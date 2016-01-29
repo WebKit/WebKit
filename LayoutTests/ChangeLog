@@ -37,7 +37,6 @@
         * storage/domstorage/localstorage/delete-defineproperty-removal-expected.txt: Added.
         * storage/domstorage/localstorage/delete-defineproperty-removal.html: Added.
 
-<<<<<<< .mine
 2016-01-29  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Check vertex array bounds before permitting a glDrawArrays to execute
@@ -49,7 +48,6 @@
         * fast/canvas/webgl/webgl-drawarrays-crash-expected.txt: Added.
         * fast/canvas/webgl/webgl-drawarrays-crash.html: Added.
 
-=======
 2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/forms tests after r195700
