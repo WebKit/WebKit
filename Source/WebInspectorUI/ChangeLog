@@ -1,3 +1,34 @@
+2016-01-29  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add font-variant-* to the visual styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=148720
+        <rdar://problem/22569974>
+
+        Reviewed by Timothy Hatcher.
+
+        Added another subsection to the "Text" section for font-variant-*
+        properties.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/FontVariantSmallCaps.svg: Removed.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel):
+        Added another keyword grouping with the "normal" value since it is used
+        frequently in multiple subsections.
+
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateFontSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateFontVariantsSection):
+        Added the five new font-variant-* properties specified in
+        <https://webkit.org/blog/5735/css-font-features/>.
+
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTextSpacingSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateAnimationSection):
+        Replaced the hardcoded "normal" keyword with the new grouping.
+
+        * UserInterface/Views/VisualStyleKeywordCheckbox.css:
+        (.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input::after): Deleted.
+
 2016-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Avoid recreating Timeline's DataGridNode data multiple times

@@ -38,6 +38,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         // These keywords, as well as the values below, are not localized as they must match the CSS spec.
         this._keywords.defaults = ["Inherit", "Initial", "Unset", "Revert"];
+        this._keywords.normal = this._keywords.defaults.concat(["Normal"]);
         this._keywords.boxModel = this._keywords.defaults.concat(["Auto"]);
         this._keywords.borderStyle = {
             basic: this._keywords.defaults.concat(["None", "Hidden", "Solid"]),
@@ -76,10 +77,11 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._generateSection("content", WebInspector.UIString("Content"));
         this._generateSection("text-style", WebInspector.UIString("Style"));
         this._generateSection("font", WebInspector.UIString("Font"));
+        this._generateSection("font-variants", WebInspector.UIString("Variants"));
         this._generateSection("text-spacing", WebInspector.UIString("Spacing"));
         this._generateSection("text-shadow", WebInspector.UIString("Shadow"));
 
-        this._sections.text = new WebInspector.DetailsSection("text", WebInspector.UIString("Text"), [this._groups.content.section, this._groups.textStyle.section, this._groups.font.section, this._groups.textSpacing.section, this._groups.textShadow.section]);
+        this._sections.text = new WebInspector.DetailsSection("text", WebInspector.UIString("Text"), [this._groups.content.section, this._groups.textStyle.section, this._groups.font.section, this._groups.fontVariants.section, this._groups.textSpacing.section, this._groups.textShadow.section]);
         this.element.appendChild(this._sections.text.element);
 
         // Background Section
@@ -705,10 +707,10 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let fontStyleRow = new WebInspector.DetailsSectionRow;
 
         properties.fontStyle = new WebInspector.VisualStyleKeywordIconList("font-style", WebInspector.UIString("Style"), ["Italic", "Normal"]);
-        properties.fontVariant = new WebInspector.VisualStyleKeywordCheckbox("font-variant", WebInspector.UIString("Variant"), "Small Caps")
+        properties.fontFeatureSettings = new WebInspector.VisualStyleBasicInput("font-feature-settings", WebInspector.UIString("Features"), WebInspector.UIString("Enter Tag"));
 
         fontStyleRow.element.appendChild(properties.fontStyle.element);
-        fontStyleRow.element.appendChild(properties.fontVariant.element);
+        fontStyleRow.element.appendChild(properties.fontFeatureSettings.element);
 
         group.autocompleteCompatibleProperties = [properties.fontFamily];
 
@@ -716,16 +718,50 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._populateSection(group, [fontGroup]);
     }
 
+    _populateFontVariantsSection()
+    {
+        let group = this._groups.fontVariants;
+        let properties = group.properties;
+
+        let alternatesRow = new WebInspector.DetailsSectionRow;
+
+        properties.fontVariantAlternates = new WebInspector.VisualStyleBasicInput("font-variant-alternates", WebInspector.UIString("Alternates"), WebInspector.UIString("Enter Value"));
+
+        alternatesRow.element.appendChild(properties.fontVariantAlternates.element);
+
+        let positionRow = new WebInspector.DetailsSectionRow;
+
+        properties.fontVariantPosition = new WebInspector.VisualStyleKeywordPicker("font-variant-position", WebInspector.UIString("Position"), this._keywords.normal.concat(["Sub", "Super"]));
+
+        positionRow.element.appendChild(properties.fontVariantPosition.element);
+
+        properties.fontVariantCaps = new WebInspector.VisualStyleKeywordPicker("font-variant-caps", WebInspector.UIString("Caps"), this._keywords.normal.concat(["None", "Small Caps", "All Small Caps", "Petite Caps", "All Petite Caps", "Unicase", "Titling Caps"]));
+
+        positionRow.element.appendChild(properties.fontVariantCaps.element);
+
+        let ligaturesRow = new WebInspector.DetailsSectionRow;
+
+        // FIXME <http://webkit.org/b/153645> Add token based editor for Visual Sidebar
+        properties.fontVariantLigatures = new WebInspector.VisualStyleKeywordPicker("font-variant-ligatures", WebInspector.UIString("Ligatures"), this._keywords.normal.concat(["None", "Common Ligatures", "No Common Ligatures", "Discretionary Ligatures", "No Discretionary Ligatures", "Historical Ligatures", "No Historical Ligatures", "Contextual", "No Contextual"]));
+
+        ligaturesRow.element.appendChild(properties.fontVariantLigatures.element);
+
+        properties.fontVariantNumeric = new WebInspector.VisualStyleKeywordPicker("font-variant-numeric", WebInspector.UIString("Numeric"), this._keywords.normal.concat(["None", "Ordinal", "Slashed Zero", "Lining Nums", "Oldstyle Nums", "Proportional Nums", "Tabular Nums", "Diagonal Fractions", "Stacked Fractions"]));
+
+        ligaturesRow.element.appendChild(properties.fontVariantNumeric.element);
+
+        let variantsGroup = new WebInspector.DetailsSectionGroup([alternatesRow, positionRow, ligaturesRow]);
+        this._populateSection(group, [variantsGroup]);
+    }
+
     _populateTextSpacingSection()
     {
         let group = this._groups.textSpacing;
         let properties = group.properties;
 
-        let defaultTextKeywords = this._keywords.defaults.concat(["Normal"]);
-
         let textLayoutRow = new WebInspector.DetailsSectionRow;
 
-        properties.lineHeight = new WebInspector.VisualStyleNumberInputBox("line-height", WebInspector.UIString("Height"), defaultTextKeywords, this._units.defaults);
+        properties.lineHeight = new WebInspector.VisualStyleNumberInputBox("line-height", WebInspector.UIString("Height"), this._keywords.normal, this._units.defaults);
         properties.verticalAlign = new WebInspector.VisualStyleNumberInputBox("vertical-align", WebInspector.UIString("Align"), ["Baseline", "Bottom"].concat(this._keywords.defaults, ["Middle", "Sub", "Super", "Text Bottom", "Text Top", "Top"]), this._units.defaults);
 
         textLayoutRow.element.appendChild(properties.lineHeight.element);
@@ -733,8 +769,8 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let textSpacingRow = new WebInspector.DetailsSectionRow;
 
-        properties.letterSpacing = new WebInspector.VisualStyleNumberInputBox("letter-spacing", WebInspector.UIString("Letter"), defaultTextKeywords, this._units.defaults);
-        properties.wordSpacing = new WebInspector.VisualStyleNumberInputBox("word-spacing", WebInspector.UIString("Word"), defaultTextKeywords, this._units.defaults);
+        properties.letterSpacing = new WebInspector.VisualStyleNumberInputBox("letter-spacing", WebInspector.UIString("Letter"), this._keywords.normal, this._units.defaults);
+        properties.wordSpacing = new WebInspector.VisualStyleNumberInputBox("word-spacing", WebInspector.UIString("Word"), this._keywords.normal, this._units.defaults);
 
         textSpacingRow.element.appendChild(properties.letterSpacing.element);
         textSpacingRow.element.appendChild(properties.wordSpacing.element);
@@ -1273,7 +1309,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let animationDirectionRow = new WebInspector.DetailsSectionRow;
 
         properties.animationDirection = new WebInspector.VisualStyleKeywordPicker("animation-direction", WebInspector.UIString("Direction"), {
-            basic: this._keywords.defaults.concat(["Normal", "Reverse"]),
+            basic: this._keywords.normal.concat(["Reverse"]),
             advanced: ["Alternate", "Alternate Reverse"]
         });
         properties.animationFillMode = new WebInspector.VisualStyleKeywordPicker("animation-fill-mode", WebInspector.UIString("Fill Mode"), this._keywords.defaults.concat(["None", "Forwards", "Backwards", "Both"]));

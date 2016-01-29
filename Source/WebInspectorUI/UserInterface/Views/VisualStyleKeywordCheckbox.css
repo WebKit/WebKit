@@ -31,14 +31,3 @@
 .visual-style-property-container.keyword-checkbox > .visual-style-property-value-container > input {
     width: auto;
 }
-
-/* Font Variant */
-.visual-style-property-container.keyword-checkbox.font-variant > .visual-style-property-value-container > input::after {
-    position: absolute;
-    top: 5px;
-    left: 15px;
-    font-size: 9px;
-    font-variant: small-caps;
-    word-spacing: -2px;
-    content: "Small Caps";
-}
