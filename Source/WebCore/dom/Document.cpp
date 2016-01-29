@@ -5351,7 +5351,7 @@ void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL
 
 void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject)
 {
-    enqueueWindowEvent(PopStateEvent::create(stateObject, m_domWindow ? m_domWindow->history() : nullptr));
+    dispatchWindowEvent(PopStateEvent::create(stateObject, m_domWindow ? m_domWindow->history() : nullptr));
 }
 
 void Document::addMediaCanStartListener(MediaCanStartListener* listener)
