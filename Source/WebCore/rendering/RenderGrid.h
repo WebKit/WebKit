@@ -76,7 +76,7 @@ private:
     LayoutUnit computeUsedBreadthOfMaxLength(const GridLength&, LayoutUnit usedBreadth, LayoutUnit maxSize) const;
     void resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection, GridSizingData&);
 
-    void ensureGridSize(unsigned maximumRowIndex, unsigned maximumColumnIndex);
+    void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
     void insertItemIntoGrid(RenderBox&, const GridCoordinate&);
     void placeItemsOnGrid();
     void populateExplicitGridAndOrderIterator();

@@ -55,13 +55,13 @@ static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row,
 
     for (const auto& it : gridAreaMap) {
         const GridCoordinate& coordinate = it.value;
-        if (row >= coordinate.rows.resolvedInitialPosition.toInt() && row <= coordinate.rows.resolvedFinalPosition.toInt())
+        if (row >= coordinate.rows.resolvedInitialPosition.toInt() && row < coordinate.rows.resolvedFinalPosition.toInt())
             candidates.append(it.key);
     }
 
     for (const auto& it : gridAreaMap) {
         const GridCoordinate& coordinate = it.value;
-        if (column >= coordinate.columns.resolvedInitialPosition.toInt() && column <= coordinate.columns.resolvedFinalPosition.toInt() && candidates.contains(it.key))
+        if (column >= coordinate.columns.resolvedInitialPosition.toInt() && column < coordinate.columns.resolvedFinalPosition.toInt() && candidates.contains(it.key))
             return it.key;
     }
 

@@ -71,7 +71,7 @@ private:
     GridPositionSide m_finalPositionSide;
 };
 
-// This class represents an index into one of the dimensions of the grid array.
+// This class represents a line index into one of the dimensions of the grid array.
 // Wraps an unsigned integer just for the purpose of knowing what we manipulate in the grid code.
 class GridResolvedPosition {
 public:

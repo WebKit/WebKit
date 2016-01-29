@@ -44,15 +44,15 @@ namespace WebCore {
 const unsigned kGridMaxTracks = 1000000;
 
 // A span in a single direction (either rows or columns). Note that |resolvedInitialPosition|
-// and |resolvedFinalPosition| are grid areas' indexes, NOT grid lines'. Iterating over the
-// span should include both |resolvedInitialPosition| and |resolvedFinalPosition| to be correct.
+// and |resolvedFinalPosition| are grid lines' indexes.
+// Iterating over the span shouldn't include |resolvedFinalPosition| to be correct.
 class GridSpan {
 public:
     GridSpan(const GridResolvedPosition& resolvedInitialPosition, const GridResolvedPosition& resolvedFinalPosition)
         : resolvedInitialPosition(std::min(resolvedInitialPosition.toInt(), kGridMaxTracks - 1))
         , resolvedFinalPosition(std::min(resolvedFinalPosition.toInt(), kGridMaxTracks))
     {
-        ASSERT(resolvedInitialPosition <= resolvedFinalPosition);
+        ASSERT(resolvedInitialPosition < resolvedFinalPosition);
     }
 
     bool operator==(const GridSpan& o) const
@@ -62,7 +62,7 @@ public:
 
     unsigned integerSpan() const
     {
-        return resolvedFinalPosition.toInt() - resolvedInitialPosition.toInt() + 1;
+        return resolvedFinalPosition.toInt() - resolvedInitialPosition.toInt();
     }
 
     GridResolvedPosition resolvedInitialPosition;
@@ -77,7 +77,7 @@ public:
 
     iterator end() const
     {
-        return resolvedFinalPosition.next();
+        return resolvedFinalPosition;
     }
 };
 
@@ -86,8 +86,8 @@ class GridCoordinate {
 public:
     // HashMap requires a default constuctor.
     GridCoordinate()
-        : columns(0, 0)
-        , rows(0, 0)
+        : columns(0, 1)
+        , rows(0, 1)
     {
     }
 

@@ -1,3 +1,73 @@
+2016-01-29  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Store lines instead of tracks in GridResolvedPosition
+        https://bugs.webkit.org/show_bug.cgi?id=153592
+
+        Reviewed by Sergio Villar Senin.
+
+        Due to the new feature that allows to create implicit tracks before the
+        explicit ones, we will need to use lines instead of tracks in the
+        code to be able to implement it properly.
+
+        This is just a first simple patch using lines instead of tracks in
+        GridResolvedPosition. It modifies the code that was using it, as it was
+        considering that the resolvedFinalPosition was a track index and
+        not a line index.
+
+        So if we've an item positioned like:
+          grid-column: 2 / 5;
+          grid-row: 1 / span 2;
+
+        Before we were storing this information on the GridSpan:
+        * columns:
+          * resolvedInitialPosition: 1
+          * resolvedFinalPosition:  3
+        * rows:
+          * resolvedInitialPosition: 0
+          * resolvedFinalPosition:  1
+
+        And now we're storing:
+        * columns:
+          * resolvedInitialPosition: 1
+          * resolvedFinalPosition:  4
+        * rows:
+          * resolvedInitialPosition: 0
+          * resolvedFinalPosition:  2
+
+        No new tests, no change of behavior.
+
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::stringForPosition):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::ensureGridSize):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridCoordinate.h:
+        (WebCore::GridSpan::GridSpan):
+        (WebCore::GridSpan::integerSpan):
+        (WebCore::GridSpan::end):
+        (WebCore::GridCoordinate::GridCoordinate):
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionAgainstOppositePosition):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromStyle):
+        (WebCore::resolveNamedGridLinePositionFromStyle): Deleted.
+        * rendering/style/GridResolvedPosition.h:
+
 2016-01-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: SQLite backend mismanages key generator values.
