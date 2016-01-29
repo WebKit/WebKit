@@ -275,6 +275,7 @@ storage/indexeddb/odd-strings.html [ Skip ]
 
 # SQLite backend tests that wedge the entire testing harness
 imported/w3c/indexeddb/keyorder.htm [ Skip ]
+storage/indexeddb/dont-wedge.html [ Skip ]
 storage/indexeddb/key-type-array.html [ Skip ]
 
 ### END OF (3) IndexedDB failures with SQLite
