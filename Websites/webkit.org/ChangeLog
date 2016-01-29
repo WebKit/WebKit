@@ -1,3 +1,14 @@
+2016-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have documentation
+        https://bugs.webkit.org/show_bug.cgi?id=153658
+
+        Reviewed by Timothy Hatcher.
+
+        * docs: Added.
+        * docs/b3: Added.
+        * docs/b3/bare-bones-backend.md: Added.
+
 2016-01-16  Timothy Hatcher  <timothy@apple.com>
 
         Fix some responsive issues on smaller screens.
