@@ -266,7 +266,7 @@ static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, F
 static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, float size)
 {
     if (const auto& specialCase = fontWithFamilySpecialCase(family, weight, desiredTraits, size))
-        return applyFontFeatureSettings((CTFontRef)specialCase.value(), nullptr, nullptr, featureSettings, variantSettings).autorelease();
+        return CFBridgingRelease(CFRetain(applyFontFeatureSettings((CTFontRef)specialCase.value(), nullptr, nullptr, featureSettings, variantSettings).autorelease()));
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSString *availableFamily;
