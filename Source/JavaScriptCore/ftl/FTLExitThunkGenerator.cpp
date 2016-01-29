@@ -49,7 +49,7 @@ ExitThunkGenerator::~ExitThunkGenerator()
 void ExitThunkGenerator::emitThunk(unsigned index)
 {
     OSRExit& exit = m_state.jitCode->osrExit[index];
-    ASSERT_UNUSED(exit, !(exit.willArriveAtOSRExitFromGenericUnwind() && exit.willArriveAtOSRExitFromCallOperation()));
+    ASSERT_UNUSED(exit, !(exit.isGenericUnwindHandler() && exit.willArriveAtOSRExitFromCallOperation()));
     
     OSRExitCompilationInfo& info = m_state.finalizer->osrExit[index];
     info.m_thunkLabel = label();

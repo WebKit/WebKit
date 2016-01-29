@@ -170,15 +170,15 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
 #if FTL_USES_B3
     for (OSRExit& exit : osrExit) {
         if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
-            RELEASE_ASSERT(exit.m_isExceptionHandler);
-            RELEASE_ASSERT(exit.m_isUnwindHandler);
+            RELEASE_ASSERT(exit.isExceptionHandler());
+            RELEASE_ASSERT(exit.isGenericUnwindHandler());
             return ValueRep::usedRegisters(exit.m_valueReps);
         }
     }
 #else // FTL_USES_B3
     for (OSRExit& exit : osrExit) {
         if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
-            RELEASE_ASSERT(exit.m_isExceptionHandler);
+            RELEASE_ASSERT(exit.isExceptionHandler());
             return stackmaps.records[exit.m_stackmapRecordIndex].usedRegisterSet();
         }
     }

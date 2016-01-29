@@ -39,6 +39,9 @@ namespace JSC { namespace DFG {
 void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
 {
     jit.add32(AssemblyHelpers::TrustedImm32(1), AssemblyHelpers::AbsoluteAddress(&exit.m_count));
+
+    if (!exitKindMayJettison(exit.m_kind))
+        return;
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jit.codeBlock()), GPRInfo::regT0);
     
@@ -264,7 +267,7 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
     ownerIsRememberedOrInEden.link(&jit);
 }
 
-void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit, bool isExitingToOpCatch)
+void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
 {
     jit.move(
         AssemblyHelpers::TrustedImmPtr(
@@ -302,7 +305,7 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit, bool isEx
     void* jumpTarget = codeBlockForExit->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
 
     jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
-    if (isExitingToOpCatch) {
+    if (exit.isExceptionHandler()) {
         // Since we're jumping to op_catch, we need to set callFrameForCatch.
         jit.storePtr(GPRInfo::callFrameRegister, jit.vm()->addressOfCallFrameForCatch());
     }

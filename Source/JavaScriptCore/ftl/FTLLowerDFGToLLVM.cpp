@@ -10186,7 +10186,7 @@ private:
             bool exitOK = true;
             bool isExceptionHandler = true;
             appendOSRExit(
-                Uncountable, noValue(), nullptr, hadException,
+                ExceptionCheck, noValue(), nullptr, hadException,
                 m_origin.withForExitAndExitOK(opCatchOrigin, exitOK), isExceptionHandler);
             return;
         }
@@ -10244,7 +10244,22 @@ private:
         if (!willCatchException)
             return;
 
-        appendOSRExitDescriptor(Uncountable, exceptionType, noValue(), nullptr, m_origin.withForExitAndExitOK(opCatchOrigin, true));
+        ExitKind exitKind;
+        switch (exceptionType) {
+        case ExceptionType::JSCall:
+        case ExceptionType::GetById:
+        case ExceptionType::PutById:
+            exitKind = GenericUnwind;
+            break;
+        case ExceptionType::LazySlowPath:
+        case ExceptionType::BinaryOpGenerator:
+            exitKind = ExceptionCheck;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        appendOSRExitDescriptor(exitKind, exceptionType, noValue(), nullptr, m_origin.withForExitAndExitOK(opCatchOrigin, true));
         OSRExitDescriptor* exitDescriptor = &m_ftlState.jitCode->osrExitDescriptors.last();
         exitDescriptor->m_stackmapID = m_stackmapIDs - 1;
 
@@ -10320,7 +10335,7 @@ private:
 
 #if FTL_USES_B3
         blessSpeculation(
-            m_out.speculate(failCondition), kind, lowValue, highValue, origin, isExceptionHandler);
+            m_out.speculate(failCondition), kind, lowValue, highValue, origin);
 #else // FTL_USES_B3
         OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue, highValue, origin);
 
@@ -10348,7 +10363,7 @@ private:
     }
 
 #if FTL_USES_B3
-    void blessSpeculation(CheckValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin, bool isExceptionHandler = false)
+    void blessSpeculation(CheckValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin)
     {
         OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(lowValue, highValue);
         
@@ -10358,7 +10373,7 @@ private:
         value->setGenerator(
             [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 exitDescriptor->emitOSRExit(
-                    *state, kind, origin, jit, params, 0, isExceptionHandler);
+                    *state, kind, origin, jit, params, 0);
             });
     }
 #endif

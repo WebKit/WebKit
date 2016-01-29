@@ -31,6 +31,7 @@
 #if ENABLE(FTL_JIT) && FTL_USES_B3
 
 #include "DFGNodeOrigin.h"
+#include "ExitKind.h"
 #include "HandlerInfo.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -88,7 +89,7 @@ private:
     PatchpointExceptionHandle(
         State&, OSRExitDescriptor*, DFG::NodeOrigin, unsigned offset, const HandlerInfo&);
 
-    RefPtr<OSRExitHandle> createHandle(const B3::StackmapGenerationParams&);
+    RefPtr<OSRExitHandle> createHandle(ExitKind, const B3::StackmapGenerationParams&);
 
     State& m_state;
     OSRExitDescriptor* m_descriptor;

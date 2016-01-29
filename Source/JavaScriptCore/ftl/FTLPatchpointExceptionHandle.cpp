@@ -69,7 +69,7 @@ RefPtr<ExceptionTarget> PatchpointExceptionHandle::scheduleExitCreation(
             new ExceptionTarget(isDefaultHandler, m_state.exceptionHandler, nullptr));
     }
     bool isDefaultHandler = false;
-    return adoptRef(new ExceptionTarget(isDefaultHandler, { }, createHandle(params)));
+    return adoptRef(new ExceptionTarget(isDefaultHandler, { }, createHandle(ExceptionCheck, params)));
 }
 
 void PatchpointExceptionHandle::scheduleExitCreationForUnwind(
@@ -78,9 +78,8 @@ void PatchpointExceptionHandle::scheduleExitCreationForUnwind(
     if (!m_descriptor)
         return;
     
-    RefPtr<OSRExitHandle> handle = createHandle(params);
+    RefPtr<OSRExitHandle> handle = createHandle(GenericUnwind, params);
 
-    handle->exit.m_isUnwindHandler = true;
     handle->exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
 
     HandlerInfo handler = m_handler;
@@ -110,11 +109,10 @@ PatchpointExceptionHandle::PatchpointExceptionHandle(
 }
 
 RefPtr<OSRExitHandle> PatchpointExceptionHandle::createHandle(
-    const B3::StackmapGenerationParams& params)
+    ExitKind kind, const B3::StackmapGenerationParams& params)
 {
-    bool isExceptionHandler = true;
     return m_descriptor->emitOSRExitLater(
-        m_state, Uncountable, m_origin, params, m_offset, isExceptionHandler);
+        m_state, kind, m_origin, params, m_offset);
 }
 
 } } // namespace JSC::FTL

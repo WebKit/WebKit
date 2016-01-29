@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 
 void handleExitCounts(CCallHelpers&, const OSRExitBase&);
 void reifyInlinedCallFrames(CCallHelpers&, const OSRExitBase&);
-void adjustAndJumpToTarget(CCallHelpers&, const OSRExitBase&, bool isExitingToOpCatch);
+void adjustAndJumpToTarget(CCallHelpers&, const OSRExitBase&);
 
 template <typename JITCodeType>
 void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM* vm, JITCode::JITType jitType)

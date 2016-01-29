@@ -69,20 +69,20 @@ void OSRExitDescriptor::validateReferences(const TrackedReferences& trackedRefer
 #if FTL_USES_B3
 RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExit(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin, CCallHelpers& jit,
-    const StackmapGenerationParams& params, unsigned offset, bool isExceptionHandler)
+    const StackmapGenerationParams& params, unsigned offset)
 {
     RefPtr<OSRExitHandle> handle =
-        prepareOSRExitHandle(state, exitKind, nodeOrigin, params, offset, isExceptionHandler);
+        prepareOSRExitHandle(state, exitKind, nodeOrigin, params, offset);
     handle->emitExitThunk(state, jit);
     return handle;
 }
 
 RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin,
-    const StackmapGenerationParams& params, unsigned offset, bool isExceptionHandler)
+    const StackmapGenerationParams& params, unsigned offset)
 {
     RefPtr<OSRExitHandle> handle =
-        prepareOSRExitHandle(state, exitKind, nodeOrigin, params, offset, isExceptionHandler);
+        prepareOSRExitHandle(state, exitKind, nodeOrigin, params, offset);
     params.addLatePath(
         [handle, &state] (CCallHelpers& jit) {
             handle->emitExitThunk(state, jit);
@@ -92,11 +92,11 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
 
 RefPtr<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin,
-    const StackmapGenerationParams& params, unsigned offset, bool isExceptionHandler)
+    const StackmapGenerationParams& params, unsigned offset)
 {
     unsigned index = state.jitCode->osrExit.size();
     OSRExit& exit = state.jitCode->osrExit.alloc(
-        this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, isExceptionHandler);
+        this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic);
     RefPtr<OSRExitHandle> handle = adoptRef(new OSRExitHandle(index, exit));
     for (unsigned i = offset; i < params.size(); ++i)
         exit.m_valueReps.append(params[i]);
@@ -108,23 +108,20 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
 #if FTL_USES_B3
 OSRExit::OSRExit(
     OSRExitDescriptor* descriptor,
-    ExitKind exitKind, CodeOrigin codeOrigin, CodeOrigin codeOriginForExitProfile,
-    bool isExceptionHandler)
+    ExitKind exitKind, CodeOrigin codeOrigin, CodeOrigin codeOriginForExitProfile)
     : OSRExitBase(exitKind, codeOrigin, codeOriginForExitProfile)
     , m_descriptor(descriptor)
 {
-    m_isExceptionHandler = isExceptionHandler;
 }
 #else // FTL_USES_B3
 OSRExit::OSRExit(
-    OSRExitDescriptor* descriptor, OSRExitDescriptorImpl& exitDescriptorImpl,
+    OSRExitDescriptor* descriptor, ExitKind exitKind, OSRExitDescriptorImpl& exitDescriptorImpl,
     uint32_t stackmapRecordIndex)
-    : OSRExitBase(exitDescriptorImpl.m_kind, exitDescriptorImpl.m_codeOrigin, exitDescriptorImpl.m_codeOriginForExitProfile)
+    : OSRExitBase(exitKind, exitDescriptorImpl.m_codeOrigin, exitDescriptorImpl.m_codeOriginForExitProfile)
     , m_descriptor(descriptor)
     , m_stackmapRecordIndex(stackmapRecordIndex)
     , m_exceptionType(exitDescriptorImpl.m_exceptionType)
 {
-    m_isExceptionHandler = exitDescriptorImpl.m_exceptionType != ExceptionType::None;
 }
 #endif // FTL_USES_B3
 
@@ -178,7 +175,7 @@ void OSRExit::gatherRegistersToSpillForCallIfException(StackMaps& stackmaps, Sta
 
 void OSRExit::spillRegistersToSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot)
 {
-    RELEASE_ASSERT(willArriveAtOSRExitFromGenericUnwind() || willArriveAtOSRExitFromCallOperation());
+    RELEASE_ASSERT(isGenericUnwindHandler() || willArriveAtOSRExitFromCallOperation());
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (registersToPreserveForCallThatMightThrow.get(reg)) {
@@ -196,7 +193,7 @@ void OSRExit::spillRegistersToSpillSlot(CCallHelpers& jit, int32_t stackSpillSlo
 
 void OSRExit::recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot)
 {
-    RELEASE_ASSERT(willArriveAtOSRExitFromGenericUnwind() || willArriveAtOSRExitFromCallOperation());
+    RELEASE_ASSERT(isGenericUnwindHandler() || willArriveAtOSRExitFromCallOperation());
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (registersToPreserveForCallThatMightThrow.get(reg)) {
@@ -227,24 +224,6 @@ bool OSRExit::willArriveAtExitFromIndirectExceptionCheck() const
         return false;
     }
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-bool exceptionTypeWillArriveAtOSRExitFromGenericUnwind(ExceptionType exceptionType)
-{
-    switch (exceptionType) {
-    case ExceptionType::JSCall:
-    case ExceptionType::GetById:
-    case ExceptionType::PutById:
-        return true;
-    default:
-        return false;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-bool OSRExit::willArriveAtOSRExitFromGenericUnwind() const
-{
-    return exceptionTypeWillArriveAtOSRExitFromGenericUnwind(m_exceptionType);
 }
 
 bool OSRExit::willArriveAtOSRExitFromCallOperation() const

@@ -492,7 +492,7 @@ static void fixFunctionBasedOnStackMaps(
         }
 
         OSRExitDescriptorImpl& exitDescriptorImpl = state.osrExitDescriptorImpls[i];
-        if (exceptionTypeWillArriveAtOSRExitFromGenericUnwind(exitDescriptorImpl.m_exceptionType))
+        if (exitDescriptorImpl.m_kind == GenericUnwind)
             genericUnwindOSRExitDescriptors.add(exitDescriptor, &exitDescriptorImpl);
 
         for (unsigned j = exitDescriptor->m_values.size(); j--;)
@@ -503,7 +503,7 @@ static void fixFunctionBasedOnStackMaps(
         for (unsigned j = 0; j < iter->value.size(); j++) {
             {
                 uint32_t stackmapRecordIndex = iter->value[j].index;
-                OSRExit exit(exitDescriptor, exitDescriptorImpl, stackmapRecordIndex);
+                OSRExit exit(exitDescriptor, exitDescriptorImpl.m_kind, exitDescriptorImpl, stackmapRecordIndex);
                 state.jitCode->osrExit.append(exit);
                 state.finalizer->osrExit.append(OSRExitCompilationInfo());
             }
@@ -528,7 +528,7 @@ static void fixFunctionBasedOnStackMaps(
                     // and the other that will be arrived at from the callOperation exception handler path.
                     // This code here generates the second callOperation variant.
                     uint32_t stackmapRecordIndex = iter->value[j].index;
-                    OSRExit exit(exitDescriptor, exitDescriptorImpl, stackmapRecordIndex);
+                    OSRExit exit(exitDescriptor, ExceptionCheck, exitDescriptorImpl, stackmapRecordIndex);
                     if (exitDescriptorImpl.m_exceptionType == ExceptionType::GetById)
                         exit.m_exceptionType = ExceptionType::GetByIdCallOperation;
                     else
@@ -590,7 +590,7 @@ static void fixFunctionBasedOnStackMaps(
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
 
-            if (exit.willArriveAtOSRExitFromGenericUnwind()) {
+            if (exit.isGenericUnwindHandler()) {
                 HandlerInfo newHandler = genericUnwindOSRExitDescriptors.get(exit.m_descriptor)->m_baselineExceptionHandler;
                 newHandler.start = exit.m_exceptionHandlerCallSiteIndex.bits();
                 newHandler.end = exit.m_exceptionHandlerCallSiteIndex.bits() + 1;

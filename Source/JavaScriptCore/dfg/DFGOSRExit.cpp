@@ -43,7 +43,6 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     , m_patchableCodeOffset(0)
     , m_recoveryIndex(recoveryIndex)
     , m_streamIndex(streamIndex)
-    , m_willArriveAtOSRExitFromGenericUnwind(false)
 {
     bool canExit = jit->m_origin.exitOK;
     if (!canExit && jit->m_currentNode) {

@@ -90,7 +90,7 @@ void JITCode::reconstruct(
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
 {
     for (OSRExit& exit : osrExit) {
-        if (exit.m_isExceptionHandler && exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
+        if (exit.isExceptionHandler() && exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
             Operands<ValueRecovery> valueRecoveries;
             reconstruct(codeBlock, exit.m_codeOrigin, exit.m_streamIndex, valueRecoveries);
             RegisterSet liveAtOSRExit;

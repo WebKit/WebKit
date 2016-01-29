@@ -207,13 +207,7 @@ static void compileStub(
     CCallHelpers jit(vm, codeBlock);
 
     // The first thing we need to do is restablish our frame in the case of an exception.
-    if (
-#if FTL_USES_B3
-        exit.m_isUnwindHandler
-#else // FTL_USES_B3
-        exit.willArriveAtOSRExitFromGenericUnwind()
-#endif // FTL_USES_B3
-        ) {
+    if (exit.isGenericUnwindHandler()) {
         RELEASE_ASSERT(vm->callFrameForCatch); // The first time we hit this exit, like at all other times, this field should be non-null.
         jit.restoreCalleeSavesFromVMCalleeSavesBuffer();
         jit.loadPtr(vm->addressOfCallFrameForCatch(), MacroAssembler::framePointerRegister);
@@ -488,19 +482,19 @@ static void compileStub(
     RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
     RegisterAtOffsetList* vmCalleeSaves = vm->getAllCalleeSaveRegisterOffsets();
     RegisterSet vmCalleeSavesToSkip = RegisterSet::stackRegisters();
-    if (exit.m_isExceptionHandler)
+    if (exit.isExceptionHandler())
         jit.move(CCallHelpers::TrustedImmPtr(vm->calleeSaveRegistersBuffer), GPRInfo::regT1);
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
         if (!allFTLCalleeSaves.get(reg)) {
-            if (exit.m_isExceptionHandler)
+            if (exit.isExceptionHandler())
                 RELEASE_ASSERT(!vmCalleeSaves->find(reg));
             continue;
         }
         unsigned unwindIndex = codeBlock->calleeSaveRegisters()->indexOf(reg);
         RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
         RegisterAtOffset* vmCalleeSave = nullptr; 
-        if (exit.m_isExceptionHandler)
+        if (exit.isExceptionHandler())
             vmCalleeSave = vmCalleeSaves->find(reg);
 
         if (reg.isGPR()) {
@@ -540,7 +534,7 @@ static void compileStub(
         }
     }
 
-    if (exit.m_isExceptionHandler) {
+    if (exit.isExceptionHandler()) {
         RegisterAtOffset* vmCalleeSave = vmCalleeSaves->find(GPRInfo::tagTypeNumberRegister);
         jit.store64(GPRInfo::tagTypeNumberRegister, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
 
@@ -564,7 +558,7 @@ static void compileStub(
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
-    adjustAndJumpToTarget(jit, exit, exit.m_isExceptionHandler);
+    adjustAndJumpToTarget(jit, exit);
     
     LinkBuffer patchBuffer(*vm, jit, codeBlock);
 #if FTL_USES_B3
@@ -622,13 +616,11 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
         dataLog("    Exit stackmap ID: ", exit.m_descriptor->m_stackmapID, "\n");
 #endif // !FTL_USES_B3
         dataLog("    Current call site index: ", exec->callSiteIndex().bits(), "\n");
-        dataLog("    Exit is exception handler: ", exit.m_isExceptionHandler, "\n");
-#if FTL_USES_B3
-        dataLog("    Is unwind handler: ", exit.m_isUnwindHandler, "\n");
-#else // FTL_USES_B3
-        dataLog("    Will arrive at exit from genericUnwind(): ", exit.willArriveAtOSRExitFromGenericUnwind(), "\n");
+        dataLog("    Exit is exception handler: ", exit.isExceptionHandler(), "\n");
+        dataLog("    Is unwind handler: ", exit.isGenericUnwindHandler(), "\n");
+#if !FTL_USES_B3
         dataLog("    Will arrive at exit from lazy slow path: ", exit.m_exceptionType == ExceptionType::LazySlowPath, "\n");
-#endif // FTL_USES_B3
+#endif // !FTL_USES_B3
         dataLog("    Exit values: ", exit.m_descriptor->m_values, "\n");
 #if FTL_USES_B3
         dataLog("    Value reps: ", listDump(exit.m_valueReps), "\n");

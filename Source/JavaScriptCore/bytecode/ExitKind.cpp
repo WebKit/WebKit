@@ -84,25 +84,27 @@ const char* exitKindToString(ExitKind kind)
         return "WatchdogTimerFired";
     case DebuggerEvent:
         return "DebuggerEvent";
+    case ExceptionCheck:
+        return "ExceptionCheck";
+    case GenericUnwind:
+        return "GenericUnwind";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "Unknown";
 }
 
-bool exitKindIsCountable(ExitKind kind)
+bool exitKindMayJettison(ExitKind kind)
 {
     switch (kind) {
-    case ExitKindUnset:
-        RELEASE_ASSERT_NOT_REACHED();
-    case BadType:
-    case Uncountable:
-    case LoadFromHole: // Already counted directly by the baseline JIT.
-    case StoreToHole: // Already counted directly by the baseline JIT.
-    case OutOfBounds: // Already counted directly by the baseline JIT.
+    case ExceptionCheck:
+    case GenericUnwind:
         return false;
     default:
         return true;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace JSC

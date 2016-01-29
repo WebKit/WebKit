@@ -279,7 +279,7 @@ private:
     void linkOSRExits();
     void disassemble(LinkBuffer&);
 
-    void appendExceptionHandlingOSRExit(unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());
+    void appendExceptionHandlingOSRExit(ExitKind, unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());
 
     // The dataflow graph currently being generated.
     Graph& m_graph;

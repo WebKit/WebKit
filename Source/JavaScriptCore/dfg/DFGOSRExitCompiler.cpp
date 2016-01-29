@@ -131,8 +131,8 @@ void compileOSRExit(ExecState* exec)
     OSRExit& exit = codeBlock->jitCode()->dfg()->osrExit[exitIndex];
     
     if (vm->callFrameForCatch)
-        ASSERT(exit.m_willArriveAtOSRExitFromGenericUnwind);
-    if (exit.m_isExceptionHandler)
+        ASSERT(exit.m_kind == GenericUnwind);
+    if (exit.isExceptionHandler())
         ASSERT(!!vm->exception());
         
     
@@ -150,7 +150,7 @@ void compileOSRExit(ExecState* exec)
         CCallHelpers jit(vm, codeBlock);
         OSRExitCompiler exitCompiler(jit);
 
-        if (exit.m_willArriveAtOSRExitFromGenericUnwind) {
+        if (exit.m_kind == GenericUnwind) {
             // We are acting as a defacto op_catch because we arrive here from genericUnwind().
             // So, we must restore our call frame and stack pointer.
             jit.restoreCalleeSavesFromVMCalleeSavesBuffer();

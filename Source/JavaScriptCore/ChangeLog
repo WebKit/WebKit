@@ -1,3 +1,103 @@
+2016-01-29  Saam barati  <sbarati@apple.com>
+
+        Exits from exceptions shouldn't jettison code
+        https://bugs.webkit.org/show_bug.cgi?id=153564
+
+        Reviewed by Geoffrey Garen.
+
+        We create two new exit kinds for exception-handling
+        OSRExits:
+        - ExceptionCheck: an exception check after a C call.
+        - GenericUnwind: an OSR exit executes because it's jumped to from genericUnwind machinery.
+
+        Having these two new exit kinds allows us to remove fields from
+        various OSRExit variants that store booleans indicating
+        if the exit is an exception handler, and if so, what kind
+        of exception handler. Most of this patch is just removing
+        those old fields and adding new equivalent functions.
+
+        This patch also implements the policy that we should never consider jettisoning
+        code from exits that happen from an exception check to an op_catch (it might be worth
+        considering a similar policy for 'throw'). We're choosing this policy because
+        it will almost never be more expensive, in total, to execute the OSR exit than
+        to execute the baseline variant of the code. When an exception is thrown, we do
+        really expensive work, like call through to genericUnwind, and also create an error
+        object with a stack trace. The cost of OSR exiting here is small in comparison to
+        those other operations. And penalizing a CodeBlock for OSR exiting from an exception
+        is silly because the basis of our implementation of exception handling in the
+        upper tiers is to OSR exit on a caught exception. So we used to penalize
+        ourselves for having an implementation that is correct w.r.t our design goals.
+
+        I've verified this hypothesis with on v8-raytrace by adding a new 
+        benchmark that throws with very high frequency. Implementing
+        this policy on that benchmark results in about a 4-5% speed up.
+
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        (JSC::exitKindMayJettison):
+        (JSC::exitKindIsCountable): Deleted.
+        * bytecode/ExitKind.h:
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        (JSC::DFG::JITCompiler::appendExceptionHandlingOSRExit):
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        (JSC::DFG::JITCompiler::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+        (JSC::DFG::OSRExitBase::isExceptionHandler):
+        (JSC::DFG::OSRExitBase::isGenericUnwindHandler):
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        (JSC::DFG::adjustFrameAndStackInOSRExitCompilerThunk):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::emitOSRExit):
+        (JSC::FTL::OSRExitDescriptor::emitOSRExitLater):
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::spillRegistersToSpillSlot):
+        (JSC::FTL::OSRExit::recoverRegistersFromSpillSlot):
+        (JSC::FTL::OSRExit::willArriveAtExitFromIndirectExceptionCheck):
+        (JSC::FTL::OSRExit::willArriveAtOSRExitFromCallOperation):
+        (JSC::FTL::exceptionTypeWillArriveAtOSRExitFromGenericUnwind): Deleted.
+        (JSC::FTL::OSRExit::willArriveAtOSRExitFromGenericUnwind): Deleted.
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLPatchpointExceptionHandle.cpp:
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreation):
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreationForUnwind):
+        (JSC::FTL::PatchpointExceptionHandle::PatchpointExceptionHandle):
+        (JSC::FTL::PatchpointExceptionHandle::createHandle):
+        * ftl/FTLPatchpointExceptionHandle.h:
+
 2016-01-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [B3] REGRESSION(r195395): testComplex(64, 128) asserts on Linux with GCC

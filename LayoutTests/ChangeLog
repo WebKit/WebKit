@@ -1,3 +1,77 @@
+2016-01-29  Saam barati  <sbarati@apple.com>
+
+        Exits from exceptions shouldn't jettison code
+        https://bugs.webkit.org/show_bug.cgi?id=153564
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/script-tests/v8-raytrace-with-try-catch-high-frequency-throws.js: Added.
+        (randomException):
+        (Class.create):
+        (Object.extend):
+        (Flog.RayTracer.Color.prototype.initialize):
+        (Flog.RayTracer.Color.prototype.add):
+        (Flog.RayTracer.Color.prototype.addScalar):
+        (Flog.RayTracer.Color.prototype.subtract):
+        (Flog.RayTracer.Color.prototype.multiply):
+        (Flog.RayTracer.Color.prototype.multiplyScalar):
+        (Flog.RayTracer.Color.prototype.divideFactor):
+        (Flog.RayTracer.Color.prototype.limit):
+        (Flog.RayTracer.Color.prototype.distance):
+        (Flog.RayTracer.Color.prototype.blend):
+        (Flog.RayTracer.Color.prototype.brightness):
+        (Flog.RayTracer.Color.prototype.toString):
+        (Flog.RayTracer.Light.prototype.initialize):
+        (Flog.RayTracer.Light.prototype.toString):
+        (Flog.RayTracer.Vector.prototype.initialize):
+        (Flog.RayTracer.Vector.prototype.copy):
+        (Flog.RayTracer.Vector.prototype.normalize):
+        (Flog.RayTracer.Vector.prototype.magnitude):
+        (Flog.RayTracer.Vector.prototype.cross):
+        (Flog.RayTracer.Vector.prototype.dot):
+        (Flog.RayTracer.Vector.prototype.add):
+        (Flog.RayTracer.Vector.prototype.subtract):
+        (Flog.RayTracer.Vector.prototype.multiplyVector):
+        (Flog.RayTracer.Vector.prototype.multiplyScalar):
+        (Flog.RayTracer.Vector.prototype.toString):
+        (Flog.RayTracer.Ray.prototype.initialize):
+        (Flog.RayTracer.Ray.prototype.toString):
+        (Flog.RayTracer.Scene.prototype.initialize):
+        (Flog.RayTracer.Material.BaseMaterial.prototype.initialize):
+        (Flog.RayTracer.Material.BaseMaterial.prototype.getColor):
+        (Flog.RayTracer.Material.BaseMaterial.prototype.wrapUp):
+        (Flog.RayTracer.Material.BaseMaterial.prototype.toString):
+        (Flog.RayTracer.Material.Solid.prototype.Object.extend.new.Flog.RayTracer.Material.BaseMaterial.initialize):
+        (Flog.RayTracer.Material.Solid.prototype.Object.extend.new.Flog.RayTracer.Material.BaseMaterial.getColor):
+        (Flog.RayTracer.Material.Solid.prototype.Object.extend.new.Flog.RayTracer.Material.BaseMaterial.toString):
+        (Flog.RayTracer.Material.Solid.prototype.Object.extend.new.Flog.RayTracer.Material.BaseMaterial):
+        (Flog.RayTracer.Material.Chessboard.prototype.Object.extend.new.Flog.RayTracer.Material.BaseMaterial.initialize):
+        (Flog.RayTracer.Material.Chessboard.prototype.Object.extend.new.Flog.RayTracer.Material.BaseMaterial.getColor):
+        (Flog.RayTracer.Material.Chessboard.prototype.Object.extend.new.Flog.RayTracer.Material.BaseMaterial.toString):
+        (Flog.RayTracer.Material.Chessboard.prototype.Object.extend.new.Flog.RayTracer.Material.BaseMaterial):
+        (Flog.RayTracer.Shape.Sphere.prototype.initialize):
+        (Flog.RayTracer.Shape.Sphere.prototype.intersect):
+        (Flog.RayTracer.Shape.Sphere.prototype.toString):
+        (Flog.RayTracer.Shape.Plane.prototype.initialize):
+        (Flog.RayTracer.Shape.Plane.prototype.intersect):
+        (Flog.RayTracer.Shape.Plane.prototype.toString):
+        (Flog.RayTracer.IntersectionInfo.prototype.initialize):
+        (Flog.RayTracer.IntersectionInfo.prototype.toString):
+        (Flog.RayTracer.Camera.prototype.initialize):
+        (Flog.RayTracer.Camera.prototype.getRay):
+        (Flog.RayTracer.Camera.prototype.toString):
+        (Flog.RayTracer.Background.prototype.initialize):
+        (Flog.RayTracer.Engine.prototype.initialize):
+        (Flog.RayTracer.Engine.prototype.setPixel):
+        (Flog.RayTracer.Engine.prototype.renderScene):
+        (Flog.RayTracer.Engine.prototype.getPixelColor):
+        (Flog.RayTracer.Engine.prototype.testIntersection):
+        (Flog.RayTracer.Engine.prototype.getReflectionRay):
+        (Flog.RayTracer.Engine.prototype.rayTrace):
+        (renderScene):
+        * js/regress/v8-raytrace-with-try-catch-high-frequency-throws-expected.txt: Added.
+        * js/regress/v8-raytrace-with-try-catch-high-frequency-throws.html: Added.
+
 2016-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed gardening after r195740 (v2).
