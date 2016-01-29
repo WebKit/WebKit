@@ -1,3 +1,12 @@
+2016-01-29  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Fix logging that overwhelms python with strings of excessive length.
+        https://bugs.webkit.org/show_bug.cgi?id=153652
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-29  Saam barati  <sbarati@apple.com>
 
         Exits from exceptions shouldn't jettison code

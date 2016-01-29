@@ -255,23 +255,26 @@ String IDBKeyData::loggingString() const
     if (m_isNull)
         return "<null>";
 
+    String result;
+
     switch (m_type) {
     case KeyType::Invalid:
         return "<invalid>";
-    case KeyType::Array:
-        {
-            StringBuilder result;
-            result.appendLiteral("<array> - { ");
-            for (size_t i = 0; i < m_arrayValue.size(); ++i) {
-                result.append(m_arrayValue[i].loggingString());
-                if (i < m_arrayValue.size() - 1)
-                    result.appendLiteral(", ");
-            }
-            result.appendLiteral(" }");
-            return result.toString();
+    case KeyType::Array: {
+        StringBuilder builder;
+        builder.appendLiteral("<array> - { ");
+        for (size_t i = 0; i < m_arrayValue.size(); ++i) {
+            builder.append(m_arrayValue[i].loggingString());
+            if (i < m_arrayValue.size() - 1)
+                builder.appendLiteral(", ");
         }
+        builder.appendLiteral(" }");
+        result = builder.toString();
+        break;
+    }
     case KeyType::String:
-        return "<string> - " + m_stringValue;
+        result = "<string> - " + m_stringValue;
+        break;
     case KeyType::Date:
         return String::format("Date m_type - %f", m_numberValue);
     case KeyType::Number:
@@ -283,7 +286,13 @@ String IDBKeyData::loggingString() const
     default:
         return String();
     }
-    ASSERT_NOT_REACHED();
+
+    if (result.length() > 150) {
+        result.truncate(147);
+        result.append(WTF::ASCIILiteral("..."));
+    }
+
+    return result;
 }
 #endif
 

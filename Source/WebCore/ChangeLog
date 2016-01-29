@@ -1,3 +1,18 @@
+2016-01-29  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Fix logging that overwhelms python with strings of excessive length.
+        https://bugs.webkit.org/show_bug.cgi?id=153652
+
+        Reviewed by Tim Horton.
+
+        No new tests (Two skipped tests now pass).
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString): Limit the length of the string.
+        
+        * Modules/indexeddb/IDBKeyRangeData.cpp:
+        (WebCore::IDBKeyRangeData::loggingString): Limit the length of the string.
+
 2016-01-29  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Windows build fix; one more ResourceLoaderOptions call site which needs to

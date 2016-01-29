@@ -116,7 +116,13 @@ bool IDBKeyRangeData::isValid() const
 #ifndef NDEBUG
 String IDBKeyRangeData::loggingString() const
 {
-    return makeString(lowerOpen ? "( " : "[ ", lowerKey.loggingString(), ", ", upperKey.loggingString(), upperOpen ? " )" : " ]");
+    auto result = makeString(lowerOpen ? "( " : "[ ", lowerKey.loggingString(), ", ", upperKey.loggingString(), upperOpen ? " )" : " ]");
+    if (result.length() > 400) {
+        result.truncate(397);
+        result.append(WTF::ASCIILiteral("..."));
+    }
+
+    return result;
 }
 #endif
 
