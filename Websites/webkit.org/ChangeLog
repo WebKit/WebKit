@@ -1,5 +1,15 @@
 2016-01-29  Filip Pizlo  <fpizlo@apple.com>
 
+        Clean up the B3 documentation a bit
+        https://bugs.webkit.org/show_bug.cgi?id=153678
+
+        Reviewed by Saam Barati.
+
+        * docs/b3/index.html: Fix some links and fix small issues.
+        * docs/b3/intermediate-representation.html: Clean up some text and fix small issues.
+
+2016-01-29  Filip Pizlo  <fpizlo@apple.com>
+
         B3 should have documentation
         https://bugs.webkit.org/show_bug.cgi?id=153658
 

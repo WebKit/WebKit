@@ -50,7 +50,8 @@ printf("%d\n", function(42)); // prints 44</code></pre>
 
     <h2>B3 IR</h2>
 
-    <p>Clients of B3 usually interact with it using B3 IR.  It's C-like, in the sense that it
+    <p>Clients of B3 usually interact with it using
+      <a href="intermediate-representation.html">B3 IR</a>.  It's C-like, in the sense that it
       models heap references as integers and does not attempt to verify memory accesses.  It
       enforces static single assignment, or SSA for short.  An SSA program will contain only one
       assignment to each variable, which makes it trivial to trace from a use of a variable to
@@ -64,8 +65,8 @@ printf("%d\n", function(42)); // prints 44</code></pre>
       being generated and for callees of the procedure's callsites.  B3 also makes it easy to
       just emit a C call.  There's an opcode for that.</p>
 
-    <p>See <a href="/documentation/b3/intermediate-representation.html">the IR documentation</a>
-      for more info.</p>
+    <p>See <a href="intermediate-representation.html">the IR documentation</a> for more
+      info.</p>
 
     <p>Here's an example of the IR from the example above:</p>
 
@@ -95,7 +96,8 @@ printf("%d\n", function(42)); // prints 44</code></pre>
 
     <h2>Air</h2>
 
-    <p>Air, or Assembly IR, is the way that B3 represents the machine instruction sequence prior
+    <p><a href="assembly-intermediate-representation.html">Air</a>, or Assembly IR, is the way
+      that B3 represents the machine instruction sequence prior
       to code generation.  Air is like assembly, except that in addition to registers it has
       temporaries, and in addition to the native address forms it has abstract ones like "stack"
       (an abstract stack slot) and "callArg" (an abstract location in the outgoing call argument

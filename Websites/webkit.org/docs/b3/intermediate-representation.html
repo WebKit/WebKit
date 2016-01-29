@@ -60,9 +60,11 @@
 
     <p>Variables, and the instructions that define them, are represented using the Value object.
       The Value object has a return type, an opcode, and zero or more children.  Children are
-      references to other Values.  Values also have a unique 32-bit index that is used as the
-      name.  Those values are used as input to the instruction that computes this value.  For
-      example:</p>
+      references to other Values.  Those values are used as input to the instruction that
+      computes this value.</p>
+    <p>Values also have a unique 32-bit index that is used as the name.</p>
+    
+    <p>Example:</p>
 
     <pre><code>Int32 @3 = Add(@1, @2)</code></pre>
 
