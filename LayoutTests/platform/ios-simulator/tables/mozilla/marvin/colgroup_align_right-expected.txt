@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (142,2) size 118x19
                 text run at (142,2) width 118: "Airport Location"
             RenderTableCell {TH} at (406,2) size 329x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=3]
-              RenderText {#text} at (83,2) size 163x19
-                text run at (83,2) width 163: "Car Rental information"
+              RenderText {#text} at (83,2) size 162x19
+                text run at (83,2) width 162: "Car Rental information"
           RenderTableRow {TR} at (0,28) size 737x24
             RenderTableCell {TH} at (2,28) size 100x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (21,2) size 58x19
