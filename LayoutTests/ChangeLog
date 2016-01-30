@@ -1,5 +1,13 @@
 2016-01-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] IndexedDB expectations gardening
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
+2016-01-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html is failing
 
         Unreviewed gardening.
