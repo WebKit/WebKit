@@ -1,5 +1,17 @@
 2016-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [B3] REGRESSION(r195882): Should break early after modConstant replaceWithNewValue succeeds
+        https://bugs.webkit.org/show_bug.cgi?id=153711
+
+        Reviewed by Filip Pizlo.
+
+        Should break after modConstant replaceWithNewValue succeeds. m_value is already replaced with Identity
+        if modConstant succeeds. So it does not have any children. m_value->child(1) breaks testb3.
+
+        * b3/B3ReduceStrength.cpp:
+
+2016-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Enable SamplingProfiler on POSIX environment
         https://bugs.webkit.org/show_bug.cgi?id=153584
 

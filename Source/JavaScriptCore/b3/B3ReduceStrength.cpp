@@ -733,7 +733,8 @@ private:
             // Turn this: Mod(constant1, constant2)
             // Into this: constant1 / constant2
             // Note that this uses ChillMod semantics.
-            replaceWithNewValue(m_value->child(0)->modConstant(m_proc, m_value->child(1)));
+            if (replaceWithNewValue(m_value->child(0)->modConstant(m_proc, m_value->child(1))))
+                break;
 
             // Modulo by constant is more efficient if we turn it into Div, and then let Div get
             // optimized.
