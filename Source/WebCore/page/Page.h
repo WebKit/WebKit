@@ -521,7 +521,7 @@ private:
     void hiddenPageDOMTimerThrottlingStateChanged();
     void setTimerThrottlingEnabled(bool);
     bool canTabSuspend();
-    void updateTabSuspensionState();
+    void scheduleTabSuspension(bool);
     void tabSuspensionTimerFired();
 
     const std::unique_ptr<Chrome> m_chrome;
@@ -663,7 +663,7 @@ private:
     SessionID m_sessionID;
 
     bool m_isClosing;
-    bool m_isTabSuspended { false };
+    bool m_shouldTabSuspend { false };
     Timer m_tabSuspensionTimer;
 
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
