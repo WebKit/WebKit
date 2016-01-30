@@ -1,3 +1,17 @@
+2016-01-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Some tests crash with specific odd database names.
+        https://bugs.webkit.org/show_bug.cgi?id=153688
+
+        Reviewed by Darin Adler.
+
+        No new tests (2 existing tests now pass).
+
+        * platform/FileSystem.cpp:
+        (WebCore::shouldEscapeUChar): Return true for some surrogate-pair situations.
+        (WebCore::encodeForFileName): Pass along the previous and next characters, as well,
+          and do a two byte escaping for some characters.
+
 2016-01-30  Eric Carlson  <eric.carlson@apple.com>
 
         More than one audio and/or text track sometimes selected in media controls menu

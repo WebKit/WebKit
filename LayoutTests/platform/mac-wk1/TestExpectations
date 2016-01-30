@@ -271,9 +271,7 @@ storage/indexeddb/prefetch-invalidation.html [ Skip ]
 storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 
 # SQLite backend tests that crash or ASSERT
-storage/indexeddb/database-odd-names.html [ Skip ]
 storage/indexeddb/dont-wedge.html [ Skip ]
-storage/indexeddb/odd-strings.html [ Skip ]
 
 ### END OF (3) IndexedDB failures with SQLite
 ########################################

@@ -82,21 +82,46 @@ static const bool needsEscaping[128] = {
     /* 78-7F */ false, false, false, false, true,  false, false, true, 
 };
 
-static inline bool shouldEscapeUChar(UChar c)
+static inline bool shouldEscapeUChar(UChar character, UChar previousCharacter, UChar nextCharacter)
 {
-    return c > 127 ? false : needsEscaping[c];
+    if (character <= 127)
+        return needsEscaping[character];
+
+    if (U16_IS_LEAD(character) && !U16_IS_TRAIL(nextCharacter))
+        return true;
+
+    if (U16_IS_TRAIL(character) && !U16_IS_LEAD(previousCharacter))
+        return true;
+
+    return false;
 }
 
 String encodeForFileName(const String& inputString)
 {
-    StringBuilder result;
-    StringImpl* stringImpl = inputString.impl();
     unsigned length = inputString.length();
+    if (!length)
+        return inputString;
+
+    StringBuilder result;
+    result.reserveCapacity(length);
+
+    UChar previousCharacter;
+    UChar character = 0;
+    UChar nextCharacter = inputString[0];
     for (unsigned i = 0; i < length; ++i) {
-        UChar character = (*stringImpl)[i];
-        if (shouldEscapeUChar(character)) {
-            result.append('%');
-            appendByteAsHex(character, result);
+        previousCharacter = character;
+        character = nextCharacter;
+        nextCharacter = i + 1 < length ? inputString[i + 1] : 0;
+
+        if (shouldEscapeUChar(character, previousCharacter, nextCharacter)) {
+            if (character <= 255) {
+                result.append('%');
+                appendByteAsHex(character, result);
+            } else {
+                result.appendLiteral("%+");
+                appendByteAsHex(character >> 8, result);
+                appendByteAsHex(character, result);
+            }
         } else
             result.append(character);
     }
