@@ -1,5 +1,13 @@
 2016-01-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Two disk cache tests are failing
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
+2016-01-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Some W3C DOM tests are failing
 
         Unreviewed gardening.
