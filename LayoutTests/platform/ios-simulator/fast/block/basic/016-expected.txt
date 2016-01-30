@@ -611,7 +611,7 @@ layer at (0,0) size 800x8116
               RenderTableRow {TR} at (0,2) size 94x22
                 RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 88x19
-                    text run at (1,1) width 5 RTL: "."
+                    text run at (1,1) width 4 RTL: "."
                     text run at (5,1) width 84: "Normal table"
           RenderTable {TABLE} at (318,176) size 144x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 139x26
@@ -685,7 +685,7 @@ layer at (0,0) size 800x8116
               RenderTableRow {TR} at (0,2) size 94x22
                 RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 88x19
-                    text run at (1,1) width 5 RTL: "."
+                    text run at (1,1) width 4 RTL: "."
                     text run at (5,1) width 84: "Normal table"
           RenderTable {TABLE} at (318,176) size 144x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 139x26
@@ -759,7 +759,7 @@ layer at (0,0) size 800x8116
               RenderTableRow {TR} at (0,2) size 94x22
                 RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 88x19
-                    text run at (1,1) width 5 RTL: "."
+                    text run at (1,1) width 4 RTL: "."
                     text run at (5,1) width 84: "Normal table"
           RenderTable {TABLE} at (318,176) size 144x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 139x26
@@ -833,7 +833,7 @@ layer at (0,0) size 800x8116
               RenderTableRow {TR} at (0,2) size 94x22
                 RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 88x19
-                    text run at (1,1) width 5 RTL: "."
+                    text run at (1,1) width 4 RTL: "."
                     text run at (5,1) width 84: "Normal table"
           RenderTable {TABLE} at (318,176) size 144x30 [border: (2px solid #0000FF)]
             RenderTableSection {TBODY} at (2,2) size 139x26
@@ -914,7 +914,7 @@ layer at (0,0) size 800x8116
                     RenderTableRow {TR} at (0,2) size 94x22
                       RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 88x19
-                          text run at (1,1) width 5 RTL: "."
+                          text run at (1,1) width 4 RTL: "."
                           text run at (5,1) width 84: "Normal table"
                 RenderTable {TABLE} at (314,175) size 144x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 139x26
@@ -994,7 +994,7 @@ layer at (0,0) size 800x8116
                     RenderTableRow {TR} at (0,2) size 94x22
                       RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 88x19
-                          text run at (1,1) width 5 RTL: "."
+                          text run at (1,1) width 4 RTL: "."
                           text run at (5,1) width 84: "Normal table"
                 RenderTable {TABLE} at (314,175) size 144x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 139x26
@@ -1074,7 +1074,7 @@ layer at (0,0) size 800x8116
                     RenderTableRow {TR} at (0,2) size 94x22
                       RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 88x19
-                          text run at (1,1) width 5 RTL: "."
+                          text run at (1,1) width 4 RTL: "."
                           text run at (5,1) width 84: "Normal table"
                 RenderTable {TABLE} at (314,175) size 144x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 139x26
@@ -1154,7 +1154,7 @@ layer at (0,0) size 800x8116
                     RenderTableRow {TR} at (0,2) size 94x22
                       RenderTableCell {TD} at (2,2) size 90x22 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 88x19
-                          text run at (1,1) width 5 RTL: "."
+                          text run at (1,1) width 4 RTL: "."
                           text run at (5,1) width 84: "Normal table"
                 RenderTable {TABLE} at (314,175) size 144x30 [border: (2px solid #0000FF)]
                   RenderTableSection {TBODY} at (2,2) size 139x26

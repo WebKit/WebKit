@@ -1,5 +1,13 @@
 2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline fast/block/basic/016.html for ios-simulator after r195740
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/block/basic/016-expected.txt:
+
+2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Last commit should have marked fast/text/fallback-language-han-2.html as an ImageOnlyFailure. Fixing that.
         https://bugs.webkit.org/show_bug.cgi?id=152438
 
