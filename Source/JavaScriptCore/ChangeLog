@@ -1,3 +1,18 @@
+2016-01-30  Andreas Kling  <akling@apple.com>
+
+        Shrink Heap::m_executables after cleaning it.
+        <https://webkit.org/b/153682>
+
+        Reviewed by Darin Adler.
+
+        The Heap::m_executables Vector was never shrunk down, despite sometimes
+        getting pretty huge (~500kB in my longest-running WebContent process.)
+
+        After GC has finished pruning unmarked Executables, shrink the Vector.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::clearUnmarkedExecutables):
+
 2016-01-29  Ada Chan  <adachan@apple.com>
 
         Enable VIDEO_PRESENTATION_MODE only in Debug and Release builds on Mac

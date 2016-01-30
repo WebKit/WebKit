@@ -996,6 +996,8 @@ void Heap::clearUnmarkedExecutables()
         std::swap(m_executables[i], m_executables.last());
         m_executables.removeLast();
     }
+
+    m_executables.shrinkToFit();
 }
 
 void Heap::deleteUnmarkedCompiledCode()
