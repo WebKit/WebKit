@@ -1,3 +1,23 @@
+2016-01-30  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Object tree parent items are misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=153699
+        <rdar://problem/24423683>
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree .object-tree):
+        Ensure that toplevel Object preview trees are displayed properly while also
+        making child trees inline.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) > .icon):
+        (.tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) .icon): Deleted.
+        This would apply to all .icon elements contained within a non-parent item,
+        which is not the desired effect. Instead, this should only apply to only the
+        .icon element of that particular non-parent item.
+
 2016-01-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add support for variable size timeline graphs

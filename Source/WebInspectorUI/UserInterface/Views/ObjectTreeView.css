@@ -69,6 +69,10 @@
     width: 0px;
 }
 
+.object-tree .object-tree {
+    display: inline-block;
+}
+
 .object-tree .tree-outline.object {
     display: none;
 }

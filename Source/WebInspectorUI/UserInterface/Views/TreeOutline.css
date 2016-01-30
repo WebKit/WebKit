@@ -68,7 +68,7 @@
     display: none;
 }
 
-.tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) .icon {
+.tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) > .icon {
     margin-left: 16px;
 }
 
