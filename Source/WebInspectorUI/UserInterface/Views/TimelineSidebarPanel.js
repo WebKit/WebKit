@@ -811,25 +811,13 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     _updateTimelineOverviewHeight()
     {
-        const timelineHeight = 36;
         const eventTitleBarOffset = 58;
         const contentElementOffset = 81;
-        const renderingFramesTimelineHeight = 108;
 
         if (!this._displayedContentView)
             return;
 
-        let overviewHeight;
-        let currentTimelineView = this._displayedContentView.currentTimelineView;
-        if (currentTimelineView && currentTimelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
-            overviewHeight = renderingFramesTimelineHeight;
-        else {
-            let timelineCount = this._timelineTreeElementMap.size;
-            if (this._timelineTreeElementMap.has(WebInspector.TimelineRecord.Type.RenderingFrame))
-                timelineCount--;
-            overviewHeight = timelineCount * timelineHeight;
-        }
-
+        let overviewHeight = this._displayedContentView.timelineOverviewHeight;
         this._timelineEventsTitleBarContainer.style.top = (overviewHeight + eventTitleBarOffset) + "px";
         this.contentView.element.style.top = (overviewHeight + contentElementOffset) + "px";
     }

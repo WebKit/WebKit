@@ -161,6 +161,12 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
         this._needsSelectedRecordLayout();
     }
 
+    get height()
+    {
+        // Overridden by sub-classes if needed.
+        return 36;
+    }
+
     shown()
     {
         this._visible = true;

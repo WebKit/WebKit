@@ -248,6 +248,14 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._timelineRuler.selectionEndTime = this._timelineRuler.selectionStartTime + x;
     }
 
+    get height()
+    {
+        let height = 0;
+        for (let graph of this._timelineOverviewGraphsMap.values())
+            height += graph.height;
+        return height;
+    }
+
     get visible()
     {
         return this._visible;

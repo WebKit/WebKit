@@ -47,6 +47,11 @@ WebInspector.RenderingFrameTimelineOverview = class RenderingFrameTimelineOvervi
 
     // Protected
 
+    get height()
+    {
+        return 108;
+    }
+
     canShowTimeline(timeline)
     {
         return timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame;

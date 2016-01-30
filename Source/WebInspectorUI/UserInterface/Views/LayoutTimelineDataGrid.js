@@ -25,11 +25,6 @@
 
 WebInspector.LayoutTimelineDataGrid = class LayoutTimelineDataGrid extends WebInspector.TimelineDataGrid
 {
-    constructor(treeOutline, columns, delegate, editCallback, deleteCallback)
-    {
-        super(treeOutline, columns, delegate, editCallback, deleteCallback);
-    }
-
     // Protected
 
     callFramePopoverAnchorElement()
