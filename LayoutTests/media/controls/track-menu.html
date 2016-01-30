@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../video-test.js"></script>
+        <script src="../media-file.js"></script>
+        <script src="../trackmenu-test.js"></script>
+        <script src="../media-controls.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var tester = new ControlsTest()
+                .whenReady(runTestsWithHiddenMenu)
+                .start();
+
+            function runTestsWithHiddenMenu()
+            {
+                findMediaElement();
+
+                var currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
+
+                tester.startNewSection("Test when track menu is hidden");
+                var statusState = tester.stateForControlsElement("Track Menu");
+
+                tester.test("Menu name is 'Track Menu'")
+                    .value(statusState.name)
+                    .isEqualTo("Track Menu");
+
+                tester.test("Menu does not exist")
+                    .value(statusState.element)
+                    .isEqualTo(null);
+
+                tester.test("Text track not visible")
+                    .value(tester.video.textTracks[0].mode)
+                    .isEqualTo("disabled");
+
+                // Show the track menu.
+                internals.suspendAnimations();
+                hideTrackMenu();
+                showTrackMenu();
+                window.setTimeout(runTestsWithVisibleMenu, 100);
+            }
+
+            function runTestsWithVisibleMenu()
+            {
+                tester.startNewSection("Test with visible menu");
+                var statusState = tester.stateForControlsElement("Track Menu", true);
+
+                tester.test("Menu name is 'Track Menu'")
+                    .value(statusState.name)
+                    .isEqualTo("Track Menu");
+
+                var captionMenu = getTrackListElement();
+                tester.test("Menu exists")
+                    .value(captionMenu)
+                    .isNotEqualTo(null);
+
+                tester.test("id is 'audioAndTextTrackMenu'")
+                    .value(captionMenu.id)
+                    .isEqualTo("audioAndTextTrackMenu");
+
+                var menuList = captionMenu.firstChild.children[1];
+                tester.test("Menu element contains <ul>")
+                    .value(menuList.tagName)
+                    .isEqualTo("UL");
+
+                var menuItem = menuList.firstChild;
+                tester.test("First menu item is selected")
+                    .value(menuItem.className)
+                    .isEqualTo("selected");
+
+                var checkImage = menuItem.children[0];
+                tester.test("First menu item contains checkmark <img>")
+                    .value(checkImage.tagName)
+                    .isEqualTo("IMG");
+
+                tester.test("First menu item checkmark image is visible")
+                    .value(getComputedStyle(checkImage).content)
+                    .contains("url('data:image/svg+xml,<svg xmlns=");
+
+                var menuItem = menuList.children[1];
+                tester.test("Second menu item is not selected")
+                    .value(menuItem.className)
+                    .isNotEqualTo("selected");
+
+                var checkImage = menuItem.children[0];
+                tester.test("Second menu item checkmark is not visible")
+                    .value(getComputedStyle(checkImage).content)
+                    .isEmptyString();
+
+                tester.end();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>This tests the track menu.</p>
+        <p>This test only runs in DRT!</p>
+        <video width="500" height="300" controls>
+            <track kind="captions" label="English Captions" src="../track/captions-webvtt/captions-fast.vtt" srclang="en">
+        </video>
+    </body>
+</html>

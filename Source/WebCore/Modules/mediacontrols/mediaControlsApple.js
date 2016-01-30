@@ -475,7 +475,7 @@ Controller.prototype = {
         captionButton.setAttribute('pseudo', '-webkit-media-controls-toggle-closed-captions-button');
         captionButton.setAttribute('aria-label', this.UIString('Captions'));
         captionButton.setAttribute('aria-haspopup', 'true');
-        captionButton.setAttribute('aria-owns', 'audioTrackMenu');
+        captionButton.setAttribute('aria-owns', 'audioAndTextTrackMenu');
         this.listenFor(captionButton, 'click', this.handleCaptionButtonClicked);
 
         var fullscreenButton = this.controls.fullscreenButton = document.createElement('button');
@@ -1737,7 +1737,7 @@ Controller.prototype = {
 
         this.captionMenu = document.createElement('div');
         this.captionMenu.setAttribute('pseudo', '-webkit-media-controls-closed-captions-container');
-        this.captionMenu.setAttribute('id', 'audioTrackMenu');
+        this.captionMenu.setAttribute('id', 'audioAndTextTrackMenu');
         this.base.appendChild(this.captionMenu);
         this.captionMenuItems = [];
 
@@ -1773,6 +1773,10 @@ Controller.prototype = {
                 menuItem.innerText = this.host.displayNameForTrack(track);
                 menuItem.track = track;
 
+                var itemCheckmark = document.createElement("img");
+                itemCheckmark.classList.add("checkmark-container");
+                menuItem.insertBefore(itemCheckmark, menuItem.firstChild);
+
                 if (track.enabled) {
                     menuItem.classList.add(this.ClassNames.selected);
                     menuItem.setAttribute('tabindex', '0');
@@ -1805,6 +1809,10 @@ Controller.prototype = {
                 menuItem.innerText = this.host.displayNameForTrack(track);
                 menuItem.track = track;
 
+                var itemCheckmark = document.createElement("img");
+                itemCheckmark.classList.add("checkmark-container");
+                menuItem.insertBefore(itemCheckmark, menuItem.firstChild);
+
                 if (track === offItem) {
                     var offMenu = menuItem;
                     continue;
@@ -1830,8 +1838,8 @@ Controller.prototype = {
 
             if (offMenu && displayMode === 'forced-only' && !trackMenuItemSelected) {
                 offMenu.classList.add(this.ClassNames.selected);
-                menuItem.setAttribute('tabindex', '0');
-                menuItem.setAttribute('aria-checked', 'true');
+                offMenu.setAttribute('tabindex', '0');
+                offMenu.setAttribute('aria-checked', 'true');
             }
         }
         
@@ -2242,6 +2250,10 @@ Controller.prototype = {
                 name: "Picture-in-picture Button",
                 object: this.controls.pictureInPictureButton
             },
+            {
+                name: "Track Menu",
+                object: this.captionMenu
+            },
         ];
 
         elements.forEach(function (element) {
@@ -2249,7 +2261,7 @@ Controller.prototype = {
             delete element.object;
 
             element.computedStyle = {};
-            if (element.styleValues) {
+            if (obj && element.styleValues) {
                 var computedStyle = window.getComputedStyle(obj);
                 element.styleValues.forEach(function (propertyName) {
                     element.computedStyle[propertyName] = computedStyle[propertyName];
@@ -2257,16 +2269,18 @@ Controller.prototype = {
                 delete element.styleValues;
             }
 
-            element.bounds = obj.getBoundingClientRect();
-            element.className = obj.className;
-            element.ariaLabel = obj.getAttribute('aria-label');
+            element.bounds = obj ? obj.getBoundingClientRect() : null;
+            element.className = obj ? obj.className : null;
+            element.ariaLabel = obj ? obj.getAttribute('aria-label') : null;
 
             if (element.extraProperties) {
                 element.extraProperties.forEach(function (property) {
-                    element[property] = obj[property];
+                    element[property] = obj ? obj[property] : null;
                 });
                 delete element.extraProperties;
             }
+
+             element.element = obj;
         });
 
         result.elements = elements;

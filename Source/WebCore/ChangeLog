@@ -1,3 +1,27 @@
+2016-01-30  Eric Carlson  <eric.carlson@apple.com>
+
+        More than one audio and/or text track sometimes selected in media controls menu
+        https://bugs.webkit.org/show_bug.cgi?id=153664
+
+        Use an <img> element for the track menu item checkmark instead of a background image and
+        the ::before selector.
+
+        Reviewed by Jer Noble.
+
+        Test: media/controls/track-menu.html
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-closed-captions-container li:hover):
+        (audio::-webkit-media-controls-closed-captions-container li .checkmark-container):
+        (audio::-webkit-media-controls-closed-captions-container li.selected .checkmark-container):
+        (audio::-webkit-media-controls-closed-captions-container li.selected:hover .checkmark-container):
+        (audio::-webkit-media-controls-closed-captions-container li.selected::before): Deleted.
+        (audio::-webkit-media-controls-closed-captions-container li.selected:hover::before): Deleted.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.buildCaptionMenu):
+        (Controller.prototype.):
+        (Controller.prototype.getCurrentControlsStatus):
+
 2016-01-30  Darin Adler  <darin@apple.com>
 
         Replace CaseFoldingHash with ASCIICaseInsensitiveHash

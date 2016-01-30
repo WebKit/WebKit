@@ -35,6 +35,11 @@ ControlsTest = class ControlsTest {
         return { idiom: "apple", status: "fail" };
     }
 
+    get video()
+    {
+        return this.media;
+    }
+
     stateForControlsElement(elementName, flushCachedState)
     {
         if (flushCachedState)
@@ -53,7 +58,7 @@ ControlsTest = class ControlsTest {
     handleEvent(event)
     {
         this.logMessage(`EVENT: ${event.type}`);
-        if (event.type == this.eventTrigger && this.callback)
+        if (event.type == this.eventTrigger && this.callback && window.testRunner)
             this.callback();
     }
 
@@ -87,11 +92,6 @@ ControlsTest = class ControlsTest {
 
     setup()
     {
-        if (!window.testRunner) {
-            this.logFailure("Test requires DRT.");
-            return false;
-        }
-
         this.console = document.createElement("div");
         this.console.className = "console";
         document.body.appendChild(this.console);
@@ -107,13 +107,20 @@ ControlsTest = class ControlsTest {
         this.media.addEventListener(this.eventTrigger, this, false);
         this.media.src = findMediaFile("video", this.mediaURL);
 
+        if (!window.testRunner) {
+            this.logFailure("Test requires DRT.");
+            return false;
+        }
+
         return true;
     }
 
     start(msg)
     {
         window.addEventListener("load", function () {
-            this.setup();
+            if (!this.setup())
+                return;
+
             if (msg)
                 this.startNewSection(msg);
         }.bind(this), false);
@@ -147,6 +154,14 @@ ControlsTest = class ControlsTest {
             this.logSuccess(this.currentMessage);
         else
             this.logFailure(`${this.currentMessage} Expected: "${value}". Actual: "${this.currentValue}"`);
+    }
+
+    isNotEqualTo(value)
+    {
+        if (this.currentValue != value)
+            this.logSuccess(this.currentMessage);
+        else
+            this.logFailure(`${this.currentMessage} Expected to not be equal to: "${value}". Actual: "${this.currentValue}"`);
     }
 
     contains(value)

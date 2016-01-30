@@ -1,3 +1,23 @@
+2016-01-30  Eric Carlson  <eric.carlson@apple.com>
+
+        More than one audio and/or text track sometimes selected in media controls menu
+        https://bugs.webkit.org/show_bug.cgi?id=153664
+
+        Reviewed by Jer Noble.
+
+        * media/controls/controls-test-helpers.js:
+        (ControlsTest.prototype.get currentState):
+        (ControlsTest.prototype.get video):
+        (ControlsTest.prototype.stateForControlsElement):
+        (ControlsTest.prototype.handleEvent):
+        (ControlsTest.prototype.setup):
+        (ControlsTest.prototype.start):
+        (ControlsTest.prototype.isEqualTo):
+        (ControlsTest.prototype.isNotEqualTo):
+        (ControlsTest.prototype.contains):
+        * media/controls/track-menu-expected.txt: Added.
+        * media/controls/track-menu.html: Added.
+
 2016-01-30  Chris Dumez  <cdumez@apple.com>
 
         [JS Bindings] prototype.constructor should be writable

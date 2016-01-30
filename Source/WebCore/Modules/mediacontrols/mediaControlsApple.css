@@ -458,22 +458,25 @@ audio::-webkit-media-controls-closed-captions-container li:hover {
     background-color: rgba(26, 68, 243, 0.6);
 }
 
-video::-webkit-media-controls-closed-captions-container li.selected::before,
-audio::-webkit-media-controls-closed-captions-container li.selected::before {
-    display: block;
-    content: "";
+video::-webkit-media-controls-closed-captions-container li .checkmark-container,
+audio::-webkit-media-controls-closed-captions-container li .checkmark-container {
+    display: none;
     position: absolute;
     top: 0.25em;
+    left: 1em;
     width: 1.1em;
     height: 1.1em;
-    -webkit-margin-start: -20px;
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="rgb(163, 163, 163)" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
-    background-repeat: no-repeat;
 }
 
-video::-webkit-media-controls-closed-captions-container li.selected:hover::before,
-audio::-webkit-media-controls-closed-captions-container li.selected:hover::before {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="rgba(255,255,255,0.45)" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
+video::-webkit-media-controls-closed-captions-container li.selected .checkmark-container,
+audio::-webkit-media-controls-closed-captions-container li.selected .checkmark-container {
+    display: inline-block;
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="rgb(163, 163, 163)" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
+}
+
+video::-webkit-media-controls-closed-captions-container li.selected:hover .checkmark-container,
+audio::-webkit-media-controls-closed-captions-container li.selected:hover .checkmark-container {
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="rgba(255,255,255,0.45)" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
 }
 
 video::-webkit-media-controls-fullscreen-button,
