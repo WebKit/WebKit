@@ -129,6 +129,7 @@ public:
     void addTypeProfilerExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot);
 
     bool hasExpressionInfo() { return m_expressionInfo.size(); }
+    const Vector<ExpressionRangeInfo>& expressionInfo() { return m_expressionInfo; }
 
     // Special registers
     void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }

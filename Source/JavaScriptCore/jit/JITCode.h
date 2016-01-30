@@ -28,10 +28,12 @@
 
 #include "ArityCheckMode.h"
 #include "CallFrame.h"
+#include "CodeOrigin.h"
 #include "Disassembler.h"
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterSet.h"
+#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -195,6 +197,7 @@ public:
 
 #if ENABLE(JIT)
     virtual RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex);
+    virtual Optional<CodeOrigin> findPC(CodeBlock*, void* pc) { UNUSED_PARAM(pc); return Nullopt; }
 #endif
 
 private:

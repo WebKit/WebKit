@@ -246,6 +246,18 @@ inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigi
     return baselineCodeBlock;
 }
 
+template <typename Function>
+inline void CodeOrigin::walkUpInlineStack(const Function& function)
+{
+    CodeOrigin codeOrigin = *this;
+    while (true) {
+        function(codeOrigin);
+        if (!codeOrigin.inlineCallFrame)
+            break;
+        codeOrigin = codeOrigin.inlineCallFrame->directCaller;
+    }
+}
+
 } // namespace JSC
 
 namespace WTF {

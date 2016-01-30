@@ -41,6 +41,7 @@
 #include "LLIntPCRanges.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
+#include "PCToCodeOriginMap.h"
 #include "SlotVisitor.h"
 #include "SlotVisitorInlines.h"
 #include "VM.h"
@@ -49,7 +50,6 @@
 namespace JSC {
 
 static double sNumTotalStackTraces = 0;
-static double sNumUnverifiedStackTraces = 0;
 static double sNumTotalWalks = 0;
 static double sNumFailedWalks = 0;
 static const uint32_t sNumWalkReportingFrequency = 50;
@@ -58,6 +58,8 @@ static const bool sReportStatsOnlyWhenTheyreAboveThreshold = false;
 static const bool sReportStats = false;
 
 using FrameType = SamplingProfiler::FrameType;
+using UnprocessedFrameType = SamplingProfiler::UnprocessedFrameType;
+using UnprocessedStackFrame = SamplingProfiler::UnprocessedStackFrame;
 
 ALWAYS_INLINE static void reportStats()
 {
@@ -65,8 +67,6 @@ ALWAYS_INLINE static void reportStats()
         if (!sReportStatsOnlyWhenTheyreAboveThreshold || (sNumFailedWalks / sNumTotalWalks > sWalkErrorPercentage)) {
             dataLogF("Num total walks: %llu. Failed walks percent: %lf\n",
                 static_cast<uint64_t>(sNumTotalWalks), sNumFailedWalks / sNumTotalWalks);
-            dataLogF("Total stack traces: %llu. Needs verification percent: %lf\n",
-                static_cast<uint64_t>(sNumTotalStackTraces), sNumUnverifiedStackTraces / sNumTotalStackTraces);
         }
     }
 }
@@ -82,33 +82,20 @@ public:
     {
     }
 
-    size_t walk(Vector<SamplingProfiler::StackFrame>& stackTrace, bool& didRunOutOfSpace, bool& stacktraceNeedsVerification)
+    size_t walk(Vector<UnprocessedStackFrame>& stackTrace, bool& didRunOutOfSpace)
     {
-        stacktraceNeedsVerification = false;
         if (sReportStats)
             sNumTotalWalks++;
         resetAtMachineFrame();
         size_t maxStackTraceSize = stackTrace.size();
         while (!isAtTop() && !m_bailingOut && m_depth < maxStackTraceSize) {
-            while (m_inlineCallFrame && m_depth < maxStackTraceSize) {
-                CodeBlock* codeBlock = m_inlineCallFrame->baselineCodeBlock.get();
-                RELEASE_ASSERT(isValidCodeBlock(codeBlock));
-                stackTrace[m_depth] = SamplingProfiler::StackFrame(SamplingProfiler::FrameType::VerifiedExecutable, codeBlock->ownerExecutable());
-                m_depth++;
-                m_inlineCallFrame = m_inlineCallFrame->directCaller.inlineCallFrame;
-            }
-
-            if (m_depth >= maxStackTraceSize)
-                break;
-
-            CodeBlock* codeBlock = m_callFrame->codeBlock();
-            if (isValidCodeBlock(codeBlock)) {
-                ExecutableBase* executable = codeBlock->ownerExecutable();
-                stackTrace[m_depth] = SamplingProfiler::StackFrame(FrameType::VerifiedExecutable,executable);
+            if (CodeBlock* codeBlock = m_callFrame->codeBlock()) {
+                ASSERT(isValidCodeBlock(codeBlock));
+                stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, m_callFrame->callSiteIndex());
             } else {
-                stacktraceNeedsVerification = true;
+                RELEASE_ASSERT(codeBlock == nullptr);
                 JSValue unsafeCallee = m_callFrame->unsafeCallee();
-                stackTrace[m_depth] = SamplingProfiler::StackFrame(FrameType::UnverifiedCallee, JSValue::encode(unsafeCallee));
+                stackTrace[m_depth] = UnprocessedStackFrame(JSValue::encode(unsafeCallee));
             }
             m_depth++;
             advanceToParentFrame();
@@ -138,8 +125,6 @@ private:
 
     void resetAtMachineFrame()
     {
-        m_inlineCallFrame = nullptr;
-
         if (isAtTop())
             return;
 
@@ -151,9 +136,6 @@ private:
             return;
         }
 
-#if ENABLE(DFG_JIT)
-        // If the frame doesn't have a code block, then it's not a 
-        // DFG/FTL frame which means we're not an inlined frame.
         CodeBlock* codeBlock = m_callFrame->codeBlock();
         if (!codeBlock)
             return;
@@ -164,25 +146,6 @@ private:
                 sNumFailedWalks++;
             return;
         }
-
-        // If the code block does not have any code origins, then there's no
-        // inlining. Hence, we're not at an inlined frame.
-        if (!codeBlock->hasCodeOrigins())
-            return;
-
-        CallSiteIndex index = m_callFrame->callSiteIndex();
-        if (!codeBlock->canGetCodeOrigin(index)) {
-            // FIXME:
-            // For the most part, we only fail here when we're looking
-            // at the top most call frame. All other parent call frames
-            // should have set the CallSiteIndex when making a call.
-            //
-            // We should resort to getting information from the PC=>CodeOrigin mapping
-            // once we implement it: https://bugs.webkit.org/show_bug.cgi?id=152629
-            return;
-        }
-        m_inlineCallFrame = codeBlock->codeOrigin(index).inlineCallFrame;
-#endif // !ENABLE(DFG_JIT)
     }
 
     bool isValidFramePointer(ExecState* exec)
@@ -213,14 +176,12 @@ private:
     const LockHolder& m_codeBlockSetLocker;
     const LockHolder& m_machineThreadsLocker;
     bool m_bailingOut { false };
-    InlineCallFrame* m_inlineCallFrame;
     size_t m_depth { 0 };
 };
 
 SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     : m_vm(vm)
     , m_stopwatch(WTFMove(stopwatch))
-    , m_indexOfNextStackTraceToVerify(0)
     , m_timingInterval(std::chrono::microseconds(1000))
     , m_totalTime(0)
     , m_timerQueue(WorkQueue::create("jsc.sampling-profiler.queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
@@ -256,23 +217,27 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
                 // While the JSC thread is suspended, we can't do things like malloc because the JSC thread
                 // may be holding the malloc lock.
                 ExecState* callFrame;
-                void* pc;
+                void* machinePC;
+                bool topFrameIsLLInt = false;
+                void* llintPC;
                 {
                     MachineThreads::Thread::Registers registers;
                     m_jscExecutionThread->getRegisters(registers);
                     callFrame = static_cast<ExecState*>(registers.framePointer());
-                    pc = registers.instructionPointer();
+                    machinePC = registers.instructionPointer();
+                    llintPC = registers.llintPC();
                     m_jscExecutionThread->freeRegisters(registers);
                 }
                 // FIXME: Lets have a way of detecting when we're parsing code.
                 // https://bugs.webkit.org/show_bug.cgi?id=152761
-                if (m_vm.executableAllocator.isValidExecutableMemory(executableAllocatorLocker, pc)) {
+                if (m_vm.executableAllocator.isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
                     if (m_vm.isExecutingInRegExpJIT) {
                         // FIXME: We're executing a regexp. Lets gather more intersting data.
                         // https://bugs.webkit.org/show_bug.cgi?id=152729
                         callFrame = m_vm.topCallFrame; // We need to do this or else we'd fail our backtrace validation b/c this isn't a JS frame.
                     }
-                } else if (LLInt::isLLIntPC(pc)) {
+                } else if (LLInt::isLLIntPC(machinePC)) {
+                    topFrameIsLLInt = true;
                     // We're okay to take a normal stack trace when the PC
                     // is in LLInt code.
                 } else {
@@ -284,10 +249,9 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
                 size_t walkSize;
                 bool wasValidWalk;
                 bool didRunOutOfVectorSpace;
-                bool stacktraceNeedsVerification;
                 {
                     FrameWalker walker(callFrame, m_vm, codeBlockSetLocker, machineThreadsLocker);
-                    walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace, stacktraceNeedsVerification);
+                    walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
                     wasValidWalk = walker.wasValidWalk();
                 }
 
@@ -298,21 +262,16 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
                 // FIXME: It'd be interesting to take data about the program's state when
                 // we fail to take a stack trace: https://bugs.webkit.org/show_bug.cgi?id=152758
                 if (wasValidWalk && walkSize) {
-                    if (sReportStats) {
+                    if (sReportStats)
                         sNumTotalStackTraces++;
-                        if (stacktraceNeedsVerification)
-                            sNumUnverifiedStackTraces++;
-                    }
-                    Vector<StackFrame> stackTrace;
+                    Vector<UnprocessedStackFrame> stackTrace;
                     stackTrace.reserveInitialCapacity(walkSize);
                     for (size_t i = 0; i < walkSize; i++) {
-                        StackFrame frame = m_currentFrames[i];
-                        stackTrace.uncheckedAppend(frame); 
-                        if (frame.frameType == FrameType::VerifiedExecutable)
-                            m_seenExecutables.add(frame.u.verifiedExecutable);
+                        UnprocessedStackFrame frame = m_currentFrames[i];
+                        stackTrace.uncheckedAppend(frame);
                     }
 
-                    m_stackTraces.append(StackTrace{ stacktraceNeedsVerification, nowTime, WTFMove(stackTrace) });
+                    m_unprocessedStackTraces.append(UnprocessedStackTrace { nowTime, machinePC, topFrameIsLLInt, llintPC, WTFMove(stackTrace) });
 
                     if (didRunOutOfVectorSpace)
                         m_currentFrames.grow(m_currentFrames.size() * 1.25);
@@ -332,6 +291,30 @@ SamplingProfiler::~SamplingProfiler()
 {
 }
 
+static ALWAYS_INLINE unsigned tryGetBytecodeIndex(unsigned llintPC, CodeBlock* codeBlock, bool& isValid)
+{
+    RELEASE_ASSERT(!codeBlock->hasCodeOrigins());
+
+#if USE(JSVALUE64)
+    unsigned bytecodeIndex = llintPC;
+    if (bytecodeIndex < codeBlock->instructionCount()) {
+        isValid = true;
+        return bytecodeIndex;
+    }
+    isValid = false;
+    return 0;
+#else
+    Instruction* instruction = bitwise_cast<Instruction*>(llintPC);
+    if (instruction >= codeBlock->instructions().begin() && instruction < codeBlock->instructions().begin() + codeBlock->instructionCount()) {
+        isValid = true;
+        unsigned bytecodeIndex = instruction - codeBlock->instructions().begin();
+        return bytecodeIndex;
+    }
+    isValid = false;
+    return 0;
+#endif
+}
+
 void SamplingProfiler::processUnverifiedStackTraces()
 {
     // This function needs to be called from the JSC execution thread.
@@ -340,22 +323,30 @@ void SamplingProfiler::processUnverifiedStackTraces()
     TinyBloomFilter filter = m_vm.heap.objectSpace().blocks().filter();
     MarkedBlockSet& markedBlockSet = m_vm.heap.objectSpace().blocks();
 
-    for (unsigned i = m_indexOfNextStackTraceToVerify; i < m_stackTraces.size(); i++) {
-        StackTrace& stackTrace = m_stackTraces[i]; 
-        if (!stackTrace.needsVerification)
-            continue;
-        stackTrace.needsVerification = false;
+    for (UnprocessedStackTrace& unprocessedStackTrace : m_unprocessedStackTraces) {
+        m_stackTraces.append(StackTrace());
+        StackTrace& stackTrace = m_stackTraces.last();
+        stackTrace.timestamp = unprocessedStackTrace.timestamp;
 
-        for (StackFrame& stackFrame : stackTrace.frames) {
-            if (stackFrame.frameType != FrameType::UnverifiedCallee) {
-                RELEASE_ASSERT(stackFrame.frameType == FrameType::VerifiedExecutable);
-                continue;
+        auto appendCodeBlock = [&] (CodeBlock* codeBlock, unsigned bytecodeIndex) {
+            stackTrace.frames.append(StackFrame(codeBlock->ownerExecutable()));
+            m_seenExecutables.add(codeBlock->ownerExecutable());
+
+            if (bytecodeIndex < codeBlock->instructionCount()) {
+                int divot;
+                int startOffset;
+                int endOffset;
+                codeBlock->expressionRangeForBytecodeOffset(bytecodeIndex, divot, startOffset, endOffset,
+                    stackTrace.frames.last().lineNumber, stackTrace.frames.last().columnNumber);
             }
+        };
 
-            JSValue callee = JSValue::decode(stackFrame.u.unverifiedCallee);
+        auto appendUnverifiedCallee = [&] (JSValue callee) {
+            stackTrace.frames.append(StackFrame());
+            StackFrame& stackFrame = stackTrace.frames.last();
             if (!Heap::isValueGCObject(filter, markedBlockSet, callee)) {
                 stackFrame.frameType = FrameType::Unknown;
-                continue;
+                return;
             }
 
             JSCell* calleeCell = callee.asCell();
@@ -372,22 +363,88 @@ void SamplingProfiler::processUnverifiedStackTraces()
 
             if (calleeCell->type() != JSFunctionType) {
                 stackFrame.frameType = frameTypeFromCallData();
-                continue;
+                return;
             }
             ExecutableBase* executable = static_cast<JSFunction*>(calleeCell)->executable();
             if (!executable) {
                 stackFrame.frameType = frameTypeFromCallData();
-                continue;
+                return;
             }
 
             RELEASE_ASSERT(Heap::isPointerGCObject(filter, markedBlockSet, executable));
-            stackFrame.frameType = FrameType::VerifiedExecutable;
-            stackFrame.u.verifiedExecutable = executable;
+            stackFrame.frameType = FrameType::Executable;
+            stackFrame.executable = executable;
             m_seenExecutables.add(executable);
+        };
+
+        // Prepend the top-most inlined frame if needed and gather
+        // location information about where the top frame is executing.
+        size_t startIndex = 0;
+        if (unprocessedStackTrace.frames.size() && unprocessedStackTrace.frames[0].frameType == UnprocessedFrameType::VerifiedCodeBlock) {
+            CodeBlock* topCodeBlock = unprocessedStackTrace.frames[0].u.verifiedCodeBlock;
+            if (unprocessedStackTrace.topFrameIsLLInt) {
+                // We reuse LLInt CodeBlocks for the baseline JIT, so we need to check for both jit types.
+                // This might also be false for various reasons (known and unknown), even though
+                // it's super unlikely. One reason that this can be false is when we throw from a DFG frame,
+                // and we end up having to unwind past a VMEntryFrame, we will end up executing
+                // inside the LLInt's handleUncaughtException. So we just protect against this
+                // by ignoring it.
+                unsigned bytecodeIndex = 0;
+                if (topCodeBlock->jitType() == JITCode::InterpreterThunk || topCodeBlock->jitType() == JITCode::BaselineJIT) {
+                    bool isValidPC;
+                    unsigned bits;
+#if USE(JSVALUE64)
+                    bits = static_cast<unsigned>(bitwise_cast<uintptr_t>(unprocessedStackTrace.llintPC));
+#else
+                    bits = bitwise_cast<unsigned>(unprocessedStackTrace.llintPC);
+#endif
+                    bytecodeIndex = tryGetBytecodeIndex(bits, topCodeBlock, isValidPC);
+
+                    UNUSED_PARAM(isValidPC); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
+
+                    appendCodeBlock(topCodeBlock, bytecodeIndex);
+                    startIndex = 1;
+                }
+            } else if (Optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
+                codeOrigin->walkUpInlineStack([&] (const CodeOrigin& codeOrigin) {
+                    appendCodeBlock(codeOrigin.inlineCallFrame ? codeOrigin.inlineCallFrame->baselineCodeBlock.get() : topCodeBlock, codeOrigin.bytecodeIndex);
+                });
+                startIndex = 1;
+            }
+        }
+
+        for (size_t i = startIndex; i < unprocessedStackTrace.frames.size(); i++) {
+            UnprocessedStackFrame& unprocessedStackFrame = unprocessedStackTrace.frames[i];
+            if (unprocessedStackFrame.frameType == UnprocessedFrameType::VerifiedCodeBlock) {
+                CodeBlock* codeBlock = unprocessedStackFrame.u.verifiedCodeBlock;
+                CallSiteIndex callSiteIndex = unprocessedStackFrame.callSiteIndex;
+
+                auto appendCodeBlockNoInlining = [&] {
+                    bool isValidPC;
+                    appendCodeBlock(codeBlock, tryGetBytecodeIndex(callSiteIndex.bits(), codeBlock, isValidPC));
+                };
+
+#if ENABLE(DFG_JIT)
+                if (codeBlock->hasCodeOrigins()) {
+                    if (codeBlock->canGetCodeOrigin(callSiteIndex)) {
+                        codeBlock->codeOrigin(callSiteIndex).walkUpInlineStack([&] (const CodeOrigin& codeOrigin) {
+                            appendCodeBlock(codeOrigin.inlineCallFrame ? codeOrigin.inlineCallFrame->baselineCodeBlock.get() : codeBlock, codeOrigin.bytecodeIndex);
+                        });
+                    } else
+                        appendCodeBlock(codeBlock, std::numeric_limits<unsigned>::max());
+                } else
+                    appendCodeBlockNoInlining();
+#else
+                appendCodeBlockNoInlining();
+#endif
+            } else {
+                ASSERT(unprocessedStackFrame.frameType == UnprocessedFrameType::UnverifiedCallee);
+                appendUnverifiedCallee(JSValue::decode(unprocessedStackFrame.u.unverifiedCallee));
+            }
         }
     }
 
-    m_indexOfNextStackTraceToVerify = m_stackTraces.size();
+    m_unprocessedStackTraces.clear();
 }
 
 void SamplingProfiler::visit(SlotVisitor& slotVisitor)
@@ -478,18 +535,12 @@ void SamplingProfiler::noticeVMEntry()
     dispatchIfNecessary(locker);
 }
 
-void SamplingProfiler::clearData()
-{
-    LockHolder locker(m_lock);
-    clearData(locker);
-}
-
 void SamplingProfiler::clearData(const LockHolder&)
 {
     ASSERT(m_lock.isLocked());
     m_stackTraces.clear();
     m_seenExecutables.clear();
-    m_indexOfNextStackTraceToVerify = 0;
+    m_unprocessedStackTraces.clear();
 }
 
 String SamplingProfiler::StackFrame::displayName()
@@ -498,9 +549,7 @@ String SamplingProfiler::StackFrame::displayName()
         return ASCIILiteral("(unknown)");
     if (frameType == FrameType::Host)
         return ASCIILiteral("(host)");
-    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
 
-    ExecutableBase* executable = u.verifiedExecutable;
     if (executable->isHostFunction())
         return static_cast<NativeExecutable*>(executable)->name();
 
@@ -521,9 +570,7 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests()
         return ASCIILiteral("(unknown)");
     if (frameType == FrameType::Host)
         return ASCIILiteral("(host)");
-    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
 
-    ExecutableBase* executable = u.verifiedExecutable;
     if (executable->isHostFunction())
         return static_cast<NativeExecutable*>(executable)->name();
 
@@ -544,25 +591,21 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests()
     return String();
 }
 
-int SamplingProfiler::StackFrame::startLine()
+int SamplingProfiler::StackFrame::functionStartLine()
 {
     if (frameType == FrameType::Unknown || frameType == FrameType::Host)
         return -1;
-    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
 
-    ExecutableBase* executable = u.verifiedExecutable;
     if (executable->isHostFunction())
         return -1;
     return static_cast<ScriptExecutable*>(executable)->firstLine();
 }
 
-unsigned SamplingProfiler::StackFrame::startColumn()
+unsigned SamplingProfiler::StackFrame::functionStartColumn()
 {
     if (frameType == FrameType::Unknown || frameType == FrameType::Host)
         return -1;
-    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
 
-    ExecutableBase* executable = u.verifiedExecutable;
     if (executable->isHostFunction())
         return -1;
 
@@ -573,9 +616,7 @@ intptr_t SamplingProfiler::StackFrame::sourceID()
 {
     if (frameType == FrameType::Unknown || frameType == FrameType::Host)
         return -1;
-    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
 
-    ExecutableBase* executable = u.verifiedExecutable;
     if (executable->isHostFunction())
         return -1;
 
@@ -586,9 +627,7 @@ String SamplingProfiler::StackFrame::url()
 {
     if (frameType == FrameType::Unknown || frameType == FrameType::Host)
         return emptyString();
-    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
 
-    ExecutableBase* executable = u.verifiedExecutable;
     if (executable->isHostFunction())
         return emptyString();
 
@@ -598,7 +637,7 @@ String SamplingProfiler::StackFrame::url()
     return url;
 }
 
-Vector<SamplingProfiler::StackTrace>& SamplingProfiler::stackTraces(const LockHolder&)
+Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces(const LockHolder& locker)
 {
     ASSERT(m_lock.isLocked());
     {
@@ -606,7 +645,9 @@ Vector<SamplingProfiler::StackTrace>& SamplingProfiler::stackTraces(const LockHo
         processUnverifiedStackTraces();
     }
 
-    return m_stackTraces;
+    Vector<StackTrace> result(WTFMove(m_stackTraces));
+    clearData(locker);
+    return result;
 }
 
 String SamplingProfiler::stackTracesAsJSON()
@@ -643,6 +684,8 @@ String SamplingProfiler::stackTracesAsJSON()
 
     json.appendLiteral("]");
 
+    clearData(locker);
+
     return json.toString();
 }
 
@@ -655,11 +698,8 @@ using namespace JSC;
 void printInternal(PrintStream& out, SamplingProfiler::FrameType frameType)
 {
     switch (frameType) {
-    case SamplingProfiler::FrameType::VerifiedExecutable:
-        out.print("VerifiedExecutable");
-        break;
-    case SamplingProfiler::FrameType::UnverifiedCallee:
-        out.print("UnverifiedCallee");
+    case SamplingProfiler::FrameType::Executable:
+        out.print("Executable");
         break;
     case SamplingProfiler::FrameType::Host:
         out.print("Host");

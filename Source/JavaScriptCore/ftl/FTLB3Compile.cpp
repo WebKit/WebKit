@@ -47,6 +47,7 @@
 #include "FTLUnwindInfo.h"
 #include "JITSubGenerator.h"
 #include "LinkBuffer.h"
+#include "PCToCodeOriginMap.h"
 #include "ScratchRegisterAllocator.h"
 
 namespace JSC { namespace FTL {
@@ -140,6 +141,10 @@ void compile(State& state, Safepoint::Result& safepointResult)
         state.allocationFailed = true;
         return;
     }
+    
+    B3::PCToOriginMap originMap = state.proc->releasePCToOriginMap();
+    if (vm.shouldBuilderPCToCodeOriginMapping())
+        codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(vm, WTFMove(originMap)), *state.finalizer->b3CodeLinkBuffer));
 
     state.generatedFunction = bitwise_cast<GeneratedFunction>(
         state.finalizer->b3CodeLinkBuffer->entrypoint().executableAddress());

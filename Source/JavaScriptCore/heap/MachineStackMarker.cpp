@@ -23,9 +23,12 @@
 #include "MachineStackMarker.h"
 
 #include "ConservativeRoots.h"
+#include "GPRInfo.h"
 #include "Heap.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
+#include "LLIntPCRanges.h"
+#include "MacroAssembler.h"
 #include "VM.h"
 #include <setjmp.h>
 #include <stdlib.h>
@@ -575,6 +578,64 @@ void* MachineThreads::Thread::Registers::instructionPointer() const
 
 #else
 #error Need a way to get the instruction pointer for another thread on this platform
+#endif
+}
+void* MachineThreads::Thread::Registers::llintPC() const
+{
+    // LLInt uses regT4 as PC.
+#if OS(DARWIN)
+
+#if __DARWIN_UNIX03
+
+#if CPU(X86)
+    static_assert(LLInt::LLIntPC == X86Registers::esi, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>(regs.__esi);
+#elif CPU(X86_64)
+    static_assert(LLInt::LLIntPC == X86Registers::r8, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>(regs.__r8);
+#elif CPU(ARM)
+    static_assert(LLInt::LLIntPC == ARMRegisters::r8, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>(regs.__r[8]);
+#elif CPU(ARM64)
+    static_assert(LLInt::LLIntPC == ARM64Registers::x4, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>(regs.__x[4]);
+#else
+#error Unknown Architecture
+#endif
+
+#else // !__DARWIN_UNIX03
+#if CPU(X86)
+    static_assert(LLInt::LLIntPC == X86Registers::esi, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>(regs.esi);
+#elif CPU(X86_64)
+    static_assert(LLInt::LLIntPC == X86Registers::r8, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>(regs.r8);
+#else
+#error Unknown Architecture
+#endif
+
+#endif // __DARWIN_UNIX03
+
+// end OS(DARWIN)
+#elif OS(WINDOWS)
+
+#if CPU(ARM)
+    static_assert(LLInt::LLIntPC == ARMRegisters::r8, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>((uintptr_t) regs.R8);
+#elif CPU(MIPS)
+#error Dont know what to do with mips. Do we even need this?
+#elif CPU(X86)
+    static_assert(LLInt::LLIntPC == X86Registers::esi, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>((uintptr_t) regs.Esi);
+#elif CPU(X86_64)
+    static_assert(LLInt::LLIntPC == X86Registers::r10, "Wrong LLInt PC.");
+    return reinterpret_cast<void*>((uintptr_t) regs.R10);
+#else
+#error Unknown Architecture
+#endif
+
+#else
+#error Need a way to get the LLIntPC for another thread on this platform
 #endif
 }
 #endif // ENABLE(SAMPLING_PROFILER)

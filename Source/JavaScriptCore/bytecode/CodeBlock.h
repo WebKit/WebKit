@@ -84,6 +84,7 @@ class LLIntOffsetsExtractor;
 class RegisterAtOffsetList;
 class TypeLocation;
 class JSModuleEnvironment;
+class PCToCodeOriginMap;
 
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 
@@ -273,7 +274,7 @@ public:
     {
         return m_jitCodeMap.get();
     }
-    
+
     unsigned bytecodeOffset(Instruction* returnAddress)
     {
         RELEASE_ASSERT(returnAddress >= instructions().begin() && returnAddress < instructions().end());
@@ -914,6 +915,11 @@ public:
 
     CallSiteIndex newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite);
 
+#if ENABLE(JIT)
+    void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
+    Optional<CodeOrigin> findPC(void* pc);
+#endif
+
 protected:
     void finalizeLLIntInlineCaches();
     void finalizeBaselineJITInlineCaches();
@@ -1032,6 +1038,7 @@ private:
     Bag<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
     SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
+    std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
 #endif
     std::unique_ptr<CompactJITCodeMap> m_jitCodeMap;
 #if ENABLE(DFG_JIT)

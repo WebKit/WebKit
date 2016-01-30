@@ -30,6 +30,7 @@
 
 #include "B3OpaqueByproducts.h"
 #include "B3Origin.h"
+#include "B3PCToOriginMap.h"
 #include "B3StackSlotKind.h"
 #include "B3Type.h"
 #include "B3ValueKey.h"
@@ -361,6 +362,9 @@ public:
     JS_EXPORT_PRIVATE unsigned frameSize() const;
     const RegisterAtOffsetList& calleeSaveRegisters() const;
 
+    PCToOriginMap& pcToOriginMap() { return m_pcToOriginMap; }
+    PCToOriginMap releasePCToOriginMap() { return WTFMove(m_pcToOriginMap); }
+
 private:
     friend class BlockInsertionSet;
     
@@ -383,6 +387,7 @@ private:
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
     ValuesCollection m_valuesCollection;
+    PCToOriginMap m_pcToOriginMap;
 };
 
 } } // namespace JSC::B3

@@ -1,5 +1,205 @@
 2016-01-29  Saam barati  <sbarati@apple.com>
 
+        JSC Sampling Profiler: Come up with a (program counter => CodeOrigin) mapping
+        https://bugs.webkit.org/show_bug.cgi?id=152629
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements a mapping from PC to CodeOrigin
+        that lives off of JITed CodeBlocks. We build this mapping
+        while JITing code, and then we compress it and store
+        it on the CodeBlock. We only build the mapping if a debugger
+        has ever been attached to any global object.
+
+        CodeBlock consults this mapping when searching for a CodeOrigin
+        for a given PC, but it also consults other code ranges
+        off the main path that may own the PC. Specifically, it searches
+        through inline caches, OSRExits, and LazySlowPaths.
+
+        To find PC info for the LLInt, we also save the LLInt pc when
+        taking a stack trace where the top frame is in LLInt code.
+
+        This patch also cleans up code inside the SamplingProfier.
+        I realized a bug in the SamplingProfiler's implementation.
+        We used to walk the inline stack while gathering a stack
+        trace. This is wrong. It's super dangerous to do this because
+        we might pause the JSC process while it's modifying its
+        CodeOrigin table. We used to walk the inline stack while
+        taking a stack trace because doing so could save us from
+        having to verify a particular stack trace. This patch changes that.
+        We now have to verify all stack traces taken. This verification step
+        includes walking the inline stack.
+
+        Because we have a PC=>CodeOrigin map, we can now gather more
+        detailed information about the top-frame we pause. This allows
+        us to correctly observe inlining. It also allows us to observe
+        expression-level line/column information for the top frame.
+        The reason we don't consult this mapping for parent frames is 
+        that all parent frames should set the CallSiteIndex on the call
+        frame header, which means we can consult that value to get inlining 
+        and expression-level line/column information.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Label::Label):
+        (JSC::AbstractMacroAssembler::Label::operator==):
+        (JSC::AbstractMacroAssembler::Label::isSet):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerLabel::labelAtOffset):
+        (JSC::AssemblerLabel::operator==):
+        * b3/B3Generate.cpp:
+        * b3/B3Origin.h:
+        (JSC::B3::Origin::data):
+        (JSC::B3::Origin::operator==):
+        * b3/B3PCToOriginMap.h: Added.
+        (JSC::B3::PCToOriginMap::PCToOriginMap):
+        (JSC::B3::PCToOriginMap::appendItem):
+        (JSC::B3::PCToOriginMap::ranges):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::pcToOriginMap):
+        (JSC::B3::Procedure::releasePCToOriginMap):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        (JSC::CodeBlock::setPCToCodeOriginMap):
+        (JSC::CodeBlock::findPC):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::jitCodeMap):
+        (JSC::CodeBlock::bytecodeOffset):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::operator==):
+        (JSC::CodeOriginHash::hash):
+        (JSC::CodeOriginHash::equal):
+        * bytecode/InlineCallFrame.h:
+        (JSC::baselineCodeBlockForOriginAndBaselineCodeBlock):
+        (JSC::CodeOrigin::walkUpInlineStack):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::PolymorphicAccess::containsPC):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::containsPC):
+        * bytecode/StructureStubInfo.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::hasExpressionInfo):
+        (JSC::UnlinkedCodeBlock::expressionInfo):
+        (JSC::UnlinkedCodeBlock::setThisRegister):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::attach):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::validateReferences):
+        (JSC::DFG::JITCode::findPC):
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::commonDataOffset):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded):
+        (JSC::DFG::JITCompiler::setEndOfMainPath):
+        (JSC::DFG::JITCompiler::setEndOfCode):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::setStartOfCode):
+        (JSC::DFG::JITCompiler::setForNode):
+        (JSC::DFG::JITCompiler::addCallSite):
+        (JSC::DFG::JITCompiler::pcToCodeOriginMapBuilder):
+        (JSC::DFG::JITCompiler::setEndOfMainPath): Deleted.
+        (JSC::DFG::JITCompiler::setEndOfCode): Deleted.
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::call):
+        (JSC::DFG::SlowPathGenerator::origin):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::addSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLB3Compile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::FTL::JITCode::findPC):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::b3Code):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::Registers::instructionPointer):
+        (JSC::MachineThreads::Thread::Registers::llintPC):
+        (JSC::MachineThreads::Thread::freeRegisters):
+        * heap/MachineStackMarker.h:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::addEvent):
+        (Inspector::buildSamples):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITCode.h:
+        (JSC::JITCode::findPC):
+        * jit/PCToCodeOriginMap.cpp: Added.
+        (JSC::PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder):
+        (JSC::PCToCodeOriginMapBuilder::appendItem):
+        (JSC::PCToCodeOriginMap::PCToCodeOriginMap):
+        (JSC::PCToCodeOriginMap::~PCToCodeOriginMap):
+        (JSC::PCToCodeOriginMap::memorySize):
+        (JSC::PCToCodeOriginMap::findPC):
+        * jit/PCToCodeOriginMap.h: Added.
+        (JSC::PCToCodeOriginMapBuilder::defaultCodeOrigin):
+        (JSC::PCToCodeOriginMapBuilder::didBuildMapping):
+        * jsc.cpp:
+        (functionSamplingProfilerStackTraces):
+        * llint/LLIntPCRanges.h:
+        (JSC::LLInt::isLLIntPC):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::reportStats):
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::FrameWalker::walk):
+        (JSC::FrameWalker::resetAtMachineFrame):
+        (JSC::FrameWalker::isValidFramePointer):
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::~SamplingProfiler):
+        (JSC::tryGetBytecodeIndex):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::visit):
+        (JSC::SamplingProfiler::noticeVMEntry):
+        (JSC::SamplingProfiler::clearData):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::StackFrame::displayNameForJSONTests):
+        (JSC::SamplingProfiler::StackFrame::functionStartLine):
+        (JSC::SamplingProfiler::StackFrame::functionStartColumn):
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::StackFrame::url):
+        (JSC::SamplingProfiler::releaseStackTraces):
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        (WTF::printInternal):
+        (JSC::SamplingProfiler::StackFrame::startLine): Deleted.
+        (JSC::SamplingProfiler::StackFrame::startColumn): Deleted.
+        (JSC::SamplingProfiler::stackTraces): Deleted.
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::UnprocessedStackFrame::UnprocessedStackFrame):
+        (JSC::SamplingProfiler::StackFrame::StackFrame):
+        (JSC::SamplingProfiler::StackTrace::StackTrace):
+        (JSC::SamplingProfiler::totalTime):
+        (JSC::SamplingProfiler::setStopWatch):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::setShouldBuildPCToCodeOriginMapping):
+        (JSC::VM::shouldBuilderPCToCodeOriginMapping):
+        * tests/stress/sampling-profiler-basic.js:
+        (platformSupportsSamplingProfiler.top):
+        (platformSupportsSamplingProfiler.jaz):
+        (platformSupportsSamplingProfiler.kaz):
+
+2016-01-29  Saam barati  <sbarati@apple.com>
+
         Remove our notion of having a single activation register
         https://bugs.webkit.org/show_bug.cgi?id=153673
 

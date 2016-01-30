@@ -330,10 +330,12 @@ void SpeculativeJIT::addSlowPathGenerator(std::unique_ptr<SlowPathGenerator> slo
     m_slowPathGenerators.append(WTFMove(slowPathGenerator));
 }
 
-void SpeculativeJIT::runSlowPathGenerators()
+void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder)
 {
-    for (unsigned i = 0; i < m_slowPathGenerators.size(); ++i)
+    for (unsigned i = 0; i < m_slowPathGenerators.size(); ++i) {
+        pcToCodeOriginMapBuilder.appendItem(m_jit.label(), m_slowPathGenerators[i]->origin().semantic);
         m_slowPathGenerators[i]->generate(this);
+    }
 }
 
 // On Windows we need to wrap fmod; on other platforms we can call it directly.
@@ -1503,6 +1505,8 @@ void SpeculativeJIT::compileCurrentBlock()
 
         if (Options::validateDFGExceptionHandling() && mayExit(m_jit.graph(), m_currentNode) != DoesNotExit)
             m_jit.jitReleaseAssertNoException();
+
+        m_jit.pcToCodeOriginMapBuilder().appendItem(m_jit.label(), m_origin.semantic);
 
         compile(m_currentNode);
         

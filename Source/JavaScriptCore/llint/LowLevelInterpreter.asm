@@ -258,7 +258,7 @@ if JSVALUE64
     # - The PC base (or PB for short) must be stored in a callee-save register.
     # - C calls are still given the Instruction* rather than the PC index.
     #   This requires an add before the call, and a sub after.
-    const PC = t4
+    const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
     if ARM64
         const PB = csr7
         const tagTypeNumber = csr8
@@ -290,7 +290,7 @@ if JSVALUE64
     end
 
 else
-    const PC = t4
+    const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
     macro loadisFromInstruction(offset, dest)
         loadis offset * 4[PC], dest
     end

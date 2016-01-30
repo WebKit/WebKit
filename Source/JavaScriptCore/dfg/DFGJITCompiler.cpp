@@ -52,6 +52,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     , m_graph(dfg)
     , m_jitCode(adoptRef(new JITCode()))
     , m_blockHeads(dfg.numBlocks())
+    , m_pcToCodeOriginMapBuilder(dfg.m_vm)
 {
     if (shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
         m_disassembler = std::make_unique<Disassembler>(dfg);
@@ -305,6 +306,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             m_codeBlock->appendExceptionHandler(newExceptionHandler);
         }
     }
+
+    if (m_pcToCodeOriginMapBuilder.didBuildMapping())
+        m_codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), linkBuffer));
 }
 
 void JITCompiler::compile()
@@ -339,7 +343,8 @@ void JITCompiler::compile()
     m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
 
     // Generate slow path code.
-    m_speculative->runSlowPathGenerators();
+    m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
+    m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
     
     compileExceptionHandlers();
     linkOSRExits();
@@ -432,7 +437,8 @@ void JITCompiler::compileFunction()
     jump(fromArityCheck);
     
     // Generate slow path code.
-    m_speculative->runSlowPathGenerators();
+    m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
+    m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
     
     compileExceptionHandlers();
     linkOSRExits();
@@ -594,6 +600,22 @@ CallSiteIndex JITCompiler::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNe
     if (willCatchException)
         appendExceptionHandlingOSRExit(GenericUnwind, eventStreamIndex, opCatchOrigin, exceptionHandler, callSite);
     return callSite;
+}
+
+void JITCompiler::setEndOfMainPath()
+{
+    m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), m_speculative->m_origin.semantic);
+    if (LIKELY(!m_disassembler))
+        return;
+    m_disassembler->setEndOfMainPath(labelIgnoringWatchpoints());
+}
+
+void JITCompiler::setEndOfCode()
+{
+    m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
+    if (LIKELY(!m_disassembler))
+        return;
+    m_disassembler->setEndOfCode(labelIgnoringWatchpoints());
 }
 
 } } // namespace JSC::DFG

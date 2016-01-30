@@ -46,6 +46,7 @@
 #include "B3ReduceStrength.h"
 #include "B3TimingScope.h"
 #include "B3Validate.h"
+#include "PCToCodeOriginMap.h"
 
 namespace JSC { namespace B3 {
 

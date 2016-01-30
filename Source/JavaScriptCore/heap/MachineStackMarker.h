@@ -72,6 +72,7 @@ public:
 #if ENABLE(SAMPLING_PROFILER)
             void* framePointer() const;
             void* instructionPointer() const;
+            void* llintPC() const;
 #endif // ENABLE(SAMPLING_PROFILER)
             
 #if OS(DARWIN)

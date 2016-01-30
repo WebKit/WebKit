@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3Origin_h
-#define B3Origin_h
+#ifndef B3PCToOriginMap_h
+#define B3PCToOriginMap_h
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/PrintStream.h>
+#include "B3Origin.h"
+#include "MacroAssembler.h"
+#include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
 
-// Whoever generates B3IR can choose to put origins on values. When you do this, B3 will be able to
-// account, down to the machine code, which instruction corresponds to which origin. B3
-// transformations must preserve Origins carefully. It's an error to write a transformation that
-// either drops Origins or lies about them.
-class Origin {
+class PCToOriginMap {
+    WTF_MAKE_NONCOPYABLE(PCToOriginMap);
 public:
-    explicit Origin(const void* data = nullptr)
-        : m_data(data)
+    PCToOriginMap()
+    { }
+
+    PCToOriginMap(PCToOriginMap&& other)
+        : m_ranges(WTFMove(other.m_ranges))
+    { }
+
+    struct OriginRange {
+        MacroAssembler::Label label;
+        Origin origin;
+    };
+
+    void appendItem(MacroAssembler::Label label, Origin origin)
     {
+        if (m_ranges.size()) {
+            if (m_ranges.last().label == label)
+                return;
+        }
+
+        m_ranges.append(OriginRange{label, origin});
     }
 
-    explicit operator bool() const { return !!m_data; }
+    const Vector<OriginRange>& ranges() const  { return m_ranges; }
 
-    const void* data() const { return m_data; }
-
-    bool operator==(const Origin& other) const { return m_data == other.m_data; }
-
-    // You should avoid using this. Use OriginDump instead.
-    void dump(PrintStream&) const;
-    
 private:
-    const void* m_data;
+    Vector<OriginRange> m_ranges;
 };
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3Origin_h
-
+#endif // B3PCToOriginMap_h

@@ -597,6 +597,9 @@ public:
 
     inline bool shouldTriggerTermination(ExecState*);
 
+    void setShouldBuildPCToCodeOriginMapping() { m_shouldBuildPCToCodeOriginMapping = true; }
+    bool shouldBuilderPCToCodeOriginMapping() const { return m_shouldBuildPCToCodeOriginMapping; }
+
 private:
     friend class LLIntOffsetsExtractor;
     friend class ClearExceptionScope;
@@ -648,6 +651,7 @@ private:
     bool m_failNextNewCodeBlock { false };
     bool m_inDefineOwnProperty;
     bool m_shouldRewriteConstAsVar { false };
+    bool m_shouldBuildPCToCodeOriginMapping { false };
     std::unique_ptr<CodeCache> m_codeCache;
     LegacyProfiler* m_enabledProfiler;
     std::unique_ptr<BuiltinExecutables> m_builtinExecutables;

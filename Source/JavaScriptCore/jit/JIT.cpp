@@ -40,6 +40,7 @@
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "JSCInlines.h"
+#include "PCToCodeOriginMap.h"
 #include "ProfilerDatabase.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
@@ -69,6 +70,7 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
     , m_byValInstructionIndex(UINT_MAX)
     , m_callLinkInfoIndex(UINT_MAX)
     , m_randomGenerator(cryptographicallyRandomNumber())
+    , m_pcToCodeOriginMapBuilder(*vm)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)
 {
@@ -157,6 +159,8 @@ void JIT::privateCompileMainPass()
             m_disassembler->setForBytecodeMainPath(m_bytecodeOffset, label());
         Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
         ASSERT_WITH_MESSAGE(m_interpreter->isOpcode(currentInstruction->u.opcode), "privateCompileMainPass gone bad @ %d", m_bytecodeOffset);
+
+        m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(m_bytecodeOffset));
 
 #if ENABLE(OPCODE_SAMPLING)
         if (m_bytecodeOffset > 0) // Avoid the overhead of sampling op_enter twice.
@@ -365,6 +369,8 @@ void JIT::privateCompileSlowCases()
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
         m_bytecodeOffset = iter->to;
 
+        m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(m_bytecodeOffset));
+
         unsigned firstTo = m_bytecodeOffset;
 
         Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
@@ -519,6 +525,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_compilation->addProfiledBytecodes(*m_vm->m_perBytecodeProfiler, m_codeBlock);
     }
     
+    m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(0, nullptr));
+
     if (m_disassembler)
         m_disassembler->setStartOfCode(label());
 
@@ -571,6 +579,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     
     if (m_disassembler)
         m_disassembler->setEndOfSlowPath(label());
+    m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
     stackOverflow.link(this);
     m_bytecodeOffset = 0;
@@ -612,6 +621,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     
     if (m_disassembler)
         m_disassembler->setEndOfCode(label());
+    m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
+
 
     LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock, effort);
     if (patchBuffer.didFailToAllocate())
@@ -708,6 +719,9 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
         m_vm->m_perBytecodeProfiler->addCompilation(m_compilation);
     }
+
+    if (m_pcToCodeOriginMapBuilder.didBuildMapping())
+        m_codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer));
     
     CodeRef result = FINALIZE_CODE(
         patchBuffer,
@@ -716,7 +730,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT.add(
         static_cast<double>(result.size()) /
         static_cast<double>(m_codeBlock->instructions().size()));
-    
+
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
     m_codeBlock->setJITCode(
         adoptRef(new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));

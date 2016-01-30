@@ -82,6 +82,8 @@ public:
 
     RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
 
+    Optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
+
 #if FTL_USES_B3
     CodeRef b3Code() const { return m_b3Code; }
 #else

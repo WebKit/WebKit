@@ -324,6 +324,14 @@ public:
     void aboutToDie();
 
     void dump(PrintStream& out) const;
+    bool containsPC(void* pc) const
+    { 
+        if (!m_stubRoutine)
+            return false;
+
+        uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
+        return m_stubRoutine->startAddress() <= pcAsInt && pcAsInt <= m_stubRoutine->endAddress();
+    }
 
 private:
     friend class AccessCase;

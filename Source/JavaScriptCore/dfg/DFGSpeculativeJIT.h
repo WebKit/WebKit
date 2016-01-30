@@ -317,7 +317,7 @@ public:
     GeneratedOperandType checkGeneratedTypeForToInt32(Node*);
 
     void addSlowPathGenerator(std::unique_ptr<SlowPathGenerator>);
-    void runSlowPathGenerators();
+    void runSlowPathGenerators(PCToCodeOriginMapBuilder&);
     
     void compile(Node*);
     void noticeOSRBirth(Node*);

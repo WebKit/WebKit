@@ -26,11 +26,8 @@ if (platformSupportsSamplingProfiler()) {
             x--;
         }
     }
-    noInline(top);
-    // FIXME: We need to call top() to get the CallSiteIndex to update
-    // inside the call frame. We need to fix that by having a PC=>CodeOrigin
-    // mapping: https://bugs.webkit.org/show_bug.cgi?id=152629
-    function jaz(x) { return x + top(); } // 
+
+    function jaz(x) { return x + top(); }
     function kaz(y) {
         return jaz(y) + 5;
     }

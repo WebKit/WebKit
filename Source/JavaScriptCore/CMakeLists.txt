@@ -511,6 +511,7 @@ set(JavaScriptCore_SOURCES
     jit/JITSubGenerator.cpp
     jit/JITThunks.cpp
     jit/JITToDFGDeferredCompilationCallback.cpp
+    jit/PCToCodeOriginMap.cpp
     jit/PolymorphicCallStubRoutine.cpp
     jit/Reg.cpp
     jit/RegisterAtOffset.cpp

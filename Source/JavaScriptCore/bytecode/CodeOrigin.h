@@ -102,6 +102,9 @@ struct CodeOrigin {
     bool isApproximatelyEqualTo(const CodeOrigin& other) const;
     
     unsigned approximateHash() const;
+
+    template <typename Function>
+    void walkUpInlineStack(const Function&);
     
     // Get the inline stack. This is slow, and is intended for debugging only.
     Vector<CodeOrigin> inlineStack() const;
@@ -127,7 +130,7 @@ inline bool CodeOrigin::operator==(const CodeOrigin& other) const
     return bytecodeIndex == other.bytecodeIndex
         && inlineCallFrame == other.inlineCallFrame;
 }
-    
+
 struct CodeOriginHash {
     static unsigned hash(const CodeOrigin& key) { return key.hash(); }
     static bool equal(const CodeOrigin& a, const CodeOrigin& b) { return a == b; }

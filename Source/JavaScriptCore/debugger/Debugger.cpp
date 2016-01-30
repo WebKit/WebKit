@@ -145,6 +145,8 @@ void Debugger::attach(JSGlobalObject* globalObject)
     globalObject->setDebugger(this);
     m_globalObjects.add(globalObject);
 
+    m_vm.setShouldBuildPCToCodeOriginMapping();
+
     // Call sourceParsed because it will execute JavaScript in the inspector.
     GatherSourceProviders gatherSourceProviders(globalObject);
     {

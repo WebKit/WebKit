@@ -184,6 +184,13 @@ void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
     reset(codeBlock);
     resetByGC = true;
 }
+
+bool StructureStubInfo::containsPC(void* pc) const
+{
+    if (cacheType != CacheType::Stub)
+        return false;
+    return u.stub->containsPC(pc);
+}
 #endif
 
 } // namespace JSC

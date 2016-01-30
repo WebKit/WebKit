@@ -56,6 +56,8 @@ namespace JSC {
             return AssemblerLabel(m_offset + offset);
         }
 
+        bool operator==(const AssemblerLabel& other) const { return m_offset == other.m_offset; }
+
         uint32_t m_offset;
     };
 

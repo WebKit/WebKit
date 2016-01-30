@@ -47,6 +47,7 @@
 #include "AirValidate.h"
 #include "B3Common.h"
 #include "B3IndexMap.h"
+#include "B3Procedure.h"
 #include "B3TimingScope.h"
 #include "CCallHelpers.h"
 #include "DisallowMacroScratchRegisterUsage.h"
@@ -171,18 +172,31 @@ void generate(Code& code, CCallHelpers& jit)
         blockJumps[target].append(jump);
     };
 
+    PCToOriginMap& pcToOriginMap = code.proc().pcToOriginMap();
+    auto addItem = [&] (Inst& inst) {
+        if (!inst.origin) {
+            pcToOriginMap.appendItem(jit.label(), Origin());
+            return;
+        }
+        pcToOriginMap.appendItem(jit.label(), inst.origin->origin());
+    };
+
     for (BasicBlock* block : code) {
         blockJumps[block].link(&jit);
         blockLabels[block] = jit.label();
         ASSERT(block->size() >= 1);
         for (unsigned i = 0; i < block->size() - 1; ++i) {
-            CCallHelpers::Jump jump = block->at(i).generate(jit, context);
+            Inst& inst = block->at(i);
+            addItem(inst);
+            CCallHelpers::Jump jump = inst.generate(jit, context);
             ASSERT_UNUSED(jump, !jump.isSet());
         }
 
         if (block->last().opcode == Jump
             && block->successorBlock(0) == code.findNextBlock(block))
             continue;
+
+        addItem(block->last());
 
         if (isReturn(block->last().opcode)) {
             // We currently don't represent the full prologue/epilogue in Air, so we need to
@@ -198,6 +212,7 @@ void generate(Code& code, CCallHelpers& jit)
             } else
                 jit.emitFunctionEpilogueWithEmptyFrame();
             jit.ret();
+            addItem(block->last());
             continue;
         }
 
@@ -218,10 +233,14 @@ void generate(Code& code, CCallHelpers& jit)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+        addItem(block->last());
     }
 
+    pcToOriginMap.appendItem(jit.label(), Origin());
+    // FIXME: Make late paths have Origins: https://bugs.webkit.org/show_bug.cgi?id=153689
     for (auto& latePath : context.latePaths)
         latePath->run(jit, context);
+    pcToOriginMap.appendItem(jit.label(), Origin());
 }
 
 } } } // namespace JSC::B3::Air

@@ -312,10 +312,14 @@ VM::VM(VMType vmType, HeapType heapType)
         enableControlFlowProfiler();
 #if ENABLE(SAMPLING_PROFILER)
     if (Options::useSamplingProfiler()) {
+        setShouldBuildPCToCodeOriginMapping();
         m_samplingProfiler = adoptRef(new SamplingProfiler(*this, Stopwatch::create()));
         m_samplingProfiler->start();
     }
 #endif // ENABLE(SAMPLING_PROFILER)
+
+    if (Options::alwaysGeneratePCToCodeOriginMap())
+        setShouldBuildPCToCodeOriginMapping();
 
     if (Options::watchdog()) {
         std::chrono::milliseconds timeoutMillis(Options::watchdog());

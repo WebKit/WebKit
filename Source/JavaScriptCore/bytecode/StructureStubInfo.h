@@ -122,6 +122,8 @@ public:
     CodeOrigin codeOrigin;
     CallSiteIndex callSiteIndex;
 
+    bool containsPC(void* pc) const;
+
     union {
         struct {
             WriteBarrierBase<Structure> baseObjectStructure;

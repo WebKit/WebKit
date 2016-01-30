@@ -52,6 +52,7 @@
 #include "LLIntEntrypoint.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
+#include "PCToCodeOriginMap.h"
 #include "PolymorphicAccess.h"
 #include "ProfilerDatabase.h"
 #include "ReduceWhitespace.h"
@@ -4266,5 +4267,31 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler(RefCountedArray
         instructions[startIdx + 1].u.basicBlockLocation = basicBlockLocation;
     }
 }
+
+#if ENABLE(JIT)
+void CodeBlock::setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&& map) 
+{ 
+    m_pcToCodeOriginMap = WTFMove(map);
+}
+
+Optional<CodeOrigin> CodeBlock::findPC(void* pc)
+{
+    if (m_pcToCodeOriginMap) {
+        if (Optional<CodeOrigin> codeOrigin = m_pcToCodeOriginMap->findPC(pc))
+            return codeOrigin;
+    }
+
+    for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
+        StructureStubInfo* stub = *iter;
+        if (stub->containsPC(pc))
+            return Optional<CodeOrigin>(stub->codeOrigin);
+    }
+
+    if (Optional<CodeOrigin> codeOrigin = m_jitCode->findPC(this, pc))
+        return codeOrigin;
+
+    return Nullopt;
+}
+#endif // ENABLE(JIT)
 
 } // namespace JSC

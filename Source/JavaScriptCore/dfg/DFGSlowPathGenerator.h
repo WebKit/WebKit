@@ -62,6 +62,9 @@ public:
         RELEASE_ASSERT_NOT_REACHED(); // By default slow path generators don't have a call.
         return MacroAssembler::Call();
     }
+
+    const NodeOrigin& origin() const  { return m_origin; }
+
 protected:
     virtual void generateInternal(SpeculativeJIT*) = 0;
     MacroAssembler::Label m_label;

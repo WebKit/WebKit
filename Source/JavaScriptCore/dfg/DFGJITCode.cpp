@@ -215,6 +215,18 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
     minifiedDFG.validateReferences(trackedReferences);
 }
 
+Optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
+{
+    for (OSRExit& exit : osrExit) {
+        if (ExecutableMemoryHandle* handle = exit.m_code.executableMemory()) {
+            if (handle->start() <= pc && pc < handle->end())
+                return Optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
+        }
+    }
+
+    return Nullopt;
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

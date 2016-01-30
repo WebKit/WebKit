@@ -1911,6 +1911,9 @@
     <ClCompile Include="..\jit\BinarySwitch.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\PCToCodeOriginMap.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\PolymorphicCallStubRoutine.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -4595,6 +4598,9 @@
     </ClInclude>
     <ClInclude Include="..\dfg\DFGPreciseLocalClobberize.h">
       <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\PCToCodeOriginMap.h">
+      <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\PolymorphicCallStubRoutine.h">
       <Filter>jit</Filter>

@@ -45,6 +45,7 @@
 #include "JITInlineCacheGenerator.h"
 #include "JSInterfaceJIT.h"
 #include "Opcode.h"
+#include "PCToCodeOriginMap.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 #include "UnusedPointer.h"
@@ -912,6 +913,8 @@ namespace JSC {
         RefPtr<Profiler::Compilation> m_compilation;
         WeakRandom m_randomGenerator;
         static CodeRef stringGetByValStubGenerator(VM*);
+
+        PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
 
         bool m_canBeOptimized;
         bool m_canBeOptimizedOrInlined;

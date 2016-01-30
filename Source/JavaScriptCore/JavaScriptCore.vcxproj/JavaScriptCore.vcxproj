@@ -670,6 +670,7 @@
     <ClCompile Include="..\jit\JITThunks.cpp" />
     <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
     <ClCompile Include="..\jit\SetupVarargsFrame.cpp" />
+    <ClCompile Include="..\jit\PCToCodeOriginMap.cpp" />
     <ClCompile Include="..\jit\PolymorphicCallStubRoutine.cpp" />
     <ClCompile Include="..\jit\Reg.cpp" />
     <ClCompile Include="..\jit\RegisterAtOffset.cpp" />
@@ -1502,7 +1503,7 @@
     <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />
-    <ClInclude Include="..\jit\SetupVarargsFrame.h" />
+    <ClInclude Include="..\jit\PCToCodeOriginMap.h" />
     <ClInclude Include="..\jit\PolymorphicCallStubRoutine.h" />
     <ClInclude Include="..\jit\Reg.h" />
     <ClInclude Include="..\jit\RegisterAtOffset.h" />
@@ -1511,6 +1512,7 @@
     <ClInclude Include="..\jit\RegisterSet.h" />
     <ClInclude Include="..\jit\Repatch.h" />
     <ClInclude Include="..\jit\ScratchRegisterAllocator.h" />
+    <ClInclude Include="..\jit\SetupVarargsFrame.h" />
     <ClInclude Include="..\jit\SnippetOperand.h" />
     <ClInclude Include="..\jit\SpecializedThunkJIT.h" />
     <ClInclude Include="..\jit\TempRegisterSet.h" />
