@@ -1,9 +1,18 @@
 <html>
-  <head>
-    <title>B3 Intermediate Representation</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
-  <body>
+<head>
+  <title>B3 Intermediate Representation</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div id="banner">
+    <a href="http://www.webkit.org/" class="banner-link">
+      <div id="logo" class="site-logo">
+        WebKit
+        <span class="tagline">Open Source Web Browser</span>
+      </div>
+    </a>
+  </div>
+  <div id="contents">
     <h1><a href="index.html">Bare Bones Backend</a> / B3 Intermediate Representation</h1>
     <p>B3 IR is a C-like SSA representation of a procedure.  A procedure has a root block at
       which it starts execution when it is invoked.  A procedure does not have to terminate, but
@@ -193,12 +202,12 @@
 
       <dt>T Div(T, T)</dt>
       <dd>Works with any type except Void.  For integer types, this represents signed division
-        with round-to-zero.  Its behavior is undefined for x/0 or -2`^`31/-1.  For floating
+        with round-to-zero.  Its behavior is undefined for x/0 or -2<sup>31</sup>/-1.  For floating
         point types, this represents division according to the IEEE 854 spec.</dd>
 
       <dt>T Mod(T, T)</dt>
       <dd>Works with any type except Void.  For integer types, this represents signed modulo.
-        Its behavior is undefined for x%0 or -2`^`31%-1.  For floating point types, this
+        Its behavior is undefined for x%0 or -2<sup>31</sup>%-1.  For floating point types, this
         represents modulo according to "fmod()".</dd>
 
       <dt>T Neg(T)</dt>
@@ -209,13 +218,13 @@
       <dt>T ChillDiv(T, T)</dt>
       <dd>Chill division.  Valid for Int32 and Int64.  An operation is said to be chill if it
         returns a sensible value whenever its non-chill form would have had undefined behavior.
-        ChillDiv turns x/0 into 0 and -2`^`31/-1 into -2`^`31.  This is a separate opcode
+        ChillDiv turns x/0 into 0 and -2<sup>31</sup>/-1 into -2<sup>31</sup>.  This is a separate opcode
         because it's exactly the semantics of division on ARM64, and it's also exactly the
         semantics that JavaScript wants for "(x/y)|0".</dd>
 
       <dt>T ChillMod(T, T)</dt>
-      <dd>Chill modulo.  Valid for Int32 and Int64.  ChllMod turns x%0 into 0 and -2`^`31%-1
-        into 0.</dd>
+      <dd>Chill modulo.  Valid for Int32 and Int64.  ChllMod turns x%0 into 0 and
+        -2<sup>31</sup>%-1 into 0.</dd>
 
       <dt>T BitAnd(T, T)</dt>
       <dd>Bitwise and.  Valid for Int32 and Int64.</dd>
@@ -515,6 +524,7 @@ patchpoint->setGenerator(
         transformations.</dd>
     </dl>
 
-  </body>
+  </div>
+</body>
 </html>
 

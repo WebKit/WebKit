@@ -1,9 +1,18 @@
 <html>
-  <head>
-    <title>Assembly Intermediate Representation</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
-  <body>
+<head>
+  <title>Assembly Intermediate Representation</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div id="banner">
+    <a href="http://www.webkit.org/" class="banner-link">
+      <div id="logo" class="site-logo">
+        WebKit
+        <span class="tagline">Open Source Web Browser</span>
+      </div>
+    </a>
+  </div>
+  <div id="contents">
     <h1><a href="index.html">Bare Bones Backend</a> / Assembly Intermediate Representation</h1>
     <p>The B3 compiler converts SSA procedures into efficient machine code by first converting
       them to a form that reveals machine details, like registers. This form is called Assembly
@@ -14,9 +23,11 @@
       which method name to use and its args indicate the arguments to pass to that method. We
       use code generation to create a massive switch statement that turns the reflective Insts
       into actual calls to MacroAssembler. Consequently, we can "add" new instructions to Air
-      usually by just editing the ​AirOpcode.opcodes file.</p>
+      usually by just editing the <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">AirOpcode.opcodes</a>
+      file.</p>
 
     <p><a href="https://bugs.webkit.org/show_bug.cgi?id=153668">FIXME: Add more text here.</a></p>
-  </body>
+  </div>
+</body>
 </html>
 

@@ -1,9 +1,18 @@
 <html>
-  <head>
-    <title>Bare Bones Backend</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
-  <body>
+<head>
+  <title>Bare Bones Backend</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div id="banner">
+    <a href="http://www.webkit.org/" class="banner-link">
+      <div id="logo" class="site-logo">
+        WebKit
+        <span class="tagline">Open Source Web Browser</span>
+      </div>
+    </a>
+  </div>
+  <div id="contents">
     <h1>Bare Bones Backend</h1>
     <p>The Bare Bones Backend, or B3 for short, is WebKit's optimizing JIT for procedures
       containing C-like code.  It's currently used as the default backend for the
@@ -31,9 +40,9 @@ root->appendNew&lt;ControlValue&gt;(
         root->appendNew<Const64Value>(proc, Origin(), 2)));
 
 std::unique_ptr&lt;Compilation&gt; compilation = std::make_unique&lt;Compilation&gt;(vm, proc);
-int64_t (*function)(int64_t) = static_cast&lt;int64_t (*)(int64_t)&gt;(compilation->code().executableAddress());
+int64_t (*function)(int64_t) = bitwise_cast&lt;int64_t (*)(int64_t)&gt;(compilation->code().executableAddress());
 
-printf("%d\n", function(42)); // prints 44</code></pre>
+printf("%lld\n", function(42)); // prints 44</code></pre>
 
     <p>When compiled, the resulting machine code looks like this:</p>
 
@@ -162,7 +171,8 @@ Int64 @6 = Add(@0, @5)
 Int32 @7 = Load8S(@6, ControlDependent|Reads:Top)
 Int32 @8 = Const32(42)
 Int32 @9 = LessThan(@7, $42(@8))
-Void @10 = Check(@9:WarmAny, generator = 0x103fe1010, earlyClobbered = [], lateClobbered = [], usedRegisters = [], ExitsSideways|Reads:Top)</code></pre>
+Void @10 = Check(@9:WarmAny, generator = 0x103fe1010, earlyClobbered = [], lateClobbered = [],
+                 usedRegisters = [], ExitsSideways|Reads:Top)</code></pre>
 
     <p>Is turned into the following Air:</p>
 
@@ -188,7 +198,8 @@ Patch &Branch8(3,SameAsRep), LessThan, (%tmp1,%tmp2,2), $42, @10</code></pre>
       from Air's object-oriented way of representing those instructions to the target's machine
       code.  We use JavaScriptCore's macro assembler for this purpose.</p>
 
-  </body>
+  </div>
+</body>
 </html>
 
 
