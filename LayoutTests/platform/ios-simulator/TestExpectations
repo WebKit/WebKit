@@ -2905,3 +2905,6 @@ webkit.org/b/153498 svg/dom/SVGScriptElement/script-change-externalResourcesRequ
 
 # displaylist tests are flaky on ios-simulator wk2
 webkit.org/b/153656 displaylists [ Pass Failure ]
+
+webkit.org/b/153370 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml.xhtml [ Failure ]
+webkit.org/b/153370 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.html [ Failure ]
