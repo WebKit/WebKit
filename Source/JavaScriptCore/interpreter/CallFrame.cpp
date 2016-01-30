@@ -84,20 +84,6 @@ CallSiteIndex CallFrame::callSiteIndex() const
     return CallSiteIndex(callSiteAsRawBits());
 }
 
-bool CallFrame::hasActivation() const
-{
-    JSValue activation = uncheckedActivation();
-    return !!activation && activation.isCell();
-}
-
-JSValue CallFrame::uncheckedActivation() const
-{
-    CodeBlock* codeBlock = this->codeBlock();
-    RELEASE_ASSERT(codeBlock->needsActivation());
-    VirtualRegister activationRegister = codeBlock->activationRegister();
-    return registers()[activationRegister.offset()].jsValue();
-}
-
 #ifndef NDEBUG
 JSStack* CallFrame::stack()
 {
@@ -206,28 +192,6 @@ CallFrame* CallFrame::callerFrame(VMEntryFrame*& currVMEntryFrame)
         return currVMEntryRecord->prevTopCallFrame();
     }
     return static_cast<CallFrame*>(callerFrameOrVMEntryFrame());
-}
-
-JSLexicalEnvironment* CallFrame::lexicalEnvironment() const
-{
-    CodeBlock* codeBlock = this->codeBlock();
-    RELEASE_ASSERT(codeBlock->needsActivation());
-    VirtualRegister activationRegister = codeBlock->activationRegister();
-    return registers()[activationRegister.offset()].Register::lexicalEnvironment();
-}
-
-JSLexicalEnvironment* CallFrame::lexicalEnvironmentOrNullptr() const
-{
-    CodeBlock* codeBlock = this->codeBlock();
-    return codeBlock->needsActivation() ? lexicalEnvironment() : nullptr;
-}
-    
-void CallFrame::setActivation(JSLexicalEnvironment* lexicalEnvironment)
-{
-    CodeBlock* codeBlock = this->codeBlock();
-    RELEASE_ASSERT(codeBlock->needsActivation());
-    VirtualRegister activationRegister = codeBlock->activationRegister();
-    registers()[activationRegister.offset()] = lexicalEnvironment;
 }
 
 String CallFrame::friendlyFunctionName()

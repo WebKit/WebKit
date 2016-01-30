@@ -89,11 +89,6 @@ inline JSLexicalEnvironment* asActivation(JSValue value)
     return jsCast<JSLexicalEnvironment*>(asObject(value));
 }
     
-ALWAYS_INLINE JSLexicalEnvironment* Register::lexicalEnvironment() const
-{
-    return asActivation(jsValue());
-}
-
 } // namespace JSC
 
 #endif // JSLexicalEnvironment_h

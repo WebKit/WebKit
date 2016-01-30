@@ -586,8 +586,6 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         static_cast<unsigned long>(instructions().size()),
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
         m_numParameters, m_numCalleeLocals, m_numVars);
-    if (needsActivation() && codeType() == FunctionCode)
-        out.printf("; lexical environment in r%d", activationRegister().offset());
     out.printf("\n");
     
     StubInfoMap stubInfos;
@@ -1750,7 +1748,6 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_hasBeenCompiledWithFTL(false)
     , m_isConstructor(other.m_isConstructor)
     , m_isStrictMode(other.m_isStrictMode)
-    , m_needsActivation(other.m_needsActivation)
     , m_codeType(other.m_codeType)
     , m_unlinkedCode(*other.m_vm, this, other.m_unlinkedCode.get())
     , m_hasDebuggerStatement(false)
@@ -1761,7 +1758,6 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_instructions(other.m_instructions)
     , m_thisRegister(other.m_thisRegister)
     , m_scopeRegister(other.m_scopeRegister)
-    , m_lexicalEnvironmentRegister(other.m_lexicalEnvironmentRegister)
     , m_hash(other.m_hash)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
@@ -1817,7 +1813,6 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_hasBeenCompiledWithFTL(false)
     , m_isConstructor(unlinkedCodeBlock->isConstructor())
     , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
-    , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
     , m_codeType(unlinkedCodeBlock->codeType())
     , m_unlinkedCode(m_globalObject->vm(), this, unlinkedCodeBlock)
     , m_hasDebuggerStatement(false)
@@ -1827,7 +1822,6 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_vm(unlinkedCodeBlock->vm())
     , m_thisRegister(unlinkedCodeBlock->thisRegister())
     , m_scopeRegister(unlinkedCodeBlock->scopeRegister())
-    , m_lexicalEnvironmentRegister(unlinkedCodeBlock->activationRegister())
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_firstLineColumnOffset(firstLineColumnOffset)
@@ -2334,7 +2328,6 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerE
     , m_hasBeenCompiledWithFTL(false)
     , m_isConstructor(false)
     , m_isStrictMode(false)
-    , m_needsActivation(false)
     , m_codeType(FunctionCode)
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)

@@ -60,7 +60,6 @@ namespace JSC {
         Register& operator=(JSObject*);
 
         int32_t i() const;
-        JSLexicalEnvironment* lexicalEnvironment() const;
         CallFrame* callFrame() const;
         CodeBlock* codeBlock() const;
         JSObject* object() const;

@@ -1338,7 +1338,6 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         dataLog("    Might inline function: ", mightInlineFunctionFor(codeBlock, kind), "\n");
         dataLog("    Might compile function: ", mightCompileFunctionFor(codeBlock, kind), "\n");
         dataLog("    Is supported for inlining: ", isSupportedForInlining(codeBlock), "\n");
-        dataLog("    Needs activation: ", codeBlock->ownerScriptExecutable()->needsActivation(), "\n");
         dataLog("    Is inlining candidate: ", codeBlock->ownerScriptExecutable()->isInliningCandidate(), "\n");
     }
     if (!canInline(capabilityLevel)) {
@@ -4909,7 +4908,6 @@ void ByteCodeParser::parseCodeBlock()
                 " ", inlineCallFrame()->directCaller);
         }
         dataLog(
-            ": needsActivation = ", codeBlock->needsActivation(),
             ", isStrictMode = ", codeBlock->ownerScriptExecutable()->isStrictMode(), "\n");
         codeBlock->baselineVersion()->dumpBytecode();
     }

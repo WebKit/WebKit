@@ -35,9 +35,8 @@ enum class DerivedContextType { None, DerivedConstructorContext, DerivedMethodCo
 // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
 // https://bugs.webkit.org/show_bug.cgi?id=151547
 struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, SuperBinding superBinding, SourceParseMode parseMode, DerivedContextType derivedContextType, bool isArrowFunctionContext, bool isClassContext)
-        : m_needsActivation(needsActivation)
-        , m_usesEval(usesEval)
+    ExecutableInfo(bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, SuperBinding superBinding, SourceParseMode parseMode, DerivedContextType derivedContextType, bool isArrowFunctionContext, bool isClassContext)
+        : m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
         , m_isConstructor(isConstructor)
         , m_isBuiltinFunction(isBuiltinFunction)
@@ -52,7 +51,6 @@ struct ExecutableInfo {
         ASSERT(m_superBinding == static_cast<unsigned>(superBinding));
     }
 
-    bool needsActivation() const { return m_needsActivation; }
     bool usesEval() const { return m_usesEval; }
     bool isStrictMode() const { return m_isStrictMode; }
     bool isConstructor() const { return m_isConstructor; }
@@ -65,7 +63,6 @@ struct ExecutableInfo {
     bool isClassContext() const { return m_isClassContext; }
 
 private:
-    unsigned m_needsActivation : 1;
     unsigned m_usesEval : 1;
     unsigned m_isStrictMode : 1;
     unsigned m_isConstructor : 1;

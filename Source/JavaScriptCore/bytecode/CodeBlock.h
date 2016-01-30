@@ -351,28 +351,6 @@ public:
     {
         return m_scopeRegister;
     }
-
-    void setActivationRegister(VirtualRegister activationRegister)
-    {
-        m_lexicalEnvironmentRegister = activationRegister;
-    }
-
-    VirtualRegister activationRegister() const
-    {
-        ASSERT(m_lexicalEnvironmentRegister.isValid());
-        return m_lexicalEnvironmentRegister;
-    }
-
-    VirtualRegister uncheckedActivationRegister()
-    {
-        return m_lexicalEnvironmentRegister;
-    }
-
-    bool needsActivation() const
-    {
-        ASSERT(m_lexicalEnvironmentRegister.isValid() == m_needsActivation);
-        return m_needsActivation;
-    }
     
     CodeType codeType() const
     {
@@ -898,7 +876,6 @@ public:
     bool m_hasBeenCompiledWithFTL : 1;
     bool m_isConstructor : 1;
     bool m_isStrictMode : 1;
-    bool m_needsActivation : 1;
     unsigned m_codeType : 2; // CodeType
 
     // Internal methods for use by validation code. It would be private if it wasn't
@@ -1039,7 +1016,6 @@ private:
     RefCountedArray<Instruction> m_instructions;
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
-    VirtualRegister m_lexicalEnvironmentRegister;
     mutable CodeBlockHash m_hash;
 
     RefPtr<SourceProvider> m_source;

@@ -34,7 +34,6 @@
 namespace JSC  {
 
     class Arguments;
-    class JSLexicalEnvironment;
     class Interpreter;
     class JSScope;
 
@@ -74,11 +73,6 @@ namespace JSC  {
             ASSERT(this[scopeRegisterOffset].Register::scope());
             return this[scopeRegisterOffset].Register::scope();
         }
-
-        bool hasActivation() const;
-        JSLexicalEnvironment* lexicalEnvironment() const;
-        JSLexicalEnvironment* lexicalEnvironmentOrNullptr() const;
-        JSValue uncheckedActivation() const;
 
         // Global object in which execution began.
         JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject();
@@ -164,7 +158,6 @@ namespace JSC  {
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
-        void setActivation(JSLexicalEnvironment*);
 
         ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC,
             CallFrame* callerFrame, int argc, JSObject* callee) 

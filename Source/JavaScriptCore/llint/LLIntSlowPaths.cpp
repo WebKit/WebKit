@@ -1031,7 +1031,6 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
 {
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
-    ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Creating function!\n");
@@ -1043,7 +1042,6 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func)
 {
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
-    ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Creating function!\n");

@@ -173,8 +173,6 @@ public:
             data->machineLocal = assign(allocation, data->local);
         }
         
-        // This register is never valid for DFG code blocks.
-        codeBlock()->setActivationRegister(VirtualRegister());
         if (LIKELY(!m_graph.hasDebuggerEnabled()))
             codeBlock()->setScopeRegister(VirtualRegister());
         else

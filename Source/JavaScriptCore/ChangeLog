@@ -1,3 +1,96 @@
+2016-01-29  Saam barati  <sbarati@apple.com>
+
+        Remove our notion of having a single activation register
+        https://bugs.webkit.org/show_bug.cgi?id=153673
+
+        Reviewed by Filip Pizlo.
+
+        We have many functions lurking around where we think a function 
+        might only have one activation register. This is clearly wrong
+        now that ES6 has block scoping. This patch removes this false notion.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::scopeRegister):
+        (JSC::CodeBlock::codeType):
+        (JSC::CodeBlock::setActivationRegister): Deleted.
+        (JSC::CodeBlock::activationRegister): Deleted.
+        (JSC::CodeBlock::uncheckedActivationRegister): Deleted.
+        (JSC::CodeBlock::needsActivation): Deleted.
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::usesEval):
+        (JSC::ExecutableInfo::isStrictMode):
+        (JSC::ExecutableInfo::isConstructor):
+        (JSC::ExecutableInfo::isClassContext):
+        (JSC::ExecutableInfo::needsActivation): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::isArrowFunctionContext):
+        (JSC::UnlinkedCodeBlock::isClassContext):
+        (JSC::UnlinkedCodeBlock::setThisRegister):
+        (JSC::UnlinkedCodeBlock::setScopeRegister):
+        (JSC::UnlinkedCodeBlock::usesGlobalObject):
+        (JSC::UnlinkedCodeBlock::setGlobalObjectRegister):
+        (JSC::UnlinkedCodeBlock::thisRegister):
+        (JSC::UnlinkedCodeBlock::scopeRegister):
+        (JSC::UnlinkedCodeBlock::addPropertyAccessInstruction):
+        (JSC::UnlinkedCodeBlock::needsFullScopeChain): Deleted.
+        (JSC::UnlinkedCodeBlock::setActivationRegister): Deleted.
+        (JSC::UnlinkedCodeBlock::activationRegister): Deleted.
+        (JSC::UnlinkedCodeBlock::hasActivationRegister): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeVarLexicalEnvironment):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::destinationForAssignResult):
+        (JSC::BytecodeGenerator::leftHandSideNeedsCopy):
+        (JSC::BytecodeGenerator::emitNodeForLeftHandSide):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::hasExitSite):
+        (JSC::DFG::Graph::activationRegister): Deleted.
+        (JSC::DFG::Graph::uncheckedActivationRegister): Deleted.
+        (JSC::DFG::Graph::machineActivationRegister): Deleted.
+        (JSC::DFG::Graph::uncheckedMachineActivationRegister): Deleted.
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callSiteIndex):
+        (JSC::CallFrame::stack):
+        (JSC::CallFrame::callerFrame):
+        (JSC::CallFrame::friendlyFunctionName):
+        (JSC::CallFrame::hasActivation): Deleted.
+        (JSC::CallFrame::uncheckedActivation): Deleted.
+        (JSC::CallFrame::lexicalEnvironment): Deleted.
+        (JSC::CallFrame::lexicalEnvironmentOrNullptr): Deleted.
+        (JSC::CallFrame::setActivation): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::scope):
+        (JSC::ExecState::setCallerFrame):
+        (JSC::ExecState::setScope):
+        (JSC::ExecState::init):
+        * interpreter/Register.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::usesEval):
+        (JSC::ScriptExecutable::usesArguments):
+        (JSC::ScriptExecutable::isArrowFunctionContext):
+        (JSC::ScriptExecutable::isStrictMode):
+        (JSC::ScriptExecutable::derivedContextType):
+        (JSC::ScriptExecutable::needsActivation): Deleted.
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::asActivation):
+        (JSC::Register::lexicalEnvironment): Deleted.
+
 2016-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         Air:fixObviousSpills should handle floats and doubles

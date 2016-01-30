@@ -398,26 +398,6 @@ public:
         return hasExitSite(node->origin.semantic, exitKind);
     }
     
-    VirtualRegister activationRegister()
-    {
-        return m_profiledBlock->activationRegister();
-    }
-    
-    VirtualRegister uncheckedActivationRegister()
-    {
-        return m_profiledBlock->uncheckedActivationRegister();
-    }
-    
-    VirtualRegister machineActivationRegister()
-    {
-        return m_profiledBlock->activationRegister();
-    }
-    
-    VirtualRegister uncheckedMachineActivationRegister()
-    {
-        return m_profiledBlock->uncheckedActivationRegister();
-    }
-    
     ValueProfile* valueProfileFor(Node*);
     MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(Node*);
     

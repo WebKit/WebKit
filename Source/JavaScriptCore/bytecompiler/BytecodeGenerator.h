@@ -354,7 +354,7 @@ namespace JSC {
 
         RegisterID* destinationForAssignResult(RegisterID* dst)
         {
-            if (dst && dst != ignoredResult() && m_codeBlock->needsFullScopeChain())
+            if (dst && dst != ignoredResult())
                 return dst->isTemporary() ? dst : newTemporary();
             return 0;
         }
@@ -465,7 +465,7 @@ namespace JSC {
 
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
         {
-            return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain() || rightHasAssignments) && !rightIsPure;
+            return (m_codeType != FunctionCode || rightHasAssignments) && !rightIsPure;
         }
 
         ALWAYS_INLINE PassRefPtr<RegisterID> emitNodeForLeftHandSide(ExpressionNode* n, bool rightHasAssignments, bool rightIsPure)
