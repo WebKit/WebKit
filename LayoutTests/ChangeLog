@@ -1,5 +1,14 @@
 2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark fast/text/fallback-language-han-2.html as failing on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=152438
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking two WPT dom-tree-accessors/document.getElementsByName tests as failing on ios-simulator.
         https://bugs.webkit.org/show_bug.cgi?id=153370
 
