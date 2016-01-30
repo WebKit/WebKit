@@ -684,8 +684,9 @@ sub InterfaceRequiresAttributesOnInstance
 sub ConstructorShouldBeOnInstance
 {
     my $interface = shift;
+
     return 1 if $interface->extendedAttributes->{"CheckSecurity"};
-    return HasComplexGetOwnProperty($interface);
+    return 0;
 }
 
 sub AttributeShouldBeOnInstanceForCompatibility

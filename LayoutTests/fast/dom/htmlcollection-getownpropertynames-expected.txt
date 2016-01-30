@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 * Own properties
-Actual:   ['0', '1', '2', '3', '4', '5', '6', '7', 'some-id', 'some-name', 'another-id', 'another-name', 'constructor', 'length']
+Actual:   ['0', '1', '2', '3', '4', '5', '6', '7', 'some-id', 'some-name', 'another-id', 'another-name', 'length']
 Expected: ['0', '1', '2', '3', '4', '5', '6', '7', 'some-id', 'some-name', 'another-id', 'another-name']
 
 * Enumerated properties

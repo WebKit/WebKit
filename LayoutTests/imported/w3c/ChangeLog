@@ -1,3 +1,20 @@
+2016-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Move more 'constructor' properties to the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=153667
+
+        Reviewed by Darin Adler.
+
+        Rebaseline several W3C tests now that more checks are passing. A lot of
+        the 'constructor' attributes checks are still failing because the
+        attribute is not writable. This is being addressed via Bug 149412.
+
+        * web-platform-tests/dom/collections/HTMLCollection-supported-property-names-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.forms-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-01-28  Chris Dumez  <cdumez@apple.com>
 
         Move attributes to the prototype for List types / and types with indexed/named property getters

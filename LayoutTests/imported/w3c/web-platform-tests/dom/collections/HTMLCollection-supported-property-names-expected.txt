@@ -1,5 +1,5 @@
 
-FAIL Object.getOwnPropertyNames on HTMLCollection assert_array_equals: lengths differ, expected 12 got 14
-FAIL Object.getOwnPropertyNames on HTMLCollection with non-HTML namespace assert_array_equals: lengths differ, expected 1 got 3
-FAIL Object.getOwnPropertyNames on HTMLCollection with expando object assert_array_equals: lengths differ, expected 2 got 4
+FAIL Object.getOwnPropertyNames on HTMLCollection assert_array_equals: lengths differ, expected 12 got 13
+FAIL Object.getOwnPropertyNames on HTMLCollection with non-HTML namespace assert_array_equals: lengths differ, expected 1 got 2
+FAIL Object.getOwnPropertyNames on HTMLCollection with expando object assert_array_equals: lengths differ, expected 2 got 3
 

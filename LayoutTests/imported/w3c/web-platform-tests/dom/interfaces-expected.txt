@@ -121,7 +121,7 @@ FAIL NodeList interface: existence and properties of interface object assert_equ
 PASS NodeList interface object length 
 PASS NodeList interface object name 
 PASS NodeList interface: existence and properties of interface prototype object 
-FAIL NodeList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: NodeList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL NodeList interface: existence and properties of interface prototype object's "constructor" property assert_true: NodeList.prototype.constructor is not writable expected true got false
 PASS NodeList interface: operation item(unsigned long) 
 FAIL NodeList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS NodeList must be primary interface of document.querySelectorAll("script") 
@@ -133,7 +133,7 @@ FAIL HTMLCollection interface: existence and properties of interface object asse
 PASS HTMLCollection interface object length 
 PASS HTMLCollection interface object name 
 PASS HTMLCollection interface: existence and properties of interface prototype object 
-FAIL HTMLCollection interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLCollection.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLCollection interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLCollection.prototype.constructor is not writable expected true got false
 FAIL HTMLCollection interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL HTMLCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLCollection interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -927,7 +927,7 @@ FAIL NamedNodeMap interface: existence and properties of interface object assert
 PASS NamedNodeMap interface object length 
 PASS NamedNodeMap interface object name 
 PASS NamedNodeMap interface: existence and properties of interface prototype object 
-FAIL NamedNodeMap interface: existence and properties of interface prototype object's "constructor" property assert_own_property: NamedNodeMap.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL NamedNodeMap interface: existence and properties of interface prototype object's "constructor" property assert_true: NamedNodeMap.prototype.constructor is not writable expected true got false
 FAIL NamedNodeMap interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL NamedNodeMap interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL NamedNodeMap interface: operation getNamedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -1550,7 +1550,7 @@ FAIL DOMTokenList interface: existence and properties of interface object assert
 PASS DOMTokenList interface object length 
 PASS DOMTokenList interface object name 
 PASS DOMTokenList interface: existence and properties of interface prototype object 
-FAIL DOMTokenList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: DOMTokenList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL DOMTokenList interface: existence and properties of interface prototype object's "constructor" property assert_true: DOMTokenList.prototype.constructor is not writable expected true got false
 FAIL DOMTokenList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS DOMTokenList interface: operation item(unsigned long) 
 PASS DOMTokenList interface: operation contains(DOMString) 
@@ -1575,6 +1575,6 @@ FAIL DOMSettableTokenList interface: existence and properties of interface objec
 PASS DOMSettableTokenList interface object length 
 PASS DOMSettableTokenList interface object name 
 PASS DOMSettableTokenList interface: existence and properties of interface prototype object 
-FAIL DOMSettableTokenList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: DOMSettableTokenList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL DOMSettableTokenList interface: existence and properties of interface prototype object's "constructor" property assert_true: DOMSettableTokenList.prototype.constructor is not writable expected true got false
 FAIL DOMSettableTokenList interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 

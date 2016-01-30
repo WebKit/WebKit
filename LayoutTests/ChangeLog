@@ -1,3 +1,16 @@
+2016-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Move more 'constructor' properties to the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=153667
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a couple of tests now that 'constructor' is on the prototype
+        for more interfaces.
+
+        * fast/dom/htmlcollection-getownpropertynames-expected.txt:
+        * storage/domstorage/localstorage/delete-defineproperty-removal-expected.txt:
+
 2016-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         TouchList should be retargeted

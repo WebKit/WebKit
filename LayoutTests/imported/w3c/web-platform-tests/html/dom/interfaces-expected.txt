@@ -755,7 +755,7 @@ FAIL HTMLAllCollection interface: existence and properties of interface object a
 PASS HTMLAllCollection interface object length 
 PASS HTMLAllCollection interface object name 
 FAIL HTMLAllCollection interface: existence and properties of interface prototype object assert_equals: prototype of HTMLAllCollection.prototype is not HTMLCollection.prototype expected object "[object HTMLCollectionPrototype]" but got object "[object Object]"
-FAIL HTMLAllCollection interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLAllCollection.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLAllCollection interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAllCollection.prototype.constructor is not writable expected true got false
 FAIL HTMLAllCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLAllCollection interface: operation item(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS HTMLAllCollection interface: operation namedItem(DOMString) 
@@ -776,7 +776,7 @@ FAIL HTMLFormControlsCollection interface: existence and properties of interface
 PASS HTMLFormControlsCollection interface object length 
 PASS HTMLFormControlsCollection interface object name 
 PASS HTMLFormControlsCollection interface: existence and properties of interface prototype object 
-FAIL HTMLFormControlsCollection interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLFormControlsCollection.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLFormControlsCollection interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFormControlsCollection.prototype.constructor is not writable expected true got false
 FAIL HTMLFormControlsCollection interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLFormControlsCollection must be primary interface of document.createElement("form").elements assert_equals: wrong typeof object expected "function" but got "object"
 FAIL Stringification of document.createElement("form").elements assert_equals: wrong typeof object expected "function" but got "object"
@@ -791,13 +791,13 @@ FAIL RadioNodeList interface: existence and properties of interface object asser
 PASS RadioNodeList interface object length 
 PASS RadioNodeList interface object name 
 PASS RadioNodeList interface: existence and properties of interface prototype object 
-FAIL RadioNodeList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: RadioNodeList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL RadioNodeList interface: existence and properties of interface prototype object's "constructor" property assert_true: RadioNodeList.prototype.constructor is not writable expected true got false
 FAIL RadioNodeList interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOptionsCollection interface: existence and properties of interface object assert_equals: class string of HTMLOptionsCollection expected "[object Function]" but got "[object HTMLOptionsCollectionConstructor]"
 PASS HTMLOptionsCollection interface object length 
 PASS HTMLOptionsCollection interface object name 
 PASS HTMLOptionsCollection interface: existence and properties of interface prototype object 
-FAIL HTMLOptionsCollection interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLOptionsCollection.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLOptionsCollection interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOptionsCollection.prototype.constructor is not writable expected true got false
 FAIL HTMLOptionsCollection interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS HTMLOptionsCollection interface: operation add([object Object],[object Object],[object Object],[object Object]) 
 FAIL HTMLOptionsCollection interface: operation remove(long) assert_equals: property has wrong .length expected 1 but got 0
@@ -842,7 +842,7 @@ FAIL DOMStringMap interface: existence and properties of interface object assert
 PASS DOMStringMap interface object length 
 PASS DOMStringMap interface object name 
 PASS DOMStringMap interface: existence and properties of interface prototype object 
-FAIL DOMStringMap interface: existence and properties of interface prototype object's "constructor" property assert_own_property: DOMStringMap.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL DOMStringMap interface: existence and properties of interface prototype object's "constructor" property assert_true: DOMStringMap.prototype.constructor is not writable expected true got false
 PASS DOMStringMap must be primary interface of document.head.dataset 
 PASS Stringification of document.head.dataset 
 FAIL DOMElementMap interface: existence and properties of interface object assert_own_property: self does not have own property "DOMElementMap" expected property "DOMElementMap" missing
@@ -1794,7 +1794,7 @@ FAIL HTMLEmbedElement interface: existence and properties of interface object as
 PASS HTMLEmbedElement interface object length 
 PASS HTMLEmbedElement interface object name 
 PASS HTMLEmbedElement interface: existence and properties of interface prototype object 
-FAIL HTMLEmbedElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLEmbedElement.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLEmbedElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLEmbedElement.prototype.constructor is not writable expected true got false
 FAIL HTMLEmbedElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLEmbedElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLEmbedElement interface: attribute width assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1815,7 +1815,7 @@ FAIL HTMLObjectElement interface: existence and properties of interface object a
 PASS HTMLObjectElement interface object length 
 PASS HTMLObjectElement interface object name 
 PASS HTMLObjectElement interface: existence and properties of interface prototype object 
-FAIL HTMLObjectElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLObjectElement.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLObjectElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLObjectElement.prototype.constructor is not writable expected true got false
 FAIL HTMLObjectElement interface: attribute data assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLObjectElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLObjectElement interface: attribute typeMustMatch assert_true: The prototype object must have a property "typeMustMatch" expected true got false
@@ -2308,7 +2308,7 @@ FAIL TextTrackList interface: existence and properties of interface object asser
 PASS TextTrackList interface object length 
 PASS TextTrackList interface object name 
 FAIL TextTrackList interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackList.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL TextTrackList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: TextTrackList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL TextTrackList interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrackList.prototype.constructor is not writable expected true got false
 FAIL TextTrackList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS TextTrackList interface: operation getTrackById(DOMString) 
 FAIL TextTrackList interface: attribute onchange assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2377,7 +2377,7 @@ FAIL TextTrackCueList interface: existence and properties of interface object as
 PASS TextTrackCueList interface object length 
 PASS TextTrackCueList interface object name 
 PASS TextTrackCueList interface: existence and properties of interface prototype object 
-FAIL TextTrackCueList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: TextTrackCueList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL TextTrackCueList interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrackCueList.prototype.constructor is not writable expected true got false
 FAIL TextTrackCueList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS TextTrackCueList interface: operation getCueById(DOMString) 
 PASS TextTrackCueList must be primary interface of document.createElement("video").addTextTrack("subtitles").cues 
@@ -2750,7 +2750,7 @@ FAIL HTMLFormElement interface: existence and properties of interface object ass
 PASS HTMLFormElement interface object length 
 PASS HTMLFormElement interface object name 
 PASS HTMLFormElement interface: existence and properties of interface prototype object 
-FAIL HTMLFormElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLFormElement.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLFormElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFormElement.prototype.constructor is not writable expected true got false
 FAIL HTMLFormElement interface: attribute acceptCharset assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFormElement interface: attribute action assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFormElement interface: attribute autocomplete assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2979,7 +2979,7 @@ FAIL HTMLSelectElement interface: existence and properties of interface object a
 PASS HTMLSelectElement interface object length 
 PASS HTMLSelectElement interface object name 
 PASS HTMLSelectElement interface: existence and properties of interface prototype object 
-FAIL HTMLSelectElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLSelectElement.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLSelectElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLSelectElement.prototype.constructor is not writable expected true got false
 FAIL HTMLSelectElement interface: attribute autocomplete assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLSelectElement interface: attribute autofocus assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLSelectElement interface: attribute disabled assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4078,7 +4078,7 @@ FAIL History interface: existence and properties of interface object assert_equa
 PASS History interface object length 
 PASS History interface object name 
 PASS History interface: existence and properties of interface prototype object 
-FAIL History interface: existence and properties of interface prototype object's "constructor" property assert_own_property: History.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL History interface: existence and properties of interface prototype object's "constructor" property assert_true: History.prototype.constructor is not writable expected true got false
 FAIL History interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL History interface: attribute state assert_true: The prototype object must have a property "state" expected true got false
 PASS History interface: operation go(long) 
@@ -4106,7 +4106,7 @@ FAIL Location interface: existence and properties of interface object assert_equ
 PASS Location interface object length 
 PASS Location interface object name 
 PASS Location interface: existence and properties of interface prototype object 
-FAIL Location interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Location.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL Location interface: existence and properties of interface prototype object's "constructor" property assert_true: Location.prototype.constructor is not writable expected true got false
 PASS Location must be primary interface of window.location 
 PASS Stringification of window.location 
 FAIL Location interface: window.location must have own property "href" assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4302,7 +4302,7 @@ FAIL PluginArray interface: existence and properties of interface object assert_
 PASS PluginArray interface object length 
 PASS PluginArray interface object name 
 PASS PluginArray interface: existence and properties of interface prototype object 
-FAIL PluginArray interface: existence and properties of interface prototype object's "constructor" property assert_own_property: PluginArray.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL PluginArray interface: existence and properties of interface prototype object's "constructor" property assert_true: PluginArray.prototype.constructor is not writable expected true got false
 PASS PluginArray interface: operation refresh(boolean) 
 FAIL PluginArray interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL PluginArray interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
@@ -4311,7 +4311,7 @@ FAIL MimeTypeArray interface: existence and properties of interface object asser
 PASS MimeTypeArray interface object length 
 PASS MimeTypeArray interface object name 
 PASS MimeTypeArray interface: existence and properties of interface prototype object 
-FAIL MimeTypeArray interface: existence and properties of interface prototype object's "constructor" property assert_own_property: MimeTypeArray.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL MimeTypeArray interface: existence and properties of interface prototype object's "constructor" property assert_true: MimeTypeArray.prototype.constructor is not writable expected true got false
 FAIL MimeTypeArray interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL MimeTypeArray interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL MimeTypeArray interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -4319,7 +4319,7 @@ FAIL Plugin interface: existence and properties of interface object assert_equal
 PASS Plugin interface object length 
 PASS Plugin interface object name 
 PASS Plugin interface: existence and properties of interface prototype object 
-FAIL Plugin interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Plugin.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL Plugin interface: existence and properties of interface prototype object's "constructor" property assert_true: Plugin.prototype.constructor is not writable expected true got false
 FAIL Plugin interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Plugin interface: attribute description assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Plugin interface: attribute filename assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4541,7 +4541,7 @@ FAIL Storage interface: existence and properties of interface object assert_equa
 PASS Storage interface object length 
 PASS Storage interface object name 
 PASS Storage interface: existence and properties of interface prototype object 
-FAIL Storage interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Storage.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL Storage interface: existence and properties of interface prototype object's "constructor" property assert_true: Storage.prototype.constructor is not writable expected true got false
 FAIL Storage interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS Storage interface: operation key(unsigned long) 
 PASS Storage interface: operation getItem(DOMString) 
@@ -4562,7 +4562,7 @@ FAIL HTMLAppletElement interface: existence and properties of interface object a
 PASS HTMLAppletElement interface object length 
 PASS HTMLAppletElement interface object name 
 PASS HTMLAppletElement interface: existence and properties of interface prototype object 
-FAIL HTMLAppletElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLAppletElement.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLAppletElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAppletElement.prototype.constructor is not writable expected true got false
 FAIL HTMLAppletElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLAppletElement interface: attribute alt assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLAppletElement interface: attribute archive assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4630,7 +4630,7 @@ FAIL HTMLFrameSetElement interface: existence and properties of interface object
 PASS HTMLFrameSetElement interface object length 
 PASS HTMLFrameSetElement interface object name 
 PASS HTMLFrameSetElement interface: existence and properties of interface prototype object 
-FAIL HTMLFrameSetElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLFrameSetElement.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL HTMLFrameSetElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFrameSetElement.prototype.constructor is not writable expected true got false
 FAIL HTMLFrameSetElement interface: attribute cols assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFrameSetElement interface: attribute rows assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFrameSetElement interface: attribute onafterprint assert_true: The prototype object must have a property "onafterprint" expected true got false
