@@ -79,7 +79,7 @@ public:
     JSString* nameValue() const { return m_nameValue.get(); }
     void setNameValue(VM& vm, JSString* nameValue) { m_nameValue.set(vm, this, nameValue); }
     unsigned parameterCount() const { return m_parameterCount; };
-    SourceParseMode parseMode() const { return m_parseMode; };
+    SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
     bool isInStrictContext() const { return m_isInStrictContext; }
     FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
@@ -128,21 +128,13 @@ public:
     bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }
     const VariableEnvironment* parentScopeTDZVariables() const { return &m_parentScopeTDZVariables; }
     
-    bool isArrowFunction() const { return m_parseMode == SourceParseMode::ArrowFunctionMode; }
+    bool isArrowFunction() const { return parseMode() == SourceParseMode::ArrowFunctionMode; }
 
     JSC::DerivedContextType derivedContextType() const {return static_cast<JSC::DerivedContextType>(m_derivedContextType); }
     
 private:
     UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, VariableEnvironment&,  JSC::DerivedContextType);
 
-    WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
-    WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
-
-    Identifier m_name;
-    Identifier m_inferredName;
-    WriteBarrier<JSString> m_nameValue;
-    RefPtr<SourceProvider> m_sourceOverride;
-    VariableEnvironment m_parentScopeTDZVariables;
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
     unsigned m_unlinkedFunctionNameStart;
@@ -154,10 +146,7 @@ private:
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount;
-    SourceParseMode m_parseMode;
-
     CodeFeatures m_features;
-
     unsigned m_isInStrictContext : 1;
     unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;
@@ -166,6 +155,17 @@ private:
     unsigned m_functionMode : 1; // FunctionMode
     unsigned m_superBinding : 1;
     unsigned m_derivedContextType: 2;
+    unsigned m_sourceParseMode : 4; // SourceParseMode
+
+    WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
+    WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
+
+    Identifier m_name;
+    Identifier m_inferredName;
+    WriteBarrier<JSString> m_nameValue;
+    RefPtr<SourceProvider> m_sourceOverride;
+
+    VariableEnvironment m_parentScopeTDZVariables;
 
 protected:
     void finishCreation(VM& vm)

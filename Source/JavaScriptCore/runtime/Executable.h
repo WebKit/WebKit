@@ -350,7 +350,7 @@ public:
     bool usesArguments() const { return m_features & ArgumentsFeature; }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
     bool isStrictMode() const { return m_features & StrictModeFeature; }
-    DerivedContextType derivedContextType() const { return m_derivedContextType; }
+    DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
 
     ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
         
@@ -413,14 +413,14 @@ protected:
 #endif
     }
 
-    SourceCode m_source;
     CodeFeatures m_features;
-    bool m_hasCapturedVariables;
-    bool m_neverInline;
-    bool m_neverOptimize { false };
     bool m_didTryToEnterInLoop;
-    DerivedContextType m_derivedContextType;
-    bool m_isArrowFunctionContext;
+    bool m_hasCapturedVariables : 1;
+    bool m_neverInline : 1;
+    bool m_neverOptimize : 1;
+    bool m_isArrowFunctionContext : 1;
+    unsigned m_derivedContextType : 2; // DerivedContextType
+
     int m_overrideLineNumber;
     int m_firstLine;
     int m_lastLine;
@@ -428,6 +428,7 @@ protected:
     unsigned m_endColumn;
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
+    SourceCode m_source;
 };
 
 class EvalExecutable final : public ScriptExecutable {
@@ -699,11 +700,11 @@ private:
 
     friend class ScriptExecutable;
     
+    unsigned m_parametersStartOffset;
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
     WriteBarrier<FunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<FunctionCodeBlock> m_codeBlockForConstruct;
     RefPtr<TypeSet> m_returnStatementTypeSet;
-    unsigned m_parametersStartOffset;
     WriteBarrier<InferredValue> m_singletonFunction;
 };
 

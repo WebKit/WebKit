@@ -133,13 +133,13 @@ const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase
 
 ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext)
     : ExecutableBase(vm, structure, NUM_PARAMETERS_NOT_COMPILED)
-    , m_source(source)
     , m_features(isInStrictContext ? StrictModeFeature : 0)
+    , m_didTryToEnterInLoop(false)
     , m_hasCapturedVariables(false)
     , m_neverInline(false)
-    , m_didTryToEnterInLoop(false)
-    , m_derivedContextType(derivedContextType)
+    , m_neverOptimize(false)
     , m_isArrowFunctionContext(isInArrowFunctionContext)
+    , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_overrideLineNumber(-1)
     , m_firstLine(-1)
     , m_lastLine(-1)
@@ -147,6 +147,7 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_endColumn(UINT_MAX)
     , m_typeProfilingStartOffset(UINT_MAX)
     , m_typeProfilingEndOffset(UINT_MAX)
+    , m_source(source)
 {
 }
 

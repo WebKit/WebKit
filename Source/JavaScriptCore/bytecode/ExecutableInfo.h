@@ -30,7 +30,7 @@
 
 namespace JSC {
     
-enum class DerivedContextType { None, DerivedConstructorContext, DerivedMethodContext };
+enum class DerivedContextType : uint8_t { None, DerivedConstructorContext, DerivedMethodContext };
 
 // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
 // https://bugs.webkit.org/show_bug.cgi?id=151547

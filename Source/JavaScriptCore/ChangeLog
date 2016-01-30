@@ -1,5 +1,31 @@
 2016-01-29  Saam barati  <sbarati@apple.com>
 
+        Pack FunctionExecutable and UnlinkedFunctionExecutable harder
+        https://bugs.webkit.org/show_bug.cgi?id=153687
+
+        Reviewed by Andreas Kling.
+
+        This patch reduces FunctionExecutable from 120 to 104 bytes.
+        This patch reduces UnlinkedFunctionExecutable from 144 to 136 bytes.
+
+        * bytecode/ExecutableInfo.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/ParserModes.h:
+        (JSC::functionNameScopeIsDynamic):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::needsActivation):
+        (JSC::ScriptExecutable::isArrowFunctionContext):
+        (JSC::ScriptExecutable::isStrictMode):
+        (JSC::ScriptExecutable::derivedContextType):
+        (JSC::ScriptExecutable::ecmaMode):
+        (JSC::ScriptExecutable::finishCreation):
+
+2016-01-29  Saam barati  <sbarati@apple.com>
+
         JSC Sampling Profiler: Come up with a (program counter => CodeOrigin) mapping
         https://bugs.webkit.org/show_bug.cgi?id=152629
 

@@ -44,7 +44,7 @@ enum DebuggerMode { DebuggerOff, DebuggerOn };
 
 enum FunctionMode { FunctionExpression, FunctionDeclaration };
 
-enum class SourceParseMode {
+enum class SourceParseMode : uint8_t {
     NormalFunctionMode,
     GeneratorBodyMode,
     GeneratorWrapperFunctionMode,
@@ -145,7 +145,7 @@ inline bool functionNameScopeIsDynamic(bool usesEval, bool isStrictMode)
     return true;
 }
 
-typedef unsigned CodeFeatures;
+typedef uint16_t CodeFeatures;
 
 const CodeFeatures NoFeatures =                       0;
 const CodeFeatures EvalFeature =                 1 << 0;

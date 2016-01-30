@@ -80,9 +80,6 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
 UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, VariableEnvironment& parentScopeTDZVariables, DerivedContextType derivedContextType)
     : Base(*vm, structure)
-    , m_name(node->ident())
-    , m_inferredName(node->inferredName())
-    , m_sourceOverride(WTFMove(sourceOverride))
     , m_firstLineOffset(node->firstLine() - source.firstLine())
     , m_lineCount(node->lastLine() - node->firstLine())
     , m_unlinkedFunctionNameStart(node->functionNameStart() - source.startOffset())
@@ -94,7 +91,6 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_typeProfilingStartOffset(node->functionKeywordStart())
     , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
     , m_parameterCount(node->parameterCount())
-    , m_parseMode(node->parseMode())
     , m_features(0)
     , m_isInStrictContext(node->isInStrictContext())
     , m_hasCapturedVariables(false)
@@ -104,6 +100,10 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_functionMode(node->functionMode())
     , m_superBinding(static_cast<unsigned>(node->superBinding()))
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
+    , m_sourceParseMode(static_cast<unsigned>(node->parseMode()))
+    , m_name(node->ident())
+    , m_inferredName(node->inferredName())
+    , m_sourceOverride(WTFMove(sourceOverride))
 {
     ASSERT(m_constructorKind == static_cast<unsigned>(node->constructorKind()));
     m_parentScopeTDZVariables.swap(parentScopeTDZVariables);
