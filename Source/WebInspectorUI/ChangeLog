@@ -1,5 +1,17 @@
 2016-01-29  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Object previews in the Console are misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=153676
+        <rdar://problem/24418796>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree .tree-outline.object.compact):
+        (.object-tree): Deleted.
+
+2016-01-29  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Provide a way to clear the network panel
         https://bugs.webkit.org/show_bug.cgi?id=153632
         <rdar://problem/23317773>
