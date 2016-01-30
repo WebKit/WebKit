@@ -1,3 +1,38 @@
+2016-01-29  Keith Miller  <keith_miller@apple.com>
+
+        Array.prototype native functions should use Symbol.species to construct the result
+        https://bugs.webkit.org/show_bug.cgi?id=153660
+
+        Reviewed by Saam Barati.
+
+        This patch adds support for Symbol.species in the Array.prototype native functions.
+        We make an optimization to avoid regressions on some benchmarks by using an
+        adaptive watchpoint to check if Array.prototype.constructor is ever changed.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::putLength):
+        (JSC::setLength):
+        (JSC::speciesConstructArray):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::ArrayPrototype::setConstructor):
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::ArrayPrototypeAdaptiveInferredPropertyWatchpoint):
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::didChangeConstructorProperty):
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        * runtime/ConstructData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * tests/es6.yaml:
+        * tests/stress/array-species-functions.js: Added.
+        (Symbol.species):
+        (funcThrows):
+        (test.species):
+        (test):
+
 2016-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         CallLinkStatus should trust BadCell exit sites whenever there is no stub

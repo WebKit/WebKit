@@ -24,6 +24,8 @@
 #include "config.h"
 #include "ArrayPrototype.h"
 
+#include "AdaptiveInferredPropertyValueWatchpointBase.h"
+#include "ArrayConstructor.h"
 #include "BuiltinNames.h"
 #include "ButterflyInlines.h"
 #include "CachedCall.h"
@@ -155,10 +157,62 @@ static ALWAYS_INLINE unsigned getLength(ExecState* exec, JSObject* obj)
     return obj->get(exec, exec->propertyNames().length).toUInt32(exec);
 }
 
-static void putLength(ExecState* exec, JSObject* obj, JSValue value)
+static ALWAYS_INLINE void putLength(ExecState* exec, JSObject* obj, JSValue value)
 {
     PutPropertySlot slot(obj);
     obj->methodTable()->put(obj, exec, exec->propertyNames().length, value, slot);
+}
+
+static ALWAYS_INLINE void setLength(ExecState* exec, JSObject* obj, unsigned value)
+{
+    if (isJSArray(obj))
+        jsCast<JSArray*>(obj)->setLength(exec, value);
+    putLength(exec, obj, jsNumber(value));
+}
+
+enum class SpeciesConstructResult {
+    FastPath,
+    Exception,
+    CreatedObject
+};
+
+static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray(ExecState* exec, JSObject* thisObject, unsigned length)
+{
+    // ECMA 9.4.2.3: https://tc39.github.io/ecma262/#sec-arrayspeciescreate
+    JSValue constructor = jsUndefined();
+    if (LIKELY(isJSArray(thisObject))) {
+        // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
+        // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
+        if (LIKELY(!thisObject->hasCustomProperties()
+            && thisObject->globalObject()->arrayPrototype() == thisObject->prototype()
+            && !thisObject->globalObject()->arrayPrototype()->didChangeConstructorProperty()))
+            return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+
+        constructor = thisObject->get(exec, exec->propertyNames().constructor);
+        if (exec->hadException())
+            return std::make_pair(SpeciesConstructResult::Exception, nullptr);
+        if (constructor.isConstructor()) {
+            JSObject* constructorObject = jsCast<JSObject*>(constructor);
+            if (exec->lexicalGlobalObject() != constructorObject->globalObject())
+                return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
+        }
+        if (constructor.isObject()) {
+            constructor = constructor.get(exec, exec->propertyNames().speciesSymbol);
+            if (exec->hadException())
+                return std::make_pair(SpeciesConstructResult::Exception, nullptr);
+            if (constructor.isNull())
+                return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
+        }
+    }
+    if (constructor.isUndefined())
+        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
+
+    MarkedArgumentBuffer args;
+    args.append(jsNumber(length));
+    JSObject* newObject = construct(exec, constructor, args, "Species construction did not get a valid constructor");
+    if (exec->hadException())
+        return std::make_pair(SpeciesConstructResult::Exception, nullptr);
+    return std::make_pair(SpeciesConstructResult::CreatedObject, newObject);
 }
 
 static inline unsigned argumentClampedIndexFromStartOrEnd(ExecState* exec, int argument, unsigned length, unsigned undefinedValue = 0)
@@ -532,6 +586,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     JSValue curArg = thisValue.toObject(exec);
     Checked<unsigned, RecordOverflow> finalArraySize = 0;
 
+    // We need to do species construction before geting the rest of the elements.
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, curArg.getObject(), 0);
+    if (speciesResult.first == SpeciesConstructResult::Exception)
+        return JSValue::encode(jsUndefined());
+
     JSArray* currentArray = nullptr;
     JSArray* previousArray = nullptr;
     for (unsigned i = 0; ; ++i) {
@@ -552,15 +611,21 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     if (finalArraySize.hasOverflowed())
         return JSValue::encode(throwOutOfMemoryError(exec));
 
-    if (argCount == 1 && previousArray && currentArray && finalArraySize.unsafeGet() < MIN_SPARSE_ARRAY_INDEX) {
+    if (speciesResult.first == SpeciesConstructResult::FastPath && argCount == 1 && previousArray && currentArray && finalArraySize.unsafeGet() < MIN_SPARSE_ARRAY_INDEX) {
         IndexingType type = JSArray::fastConcatType(exec->vm(), *previousArray, *currentArray);
         if (type != NonArray)
             return previousArray->fastConcatWith(*exec, *currentArray);
     }
 
-    JSArray* arr = constructEmptyArray(exec, nullptr, finalArraySize.unsafeGet());
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+    ASSERT(speciesResult.first != SpeciesConstructResult::Exception);
+
+    JSObject* result;
+    if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+        result = speciesResult.second;
+    else {
+        // We add the newTarget because the compiler gets confused between 0 being a number and a pointer.
+        result = constructEmptyArray(exec, nullptr, 0, JSValue());
+    }
 
     curArg = thisValue.toObject(exec);
     unsigned n = 0;
@@ -575,19 +640,19 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
                 if (exec->hadException())
                     return JSValue::encode(jsUndefined());
                 if (v)
-                    arr->putDirectIndex(exec, n, v);
+                    result->putDirectIndex(exec, n, v);
                 n++;
             }
         } else {
-            arr->putDirectIndex(exec, n, curArg);
+            result->putDirectIndex(exec, n, curArg);
             n++;
         }
         if (i == argCount)
             break;
         curArg = exec->uncheckedArgument(i);
     }
-    arr->setLength(exec, n);
-    return JSValue::encode(arr);
+    setLength(exec, result, n);
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
@@ -757,12 +822,21 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, length, length);
 
-    if (isJSArray(thisObj)) {
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, end - begin);
+    // We can only get an exception if we call some user function.
+    if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
+        return JSValue::encode(jsUndefined());
+
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj))) {
         if (JSArray* result = asArray(thisObj)->fastSlice(*exec, begin, end - begin))
             return JSValue::encode(result);
     }
 
-    JSArray* result = constructEmptyArray(exec, nullptr, end - begin);
+    JSObject* result;
+    if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+        result = speciesResult.second;
+    else
+        result = constructEmptyArray(exec, nullptr, end - begin);
 
     unsigned n = 0;
     for (unsigned k = begin; k < end; k++, n++) {
@@ -772,7 +846,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         if (v)
             result->putDirectIndex(exec, n, v);
     }
-    result->setLength(exec, n);
+    setLength(exec, result, n);
     return JSValue::encode(result);
 }
 
@@ -786,9 +860,21 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    
-    if (!exec->argumentCount())
-        return JSValue::encode(constructEmptyArray(exec, nullptr));
+
+    if (!exec->argumentCount()) {
+        std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, 0);
+        if (speciesResult.first == SpeciesConstructResult::Exception)
+            return JSValue::encode(jsUndefined());
+
+        JSObject* result;
+        if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+            result = speciesResult.second;
+        else
+            result = constructEmptyArray(exec, nullptr);
+
+        setLength(exec, result, 0);
+        return JSValue::encode(result);
+    }
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
 
@@ -803,15 +889,22 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             deleteCount = static_cast<unsigned>(deleteDouble);
     }
 
-    JSArray* result = nullptr;
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, deleteCount);
+    if (speciesResult.first == SpeciesConstructResult::Exception)
+        return JSValue::encode(jsUndefined());
 
-    if (isJSArray(thisObj))
+    JSObject* result = nullptr;
+    if (speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj))
         result = asArray(thisObj)->fastSlice(*exec, begin, deleteCount);
 
     if (!result) {
-        result = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
-        if (!result)
-            return JSValue::encode(throwOutOfMemoryError(exec));
+        if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+            result = speciesResult.second;
+        else {
+            result = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
+            if (!result)
+                return JSValue::encode(throwOutOfMemoryError(exec));
+        }
 
         for (unsigned k = 0; k < deleteCount; ++k) {
             JSValue v = getProperty(exec, thisObj, k + begin);
@@ -837,7 +930,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             return JSValue::encode(jsUndefined());
     }
 
-    putLength(exec, thisObj, jsNumber(length - deleteCount + additionalArgs));
+    setLength(exec, thisObj, length - deleteCount + additionalArgs);
     return JSValue::encode(result);
 }
 
@@ -941,6 +1034,50 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncKeys(ExecState* exec)
 {
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     return JSValue::encode(JSArrayIterator::create(exec, exec->callee()->globalObject()->arrayIteratorStructure(), ArrayIterateKey, thisObj));
+}
+
+// -------------------- ArrayPrototype.constructor Watchpoint ------------------
+
+class ArrayPrototypeAdaptiveInferredPropertyWatchpoint : public AdaptiveInferredPropertyValueWatchpointBase {
+public:
+    typedef AdaptiveInferredPropertyValueWatchpointBase Base;
+    ArrayPrototypeAdaptiveInferredPropertyWatchpoint(const ObjectPropertyCondition&, ArrayPrototype*);
+
+private:
+    virtual void handleFire(const FireDetail&) override;
+
+    ArrayPrototype* m_arrayPrototype;
+};
+
+void ArrayPrototype::setConstructor(VM& vm, JSObject* constructorProperty, unsigned attributes)
+{
+    putDirectWithoutTransition(vm, vm.propertyNames->constructor, constructorProperty, attributes);
+
+    PropertyOffset offset = this->structure()->get(vm, vm.propertyNames->constructor);
+    ASSERT(isValidOffset(offset));
+    this->structure()->startWatchingPropertyForReplacements(vm, offset);
+
+    ObjectPropertyCondition condition = ObjectPropertyCondition::equivalence(vm, this, this, vm.propertyNames->constructor.impl(), constructorProperty);
+    ASSERT(condition.isWatchable());
+
+    m_constructorWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(condition, this);
+    m_constructorWatchpoint->install();
+}
+
+ArrayPrototypeAdaptiveInferredPropertyWatchpoint::ArrayPrototypeAdaptiveInferredPropertyWatchpoint(const ObjectPropertyCondition& key, ArrayPrototype* prototype)
+    : Base(key)
+    , m_arrayPrototype(prototype)
+{
+}
+
+void ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire(const FireDetail& detail)
+{
+    StringPrintStream out;
+    out.print("ArrayPrototype adaption of ", key(), " failed: ", detail);
+
+    StringFireDetail stringDetail(out.toCString().data());
+
+    m_arrayPrototype->m_didChangeConstructorProperty = true;
 }
 
 } // namespace JSC

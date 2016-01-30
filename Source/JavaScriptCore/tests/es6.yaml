@@ -717,15 +717,15 @@
 - path: es6/Array_is_subclassable_Array.of.js
   cmd: runES6 :normal
 - path: es6/Array_is_subclassable_Array.prototype.concat.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Array_is_subclassable_Array.prototype.filter.js
   cmd: runES6 :fail
 - path: es6/Array_is_subclassable_Array.prototype.map.js
   cmd: runES6 :fail
 - path: es6/Array_is_subclassable_Array.prototype.slice.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Array_is_subclassable_Array.prototype.splice.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Array_is_subclassable_correct_prototype_chain.js
   cmd: runES6 :normal
 - path: es6/Array_static_methods_Array.from_generator_instances.js
@@ -1195,15 +1195,15 @@
 - path: es6/well-known_symbols_Symbol.search.js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.species_Array.prototype.concat.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.species_Array.prototype.filter.js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.species_Array.prototype.map.js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.species_Array.prototype.slice.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.species_Array.prototype.splice.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.species_existence.js
   cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.species_RegExp.prototype[Symbol.split].js

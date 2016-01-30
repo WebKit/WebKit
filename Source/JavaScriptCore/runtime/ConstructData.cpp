@@ -35,6 +35,17 @@
 
 namespace JSC {
 
+JSObject* construct(ExecState* exec, JSValue constructorObject, const ArgList& args, const String& errorMessage)
+{
+    ConstructData constructData;
+    ConstructType constructType = getConstructData(constructorObject, constructData);
+    if (constructType == ConstructTypeNone)
+        return throwTypeError(exec, errorMessage);
+
+    return construct(exec, constructorObject, constructType, constructData, args, constructorObject);
+}
+
+
 JSObject* construct(ExecState* exec, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
 {
     ASSERT(constructType == ConstructTypeJS || constructType == ConstructTypeHost);
