@@ -1,3 +1,12 @@
+2016-01-29  Ada Chan  <adachan@apple.com>
+
+        Enable VIDEO_PRESENTATION_MODE only in Debug and Release builds on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=153665
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-01-30  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] WebKit1 apps crash in ___ZN7WebCore16DiskCacheMonitorC2ERKNS_15ResourceRequestENS_9SessionIDEPK20_CFCachedURLResponse_block_invoke1

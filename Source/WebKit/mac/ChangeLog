@@ -1,3 +1,12 @@
+2016-01-29  Ada Chan  <adachan@apple.com>
+
+        Enable VIDEO_PRESENTATION_MODE only in Debug and Release builds on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=153665
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-01-28  Darin Adler  <darin@apple.com>
 
         Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
