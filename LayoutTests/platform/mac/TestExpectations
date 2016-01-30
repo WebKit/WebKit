@@ -1307,3 +1307,5 @@ webkit.org/b/152009 [ Debug ElCapitan ] fast/canvas/canvas-too-large-to-draw.htm
 [ Yosemite ] media/airplay-target-availability.html
 
 webkit.org/b/153086 sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.3_encodeURI/S15.1.3.3_A2.4_T2.html [ Pass Crash ]
+
+webkit.org/b/153683 [ ElCapitan ] fast/parser/external-entities-in-xslt.xml [ Pass Failure ]

@@ -1,3 +1,12 @@
+2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/parser/external-entities-in-xslt.xml as flaky on El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=153683
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         fast/shadow-dom/Element-interface-attachShadow.html fails on iOS
