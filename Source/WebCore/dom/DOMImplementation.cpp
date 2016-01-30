@@ -64,7 +64,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef HashSet<String, CaseFoldingHash> FeatureSet;
+typedef HashSet<String, ASCIICaseInsensitiveHash> FeatureSet;
 
 static void addString(FeatureSet& set, const char* string)
 {

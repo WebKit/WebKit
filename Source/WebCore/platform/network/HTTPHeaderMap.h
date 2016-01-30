@@ -48,7 +48,7 @@ struct CrossThreadHTTPHeaderMapData {
 class HTTPHeaderMap {
 public:
     typedef HashMap<HTTPHeaderName, String, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>> CommonHeadersHashMap;
-    typedef HashMap<String, String, CaseFoldingHash> UncommonHeadersHashMap;
+    typedef HashMap<String, String, ASCIICaseInsensitiveHash> UncommonHeadersHashMap;
 
     class HTTPHeaderMapConstIterator {
     public:

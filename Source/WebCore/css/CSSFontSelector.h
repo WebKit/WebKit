@@ -86,9 +86,9 @@ private:
     void beginLoadTimerFired();
 
     Document* m_document;
-    HashMap<String, Vector<Ref<CSSFontFace>>, CaseFoldingHash> m_fontFaces;
-    HashMap<String, Vector<Ref<CSSFontFace>>, CaseFoldingHash> m_locallyInstalledFontFaces;
-    HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>, CaseFoldingHash> m_fonts;
+    HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_fontFaces;
+    HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFontFaces;
+    HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>, ASCIICaseInsensitiveHash> m_fonts;
     HashSet<FontSelectorClient*> m_clients;
 
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;

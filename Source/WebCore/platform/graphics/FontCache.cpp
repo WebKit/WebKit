@@ -97,50 +97,46 @@ FontCache::FontCache()
 }
 
 struct FontPlatformDataCacheKey {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    FontPlatformDataCacheKey() { }
+    AtomicString family;
+    FontDescriptionKey description;
+
+    FontPlatformDataCacheKey() = default;
     FontPlatformDataCacheKey(const AtomicString& family, const FontDescription& description)
-        : m_fontDescriptionKey(description)
-        , m_family(family)
-    { }
-
-    explicit FontPlatformDataCacheKey(HashTableDeletedValueType t)
-        : m_fontDescriptionKey(t)
-    { }
-
-    bool isHashTableDeletedValue() const { return m_fontDescriptionKey.isHashTableDeletedValue(); }
-
-    bool operator==(const FontPlatformDataCacheKey& other) const
+        : family(family), description(description)
     {
-        if (m_fontDescriptionKey != other.m_fontDescriptionKey)
-            return false;
-        if (m_family.impl() == other.m_family.impl())
-            return true;
-        if (m_family.isNull() || other.m_family.isNull())
-            return false;
-        return CaseFoldingHash::equal(m_family, other.m_family);
     }
 
-    FontDescriptionKey m_fontDescriptionKey;
-    AtomicString m_family;
+    explicit FontPlatformDataCacheKey(HashTableDeletedValueType)
+        : description(HashTableDeletedValue)
+    {
+    }
+    bool isHashTableDeletedValue() const
+    {
+        return description.isHashTableDeletedValue();
+    }
 };
 
 struct FontPlatformDataCacheKeyHash {
-    static unsigned hash(const FontPlatformDataCacheKey& fontKey)
+    static unsigned hash(const FontPlatformDataCacheKey& key)
     {
-        return pairIntHash(CaseFoldingHash::hash(fontKey.m_family), fontKey.m_fontDescriptionKey.computeHash());
+        return pairIntHash(ASCIICaseInsensitiveHash::hash(key.family), key.description.computeHash());
     }
-         
     static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
     {
-        return a == b;
+        return a.description == b.description && equalIgnoringASCIICase(a.family, b.family);
     }
-
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-typedef HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, WTF::SimpleClassHashTraits<FontPlatformDataCacheKey>> FontPlatformDataCache;
+struct FontPlatformDataCacheKeyTraits : SimpleClassHashTraits<FontPlatformDataCacheKey> {
+    static const bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const FontPlatformDataCacheKey& key)
+    {
+        return key.family.isNull();
+    }
+};
+
+typedef HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyTraits> FontPlatformDataCache;
 
 static FontPlatformDataCache& fontPlatformDataCache()
 {
@@ -207,9 +203,9 @@ static AtomicString alternateFamilyName(const AtomicString& familyName)
     return nullAtom;
 }
 
-FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription,
-                                                       const AtomicString& passedFamilyName,
-                                                       bool checkingAlternateName)
+// FIXME: This function name should not have the word "get" in it for WebKit coding style.
+// FIXME: The boolean here is poor coding style. Easy to factor this into two functions so we don't need it.
+FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const AtomicString& passedFamilyName, bool checkingAlternateName)
 {
 #if PLATFORM(IOS)
     FontLocker fontLocker;
@@ -218,9 +214,9 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 #if OS(WINDOWS) && ENABLE(OPENTYPE_VERTICAL)
     // Leading "@" in the font name enables Windows vertical flow flag for the font.
     // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
-    // IE disregards "@" regardless of the orientatoin, so we follow the behavior.
-    const AtomicString& familyName = (passedFamilyName.isEmpty() || passedFamilyName[0] != '@') ?
-        passedFamilyName : AtomicString(passedFamilyName.impl()->substring(1));
+    // IE disregards "@" regardless of the orientation, so we follow the behavior.
+    const AtomicString& familyName = passedFamilyName[0] != '@'
+        ? passedFamilyName : AtomicString(passedFamilyName.impl()->substring(1));
 #else
     const AtomicString& familyName = passedFamilyName;
 #endif
@@ -237,14 +233,13 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
     FontPlatformDataCache::iterator it = addResult.iterator;
     if (addResult.isNewEntry) {
         it->value = createFontPlatformData(fontDescription, familyName);
-
         if (!it->value && !checkingAlternateName) {
-            // We were unable to find a font.  We have a small set of fonts that we alias to other names,
-            // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
-            const AtomicString alternateName = alternateFamilyName(familyName);
+            // We were unable to find a font. We have a small set of fonts that we alias to other names,
+            // e.g., Arial/Helvetica, Courier/Courier New, etc. Try looking up the font under the aliased name.
+            auto alternateName = alternateFamilyName(familyName);
             if (!alternateName.isNull()) {
                 FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, true);
-                // Lookup the key in the hash table again as the previous iterator may have
+                // Look up the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to getCachedFontPlatformData().
                 it = fontPlatformDataCache().find(key);
                 ASSERT(it != fontPlatformDataCache().end());

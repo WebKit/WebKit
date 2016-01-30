@@ -69,7 +69,7 @@ private:
 
     void setAutoStartOriginsTableWithItemsPassingTest(API::Dictionary&, std::function<bool(double expirationTimestamp)>);
 
-    typedef HashMap<String, PlugInAutoStartOriginMap, CaseFoldingHash> AutoStartTable;
+    typedef HashMap<String, PlugInAutoStartOriginMap, ASCIICaseInsensitiveHash> AutoStartTable;
     typedef HashMap<WebCore::SessionID, AutoStartTable> SessionAutoStartTable;
     SessionAutoStartTable m_autoStartTable;
 

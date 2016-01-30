@@ -190,22 +190,20 @@ public:
     Ref<FontCascadeFonts> fonts;
 };
 
+// FIXME: Should make hash traits for FontCascadeCacheKey instead of using a hash as the key (so we hash a hash).
 typedef HashMap<unsigned, std::unique_ptr<FontCascadeCacheEntry>, AlreadyHashed> FontCascadeCache;
 
-static bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
+static bool keysMatch(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
 {
     if (a.fontDescriptionKey != b.fontDescriptionKey)
         return false;
     if (a.fontSelectorId != b.fontSelectorId || a.fontSelectorVersion != b.fontSelectorVersion)
         return false;
-    if (a.families.size() != b.families.size())
+    unsigned size = a.families.size();
+    if (size != b.families.size())
         return false;
-    for (unsigned i = 0; i < a.families.size(); ++i) {
-        auto* aImpl = a.families[i].impl();
-        auto* bImpl = b.families[i].impl();
-        if (aImpl == bImpl)
-            continue;
-        if (!aImpl || !bImpl || !CaseFoldingHash::equal(aImpl, bImpl))
+    for (unsigned i = 0; i < size; ++i) {
+        if (!equalIgnoringASCIICase(a.families[i], b.families[i]))
             return false;
     }
     return true;
@@ -232,26 +230,27 @@ static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription&
 {
     FontCascadeCacheKey key;
     key.fontDescriptionKey = FontDescriptionKey(description);
-    for (unsigned i = 0; i < description.familyCount(); ++i)
-        key.families.append(description.familyAt(i));
+    unsigned familyCount = description.familyCount();
+    key.families.reserveInitialCapacity(familyCount);
+    for (unsigned i = 0; i < familyCount; ++i)
+        key.families.uncheckedAppend(description.familyAt(i));
     key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
     key.fontSelectorVersion = fontSelector ? fontSelector->version() : 0;
     return key;
 }
 
-// FIXME: Why can't we just teach HashMap about FontCascadeCacheKey instead of hashing a hash?
 static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
 {
-    Vector<unsigned, 7> hashCodes;
-    hashCodes.reserveInitialCapacity(4 + key.families.size());
-
-    hashCodes.uncheckedAppend(key.fontDescriptionKey.computeHash());
-    hashCodes.uncheckedAppend(key.fontSelectorId);
-    hashCodes.uncheckedAppend(key.fontSelectorVersion);
-    for (unsigned i = 0; i < key.families.size(); ++i)
-        hashCodes.uncheckedAppend(key.families[i].impl() ? CaseFoldingHash::hash(key.families[i]) : 0);
-
-    return StringHasher::hashMemory(hashCodes.data(), hashCodes.size() * sizeof(unsigned));
+    // FIXME: Should hash the key and the family name characters rather than making a hash out of other hashes.
+    IntegerHasher hasher;
+    hasher.add(key.fontDescriptionKey.computeHash());
+    hasher.add(key.fontSelectorId);
+    hasher.add(key.fontSelectorVersion);
+    for (unsigned i = 0; i < key.families.size(); ++i) {
+        StringImpl* family = key.families[i].impl();
+        hasher.add(family ? ASCIICaseInsensitiveHash::hash(family) : 0);
+    }
+    return hasher.hash();
 }
 
 void pruneUnreferencedEntriesFromFontCascadeCache()
@@ -272,8 +271,8 @@ static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescripti
     auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
 
     unsigned hash = computeFontCascadeCacheHash(key);
-    auto addResult = fontCascadeCache().add(hash, std::unique_ptr<FontCascadeCacheEntry>());
-    if (!addResult.isNewEntry && addResult.iterator->value->key == key)
+    auto addResult = fontCascadeCache().add(hash, nullptr);
+    if (!addResult.isNewEntry && keysMatch(addResult.iterator->value->key, key))
         return addResult.iterator->value->fonts.get();
 
     auto& newEntry = addResult.iterator->value;

@@ -362,11 +362,11 @@ HRESULT WebURLResponse::allHeaderFields(_COM_Outptr_opt_ IPropertyBag** headerFi
     if (!headerFields)
         return E_POINTER;
 
-    HashMap<String, String, CaseFoldingHash> fields;
+    HashMap<String, String, ASCIICaseInsensitiveHash> fields;
     for (const auto& keyValuePair : m_response.httpHeaderFields())
         fields.add(keyValuePair.key, keyValuePair.value);
 
-    *headerFields = COMPropertyBag<String, String, CaseFoldingHash>::adopt(fields);
+    *headerFields = COMPropertyBag<String, String, ASCIICaseInsensitiveHash>::adopt(fields);
     return S_OK;
 }
 

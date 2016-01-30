@@ -1,3 +1,25 @@
+2016-01-30  Darin Adler  <darin@apple.com>
+
+        Replace CaseFoldingHash with ASCIICaseInsensitiveHash
+        https://bugs.webkit.org/show_bug.cgi?id=153639
+
+        Reviewed by Filip Pizlo.
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm: Use ASCIICaseInsensitiveHash
+        for MIME types. MIME types are all ASCII.
+
+        * UIProcess/Plugins/PlugInAutoStartProvider.h: Use ASCIICaseInsensitiveHash for
+        origins. Origin strings should use ASCII case insensitive matching and should not
+        fold non-ASCII case.
+
+        * WebProcess/WebPage/WebPage.h: Use ASCIICaseInsensitiveHash for MIME types.
+        MIME types are all ASCII.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::addCaseFoldedCharacters): Use ASCIICaseInsensitiveHash to hash plug-in
+        origin strings. (See rationale above.)
+        (WebKit::hashForPlugInOrigin): Updated comment.
+
 2016-01-30  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         [GTK] Use configured python executable when executing generate-inspector-gresource-manifest.py

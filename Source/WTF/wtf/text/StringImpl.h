@@ -762,8 +762,6 @@ public:
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
-    WTF_EXPORT_STRING_API static const UChar latin1CaseFoldTable[256];
-
     Ref<StringImpl> extractFoldedStringInSymbol()
     {
         ASSERT(isSymbol());
@@ -945,9 +943,6 @@ inline bool equal(const StringImpl* a, const char* b, unsigned length) { return 
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
 WTF_EXPORT_STRING_API bool equal(const StringImpl& a, const StringImpl& b);
-
-// FIXME: Deprecated. Used only by CaseFoldingHash, which itself is soon to be deprecated and removed, replaced by ASCIICaseFoldingHash.
-WTF_EXPORT_STRING_API bool equalCompatibiltyCaselessNonNull(const StringImpl*, const StringImpl*);
 
 WTF_EXPORT_STRING_API bool equalIgnoringNullity(StringImpl*, StringImpl*);
 WTF_EXPORT_STRING_API bool equalIgnoringNullity(const UChar*, size_t length, StringImpl*);

@@ -1,3 +1,91 @@
+2016-01-30  Darin Adler  <darin@apple.com>
+
+        Replace CaseFoldingHash with ASCIICaseInsensitiveHash
+        https://bugs.webkit.org/show_bug.cgi?id=153639
+
+        Reviewed by Filip Pizlo.
+
+        * Modules/webdatabase/DatabaseAuthorizer.h: Use ASCIICaseInsensitiveHash
+        for whitelisted functions. Function names are all ASCII.
+
+        * accessibility/AccessibilityObject.cpp: Use ASCIICaseInsensitiveHash
+        for ARIA roles. ARIA roles are all ASCII.
+
+        * crypto/CryptoAlgorithmRegistry.h: Use ASCIICaseInsensitiveHash for
+        crypto algorithm names. Algorithm names are all ASCII.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::registerLocalFontFacesForFamily): Use ASCIICaseInsensitiveHash
+        for font faces. Face names should use ASCII case insensitive matching;
+        there is no need for non-ASCII case folding.
+        * css/CSSFontSelector.h: Ditto.
+
+        * dom/DOMImplementation.cpp: Use ASCIICaseInsensitiveHash for the
+        FeatureSet. The features are all ASCII.
+
+        * dom/Document.h: Use ASCIICaseInsensitiveHash for the access key
+        map. Access keys are all ASCII.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::isLegacySupportedJavaScriptLanguage): Use ASCIICaseInsensitiveHash
+        for the language set. These strings are all ASCII.
+
+        * editing/EditorCommand.cpp: Use ASCIICaseInsensitiveHash for editor
+        command names. These names are all ASCII.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin): Use ASCIICaseInsensitiveHash
+        for parameter names. These names are all ASCII.
+
+        * html/InputType.cpp: Use ASCIICaseInsensitiveHash for the input types.
+        The input types are all ASCII.
+
+        * loader/CrossOriginAccessControl.h: Use ASCIICaseInsensitiveHash for
+        HTTP header field names. These names are all ASCII.
+        * loader/CrossOriginPreflightResultCache.h: Ditto.
+
+        * loader/archive/ArchiveFactory.cpp: Use ASCIICaseInsensitiveHash for
+        MIME types. MIME types are all ASCII.
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes): Ditto.
+
+        * platform/SchemeRegistry.h: Use ASCIICaseInsensitiveHas for URL schemes.
+        URL schemes are all ASCII.
+        * platform/URL.cpp: Ditto.
+
+        * platform/graphics/FontCache.cpp: Reworked FontPlatformDataCacheKey struct:
+        Made it a conventional struct with non-prefixed data members names. Removed
+        the "==" operator since it was appropriate for hash table lookup but wasn't
+        a true equality operator. Tightened the implementations of the constructors.
+        (WebCore::FontPlatformDataCacheKeyHash::hash): Use ASCIICaseInsensitiveHash.
+        (WebCore::FontPlatformDataCacheKeyHash::equal): Do the equality check here,
+        not using the == operator. And use equalIgnoringASCIICase.
+        (WebCore::FontPlatformDataCacheKeyTraits::isEmptyValue): Added this entire
+        traits struct so we check empty values in a more efficient way.
+        (WebCore::FontCache::getCachedFontPlatformData): Added comments and tweaked
+        style in this function.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::keysMatch): Rename from operator== since this operation is not
+        equality. Changed to equalIgnoringASCIICase and did a little streamlining.
+        (WebCore::makeFontCascadeCacheKey): Use reserveInitialCapacity for slightly
+        better memory use.
+        (WebCore::computeFontCascadeCacheHash): Use IntegerHasher to make computing
+        a hash more efficient by eliminating the overhead of building a vector and
+        even possible heap allocation and deallocation.
+        (WebCore::retrieveOrAddCachedFonts): Use keysMatch instead of ==.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp: Use ASCIICaseInsensitiveHash
+        for font family names. These names should use ASCII case insensitive matching;
+        there is no need for non-ASCII case folding.
+
+        * platform/network/HTTPHeaderMap.h: Use ASCIICaseInsensitiveHash for
+        HTTP header field names. These names are all ASCII.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::computeFontHash): Use IntegerHasher to avoid allocating memory just
+        to compute a hash. Use ASCIICaseInsensitiveHash.
+
 2016-01-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r195871.
