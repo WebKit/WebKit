@@ -2543,6 +2543,9 @@ webkit.org/b/153062 accessibility/gtk/entry-and-password.html [ Failure ]
 
 webkit.org/b/153692 imported/blink/fast/css/first-letter-float-block.html [ Crash Pass ]
 
+webkit.org/b/153695 fast/repaint/fixed-move-after-scroll.html [ Crash Pass ]
+webkit.org/b/153695 fast/scrolling/scroll-position-on-reload-rtl.html [ Crash Pass ]
+
 webkit.org/b/153696 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/153696 accessibility/roles-exposed.html [ Failure ]
 
