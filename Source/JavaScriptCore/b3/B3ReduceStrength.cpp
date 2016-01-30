@@ -662,14 +662,12 @@ private:
                     // We can do this because it's precisely correct for ChillDiv and for Div we
                     // are allowed to do whatever we want.
                     m_value->replaceWithIdentity(m_value->child(1));
-                    m_changed = true;
                     break;
 
                 case 1:
                     // Turn this: Div(value, 1)
                     // Into this: value
                     m_value->replaceWithIdentity(m_value->child(0));
-                    m_changed = true;
                     break;
 
                 default:
@@ -722,12 +720,11 @@ private:
                                 m_index, ZShr, m_value->origin(), magicQuotient,
                                 m_insertionSet.insert<Const32Value>(
                                     m_index, m_value->origin(), 31))));
-                    m_changed = true;
                     break;
                 }
 
-                if (m_value->opcode() != ChillDiv && m_value->opcode() != Div)
-                    break;
+                m_changed = true;
+                break;
             }
             break;
 
@@ -737,6 +734,68 @@ private:
             // Into this: constant1 / constant2
             // Note that this uses ChillMod semantics.
             replaceWithNewValue(m_value->child(0)->modConstant(m_proc, m_value->child(1)));
+
+            // Modulo by constant is more efficient if we turn it into Div, and then let Div get
+            // optimized.
+            if (m_value->child(1)->hasInt()) {
+                switch (m_value->child(1)->asInt()) {
+                case 0:
+                    // Turn this: Mod(value, 0)
+                    // Into this: 0
+                    // This is correct according to ChillMod semantics.
+                    m_value->replaceWithIdentity(m_value->child(1));
+                    break;
+
+                default:
+                    // Turn this: Mod(N, D)
+                    // Into this: Sub(N, Mul(Div(N, D), D))
+                    //
+                    // This is a speed-up because we use our existing Div optimizations.
+                    //
+                    // Here's an easier way to look at it:
+                    //     N % D = N - N / D * D
+                    //
+                    // Note that this does not work for D = 0 and ChillMod. The expected result is 0.
+                    // That's why we have a special-case above.
+                    //     X % 0 = X - X / 0 * 0 = X     (should be 0)
+                    //
+                    // This does work for the D = -1 special case.
+                    //     -2^31 % -1 = -2^31 - -2^31 / -1 * -1
+                    //                = -2^31 - -2^31 * -1
+                    //                = -2^31 - -2^31
+                    //                = 0
+
+                    Opcode divOpcode;
+                    switch (m_value->opcode()) {
+                    case Mod:
+                        divOpcode = Div;
+                        break;
+                    case ChillMod:
+                        divOpcode = ChillDiv;
+                        break;
+                    default:
+                        divOpcode = Oops;
+                        RELEASE_ASSERT_NOT_REACHED();
+                        break;
+                    }
+
+                    m_value->replaceWithIdentity(
+                        m_insertionSet.insert<Value>(
+                            m_index, Sub, m_value->origin(),
+                            m_value->child(0),
+                            m_insertionSet.insert<Value>(
+                                m_index, Mul, m_value->origin(),
+                                m_insertionSet.insert<Value>(
+                                    m_index, divOpcode, m_value->origin(),
+                                    m_value->child(0), m_value->child(1)),
+                                m_value->child(1))));
+                    break;
+                }
+                
+                m_changed = true;
+                break;
+            }
+            
             break;
 
         case BitAnd:

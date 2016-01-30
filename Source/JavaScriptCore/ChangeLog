@@ -1,3 +1,20 @@
+2016-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should reduce Mod(value, constant) to Div and Mul so that our Div optimizations can do things
+        https://bugs.webkit.org/show_bug.cgi?id=153693
+
+        Reviewed by Saam Barati.
+
+        The most efficient way to handle Mod(value, constant) is to reduce it to
+        Sub(value, Mul(Div(value, constant), constant)) and then let the Div optimizations do their
+        thing.
+
+        In the future we could add special handling of Mod(value, 1 << constant), but it's not
+        obvious that this would produce better code than reducing through Div, if we also make sure
+        that we have great optimizations for Mul and Div.
+
+        * b3/B3ReduceStrength.cpp:
+
 2016-01-29  Keith Miller  <keith_miller@apple.com>
 
         Array.prototype native functions should use Symbol.species to construct the result
