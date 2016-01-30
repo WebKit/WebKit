@@ -96,4 +96,9 @@ TextStream& operator<<(TextStream& ts, BackgroundEdgeOrigin edge)
     return ts;
 }
 
+bool alwaysPageBreak(BreakBetween between)
+{
+    return between >= PageBreakBetween;
+}
+
 } // namespace WebCore

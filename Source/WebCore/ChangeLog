@@ -1,3 +1,94 @@
+2016-01-30 Dave Hyatt  <hyatt@apple.com>
+
+        Support break-after, break-before and break-inside.
+        https://bugs.webkit.org/show_bug.cgi?id=148814
+
+        Reviewed by Dean Jackson.
+
+        New tests added in printing/, fast/multicol/, and fast/regions.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::convertToPageBreak):
+        (WebCore::convertToColumnBreak):
+        (WebCore::convertToRegionBreak):
+        For backwards compatibility, keep support for all the old properties in
+        computed style. This means we have to convert the break-* property values
+        into keywords that make sense for the legacy properties. This mainly
+        involves mapping "page", "column", "region" to "always" (similar rule for
+        the avoid-* versions as well).
+
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        Add support for the three new break-* properties.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        Add support for the new break properties.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator BreakBetween):
+        (WebCore::CSSPrimitiveValue::operator BreakInside):
+        Add converters for the new BreakBetween and BreakInside enums. Remove
+        the EPageBreak enum, since it is no longer used.
+
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        Add the new properties and the new values supported by the properties
+        to the keywords lists.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontSynthesis):
+        (WebCore::StyleBuilderConverter::convertPageBreakBetween):
+        (WebCore::StyleBuilderConverter::convertPageBreakInside):
+        (WebCore::StyleBuilderConverter::convertColumnBreakBetween):
+        (WebCore::StyleBuilderConverter::convertColumnBreakInside):
+        (WebCore::StyleBuilderConverter::convertRegionBreakBetween):
+        (WebCore::StyleBuilderConverter::convertRegionBreakInside):
+        In order to map the legacy properties into the new break-* values
+        we have custom converter functions.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChild):
+        (WebCore::RenderBlock::childBoxIsUnsplittableForFragmentation):
+        (WebCore::RenderBlock::computeRegionRangeForBoxChild):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        Patch the block code to check the correct new break-* constants. For
+        avoidance, this means checking both the general avoid value and the
+        specific value (e.g., avoid-page). In place of "always", we check
+        the specific value (e.g., column) and then for page specifically, we
+        also treat "left", "right", "recto" and "verso" as "always break" for now.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        Make sure changes to the break properties trigger relayout.
+
+        * rendering/style/RenderStyle.h:
+        Add getters and setters for the break-* properties and remove all
+        occurrences of the legacy page, column and region values from the RenderStyle.
+
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::alwaysPageBreak):
+        We have a helper function here for mapping several constant values to "page".
+
+        * rendering/style/RenderStyleConstants.h:
+        Definitions of the new BreakBetween and BreakInside enums.
+
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::operator==):
+        * rendering/style/StyleMultiColData.h:
+        Remove the column-specific break data.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        Remove the region-specific break data and replace it with generic break
+        data that is now used by all three pagination models.
+
 2016-01-29  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Fix compile error.

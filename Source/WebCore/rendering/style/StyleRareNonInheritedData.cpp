@@ -86,9 +86,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_scrollSnapType(static_cast<unsigned>(RenderStyle::initialScrollSnapType()))
 #endif
     , m_regionFragment(RenderStyle::initialRegionFragment())
-    , m_regionBreakAfter(RenderStyle::initialPageBreak())
-    , m_regionBreakBefore(RenderStyle::initialPageBreak())
-    , m_regionBreakInside(RenderStyle::initialPageBreak())
     , m_pageSizeType(PAGE_SIZE_AUTO)
     , m_transformStyle3D(RenderStyle::initialTransformStyle3D())
     , m_backfaceVisibility(RenderStyle::initialBackfaceVisibility())
@@ -107,6 +104,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_isolation(RenderStyle::initialIsolation())
 #endif
     , m_objectFit(RenderStyle::initialObjectFit())
+    , m_breakBefore(RenderStyle::initialBreakBetween())
+    , m_breakAfter(RenderStyle::initialBreakBetween())
+    , m_breakInside(RenderStyle::initialBreakInside())
 {
     m_maskBoxImage.setMaskDefaults();
 }
@@ -178,9 +178,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_scrollSnapType(o.m_scrollSnapType)
 #endif
     , m_regionFragment(o.m_regionFragment)
-    , m_regionBreakAfter(o.m_regionBreakAfter)
-    , m_regionBreakBefore(o.m_regionBreakBefore)
-    , m_regionBreakInside(o.m_regionBreakInside)
     , m_pageSizeType(o.m_pageSizeType)
     , m_transformStyle3D(o.m_transformStyle3D)
     , m_backfaceVisibility(o.m_backfaceVisibility)
@@ -199,6 +196,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_isolation(o.m_isolation)
 #endif
     , m_objectFit(o.m_objectFit)
+    , m_breakBefore(o.m_breakBefore)
+    , m_breakAfter(o.m_breakAfter)
+    , m_breakInside(o.m_breakInside)
 {
 }
 
@@ -274,9 +274,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_justifySelf == o.m_justifySelf
         && m_regionThread == o.m_regionThread
         && m_regionFragment == o.m_regionFragment
-        && m_regionBreakAfter == o.m_regionBreakAfter
-        && m_regionBreakBefore == o.m_regionBreakBefore
-        && m_regionBreakInside == o.m_regionBreakInside
         && m_pageSizeType == o.m_pageSizeType
         && m_transformStyle3D == o.m_transformStyle3D
         && m_backfaceVisibility == o.m_backfaceVisibility
@@ -300,7 +297,10 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_isolation == o.m_isolation
 #endif
         && m_aspectRatioType == o.m_aspectRatioType
-        && m_objectFit == o.m_objectFit;
+        && m_objectFit == o.m_objectFit
+        && m_breakAfter == o.m_breakAfter
+        && m_breakBefore == o.m_breakBefore
+        && m_breakInside == o.m_breakInside;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& o) const

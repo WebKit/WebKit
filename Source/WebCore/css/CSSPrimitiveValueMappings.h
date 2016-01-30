@@ -2201,42 +2201,131 @@ template<> inline CSSPrimitiveValue::operator EOverflow() const
     return OVISIBLE;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPageBreak e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BreakBetween e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (e) {
-    case PBAUTO:
+    case AutoBreakBetween:
         m_value.valueID = CSSValueAuto;
         break;
-    case PBALWAYS:
-        m_value.valueID = CSSValueAlways;
-        break;
-    case PBAVOID:
+    case AvoidBreakBetween:
         m_value.valueID = CSSValueAvoid;
+        break;
+    case AvoidColumnBreakBetween:
+        m_value.valueID = CSSValueAvoidColumn;
+        break;
+    case AvoidPageBreakBetween:
+        m_value.valueID = CSSValueAvoidPage;
+        break;
+    case AvoidRegionBreakBetween:
+        m_value.valueID = CSSValueAvoidRegion;
+        break;
+    case ColumnBreakBetween:
+        m_value.valueID = CSSValueColumn;
+        break;
+    case PageBreakBetween:
+        m_value.valueID = CSSValuePage;
+        break;
+    case RegionBreakBetween:
+        m_value.valueID = CSSValueRegion;
+        break;
+    case LeftPageBreakBetween:
+        m_value.valueID = CSSValueLeft;
+        break;
+    case RightPageBreakBetween:
+        m_value.valueID = CSSValueRight;
+        break;
+    case RectoPageBreakBetween:
+        m_value.valueID = CSSValueRecto;
+        break;
+    case VersoPageBreakBetween:
+        m_value.valueID = CSSValueVerso;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EPageBreak() const
+template<> inline CSSPrimitiveValue::operator BreakBetween() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueAuto:
-        return PBAUTO;
-    case CSSValueLeft:
-    case CSSValueRight:
-    case CSSValueAlways:
-        return PBALWAYS; // CSS2.1: "Conforming user agents may map left/right to always."
+        return AutoBreakBetween;
     case CSSValueAvoid:
-        return PBAVOID;
+        return AvoidBreakBetween;
+    case CSSValueAvoidColumn:
+        return AvoidColumnBreakBetween;
+    case CSSValueAvoidPage:
+        return AvoidPageBreakBetween;
+    case CSSValueAvoidRegion:
+        return AvoidRegionBreakBetween;
+    case CSSValueColumn:
+        return ColumnBreakBetween;
+    case CSSValuePage:
+        return PageBreakBetween;
+    case CSSValueRegion:
+        return RegionBreakBetween;
+    case CSSValueLeft:
+        return LeftPageBreakBetween;
+    case CSSValueRight:
+        return RightPageBreakBetween;
+    case CSSValueRecto:
+        return RectoPageBreakBetween;
+    case CSSValueVerso:
+        return VersoPageBreakBetween;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return PBAUTO;
+    return AutoBreakBetween;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BreakInside e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (e) {
+    case AutoBreakInside:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case AvoidBreakInside:
+        m_value.valueID = CSSValueAvoid;
+        break;
+    case AvoidColumnBreakInside:
+        m_value.valueID = CSSValueAvoidColumn;
+        break;
+    case AvoidPageBreakInside:
+        m_value.valueID = CSSValueAvoidPage;
+        break;
+    case AvoidRegionBreakInside:
+        m_value.valueID = CSSValueAvoidRegion;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator BreakInside() const
+{
+    ASSERT(isValueID());
+    
+    switch (m_value.valueID) {
+    case CSSValueAuto:
+        return AutoBreakInside;
+    case CSSValueAvoid:
+        return AvoidBreakInside;
+    case CSSValueAvoidColumn:
+        return AvoidColumnBreakInside;
+    case CSSValueAvoidPage:
+        return AvoidPageBreakInside;
+    case CSSValueAvoidRegion:
+        return AvoidRegionBreakInside;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return AutoBreakInside;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPosition e)

@@ -686,6 +686,12 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
     if (rareNonInheritedData->m_textCombine != other.rareNonInheritedData->m_textCombine)
         return true;
 
+    // Check breaks.
+    if (rareNonInheritedData->m_breakBefore != other.rareNonInheritedData->m_breakBefore
+        || rareNonInheritedData->m_breakAfter != other.rareNonInheritedData->m_breakAfter
+        || rareNonInheritedData->m_breakInside != other.rareNonInheritedData->m_breakInside)
+        return true;
+
     // Overflow returns a layout hint.
     if (noninherited_flags.overflowX() != other.noninherited_flags.overflowX()
         || noninherited_flags.overflowY() != other.noninherited_flags.overflowY())

@@ -196,6 +196,9 @@ border-width [Longhands=border-top-width|border-right-width|border-bottom-width|
 bottom [Initial=initialOffset, Converter=LengthOrAuto]
 box-shadow [Custom=All]
 box-sizing
+break-after [Initial=initialBreakBetween]
+break-before [Initial=initialBreakBetween]
+break-inside [Initial=initialBreakInside]
 buffered-rendering [SVG]
 // -webkit-box-sizing worked in Safari 4 and earlier.
 -webkit-box-sizing = box-sizing
@@ -290,9 +293,9 @@ padding-left [Initial=initialPadding, Converter=Length]
 padding-right [Initial=initialPadding, Converter=Length]
 padding-top [Initial=initialPadding, Converter=Length]
 page [SkipBuilder]
-page-break-after [Initial=initialPageBreak]
-page-break-before [Initial=initialPageBreak]
-page-break-inside [Initial=initialPageBreak]
+page-break-after [Initial=initialBreakBetween, NameForMethods=BreakAfter, Converter=PageBreakBetween]
+page-break-before [Initial=initialBreakBetween, NameForMethods=BreakBefore, Converter=PageBreakBetween]
+page-break-inside [Initial=initialBreakInside, NameForMethods=BreakInside, Converter=PageBreakInside]
 paint-order [SVG, Converter=PaintOrder]
 pointer-events [Inherited]
 position
@@ -427,9 +430,9 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 // w_r > 8px, b_r = 8 + 4 * sqrt((w_r - 8) / 2).
 -webkit-box-shadow [Custom=All]
 -webkit-column-axis
--webkit-column-break-after [Initial=initialPageBreak]
--webkit-column-break-before [Initial=initialPageBreak]
--webkit-column-break-inside [Initial=initialPageBreak]
+-webkit-column-break-after [Initial=initialBreakBetween, NameForMethods=BreakAfter, Converter=ColumnBreakBetween]
+-webkit-column-break-before [Initial=initialBreakBetween, NameForMethods=BreakBefore, Converter=ColumnBreakBetween]
+-webkit-column-break-inside [Initial=initialBreakInside, NameForMethods=BreakInside, Converter=ColumnBreakInside]
 column-count [AutoFunctions]
 -webkit-column-count = column-count
 column-fill
@@ -642,9 +645,9 @@ transform-style [NameForMethods=TransformStyle3D]
 -webkit-flow-into [NameForMethods=FlowThread, Converter=StringOrNone]
 -webkit-flow-from [NameForMethods=RegionThread, Converter=StringOrNone]
 -webkit-region-fragment
--webkit-region-break-after [Initial=initialPageBreak]
--webkit-region-break-before [Initial=initialPageBreak]
--webkit-region-break-inside [Initial=initialPageBreak]
+-webkit-region-break-after [Initial=initialBreakBetween, NameForMethods=BreakAfter, Converter=RegionBreakBetween]
+-webkit-region-break-before [Initial=initialBreakBetween, NameForMethods=BreakBefore, Converter=RegionBreakBetween]
+-webkit-region-break-inside [Initial=initialBreakInside, NameForMethods=BreakInside, Converter=RegionBreakInside]
 #endif
 #if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
 -webkit-shape-outside [Converter=ShapeValue]

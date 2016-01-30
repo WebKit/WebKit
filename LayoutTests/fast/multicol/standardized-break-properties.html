@@ -1,0 +1,40 @@
+<style>
+    div.box { -webkit-box-sizing: border; border: solid blue; }
+    div.shorter { height: 54px; }
+    div.taller { height: 72px; }
+</style>
+<div style="height: 100px; width: 630; -webkit-columns:6; -webkit-column-gap:5px; columns:6; column-gap:5px;">
+    <div class="taller box"></div>
+    <div class="taller box"></div>
+    <div id="break-before" class="shorter box" style="break-before: column;"></div>
+    <div class="shorter box" style="break-after: column;"></div>
+    <div id="after-break" class="shorter box"></div>
+    <div id="no-break" class="shorter box" style="break-inside: avoid-column;"></div>
+    <div id="subPixelTest" style="width:10.5px"></div>
+</div>
+<pre id="console"></pre>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function testBoxPosition(id, expectedLeft, expectedTop)
+    {
+        var rect = document.getElementById(id).getBoundingClientRect();
+        if (Math.round(rect.left) === expectedLeft && Math.round(rect.top) === expectedTop)
+            log("PASS: '" + id + "' is at (" + expectedLeft + ", " + expectedTop + ")");
+        else
+            log("FAIL: '" + id + "' is at (" + Math.round(rect.left) + ", " + Math.round(rect.top) + ") instead of (" + expectedLeft + " ," + expectedTop + ")");
+    }
+
+    var rect = document.getElementById('subPixelTest').getBoundingClientRect();
+    var hasSubpixelSupport = Math.round(rect.right) != rect.right;
+
+    testBoxPosition("break-before", hasSubpixelSupport ? 220 : 218, 8);
+    testBoxPosition("after-break", hasSubpixelSupport ? 431 : 428, 8);
+    testBoxPosition("no-break", hasSubpixelSupport ? 537 : 533, 8);
+</script>

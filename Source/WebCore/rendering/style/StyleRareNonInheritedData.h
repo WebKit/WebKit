@@ -194,10 +194,6 @@ public:
 
     unsigned m_regionFragment : 1; // RegionFragment
 
-    unsigned m_regionBreakAfter : 2; // EPageBreak
-    unsigned m_regionBreakBefore : 2; // EPageBreak
-    unsigned m_regionBreakInside : 2; // EPageBreak
-
     unsigned m_pageSizeType : 2; // PageSizeType
     unsigned m_transformStyle3D : 1; // ETransformStyle3D
     unsigned m_backfaceVisibility : 1; // EBackfaceVisibility
@@ -223,6 +219,10 @@ public:
 #endif
 
     unsigned m_objectFit : 3; // ObjectFit
+    
+    unsigned m_breakBefore : 4; // BreakBetween
+    unsigned m_breakAfter : 4;
+    unsigned m_breakInside : 3; // BreakInside
 
 private:
     StyleRareNonInheritedData();

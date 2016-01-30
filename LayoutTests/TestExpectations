@@ -712,7 +712,6 @@ webkit.org/b/148818 imported/w3c/css/css-multicol-1/multicol-fill-auto-block-chi
 webkit.org/b/148818 imported/w3c/css/css-multicol-1/multicol-nested-column-rule-001.xht [ ImageOnlyFailure ] # only scrollbar
 
 webkit.org/b/148812 imported/w3c/css/css-multicol-1/multicol-width-small-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148814 imported/w3c/css/css-multicol-1/multicol-break-000.xht [ ImageOnlyFailure ]
 webkit.org/b/148814 imported/w3c/css/css-multicol-1/multicol-break-001.xht [ ImageOnlyFailure ]
 webkit.org/b/148816 imported/w3c/css/css-multicol-1/multicol-rule-004.xht [ ImageOnlyFailure ]
 webkit.org/b/148823 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-003.xht [ ImageOnlyFailure ]

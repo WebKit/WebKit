@@ -475,10 +475,15 @@ enum TextZoom {
     TextZoomNormal, TextZoomReset
 };
 
-enum EPageBreak {
-    PBAUTO, PBALWAYS, PBAVOID
+enum BreakBetween {
+    AutoBreakBetween, AvoidBreakBetween, AvoidColumnBreakBetween, AvoidPageBreakBetween, AvoidRegionBreakBetween, ColumnBreakBetween, RegionBreakBetween, PageBreakBetween, LeftPageBreakBetween, RightPageBreakBetween, RectoPageBreakBetween, VersoPageBreakBetween
 };
-
+bool alwaysPageBreak(BreakBetween);
+    
+enum BreakInside {
+    AutoBreakInside, AvoidBreakInside, AvoidColumnBreakInside, AvoidPageBreakInside, AvoidRegionBreakInside
+};
+    
 enum EEmptyCell {
     SHOW, HIDE
 };

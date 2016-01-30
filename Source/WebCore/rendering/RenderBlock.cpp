@@ -1470,7 +1470,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOf
 bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect, PaintBlockType paintType)
 {
     // Check for page-break-before: always, and if it's set, break and bail.
-    bool checkBeforeAlways = !childrenInline() && (usePrintRect && child.style().pageBreakBefore() == PBALWAYS);
+    bool checkBeforeAlways = !childrenInline() && (usePrintRect && alwaysPageBreak(child.style().breakBefore()));
     LayoutUnit absoluteChildY = paintOffset.y() + child.y();
     if (checkBeforeAlways
         && absoluteChildY > paintInfo.rect.y()
@@ -1499,7 +1499,7 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
     }
 
     // Check for page-break-after: always, and if it's set, break and bail.
-    bool checkAfterAlways = !childrenInline() && (usePrintRect && child.style().pageBreakAfter() == PBALWAYS);
+    bool checkAfterAlways = !childrenInline() && (usePrintRect && alwaysPageBreak(child.style().breakAfter()));
     if (checkAfterAlways
         && (absoluteChildY + child.height()) > paintInfo.rect.y()
         && (absoluteChildY + child.height()) < paintInfo.rect.maxY()) {
@@ -3533,9 +3533,10 @@ bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child)
     bool checkColumnBreaks = flowThread && flowThread->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight;
     bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
-    return child.isUnsplittableForPagination() || (checkColumnBreaks && child.style().columnBreakInside() == PBAVOID)
-        || (checkPageBreaks && child.style().pageBreakInside() == PBAVOID)
-        || (checkRegionBreaks && child.style().regionBreakInside() == PBAVOID);
+    return child.isUnsplittableForPagination() || child.style().breakInside() == AvoidBreakInside
+        || (checkColumnBreaks && child.style().breakInside() == AvoidColumnBreakInside)
+        || (checkPageBreaks && child.style().breakInside() == AvoidPageBreakInside)
+        || (checkRegionBreaks && child.style().breakInside() == AvoidRegionBreakInside);
 }
 
 void RenderBlock::computeRegionRangeForBoxChild(const RenderBox& box) const

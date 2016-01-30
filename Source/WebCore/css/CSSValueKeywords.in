@@ -832,6 +832,17 @@ content-box
 padding
 padding-box
 
+//
+// CSS_PROP_BREAK_BEFORE/AFTER/INSIDE
+//
+avoid-column
+avoid-page
+avoid-region
+page
+recto
+region
+verso
+
 // CSS_SHAPES
 margin-box
 

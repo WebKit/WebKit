@@ -1043,6 +1043,20 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueHistoricalForms)
             return true;
         break;
+            
+    case CSSPropertyBreakAfter:
+    case CSSPropertyBreakBefore:
+        // auto | avoid | left | right | recto | verso | column | page | region | avoid-page | avoid-column | avoid-region
+        if (valueID == CSSValueAuto || valueID == CSSValueAvoid || valueID == CSSValueLeft || valueID == CSSValueRight
+            || valueID == CSSValueRecto || valueID == CSSValueVerso || valueID == CSSValueColumn || valueID == CSSValuePage
+            || valueID == CSSValueRegion || valueID == CSSValueAvoidColumn || valueID == CSSValueAvoidPage || valueID == CSSValueAvoidRegion)
+            return true;
+        break;
+    case CSSPropertyBreakInside:
+        // auto | avoid | avoid-page | avoid-column | avoid-region
+        if (valueID == CSSValueAuto || valueID == CSSValueAvoid || valueID == CSSValueAvoidColumn || valueID == CSSValueAvoidPage || valueID == CSSValueAvoidRegion)
+            return true;
+        break;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -1062,6 +1076,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyBorderRightStyle:
     case CSSPropertyBorderTopStyle:
     case CSSPropertyBoxSizing:
+    case CSSPropertyBreakAfter:
+    case CSSPropertyBreakBefore:
+    case CSSPropertyBreakInside:
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyDirection:
@@ -3165,6 +3182,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyBorderRightStyle:
     case CSSPropertyBorderTopStyle:
     case CSSPropertyBoxSizing:
+    case CSSPropertyBreakAfter:
+    case CSSPropertyBreakBefore:
+    case CSSPropertyBreakInside:
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyDirection:

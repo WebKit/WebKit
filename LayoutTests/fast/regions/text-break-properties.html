@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<style>
+    #content { -webkit-flow-into: flow; }
+    .region { -webkit-flow-from: flow; }
+    .finished #content, .finished .region { display: none; }
+
+    #region1 { width: 70px; height: 60px; }
+    #region2 { width: 200px; height: 100px; }
+    #region3 { width: 110px; height: 120px; }
+    #region4 { width: 220px; height: 100px; }
+    #region5 { width: 200px; height: 140px; }
+</style>
+
+<div id="content">
+    <div style="break-after: region"><b class="check region1">Region 1</b></div>
+    
+    <div>
+        <div>
+            <div style="break-after: region">
+                <div>
+                    <b class="check region2">Region 2</b>
+                    <div style="break-before: region; margin-top:35px;"><b class="check region3">Region 3</b></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div><b class="check region4">Region 4</b></div>
+    
+    
+    <div style="break-inside: avoid-region;">
+        <b class="check region5 start">Start of region 5.</b> Do not split these lines. Do not split these lines. Do not split these lines. Do not split these lines. Do not split these lines. Do not split these lines. Do not split these lines. <b class="check region5 end">End of region 5.</b>
+    </div>
+    
+</div>
+
+<div id="region1" class="region"></div>
+<div id="region2" class="region"></div>
+<div id="region3" class="region"></div>
+<div id="region4" class="region"></div>
+<div id="region5" class="region"></div>
+
+<script src="resources/helper.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (testContentToRegionsMapping())
+        document.body.className = "finished";
+</script>

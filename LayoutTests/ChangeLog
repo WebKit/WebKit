@@ -1,3 +1,56 @@
+2016-01-30  Dave Hyatt  <hyatt@apple.com>
+
+        Support break-after, break-before and break-inside.
+        https://bugs.webkit.org/show_bug.cgi?id=148814
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        * fast/multicol/standardized-break-properties-expected.txt: Added.
+        * fast/multicol/standardized-break-properties.html: Added.
+        * fast/multicol/vertical-lr/standardized-break-properties-expected.txt: Added.
+        * fast/multicol/vertical-lr/standardized-break-properties.html: Added.
+        * fast/multicol/vertical-rl/standardized-break-properties-expected.txt: Added.
+        * fast/multicol/vertical-rl/standardized-break-properties.html: Added.
+        * fast/regions/text-break-properties-expected.txt: Added.
+        * fast/regions/text-break-properties.html: Added.
+        * printing/allowed-breaks-expected.txt: Added.
+        * printing/allowed-breaks.html: Added.
+        * printing/break-after-avoid-expected.txt: Added.
+        * printing/break-after-avoid-page-expected.txt: Added.
+        * printing/break-after-avoid-page.html: Added.
+        * printing/break-after-avoid.html: Added.
+        * printing/break-always-expected.txt: Added.
+        * printing/break-always.html: Added.
+        * printing/break-avoid-expected.txt: Added.
+        * printing/break-avoid-page-expected.txt: Added.
+        * printing/break-avoid-page.html: Added.
+        * printing/break-avoid.html: Added.
+        * printing/break-display-none-expected.txt: Added.
+        * printing/break-display-none.html: Added.
+        * printing/break-inside-avoid-expected.txt: Added.
+        * printing/break-inside-avoid-page-expected.txt: Added.
+        * printing/break-inside-avoid-page.html: Added.
+        * printing/break-inside-avoid.html: Added.
+        * printing/script-tests/allowed-breaks.js: Added.
+        (test):
+        * printing/script-tests/break-after-avoid-page.js: Added.
+        (test):
+        * printing/script-tests/break-after-avoid.js: Added.
+        (test):
+        * printing/script-tests/break-always.js: Added.
+        (test):
+        * printing/script-tests/break-avoid-page.js: Added.
+        (test):
+        * printing/script-tests/break-avoid.js: Added.
+        (test):
+        * printing/script-tests/break-display-none.js: Added.
+        (test):
+        * printing/script-tests/break-inside-avoid-page.js: Added.
+        (test):
+        * printing/script-tests/break-inside-avoid.js: Added.
+        (test):
+
 2016-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Mark two CSS multicolumn tests as failing

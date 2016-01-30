@@ -1490,9 +1490,9 @@ LayoutUnit RenderBlockFlow::applyBeforeBreak(RenderBox& child, LayoutUnit logica
     bool checkColumnBreaks = flowThread && flowThread->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight; // FIXME: Once columns can print we have to check this.
     bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
-    bool checkBeforeAlways = (checkColumnBreaks && child.style().columnBreakBefore() == PBALWAYS)
-        || (checkPageBreaks && child.style().pageBreakBefore() == PBALWAYS)
-        || (checkRegionBreaks && child.style().regionBreakBefore() == PBALWAYS);
+    bool checkBeforeAlways = (checkColumnBreaks && child.style().breakBefore() == ColumnBreakBetween)
+        || (checkPageBreaks && alwaysPageBreak(child.style().breakBefore()))
+        || (checkRegionBreaks && child.style().breakBefore() == RegionBreakBetween);
     if (checkBeforeAlways && inNormalFlow(child) && hasNextPage(logicalOffset, IncludePageBoundary)) {
         if (checkColumnBreaks) {
             if (isInsideMulticolFlowThread)
@@ -1516,9 +1516,9 @@ LayoutUnit RenderBlockFlow::applyAfterBreak(RenderBox& child, LayoutUnit logical
     bool checkColumnBreaks = flowThread && flowThread->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight; // FIXME: Once columns can print we have to check this.
     bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
-    bool checkAfterAlways = (checkColumnBreaks && child.style().columnBreakAfter() == PBALWAYS)
-        || (checkPageBreaks && child.style().pageBreakAfter() == PBALWAYS)
-        || (checkRegionBreaks && child.style().regionBreakAfter() == PBALWAYS);
+    bool checkAfterAlways = (checkColumnBreaks && child.style().breakAfter() == ColumnBreakBetween)
+        || (checkPageBreaks && alwaysPageBreak(child.style().breakAfter()))
+        || (checkRegionBreaks && child.style().breakAfter() == RegionBreakBetween);
     if (checkAfterAlways && inNormalFlow(child) && hasNextPage(logicalOffset, IncludePageBoundary)) {
         LayoutUnit marginOffset = marginInfo.canCollapseWithMarginBefore() ? LayoutUnit() : marginInfo.margin();
 

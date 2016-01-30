@@ -64,9 +64,6 @@ public:
     bool m_normalGap : 1;
     unsigned m_fill : 1; // ColumnFill
     unsigned m_columnSpan : 1;
-    unsigned m_breakBefore : 2; // EPageBreak
-    unsigned m_breakAfter : 2; // EPageBreak
-    unsigned m_breakInside : 2; // EPageBreak
     unsigned m_axis : 2; // ColumnAxis
     unsigned m_progression : 2; // ColumnProgression
 
