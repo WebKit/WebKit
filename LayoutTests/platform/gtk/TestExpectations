@@ -2541,6 +2541,8 @@ webkit.org/b/152823 imported/w3c/css/css-multicol-1/multicol-rule-outset-000.xht
 
 webkit.org/b/153062 accessibility/gtk/entry-and-password.html [ Failure ]
 
+webkit.org/b/153692 fast/repaint/fixed-move-after-scroll.html [ Crash Pass ]
+
 webkit.org/b/153696 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/153696 accessibility/roles-exposed.html [ Failure ]
 
