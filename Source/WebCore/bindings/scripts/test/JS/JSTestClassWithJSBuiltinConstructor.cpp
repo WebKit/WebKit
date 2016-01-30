@@ -33,6 +33,7 @@ namespace WebCore {
 // Attributes
 
 JSC::EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestClassWithJSBuiltinConstructorConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestClassWithJSBuiltinConstructorPrototype : public JSC::JSNonFinalObject {
 public:
@@ -84,7 +85,7 @@ template<> const ClassInfo JSTestClassWithJSBuiltinConstructorConstructor::s_inf
 
 static const HashTableValue JSTestClassWithJSBuiltinConstructorPrototypeTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestClassWithJSBuiltinConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestClassWithJSBuiltinConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestClassWithJSBuiltinConstructorConstructor) } },
 };
 
 const ClassInfo JSTestClassWithJSBuiltinConstructorPrototype::s_info = { "TestClassWithJSBuiltinConstructorPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructorPrototype) };
@@ -124,6 +125,19 @@ EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(ExecState* state, 
     if (!domObject)
         return throwVMTypeError(state);
     return JSValue::encode(JSTestClassWithJSBuiltinConstructor::getConstructor(state->vm(), domObject->globalObject()));
+}
+
+void setJSTestClassWithJSBuiltinConstructorConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicCast<JSTestClassWithJSBuiltinConstructorPrototype*>(baseValue);
+    if (UNLIKELY(!domObject)) {
+        throwVMTypeError(state);
+        return;
+    }
+    // Shadowing a built-in constructor
+    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestClassWithJSBuiltinConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)

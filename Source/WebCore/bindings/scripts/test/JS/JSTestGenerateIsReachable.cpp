@@ -32,6 +32,7 @@ namespace WebCore {
 // Attributes
 
 JSC::EncodedJSValue jsTestGenerateIsReachableConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestGenerateIsReachableConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestGenerateIsReachablePrototype : public JSC::JSNonFinalObject {
 public:
@@ -73,7 +74,7 @@ template<> const ClassInfo JSTestGenerateIsReachableConstructor::s_info = { "Tes
 
 static const HashTableValue JSTestGenerateIsReachablePrototypeTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGenerateIsReachableConstructor) } },
 };
 
 const ClassInfo JSTestGenerateIsReachablePrototype::s_info = { "TestGenerateIsReachablePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachablePrototype) };
@@ -113,6 +114,19 @@ EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* state, JSObject* 
     if (!domObject)
         return throwVMTypeError(state);
     return JSValue::encode(JSTestGenerateIsReachable::getConstructor(state->vm(), domObject->globalObject()));
+}
+
+void setJSTestGenerateIsReachableConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestGenerateIsReachablePrototype* domObject = jsDynamicCast<JSTestGenerateIsReachablePrototype*>(baseValue);
+    if (UNLIKELY(!domObject)) {
+        throwVMTypeError(state);
+        return;
+    }
+    // Shadowing a built-in constructor
+    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, JSGlobalObject* globalObject)

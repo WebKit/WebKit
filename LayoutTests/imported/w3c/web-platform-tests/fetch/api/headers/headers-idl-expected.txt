@@ -3,7 +3,7 @@ FAIL Headers interface: existence and properties of interface object assert_equa
 PASS Headers interface object length 
 PASS Headers interface object name 
 PASS Headers interface: existence and properties of interface prototype object 
-FAIL Headers interface: existence and properties of interface prototype object's "constructor" property assert_true: Headers.prototype.constructor is not writable expected true got false
+PASS Headers interface: existence and properties of interface prototype object's "constructor" property 
 PASS Headers interface: operation append(ByteString,ByteString) 
 PASS Headers interface: operation delete(ByteString) 
 PASS Headers interface: operation get(ByteString) 

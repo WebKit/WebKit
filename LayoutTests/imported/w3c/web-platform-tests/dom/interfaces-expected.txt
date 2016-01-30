@@ -6,7 +6,7 @@ FAIL Event interface: existence and properties of interface object assert_equals
 PASS Event interface object length 
 PASS Event interface object name 
 PASS Event interface: existence and properties of interface prototype object 
-FAIL Event interface: existence and properties of interface prototype object's "constructor" property assert_true: Event.prototype.constructor is not writable expected true got false
+PASS Event interface: existence and properties of interface prototype object's "constructor" property 
 FAIL Event interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Event interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Event interface: attribute currentTarget assert_equals: getter must be Function expected "function" but got "undefined"
@@ -75,7 +75,7 @@ FAIL CustomEvent interface: existence and properties of interface object assert_
 PASS CustomEvent interface object length 
 PASS CustomEvent interface object name 
 PASS CustomEvent interface: existence and properties of interface prototype object 
-FAIL CustomEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: CustomEvent.prototype.constructor is not writable expected true got false
+PASS CustomEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CustomEvent interface: attribute detail assert_true: The prototype object must have a property "detail" expected true got false
 FAIL CustomEvent interface: operation initCustomEvent(DOMString,boolean,boolean,any) assert_equals: property has wrong .length expected 4 but got 0
 PASS CustomEvent must be primary interface of new CustomEvent("foo") 
@@ -109,7 +109,7 @@ FAIL EventTarget interface: existence and properties of interface object assert_
 PASS EventTarget interface object length 
 PASS EventTarget interface object name 
 PASS EventTarget interface: existence and properties of interface prototype object 
-FAIL EventTarget interface: existence and properties of interface prototype object's "constructor" property assert_true: EventTarget.prototype.constructor is not writable expected true got false
+PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
 PASS EventTarget interface: operation addEventListener(DOMString,EventListener,boolean) 
 PASS EventTarget interface: operation removeEventListener(DOMString,EventListener,boolean) 
 PASS EventTarget interface: operation dispatchEvent(Event) 
@@ -121,7 +121,7 @@ FAIL NodeList interface: existence and properties of interface object assert_equ
 PASS NodeList interface object length 
 PASS NodeList interface object name 
 PASS NodeList interface: existence and properties of interface prototype object 
-FAIL NodeList interface: existence and properties of interface prototype object's "constructor" property assert_true: NodeList.prototype.constructor is not writable expected true got false
+PASS NodeList interface: existence and properties of interface prototype object's "constructor" property 
 PASS NodeList interface: operation item(unsigned long) 
 FAIL NodeList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS NodeList must be primary interface of document.querySelectorAll("script") 
@@ -133,7 +133,7 @@ FAIL HTMLCollection interface: existence and properties of interface object asse
 PASS HTMLCollection interface object length 
 PASS HTMLCollection interface object name 
 PASS HTMLCollection interface: existence and properties of interface prototype object 
-FAIL HTMLCollection interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLCollection.prototype.constructor is not writable expected true got false
+PASS HTMLCollection interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLCollection interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL HTMLCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLCollection interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -152,7 +152,7 @@ FAIL MutationObserver interface: existence and properties of interface object as
 PASS MutationObserver interface object length 
 PASS MutationObserver interface object name 
 PASS MutationObserver interface: existence and properties of interface prototype object 
-FAIL MutationObserver interface: existence and properties of interface prototype object's "constructor" property assert_true: MutationObserver.prototype.constructor is not writable expected true got false
+PASS MutationObserver interface: existence and properties of interface prototype object's "constructor" property 
 PASS MutationObserver interface: operation observe(Node,MutationObserverInit) 
 PASS MutationObserver interface: operation disconnect() 
 PASS MutationObserver interface: operation takeRecords() 
@@ -160,7 +160,7 @@ FAIL MutationRecord interface: existence and properties of interface object asse
 PASS MutationRecord interface object length 
 PASS MutationRecord interface object name 
 PASS MutationRecord interface: existence and properties of interface prototype object 
-FAIL MutationRecord interface: existence and properties of interface prototype object's "constructor" property assert_true: MutationRecord.prototype.constructor is not writable expected true got false
+PASS MutationRecord interface: existence and properties of interface prototype object's "constructor" property 
 FAIL MutationRecord interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MutationRecord interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MutationRecord interface: attribute addedNodes assert_equals: getter must be Function expected "function" but got "undefined"
@@ -174,7 +174,7 @@ FAIL Node interface: existence and properties of interface object assert_equals:
 PASS Node interface object length 
 PASS Node interface object name 
 FAIL Node interface: existence and properties of interface prototype object assert_equals: prototype of Node.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL Node interface: existence and properties of interface prototype object's "constructor" property assert_true: Node.prototype.constructor is not writable expected true got false
+PASS Node interface: existence and properties of interface prototype object's "constructor" property 
 PASS Node interface: constant ELEMENT_NODE on interface object 
 PASS Node interface: constant ELEMENT_NODE on interface prototype object 
 PASS Node interface: constant ATTRIBUTE_NODE on interface object 
@@ -241,7 +241,7 @@ FAIL Document interface: existence and properties of interface object assert_equ
 PASS Document interface object length 
 PASS Document interface object name 
 PASS Document interface: existence and properties of interface prototype object 
-FAIL Document interface: existence and properties of interface prototype object's "constructor" property assert_true: Document.prototype.constructor is not writable expected true got false
+PASS Document interface: existence and properties of interface prototype object's "constructor" property 
 FAIL Document interface: attribute implementation assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute URL assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute documentURI assert_equals: getter must be Function expected "function" but got "undefined"
@@ -285,7 +285,7 @@ FAIL XMLDocument interface: existence and properties of interface object assert_
 PASS XMLDocument interface object length 
 PASS XMLDocument interface object name 
 PASS XMLDocument interface: existence and properties of interface prototype object 
-FAIL XMLDocument interface: existence and properties of interface prototype object's "constructor" property assert_true: XMLDocument.prototype.constructor is not writable expected true got false
+PASS XMLDocument interface: existence and properties of interface prototype object's "constructor" property 
 PASS XMLDocument must be primary interface of xmlDoc 
 PASS Stringification of xmlDoc 
 PASS Document interface: xmlDoc must inherit property "implementation" with the proper type (0) 
@@ -458,7 +458,7 @@ FAIL DOMImplementation interface: existence and properties of interface object a
 PASS DOMImplementation interface object length 
 PASS DOMImplementation interface object name 
 PASS DOMImplementation interface: existence and properties of interface prototype object 
-FAIL DOMImplementation interface: existence and properties of interface prototype object's "constructor" property assert_true: DOMImplementation.prototype.constructor is not writable expected true got false
+PASS DOMImplementation interface: existence and properties of interface prototype object's "constructor" property 
 FAIL DOMImplementation interface: operation createDocumentType(DOMString,DOMString,DOMString) assert_equals: property has wrong .length expected 3 but got 0
 FAIL DOMImplementation interface: operation createDocument(DOMString,DOMString,DocumentType) assert_equals: property has wrong .length expected 2 but got 0
 PASS DOMImplementation interface: operation createHTMLDocument(DOMString) 
@@ -480,7 +480,7 @@ FAIL DocumentFragment interface: existence and properties of interface object as
 PASS DocumentFragment interface object length 
 PASS DocumentFragment interface object name 
 PASS DocumentFragment interface: existence and properties of interface prototype object 
-FAIL DocumentFragment interface: existence and properties of interface prototype object's "constructor" property assert_true: DocumentFragment.prototype.constructor is not writable expected true got false
+PASS DocumentFragment interface: existence and properties of interface prototype object's "constructor" property 
 FAIL DocumentFragment interface: operation getElementById(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL DocumentFragment interface: attribute children assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL DocumentFragment interface: attribute firstElementChild assert_equals: getter must be Function expected "function" but got "undefined"
@@ -597,7 +597,7 @@ FAIL DocumentType interface: existence and properties of interface object assert
 PASS DocumentType interface object length 
 PASS DocumentType interface object name 
 PASS DocumentType interface: existence and properties of interface prototype object 
-FAIL DocumentType interface: existence and properties of interface prototype object's "constructor" property assert_true: DocumentType.prototype.constructor is not writable expected true got false
+PASS DocumentType interface: existence and properties of interface prototype object's "constructor" property 
 FAIL DocumentType interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL DocumentType interface: attribute publicId assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL DocumentType interface: attribute systemId assert_equals: getter must be Function expected "function" but got "undefined"
@@ -700,7 +700,7 @@ FAIL Element interface: existence and properties of interface object assert_equa
 PASS Element interface object length 
 PASS Element interface object name 
 PASS Element interface: existence and properties of interface prototype object 
-FAIL Element interface: existence and properties of interface prototype object's "constructor" property assert_true: Element.prototype.constructor is not writable expected true got false
+PASS Element interface: existence and properties of interface prototype object's "constructor" property 
 FAIL Element interface: attribute namespaceURI assert_own_property: expected property "namespaceURI" missing
 FAIL Element interface: attribute prefix assert_own_property: expected property "prefix" missing
 FAIL Element interface: attribute localName assert_own_property: expected property "localName" missing
@@ -927,7 +927,7 @@ FAIL NamedNodeMap interface: existence and properties of interface object assert
 PASS NamedNodeMap interface object length 
 PASS NamedNodeMap interface object name 
 PASS NamedNodeMap interface: existence and properties of interface prototype object 
-FAIL NamedNodeMap interface: existence and properties of interface prototype object's "constructor" property assert_true: NamedNodeMap.prototype.constructor is not writable expected true got false
+PASS NamedNodeMap interface: existence and properties of interface prototype object's "constructor" property 
 FAIL NamedNodeMap interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL NamedNodeMap interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL NamedNodeMap interface: operation getNamedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -940,7 +940,7 @@ FAIL Attr interface: existence and properties of interface object assert_equals:
 PASS Attr interface object length 
 PASS Attr interface object name 
 FAIL Attr interface: existence and properties of interface prototype object assert_equals: prototype of Attr.prototype is not Object.prototype expected object "[object Object]" but got object "[object NodePrototype]"
-FAIL Attr interface: existence and properties of interface prototype object's "constructor" property assert_true: Attr.prototype.constructor is not writable expected true got false
+PASS Attr interface: existence and properties of interface prototype object's "constructor" property 
 FAIL Attr interface: attribute namespaceURI assert_own_property: expected property "namespaceURI" missing
 FAIL Attr interface: attribute prefix assert_own_property: expected property "prefix" missing
 FAIL Attr interface: attribute localName assert_own_property: expected property "localName" missing
@@ -965,7 +965,7 @@ FAIL CharacterData interface: existence and properties of interface object asser
 PASS CharacterData interface object length 
 PASS CharacterData interface object name 
 PASS CharacterData interface: existence and properties of interface prototype object 
-FAIL CharacterData interface: existence and properties of interface prototype object's "constructor" property assert_true: CharacterData.prototype.constructor is not writable expected true got false
+PASS CharacterData interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CharacterData interface: attribute data assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL CharacterData interface: attribute length assert_equals: getter must be Function expected "function" but got "undefined"
 PASS CharacterData interface: operation substringData(unsigned long,unsigned long) 
@@ -983,7 +983,7 @@ FAIL Text interface: existence and properties of interface object assert_equals:
 PASS Text interface object length 
 PASS Text interface object name 
 PASS Text interface: existence and properties of interface prototype object 
-FAIL Text interface: existence and properties of interface prototype object's "constructor" property assert_true: Text.prototype.constructor is not writable expected true got false
+PASS Text interface: existence and properties of interface prototype object's "constructor" property 
 PASS Text interface: operation splitText(unsigned long) 
 FAIL Text interface: attribute wholeText assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Text must be primary interface of document.createTextNode("abc") 
@@ -1095,7 +1095,7 @@ FAIL ProcessingInstruction interface: existence and properties of interface obje
 PASS ProcessingInstruction interface object length 
 PASS ProcessingInstruction interface object name 
 PASS ProcessingInstruction interface: existence and properties of interface prototype object 
-FAIL ProcessingInstruction interface: existence and properties of interface prototype object's "constructor" property assert_true: ProcessingInstruction.prototype.constructor is not writable expected true got false
+PASS ProcessingInstruction interface: existence and properties of interface prototype object's "constructor" property 
 FAIL ProcessingInstruction interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
 PASS ProcessingInstruction must be primary interface of xmlDoc.createProcessingInstruction("abc", "def") 
 PASS Stringification of xmlDoc.createProcessingInstruction("abc", "def") 
@@ -1204,7 +1204,7 @@ FAIL Comment interface: existence and properties of interface object assert_equa
 PASS Comment interface object length 
 PASS Comment interface object name 
 PASS Comment interface: existence and properties of interface prototype object 
-FAIL Comment interface: existence and properties of interface prototype object's "constructor" property assert_true: Comment.prototype.constructor is not writable expected true got false
+PASS Comment interface: existence and properties of interface prototype object's "constructor" property 
 PASS Comment must be primary interface of document.createComment("abc") 
 PASS Stringification of document.createComment("abc") 
 PASS CharacterData interface: document.createComment("abc") must inherit property "data" with the proper type (0) 
@@ -1311,7 +1311,7 @@ FAIL Range interface: existence and properties of interface object assert_equals
 PASS Range interface object length 
 PASS Range interface object name 
 PASS Range interface: existence and properties of interface prototype object 
-FAIL Range interface: existence and properties of interface prototype object's "constructor" property assert_true: Range.prototype.constructor is not writable expected true got false
+PASS Range interface: existence and properties of interface prototype object's "constructor" property 
 FAIL Range interface: attribute startContainer assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Range interface: attribute startOffset assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Range interface: attribute endContainer assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1461,7 +1461,7 @@ FAIL NodeIterator interface: existence and properties of interface object assert
 PASS NodeIterator interface object length 
 PASS NodeIterator interface object name 
 PASS NodeIterator interface: existence and properties of interface prototype object 
-FAIL NodeIterator interface: existence and properties of interface prototype object's "constructor" property assert_true: NodeIterator.prototype.constructor is not writable expected true got false
+PASS NodeIterator interface: existence and properties of interface prototype object's "constructor" property 
 FAIL NodeIterator interface: attribute root assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL NodeIterator interface: attribute referenceNode assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL NodeIterator interface: attribute pointerBeforeReferenceNode assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1484,7 +1484,7 @@ FAIL TreeWalker interface: existence and properties of interface object assert_e
 PASS TreeWalker interface object length 
 PASS TreeWalker interface object name 
 PASS TreeWalker interface: existence and properties of interface prototype object 
-FAIL TreeWalker interface: existence and properties of interface prototype object's "constructor" property assert_true: TreeWalker.prototype.constructor is not writable expected true got false
+PASS TreeWalker interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TreeWalker interface: attribute root assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TreeWalker interface: attribute whatToShow assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TreeWalker interface: attribute filter assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1550,7 +1550,7 @@ FAIL DOMTokenList interface: existence and properties of interface object assert
 PASS DOMTokenList interface object length 
 PASS DOMTokenList interface object name 
 PASS DOMTokenList interface: existence and properties of interface prototype object 
-FAIL DOMTokenList interface: existence and properties of interface prototype object's "constructor" property assert_true: DOMTokenList.prototype.constructor is not writable expected true got false
+PASS DOMTokenList interface: existence and properties of interface prototype object's "constructor" property 
 FAIL DOMTokenList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS DOMTokenList interface: operation item(unsigned long) 
 PASS DOMTokenList interface: operation contains(DOMString) 
@@ -1575,6 +1575,6 @@ FAIL DOMSettableTokenList interface: existence and properties of interface objec
 PASS DOMSettableTokenList interface object length 
 PASS DOMSettableTokenList interface object name 
 PASS DOMSettableTokenList interface: existence and properties of interface prototype object 
-FAIL DOMSettableTokenList interface: existence and properties of interface prototype object's "constructor" property assert_true: DOMSettableTokenList.prototype.constructor is not writable expected true got false
+PASS DOMSettableTokenList interface: existence and properties of interface prototype object's "constructor" property 
 FAIL DOMSettableTokenList interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 

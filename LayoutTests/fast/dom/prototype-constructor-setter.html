@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Makes sure prototype.constructor is writable");
+
+shouldBe('document.body.constructor', 'HTMLBodyElement.prototype.constructor');
+shouldBe('document.body.__proto__.constructor', 'HTMLBodyElement.prototype.constructor');
+
+shouldNotThrow('document.body.__proto__.constructor = "testPrototype"');
+shouldBeEqualToString("document.body.__proto__.constructor", "testPrototype");
+shouldBeEqualToString("document.body.constructor", "testPrototype");
+
+shouldNotThrow('document.body.constructor = "testInstance"');
+shouldBeEqualToString("document.body.constructor", "testInstance");
+shouldBeEqualToString("document.body.__proto__.constructor", "testPrototype");
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

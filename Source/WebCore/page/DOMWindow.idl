@@ -36,7 +36,6 @@
     CustomPutFunction,
     EventTarget,
     JSGenerateToNativeObject,
-    ReplaceableConstructor,
     JSLegacyParent=JSDOMWindowBase,
     InterfaceName=Window,
 ] interface DOMWindow {

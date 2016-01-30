@@ -18,7 +18,7 @@ FAIL XMLHttpRequestUpload interface: existence and properties of interface objec
 PASS XMLHttpRequestUpload interface object length 
 PASS XMLHttpRequestUpload interface object name 
 FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object's "constructor" property assert_true: XMLHttpRequestUpload.prototype.constructor is not writable expected true got false
+PASS XMLHttpRequestUpload interface: existence and properties of interface prototype object's "constructor" property 
 PASS XMLHttpRequestUpload must be primary interface of (new XMLHttpRequest()).upload 
 PASS Stringification of (new XMLHttpRequest()).upload 
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onloadstart" with the proper type (0) 
@@ -42,7 +42,7 @@ FAIL XMLHttpRequest interface: existence and properties of interface object asse
 PASS XMLHttpRequest interface object length 
 PASS XMLHttpRequest interface object name 
 FAIL XMLHttpRequest interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequest interface: existence and properties of interface prototype object's "constructor" property assert_true: XMLHttpRequest.prototype.constructor is not writable expected true got false
+PASS XMLHttpRequest interface: existence and properties of interface prototype object's "constructor" property 
 FAIL XMLHttpRequest interface: attribute onreadystatechange assert_equals: getter must be Function expected "function" but got "undefined"
 PASS XMLHttpRequest interface: constant UNSENT on interface object 
 PASS XMLHttpRequest interface: constant UNSENT on interface prototype object 
@@ -127,7 +127,7 @@ FAIL FormData interface: existence and properties of interface object assert_equ
 PASS FormData interface object length 
 PASS FormData interface object name 
 PASS FormData interface: existence and properties of interface prototype object 
-FAIL FormData interface: existence and properties of interface prototype object's "constructor" property assert_true: FormData.prototype.constructor is not writable expected true got false
+PASS FormData interface: existence and properties of interface prototype object's "constructor" property 
 FAIL FormData interface: operation append(USVString,Blob,USVString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL FormData interface: operation append(USVString,USVString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL FormData interface: operation delete(USVString) assert_own_property: interface prototype object missing non-static operation expected property "delete" missing
@@ -184,7 +184,7 @@ FAIL ProgressEvent interface: existence and properties of interface object asser
 PASS ProgressEvent interface object length 
 PASS ProgressEvent interface object name 
 PASS ProgressEvent interface: existence and properties of interface prototype object 
-FAIL ProgressEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: ProgressEvent.prototype.constructor is not writable expected true got false
+PASS ProgressEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL ProgressEvent interface: attribute lengthComputable assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL ProgressEvent interface: attribute loaded assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL ProgressEvent interface: attribute total assert_equals: getter must be Function expected "function" but got "undefined"

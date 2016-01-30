@@ -111,7 +111,6 @@ RaisesException
 RaisesExceptionWithMessage
 Reflect=*
 Replaceable
-ReplaceableConstructor
 ReportExtraMemoryCost
 RequiresExistingAtomicString
 SetterRaisesException

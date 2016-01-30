@@ -1,0 +1,17 @@
+Makes sure prototype.constructor is writable
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body.constructor is HTMLBodyElement.prototype.constructor
+PASS document.body.__proto__.constructor is HTMLBodyElement.prototype.constructor
+PASS document.body.__proto__.constructor = "testPrototype" did not throw exception.
+PASS document.body.__proto__.constructor is "testPrototype"
+PASS document.body.constructor is "testPrototype"
+PASS document.body.constructor = "testInstance" did not throw exception.
+PASS document.body.constructor is "testInstance"
+PASS document.body.__proto__.constructor is "testPrototype"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

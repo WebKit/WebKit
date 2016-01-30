@@ -1,5 +1,80 @@
 2016-01-30  Chris Dumez  <cdumez@apple.com>
 
+        [JS Bindings] prototype.constructor should be writable
+        https://bugs.webkit.org/show_bug.cgi?id=149412
+        <rdar://problem/22545096>
+
+        Reviewed by Darin Adler.
+
+        prototype.constructor should have the following properties:
+        { [[Writable]]: true, [[Enumerable]]: false, [[Configurable]]: true }
+
+        as per the Web IDL specification:
+        https://heycam.github.io/webidl/#interface-prototype-object
+
+        In WebKit, it is currently not writable. It is writable in Firefox.
+
+        This patch was first landed in r190085 but was rolled out for causing
+        crashes: <rdar://problem/22825602>. The issue was that even though we
+        marked constructor as writable, we failed to generate a setter for it.
+        This patch addresses the issue and the crash in <rdar://problem/22825602>
+        no longer occurs after this change. A regression test is also added for
+        this crash.
+
+        Tests:
+        fast/dom/HTMLDocument/constructor-setter-crash.html
+        fast/dom/prototype-constructor-setter.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributesHashTable):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::setJSTestActiveDOMObjectConstructor):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::setJSTestClassWithJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::setJSTestCustomConstructorWithNoInterfaceObjectConstructor):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::setJSTestCustomNamedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::setJSTestEventConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::setJSTestEventTargetConstructor):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::setJSTestExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::setJSTestGenerateIsReachableConstructor):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::setJSTestInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::setJSTestJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::setJSTestMediaQueryListListenerConstructor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::setJSTestNamedConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::setJSTestNodeConstructor):
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        (WebCore::setJSTestNondeterministicConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::setJSTestOverloadedConstructorsConstructor):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::setJSTestOverrideBuiltinsConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::setJSTestSerializedScriptValueInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::setJSTestTypedefsConstructor):
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::setJSattributeConstructor):
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::setJSreadonlyConstructor):
+        * page/DOMWindow.idl:
+
+2016-01-30  Chris Dumez  <cdumez@apple.com>
+
         Move more 'constructor' properties to the prototype
         https://bugs.webkit.org/show_bug.cgi?id=153667
 

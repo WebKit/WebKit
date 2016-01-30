@@ -32,6 +32,7 @@ namespace WebCore {
 // Attributes
 
 JSC::EncodedJSValue jsreadonlyConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSreadonlyConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSreadonlyPrototype : public JSC::JSNonFinalObject {
 public:
@@ -73,7 +74,7 @@ template<> const ClassInfo JSreadonlyConstructor::s_info = { "readonlyConstructo
 
 static const HashTableValue JSreadonlyPrototypeTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsreadonlyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsreadonlyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSreadonlyConstructor) } },
 };
 
 const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
@@ -113,6 +114,19 @@ EncodedJSValue jsreadonlyConstructor(ExecState* state, JSObject* baseValue, Enco
     if (!domObject)
         return throwVMTypeError(state);
     return JSValue::encode(JSreadonly::getConstructor(state->vm(), domObject->globalObject()));
+}
+
+void setJSreadonlyConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSreadonlyPrototype* domObject = jsDynamicCast<JSreadonlyPrototype*>(baseValue);
+    if (UNLIKELY(!domObject)) {
+        throwVMTypeError(state);
+        return;
+    }
+    // Shadowing a built-in constructor
+    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 JSValue JSreadonly::getConstructor(VM& vm, JSGlobalObject* globalObject)

@@ -755,7 +755,7 @@ FAIL HTMLAllCollection interface: existence and properties of interface object a
 PASS HTMLAllCollection interface object length 
 PASS HTMLAllCollection interface object name 
 FAIL HTMLAllCollection interface: existence and properties of interface prototype object assert_equals: prototype of HTMLAllCollection.prototype is not HTMLCollection.prototype expected object "[object HTMLCollectionPrototype]" but got object "[object Object]"
-FAIL HTMLAllCollection interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAllCollection.prototype.constructor is not writable expected true got false
+PASS HTMLAllCollection interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLAllCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLAllCollection interface: operation item(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS HTMLAllCollection interface: operation namedItem(DOMString) 
@@ -776,7 +776,7 @@ FAIL HTMLFormControlsCollection interface: existence and properties of interface
 PASS HTMLFormControlsCollection interface object length 
 PASS HTMLFormControlsCollection interface object name 
 PASS HTMLFormControlsCollection interface: existence and properties of interface prototype object 
-FAIL HTMLFormControlsCollection interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFormControlsCollection.prototype.constructor is not writable expected true got false
+PASS HTMLFormControlsCollection interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLFormControlsCollection interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLFormControlsCollection must be primary interface of document.createElement("form").elements assert_equals: wrong typeof object expected "function" but got "object"
 FAIL Stringification of document.createElement("form").elements assert_equals: wrong typeof object expected "function" but got "object"
@@ -791,13 +791,13 @@ FAIL RadioNodeList interface: existence and properties of interface object asser
 PASS RadioNodeList interface object length 
 PASS RadioNodeList interface object name 
 PASS RadioNodeList interface: existence and properties of interface prototype object 
-FAIL RadioNodeList interface: existence and properties of interface prototype object's "constructor" property assert_true: RadioNodeList.prototype.constructor is not writable expected true got false
+PASS RadioNodeList interface: existence and properties of interface prototype object's "constructor" property 
 FAIL RadioNodeList interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOptionsCollection interface: existence and properties of interface object assert_equals: class string of HTMLOptionsCollection expected "[object Function]" but got "[object HTMLOptionsCollectionConstructor]"
 PASS HTMLOptionsCollection interface object length 
 PASS HTMLOptionsCollection interface object name 
 PASS HTMLOptionsCollection interface: existence and properties of interface prototype object 
-FAIL HTMLOptionsCollection interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOptionsCollection.prototype.constructor is not writable expected true got false
+PASS HTMLOptionsCollection interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLOptionsCollection interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS HTMLOptionsCollection interface: operation add([object Object],[object Object],[object Object],[object Object]) 
 FAIL HTMLOptionsCollection interface: operation remove(long) assert_equals: property has wrong .length expected 1 but got 0
@@ -842,7 +842,7 @@ FAIL DOMStringMap interface: existence and properties of interface object assert
 PASS DOMStringMap interface object length 
 PASS DOMStringMap interface object name 
 PASS DOMStringMap interface: existence and properties of interface prototype object 
-FAIL DOMStringMap interface: existence and properties of interface prototype object's "constructor" property assert_true: DOMStringMap.prototype.constructor is not writable expected true got false
+PASS DOMStringMap interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMStringMap must be primary interface of document.head.dataset 
 PASS Stringification of document.head.dataset 
 FAIL DOMElementMap interface: existence and properties of interface object assert_own_property: self does not have own property "DOMElementMap" expected property "DOMElementMap" missing
@@ -856,7 +856,7 @@ FAIL HTMLElement interface: existence and properties of interface object assert_
 PASS HTMLElement interface object length 
 PASS HTMLElement interface object name 
 PASS HTMLElement interface: existence and properties of interface prototype object 
-FAIL HTMLElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLElement.prototype.constructor is not writable expected true got false
+PASS HTMLElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLElement interface: attribute title assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLElement interface: attribute lang assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLElement interface: attribute translate assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1304,7 +1304,7 @@ FAIL HTMLUnknownElement interface: existence and properties of interface object 
 PASS HTMLUnknownElement interface object length 
 PASS HTMLUnknownElement interface object name 
 PASS HTMLUnknownElement interface: existence and properties of interface prototype object 
-FAIL HTMLUnknownElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLUnknownElement.prototype.constructor is not writable expected true got false
+PASS HTMLUnknownElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLUnknownElement must be primary interface of document.createElement("blink") 
 PASS Stringification of document.createElement("blink") 
 PASS HTMLUnknownElement must be primary interface of document.createElement("quasit") 
@@ -1331,7 +1331,7 @@ FAIL HTMLHtmlElement interface: existence and properties of interface object ass
 PASS HTMLHtmlElement interface object length 
 PASS HTMLHtmlElement interface object name 
 PASS HTMLHtmlElement interface: existence and properties of interface prototype object 
-FAIL HTMLHtmlElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLHtmlElement.prototype.constructor is not writable expected true got false
+PASS HTMLHtmlElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLHtmlElement interface: attribute version assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLHtmlElement must be primary interface of document.createElement("html") 
 PASS Stringification of document.createElement("html") 
@@ -1340,14 +1340,14 @@ FAIL HTMLHeadElement interface: existence and properties of interface object ass
 PASS HTMLHeadElement interface object length 
 PASS HTMLHeadElement interface object name 
 PASS HTMLHeadElement interface: existence and properties of interface prototype object 
-FAIL HTMLHeadElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLHeadElement.prototype.constructor is not writable expected true got false
+PASS HTMLHeadElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLHeadElement must be primary interface of document.createElement("head") 
 PASS Stringification of document.createElement("head") 
 FAIL HTMLTitleElement interface: existence and properties of interface object assert_equals: class string of HTMLTitleElement expected "[object Function]" but got "[object HTMLTitleElementConstructor]"
 PASS HTMLTitleElement interface object length 
 PASS HTMLTitleElement interface object name 
 PASS HTMLTitleElement interface: existence and properties of interface prototype object 
-FAIL HTMLTitleElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTitleElement.prototype.constructor is not writable expected true got false
+PASS HTMLTitleElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTitleElement interface: attribute text assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLTitleElement must be primary interface of document.createElement("title") 
 PASS Stringification of document.createElement("title") 
@@ -1356,7 +1356,7 @@ FAIL HTMLBaseElement interface: existence and properties of interface object ass
 PASS HTMLBaseElement interface object length 
 PASS HTMLBaseElement interface object name 
 PASS HTMLBaseElement interface: existence and properties of interface prototype object 
-FAIL HTMLBaseElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLBaseElement.prototype.constructor is not writable expected true got false
+PASS HTMLBaseElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLBaseElement interface: attribute href assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLBaseElement interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLBaseElement must be primary interface of document.createElement("base") 
@@ -1367,7 +1367,7 @@ FAIL HTMLLinkElement interface: existence and properties of interface object ass
 PASS HTMLLinkElement interface object length 
 PASS HTMLLinkElement interface object name 
 PASS HTMLLinkElement interface: existence and properties of interface prototype object 
-FAIL HTMLLinkElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLLinkElement.prototype.constructor is not writable expected true got false
+PASS HTMLLinkElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLLinkElement interface: attribute href assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLLinkElement interface: attribute crossOrigin assert_true: The prototype object must have a property "crossOrigin" expected true got false
 FAIL HTMLLinkElement interface: attribute rel assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1397,7 +1397,7 @@ FAIL HTMLMetaElement interface: existence and properties of interface object ass
 PASS HTMLMetaElement interface object length 
 PASS HTMLMetaElement interface object name 
 PASS HTMLMetaElement interface: existence and properties of interface prototype object 
-FAIL HTMLMetaElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMetaElement.prototype.constructor is not writable expected true got false
+PASS HTMLMetaElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLMetaElement interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMetaElement interface: attribute httpEquiv assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMetaElement interface: attribute content assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1412,7 +1412,7 @@ FAIL HTMLStyleElement interface: existence and properties of interface object as
 PASS HTMLStyleElement interface object length 
 PASS HTMLStyleElement interface object name 
 PASS HTMLStyleElement interface: existence and properties of interface prototype object 
-FAIL HTMLStyleElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLStyleElement.prototype.constructor is not writable expected true got false
+PASS HTMLStyleElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLStyleElement interface: attribute media assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLStyleElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLStyleElement interface: attribute scoped assert_true: The prototype object must have a property "scoped" expected true got false
@@ -1426,7 +1426,7 @@ FAIL HTMLBodyElement interface: existence and properties of interface object ass
 PASS HTMLBodyElement interface object length 
 PASS HTMLBodyElement interface object name 
 PASS HTMLBodyElement interface: existence and properties of interface prototype object 
-FAIL HTMLBodyElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLBodyElement.prototype.constructor is not writable expected true got false
+PASS HTMLBodyElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLBodyElement interface: attribute text assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLBodyElement interface: attribute link assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLBodyElement interface: attribute vLink assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1471,7 +1471,7 @@ FAIL HTMLHeadingElement interface: existence and properties of interface object 
 PASS HTMLHeadingElement interface object length 
 PASS HTMLHeadingElement interface object name 
 PASS HTMLHeadingElement interface: existence and properties of interface prototype object 
-FAIL HTMLHeadingElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLHeadingElement.prototype.constructor is not writable expected true got false
+PASS HTMLHeadingElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLHeadingElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLHeadingElement must be primary interface of document.createElement("h1") 
 PASS Stringification of document.createElement("h1") 
@@ -1495,7 +1495,7 @@ FAIL HTMLParagraphElement interface: existence and properties of interface objec
 PASS HTMLParagraphElement interface object length 
 PASS HTMLParagraphElement interface object name 
 PASS HTMLParagraphElement interface: existence and properties of interface prototype object 
-FAIL HTMLParagraphElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLParagraphElement.prototype.constructor is not writable expected true got false
+PASS HTMLParagraphElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLParagraphElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLParagraphElement must be primary interface of document.createElement("p") 
 PASS Stringification of document.createElement("p") 
@@ -1504,7 +1504,7 @@ FAIL HTMLHRElement interface: existence and properties of interface object asser
 PASS HTMLHRElement interface object length 
 PASS HTMLHRElement interface object name 
 PASS HTMLHRElement interface: existence and properties of interface prototype object 
-FAIL HTMLHRElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLHRElement.prototype.constructor is not writable expected true got false
+PASS HTMLHRElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLHRElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLHRElement interface: attribute color assert_true: The prototype object must have a property "color" expected true got false
 FAIL HTMLHRElement interface: attribute noShade assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1521,7 +1521,7 @@ FAIL HTMLPreElement interface: existence and properties of interface object asse
 PASS HTMLPreElement interface object length 
 PASS HTMLPreElement interface object name 
 PASS HTMLPreElement interface: existence and properties of interface prototype object 
-FAIL HTMLPreElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLPreElement.prototype.constructor is not writable expected true got false
+PASS HTMLPreElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLPreElement interface: attribute width assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLPreElement must be primary interface of document.createElement("pre") 
 PASS Stringification of document.createElement("pre") 
@@ -1539,7 +1539,7 @@ FAIL HTMLQuoteElement interface: existence and properties of interface object as
 PASS HTMLQuoteElement interface object length 
 PASS HTMLQuoteElement interface object name 
 PASS HTMLQuoteElement interface: existence and properties of interface prototype object 
-FAIL HTMLQuoteElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLQuoteElement.prototype.constructor is not writable expected true got false
+PASS HTMLQuoteElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLQuoteElement interface: attribute cite assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLQuoteElement must be primary interface of document.createElement("blockquote") 
 PASS Stringification of document.createElement("blockquote") 
@@ -1551,7 +1551,7 @@ FAIL HTMLOListElement interface: existence and properties of interface object as
 PASS HTMLOListElement interface object length 
 PASS HTMLOListElement interface object name 
 PASS HTMLOListElement interface: existence and properties of interface prototype object 
-FAIL HTMLOListElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOListElement.prototype.constructor is not writable expected true got false
+PASS HTMLOListElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLOListElement interface: attribute reversed assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOListElement interface: attribute start assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOListElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1560,14 +1560,14 @@ FAIL HTMLUListElement interface: existence and properties of interface object as
 PASS HTMLUListElement interface object length 
 PASS HTMLUListElement interface object name 
 PASS HTMLUListElement interface: existence and properties of interface prototype object 
-FAIL HTMLUListElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLUListElement.prototype.constructor is not writable expected true got false
+PASS HTMLUListElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLUListElement interface: attribute compact assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLUListElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLLIElement interface: existence and properties of interface object assert_equals: class string of HTMLLIElement expected "[object Function]" but got "[object HTMLLIElementConstructor]"
 PASS HTMLLIElement interface object length 
 PASS HTMLLIElement interface object name 
 PASS HTMLLIElement interface: existence and properties of interface prototype object 
-FAIL HTMLLIElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLLIElement.prototype.constructor is not writable expected true got false
+PASS HTMLLIElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLLIElement interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLLIElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLLIElement must be primary interface of document.createElement("li") 
@@ -1578,13 +1578,13 @@ FAIL HTMLDListElement interface: existence and properties of interface object as
 PASS HTMLDListElement interface object length 
 PASS HTMLDListElement interface object name 
 PASS HTMLDListElement interface: existence and properties of interface prototype object 
-FAIL HTMLDListElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDListElement.prototype.constructor is not writable expected true got false
+PASS HTMLDListElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLDListElement interface: attribute compact assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLDivElement interface: existence and properties of interface object assert_equals: class string of HTMLDivElement expected "[object Function]" but got "[object HTMLDivElementConstructor]"
 PASS HTMLDivElement interface object length 
 PASS HTMLDivElement interface object name 
 PASS HTMLDivElement interface: existence and properties of interface prototype object 
-FAIL HTMLDivElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDivElement.prototype.constructor is not writable expected true got false
+PASS HTMLDivElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLDivElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLDivElement must be primary interface of document.createElement("div") 
 PASS Stringification of document.createElement("div") 
@@ -1593,7 +1593,7 @@ FAIL HTMLAnchorElement interface: existence and properties of interface object a
 PASS HTMLAnchorElement interface object length 
 PASS HTMLAnchorElement interface object name 
 PASS HTMLAnchorElement interface: existence and properties of interface prototype object 
-FAIL HTMLAnchorElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAnchorElement.prototype.constructor is not writable expected true got false
+PASS HTMLAnchorElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLAnchorElement interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLAnchorElement interface: attribute download assert_true: The prototype object must have a property "download" expected true got false
 FAIL HTMLAnchorElement interface: attribute ping assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1648,7 +1648,7 @@ FAIL HTMLDataElement interface: existence and properties of interface object ass
 PASS HTMLDataElement interface object length 
 PASS HTMLDataElement interface object name 
 PASS HTMLDataElement interface: existence and properties of interface prototype object 
-FAIL HTMLDataElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDataElement.prototype.constructor is not writable expected true got false
+PASS HTMLDataElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLDataElement interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLDataElement must be primary interface of document.createElement("data") 
 PASS Stringification of document.createElement("data") 
@@ -1657,7 +1657,7 @@ FAIL HTMLTimeElement interface: existence and properties of interface object ass
 PASS HTMLTimeElement interface object length 
 PASS HTMLTimeElement interface object name 
 PASS HTMLTimeElement interface: existence and properties of interface prototype object 
-FAIL HTMLTimeElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTimeElement.prototype.constructor is not writable expected true got false
+PASS HTMLTimeElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTimeElement interface: attribute dateTime assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLTimeElement must be primary interface of document.createElement("time") 
 PASS Stringification of document.createElement("time") 
@@ -1666,14 +1666,14 @@ FAIL HTMLSpanElement interface: existence and properties of interface object ass
 PASS HTMLSpanElement interface object length 
 PASS HTMLSpanElement interface object name 
 PASS HTMLSpanElement interface: existence and properties of interface prototype object 
-FAIL HTMLSpanElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLSpanElement.prototype.constructor is not writable expected true got false
+PASS HTMLSpanElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLSpanElement must be primary interface of document.createElement("span") 
 PASS Stringification of document.createElement("span") 
 FAIL HTMLBRElement interface: existence and properties of interface object assert_equals: class string of HTMLBRElement expected "[object Function]" but got "[object HTMLBRElementConstructor]"
 PASS HTMLBRElement interface object length 
 PASS HTMLBRElement interface object name 
 PASS HTMLBRElement interface: existence and properties of interface prototype object 
-FAIL HTMLBRElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLBRElement.prototype.constructor is not writable expected true got false
+PASS HTMLBRElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLBRElement interface: attribute clear assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLBRElement must be primary interface of document.createElement("br") 
 PASS Stringification of document.createElement("br") 
@@ -1682,7 +1682,7 @@ FAIL HTMLModElement interface: existence and properties of interface object asse
 PASS HTMLModElement interface object length 
 PASS HTMLModElement interface object name 
 PASS HTMLModElement interface: existence and properties of interface prototype object 
-FAIL HTMLModElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLModElement.prototype.constructor is not writable expected true got false
+PASS HTMLModElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLModElement interface: attribute cite assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLModElement interface: attribute dateTime assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLModElement must be primary interface of document.createElement("ins") 
@@ -1697,14 +1697,14 @@ FAIL HTMLPictureElement interface: existence and properties of interface object 
 PASS HTMLPictureElement interface object length 
 PASS HTMLPictureElement interface object name 
 PASS HTMLPictureElement interface: existence and properties of interface prototype object 
-FAIL HTMLPictureElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLPictureElement.prototype.constructor is not writable expected true got false
+PASS HTMLPictureElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLPictureElement must be primary interface of document.createElement("picture") 
 PASS Stringification of document.createElement("picture") 
 FAIL HTMLImageElement interface: existence and properties of interface object assert_equals: class string of HTMLImageElement expected "[object Function]" but got "[object HTMLImageElementConstructor]"
 PASS HTMLImageElement interface object length 
 PASS HTMLImageElement interface object name 
 PASS HTMLImageElement interface: existence and properties of interface prototype object 
-FAIL HTMLImageElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLImageElement.prototype.constructor is not writable expected true got false
+PASS HTMLImageElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLImageElement interface: attribute alt assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLImageElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLImageElement interface: attribute srcset assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1773,7 +1773,7 @@ FAIL HTMLIFrameElement interface: existence and properties of interface object a
 PASS HTMLIFrameElement interface object length 
 PASS HTMLIFrameElement interface object name 
 PASS HTMLIFrameElement interface: existence and properties of interface prototype object 
-FAIL HTMLIFrameElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLIFrameElement.prototype.constructor is not writable expected true got false
+PASS HTMLIFrameElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLIFrameElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLIFrameElement interface: attribute srcdoc assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLIFrameElement interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1794,7 +1794,7 @@ FAIL HTMLEmbedElement interface: existence and properties of interface object as
 PASS HTMLEmbedElement interface object length 
 PASS HTMLEmbedElement interface object name 
 PASS HTMLEmbedElement interface: existence and properties of interface prototype object 
-FAIL HTMLEmbedElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLEmbedElement.prototype.constructor is not writable expected true got false
+PASS HTMLEmbedElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLEmbedElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLEmbedElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLEmbedElement interface: attribute width assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1815,7 +1815,7 @@ FAIL HTMLObjectElement interface: existence and properties of interface object a
 PASS HTMLObjectElement interface object length 
 PASS HTMLObjectElement interface object name 
 PASS HTMLObjectElement interface: existence and properties of interface prototype object 
-FAIL HTMLObjectElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLObjectElement.prototype.constructor is not writable expected true got false
+PASS HTMLObjectElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLObjectElement interface: attribute data assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLObjectElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLObjectElement interface: attribute typeMustMatch assert_true: The prototype object must have a property "typeMustMatch" expected true got false
@@ -1875,7 +1875,7 @@ FAIL HTMLParamElement interface: existence and properties of interface object as
 PASS HTMLParamElement interface object length 
 PASS HTMLParamElement interface object name 
 PASS HTMLParamElement interface: existence and properties of interface prototype object 
-FAIL HTMLParamElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLParamElement.prototype.constructor is not writable expected true got false
+PASS HTMLParamElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLParamElement interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLParamElement interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLParamElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1890,7 +1890,7 @@ FAIL HTMLVideoElement interface: existence and properties of interface object as
 PASS HTMLVideoElement interface object length 
 PASS HTMLVideoElement interface object name 
 PASS HTMLVideoElement interface: existence and properties of interface prototype object 
-FAIL HTMLVideoElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLVideoElement.prototype.constructor is not writable expected true got false
+PASS HTMLVideoElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLVideoElement interface: attribute width assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLVideoElement interface: attribute height assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLVideoElement interface: attribute videoWidth assert_equals: getter must be Function expected "function" but got "undefined"
@@ -1956,7 +1956,7 @@ FAIL HTMLAudioElement interface: existence and properties of interface object as
 PASS HTMLAudioElement interface object length 
 PASS HTMLAudioElement interface object name 
 PASS HTMLAudioElement interface: existence and properties of interface prototype object 
-FAIL HTMLAudioElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAudioElement.prototype.constructor is not writable expected true got false
+PASS HTMLAudioElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLAudioElement must be primary interface of document.createElement("audio") 
 PASS Stringification of document.createElement("audio") 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "error" with the proper type (0) 
@@ -2063,7 +2063,7 @@ FAIL HTMLSourceElement interface: existence and properties of interface object a
 PASS HTMLSourceElement interface object length 
 PASS HTMLSourceElement interface object name 
 PASS HTMLSourceElement interface: existence and properties of interface prototype object 
-FAIL HTMLSourceElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLSourceElement.prototype.constructor is not writable expected true got false
+PASS HTMLSourceElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLSourceElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLSourceElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLSourceElement interface: attribute srcset assert_true: The prototype object must have a property "srcset" expected true got false
@@ -2080,7 +2080,7 @@ FAIL HTMLTrackElement interface: existence and properties of interface object as
 PASS HTMLTrackElement interface object length 
 PASS HTMLTrackElement interface object name 
 PASS HTMLTrackElement interface: existence and properties of interface prototype object 
-FAIL HTMLTrackElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTrackElement.prototype.constructor is not writable expected true got false
+PASS HTMLTrackElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTrackElement interface: attribute kind assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTrackElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTrackElement interface: attribute srclang assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2113,7 +2113,7 @@ FAIL HTMLMediaElement interface: existence and properties of interface object as
 PASS HTMLMediaElement interface object length 
 PASS HTMLMediaElement interface object name 
 PASS HTMLMediaElement interface: existence and properties of interface prototype object 
-FAIL HTMLMediaElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMediaElement.prototype.constructor is not writable expected true got false
+PASS HTMLMediaElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLMediaElement interface: attribute error assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMediaElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMediaElement interface: attribute currentSrc assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2171,7 +2171,7 @@ FAIL MediaError interface: existence and properties of interface object assert_e
 PASS MediaError interface object length 
 PASS MediaError interface object name 
 PASS MediaError interface: existence and properties of interface prototype object 
-FAIL MediaError interface: existence and properties of interface prototype object's "constructor" property assert_true: MediaError.prototype.constructor is not writable expected true got false
+PASS MediaError interface: existence and properties of interface prototype object's "constructor" property 
 PASS MediaError interface: constant MEDIA_ERR_ABORTED on interface object 
 PASS MediaError interface: constant MEDIA_ERR_ABORTED on interface prototype object 
 PASS MediaError interface: constant MEDIA_ERR_NETWORK on interface object 
@@ -2233,7 +2233,7 @@ FAIL MediaController interface: existence and properties of interface object ass
 PASS MediaController interface object length 
 PASS MediaController interface object name 
 FAIL MediaController interface: existence and properties of interface prototype object assert_equals: prototype of MediaController.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL MediaController interface: existence and properties of interface prototype object's "constructor" property assert_true: MediaController.prototype.constructor is not writable expected true got false
+PASS MediaController interface: existence and properties of interface prototype object's "constructor" property 
 FAIL MediaController interface: attribute readyState assert_true: The prototype object must have a property "readyState" expected true got false
 FAIL MediaController interface: attribute buffered assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MediaController interface: attribute seekable assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2308,7 +2308,7 @@ FAIL TextTrackList interface: existence and properties of interface object asser
 PASS TextTrackList interface object length 
 PASS TextTrackList interface object name 
 FAIL TextTrackList interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackList.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL TextTrackList interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrackList.prototype.constructor is not writable expected true got false
+PASS TextTrackList interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TextTrackList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS TextTrackList interface: operation getTrackById(DOMString) 
 FAIL TextTrackList interface: attribute onchange assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2336,7 +2336,7 @@ FAIL TextTrack interface: existence and properties of interface object assert_eq
 PASS TextTrack interface object length 
 PASS TextTrack interface object name 
 FAIL TextTrack interface: existence and properties of interface prototype object assert_equals: prototype of TextTrack.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL TextTrack interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrack.prototype.constructor is not writable expected true got false
+PASS TextTrack interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TextTrack interface: attribute kind assert_true: The prototype object must have a property "kind" expected true got false
 FAIL TextTrack interface: attribute label assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TextTrack interface: attribute language assert_true: The prototype object must have a property "language" expected true got false
@@ -2377,7 +2377,7 @@ FAIL TextTrackCueList interface: existence and properties of interface object as
 PASS TextTrackCueList interface object length 
 PASS TextTrackCueList interface object name 
 PASS TextTrackCueList interface: existence and properties of interface prototype object 
-FAIL TextTrackCueList interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrackCueList.prototype.constructor is not writable expected true got false
+PASS TextTrackCueList interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TextTrackCueList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS TextTrackCueList interface: operation getCueById(DOMString) 
 PASS TextTrackCueList must be primary interface of document.createElement("video").addTextTrack("subtitles").cues 
@@ -2389,7 +2389,7 @@ FAIL TextTrackCue interface: existence and properties of interface object assert
 FAIL TextTrackCue interface object length assert_equals: wrong value for TextTrackCue.length expected 0 but got 3
 PASS TextTrackCue interface object name 
 FAIL TextTrackCue interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackCue.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL TextTrackCue interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrackCue.prototype.constructor is not writable expected true got false
+PASS TextTrackCue interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TextTrackCue interface: attribute track assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TextTrackCue interface: attribute id assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TextTrackCue interface: attribute startTime assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2401,7 +2401,7 @@ FAIL TimeRanges interface: existence and properties of interface object assert_e
 PASS TimeRanges interface object length 
 PASS TimeRanges interface object name 
 PASS TimeRanges interface: existence and properties of interface prototype object 
-FAIL TimeRanges interface: existence and properties of interface prototype object's "constructor" property assert_true: TimeRanges.prototype.constructor is not writable expected true got false
+PASS TimeRanges interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TimeRanges interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS TimeRanges interface: operation start(unsigned long) 
 PASS TimeRanges interface: operation end(unsigned long) 
@@ -2416,7 +2416,7 @@ FAIL TrackEvent interface: existence and properties of interface object assert_e
 PASS TrackEvent interface object length 
 PASS TrackEvent interface object name 
 PASS TrackEvent interface: existence and properties of interface prototype object 
-FAIL TrackEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: TrackEvent.prototype.constructor is not writable expected true got false
+PASS TrackEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TrackEvent interface: attribute track assert_true: The prototype object must have a property "track" expected true got false
 FAIL TrackEvent must be primary interface of new TrackEvent("addtrack"; {track:document.createElement("track").track}) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
 FAIL Stringification of new TrackEvent("addtrack"; {track:document.createElement("track").track}) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
@@ -2443,7 +2443,7 @@ FAIL HTMLMapElement interface: existence and properties of interface object asse
 PASS HTMLMapElement interface object length 
 PASS HTMLMapElement interface object name 
 PASS HTMLMapElement interface: existence and properties of interface prototype object 
-FAIL HTMLMapElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMapElement.prototype.constructor is not writable expected true got false
+PASS HTMLMapElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLMapElement interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMapElement interface: attribute areas assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMapElement interface: attribute images assert_true: The prototype object must have a property "images" expected true got false
@@ -2456,7 +2456,7 @@ FAIL HTMLAreaElement interface: existence and properties of interface object ass
 PASS HTMLAreaElement interface object length 
 PASS HTMLAreaElement interface object name 
 PASS HTMLAreaElement interface: existence and properties of interface prototype object 
-FAIL HTMLAreaElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAreaElement.prototype.constructor is not writable expected true got false
+PASS HTMLAreaElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLAreaElement interface: attribute alt assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLAreaElement interface: attribute coords assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLAreaElement interface: attribute shape assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2503,7 +2503,7 @@ FAIL HTMLTableElement interface: existence and properties of interface object as
 PASS HTMLTableElement interface object length 
 PASS HTMLTableElement interface object name 
 PASS HTMLTableElement interface: existence and properties of interface prototype object 
-FAIL HTMLTableElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableElement.prototype.constructor is not writable expected true got false
+PASS HTMLTableElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTableElement interface: attribute caption assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLTableElement interface: operation createCaption() 
 PASS HTMLTableElement interface: operation deleteCaption() 
@@ -2564,7 +2564,7 @@ FAIL HTMLTableCaptionElement interface: existence and properties of interface ob
 PASS HTMLTableCaptionElement interface object length 
 PASS HTMLTableCaptionElement interface object name 
 PASS HTMLTableCaptionElement interface: existence and properties of interface prototype object 
-FAIL HTMLTableCaptionElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableCaptionElement.prototype.constructor is not writable expected true got false
+PASS HTMLTableCaptionElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTableCaptionElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLTableCaptionElement must be primary interface of document.createElement("caption") 
 PASS Stringification of document.createElement("caption") 
@@ -2573,7 +2573,7 @@ FAIL HTMLTableColElement interface: existence and properties of interface object
 PASS HTMLTableColElement interface object length 
 PASS HTMLTableColElement interface object name 
 PASS HTMLTableColElement interface: existence and properties of interface prototype object 
-FAIL HTMLTableColElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableColElement.prototype.constructor is not writable expected true got false
+PASS HTMLTableColElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTableColElement interface: attribute span assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTableColElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTableColElement interface: attribute ch assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2600,7 +2600,7 @@ FAIL HTMLTableSectionElement interface: existence and properties of interface ob
 PASS HTMLTableSectionElement interface object length 
 PASS HTMLTableSectionElement interface object name 
 PASS HTMLTableSectionElement interface: existence and properties of interface prototype object 
-FAIL HTMLTableSectionElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableSectionElement.prototype.constructor is not writable expected true got false
+PASS HTMLTableSectionElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTableSectionElement interface: attribute rows assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLTableSectionElement interface: operation insertRow(long) 
 FAIL HTMLTableSectionElement interface: operation deleteRow(long) assert_equals: property has wrong .length expected 1 but got 0
@@ -2651,7 +2651,7 @@ FAIL HTMLTableRowElement interface: existence and properties of interface object
 PASS HTMLTableRowElement interface object length 
 PASS HTMLTableRowElement interface object name 
 PASS HTMLTableRowElement interface: existence and properties of interface prototype object 
-FAIL HTMLTableRowElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableRowElement.prototype.constructor is not writable expected true got false
+PASS HTMLTableRowElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTableRowElement interface: attribute rowIndex assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTableRowElement interface: attribute sectionRowIndex assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTableRowElement interface: attribute cells assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2682,7 +2682,7 @@ FAIL HTMLTableDataCellElement interface: existence and properties of interface o
 PASS HTMLTableDataCellElement interface object length 
 PASS HTMLTableDataCellElement interface object name 
 PASS HTMLTableDataCellElement interface: existence and properties of interface prototype object 
-FAIL HTMLTableDataCellElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableDataCellElement.prototype.constructor is not writable expected true got false
+PASS HTMLTableDataCellElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTableDataCellElement interface: attribute abbr assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLTableDataCellElement must be primary interface of document.createElement("td") 
 PASS Stringification of document.createElement("td") 
@@ -2704,7 +2704,7 @@ FAIL HTMLTableHeaderCellElement interface: existence and properties of interface
 PASS HTMLTableHeaderCellElement interface object length 
 PASS HTMLTableHeaderCellElement interface object name 
 PASS HTMLTableHeaderCellElement interface: existence and properties of interface prototype object 
-FAIL HTMLTableHeaderCellElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableHeaderCellElement.prototype.constructor is not writable expected true got false
+PASS HTMLTableHeaderCellElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTableHeaderCellElement interface: attribute scope assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTableHeaderCellElement interface: attribute abbr assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTableHeaderCellElement interface: attribute sorted assert_true: The prototype object must have a property "sorted" expected true got false
@@ -2732,7 +2732,7 @@ FAIL HTMLTableCellElement interface: existence and properties of interface objec
 PASS HTMLTableCellElement interface object length 
 PASS HTMLTableCellElement interface object name 
 PASS HTMLTableCellElement interface: existence and properties of interface prototype object 
-FAIL HTMLTableCellElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableCellElement.prototype.constructor is not writable expected true got false
+PASS HTMLTableCellElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTableCellElement interface: attribute colSpan assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTableCellElement interface: attribute rowSpan assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTableCellElement interface: attribute headers assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2750,7 +2750,7 @@ FAIL HTMLFormElement interface: existence and properties of interface object ass
 PASS HTMLFormElement interface object length 
 PASS HTMLFormElement interface object name 
 PASS HTMLFormElement interface: existence and properties of interface prototype object 
-FAIL HTMLFormElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFormElement.prototype.constructor is not writable expected true got false
+PASS HTMLFormElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLFormElement interface: attribute acceptCharset assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFormElement interface: attribute action assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFormElement interface: attribute autocomplete assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2789,7 +2789,7 @@ FAIL HTMLLabelElement interface: existence and properties of interface object as
 PASS HTMLLabelElement interface object length 
 PASS HTMLLabelElement interface object name 
 PASS HTMLLabelElement interface: existence and properties of interface prototype object 
-FAIL HTMLLabelElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLLabelElement.prototype.constructor is not writable expected true got false
+PASS HTMLLabelElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLLabelElement interface: attribute form assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLLabelElement interface: attribute htmlFor assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLLabelElement interface: attribute control assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2802,7 +2802,7 @@ FAIL HTMLInputElement interface: existence and properties of interface object as
 PASS HTMLInputElement interface object length 
 PASS HTMLInputElement interface object name 
 PASS HTMLInputElement interface: existence and properties of interface prototype object 
-FAIL HTMLInputElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLInputElement.prototype.constructor is not writable expected true got false
+PASS HTMLInputElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLInputElement interface: attribute accept assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLInputElement interface: attribute alt assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLInputElement interface: attribute autocomplete assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2933,7 +2933,7 @@ FAIL HTMLButtonElement interface: existence and properties of interface object a
 PASS HTMLButtonElement interface object length 
 PASS HTMLButtonElement interface object name 
 PASS HTMLButtonElement interface: existence and properties of interface prototype object 
-FAIL HTMLButtonElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLButtonElement.prototype.constructor is not writable expected true got false
+PASS HTMLButtonElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLButtonElement interface: attribute autofocus assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLButtonElement interface: attribute disabled assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLButtonElement interface: attribute form assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2979,7 +2979,7 @@ FAIL HTMLSelectElement interface: existence and properties of interface object a
 PASS HTMLSelectElement interface object length 
 PASS HTMLSelectElement interface object name 
 PASS HTMLSelectElement interface: existence and properties of interface prototype object 
-FAIL HTMLSelectElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLSelectElement.prototype.constructor is not writable expected true got false
+PASS HTMLSelectElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLSelectElement interface: attribute autocomplete assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLSelectElement interface: attribute autofocus assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLSelectElement interface: attribute disabled assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3054,7 +3054,7 @@ FAIL HTMLOptGroupElement interface: existence and properties of interface object
 PASS HTMLOptGroupElement interface object length 
 PASS HTMLOptGroupElement interface object name 
 PASS HTMLOptGroupElement interface: existence and properties of interface prototype object 
-FAIL HTMLOptGroupElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOptGroupElement.prototype.constructor is not writable expected true got false
+PASS HTMLOptGroupElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLOptGroupElement interface: attribute disabled assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOptGroupElement interface: attribute label assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLOptGroupElement must be primary interface of document.createElement("optgroup") 
@@ -3065,7 +3065,7 @@ FAIL HTMLOptionElement interface: existence and properties of interface object a
 PASS HTMLOptionElement interface object length 
 PASS HTMLOptionElement interface object name 
 PASS HTMLOptionElement interface: existence and properties of interface prototype object 
-FAIL HTMLOptionElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOptionElement.prototype.constructor is not writable expected true got false
+PASS HTMLOptionElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLOptionElement interface: attribute disabled assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOptionElement interface: attribute form assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOptionElement interface: attribute label assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3098,7 +3098,7 @@ FAIL HTMLTextAreaElement interface: existence and properties of interface object
 PASS HTMLTextAreaElement interface object length 
 PASS HTMLTextAreaElement interface object name 
 PASS HTMLTextAreaElement interface: existence and properties of interface prototype object 
-FAIL HTMLTextAreaElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTextAreaElement.prototype.constructor is not writable expected true got false
+PASS HTMLTextAreaElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTextAreaElement interface: attribute autocomplete assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTextAreaElement interface: attribute autofocus assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLTextAreaElement interface: attribute cols assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3177,7 +3177,7 @@ FAIL HTMLKeygenElement interface: existence and properties of interface object a
 PASS HTMLKeygenElement interface object length 
 PASS HTMLKeygenElement interface object name 
 PASS HTMLKeygenElement interface: existence and properties of interface prototype object 
-FAIL HTMLKeygenElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLKeygenElement.prototype.constructor is not writable expected true got false
+PASS HTMLKeygenElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLKeygenElement interface: attribute autofocus assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLKeygenElement interface: attribute challenge assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLKeygenElement interface: attribute disabled assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3213,7 +3213,7 @@ FAIL HTMLOutputElement interface: existence and properties of interface object a
 PASS HTMLOutputElement interface object length 
 PASS HTMLOutputElement interface object name 
 PASS HTMLOutputElement interface: existence and properties of interface prototype object 
-FAIL HTMLOutputElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOutputElement.prototype.constructor is not writable expected true got false
+PASS HTMLOutputElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLOutputElement interface: attribute htmlFor assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOutputElement interface: attribute form assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOutputElement interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3247,7 +3247,7 @@ FAIL HTMLProgressElement interface: existence and properties of interface object
 PASS HTMLProgressElement interface object length 
 PASS HTMLProgressElement interface object name 
 PASS HTMLProgressElement interface: existence and properties of interface prototype object 
-FAIL HTMLProgressElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLProgressElement.prototype.constructor is not writable expected true got false
+PASS HTMLProgressElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLProgressElement interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLProgressElement interface: attribute max assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLProgressElement interface: attribute position assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3262,7 +3262,7 @@ FAIL HTMLMeterElement interface: existence and properties of interface object as
 PASS HTMLMeterElement interface object length 
 PASS HTMLMeterElement interface object name 
 PASS HTMLMeterElement interface: existence and properties of interface prototype object 
-FAIL HTMLMeterElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMeterElement.prototype.constructor is not writable expected true got false
+PASS HTMLMeterElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLMeterElement interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMeterElement interface: attribute min assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMeterElement interface: attribute max assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3283,7 +3283,7 @@ FAIL HTMLFieldSetElement interface: existence and properties of interface object
 PASS HTMLFieldSetElement interface object length 
 PASS HTMLFieldSetElement interface object name 
 PASS HTMLFieldSetElement interface: existence and properties of interface prototype object 
-FAIL HTMLFieldSetElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFieldSetElement.prototype.constructor is not writable expected true got false
+PASS HTMLFieldSetElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLFieldSetElement interface: attribute disabled assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFieldSetElement interface: attribute form assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFieldSetElement interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3299,7 +3299,7 @@ FAIL HTMLLegendElement interface: existence and properties of interface object a
 PASS HTMLLegendElement interface object length 
 PASS HTMLLegendElement interface object name 
 PASS HTMLLegendElement interface: existence and properties of interface prototype object 
-FAIL HTMLLegendElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLLegendElement.prototype.constructor is not writable expected true got false
+PASS HTMLLegendElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLLegendElement interface: attribute form assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLLegendElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLLegendElement must be primary interface of document.createElement("legend") 
@@ -3316,7 +3316,7 @@ FAIL ValidityState interface: existence and properties of interface object asser
 PASS ValidityState interface object length 
 PASS ValidityState interface object name 
 PASS ValidityState interface: existence and properties of interface prototype object 
-FAIL ValidityState interface: existence and properties of interface prototype object's "constructor" property assert_true: ValidityState.prototype.constructor is not writable expected true got false
+PASS ValidityState interface: existence and properties of interface prototype object's "constructor" property 
 FAIL ValidityState interface: attribute valueMissing assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL ValidityState interface: attribute typeMismatch assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL ValidityState interface: attribute patternMismatch assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3345,7 +3345,7 @@ FAIL HTMLDetailsElement interface: existence and properties of interface object 
 PASS HTMLDetailsElement interface object length 
 PASS HTMLDetailsElement interface object name 
 PASS HTMLDetailsElement interface: existence and properties of interface prototype object 
-FAIL HTMLDetailsElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDetailsElement.prototype.constructor is not writable expected true got false
+PASS HTMLDetailsElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLDetailsElement interface: attribute open assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLDetailsElement must be primary interface of document.createElement("details") 
 PASS Stringification of document.createElement("details") 
@@ -3354,7 +3354,7 @@ FAIL HTMLMenuElement interface: existence and properties of interface object ass
 PASS HTMLMenuElement interface object length 
 PASS HTMLMenuElement interface object name 
 PASS HTMLMenuElement interface: existence and properties of interface prototype object 
-FAIL HTMLMenuElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMenuElement.prototype.constructor is not writable expected true got false
+PASS HTMLMenuElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLMenuElement interface: attribute type assert_true: The prototype object must have a property "type" expected true got false
 FAIL HTMLMenuElement interface: attribute label assert_true: The prototype object must have a property "label" expected true got false
 FAIL HTMLMenuElement interface: attribute compact assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3396,7 +3396,7 @@ FAIL HTMLScriptElement interface: existence and properties of interface object a
 PASS HTMLScriptElement interface object length 
 PASS HTMLScriptElement interface object name 
 PASS HTMLScriptElement interface: existence and properties of interface prototype object 
-FAIL HTMLScriptElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLScriptElement.prototype.constructor is not writable expected true got false
+PASS HTMLScriptElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLScriptElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLScriptElement interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLScriptElement interface: attribute charset assert_equals: getter must be Function expected "function" but got "undefined"
@@ -3421,13 +3421,13 @@ FAIL HTMLTemplateElement interface: existence and properties of interface object
 PASS HTMLTemplateElement interface object length 
 PASS HTMLTemplateElement interface object name 
 PASS HTMLTemplateElement interface: existence and properties of interface prototype object 
-FAIL HTMLTemplateElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTemplateElement.prototype.constructor is not writable expected true got false
+PASS HTMLTemplateElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLTemplateElement interface: attribute content assert_true: The prototype object must have a property "content" expected true got false
 FAIL HTMLCanvasElement interface: existence and properties of interface object assert_equals: class string of HTMLCanvasElement expected "[object Function]" but got "[object HTMLCanvasElementConstructor]"
 PASS HTMLCanvasElement interface object length 
 PASS HTMLCanvasElement interface object name 
 PASS HTMLCanvasElement interface: existence and properties of interface prototype object 
-FAIL HTMLCanvasElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLCanvasElement.prototype.constructor is not writable expected true got false
+PASS HTMLCanvasElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLCanvasElement interface: attribute width assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLCanvasElement interface: attribute height assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLCanvasElement interface: operation getContext(DOMString,any) assert_equals: property has wrong .length expected 1 but got 0
@@ -3465,7 +3465,7 @@ FAIL CanvasRenderingContext2D interface: existence and properties of interface o
 FAIL CanvasRenderingContext2D interface object length assert_equals: wrong value for CanvasRenderingContext2D.length expected 1 but got 0
 PASS CanvasRenderingContext2D interface object name 
 FAIL CanvasRenderingContext2D interface: existence and properties of interface prototype object assert_equals: prototype of CanvasRenderingContext2D.prototype is not Object.prototype expected object "[object Object]" but got object "[object CanvasRenderingContextPrototype]"
-FAIL CanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property assert_true: CanvasRenderingContext2D.prototype.constructor is not writable expected true got false
+PASS CanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CanvasRenderingContext2D interface: attribute canvas assert_own_property: expected property "canvas" missing
 FAIL CanvasRenderingContext2D interface: attribute width assert_true: The prototype object must have a property "width" expected true got false
 FAIL CanvasRenderingContext2D interface: attribute height assert_true: The prototype object must have a property "height" expected true got false
@@ -3680,19 +3680,19 @@ FAIL CanvasGradient interface: existence and properties of interface object asse
 PASS CanvasGradient interface object length 
 PASS CanvasGradient interface object name 
 PASS CanvasGradient interface: existence and properties of interface prototype object 
-FAIL CanvasGradient interface: existence and properties of interface prototype object's "constructor" property assert_true: CanvasGradient.prototype.constructor is not writable expected true got false
+PASS CanvasGradient interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CanvasGradient interface: operation addColorStop(double,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL CanvasPattern interface: existence and properties of interface object assert_equals: class string of CanvasPattern expected "[object Function]" but got "[object CanvasPatternConstructor]"
 PASS CanvasPattern interface object length 
 PASS CanvasPattern interface object name 
 PASS CanvasPattern interface: existence and properties of interface prototype object 
-FAIL CanvasPattern interface: existence and properties of interface prototype object's "constructor" property assert_true: CanvasPattern.prototype.constructor is not writable expected true got false
+PASS CanvasPattern interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CanvasPattern interface: operation setTransform(SVGMatrix) assert_own_property: interface prototype object missing non-static operation expected property "setTransform" missing
 FAIL TextMetrics interface: existence and properties of interface object assert_equals: class string of TextMetrics expected "[object Function]" but got "[object TextMetricsConstructor]"
 PASS TextMetrics interface object length 
 PASS TextMetrics interface object name 
 PASS TextMetrics interface: existence and properties of interface prototype object 
-FAIL TextMetrics interface: existence and properties of interface prototype object's "constructor" property assert_true: TextMetrics.prototype.constructor is not writable expected true got false
+PASS TextMetrics interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TextMetrics interface: attribute width assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TextMetrics interface: attribute actualBoundingBoxLeft assert_true: The prototype object must have a property "actualBoundingBoxLeft" expected true got false
 FAIL TextMetrics interface: attribute actualBoundingBoxRight assert_true: The prototype object must have a property "actualBoundingBoxRight" expected true got false
@@ -3709,7 +3709,7 @@ FAIL ImageData interface: existence and properties of interface object assert_eq
 PASS ImageData interface object length 
 PASS ImageData interface object name 
 PASS ImageData interface: existence and properties of interface prototype object 
-FAIL ImageData interface: existence and properties of interface prototype object's "constructor" property assert_true: ImageData.prototype.constructor is not writable expected true got false
+PASS ImageData interface: existence and properties of interface prototype object's "constructor" property 
 FAIL ImageData interface: attribute width assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL ImageData interface: attribute height assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL ImageData interface: attribute data assert_true: The prototype object must have a property "data" expected true got false
@@ -3733,7 +3733,7 @@ FAIL Path2D interface: existence and properties of interface object assert_equal
 PASS Path2D interface object length 
 PASS Path2D interface object name 
 PASS Path2D interface: existence and properties of interface prototype object 
-FAIL Path2D interface: existence and properties of interface prototype object's "constructor" property assert_true: Path2D.prototype.constructor is not writable expected true got false
+PASS Path2D interface: existence and properties of interface prototype object's "constructor" property 
 PASS Path2D interface: operation addPath(Path2D,SVGMatrix) 
 FAIL Path2D interface: operation addPathByStrokingPath(Path2D,CanvasDrawingStyles,SVGMatrix) assert_own_property: interface prototype object missing non-static operation expected property "addPathByStrokingPath" missing
 FAIL Path2D interface: operation addText(DOMString,CanvasDrawingStyles,SVGMatrix,unrestricted double,unrestricted double,unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "addText" missing
@@ -3754,7 +3754,7 @@ FAIL DataTransfer interface: existence and properties of interface object assert
 PASS DataTransfer interface object length 
 PASS DataTransfer interface object name 
 PASS DataTransfer interface: existence and properties of interface prototype object 
-FAIL DataTransfer interface: existence and properties of interface prototype object's "constructor" property assert_true: DataTransfer.prototype.constructor is not writable expected true got false
+PASS DataTransfer interface: existence and properties of interface prototype object's "constructor" property 
 FAIL DataTransfer interface: attribute dropEffect assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL DataTransfer interface: attribute effectAllowed assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL DataTransfer interface: attribute items assert_true: The prototype object must have a property "items" expected true got false
@@ -4072,13 +4072,13 @@ FAIL BarProp interface: existence and properties of interface object assert_equa
 PASS BarProp interface object length 
 PASS BarProp interface object name 
 PASS BarProp interface: existence and properties of interface prototype object 
-FAIL BarProp interface: existence and properties of interface prototype object's "constructor" property assert_true: BarProp.prototype.constructor is not writable expected true got false
+PASS BarProp interface: existence and properties of interface prototype object's "constructor" property 
 FAIL BarProp interface: attribute visible assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL History interface: existence and properties of interface object assert_equals: class string of History expected "[object Function]" but got "[object HistoryConstructor]"
 PASS History interface object length 
 PASS History interface object name 
 PASS History interface: existence and properties of interface prototype object 
-FAIL History interface: existence and properties of interface prototype object's "constructor" property assert_true: History.prototype.constructor is not writable expected true got false
+PASS History interface: existence and properties of interface prototype object's "constructor" property 
 FAIL History interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL History interface: attribute state assert_true: The prototype object must have a property "state" expected true got false
 PASS History interface: operation go(long) 
@@ -4106,7 +4106,7 @@ FAIL Location interface: existence and properties of interface object assert_equ
 PASS Location interface object length 
 PASS Location interface object name 
 PASS Location interface: existence and properties of interface prototype object 
-FAIL Location interface: existence and properties of interface prototype object's "constructor" property assert_true: Location.prototype.constructor is not writable expected true got false
+PASS Location interface: existence and properties of interface prototype object's "constructor" property 
 PASS Location must be primary interface of window.location 
 PASS Stringification of window.location 
 FAIL Location interface: window.location must have own property "href" assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4128,7 +4128,7 @@ FAIL PopStateEvent interface: existence and properties of interface object asser
 PASS PopStateEvent interface object length 
 PASS PopStateEvent interface object name 
 PASS PopStateEvent interface: existence and properties of interface prototype object 
-FAIL PopStateEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: PopStateEvent.prototype.constructor is not writable expected true got false
+PASS PopStateEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL PopStateEvent interface: attribute state assert_true: The prototype object must have a property "state" expected true got false
 PASS PopStateEvent must be primary interface of new PopStateEvent("popstate", { data: {} }) 
 PASS Stringification of new PopStateEvent("popstate", { data: {} }) 
@@ -4157,26 +4157,26 @@ FAIL HashChangeEvent interface: existence and properties of interface object ass
 PASS HashChangeEvent interface object length 
 PASS HashChangeEvent interface object name 
 PASS HashChangeEvent interface: existence and properties of interface prototype object 
-FAIL HashChangeEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: HashChangeEvent.prototype.constructor is not writable expected true got false
+PASS HashChangeEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HashChangeEvent interface: attribute oldURL assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HashChangeEvent interface: attribute newURL assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL PageTransitionEvent interface: existence and properties of interface object assert_equals: class string of PageTransitionEvent expected "[object Function]" but got "[object PageTransitionEventConstructor]"
 PASS PageTransitionEvent interface object length 
 PASS PageTransitionEvent interface object name 
 PASS PageTransitionEvent interface: existence and properties of interface prototype object 
-FAIL PageTransitionEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: PageTransitionEvent.prototype.constructor is not writable expected true got false
+PASS PageTransitionEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL PageTransitionEvent interface: attribute persisted assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL BeforeUnloadEvent interface: existence and properties of interface object assert_equals: class string of BeforeUnloadEvent expected "[object Function]" but got "[object BeforeUnloadEventConstructor]"
 PASS BeforeUnloadEvent interface object length 
 PASS BeforeUnloadEvent interface object name 
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object 
-FAIL BeforeUnloadEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: BeforeUnloadEvent.prototype.constructor is not writable expected true got false
+PASS BeforeUnloadEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL BeforeUnloadEvent interface: attribute returnValue assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL ApplicationCache interface: existence and properties of interface object assert_equals: class string of ApplicationCache expected "[object Function]" but got "[object ApplicationCacheConstructor]"
 PASS ApplicationCache interface object length 
 PASS ApplicationCache interface object name 
 FAIL ApplicationCache interface: existence and properties of interface prototype object assert_equals: prototype of ApplicationCache.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL ApplicationCache interface: existence and properties of interface prototype object's "constructor" property assert_true: ApplicationCache.prototype.constructor is not writable expected true got false
+PASS ApplicationCache interface: existence and properties of interface prototype object's "constructor" property 
 PASS ApplicationCache interface: constant UNCACHED on interface object 
 PASS ApplicationCache interface: constant UNCACHED on interface prototype object 
 PASS ApplicationCache interface: constant IDLE on interface object 
@@ -4235,7 +4235,7 @@ FAIL ErrorEvent interface: existence and properties of interface object assert_e
 PASS ErrorEvent interface object length 
 PASS ErrorEvent interface object name 
 PASS ErrorEvent interface: existence and properties of interface prototype object 
-FAIL ErrorEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: ErrorEvent.prototype.constructor is not writable expected true got false
+PASS ErrorEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL ErrorEvent interface: attribute message assert_true: The prototype object must have a property "message" expected true got false
 FAIL ErrorEvent interface: attribute filename assert_true: The prototype object must have a property "filename" expected true got false
 FAIL ErrorEvent interface: attribute lineno assert_true: The prototype object must have a property "lineno" expected true got false
@@ -4245,7 +4245,7 @@ FAIL Navigator interface: existence and properties of interface object assert_eq
 PASS Navigator interface object length 
 PASS Navigator interface object name 
 PASS Navigator interface: existence and properties of interface prototype object 
-FAIL Navigator interface: existence and properties of interface prototype object's "constructor" property assert_true: Navigator.prototype.constructor is not writable expected true got false
+PASS Navigator interface: existence and properties of interface prototype object's "constructor" property 
 FAIL Navigator interface: attribute appCodeName assert_true: The prototype object must have a property "appCodeName" expected true got false
 FAIL Navigator interface: attribute appName assert_true: The prototype object must have a property "appName" expected true got false
 FAIL Navigator interface: attribute appVersion assert_true: The prototype object must have a property "appVersion" expected true got false
@@ -4302,7 +4302,7 @@ FAIL PluginArray interface: existence and properties of interface object assert_
 PASS PluginArray interface object length 
 PASS PluginArray interface object name 
 PASS PluginArray interface: existence and properties of interface prototype object 
-FAIL PluginArray interface: existence and properties of interface prototype object's "constructor" property assert_true: PluginArray.prototype.constructor is not writable expected true got false
+PASS PluginArray interface: existence and properties of interface prototype object's "constructor" property 
 PASS PluginArray interface: operation refresh(boolean) 
 FAIL PluginArray interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL PluginArray interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
@@ -4311,7 +4311,7 @@ FAIL MimeTypeArray interface: existence and properties of interface object asser
 PASS MimeTypeArray interface object length 
 PASS MimeTypeArray interface object name 
 PASS MimeTypeArray interface: existence and properties of interface prototype object 
-FAIL MimeTypeArray interface: existence and properties of interface prototype object's "constructor" property assert_true: MimeTypeArray.prototype.constructor is not writable expected true got false
+PASS MimeTypeArray interface: existence and properties of interface prototype object's "constructor" property 
 FAIL MimeTypeArray interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL MimeTypeArray interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL MimeTypeArray interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -4319,7 +4319,7 @@ FAIL Plugin interface: existence and properties of interface object assert_equal
 PASS Plugin interface object length 
 PASS Plugin interface object name 
 PASS Plugin interface: existence and properties of interface prototype object 
-FAIL Plugin interface: existence and properties of interface prototype object's "constructor" property assert_true: Plugin.prototype.constructor is not writable expected true got false
+PASS Plugin interface: existence and properties of interface prototype object's "constructor" property 
 FAIL Plugin interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Plugin interface: attribute description assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Plugin interface: attribute filename assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4330,7 +4330,7 @@ FAIL MimeType interface: existence and properties of interface object assert_equ
 PASS MimeType interface object length 
 PASS MimeType interface object name 
 PASS MimeType interface: existence and properties of interface prototype object 
-FAIL MimeType interface: existence and properties of interface prototype object's "constructor" property assert_true: MimeType.prototype.constructor is not writable expected true got false
+PASS MimeType interface: existence and properties of interface prototype object's "constructor" property 
 FAIL MimeType interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MimeType interface: attribute description assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MimeType interface: attribute suffixes assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4359,7 +4359,7 @@ FAIL MessageEvent interface: existence and properties of interface object assert
 PASS MessageEvent interface object length 
 PASS MessageEvent interface object name 
 PASS MessageEvent interface: existence and properties of interface prototype object 
-FAIL MessageEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: MessageEvent.prototype.constructor is not writable expected true got false
+PASS MessageEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL MessageEvent interface: attribute data assert_true: The prototype object must have a property "data" expected true got false
 FAIL MessageEvent interface: attribute origin assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MessageEvent interface: attribute lastEventId assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4370,7 +4370,7 @@ FAIL EventSource interface: existence and properties of interface object assert_
 PASS EventSource interface object length 
 PASS EventSource interface object name 
 FAIL EventSource interface: existence and properties of interface prototype object assert_equals: prototype of EventSource.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL EventSource interface: existence and properties of interface prototype object's "constructor" property assert_true: EventSource.prototype.constructor is not writable expected true got false
+PASS EventSource interface: existence and properties of interface prototype object's "constructor" property 
 FAIL EventSource interface: attribute url assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL EventSource interface: attribute withCredentials assert_equals: getter must be Function expected "function" but got "undefined"
 PASS EventSource interface: constant CONNECTING on interface object 
@@ -4388,7 +4388,7 @@ FAIL WebSocket interface: existence and properties of interface object assert_eq
 PASS WebSocket interface object length 
 PASS WebSocket interface object name 
 FAIL WebSocket interface: existence and properties of interface prototype object assert_equals: prototype of WebSocket.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL WebSocket interface: existence and properties of interface prototype object's "constructor" property assert_true: WebSocket.prototype.constructor is not writable expected true got false
+PASS WebSocket interface: existence and properties of interface prototype object's "constructor" property 
 FAIL WebSocket interface: attribute url assert_equals: getter must be Function expected "function" but got "undefined"
 PASS WebSocket interface: constant CONNECTING on interface object 
 PASS WebSocket interface: constant CONNECTING on interface prototype object 
@@ -4416,7 +4416,7 @@ FAIL CloseEvent interface: existence and properties of interface object assert_e
 PASS CloseEvent interface object length 
 PASS CloseEvent interface object name 
 PASS CloseEvent interface: existence and properties of interface prototype object 
-FAIL CloseEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: CloseEvent.prototype.constructor is not writable expected true got false
+PASS CloseEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CloseEvent interface: attribute wasClean assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL CloseEvent interface: attribute code assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL CloseEvent interface: attribute reason assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4424,14 +4424,14 @@ FAIL MessageChannel interface: existence and properties of interface object asse
 PASS MessageChannel interface object length 
 PASS MessageChannel interface object name 
 PASS MessageChannel interface: existence and properties of interface prototype object 
-FAIL MessageChannel interface: existence and properties of interface prototype object's "constructor" property assert_true: MessageChannel.prototype.constructor is not writable expected true got false
+PASS MessageChannel interface: existence and properties of interface prototype object's "constructor" property 
 FAIL MessageChannel interface: attribute port1 assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MessageChannel interface: attribute port2 assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MessagePort interface: existence and properties of interface object assert_equals: class string of MessagePort expected "[object Function]" but got "[object MessagePortConstructor]"
 PASS MessagePort interface object length 
 PASS MessagePort interface object name 
 FAIL MessagePort interface: existence and properties of interface prototype object assert_equals: prototype of MessagePort.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-FAIL MessagePort interface: existence and properties of interface prototype object's "constructor" property assert_true: MessagePort.prototype.constructor is not writable expected true got false
+PASS MessagePort interface: existence and properties of interface prototype object's "constructor" property 
 PASS MessagePort interface: operation postMessage(any,[object Object]) 
 PASS MessagePort interface: operation start() 
 PASS MessagePort interface: operation close() 
@@ -4496,7 +4496,7 @@ FAIL Worker interface: existence and properties of interface object assert_equal
 PASS Worker interface object length 
 PASS Worker interface object name 
 PASS Worker interface: existence and properties of interface prototype object 
-FAIL Worker interface: existence and properties of interface prototype object's "constructor" property assert_true: Worker.prototype.constructor is not writable expected true got false
+PASS Worker interface: existence and properties of interface prototype object's "constructor" property 
 PASS Worker interface: operation terminate() 
 PASS Worker interface: operation postMessage(any,[object Object]) 
 FAIL Worker interface: attribute onmessage assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4541,7 +4541,7 @@ FAIL Storage interface: existence and properties of interface object assert_equa
 PASS Storage interface object length 
 PASS Storage interface object name 
 PASS Storage interface: existence and properties of interface prototype object 
-FAIL Storage interface: existence and properties of interface prototype object's "constructor" property assert_true: Storage.prototype.constructor is not writable expected true got false
+PASS Storage interface: existence and properties of interface prototype object's "constructor" property 
 FAIL Storage interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS Storage interface: operation key(unsigned long) 
 PASS Storage interface: operation getItem(DOMString) 
@@ -4552,7 +4552,7 @@ FAIL StorageEvent interface: existence and properties of interface object assert
 PASS StorageEvent interface object length 
 PASS StorageEvent interface object name 
 PASS StorageEvent interface: existence and properties of interface prototype object 
-FAIL StorageEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: StorageEvent.prototype.constructor is not writable expected true got false
+PASS StorageEvent interface: existence and properties of interface prototype object's "constructor" property 
 FAIL StorageEvent interface: attribute key assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL StorageEvent interface: attribute oldValue assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL StorageEvent interface: attribute newValue assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4562,7 +4562,7 @@ FAIL HTMLAppletElement interface: existence and properties of interface object a
 PASS HTMLAppletElement interface object length 
 PASS HTMLAppletElement interface object name 
 PASS HTMLAppletElement interface: existence and properties of interface prototype object 
-FAIL HTMLAppletElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAppletElement.prototype.constructor is not writable expected true got false
+PASS HTMLAppletElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLAppletElement interface: attribute align assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLAppletElement interface: attribute alt assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLAppletElement interface: attribute archive assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4591,7 +4591,7 @@ FAIL HTMLMarqueeElement interface: existence and properties of interface object 
 PASS HTMLMarqueeElement interface object length 
 PASS HTMLMarqueeElement interface object name 
 PASS HTMLMarqueeElement interface: existence and properties of interface prototype object 
-FAIL HTMLMarqueeElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMarqueeElement.prototype.constructor is not writable expected true got false
+PASS HTMLMarqueeElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLMarqueeElement interface: attribute behavior assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMarqueeElement interface: attribute bgColor assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMarqueeElement interface: attribute direction assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4630,7 +4630,7 @@ FAIL HTMLFrameSetElement interface: existence and properties of interface object
 PASS HTMLFrameSetElement interface object length 
 PASS HTMLFrameSetElement interface object name 
 PASS HTMLFrameSetElement interface: existence and properties of interface prototype object 
-FAIL HTMLFrameSetElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFrameSetElement.prototype.constructor is not writable expected true got false
+PASS HTMLFrameSetElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLFrameSetElement interface: attribute cols assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFrameSetElement interface: attribute rows assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFrameSetElement interface: attribute onafterprint assert_true: The prototype object must have a property "onafterprint" expected true got false
@@ -4667,7 +4667,7 @@ FAIL HTMLFrameElement interface: existence and properties of interface object as
 PASS HTMLFrameElement interface object length 
 PASS HTMLFrameElement interface object name 
 PASS HTMLFrameElement interface: existence and properties of interface prototype object 
-FAIL HTMLFrameElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFrameElement.prototype.constructor is not writable expected true got false
+PASS HTMLFrameElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLFrameElement interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFrameElement interface: attribute scrolling assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFrameElement interface: attribute src assert_equals: getter must be Function expected "function" but got "undefined"
@@ -4694,7 +4694,7 @@ FAIL HTMLDirectoryElement interface: existence and properties of interface objec
 PASS HTMLDirectoryElement interface object length 
 PASS HTMLDirectoryElement interface object name 
 PASS HTMLDirectoryElement interface: existence and properties of interface prototype object 
-FAIL HTMLDirectoryElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDirectoryElement.prototype.constructor is not writable expected true got false
+PASS HTMLDirectoryElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLDirectoryElement interface: attribute compact assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLDirectoryElement must be primary interface of document.createElement("dir") 
 PASS Stringification of document.createElement("dir") 
@@ -4703,7 +4703,7 @@ FAIL HTMLFontElement interface: existence and properties of interface object ass
 PASS HTMLFontElement interface object length 
 PASS HTMLFontElement interface object name 
 PASS HTMLFontElement interface: existence and properties of interface prototype object 
-FAIL HTMLFontElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFontElement.prototype.constructor is not writable expected true got false
+PASS HTMLFontElement interface: existence and properties of interface prototype object's "constructor" property 
 FAIL HTMLFontElement interface: attribute color assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFontElement interface: attribute face assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFontElement interface: attribute size assert_equals: getter must be Function expected "function" but got "undefined"

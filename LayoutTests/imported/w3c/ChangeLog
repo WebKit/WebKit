@@ -1,5 +1,20 @@
 2016-01-30  Chris Dumez  <cdumez@apple.com>
 
+        [JS Bindings] prototype.constructor should be writable
+        https://bugs.webkit.org/show_bug.cgi?id=149412
+        <rdar://problem/22545096>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C tests now that more checks are passing.
+
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-idl-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-01-30  Chris Dumez  <cdumez@apple.com>
+
         Move more 'constructor' properties to the prototype
         https://bugs.webkit.org/show_bug.cgi?id=153667
 

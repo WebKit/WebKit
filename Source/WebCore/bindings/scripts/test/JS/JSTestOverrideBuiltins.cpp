@@ -41,6 +41,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedIt
 // Attributes
 
 JSC::EncodedJSValue jsTestOverrideBuiltinsConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestOverrideBuiltinsConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestOverrideBuiltinsPrototype : public JSC::JSNonFinalObject {
 public:
@@ -79,7 +80,7 @@ static const struct CompactHashIndex JSTestOverrideBuiltinsTableIndex[2] = {
 
 static const HashTableValue JSTestOverrideBuiltinsTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverrideBuiltinsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverrideBuiltinsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestOverrideBuiltinsConstructor) } },
 };
 
 static const HashTable JSTestOverrideBuiltinsTable = { 1, 1, true, JSTestOverrideBuiltinsTableValues, JSTestOverrideBuiltinsTableIndex };
@@ -167,6 +168,19 @@ EncodedJSValue jsTestOverrideBuiltinsConstructor(ExecState* state, JSObject*, En
     if (!domObject)
         return throwVMTypeError(state);
     return JSValue::encode(JSTestOverrideBuiltins::getConstructor(state->vm(), domObject->globalObject()));
+}
+
+void setJSTestOverrideBuiltinsConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseValue);
+    JSTestOverrideBuiltins* domObject = jsDynamicCast<JSTestOverrideBuiltins*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!domObject)) {
+        throwVMTypeError(state);
+        return;
+    }
+    // Shadowing a built-in constructor
+    domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
 void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)

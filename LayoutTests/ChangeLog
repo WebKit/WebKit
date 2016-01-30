@@ -1,5 +1,24 @@
 2016-01-30  Chris Dumez  <cdumez@apple.com>
 
+        [JS Bindings] prototype.constructor should be writable
+        https://bugs.webkit.org/show_bug.cgi?id=149412
+        <rdar://problem/22545096>
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLDocument/constructor-setter-crash-expected.txt: Added.
+        * fast/dom/HTMLDocument/constructor-setter-crash.html: Added.
+        Add regression test for crash at <rdar://problem/22825602>.
+
+        * fast/dom/prototype-constructor-setter-expected.txt: Added.
+        * fast/dom/prototype-constructor-setter.html: Added.
+        Add new test checking that prototype.constructor is writable.
+
+        * js/dom/constructor-attributes-expected.txt:
+        Rebaseline existing test now that prototype.constructor is writable.
+
+2016-01-30  Chris Dumez  <cdumez@apple.com>
+
         Move more 'constructor' properties to the prototype
         https://bugs.webkit.org/show_bug.cgi?id=153667
 
