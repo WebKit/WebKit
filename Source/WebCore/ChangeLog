@@ -1,3 +1,19 @@
+2016-01-30  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] WebKit1 apps crash in ___ZN7WebCore16DiskCacheMonitorC2ERKNS_15ResourceRequestENS_9SessionIDEPK20_CFCachedURLResponse_block_invoke1
+        <http://webkit.org/b/153710>
+        <rdar://problem/23116706>
+
+        Reviewed by Darin Adler.
+
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::DiskCacheMonitor):
+        - Fix race condition on iOS WebKit1 clients by calling the block
+          to cancel the DiskCacheMonitor on the WebThread, which is the
+          same thread where the CFCachedURLResponseCallBackBlock is
+          called.
+        - Removed whitespace to adhere to style.
+
 2016-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         TouchList should be retargeted

@@ -71,11 +71,20 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
 
     // Set up a delayed callback to cancel this monitor if the resource hasn't been cached yet.
     __block DiskCacheMonitor* rawMonitor = this;
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * diskCacheMonitorTimeout), dispatch_get_main_queue(), ^{
+    auto cancelMonitorBlock = ^{
         delete rawMonitor; // Balanced by "new DiskCacheMonitor" in monitorFileBackingStoreCreation.
         rawMonitor = nullptr;
-    });
+    };
+
+#if USE(WEB_THREAD)
+    auto cancelMonitorBlockToRun = ^{
+        WebThreadRun(cancelMonitorBlock);
+    };
+#else
+    auto cancelMonitorBlockToRun = cancelMonitorBlock;
+#endif
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * diskCacheMonitorTimeout), dispatch_get_main_queue(), cancelMonitorBlockToRun);
 
     // Set up the disk caching callback to create the ShareableResource and send it to the WebProcess.
     CFCachedURLResponseCallBackBlock block = ^(CFCachedURLResponseRef cachedResponse)
@@ -96,10 +105,10 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
     };
 
 #if USE(WEB_THREAD)
-    CFCachedURLResponseCallBackBlock blockToRun = ^ (CFCachedURLResponseRef response)
+    CFCachedURLResponseCallBackBlock blockToRun = ^(CFCachedURLResponseRef response)
     {
         CFRetain(response);
-        WebThreadRun(^ {
+        WebThreadRun(^{
             block(response);
             CFRelease(response);
         });
