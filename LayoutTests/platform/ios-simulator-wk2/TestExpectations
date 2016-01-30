@@ -2048,3 +2048,5 @@ http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin.html [ Skip ]
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html [ Skip ]
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html [ Skip ]
+
+webkit.org/b/153380 webarchive/loading/object.html [ Pass Crash ]
