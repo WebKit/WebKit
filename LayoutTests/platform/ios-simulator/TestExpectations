@@ -215,6 +215,13 @@ loader/stateobjects/pushstate-size-iframe.html [ Skip ]
 fast/loader/stateobjects/replacestate-frequency-with-user-gesture.html [ Skip ]
 fast/loader/stateobjects/pushstate-frequency-with-user-gesture.html [ Skip ]
 
+webkit.org/b/148695 fast/shadow-dom [ Pass ]
+webkit.org/b/149440 fast/shadow-dom/css-scoping-shadow-host-functional-rule.html [ ImageOnlyFailure ]
+webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slotted-rule.html [ ImageOnlyFailure ]
+webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.html [ ImageOnlyFailure ]
+
+webkit.org/b/150225 fast/custom-elements [ Pass ]
+
 ###
 # Known failures
 ##

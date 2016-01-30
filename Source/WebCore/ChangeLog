@@ -1,3 +1,16 @@
+2016-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fast/shadow-dom/Element-interface-attachShadow.html fails on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=153681
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by canHaveUserAgentShadowRoot() returning false on a meter element since it's disabled on iOS.
+        Override HTMLUnknownElement's canHaveUserAgentShadowRoot to return false for compatbility on iOS.
+
+        * html/HTMLUnknownElement.h:
+        (WebCore::HTMLUnknownElement::canHaveUserAgentShadowRoot):
+
 2016-01-29  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Getting records for key ranges with null keys aren't properly handled in SQLite backend

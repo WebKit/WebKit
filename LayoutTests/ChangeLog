@@ -1,3 +1,14 @@
+2016-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fast/shadow-dom/Element-interface-attachShadow.html fails on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=153681
+
+        Reviewed by Antti Koivisto.
+
+        Enable shadow DOM and custom elements tests on iOS; matches that's in platform/mac/TestExpectations.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Missed one rebaseline for ios-simulator after r195740 in the last patch.
