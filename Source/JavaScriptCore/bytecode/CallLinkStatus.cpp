@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,7 +90,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     
     CallLinkInfo* callLinkInfo = map.get(CodeOrigin(bytecodeIndex));
     if (!callLinkInfo) {
-        if (exitSiteData.m_takesSlowPath)
+        if (exitSiteData.takesSlowPath)
             return takesSlowPath();
         return computeFromLLInt(locker, profiledBlock, bytecodeIndex);
     }
@@ -107,10 +107,10 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
     ExitSiteData exitSiteData;
     
 #if ENABLE(DFG_JIT)
-    exitSiteData.m_takesSlowPath =
+    exitSiteData.takesSlowPath =
         profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadType))
         || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable));
-    exitSiteData.m_badFunction =
+    exitSiteData.badFunction =
         profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell));
 #else
     UNUSED_PARAM(locker);
@@ -208,6 +208,7 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
         CallLinkStatus result;
         result.m_variants = variants;
         result.m_couldTakeSlowPath = !!totalCallsToUnknown;
+        result.m_isBasedOnStub = true;
         return result;
     }
     
@@ -230,9 +231,18 @@ CallLinkStatus CallLinkStatus::computeFor(
     ExitSiteData exitSiteData)
 {
     CallLinkStatus result = computeFor(locker, profiledBlock, callLinkInfo);
-    if (exitSiteData.m_badFunction)
-        result.makeClosureCall();
-    if (exitSiteData.m_takesSlowPath)
+    if (exitSiteData.badFunction) {
+        if (result.isBasedOnStub()) {
+            // If we have a polymorphic stub, then having an exit site is not quite so useful. In
+            // most cases, the information in the stub has higher fidelity.
+            result.makeClosureCall();
+        } else {
+            // We might not have a polymorphic stub for any number of reasons. When this happens, we
+            // are in less certain territory, so exit sites mean a lot.
+            result.m_couldTakeSlowPath = true;
+        }
+    }
+    if (exitSiteData.takesSlowPath)
         result.m_couldTakeSlowPath = true;
     
     return result;

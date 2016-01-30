@@ -1,3 +1,80 @@
+2016-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        CallLinkStatus should trust BadCell exit sites whenever there is no stub
+        https://bugs.webkit.org/show_bug.cgi?id=153691
+
+        Reviewed by Benjamin Poulain.
+
+        This fixes a regression in our treatment of inlining failure exit sites when deciding if we
+        should inline a call.
+
+        A long time ago, a BadCell exit site would ensure that a CallLinkStatus returned
+        takesSlowPath.
+
+        But then we added closure calls. A BadCell exit site might just mean that we should do
+        closure call inlining. We added a BadExecutable exit site to indicate that even closure call
+        inlining had failed. BadCell would no longer force CallLinkStatus to return takesSlowPath,
+        but BadExecutable would stuff do so.
+
+        But then we unified the IR for checking functions and executables, and the DFG stopped using
+        the BadExecutable exit kind. Probably this change disabled our ability to use exit site
+        counting for deciding when to takesSlowPath. But this isn't necessarily a disaster, since
+        any time you exited in this way, you'd be taken to a baseline call inline cache, and that
+        inline cache would record the slow path.
+
+        But then we introduced polymorphic call inlining. Polymorphic call inlining means that call
+        unlinking, like when one of the callees is optimized, will reset the stub. We also made it
+        so that the stub is like a gate for the slow path count. A clear inline cache must first
+        cause the creation of a stub and then cause it to overflow before the slow path is counted.
+
+        So, if the DFG or FTL exits on a cell check associated with a particular callsite being
+        speculatively inlined, then it's possible that nobody will know about the exit because:
+
+        - The exit kind is BadCell but CallLinkStatus needs BadExecutable to disable inlining.
+
+        - Between when we tiered up to the DFG (or FTL) and when the exit happened, one of the
+          callees was tiered up, causing the baseline CallLinkInfo to be unlinked. Therefore, after
+          the exit, the inline cache is in a reset state and will not count the call as taking slow
+          path.
+
+        The challenge when dealing with this is that often, we will have an super early compilation
+        of a minimorphic call site before we have seen all of its small set of callees. For example
+        we may have seen only one of two possible callees. That early compilation will OSR exit, and
+        in trunk, will be recompiled with bimorphic speculative inlining. That's a pretty good
+        outcome. Basically, we are trusting that if during the time that the function has been
+        running prior to a given compilation, a callsite has only seen a small number of callees,
+        then it's safe to assume that it won't see another one anytime soon.
+
+        So, simply forcing the CallLinkStatus to set takesSlowPath any time there was a BadCell exit
+        would hurt our performance in some cases, because trunk prior to this change would have their
+        final compilation use speculative inlining, and this change would make guarded inlining
+        instead.
+
+        The compromise that I came up with relies on the fact that a CallLinkInfo must be reset quite
+        frequently for it to routinely happen in between tier-up to DFG (or FTL) and an exit. So,
+        most likely, such a CallLinkInfo will also show up as being clear when the CallLinkStatus
+        is built during DFG profiling. The CallLinkStatus will then fall back on the CallLinkInfo's
+        lastSeenCallee field, which is persistent across resets. This change just makes it so that
+        CallLinkStatus sets takesSlowPath if there is a BadCell exit and the status had to be
+        inferred from the lastSeenCallee.
+
+        This change reduces pointless recompilations in gbemu. It's an 11% speed-up on gbemu. It
+        doesn't seem to hurt any benchmarks.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeExitSiteData):
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (JSC::CallLinkStatus::at):
+        (JSC::CallLinkStatus::operator[]):
+        (JSC::CallLinkStatus::isProved):
+        (JSC::CallLinkStatus::isBasedOnStub):
+        (JSC::CallLinkStatus::canOptimize):
+        (JSC::CallLinkStatus::maxNumArguments):
+        (JSC::CallLinkStatus::ExitSiteData::ExitSiteData): Deleted.
+
 2016-01-29  Saam barati  <sbarati@apple.com>
 
         Pack FunctionExecutable and UnlinkedFunctionExecutable harder
