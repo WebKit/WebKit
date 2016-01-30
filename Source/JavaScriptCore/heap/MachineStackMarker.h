@@ -31,6 +31,11 @@
 #include <mach/thread_act.h>
 #endif
 
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#include <semaphore.h>
+#include <signal.h>
+#endif
+
 #if OS(DARWIN)
 typedef mach_port_t PlatformThread;
 #elif OS(WINDOWS)
@@ -95,7 +100,10 @@ public:
 #elif OS(WINDOWS)
             typedef CONTEXT PlatformRegisters;
 #elif USE(PTHREADS)
-            typedef pthread_attr_t PlatformRegisters;
+            struct PlatformRegisters {
+                pthread_attr_t attribute;
+                mcontext_t machineContext;
+            };
 #else
 #error Need a thread register struct for this platform
 #endif
@@ -118,6 +126,11 @@ public:
         void* stackEnd;
 #if OS(WINDOWS)
         HANDLE platformThreadHandle;
+#elif USE(PTHREADS) && !OS(DARWIN)
+        sem_t semaphoreForSuspendResume;
+        mcontext_t suspendedMachineContext;
+        int suspendCount { 0 };
+        std::atomic<bool> suspended { false };
 #endif
     };
 

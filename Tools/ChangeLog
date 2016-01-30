@@ -1,3 +1,12 @@
+2016-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Enable SamplingProfiler on POSIX environment
+        https://bugs.webkit.org/show_bug.cgi?id=153584
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-01-29  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         update-webkit-dependency fails to fetch updates through firewall on Windows

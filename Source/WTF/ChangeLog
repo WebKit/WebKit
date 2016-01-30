@@ -1,3 +1,14 @@
+2016-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Enable SamplingProfiler on POSIX environment
+        https://bugs.webkit.org/show_bug.cgi?id=153584
+
+        Reviewed by Michael Saboff.
+
+        Use __GLIBC__ since mcontext_t layout depends on it.
+
+        * wtf/Platform.h:
+
 2016-01-28  Darin Adler  <darin@apple.com>
 
         Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase

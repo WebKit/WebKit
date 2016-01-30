@@ -1,3 +1,47 @@
+2016-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Enable SamplingProfiler on POSIX environment
+        https://bugs.webkit.org/show_bug.cgi?id=153584
+
+        Reviewed by Michael Saboff.
+
+        In this patch, we implement suspend and resume mechanizm for POSIX threads.
+        And with GLIBC, we can retrieve registers from it.
+
+        We take the following strategy.
+
+        Suspend side.
+        1. install sigaction to the threads.
+        2. in the profiler (suspend / resume callers), emit signal with pthread_kill and wait with POSIX semaphore.
+        3. in the signal handler, up the POSIX semaphore. Use sem_post because it is the async-signal-safe function in POSIX.
+        4. in the signal handler, perform sigsuspend to stop the thread until being resumed.
+        5. in the profiler, we can be waken up from the semaphore because (3) ups.
+
+        Resume side.
+        1. in the profiler, emit signal and wait on the semaphore.
+        2. in the signal handler, it is waken up from the sigsuspend.
+        3. in the signal handler, up the semaphore.
+        4. in the profiler, the profiler is waken up from the semaphore. It is ensured that the given thread is resumed by the signal.
+
+        * heap/MachineStackMarker.cpp:
+        (pthreadSignalHandlerSuspendResume):
+        (JSC::MachineThreads::Thread::Thread):
+        (JSC::MachineThreads::Thread::~Thread):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::Thread::resume):
+        (JSC::MachineThreads::Thread::getRegisters):
+        (JSC::MachineThreads::Thread::Registers::stackPointer):
+        (JSC::MachineThreads::Thread::Registers::framePointer):
+        (JSC::MachineThreads::Thread::Registers::instructionPointer):
+        (JSC::MachineThreads::Thread::Registers::llintPC):
+        (JSC::MachineThreads::Thread::freeRegisters):
+        * heap/MachineStackMarker.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::reportStats):
+        * tests/stress/call-varargs-from-inlined-code-with-odd-number-of-arguments.js:
+        * tests/stress/call-varargs-from-inlined-code.js:
+        * tests/stress/v8-earley-boyer-strict.js:
+
 2016-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should reduce Mod(value, constant) to Div and Mul so that our Div optimizations can do things

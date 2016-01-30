@@ -1,3 +1,7 @@
+// [DFG] call-varargs-from-inlined-code-with-odd-number-of-arguments.js fails in POSIX environment if SamplingProfiler is enabled
+// https://bugs.webkit.org/show_bug.cgi?id=153704
+//@ if $hostOS == "linux" then defaultNoSamplingProfilerRun else defaultRun end
+
 function foo(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y) {
     return a * 2 + b * 3 + c * 5 + d * 7 + e * 11 + f * 13 + g * 17 + h * 19 + i * 23 + j * 29 + k * 31 + l * 37 + m * 41 + n * 43 + o * 47 + p * 53 + q * 59 + r * 61 + s * 67 + t * 71 + u * 73 + v * 79 + w * 83 + x * 89 + y * 97;
 }

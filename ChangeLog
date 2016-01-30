@@ -1,3 +1,14 @@
+2016-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Enable SamplingProfiler on POSIX environment
+        https://bugs.webkit.org/show_bug.cgi?id=153584
+
+        Reviewed by Michael Saboff.
+
+        Add features.h header check. It will define __GLIBC__.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2016-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Remove ENABLE_CURRENTSRC

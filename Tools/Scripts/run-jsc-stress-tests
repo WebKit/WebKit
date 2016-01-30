@@ -904,6 +904,24 @@ def defaultNoEagerRun
     end
 end
 
+def defaultNoSamplingProfilerRun
+    runDefault
+    runAlwaysTriggerCopyPhase
+    if $jitTests
+        runNoLLInt
+        runNoCJITValidatePhases
+        runDFGEager
+        runDFGEagerNoCJITValidate
+        runDefaultFTL
+        runFTLNoCJITNoPutStackValidate
+        runFTLNoCJITNoInlineValidate
+        runFTLEager
+        runFTLEagerNoCJITValidate
+        runFTLNoCJITSmallPool
+        runDFGMaximalFlushPhase
+    end
+end
+
 def runProfiler
     if $remote or ($architecture !~ /x86/i and $hostOS == "darwin") or ($hostOS == "windows")
         skip

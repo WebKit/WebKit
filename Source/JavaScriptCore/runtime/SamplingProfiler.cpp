@@ -66,7 +66,7 @@ ALWAYS_INLINE static void reportStats()
     if (sReportStats && sNumTotalWalks && static_cast<uint64_t>(sNumTotalWalks) % sNumWalkReportingFrequency == 0) {
         if (!sReportStatsOnlyWhenTheyreAboveThreshold || (sNumFailedWalks / sNumTotalWalks > sWalkErrorPercentage)) {
             dataLogF("Num total walks: %llu. Failed walks percent: %lf\n",
-                static_cast<uint64_t>(sNumTotalWalks), sNumFailedWalks / sNumTotalWalks);
+                static_cast<unsigned long long>(sNumTotalWalks), sNumFailedWalks / sNumTotalWalks);
         }
     }
 }

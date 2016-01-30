@@ -147,3 +147,9 @@ endif ()
 if (NOT APPLE)
     set(CMAKE_NINJA_FORCE_RESPONSE_FILE 1)
 endif ()
+
+# Check whether features.h header exists.
+# Including glibc's one defines __GLIBC__, that is used in Platform.h
+include(CheckIncludeFiles)
+check_include_files(features.h HAVE_FEATURES_H)
+SET_AND_EXPOSE_TO_BUILD(HAVE_FEATURES_H ${HAVE_FEATURES_H})
