@@ -1,5 +1,13 @@
 2016-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Mark two CSS multicolumn tests as failing
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
+2016-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Mark two scrollbar tests as crashing
 
         Unreviewed test gardening.

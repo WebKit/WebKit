@@ -2554,6 +2554,9 @@ webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-
 webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html [ Failure ]
 webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-code.html [ Failure ]
 
+webkit.org/b/153698 imported/w3c/css/css-multicol-1/multicol-rule-dashed-000.xht [ ImageOnlyFailure ]
+webkit.org/b/153698 imported/w3c/css/css-multicol-1/multicol-zero-height-001.xht [ ImageOnlyFailure ]
+
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
