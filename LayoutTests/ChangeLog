@@ -1,3 +1,14 @@
+2016-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add expectations for media source SourceBuffer tests
+
+        Unreviewed test gardening.
+
+        * platform/gtk/http/tests/media/media-source/SourceBuffer-abort-expected.txt: Added.
+        * platform/gtk/http/tests/media/media-source/SourceBuffer-abort-readyState-expected.txt: Added.
+        * platform/gtk/http/tests/media/media-source/SourceBuffer-abort-removed-expected.txt: Added.
+        * platform/gtk/http/tests/media/media-source/SourceBuffer-abort-updating-expected.txt: Added.
+
 2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/block/basic/016.html for ios-simulator after r195740
