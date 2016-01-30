@@ -118,6 +118,14 @@ void UIScriptController::zoomToScale(double, JSValueRef)
 {
 }
 
+void UIScriptController::touchDownAtPoint(long x, long y, long touchCount, JSValueRef)
+{
+}
+
+void UIScriptController::liftUpAtPoint(long x, long y, long touchCount, JSValueRef)
+{
+}
+
 void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef)
 {
 }

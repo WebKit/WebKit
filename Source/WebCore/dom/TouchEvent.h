@@ -65,9 +65,9 @@ public:
     TouchList* targetTouches() const { return m_targetTouches.get(); }
     TouchList* changedTouches() const { return m_changedTouches.get(); }
 
-    void setTouches(PassRefPtr<TouchList> touches) { m_touches = touches; }
-    void setTargetTouches(PassRefPtr<TouchList> targetTouches) { m_targetTouches = targetTouches; }
-    void setChangedTouches(PassRefPtr<TouchList> changedTouches) { m_changedTouches = changedTouches; }
+    void setTouches(RefPtr<TouchList>&& touches) { m_touches = touches; }
+    void setTargetTouches(RefPtr<TouchList>&& targetTouches) { m_targetTouches = targetTouches; }
+    void setChangedTouches(RefPtr<TouchList>&& changedTouches) { m_changedTouches = changedTouches; }
 
     virtual bool isTouchEvent() const override;
 

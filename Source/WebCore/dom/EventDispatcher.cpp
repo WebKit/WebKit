@@ -87,7 +87,7 @@ public:
     EventContext& contextAt(size_t i) { return *m_path[i]; }
 
 #if ENABLE(TOUCH_EVENTS)
-    bool updateTouchLists(const TouchEvent&);
+    void retargetTouchLists(const TouchEvent&);
 #endif
     void setRelatedTarget(Node& origin, EventTarget&);
 
@@ -96,97 +96,13 @@ public:
     EventContext* lastContextIfExists() { return m_path.isEmpty() ? nullptr : m_path.last().get(); }
 
 private:
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    void updateTouchListsInEventPath(const TouchList*, TouchEventContext::TouchListType);
+#if ENABLE(TOUCH_EVENTS)
+    void retargetTouch(TouchEventContext::TouchListType, const Touch&);
 #endif
 
     Event& m_event;
     Vector<std::unique_ptr<EventContext>, 32> m_path;
 };
-
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-// FIXME: Use RelatedNodeRetargeter instead.
-class EventRelatedNodeResolver {
-public:
-    EventRelatedNodeResolver(Touch& touch, TouchEventContext::TouchListType touchListType)
-        : m_relatedNode(*touch.target()->toNode())
-        , m_relatedNodeTreeScope(m_relatedNode.treeScope())
-        , m_relatedNodeInCurrentTreeScope(nullptr)
-        , m_currentTreeScope(nullptr)
-        , m_touch(&touch)
-        , m_touchListType(touchListType)
-    {
-        ASSERT(touch.target()->toNode());
-    }
-
-    Touch* touch() const { return m_touch; }
-    TouchEventContext::TouchListType touchListType() const { return m_touchListType; }
-
-    Node* moveToParentOrShadowHost(Node& newTarget)
-    {
-        TreeScope& newTreeScope = newTarget.treeScope();
-        if (&newTreeScope == m_currentTreeScope)
-            return m_relatedNodeInCurrentTreeScope;
-
-        if (m_currentTreeScope) {
-            ASSERT(is<ShadowRoot>(m_currentTreeScope->rootNode()));
-            ASSERT(&newTarget == downcast<ShadowRoot>(m_currentTreeScope->rootNode()).host());
-            ASSERT(m_currentTreeScope->parentTreeScope() == &newTreeScope);
-        }
-
-        if (&newTreeScope == &m_relatedNodeTreeScope)
-            m_relatedNodeInCurrentTreeScope = &m_relatedNode;
-        else if (m_relatedNodeInCurrentTreeScope) {
-            ASSERT(m_currentTreeScope);
-            m_relatedNodeInCurrentTreeScope = &newTarget;
-        } else {
-            if (!m_currentTreeScope) {
-                TreeScope* newTreeScopeAncestor = &newTreeScope;
-                do {
-                    m_relatedNodeInCurrentTreeScope = findHostOfTreeScopeInTargetTreeScope(m_relatedNodeTreeScope, *newTreeScopeAncestor);
-                    newTreeScopeAncestor = newTreeScopeAncestor->parentTreeScope();
-                    if (newTreeScopeAncestor == &m_relatedNodeTreeScope) {
-                        m_relatedNodeInCurrentTreeScope = &m_relatedNode;
-                        break;
-                    }
-                } while (newTreeScopeAncestor && !m_relatedNodeInCurrentTreeScope);
-            }
-            ASSERT(m_relatedNodeInCurrentTreeScope || findHostOfTreeScopeInTargetTreeScope(newTreeScope, m_relatedNodeTreeScope)
-                || &newTreeScope.documentScope() != &m_relatedNodeTreeScope.documentScope());
-        }
-
-        m_currentTreeScope = &newTreeScope;
-
-        return m_relatedNodeInCurrentTreeScope;
-    }
-
-    static Node* findHostOfTreeScopeInTargetTreeScope(const TreeScope& startingTreeScope, const TreeScope& targetScope)
-    {
-        ASSERT(&targetScope != &startingTreeScope);
-        Node* previousHost = nullptr;
-        for (const TreeScope* scope = &startingTreeScope; scope; scope = scope->parentTreeScope()) {
-            if (scope == &targetScope) {
-                ASSERT(previousHost);
-                ASSERT_WITH_SECURITY_IMPLICATION(&previousHost->treeScope() == &targetScope);
-                return previousHost;
-            }
-            if (is<ShadowRoot>(scope->rootNode()))
-                previousHost = downcast<ShadowRoot>(scope->rootNode()).host();
-            else
-                ASSERT_WITH_SECURITY_IMPLICATION(!scope->parentTreeScope());
-        }
-        return nullptr;
-    }
-
-private:
-    Node& m_relatedNode;
-    const TreeScope& m_relatedNodeTreeScope;
-    Node* m_relatedNodeInCurrentTreeScope;
-    TreeScope* m_currentTreeScope;
-    Touch* m_touch;
-    TouchEventContext::TouchListType m_touchListType;
-};
-#endif
 
 inline EventTarget* eventTargetRespectingTargetRules(Node& referenceNode)
 {
@@ -311,11 +227,9 @@ bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
 
     if (EventTarget* relatedTarget = event.relatedTarget())
         eventPath.setRelatedTarget(*node, *relatedTarget);
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    if (is<TouchEvent>(event)) {
-        if (!eventPath.updateTouchLists(downcast<TouchEvent>(event)))
-            return true;
-    }
+#if ENABLE(TOUCH_EVENTS)
+    if (is<TouchEvent>(event))
+        eventPath.retargetTouchLists(downcast<TouchEvent>(event));
 #endif
 
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
@@ -403,7 +317,7 @@ EventPath::EventPath(Node& originalTarget, Event& event)
 #endif
 
     bool isMouseOrFocusEvent = event.isMouseEvent() || event.isFocusEvent();
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
     bool isTouchEvent = event.isTouchEvent();
 #endif
     EventTarget* target = nullptr;
@@ -417,7 +331,7 @@ EventPath::EventPath(Node& originalTarget, Event& event)
             EventTarget* currentTarget = eventTargetRespectingTargetRules(*node);
             if (isMouseOrFocusEvent)
                 m_path.append(std::make_unique<MouseOrFocusEventContext>(node, currentTarget, target));
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
             else if (isTouchEvent)
                 m_path.append(std::make_unique<TouchEventContext>(node, currentTarget, target));
 #endif
@@ -458,42 +372,6 @@ EventPath::EventPath(Node& originalTarget, Event& event)
         node = shadowRoot.host();
     }
 }
-
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-static void addRelatedNodeResolversForTouchList(Vector<EventRelatedNodeResolver, 16>& touchTargetResolvers, TouchList* touchList, TouchEventContext::TouchListType type)
-{
-    const size_t touchListSize = touchList->length();
-    for (size_t i = 0; i < touchListSize; ++i)
-        touchTargetResolvers.append(EventRelatedNodeResolver(*touchList->item(i), type));
-}
-
-bool EventPath::updateTouchLists(const TouchEvent& touchEvent)
-{
-    if (!touchEvent.touches() || !touchEvent.targetTouches() || !touchEvent.changedTouches())
-        return false;
-    
-    Vector<EventRelatedNodeResolver, 16> touchTargetResolvers;
-    const size_t touchNodeCount = touchEvent.touches()->length() + touchEvent.targetTouches()->length() + touchEvent.changedTouches()->length();
-    touchTargetResolvers.reserveInitialCapacity(touchNodeCount);
-
-    addRelatedNodeResolversForTouchList(touchTargetResolvers, touchEvent.touches(), TouchEventContext::Touches);
-    addRelatedNodeResolversForTouchList(touchTargetResolvers, touchEvent.targetTouches(), TouchEventContext::TargetTouches);
-    addRelatedNodeResolversForTouchList(touchTargetResolvers, touchEvent.changedTouches(), TouchEventContext::ChangedTouches);
-
-    ASSERT(touchTargetResolvers.size() == touchNodeCount);
-    for (auto& eventPath : m_path) {
-        TouchEventContext& context = toTouchEventContext(*eventPath);
-        Node& nodeToMoveTo = *context.node();
-        for (size_t resolverIndex = 0; resolverIndex < touchNodeCount; ++resolverIndex) {
-            EventRelatedNodeResolver& currentResolver = touchTargetResolvers[resolverIndex];
-            Node* nodeInCurrentTreeScope = currentResolver.moveToParentOrShadowHost(nodeToMoveTo);
-            ASSERT(currentResolver.touch());
-            context.touchList(currentResolver.touchListType())->append(currentResolver.touch()->cloneWithNewTarget(nodeInCurrentTreeScope));
-        }
-    }
-    return true;
-}
-#endif
 
 class RelatedNodeRetargeter {
 public:
@@ -622,7 +500,6 @@ private:
 
 void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
 {
-    UNUSED_PARAM(origin);
     Node* relatedNode = relatedTarget.toNode();
     if (!relatedNode || m_path.isEmpty())
         return;
@@ -660,6 +537,50 @@ void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
         previousTreeScope = &currentTreeScope;
     }
 }
+
+#if ENABLE(TOUCH_EVENTS)
+void EventPath::retargetTouch(TouchEventContext::TouchListType touchListType, const Touch& touch)
+{
+    EventTarget* eventTarget = touch.target();
+    if (!eventTarget)
+        return;
+
+    Node* targetNode = eventTarget->toNode();
+    if (!targetNode)
+        return;
+
+    RelatedNodeRetargeter retargeter(*targetNode, downcast<MouseOrFocusEventContext>(*m_path[0]).node()->treeScope());
+    TreeScope* previousTreeScope = nullptr;
+    for (auto& context : m_path) {
+        TreeScope& currentTreeScope = context->node()->treeScope();
+        if (UNLIKELY(previousTreeScope && &currentTreeScope != previousTreeScope))
+            retargeter.moveToNewTreeScope(previousTreeScope, currentTreeScope);
+
+        Node* currentRelatedNode = retargeter.currentNode(currentTreeScope);
+        downcast<TouchEventContext>(*context).touchList(touchListType)->append(touch.cloneWithNewTarget(currentRelatedNode));
+
+        previousTreeScope = &currentTreeScope;
+    }
+}
+
+void EventPath::retargetTouchLists(const TouchEvent& touchEvent)
+{
+    if (touchEvent.touches()) {
+        for (size_t i = 0; i < touchEvent.touches()->length(); ++i)
+            retargetTouch(TouchEventContext::Touches, *touchEvent.touches()->item(i));
+    }
+
+    if (touchEvent.targetTouches()) {
+        for (size_t i = 0; i < touchEvent.targetTouches()->length(); ++i)
+            retargetTouch(TouchEventContext::TargetTouches, *touchEvent.targetTouches()->item(i));
+    }
+
+    if (touchEvent.changedTouches()) {
+        for (size_t i = 0; i < touchEvent.changedTouches()->length(); ++i)
+            retargetTouch(TouchEventContext::ChangedTouches, *touchEvent.changedTouches()->item(i));
+    }
+}
+#endif
 
 bool EventPath::hasEventListeners(const AtomicString& eventType) const
 {

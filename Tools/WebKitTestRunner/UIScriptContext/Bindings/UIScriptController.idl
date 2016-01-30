@@ -30,8 +30,10 @@ interface UIScriptController {
     void zoomToScale(double scale, object callback);
 
     // Interaction.
-    // These functions post events asynchronously. The callback is fired when the events have been disptached, but any
+    // These functions post events asynchronously. The callback is fired when the events have been dispatched, but any
     // resulting behavior may also be asynchronous.
+    void touchDownAtPoint(long x, long y, long touchCount, object callback);
+    void liftUpAtPoint(long x, long y, long touchCount, object callback);
     void singleTapAtPoint(long x, long y, object callback);
     void doubleTapAtPoint(long x, long y, object callback);
 

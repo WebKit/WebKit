@@ -79,6 +79,30 @@ static CGPoint globalToContentCoordinates(TestRunnerWKWebView *webView, long x, 
     return point;
 }
 
+void UIScriptController::touchDownAtPoint(long x, long y, long touchCount, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    [[HIDEventGenerator sharedHIDEventGenerator] touchDown:location touchCount:touchCount completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
+void UIScriptController::liftUpAtPoint(long x, long y, long touchCount, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    
+    auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
+    [[HIDEventGenerator sharedHIDEventGenerator] liftUp:location touchCount:touchCount completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
 void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

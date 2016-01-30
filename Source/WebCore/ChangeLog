@@ -1,3 +1,37 @@
+2016-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TouchList should be retargeted
+        https://bugs.webkit.org/show_bug.cgi?id=149592
+
+        Reviewed by Antti Koivisto.
+
+        Retarget touch target's using the same algorithm as the one used for related targets instead of
+        EventRelatedNodeResolver which is removed in this patch.
+
+        Also enable the retargeting on iOS.
+
+        Test: fast/shadow-dom/touch-event-ios.html
+
+        * dom/EventContext.cpp:
+        (WebCore::TouchEventContext::TouchEventContext):
+        (WebCore::TouchEventContext::handleLocalEvents):
+        (WebCore::TouchEventContext::checkReachability):
+        * dom/EventContext.h:
+        (WebCore::toTouchEventContext):
+        (WebCore::EventContext::isUnreachableNode):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedNodeResolver): Deleted.
+        (WebCore::EventPath::EventPath):
+        (WebCore::EventDispatcher::dispatchEvent): 
+        (WebCore::addRelatedNodeResolversForTouchList): Deleted.
+        (WebCore::EventPath::updateTouchLists): Deleted.
+        (WebCore::EventPath::setRelatedTarget): Removed superfluous UNUSED_PARAM since the argument is always used.
+        (WebCore::EventPath::retargetTouch): Extracted from updateTouchLists/setRelatedTarget. Clones Touch object
+        with the new target for each event context just like related targets.
+        (WebCore::EventPath::retargetTouchLists): Renamed from updateTouchLists. Calls retargetTouch on each Touch
+        object in each TouchList.
+        * dom/TouchEvent.h:
+
 2016-01-30 Dave Hyatt  <hyatt@apple.com>
 
         Support break-after, break-before and break-inside.

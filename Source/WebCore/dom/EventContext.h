@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class Event;
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
 class TouchList;
 #endif
 
@@ -54,7 +54,7 @@ public:
     virtual bool isTouchEventContext() const;
 
 protected:
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     bool isUnreachableNode(EventTarget*);
     bool isReachable(Node*) const;
 #endif
@@ -77,7 +77,7 @@ private:
 };
 
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
 class TouchEventContext final : public EventContext {
 public:
     TouchEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
@@ -111,7 +111,7 @@ private:
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;
     RefPtr<TouchList> m_changedTouches;
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     void checkReachability(TouchList*) const;
 #endif
 };
@@ -129,7 +129,7 @@ inline TouchEventContext* toTouchEventContext(EventContext* eventContext)
 }
 #endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
 inline bool EventContext::isUnreachableNode(EventTarget* target)
 {
     // FIXME: Checks also for SVG elements.

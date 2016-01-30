@@ -1,0 +1,117 @@
+Tests for retargeting touch targets. This test requires touch events support and runUIScript.
+
+touchstart at left-shadow with
+    target: left-shadow-target
+    touches: [0: left-shadow-target]
+    targetTouches: [0: left-shadow-target]
+    changedTouches: [0: left-shadow-target]
+
+touchstart at document with
+    target: left-host
+    touches: [0: left-host]
+    targetTouches: [0: left-host]
+    changedTouches: [0: left-host]
+
+touchstart at right-lower-shadow with
+    target: slot
+    touches: [0: left-host, 1: right-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
+touchstart at right-upper-shadow with
+    target: slot
+    touches: [0: left-host, 1: right-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
+touchstart at document with
+    target: right-target
+    touches: [0: left-host, 1: right-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
+touchmove at left-shadow with
+    target: left-shadow-target
+    touches: [0: left-shadow-target, 1: right-target]
+    targetTouches: [0: left-shadow-target]
+    changedTouches: [0: left-shadow-target]
+
+touchmove at document with
+    target: left-host
+    touches: [0: left-host, 1: right-target]
+    targetTouches: [0: left-host]
+    changedTouches: [0: left-host]
+
+touchstart at document with
+    target: bottom-target
+    touches: [0: left-host, 1: right-target, 2: bottom-target]
+    targetTouches: [0: bottom-target]
+    changedTouches: [0: bottom-target]
+
+touchmove at left-shadow with
+    target: left-shadow-target
+    touches: [0: left-shadow-target, 1: right-target, 2: bottom-target]
+    targetTouches: [0: left-shadow-target]
+    changedTouches: [0: left-shadow-target]
+
+touchmove at document with
+    target: left-host
+    touches: [0: left-host, 1: right-target, 2: bottom-target]
+    targetTouches: [0: left-host]
+    changedTouches: [0: left-host]
+
+touchmove at right-lower-shadow with
+    target: slot
+    touches: [0: left-host, 1: right-target, 2: bottom-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
+touchmove at right-upper-shadow with
+    target: slot
+    touches: [0: left-host, 1: right-target, 2: bottom-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
+touchmove at document with
+    target: right-target
+    touches: [0: left-host, 1: right-target, 2: bottom-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
+touchend at document with
+    target: bottom-target
+    touches: []
+    targetTouches: []
+    changedTouches: [0: bottom-target]
+
+touchend at left-shadow with
+    target: left-shadow-target
+    touches: []
+    targetTouches: []
+    changedTouches: [0: left-shadow-target]
+
+touchend at document with
+    target: left-host
+    touches: []
+    targetTouches: []
+    changedTouches: [0: left-host]
+
+touchend at right-lower-shadow with
+    target: slot
+    touches: []
+    targetTouches: []
+    changedTouches: [0: right-target]
+
+touchend at right-upper-shadow with
+    target: slot
+    touches: []
+    targetTouches: []
+    changedTouches: [0: right-target]
+
+touchend at document with
+    target: right-target
+    touches: []
+    targetTouches: []
+    changedTouches: [0: right-target]
+
+

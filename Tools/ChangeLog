@@ -1,3 +1,26 @@
+2016-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TouchList should be retargeted
+        https://bugs.webkit.org/show_bug.cgi?id=149592
+
+        Reviewed by Antti Koivisto.
+
+        Added touchDownAtPoint and liftUpAtPoint to UIScriptController so that we can test touch events with
+        multiple touch targets on iOS. fast/shadow-dom/touch-event-ios.html uses this new testing feature.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::touchDownAtPoint): Added.
+        (WTR::UIScriptController::liftUpAtPoint): Added.
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator touchDown:touchCount:completionBlock:]): Added. Sends touch down and waits.
+        (-[HIDEventGenerator liftUp:touchCount:completionBlock:]): Ditto for lift up.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::touchDownAtPoint): Added.
+        (WTR::UIScriptController::liftUpAtPoint): Added.
+
 2016-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Enable SamplingProfiler on POSIX environment

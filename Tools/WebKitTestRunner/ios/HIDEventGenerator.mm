@@ -370,6 +370,18 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     [self _updateTouchPoints:newLocations count:touchCount];
 }
 
+- (void)touchDown:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock
+{
+    [self touchDown:location touchCount:count];
+    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+}
+
+- (void)liftUp:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock
+{
+    [self liftUp:location touchCount:count];
+    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+}
+
 - (void)sendTaps:(int)tapCount location:(CGPoint)location withNumberOfTouches:(int)touchCount completionBlock:(void (^)(void))completionBlock
 {
     struct timespec doubleDelay = { 0, static_cast<long>(multiTapInterval) };

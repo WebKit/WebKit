@@ -47,6 +47,8 @@ public:
     void doAsyncTask(JSValueRef callback);
     void zoomToScale(double scale, JSValueRef callback);
 
+    void touchDownAtPoint(long x, long y, long touchCount, JSValueRef callback);
+    void liftUpAtPoint(long x, long y, long touchCount, JSValueRef callback);
     void singleTapAtPoint(long x, long y, JSValueRef callback);
     void doubleTapAtPoint(long x, long y, JSValueRef callback);
     

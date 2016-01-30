@@ -1,3 +1,16 @@
+2016-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TouchList should be retargeted
+        https://bugs.webkit.org/show_bug.cgi?id=149592
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test for retargeting touch targets on iOS.
+
+        * fast/shadow-dom/touch-event-ios-expected.txt: Added.
+        * fast/shadow-dom/touch-event-ios.html: Added.
+        * platform/mac/TestExpectations: Added the failing expectation on Mac since touch support is not enabled.
+
 2016-01-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Two disk cache tests are failing

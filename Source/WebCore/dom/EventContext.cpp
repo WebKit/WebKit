@@ -90,7 +90,7 @@ bool MouseOrFocusEventContext::isMouseOrFocusEventContext() const
     return true;
 }
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
 TouchEventContext::TouchEventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target)
     : EventContext(node, currentTarget, target)
     , m_touches(TouchList::create())
@@ -105,16 +105,16 @@ TouchEventContext::~TouchEventContext()
 
 void TouchEventContext::handleLocalEvents(Event& event) const
 {
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     checkReachability(m_touches.get());
     checkReachability(m_targetTouches.get());
     checkReachability(m_changedTouches.get());
 #endif
     ASSERT(is<TouchEvent>(event));
     TouchEvent& touchEvent = downcast<TouchEvent>(event);
-    touchEvent.setTouches(m_touches);
-    touchEvent.setTargetTouches(m_targetTouches);
-    touchEvent.setChangedTouches(m_changedTouches);
+    touchEvent.setTouches(m_touches.get());
+    touchEvent.setTargetTouches(m_targetTouches.get());
+    touchEvent.setChangedTouches(m_changedTouches.get());
     EventContext::handleLocalEvents(event);
 }
 
@@ -123,7 +123,7 @@ bool TouchEventContext::isTouchEventContext() const
     return true;
 }
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
 void TouchEventContext::checkReachability(TouchList* touchList) const
 {
     size_t length = touchList->length();
