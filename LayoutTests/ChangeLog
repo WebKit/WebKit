@@ -1,5 +1,13 @@
 2016-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Really mark imported/blink/fast/css/first-letter-float-block.html as crashing
+
+        Unreviewed test gardening. Copypaste error in the previous commit.
+
+        * platform/gtk/TestExpectations:
+
+2016-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Mark imported/blink/fast/css/first-letter-float-block.html as crashing
 
         Unreviewed test gardening.
