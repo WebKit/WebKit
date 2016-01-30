@@ -1,5 +1,22 @@
 2016-01-30  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline bindings tests after r195904.
+
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertySlot):
+        (WebCore::jsTestCustomNamedGetterConstructor):
+        (WebCore::setJSTestCustomNamedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::getOwnPropertySlot):
+        (WebCore::jsTestEventTargetConstructor):
+        (WebCore::setJSTestEventTargetConstructor):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltins::getOwnPropertySlot):
+        (WebCore::jsTestOverrideBuiltinsConstructor):
+        (WebCore::setJSTestOverrideBuiltinsConstructor):
+
+2016-01-30  Chris Dumez  <cdumez@apple.com>
+
         [JS Bindings] prototype.constructor should be writable
         https://bugs.webkit.org/show_bug.cgi?id=149412
         <rdar://problem/22545096>
