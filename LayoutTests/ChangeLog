@@ -1,5 +1,13 @@
 2016-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Mark some content security policy tests as failing
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
+2016-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Mark Ruby expansion tests as failing
 
         Unreviewed test gardening.
