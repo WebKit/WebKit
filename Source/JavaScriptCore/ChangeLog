@@ -1,3 +1,32 @@
+2016-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [B3] JetStream/quicksort.c fails/hangs on Linux with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=153647
+
+        Reviewed by Filip Pizlo.
+
+        In B3ComputeDivisionMagic, we accidentally perform sub, add operation onto signed integer. (In this case, int32_t)
+        But integer overflow is undefined behavior in C![1][2]
+        As a result, in GCC 4.9 release build, computeDivisionMagic(2) returns unexpected value.
+        `divisor = 2`
+        `d = 2`
+        `signedMin = INT32_MIN = -2147483647 (-0x7fffffff)`
+        `t = signedMin`
+        `anc = t - 1 - (t % ad)` Oops, we performed overflow operation!
+
+        So, `anc` value becomes undefined.
+        In this patch, we first cast all the operated values to unsigned one.
+        Reading the code, there are no operations that depends on signedness. (For example, we used aboveEqual like unsigned operations for comparison.)
+
+        [1]: http://blog.llvm.org/2011/05/what-every-c-programmer-should-know.html
+        [2]: http://dl.acm.org/citation.cfm?id=2522728
+
+        * b3/B3ComputeDivisionMagic.h:
+        (JSC::B3::computeDivisionMagic):
+        * b3/testb3.cpp:
+        (JSC::B3::testComputeDivisionMagic):
+        (JSC::B3::run):
+
 2016-01-30  Andreas Kling  <akling@apple.com>
 
         Shrink Heap::m_executables after cleaning it.

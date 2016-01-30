@@ -30,6 +30,7 @@
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
 #include "B3Compilation.h"
+#include "B3ComputeDivisionMagic.h"
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
 #include "B3ControlValue.h"
@@ -9983,6 +9984,14 @@ void testSShrShl64(int64_t value, int32_t sshrAmount, int32_t shlAmount)
         == ((value << (shlAmount & 63)) >> (sshrAmount & 63)));
 }
 
+template<typename T>
+void testComputeDivisionMagic(T value, T magicMultiplier, unsigned shift)
+{
+    DivisionMagic<T> magic = computeDivisionMagic(value);
+    CHECK(magic.magicMultiplier == magicMultiplier);
+    CHECK(magic.shift == shift);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -11380,6 +11389,8 @@ void run(const char* filter)
     RUN(testSShrShl64(-42000000000, 8, 8));
 
     RUN(testCheckMul64SShr());
+
+    RUN(testComputeDivisionMagic<int32_t>(2, -2147483647, 0));
 
     if (tasks.isEmpty())
         usage();
