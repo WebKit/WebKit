@@ -1995,8 +1995,7 @@ void Node::handleLocalEvents(Event& event)
     if (!hasEventTargetData())
         return;
 
-    // FIXME: Should we deliver wheel events to disabled form controls or not?
-    if (is<Element>(*this) && downcast<Element>(*this).isDisabledFormControl() && event.isMouseEvent() && !event.isWheelEvent())
+    if (is<Element>(*this) && downcast<Element>(*this).isDisabledFormControl() && event.isMouseEvent())
         return;
 
     fireEventListeners(&event);
