@@ -5045,8 +5045,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_pageClient.mediaSessionManager().removeAllPlaybackTargetPickerClients(*this);
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInvalidation.h>)
-#include <WebKitAdditions/WebPageProxyInvalidation.h>
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInvalidation.cpp>)
+#include <WebKitAdditions/WebPageProxyInvalidation.cpp>
 #endif
 
     CallbackBase::Error error;
