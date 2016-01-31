@@ -144,14 +144,6 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._dataGrid.closed();
     }
 
-    needsLayout()
-    {
-        if (!this._networkSidebarPanel.visible)
-            return;
-
-        super.needsLayout();
-    }
-
     reset()
     {
         this._contentTreeOutline.removeChildren();

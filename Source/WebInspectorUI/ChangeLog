@@ -1,3 +1,19 @@
+2016-01-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Network panel is empty until the window is resized
+        https://bugs.webkit.org/show_bug.cgi?id=153701
+        <rdar://problem/24423739>
+
+        Reviewed by Timothy Hatcher.
+
+        NetworkGridContentView shouldn't prevent a layout from being scheduled
+        when the network sidebar is collapsed.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype.needsLayout): Deleted.
+        Removed View.prototype.needsLayout override that was preventing
+        layouts from being scheduled as timeline records are added.
+
 2016-01-30  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Object tree parent items are misaligned
