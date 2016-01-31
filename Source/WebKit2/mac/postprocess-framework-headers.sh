@@ -61,7 +61,13 @@ function rewrite_headers () {
         -e 's/WK_ARRAY\(([^\)]+)\)/NSArray<\1>/g'
         -e 's/WK_DICTIONARY\(([^\)]+)\)/NSDictionary<\1>/g'
         -e 's/WK_SET\(([^\)]+)\)/NSSet<\1>/g'
+        -e s/WK_ASSUME_NONNULL_BEGIN/NS_ASSUME_NONNULL_BEGIN/
+        -e s/WK_ASSUME_NONNULL_END/NS_ASSUME_NONNULL_END/
         -e s/WK_DESIGNATED_INITIALIZER/NS_DESIGNATED_INITIALIZER/
+        -e s/WK_NULLABLE_PROPERTY/nullable,/
+        -e s/WK_NULLABLE_SPECIFIER/__nullable/g
+        -e s/WK_NULLABLE/nullable/g
+        -e s/WK_NULL_UNSPECIFIED/null_unspecified/
         -e s/WK_UNAVAILABLE/NS_UNAVAILABLE/
     )
 

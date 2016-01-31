@@ -32,24 +32,24 @@
 /*! @abstract A WKBackForwardList object is a list of webpages previously
  visited in a web view that can be reached by going back or forward.
  */
-NS_ASSUME_NONNULL_BEGIN
+WK_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKBackForwardList : NSObject
 
 /*! @abstract The current item.
  */
-@property (nullable, nonatomic, readonly, strong) WKBackForwardListItem *currentItem;
+@property (WK_NULLABLE_PROPERTY nonatomic, readonly, strong) WKBackForwardListItem *currentItem;
 
 /*! @abstract The item immediately preceding the current item, or nil
 if there isn't one.
  */
-@property (nullable, nonatomic, readonly, strong) WKBackForwardListItem *backItem;
+@property (WK_NULLABLE_PROPERTY nonatomic, readonly, strong) WKBackForwardListItem *backItem;
 
 /*! @abstract The item immediately following the current item, or nil
 if there isn't one.
  */
-@property (nullable, nonatomic, readonly, strong) WKBackForwardListItem *forwardItem;
+@property (WK_NULLABLE_PROPERTY nonatomic, readonly, strong) WKBackForwardListItem *forwardItem;
 
 /*! @abstract Returns the item at a specified distance from the current
  item.
@@ -59,7 +59,7 @@ if there isn't one.
  @result The item at the specified distance from the current item, or nil
  if the index parameter exceeds the limits of the list.
  */
-- (nullable WKBackForwardListItem *)itemAtIndex:(NSInteger)index;
+- (WK_NULLABLE WKBackForwardListItem *)itemAtIndex:(NSInteger)index;
 
 /*! @abstract The portion of the list preceding the current item.
  @discussion The items are in the order in which they were originally
@@ -75,6 +75,6 @@ if there isn't one.
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_ASSUME_NONNULL_END
 
 #endif

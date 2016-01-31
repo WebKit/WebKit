@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+WK_ASSUME_NONNULL_BEGIN
 
 @class WKUserScript;
 @protocol WKScriptMessageHandler;
@@ -72,6 +72,6 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_ASSUME_NONNULL_END
 
 #endif

@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+WK_ASSUME_NONNULL_BEGIN
 
 /*! @constant WKWebsiteDataTypeDiskCache On-disk caches. */
 WK_EXTERN NSString * const WKWebsiteDataTypeDiskCache WK_AVAILABLE(10_11, 9_0);
@@ -67,6 +67,6 @@ WK_CLASS_AVAILABLE(10_11, 9_0)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_ASSUME_NONNULL_END
 
 #endif

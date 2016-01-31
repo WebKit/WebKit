@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+WK_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface _WKUserStyleSheet : NSObject <NSCopying>
@@ -42,6 +42,6 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_ASSUME_NONNULL_END
 
 #endif

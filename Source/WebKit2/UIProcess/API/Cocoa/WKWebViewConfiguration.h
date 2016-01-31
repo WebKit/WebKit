@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+WK_ASSUME_NONNULL_BEGIN
 
 @class WKPreferences;
 @class WKProcessPool;
@@ -105,7 +105,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The name of the application as used in the user agent string.
 */
-@property (nullable, nonatomic, copy) NSString *applicationNameForUserAgent WK_AVAILABLE(10_11, 9_0);
+@property (WK_NULLABLE_PROPERTY nonatomic, copy) NSString *applicationNameForUserAgent WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract A Boolean value indicating whether AirPlay is allowed.
  @discussion The default value is YES.
@@ -160,6 +160,6 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_ASSUME_NONNULL_END
 
 #endif

@@ -35,7 +35,7 @@
  it does not uniquely identify a frame across multiple delegate method
  calls.
  */
-NS_ASSUME_NONNULL_BEGIN
+WK_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKFrameInfo : NSObject <NSCopying>
@@ -55,6 +55,6 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_ASSUME_NONNULL_END
 
 #endif

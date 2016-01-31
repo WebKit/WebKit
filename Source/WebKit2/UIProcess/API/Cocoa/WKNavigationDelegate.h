@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+WK_ASSUME_NONNULL_BEGIN
 
 @class WKNavigation;
 @class WKNavigationAction;
@@ -90,14 +90,14 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @param webView The web view invoking the delegate method.
  @param navigation The navigation.
  */
-- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation;
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WK_NULL_UNSPECIFIED WKNavigation *)navigation;
 
 /*! @abstract Invoked when a server redirect is received for the main
  frame.
  @param webView The web view invoking the delegate method.
  @param navigation The navigation.
  */
-- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(null_unspecified WKNavigation *)navigation;
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WK_NULL_UNSPECIFIED WKNavigation *)navigation;
 
 /*! @abstract Invoked when an error occurs while starting to load data for
  the main frame.
@@ -105,19 +105,19 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @param navigation The navigation.
  @param error The error that occurred.
  */
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error;
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WK_NULL_UNSPECIFIED WKNavigation *)navigation withError:(NSError *)error;
 
 /*! @abstract Invoked when content starts arriving for the main frame.
  @param webView The web view invoking the delegate method.
  @param navigation The navigation.
  */
-- (void)webView:(WKWebView *)webView didCommitNavigation:(null_unspecified WKNavigation *)navigation;
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WK_NULL_UNSPECIFIED WKNavigation *)navigation;
 
 /*! @abstract Invoked when a main frame navigation completes.
  @param webView The web view invoking the delegate method.
  @param navigation The navigation.
  */
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation;
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WK_NULL_UNSPECIFIED WKNavigation *)navigation;
 
 /*! @abstract Invoked when an error occurs during a committed main frame
  navigation.
@@ -125,7 +125,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @param navigation The navigation.
  @param error The error that occurred.
  */
-- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error;
+- (void)webView:(WKWebView *)webView didFailNavigation:(WK_NULL_UNSPECIFIED WKNavigation *)navigation withError:(NSError *)error;
 
 /*! @abstract Invoked when the web view needs to respond to an authentication challenge.
  @param webView The web view that received the authentication challenge.
@@ -137,7 +137,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  credential.
  @discussion If you do not implement this method, the web view will respond to the authentication challenge with the NSURLSessionAuthChallengeRejectProtectionSpace disposition.
  */
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *_Nullable credential))completionHandler;
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *WK_NULLABLE_SPECIFIER credential))completionHandler;
 
 /*! @abstract Invoked when the web view's web content process is terminated.
  @param webView The web view whose underlying web content process was terminated.
@@ -146,6 +146,6 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
 
 @end
 
-NS_ASSUME_NONNULL_END
+WK_ASSUME_NONNULL_END
 
 #endif

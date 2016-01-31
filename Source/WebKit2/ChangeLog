@@ -1,3 +1,32 @@
+2016-01-30  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r195914, because at least one of the build.webkit.org builders still uses a compiler that doesn’t understand _Nullable.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationResponse.h:
+        * UIProcess/API/Cocoa/WKScriptMessage.h:
+        * UIProcess/API/Cocoa/WKScriptMessageHandler.h:
+        * UIProcess/API/Cocoa/WKSecurityOrigin.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserScript.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWindowFeatures.h:
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.h:
+        * UIProcess/API/Cocoa/_WKElementInfo.h:
+        * UIProcess/API/Cocoa/_WKPreviewElementInfo.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * mac/postprocess-framework-headers.sh:
+
 2016-01-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r195911.
