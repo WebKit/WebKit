@@ -142,7 +142,7 @@ enum class DynamicViewportUpdateMode {
     ResizingWithDocumentHidden,
 };
 
-#if __has_include(<WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>
 #else
 

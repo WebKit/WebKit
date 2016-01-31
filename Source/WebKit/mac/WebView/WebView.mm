@@ -295,7 +295,7 @@
 #import <WebCore/WebMediaSessionManagerMac.h>
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebViewIncludes.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewIncludes.h>
 #endif
 
@@ -973,7 +973,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebViewInitialization.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewInitialization.mm>
 #endif
 
@@ -1217,7 +1217,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.dragClient = new WebDragClient(self);
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebViewInitialization.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewInitialization.mm>
 #endif
 

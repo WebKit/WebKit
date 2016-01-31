@@ -29,7 +29,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/PageConfigurationIncludes.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/PageConfigurationIncludes.h>
 #endif
 
@@ -77,7 +77,7 @@ public:
     FrameLoaderClient* loaderClientForMainFrame { nullptr };
     DiagnosticLoggingClient* diagnosticLoggingClient { nullptr };
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/PageConfigurationMembers.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/PageConfigurationMembers.h>
 #endif
 

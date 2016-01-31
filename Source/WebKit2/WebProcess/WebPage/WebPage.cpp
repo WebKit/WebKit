@@ -231,7 +231,7 @@
 #include <WebCore/MediaPlayerRequestInstallMissingPluginsCallback.h>
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageIncludes.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageIncludes.h>
 #endif
 
@@ -398,7 +398,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageConfiguration.userContentController = m_userContentController ? &m_userContentController->userContentController() : &m_pageGroup->userContentController();
     pageConfiguration.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageInitialization.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageInitialization.h>
 #endif
 

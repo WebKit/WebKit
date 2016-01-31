@@ -122,7 +122,7 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyIncludes.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyIncludes.h>
 #endif
 
@@ -1557,7 +1557,7 @@ private:
     RefPtr<WebVibrationProxy> m_vibration;
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyMembers.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyMembers.h>
 #endif
 

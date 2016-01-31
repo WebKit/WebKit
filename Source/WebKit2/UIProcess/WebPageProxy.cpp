@@ -165,7 +165,7 @@
 #include <WebCore/MediaSessionMetadata.h>
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyIncludes.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyIncludes.h>
 #endif
 
@@ -474,7 +474,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_vibration = WebVibrationProxy::create(this);
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInitialization.cpp>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyInitialization.cpp>
 #endif
 
@@ -706,7 +706,7 @@ void WebPageProxy::reattachToWebProcess()
     m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInitialization.cpp>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyInitialization.cpp>
 #endif
 
@@ -5045,7 +5045,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_pageClient.mediaSessionManager().removeAllPlaybackTargetPickerClients(*this);
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInvalidation.cpp>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyInvalidation.cpp>
 #endif
 

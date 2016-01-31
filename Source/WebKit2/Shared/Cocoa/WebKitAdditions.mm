@@ -25,6 +25,6 @@
 
 #import "config.h"
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebKitAdditions.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebKitAdditions.mm>
 #endif

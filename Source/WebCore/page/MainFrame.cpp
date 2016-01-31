@@ -39,7 +39,7 @@
 #include "ServicesOverlayController.h"
 #endif /* PLATFORM(MAC) */
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/MainFrameIncludes.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MainFrameIncludes.h>
 #endif
 
@@ -57,7 +57,7 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
     , m_diagnosticLoggingClient(configuration.diagnosticLoggingClient)
 {
-#if defined(__has_include) && __has_include(<WebKitAdditions/MainFrameInitialization.cpp>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MainFrameInitialization.cpp>
 #endif
 }

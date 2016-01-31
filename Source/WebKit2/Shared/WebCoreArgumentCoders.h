@@ -465,7 +465,7 @@ template<> struct ArgumentCoder<WebCore::ExceptionDetails> {
 
 } // namespace IPC
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebCoreArgumentCodersAdditions.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebCoreArgumentCodersAdditions.h>
 #endif
 

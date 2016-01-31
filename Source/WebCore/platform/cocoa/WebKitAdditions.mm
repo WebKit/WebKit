@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebCoreAdditions.cpp>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebCoreAdditions.cpp>
 #endif
 

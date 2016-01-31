@@ -29,7 +29,7 @@
 #include "Frame.h"
 #include <wtf/Vector.h>
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/MainFrameIncludes.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MainFrameIncludes.h>
 #endif
 
@@ -68,7 +68,7 @@ public:
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/MainFrameMembers.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MainFrameMembers.h>
 #endif
 

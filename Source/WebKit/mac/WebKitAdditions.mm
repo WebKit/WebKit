@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __has_include
-#if __has_include(<WebKitAdditions/WebKitLegacyAdditions.cpp>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebKitLegacyAdditions.cpp>
-#endif
 #endif

@@ -27,7 +27,7 @@
 #include <functional>
 #include <wtf/text/AtomicString.h>
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/EventNamesAdditions.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/EventNamesAdditions.h>
 #endif
 

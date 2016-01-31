@@ -1,3 +1,24 @@
+2016-01-31  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove __has_include guards around use of WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=153728
+
+        Reviewed by Andy Estes.
+
+        Guard WebKitAdditions includes with #if USE(APPLE_INTERNAL_SDK) rather than with __has_include.
+
+        * Shared/Cocoa/WebKitAdditions.mm:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+
 2016-01-31  Timothy Horton  <timothy_horton@apple.com>
 
         Include the right WebKitAdditions files

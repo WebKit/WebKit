@@ -44,7 +44,7 @@
 #import <mach/mach_port.h>
 #endif
 
-#if __has_include(<WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>
 #else
 

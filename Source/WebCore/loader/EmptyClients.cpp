@@ -44,7 +44,7 @@
 #include "StorageNamespaceProvider.h"
 #include <wtf/NeverDestroyed.h>
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/EmptyClientsIncludes.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/EmptyClientsIncludes.h>
 #endif
 
@@ -138,7 +138,7 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
     pageConfiguration.storageNamespaceProvider = adoptRef(new EmptyStorageNamespaceProvider);
     pageConfiguration.visitedLinkStore = adoptRef(new EmptyVisitedLinkStore);
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/EmptyClientsFill.cpp>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/EmptyClientsFill.cpp>
 #endif
 }
