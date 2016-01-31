@@ -1,3 +1,12 @@
+2016-01-30  Dave Hyatt  <hyatt@apple.com>
+
+        Add the break-* properties to Web Inspector's completion set
+        https://bugs.webkit.org/show_bug.cgi?id=153706
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2016-01-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Network panel is empty until the window is resized

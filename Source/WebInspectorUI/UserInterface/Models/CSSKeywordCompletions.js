@@ -440,6 +440,15 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "margin-after-collapse": [
         "collapse", "separate", "discard"
     ],
+    "break-after": [
+         "left", "right", "recto", "verso", "auto", "avoid", "page", "column", "region", "avoid-page", "avoid-column", "avoid-region"
+    ],
+    "break-before": [
+          "left", "right", "recto", "verso", "auto", "avoid", "page", "column", "region", "avoid-page", "avoid-column", "avoid-region"
+    ],
+    "break-inside": [
+          "auto", "avoid", "avoid-page", "avoid-column", "avoid-region"
+    ],
     "page-break-after": [
         "left", "right", "auto", "always", "avoid"
     ],
