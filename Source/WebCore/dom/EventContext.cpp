@@ -31,6 +31,7 @@
 #include "FocusEvent.h"
 #include "MouseEvent.h"
 #include "TouchEvent.h"
+#include "WheelEvent.h"
 
 namespace WebCore {
 
@@ -76,10 +77,10 @@ MouseOrFocusEventContext::~MouseOrFocusEventContext()
 
 void MouseOrFocusEventContext::handleLocalEvents(Event& event) const
 {
-    ASSERT(is<MouseEvent>(event) || is<FocusEvent>(event));
+    ASSERT(is<MouseEvent>(event) || is<WheelEvent>(event) || is<FocusEvent>(event));
     if (m_relatedTarget) {
-        if (is<MouseEvent>(event))
-            downcast<MouseEvent>(event).setRelatedTarget(m_relatedTarget.get());
+        if (is<MouseEvent>(event) || is<WheelEvent>(event))
+            static_cast<MouseEvent&>(event).setRelatedTarget(m_relatedTarget.get());
         else if (is<FocusEvent>(event))
             downcast<FocusEvent>(event).setRelatedTarget(m_relatedTarget.get());
     }
