@@ -29,13 +29,13 @@
 
 #import <WebKit/_WKElementInfo.h>
 
-WK_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(NA, WK_IOS_TBA)
 @interface _WKPreviewElementInfo : _WKElementInfo
 
 @end
 
-WK_ASSUME_NONNULL_END
+NS_ASSUME_NONNULL_END
 
 #endif

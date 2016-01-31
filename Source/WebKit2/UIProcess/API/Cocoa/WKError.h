@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-WK_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONNULL_BEGIN
 
 /*! @constant WKErrorDomain Indicates a WebKit error. */
 WK_EXTERN NSString * const WKErrorDomain WK_AVAILABLE(10_10, 8_0);
@@ -50,6 +50,6 @@ typedef NS_ENUM(NSInteger, WKErrorCode) {
     WKErrorJavaScriptResultTypeIsUnsupported WK_ENUM_AVAILABLE(10_11, 9_0),
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
-WK_ASSUME_NONNULL_END
+NS_ASSUME_NONNULL_END
 
 #endif

@@ -29,7 +29,7 @@
 
 #import <WebKit/WKWebsiteDataRecord.h>
 
-WK_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONNULL_BEGIN
 
 /*! A WKWebsiteDataStore represents various types of data that a website might
  make use of. This includes cookies, disk and memory caches, and persistent data such as WebSQL,
@@ -77,6 +77,6 @@ WK_CLASS_AVAILABLE(10_11, 9_0)
 
 @end
 
-WK_ASSUME_NONNULL_END
+NS_ASSUME_NONNULL_END
 
 #endif

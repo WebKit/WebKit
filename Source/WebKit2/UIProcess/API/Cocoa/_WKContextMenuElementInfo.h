@@ -29,13 +29,13 @@
 
 #import <WebKit/_WKElementInfo.h>
 
-WK_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(WK_MAC_TBA, NA)
 @interface _WKContextMenuElementInfo : _WKElementInfo
 
 @end
 
-WK_ASSUME_NONNULL_END
+NS_ASSUME_NONNULL_END
 
 #endif

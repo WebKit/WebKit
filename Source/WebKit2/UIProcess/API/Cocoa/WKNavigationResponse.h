@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-WK_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONNULL_BEGIN
 
 @class WKFrameInfo;
 
@@ -53,6 +53,6 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @end
 
-WK_ASSUME_NONNULL_END
+NS_ASSUME_NONNULL_END
 
 #endif

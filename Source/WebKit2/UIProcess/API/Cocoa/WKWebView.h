@@ -33,7 +33,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
-WK_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONNULL_BEGIN
 
 @class WKBackForwardList;
 @class WKBackForwardListItem;
@@ -61,10 +61,10 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (nonatomic, readonly, copy) WKWebViewConfiguration *configuration;
 
 /*! @abstract The web view's navigation delegate. */
-@property (WK_NULLABLE_PROPERTY nonatomic, weak) id <WKNavigationDelegate> navigationDelegate;
+@property (nullable, nonatomic, weak) id <WKNavigationDelegate> navigationDelegate;
 
 /*! @abstract The web view's user interface delegate. */
-@property (WK_NULLABLE_PROPERTY nonatomic, weak) id <WKUIDelegate> UIDelegate;
+@property (nullable, nonatomic, weak) id <WKUIDelegate> UIDelegate;
 
 /*! @abstract The web view's back-forward list. */
 @property (nonatomic, readonly, strong) WKBackForwardList *backForwardList;
@@ -89,7 +89,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @param request The request specifying the URL to which to navigate.
  @result A new navigation for the given request.
  */
-- (WK_NULLABLE WKNavigation *)loadRequest:(NSURLRequest *)request;
+- (nullable WKNavigation *)loadRequest:(NSURLRequest *)request;
 
 /*! @abstract Navigates to the requested file URL on the filesystem.
  @param URL The file URL to which to navigate.
@@ -98,14 +98,14 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  If readAccessURL references a directory, files inside that file may be loaded by WebKit.
  @result A new navigation for the given file URL.
  */
-- (WK_NULLABLE WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL WK_AVAILABLE(10_11, 9_0);
+- (nullable WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract Sets the webpage contents and base URL.
  @param string The string to use as the contents of the webpage.
  @param baseURL A URL that is used to resolve relative URLs within the document.
  @result A new navigation.
  */
-- (WK_NULLABLE WKNavigation *)loadHTMLString:(NSString *)string baseURL:(WK_NULLABLE NSURL *)baseURL;
+- (nullable WKNavigation *)loadHTMLString:(NSString *)string baseURL:(nullable NSURL *)baseURL;
 
 /*! @abstract Sets the webpage contents and base URL.
  @param data The data to use as the contents of the webpage.
@@ -114,7 +114,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @param baseURL A URL that is used to resolve relative URLs within the document.
  @result A new navigation.
  */
-- (WK_NULLABLE WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL WK_AVAILABLE(10_11, 9_0);
+- (nullable WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract Navigates to an item from the back-forward list and sets it
  as the current item.
@@ -124,13 +124,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  the current item or is not part of the web view's back-forward list.
  @seealso backForwardList
  */
-- (WK_NULLABLE WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item;
+- (nullable WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item;
 
 /*! @abstract The page title.
  @discussion @link WKWebView @/link is key-value observing (KVO) compliant
  for this property.
  */
-@property (WK_NULLABLE_PROPERTY nonatomic, readonly, copy) NSString *title;
+@property (nullable, nonatomic, readonly, copy) NSString *title;
 
 /*! @abstract The active URL.
  @discussion This is the URL that should be reflected in the user
@@ -138,7 +138,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @link WKWebView @/link is key-value observing (KVO) compliant for this
  property.
  */
-@property (WK_NULLABLE_PROPERTY nonatomic, readonly, copy) NSURL *URL;
+@property (nullable, nonatomic, readonly, copy) NSURL *URL;
 
 /*! @abstract A Boolean value indicating whether the view is currently
  loading content.
@@ -191,24 +191,24 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @result A new navigation to the requested item, or nil if there is no back
  item in the back-forward list.
  */
-- (WK_NULLABLE WKNavigation *)goBack;
+- (nullable WKNavigation *)goBack;
 
 /*! @abstract Navigates to the forward item in the back-forward list.
  @result A new navigation to the requested item, or nil if there is no
  forward item in the back-forward list.
  */
-- (WK_NULLABLE WKNavigation *)goForward;
+- (nullable WKNavigation *)goForward;
 
 /*! @abstract Reloads the current page.
  @result A new navigation representing the reload.
  */
-- (WK_NULLABLE WKNavigation *)reload;
+- (nullable WKNavigation *)reload;
 
 /*! @abstract Reloads the current page, performing end-to-end revalidation
  using cache-validating conditionals if possible.
  @result A new navigation representing the reload.
  */
-- (WK_NULLABLE WKNavigation *)reloadFromOrigin;
+- (nullable WKNavigation *)reloadFromOrigin;
 
 /*! @abstract Stops loading all resources on the current page.
  */
@@ -229,7 +229,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 /*! @abstract The custom user agent string or nil if no custom user agent string has been set.
 */
-@property (WK_NULLABLE_PROPERTY nonatomic, copy) NSString *customUserAgent WK_AVAILABLE(10_11, 9_0);
+@property (nullable, nonatomic, copy) NSString *customUserAgent WK_AVAILABLE(10_11, 9_0);
 
 /*! @abstract A Boolean value indicating whether link preview is allowed for any
  links inside this WKWebView.
@@ -276,35 +276,35 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  back-forward list.
  @param sender The object that sent this message.
  */
-- (IBAction)goBack:(WK_NULLABLE id)sender;
+- (IBAction)goBack:(nullable id)sender;
 
 /*! @abstract Action method that navigates to the forward item in the
  back-forward list.
  @param sender The object that sent this message.
  */
-- (IBAction)goForward:(WK_NULLABLE id)sender;
+- (IBAction)goForward:(nullable id)sender;
 
 /*! @abstract Action method that reloads the current page.
  @param sender The object that sent this message.
  */
-- (IBAction)reload:(WK_NULLABLE id)sender;
+- (IBAction)reload:(nullable id)sender;
 
 /*! @abstract Action method that reloads the current page, performing
  end-to-end revalidation using cache-validating conditionals if possible.
  @param sender The object that sent this message.
  */
-- (IBAction)reloadFromOrigin:(WK_NULLABLE id)sender;
+- (IBAction)reloadFromOrigin:(nullable id)sender;
 
 /*! @abstract Action method that stops loading all resources on the current
  page.
  @param sender The object that sent this message.
  */
-- (IBAction)stopLoading:(WK_NULLABLE id)sender;
+- (IBAction)stopLoading:(nullable id)sender;
 
 @end
 
 #endif
 
-WK_ASSUME_NONNULL_END
+NS_ASSUME_NONNULL_END
 
 #endif
