@@ -278,7 +278,7 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, Abstract
         m_shiftKey = keyStateEvent->shiftKey();
         m_metaKey = keyStateEvent->metaKey();
     }
-    setUnderlyingEvent(underlyingEvent);
+    setUnderlyingEvent(underlyingEvent.get());
 
     if (is<MouseEvent>(this->underlyingEvent())) {
         MouseEvent& mouseEvent = downcast<MouseEvent>(*this->underlyingEvent());

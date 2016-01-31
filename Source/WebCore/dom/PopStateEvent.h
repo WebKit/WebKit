@@ -46,7 +46,7 @@ class PopStateEvent final : public Event {
 public:
     virtual ~PopStateEvent();
     static Ref<PopStateEvent> create();
-    static Ref<PopStateEvent> create(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
+    static Ref<PopStateEvent> create(RefPtr<SerializedScriptValue>&&, PassRefPtr<History>);
     static Ref<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
 
     PassRefPtr<SerializedScriptValue> serializedState() const { ASSERT(m_serializedState); return m_serializedState; }

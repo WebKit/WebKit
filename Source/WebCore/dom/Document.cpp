@@ -1005,7 +1005,7 @@ RefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& 
 }
 
 
-RefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
+RefPtr<Node> Document::adoptNode(Node* source, ExceptionCode& ec)
 {
     if (!source) {
         ec = NOT_SUPPORTED_ERR;
@@ -1044,7 +1044,7 @@ RefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         }
     }
 
-    adoptIfNeeded(source.get());
+    adoptIfNeeded(source);
 
     return source;
 }
@@ -2731,8 +2731,8 @@ void Document::implicitClose()
     dispatchWindowLoadEvent();
     enqueuePageshowEvent(PageshowEventNotPersisted);
     if (m_pendingStateObject)
-        enqueuePopstateEvent(m_pendingStateObject.release());
-    
+        enqueuePopstateEvent(WTFMove(m_pendingStateObject));
+
     if (f)
         f->loader().dispatchOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
@@ -5550,9 +5550,9 @@ void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL
     enqueueWindowEvent(HashChangeEvent::create(oldURL, newURL));
 }
 
-void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject)
+void Document::enqueuePopstateEvent(RefPtr<SerializedScriptValue>&& stateObject)
 {
-    enqueueWindowEvent(PopStateEvent::create(stateObject, m_domWindow ? m_domWindow->history() : nullptr));
+    enqueueWindowEvent(PopStateEvent::create(WTFMove(stateObject), m_domWindow ? m_domWindow->history() : nullptr));
 }
 
 void Document::addMediaCanStartListener(MediaCanStartListener* listener)
@@ -6830,7 +6830,7 @@ bool Document::hasFocus() const
 #if ENABLE(WEB_REPLAY)
 void Document::setInputCursor(PassRefPtr<InputCursor> cursor)
 {
-    m_inputCursor = cursor;
+    m_inputCursor = WTFMove(cursor);
 }
 #endif
 

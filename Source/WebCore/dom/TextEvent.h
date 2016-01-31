@@ -43,7 +43,7 @@ namespace WebCore {
         static Ref<TextEvent> create();
         static Ref<TextEvent> create(AbstractView*, const String& data, TextEventInputType = TextEventInputKeyboard);
         static Ref<TextEvent> createForPlainTextPaste(AbstractView*, const String& data, bool shouldSmartReplace);
-        static Ref<TextEvent> createForFragmentPaste(AbstractView*, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        static Ref<TextEvent> createForFragmentPaste(AbstractView*, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
         static Ref<TextEvent> createForDrop(AbstractView*, const String& data);
         static Ref<TextEvent> createForDictation(AbstractView*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
@@ -72,7 +72,7 @@ namespace WebCore {
         TextEvent();
 
         TextEvent(AbstractView*, const String& data, TextEventInputType = TextEventInputKeyboard);
-        TextEvent(AbstractView*, const String& data, PassRefPtr<DocumentFragment>, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        TextEvent(AbstractView*, const String& data, RefPtr<DocumentFragment>&&, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
         TextEvent(AbstractView*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         virtual bool isTextEvent() const override;

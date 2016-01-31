@@ -236,15 +236,6 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
 #endif
 }
 
-void ProcessingInstruction::setCSSStyleSheet(PassRefPtr<CSSStyleSheet> sheet)
-{
-    ASSERT(!m_cachedSheet);
-    ASSERT(!m_loading);
-    m_sheet = sheet;
-    sheet->setTitle(m_title);
-    sheet->setDisabled(m_alternate);
-}
-
 void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     if (!sheet())

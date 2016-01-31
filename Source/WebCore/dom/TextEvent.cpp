@@ -47,9 +47,9 @@ Ref<TextEvent> TextEvent::createForPlainTextPaste(AbstractView* view, const Stri
     return adoptRef(*new TextEvent(view, data, 0, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
 }
 
-Ref<TextEvent> TextEvent::createForFragmentPaste(AbstractView* view, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+Ref<TextEvent> TextEvent::createForFragmentPaste(AbstractView* view, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
 {
-    return adoptRef(*new TextEvent(view, "", data, shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
+    return adoptRef(*new TextEvent(view, emptyString(), WTFMove(data), shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
 }
 
 Ref<TextEvent> TextEvent::createForDrop(AbstractView* view, const String& data)
@@ -80,11 +80,11 @@ TextEvent::TextEvent(AbstractView* view, const String& data, TextEventInputType 
 {
 }
 
-TextEvent::TextEvent(AbstractView* view, const String& data, PassRefPtr<DocumentFragment> pastingFragment, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+TextEvent::TextEvent(AbstractView* view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
     : UIEvent(eventNames().textInputEvent, true, true, view, 0)
     , m_inputType(TextEventInputPaste)
     , m_data(data)
-    , m_pastingFragment(pastingFragment)
+    , m_pastingFragment(WTFMove(pastingFragment))
     , m_shouldSmartReplace(shouldSmartReplace)
     , m_shouldMatchStyle(shouldMatchStyle)
     , m_mailBlockquoteHandling(mailBlockquoteHandling)

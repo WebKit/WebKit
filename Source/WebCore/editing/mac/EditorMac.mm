@@ -96,7 +96,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
     RefPtr<DocumentFragment> fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainText);
 
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
+        pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
 
     client()->setInsertionPasteboard(String());
 }
@@ -283,7 +283,7 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     if (RefPtr<DocumentFragment> fragment = webContentFromPasteboard(pasteboard, *range, true, chosePlainText)) {
         maybeCopyNodeAttributesToFragment(*node, *fragment);
         if (shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-            pasteAsFragment(fragment.release(), canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
+            pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
     }
 
     client()->setInsertionPasteboard(String());
@@ -673,7 +673,7 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
     if (m_frame.selection().selection().isContentRichlyEditable()) {
         RefPtr<DocumentFragment> fragment = createFragmentAndAddResources(attributedString);
         if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertActionPasted))
-            pasteAsFragment(fragment, false, false, mailBlockquoteHandling);
+            pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
     } else {
         String text = [attributedString string];
         if (shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))

@@ -42,7 +42,7 @@ public:
     explicit GenericEventQueue(EventTarget&);
     ~GenericEventQueue();
 
-    void enqueueEvent(PassRefPtr<Event>);
+    void enqueueEvent(RefPtr<Event>&&);
     void close();
 
     void cancelAllEvents();

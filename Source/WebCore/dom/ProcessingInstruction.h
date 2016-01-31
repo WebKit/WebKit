@@ -45,7 +45,6 @@ public:
 
     const String& localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
-    void setCSSStyleSheet(PassRefPtr<CSSStyleSheet>);
 
     bool isCSS() const { return m_isCSS; }
 #if ENABLE(XSLT)

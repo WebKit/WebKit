@@ -1,5 +1,53 @@
 2016-01-31  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        Reduce PassRefPtr uses in dom - 5
+        https://bugs.webkit.org/show_bug.cgi?id=153470
+
+        Reviewed by Darin Adler.
+
+        As a step to remove PassRefPtr, this patch reduces uses of PassRefPtr in WebCore/dom. 
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::enqueuePopstateEvent):
+        (WebCore::Document::setInputCursor):
+        * dom/Document.h:
+        * dom/DocumentMarker.cpp:
+        (WebCore::DocumentMarkerTextMatch::instanceFor):
+        * dom/Event.cpp:
+        (WebCore::Event::setUnderlyingEvent):
+        * dom/Event.h:
+        * dom/EventDispatcher.h:
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::enqueueEvent):
+        * dom/GenericEventQueue.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchDOMActivateEvent):
+        * dom/NodeIterator.h:
+        * dom/PendingScript.h:
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::create):
+        * dom/PopStateEvent.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setCSSStyleSheet): Deleted. Nobody calls this function.
+        * dom/ProcessingInstruction.h:
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::RangeBoundaryPoint):
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::createForFragmentPaste):
+        (WebCore::TextEvent::TextEvent):
+        * dom/TextEvent.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsFragment):
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::replaceNodeFromPasteboard):
+
+2016-01-31  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         Use std::make_unique<> when creating an unique_ptr object.
         https://bugs.webkit.org/show_bug.cgi?id=153705
 

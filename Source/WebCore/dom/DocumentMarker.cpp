@@ -37,7 +37,7 @@ DocumentMarkerDetails::~DocumentMarkerDetails()
 {
 }
 
-class DocumentMarkerDescription : public DocumentMarkerDetails {
+class DocumentMarkerDescription final : public DocumentMarkerDetails {
 public:
     static Ref<DocumentMarkerDescription> create(const String&);
 

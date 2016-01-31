@@ -28,7 +28,6 @@
 
 #include "SimulatedClickOptions.h"
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

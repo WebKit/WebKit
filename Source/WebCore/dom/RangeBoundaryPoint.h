@@ -33,7 +33,7 @@ namespace WebCore {
 
 class RangeBoundaryPoint {
 public:
-    explicit RangeBoundaryPoint(PassRefPtr<Node> container);
+    explicit RangeBoundaryPoint(Node* container);
 
     explicit RangeBoundaryPoint(const RangeBoundaryPoint&);
 
@@ -65,7 +65,7 @@ private:
     RefPtr<Node> m_childBeforeBoundary;
 };
 
-inline RangeBoundaryPoint::RangeBoundaryPoint(PassRefPtr<Node> container)
+inline RangeBoundaryPoint::RangeBoundaryPoint(Node* container)
     : m_containerNode(container)
 {
     ASSERT(m_containerNode);

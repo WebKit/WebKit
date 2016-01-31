@@ -29,7 +29,6 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include <wtf/text/TextPosition.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

@@ -64,9 +64,9 @@ Ref<PopStateEvent> PopStateEvent::create()
     return adoptRef(*new PopStateEvent);
 }
 
-Ref<PopStateEvent> PopStateEvent::create(PassRefPtr<SerializedScriptValue> serializedState, PassRefPtr<History> history)
+Ref<PopStateEvent> PopStateEvent::create(RefPtr<SerializedScriptValue>&& serializedState, PassRefPtr<History> history)
 {
-    return adoptRef(*new PopStateEvent(serializedState, history));
+    return adoptRef(*new PopStateEvent(WTFMove(serializedState), history));
 }
 
 Ref<PopStateEvent> PopStateEvent::create(const AtomicString& type, const PopStateEventInit& initializer)

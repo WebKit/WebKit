@@ -45,7 +45,7 @@ GenericEventQueue::~GenericEventQueue()
 {
 }
 
-void GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
+void GenericEventQueue::enqueueEvent(RefPtr<Event>&& event)
 {
     if (m_isClosed)
         return;
@@ -53,7 +53,7 @@ void GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
     if (event->target() == &m_owner)
         event->setTarget(nullptr);
 
-    m_pendingEvents.append(event);
+    m_pendingEvents.append(WTFMove(event));
 
     if (m_isSuspended)
         return;

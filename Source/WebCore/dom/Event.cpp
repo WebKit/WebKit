@@ -176,13 +176,14 @@ void Event::receivedTarget()
 {
 }
 
-void Event::setUnderlyingEvent(PassRefPtr<Event> ue)
+void Event::setUnderlyingEvent(Event* underlyingEvent)
 {
     // Prohibit creation of a cycle -- just do nothing in that case.
-    for (Event* e = ue.get(); e; e = e->underlyingEvent())
-        if (e == this)
+    for (Event* event = underlyingEvent; event; event = event->underlyingEvent()) {
+        if (event == this)
             return;
-    m_underlyingEvent = ue;
+    }
+    m_underlyingEvent = underlyingEvent;
 }
 
 } // namespace WebCore
