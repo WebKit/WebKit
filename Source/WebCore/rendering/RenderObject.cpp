@@ -45,6 +45,7 @@
 #include "HitTestResult.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCaches.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PseudoElement.h"
 #include "RenderCounter.h"
