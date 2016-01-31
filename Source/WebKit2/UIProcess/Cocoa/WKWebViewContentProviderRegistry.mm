@@ -42,7 +42,7 @@
 using namespace WebKit;
 
 @implementation WKWebViewContentProviderRegistry {
-    HashMap<String, Class <WKWebViewContentProvider>, CaseFoldingHash> _contentProviderForMIMEType;
+    HashMap<String, Class <WKWebViewContentProvider>, ASCIICaseInsensitiveHash> _contentProviderForMIMEType;
     HashCountedSet<WebPageProxy*> _pages;
 }
 

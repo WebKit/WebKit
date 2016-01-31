@@ -1,3 +1,23 @@
+2016-01-31  Darin Adler  <darin@apple.com>
+
+        Replace CaseFoldingHash with ASCIICaseInsensitiveHash
+        https://bugs.webkit.org/show_bug.cgi?id=153639
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/text/StringHash.h: Renamed CaseFoldingHash to ASCIICaseInsensitiveHash.
+        (WTF::ASCIICaseInsensitiveHash::foldCase): Use toASCIILower.
+        (WTF::ASCIICaseInsensitiveHash::equal): Use equalIgnoringASCIICase.
+        Also added some assertions.
+
+        * wtf/text/StringImpl.cpp: Made the latin1CaseFoldTable private to this file,
+        since it's no longer needed by CaseFoldingHash. Moved it up before its first use.
+        (WTF::equalCompatibilityCaseless): Fixed typo in the name of this function.
+        (WTF::equalCompatibiltyCaselessNonNull): Deleted.
+
+        * wtf/text/StringImpl.h: Removed declarations of latin1CaseFoldTable and
+        equalCompatibiltyCaselessNonNull
+
 2016-01-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r195911.

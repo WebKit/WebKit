@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2012, 2013 Apple Inc. All rights reserved
+ * Copyright (C) 2006-2008, 2012-2013, 2016 Apple Inc. All rights reserved
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ namespace WTF {
         return value.isNull();
     }
 
-    // The hash() functions on StringHash and CaseFoldingHash do not support
+    // The hash() functions on StringHash and ASCIICaseInsensitiveHash do not support
     // null strings. get(), contains(), and add() on HashMap<String,..., StringHash>
     // cause a null-pointer dereference when passed null strings.
 
@@ -71,14 +71,11 @@ namespace WTF {
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    class CaseFoldingHash {
+    class ASCIICaseInsensitiveHash {
     public:
         template<typename T> static inline UChar foldCase(T character)
         {
-            if (std::is_same<T, LChar>::value)
-                return StringImpl::latin1CaseFoldTable[character];
-            
-            return u_foldCase(character, U_FOLD_CASE_DEFAULT);
+            return toASCIILower(character);
         }
 
         static unsigned hash(const UChar* data, unsigned length)
@@ -105,17 +102,23 @@ namespace WTF {
 
         static inline unsigned hash(const char* data, unsigned length)
         {
-            return CaseFoldingHash::hash(reinterpret_cast<const LChar*>(data), length);
+            return hash(reinterpret_cast<const LChar*>(data), length);
         }
         
+        static inline bool equal(const StringImpl& a, const StringImpl& b)
+        {
+            return equalIgnoringASCIICase(a, b);
+        }
         static inline bool equal(const StringImpl* a, const StringImpl* b)
         {
-            return equalCompatibiltyCaselessNonNull(a, b);
+            ASSERT(a);
+            ASSERT(b);
+            return equal(*a, *b);
         }
 
         static unsigned hash(const RefPtr<StringImpl>& key) 
         {
-            return hash(*key);
+            return hash(key.get());
         }
 
         static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b)
@@ -167,8 +170,8 @@ namespace WTF {
 
 }
 
+using WTF::ASCIICaseInsensitiveHash;
 using WTF::AlreadyHashed;
-using WTF::CaseFoldingHash;
 using WTF::StringHash;
 
 #endif

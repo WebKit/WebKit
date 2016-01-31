@@ -65,7 +65,7 @@ private:
 
     void registerAlgorithm(const String& name, CryptoAlgorithmIdentifier, CryptoAlgorithmConstructor);
 
-    HashMap<String, CryptoAlgorithmIdentifier, CaseFoldingHash> m_nameToIdentifierMap;
+    HashMap<String, CryptoAlgorithmIdentifier, ASCIICaseInsensitiveHash> m_nameToIdentifierMap;
     HashMap<unsigned, String> m_identifierToNameMap;
     HashMap<unsigned, CryptoAlgorithmConstructor> m_identifierToConstructorMap;
 };

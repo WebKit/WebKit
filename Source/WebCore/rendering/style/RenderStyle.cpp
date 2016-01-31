@@ -366,21 +366,19 @@ bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-inline unsigned computeFontHash(const FontCascade& font)
+
+static inline unsigned computeFontHash(const FontCascade& font)
 {
-    unsigned hashCodes[2] = {
-        CaseFoldingHash::hash(font.fontDescription().firstFamily().impl()),
-        static_cast<unsigned>(font.fontDescription().specifiedSize())
-    };
-    return StringHasher::computeHash(reinterpret_cast<UChar*>(hashCodes), 2 * sizeof(unsigned) / sizeof(UChar));
+    IntegerHasher hasher;
+    hasher.add(ASCIICaseInsensitiveHash::hash(font.fontDescription().firstFamily()));
+    hasher.add(font.fontDescription().specifiedSize());
+    return hasher.hash();
 }
 
-uint32_t RenderStyle::hashForTextAutosizing() const
+unsigned RenderStyle::hashForTextAutosizing() const
 {
     // FIXME: Not a very smart hash. Could be improved upon. See <https://bugs.webkit.org/show_bug.cgi?id=121131>.
-    uint32_t hash = 0;
-    
-    hash ^= rareNonInheritedData->m_appearance;
+    unsigned hash = rareNonInheritedData->m_appearance;
     hash ^= rareNonInheritedData->marginBeforeCollapse;
     hash ^= rareNonInheritedData->marginAfterCollapse;
     hash ^= rareNonInheritedData->lineClamp.value();
@@ -421,6 +419,7 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle* other) const
         && noninherited_flags.floating() == other->noninherited_flags.floating()
         && rareNonInheritedData->textOverflow == other->rareNonInheritedData->textOverflow;
 }
+
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)
 
 bool RenderStyle::inheritedDataShared(const RenderStyle* other) const

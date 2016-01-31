@@ -119,7 +119,7 @@ public:
             return true;
         if (m_family.isNull() || other.m_family.isNull())
             return false;
-        return CaseFoldingHash::equal(m_family, other.m_family);
+        return ASCIICaseInsensitiveHash::equal(m_family, other.m_family);
     }
 
     FontDescriptionKey m_fontDescriptionKey;
@@ -129,7 +129,7 @@ public:
 struct FontPlatformDataCacheKeyHash {
     static unsigned hash(const FontPlatformDataCacheKey& fontKey)
     {
-        return pairIntHash(CaseFoldingHash::hash(fontKey.m_family), fontKey.m_fontDescriptionKey.computeHash());
+        return pairIntHash(ASCIICaseInsensitiveHash::hash(fontKey.m_family), fontKey.m_fontDescriptionKey.computeHash());
     }
          
     static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)

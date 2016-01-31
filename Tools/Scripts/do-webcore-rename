@@ -98,7 +98,7 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "deleteAllValues" => "deprecatedDeleteAllValues",
+    "CaseFoldingHash" => "ASCIICaseInsensitiveHash",
 );
 
 my %renamesContemplatedForTheFuture = (

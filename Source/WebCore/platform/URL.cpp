@@ -1990,7 +1990,7 @@ bool URL::isBlankURL() const
     return protocolIs("about");
 }
 
-typedef HashMap<String, unsigned short, CaseFoldingHash> DefaultPortsMap;
+typedef HashMap<String, unsigned short, ASCIICaseInsensitiveHash> DefaultPortsMap;
 static const DefaultPortsMap& defaultPortsMap()
 {
     static NeverDestroyed<const DefaultPortsMap> defaultPortsMap(DefaultPortsMap({

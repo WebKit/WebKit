@@ -118,7 +118,7 @@ static bool isLegacySupportedJavaScriptLanguage(const String& language)
     // We want to accept all the values that either of these browsers accept, but not other values.
 
     // FIXME: This function is not HTML5 compliant. These belong in the MIME registry as "text/javascript<version>" entries.
-    typedef HashSet<String, CaseFoldingHash> LanguageSet;
+    typedef HashSet<String, ASCIICaseInsensitiveHash> LanguageSet;
     static NeverDestroyed<LanguageSet> languages;
     if (languages.get().isEmpty()) {
         languages.get().add("javascript");
