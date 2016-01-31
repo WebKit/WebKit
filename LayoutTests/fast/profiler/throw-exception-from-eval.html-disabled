@@ -5,7 +5,7 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 if (window.internals)
-    internals.settings.setLegacyJavaScriptProfilingEnabled(true);
+    internals.settings.setJavaScriptProfilingEnabled(true);
 
 console.profile("Throw within an eval.");
 

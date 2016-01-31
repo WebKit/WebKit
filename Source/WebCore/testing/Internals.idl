@@ -263,7 +263,7 @@ enum AutoFillButtonType {
     unsigned long numberOfLiveDocuments();
     DOMWindow openDummyInspectorFrontend(DOMString url);
     void closeDummyInspectorFrontend();
-    [RaisesException] void setLegacyJavaScriptProfilingEnabled(boolean enabled);
+    [RaisesException] void setJavaScriptProfilingEnabled(boolean creates);
     [RaisesException] void setInspectorIsUnderTest(boolean isUnderTest);
 
     DOMString counterValue(Element element);

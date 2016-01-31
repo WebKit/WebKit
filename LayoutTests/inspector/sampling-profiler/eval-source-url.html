@@ -21,7 +21,8 @@ function foo() {
 noInline(foo);
 
 function bar() {
-    eval("//# sourceURL=eval.js\nfoo();");
+    for (let i = 0; i < 2; i++)
+        eval("//# sourceURL=eval.js\nfoo();");
 }
 noInline(bar);
 

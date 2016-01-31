@@ -63,7 +63,7 @@ static bool shouldAllowAccessFrom(const JSGlobalObject* thisObject, ExecState* e
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, CREATE_METHOD_TABLE(JSDOMWindowBase) };
 
-const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &shouldAllowAccessFrom, &supportsLegacyProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, &queueTaskToEventLoop, &shouldInterruptScriptBeforeTimeout, &moduleLoaderResolve, &moduleLoaderFetch, nullptr, nullptr, &moduleLoaderEvaluate };
+const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &shouldAllowAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, &queueTaskToEventLoop, &shouldInterruptScriptBeforeTimeout, &moduleLoaderResolve, &moduleLoaderFetch, nullptr, nullptr, &moduleLoaderEvaluate };
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : JSDOMGlobalObject(vm, structure, &shell->world(), &s_globalObjectMethodTable)
@@ -115,7 +115,7 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
     printErrorMessageForFrame(wrapped().frame(), message);
 }
 
-bool JSDOMWindowBase::supportsLegacyProfiling(const JSGlobalObject* object)
+bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     Frame* frame = thisObject->wrapped().frame();
@@ -126,7 +126,7 @@ bool JSDOMWindowBase::supportsLegacyProfiling(const JSGlobalObject* object)
     if (!page)
         return false;
 
-    return page->inspectorController().legacyProfilerEnabled();
+    return page->inspectorController().profilerEnabled();
 }
 
 bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
@@ -142,7 +142,7 @@ bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 
     bool enabled = page->inspectorController().enabled();
     ASSERT(enabled || !thisObject->debugger());
-    ASSERT(enabled || !supportsLegacyProfiling(thisObject));
+    ASSERT(enabled || !supportsProfiling(thisObject));
     return enabled;
 }
 

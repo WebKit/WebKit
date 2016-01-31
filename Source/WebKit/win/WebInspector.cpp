@@ -216,7 +216,7 @@ HRESULT WebInspector::isJavaScriptProfilingEnabled(_Out_ BOOL* isProfilingEnable
     if (!inspectedPage)
         return S_OK;
 
-    *isProfilingEnabled = inspectedPage->inspectorController().legacyProfilerEnabled();
+    *isProfilingEnabled = inspectedPage->inspectorController().profilerEnabled();
     return S_OK;
 }
 
@@ -229,7 +229,7 @@ HRESULT WebInspector::setJavaScriptProfilingEnabled(BOOL enabled)
     if (!inspectedPage)
         return S_OK;
 
-    inspectedPage->inspectorController().setLegacyProfilerEnabled(enabled);
+    inspectedPage->inspectorController().setProfilerEnabled(enabled);
 
     return S_OK;
 }

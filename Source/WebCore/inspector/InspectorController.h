@@ -111,8 +111,8 @@ public:
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
     WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
 
-    WEBCORE_EXPORT bool legacyProfilerEnabled() const;
-    WEBCORE_EXPORT void setLegacyProfilerEnabled(bool);
+    WEBCORE_EXPORT bool profilerEnabled() const;
+    WEBCORE_EXPORT void setProfilerEnabled(bool);
 
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
@@ -151,7 +151,6 @@ private:
 
     bool m_isUnderTest { false };
     bool m_isAutomaticInspection { false };
-    bool m_legacyProfilerEnabled { false };
 };
 
 } // namespace WebCore
