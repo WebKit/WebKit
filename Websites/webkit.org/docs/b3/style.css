@@ -13,7 +13,7 @@ h1, h2, h3, h4 {
     letter-spacing: -0.018em;
     page-break-after: avoid;
 }
-h1 { font-size: 19px; margin: .15em 1em 0.5em 0; text-indent: -10px }
+h1 { font-size: 20px; text-indent: -10px }
 h2 { font-size: 17px; text-indent: -10px }
 h3 { font-size: 15px; text-indent: -10px }
 hr { border: none;  border-top: 1px solid #ccb; margin: 2em 0 }
@@ -114,7 +114,7 @@ dd:last-child {
 
 #contents {
     font-size: 90%;
-    padding: 2em 2em 2em 2em
+    padding: 1em 2em 2em 2em
 }
 
 p {

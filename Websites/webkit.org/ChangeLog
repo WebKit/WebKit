@@ -1,5 +1,14 @@
 2016-01-30  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 documentation style shouldn't have hacks for h1
+        https://bugs.webkit.org/show_bug.cgi?id=153725
+
+        Reviewed by Alexey Proskuryakov.
+
+        * docs/b3/style.css:
+
+2016-01-30  Filip Pizlo  <fpizlo@apple.com>
+
         Improve the style of B3 documentation
         https://bugs.webkit.org/show_bug.cgi?id=153674
 
