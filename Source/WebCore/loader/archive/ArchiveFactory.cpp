@@ -47,7 +47,7 @@
 namespace WebCore {
 
 typedef PassRefPtr<Archive> RawDataCreationFunction(const URL&, SharedBuffer*);
-typedef HashMap<String, RawDataCreationFunction*, ASCIICaseInsensitiveHash> ArchiveMIMETypesMap;
+typedef HashMap<String, RawDataCreationFunction*, CaseFoldingHash> ArchiveMIMETypesMap;
 
 // The create functions in the archive classes return PassRefPtr to concrete subclasses
 // of Archive. This adaptor makes the functions have a uniform return type.

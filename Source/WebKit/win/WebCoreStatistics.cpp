@@ -295,7 +295,7 @@ HRESULT WebCoreStatistics::memoryStatistics(_COM_Outptr_opt_ IPropertyBag** stat
     unsigned long long heapFree = JSDOMWindow::commonVM().heap.capacity() - heapSize;
     GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
 
-    HashMap<String, unsigned long long, ASCIICaseInsensitiveHash> fields;
+    HashMap<String, unsigned long long, CaseFoldingHash> fields;
     fields.add("FastMallocReservedVMBytes", static_cast<unsigned long long>(fastMallocStatistics.reservedVMBytes));
     fields.add("FastMallocCommittedVMBytes", static_cast<unsigned long long>(fastMallocStatistics.committedVMBytes));
     fields.add("FastMallocFreeListBytes", static_cast<unsigned long long>(fastMallocStatistics.freeListBytes));
@@ -304,7 +304,7 @@ HRESULT WebCoreStatistics::memoryStatistics(_COM_Outptr_opt_ IPropertyBag** stat
     fields.add("JavaScriptStackSize", static_cast<unsigned long long>(globalMemoryStats.stackBytes));
     fields.add("JavaScriptJITSize", static_cast<unsigned long long>(globalMemoryStats.JITBytes));
 
-    *statistics = COMPropertyBag<unsigned long long, String, ASCIICaseInsensitiveHash>::adopt(fields);
+    *statistics = COMPropertyBag<unsigned long long, String, CaseFoldingHash>::adopt(fields);
 
     return S_OK;
 }

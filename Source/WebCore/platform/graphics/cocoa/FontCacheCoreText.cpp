@@ -645,7 +645,7 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
     return SynthesisPair(needsSyntheticBold, needsSyntheticOblique);
 }
 
-typedef HashSet<String, ASCIICaseInsensitiveHash> Whitelist;
+typedef HashSet<String, CaseFoldingHash> Whitelist;
 static Whitelist& fontWhitelist()
 {
     static NeverDestroyed<Whitelist> whitelist;

@@ -117,7 +117,7 @@ private:
 
     const String m_databaseInfoTableName;
 
-    HashSet<String, ASCIICaseInsensitiveHash> m_whitelistedFunctions;
+    HashSet<String, CaseFoldingHash> m_whitelistedFunctions;
 };
 
 } // namespace WebCore

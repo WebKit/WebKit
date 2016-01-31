@@ -1988,7 +1988,7 @@ AccessibilityObject* AccessibilityObject::firstAnonymousBlockChild() const
     return nullptr;
 }
 
-typedef HashMap<String, AccessibilityRole, ASCIICaseInsensitiveHash> ARIARoleMap;
+typedef HashMap<String, AccessibilityRole, CaseFoldingHash> ARIARoleMap;
 typedef HashMap<AccessibilityRole, String, DefaultHash<int>::Hash, WTF::UnsignedWithZeroKeyHashTraits<int>> ARIAReverseRoleMap;
 
 static ARIARoleMap* gAriaRoleMap = nullptr;

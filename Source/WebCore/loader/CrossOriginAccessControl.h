@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-typedef HashSet<String, ASCIICaseInsensitiveHash> HTTPHeaderSet;
+typedef HashSet<String, CaseFoldingHash> HTTPHeaderSet;
 
 class HTTPHeaderMap;
 enum class HTTPHeaderName;

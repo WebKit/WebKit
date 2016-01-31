@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-typedef HashSet<String, ASCIICaseInsensitiveHash> URLSchemesMap;
+typedef HashSet<String, CaseFoldingHash> URLSchemesMap;
 
 class SchemeRegistry {
 public:

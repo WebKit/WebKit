@@ -1393,7 +1393,7 @@ private:
     WebCore::Timer m_volatilityTimer;
 #endif
 
-    HashSet<String, ASCIICaseInsensitiveHash> m_mimeTypesWithCustomContentProviders;
+    HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomContentProviders;
     WebCore::Color m_backgroundColor;
 
     HashSet<unsigned> m_activeRenderingSuppressionTokens;

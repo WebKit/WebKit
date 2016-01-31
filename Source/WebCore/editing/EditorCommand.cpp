@@ -77,7 +77,7 @@ public:
     bool allowExecutionWhenDisabled;
 };
 
-typedef HashMap<String, const EditorInternalCommand*, ASCIICaseInsensitiveHash> CommandMap;
+typedef HashMap<String, const EditorInternalCommand*, CaseFoldingHash> CommandMap;
 
 static const bool notTextInsertion = false;
 static const bool isTextInsertion = true;

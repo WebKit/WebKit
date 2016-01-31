@@ -166,7 +166,7 @@ static bool shouldNotPerformURLAdjustment()
 // FIXME: This function should not deal with url or serviceType!
 void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType)
 {
-    HashSet<StringImpl*, ASCIICaseInsensitiveHash> uniqueParamNames;
+    HashSet<StringImpl*, CaseFoldingHash> uniqueParamNames;
     String urlParameter;
     
     // Scan the PARAM children and store their name/value pairs.

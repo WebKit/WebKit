@@ -150,7 +150,7 @@ static HashSet<String>* pdfMIMETypes;
 static HashSet<String>* pdfAndPostScriptMIMETypes;
 static HashSet<String>* unsupportedTextMIMETypes;
 
-typedef HashMap<String, Vector<String>*, ASCIICaseInsensitiveHash> MediaMIMETypeMap;
+typedef HashMap<String, Vector<String>*, CaseFoldingHash> MediaMIMETypeMap;
     
 static void initializeSupportedImageMIMETypes()
 {

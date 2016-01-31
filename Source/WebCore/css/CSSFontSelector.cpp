@@ -224,7 +224,7 @@ static String familyNameFromPrimitive(const CSSPrimitiveValue& value)
     }
 }
 
-static void registerLocalFontFacesForFamily(const String& familyName, HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash>& locallyInstalledFontFaces)
+static void registerLocalFontFacesForFamily(const String& familyName, HashMap<String, Vector<Ref<CSSFontFace>>, CaseFoldingHash>& locallyInstalledFontFaces)
 {
     ASSERT(!locallyInstalledFontFaces.contains(familyName));
 
