@@ -1,3 +1,52 @@
+2016-01-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Should not predict OtherObj for ToThis with primitive types under strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=153544
+
+        Reviewed by Filip Pizlo.
+
+        Currently, ToThis predicates OtherObj for primitive values.
+        But it's not true in strict mode.
+        In strict mode, ToThis does nothing on primitive values.
+
+        In this patch, we
+
+        1. fix prediction. Handles primitive types in strict mode. And we also handles StringObject.
+        2. convert it to Identity if the argument should be predicted as primitive types.
+
+        This optimization is important to implement Primitive.prototype.methods[1].
+        Otherwise, we always got BadType OSR exits.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=143889
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToThis):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * tests/stress/to-this-boolean.js: Added.
+        (Boolean.prototype.negate):
+        (Boolean.prototype.negate2):
+        * tests/stress/to-this-double.js: Added.
+        (Number.prototype.negate):
+        * tests/stress/to-this-int32.js: Added.
+        (Number.prototype.negate):
+        * tests/stress/to-this-int52.js: Added.
+        (Number.prototype.negate):
+        * tests/stress/to-this-number.js: Added.
+        (Number.prototype.negate):
+        * tests/stress/to-this-string.js: Added.
+        (String.prototype.prefix):
+        (String.prototype.first):
+        (String.prototype.second):
+        * tests/stress/to-this-symbol.js: Added.
+        (Symbol.prototype.identity):
+        (Symbol.prototype.identity2):
+
 2016-01-31  Guillaume Emont  <guijemont@igalia.com>
 
         [mips] don't save to a callee saved register too early

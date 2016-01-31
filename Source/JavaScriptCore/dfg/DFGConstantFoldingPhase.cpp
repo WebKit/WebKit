@@ -552,7 +552,7 @@ private:
                 changed = true;
                 break;
             }
-                
+
             case Check: {
                 alreadyHandled = true;
                 m_interpreter.execute(indexInBlock);

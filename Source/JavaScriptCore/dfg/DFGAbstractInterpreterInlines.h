@@ -1691,10 +1691,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ToThis: {
         AbstractValue& source = forNode(node->child1());
         AbstractValue& destination = forNode(node);
-            
-        if (m_graph.executableFor(node->origin.semantic)->isStrictMode())
+
+        if (source.m_type == SpecStringObject) {
+            m_state.setFoundConstants(true);
+            destination = source;
+            break;
+        }
+
+        if (m_graph.executableFor(node->origin.semantic)->isStrictMode()) {
+            if (!(source.m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecSymbol))) {
+                m_state.setFoundConstants(true);
+                destination = source;
+                break;
+            }
             destination.makeHeapTop();
-        else {
+        } else {
             destination = source;
             destination.merge(SpecObject);
         }

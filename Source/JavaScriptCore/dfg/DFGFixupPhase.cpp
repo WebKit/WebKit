@@ -1003,30 +1003,7 @@ private:
         }
             
         case ToThis: {
-            ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->isStrictMode() ? StrictMode : NotStrictMode;
-
-            if (node->child1()->shouldSpeculateOther()) {
-                if (ecmaMode == StrictMode) {
-                    fixEdge<OtherUse>(node->child1());
-                    node->convertToIdentity();
-                    break;
-                }
-
-                m_insertionSet.insertNode(
-                    m_indexInBlock, SpecNone, Check, node->origin,
-                    Edge(node->child1().node(), OtherUse));
-                observeUseKindOnNode<OtherUse>(node->child1().node());
-                m_graph.convertToConstant(
-                    node, m_graph.globalThisObjectFor(node->origin.semantic));
-                break;
-            }
-            
-            if (isFinalObjectSpeculation(node->child1()->prediction())) {
-                fixEdge<FinalObjectUse>(node->child1());
-                node->convertToIdentity();
-                break;
-            }
-            
+            fixupToThis(node);
             break;
         }
             
@@ -1590,6 +1567,85 @@ private:
         if (!node->child2()) {
             ASSERT(!node->child3());
             node->convertToIdentity();
+        }
+    }
+
+    void fixupToThis(Node* node)
+    {
+        ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->isStrictMode() ? StrictMode : NotStrictMode;
+
+        if (ecmaMode == StrictMode) {
+            if (node->child1()->shouldSpeculateBoolean()) {
+                fixEdge<BooleanUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateInt32()) {
+                fixEdge<Int32Use>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (enableInt52() && node->child1()->shouldSpeculateMachineInt()) {
+                fixEdge<Int52RepUse>(node->child1());
+                node->convertToIdentity();
+                node->setResult(NodeResultInt52);
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateNumber()) {
+                fixEdge<DoubleRepUse>(node->child1());
+                node->convertToIdentity();
+                node->setResult(NodeResultDouble);
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateSymbol()) {
+                fixEdge<SymbolUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateStringIdent()) {
+                fixEdge<StringIdentUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+        }
+
+        if (node->child1()->shouldSpeculateOther()) {
+            if (ecmaMode == StrictMode) {
+                fixEdge<OtherUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            m_insertionSet.insertNode(
+                m_indexInBlock, SpecNone, Check, node->origin,
+                Edge(node->child1().node(), OtherUse));
+            observeUseKindOnNode<OtherUse>(node->child1().node());
+            m_graph.convertToConstant(
+                node, m_graph.globalThisObjectFor(node->origin.semantic));
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateStringObject()) {
+            fixEdge<StringObjectUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (isFinalObjectSpeculation(node->child1()->prediction())) {
+            fixEdge<FinalObjectUse>(node->child1());
+            node->convertToIdentity();
+            return;
         }
     }
     

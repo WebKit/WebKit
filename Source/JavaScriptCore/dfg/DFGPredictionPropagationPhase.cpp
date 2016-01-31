@@ -489,11 +489,58 @@ private:
         }
 
         case ToThis: {
+            // ToThis in methods for primitive types should speculate primitive types in strict mode.
+            ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->isStrictMode() ? StrictMode : NotStrictMode;
+            if (ecmaMode == StrictMode) {
+                if (node->child1()->shouldSpeculateBoolean()) {
+                    changed |= mergePrediction(SpecBoolean);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateInt32()) {
+                    changed |= mergePrediction(SpecInt32);
+                    break;
+                }
+
+                if (enableInt52() && node->child1()->shouldSpeculateMachineInt()) {
+                    changed |= mergePrediction(SpecMachineInt);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateNumber()) {
+                    changed |= mergePrediction(SpecMachineInt);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateSymbol()) {
+                    changed |= mergePrediction(SpecSymbol);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateStringIdent()) {
+                    changed |= mergePrediction(SpecStringIdent);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateString()) {
+                    changed |= mergePrediction(SpecString);
+                    break;
+                }
+            } else {
+                if (node->child1()->shouldSpeculateString()) {
+                    changed |= mergePrediction(SpecStringObject);
+                    break;
+                }
+            }
+
             SpeculatedType prediction = node->child1()->prediction();
             if (prediction) {
                 if (prediction & ~SpecObject) {
-                    prediction &= SpecObject;
-                    prediction = mergeSpeculations(prediction, SpecObjectOther);
+                    // Wrapper objects are created only in sloppy mode.
+                    if (ecmaMode != StrictMode) {
+                        prediction &= SpecObject;
+                        prediction = mergeSpeculations(prediction, SpecObjectOther);
+                    }
                 }
                 changed |= mergePrediction(prediction);
             }
