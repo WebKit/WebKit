@@ -39,9 +39,9 @@ namespace WebCore {
 class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker {
     WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMac);
 public:
-    virtual ~MediaPlaybackTargetPickerMac();
+    explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
 
-    WEBCORE_EXPORT static std::unique_ptr<MediaPlaybackTargetPickerMac> create(MediaPlaybackTargetPicker::Client&);
+    virtual ~MediaPlaybackTargetPickerMac();
 
     void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute) override;
     void startingMonitoringPlaybackTargets() override;
@@ -49,8 +49,6 @@ public:
     void invalidatePlaybackTargets() override;
 
 private:
-    explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
-
     bool externalOutputDeviceAvailable() override;
     Ref<MediaPlaybackTarget> playbackTarget() override;
 

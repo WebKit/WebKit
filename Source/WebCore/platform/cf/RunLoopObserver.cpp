@@ -28,11 +28,6 @@
 
 namespace WebCore {
 
-std::unique_ptr<RunLoopObserver> RunLoopObserver::create(CFIndex order, RunLoopObserver::RunLoopObserverCallback callback)
-{
-    return std::unique_ptr<RunLoopObserver>(new RunLoopObserver(order, callback));
-}
-
 RunLoopObserver::~RunLoopObserver()
 {
     invalidate();

@@ -39,11 +39,6 @@ namespace WebCore {
 
 static const double timerInterval = 1.0 / 10.0;
 
-std::unique_ptr<MediaPlaybackTargetPickerMock> MediaPlaybackTargetPickerMock::create(MediaPlaybackTargetPicker::Client& client)
-{
-    return std::unique_ptr<MediaPlaybackTargetPickerMock>(new MediaPlaybackTargetPickerMock(client));
-}
-
 MediaPlaybackTargetPickerMock::MediaPlaybackTargetPickerMock(MediaPlaybackTargetPicker::Client& client)
     : MediaPlaybackTargetPicker(client)
     , m_timer(RunLoop::main(), this, &MediaPlaybackTargetPickerMock::timerFired)

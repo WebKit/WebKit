@@ -85,8 +85,7 @@ std::unique_ptr<FloatingObject> FloatingObject::create(RenderBox& renderer)
 
 std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool shouldPaint, bool isDescendant) const
 {
-    // FIXME: Use make_unique here, once we can get it to compile on all platforms we support.
-    return std::unique_ptr<FloatingObject>(new FloatingObject(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), shouldPaint, isDescendant));
+    return std::make_unique<FloatingObject>(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), shouldPaint, isDescendant);
 }
 
 std::unique_ptr<FloatingObject> FloatingObject::unsafeClone() const

@@ -113,7 +113,7 @@ void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(const String&
 MediaPlaybackTargetPickerMock& WebMediaSessionManager::mockPicker()
 {
     if (!m_pickerOverride)
-        m_pickerOverride = MediaPlaybackTargetPickerMock::create(*this);
+        m_pickerOverride = std::make_unique<MediaPlaybackTargetPickerMock>(*this);
 
     return *m_pickerOverride.get();
 }

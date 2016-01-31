@@ -134,7 +134,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     // FIXME: Abstract away platform-specific code once https://bugs.webkit.org/show_bug.cgi?id=142748 is fixed.
 
 #if PLATFORM(COCOA)
-    m_frameStartObserver = RunLoopObserver::create(0, [this]() {
+    m_frameStartObserver = std::make_unique<RunLoopObserver>(0, [this]() {
         if (!m_enabled || m_environment.scriptDebugServer().isPaused())
             return;
 
@@ -143,7 +143,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
         m_runLoopNestingLevel++;
     });
 
-    m_frameStopObserver = RunLoopObserver::create(frameStopRunLoopOrder, [this]() {
+    m_frameStopObserver = std::make_unique<RunLoopObserver>(frameStopRunLoopOrder, [this]() {
         if (!m_enabled || m_environment.scriptDebugServer().isPaused())
             return;
 

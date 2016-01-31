@@ -58,7 +58,7 @@ LayerFlushScheduler::LayerFlushScheduler(LayerFlushSchedulerClient* client)
 {
     ASSERT_ARG(client, client);
 
-    m_runLoopObserver = RunLoopObserver::create(layerFlushRunLoopOrder, [this]() {
+    m_runLoopObserver = std::make_unique<RunLoopObserver>(layerFlushRunLoopOrder, [this]() {
         if (this->isSuspended())
             return;
         this->layerFlushCallback();
