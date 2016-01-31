@@ -1041,7 +1041,6 @@ class Instruction
             $asm.puts "sltu #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].mipsOperand}"
         when "pichdr"
             $asm.putStr("OFFLINE_ASM_CPLOAD(#{MIPS_CALL_REG.mipsOperand})")
-            $asm.puts "move #{MIPS_GPSAVE_REG.mipsOperand}, #{MIPS_GP_REG.mipsOperand}"
         when "memfence"
             $asm.puts "sync"
         else

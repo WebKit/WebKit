@@ -430,8 +430,10 @@ if C_LOOP or ARM64 or X86_64 or X86_64_WIN
     const CalleeSaveRegisterCount = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7
     const CalleeSaveRegisterCount = 7
-elsif SH4 or MIPS
+elsif SH4
     const CalleeSaveRegisterCount = 5
+elsif MIPS
+    const CalleeSaveRegisterCount = 1
 elsif X86 or X86_WIN
     const CalleeSaveRegisterCount = 3
 end
@@ -449,12 +451,10 @@ macro pushCalleeSaves()
     elsif ARMv7
         emit "push {r4-r6, r8-r11}"
     elsif MIPS
-        emit "addiu $sp, $sp, -20"
-        emit "sw $20, 16($sp)"
-        emit "sw $19, 12($sp)"
-        emit "sw $18, 8($sp)"
-        emit "sw $17, 4($sp)"
-        emit "sw $16, 0($sp)"
+        emit "addiu $sp, $sp, -4"
+        emit "sw $s4, 0($sp)"
+        # save $gp to $s4 so that we can restore it after a function call
+        emit "move $s4, $gp"
     elsif SH4
         emit "mov.l r13, @-r15"
         emit "mov.l r11, @-r15"
@@ -479,12 +479,8 @@ macro popCalleeSaves()
     elsif ARMv7
         emit "pop {r4-r6, r8-r11}"
     elsif MIPS
-        emit "lw $16, 0($sp)"
-        emit "lw $17, 4($sp)"
-        emit "lw $18, 8($sp)"
-        emit "lw $19, 12($sp)"
-        emit "lw $20, 16($sp)"
-        emit "addiu $sp, $sp, 20"
+        emit "lw $s4, 0($sp)"
+        emit "addiu $sp, $sp, 4"
     elsif SH4
         emit "mov.l @r15+, r8"
         emit "mov.l @r15+, r9"

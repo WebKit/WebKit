@@ -1,3 +1,21 @@
+2016-01-31  Guillaume Emont  <guijemont@igalia.com>
+
+        [mips] don't save to a callee saved register too early
+        https://bugs.webkit.org/show_bug.cgi?id=153463
+
+        If we save $gp to $s4 in pichdr, then in some cases, we were
+        overwriting $s4 before LLInt's pushCalleeSaves() is called (as pichdr
+        is at the very beginning of a function). Now we save $gp to $s4 at the
+        end of pushCalleeSaves().
+
+        Reviewed by Michael Saboff.
+
+        * offlineasm/mips.rb:
+        * llint/LowLevelInterpreter.asm:
+        Move the saving of $gp to $s4 from pichdr to pushCalleeSaves(). Take
+        the opportunity to only save $s4 as we never use the other callee
+        saved registers.
+
 2016-01-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r195799 and r195828.
