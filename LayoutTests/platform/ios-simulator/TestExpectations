@@ -83,6 +83,9 @@ media
 http/tests/media
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
 
+# No touch events
+fast/shadow-dom/touch-event-ios.html [ Skip ]
+
 # MediaSource is not currently supported on iOS.
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
 fast/history/page-cache-media-source-closed.html [ Skip ]
