@@ -4983,6 +4983,41 @@ void testFramePointer()
     CHECK(fp >= bitwise_cast<char*>(&proc) - 10000);
 }
 
+void testOverrideFramePointer()
+{
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        // Add a stack slot to make the frame non trivial.
+        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(8, StackSlotKind::Locked));
+
+        // Sub on x86 UseDef the source. If FP is not protected correctly, it will be overridden since it is the last visible use.
+        Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* fp = root->appendNew<Value>(proc, FramePointer, Origin());
+        Value* result = root->appendNew<Value>(proc, Sub, Origin(), fp, offset);
+
+        root->appendNew<ControlValue>(proc, Return, Origin(), result);
+        CHECK(compileAndRun<int64_t>(proc, 1));
+    }
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(8, StackSlotKind::Locked));
+
+        Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* fp = root->appendNew<Value>(proc, FramePointer, Origin());
+        Value* offsetFP = root->appendNew<Value>(proc, BitAnd, Origin(), offset, fp);
+        Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* offsetArg = root->appendNew<Value>(proc, Add, Origin(), offset, arg);
+        Value* result = root->appendNew<Value>(proc, Add, Origin(), offsetArg, offsetFP);
+
+        root->appendNew<ControlValue>(proc, Return, Origin(), result);
+        CHECK(compileAndRun<int64_t>(proc, 1, 2));
+    }
+}
+
 void testStackSlot()
 {
     Procedure proc;
@@ -10766,6 +10801,7 @@ void run(const char* filter)
     RUN(testLoadAddrShift(2));
     RUN(testLoadAddrShift(3));
     RUN(testFramePointer());
+    RUN(testOverrideFramePointer());
     RUN(testStackSlot());
     RUN(testLoadFromFramePointer());
     RUN(testStoreLoadStackSlot(50));

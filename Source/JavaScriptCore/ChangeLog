@@ -1,3 +1,44 @@
+2016-02-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] IRC can coalesce the frame pointer with a Tmp that is modified
+        https://bugs.webkit.org/show_bug.cgi?id=153694
+
+        Reviewed by Filip Pizlo.
+
+        Let's say we have:
+            Move(FP, Tmp1)
+            Add64(#1, Tmp1)
+
+        If we were to coalesce the Move, we would modify the frame pointer.
+        Well, that's exactly what was happening with IRC.
+
+        Since the epilogue is not know to Air before IRC, the liveness analysis
+        never discovers that FP is live when Tmp1 is UseDef by Add64. Adding
+        FP would a be a problem anyway for a bunch of reasons.
+
+        I tried two ways to prevent IRC to override IRC:
+        1) Add an interference edge with FP for all non-duplication Defs.
+        2) Let coalesce() know about FP and constraint any coalescing with a re-Def.
+
+        The two are within margin of error for performance. The second one was considerably
+        more complicated. This patch implements the first one.
+
+        Some extra note:
+        -It is very important to not increment the degree of a Tmp when making it interfere
+         with FP. FP is not a valid color, it is not counted in the "K" colors considered
+         for coloring. Increasing the degree with the edge to FP would make every stage
+         pessimistic since there is an extra degree that can never be removed.
+        -I put "interferenceEdges" and "adjacencyList" in an inconsistent state.
+         This is intentional, "interferenceEdges" is used to test the existence of an edge,
+         "adjacencyList" is used to go over all the edges. In this case, we don't want
+         the edge with FP to be considered when pruning the graph.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        One branch could be transformed into an assertion: TmpLiveness is type specific now.
+        * b3/testb3.cpp:
+        (JSC::B3::testOverrideFramePointer):
+        (JSC::B3::run):
+
 2016-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed speculative buildfix.

@@ -891,8 +891,14 @@ private:
                     return;
                 
                 for (const Tmp& liveTmp : liveTmps) {
-                    if (liveTmp.isGP() == (type == Arg::GP))
-                        addEdge(arg, liveTmp);
+                    ASSERT(liveTmp.isGP() == (type == Arg::GP));
+                    addEdge(arg, liveTmp);
+                }
+
+                if (type == Arg::GP && !arg.isGPR()) {
+                    m_interferenceEdges.add(InterferenceEdge(
+                        AbsoluteTmpMapper<type>::absoluteIndex(Tmp(MacroAssembler::framePointerRegister)),
+                        AbsoluteTmpMapper<type>::absoluteIndex(arg)));
                 }
             });
     }
@@ -1068,8 +1074,13 @@ private:
             tmpsWithInterferences.add(AbsoluteTmpMapper<type>::tmpFromAbsoluteIndex(edge.second()));
         }
 
-        for (const auto& tmp : tmpsWithInterferences)
-            out.print("    ", tmp.internalValue(), " [label=\"", tmp, " (", m_degrees[AbsoluteTmpMapper<type>::absoluteIndex(tmp)], ")\"];\n");
+        for (const auto& tmp : tmpsWithInterferences) {
+            unsigned tmpIndex = AbsoluteTmpMapper<type>::absoluteIndex(tmp);
+            if (tmpIndex < m_degrees.size())
+                out.print("    ", tmp.internalValue(), " [label=\"", tmp, " (", m_degrees[tmpIndex], ")\"];\n");
+            else
+                out.print("    ", tmp.internalValue(), " [label=\"", tmp, "\"];\n");
+        }
 
         for (const auto& edge : m_interferenceEdges)
             out.print("    ", edge.first(), " -- ", edge.second(), ";\n");
@@ -1130,6 +1141,9 @@ private:
         while (true) {
             ++m_numIterations;
 
+            if (traceDebug)
+                dataLog("Code at iteration ", m_numIterations, ":\n", m_code);
+
             // FIXME: One way to optimize this code is to remove the recomputation inside the fixpoint.
             // We need to recompute because spilling adds tmps, but we could just update tmpWidth when we
             // add those tmps. Note that one easy way to remove the recomputation is to make any newly
@@ -1148,6 +1162,9 @@ private:
             ColoringAllocator<type> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
             if (!allocator.requiresSpilling()) {
                 assignRegistersToTmp(allocator);
+                if (traceDebug)
+                    dataLog("Successfull allocation at iteration ", m_numIterations, ":\n", m_code);
+
                 return;
             }
             addSpillAndFill<type>(allocator, unspillableTmps);
