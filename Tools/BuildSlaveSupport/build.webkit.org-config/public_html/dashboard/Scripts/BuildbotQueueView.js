@@ -38,9 +38,12 @@ BuildbotQueueView = function(queues)
         queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this._unauthorizedAccess, this);
     }.bind(this));
 
-    Dashboard.Repository.OpenSource.trac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
-    if (typeof Dashboard.Repository.Internal.trac != "undefined")
-        Dashboard.Repository.Internal.trac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
+    var sortedRepositories = Dashboard.sortedRepositories;
+    for (var i = 0; i < sortedRepositories.length; i++) {
+        var trac = sortedRepositories[i].trac;
+        if (trac)
+            trac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
+    }
 };
 
 BaseObject.addConstructorFunctions(BuildbotQueueView);

@@ -323,8 +323,11 @@ function documentReady()
     }
 }
 
-Dashboard.Repository.OpenSource.trac.startPeriodicUpdates();
-if (typeof Dashboard.Repository.Internal.trac !== "undefined")
-    Dashboard.Repository.Internal.trac.startPeriodicUpdates();
+var sortedRepositories = Dashboard.sortedRepositories;
+for (var i = 0; i < sortedRepositories.length; ++i) {
+    var trac = sortedRepositories[i].trac;
+    if (typeof trac !== "undefined")
+        trac.startPeriodicUpdates();
+}
 
 document.addEventListener("DOMContentLoaded", documentReady);
