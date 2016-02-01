@@ -63,8 +63,10 @@ void VisiblePosition::init(const Position& position, EAffinity affinity)
         m_affinity = DOWNSTREAM;
 }
 
-VisiblePosition VisiblePosition::next(EditingBoundaryCrossingRule rule) const
+VisiblePosition VisiblePosition::next(EditingBoundaryCrossingRule rule, bool* reachedBoundary) const
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     // FIXME: Support CanSkipEditingBoundary
     ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
     VisiblePosition next(nextVisuallyDistinctCandidate(m_deepPosition), m_affinity);
@@ -72,19 +74,24 @@ VisiblePosition VisiblePosition::next(EditingBoundaryCrossingRule rule) const
     if (rule == CanCrossEditingBoundary)
         return next;
 
-    return honorEditingBoundaryAtOrAfter(next);
+    return honorEditingBoundaryAtOrAfter(next, reachedBoundary);
 }
 
-VisiblePosition VisiblePosition::previous(EditingBoundaryCrossingRule rule) const
+VisiblePosition VisiblePosition::previous(EditingBoundaryCrossingRule rule, bool* reachedBoundary) const
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     // FIXME: Support CanSkipEditingBoundary
     ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
     // find first previous DOM position that is visible
     Position pos = previousVisuallyDistinctCandidate(m_deepPosition);
     
     // return null visible position if there is no previous visible position
-    if (pos.atStartOfTree())
+    if (pos.atStartOfTree()) {
+        if (reachedBoundary)
+            *reachedBoundary = true;
         return VisiblePosition();
+    }
         
     VisiblePosition prev = VisiblePosition(pos, DOWNSTREAM);
     ASSERT(prev != *this);
@@ -102,7 +109,7 @@ VisiblePosition VisiblePosition::previous(EditingBoundaryCrossingRule rule) cons
     if (rule == CanCrossEditingBoundary)
         return prev;
     
-    return honorEditingBoundaryAtOrBefore(prev);
+    return honorEditingBoundaryAtOrBefore(prev, reachedBoundary);
 }
 
 Position VisiblePosition::leftVisuallyDistinctCandidate() const
@@ -253,12 +260,17 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
     }
 }
 
-VisiblePosition VisiblePosition::left(bool stayInEditableContent) const
+VisiblePosition VisiblePosition::left(bool stayInEditableContent, bool* reachedBoundary) const
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     Position pos = leftVisuallyDistinctCandidate();
     // FIXME: Why can't we move left from the last position in a tree?
-    if (pos.atStartOfTree() || pos.atEndOfTree())
+    if (pos.atStartOfTree() || pos.atEndOfTree()) {
+        if (reachedBoundary)
+            *reachedBoundary = true;
         return VisiblePosition();
+    }
 
     VisiblePosition left = VisiblePosition(pos, DOWNSTREAM);
     ASSERT(left != *this);
@@ -267,7 +279,7 @@ VisiblePosition VisiblePosition::left(bool stayInEditableContent) const
         return left;
 
     // FIXME: This may need to do something different from "before".
-    return honorEditingBoundaryAtOrBefore(left);
+    return honorEditingBoundaryAtOrBefore(left, reachedBoundary);
 }
 
 Position VisiblePosition::rightVisuallyDistinctCandidate() const
@@ -421,12 +433,17 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
     }
 }
 
-VisiblePosition VisiblePosition::right(bool stayInEditableContent) const
+VisiblePosition VisiblePosition::right(bool stayInEditableContent, bool* reachedBoundary) const
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     Position pos = rightVisuallyDistinctCandidate();
     // FIXME: Why can't we move left from the last position in a tree?
-    if (pos.atStartOfTree() || pos.atEndOfTree())
+    if (pos.atStartOfTree() || pos.atEndOfTree()) {
+        if (reachedBoundary)
+            *reachedBoundary = true;
         return VisiblePosition();
+    }
 
     VisiblePosition right = VisiblePosition(pos, DOWNSTREAM);
     ASSERT(right != *this);
@@ -435,56 +452,78 @@ VisiblePosition VisiblePosition::right(bool stayInEditableContent) const
         return right;
 
     // FIXME: This may need to do something different from "after".
-    return honorEditingBoundaryAtOrAfter(right);
+    return honorEditingBoundaryAtOrAfter(right, reachedBoundary);
 }
 
-VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePosition &pos) const
+VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePosition &pos, bool* reachedBoundary) const
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     if (pos.isNull())
         return pos;
     
     Node* highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if pos is not somewhere inside the editable region containing this position
-    if (highestRoot && !pos.deepEquivalent().deprecatedNode()->isDescendantOf(highestRoot))
+    if (highestRoot && !pos.deepEquivalent().deprecatedNode()->isDescendantOf(highestRoot)) {
+        if (reachedBoundary)
+            *reachedBoundary = true;
         return VisiblePosition();
-        
+    }
+    
     // Return pos itself if the two are from the very same editable region, or both are non-editable
     // FIXME: In the non-editable case, just because the new position is non-editable doesn't mean movement
     // to it is allowed.  VisibleSelection::adjustForEditableContent has this problem too.
-    if (highestEditableRoot(pos.deepEquivalent()) == highestRoot)
+    if (highestEditableRoot(pos.deepEquivalent()) == highestRoot) {
+        if (reachedBoundary)
+            *reachedBoundary = *this == pos;
         return pos;
+    }
   
     // Return empty position if this position is non-editable, but pos is editable
     // FIXME: Move to the previous non-editable region.
-    if (!highestRoot)
+    if (!highestRoot) {
+        if (reachedBoundary)
+            *reachedBoundary = true;
         return VisiblePosition();
+    }
 
     // Return the last position before pos that is in the same editable region as this position
     return lastEditablePositionBeforePositionInRoot(pos.deepEquivalent(), highestRoot);
 }
 
-VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosition &pos) const
+VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosition &pos, bool* reachedBoundary) const
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     if (pos.isNull())
         return pos;
     
     Node* highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if pos is not somewhere inside the editable region containing this position
-    if (highestRoot && !pos.deepEquivalent().deprecatedNode()->isDescendantOf(highestRoot))
+    if (highestRoot && !pos.deepEquivalent().deprecatedNode()->isDescendantOf(highestRoot)) {
+        if (reachedBoundary)
+            *reachedBoundary = true;
         return VisiblePosition();
+    }
     
     // Return pos itself if the two are from the very same editable region, or both are non-editable
     // FIXME: In the non-editable case, just because the new position is non-editable doesn't mean movement
     // to it is allowed.  VisibleSelection::adjustForEditableContent has this problem too.
-    if (highestEditableRoot(pos.deepEquivalent()) == highestRoot)
+    if (highestEditableRoot(pos.deepEquivalent()) == highestRoot) {
+        if (reachedBoundary)
+            *reachedBoundary = *this == pos;
         return pos;
+    }
 
     // Return empty position if this position is non-editable, but pos is editable
     // FIXME: Move to the next non-editable region.
-    if (!highestRoot)
+    if (!highestRoot) {
+        if (reachedBoundary)
+            *reachedBoundary = true;
         return VisiblePosition();
+    }
 
     // Return the next position after pos that is in the same editable region as this position
     return firstEditablePositionAfterPositionInRoot(pos.deepEquivalent(), highestRoot);

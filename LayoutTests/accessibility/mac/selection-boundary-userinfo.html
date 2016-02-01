@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="textbox" tabindex=0 id="textbox" contenteditable=true>
+    <p><br>
+</div>
+
+<br>
+
+<input type="text" id="input">
+
+<br>
+
+<textarea id="textarea"></textarea>
+
+<script>
+
+    description("This tests selection change notifications at text boundaries.");
+
+    var AXTextStateChangeTypeSelectionMove = 2;
+    var AXTextStateChangeTypeSelectionExtend = AXTextStateChangeTypeSelectionMove + 1;
+    var AXTextStateChangeTypeSelectionBoundary = AXTextStateChangeTypeSelectionExtend + 1;
+
+    var AXTextSelectionDirectionBeginning = 1;
+    var AXTextSelectionDirectionEnd = AXTextSelectionDirectionBeginning + 1;
+    var AXTextSelectionDirectionPrevious = AXTextSelectionDirectionEnd + 1;
+    var AXTextSelectionDirectionNext = AXTextSelectionDirectionPrevious + 1;
+    var AXTextSelectionDirectionDiscontiguous = AXTextSelectionDirectionNext + 1;
+
+    var AXTextSelectionGranularityCharacter = 1;
+    var AXTextSelectionGranularityWord = AXTextSelectionGranularityCharacter + 1;
+    var AXTextSelectionGranularityLine = AXTextSelectionGranularityWord + 1;
+    var AXTextSelectionGranularitySentence = AXTextSelectionGranularityLine + 1;
+    var AXTextSelectionGranularityParagraph = AXTextSelectionGranularitySentence + 1;
+    var AXTextSelectionGranularityDocument = AXTextSelectionGranularityParagraph + 2;
+
+    function move(includeVertical) {
+        // Move by character
+        eventSender.keyDown("leftArrow");
+        eventSender.keyDown("rightArrow");
+        if (includeVertical) {
+            // Move by line
+            eventSender.keyDown("upArrow");
+            eventSender.keyDown("downArrow");
+        }
+        // Move by word
+        eventSender.keyDown("leftArrow", ["altKey"]);
+        eventSender.keyDown("rightArrow", ["altKey"]);
+        // Move to beginning/end of line
+        eventSender.keyDown("leftArrow", ["metaKey"]);
+        eventSender.keyDown("rightArrow", ["metaKey"]);
+        if (includeVertical) {
+            // Move to beginning/end of document
+            eventSender.keyDown("upArrow", ["metaKey"]);
+            eventSender.keyDown("downArrow", ["metaKey"]);
+        }
+    }
+
+    var webArea = 0;
+    var count = 0;
+    var results = [];
+    var i = 0;
+    function notificationCallback(notification, userInfo) {
+        if (notification == "AXSelectedTextChanged") {
+            count++;
+            if (userInfo) {
+                results.push(userInfo["AXTextStateChangeType"]);
+                if (userInfo["AXTextSelectionDirection"])
+                    results.push(userInfo["AXTextSelectionDirection"]);
+                if (userInfo["AXTextSelectionGranularity"])
+                    results.push(userInfo["AXTextSelectionGranularity"]);
+            }
+            if (count == 29) {
+
+                function shouldBeResults(includeVertical) {
+                    // Focusing into the textbox
+                    shouldBe("results[i]", "AXTextStateChangeTypeSelectionMove"); i++;
+                    shouldBe("results[i]", "AXTextSelectionDirectionDiscontiguous");  i++;
+
+                    // Left Arrow
+                    shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary");  i++;
+                    shouldBe("results[i]", "AXTextSelectionDirectionPrevious");  i++;
+                    shouldBe("results[i]", "AXTextSelectionGranularityCharacter");  i++;
+
+                    // Right Arrow
+                    shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary");  i++;
+                    shouldBe("results[i]", "AXTextSelectionDirectionNext");  i++;
+                    shouldBe("results[i]", "AXTextSelectionGranularityCharacter");  i++;
+
+                    if (includeVertical) {
+                        // Up Arrow
+                        shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary");  i++;
+                        shouldBe("results[i]", "AXTextSelectionDirectionPrevious"); i++;
+                        shouldBe("results[i]", "AXTextSelectionGranularityLine"); i++;
+
+                        // Down Arrow
+                        shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary"); i++;
+                        shouldBe("results[i]", "AXTextSelectionDirectionNext"); i++;
+                        shouldBe("results[i]", "AXTextSelectionGranularityLine"); i++;
+                    }
+
+                    // Option Left Arrow
+                    shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary"); i++;
+                    shouldBe("results[i]", "AXTextSelectionDirectionPrevious"); i++;
+                    shouldBe("results[i]", "AXTextSelectionGranularityWord"); i++;
+
+                    // Option Right Arrow
+                    shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary"); i++;
+                    shouldBe("results[i]", "AXTextSelectionDirectionNext"); i++;
+                    shouldBe("results[i]", "AXTextSelectionGranularityWord"); i++;
+
+                    // Command Left Arrow
+                    shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary"); i++;
+                    shouldBe("results[i]", "AXTextSelectionDirectionBeginning"); i++;
+                    shouldBe("results[i]", "AXTextSelectionGranularityLine"); i++;
+
+                    // Command Right Arrow
+                    shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary"); i++;
+                    shouldBe("results[i]", "AXTextSelectionDirectionEnd"); i++;
+                    shouldBe("results[i]", "AXTextSelectionGranularityLine"); i++;
+
+                    if (includeVertical) {
+                        // Command Up Arrow
+                        shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary"); i++;
+                        // FIXME: This should be AXTextSelectionDirectionBeginning.
+                        shouldBe("results[i]", "AXTextSelectionDirectionPrevious"); i++;
+                        shouldBe("results[i]", "AXTextSelectionGranularityDocument"); i++;
+
+                        // Command Down Arrow
+                        shouldBe("results[i]", "AXTextStateChangeTypeSelectionBoundary"); i++;
+                        // FIXME: This should be AXTextSelectionDirectionEnd.
+                        shouldBe("results[i]", "AXTextSelectionDirectionNext"); i++;
+                        shouldBe("results[i]", "AXTextSelectionGranularityDocument"); i++;
+                    }
+                }
+
+                // Content Editable Div
+                shouldBeResults(true);
+
+                // Text Field
+                shouldBeResults(false);
+
+                // Text Area
+                shouldBeResults(true);
+
+                webArea.removeNotificationListener();
+                window.testRunner.notifyDone();
+            }
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.testRunner.waitUntilDone();
+
+        accessibilityController.enableEnhancedAccessibility(true);
+
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+        var addedNotification = webArea.addNotificationListener(notificationCallback);
+        shouldBe("addedNotification", "true");
+
+        textbox = document.getElementById("textbox");
+        textbox.focus();
+
+        move(true);
+
+        textbox = document.getElementById("input");
+        textbox.focus();
+
+        move(false);
+
+        textbox = document.getElementById("textarea");
+        textbox.focus();
+
+        move(true);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

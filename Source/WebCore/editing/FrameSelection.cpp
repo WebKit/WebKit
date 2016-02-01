@@ -760,8 +760,10 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
+VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity, bool* reachedBoundary)
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     VisiblePosition pos;
     switch (granularity) {
     case CharacterGranularity:
@@ -771,11 +773,14 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
             else
                 pos = VisiblePosition(m_selection.start(), m_selection.affinity());
         } else
-            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).right(true);
+            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).right(true, reachedBoundary);
         break;
     case WordGranularity: {
         bool skipsSpaceWhenMovingRight = m_frame && m_frame->editor().behavior().shouldSkipSpaceWhenMovingRight();
-        pos = rightWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()), skipsSpaceWhenMovingRight);
+        VisiblePosition currentPosition(m_selection.extent(), m_selection.affinity());
+        pos = rightWordPosition(currentPosition, skipsSpaceWhenMovingRight);
+        if (reachedBoundary)
+            *reachedBoundary = pos == currentPosition;
         break;
     }
     case SentenceGranularity:
@@ -785,10 +790,10 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
     case ParagraphBoundary:
     case DocumentBoundary:
         // FIXME: Implement all of the above.
-        pos = modifyMovingForward(granularity);
+        pos = modifyMovingForward(granularity, reachedBoundary);
         break;
     case LineBoundary:
-        pos = rightBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
+        pos = rightBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock(), reachedBoundary);
         break;
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -797,8 +802,26 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity)
+VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity, bool* reachedBoundary)
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
+    VisiblePosition currentPosition;
+    switch (granularity) {
+    case WordGranularity:
+    case SentenceGranularity:
+        currentPosition = VisiblePosition(m_selection.extent(), m_selection.affinity());
+        break;
+    case LineGranularity:
+    case ParagraphGranularity:
+    case SentenceBoundary:
+    case ParagraphBoundary:
+    case DocumentBoundary:
+        currentPosition = endForPlatform();
+        break;
+    default:
+        break;
+    }
     VisiblePosition pos;
     // FIXME: Stay in editable content for the less common granularities.
     switch (granularity) {
@@ -806,43 +829,57 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity)
         if (isRange())
             pos = VisiblePosition(m_selection.end(), m_selection.affinity());
         else
-            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).next(CannotCrossEditingBoundary);
+            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).next(CannotCrossEditingBoundary, reachedBoundary);
         break;
     case WordGranularity:
-        pos = nextWordPositionForPlatform(VisiblePosition(m_selection.extent(), m_selection.affinity()));
+        pos = nextWordPositionForPlatform(currentPosition);
         break;
     case SentenceGranularity:
-        pos = nextSentencePosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
+        pos = nextSentencePosition(currentPosition);
         break;
     case LineGranularity: {
         // down-arrowing from a range selection that ends at the start of a line needs
         // to leave the selection at that line start (no need to call nextLinePosition!)
-        pos = endForPlatform();
+        pos = currentPosition;
         if (!isRange() || !isStartOfLine(pos))
             pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(START));
         break;
     }
     case ParagraphGranularity:
-        pos = nextParagraphPosition(endForPlatform(), lineDirectionPointForBlockDirectionNavigation(START));
+        pos = nextParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(START));
         break;
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
     case SentenceBoundary:
-        pos = endOfSentence(endForPlatform());
+        pos = endOfSentence(currentPosition);
         break;
     case LineBoundary:
-        pos = logicalEndOfLine(endForPlatform());
+        pos = logicalEndOfLine(endForPlatform(), reachedBoundary);
         break;
     case ParagraphBoundary:
-        pos = endOfParagraph(endForPlatform());
+        pos = endOfParagraph(currentPosition);
         break;
     case DocumentBoundary:
-        pos = endForPlatform();
+        pos = currentPosition;
         if (isEditablePosition(pos.deepEquivalent()))
             pos = endOfEditableContent(pos);
         else
             pos = endOfDocument(pos);
+        break;
+    }
+    switch (granularity) {
+    case WordGranularity:
+    case SentenceGranularity:
+    case LineGranularity:
+    case ParagraphGranularity:
+    case SentenceBoundary:
+    case ParagraphBoundary:
+    case DocumentBoundary:
+        if (reachedBoundary)
+            *reachedBoundary = pos == currentPosition;
+        break;
+    default:
         break;
     }
     return pos;
@@ -944,8 +981,10 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
+VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity, bool* reachedBoundary)
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     VisiblePosition pos;
     switch (granularity) {
     case CharacterGranularity:
@@ -955,11 +994,14 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
             else
                 pos = VisiblePosition(m_selection.end(), m_selection.affinity());
         else
-            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).left(true);
+            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).left(true, reachedBoundary);
         break;
     case WordGranularity: {
         bool skipsSpaceWhenMovingRight = m_frame && m_frame->editor().behavior().shouldSkipSpaceWhenMovingRight();
-        pos = leftWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()), skipsSpaceWhenMovingRight);
+        VisiblePosition currentPosition(m_selection.extent(), m_selection.affinity());
+        pos = leftWordPosition(currentPosition, skipsSpaceWhenMovingRight);
+        if (reachedBoundary)
+            *reachedBoundary = pos == currentPosition;
         break;
     }
     case SentenceGranularity:
@@ -969,10 +1011,10 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
     case ParagraphBoundary:
     case DocumentBoundary:
         // FIXME: Implement all of the above.
-        pos = modifyMovingBackward(granularity);
+        pos = modifyMovingBackward(granularity, reachedBoundary);
         break;
     case LineBoundary:
-        pos = leftBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
+        pos = leftBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock(), reachedBoundary);
         break;
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -981,39 +1023,57 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity)
+VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity, bool* reachedBoundary)
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
+    VisiblePosition currentPosition;
+    switch (granularity) {
+    case WordGranularity:
+    case SentenceGranularity:
+        currentPosition = VisiblePosition(m_selection.extent(), m_selection.affinity());
+        break;
+    case LineGranularity:
+    case ParagraphGranularity:
+    case SentenceBoundary:
+    case ParagraphBoundary:
+    case DocumentBoundary:
+        currentPosition = startForPlatform();
+        break;
+    default:
+        break;
+    }
     VisiblePosition pos;
     switch (granularity) {
     case CharacterGranularity:
         if (isRange())
             pos = VisiblePosition(m_selection.start(), m_selection.affinity());
         else
-            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).previous(CannotCrossEditingBoundary);
+            pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).previous(CannotCrossEditingBoundary, reachedBoundary);
         break;
     case WordGranularity:
-        pos = previousWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
+        pos = previousWordPosition(currentPosition);
         break;
     case SentenceGranularity:
-        pos = previousSentencePosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
+        pos = previousSentencePosition(currentPosition);
         break;
     case LineGranularity:
-        pos = previousLinePosition(startForPlatform(), lineDirectionPointForBlockDirectionNavigation(START));
+        pos = previousLinePosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(START));
         break;
     case ParagraphGranularity:
-        pos = previousParagraphPosition(startForPlatform(), lineDirectionPointForBlockDirectionNavigation(START));
+        pos = previousParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(START));
         break;
     case SentenceBoundary:
-        pos = startOfSentence(startForPlatform());
+        pos = startOfSentence(currentPosition);
         break;
     case LineBoundary:
-        pos = logicalStartOfLine(startForPlatform());
+        pos = logicalStartOfLine(startForPlatform(), reachedBoundary);
         break;
     case ParagraphBoundary:
-        pos = startOfParagraph(startForPlatform());
+        pos = startOfParagraph(currentPosition);
         break;
     case DocumentBoundary:
-        pos = startForPlatform();
+        pos = currentPosition;
         if (isEditablePosition(pos.deepEquivalent()))
             pos = startOfEditableContent(pos);
         else
@@ -1021,6 +1081,20 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
         break;
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
+        break;
+    }
+    switch (granularity) {
+    case WordGranularity:
+    case SentenceGranularity:
+    case LineGranularity:
+    case ParagraphGranularity:
+    case SentenceBoundary:
+    case ParagraphBoundary:
+    case DocumentBoundary:
+        if (reachedBoundary)
+            *reachedBoundary = pos == currentPosition;
+        break;
+    default:
         break;
     }
     return pos;
@@ -1099,6 +1173,68 @@ AXTextStateChangeIntent FrameSelection::textSelectionIntent(EAlteration alter, S
     return intent;
 }
 
+static AXTextSelection textSelectionWithDirectionAndGranularity(SelectionDirection direction, TextGranularity granularity)
+{
+    // FIXME: Account for BIDI in DirectionRight & DirectionLeft. (In a RTL block, Right would map to Previous/Beginning and Left to Next/End.)
+    AXTextSelectionDirection intentDirection = AXTextSelectionDirectionUnknown;
+    switch (direction) {
+    case DirectionForward:
+        intentDirection = AXTextSelectionDirectionNext;
+        break;
+    case DirectionRight:
+        intentDirection = AXTextSelectionDirectionNext;
+        break;
+    case DirectionBackward:
+        intentDirection = AXTextSelectionDirectionPrevious;
+        break;
+    case DirectionLeft:
+        intentDirection = AXTextSelectionDirectionPrevious;
+        break;
+    }
+    AXTextSelectionGranularity intentGranularity = AXTextSelectionGranularityUnknown;
+    switch (granularity) {
+    case CharacterGranularity:
+        intentGranularity = AXTextSelectionGranularityCharacter;
+        break;
+    case WordGranularity:
+        intentGranularity = AXTextSelectionGranularityWord;
+        break;
+    case SentenceGranularity:
+    case SentenceBoundary: // FIXME: Boundary should affect direction.
+        intentGranularity = AXTextSelectionGranularitySentence;
+        break;
+    case LineGranularity:
+        intentGranularity = AXTextSelectionGranularityLine;
+        break;
+    case ParagraphGranularity:
+    case ParagraphBoundary: // FIXME: Boundary should affect direction.
+        intentGranularity = AXTextSelectionGranularityParagraph;
+        break;
+    case DocumentGranularity:
+    case DocumentBoundary: // FIXME: Boundary should affect direction.
+        intentGranularity = AXTextSelectionGranularityDocument;
+        break;
+    case LineBoundary:
+        intentGranularity = AXTextSelectionGranularityLine;
+        switch (direction) {
+        case DirectionForward:
+            intentDirection = AXTextSelectionDirectionEnd;
+            break;
+        case DirectionRight:
+            intentDirection = AXTextSelectionDirectionEnd;
+            break;
+        case DirectionBackward:
+            intentDirection = AXTextSelectionDirectionBeginning;
+            break;
+        case DirectionLeft:
+            intentDirection = AXTextSelectionDirectionBeginning;
+            break;
+        }
+        break;
+    }
+    return { intentDirection, intentGranularity, false };
+}
+
 bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, TextGranularity granularity, EUserTriggered userTriggered)
 {
     if (userTriggered == UserTriggered) {
@@ -1116,13 +1252,14 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
 
     willBeModified(alter, direction);
 
+    bool shouldNotify = false;
     bool wasRange = m_selection.isRange();
     Position originalStartPosition = m_selection.start();
     VisiblePosition position;
     switch (direction) {
     case DirectionRight:
         if (alter == AlterationMove)
-            position = modifyMovingRight(granularity);
+            position = modifyMovingRight(granularity, &shouldNotify);
         else
             position = modifyExtendingRight(granularity);
         break;
@@ -1130,11 +1267,11 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
         if (alter == AlterationExtend)
             position = modifyExtendingForward(granularity);
         else
-            position = modifyMovingForward(granularity);
+            position = modifyMovingForward(granularity, &shouldNotify);
         break;
     case DirectionLeft:
         if (alter == AlterationMove)
-            position = modifyMovingLeft(granularity);
+            position = modifyMovingLeft(granularity, &shouldNotify);
         else
             position = modifyExtendingLeft(granularity);
         break;
@@ -1142,8 +1279,13 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
         if (alter == AlterationExtend)
             position = modifyExtendingBackward(granularity);
         else
-            position = modifyMovingBackward(granularity);
+            position = modifyMovingBackward(granularity, &shouldNotify);
         break;
+    }
+    
+    if (shouldNotify && userTriggered == UserTriggered && m_frame && AXObjectCache::accessibilityEnabled()) {
+        notifyAccessibilityForSelectionChange({ AXTextStateChangeTypeSelectionBoundary, textSelectionWithDirectionAndGranularity(direction, granularity) });
+        return true;
     }
 
     if (position.isNull())

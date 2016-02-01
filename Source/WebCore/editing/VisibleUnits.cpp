@@ -774,31 +774,37 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         : positionBeforeNode(startNode);
 }
 
-static VisiblePosition startOfLine(const VisiblePosition& c, LineEndpointComputationMode mode)
+static VisiblePosition startOfLine(const VisiblePosition& c, LineEndpointComputationMode mode, bool* reachedBoundary)
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     // TODO: this is the current behavior that might need to be fixed.
     // Please refer to https://bugs.webkit.org/show_bug.cgi?id=49107 for detail.
     VisiblePosition visPos = startPositionForLine(c, mode);
 
     if (mode == UseLogicalOrdering) {
         if (Node* editableRoot = highestEditableRoot(c.deepEquivalent())) {
-            if (!editableRoot->contains(visPos.deepEquivalent().containerNode()))
-                return firstPositionInNode(editableRoot);
+            if (!editableRoot->contains(visPos.deepEquivalent().containerNode())) {
+                VisiblePosition newPosition = firstPositionInNode(editableRoot);
+                if (reachedBoundary)
+                    *reachedBoundary = c == newPosition;
+                return newPosition;
+            }
         }
     }
 
-    return c.honorEditingBoundaryAtOrBefore(visPos);
+    return c.honorEditingBoundaryAtOrBefore(visPos, reachedBoundary);
 }
 
 // FIXME: Rename this function to reflect the fact it ignores bidi levels.
 VisiblePosition startOfLine(const VisiblePosition& currentPosition)
 {
-    return startOfLine(currentPosition, UseInlineBoxOrdering);
+    return startOfLine(currentPosition, UseInlineBoxOrdering, nullptr);
 }
 
-VisiblePosition logicalStartOfLine(const VisiblePosition& currentPosition)
+VisiblePosition logicalStartOfLine(const VisiblePosition& currentPosition, bool* reachedBoundary)
 {
-    return startOfLine(currentPosition, UseLogicalOrdering);
+    return startOfLine(currentPosition, UseLogicalOrdering, reachedBoundary);
 }
 
 static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpointComputationMode mode)
@@ -858,8 +864,10 @@ static bool inSameLogicalLine(const VisiblePosition& a, const VisiblePosition& b
     return a.isNotNull() && logicalStartOfLine(a) == logicalStartOfLine(b);
 }
 
-static VisiblePosition endOfLine(const VisiblePosition& c, LineEndpointComputationMode mode)
+static VisiblePosition endOfLine(const VisiblePosition& c, LineEndpointComputationMode mode, bool* reachedBoundary)
 {
+    if (reachedBoundary)
+        *reachedBoundary = false;
     // TODO: this is the current behavior that might need to be fixed.
     // Please refer to https://bugs.webkit.org/show_bug.cgi?id=49107 for detail.
     VisiblePosition visPos = endPositionForLine(c, mode);
@@ -874,11 +882,15 @@ static VisiblePosition endOfLine(const VisiblePosition& c, LineEndpointComputati
             visPos = visPos.previous();
 
         if (Node* editableRoot = highestEditableRoot(c.deepEquivalent())) {
-            if (!editableRoot->contains(visPos.deepEquivalent().containerNode()))
-                return lastPositionInNode(editableRoot);
+            if (!editableRoot->contains(visPos.deepEquivalent().containerNode())) {
+                VisiblePosition newPosition = lastPositionInNode(editableRoot);
+                if (reachedBoundary)
+                    *reachedBoundary = c == newPosition;
+                return newPosition;
+            }
         }
 
-        return c.honorEditingBoundaryAtOrAfter(visPos);
+        return c.honorEditingBoundaryAtOrAfter(visPos, reachedBoundary);
     }
 
     // Make sure the end of line is at the same line as the given input position. Else use the previous position to 
@@ -893,18 +905,18 @@ static VisiblePosition endOfLine(const VisiblePosition& c, LineEndpointComputati
         visPos = endPositionForLine(visPos, UseInlineBoxOrdering);
     }
     
-    return c.honorEditingBoundaryAtOrAfter(visPos);
+    return c.honorEditingBoundaryAtOrAfter(visPos, reachedBoundary);
 }
 
 // FIXME: Rename this function to reflect the fact it ignores bidi levels.
 VisiblePosition endOfLine(const VisiblePosition& currentPosition)
 {
-    return endOfLine(currentPosition, UseInlineBoxOrdering);
+    return endOfLine(currentPosition, UseInlineBoxOrdering, nullptr);
 }
 
-VisiblePosition logicalEndOfLine(const VisiblePosition& currentPosition)
+VisiblePosition logicalEndOfLine(const VisiblePosition& currentPosition, bool* reachedBoundary)
 {
-    return endOfLine(currentPosition, UseLogicalOrdering);
+    return endOfLine(currentPosition, UseLogicalOrdering, reachedBoundary);
 }
 
 bool inSameLine(const VisiblePosition& a, const VisiblePosition& b)
@@ -1440,14 +1452,14 @@ bool isEndOfEditableOrNonEditableContent(const VisiblePosition& p)
     return p.isNotNull() && p.next().isNull();
 }
 
-VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direction)
+VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direction, bool* reachedBoundary)
 {
-    return direction == LTR ? logicalStartOfLine(c) : logicalEndOfLine(c);
+    return direction == LTR ? logicalStartOfLine(c, reachedBoundary) : logicalEndOfLine(c, reachedBoundary);
 }
 
-VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection direction)
+VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection direction, bool* reachedBoundary)
 {
-    return direction == LTR ? logicalEndOfLine(c) : logicalStartOfLine(c);
+    return direction == LTR ? logicalEndOfLine(c, reachedBoundary) : logicalStartOfLine(c, reachedBoundary);
 }
 
 static bool directionIsDownstream(SelectionDirection direction)

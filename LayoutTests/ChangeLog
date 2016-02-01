@@ -1,3 +1,16 @@
+2016-01-31  Doug Russell  <d_russell@apple.com>
+
+        AX: Add a boundary value to AXTextStateChangeType
+        https://bugs.webkit.org/show_bug.cgi?id=153085
+
+        Reviewed by Darin Adler.
+
+        Post an AT notification when navigation is attempted past
+        an editable element's boundaries.
+
+        * accessibility/mac/selection-boundary-userinfo-expected.txt: Added.
+        * accessibility/mac/selection-boundary-userinfo.html: Added.
+
 2016-01-31  Daniel Bates  <dabates@apple.com>
 
         CSP: Use the served CSP header for dedicated workers

@@ -158,6 +158,8 @@ static AXTextStateChangeType platformChangeTypeForWebCoreChangeType(WebCore::AXT
         return kAXTextStateChangeTypeSelectionMove;
     case WebCore::AXTextStateChangeTypeSelectionExtend:
         return kAXTextStateChangeTypeSelectionExtend;
+    case WebCore::AXTextStateChangeTypeSelectionBoundary:
+        return kAXTextStateChangeTypeSelectionBoundary;
     }
 }
 
@@ -365,6 +367,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
         switch (intent.type) {
         case AXTextStateChangeTypeSelectionMove:
         case AXTextStateChangeTypeSelectionExtend:
+        case AXTextStateChangeTypeSelectionBoundary:
             [userInfo setObject:@(platformDirectionForWebCoreDirection(intent.selection.direction)) forKey:NSAccessibilityTextSelectionDirection];
             switch (intent.selection.direction) {
             case AXTextSelectionDirectionUnknown:
@@ -378,13 +381,13 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
             case AXTextSelectionDirectionDiscontiguous:
                 break;
             }
+            if (intent.selection.focusChange)
+                [userInfo setObject:@(intent.selection.focusChange) forKey:NSAccessibilityTextSelectionChangedFocus];
             break;
         case AXTextStateChangeTypeUnknown:
         case AXTextStateChangeTypeEdit:
             break;
         }
-        if (intent.selection.focusChange)
-            [userInfo setObject:[NSNumber numberWithBool:intent.selection.focusChange] forKey:NSAccessibilityTextSelectionChangedFocus];
     }
     if (!selection.isNone()) {
         if (id textMarkerRange = [object->wrapper() textMarkerRangeFromVisiblePositions:selection.visibleStart() endPosition:selection.visibleEnd()])

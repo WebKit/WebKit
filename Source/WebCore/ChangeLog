@@ -1,3 +1,53 @@
+2016-01-31  Doug Russell  <d_russell@apple.com>
+
+        AX: Add a boundary value to AXTextStateChangeType
+        https://bugs.webkit.org/show_bug.cgi?id=153085
+
+        Reviewed by Darin Adler.
+
+        Post an AT notification when navigation is attempted past
+        an editable element's boundaries.
+
+        Test: accessibility/mac/selection-boundary-userinfo.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::showIntent):
+        * accessibility/AXTextStateChangeIntent.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (platformChangeTypeForWebCoreChangeType):
+        (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingForward):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::modifyMovingBackward):
+        (WebCore::textSelectionWithDirectionAndGranularity):
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::modifyExtendingBackward): Deleted.
+        (WebCore::FrameSelection::textSelectionIntent): Deleted.
+        * editing/FrameSelection.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next):
+        (WebCore::VisiblePosition::previous):
+        (WebCore::VisiblePosition::left):
+        (WebCore::VisiblePosition::right):
+        (WebCore::VisiblePosition::honorEditingBoundaryAtOrBefore):
+        (WebCore::VisiblePosition::honorEditingBoundaryAtOrAfter):
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate): Deleted.
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate): Deleted.
+        * editing/VisiblePosition.h:
+        * editing/VisibleUnits.cpp:
+        (WebCore::startOfLine):
+        (WebCore::logicalStartOfLine):
+        (WebCore::endOfLine):
+        (WebCore::logicalEndOfLine):
+        (WebCore::leftBoundaryOfLine):
+        (WebCore::rightBoundaryOfLine):
+        (WebCore::inSameLogicalLine): Deleted.
+        (WebCore::endOfEditableContent): Deleted.
+        (WebCore::isEndOfEditableOrNonEditableContent): Deleted.
+        * editing/VisibleUnits.h:
+
 2016-01-31  Daniel Bates  <dabates@apple.com>
 
         CSP: Use the served CSP header for dedicated workers

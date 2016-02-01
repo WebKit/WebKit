@@ -32,7 +32,8 @@ enum AXTextStateChangeType {
     AXTextStateChangeTypeUnknown,
     AXTextStateChangeTypeEdit,
     AXTextStateChangeTypeSelectionMove,
-    AXTextStateChangeTypeSelectionExtend
+    AXTextStateChangeTypeSelectionExtend,
+    AXTextStateChangeTypeSelectionBoundary
 };
 
 enum AXTextEditType {

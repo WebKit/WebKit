@@ -291,12 +291,12 @@ private:
 
     VisiblePosition modifyExtendingRight(TextGranularity);
     VisiblePosition modifyExtendingForward(TextGranularity);
-    VisiblePosition modifyMovingRight(TextGranularity);
-    VisiblePosition modifyMovingForward(TextGranularity);
+    VisiblePosition modifyMovingRight(TextGranularity, bool* reachedBoundary = nullptr);
+    VisiblePosition modifyMovingForward(TextGranularity, bool* reachedBoundary = nullptr);
     VisiblePosition modifyExtendingLeft(TextGranularity);
     VisiblePosition modifyExtendingBackward(TextGranularity);
-    VisiblePosition modifyMovingLeft(TextGranularity);
-    VisiblePosition modifyMovingBackward(TextGranularity);
+    VisiblePosition modifyMovingLeft(TextGranularity, bool* reachedBoundary = nullptr);
+    VisiblePosition modifyMovingBackward(TextGranularity, bool* reachedBoundary = nullptr);
 
     LayoutUnit lineDirectionPointForBlockDirectionNavigation(EPositionType);
 

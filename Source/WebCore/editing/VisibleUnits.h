@@ -60,11 +60,11 @@ WEBCORE_EXPORT VisiblePosition nextLinePosition(const VisiblePosition&, int line
 WEBCORE_EXPORT bool inSameLine(const VisiblePosition &, const VisiblePosition &);
 WEBCORE_EXPORT bool isStartOfLine(const VisiblePosition &);
 WEBCORE_EXPORT bool isEndOfLine(const VisiblePosition &);
-VisiblePosition logicalStartOfLine(const VisiblePosition &);
-VisiblePosition logicalEndOfLine(const VisiblePosition &);
+VisiblePosition logicalStartOfLine(const VisiblePosition &, bool* reachedBoundary = nullptr);
+VisiblePosition logicalEndOfLine(const VisiblePosition &, bool* reachedBoundary = nullptr);
 bool isLogicalEndOfLine(const VisiblePosition &);
-VisiblePosition leftBoundaryOfLine(const VisiblePosition&, TextDirection);
-VisiblePosition rightBoundaryOfLine(const VisiblePosition&, TextDirection);
+VisiblePosition leftBoundaryOfLine(const VisiblePosition&, TextDirection, bool* reachedBoundary);
+VisiblePosition rightBoundaryOfLine(const VisiblePosition&, TextDirection, bool* reachedBoundary);
 
 // paragraphs (perhaps a misnomer, can be divided by line break elements)
 WEBCORE_EXPORT VisiblePosition startOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);

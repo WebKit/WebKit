@@ -995,6 +995,9 @@ void AXObjectCache::showIntent(const AXTextStateChangeIntent &intent)
     case AXTextStateChangeTypeSelectionExtend:
         dataLog("Extend::");
         break;
+    case AXTextStateChangeTypeSelectionBoundary:
+        dataLog("Boundary::");
+        break;
     }
     switch (intent.type) {
     case AXTextStateChangeTypeUnknown:
@@ -1029,6 +1032,7 @@ void AXObjectCache::showIntent(const AXTextStateChangeIntent &intent)
         break;
     case AXTextStateChangeTypeSelectionMove:
     case AXTextStateChangeTypeSelectionExtend:
+    case AXTextStateChangeTypeSelectionBoundary:
         switch (intent.selection.direction) {
         case AXTextSelectionDirectionUnknown:
             dataLog("Unknown::");
