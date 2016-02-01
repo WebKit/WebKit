@@ -398,7 +398,6 @@ set(WEBKIT2_EXTRA_DEPENDENCIES
 
 set(XPCService_SOURCES
     Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm
-    Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm
 )
 
 set(WebProcess_SOURCES

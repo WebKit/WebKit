@@ -1,3 +1,9 @@
+2016-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix after r195795.
+
+        * PlatformMac.cmake: Remove Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm.
+
 2016-01-31  Darin Adler  <darin@apple.com>
 
         Get rid of most calls to String::upper; mostly replace them with convertToASCIIUppercase
