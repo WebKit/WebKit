@@ -86,8 +86,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
 
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
-            RetainPtr<CFStringRef> messageString = adoptCF(CFHTTPMessageCopyVersion(httpResponse));
-            m_httpVersion = String(messageString.get()).upper();
+            m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(httpResponse)).get()).convertToASCIIUppercase();
             m_httpStatusCode = CFHTTPMessageGetResponseStatusCode(httpResponse);
             
             if (initLevel < AllFields) {

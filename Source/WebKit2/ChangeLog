@@ -1,3 +1,13 @@
+2016-01-31  Darin Adler  <darin@apple.com>
+
+        Get rid of most calls to String::upper; mostly replace them with convertToASCIIUppercase
+        https://bugs.webkit.org/show_bug.cgi?id=153715
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        Use convertToASCIIUppercase on language names.
+
 2016-01-31  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove __has_include guards around use of WebKitAdditions

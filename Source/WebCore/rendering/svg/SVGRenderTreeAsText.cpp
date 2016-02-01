@@ -145,7 +145,7 @@ static TextStream& operator<<(TextStream& ts, const DashArray& a)
 
 static TextStream& operator<<(TextStream& ts, const SVGSpreadMethodType& type)
 {
-    ts << SVGPropertyTraits<SVGSpreadMethodType>::toString(type).upper();
+    ts << SVGPropertyTraits<SVGSpreadMethodType>::toString(type).convertToASCIIUppercase();
     return ts;
 }
 

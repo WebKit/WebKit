@@ -700,9 +700,9 @@ TEST_F(EWK2TextCheckerTest, ewk_text_checker_spell_checking_languages)
     // Case sensitivity of dictionaries doesn't affect on loading the dictionaries,
     // the Enchant library will 'normalize' them.
     WTF::StringBuilder languages;
-    languages.append(String(firstExpected).upper());
+    languages.append(String(firstExpected).convertToASCIIUppercase());
     languages.append(',');
-    languages.append(String(lastExpected).lower());
+    languages.append(String(lastExpected).convertToASCIILowercase());
 
     // Set both languages (the first and the last) from the list.
     ewk_text_checker_spell_checking_languages_set(languages.toString().utf8().data());

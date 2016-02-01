@@ -1,3 +1,25 @@
+2016-01-31  Darin Adler  <darin@apple.com>
+
+        Get rid of most calls to String::upper; mostly replace them with convertToASCIIUppercase
+        https://bugs.webkit.org/show_bug.cgi?id=153715
+
+        Reviewed by Gyuyoung Kim.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::computedAttributesForElement): Use convertToASCIILowercase to fold
+        ASCII case when searching for fonts by name.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit): Use convertToASCIIUppercase to make
+        the HTTP version string canonical. Not sure why it's needed at all, but the letters
+        we might be uppercasing are "HTTP", so no need to handle non-ASCII.
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformLazyInit): Ditto.
+
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<): Use convertToASCIIUppercase when writing the spread
+        method type into a text stream. The method types are all ASCII.
+
 2016-01-31  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove __has_include guards around use of WebKitAdditions

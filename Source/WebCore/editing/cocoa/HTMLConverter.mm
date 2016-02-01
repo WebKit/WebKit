@@ -1089,7 +1089,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (!font) {
         String fontName = _caches->propertyValueForNode(element, CSSPropertyFontFamily);
         if (fontName.length())
-            font = _fontForNameAndSize(fontName.upper(), fontSize, _fontCache);
+            font = _fontForNameAndSize(fontName.convertToASCIILowercase(), fontSize, _fontCache);
         if (!font)
             font = [PlatformFontClass fontWithName:@"Times" size:fontSize];
 
