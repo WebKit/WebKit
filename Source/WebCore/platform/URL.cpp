@@ -2132,6 +2132,8 @@ String mimeTypeFromDataURL(const String& url)
         // But we have been returning empty string here for some time, so not changing its behavior at this time.
         return emptyString();
     }
+    if (index == 5)
+        return ASCIILiteral("text/plain");
     ASSERT(index >= 5);
     return url.substring(5, index - 5).convertToASCIILowercase();
 }
