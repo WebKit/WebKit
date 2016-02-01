@@ -1,3 +1,15 @@
+2016-02-01  Tim Horton  <timothy_horton@apple.com>
+
+        Snapshot surfaces are forever wired after being compressed
+        https://bugs.webkit.org/show_bug.cgi?id=153751
+        <rdar://problem/24354546>
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::convertToFormat):
+        Allow IOSurfaceAccelerator to unwire surfaces after they're transformed.
+
 2016-02-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/20150072> [iOS] Remove some file upload code only needed before iOS 9
