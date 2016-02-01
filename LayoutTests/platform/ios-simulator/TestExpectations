@@ -2913,3 +2913,5 @@ webkit.org/b/153370 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-
 webkit.org/b/153370 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.html [ Failure ]
 
 webkit.org/b/152438 fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/153311 fast/replaced/preferred-widths.html [ Pass Failure ]
