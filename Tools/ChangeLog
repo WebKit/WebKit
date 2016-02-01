@@ -1,3 +1,14 @@
+2016-02-01  Brady Eidson  <beidson@apple.com>
+
+        Add command line flag to DRT to output the number of tests completed in server mode.
+        https://bugs.webkit.org/show_bug.cgi?id=153750
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (runTestingServerLoop):
+
 2016-02-01  Jason Marcell  <jmarcell@apple.com>
 
         Improvements to botwatcher's dashboard unit tests.
