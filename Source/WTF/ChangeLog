@@ -1,3 +1,14 @@
+2016-02-01  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] WTFHeaderDetection.h no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=153753
+        rdar://problem/24434627
+
+        Reviewed by Darin Adler.
+
+        * wtf/Platform.h:
+        * wtf/PlatformWin.cmake:
+
 2016-01-31  Darin Adler  <darin@apple.com>
 
         Cut down on calls to String::lower; mostly replace with convertToASCIILowercase
