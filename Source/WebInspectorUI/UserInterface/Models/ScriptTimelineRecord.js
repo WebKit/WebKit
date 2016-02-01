@@ -292,6 +292,7 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         nameMap.set("removesourcebuffer", "Remove Source Buffer");
         nameMap.set("removestream", "Remove Stream");
         nameMap.set("removetrack", "Remove Track");
+        nameMap.set("resize", "Resize");
         nameMap.set("securitypolicyviolation", "Security Policy Violation");
         nameMap.set("selectionchange", "Selection Change");
         nameMap.set("selectstart", "Select Start");

@@ -314,6 +314,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &onprogressAttr,
         &onratechangeAttr,
         &onresetAttr,
+        &onresizeAttr,
         &onscrollAttr,
         &onsearchAttr,
         &onseekedAttr,

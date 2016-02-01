@@ -638,6 +638,8 @@ private:
     void addPlayedRange(const MediaTime& start, const MediaTime& end);
     
     void scheduleTimeupdateEvent(bool periodicEvent);
+    virtual void scheduleResizeEvent() { }
+    virtual void scheduleResizeEventIfSizeChanged() { }
 
     // loading
     void selectMediaResource();

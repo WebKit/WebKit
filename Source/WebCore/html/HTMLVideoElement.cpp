@@ -186,6 +186,20 @@ unsigned HTMLVideoElement::videoHeight() const
     return clampToUnsigned(player()->naturalSize().height());
 }
 
+void HTMLVideoElement::scheduleResizeEvent()
+{
+    m_lastReportedVideoWidth = videoWidth();
+    m_lastReportedVideoHeight = videoHeight();
+    scheduleEvent(eventNames().resizeEvent);
+}
+
+void HTMLVideoElement::scheduleResizeEventIfSizeChanged()
+{
+    if (m_lastReportedVideoWidth == videoWidth() && m_lastReportedVideoHeight == videoHeight())
+        return;
+    scheduleResizeEvent();
+}
+
 bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name() == posterAttr || HTMLMediaElement::isURLAttribute(attribute);

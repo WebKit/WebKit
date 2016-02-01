@@ -80,7 +80,7 @@
     attribute EventHandler onprogress;
     attribute EventHandler onratechange;
     attribute EventHandler onreset;
-    // attribute EventHandler onresize;
+    attribute EventHandler onresize;
     attribute EventHandler onscroll;
     attribute EventHandler onseeked;
     attribute EventHandler onseeking;

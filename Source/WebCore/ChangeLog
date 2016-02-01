@@ -1,3 +1,33 @@
+2016-01-31  Jeremy Jones  <jeremyj@apple.com>
+
+        Add resize event for HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=125715
+
+        Reviewed by Darin Adler.
+
+        Tests: http/tests/media/hls/hls-video-resize.html
+               media/video-resize.html
+
+        Move resize javascript event from DOMWindow.idl to GlobalEventHandlers.idl
+        per https://html.spec.whatwg.org/multipage/webappapis.html#globaleventhandlers
+
+        Post resize event from video element when metadata loads and when content size changes.
+
+        * dom/GlobalEventHandlers.idl: Add onresize.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap): Add onresizeAttr.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::mediaPlayerSizeChanged):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::scheduleResizeEvent):
+        (WebCore::HTMLMediaElement::scheduleResizeEventIfSizeChanged):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::scheduleResizeEvent): Sechedule event.
+        (WebCore::HTMLVideoElement::scheduleResizeEventIfSizeChanged): Schedule event if size has changed.
+        * html/HTMLVideoElement.h: Add declarations.
+        * page/DOMWindow.idl: Remove onresize.
+
 2016-01-31  Darin Adler  <darin@apple.com>
 
         Revert accidental behavior change from previous patch.

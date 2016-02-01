@@ -109,7 +109,7 @@ FAIL Document interface: attribute onplaying assert_equals: getter must be Funct
 FAIL Document interface: attribute onprogress assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onratechange assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onreset assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Document interface: attribute onresize assert_true: The prototype object must have a property "onresize" expected true got false
+FAIL Document interface: attribute onresize assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onscroll assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onseeked assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onseeking assert_equals: getter must be Function expected "function" but got "undefined"
@@ -341,7 +341,7 @@ PASS Document interface: iframe.contentDocument must inherit property "onplaying
 PASS Document interface: iframe.contentDocument must inherit property "onprogress" with the proper type (140) 
 PASS Document interface: iframe.contentDocument must inherit property "onratechange" with the proper type (141) 
 PASS Document interface: iframe.contentDocument must inherit property "onreset" with the proper type (142) 
-FAIL Document interface: iframe.contentDocument must inherit property "onresize" with the proper type (143) assert_inherits: property "onresize" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onresize" with the proper type (143) 
 PASS Document interface: iframe.contentDocument must inherit property "onscroll" with the proper type (144) 
 PASS Document interface: iframe.contentDocument must inherit property "onseeked" with the proper type (145) 
 PASS Document interface: iframe.contentDocument must inherit property "onseeking" with the proper type (146) 
@@ -656,7 +656,7 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onprogress" with the proper type (140) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onratechange" with the proper type (141) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onreset" with the proper type (142) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onresize" with the proper type (143) assert_inherits: property "onresize" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onresize" with the proper type (143) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onscroll" with the proper type (144) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeked" with the proper type (145) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeking" with the proper type (146) 
@@ -938,7 +938,7 @@ FAIL HTMLElement interface: attribute onplaying assert_own_property: expected pr
 FAIL HTMLElement interface: attribute onprogress assert_own_property: expected property "onprogress" missing
 FAIL HTMLElement interface: attribute onratechange assert_own_property: expected property "onratechange" missing
 FAIL HTMLElement interface: attribute onreset assert_own_property: expected property "onreset" missing
-FAIL HTMLElement interface: attribute onresize assert_true: The prototype object must have a property "onresize" expected true got false
+FAIL HTMLElement interface: attribute onresize assert_own_property: expected property "onresize" missing
 FAIL HTMLElement interface: attribute onscroll assert_own_property: expected property "onscroll" missing
 FAIL HTMLElement interface: attribute onseeked assert_own_property: expected property "onseeked" missing
 FAIL HTMLElement interface: attribute onseeking assert_own_property: expected property "onseeking" missing
@@ -1035,7 +1035,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onprogress" with the proper type (78) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onratechange" with the proper type (79) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onreset" with the proper type (80) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onresize" with the proper type (81) assert_inherits: property "onresize" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onresize" with the proper type (81) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onscroll" with the proper type (82) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeked" with the proper type (83) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeking" with the proper type (84) 

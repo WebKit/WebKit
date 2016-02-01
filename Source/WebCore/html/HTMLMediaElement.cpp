@@ -2150,6 +2150,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
         prepareMediaFragmentURI();
         scheduleEvent(eventNames().durationchangeEvent);
+        scheduleResizeEvent();
         scheduleEvent(eventNames().loadedmetadataEvent);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
@@ -4496,6 +4497,8 @@ void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
         downcast<MediaDocument>(document()).mediaElementNaturalSizeChanged(expandedIntSize(m_player->naturalSize()));
 
     beginProcessingMediaPlayerCallback();
+    if (m_readyState > HAVE_NOTHING)
+        scheduleResizeEventIfSizeChanged();
     if (renderer())
         renderer()->updateFromElement();
     endProcessingMediaPlayerCallback();

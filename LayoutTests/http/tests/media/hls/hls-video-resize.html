@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <title>&lt;video&gt; element initial resize event test for HLS</title>
+        <script src=../../media-resources/video-test.js></script>
+
+        <script>
+            function test()
+            {
+                var receiveLoadMetadata = false;
+                var receiveSecondResize = false;
+
+                findMediaElement();
+
+                testExpected("video.videoWidth", 0);
+                testExpected("video.videoHeight", 0);
+
+                waitForEventOnceOn(video, "error", function () {
+                    failTest("Load failed.");
+                });
+
+                waitForEventOnceOn(video, "loadedmetadata", function () {
+                    receiveLoadMetadata = true;
+                    logResult(!receiveSecondResize, "Receive loadmetadata event before second resize.");
+                });
+
+                waitForEventOnceOn(video, "resize", function () {
+                    logResult(!receiveLoadMetadata, "Receive first resize event before loadedmetadata.");
+
+                    receivedFirstResizeEvent = true;
+                    testExpected("video.videoWidth", 0);
+                    testExpected("video.videoHeight", 0);
+
+                    waitForEventOnceOn(video, "resize", function () {
+                        receiveSecondResize = true;
+                        testExpected("video.videoWidth", 640);
+                        testExpected("video.videoHeight", 480);
+                        endTest();                      
+                    });
+                });
+
+                video.src = "../resources/hls/bipbop/prog_index.m3u8";
+            }
+        </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+
+        <video controls width=640 height=480"></video>
+        <p>Test &lt;video&gt; element initial resize event for HLS.</p>
+
+    </body>
+</html>

@@ -111,6 +111,7 @@ PASS a["onplaying"] is null
 PASS a["onprogress"] is null
 PASS a["onratechange"] is null
 PASS a["onreset"] is null
+PASS a["onresize"] is null
 PASS a["onscroll"] is null
 PASS a["onseeked"] is null
 PASS a["onseeking"] is null

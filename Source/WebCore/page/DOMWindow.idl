@@ -215,9 +215,6 @@
 
     // Event Handlers
 
-    // FIXME: This should be in GlobalEventHandlers.idl according to HTML5 - https://html.spec.whatwg.org/multipage/webappapis.html#globaleventhandlers
-    [NotEnumerable] attribute EventHandler onresize;
-
     // Unique to Element and DOMWindow
     // FIXME: Should these be exposed on Document as well (and therefore moved to GlobalEventHandlers.idl)?
     [NotEnumerable] attribute EventHandler onanimationend;

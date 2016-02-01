@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>&lt;video&gt; element initial resize event test</title>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+
+        <script>
+            function test()
+            {
+                var receivedFirstResizeEvent = false;
+
+                findMediaElement();
+
+                testExpected("video.videoWidth", 0);
+                testExpected("video.videoHeight", 0);
+
+                waitForEventOnceOn(video, "loadedmetadata", function () {
+                    logResult(receivedFirstResizeEvent, "Receive loadedmetadata after first resize event.");
+                });
+
+                waitForEventOnceOn(video, "resize", function () {
+                    receivedFirstResizeEvent = true;
+                    testExpected("video.videoWidth", 320);
+                    testExpected("video.videoHeight", 240);
+                    endTest();
+                });
+
+                video.src = findMediaFile("video", "content/test");
+            }
+        </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+
+        <video controls width=640 height=480"></video>
+        <p>Test &lt;video&gt; element initial resize event.</p>
+
+    </body>
+</html>
