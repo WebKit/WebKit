@@ -1,5 +1,11 @@
 2016-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed speculative buildfix after r195755.
+
+        * PlatformMac.cmake:
+
+2016-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed speculative buildfix after r195795.
 
         * PlatformMac.cmake: Remove Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm.

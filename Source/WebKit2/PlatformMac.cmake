@@ -435,6 +435,8 @@ list(APPEND WebKit2_MESSAGES_IN_FILES
 
     Shared/mac/SecItemShim.messages.in
 
+    UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in
+
     UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in
     UIProcess/mac/SecItemShimProxy.messages.in
     UIProcess/mac/ViewGestureController.messages.in
