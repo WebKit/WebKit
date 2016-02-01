@@ -28,6 +28,7 @@
 
 #if USE(IOSURFACE)
 
+#import "CoreGraphicsSPI.h"
 #import "GraphicsContextCG.h"
 #import "IOSurfacePool.h"
 #import "IOSurfaceSPI.h"
@@ -35,12 +36,6 @@
 #import "ImageBufferDataCG.h"
 #import "MachSendRight.h"
 #import <wtf/Assertions.h>
-
-extern "C" {
-CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
-CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
-CGImageRef CGIOSurfaceContextCreateImageReference(CGContextRef);
-}
 
 #if PLATFORM(IOS)
 // Move this into the SPI header once it's possible to put inside the APPLE_INTERNAL_SDK block.
