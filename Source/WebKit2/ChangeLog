@@ -1,3 +1,23 @@
+2016-02-01  Tim Horton  <timothy_horton@apple.com>
+
+        Crash using WKPDFView, in -[UIPDFPageView showContent]
+        https://bugs.webkit.org/show_bug.cgi?id=153770
+        <rdar://problem/20157864>
+
+        Reviewed by Anders Carlsson.
+
+        When scrolling, we throw away UIPDFPageViews, but forget to unhook their delegates.
+        In some cases (also because their delegate is a raw pointer, not weak), they can call
+        back into a deleted WKPDFView, causing a crash.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (detachViewForPage):
+        Add a helper to detach a page view, and unhook its delegates.
+
+        (-[WKPDFView _clearPages]):
+        (-[WKPDFView _revalidateViews]):
+        Make use of the new helper.
+
 2016-02-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/20150072> [iOS] Remove some file upload code only needed before iOS 9

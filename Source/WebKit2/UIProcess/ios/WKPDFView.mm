@@ -156,13 +156,18 @@ typedef struct {
     return [_pdfDocument CGDocument];
 }
 
+static void detachViewForPage(PDFPageInfo& page)
+{
+    [page.view removeFromSuperview];
+    [page.view setDelegate:nil];
+    [[page.view annotationController] setDelegate:nil];
+    page.view = nil;
+}
+
 - (void)_clearPages
 {
-    for (auto& page : _pages) {
-        [page.view removeFromSuperview];
-        [page.view setDelegate:nil];
-        [[page.view annotationController] setDelegate:nil];
-    }
+    for (auto& page : _pages)
+        detachViewForPage(page);
     
     _pages.clear();
 }
@@ -268,8 +273,7 @@ typedef struct {
 
     for (auto& pageInfo : _pages) {
         if (!CGRectIntersectsRect(pageInfo.frame, targetRectWithOverdraw) && pageInfo.index != _currentFindPageIndex) {
-            [pageInfo.view removeFromSuperview];
-            pageInfo.view = nullptr;
+            detachViewForPage(pageInfo);
             continue;
         }
 
