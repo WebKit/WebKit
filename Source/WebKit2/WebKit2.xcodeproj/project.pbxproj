@@ -8381,7 +8381,7 @@
 			name = Databases;
 			productName = Networking;
 			productReference = 51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Databases.Development.xpc */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.xpc-service";
 		};
 		51FA1E17180CCADE00C44BE9 /* DatabaseProcess */ = {
 			isa = PBXNativeTarget;
@@ -8456,7 +8456,7 @@
 			name = WebContent;
 			productName = WebKit2Service;
 			productReference = BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.Development.xpc */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.xpc-service";
 		};
 		BC8283B016B4BF7700A278FE /* Networking */ = {
 			isa = PBXNativeTarget;
@@ -8474,7 +8474,7 @@
 			name = Networking;
 			productName = Networking;
 			productReference = BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.Development.xpc */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.xpc-service";
 		};
 		BC8283F816B4FDDE00A278FE /* Plugin.32 */ = {
 			isa = PBXNativeTarget;
@@ -8492,7 +8492,7 @@
 			name = Plugin.32;
 			productName = Plugin.32;
 			productReference = BC8283F916B4FDDE00A278FE /* com.apple.WebKit.Plugin.32.Development.xpc */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.xpc-service";
 		};
 		BC82841E16B4FDF600A278FE /* Plugin.64 */ = {
 			isa = PBXNativeTarget;
@@ -8510,7 +8510,7 @@
 			name = Plugin.64;
 			productName = Plugin.64;
 			productReference = BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.Development.xpc */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.xpc-service";
 		};
 		BCDE093313272496001259FB /* PluginProcess */ = {
 			isa = PBXNativeTarget;

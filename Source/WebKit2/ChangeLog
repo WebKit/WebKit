@@ -1,3 +1,14 @@
+2016-02-01  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Let Xcode know that the WebKit XPC service products are XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=153773
+
+        Reviewed by Tim Horton.
+
+        * Configurations/BaseXPCService.xcconfig: Removed now-redundant definitions of
+          MACH_O_TYPE and WRAPPER_EXTENSION.
+        * WebKit2.xcodeproj/project.pbxproj: Updated product types.
+
 2016-02-01  Tim Horton  <timothy_horton@apple.com>
 
         Crash using WKPDFView, in -[UIPDFPageView showContent]
