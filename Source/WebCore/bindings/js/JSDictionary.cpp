@@ -47,6 +47,10 @@
 #include "JSMediaKeyError.h"
 #endif
 
+#if ENABLE(FETCH_API)
+#include "JSFetchHeaders.h"
+#endif
+
 #if ENABLE(MEDIA_STREAM)
 #include "JSMediaStream.h"
 #include "JSMediaStreamTrack.h"
@@ -224,6 +228,13 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaKeyError>& result)
 {
     result = JSMediaKeyError::toWrapped(value);
+}
+#endif
+
+#if ENABLE(FETCH_API)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<FetchHeaders>& result)
+{
+    result = JSFetchHeaders::toWrapped(value);
 }
 #endif
 

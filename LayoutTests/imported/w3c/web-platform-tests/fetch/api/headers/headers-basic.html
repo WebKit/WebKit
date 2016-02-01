@@ -48,6 +48,7 @@
           assert_equals(headers.get(name), String(headerDict[name]),
             "name: " + name + " has value: " + headerDict[name]);
         }
+        assert_equals(headers.get("length"), null, "init should be treated as a sequence, not as a dictionary");
       }, "Create headers with sequence");
 
       test(function() {

@@ -1,3 +1,111 @@
+2016-02-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement Fetch API Request
+        https://bugs.webkit.org/show_bug.cgi?id=153437
+
+        Added support for Fetch Request and Body.
+        Body is sharing functionality between Request and Response.
+        Conversion between various body types are not implemented yet.
+
+        Added a FetchOptions class. Options in this class are partially redundant with ResourceLoaderOptions.
+
+        Fixing bug in Headers constructor.
+        Making error reporting in case of modifying headers compliant with the spec.
+
+        Reviewed by Darin Adler.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/request/request-clone.sub.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-consume.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-disturbed.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-error.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-headers.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-idl.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-init-001.sub.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-init-002.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-init-003.sub.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-structure.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/fetch/FetchBody.cpp: Added.
+        (WebCore::FetchBody::initBody):
+        (WebCore::FetchBody::clear):
+        (WebCore::FetchBody::processIfEmptyOrDisturbed):
+        (WebCore::FetchBody::arrayBuffer):
+        (WebCore::FetchBody::formData):
+        (WebCore::FetchBody::blob):
+        (WebCore::FetchBody::text):
+        (WebCore::FetchBody::json):
+        * Modules/fetch/FetchBody.h: Added.
+        (WebCore::FetchBody::~FetchBody):
+        (WebCore::FetchBody::isEmpty):
+        (WebCore::FetchBody::isDisturbed):
+        (WebCore::FetchBody::setDisturbed):
+        (WebCore::FetchBody::setMimeType):
+        (WebCore::FetchBody::mimeType):
+        * Modules/fetch/FetchBody.idl: Added.
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::canWriteHeader):
+        (WebCore::FetchHeaders::append):
+        (WebCore::FetchHeaders::remove):
+        (WebCore::FetchHeaders::set):
+        (WebCore::FetchHeaders::fill): Helper routine implementing https://fetch.spec.whatwg.org/#concept-headers-fill
+        * Modules/fetch/FetchHeaders.h: Adding header getter/setter for FetchRequest.
+        (WebCore::FetchHeaders::fastGet):
+        (WebCore::FetchHeaders::fastSet):
+        * Modules/fetch/FetchHeaders.js: Fixing bug in constructor (covered by modified headers-basc.html test).
+        (initializeFetchHeaders):
+        * Modules/fetch/FetchOptions.h: Added.
+        (WebCore::FetchOptions::FetchOptions):
+        (WebCore::FetchOptions::type):
+        (WebCore::FetchOptions::destination):
+        (WebCore::FetchOptions::mode):
+        (WebCore::FetchOptions::credentials):
+        (WebCore::FetchOptions::cache):
+        (WebCore::FetchOptions::redirect):
+        (WebCore::FetchOptions::referrerPolicy):
+        (WebCore::FetchOptions::setType):
+        (WebCore::FetchOptions::setDestination):
+        (WebCore::FetchOptions::setMode):
+        (WebCore::FetchOptions::setCredentials):
+        (WebCore::FetchOptions::setCache):
+        (WebCore::FetchOptions::setRedirect):
+        (WebCore::FetchOptions::setReferrerPolicy):
+        * Modules/fetch/FetchRequest.cpp: Added.
+        (WebCore::FetchRequest::create):
+        (WebCore::FetchRequest::FetchRequest):
+        (WebCore::FetchRequest::init):
+        (WebCore::FetchRequest::setReferrer):
+        (WebCore::FetchRequest::setReferrerPolicy):
+        (WebCore::FetchRequest::setMode):
+        (WebCore::FetchRequest::setCredentials):
+        (WebCore::FetchRequest::setCache):
+        (WebCore::FetchRequest::setRedirect):
+        (WebCore::FetchRequest::type):
+        (WebCore::FetchRequest::destination):
+        (WebCore::FetchRequest::referrerPolicy):
+        (WebCore::FetchRequest::referrer):
+        (WebCore::FetchRequest::mode):
+        (WebCore::FetchRequest::credentials):
+        (WebCore::FetchRequest::cache):
+        (WebCore::FetchRequest::redirect):
+        (WebCore::FetchRequest::setMethod):
+        (WebCore::FetchRequest::clone):
+        * Modules/fetch/FetchRequest.h: Added.
+        (WebCore::FetchRequest::method):
+        (WebCore::FetchRequest::url):
+        (WebCore::FetchRequest::integrity):
+        (WebCore::FetchRequest::headers):
+        * Modules/fetch/FetchRequest.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/Dictionary.h:
+        (WebCore::Dictionary::execState):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+        (WebCore::JSDictionary::get):
+
 2016-01-31  Jeremy Jones  <jeremyj@apple.com>
 
         Add resize event for HTMLMediaElement

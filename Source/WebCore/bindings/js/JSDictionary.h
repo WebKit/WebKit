@@ -47,6 +47,7 @@ class DOMError;
 class DOMWindow;
 class EventTarget;
 class Gamepad;
+class FetchHeaders;
 class MediaKeyError;
 class MediaStream;
 class MediaStreamTrack;
@@ -126,6 +127,9 @@ private:
 #if ENABLE(ENCRYPTED_MEDIA)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaKeyError>& result);
 #endif
+#if ENABLE(FETCH_API)
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<FetchHeaders>& result);
+#endif
 #if ENABLE(MEDIA_STREAM)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStream>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStreamTrack>& result);
@@ -161,6 +165,12 @@ template <typename Result>
 bool JSDictionary::get(const char* propertyName, Result& finalResult) const
 {
     return tryGetPropertyAndResult(propertyName, &finalResult, IdentitySetter<Result>::identitySetter) == PropertyFound;
+}
+
+template <>
+inline bool JSDictionary::get(const char* propertyName, JSC::JSValue& finalResult) const
+{
+    return tryGetProperty(propertyName, finalResult) == PropertyFound;
 }
 
 template <typename T, typename Result>

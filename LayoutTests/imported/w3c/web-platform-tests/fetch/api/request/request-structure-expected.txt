@@ -1,0 +1,21 @@
+
+PASS Request has clone method 
+PASS Request has arrayBuffer method 
+PASS Request has blob method 
+PASS Request has formData method 
+PASS Request has json method 
+PASS Request has text method 
+PASS Check method attribute 
+PASS Check url attribute 
+PASS Check headers attribute 
+PASS Check type attribute 
+PASS Check destination attribute 
+PASS Check referrer attribute 
+PASS Check referrerPolicy attribute 
+PASS Check mode attribute 
+PASS Check credentials attribute 
+PASS Check cache attribute 
+PASS Check redirect attribute 
+PASS Check integrity attribute 
+PASS Check bodyUsed attribute 
+

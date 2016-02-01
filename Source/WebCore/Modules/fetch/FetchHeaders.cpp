@@ -101,12 +101,16 @@ static bool isSimpleHeader(const String& name, const String& value)
     }
 }
 
-static bool canWriteHeader(const String& name, const String& value, FetchHeaders::Guard guard)
+static bool canWriteHeader(const String& name, const String& value, FetchHeaders::Guard guard, ExceptionCode& ec)
 {
-    if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(value))
+    if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(value)) {
+        ec = TypeError;
         return false;
-    if (guard == FetchHeaders::Guard::Immutable)
+    }
+    if (guard == FetchHeaders::Guard::Immutable) {
+        ec = TypeError;
         return false;
+    }
     if (guard == FetchHeaders::Guard::Request && isForbiddenHeaderName(name))
         return false;
     if (guard == FetchHeaders::Guard::RequestNoCors && !isSimpleHeader(name, value))
@@ -119,19 +123,15 @@ static bool canWriteHeader(const String& name, const String& value, FetchHeaders
 void FetchHeaders::append(const String& name, const String& value, ExceptionCode& ec)
 {
     String normalizedValue = stripLeadingAndTrailingHTTPSpaces(value);
-    if (!canWriteHeader(name, normalizedValue, m_guard)) {
-        ec = TypeError;
+    if (!canWriteHeader(name, normalizedValue, m_guard, ec))
         return;
-    }
     m_headers.add(name, normalizedValue);
 }
 
 void FetchHeaders::remove(const String& name, ExceptionCode& ec)
 {
-    if (!canWriteHeader(name, String(), m_guard)) {
-        ec = TypeError;
+    if (!canWriteHeader(name, String(), m_guard, ec))
         return;
-    }
     m_headers.remove(name);
 }
 
@@ -156,11 +156,27 @@ bool FetchHeaders::has(const String& name, ExceptionCode& ec) const
 void FetchHeaders::set(const String& name, const String& value, ExceptionCode& ec)
 {
     String normalizedValue = stripLeadingAndTrailingHTTPSpaces(value);
-    if (!canWriteHeader(name, normalizedValue, m_guard)) {
-        ec = TypeError;
+    if (!canWriteHeader(name, normalizedValue, m_guard, ec))
         return;
-    }
     m_headers.set(name, normalizedValue);
+}
+
+void FetchHeaders::fill(const FetchHeaders* headers)
+{
+    if (!headers)
+        return;
+
+    ASSERT(m_guard != Guard::Immutable);
+
+    ExceptionCode ec;
+    for (auto& header : headers->m_headers) {
+        if (canWriteHeader(header.key, header.value, m_guard, ec)) {
+            if (header.keyAsHTTPHeaderName)
+                m_headers.add(header.keyAsHTTPHeaderName.value(), header.value);
+            else
+                m_headers.add(header.key, header.value);
+        }
+    }
 }
 
 } // namespace WebCore

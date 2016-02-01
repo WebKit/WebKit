@@ -66,6 +66,8 @@ public:
     bool getOwnPropertyNames(Vector<String>&) const;
     bool getWithUndefinedOrNullCheck(const char* propertyName, String& value) const;
 
+    JSC::ExecState* execState() const { return m_dictionary.execState(); }
+
 private:
     template <typename T>
     JSC::JSObject* asJSObject(T*) const;

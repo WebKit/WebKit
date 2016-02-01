@@ -1,0 +1,64 @@
+/*
+ * Copyright (C) 2016 Canon Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted, provided that the following conditions
+ * are required to be met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Canon Inc. nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY CANON INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL CANON INC. AND ITS CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+enum RequestType { "", "audio", "font", "image", "script", "style", "track", "video" };
+enum RequestDestination { "", "document", "sharedworker", "subresource", "unknown", "worker" };
+enum RequestMode { "navigate", "same-origin", "no-cors", "cors" };
+enum RequestCredentials { "omit", "same-origin", "include" };
+enum RequestCache { "default", "no-store", "reload", "no-cache", "force-cache" };
+enum RequestRedirect { "follow", "error", "manual" };
+enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin-only", "origin-when-cross-origin", "unsafe-url" };
+
+[
+    Conditional=FETCH_API,
+    ConstructorCallWith=ScriptExecutionContext,
+    ConstructorRaisesException,
+    Constructor(FetchRequest input, [Default=Undefined] optional Dictionary init),
+    Constructor(DOMString input, [Default=Undefined]  optional Dictionary init),
+    GlobalContext=DOMWindow&WorkerGlobalScope,
+    ImplementationLacksVTable,
+    InterfaceName=Request
+]
+interface FetchRequest {
+    readonly attribute DOMString method;
+    readonly attribute DOMString url;
+    readonly attribute FetchHeaders headers;
+
+    readonly attribute RequestType type;
+    readonly attribute RequestDestination destination;
+    readonly attribute DOMString referrer;
+    readonly attribute ReferrerPolicy referrerPolicy;
+    readonly attribute RequestMode mode;
+    readonly attribute RequestCredentials credentials;
+    readonly attribute RequestCache cache;
+    readonly attribute RequestRedirect redirect;
+    readonly attribute DOMString integrity;
+
+    [RaisesException, NewObject] FetchRequest clone();
+};
+FetchRequest implements FetchBody;

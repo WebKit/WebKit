@@ -64,6 +64,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ReadableStream').hasOwnPr
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ReadableStream').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ReadableStream').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ReadableStream').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').value is Request
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').value is URL
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('set') is false

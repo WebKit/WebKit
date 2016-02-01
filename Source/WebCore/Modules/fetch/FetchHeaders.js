@@ -47,6 +47,7 @@ function initializeFetchHeaders(headersInit)
                 throw new @TypeError("headersInit sequence items should contain two values");
             this.@appendFromJS(header[0], header[1]);
         }
+        return this;
     }
 
     @Object.@getOwnPropertyNames(headersInit).forEach((name) => {

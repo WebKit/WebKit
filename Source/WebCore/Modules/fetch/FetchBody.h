@@ -26,52 +26,73 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FetchHeaders_h
-#define FetchHeaders_h
+#ifndef FetchBody_h
+#define FetchBody_h
 
 #if ENABLE(FETCH_API)
 
-#include "HTTPHeaderMap.h"
+#include "Blob.h"
+#include "DOMFormData.h"
+#include "JSDOMPromise.h"
+
+namespace JSC {
+class ExecState;
+class JSValue;
+};
 
 namespace WebCore {
 
+class Dictionary;
 typedef int ExceptionCode;
 
-class FetchHeaders : public RefCounted<FetchHeaders> {
+class FetchBody {
 public:
-    enum class Guard {
-        None,
-        Immutable,
-        Request,
-        RequestNoCors,
-        Response
-    };
+    typedef DOMPromise<Vector<unsigned char>, ExceptionCode> ArrayBufferPromise;
+    void arrayBuffer(ArrayBufferPromise&&);
 
-    static Ref<FetchHeaders> create(Guard guard = Guard::None) { return adoptRef(*new FetchHeaders(guard)); }
-    static Ref<FetchHeaders> create(const FetchHeaders& headers) { return adoptRef(*new FetchHeaders(headers.m_guard, headers.m_headers)); }
+    typedef DOMPromise<RefPtr<DOMFormData>, ExceptionCode> FormDataPromise;
+    void formData(FormDataPromise&&);
 
-    void append(const String& name, const String& value, ExceptionCode&);
-    void remove(const String&, ExceptionCode&);
-    String get(const String&, ExceptionCode&) const;
-    bool has(const String&, ExceptionCode&) const;
-    void set(const String& name, const String& value, ExceptionCode&);
+    typedef DOMPromise<RefPtr<Blob>, ExceptionCode> BlobPromise;
+    void blob(BlobPromise&&);
 
-    void initializeWith(const FetchHeaders*, ExceptionCode&);
-    void fill(const FetchHeaders*);
+    typedef DOMPromise<JSC::JSValue, ExceptionCode> JSONPromise;
+    void json(JSC::ExecState&, JSONPromise&&);
 
-    String fastGet(HTTPHeaderName name) const { return m_headers.get(name); }
-    void fastSet(HTTPHeaderName name, const String& value) { m_headers.set(name, value); }
+    typedef DOMPromise<String, ExceptionCode> TextPromise;
+    void text(TextPromise&&);
+
+    bool isDisturbed() const { return m_isDisturbed; }
+    bool isEmpty() const { return m_type == Type::None; }
+
+    void setMimeType(const String& mimeType) { m_mimeType = mimeType; }
+    String mimeType() const { return m_mimeType; }
+
+    static FetchBody fromJSValue(JSC::ExecState&, JSC::JSValue);
+    static FetchBody fromRequestBody(FetchBody*);
 
 private:
-    FetchHeaders(Guard guard) : m_guard(guard) { }
-    FetchHeaders(Guard guard, const HTTPHeaderMap& headers) : m_guard(guard), m_headers(headers) { }
+    template<typename T> bool processIfEmptyOrDisturbed(DOMPromise<T, ExceptionCode>&);
 
-    Guard m_guard;
-    HTTPHeaderMap m_headers;
+    enum class Type { None, Text, Blob, FormData };
+
+    FetchBody(Ref<Blob>&&);
+    FetchBody(Ref<DOMFormData>&&);
+    FetchBody(String&&);
+    FetchBody() { }
+
+    Type m_type = Type::None;
+    String m_mimeType;
+    bool m_isDisturbed = false;
+
+    // FIXME: Add support for BufferSource and URLSearchParams.
+    RefPtr<Blob> m_blob;
+    RefPtr<DOMFormData> m_formData;
+    String m_text;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)
 
-#endif // FetchHeaders_h
+#endif // FetchBody_h

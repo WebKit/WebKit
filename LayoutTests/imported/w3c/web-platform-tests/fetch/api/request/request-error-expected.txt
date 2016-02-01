@@ -1,0 +1,17 @@
+
+PASS RequestInit's window is not null 
+PASS Input URL is not valid 
+PASS Input URL has credentials 
+PASS RequestInit's mode is navigate 
+PASS RequestInit's referrer is invalid 
+PASS RequestInit's referrer has invalid origin 
+PASS RequestInit's method is invalid 
+PASS RequestInit's method is forbidden 
+PASS RequestInit's mode is no-cors and method is not simple 
+PASS RequestInit's mode is no-cors and integrity is not empty 
+PASS Bad referrerPolicy init parameter value 
+PASS Bad mode init parameter value 
+PASS Bad credentials init parameter value 
+PASS Bad cache init parameter value 
+PASS Bad redirect init parameter value 
+

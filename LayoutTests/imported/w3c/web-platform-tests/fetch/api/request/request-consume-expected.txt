@@ -1,0 +1,15 @@
+
+PASS Consume request's body as text 
+FAIL Consume request's body as blob promise_test: Unhandled rejection with value: undefined
+PASS Consume request's body as arrayBuffer 
+PASS Consume request's body as json 
+FAIL Consume request's body as formData promise_test: Unhandled rejection with value: undefined
+PASS Consume JSON from text: '"null"' 
+PASS Consume JSON from text: '"1"' 
+PASS Consume JSON from text: '"true"' 
+PASS Consume JSON from text: '"\"string\""' 
+PASS Trying to consume bad JSON text as JSON: 'undefined' 
+PASS Trying to consume bad JSON text as JSON: '{' 
+PASS Trying to consume bad JSON text as JSON: 'a' 
+PASS Trying to consume bad JSON text as JSON: '[' 
+

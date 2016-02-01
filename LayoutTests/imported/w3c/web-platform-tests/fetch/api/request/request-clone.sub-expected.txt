@@ -1,0 +1,4 @@
+
+FAIL Check cloning a request ExpectedValuesDict["headers"].keys is not a function. (In 'ExpectedValuesDict["headers"].keys()', 'ExpectedValuesDict["headers"].keys' is undefined)
+PASS Check cloning a request copies the headers 
+

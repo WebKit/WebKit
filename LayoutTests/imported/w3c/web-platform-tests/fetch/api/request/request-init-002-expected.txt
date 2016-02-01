@@ -1,0 +1,7 @@
+
+PASS Initialize Request with headers values 
+FAIL Initialize Request's body with application/octet-binary promise_test: Unhandled rejection with value: undefined
+FAIL Initialize Request's body with multipart/form-data promise_test: Unhandled rejection with value: undefined
+PASS Initialize Request's body with text/plain;charset=UTF-8 
+FAIL Initialize Request's body with application/x-www-form-urlencoded;charset=UTF-8 promise_test: Unhandled rejection with value: "URLSearchParams not supported"
+

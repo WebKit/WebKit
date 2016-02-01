@@ -1,0 +1,6 @@
+
+FAIL Check request values when initialized from Request ExpectedValuesDict["headers"].keys is not a function. (In 'ExpectedValuesDict["headers"].keys()', 'ExpectedValuesDict["headers"].keys' is undefined)
+FAIL Check request values when initialized from Request and init values ExpectedValuesDict["headers"].keys is not a function. (In 'ExpectedValuesDict["headers"].keys()', 'ExpectedValuesDict["headers"].keys' is undefined)
+FAIL Check request values when initialized from url string assert_equals: Check url attribute expected "http://url.test:1234/path/subpath?query=true" but got "http://url.test:1234/path/subpath?query=true#fragment"
+FAIL Check request values when initialized from url and init values ExpectedValuesDict["headers"].keys is not a function. (In 'ExpectedValuesDict["headers"].keys()', 'ExpectedValuesDict["headers"].keys' is undefined)
+
