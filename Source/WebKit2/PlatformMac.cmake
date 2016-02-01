@@ -371,6 +371,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/mac"
     "${WEBKIT2_DIR}/Shared/Plugins/mac"
     "${WEBKIT2_DIR}/Shared/Scrolling"
+    "${WEBKIT2_DIR}/WebProcess/cocoa"
     "${WEBKIT2_DIR}/WebProcess/mac"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/Cocoa"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/mac"

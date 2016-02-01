@@ -1,5 +1,11 @@
 2016-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more unreviewed speculative buildfix after r195755.
+
+        * PlatformMac.cmake:
+
+2016-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed speculative buildfix after r195755.
 
         * PlatformMac.cmake:
