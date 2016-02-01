@@ -704,8 +704,6 @@ sub AttributeShouldBeOnInstance
 
     return 1 if InterfaceRequiresAttributesOnInstance($interface);
     return 1 if $attribute->signature->type =~ /Constructor$/;
-    return 1 if HasCustomGetter($attribute->signature->extendedAttributes);
-    return 1 if HasCustomSetter($attribute->signature->extendedAttributes);
 
     # [Unforgeable] attributes should be on the instance.
     # https://heycam.github.io/webidl/#Unforgeable

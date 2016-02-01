@@ -364,30 +364,29 @@ typedef JSDOMConstructor<JSTestObj> JSTestObjConstructor;
 /* Hash table */
 
 static const struct CompactHashIndex JSTestObjTableIndex[17] = {
-    { 5, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
     { 4, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 2, -1 },
-    { 0, 16 },
-    { -1, -1 },
-    { 1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { 3, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { 0, 16 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
 };
 
 
 static const HashTableValue JSTestObjTableValues[] =
 {
     { "TestSubObjEnabledBySetting", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestSubObjEnabledBySettingConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTestSubObjEnabledBySettingConstructor) } },
-    { "customAttr", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCustomAttr) } },
 #if ENABLE(Condition1)
     { "conditionalAttr4", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr4Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAttr4Constructor) } },
 #else
@@ -406,7 +405,7 @@ static const HashTableValue JSTestObjTableValues[] =
     { "contentDocument", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjContentDocument), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-static const HashTable JSTestObjTable = { 6, 15, true, JSTestObjTableValues, JSTestObjTableIndex };
+static const HashTable JSTestObjTable = { 5, 15, true, JSTestObjTableValues, JSTestObjTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
@@ -525,6 +524,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "stringAttrWithGetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithGetterException) } },
     { "stringAttrWithSetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithSetterException) } },
     { "strictTypeCheckingAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStrictTypeCheckingAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStrictTypeCheckingAttribute) } },
+    { "customAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCustomAttr) } },
 #if ENABLE(Condition4)
     { "jsBuiltinAttribute", Accessor | Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testObjJsBuiltinAttributeCodeGenerator), (intptr_t) (setTestObjJsBuiltinAttributeCodeGenerator) } },
 #else
@@ -1284,7 +1284,9 @@ EncodedJSValue jsTestObjCustomAttr(ExecState* state, JSObject* slotBase, Encoded
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestObj*>(slotBase);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis))
+        return throwGetterTypeError(*state, "TestObj", "customAttr");
     return JSValue::encode(castedThis->customAttr(*state));
 }
 
@@ -2416,10 +2418,11 @@ void setJSTestObjCustomAttr(ExecState* state, JSObject* baseObject, EncodedJSVal
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
-    UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestObj*>(baseObject);
-    UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(state);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        throwSetterTypeError(*state, "TestObj", "customAttr");
+        return;
+    }
     castedThis->setCustomAttr(*state, value);
 }
 

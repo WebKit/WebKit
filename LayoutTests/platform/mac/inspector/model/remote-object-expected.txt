@@ -1596,12 +1596,6 @@ EXPRESSION: window.loadEvent
     "_properties": [
       {
         "_listeners": null,
-        "_name": "clipboardData",
-        "_type": "undefined",
-        "_value": "undefined"
-      },
-      {
-        "_listeners": null,
         "_name": "type",
         "_type": "string",
         "_value": "load"
@@ -1624,6 +1618,12 @@ EXPRESSION: window.loadEvent
         "_name": "eventPhase",
         "_type": "number",
         "_value": "2"
+      },
+      {
+        "_listeners": null,
+        "_name": "bubbles",
+        "_type": "boolean",
+        "_value": "false"
       }
     ],
     "_entries": null
@@ -1905,24 +1905,6 @@ EXPRESSION: input = document.createElement('input'); input.type = 'password'; in
     "_properties": [
       {
         "_listeners": null,
-        "_name": "selectionStart",
-        "_type": "number",
-        "_value": "0"
-      },
-      {
-        "_listeners": null,
-        "_name": "selectionEnd",
-        "_type": "number",
-        "_value": "0"
-      },
-      {
-        "_listeners": null,
-        "_name": "selectionDirection",
-        "_type": "string",
-        "_value": "none"
-      },
-      {
-        "_listeners": null,
         "_name": "accept",
         "_type": "string",
         "_value": ""
@@ -1932,6 +1914,24 @@ EXPRESSION: input = document.createElement('input'); input.type = 'password'; in
         "_name": "alt",
         "_type": "string",
         "_value": ""
+      },
+      {
+        "_listeners": null,
+        "_name": "autocomplete",
+        "_type": "string",
+        "_value": ""
+      },
+      {
+        "_listeners": null,
+        "_name": "autofocus",
+        "_type": "boolean",
+        "_value": "false"
+      },
+      {
+        "_listeners": null,
+        "_name": "defaultChecked",
+        "_type": "boolean",
+        "_value": "false"
       }
     ],
     "_entries": null

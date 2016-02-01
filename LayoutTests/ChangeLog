@@ -1,3 +1,20 @@
+2016-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Move properties that use custom bindings to the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=153735
+
+        Reviewed by Darin Adler.
+
+        Rebaseline / update existing tests now that properties using custom
+        bindings are on the prototype, as expected.
+
+        * fast/mediastream/MediaStream-video-element-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-properties-prototype-expected.txt:
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * js/dom/dom-attributes-on-mismatch-type-expected.txt:
+        * js/dom/dom-attributes-on-mismatch-type.html:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+
 2016-02-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement Fetch API Request

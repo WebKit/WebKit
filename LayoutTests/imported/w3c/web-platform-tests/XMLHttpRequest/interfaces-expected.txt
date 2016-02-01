@@ -70,8 +70,8 @@ PASS XMLHttpRequest interface: operation getResponseHeader(ByteString)
 PASS XMLHttpRequest interface: operation getAllResponseHeaders() 
 PASS XMLHttpRequest interface: operation overrideMimeType(DOMString) 
 FAIL XMLHttpRequest interface: attribute responseType assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL XMLHttpRequest interface: attribute response assert_true: The prototype object must have a property "response" expected true got false
-FAIL XMLHttpRequest interface: attribute responseText assert_true: The prototype object must have a property "responseText" expected true got false
+FAIL XMLHttpRequest interface: attribute response assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL XMLHttpRequest interface: attribute responseText assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL XMLHttpRequest interface: attribute responseXML assert_equals: getter must be Function expected "function" but got "undefined"
 PASS XMLHttpRequest must be primary interface of new XMLHttpRequest() 
 PASS Stringification of new XMLHttpRequest() 
@@ -103,8 +103,8 @@ PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "getAl
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "overrideMimeType" with the proper type (20) 
 PASS XMLHttpRequest interface: calling overrideMimeType(DOMString) on new XMLHttpRequest() with too few arguments must throw TypeError 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "responseType" with the proper type (21) 
-FAIL XMLHttpRequest interface: new XMLHttpRequest() must inherit property "response" with the proper type (22) assert_inherits: property "response" found on object expected in prototype chain
-FAIL XMLHttpRequest interface: new XMLHttpRequest() must inherit property "responseText" with the proper type (23) assert_inherits: property "responseText" found on object expected in prototype chain
+PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "response" with the proper type (22) 
+PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "responseText" with the proper type (23) 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "responseXML" with the proper type (24) 
 PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit property "onloadstart" with the proper type (0) 
 PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit property "onprogress" with the proper type (1) 

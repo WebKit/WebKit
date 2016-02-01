@@ -12,16 +12,16 @@ PASS properties.configurable is true
 PASS properties.enumerable is true
 
 * response
-FAIL xhr.hasOwnProperty(propertyName) should be false. Was true.
-FAIL xhr.__proto__.hasOwnProperty(propertyName) should be true. Was false.
-FAIL properties.configurable should be true. Threw exception TypeError: undefined is not an object (evaluating 'properties.configurable')
-FAIL properties.enumerable should be true. Threw exception TypeError: undefined is not an object (evaluating 'properties.enumerable')
+PASS xhr.hasOwnProperty(propertyName) is false
+PASS xhr.__proto__.hasOwnProperty(propertyName) is true
+PASS properties.configurable is true
+PASS properties.enumerable is true
 
 * responseText
-FAIL xhr.hasOwnProperty(propertyName) should be false. Was true.
-FAIL xhr.__proto__.hasOwnProperty(propertyName) should be true. Was false.
-FAIL properties.configurable should be true. Threw exception TypeError: undefined is not an object (evaluating 'properties.configurable')
-FAIL properties.enumerable should be true. Threw exception TypeError: undefined is not an object (evaluating 'properties.enumerable')
+PASS xhr.hasOwnProperty(propertyName) is false
+PASS xhr.__proto__.hasOwnProperty(propertyName) is true
+PASS properties.configurable is true
+PASS properties.enumerable is true
 
 * responseType
 PASS xhr.hasOwnProperty(propertyName) is false

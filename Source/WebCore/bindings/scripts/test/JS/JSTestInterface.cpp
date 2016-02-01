@@ -151,31 +151,6 @@ private:
 
 typedef JSDOMConstructor<JSTestInterface> JSTestInterfaceConstructor;
 
-/* Hash table */
-
-static const struct CompactHashIndex JSTestInterfaceTableIndex[4] = {
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { 1, -1 },
-};
-
-
-static const HashTableValue JSTestInterfaceTableValues[] =
-{
-#if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr3", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalStr3", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr3) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-};
-
-static const HashTable JSTestInterfaceTable = { 2, 3, true, JSTestInterfaceTableValues, JSTestInterfaceTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestInterfaceConstructorTableValues[] =
@@ -306,6 +281,11 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
+    { "implementsStr3", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsNode", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsNode) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
@@ -317,6 +297,11 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStr2", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr2) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "supplementalStr3", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr3) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -395,7 +380,7 @@ void JSTestInterfacePrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestInterfacePrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, CREATE_METHOD_TABLE(JSTestInterface) };
+const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterface) };
 
 JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestInterface>&& impl)
     : JSDOMWrapper<TestInterface>(structure, globalObject, WTFMove(impl))
@@ -416,15 +401,6 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
 {
     JSTestInterface* thisObject = static_cast<JSTestInterface*>(cell);
     thisObject->JSTestInterface::~JSTestInterface();
-}
-
-bool JSTestInterface::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    auto* thisObject = jsCast<JSTestInterface*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (getStaticValueSlot<JSTestInterface, Base>(state, JSTestInterfaceTable, thisObject, propertyName, slot))
-        return true;
-    return false;
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
@@ -489,7 +465,9 @@ EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* state, JSObject* slotBas
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestInterface*>(slotBase);
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis))
+        return throwGetterTypeError(*state, "TestInterface", "implementsStr3");
     return JSValue::encode(castedThis->implementsStr3(*state));
 }
 
@@ -573,7 +551,9 @@ EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* state, JSObject* slotB
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestInterface*>(slotBase);
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis))
+        return throwGetterTypeError(*state, "TestInterface", "supplementalStr3");
     return JSValue::encode(castedThis->supplementalStr3(*state));
 }
 
@@ -673,10 +653,11 @@ void setJSTestInterfaceImplementsStr3(ExecState* state, JSObject* baseObject, En
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
-    UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestInterface*>(baseObject);
-    UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(state);
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        throwSetterTypeError(*state, "TestInterface", "implementsStr3");
+        return;
+    }
     castedThis->setImplementsStr3(*state, value);
 }
 
@@ -738,10 +719,11 @@ void setJSTestInterfaceSupplementalStr3(ExecState* state, JSObject* baseObject, 
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
-    UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestInterface*>(baseObject);
-    UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(state);
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        throwSetterTypeError(*state, "TestInterface", "supplementalStr3");
+        return;
+    }
     castedThis->setSupplementalStr3(*state, value);
 }
 

@@ -71,9 +71,11 @@ bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
         return true;
     }
 
-    if (const HashTableValue* entry = JSHTMLDocument::info()->staticPropHashTable->entry(propertyName)) {
-        slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());
-        return true;
+    if (auto* table = JSHTMLDocument::info()->staticPropHashTable) {
+        if (const HashTableValue* entry = table->entry(propertyName)) {
+            slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());
+            return true;
+        }
     }
 
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);

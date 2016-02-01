@@ -33,10 +33,10 @@ PASS video.videoTracks[0].language is ""
 PASS video.videoTracks[0].kind is "main"
 
 video.videoTracks[0] properties:
-  track.kind = main
-  track.language = 
   track.id = <UUID>
+  track.kind = main
   track.label = Mock video device
+  track.language = 
   track.selected = true
   track.sourceBuffer = null
 
@@ -47,10 +47,10 @@ PASS video.audioTracks[0].language is ""
 PASS video.audioTracks[0].kind is "main"
 
 video.audioTracks[0] properties:
-  track.kind = main
-  track.language = 
   track.id = <UUID>
+  track.kind = main
   track.label = Mock audio device
+  track.language = 
   track.enabled = true
   track.sourceBuffer = null
 

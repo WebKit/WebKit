@@ -271,7 +271,7 @@ PASS Document interface: iframe.contentDocument must inherit property "applets" 
 PASS Document interface: iframe.contentDocument must inherit property "clear" with the proper type (79) 
 PASS Document interface: iframe.contentDocument must inherit property "captureEvents" with the proper type (80) 
 PASS Document interface: iframe.contentDocument must inherit property "releaseEvents" with the proper type (81) 
-FAIL Document interface: iframe.contentDocument must inherit property "all" with the proper type (82) assert_inherits: property "all" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "all" with the proper type (82) 
 PASS Document interface: iframe.contentDocument must inherit property "getElementById" with the proper type (83) 
 FAIL Document interface: calling getElementById(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -1942,7 +1942,7 @@ PASS HTMLMediaElement interface: document.createElement("video") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "play" with the proper type (32) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "pause" with the proper type (33) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "mediaGroup" with the proper type (34) 
-FAIL HTMLMediaElement interface: document.createElement("video") must inherit property "controller" with the proper type (35) assert_inherits: property "controller" found on object expected in prototype chain
+PASS HTMLMediaElement interface: document.createElement("video") must inherit property "controller" with the proper type (35) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "controls" with the proper type (36) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "volume" with the proper type (37) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "muted" with the proper type (38) 
@@ -1998,7 +1998,7 @@ PASS HTMLMediaElement interface: document.createElement("audio") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "play" with the proper type (32) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "pause" with the proper type (33) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "mediaGroup" with the proper type (34) 
-FAIL HTMLMediaElement interface: document.createElement("audio") must inherit property "controller" with the proper type (35) assert_inherits: property "controller" found on object expected in prototype chain
+PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "controller" with the proper type (35) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "controls" with the proper type (36) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "volume" with the proper type (37) 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "muted" with the proper type (38) 
@@ -2049,7 +2049,7 @@ PASS HTMLMediaElement interface: new Audio() must inherit property "loop" with t
 PASS HTMLMediaElement interface: new Audio() must inherit property "play" with the proper type (32) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "pause" with the proper type (33) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "mediaGroup" with the proper type (34) 
-FAIL HTMLMediaElement interface: new Audio() must inherit property "controller" with the proper type (35) assert_inherits: property "controller" found on object expected in prototype chain
+PASS HTMLMediaElement interface: new Audio() must inherit property "controller" with the proper type (35) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "controls" with the proper type (36) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "volume" with the proper type (37) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "muted" with the proper type (38) 
@@ -2158,7 +2158,7 @@ FAIL HTMLMediaElement interface: attribute loop assert_equals: getter must be Fu
 PASS HTMLMediaElement interface: operation play() 
 PASS HTMLMediaElement interface: operation pause() 
 FAIL HTMLMediaElement interface: attribute mediaGroup assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL HTMLMediaElement interface: attribute controller assert_true: The prototype object must have a property "controller" expected true got false
+FAIL HTMLMediaElement interface: attribute controller assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMediaElement interface: attribute controls assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMediaElement interface: attribute volume assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLMediaElement interface: attribute muted assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2337,9 +2337,9 @@ PASS TextTrack interface object length
 PASS TextTrack interface object name 
 FAIL TextTrack interface: existence and properties of interface prototype object assert_equals: prototype of TextTrack.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 PASS TextTrack interface: existence and properties of interface prototype object's "constructor" property 
-FAIL TextTrack interface: attribute kind assert_true: The prototype object must have a property "kind" expected true got false
+FAIL TextTrack interface: attribute kind assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TextTrack interface: attribute label assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL TextTrack interface: attribute language assert_true: The prototype object must have a property "language" expected true got false
+FAIL TextTrack interface: attribute language assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TextTrack interface: attribute id assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TextTrack interface: attribute inBandMetadataTrackDispatchType assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TextTrack interface: attribute mode assert_equals: getter must be Function expected "function" but got "undefined"
@@ -2350,9 +2350,9 @@ PASS TextTrack interface: operation removeCue(TextTrackCue)
 FAIL TextTrack interface: attribute oncuechange assert_equals: getter must be Function expected "function" but got "undefined"
 PASS TextTrack must be primary interface of document.createElement("track").track 
 PASS Stringification of document.createElement("track").track 
-FAIL TextTrack interface: document.createElement("track").track must inherit property "kind" with the proper type (0) assert_inherits: property "kind" found on object expected in prototype chain
+PASS TextTrack interface: document.createElement("track").track must inherit property "kind" with the proper type (0) 
 PASS TextTrack interface: document.createElement("track").track must inherit property "label" with the proper type (1) 
-FAIL TextTrack interface: document.createElement("track").track must inherit property "language" with the proper type (2) assert_inherits: property "language" found on object expected in prototype chain
+PASS TextTrack interface: document.createElement("track").track must inherit property "language" with the proper type (2) 
 PASS TextTrack interface: document.createElement("track").track must inherit property "id" with the proper type (3) 
 PASS TextTrack interface: document.createElement("track").track must inherit property "inBandMetadataTrackDispatchType" with the proper type (4) 
 PASS TextTrack interface: document.createElement("track").track must inherit property "mode" with the proper type (5) 
@@ -2417,7 +2417,7 @@ PASS TrackEvent interface object length
 PASS TrackEvent interface object name 
 PASS TrackEvent interface: existence and properties of interface prototype object 
 PASS TrackEvent interface: existence and properties of interface prototype object's "constructor" property 
-FAIL TrackEvent interface: attribute track assert_true: The prototype object must have a property "track" expected true got false
+FAIL TrackEvent interface: attribute track assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL TrackEvent must be primary interface of new TrackEvent("addtrack"; {track:document.createElement("track").track}) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
 FAIL Stringification of new TrackEvent("addtrack"; {track:document.createElement("track").track}) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
 FAIL TrackEvent interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "track" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
@@ -2853,9 +2853,9 @@ FAIL HTMLInputElement interface: operation reportValidity() assert_own_property:
 PASS HTMLInputElement interface: operation setCustomValidity(DOMString) 
 FAIL HTMLInputElement interface: attribute labels assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLInputElement interface: operation select() 
-FAIL HTMLInputElement interface: attribute selectionStart assert_true: The prototype object must have a property "selectionStart" expected true got false
-FAIL HTMLInputElement interface: attribute selectionEnd assert_true: The prototype object must have a property "selectionEnd" expected true got false
-FAIL HTMLInputElement interface: attribute selectionDirection assert_true: The prototype object must have a property "selectionDirection" expected true got false
+FAIL HTMLInputElement interface: attribute selectionStart assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLInputElement interface: attribute selectionEnd assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLInputElement interface: attribute selectionDirection assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLInputElement interface: operation setRangeText(DOMString) 
 PASS HTMLInputElement interface: operation setRangeText(DOMString,unsigned long,unsigned long,SelectionMode) 
 FAIL HTMLInputElement interface: operation setSelectionRange(unsigned long,unsigned long,DOMString) assert_equals: property has wrong .length expected 2 but got 0
@@ -2916,9 +2916,9 @@ PASS HTMLInputElement interface: document.createElement("input") must inherit pr
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on document.createElement("input") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "labels" with the proper type (48) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "select" with the proper type (49) 
-FAIL HTMLInputElement interface: document.createElement("input") must inherit property "selectionStart" with the proper type (50) assert_inherits: property "selectionStart" found on object expected in prototype chain
-FAIL HTMLInputElement interface: document.createElement("input") must inherit property "selectionEnd" with the proper type (51) assert_inherits: property "selectionEnd" found on object expected in prototype chain
-FAIL HTMLInputElement interface: document.createElement("input") must inherit property "selectionDirection" with the proper type (52) assert_inherits: property "selectionDirection" found on object expected in prototype chain
+PASS HTMLInputElement interface: document.createElement("input") must inherit property "selectionStart" with the proper type (50) 
+PASS HTMLInputElement interface: document.createElement("input") must inherit property "selectionEnd" with the proper type (51) 
+PASS HTMLInputElement interface: document.createElement("input") must inherit property "selectionDirection" with the proper type (52) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "setRangeText" with the proper type (53) 
 PASS HTMLInputElement interface: calling setRangeText(DOMString) on document.createElement("input") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "setRangeText" with the proper type (54) 
@@ -3422,7 +3422,7 @@ PASS HTMLTemplateElement interface object length
 PASS HTMLTemplateElement interface object name 
 PASS HTMLTemplateElement interface: existence and properties of interface prototype object 
 PASS HTMLTemplateElement interface: existence and properties of interface prototype object's "constructor" property 
-FAIL HTMLTemplateElement interface: attribute content assert_true: The prototype object must have a property "content" expected true got false
+FAIL HTMLTemplateElement interface: attribute content assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLCanvasElement interface: existence and properties of interface object assert_equals: class string of HTMLCanvasElement expected "[object Function]" but got "[object HTMLCanvasElementConstructor]"
 PASS HTMLCanvasElement interface object length 
 PASS HTMLCanvasElement interface object name 
@@ -3482,8 +3482,8 @@ FAIL CanvasRenderingContext2D interface: operation resetTransform() assert_own_p
 FAIL CanvasRenderingContext2D interface: attribute globalAlpha assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL CanvasRenderingContext2D interface: attribute globalCompositeOperation assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL CanvasRenderingContext2D interface: attribute imageSmoothingEnabled assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL CanvasRenderingContext2D interface: attribute strokeStyle assert_true: The prototype object must have a property "strokeStyle" expected true got false
-FAIL CanvasRenderingContext2D interface: attribute fillStyle assert_true: The prototype object must have a property "fillStyle" expected true got false
+FAIL CanvasRenderingContext2D interface: attribute strokeStyle assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL CanvasRenderingContext2D interface: attribute fillStyle assert_equals: getter must be Function expected "function" but got "undefined"
 PASS CanvasRenderingContext2D interface: operation createLinearGradient(double,double,double,double) 
 PASS CanvasRenderingContext2D interface: operation createRadialGradient(double,double,double,double,double,double) 
 PASS CanvasRenderingContext2D interface: operation createPattern(CanvasImageSource,DOMString) 
@@ -3569,8 +3569,8 @@ FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalAlpha" with the proper type (13) 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalCompositeOperation" with the proper type (14) 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "imageSmoothingEnabled" with the proper type (15) 
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "strokeStyle" with the proper type (16) assert_inherits: property "strokeStyle" found on object expected in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillStyle" with the proper type (17) assert_inherits: property "fillStyle" found on object expected in prototype chain
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "strokeStyle" with the proper type (16) Unrecognized type [object Object],[object Object],[object Object]
+FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillStyle" with the proper type (17) Unrecognized type [object Object],[object Object],[object Object]
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createLinearGradient" with the proper type (18) 
 PASS CanvasRenderingContext2D interface: calling createLinearGradient(double,double,double,double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "createRadialGradient" with the proper type (19) 
@@ -3759,7 +3759,7 @@ FAIL DataTransfer interface: attribute dropEffect assert_equals: getter must be 
 FAIL DataTransfer interface: attribute effectAllowed assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL DataTransfer interface: attribute items assert_true: The prototype object must have a property "items" expected true got false
 PASS DataTransfer interface: operation setDragImage(Element,long,long) 
-FAIL DataTransfer interface: attribute types assert_true: The prototype object must have a property "types" expected true got false
+FAIL DataTransfer interface: attribute types assert_equals: getter must be Function expected "function" but got "undefined"
 PASS DataTransfer interface: operation getData(DOMString) 
 PASS DataTransfer interface: operation setData(DOMString,DOMString) 
 PASS DataTransfer interface: operation clearData(DOMString) 
@@ -4080,7 +4080,7 @@ PASS History interface object name
 PASS History interface: existence and properties of interface prototype object 
 PASS History interface: existence and properties of interface prototype object's "constructor" property 
 FAIL History interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
-FAIL History interface: attribute state assert_true: The prototype object must have a property "state" expected true got false
+FAIL History interface: attribute state assert_equals: getter must be Function expected "function" but got "undefined"
 PASS History interface: operation go(long) 
 PASS History interface: operation back() 
 PASS History interface: operation forward() 
@@ -4089,7 +4089,7 @@ PASS History interface: operation replaceState(any,DOMString,DOMString)
 PASS History must be primary interface of window.history 
 PASS Stringification of window.history 
 FAIL History interface: window.history must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
-FAIL History interface: window.history must inherit property "state" with the proper type (1) assert_inherits: property "state" found on object expected in prototype chain
+PASS History interface: window.history must inherit property "state" with the proper type (1) 
 PASS History interface: window.history must inherit property "go" with the proper type (2) 
 PASS History interface: calling go(long) on window.history with too few arguments must throw TypeError 
 PASS History interface: window.history must inherit property "back" with the proper type (3) 
@@ -4129,10 +4129,10 @@ PASS PopStateEvent interface object length
 PASS PopStateEvent interface object name 
 PASS PopStateEvent interface: existence and properties of interface prototype object 
 PASS PopStateEvent interface: existence and properties of interface prototype object's "constructor" property 
-FAIL PopStateEvent interface: attribute state assert_true: The prototype object must have a property "state" expected true got false
+FAIL PopStateEvent interface: attribute state assert_equals: getter must be Function expected "function" but got "undefined"
 PASS PopStateEvent must be primary interface of new PopStateEvent("popstate", { data: {} }) 
 PASS Stringification of new PopStateEvent("popstate", { data: {} }) 
-FAIL PopStateEvent interface: new PopStateEvent("popstate", { data: {} }) must inherit property "state" with the proper type (0) assert_inherits: property "state" found on object expected in prototype chain
+PASS PopStateEvent interface: new PopStateEvent("popstate", { data: {} }) must inherit property "state" with the proper type (0) 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "type" with the proper type (0) 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "target" with the proper type (1) 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "currentTarget" with the proper type (2) 
@@ -4360,7 +4360,7 @@ PASS MessageEvent interface object length
 PASS MessageEvent interface object name 
 PASS MessageEvent interface: existence and properties of interface prototype object 
 PASS MessageEvent interface: existence and properties of interface prototype object's "constructor" property 
-FAIL MessageEvent interface: attribute data assert_true: The prototype object must have a property "data" expected true got false
+FAIL MessageEvent interface: attribute data assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MessageEvent interface: attribute origin assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MessageEvent interface: attribute lastEventId assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL MessageEvent interface: attribute source assert_equals: getter must be Function expected "function" but got "undefined"

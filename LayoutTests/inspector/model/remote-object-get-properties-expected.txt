@@ -37,11 +37,9 @@ type: object
 description: Event
 
 OWN PROPERTIES:
-    clipboardData
     __proto__
 
 DISPLAYABLE PROPERTIES:
-    clipboardData
     type
     target
     currentTarget
@@ -53,10 +51,10 @@ DISPLAYABLE PROPERTIES:
     srcElement
     returnValue
     cancelBubble
+    clipboardData
     __proto__
 
 ALL PROPERTIES:
-    clipboardData
     constructor
     type
     target
@@ -69,6 +67,7 @@ ALL PROPERTIES:
     srcElement
     returnValue
     cancelBubble
+    clipboardData
     NONE
     CAPTURING_PHASE
     AT_TARGET
