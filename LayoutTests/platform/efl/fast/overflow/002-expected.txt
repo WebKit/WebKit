@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 213x312 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 209x308
-          RenderTableRow {TR} at (0,2) size 209x304
-            RenderTableCell {TD} at (2,2) size 205x304 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 212x312 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 208x308
+          RenderTableRow {TR} at (0,2) size 208x304
+            RenderTableCell {TD} at (2,2) size 204x304 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
 layer at (14,14) size 200x300 clip at (14,14) size 185x300 scrollHeight 432
   RenderBlock {DIV} at (2,2) size 200x300
     RenderText {#text} at (0,0) size 137x17

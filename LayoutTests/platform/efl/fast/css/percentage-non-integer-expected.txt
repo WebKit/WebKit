@@ -57,9 +57,9 @@ layer at (0,0) size 800x585
       RenderBlock (anonymous) at (0,100) size 784x18
         RenderBR {BR} at (0,0) size 0x17
 layer at (8,126) size 293x20
-  RenderTable {TABLE} at (0,0) size 294x20
-    RenderTableSection {TBODY} at (0,0) size 294x20
-      RenderTableRow {TR} at (0,0) size 294x20
+  RenderTable {TABLE} at (0,0) size 293x20
+    RenderTableSection {TBODY} at (0,0) size 293x20
+      RenderTableRow {TR} at (0,0) size 293x20
         RenderTableCell {TD} at (0,10) size 12x0 [bgcolor=#00FF00] [r=0 c=0 rs=1 cs=1]
         RenderTableCell {TD} at (11,10) size 11x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
         RenderTableCell {TD} at (21,10) size 14x0 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
@@ -79,7 +79,7 @@ layer at (8,126) size 293x20
         RenderTableCell {TD} at (225,10) size 29x0 [bgcolor=#00FF00] [r=0 c=16 rs=1 cs=1]
         RenderTableCell {TD} at (253,10) size 11x0 [bgcolor=#000000] [r=0 c=17 rs=1 cs=1]
         RenderTableCell {TD} at (263,10) size 31x0 [bgcolor=#00FF00] [r=0 c=18 rs=1 cs=1]
-        RenderTableCell {TD} at (293,10) size 1x0 [r=0 c=19 rs=1 cs=1]
+        RenderTableCell {TD} at (293,10) size 0x0 [r=0 c=19 rs=1 cs=1]
 layer at (8,126) size 1000x20
   RenderTable {TABLE} at (0,0) size 1000x20
     RenderTableSection {TBODY} at (0,0) size 1000x20

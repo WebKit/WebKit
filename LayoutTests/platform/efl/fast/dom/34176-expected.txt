@@ -268,12 +268,12 @@ layer at (0,0) size 785x1440
                 RenderText {#text} at (742,0) size 27x17
                   text run at (742,0) width 27: "Test"
           RenderBlock (anonymous) at (0,18) size 769x24
-            RenderTable {TABLE} at (754,0) size 15x24
-              RenderTableSection {TBODY} at (0,0) size 15x24
-                RenderTableRow {TR} at (0,2) size 15x20
-                  RenderTableCell {TD} at (2,2) size 11x20 [r=0 c=0 rs=1 cs=1]
-                    RenderText {#text} at (1,1) size 9x17
-                      text run at (1,1) width 9: "a"
+            RenderTable {TABLE} at (755,0) size 14x24
+              RenderTableSection {TBODY} at (0,0) size 14x24
+                RenderTableRow {TR} at (0,2) size 14x20
+                  RenderTableCell {TD} at (2,2) size 10x20 [r=0 c=0 rs=1 cs=1]
+                    RenderText {#text} at (1,1) size 8x17
+                      text run at (1,1) width 8: "a"
           RenderBlock (anonymous) at (0,42) size 769x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {EM} at (0,0) size 0x0

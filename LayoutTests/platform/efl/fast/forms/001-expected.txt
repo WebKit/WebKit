@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,58) size 784x45 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 780x40
           RenderTableRow {TR} at (0,0) size 780x40
-            RenderTableCell {TD} at (0,0) size 91x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 90x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,1) size 84x38 [bgcolor=#FFFFFF]
                 RenderBlock (anonymous) at (15,10) size 28x18
                   RenderText at (0,0) size 28x17
@@ -19,21 +19,21 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 784x24 [border: (2px outset #808080)]
           RenderTableSection {TBODY} at (2,2) size 780x20
             RenderTableRow {TR} at (0,0) size 780x20
-              RenderTableCell {TD} at (0,0) size 19x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 18x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderBlock {INPUT} at (3,4) size 12x12
               RenderTableCell {TD} at (18,9) size 762x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
       RenderBlock {P} at (0,158) size 784x25
         RenderTable {TABLE} at (0,0) size 784x24 [border: (2px outset #808080)]
           RenderTableSection {TBODY} at (2,2) size 780x20
             RenderTableRow {TR} at (0,0) size 780x20
-              RenderTableCell {TD} at (0,0) size 19x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 18x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderBlock {INPUT} at (3,4) size 12x12
               RenderTableCell {TD} at (18,9) size 762x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
       RenderBlock {P} at (0,198) size 784x51
         RenderTable {TABLE} at (0,0) size 784x50 [border: (2px outset #808080)]
           RenderTableSection {TBODY} at (2,2) size 780x46
             RenderTableRow {TR} at (0,0) size 780x46
-              RenderTableCell {TD} at (0,0) size 69x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 68x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 62x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 28x18
                     RenderText at (0,0) size 28x17
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 784x91 [border: (2px outset #808080)]
           RenderTableSection {TBODY} at (2,2) size 780x87
             RenderTableRow {TR} at (0,0) size 780x87
-              RenderTableCell {TD} at (0,0) size 127x87 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 126x87 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderButton {INPUT} at (3,1) size 120x85 [bgcolor=#C0C0C0] [border: (40px solid #FF0000)]
                   RenderBlock (anonymous) at (46,42) size 28x18
                     RenderText at (0,0) size 28x17
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,91) size 784x91 [border: (2px outset #808080)]
           RenderTableSection {TBODY} at (2,2) size 780x87
             RenderTableRow {TR} at (0,0) size 780x87
-              RenderTableCell {TD} at (0,0) size 193x87 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 192x87 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderButton {INPUT} at (3,1) size 186x85 [bgcolor=#C0C0C0] [border: (40px solid #FF0000)]
                   RenderBlock (anonymous) at (46,42) size 94x18
                     RenderText at (0,0) size 94x17

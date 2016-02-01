@@ -11,11 +11,11 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,0) size 784x50
-          RenderTable {TABLE} at (0,0) size 100x50
-            RenderTableSection {TBODY} at (0,0) size 100x50
-              RenderTableRow {TR} at (0,2) size 100x46
-                RenderTableCell {TD} at (2,24) size 3x2 [r=0 c=0 rs=1 cs=1]
-                RenderTableCell {TD} at (6,2) size 92x46 [r=0 c=1 rs=1 cs=1]
+          RenderTable {TABLE} at (0,0) size 99x50
+            RenderTableSection {TBODY} at (0,0) size 99x50
+              RenderTableRow {TR} at (0,2) size 99x46
+                RenderTableCell {TD} at (2,24) size 2x2 [r=0 c=0 rs=1 cs=1]
+                RenderTableCell {TD} at (6,2) size 91x46 [r=0 c=1 rs=1 cs=1]
                   RenderButton {INPUT} at (3,3) size 85x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                     RenderBlock (anonymous) at (17,10) size 51x18
                       RenderText at (0,0) size 51x17

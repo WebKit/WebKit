@@ -22,13 +22,13 @@ layer at (0,0) size 800x600
           text run at (0,36) width 247: "padding on either side of the box stack."
 layer at (8,148) size 240x340
   RenderBlock (positioned) {DIV} at (8,148) size 240x340 [border: (20px solid #000000)]
-    RenderTable {TABLE} at (20,20) size 101x100
-      RenderTableSection {TBODY} at (0,0) size 101x100
-        RenderTableRow {TR} at (0,0) size 101x100
-          RenderTableCell {TD} at (0,0) size 101x100 [r=0 c=0 rs=1 cs=1]
-            RenderBlock {DIV} at (0,0) size 101x100 [bgcolor=#808000]
+    RenderTable {TABLE} at (20,20) size 100x100
+      RenderTableSection {TBODY} at (0,0) size 100x100
+        RenderTableRow {TR} at (0,0) size 100x100
+          RenderTableCell {TD} at (0,0) size 100x100 [r=0 c=0 rs=1 cs=1]
+            RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#808000]
 layer at (28,268) size 100x100
-  RenderBlock (positioned) {DIV} at (20,120) size 101x100 [bgcolor=#008000]
+  RenderBlock (positioned) {DIV} at (20,120) size 100x100 [bgcolor=#008000]
 layer at (28,368) size 100x100
   RenderBlock (positioned) {DIV} at (20,220) size 100x100 [bgcolor=#808000]
 layer at (300,148) size 340x240
