@@ -352,9 +352,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
             this.replaceSubview(this._currentTimelineOverview, newTimelineOverview);
 
             this._currentTimelineOverview = newTimelineOverview;
-            this._currentTimelineOverview.shown();
 
             this._updateTimelineOverviewHeight();
+            this._currentTimelineOverview.shown();
         }
 
         if (timelineView) {

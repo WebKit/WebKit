@@ -1,5 +1,19 @@
 2016-02-01  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Rendering Frames timeline draws all frame bars at minimum height
+        https://bugs.webkit.org/show_bug.cgi?id=153736
+        <rdar://problem/21946301>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        Update the new timeline overview's height before it's shown. Showing the
+        overview causes the rendering frames graph to do a layout, which requires
+        the height of the containing view to be a valid value.
+
+2016-02-01  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: DataGridNode should support adding go-to arrow buttons to any cell
         https://bugs.webkit.org/show_bug.cgi?id=153733
         <rdar://problem/24431813>
