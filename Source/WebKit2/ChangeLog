@@ -1,3 +1,24 @@
+2016-02-01  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Get rid of WK_ macros for initializers
+        https://bugs.webkit.org/show_bug.cgi?id=153744
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKFoundation.h: Removed definitions of WK_DESIGNATED_INITIALIZER and
+          WK_UNAVAILABLE.
+
+        * mac/postprocess-framework-headers.sh: Removed rules for rewriting the above macros. Also
+          removed Foundation import that became unnecessary, and definitions that were only needed
+          before iOS 8.
+
+        Replaced instances of the above macros with their expansions.
+
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKSecurityOrigin.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+
 2016-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more unreviewed speculative buildfix after r195755.

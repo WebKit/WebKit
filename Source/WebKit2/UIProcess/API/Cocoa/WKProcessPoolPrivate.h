@@ -32,7 +32,7 @@
 @protocol _WKDownloadDelegate;
 
 @interface WKProcessPool ()
-- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration __attribute__((objc_method_family(init))) WK_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration __attribute__((objc_method_family(init))) NS_DESIGNATED_INITIALIZER;
 @end
 
 @interface WKProcessPool (WKPrivate)

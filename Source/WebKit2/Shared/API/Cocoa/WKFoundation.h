@@ -63,27 +63,8 @@
 
 #endif
 
-#ifndef __NSi_8_3
-#define __NSi_8_3 introduced=8.3
-#endif
-
 #ifdef __OBJC__
-#import <Foundation/Foundation.h>
-
-#ifdef NS_DESIGNATED_INITIALIZER
-#define WK_DESIGNATED_INITIALIZER NS_DESIGNATED_INITIALIZER
-#else
-#define WK_DESIGNATED_INITIALIZER
-#endif
-
-#ifdef NS_UNAVAILABLE
-#define WK_UNAVAILABLE NS_UNAVAILABLE
-#else
-#define WK_UNAVAILABLE
-#endif
-
 #define WK_NULLABLE_SPECIFIER __nullable
-
 #endif
 
 #endif

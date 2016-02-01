@@ -47,7 +47,7 @@ WK_CLASS_AVAILABLE(10_11, 9_0)
 */
 + (WKWebsiteDataStore *)nonPersistentDataStore;
 
-- (instancetype)init WK_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
 /*! @abstract Whether the data store is persistent or not. */
 @property (nonatomic, readonly, getter=isPersistent) BOOL persistent;

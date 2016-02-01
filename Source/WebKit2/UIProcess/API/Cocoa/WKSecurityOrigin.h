@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 WK_CLASS_AVAILABLE(10_11, 9_0)
 @interface WKSecurityOrigin : NSObject
 
-- (instancetype)init WK_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
 /*! @abstract The security origin's protocol.
  */
