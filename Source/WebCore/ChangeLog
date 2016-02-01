@@ -1,3 +1,9 @@
+2016-02-01  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix a build after r195899.
+
+        * dom/EventContext.h: Enabled TouchEventContext type trait specialization on iOS.
+
 2016-02-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement Fetch API Request

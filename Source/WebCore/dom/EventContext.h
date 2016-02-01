@@ -160,7 +160,7 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MouseOrFocusEventContext)
 static bool isType(const WebCore::EventContext& context) { return context.isMouseOrFocusEventContext(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TouchEventContext)
 static bool isType(const WebCore::EventContext& context) { return context.isTouchEventContext(); }
 SPECIALIZE_TYPE_TRAITS_END()
