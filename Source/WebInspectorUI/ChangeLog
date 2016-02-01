@@ -1,3 +1,22 @@
+2016-02-01  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: DataGridNode should support adding go-to arrow buttons to any cell
+        https://bugs.webkit.org/show_bug.cgi?id=153733
+        <rdar://problem/24431813>
+
+        Reviewed by Brian Burg.
+
+        Provide a way to add go-to arrow buttons to any grid cell from within a
+        DataGridNode subclass's implementation of createCellContent.
+
+        * UserInterface/Views/DataGrid.js:
+        New event type, GoToArrowClicked.
+        (WebInspector.DataGridNode.prototype.createGoToArrowButton.buttonClicked):
+        (WebInspector.DataGridNode.prototype.createGoToArrowButton):
+        Adds a go-to arrow button to the cell's content element. Clicking the button
+        dispatches an event on the DataGrid, with event data containing the
+        DataGridNode and identifier of the cell containing the arrow button.
+
 2016-01-31  Jeremy Jones  <jeremyj@apple.com>
 
         Add resize event for HTMLMediaElement
