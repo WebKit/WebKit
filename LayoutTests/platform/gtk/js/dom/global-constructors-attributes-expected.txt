@@ -1018,11 +1018,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'ProgressEvent').hasOwnProperty('ge
 PASS Object.getOwnPropertyDescriptor(global, 'ProgressEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ProgressEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ProgressEvent').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'Request').value is Request
-PASS Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Request').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'Request').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').value is RGBColor
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('set') is false
@@ -1073,6 +1068,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Rect').hasOwnProperty('get') is fa
 PASS Object.getOwnPropertyDescriptor(global, 'Rect').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Rect').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Rect').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'Request').value is Request
+PASS Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Request').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'Request').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SQLException').value is SQLException
 PASS Object.getOwnPropertyDescriptor(global, 'SQLException').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SQLException').hasOwnProperty('set') is false
