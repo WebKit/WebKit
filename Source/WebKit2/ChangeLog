@@ -1,3 +1,12 @@
+2016-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Stop linking to PassKit
+        https://bugs.webkit.org/show_bug.cgi?id=153746
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKit.xcconfig:
+
 2016-02-01  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Get rid of WK_ macros for initializers

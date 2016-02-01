@@ -36,8 +36,8 @@ DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT_FRAMEWORKS_DIR);
 FRAMEWORK_AND_LIBRARY_LDFLAGS_BASE_ios = -lobjc -framework AssertionServices -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CorePDF -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework UIKit -framework OpenGLES -framework MobileCoreServices -lMobileGestalt $(FRAMEWORK_AND_LIBRARY_LDFLAGS_PLATFORM_$(PLATFORM_NAME));
 FRAMEWORK_AND_LIBRARY_LDFLAGS[sdk=iphoneos*] = $(FRAMEWORK_AND_LIBRARY_LDFLAGS_BASE_ios) -framework IOSurface;
 FRAMEWORK_AND_LIBRARY_LDFLAGS[sdk=iphonesimulator*] = $(FRAMEWORK_AND_LIBRARY_LDFLAGS_BASE_ios);
-FRAMEWORK_AND_LIBRARY_LDFLAGS_PLATFORM_iphoneos = -framework PassKit;
-FRAMEWORK_AND_LIBRARY_LDFLAGS_PLATFORM_iphonesimulator = -framework PassKit;
+FRAMEWORK_AND_LIBRARY_LDFLAGS_PLATFORM_iphoneos = ;
+FRAMEWORK_AND_LIBRARY_LDFLAGS_PLATFORM_iphonesimulator = ;
 FRAMEWORK_AND_LIBRARY_LDFLAGS[sdk=macosx*] = -framework ApplicationServices -framework Carbon -framework Cocoa -framework CoreServices -framework IOKit -framework CoreAudio -framework IOSurface -framework OpenGL;
 
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
