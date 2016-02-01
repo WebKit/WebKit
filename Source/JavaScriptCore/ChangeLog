@@ -1,3 +1,9 @@
+2016-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix.
+
+        * dfg/DFGCommon.h: FTL_USES_B3 should be false if FTL JIT is disabled.
+
 2016-01-31  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove unused definition of HAVE_HEADER_DETECTION_H
