@@ -482,26 +482,30 @@ void CachedResource::removeClient(CachedResourceClient* client)
         didRemoveClient(client);
     }
 
-    bool deleted = deleteIfPossible();
-    if (allowsCaching() && !deleted && !hasClients()) {
-        auto& memoryCache = MemoryCache::singleton();
-        if (inCache()) {
-            memoryCache.removeFromLiveResourcesSize(*this);
-            memoryCache.removeFromLiveDecodedResourcesList(*this);
-        }
-        if (!m_switchingClientsToRevalidatedResource)
-            allClientsRemoved();
-        destroyDecodedDataIfNeeded();
-        if (response().cacheControlContainsNoStore() && url().protocolIs("https")) {
-            // RFC2616 14.9.2:
-            // "no-store: ... MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
-            // "... History buffers MAY store such responses as part of their normal operation."
-            // We allow non-secure content to be reused in history, but we do not allow secure content to be reused.
-            memoryCache.remove(*this);
-        }
-        memoryCache.pruneSoon();
+    if (deleteIfPossible()) {
+        // `this` object is dead here.
+        return;
     }
-    // This object may be dead here.
+
+    if (!allowsCaching() || hasClients())
+        return;
+
+    auto& memoryCache = MemoryCache::singleton();
+    if (inCache()) {
+        memoryCache.removeFromLiveResourcesSize(*this);
+        memoryCache.removeFromLiveDecodedResourcesList(*this);
+    }
+    if (!m_switchingClientsToRevalidatedResource)
+        allClientsRemoved();
+    destroyDecodedDataIfNeeded();
+    if (response().cacheControlContainsNoStore() && url().protocolIs("https")) {
+        // RFC2616 14.9.2:
+        // "no-store: ... MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
+        // "... History buffers MAY store such responses as part of their normal operation."
+        // We allow non-secure content to be reused in history, but we do not allow secure content to be reused.
+        memoryCache.remove(*this);
+    }
+    memoryCache.pruneSoon();
 }
 
 void CachedResource::destroyDecodedDataIfNeeded()

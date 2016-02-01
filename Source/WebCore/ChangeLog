@@ -1,3 +1,18 @@
+2016-02-01  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r195770): Use-after-free in ResourceLoaderOptions::cachingPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=153727
+        <rdar://problem/24429886>
+
+        Reviewed by Chris Dumez.
+
+        The `this` object may be freed after calling deleteIfPossible(). Make the early-return-if-
+        deleted more explicit, and only check allowsCaching() after the deleteIfPossible() return
+        value check.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::removeClient):
+
 2016-02-01  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix a build after r195899.
