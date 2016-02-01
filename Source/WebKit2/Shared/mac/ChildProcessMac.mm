@@ -41,10 +41,8 @@
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
-#ifdef __has_include
-#if __has_include(<HIServices/ProcessesPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <HIServices/ProcessesPriv.h>
-#endif
 #endif
 
 typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );

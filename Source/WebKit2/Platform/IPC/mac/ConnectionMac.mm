@@ -41,7 +41,7 @@
 #include "ProcessAssertion.h"
 #include <UIKit/UIAccessibility.h>
 
-#if __has_include(<AXRuntime/AXNotificationConstants.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <AXRuntime/AXDefines.h>
 #include <AXRuntime/AXNotificationConstants.h>
 #else
@@ -50,7 +50,7 @@
 
 #endif
 
-#if __has_include(<HIServices/AccessibilityPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <HIServices/AccessibilityPriv.h>
 #else
 typedef enum {

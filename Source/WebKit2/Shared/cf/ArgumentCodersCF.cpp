@@ -36,14 +36,14 @@
 #import <Foundation/Foundation.h>
 #endif
 
-#if defined(__has_include) && __has_include(<Security/SecIdentityPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <Security/SecIdentityPriv.h>
 #endif
 
 extern "C" SecIdentityRef SecIdentityCreate(CFAllocatorRef allocator, SecCertificateRef certificate, SecKeyRef privateKey);
 
 #if PLATFORM(IOS)
-#if defined(__has_include) && __has_include(<Security/SecKeyPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <Security/SecKeyPriv.h>
 #endif
 
@@ -51,7 +51,7 @@ extern "C" OSStatus SecKeyFindWithPersistentRef(CFDataRef persistentRef, SecKeyR
 #endif
 
 #if HAVE(SEC_ACCESS_CONTROL)
-#if defined(__has_include) && __has_include(<Security/SecAccessControlPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <Security/SecAccessControlPriv.h>
 #endif
 

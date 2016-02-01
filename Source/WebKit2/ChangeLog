@@ -1,5 +1,21 @@
 2016-02-01  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Remove some more __has_include guards
+        https://bugs.webkit.org/show_bug.cgi?id=153774
+
+        Reviewed by Tim Horton.
+
+        Guard private header includes with #if USE(APPLE_INTERNAL_SDK) rather than with __has_include.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        * Platform/IPC/mac/ImportanceAssertion.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        * Shared/mac/ChildProcessMac.mm:
+        * Shared/mac/SecItemShim.cpp:
+
+2016-02-01  Dan Bernstein  <mitz@apple.com>
+
         [Xcode] Let Xcode know that the WebKit XPC service products are XPC services
         https://bugs.webkit.org/show_bug.cgi?id=153773
 

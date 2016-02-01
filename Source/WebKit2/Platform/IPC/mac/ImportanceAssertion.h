@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#if __has_include(<libproc_internal.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <libproc_internal.h>
 #endif
 

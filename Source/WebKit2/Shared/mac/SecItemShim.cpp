@@ -41,7 +41,7 @@
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 
-#if __has_include(<CFNetwork/CFURLConnectionPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <CFNetwork/CFURLConnectionPriv.h>
 #else
 struct _CFNFrameworksStubs {

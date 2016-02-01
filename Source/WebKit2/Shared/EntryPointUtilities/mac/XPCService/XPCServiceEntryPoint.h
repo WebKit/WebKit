@@ -32,7 +32,7 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 
 #if HAVE(VOUCHERS)
-#if __has_include(<os/voucher_private.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <os/voucher_private.h>
 #else
 extern "C" OS_NOTHROW void voucher_replace_default_voucher(void);
