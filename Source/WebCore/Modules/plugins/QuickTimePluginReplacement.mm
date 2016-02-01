@@ -82,36 +82,36 @@ PassRefPtr<PluginReplacement> QuickTimePluginReplacement::create(HTMLPlugInEleme
 
 bool QuickTimePluginReplacement::supportsMimeType(const String& mimeType)
 {
-    static const char* types[] = {
-        "application/vnd.apple.mpegurl", "application/x-mpegurl", "audio/3gpp", "audio/3gpp2", "audio/aac", "audio/aiff",
-        "audio/amr", "audio/basic", "audio/mp3", "audio/mp4", "audio/mpeg", "audio/mpeg3", "audio/mpegurl", "audio/scpls",
-        "audio/wav", "audio/x-aac", "audio/x-aiff", "audio/x-caf", "audio/x-m4a", "audio/x-m4b", "audio/x-m4p",
-        "audio/x-m4r", "audio/x-mp3", "audio/x-mpeg", "audio/x-mpeg3", "audio/x-mpegurl", "audio/x-scpls", "audio/x-wav",
-        "video/3gpp", "video/3gpp2", "video/mp4", "video/quicktime", "video/x-m4v"
-    };
-    static NeverDestroyed<HashSet<String>> typeHash;
-    if (!typeHash.get().size()) {
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(types); ++i)
-            typeHash.get().add(types[i]);
-    }
-
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> typeHash = []() {
+        static const char* const types[] = {
+            "application/vnd.apple.mpegurl", "application/x-mpegurl", "audio/3gpp", "audio/3gpp2", "audio/aac", "audio/aiff",
+            "audio/amr", "audio/basic", "audio/mp3", "audio/mp4", "audio/mpeg", "audio/mpeg3", "audio/mpegurl", "audio/scpls",
+            "audio/wav", "audio/x-aac", "audio/x-aiff", "audio/x-caf", "audio/x-m4a", "audio/x-m4b", "audio/x-m4p",
+            "audio/x-m4r", "audio/x-mp3", "audio/x-mpeg", "audio/x-mpeg3", "audio/x-mpegurl", "audio/x-scpls", "audio/x-wav",
+            "video/3gpp", "video/3gpp2", "video/mp4", "video/quicktime", "video/x-m4v"
+        };
+        HashSet<String, ASCIICaseInsensitiveHash> set;
+        for (auto& type : types)
+            set.add(type);
+        return set;
+    }();
     return typeHash.get().contains(mimeType);
 }
 
 bool QuickTimePluginReplacement::supportsFileExtension(const String& extension)
 {
-    static const char* extensions[] = {
-        "3g2", "3gp", "3gp2", "3gpp", "aac", "adts", "aif", "aifc", "aiff", "AMR", "au", "bwf", "caf", "cdda", "m3u",
-        "m3u8", "m4a", "m4b", "m4p", "m4r", "m4v", "mov", "mp3", "mp3", "mp4", "mpeg", "mpg", "mqv", "pls", "qt",
-        "snd", "swa", "ts", "ulw", "wav"
-    };
-    static NeverDestroyed<HashSet<String>> extensionHash;
-    if (!extensionHash.get().size()) {
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(extensions); ++i)
-            extensionHash.get().add(extensions[i]);
-    }
-
-    return extensionHash.get().contains(extension);
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> extensionSet = []() {
+        static const char* const extensions[] = {
+            "3g2", "3gp", "3gp2", "3gpp", "aac", "adts", "aif", "aifc", "aiff", "AMR", "au", "bwf", "caf", "cdda", "m3u",
+            "m3u8", "m4a", "m4b", "m4p", "m4r", "m4v", "mov", "mp3", "mp3", "mp4", "mpeg", "mpg", "mqv", "pls", "qt",
+            "snd", "swa", "ts", "ulw", "wav"
+        };
+        HashSet<String, ASCIICaseInsensitiveHash> set;
+        for (auto& extension : extensions)
+            set.add(extension);
+        return set;
+    }();
+    return extensionSet.get().contains(extension);
 }
 
 QuickTimePluginReplacement::QuickTimePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)

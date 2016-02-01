@@ -65,7 +65,7 @@ public:
 
 private:
     // engine support
-    static void getSupportedTypes(HashSet<String>& types);
+    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     static void getSitesInMediaCache(Vector<String>&);

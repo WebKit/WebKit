@@ -81,7 +81,7 @@ static String hostName(const URL& url, bool secure)
 {
     ASSERT(url.protocolIs("wss") == secure);
     StringBuilder builder;
-    builder.append(url.host().lower());
+    builder.append(url.host().convertToASCIILowercase());
     if (url.port() && ((!secure && url.port() != 80) || (secure && url.port() != 443))) {
         builder.append(':');
         builder.appendNumber(url.port());
@@ -143,9 +143,10 @@ void WebSocketHandshake::setURL(const URL& url)
     m_url = url.isolatedCopy();
 }
 
+// FIXME: Return type should just be String, not const String.
 const String WebSocketHandshake::host() const
 {
-    return m_url.host().lower();
+    return m_url.host().convertToASCIILowercase();
 }
 
 const String& WebSocketHandshake::clientProtocol() const

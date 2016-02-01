@@ -259,7 +259,7 @@ protected:
     virtual void updateVideoLayerGravity() = 0;
 
     static bool isUnsupportedMIMEType(const String&);
-    static const HashSet<String>& staticMIMETypeList();
+    static const HashSet<String, ASCIICaseInsensitiveHash>& staticMIMETypeList();
 
 protected:
     void updateStates();

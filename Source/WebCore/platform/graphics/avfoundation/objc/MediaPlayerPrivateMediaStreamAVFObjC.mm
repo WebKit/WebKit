@@ -83,9 +83,9 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::isAvailable()
     return AVFoundationLibrary() && isCoreMediaFrameworkAvailable();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
-    static NeverDestroyed<HashSet<String>> cache;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
     types = cache;
 }
 

@@ -1,3 +1,14 @@
+2016-01-31  Darin Adler  <darin@apple.com>
+
+        Cut down on calls to String::lower; mostly replace with convertToASCIILowercase
+        https://bugs.webkit.org/show_bug.cgi?id=153732
+
+        Reviewed by Dean Jackson.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (newArrayWithStrings): Updated to use HashSet<String, ASCIICaseInsensitiveHash>
+        and also to use a modern for loop.
+
 2016-01-31  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove __has_include guards around use of WebKitAdditions

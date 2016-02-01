@@ -1201,7 +1201,7 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
 static inline AtomicString makeIdForStyleResolution(const AtomicString& value, bool inQuirksMode)
 {
     if (inQuirksMode)
-        return value.lower();
+        return value.convertToASCIILowercase();
     return value;
 }
 

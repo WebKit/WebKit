@@ -199,7 +199,7 @@ CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const CSSParserStr
 
 CSSParserSelector* CSSParserSelector::parsePseudoElementSelector(CSSParserString& pseudoTypeString)
 {
-    pseudoTypeString.lower();
+    pseudoTypeString.convertToASCIILowercaseInPlace();
     AtomicString name = pseudoTypeString;
 
     CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(name);

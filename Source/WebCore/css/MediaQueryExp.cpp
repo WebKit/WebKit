@@ -232,7 +232,7 @@ String MediaQueryExp::serialize() const
 
     StringBuilder result;
     result.append('(');
-    result.append(m_mediaFeature.lower());
+    result.append(m_mediaFeature.convertToASCIILowercase());
     if (m_value) {
         result.appendLiteral(": ");
         result.append(m_value->cssText());

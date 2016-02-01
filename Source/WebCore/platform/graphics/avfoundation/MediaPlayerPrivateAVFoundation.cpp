@@ -1111,12 +1111,12 @@ bool MediaPlayerPrivateAVFoundation::isUnsupportedMIMEType(const String& type)
     return false;
 }
 
-const HashSet<String>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
+const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
 {
-    static NeverDestroyed<HashSet<String>> cache = []() {
-        HashSet<String> types;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache = []() {
+        HashSet<String, ASCIICaseInsensitiveHash> types;
 
-        static const char* typeNames[] = {
+        static const char* const typeNames[] = {
             "application/vnd.apple.mpegurl",
             "application/x-mpegurl",
             "audio/3gpp",
@@ -1148,8 +1148,8 @@ const HashSet<String>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
             "video/x-mpeg",
             "video/x-mpg",
         };
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(typeNames); ++i)
-            types.add(typeNames[i]);
+        for (auto& type : typeNames)
+            types.add(type);
 
         return types;
     }();

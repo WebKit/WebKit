@@ -340,34 +340,18 @@ CSSParser::~CSSParser()
     clearProperties();
 }
 
-template <typename CharacterType>
-ALWAYS_INLINE static void makeLower(const CharacterType* input, CharacterType* output, unsigned length)
+template<typename CharacterType> ALWAYS_INLINE static void convertToASCIILowercaseInPlace(CharacterType* characters, unsigned length)
 {
-    // FIXME: If we need Unicode lowercasing here, then we probably want the real kind
-    // that can potentially change the length of the string rather than the character
-    // by character kind. If we don't need Unicode lowercasing, it would be good to
-    // simplify this function.
-
-    if (charactersAreAllASCII(input, length)) {
-        // Fast case for all-ASCII.
-        for (unsigned i = 0; i < length; ++i)
-            output[i] = toASCIILower(input[i]);
-    } else {
-        for (unsigned i = 0; i < length; ++i) {
-            ASSERT(u_tolower(input[i]) <= 0xFFFF);
-            output[i] = u_tolower(input[i]);
-        }
-    }
+    for (unsigned i = 0; i < length; ++i)
+        characters[i] = toASCIILower(characters[i]);
 }
 
-void CSSParserString::lower()
+void CSSParserString::convertToASCIILowercaseInPlace()
 {
-    if (is8Bit()) {
-        makeLower(characters8(), characters8(), length());
-        return;
-    }
-
-    makeLower(characters16(), characters16(), length());
+    if (is8Bit())
+        WebCore::convertToASCIILowercaseInPlace(characters8(), length());
+    else
+        WebCore::convertToASCIILowercaseInPlace(characters16(), length());
 }
 
 void CSSParser::setupParser(const char* prefix, unsigned prefixLength, StringView string, const char* suffix, unsigned suffixLength)
@@ -1198,17 +1182,24 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     }
 }
 
+static bool isUniversalKeyword(const String& string)
+{
+    // These keywords can be used for all properties.
+    return equalLettersIgnoringASCIICase(string, "initial")
+        || equalLettersIgnoringASCIICase(string, "inherit")
+        || equalLettersIgnoringASCIICase(string, "unset")
+        || equalLettersIgnoringASCIICase(string, "revert");
+}
+
 static CSSParser::ParseResult parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, const CSSParserContext& parserContext, StyleSheetContents* styleSheetContents)
 {
     ASSERT(!string.isEmpty());
 
     if (!isKeywordPropertyID(propertyId)) {
-        // All properties accept the values of "initial" and "inherit".
-        String lowerCaseString = string.lower();
-        if (lowerCaseString != "initial" && lowerCaseString != "inherit" && lowerCaseString != "unset" && lowerCaseString != "revert")
+        if (!isUniversalKeyword(string))
             return CSSParser::ParseResult::Error;
 
-        // Parse initial/inherit/unset/revert shorthands using the CSSParser.
+        // Don't try to parse initial/inherit/unset/revert shorthands; return an error so the caller will use the full CSS parser.
         if (shorthandForProperty(propertyId).length())
             return CSSParser::ParseResult::Error;
     }
@@ -4342,17 +4333,19 @@ RefPtr<CSSValue> CSSParser::parseAttr(CSSParserValueList& args)
     if (argument.unit != CSSPrimitiveValue::CSS_IDENT)
         return nullptr;
 
-    String attrName = argument.string;
+    ASSERT(argument.string.length());
+
     // CSS allows identifiers with "-" at the start, like "-webkit-mask-image".
     // But HTML attribute names can't have those characters, and we should not
     // even parse them inside attr().
-    if (attrName[0] == '-')
+    if (argument.string[0] == '-')
         return nullptr;
 
     if (m_context.isHTMLDocument)
-        attrName = attrName.lower();
+        argument.string.convertToASCIILowercaseInPlace();
 
-    return CSSValuePool::singleton().createValue(attrName, CSSPrimitiveValue::CSS_ATTR);
+    // FIXME: Is there some small benefit to creating an AtomicString here instead of a String?
+    return CSSValuePool::singleton().createValue(String(argument.string), CSSPrimitiveValue::CSS_ATTR);
 }
 
 RefPtr<CSSValue> CSSParser::parseBackgroundColor()

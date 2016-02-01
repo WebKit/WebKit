@@ -33,9 +33,7 @@ namespace WebCore {
 class CSSValue;
 class QualifiedName;
 
-// This can't be a StringView for 2 reasons:
-// 1. lower() clobbers the data we point to.
-// 2. We are an element of a union (in CSSParserValue) so we need to have a trivial destructor.
+// This should be a StringView but currently it can't because it's used as an element of a union in CSSParserValue.
 struct CSSParserString {
     void init(LChar* characters, unsigned length)
     {
@@ -73,13 +71,12 @@ struct CSSParserString {
     bool is8Bit() const { return m_is8Bit; }
     LChar* characters8() const { ASSERT(is8Bit()); return m_data.characters8; }
     UChar* characters16() const { ASSERT(!is8Bit()); return m_data.characters16; }
-    template <typename CharacterType>
-    CharacterType* characters() const;
+    template<typename CharacterType> CharacterType* characters() const;
 
     unsigned length() const { return m_length; }
     void setLength(unsigned length) { m_length = length; }
 
-    void lower();
+    void convertToASCIILowercaseInPlace();
 
     UChar operator[](unsigned i) const
     {

@@ -120,9 +120,9 @@ bool MediaPlayerPrivateMediaFoundation::isAvailable()
     return true;
 }
 
-static const HashSet<String>& mimeTypeCache()
+static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
-    static NeverDestroyed<HashSet<String>> cachedTypes;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cachedTypes;
 
     if (cachedTypes.get().size() > 0)
         return cachedTypes;
@@ -148,7 +148,7 @@ static const HashSet<String>& mimeTypeCache()
     return cachedTypes;
 }
 
-void MediaPlayerPrivateMediaFoundation::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateMediaFoundation::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
     types = mimeTypeCache();
 }

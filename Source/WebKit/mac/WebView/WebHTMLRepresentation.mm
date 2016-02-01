@@ -87,13 +87,12 @@ using JSC::Yarr::RegularExpression;
 
 @implementation WebHTMLRepresentation
 
-static NSMutableArray *newArrayWithStrings(const HashSet<String>& set) NS_RETURNS_RETAINED;
-static NSMutableArray *newArrayWithStrings(const HashSet<String>& set)
+static NSMutableArray *newArrayWithStrings(const HashSet<String, ASCIICaseInsensitiveHash>&) NS_RETURNS_RETAINED;
+static NSMutableArray *newArrayWithStrings(const HashSet<String, ASCIICaseInsensitiveHash>& set)
 {
     NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:set.size()];
-    HashSet<String>::const_iterator end = set.end();
-    for (HashSet<String>::const_iterator it = set.begin(); it != end; ++it)
-        [array addObject:(NSString *)(*it)];
+    for (auto& string : set)
+        [array addObject:(NSString *)string];
     return array;
 }
 

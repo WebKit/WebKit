@@ -53,7 +53,7 @@ public:
     ~MediaPlayerPrivateMediaFoundation();
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    static void getSupportedTypes(HashSet<String>& types);
+    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool isAvailable();
 

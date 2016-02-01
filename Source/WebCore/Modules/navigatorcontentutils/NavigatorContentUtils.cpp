@@ -39,15 +39,6 @@
 
 namespace WebCore {
 
-static HashSet<String>* protocolWhitelist;
-
-static void initProtocolHandlerWhitelist()
-{
-    protocolWhitelist = new HashSet<String>;
-    for (auto* protocol : { "bitcoin", "geo", "im", "irc", "ircs", "magnet", "mailto", "mms", "news", "nntp", "sip", "sms", "smsto", "ssh", "tel", "urn", "webcal", "wtai", "xmpp" })
-        protocolWhitelist->add(protocol);
-}
-
 static bool verifyCustomHandlerURL(const URL& baseURL, const String& url, ExceptionCode& ec)
 {
     // The specification requires that it is a SYNTAX_ERR if the "%s" token is
@@ -74,11 +65,15 @@ static bool verifyCustomHandlerURL(const URL& baseURL, const String& url, Except
     return true;
 }
 
-static bool isProtocolWhitelisted(const String& scheme)
+static inline bool isProtocolWhitelisted(const String& scheme)
 {
-    if (!protocolWhitelist)
-        initProtocolHandlerWhitelist();
-    return protocolWhitelist->contains(scheme.convertToASCIILowercase());
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> protocolWhitelist = []() {
+        HashSet<String, ASCIICaseInsensitiveHash> set;
+        for (auto* protocol : { "bitcoin", "geo", "im", "irc", "ircs", "magnet", "mailto", "mms", "news", "nntp", "sip", "sms", "smsto", "ssh", "tel", "urn", "webcal", "wtai", "xmpp" })
+            set.add(protocol);
+        return set;
+    }();
+    return protocolWhitelist.get().contains(scheme);
 }
 
 static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
@@ -86,6 +81,7 @@ static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
     if (isProtocolWhitelisted(scheme))
         return true;
 
+    // FIXME: Should this be case sensitive, or should it be ASCII case-insensitive?
     if (scheme.startsWith("web+")) {
         // The specification requires that the length of scheme is at least five characters (including 'web+' prefix).
         if (scheme.length() >= 5 && isValidProtocol(scheme))

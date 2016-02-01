@@ -2121,15 +2121,19 @@ bool portAllowed(const URL& url)
 String mimeTypeFromDataURL(const String& url)
 {
     ASSERT(protocolIs(url, "data"));
-    size_t index = url.find(';');
+
+    // FIXME: What's the right behavior when the URL has a comma first, but a semicolon later?
+    // Currently this code will break at the semicolon in that case. Not sure that's correct.
+    auto index = url.find(';', 5);
     if (index == notFound)
-        index = url.find(',');
-    if (index != notFound) {
-        if (index > 5)
-            return url.substring(5, index - 5).lower();
-        return "text/plain"; // Data URLs with no MIME type are considered text/plain.
+        index = url.find(',', 5);
+    if (index == notFound) {
+        // FIXME: There was an old comment here that made it sound like this should be returning text/plain.
+        // But we have been returning empty string here for some time, so not changing its behavior at this time.
+        return emptyString();
     }
-    return "";
+    ASSERT(index >= 5);
+    return url.substring(5, index - 5).convertToASCIILowercase();
 }
 
 String mimeTypeFromURL(const URL& url)

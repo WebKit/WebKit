@@ -1232,14 +1232,13 @@ static bool shouldRejectMIMEType(const String& type)
 {
     // QTKit will return non-video MIME types which it claims to support, but which we
     // do not support in the <video> element. Disclaim all non video/ or audio/ types.
-    return !type.startsWith("video/") && !type.startsWith("audio/");
+    return !type.startsWith("video/", false) && !type.startsWith("audio/", false);
 }
 
-static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
+static void addFileTypesToCache(NSArray *fileTypes, HashSet<String, ASCIICaseInsensitiveHash> &cache)
 {
-    int count = [fileTypes count];
-    for (int n = 0; n < count; n++) {
-        CFStringRef ext = reinterpret_cast<CFStringRef>([fileTypes objectAtIndex:n]);
+    for (NSString *fileType : fileTypes) {
+        CFStringRef ext = reinterpret_cast<CFStringRef>(fileType);
         RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL));
         if (!uti)
             continue;
@@ -1254,25 +1253,18 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
         if (CFStringGetCharacterAtIndex(ext, 0) != '\'') {
             // UTI is missing many media related MIME types supported by QTKit (see rdar://6434168), and not all
             // web servers use the MIME type UTI returns for an extension (see rdar://7875393), so even if UTI 
-            // has a type for this extension add any types in hard coded table in the MIME type regsitry.
-            Vector<String> typesForExtension = MIMETypeRegistry::getMediaMIMETypesForExtension(ext);
-            unsigned count = typesForExtension.size();
-            for (unsigned ndx = 0; ndx < count; ++ndx) {
-                String type = typesForExtension[ndx].lower();
-
-                if (shouldRejectMIMEType(type))
-                    continue;
-
-                if (!cache.contains(type))
+            // has a type for this extension add any types in hard coded table in the MIME type registry.
+            for (auto& type : MIMETypeRegistry::getMediaMIMETypesForExtension(ext)) {
+                if (!shouldRejectMIMEType(type))
                     cache.add(type);
             }
         }
     }    
 }
 
-static HashSet<String> mimeCommonTypesCache()
+static HashSet<String, ASCIICaseInsensitiveHash> mimeCommonTypesCache()
 {
-    static NeverDestroyed<HashSet<String>> cache;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
     static bool typeListInitialized = false;
 
     if (!typeListInitialized) {
@@ -1284,9 +1276,9 @@ static HashSet<String> mimeCommonTypesCache()
     return cache;
 } 
 
-static HashSet<String> mimeModernTypesCache()
+static HashSet<String, ASCIICaseInsensitiveHash> mimeModernTypesCache()
 {
-    static NeverDestroyed<HashSet<String>> cache;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
     static bool typeListInitialized = false;
     
     if (!typeListInitialized) {
@@ -1298,15 +1290,13 @@ static HashSet<String> mimeModernTypesCache()
     return cache;
 }
 
-static void concatenateHashSets(HashSet<String>& destination, const HashSet<String>& source)
+static void concatenateHashSets(HashSet<String, ASCIICaseInsensitiveHash>& destination, const HashSet<String, ASCIICaseInsensitiveHash>& source)
 {
-    HashSet<String>::const_iterator it = source.begin();
-    HashSet<String>::const_iterator end = source.end();
-    for (; it != end; ++it)
-        destination.add(*it);
+    for (auto& type : source)
+        destination.add(type);
 }
 
-void MediaPlayerPrivateQTKit::getSupportedTypes(HashSet<String>& supportedTypes)
+void MediaPlayerPrivateQTKit::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes)
 {
     concatenateHashSets(supportedTypes, mimeModernTypesCache());
 
@@ -1378,22 +1368,26 @@ void MediaPlayerPrivateQTKit::disableUnsupportedTracks()
         return;
     }
     
-    static HashSet<String>* allowedTrackTypes = 0;
-    if (!allowedTrackTypes) {
-        allowedTrackTypes = new HashSet<String>;
-        allowedTrackTypes->add(QTMediaTypeVideo);
-        allowedTrackTypes->add(QTMediaTypeSound);
-        allowedTrackTypes->add(QTMediaTypeText);
-        allowedTrackTypes->add(QTMediaTypeBase);
-        allowedTrackTypes->add(QTMediaTypeMPEG);
-        allowedTrackTypes->add("clcp"); // Closed caption
-        allowedTrackTypes->add("sbtl"); // Subtitle
-        allowedTrackTypes->add("odsm"); // MPEG-4 object descriptor stream
-        allowedTrackTypes->add("sdsm"); // MPEG-4 scene description stream
-        allowedTrackTypes->add("tmcd"); // timecode
-        allowedTrackTypes->add("tc64"); // timcode-64
-        allowedTrackTypes->add("tmet"); // timed metadata
-    }
+    static NeverDestroyed<HashSet<String>> allowedTrackTypes = []() {
+        NSString *types[] = {
+            QTMediaTypeVideo,
+            QTMediaTypeSound,
+            QTMediaTypeText,
+            QTMediaTypeBase,
+            QTMediaTypeMPEG,
+            @"clcp", // Closed caption
+            @"sbtl", // Subtitle
+            @"odsm", // MPEG-4 object descriptor stream
+            @"sdsm", // MPEG-4 scene description stream
+            @"tmcd", // timecode
+            @"tc64", // timcode-64
+            @"tmet", // timed metadata
+        };
+        HashSet<String> set;
+        for (auto& type : types)
+            set.add(type);
+        return set;
+    }();
     
     NSArray *tracks = [m_qtMovie.get() tracks];
     
@@ -1419,7 +1413,7 @@ void MediaPlayerPrivateQTKit::disableUnsupportedTracks()
             continue;
 
         // Test whether the media type is in our white list.
-        if (!allowedTrackTypes->contains(mediaType)) {
+        if (!allowedTrackTypes.get().contains(mediaType)) {
             // If this track type is not allowed, then we need to disable it.
             [track setEnabled:NO];
             --m_enabledTrackCount;

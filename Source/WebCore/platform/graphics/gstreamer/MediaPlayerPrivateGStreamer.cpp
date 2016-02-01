@@ -41,6 +41,7 @@
 #include <limits>
 #include <wtf/HexNumber.h>
 #include <wtf/MediaTime.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -1659,116 +1660,111 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState error)
     m_readyTimerHandler.stop();
 }
 
-static HashSet<String> mimeTypeCache()
+// FIXME: In what sense is this a "cache"?
+static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
-    initializeGStreamerAndRegisterWebKitElements();
-
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
-    static bool typeListInitialized = false;
-
-    if (typeListInitialized)
-        return cache;
-
-    const char* mimeTypes[] = {
-        "application/ogg",
-        "application/vnd.apple.mpegurl",
-        "application/vnd.rn-realmedia",
-        "application/x-3gp",
-        "application/x-pn-realaudio",
-        "application/x-mpegurl",
-        "audio/3gpp",
-        "audio/aac",
-        "audio/flac",
-        "audio/iLBC-sh",
-        "audio/midi",
-        "audio/mobile-xmf",
-        "audio/mp1",
-        "audio/mp2",
-        "audio/mp3",
-        "audio/mp4",
-        "audio/mpeg",
-        "audio/ogg",
-        "audio/opus",
-        "audio/qcelp",
-        "audio/riff-midi",
-        "audio/speex",
-        "audio/wav",
-        "audio/webm",
-        "audio/x-ac3",
-        "audio/x-aiff",
-        "audio/x-amr-nb-sh",
-        "audio/x-amr-wb-sh",
-        "audio/x-au",
-        "audio/x-ay",
-        "audio/x-celt",
-        "audio/x-dts",
-        "audio/x-flac",
-        "audio/x-gbs",
-        "audio/x-gsm",
-        "audio/x-gym",
-        "audio/x-imelody",
-        "audio/x-ircam",
-        "audio/x-kss",
-        "audio/x-m4a",
-        "audio/x-mod",
-        "audio/x-mp3",
-        "audio/x-mpeg",
-        "audio/x-musepack",
-        "audio/x-nist",
-        "audio/x-nsf",
-        "audio/x-paris",
-        "audio/x-sap",
-        "audio/x-sbc",
-        "audio/x-sds",
-        "audio/x-shorten",
-        "audio/x-sid",
-        "audio/x-spc",
-        "audio/x-speex",
-        "audio/x-svx",
-        "audio/x-ttafile",
-        "audio/x-vgm",
-        "audio/x-voc",
-        "audio/x-vorbis+ogg",
-        "audio/x-w64",
-        "audio/x-wav",
-        "audio/x-wavpack",
-        "audio/x-wavpack-correction",
-        "video/3gpp",
-        "video/flv",
-        "video/mj2",
-        "video/mp2t",
-        "video/mp4",
-        "video/mpeg",
-        "video/mpegts",
-        "video/ogg",
-        "video/quicktime",
-        "video/vivo",
-        "video/webm",
-        "video/x-cdxa",
-        "video/x-dirac",
-        "video/x-dv",
-        "video/x-fli",
-        "video/x-flv",
-        "video/x-h263",
-        "video/x-ivf",
-        "video/x-m4v",
-        "video/x-matroska",
-        "video/x-mng",
-        "video/x-ms-asf",
-        "video/x-msvideo",
-        "video/x-mve",
-        "video/x-nuv",
-        "video/x-vcd"
-    };
-
-    for (unsigned i = 0; i < (sizeof(mimeTypes) / sizeof(*mimeTypes)); ++i)
-        cache.add(String(mimeTypes[i]));
-
-    typeListInitialized = true;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache = []() {
+        initializeGStreamerAndRegisterWebKitElements();
+        HashSet<String, ASCIICaseInsensitiveHash> set;
+        const char* mimeTypes[] = {
+            "application/ogg",
+            "application/vnd.apple.mpegurl",
+            "application/vnd.rn-realmedia",
+            "application/x-3gp",
+            "application/x-pn-realaudio",
+            "application/x-mpegurl",
+            "audio/3gpp",
+            "audio/aac",
+            "audio/flac",
+            "audio/iLBC-sh",
+            "audio/midi",
+            "audio/mobile-xmf",
+            "audio/mp1",
+            "audio/mp2",
+            "audio/mp3",
+            "audio/mp4",
+            "audio/mpeg",
+            "audio/ogg",
+            "audio/opus",
+            "audio/qcelp",
+            "audio/riff-midi",
+            "audio/speex",
+            "audio/wav",
+            "audio/webm",
+            "audio/x-ac3",
+            "audio/x-aiff",
+            "audio/x-amr-nb-sh",
+            "audio/x-amr-wb-sh",
+            "audio/x-au",
+            "audio/x-ay",
+            "audio/x-celt",
+            "audio/x-dts",
+            "audio/x-flac",
+            "audio/x-gbs",
+            "audio/x-gsm",
+            "audio/x-gym",
+            "audio/x-imelody",
+            "audio/x-ircam",
+            "audio/x-kss",
+            "audio/x-m4a",
+            "audio/x-mod",
+            "audio/x-mp3",
+            "audio/x-mpeg",
+            "audio/x-musepack",
+            "audio/x-nist",
+            "audio/x-nsf",
+            "audio/x-paris",
+            "audio/x-sap",
+            "audio/x-sbc",
+            "audio/x-sds",
+            "audio/x-shorten",
+            "audio/x-sid",
+            "audio/x-spc",
+            "audio/x-speex",
+            "audio/x-svx",
+            "audio/x-ttafile",
+            "audio/x-vgm",
+            "audio/x-voc",
+            "audio/x-vorbis+ogg",
+            "audio/x-w64",
+            "audio/x-wav",
+            "audio/x-wavpack",
+            "audio/x-wavpack-correction",
+            "video/3gpp",
+            "video/flv",
+            "video/mj2",
+            "video/mp2t",
+            "video/mp4",
+            "video/mpeg",
+            "video/mpegts",
+            "video/ogg",
+            "video/quicktime",
+            "video/vivo",
+            "video/webm",
+            "video/x-cdxa",
+            "video/x-dirac",
+            "video/x-dv",
+            "video/x-fli",
+            "video/x-flv",
+            "video/x-h263",
+            "video/x-ivf",
+            "video/x-m4v",
+            "video/x-matroska",
+            "video/x-mng",
+            "video/x-ms-asf",
+            "video/x-msvideo",
+            "video/x-mve",
+            "video/x-nuv",
+            "video/x-vcd"
+        };
+        for (auto& type : mimeTypes)
+            set.add(type);
+        return set;
+    }();
     return cache;
 }
 
-void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
     types = mimeTypeCache();
 }

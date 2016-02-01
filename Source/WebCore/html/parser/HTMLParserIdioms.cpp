@@ -26,10 +26,10 @@
 #include "HTMLParserIdioms.h"
 
 #include "Decimal.h"
+#include "QualifiedName.h"
 #include "URL.h"
 #include <limits>
 #include <wtf/MathExtras.h>
-#include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

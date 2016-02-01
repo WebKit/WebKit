@@ -1344,9 +1344,6 @@ private:
     void createRenderTree();
     void detachParser();
 
-    typedef void (*ArgumentsCallback)(const String& keyString, const String& valueString, Document*, void* data);
-    void processArguments(const String& features, void* data, ArgumentsCallback);
-
     // FontSelectorClient
     virtual void fontsNeedUpdate(FontSelector&) override final;
 

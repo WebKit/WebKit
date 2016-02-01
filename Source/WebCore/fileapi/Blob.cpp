@@ -96,7 +96,7 @@ Blob::Blob(Vector<BlobPart> blobParts, const String& contentType)
 }
 
 Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, long long size)
-    : m_type(Blob::normalizedContentType(type))
+    : m_type(normalizedContentType(type))
     , m_size(size)
 {
     m_internalURL = BlobURL::createInternalURL();
@@ -104,7 +104,7 @@ Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, lon
 }
 
 Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
-    : m_type(Blob::normalizedContentType(type))
+    : m_type(normalizedContentType(type))
     , m_size(-1) // size is not necessarily equal to end - start.
 {
     m_internalURL = BlobURL::createInternalURL();
@@ -122,7 +122,7 @@ unsigned long long Blob::size() const
         // FIXME: JavaScript cannot represent sizes as large as unsigned long long, we need to
         // come up with an exception to throw if file size is not representable.
         unsigned long long actualSize = ThreadableBlobRegistry::blobSize(m_internalURL);
-        m_size = (WTF::isInBounds<long long>(actualSize)) ? static_cast<long long>(actualSize) : 0;
+        m_size = WTF::isInBounds<long long>(actualSize) ? static_cast<long long>(actualSize) : 0;
     }
 
     return static_cast<unsigned long long>(m_size);
@@ -130,61 +130,38 @@ unsigned long long Blob::size() const
 
 bool Blob::isValidContentType(const String& contentType)
 {
-    if (contentType.isNull())
-        return true;
-
-    size_t length = contentType.length();
-    if (contentType.is8Bit()) {
-        const LChar* characters = contentType.characters8();
-        for (size_t i = 0; i < length; ++i) {
-            if (characters[i] < 0x20 || characters[i] > 0x7e)
-                return false;
-        }
-    } else {
-        const UChar* characters = contentType.characters16();
-        for (size_t i = 0; i < length; ++i) {
-            if (characters[i] < 0x20 || characters[i] > 0x7e)
-                return false;
-        }
+    // FIXME: Do we really want to treat the empty string and null string as valid content types?
+    unsigned length = contentType.length();
+    for (unsigned i = 0; i < length; ++i) {
+        if (contentType[i] < 0x20 || contentType[i] > 0x7e)
+            return false;
     }
     return true;
 }
 
 String Blob::normalizedContentType(const String& contentType)
 {
-    if (Blob::isValidContentType(contentType))
-        return contentType.lower();
-    return emptyString();
+    if (!isValidContentType(contentType))
+        return emptyString();
+    return contentType.convertToASCIILowercase();
 }
 
 bool Blob::isNormalizedContentType(const String& contentType)
 {
-    if (contentType.isNull())
-        return true;
-
-    size_t length = contentType.length();
-    if (contentType.is8Bit()) {
-        const LChar* characters = contentType.characters8();
-        for (size_t i = 0; i < length; ++i) {
-            if (characters[i] < 0x20 || characters[i] > 0x7e)
-                return false;
-            if (isASCIIUpper(characters[i]))
-                return false;
-        }
-    } else {
-        const UChar* characters = contentType.characters16();
-        for (size_t i = 0; i < length; ++i) {
-            if (characters[i] < 0x20 || characters[i] > 0x7e)
-                return false;
-            if (isASCIIUpper(characters[i]))
-                return false;
-        }
+    // FIXME: Do we really want to treat the empty string and null string as valid content types?
+    unsigned length = contentType.length();
+    for (size_t i = 0; i < length; ++i) {
+        if (contentType[i] < 0x20 || contentType[i] > 0x7e)
+            return false;
+        if (isASCIIUpper(contentType[i]))
+            return false;
     }
     return true;
 }
 
 bool Blob::isNormalizedContentType(const CString& contentType)
 {
+    // FIXME: Do we really want to treat the empty string and null string as valid content types?
     size_t length = contentType.length();
     const char* characters = contentType.data();
     for (size_t i = 0; i < length; ++i) {

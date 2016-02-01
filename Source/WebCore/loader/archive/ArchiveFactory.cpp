@@ -91,9 +91,8 @@ PassRefPtr<Archive> ArchiveFactory::create(const URL& url, SharedBuffer* data, c
 
 void ArchiveFactory::registerKnownArchiveMIMETypes()
 {
-    HashSet<String>& mimeTypes = MIMETypeRegistry::getSupportedNonImageMIMETypes();
-    
-    for (const auto& mimeType : archiveMIMETypes().keys())
+    auto& mimeTypes = MIMETypeRegistry::getSupportedNonImageMIMETypes();
+    for (auto& mimeType : archiveMIMETypes().keys())
         mimeTypes.add(mimeType);
 }
 

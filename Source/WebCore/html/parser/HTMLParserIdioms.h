@@ -25,18 +25,21 @@
 #ifndef HTMLParserIdioms_h
 #define HTMLParserIdioms_h
 
-#include "QualifiedName.h"
+#include <unicode/uchar.h>
 #include <wtf/Forward.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Decimal;
+class QualifiedName;
 
 // Space characters as defined by the HTML specification.
+template<typename CharacterType> bool isHTMLSpace(CharacterType);
+template<typename CharacterType> bool isComma(CharacterType);
+template<typename CharacterType> bool isHTMLSpaceOrComma(CharacterType);
 bool isHTMLLineBreak(UChar);
 bool isNotHTMLSpace(UChar);
-bool isHTMLSpaceButNotLineBreak(UChar character);
+bool isHTMLSpaceButNotLineBreak(UChar);
 
 // Strip leading and trailing whitespace as defined by the HTML specification. 
 WEBCORE_EXPORT String stripLeadingAndTrailingHTMLSpaces(const String&);
@@ -59,9 +62,11 @@ bool parseHTMLInteger(const String&, int&);
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
 bool parseHTMLNonNegativeInteger(const String&, unsigned int&);
 
+bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
+
 // Inline implementations of some of the functions declared above.
-template<typename CharType>
-inline bool isHTMLSpace(CharType character)
+
+template<typename CharacterType> inline bool isHTMLSpace(CharacterType character)
 {
     // Histogram from Apple's page load test combined with some ad hoc browsing some other test suites.
     //
@@ -81,16 +86,14 @@ inline bool isHTMLLineBreak(UChar character)
     return character <= '\r' && (character == '\n' || character == '\r');
 }
 
-template<typename CharType>
-inline bool isComma(CharType character)
+template<typename CharacterType> inline bool isComma(CharacterType character)
 {
     return character == ',';
 }
 
-template<typename CharType>
-inline bool isHTMLSpaceOrComma(CharType character)
+template<typename CharacterType> inline bool isHTMLSpaceOrComma(CharacterType character)
 {
-    return isComma(character) || isHTMLSpace<CharType>(character);
+    return isComma(character) || isHTMLSpace(character);
 }
 
 inline bool isNotHTMLSpace(UChar character)
@@ -102,8 +105,6 @@ inline bool isHTMLSpaceButNotLineBreak(UChar character)
 {
     return isHTMLSpace(character) && !isHTMLLineBreak(character);
 }
-
-bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
 
 }
 

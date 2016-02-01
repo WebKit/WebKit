@@ -96,9 +96,9 @@ static URLSchemesMap& emptyDocumentSchemes()
     return emptyDocumentSchemes;
 }
 
-static HashSet<String>& schemesForbiddenFromDomainRelaxation()
+static HashSet<String, ASCIICaseInsensitiveHash>& schemesForbiddenFromDomainRelaxation()
 {
-    static NeverDestroyed<HashSet<String>> schemes;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> schemes;
     return schemes;
 }
 

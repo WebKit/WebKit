@@ -3278,59 +3278,40 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
     }
 }
 
-// Though isspace() considers \t and \v to be whitespace, Win IE doesn't.
-static bool isSeparator(UChar c)
+static bool isSeparator(UChar character)
 {
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '=' || c == ',' || c == '\0';
+    return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '=' || character == ',';
 }
 
-void Document::processArguments(const String& features, void* data, ArgumentsCallback callback)
+static void processArguments(StringView features, std::function<void(StringView type, StringView value)> callback)
 {
-    // Tread lightly in this code -- it was specifically designed to mimic Win IE's parsing behavior.
-    unsigned keyBegin, keyEnd;
-    unsigned valueBegin, valueEnd;
-
-    String buffer = features.lower();
-    unsigned length = buffer.length();
+    unsigned length = features.length();
     for (unsigned i = 0; i < length; ) {
-        // skip to first non-separator, but don't skip past the end of the string
-        while (isSeparator(buffer[i])) {
-            if (i >= length)
-                break;
-            i++;
-        }
-        keyBegin = i;
+        // skip to first non-separator
+        while (i < length && isSeparator(features[i]))
+            ++i;
+        unsigned keyBegin = i;
 
         // skip to first separator
-        while (!isSeparator(buffer[i]))
+        while (i < length && !isSeparator(features[i]))
             i++;
-        keyEnd = i;
+        unsigned keyEnd = i;
 
-        // skip to first '=', but don't skip past a ',' or the end of the string
-        while (buffer[i] != '=') {
-            if (buffer[i] == ',' || i >= length)
-                break;
-            i++;
-        }
+        // skip to first '=', but don't skip past a ','
+        while (i < length && features[i] != '=' && features[i] != ',')
+            ++i;
 
-        // skip to first non-separator, but don't skip past a ',' or the end of the string
-        while (isSeparator(buffer[i])) {
-            if (buffer[i] == ',' || i >= length)
-                break;
-            i++;
-        }
-        valueBegin = i;
+        // skip to first non-separator, but don't skip past a ','
+        while (i < length && isSeparator(features[i]) && features[i] != ',')
+            ++i;
+        unsigned valueBegin = i;
 
         // skip to first separator
-        while (!isSeparator(buffer[i]))
-            i++;
-        valueEnd = i;
+        while (i < length && !isSeparator(features[i]))
+            ++i;
+        unsigned valueEnd = i;
 
-        ASSERT_WITH_SECURITY_IMPLICATION(i <= length);
-
-        String keyString = buffer.substring(keyBegin, keyEnd - keyBegin);
-        String valueString = buffer.substring(valueBegin, valueEnd - valueBegin);
-        callback(keyString, valueString, this, data);
+        callback(features.substring(keyBegin, keyEnd - keyBegin), features.substring(valueBegin, valueEnd - valueBegin));
     }
 }
 
@@ -3342,7 +3323,10 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
         return;
 
     m_viewportArguments = ViewportArguments(origin);
-    processArguments(features, (void*)&m_viewportArguments, setViewportFeature);
+
+    processArguments(features, [this](StringView key, StringView value) {
+        setViewportFeature(m_viewportArguments, *this, key, value);
+    });
 
     updateViewportArguments();
 }
@@ -3362,17 +3346,13 @@ void Document::updateViewportArguments()
 
 #if PLATFORM(IOS)
 
-// FIXME: Find a better place for this functionality.
-void setParserFeature(const String& key, const String& value, Document* document, void*)
-{
-    if (key == "telephone" && equalLettersIgnoringASCIICase(value, "no"))
-        document->setIsTelephoneNumberParsingAllowed(false);
-}
-
 void Document::processFormatDetection(const String& features)
 {
-    ASSERT(!features.isNull());
-    processArguments(features, nullptr, setParserFeature);
+    // FIXME: Find a better place for this function.
+    processArguments(features, [this](StringView key, StringView value) {
+        if (equalLettersIgnoringASCIICase(key, "telephone") && equalLettersIgnoringASCIICase(value, "no"))
+            setIsTelephoneNumberParsingAllowed(false);
+    });
 }
 
 void Document::processWebAppOrientations()

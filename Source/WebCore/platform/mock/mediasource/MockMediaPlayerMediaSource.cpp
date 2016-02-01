@@ -45,9 +45,9 @@ void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar regist
         supportsType, 0, 0, 0, 0);
 }
 
-static const HashSet<String>& mimeTypeCache()
+static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
-    static NeverDestroyed<HashSet<String>> cache;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
     static bool isInitialized = false;
 
     if (!isInitialized) {
@@ -59,7 +59,7 @@ static const HashSet<String>& mimeTypeCache()
     return cache;
 }
 
-void MockMediaPlayerMediaSource::getSupportedTypes(HashSet<String>& supportedTypes)
+void MockMediaPlayerMediaSource::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes)
 {
     supportedTypes = mimeTypeCache();
 }

@@ -589,7 +589,7 @@ source_size_length: unary_term | calc_function;
 
 base_media_query_exp: '(' maybe_space IDENT maybe_space maybe_media_value ')' {
         std::unique_ptr<CSSParserValueList> mediaValue($5);
-        $3.lower();
+        $3.convertToASCIILowercaseInPlace();
         $$ = new MediaQueryExp($3, mediaValue.get());
     }
     ;
@@ -644,7 +644,7 @@ media_query:
     }
     |
     maybe_media_restrictor maybe_space IDENT maybe_space maybe_and_media_query_exp_list {
-        $3.lower();
+        $3.convertToASCIILowercaseInPlace();
         $$ = new MediaQuery($1, $3, std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($5));
     }
     ;
@@ -1234,7 +1234,7 @@ specifier:
         $$ = new CSSParserSelector;
         $$->setMatch(CSSSelector::Id);
         if (parser->m_context.mode == CSSQuirksMode)
-            $1.lower();
+            $1.convertToASCIILowercaseInPlace();
         $$->setValue($1);
     }
   | HEX {
@@ -1244,7 +1244,7 @@ specifier:
             $$ = new CSSParserSelector;
             $$->setMatch(CSSSelector::Id);
             if (parser->m_context.mode == CSSQuirksMode)
-                $1.lower();
+                $1.convertToASCIILowercaseInPlace();
             $$->setValue($1);
         }
     }
@@ -1258,7 +1258,7 @@ class:
         $$ = new CSSParserSelector;
         $$->setMatch(CSSSelector::Class);
         if (parser->m_context.mode == CSSQuirksMode)
-            $2.lower();
+            $2.convertToASCIILowercaseInPlace();
         $$->setValue($2);
     }
   ;

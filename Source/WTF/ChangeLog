@@ -1,5 +1,16 @@
 2016-01-31  Darin Adler  <darin@apple.com>
 
+        Cut down on calls to String::lower; mostly replace with convertToASCIILowercase
+        https://bugs.webkit.org/show_bug.cgi?id=153732
+
+        Reviewed by Dean Jackson.
+
+        * wtf/text/StringView.h: Added toIntStrict. Not thrilled about the name of this
+        function, but generally it seems likely to be useful more often than toInt.
+        And it's needed for one call site in WebCore that was using String::lower.
+
+2016-01-31  Darin Adler  <darin@apple.com>
+
         Get rid of most calls to String::upper; mostly replace them with convertToASCIIUppercase
         https://bugs.webkit.org/show_bug.cgi?id=153715
 

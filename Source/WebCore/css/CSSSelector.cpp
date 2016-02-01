@@ -805,28 +805,27 @@ CSSSelector::RareData::~RareData()
 // a helper function for parsing nth-arguments
 bool CSSSelector::RareData::parseNth()
 {
-    String argument = m_argument.lower();
-
-    if (argument.isEmpty())
+    if (m_argument.isEmpty())
         return false;
 
-    m_a = 0;
-    m_b = 0;
-    if (argument == "odd") {
+    if (equalLettersIgnoringASCIICase(m_argument, "odd")) {
         m_a = 2;
         m_b = 1;
-    } else if (argument == "even") {
+    } else if (equalLettersIgnoringASCIICase(m_argument, "even")) {
         m_a = 2;
         m_b = 0;
     } else {
-        size_t n = argument.find('n');
+        m_a = 0;
+        m_b = 0;
+
+        size_t n = std::min(m_argument.find('n'), m_argument.find('N'));
         if (n != notFound) {
-            if (argument[0] == '-') {
+            if (m_argument[0] == '-') {
                 if (n == 1)
                     m_a = -1; // -n == -1n
                 else {
                     bool ok;
-                    m_a = argument.substringSharingImpl(0, n).toIntStrict(&ok);
+                    m_a = StringView(m_argument).substring(0, n).toIntStrict(ok);
                     if (!ok)
                         return false;
                 }
@@ -834,29 +833,29 @@ bool CSSSelector::RareData::parseNth()
                 m_a = 1; // n == 1n
             else {
                 bool ok;
-                m_a = argument.substringSharingImpl(0, n).toIntStrict(&ok);
+                m_a = StringView(m_argument).substring(0, n).toIntStrict(ok);
                 if (!ok)
                     return false;
             }
 
-            size_t p = argument.find('+', n);
+            size_t p = m_argument.find('+', n);
             if (p != notFound) {
                 bool ok;
-                m_b = argument.substringSharingImpl(p + 1, argument.length() - p - 1).toIntStrict(&ok);
+                m_b = StringView(m_argument).substring(p + 1).toIntStrict(ok);
                 if (!ok)
                     return false;
             } else {
-                p = argument.find('-', n);
+                p = m_argument.find('-', n);
                 if (p != notFound) {
                     bool ok;
-                    m_b = -argument.substringSharingImpl(p + 1, argument.length() - p - 1).toIntStrict(&ok);
+                    m_b = -StringView(m_argument).substring(p + 1).toIntStrict(ok);
                     if (!ok)
                         return false;
                 }
             }
         } else {
             bool ok;
-            m_b = argument.toIntStrict(&ok);
+            m_b = m_argument.string().toIntStrict(&ok);
             if (!ok)
                 return false;
         }

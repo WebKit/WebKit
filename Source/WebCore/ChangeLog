@@ -1,3 +1,243 @@
+2016-01-31  Darin Adler  <darin@apple.com>
+
+        Cut down on calls to String::lower; mostly replace with convertToASCIILowercase
+        https://bugs.webkit.org/show_bug.cgi?id=153732
+
+        Reviewed by Dean Jackson.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::isTypeSupported): Added comment about mysterious call
+        to lower(); should probably return here and remove it.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::initProtocolHandlerWhitelist): Deleted. Moved into isProtocolWhitelisted.
+        (WebCore::isProtocolWhitelisted): Changed set to be ASCIICaseInsensitiveHash and
+        initialized it using a lambda instead of a separate function.
+        (WebCore::verifyProtocolHandlerScheme): Added a FIXME about some case sensitive
+        checking of the protocol prefix here.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::supportsMimeType): Changed set to be
+        ASCIICaseInsensitiveHash and initialized it using a lambda instead of using
+        an explict check for empty.
+        (WebCore::QuickTimePluginReplacement::supportsFileExtension): Ditto.
+
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::queryKeysAndValues): Use convertToASCIILowercase. The keys here are
+        going to be all ASCII.
+        (WebCore::isYouTubeURL): Use equalLettersIgnoringASCIICase instead of lowercasing
+        the string.
+        (WebCore::processAndCreateYouTubeURL): Use url.protocolIsInHTTPFamily instead of
+        listing "http" and then "https" explicitly. Use equalLettersIgnoringASCIICase
+        instead of lowercasing a string.
+        (WebCore::YouTubePluginReplacement::youTubeURL): Ditto.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::hostName): Use convertToASCIILowercase on host name.
+        (WebCore::WebSocketHandshake::host): Ditto.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes): Call convertToASCIILowercase instead of lower
+        to lowercase an element's tag name. This is a strange way to do things; typically
+        would be better to use some other function on Element, since tagName goes out of
+        its way to be capitalized, but some ATK expert can improve this later.
+
+        * css/CSSGrammar.y.in: Use the new convertToASCIILowercaseInPlace function rather
+        than the old lower function. We only need to lowercase the ASCII letters, and it's
+        also better to have the function have a clearer name.
+
+        * css/CSSParser.cpp:
+        (WebCore::convertToASCIILowercaseInPlace): Renamed from makeLower and made it deal
+        with only ASCII lowercasing.
+        (WebCore::CSSParserString::convertToASCIILowercaseInPlace): Renamed from lower.
+        (WebCore::isUniversalKeyword): Added. Helper for the function below that uses
+        equalLettersIgnoringASCIICase rather than lowercasing the string.
+        (WebCore::parseKeywordValue): Use isUniversalKeyword. Also clarified a comment.
+        (WebCore::CSSParser::parseAttr): Use convertToASCIILowercaseInPlace and delay
+        String creation until later in the function, using CSSParserString operations more.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoElementSelector): Use
+        convertToASCIILowercaseInPlace by its new name, with its new behavior.
+
+        * css/CSSParserValues.h: Tweaked comment and formatting a bit. Replaced the lower
+        function with the convertToASCIILowercaseInPlace function.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::RareData::parseNth): Rewrote this to avoid the need to
+        make a lowercased copy of m_argument. Use equalLettersIgnoringASCIICase, and two
+        calls to find. Also use String::toIntStrict so we don't have to create String
+        objects for substrings.
+
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::MediaQuery): Use convertToASCIILowercase for media type name.
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::serialize): Use convertToASCIILowercase for media feature name.
+
+        * dom/Document.cpp:
+        (WebCore::isSeparator): Tweaked formatting and removed non-helpful comment.
+        (WebCore::processArguments): Changed this from a static member function to a non-member
+        file internal function. Use a std::function instead of a function pointer with a void*
+        pointer. Rewrote algorithm to simplify it and use StringView instead of String for the
+        keys and values.
+        (WebCore::Document::processViewport): Use a lambda instead of a function pointer to
+        call setViewportFeature, so that function's interface is no longer dictated by
+        the exact type of the function pointer argument to processArguments.
+        (WebCore::Document::processFormatDetection): Use a lambda instead of the
+        setParserFeature function above; use equalLettersIgnoringASCIICase for both the
+        key and the value, since processArguments no longer lowercases the string.
+        (WebCore::Document::processArguments): Deleted.
+
+        * dom/Document.h: Removed unnecessary declaration of processArguments and
+        ArgumentsCallback. Both are now private to the cpp file.
+
+        * dom/Element.cpp:
+        (WebCore::makeIdForStyleResolution): Use convertToASCIILowercase. When in quirks mode,
+        we want to match IDs in an ASCII case-insensitive way not match compatibility caseless.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::isScriptTypeSupported): Remove the use of lower here since
+        the MIME type registry is now itself ASCII case-insensitive.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::numericPrefix): Changed to use StringView and take a Document&, rearranged
+        argument order so Document& comes first.
+        (WebCore::findSizeValue): Ditto.
+        (WebCore::findScaleValue): Ditto.
+        (WebCore::findBooleanValue): Ditto. Also use std::abs instead of fabs, possibly
+        avoiding a conversion from float to double (not sure it was happening before but it's
+        definitely not happening now).
+        (WebCore::setViewportFeature): Changed to put arguments in a more logical order, to take
+        the ViewportArguments as a reference, not a void*, and to use StringView to avoid forcing
+        the caller to allocate strings. Also changed to use equalLettersIgnoringASCIICase so we
+        don't rely on the caller to make the key lowercase for us.
+        (WebCore::reportViewportWarning): Changed argument types. Added a couple comments about
+        mistakes in the function.
+
+        * dom/ViewportArguments.h: Removed unnecessary declaration of reportViewportWarning,
+        which is now private to the cpp file. Updated for new arguments to setViewportFeature.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeFormatBlock): Use convertToASCIILowercase on the argument, which is
+        specifying a tag name.
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::isValidContentType): Removed unnecessary separate loops for
+        8-bit and 16-bit strings. Content types are short strings and this small optimization is
+        not worth the additional code complexity.
+        (WebCore::Blob::normalizedContentType): Use convertToASCIILowercase since valid
+        content types are guaranteed to be all ASCII.
+        (WebCore::Blob::isNormalizedContentType): Removed unnecessary separate loops for
+        8-bit and 16-bit strings. Content types are short strings and this small optimization is
+        not worth the additional code complexity.
+
+        * html/parser/HTMLParserIdioms.cpp: Added now-needed include of QualifiedName.h.
+
+        * html/parser/HTMLParserIdioms.h: Removed unneeded include of QualifiedName.h and
+        WTFString.h. Made sure every function is declared first, even if it's also defined
+        later in the header in the section for functions templates and inline functions.
+
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::ArchiveFactory::registerKnownArchiveMIMETypes): Use auto& for the type of
+        the set of MIME types here, since it's now using ASCIICaseInsensitiveHash.
+
+        * platform/MIMETypeRegistry.cpp: Changed the MIME type sets to use
+        ASCIICaseInsensitiveHash since MIME type are not case sensitive.
+        (WebCore::initializeSupportedImageMIMETypes): Use a modern for loop.
+        (WebCore::initializeSupportedImageMIMETypesForEncoding): Updated for HashSet type change.
+        (WebCore::initializePDFMIMETypes): Use a modern for loop.
+        (WebCore::initializeSupportedNonImageMimeTypes): Use a modern for loop.
+        (WebCore::initializeSupportedMediaMIMETypes): Updated for HashSet type change.
+        (WebCore::initializeUnsupportedTextMIMETypes): Use a modern for loop.
+        (WebCore::initializeMIMETypeRegistry): Updated for HashSet type change.
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypes): Ditto.
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes): Ditto.
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypesForEncoding): Ditto.
+        (WebCore::MIMETypeRegistry::getSupportedNonImageMIMETypes): Ditto.
+        (WebCore::MIMETypeRegistry::getSupportedMediaMIMETypes): Ditto.
+        (WebCore::MIMETypeRegistry::getPDFMIMETypes): Ditto.
+        (WebCore::MIMETypeRegistry::getPDFAndPostScriptMIMETypes): Ditto.
+        (WebCore::MIMETypeRegistry::getUnsupportedTextMIMETypes): Ditto.
+        (WebCore::mimeTypeAssociationMap): Use ASCIICaseInsensitiveHash.
+        (WebCore::MIMETypeRegistry::getNormalizedMIMEType): Use auto to make code tighter.
+
+        * platform/MIMETypeRegistry.h: Changed return types of the getMIMETypes functions
+        to use ASCIICaseInsensitiveHash.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::schemesForbiddenFromDomainRelaxation): Changed type to
+        use ASCIICaseInsensitiveHash.
+
+        * platform/URL.cpp:
+        (WebCore::mimeTypeFromDataURL): Use convertToASCIILowercase instead of lower.
+        Also removed some dead code that tried to handle the case where the data URL
+        has a comma as one of the first 5 characters: That can't happen since it's a
+        precondition of this function that the first five characters are "data:".
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::getSupportedTypes): Change type of argument to
+        a HashSet with ASCIICaseInsensitiveHash.
+        * platform/graphics/MediaPlayer.h: Ditto.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::staticMIMETypeList):
+        Changed type of HashSet to use ASCIICaseInsensitiveHash.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h: Ditto.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::avfMIMETypes):
+        Changed type of HashSet to use ASCIICaseInsensitiveHash.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::getSupportedTypes): Ditto.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h: Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        Changed type of HashSet to use ASCIICaseInsensitiveHash.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator): Removed
+        an unnecessary line of code to set a local variable to 0 just before it falls
+        out of scope.
+        (WebCore::avfMIMETypes): Ditto. Also tightened up the code a bit.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::getSupportedTypes): Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        Changed type of HashSet to use ASCIICaseInsensitiveHash.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::mimeTypeCache): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes): Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h: Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes): Ditto.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::getSupportedTypes): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Ditto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h: Ditto.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::shouldRejectMIMEType): Made this non-case-sensitive by using startsWith
+        and the "false" argument. Later change this to startsWithIgnoringASCIICase or
+        startsWithLettersIgnoringASCIICase.
+        (WebCore::addFileTypesToCache): Use ASCIICaseInsensitiveHash. ALso rewrote to
+        tighten up the code a bit and use modern Objective-C for loops.
+        (WebCore::mimeCommonTypesCache): Use ASCIICaseInsensitiveHash.
+        (WebCore::mimeModernTypesCache): Ditto.
+        (WebCore::concatenateHashSets): Ditto.
+        (WebCore::MediaPlayerPrivateQTKit::getSupportedTypes): Ditto.
+        (WebCore::MediaPlayerPrivateQTKit::disableUnsupportedTracks): Initialied
+        track type set using lambda, but left it case sensitive.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::mimeTypeCache): Changed type of HashSet to use ASCIICaseInsensitiveHash.
+        (WebCore::MediaPlayerPrivateMediaFoundation::getSupportedTypes): Ditto.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::mimeTypeCache): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::getSupportedTypes): Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h: Ditto.
+
 2016-01-31  Brent Fulgham  <bfulgham@apple.com>
 
         Add "WebKit built-in PDF" Plugin to set of publicly visible plugins
