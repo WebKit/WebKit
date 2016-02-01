@@ -73,22 +73,12 @@ SOFT_LINK_CONSTANT(Photos, PHImageRequestOptionsVersionCurrent, NSString *);
 
 static inline UIImage *photoLibraryIcon()
 {
-    // FIXME: Remove when a new SDK is available. <rdar://problem/20150072>
-#if defined(HAVE_WEBKIT_DOC_PICKER_ICONS)
     return _UIImageGetWebKitPhotoLibraryIcon();
-#else
-    return nil;
-#endif
 }
 
 static inline UIImage *cameraIcon()
 {
-    // FIXME: Remove when a new SDK is available. <rdar://problem/20150072>
-#if defined(HAVE_WEBKIT_DOC_PICKER_ICONS)
     return _UIImageGetWebKitTakePhotoOrVideoIcon();
-#else
-    return nil;
-#endif
 }
 
 #pragma mark - Icon generation
@@ -374,19 +364,7 @@ static UIImage* iconForFile(NSURL *file)
         [mimeTypes addObject:mimeType->string()];
     _mimeTypes = adoptNS([mimeTypes copy]);
 
-    // FIXME: Remove this check and the fallback code when a new SDK is available. <rdar://problem/20150072>
-    if ([UIDocumentMenuViewController instancesRespondToSelector:@selector(_initIgnoringApplicationEntitlementForImportOfTypes:)]) {
-        [self _showDocumentPickerMenu];
-        return;
-    }
-
-    // Fall back to showing the old-style source selection sheet.
-    // If there is no camera or this is type=multiple, just show the image picker for the photo library.
-    // Otherwise, show an action sheet for the user to choose between camera or library.
-    if (_allowMultipleFiles || ![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-        [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-    else
-        [self _showMediaSourceSelectionSheet];
+    [self _showDocumentPickerMenu];
 }
 
 - (void)dismiss
@@ -480,36 +458,6 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         return WEB_UI_STRING_KEY("Take Video", "Take Video (file upload action sheet)", "File Upload alert sheet camera button string for taking only videos");
 
     return WEB_UI_STRING_KEY("Take Photo", "Take Photo (file upload action sheet)", "File Upload alert sheet camera button string for taking only photos");
-}
-
-- (void)_showMediaSourceSelectionSheet
-{
-    NSString *existingString = [self _photoLibraryButtonLabel];
-    NSString *cameraString = [self _cameraButtonLabel];
-    NSString *cancelString = WEB_UI_STRING_KEY("Cancel", "Cancel (file upload action sheet)", "File Upload alert sheet button string to cancel");
-
-    _actionSheetController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:cancelString style:UIAlertActionStyleCancel handler:^(UIAlertAction *){
-        [self _cancel];
-        // We handled cancel ourselves. Prevent the popover controller delegate from cancelling when the popover dismissed.
-        [_presentationPopover setDelegate:nil];
-    }];
-
-    UIAlertAction *cameraAction = [UIAlertAction actionWithTitle:cameraString style:UIAlertActionStyleDefault handler:^(UIAlertAction *){
-        _usingCamera = YES;
-        [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
-    }];
-
-    UIAlertAction *photoLibraryAction = [UIAlertAction actionWithTitle:existingString style:UIAlertActionStyleDefault handler:^(UIAlertAction *){
-        [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-    }];
-
-    [_actionSheetController addAction:cancelAction];
-    [_actionSheetController addAction:cameraAction];
-    [_actionSheetController addAction:photoLibraryAction];
-
-    [self _presentForCurrentInterfaceIdiom:_actionSheetController.get()];
 }
 
 - (void)_showDocumentPickerMenu

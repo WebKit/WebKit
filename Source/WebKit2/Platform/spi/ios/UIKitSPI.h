@@ -79,15 +79,6 @@
 #import <UIKit/UIPreviewItemController.h>
 #endif
 
-// FIXME: Unconditionally include this file when a new SDK is available. <rdar://problem/20150072>
-#if defined(__has_include) && __has_include(<UIKit/UIDocumentMenuViewController_Private.h>)
-#import <UIKit/UIDocumentMenuViewController_Private.h>
-#else
-@interface UIDocumentMenuViewController ()
-- (instancetype)_initIgnoringApplicationEntitlementForImportOfTypes:(NSArray *)types;
-@end
-#endif
-
 #else
 
 #if HAVE(LINK_PREVIEW)

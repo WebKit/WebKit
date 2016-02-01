@@ -1,3 +1,21 @@
+2016-02-01  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/20150072> [iOS] Remove some file upload code only needed before iOS 9
+        https://bugs.webkit.org/show_bug.cgi?id=153754
+
+        Reviewed by Darin Adler.
+
+        * Platform/spi/ios/UIKitSPI.h: Removed conditional forward declaration of SPI.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (photoLibraryIcon): Removed check for HAVE_WEBKIT_DOC_PICKER_ICONS, which is always true in
+          iOS 9 and later.
+        (cameraIcon): Ditto.
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]): Removed branch for when
+          UIDocumentMenuViewController doesn’t respond to
+          -_initIgnoringApplicationEntitlementForImportOfTypes:.
+        (-[WKFileUploadPanel _showMediaSourceSelectionSheet]): Deleted now-unused method.
+
 2016-02-01  Anders Carlsson  <andersca@apple.com>
 
         Stop linking to PassKit

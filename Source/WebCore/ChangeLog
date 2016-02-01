@@ -1,3 +1,12 @@
+2016-02-01  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/20150072> [iOS] Remove some file upload code only needed before iOS 9
+        https://bugs.webkit.org/show_bug.cgi?id=153754
+
+        Reviewed by Darin Adler.
+
+        * English.lproj/Localizable.strings: Updated for removal of WebKit2 string.
+
 2016-02-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Cache the Path instead of creating it every time it is required

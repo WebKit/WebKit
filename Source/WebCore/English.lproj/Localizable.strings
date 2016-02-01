@@ -124,9 +124,6 @@
 /* menu item title for phone number */
 "Call Using iPhone:" = "Call Using iPhone:";
 
-/* File Upload alert sheet button string to cancel */
-"Cancel (file upload action sheet)" = "Cancel";
-
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
 
