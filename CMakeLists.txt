@@ -105,11 +105,6 @@ set(WebCoreTestSupport_LIBRARY_TYPE STATIC)
 option(SHOULD_INSTALL_JS_SHELL "generate an installation rule to install the built JavaScript shell")
 
 # -----------------------------------------------------------------------------
-# Common configuration
-#------------------------------------------------------------------------------
-include(WebKitCommon)
-
-# -----------------------------------------------------------------------------
 # Output directories
 #------------------------------------------------------------------------------
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
@@ -121,6 +116,11 @@ endif ()
 if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 endif ()
+
+# -----------------------------------------------------------------------------
+# Common configuration
+#------------------------------------------------------------------------------
+include(WebKitCommon)
 
 # -----------------------------------------------------------------------------
 # Enable API unit tests and create a target for the test runner
