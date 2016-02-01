@@ -76,13 +76,13 @@ test("_appendPendingRevisionCount", function()
 {
     this.view._appendPendingRevisionCount(this.queue);
     var revisionsBehind = this.view.element.getElementsByClassName("message")[0].innerHTML.match(/.*(\d+) revision(|s) behind/)[1];
-    equal(revisionsBehind, "1", "assert revisions behind");
+    strictEqual(revisionsBehind, "1", "assert revisions behind");
 });
 
 test("_popoverLinesForCommitRange", function()
 {
     var lines = this.view._popoverLinesForCommitRange(this.trac, this.trunkBranch, 33018, 33020);
-    strictEqual(lines.length, 3, "has 3 lines");
+    strictEqual(lines.length, 2, "has 2 lines");
 });
 
 test("_presentPopoverForPendingCommits", function()
@@ -106,7 +106,7 @@ test("_presentPopoverForRevisionRange", function()
     };
     this.view._presentPopoverForRevisionRange(element, popover, context);
     var nodeList = popover._element.getElementsByClassName("pending-commit");
-    strictEqual(nodeList.length, 3, "has 3 commits");
+    strictEqual(nodeList.length, 2, "has 2 commits");
 });
 
 test("_presentPopoverForRevisionRange no commits", function()
@@ -147,6 +147,11 @@ test("_revisionContentWithPopoverForIteration has previousIteration", function()
     strictEqual(content.innerHTML, "r33022", "should have correct revision number.");
     strictEqual(content.classList.contains("revision-number"), true, "should have class 'revision-number'.");
     strictEqual(content.classList.contains("popover-tracking"), true, "should have class 'popover-tracking'.");
+    var element = document.createElement("div");
+    var popover = new Dashboard.Popover();
+    this.view._presentPopoverForRevisionRange(element, popover, content.popoverTracker._context);
+    var nodeList = popover._element.getElementsByClassName("pending-commit");
+    strictEqual(nodeList.length, 2, "has 2 commits");
 });
 
 module("BuildBotQueue", {

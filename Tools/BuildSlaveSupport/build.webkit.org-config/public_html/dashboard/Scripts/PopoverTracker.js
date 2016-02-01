@@ -38,6 +38,7 @@ PopoverTracker = function(element, presentPopoverCallback, context)
     element.classList.add("popover-tracking");
     element.addEventListener("mouseenter", this._mouseEnteredPopoverOrElement.bind(this), true);
     element.addEventListener("mouseleave", this._mouseExitedPopoverOrElement.bind(this), true);
+    element.popoverTracker = this;
 };
 
 // Only one popover may be active at any time. An active popover is not necessarily visible already.

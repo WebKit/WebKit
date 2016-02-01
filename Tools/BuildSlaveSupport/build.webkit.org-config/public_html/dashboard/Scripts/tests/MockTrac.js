@@ -45,7 +45,7 @@ MockTrac = function()
             "date": new Date("2015-11-16T01:18:23.000Z"),
             "description": "description",
             "containsBranchLocation": true,
-            "branchName": "trunk"
+            "branchName": "someOtherBranch"
         },
         {
             "revisionNumber": 33020,

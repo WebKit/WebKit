@@ -1,5 +1,21 @@
 2016-02-01  Jason Marcell  <jmarcell@apple.com>
 
+        Improvements to botwatcher's dashboard unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=153621
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/PopoverTracker.js:
+        (PopoverTracker): Retain a reference to the PopoverTracker so that we can make assertions about it in the unit tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockTrac.js:
+        (MockTrac): Changing revision 33019 to be on a different branch so that _appendPendingRevisionCount and
+        _popoverLinesForCommitRange have to traverse commits from different branches.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/tests.js: Changing equal to strictEqual
+        in unit test for _appendPendingRevisionCount. Also added assertions for Popover in test for
+        _revisionContentWithPopoverForIteration.
+
+2016-02-01  Jason Marcell  <jmarcell@apple.com>
+
         Refactor to add event listeners and start periodic updates for all trac instances.
         https://bugs.webkit.org/show_bug.cgi?id=153609
 
