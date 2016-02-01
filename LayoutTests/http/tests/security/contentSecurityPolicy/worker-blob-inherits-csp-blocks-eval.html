@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- FIXME: Remove 'self' from script-src once we fix <https://bugs.webkit.org/show_bug.cgi?id=153158>. -->
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that the Content Security Policy (CSP) of the owner document (this page) blocks a blob-URL Web Worker from using <code>eval()</code> because the parent's CSP does not list <code>unsafe-eval</code> in script-src.</p>
+<pre id="result"></pre>
+<script>
+window.onmessage = function (event)
+{
+    document.getElementById("result").textContent = event.data;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var script = [
+    'var exception;',
+    'try {',
+    '    eval("1 + 0");',
+    '} catch (e) {',
+    '    exception = e;',
+    '}',
+    'if (!exception)',
+    '    self.postMessage("FAIL should throw EvalError. But did not throw an exception.");',
+    'else {',
+    '    if (exception instanceof EvalError)',
+    '        self.postMessage("PASS threw exception " + exception + ".");',
+    '    else',
+    '        self.postMessage("FAIL should throw EvalError. Threw exception " + exception + ".");',
+    '}',
+].join("\n");
+
+var worker;
+try {
+    worker = new Worker(window.URL.createObjectURL(new Blob([script])));
+    worker.onmessage = function (event) { window.postMessage(event.data, "*") };
+} catch (exception) {
+    window.postMessage("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".", "*");
+}
+</script>
+</body>
+</html>

@@ -27,7 +27,6 @@
 #ifndef WorkerThread_h
 #define WorkerThread_h
 
-#include "ContentSecurityPolicy.h"
 #include "WorkerRunLoop.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -36,6 +35,7 @@
 
 namespace WebCore {
 
+    class ContentSecurityPolicyResponseHeaders;
     class URL;
     class NotificationClient;
     class SecurityOrigin;
@@ -68,10 +68,10 @@ namespace WebCore {
 #endif
 
     protected:
-        WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, const SecurityOrigin* topOrigin);
+        WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, const SecurityOrigin* topOrigin);
 
         // Factory method for creating a new worker context for the thread.
-        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) = 0;
+        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, PassRefPtr<SecurityOrigin> topOrigin) = 0;
 
         // Executes the event loop for the worker thread. Derived classes can override to perform actions before/after entering the event loop.
         virtual void runEventLoop();

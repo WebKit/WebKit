@@ -31,6 +31,7 @@
 
 #include "DOMWindow.h"
 #include "CachedResourceLoader.h"
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -40,6 +41,7 @@
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "NetworkStateNotifier.h"
+#include "SecurityOrigin.h"
 #include "TextEncoding.h"
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerScriptLoader.h"
@@ -150,8 +152,11 @@ void Worker::notifyNetworkStateChange(bool isOnLine)
     m_contextProxy->notifyNetworkStateChange(isOnLine);
 }
 
-void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse&)
+void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
+    const URL& responseURL = response.url();
+    if (!responseURL.protocolIs("blob") && !responseURL.protocolIs("file") && !SecurityOrigin::create(responseURL)->isUnique())
+        m_contentSecurityPolicyResponseHeaders = ContentSecurityPolicyResponseHeaders(response);
     InspectorInstrumentation::didReceiveScriptResponse(scriptExecutionContext(), identifier);
 }
 
@@ -160,8 +165,8 @@ void Worker::notifyFinished()
     if (m_scriptLoader->failed())
         dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else {
-        WorkerThreadStartMode startMode = DontPauseWorkerGlobalScopeOnStart;
-        m_contextProxy->startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), startMode);
+        const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : scriptExecutionContext()->contentSecurityPolicy()->responseHeaders();
+        m_contextProxy->startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, DontPauseWorkerGlobalScopeOnStart);
         InspectorInstrumentation::scriptImported(scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
     }
     m_scriptLoader = nullptr;

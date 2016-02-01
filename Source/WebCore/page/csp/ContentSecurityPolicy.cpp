@@ -771,11 +771,11 @@ private:
 class CSPDirectiveList {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<CSPDirectiveList> create(ContentSecurityPolicy*, const String&, ContentSecurityPolicy::HeaderType);
-    CSPDirectiveList(ContentSecurityPolicy*, ContentSecurityPolicy::HeaderType);
+    static std::unique_ptr<CSPDirectiveList> create(ContentSecurityPolicy*, const String&, ContentSecurityPolicyHeaderType);
+    CSPDirectiveList(ContentSecurityPolicy*, ContentSecurityPolicyHeaderType);
 
     const String& header() const { return m_header; }
-    ContentSecurityPolicy::HeaderType headerType() const { return m_headerType; }
+    ContentSecurityPolicyHeaderType headerType() const { return m_headerType; }
 
     bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
@@ -835,7 +835,7 @@ private:
     ContentSecurityPolicy* m_policy;
 
     String m_header;
-    ContentSecurityPolicy::HeaderType m_headerType;
+    ContentSecurityPolicyHeaderType m_headerType;
 
     bool m_reportOnly;
     bool m_haveSandboxPolicy;
@@ -859,17 +859,17 @@ private:
     String m_evalDisabledErrorMessage;
 };
 
-CSPDirectiveList::CSPDirectiveList(ContentSecurityPolicy* policy, ContentSecurityPolicy::HeaderType type)
+CSPDirectiveList::CSPDirectiveList(ContentSecurityPolicy* policy, ContentSecurityPolicyHeaderType type)
     : m_policy(policy)
     , m_headerType(type)
     , m_reportOnly(false)
     , m_haveSandboxPolicy(false)
     , m_reflectedXSSDisposition(ContentSecurityPolicy::ReflectedXSSUnset)
 {
-    m_reportOnly = (type == ContentSecurityPolicy::Report || type == ContentSecurityPolicy::PrefixedReport);
+    m_reportOnly = (type == ContentSecurityPolicyHeaderType::Report || type == ContentSecurityPolicyHeaderType::PrefixedReport);
 }
 
-std::unique_ptr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* policy, const String& header, ContentSecurityPolicy::HeaderType type)
+std::unique_ptr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* policy, const String& header, ContentSecurityPolicyHeaderType type)
 {
     auto directives = std::make_unique<CSPDirectiveList>(policy, type);
     directives->parse(header);
@@ -1371,7 +1371,22 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
         didReceiveHeader(policy->header(), policy->headerType());
 }
 
-void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType type)
+ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() const
+{
+    ContentSecurityPolicyResponseHeaders result;
+    result.m_headers.reserveInitialCapacity(m_policies.size());
+    for (auto& policy : m_policies)
+        result.m_headers.uncheckedAppend({ policy->header(), policy->headerType() });
+    return result;
+}
+
+void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicyResponseHeaders& headers)
+{
+    for (auto& header : headers.m_headers)
+        didReceiveHeader(header.first, header.second);
+}
+
+void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecurityPolicyHeaderType type)
 {
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
     // be combined with a comma. Walk the header string, and parse each comma
@@ -1401,16 +1416,6 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
 void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
 {
     m_overrideInlineStyleAllowed = value;
-}
-
-const String& ContentSecurityPolicy::deprecatedHeader() const
-{
-    return m_policies.isEmpty() ? emptyString() : m_policies[0]->header();
-}
-
-ContentSecurityPolicy::HeaderType ContentSecurityPolicy::deprecatedHeaderType() const
-{
-    return m_policies.isEmpty() ? Enforce : m_policies[0]->headerType();
 }
 
 template<bool (CSPDirectiveList::*allowed)(ContentSecurityPolicy::ReportingStatus) const>

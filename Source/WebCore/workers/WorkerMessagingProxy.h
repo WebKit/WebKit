@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+    class ContentSecurityPolicyResponseHeaders;
     class DedicatedWorkerThread;
     class ScriptExecutionContext;
     class Worker;
@@ -51,7 +52,7 @@ namespace WebCore {
 
         // Implementations of WorkerGlobalScopeProxy.
         // (Only use these methods in the worker object thread.)
-        virtual void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode) override;
+        virtual void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, WorkerThreadStartMode) override;
         virtual void terminateWorkerGlobalScope() override;
         virtual void postMessageToWorkerGlobalScope(PassRefPtr<SerializedScriptValue>, std::unique_ptr<MessagePortChannelArray>) override;
         virtual bool hasPendingActivity() const override;

@@ -1,3 +1,92 @@
+2016-01-31  Daniel Bates  <dabates@apple.com>
+
+        CSP: Use the served CSP header for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=153157
+        <rdar://problem/24383254>
+        And
+        https://bugs.webkit.org/show_bug.cgi?id=153156
+        <rdar://problem/24383246>
+
+        Reviewed by Brent Fulgham.
+
+        Inspired by Blink commit:
+        <https://src.chromium.org/viewvc/blink?revision=194143&view=revision>
+
+        Implement support for respecting Content Security Policy (CSP) HTTP headers included in the
+        HTTP response for a Web Worker's script as per section Workers of the CSP 2.0 spec,
+        <https://w3c.github.io/webappsec-csp/2/#processing-model-workers> (29 August 2015).
+
+        Currently a Web Worker always inherits the CSP of its owner document. Instead a web worker
+        will inherit the CSP of its owner document only if its script is incapable of defining a
+        content security policy (i.e. its origin is a globally unique identifier). Otherwise, the
+        CSP HTTP headers delivered with the script will be used to define the CSP for the worker.
+
+        Tests: fast/workers/worker-inherits-csp-blocks-eval.html
+               fast/workers/worker-inherits-csp-blocks-xhr.html
+               http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-blocks-eval.html
+
+        * CMakeLists.txt: Add file ContentSecurityPolicyResponseHeaders.cpp.
+        * WebCore.vcxproj/WebCore.vcxproj: Add files ContentSecurityPolicyResponseHeaders.{cpp, h}.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Update code to use enum class ContentSecurityPolicyHeaderType.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument): Extract logic to collect Content Security Policy HTTP headers
+        into class ContentSecurityPolicyResponseHeaders and make use of it here.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::headerType): Modified to use enum class ContentSecurityPolicyHeaderType.
+        (WebCore::CSPDirectiveList::CSPDirectiveList): Ditto.
+        (WebCore::CSPDirectiveList::create): Ditto.
+        (WebCore::ContentSecurityPolicy::responseHeaders): Creates and returns a ContentSecurityPolicyResponseHeaders
+        object with the parsed CSP policy headers.
+        (WebCore::ContentSecurityPolicy::didReceiveHeaders): Processed the CSP policy headers represented by the
+        specified ContentSecurityPolicyResponseHeaders object.
+        (WebCore::ContentSecurityPolicy::deprecatedHeader): Deleted.
+        (WebCore::ContentSecurityPolicy::deprecatedHeaderType): Deleted.
+        * page/csp/ContentSecurityPolicy.h: Defines a class that represents a collection of CSP policy headers.
+        This class has two purposes:
+            - It extracts the CSP policy headers from a HTTP response (ResourceResponse object). We make use of
+            this functionality in both FrameLoader::didBeginDocument() and Worker::didReceiveResponse().
+            - It serves as a memento that externalizes the internal CSP policy details of an instance of
+            ContentSecurityPolicy. We make use of this memento functionality to support inheriting the
+            CSP policy of the worker's owner document in a thread-safe manner. You can create and restore
+            a memento using ContentSecurityPolicy::responseHeaders() and ContentSecurityPolicy::didReceiveHeaders(), respectively.
+        * page/csp/ContentSecurityPolicyResponseHeaders.cpp: Added.
+        (WebCore::ContentSecurityPolicyResponseHeaders::ContentSecurityPolicyResponseHeaders): Extracts the
+        CSP HTTP headers from a ResourceResponse object.
+        (WebCore::ContentSecurityPolicyResponseHeaders::isolatedCopy): Make a copy of this object that is
+        safe to pass to another thread.
+        * page/csp/ContentSecurityPolicyResponseHeaders.h: Added.
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create): Modified to use class ContentSecurityPolicyResponseHeaders.
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::create): Ditto.
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread): Ditto.
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope): Ditto.
+        * workers/DedicatedWorkerThread.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::didReceiveResponse): Create a ContentSecurityPolicyResponseHeaders if the origin of
+        the worker's script is capable of providing a CSP. Otherwise, we will inherit the CSP of the worker's owner
+        document in Worker::notifyFinished().
+        (WebCore::Worker::notifyFinished): Pass the appropriate CSP response headers to WorkerMessagingProxy::startWorkerGlobalScope().
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders): Renamed; formerly named applyContentSecurityPolicyFromString().
+        Modified to take a ContentSecurityPolicyResponseHeaders and apply it to the ContentSecurityPolicy object associated with the worker.
+        (WebCore::WorkerGlobalScope::applyContentSecurityPolicyFromString): Deleted.
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope): Pass the worker's ContentSecurityPolicyResponseHeaders object.
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData): Added field m_contentSecurityPolicyResponseHeaders to store
+        the CSP response headers to be applied to the worker's ContentSecurityPolicy object.
+        (WebCore::WorkerThread::WorkerThread): Modified to use ContentSecurityPolicyResponseHeaders.
+        (WebCore::WorkerThread::workerThread): Pass the ContentSecurityPolicyResponseHeaders object from the start up data struct
+        to DedicatedWorkerThread::createWorkerGlobalScope().
+        * workers/WorkerThread.h:
+
 2016-01-31  Darin Adler  <darin@apple.com>
 
         Get rid of most calls to String::upper; mostly replace them with convertToASCIIUppercase

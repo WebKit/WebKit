@@ -7304,6 +7304,7 @@
     <ClCompile Include="..\page\Chrome.cpp" />
     <ClCompile Include="..\page\animation\CompositeAnimation.cpp" />
     <ClCompile Include="..\page\csp\ContentSecurityPolicy.cpp" />
+    <ClCompile Include="..\page\csp\ContentSecurityPolicyResponseHeaders.cpp" />
     <ClCompile Include="..\page\ContextMenuContext.cpp" />
     <ClCompile Include="..\page\ContextMenuController.cpp" />
     <ClCompile Include="..\page\Crypto.cpp" />
@@ -20701,6 +20702,7 @@
     <ClInclude Include="..\page\ChromeClient.h" />
     <ClInclude Include="..\page\animation\CompositeAnimation.h" />
     <ClInclude Include="..\page\csp\ContentSecurityPolicy.h" />
+    <ClInclude Include="..\page\csp\ContentSecurityPolicyResponseHeaders.h" />
     <ClInclude Include="..\page\ContextMenuClient.h" />
     <ClInclude Include="..\page\ContextMenuContext.h" />
     <ClInclude Include="..\page\ContextMenuController.h" />

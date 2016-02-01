@@ -1,0 +1,4 @@
+This tests that the Content Security Policy (CSP) of the owner document (this page) blocks a file-URL Web Worker from using eval() because the parent's CSP does not list unsafe-eval in script-src.
+
+PASS threw exception EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+.

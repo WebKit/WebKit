@@ -1,3 +1,47 @@
+2016-01-31  Daniel Bates  <dabates@apple.com>
+
+        CSP: Use the served CSP header for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=153157
+        <rdar://problem/24383254>
+        And
+        https://bugs.webkit.org/show_bug.cgi?id=153156
+        <rdar://problem/24383246>
+
+        Reviewed by Brent Fulgham.
+
+        Add new tests to ensure we block eval() in blob-, file-URL workers and block XHR in a file-URL worker.
+
+        * TestExpectations: Remove now passing tests http/tests/security/contentSecurityPolicy/worker-{multiple-csp-headers, without-own-csp}.html
+        and update the associated bug # for tests that fail.
+        * fast/workers/resources/worker-inherits-csp-blocks-eval.js: Added.
+        (catch):
+        * fast/workers/resources/worker-inherits-csp-blocks-xhr.js: Added.
+        (catch):
+        * fast/workers/worker-inherits-csp-blocks-eval-expected.txt: Added.
+        * fast/workers/worker-inherits-csp-blocks-eval.html: Added.
+        * fast/workers/worker-inherits-csp-blocks-xhr-expected.txt: Added.
+        * fast/workers/worker-inherits-csp-blocks-xhr.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-blocks-eval-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-blocks-eval.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-multiple-csp-headers-expected.txt: Updated expected results as
+        the result was incorrect.
+        * http/tests/security/contentSecurityPolicy/worker-without-own-csp-expected.txt: Ditto.
+
+2016-01-27  Daniel Bates  <dabates@apple.com>
+
+        CSP: Use the served CSP header for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=153157
+        And
+        https://bugs.webkit.org/show_bug.cgi?id=153156
+
+        Reviewed by Brent Fulgham.
+
+        Remove some tests that now pass and update the expected results of existing tests.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/worker-multiple-csp-headers-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-without-own-csp-expected.txt:
+
 2016-01-31  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed. EFL gardening: rebaseline tests after r195740. (more to follow)

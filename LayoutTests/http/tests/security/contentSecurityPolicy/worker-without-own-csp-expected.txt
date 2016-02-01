@@ -1,4 +1,3 @@
 
-
 PASS Worker should not inherit document's CSP 
 

@@ -29,11 +29,13 @@
 
 #include "AbstractWorker.h"
 #include "ActiveDOMObject.h"
+#include "ContentSecurityPolicyResponseHeaders.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "MessagePort.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -83,6 +85,7 @@ namespace WebCore {
 
         RefPtr<WorkerScriptLoader> m_scriptLoader;
         WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
+        Optional<ContentSecurityPolicyResponseHeaders> m_contentSecurityPolicyResponseHeaders;
     };
 
 } // namespace WebCore

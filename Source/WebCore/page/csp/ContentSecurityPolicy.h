@@ -26,6 +26,7 @@
 #ifndef ContentSecurityPolicy_h
 #define ContentSecurityPolicy_h
 
+#include "ContentSecurityPolicyResponseHeaders.h"
 #include "URL.h"
 #include "ScriptState.h"
 #include <memory>
@@ -56,13 +57,6 @@ public:
 
     void copyStateFrom(const ContentSecurityPolicy*);
 
-    enum HeaderType {
-        Report,
-        Enforce,
-        PrefixedReport,
-        PrefixedEnforce
-    };
-
     enum class ReportingStatus {
         SendReport,
         SuppressReport
@@ -77,12 +71,9 @@ public:
         BlockReflectedXSS
     };
 
-    void didReceiveHeader(const String&, HeaderType);
-
-    // These functions are wrong because they assume that there is only one header.
-    // FIXME: Replace them with functions that return vectors.
-    const String& deprecatedHeader() const;
-    HeaderType deprecatedHeaderType() const;
+    ContentSecurityPolicyResponseHeaders responseHeaders() const;
+    void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&);
+    void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType);
 
     bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy = false, ContentSecurityPolicy::ReportingStatus = ContentSecurityPolicy::ReportingStatus::SendReport) const;
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy = false, ContentSecurityPolicy::ReportingStatus = ContentSecurityPolicy::ReportingStatus::SendReport) const;
