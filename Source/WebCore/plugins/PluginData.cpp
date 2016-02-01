@@ -24,6 +24,7 @@
 #include "config.h"
 #include "PluginData.h"
 
+#include "LocalizedStrings.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "PluginStrategy.h"
@@ -45,6 +46,18 @@ Vector<PluginInfo> PluginData::webVisiblePlugins() const
     return plugins;
 }
 
+#if PLATFORM(COCOA)
+static inline bool isBuiltInPDFPlugIn(const PluginInfo& plugIn)
+{
+    return plugIn.name == builtInPDFPluginName();
+}
+#else
+static inline bool isBuiltInPDFPlugIn(const PluginInfo&)
+{
+    return false;
+}
+#endif
+
 static bool shouldBePubliclyVisible(const PluginInfo& plugin)
 {
     // For practical website compatibility, there are a few plugins that need to be
@@ -52,7 +65,8 @@ static bool shouldBePubliclyVisible(const PluginInfo& plugin)
     // there is a good track record that this does not harm compatibility.
     return plugin.name.containsIgnoringASCIICase("Shockwave")
         || plugin.name.containsIgnoringASCIICase("QuickTime")
-        || plugin.name.containsIgnoringASCIICase("Java");
+        || plugin.name.containsIgnoringASCIICase("Java")
+        || isBuiltInPDFPlugIn(plugin);
 }
 
 Vector<PluginInfo> PluginData::publiclyVisiblePlugins() const

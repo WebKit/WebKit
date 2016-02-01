@@ -1,0 +1,32 @@
+<html>
+<head>
+<script>
+function test()
+{
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+        internals.setShowAllPlugins(false);
+    }
+
+    var pluginList = "";
+    Array.prototype.forEach.call(navigator.plugins, function(plugin) {
+        if (pluginList.length)
+            pluginList = pluginList + "\n";
+        pluginList = pluginList + plugin.name;
+    });
+
+    if (pluginList.length)
+        document.getElementById("result").innerText = pluginList;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="test();">
+<p>
+    Check we only display the valid set of "public" plugins.
+</p>
+<div id="result">None</div>
+</body>
+</html>

@@ -1,3 +1,22 @@
+2016-01-31  Brent Fulgham  <bfulgham@apple.com>
+
+        Add "WebKit built-in PDF" Plugin to set of publicly visible plugins
+        https://bugs.webkit.org/show_bug.cgi?id=153657
+        <rdar://problem/24413107>
+
+        Reviewed by Darin Adler.
+
+        Tested by http/tests/plugins/visible_plugins.html.
+
+        A number of poorly-coded sites break when WebKit reports that it understands PDF mime types,
+        but does not have a list of plugins that the site can iterate through.
+
+        To avoid this compatibility problem, we should also expose the "WebKit built-in PDF" plugin
+        to avoid this edge case.
+
+        * plugins/PluginData.cpp:
+        (WebCore::shouldBePubliclyVisible): Add "WebKit built-in PDF" plugin.
+
 2016-01-31  Doug Russell  <d_russell@apple.com>
 
         AX: Add a boundary value to AXTextStateChangeType
