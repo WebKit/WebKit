@@ -1,3 +1,19 @@
+2016-02-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Cache the Path instead of creating it every time it is required
+        https://bugs.webkit.org/show_bug.cgi?id=152939
+
+        Reviewed by Darin Adler.
+
+        If the key type of an LRU cache can't to be strongly tided to a specific
+        data type; e.g. FloatRect -> Path, we need to be able to pass the policy
+        type to the TinyLRUCache template instead of just specializing it. This
+        will make the code more readable and will allow different caches for the
+        same key type.
+
+        * wtf/TinyLRUCache.h:
+        (WebCore::TinyLRUCache::get):
+
 2016-02-01  Alex Christensen  <achristensen@webkit.org>
 
         [Win] WTFHeaderDetection.h no longer needed

@@ -1,3 +1,66 @@
+2016-02-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Cache the Path instead of creating it every time it is required
+        https://bugs.webkit.org/show_bug.cgi?id=152939
+
+        Reviewed by Darin Adler.
+
+        Instead of creating the Path object every time it is required, we should 
+        cache it in an LRU cache. TinyLRUCache returns a reference to the cached
+        entry so we do not have to pay the cost of copying it either.
+
+        * platform/graphics/FloatRoundedRect.h:
+        (WebCore::operator!=):
+        Implement the inequality operator for FloatRoundedRect since it is
+        called by TinyLRUCache.
+        
+        * rendering/ClipPathOperation.h:
+        Return a reference to the path in the cache since instead of creating a
+        new copy.
+        
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::SVGPathTranslatedByteStream::SVGPathTranslatedByteStream):
+        (WebCore::SVGPathTranslatedByteStream::operator==):
+        (WebCore::SVGPathTranslatedByteStream::operator!=):
+        (WebCore::SVGPathTranslatedByteStream::isEmpty):
+        (WebCore::SVGPathTranslatedByteStream::path):
+        This struct holds an offset and an SVGPathByteStream. It is the key of 
+        the LRU cache for the the translated SVGPathByteStream.
+        
+        (WebCore::EllipsePathPolicy::isKeyNull):
+        (WebCore::EllipsePathPolicy::createValueForKey):
+        (WebCore::RoundedRectPathPolicy::isKeyNull):
+        (WebCore::RoundedRectPathPolicy::createValueForKey):
+        (WebCore::PolygonPathPolicy::isKeyNull):
+        (WebCore::PolygonPathPolicy::createValueForKey):
+        (WebCore::TranslatedByteStreamPathPolicy::isKeyNull):
+        (WebCore::TranslatedByteStreamPathPolicy::createValueForKey):
+        Inherit from the LRU cache policy template, so have a specific name for
+        the desired path contents and pass this class explicitly to the LRU cache
+        template.
+        
+        (WebCore::cachedEllipsePath):
+        (WebCore::cachedRoundedRectPath):
+        (WebCore::cachedPolygonPath):
+        (WebCore::cachedTranslatedByteStreamPath):
+        Return a cached path object for specific path contents.
+        
+        (WebCore::BasicShapeCircle::path):
+        (WebCore::BasicShapeEllipse::path):
+        (WebCore::BasicShapePolygon::path):
+        (WebCore::BasicShapePath::path):
+        (WebCore::BasicShapeInset::path):
+        Get the Path object from the cache; create a new one if it does not exist.
+        
+        * rendering/style/BasicShapes.h:
+        Change the prototype of the path() function to return a reference to the
+        path in the cache instead of a having to copying it.
+        
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPathByteStream::operator!=):
+        Implement the inequality operator for SVGPathByteStream because it is
+        called by TinyLRUCache.
+
 2016-02-01  Chris Dumez  <cdumez@apple.com>
 
         Move properties that use custom bindings to the prototype

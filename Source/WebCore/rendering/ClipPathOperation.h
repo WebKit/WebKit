@@ -103,12 +103,7 @@ public:
 
     const BasicShape& basicShape() const { return m_shape; }
     WindRule windRule() const { return m_shape.get().windRule(); }
-    const Path pathForReferenceRect(const FloatRect& boundingRect)
-    {
-        Path path;
-        m_shape.get().path(path, boundingRect);
-        return path;
-    }
+    const Path& pathForReferenceRect(const FloatRect& boundingRect) { return m_shape.get().path(boundingRect); }
 
     void setReferenceBox(CSSBoxType referenceBox) { m_referenceBox = referenceBox; }
     CSSBoxType referenceBox() const { return m_referenceBox; }

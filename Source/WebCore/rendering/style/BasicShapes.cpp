@@ -41,6 +41,9 @@
 #include "SVGPathByteStream.h"
 #include "SVGPathUtilities.h"
 
+#include <wtf/NeverDestroyed.h>
+#include <wtf/TinyLRUCache.h>
+
 namespace WebCore {
 
 void BasicShapeCenterCoordinate::updateComputedLength()
@@ -58,6 +61,90 @@ void BasicShapeCenterCoordinate::updateComputedLength()
     auto rhs = std::make_unique<CalcExpressionLength>(m_length);
     auto op = std::make_unique<CalcExpressionBinaryOperation>(WTFMove(lhs), WTFMove(rhs), CalcSubtract);
     m_computedLength = Length(CalculationValue::create(WTFMove(op), CalculationRangeAll));
+}
+
+struct SVGPathTranslatedByteStream {
+    SVGPathTranslatedByteStream(const FloatPoint& offset, const SVGPathByteStream& rawStream)
+        : m_offset(offset)
+        , m_rawStream(rawStream)
+    { }
+
+    bool operator==(const SVGPathTranslatedByteStream& other) const { return other.m_offset == m_offset && other.m_rawStream == m_rawStream; }
+    bool operator!=(const SVGPathTranslatedByteStream& other) const { return !(*this == other); }
+    bool isEmpty() const { return m_rawStream.isEmpty(); }
+
+    Path path() const
+    {
+        Path path;
+        buildPathFromByteStream(m_rawStream, path);
+        path.translate(toFloatSize(m_offset));
+        return path;
+    }
+    
+    FloatPoint m_offset;
+    SVGPathByteStream m_rawStream;
+};
+
+struct EllipsePathPolicy : public TinyLRUCachePolicy<FloatRect, Path> {
+public:
+    static bool isKeyNull(const FloatRect& rect) { return rect.isEmpty(); }
+
+    static Path createValueForKey(const FloatRect& rect)
+    {
+        Path path;
+        path.addEllipse(rect);
+        return path;
+    }
+};
+
+struct RoundedRectPathPolicy : public TinyLRUCachePolicy<FloatRoundedRect, Path> {
+public:
+    static bool isKeyNull(const FloatRoundedRect& rect) { return rect.isEmpty(); }
+
+    static Path createValueForKey(const FloatRoundedRect& rect)
+    {
+        Path path;
+        path.addRoundedRect(rect);
+        return path;
+    }
+};
+
+struct PolygonPathPolicy : public TinyLRUCachePolicy<Vector<FloatPoint>, Path> {
+public:
+    static bool isKeyNull(const Vector<FloatPoint>& points) { return !points.size(); }
+
+    static Path createValueForKey(const Vector<FloatPoint>& points) { return Path::polygonPathFromPoints(points); }
+};
+
+struct TranslatedByteStreamPathPolicy : public TinyLRUCachePolicy<SVGPathTranslatedByteStream, Path> {
+public:
+    static bool isKeyNull(const SVGPathTranslatedByteStream& stream) { return stream.isEmpty(); }
+
+    static Path createValueForKey(const SVGPathTranslatedByteStream& stream) { return stream.path(); }
+};
+
+static const Path& cachedEllipsePath(const FloatRect& rect)
+{
+    static NeverDestroyed<TinyLRUCache<FloatRect, Path, 4, EllipsePathPolicy>> cache;
+    return cache.get().get(rect);
+}
+
+static const Path& cachedRoundedRectPath(const FloatRoundedRect& rect)
+{
+    static NeverDestroyed<TinyLRUCache<FloatRoundedRect, Path, 4, RoundedRectPathPolicy>> cache;
+    return cache.get().get(rect);
+}
+
+static const Path& cachedPolygonPath(const Vector<FloatPoint>& points)
+{
+    static NeverDestroyed<TinyLRUCache<Vector<FloatPoint>, Path, 4, PolygonPathPolicy>> cache;
+    return cache.get().get(points);
+}
+
+static const Path& cachedTranslatedByteStreamPath(const SVGPathByteStream& stream, const FloatPoint& offset)
+{
+    static NeverDestroyed<TinyLRUCache<SVGPathTranslatedByteStream, Path, 4, TranslatedByteStreamPathPolicy>> cache;
+    return cache.get().get(SVGPathTranslatedByteStream(offset, stream));
 }
 
 bool BasicShapeCircle::operator==(const BasicShape& other) const
@@ -88,19 +175,13 @@ float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight
     return std::max(std::max(std::abs(centerX), widthDelta), std::max(std::abs(centerY), heightDelta));
 }
 
-void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
+const Path& BasicShapeCircle::path(const FloatRect& boundingBox)
 {
-    ASSERT(path.isEmpty());
-
     float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width());
     float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height());
     float radius = floatValueForRadiusInBox(boundingBox.width(), boundingBox.height());
-    path.addEllipse(FloatRect(
-        centerX - radius + boundingBox.x(),
-        centerY - radius + boundingBox.y(),
-        radius * 2,
-        radius * 2
-    ));
+
+    return cachedEllipsePath(FloatRect(centerX - radius + boundingBox.x(), centerY - radius + boundingBox.y(), radius * 2, radius * 2));
 }
 
 bool BasicShapeCircle::canBlend(const BasicShape& other) const
@@ -148,19 +229,14 @@ float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius
     return std::max(std::abs(center), widthOrHeightDelta);
 }
 
-void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
+const Path& BasicShapeEllipse::path(const FloatRect& boundingBox)
 {
-    ASSERT(path.isEmpty());
-
     float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width());
     float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height());
     float radiusX = floatValueForRadiusInBox(m_radiusX, centerX, boundingBox.width());
     float radiusY = floatValueForRadiusInBox(m_radiusY, centerY, boundingBox.height());
-    path.addEllipse(FloatRect(
-        centerX - radiusX + boundingBox.x(),
-        centerY - radiusY + boundingBox.y(),
-        radiusX * 2,
-        radiusY * 2));
+
+    return cachedEllipsePath(FloatRect(centerX - radiusX + boundingBox.x(), centerY - radiusY + boundingBox.y(), radiusX * 2, radiusY * 2));
 }
 
 bool BasicShapeEllipse::canBlend(const BasicShape& other) const
@@ -204,22 +280,18 @@ bool BasicShapePolygon::operator==(const BasicShape& other) const
         && m_values == otherPolygon.m_values;
 }
 
-void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
+const Path& BasicShapePolygon::path(const FloatRect& boundingBox)
 {
-    ASSERT(path.isEmpty());
     ASSERT(!(m_values.size() % 2));
     size_t length = m_values.size();
-    
-    if (!length)
-        return;
 
-    path.moveTo(FloatPoint(floatValueForLength(m_values.at(0), boundingBox.width()) + boundingBox.x(),
-        floatValueForLength(m_values.at(1), boundingBox.height()) + boundingBox.y()));
-    for (size_t i = 2; i < length; i = i + 2) {
-        path.addLineTo(FloatPoint(floatValueForLength(m_values.at(i), boundingBox.width()) + boundingBox.x(),
-            floatValueForLength(m_values.at(i + 1), boundingBox.height()) + boundingBox.y()));
+    Vector<FloatPoint> points(length / 2);
+    for (size_t i = 0; i < points.size(); ++i) {
+        points[i].setX(floatValueForLength(m_values.at(i * 2), boundingBox.width()) + boundingBox.x());
+        points[i].setY(floatValueForLength(m_values.at(i * 2 + 1), boundingBox.height()) + boundingBox.y());
     }
-    path.closeSubpath();
+
+    return cachedPolygonPath(points);
 }
 
 bool BasicShapePolygon::canBlend(const BasicShape& other) const
@@ -259,11 +331,9 @@ BasicShapePath::BasicShapePath(std::unique_ptr<SVGPathByteStream>&& byteStream)
 {
 }
 
-void BasicShapePath::path(Path& path, const FloatRect& boundingBox)
+const Path& BasicShapePath::path(const FloatRect& boundingBox)
 {
-    ASSERT(path.isEmpty());
-    buildPathFromByteStream(*m_byteStream, path);
-    path.translate(toFloatSize(boundingBox.location()));
+    return cachedTranslatedByteStreamPath(*m_byteStream, boundingBox.location());
 }
 
 bool BasicShapePath::operator==(const BasicShape& other) const
@@ -320,9 +390,8 @@ static FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const Floa
         floatValueForLength(lengthSize.height(), boundingBox.height()));
 }
 
-void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
+const Path& BasicShapeInset::path(const FloatRect& boundingBox)
 {
-    ASSERT(path.isEmpty());
     float left = floatValueForLength(m_left, boundingBox.width());
     float top = floatValueForLength(m_top, boundingBox.height());
     auto rect = FloatRect(left + boundingBox.x(), top + boundingBox.y(),
@@ -333,7 +402,8 @@ void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
         floatSizeForLengthSize(m_bottomLeftRadius, boundingBox),
         floatSizeForLengthSize(m_bottomRightRadius, boundingBox));
     radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
-    path.addRoundedRect(FloatRoundedRect(rect, radii));
+
+    return cachedRoundedRectPath(FloatRoundedRect(rect, radii));
 }
 
 bool BasicShapeInset::canBlend(const BasicShape& other) const

@@ -60,7 +60,7 @@ public:
 
     virtual Type type() const = 0;
 
-    virtual void path(Path&, const FloatRect&) = 0;
+    virtual const Path& path(const FloatRect&) = 0;
     virtual WindRule windRule() const { return RULE_NONZERO; }
 
     virtual bool canBlend(const BasicShape&) const = 0;
@@ -192,7 +192,7 @@ private:
 
     virtual Type type() const override { return BasicShapeCircleType; }
 
-    virtual void path(Path&, const FloatRect&) override;
+    virtual const Path& path(const FloatRect&) override;
 
     virtual bool canBlend(const BasicShape&) const override;
     virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
@@ -224,7 +224,7 @@ private:
 
     virtual Type type() const override { return BasicShapeEllipseType; }
 
-    virtual void path(Path&, const FloatRect&) override;
+    virtual const Path& path(const FloatRect&) override;
 
     virtual bool canBlend(const BasicShape&) const override;
     virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
@@ -255,7 +255,7 @@ private:
 
     virtual Type type() const override { return BasicShapePolygonType; }
 
-    virtual void path(Path&, const FloatRect&) override;
+    virtual const Path& path(const FloatRect&) override;
 
     virtual bool canBlend(const BasicShape&) const override;
     virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
@@ -283,7 +283,7 @@ private:
 
     virtual Type type() const override { return BasicShapePathType; }
 
-    virtual void path(Path&, const FloatRect&) override;
+    virtual const Path& path(const FloatRect&) override;
 
     virtual bool canBlend(const BasicShape&) const override;
     virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
@@ -323,7 +323,7 @@ private:
 
     virtual Type type() const override { return BasicShapeInsetType; }
 
-    virtual void path(Path&, const FloatRect&) override;
+    virtual const Path& path(const FloatRect&) override;
 
     virtual bool canBlend(const BasicShape&) const override;
     virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
