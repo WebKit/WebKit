@@ -1,5 +1,20 @@
 2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Option+Up/Down should not move cursor outside of number
+        https://bugs.webkit.org/show_bug.cgi?id=153784
+        <rdar://problem/24453133>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        When selectionStart === selectionEnd we were duplicating the
+        movement mutation by performing it twice on the same object.
+        After much experimentation, I left in the existing code path
+        for handling mutation with a selection. It is not perfect,
+        but it is better then just applying the ch diff.
+
+2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: High Level Memory Overview Instrument
         https://bugs.webkit.org/show_bug.cgi?id=153516
         <rdar://problem/24356378>
