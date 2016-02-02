@@ -1,3 +1,14 @@
+2016-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Minor fixes for B3 IR documentation
+        https://bugs.webkit.org/show_bug.cgi?id=153782
+
+        Reviewed by Michael Saboff.
+
+        Fix minor issues that Geoff found.
+
+        * docs/b3/intermediate-representation.html:
+
 2016-01-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3 documentation style shouldn't have hacks for h1

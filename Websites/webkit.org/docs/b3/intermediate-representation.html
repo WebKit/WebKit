@@ -88,13 +88,19 @@
     <h2>Stack Slot</h2>
 
     <p>B3 exposes the concept of stack-allocated data and gives the client a lot of control.
-      You can force stack slots to end up at a particular offset from the frame pointer, though
-      this is very dangerous.  After compilation is done, you can get the selected frame pointer
-      offset from any stack slot.  Usually, you let B3 select where stack slots go, and then use
-      the StackSlot API to get its FP offset after compilation.</p>
+      By default, stack slots get allocated wherever B3 chooses. It will try to pack them as
+      much as possible. After compilation is done, you can retrieve each stack slot's location
+      in the form of an offset from the frame pointer.</p>
+
+    <p>You can force stack slots to end up at a particular offset from the frame pointer, though
+      this is very dangerous.  For example, B3 assumes that it can use the slots closest to the
+      frame pointer for callee-saves, and currently when you force something to a particular
+      frame pointer offset, there is no mechanism to notice that this space is also being used
+      for callee-saves.  Therefore, we recommend not using the frame pointer offset forcing
+      feature unless you know a lot about the ABI and you have no other choice.</p>
 
     <p>Stack slots are also used for creating non-SSA variables with the intention of having B3
-      convert them into SSA.  There are two kinds of stack lots.</p>
+      convert them into SSA.  There are two kinds of stack slots.</p>
 
     <dl>
       <dt>Anonymous</dt>
@@ -118,7 +124,8 @@
       predecessors.  Each basic block may have zero or more successors.  The successors are
       controlled by the basic block's last Value, which must be a ControlValue instance.</p>
 
-    <p>Each basic block contains a Vector&lt;Value*&gt; as the contents of the block.</p>
+    <p>Each basic block contains a Vector&lt;Value*&gt; as the contents of the block. Control
+      flow inside the block is implicit based on the order of Values in the vector.</p>
 
     <h2>Opcodes</h2>
 
