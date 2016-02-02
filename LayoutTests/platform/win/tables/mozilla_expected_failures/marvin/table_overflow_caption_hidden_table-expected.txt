@@ -15,6 +15,6 @@ layer at (8,8) size 200x122 clip at (9,8) size 198x122 scrollWidth 396 scrollHei
         RenderTableCell {TD} at (2,43) size 98x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
           RenderText {#text} at (2,2) size 21x18
             text run at (2,2) width 21: "foo"
-        RenderTableCell {TD} at (101,43) size 95x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+        RenderTableCell {TD} at (101,43) size 96x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
           RenderText {#text} at (2,2) size 20x18
             text run at (2,2) width 20: "bar"

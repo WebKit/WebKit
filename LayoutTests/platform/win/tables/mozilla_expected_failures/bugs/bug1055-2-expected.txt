@@ -93,7 +93,7 @@ layer at (0,0) size 785x901
             RenderTableCell {TD} at (0,0) size 205x30 [border: (7px double #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (8,8) size 8x18
                 text run at (8,8) width 8: "1"
-            RenderTableCell {TD} at (204,0) size 165x30 [border: (7px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (205,0) size 164x30 [border: (7px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (4,8) size 8x18
                 text run at (4,8) width 8: "2"
             RenderTableCell {TD} at (369,0) size 195x30 [border: (7px groove #00FF00)] [r=0 c=2 rs=1 cs=1]
@@ -103,7 +103,7 @@ layer at (0,0) size 785x901
             RenderTableCell {TD} at (0,30) size 205x26 [border: (3px inset #0000FF)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (8,4) size 8x18
                 text run at (8,4) width 8: "4"
-            RenderTableCell {TD} at (204,30) size 165x26 [border: (3px double #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (205,30) size 164x26 [border: (3px double #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (4,4) size 8x18
                 text run at (4,4) width 8: "5"
             RenderTableCell {TD} at (369,30) size 195x26 [border: (3px solid #FF0000)] [r=1 c=2 rs=1 cs=1]
@@ -113,7 +113,7 @@ layer at (0,0) size 785x901
             RenderTableCell {TD} at (0,56) size 205x29 [border: (3px groove #00FF00)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (8,4) size 8x18
                 text run at (8,4) width 8: "7"
-            RenderTableCell {TD} at (204,56) size 165x29 [border: (3px inset #0000FF)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (205,56) size 164x29 [border: (3px inset #0000FF)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (4,4) size 8x18
                 text run at (4,4) width 8: "8"
             RenderTableCell {TD} at (369,56) size 195x29 [border: (3px double #000000)] [r=2 c=2 rs=1 cs=1]
