@@ -50,6 +50,8 @@
 
 #endif
 
+#if PLATFORM(MAC)
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <HIServices/AccessibilityPriv.h>
 #else
@@ -59,9 +61,9 @@ typedef enum {
 } AXSuspendStatus;
 #endif
 
-#if PLATFORM(MAC)
 extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
-#endif
+
+#endif // PLATFORM(MAC)
 
 namespace IPC {
 
