@@ -5128,7 +5128,7 @@ void Document::initSecurityContext()
         // This can occur via document.implementation.createDocument().
         setCookieURL(URL(ParsedURLString, emptyString()));
         setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
-        setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
+        setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(*this));
         return;
     }
 
@@ -5141,7 +5141,7 @@ void Document::initSecurityContext()
         applyContentDispositionAttachmentSandbox();
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
-    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
+    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(*this));
 
     if (Settings* settings = this->settings()) {
         if (!settings->webSecurityEnabled()) {

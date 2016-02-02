@@ -1,3 +1,112 @@
+2016-02-02  Daniel Bates  <dabates@apple.com>
+
+        CSP: Support checking content security policy without a script execution context
+        https://bugs.webkit.org/show_bug.cgi?id=153748
+        <rdar://problem/24439149>
+
+        Reviewed by Darin Alder.
+
+        Towards checking a Web Worker's content security policy against a redirected worker
+        script load or redirected XHR request for an XHR request initiated from it, we should
+        support instantiating a ContentSecurityPolicy object without a ScriptExecutionContext.
+
+        No functionality was changed. So, no new tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Pass |this| as a reference instead of as a pointer.
+        * page/csp/ContentSecurityPolicy.cpp: Remove extraneous includes ScriptState.h, TextEncoding.h,
+        and URL.h as they are included by ContentSecurityPolicy.h, FormDataList.h and FormData.h, respectively.
+        (WebCore::CSPSource::CSPSource): Take a constant reference to a ContentSecurityPolicy instead
+        of a pointer since we never expected a null pointer.
+        (WebCore::CSPSource::schemeMatches): Move logic for checking the protocol of source "self"
+        from here to ContentSecurityPolicy::protocolMatchesSelf() because we may not have a security
+        origin if ContentSecurityPolicy was initiated without a ScriptExecutionContext object.
+        (WebCore::CSPSourceList::allowSelf): Added.
+        (WebCore::CSPSourceList::CSPSourceList): Take a constant reference to a ContentSecurityPolicy
+        instead of a pointer since we never expected a null pointer. Remove fields from member
+        initialization list that can be initialized using C++11 in-class initialization syntax.
+        (WebCore::CSPSourceList::matches): Call ContentSecurityPolicy::urlMatchesSelf() to match the
+        effective URL against the URL of source "self".
+        (WebCore::CSPSourceList::parse): Update code as necessary now that m_policy is a reference
+        instead of a pointer.
+        (WebCore::CSPSourceList::parseSource): Simplify code by setting internal member fields directly
+        instead of via member functions.
+        (WebCore::CSPSourceList::parsePath): Update code as necessary now that m_policy is a reference
+        instead of a pointer.
+        (WebCore::CSPDirective::CSPDirective): Take a constant reference to a ContentSecurityPolicy
+        instead of a pointer since we never expected a null pointer.
+        (WebCore::CSPDirective::policy): Return a reference to a const ContentSecurityPolicy.
+        (WebCore::MediaListDirective::MediaListDirective): Take a constant reference to a ContentSecurityPolicy
+        instead of a pointer since we never expected a null pointer.
+        (WebCore::MediaListDirective::parse): Update code as necessary now that m_policy is a reference
+        instead of a pointer.
+        (WebCore::SourceListDirective::SourceListDirective): Take a constant reference to a ContentSecurityPolicy
+        instead of a pointer since we never expected a null pointer.
+        (WebCore::SourceListDirective::allows): Write in terms of CSPSourceList::allowSelf() because we
+        may not have a security origin to get a URL from if ContentSecurityPolicy was initiated without
+        a ScriptExecutionContext object.
+        (WebCore::CSPDirectiveList::reportURIs): Change return type from Vector<URL> to Vector<String>
+        The caller will convert the strings to URLs with respect to the script execution context.
+        (WebCore::CSPDirectiveList::parseReportURI): Store the report URI as a string instead of a URL
+        because we may not have a security origin to compute the absolute URL if ContentSecurityPolicy
+        was initiated without a ScriptExecutionContext object.
+        (WebCore::CSPDirectiveList::CSPDirectiveList): Take a reference to a ContentSecurityPolicy
+        instead of a pointer since we never expected a null pointer. It would be better to take a const
+        reference to a ContentSecurityPolicy, but ContentSecurityPolicy::applySandboxPolicy() needs to set
+        state on ContentSecurityPolicy :(
+        (WebCore::CSPDirectiveList::create): Ditto.
+        (WebCore::CSPDirectiveList::reportViolation): Update code as necessary now that m_policy is a reference
+        instead of a pointer.
+        (WebCore::CSPDirectiveList::checkEvalAndReportViolation): Ditto.
+        (WebCore::CSPDirectiveList::checkInlineAndReportViolation): Ditto.
+        (WebCore::CSPDirectiveList::parseDirective): Ditto.
+        (WebCore::CSPDirectiveList::parseReportURI): Store the report URI as a string instead of a URL
+        because we may not have a security origin to compute the absolute URL if ContentSecurityPolicy
+        was initiated without a ScriptExecutionContext object.
+        (WebCore::CSPDirectiveList::setCSPDirective): Update code as necessary now that m_policy is a reference
+        instead of a pointer.
+        (WebCore::CSPDirectiveList::applySandboxPolicy): Ditto.
+        (WebCore::CSPDirectiveList::parseReflectedXSS): Ditto.
+        (WebCore::CSPDirectiveList::addDirective): Ditto.
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy): Modified to take the ScriptExecutionObject
+        as a reference and compute the CSPSource object for "self" and cache the protocol for "self". Removed
+        field m_overrideInlineStyleAllowed from the member initialization list and used C++11 in-class
+        initialization syntax to initialize it. Added overloaded constructor that takes a SecurityOrigin object.
+        We are not making use of this overloaded constructor at this time. We will in a subsequent patch.
+        (WebCore::ContentSecurityPolicy::didReceiveHeader): Store the eval disabled error message for
+        the last parsed policy in a member field instead of using it as part of disabling eval execution
+        on the script execution context because we may not have such a context.
+        (WebCore::ContentSecurityPolicy::applyPolicyToScriptExecutionContext): Applies the content security
+        policy eval and sandbox restrictions to the script execution context.
+        (WebCore::ContentSecurityPolicy::urlMatchesSelf): Match the specified URL against the URL for
+        source "self".
+        (WebCore::ContentSecurityPolicy::protocolMatchesSelf): Match the protocol of the specified URL
+        against the protocol for source "self".
+        (WebCore::ContentSecurityPolicy::gatherReportURIs): Modified to use the script execution context
+        to compute the absolute URL for each report URI.
+        (WebCore::ContentSecurityPolicy::reportViolation): Bail out if we do not have a script execution
+        context.
+        (WebCore::ContentSecurityPolicy::logToConsole): Only log to the console if we have a script
+        execution context.
+        (WebCore::ContentSecurityPolicy::reportBlockedScriptExecutionToInspector): Only report blocked
+        script execution to the Web Inspector if we have a script execution context.
+        (WebCore::CSPSourceList::addSourceSelf): Deleted.
+        (WebCore::CSPSourceList::addSourceStar): Deleted.
+        (WebCore::CSPSourceList::addSourceUnsafeInline): Deleted.
+        (WebCore::CSPSourceList::addSourceUnsafeEval): Deleted.
+        (WebCore::CSPDirectiveList::gatherReportURIs): Deleted.
+        (WebCore::ContentSecurityPolicy::securityOrigin): Deleted.
+        (WebCore::ContentSecurityPolicy::url): Deleted.
+        (WebCore::ContentSecurityPolicy::completeURL): Deleted.
+        (WebCore::ContentSecurityPolicy::enforceSandboxFlags): Deleted.
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::enforceSandboxFlags): Accumulates the parsed sandbox flags. We
+        will apply the sandbox flags in ContentSecurityPolicy::applyPolicyToScriptExecutionContext().
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope): Instantiate ContentSecurityPolicy.
+        (WebCore::WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders): Move instantiation of
+        ContentSecurityPolicy from here to constructor.
+
 2016-02-02  Eric Carlson  <eric.carlson@apple.com>
 
         Allow ports to disable automatic text track selection
