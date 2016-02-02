@@ -1,3 +1,16 @@
+2016-02-02  Dan Bernstein  <mitz@apple.com>
+
+        Tagline in B3 docs should match the rest of the website
+        https://bugs.webkit.org/show_bug.cgi?id=153801
+
+        Reviewed by Filip Pizlo.
+
+        Fix the tagline.
+
+        * docs/b3/assembly-intermediate-representation.html:
+        * docs/b3/index.html:
+        * docs/b3/intermediate-representation.html:
+
 2016-02-02  Filip Pizlo  <fpizlo@apple.com>
 
         Minor fixes for B3 IR documentation
