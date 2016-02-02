@@ -27,12 +27,12 @@ function raw(template)
 {
     "use strict";
 
-    if (template === null || template === undefined)
+    if (template === null || template === @undefined)
         throw new @TypeError("String.raw requires template not be null or undefined");
     var cookedSegments = @Object(template);
 
     var rawValue = cookedSegments.raw;
-    if (rawValue === null || rawValue === undefined)
+    if (rawValue === null || rawValue === @undefined)
         throw new @TypeError("String.raw requires template.raw not be null or undefined");
     var rawSegments = @Object(rawValue);
 

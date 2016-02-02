@@ -36,19 +36,43 @@ class CommonIdentifiers;
 class BytecodeGenerator;
 class BytecodeIntrinsicNode;
 class RegisterID;
+class Identifier;
+
+#define JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
+    macro(assert) \
+    macro(putByValDirect) \
+    macro(toString)
+
+#define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
+    macro(undefined) \
+    macro(arrayIterationKindKey) \
+    macro(arrayIterationKindValue) \
+    macro(arrayIterationKindKeyValue) \
+    macro(promiseStatePending) \
+    macro(promiseStateFulfilled) \
+    macro(promiseStateRejected) \
+    macro(symbolIterator)
 
 class BytecodeIntrinsicRegistry {
     WTF_MAKE_NONCOPYABLE(BytecodeIntrinsicRegistry);
 public:
-    explicit BytecodeIntrinsicRegistry(const CommonIdentifiers&);
+    explicit BytecodeIntrinsicRegistry(VM&);
 
     typedef RegisterID* (BytecodeIntrinsicNode::* EmitterType)(BytecodeGenerator&, RegisterID*);
 
     EmitterType lookup(const Identifier&) const;
 
+#define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) JSValue name##Value(BytecodeGenerator&);
+    JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS)
+#undef JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS
+
 private:
-    const CommonIdentifiers& m_propertyNames;
+    VM& m_vm;
     HashMap<RefPtr<UniquedStringImpl>, EmitterType, IdentifierRepHash> m_bytecodeIntrinsicMap;
+
+#define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) Strong<Unknown> m_##name;
+    JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS)
+#undef JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS
 };
 
 } // namespace JSC

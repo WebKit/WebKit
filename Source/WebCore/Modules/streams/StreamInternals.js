@@ -30,7 +30,7 @@
 function shieldingPromiseResolve(result)
 {
     const promise = @Promise.@resolve(result);
-    if (promise.@then === undefined)
+    if (promise.@then === @undefined)
         promise.@then = @Promise.prototype.@then;
     return promise;
 }
@@ -40,7 +40,7 @@ function promiseInvokeOrNoopNoCatch(object, key, args)
     "use strict";
 
     const method = object[key];
-    if (method === undefined)
+    if (method === @undefined)
         return @Promise.@resolve();
     return @shieldingPromiseResolve(method.@apply(object, args));
 }
@@ -64,7 +64,7 @@ function promiseInvokeOrFallbackOrNoop(object, key1, args1, key2, args2)
 
     try {
         const method = object[key1];
-        if (method === undefined)
+        if (method === @undefined)
             return @promiseInvokeOrNoopNoCatch(object, key2, args2);
         return @shieldingPromiseResolve(method.@apply(object, args1));
     }
@@ -77,7 +77,7 @@ function validateAndNormalizeQueuingStrategy(size, highWaterMark)
 {
     "use strict";
 
-    if (size !== undefined && typeof size !== "function")
+    if (size !== @undefined && typeof size !== "function")
         throw new @TypeError("size parameter must be a function");
 
     const normalizedStrategy = { };

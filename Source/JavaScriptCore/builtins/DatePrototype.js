@@ -35,7 +35,7 @@ function toLocaleString(/* locales, options */)
         // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
 
         var options;
-        if (opts === undefined)
+        if (opts === @undefined)
             options = null;
         else if (opts === null)
             throw new @TypeError("null is not an object");
@@ -44,13 +44,13 @@ function toLocaleString(/* locales, options */)
 
         // Check original instead of descendant to reduce lookups up the prototype chain.
         var needsDefaults = !options || (
-            options.weekday === undefined &&
-            options.year === undefined &&
-            options.month === undefined &&
-            options.day === undefined &&
-            options.hour === undefined &&
-            options.minute === undefined &&
-            options.second === undefined
+            options.weekday === @undefined &&
+            options.year === @undefined &&
+            options.month === @undefined &&
+            options.day === @undefined &&
+            options.hour === @undefined &&
+            options.minute === @undefined &&
+            options.second === @undefined
         );
 
         // Only create descendant if it will have own properties.
@@ -92,7 +92,7 @@ function toLocaleDateString(/* locales, options */)
         // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
 
         var options;
-        if (opts === undefined)
+        if (opts === @undefined)
             options = null;
         else if (opts === null)
             throw new @TypeError("null is not an object");
@@ -101,10 +101,10 @@ function toLocaleDateString(/* locales, options */)
 
         // Check original instead of descendant to reduce lookups up the prototype chain.
         var needsDefaults = !options || (
-            options.weekday === undefined &&
-            options.year === undefined &&
-            options.month === undefined &&
-            options.day === undefined
+            options.weekday === @undefined &&
+            options.year === @undefined &&
+            options.month === @undefined &&
+            options.day === @undefined
         );
 
         // Only create descendant if it will have own properties.
@@ -142,7 +142,7 @@ function toLocaleTimeString(/* locales, options */)
         // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
 
         var options;
-        if (opts === undefined)
+        if (opts === @undefined)
             options = null;
         else if (opts === null)
             throw new @TypeError("null is not an object");
@@ -151,9 +151,9 @@ function toLocaleTimeString(/* locales, options */)
 
         // Check original instead of descendant to reduce lookups up the prototype chain.
         var needsDefaults = !options || (
-            options.hour === undefined &&
-            options.minute === undefined &&
-            options.second === undefined
+            options.hour === @undefined &&
+            options.minute === @undefined &&
+            options.second === @undefined
         );
 
         // Only create descendant if it will have own properties.

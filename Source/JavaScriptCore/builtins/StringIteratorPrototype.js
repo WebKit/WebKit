@@ -31,17 +31,17 @@ function next()
         throw new @TypeError("%StringIteratorPrototype%.next requires that |this| not be null or undefined");
 
     var position = this.@stringIteratorNextIndex;
-    if (position === undefined)
+    if (position === @undefined)
         throw new @TypeError("%StringIteratorPrototype%.next requires that |this| be a String Iterator instance");
 
     var done = true;
-    var value = undefined;
+    var value = @undefined;
 
     var string = this.@iteratedString;
-    if (string !== undefined) {
+    if (string !== @undefined) {
         var length = string.length >>> 0;
         if (position >= length) {
-            this.@iteratedString = undefined;
+            this.@iteratedString = @undefined;
         } else {
             done = false;
 

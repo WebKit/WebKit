@@ -40,7 +40,7 @@ function generatorResume(generator, sentValue, resumeMode)
 
     let state = generator.@generatorState;
     let done = false;
-    let value = undefined;
+    let value = @undefined;
 
     if (typeof state !== 'number')
         throw new @TypeError("|this| should be a generator");

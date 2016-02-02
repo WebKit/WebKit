@@ -46,22 +46,22 @@ function all(iterable)
         return function (argument)
         {
             if (alreadyCalled)
-                return undefined;
+                return @undefined;
             alreadyCalled = true;
 
             @putByValDirect(values, index, argument);
 
             --remainingElementsCount;
             if (remainingElementsCount === 0)
-                return promiseCapability.@resolve.@call(undefined, values);
+                return promiseCapability.@resolve.@call(@undefined, values);
 
-            return undefined;
+            return @undefined;
         }
     }
 
     try {
         for (var value of iterable) {
-            @putByValDirect(values, index, undefined);
+            @putByValDirect(values, index, @undefined);
             var nextPromise = constructor.resolve(value);
             var resolveElement = newResolveElement(index);
             ++remainingElementsCount;
@@ -71,9 +71,9 @@ function all(iterable)
 
         --remainingElementsCount;
         if (remainingElementsCount === 0)
-            promiseCapability.@resolve.@call(undefined, values);
+            promiseCapability.@resolve.@call(@undefined, values);
     } catch (error) {
-        promiseCapability.@reject.@call(undefined, error);
+        promiseCapability.@reject.@call(@undefined, error);
     }
 
     return promiseCapability.@promise;
@@ -98,7 +98,7 @@ function race(iterable)
             nextPromise.then(promiseCapability.@resolve, promiseCapability.@reject);
         }
     } catch (error) {
-        promiseCapability.@reject.@call(undefined, error);
+        promiseCapability.@reject.@call(@undefined, error);
     }
 
     return promiseCapability.@promise;
@@ -113,7 +113,7 @@ function reject(reason)
 
     var promiseCapability = @newPromiseCapability(this);
 
-    promiseCapability.@reject.@call(undefined, reason);
+    promiseCapability.@reject.@call(@undefined, reason);
 
     return promiseCapability.@promise;
 }
@@ -133,7 +133,7 @@ function resolve(value)
 
     var promiseCapability = @newPromiseCapability(this);
 
-    promiseCapability.@resolve.@call(undefined, value);
+    promiseCapability.@resolve.@call(@undefined, value);
 
     return promiseCapability.@promise;
 }

@@ -33,11 +33,11 @@ function forEach(callback /*, thisArg */)
     if (typeof callback !== 'function')
         throw new @TypeError("Set.prototype.forEach callback must be a function");
 
-    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
     var iterator = @SetIterator(this);
 
     // To avoid object allocations for iterator result objects, we pass the placeholder to the special "next" function in order to fill the results.
-    var value = [ undefined ];
+    var value = [ @undefined ];
     for (;;) {
         if (@setIteratorNext.@call(iterator, value))
             break;

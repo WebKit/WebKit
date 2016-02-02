@@ -32,6 +32,7 @@
 #include "ArgList.h"
 #include "ArrayBufferNeuteringWatchpoint.h"
 #include "BuiltinExecutables.h"
+#include "BytecodeIntrinsicRegistry.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
 #include "CommonIdentifiers.h"
@@ -306,6 +307,8 @@ VM::VM(VMType vmType, HeapType heapType)
     // Initialize this last, as a free way of asserting that VM initialization itself
     // won't use this.
     m_typedArrayController = adoptRef(new SimpleTypedArrayController());
+
+    m_bytecodeIntrinsicRegistry = std::make_unique<BytecodeIntrinsicRegistry>(*this);
 
     if (Options::useTypeProfiler())
         enableTypeProfiler();

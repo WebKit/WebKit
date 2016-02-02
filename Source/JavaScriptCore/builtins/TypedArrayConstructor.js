@@ -33,7 +33,7 @@ function of(/* items... */)
     "use strict";
     let len = arguments.length;
     let constructFunction = this.@allocateTypedArray;
-    if (constructFunction === undefined)
+    if (constructFunction === @undefined)
         throw new @TypeError("TypedArray.from requires its this argument to subclass a TypedArray constructor");
 
     let result = constructFunction(len);
@@ -52,7 +52,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
     let thisArg;
 
-    if (mapFn !== undefined) {
+    if (mapFn !== @undefined) {
         if (typeof mapFn !== "function")
             throw new @TypeError("TypedArray.from requires that the second argument, when provided, be a function");
 
@@ -85,14 +85,14 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
         for (let value of wrapper) {
             if (mapFn)
-                @putByValDirect(accumulator, k, thisArg === undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
+                @putByValDirect(accumulator, k, thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
             else
                 @putByValDirect(accumulator, k, value);
             k++;
         }
 
         let constructFunction = this.@allocateTypedArray;
-        if (constructFunction === undefined)
+        if (constructFunction === @undefined)
             throw new @TypeError("TypedArray.from requires its this argument subclass a TypedArray constructor");
 
         let result = constructFunction(k);
@@ -108,7 +108,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     let arrayLikeLength = @toLength(arrayLike.length);
 
     let constructFunction = this.@allocateTypedArray;
-    if (constructFunction === undefined)
+    if (constructFunction === @undefined)
         throw new @TypeError("this does not subclass a TypedArray constructor");
 
     let result = constructFunction(arrayLikeLength);
@@ -117,7 +117,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     while (k < arrayLikeLength) {
         let value = arrayLike[k];
         if (mapFn)
-            result[k] = thisArg === undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
+            result[k] = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
         else
             result[k] = value;
         k++;

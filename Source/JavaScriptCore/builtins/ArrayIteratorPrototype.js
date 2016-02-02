@@ -31,18 +31,18 @@ function next()
         throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
 
     var itemKind = this.@arrayIterationKind;
-    if (itemKind === undefined)
+    if (itemKind === @undefined)
         throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
 
     var done = true;
-    var value = undefined;
+    var value = @undefined;
 
     var array = this.@iteratedObject;
-    if (array !== undefined) {
+    if (array !== @undefined) {
         var index = this.@arrayIteratorNextIndex;
         var length = array.length >>> 0;
         if (index >= length) {
-            this.@iteratedObject = undefined;
+            this.@iteratedObject = @undefined;
         } else {
             this.@arrayIteratorNextIndex = index + 1;
             done = false;

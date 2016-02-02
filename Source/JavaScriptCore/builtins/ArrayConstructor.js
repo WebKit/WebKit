@@ -42,11 +42,11 @@ function from(items /*, mapFn, thisArg */)
 
     var thisObj = this;
 
-    var mapFn = arguments.length > 1 ? arguments[1] : undefined;
+    var mapFn = arguments.length > 1 ? arguments[1] : @undefined;
 
     var thisArg;
 
-    if (mapFn !== undefined) {
+    if (mapFn !== @undefined) {
         if (typeof mapFn !== "function")
             throw new @TypeError("Array.from requires that the second argument, when provided, be a function");
 
@@ -79,7 +79,7 @@ function from(items /*, mapFn, thisArg */)
 
         for (var value of wrapper) {
             if (mapFn)
-                @putByValDirect(result, k, thisArg === undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
+                @putByValDirect(result, k, thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
             else
                 @putByValDirect(result, k, value);
             k += 1;
@@ -99,7 +99,7 @@ function from(items /*, mapFn, thisArg */)
     while (k < arrayLikeLength) {
         var value = arrayLike[k];
         if (mapFn)
-            @putByValDirect(result, k, thisArg === undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
+            @putByValDirect(result, k, thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
         else
             @putByValDirect(result, k, value);
         k += 1;

@@ -30,15 +30,15 @@ function initializeReadableStream(underlyingSource, strategy)
 {
     "use strict";
 
-     if (typeof underlyingSource === "undefined")
+     if (underlyingSource === @undefined)
          underlyingSource = { };
-     if (typeof strategy === "undefined")
+     if (strategy === @undefined)
          strategy = { highWaterMark: 1, size: function() { return 1; } };
 
     if (!@isObject(underlyingSource))
         throw new @TypeError("ReadableStream constructor takes an object as first argument");
 
-    if (strategy !== undefined && !@isObject(strategy))
+    if (strategy !== @undefined && !@isObject(strategy))
         throw new @TypeError("ReadableStream constructor takes an object as second argument, if any");
 
     this.@underlyingSource = underlyingSource;
@@ -49,8 +49,8 @@ function initializeReadableStream(underlyingSource, strategy)
     this.@closeRequested = false;
     this.@pullAgain = false;
     this.@pulling = false;
-    this.@reader = undefined;
-    this.@storedError = undefined;
+    this.@reader = @undefined;
+    this.@storedError = @undefined;
     this.@disturbed = false;
     this.@controller = new @ReadableStreamController(this);
     this.@strategy = @validateAndNormalizeQueuingStrategy(strategy.size, strategy.highWaterMark);
@@ -137,11 +137,11 @@ function pipeTo(destination, options)
         if (!preventCancel) {
             reader.cancel(reason);
             reader.releaseLock();
-            promiseCapability.@reject.@call(undefined, reason);
+            promiseCapability.@reject.@call(@undefined, reason);
         } else {
             @Promise.prototype.@then.@call(lastRead, function() {
                 reader.releaseLock();
-                promiseCapability.@reject.@call(undefined, reason);
+                promiseCapability.@reject.@call(@undefined, reason);
             });
         }
     }
@@ -153,7 +153,7 @@ function pipeTo(destination, options)
         if (!preventClose && (destinationState === "waiting" || destinationState === "writable")) {
             closedPurposefully = true;
             @Promise.prototype.@then.@call(destination.close(), promiseCapability.@resolve, promiseCapability.@reject);
-        } else if (lastWrite !== undefined)
+        } else if (lastWrite !== @undefined)
             @Promise.prototype.@then.@call(lastWrite, promiseCapability.@resolve, promiseCapability.@reject);
         else
             promiseCapability.@resolve.@call();
@@ -165,14 +165,14 @@ function pipeTo(destination, options)
 
         if (!preventAbort)
             destination.abort(reason);
-        promiseCapability.@reject.@call(undefined, reason);
+        promiseCapability.@reject.@call(@undefined, reason);
     }
 
     promiseCapability = @newPromiseCapability(@Promise);
 
     reader = source.getReader();
 
-    @Promise.prototype.@then.@call(reader.closed, undefined, abortDestination);
+    @Promise.prototype.@then.@call(reader.closed, @undefined, abortDestination);
     @Promise.prototype.@then.@call(destination.closed,
         function() {
             if (!closedPurposefully)

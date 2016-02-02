@@ -30,7 +30,7 @@ function every(callback /*, thisArg */)
 {
     "use strict";
     var length = @typedArrayLength(this);
-    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
 
     if (typeof callback !== "function")
         throw new @TypeError("TypedArray.prototype.every callback must be a function");
@@ -47,7 +47,7 @@ function find(callback /* [, thisArg] */)
 {
     "use strict";
     var length = @typedArrayLength(this);
-    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
 
     if (typeof callback !== "function")
         throw new @TypeError("TypedArray.prototype.find callback must be a function");
@@ -57,14 +57,14 @@ function find(callback /* [, thisArg] */)
         if (callback.@call(thisArg, elem, i, this))
             return elem;
     }
-    return undefined;
+    return @undefined;
 }
 
 function findIndex(callback /* [, thisArg] */)
 {
     "use strict";
     var length = @typedArrayLength(this);
-    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
 
     if (typeof callback !== "function")
         throw new @TypeError("TypedArray.prototype.findIndex callback must be a function");
@@ -80,7 +80,7 @@ function forEach(callback /* [, thisArg] */)
 {
     "use strict";
     var length = @typedArrayLength(this);
-    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
 
     if (typeof callback !== "function")
         throw new @TypeError("TypedArray.prototype.forEach callback must be a function");
@@ -94,7 +94,7 @@ function some(callback /* [, thisArg] */)
     // 22.2.3.24
     "use strict";
     var length = @typedArrayLength(this);
-    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
 
     if (typeof callback !== "function")
         throw new @TypeError("TypedArray.prototype.some callback must be a function");
@@ -192,7 +192,7 @@ function reduce(callback /* [, initialValue] */)
         accumulator = this[k++];
 
     for (; k < length; k++)
-        accumulator = callback.@call(undefined, accumulator, this[k], k, this);
+        accumulator = callback.@call(@undefined, accumulator, this[k], k, this);
 
     return accumulator;
 }
@@ -217,7 +217,7 @@ function reduceRight(callback /* [, initialValue] */)
         accumulator = this[k--];
 
     for (; k >= 0; k--)
-        accumulator = callback.@call(undefined, accumulator, this[k], k, this);
+        accumulator = callback.@call(@undefined, accumulator, this[k], k, this);
 
     return accumulator;
 }
@@ -232,7 +232,7 @@ function map(callback /*, thisArg */)
     if (typeof callback !== "function")
         throw new @TypeError("TypedArray.prototype.map callback must be a function");
 
-    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
     // FIXME: This should be a species constructor.
     var result = new this.constructor(length);
     for (var i = 0; i < length; i++) {
@@ -251,7 +251,7 @@ function filter(callback /*, thisArg */)
     if (typeof callback !== "function")
         throw new @TypeError("TypedArray.prototype.filter callback must be a function");
 
-    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
 
     var kept = [];
 

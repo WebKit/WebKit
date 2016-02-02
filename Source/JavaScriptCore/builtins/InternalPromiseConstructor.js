@@ -48,29 +48,29 @@ function internalAll(array)
         return function (argument)
         {
             if (alreadyCalled)
-                return undefined;
+                return @undefined;
             alreadyCalled = true;
 
             @putByValDirect(values, index, argument);
 
             --remainingElementsCount;
             if (remainingElementsCount === 0)
-                return promiseCapability.@resolve.@call(undefined, values);
+                return promiseCapability.@resolve.@call(@undefined, values);
 
-            return undefined;
+            return @undefined;
         }
     }
 
     try {
         if (array.length === 0)
-            promiseCapability.@resolve.@call(undefined, values);
+            promiseCapability.@resolve.@call(@undefined, values);
         else {
             for (var index = 0, length = array.length; index < length; ++index) {
                 var value = array[index];
-                @putByValDirect(values, index, undefined);
+                @putByValDirect(values, index, @undefined);
 
                 var nextPromiseCapability = @newPromiseCapability(@InternalPromise);
-                nextPromiseCapability.@resolve.@call(undefined, value);
+                nextPromiseCapability.@resolve.@call(@undefined, value);
                 var nextPromise = nextPromiseCapability.@promise;
 
                 var resolveElement = newResolveElement(index);
@@ -79,7 +79,7 @@ function internalAll(array)
             }
         }
     } catch (error) {
-        promiseCapability.@reject.@call(undefined, error);
+        promiseCapability.@reject.@call(@undefined, error);
     }
 
     return promiseCapability.@promise;

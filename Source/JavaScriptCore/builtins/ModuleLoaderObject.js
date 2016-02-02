@@ -98,15 +98,15 @@ function newRegistryEntry(key)
     return {
         key: key,
         state: this.Fetch,
-        metadata: undefined,
-        fetch: undefined,
-        translate: undefined,
-        instantiate: undefined,
-        resolveDependencies: undefined,
+        metadata: @undefined,
+        fetch: @undefined,
+        translate: @undefined,
+        instantiate: @undefined,
+        resolveDependencies: @undefined,
         dependencies: [], // To keep the module order, we store the module keys in the array.
-        dependenciesMap: undefined,
-        module: undefined, // JSModuleRecord
-        error: undefined,
+        dependenciesMap: @undefined,
+        module: @undefined, // JSModuleRecord
+        error: @undefined,
     };
 }
 
@@ -130,7 +130,7 @@ function forceFulfillPromise(promise, value)
 {
     "use strict";
 
-    if (promise.@promiseState === @promisePending)
+    if (promise.@promiseState === @promiseStatePending)
         @fulfillPromise(promise, value);
 }
 
@@ -199,7 +199,7 @@ function commitInstantiated(entry, optionalInstance, source)
         var depKey = requestedModules[i];
         var pair = {
             key: depKey,
-            value: undefined
+            value: @undefined
         };
         @putByValDirect(dependencies, i, pair);
         dependenciesMap.@set(depKey, pair);
@@ -232,7 +232,7 @@ function requestFetch(key)
     var entry = this.ensureRegistered(key);
     if (entry.state > this.Link) {
         var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@reject.@call(undefined, new @TypeError("Requested module is already ready to be executed."));
+        deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
         return deferred.@promise;
     }
 
@@ -264,7 +264,7 @@ function requestTranslate(key)
     var entry = this.ensureRegistered(key);
     if (entry.state > this.Link) {
         var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@reject.@call(undefined, new @TypeError("Requested module is already ready to be executed."));
+        deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
         return deferred.@promise;
     }
 
@@ -296,7 +296,7 @@ function requestInstantiate(key)
     var entry = this.ensureRegistered(key);
     if (entry.state > this.Link) {
         var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@reject.@call(undefined, new @TypeError("Requested module is already ready to be executed."));
+        deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
         return deferred.@promise;
     }
 
@@ -338,7 +338,7 @@ function requestResolveDependencies(key)
     var entry = this.ensureRegistered(key);
     if (entry.state > this.Link) {
         var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@reject.@call(undefined, new @TypeError("Requested module is already ready to be executed."));
+        deferred.@reject.@call(@undefined, new @TypeError("Requested module is already ready to be executed."));
         return deferred.@promise;
     }
 
@@ -411,7 +411,7 @@ function requestLink(key)
     var entry = this.ensureRegistered(key);
     if (entry.state > this.Link) {
         var deferred = @newPromiseCapability(@InternalPromise);
-        deferred.@resolve.@call(undefined, entry.module);
+        deferred.@resolve.@call(@undefined, entry.module);
         return deferred.@promise;
     }
 
@@ -504,7 +504,7 @@ function provide(key, stage, value)
     if (stage === this.Translate) {
         if (entry.status > this.Translate)
             throw new @TypeError("Requested module is already translated.");
-        this.fulfillFetch(entry, undefined);
+        this.fulfillFetch(entry, @undefined);
         this.fulfillTranslate(entry, value);
         return;
     }
@@ -512,7 +512,7 @@ function provide(key, stage, value)
     if (stage === this.Instantiate) {
         if (entry.status > this.Instantiate)
             throw new @TypeError("Requested module is already instantiated.");
-        this.fulfillFetch(entry, undefined);
+        this.fulfillFetch(entry, @undefined);
         this.fulfillTranslate(entry, value);
         var loader = this;
         entry.translate.then(function (source) {

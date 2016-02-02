@@ -29,7 +29,7 @@ function initializeFetchHeaders(headersInit)
 {
     "use strict";
 
-    if (headersInit === undefined)
+    if (headersInit === @undefined)
         return this;
 
     if (!@isObject(headersInit))

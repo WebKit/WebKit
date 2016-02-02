@@ -65,11 +65,11 @@ function releaseLock()
         throw new @TypeError("There are still pending read requests, cannot release the lock");
 
     if (stream.@state === @streamReadable)
-        this.@closedPromiseCapability.@reject.@call(undefined, new @TypeError("releasing lock of reader whose stream is still in readable state"));
+        this.@closedPromiseCapability.@reject.@call(@undefined, new @TypeError("releasing lock of reader whose stream is still in readable state"));
     else
         this.@closedPromiseCapability = { @promise: @Promise.@reject(new @TypeError("reader released lock")) };
 
-    stream.@reader = undefined;
+    stream.@reader = @undefined;
     this.@ownerReadableStream = null;
 }
 

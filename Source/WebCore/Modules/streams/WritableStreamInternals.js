@@ -63,12 +63,12 @@ function errorWritableStream(stream, e)
     while (stream.@queue.content.length > 0) {
         const writeRecord = @dequeueValue(stream.@queue);
         if (writeRecord !== "close")
-            writeRecord.promiseCapability.@reject.@call(undefined, e);
+            writeRecord.promiseCapability.@reject.@call(@undefined, e);
     }
     stream.@storedError = e;
     if (stream.@state === @streamWaiting)
         stream.@readyPromiseCapability.@resolve.@call();
-    stream.@closedPromiseCapability.@reject.@call(undefined, e);
+    stream.@closedPromiseCapability.@reject.@call(@undefined, e);
     stream.@state = @streamErrored;
 }
 

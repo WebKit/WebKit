@@ -1,3 +1,145 @@
+2016-02-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Introduce BytecodeIntrinsic constant rep like @undefined
+        https://bugs.webkit.org/show_bug.cgi?id=153737
+
+        Reviewed by Darin Adler.
+
+        This patch enhances existing BytecodeIntrinsic mechanism to accept `@xxx` form,
+        that will be used to represent bytecode intrinsic constants.
+        After this change, we can use 2 forms for bytecode intrinsics. (1) Function form (like, @toString(value))
+        and (2) Constant form (like @undefined).
+
+        Bytecode intrinsic constants allow us to easily expose constant values from C++ world.
+        For example, we can expose ArrayIterationKind flags to JS world without using private global variables.
+        Exposed constant values are loaded from bytecodes directly through constant registers.
+        While previously we expose them through private global variables, bytecode intrinsic constants
+        can be loaded directly from CodeBlock. And later, it will become JSConstant in DFG.
+
+        And by using this mechanism, we implement several constants. @undefined, @arrayIterationKindKeyValue etc.
+
+        * builtins/ArrayConstructor.js:
+        (from):
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        * builtins/ArrayPrototype.js:
+        (reduce):
+        (reduceRight):
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        (fill):
+        (find):
+        (findIndex):
+        (includes):
+        (sort.compactSparse):
+        (sort.compactSlow):
+        (sort.compact):
+        (sort):
+        (copyWithin):
+        * builtins/DatePrototype.js:
+        (toLocaleString.toDateTimeOptionsAnyAll):
+        (toLocaleString):
+        (toLocaleDateString.toDateTimeOptionsDateDate):
+        (toLocaleDateString):
+        (toLocaleTimeString.toDateTimeOptionsTimeTime):
+        (toLocaleTimeString):
+        * builtins/GeneratorPrototype.js:
+        (generatorResume):
+        * builtins/GlobalObject.js:
+        (isDictionary):
+        * builtins/InternalPromiseConstructor.js:
+        (internalAll.newResolveElement):
+        (internalAll):
+        * builtins/IteratorPrototype.js:
+        (symbolIteratorGetter):
+        (symbolIterator): Deleted.
+        * builtins/MapPrototype.js:
+        (forEach):
+        * builtins/ModuleLoaderObject.js:
+        (newRegistryEntry):
+        (forceFulfillPromise):
+        (commitInstantiated):
+        (requestFetch):
+        (requestTranslate):
+        (requestInstantiate):
+        (requestLink):
+        (provide):
+        * builtins/PromiseConstructor.js:
+        (all.newResolveElement):
+        (all):
+        (race):
+        (reject):
+        (resolve):
+        * builtins/PromiseOperations.js:
+        (newPromiseCapability.executor):
+        (newPromiseCapability):
+        (rejectPromise):
+        (fulfillPromise):
+        (createResolvingFunctions.resolve):
+        (createResolvingFunctions.reject):
+        (createResolvingFunctions):
+        (promiseReactionJob):
+        (promiseResolveThenableJob):
+        (initializePromise):
+        * builtins/PromisePrototype.js:
+        (catch):
+        (then):
+        * builtins/SetPrototype.js:
+        (forEach):
+        * builtins/StringConstructor.js:
+        (raw):
+        * builtins/StringIteratorPrototype.js:
+        (next):
+        * builtins/StringPrototype.js:
+        (localeCompare):
+        * builtins/TypedArrayConstructor.js:
+        (of):
+        (from):
+        * builtins/TypedArrayPrototype.js:
+        (every):
+        (find):
+        (findIndex):
+        (forEach):
+        (some):
+        (reduce):
+        (reduceRight):
+        (map):
+        (filter):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        (JSC::BytecodeIntrinsicRegistry::lookup):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/NodesCodegen.cpp:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createResolve):
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/NodeConstructors.h:
+        (JSC::BytecodeIntrinsicNode::BytecodeIntrinsicNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isBytecodeIntrinsicNode):
+        (JSC::BytecodeIntrinsicNode::type):
+        (JSC::BytecodeIntrinsicNode::emitter):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createResolve):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers): Deleted.
+        * runtime/CommonIdentifiers.h:
+        (JSC::CommonIdentifiers::bytecodeIntrinsicRegistry): Deleted.
+        * runtime/IteratorPrototype.cpp:
+        (JSC::IteratorPrototype::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::bytecodeIntrinsicRegistry):
+
 2016-02-02  Per Arne Vollan  <peavo@outlook.com>
 
         [B3][Win64] Compile fixes.

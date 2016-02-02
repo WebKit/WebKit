@@ -36,7 +36,7 @@ function localeCompare(that/*, locales, options */)
     if (this === null)
         throw new @TypeError("String.prototype.localeCompare requires that |this| not be null");
     
-    if (this === undefined)
+    if (this === @undefined)
         throw new @TypeError("String.prototype.localeCompare requires that |this| not be undefined");
 
     // 2. Let S be ToString(O).
@@ -48,7 +48,7 @@ function localeCompare(that/*, locales, options */)
     var thatString = @toString(that);
 
     // Avoid creating a collator for defaults.
-    if (arguments[1] === undefined && arguments[2] === undefined)
+    if (arguments[1] === @undefined && arguments[2] === @undefined)
         return @Collator.prototype.compare(thisString, thatString);
 
     // 6. Let collator be Construct(%Collator%, «locales, options»).

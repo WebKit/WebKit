@@ -30,9 +30,9 @@ function initializeWritableStream(underlyingSink, strategy)
 {
     "use strict";
 
-    if (typeof underlyingSink === "undefined")
+    if (underlyingSink === @undefined)
         underlyingSink = { };
-    if (typeof strategy === "undefined")
+    if (strategy === @undefined)
         strategy = { highWaterMark: 0, size: function() { return 1; } };
 
     if (!@isObject(underlyingSink))
@@ -59,7 +59,7 @@ function initializeWritableStream(underlyingSink, strategy)
     this.@startedPromise = @promiseInvokeOrNoopNoCatch(underlyingSink, "start", [errorFunction]);
     this.@startedPromise.@then(() => {
         this.@started = true;
-        this.@startedPromise = undefined;
+        this.@startedPromise = @undefined;
     }, errorFunction);
 
     return this;
@@ -122,9 +122,9 @@ function write(chunk)
     @assert(this.@state === @streamWritable || this.@state === @streamWaiting);
 
     let chunkSize = 1;
-    if (this.@strategy.size !== undefined) {
+    if (this.@strategy.size !== @undefined) {
         try {
-            chunkSize = this.@strategy.size.@call(undefined, chunk);
+            chunkSize = this.@strategy.size.@call(@undefined, chunk);
         } catch(e) {
             @errorWritableStream(this, e);
             return @Promise.@reject(e);

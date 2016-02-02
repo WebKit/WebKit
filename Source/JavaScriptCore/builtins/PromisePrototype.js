@@ -27,7 +27,7 @@ function catch(onRejected)
 {
     "use strict";
 
-    return this.then(undefined, onRejected);
+    return this.then(@undefined, onRejected);
 }
 
 function then(onFulfilled, onRejected)
@@ -54,12 +54,12 @@ function then(onFulfilled, onRejected)
 
     var state = this.@promiseState;
 
-    if (state === @promisePending) {
+    if (state === @promiseStatePending) {
         @putByValDirect(this.@promiseFulfillReactions, this.@promiseFulfillReactions.length, fulfillReaction)
         @putByValDirect(this.@promiseRejectReactions, this.@promiseRejectReactions.length, rejectReaction)
-    } else if (state === @promiseFulfilled)
+    } else if (state === @promiseStateFulfilled)
         @enqueueJob(@promiseReactionJob, [fulfillReaction, this.@promiseResult]);
-    else if (state === @promiseRejected)
+    else if (state === @promiseStateRejected)
         @enqueueJob(@promiseReactionJob, [rejectReaction, this.@promiseResult]);
 
     return resultCapability.@promise;

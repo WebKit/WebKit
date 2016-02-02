@@ -1,3 +1,38 @@
+2016-02-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Introduce BytecodeIntrinsic constant rep like @undefined
+        https://bugs.webkit.org/show_bug.cgi?id=153737
+
+        Reviewed by Darin Adler.
+
+        * Modules/fetch/FetchHeaders.js:
+        (initializeFetchHeaders):
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream):
+        (closeDestination):
+        (abortDestination):
+        (pipeTo):
+        * Modules/streams/ReadableStreamInternals.js:
+        (privateInitializeReadableStreamController):
+        (teeReadableStream):
+        (isReadableStreamReader):
+        (errorReadableStream):
+        (finishClosingReadableStream):
+        (enqueueInReadableStream):
+        (readFromReadableStreamReader):
+        * Modules/streams/ReadableStreamReader.js:
+        (releaseLock):
+        * Modules/streams/StreamInternals.js:
+        (shieldingPromiseResolve):
+        (promiseInvokeOrNoopNoCatch):
+        (promiseInvokeOrFallbackOrNoop):
+        (validateAndNormalizeQueuingStrategy):
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+        (write):
+        * Modules/streams/WritableStreamInternals.js:
+        (errorWritableStream):
+
 2016-02-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/dont-wedge.html sometimes ASSERTs.

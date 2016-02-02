@@ -62,7 +62,7 @@ function isDictionary(object)
 {
     "use strict";
 
-    return typeof object === "undefined" || object == null || typeof object === "object";
+    return object === @undefined || object == null || typeof object === "object";
 }
 
 // FIXME: this needs to have it's name changed to "get [Symbol.species]".

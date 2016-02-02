@@ -51,16 +51,16 @@ function newPromiseCapability(constructor)
         throw new @TypeError("promise capability requires a constructor function");
 
     var promiseCapability = {
-        @promise: undefined,
-        @resolve: undefined,
-        @reject: undefined
+        @promise: @undefined,
+        @resolve: @undefined,
+        @reject: @undefined
     };
 
     function executor(resolve, reject)
     {
-        if (promiseCapability.@resolve !== undefined)
+        if (promiseCapability.@resolve !== @undefined)
             throw new @TypeError("resolve function is already set");
-        if (promiseCapability.@reject !== undefined)
+        if (promiseCapability.@reject !== @undefined)
             throw new @TypeError("reject function is already set");
 
         promiseCapability.@resolve = resolve;
@@ -94,9 +94,9 @@ function rejectPromise(promise, reason)
 
     var reactions = promise.@promiseRejectReactions;
     promise.@promiseResult = reason;
-    promise.@promiseFulfillReactions = undefined;
-    promise.@promiseRejectReactions = undefined;
-    promise.@promiseState = @promiseRejected;
+    promise.@promiseFulfillReactions = @undefined;
+    promise.@promiseRejectReactions = @undefined;
+    promise.@promiseState = @promiseStateRejected;
 
     @InspectorInstrumentation.promiseRejected(promise, reason, reactions);
 
@@ -109,9 +109,9 @@ function fulfillPromise(promise, value)
 
     var reactions = promise.@promiseFulfillReactions;
     promise.@promiseResult = value;
-    promise.@promiseFulfillReactions = undefined;
-    promise.@promiseRejectReactions = undefined;
-    promise.@promiseState = @promiseFulfilled;
+    promise.@promiseFulfillReactions = @undefined;
+    promise.@promiseRejectReactions = @undefined;
+    promise.@promiseState = @promiseStateFulfilled;
 
     @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);
 
@@ -126,7 +126,7 @@ function createResolvingFunctions(promise)
 
     var resolve = function (resolution) {
         if (alreadyResolved)
-            return undefined;
+            return @undefined;
         alreadyResolved = true;
 
         if (resolution === promise)
@@ -147,12 +147,12 @@ function createResolvingFunctions(promise)
 
         @enqueueJob(@promiseResolveThenableJob, [promise, resolution, then]);
 
-        return undefined;
+        return @undefined;
     };
 
     var reject = function (reason) {
         if (alreadyResolved)
-            return undefined;
+            return @undefined;
         alreadyResolved = true;
 
         return @rejectPromise(promise, reason);
@@ -172,12 +172,12 @@ function promiseReactionJob(reaction, argument)
 
     var result;
     try {
-        result = reaction.@handler.@call(undefined, argument);
+        result = reaction.@handler.@call(@undefined, argument);
     } catch (error) {
-        return promiseCapability.@reject.@call(undefined, error);
+        return promiseCapability.@reject.@call(@undefined, error);
     }
 
-    return promiseCapability.@resolve.@call(undefined, result);
+    return promiseCapability.@resolve.@call(@undefined, result);
 }
 
 function promiseResolveThenableJob(promiseToResolve, thenable, then)
@@ -189,7 +189,7 @@ function promiseResolveThenableJob(promiseToResolve, thenable, then)
     try {
         return then.@call(thenable, resolvingFunctions.@resolve, resolvingFunctions.@reject);
     } catch (error) {
-        return resolvingFunctions.@reject.@call(undefined, error);
+        return resolvingFunctions.@reject.@call(@undefined, error);
     }
 }
 
@@ -200,7 +200,7 @@ function initializePromise(executor)
     if (typeof executor !== 'function')
         throw new @TypeError("Promise constructor takes a function argument");
 
-    this.@promiseState = @promisePending;
+    this.@promiseState = @promiseStatePending;
     this.@promiseFulfillReactions = [];
     this.@promiseRejectReactions = [];
 
@@ -208,7 +208,7 @@ function initializePromise(executor)
     try {
         executor(resolvingFunctions.@resolve, resolvingFunctions.@reject);
     } catch (error) {
-        return resolvingFunctions.@reject.@call(undefined, error);
+        return resolvingFunctions.@reject.@call(@undefined, error);
     }
 
     return this;

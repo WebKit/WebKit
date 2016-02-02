@@ -182,11 +182,17 @@ public:
     {
         return new (m_parserArena) NewTargetNode(location);
     }
-    ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier* ident, const JSTextPosition& start)
+    ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& start, const JSTextPosition& end)
     {
-        if (m_vm->propertyNames->arguments == *ident)
+        if (m_vm->propertyNames->arguments == ident)
             usesArguments();
-        return new (m_parserArena) ResolveNode(location, *ident, start);
+
+        if (ident.isSymbol()) {
+            if (BytecodeIntrinsicNode::EmitterType emitter = m_vm->bytecodeIntrinsicRegistry().lookup(ident))
+                return new (m_parserArena) BytecodeIntrinsicNode(BytecodeIntrinsicNode::Type::Constant, location, emitter, ident, nullptr, start, start, end);
+        }
+
+        return new (m_parserArena) ResolveNode(location, ident, start);
     }
     ExpressionNode* createObjectLiteral(const JSTokenLocation& location) { return new (m_parserArena) ObjectLiteralNode(location); }
     ExpressionNode* createObjectLiteral(const JSTokenLocation& location, PropertyListNode* properties) { return new (m_parserArena) ObjectLiteralNode(location, properties); }
@@ -1136,6 +1142,11 @@ ExpressionNode* ASTBuilder::makeBitXOrNode(const JSTokenLocation& location, Expr
 ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd)
 {
     ASSERT(divot.offset >= divot.lineStartOffset);
+    if (func->isBytecodeIntrinsicNode()) {
+        BytecodeIntrinsicNode* intrinsic = static_cast<BytecodeIntrinsicNode*>(func);
+        if (intrinsic->type() == BytecodeIntrinsicNode::Type::Constant)
+            return new (m_parserArena) BytecodeIntrinsicNode(BytecodeIntrinsicNode::Type::Function, location, intrinsic->emitter(), intrinsic->identifier(), args, divot, divotStart, divotEnd);
+    }
     if (!func->isLocation())
         return new (m_parserArena) FunctionCallValueNode(location, func, args, divot, divotStart, divotEnd);
     if (func->isResolveNode()) {
@@ -1145,8 +1156,6 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
             usesEval();
             return new (m_parserArena) EvalFunctionCallNode(location, args, divot, divotStart, divotEnd);
         }
-        if (BytecodeIntrinsicNode::EmitterType emitter = m_vm->propertyNames->bytecodeIntrinsicRegistry().lookup(identifier))
-            return new (m_parserArena) BytecodeIntrinsicNode(location, emitter, identifier, args, divot, divotStart, divotEnd);
         return new (m_parserArena) FunctionCallResolveNode(location, identifier, args, divot, divotStart, divotEnd);
     }
     if (func->isBracketAccessorNode()) {

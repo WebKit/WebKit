@@ -25,30 +25,51 @@
 
 #include "config.h"
 #include "BytecodeIntrinsicRegistry.h"
-
-#include "CommonIdentifiers.h"
+#include "BytecodeGenerator.h"
+#include "JSArrayIterator.h"
+#include "JSCJSValueInlines.h"
+#include "JSPromise.h"
 #include "Nodes.h"
+#include "StrongInlines.h"
 
 namespace JSC {
 
-#define INITIALISE_BYTECODE_INTRINSIC_NAMES_TO_SET(name) m_bytecodeIntrinsicMap.add(propertyNames.name##PrivateName.impl(), &BytecodeIntrinsicNode::emit_intrinsic_##name);
+#define INITIALIZE_BYTECODE_INTRINSIC_NAMES_TO_SET(name) m_bytecodeIntrinsicMap.add(vm.propertyNames->name##PrivateName.impl(), &BytecodeIntrinsicNode::emit_intrinsic_##name);
 
-BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(const CommonIdentifiers& propertyNames)
-    : m_propertyNames(propertyNames)
+BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
+    : m_vm(vm)
     , m_bytecodeIntrinsicMap()
 {
-    JSC_COMMON_BYTECODE_INTRINSICS_EACH_NAME(INITIALISE_BYTECODE_INTRINSIC_NAMES_TO_SET)
+    JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(INITIALIZE_BYTECODE_INTRINSIC_NAMES_TO_SET)
+    JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(INITIALIZE_BYTECODE_INTRINSIC_NAMES_TO_SET)
+
+    m_undefined.set(m_vm, jsUndefined());
+    m_arrayIterationKindKey.set(m_vm, jsNumber(ArrayIterateKey));
+    m_arrayIterationKindValue.set(m_vm, jsNumber(ArrayIterateValue));
+    m_arrayIterationKindKeyValue.set(m_vm, jsNumber(ArrayIterateKeyValue));
+    m_promiseStatePending.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)));
+    m_promiseStateFulfilled.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Fulfilled)));
+    m_promiseStateRejected.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Rejected)));
+    m_symbolIterator.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->iteratorSymbol.impl())));
 }
 
 BytecodeIntrinsicNode::EmitterType BytecodeIntrinsicRegistry::lookup(const Identifier& ident) const
 {
-    if (!m_propertyNames.isPrivateName(ident))
+    if (!m_vm.propertyNames->isPrivateName(ident))
         return nullptr;
     auto iterator = m_bytecodeIntrinsicMap.find(ident.impl());
     if (iterator == m_bytecodeIntrinsicMap.end())
         return nullptr;
     return iterator->value;
 }
+
+#define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) \
+    JSValue BytecodeIntrinsicRegistry::name##Value(BytecodeGenerator&) \
+    { \
+        return m_##name.get(); \
+    }
+    JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS)
+#undef JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS
 
 } // namespace JSC
 

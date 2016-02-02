@@ -59,7 +59,7 @@ function privateInitializeReadableStreamController(stream)
 
     if (!@isReadableStream(stream))
         throw new @TypeError("ReadableStreamController needs a ReadableStream");
-    if (typeof stream.@controller !== "undefined")
+    if (stream.@controller !== @undefined)
         throw new @TypeError("ReadableStream already has a controller");
     this.@controlledReadableStream = stream;
 
@@ -79,8 +79,8 @@ function teeReadableStream(stream, shouldClone)
         closedOrErrored: false,
         canceled1: false,
         canceled2: false,
-        reason1: undefined,
-        reason: undefined,
+        reason1: @undefined,
+        reason: @undefined,
     };
 
     teeState.cancelPromiseCapability = @newPromiseCapability(@InternalPromise);
@@ -96,7 +96,7 @@ function teeReadableStream(stream, shouldClone)
         "cancel": @teeReadableStreamBranch2CancelFunction(teeState, stream)
     });
 
-    reader.@closedPromiseCapability.@promise.@then(undefined, function(e) {
+    reader.@closedPromiseCapability.@promise.@then(@undefined, function(e) {
         if (teeState.closedOrErrored)
             return;
         @errorReadableStream(branch1, e);
@@ -183,7 +183,7 @@ function isReadableStreamReader(reader)
 
     // To reset @ownerReadableStream it must be set to null instead of undefined because there is no way to distinguish
     // between a non-existent slot and an slot set to undefined.
-    return @isObject(reader) && typeof reader.@ownerReadableStream !== "undefined";
+    return @isObject(reader) && reader.@ownerReadableStream !== @undefined;
 }
 
 function isReadableStreamController(controller)
@@ -208,10 +208,10 @@ function errorReadableStream(stream, error)
 
     const requests = reader.@readRequests;
     for (let index = 0, length = requests.length; index < length; ++index)
-        requests[index].@reject.@call(undefined, error);
+        requests[index].@reject.@call(@undefined, error);
     reader.@readRequests = [];
 
-    reader.@closedPromiseCapability.@reject.@call(undefined, error);
+    reader.@closedPromiseCapability.@reject.@call(@undefined, error);
 }
 
 function requestReadableStreamPull(stream)
@@ -287,7 +287,7 @@ function finishClosingReadableStream(stream)
 
     const requests = reader.@readRequests;
     for (let index = 0, length = requests.length; index < length; ++index)
-        requests[index].@resolve.@call(undefined, {value:undefined, done: true});
+        requests[index].@resolve.@call(@undefined, {value:@undefined, done: true});
     reader.@readRequests = [];
     reader.@closedPromiseCapability.@resolve.@call();
 }
@@ -314,7 +314,7 @@ function enqueueInReadableStream(stream, chunk)
     if (stream.@state === @streamClosed)
         return;
     if (@isReadableStreamLocked(stream) && stream.@reader.@readRequests.length) {
-        stream.@reader.@readRequests.@shift().@resolve.@call(undefined, {value: chunk, done: false});
+        stream.@reader.@readRequests.@shift().@resolve.@call(@undefined, {value: chunk, done: false});
         @requestReadableStreamPull(stream);
         return;
     }
@@ -343,7 +343,7 @@ function readFromReadableStreamReader(reader)
     @assert(!!stream);
     stream.@disturbed = true;
     if (stream.@state === @streamClosed)
-        return @Promise.@resolve({value: undefined, done: true});
+        return @Promise.@resolve({value: @undefined, done: true});
     if (stream.@state === @streamErrored)
         return @Promise.@reject(stream.@storedError);
     @assert(stream.@state === @streamReadable);
