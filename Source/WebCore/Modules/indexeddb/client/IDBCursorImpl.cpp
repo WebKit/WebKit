@@ -44,18 +44,22 @@ Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBIndex& index, c
     return adoptRef(*new IDBCursor(transaction, index, info));
 }
 
-IDBCursor::IDBCursor(IDBTransaction&, IDBObjectStore& objectStore, const IDBCursorInfo& info)
-    : m_info(info)
+IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
+    : ActiveDOMObject(transaction.scriptExecutionContext())
+    , m_info(info)
     , m_source(IDBAny::create(objectStore).leakRef())
     , m_objectStore(&objectStore)
 {
+    suspendIfNeeded();
 }
 
-IDBCursor::IDBCursor(IDBTransaction&, IDBIndex& index, const IDBCursorInfo& info)
-    : m_info(info)
+IDBCursor::IDBCursor(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
+    : ActiveDOMObject(transaction.scriptExecutionContext())
+    , m_info(info)
     , m_source(IDBAny::create(index).leakRef())
     , m_index(&index)
 {
+    suspendIfNeeded();
 }
 
 IDBCursor::~IDBCursor()
@@ -163,6 +167,8 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::
 
     ASSERT(request);
     request->setSource(*this);
+    ++m_outstandingRequestCount;
+
     return request;
 }
 
@@ -281,6 +287,8 @@ void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage
 
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned long count)
 {
+    ++m_outstandingRequestCount;
+
     m_request->willIterateCursor(*this);
     transaction().iterateCursor(*this, key, count);
 }
@@ -324,7 +332,15 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* co
         return nullptr;
     }
 
-    return effectiveObjectStore().deleteFunction(context, m_deprecatedCurrentPrimaryKey.jsValue(), ec);
+    auto request = effectiveObjectStore().modernDelete(context, m_deprecatedCurrentPrimaryKey.jsValue(), ec);
+    if (ec.code)
+        return nullptr;
+
+    ASSERT(request);
+    request->setSource(*this);
+    ++m_outstandingRequestCount;
+
+    return request;
 }
 
 void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
@@ -357,6 +373,27 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
         m_deprecatedCurrentValue = deserializeIDBValueData(*context, getResult.valueBuffer());
 
     m_gotValue = true;
+}
+
+const char* IDBCursor::activeDOMObjectName() const
+{
+    return "IDBCursor";
+}
+
+bool IDBCursor::canSuspendForDocumentSuspension() const
+{
+    return false;
+}
+
+bool IDBCursor::hasPendingActivity() const
+{
+    return m_outstandingRequestCount;
+}
+
+void IDBCursor::decrementOutstandingRequestCount()
+{
+    ASSERT(m_outstandingRequestCount);
+    --m_outstandingRequestCount;
 }
 
 } // namespace IDBClient

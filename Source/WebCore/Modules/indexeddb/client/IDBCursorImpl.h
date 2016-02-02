@@ -42,7 +42,7 @@ class IDBIndex;
 class IDBObjectStore;
 class IDBTransaction;
 
-class IDBCursor : public WebCore::IDBCursorWithValue {
+class IDBCursor : public WebCore::IDBCursorWithValue, public ActiveDOMObject {
 public:
     static Ref<IDBCursor> create(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
 
@@ -74,11 +74,21 @@ public:
     virtual bool isKeyCursor() const override { return true; }
     virtual bool isModernCursor() const override final { return true; }
 
+    void decrementOutstandingRequestCount();
+
 protected:
     IDBCursor(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
     IDBCursor(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
 
 private:
+    // ActiveDOMObject.
+    virtual const char* activeDOMObjectName() const override final;
+    virtual bool canSuspendForDocumentSuspension() const override final;
+    virtual bool hasPendingActivity() const override final;
+
+    // Cursors are created with an outstanding iteration request.
+    unsigned m_outstandingRequestCount { 1 };
+
     IDBCursorInfo m_info;
     Ref<IDBAny> m_source;
     IDBObjectStore* m_objectStore { nullptr };

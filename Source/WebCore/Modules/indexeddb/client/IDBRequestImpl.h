@@ -32,6 +32,7 @@
 #include "IDBOpenDBRequest.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionImpl.h"
+#include "ScopeGuard.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -146,6 +147,8 @@ private:
     IndexedDB::IndexRecordType m_requestedIndexRecordType;
 
     RefPtr<IDBCursor> m_pendingCursor;
+
+    std::unique_ptr<ScopeGuard> m_cursorRequestNotifier;
 };
 
 } // namespace IDBClient

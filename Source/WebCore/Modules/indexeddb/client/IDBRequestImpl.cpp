@@ -152,7 +152,13 @@ RefPtr<WebCore::IDBAny> IDBRequest::source() const
 
 void IDBRequest::setSource(IDBCursor& cursor)
 {
+    ASSERT(!m_cursorRequestNotifier);
+
     m_source = IDBAny::create(cursor);
+    m_cursorRequestNotifier = std::make_unique<ScopeGuard>([this]() {
+        ASSERT(m_source->type() == IDBAny::Type::IDBCursor || m_source->type() == IDBAny::Type::IDBCursorWithValue);
+        m_source->modernIDBCursor()->decrementOutstandingRequestCount();
+    });
 }
 
 void IDBRequest::setVersionChangeTransaction(IDBTransaction& transaction)
@@ -283,6 +289,8 @@ bool IDBRequest::dispatchEvent(Event& event)
 
     m_hasPendingActivity = false;
 
+    m_cursorRequestNotifier = nullptr;
+
     bool dontPreventDefault;
     {
         TransactionActivator activator(m_transaction.get());
@@ -364,6 +372,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     ASSERT(m_transaction);
     ASSERT(!m_pendingCursor);
     ASSERT(&cursor == resultCursor());
+    ASSERT(!m_cursorRequestNotifier);
 
     m_pendingCursor = &cursor;
     m_hasPendingActivity = true;
@@ -371,6 +380,10 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     m_readyState = IDBRequestReadyState::Pending;
     m_domError = nullptr;
     m_idbError = { };
+
+    m_cursorRequestNotifier = std::make_unique<ScopeGuard>([this]() {
+        m_pendingCursor->decrementOutstandingRequestCount();
+    });
 }
 
 void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
@@ -384,6 +397,7 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
             m_result = IDBAny::create(*m_pendingCursor);
     }
 
+    m_cursorRequestNotifier = nullptr;
     m_pendingCursor = nullptr;
 
     requestCompleted(resultData);

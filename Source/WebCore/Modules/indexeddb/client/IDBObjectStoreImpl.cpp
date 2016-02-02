@@ -340,8 +340,12 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
     return adoptRef(request.leakRef());
 }
 
-
 RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
+{
+    return doDelete(context, keyRange, ec);
+}
+
+RefPtr<IDBRequest> IDBObjectStore::doDelete(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::deleteFunction");
 
@@ -381,10 +385,10 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContex
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
-    return deleteFunction(context, key.jsValue(), ec);
+    return modernDelete(context, key.jsValue(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, JSC::JSValue key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext* context, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
@@ -394,7 +398,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContex
         return nullptr;
     }
 
-    return deleteFunction(context, &IDBKeyRange::create(idbKey.get()).get(), ec);
+    return doDelete(context, &IDBKeyRange::create(idbKey.get()).get(), ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)

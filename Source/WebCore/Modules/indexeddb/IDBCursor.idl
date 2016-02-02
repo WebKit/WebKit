@@ -26,6 +26,7 @@
 [
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
+    ActiveDOMObject,
     SkipVTableValidation,
     JSCustomMarkFunction,
 ] interface IDBCursor {

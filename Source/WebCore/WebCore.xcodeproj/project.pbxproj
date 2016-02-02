@@ -1979,6 +1979,8 @@
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		51405C88190B014400754F94 /* SelectionRectGatherer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51405C86190B014400754F94 /* SelectionRectGatherer.cpp */; };
 		51405C89190B014400754F94 /* SelectionRectGatherer.h in Headers */ = {isa = PBXBuildFile; fileRef = 51405C87190B014400754F94 /* SelectionRectGatherer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5141298E1C5FD83A0059E714 /* JSIDBCursorWithValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5141298D1C5FD7E90059E714 /* JSIDBCursorWithValueCustom.cpp */; };
+		514129901C601ACC0059E714 /* ScopeGuard.h in Headers */ = {isa = PBXBuildFile; fileRef = 5141298F1C601A890059E714 /* ScopeGuard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5145B1091BC48E2E00E86219 /* IDBResourceIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5145B1071BC4890B00E86219 /* IDBResourceIdentifier.cpp */; };
 		5145B10A1BC48E2E00E86219 /* IDBResourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5145B1081BC4890B00E86219 /* IDBResourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5148453E1BB9D07E006A72ED /* IDBError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5148453C1BB9D076006A72ED /* IDBError.cpp */; };
@@ -9467,6 +9469,8 @@
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		51405C86190B014400754F94 /* SelectionRectGatherer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectionRectGatherer.cpp; sourceTree = "<group>"; };
 		51405C87190B014400754F94 /* SelectionRectGatherer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionRectGatherer.h; sourceTree = "<group>"; };
+		5141298D1C5FD7E90059E714 /* JSIDBCursorWithValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursorWithValueCustom.cpp; sourceTree = "<group>"; };
+		5141298F1C601A890059E714 /* ScopeGuard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeGuard.h; sourceTree = "<group>"; };
 		5145B1071BC4890B00E86219 /* IDBResourceIdentifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBResourceIdentifier.cpp; sourceTree = "<group>"; };
 		5145B1081BC4890B00E86219 /* IDBResourceIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBResourceIdentifier.h; sourceTree = "<group>"; };
 		5148453C1BB9D076006A72ED /* IDBError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBError.cpp; sourceTree = "<group>"; };
@@ -22304,6 +22308,7 @@
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
 				511EF2CC17F0FDF100E4FA16 /* JSIDBAnyCustom.cpp */,
 				512BDB4C1C46B0FF006494DF /* JSIDBCursorCustom.cpp */,
+				5141298D1C5FD7E90059E714 /* JSIDBCursorWithValueCustom.cpp */,
 				511EF2CD17F0FDF100E4FA16 /* JSIDBDatabaseCustom.cpp */,
 				511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */,
 				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
@@ -22794,6 +22799,7 @@
 				44C363EF0FAA7BB30097F8CC /* RuntimeApplicationChecksIOS.mm */,
 				5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */,
 				5162C7F311F77EFB00612EFE /* SchemeRegistry.h */,
+				5141298F1C601A890059E714 /* ScopeGuard.h */,
 				BC8AE34C12EA096A00EB3AE6 /* ScrollableArea.cpp */,
 				BC8AE34D12EA096A00EB3AE6 /* ScrollableArea.h */,
 				CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */,
@@ -25641,6 +25647,7 @@
 				31C0FF4C0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h in Headers */,
 				31C0FF4E0E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h in Headers */,
 				85C7F5E70AAFBAFB004014DD /* DOMWheelEvent.h in Headers */,
+				514129901C601ACC0059E714 /* ScopeGuard.h in Headers */,
 				85989DD10ACC8BBD00A0BC51 /* DOMWheelEventInternal.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				FC9A0F75164094CF003D6B8D /* DOMWindowCSS.h in Headers */,
@@ -31251,6 +31258,7 @@
 				B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */,
 				1A22464B0CC98DDB00C05240 /* SQLiteStatement.cpp in Sources */,
 				1A22464D0CC98DDB00C05240 /* SQLiteTransaction.cpp in Sources */,
+				5141298E1C5FD83A0059E714 /* JSIDBCursorWithValueCustom.cpp in Sources */,
 				97BC6A411505F081001B74AC /* SQLResultSet.cpp in Sources */,
 				97BC6A441505F081001B74AC /* SQLResultSetRowList.cpp in Sources */,
 				FE8A674716CDD19E00930BF8 /* SQLStatement.cpp in Sources */,

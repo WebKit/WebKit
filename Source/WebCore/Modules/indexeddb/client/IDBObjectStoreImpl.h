@@ -80,8 +80,7 @@ public:
     virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
 
     RefPtr<IDBRequest> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
-
-    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, JSC::JSValue key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> modernDelete(ScriptExecutionContext*, JSC::JSValue key, ExceptionCodeWithMessage&);
 
     void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
@@ -104,6 +103,7 @@ private:
 
     RefPtr<IDBRequest> putOrAdd(JSC::ExecState&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, InlineKeyCheck, ExceptionCodeWithMessage&);
     RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> doDelete(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec);
 
     IDBObjectStoreInfo m_info;
     IDBObjectStoreInfo m_originalInfo;

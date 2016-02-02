@@ -1,3 +1,70 @@
+2016-02-01  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Cursors (still) do not keep their opening request alive.
+        https://bugs.webkit.org/show_bug.cgi?id=153724
+
+        Reviewed by Alex Christensen.
+
+        No new tests (All existing tests pass without flakiness).
+
+        IDBCursors did not properly keep their JS wrappers alive.
+        Making them ActiveDOMObjects that keep track of how many requests might be in flight fixes this.
+        This also makes them actually keep their opening-request live via the opaque-root mechanism.
+        
+        IDBCursorWithValue also needed to opt in to all of these mechanisms.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::hasPendingActivity): The base IDBCursor always has no pending activity,
+          to maintain current behavior in LegacyIDB. This weirdness will go away when LegacyIDB does.
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+
+        Track a count for all outstanding requests to keep the cursor alive as an ActiveDOMObject.
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::IDBCursor):
+        (WebCore::IDBClient::IDBCursor::update):
+        (WebCore::IDBClient::IDBCursor::uncheckedIterateCursor):
+        (WebCore::IDBClient::IDBCursor::deleteFunction):
+        (WebCore::IDBClient::IDBCursor::activeDOMObjectName):
+        (WebCore::IDBClient::IDBCursor::canSuspendForDocumentSuspension):
+        (WebCore::IDBClient::IDBCursor::hasPendingActivity):
+        (WebCore::IDBClient::IDBCursor::decrementOutstandingRequestCount):
+        * Modules/indexeddb/client/IDBCursorImpl.h:
+        
+        Rework the "delete" family of functions on the object store to allow for returning a modern IDBRequest.
+        A lot of this can go away when LegacyIDB does.
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::deleteFunction):
+        (WebCore::IDBClient::IDBObjectStore::doDelete):
+        (WebCore::IDBClient::IDBObjectStore::modernDelete):
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+        
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::setSource): Setup a ScopeGuard to decrement the cursor's request
+          count whenever it makes sense to do so.
+        (WebCore::IDBClient::IDBRequest::dispatchEvent): Clear the ScopeGuard (if it exists) to decrement the count.
+        (WebCore::IDBClient::IDBRequest::willIterateCursor): Set the ScopeGuard.
+        (WebCore::IDBClient::IDBRequest::didOpenOrIterateCursor): Clear the ScopeGuard (if it exists) to decrement the count.
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::ScopeGuard::ScopeGuard): Deleted.
+        (WebCore::IDBServer::ScopeGuard::~ScopeGuard): Deleted.
+        (WebCore::IDBServer::ScopeGuard::enable): Deleted.
+        (WebCore::IDBServer::ScopeGuard::disable): Deleted.
+        
+        * bindings/js/JSIDBCursorWithValueCustom.cpp: Added.
+        (WebCore::JSIDBCursorWithValue::visitAdditionalChildren):
+        
+        * platform/ScopeGuard.h: Added.
+        (WebCore::ScopeGuard::ScopeGuard):
+        (WebCore::ScopeGuard::~ScopeGuard):
+        (WebCore::ScopeGuard::enable):
+        (WebCore::ScopeGuard::disable):
+
 2016-02-01  Sun-woo Nam  <sunny.nam@samsung.com>
 
         Free Colormap when XWindow is destroyed.

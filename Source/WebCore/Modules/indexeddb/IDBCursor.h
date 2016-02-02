@@ -76,6 +76,8 @@ public:
 
     virtual bool isModernCursor() const { return false; }
 
+    virtual bool hasPendingActivity() const { return false; }
+
 protected:
     IDBCursor();
 };

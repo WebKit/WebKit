@@ -1186,6 +1186,7 @@ set(WebCore_SOURCES
     bindings/js/JSHistoryCustom.cpp
     bindings/js/JSIDBAnyCustom.cpp
     bindings/js/JSIDBCursorCustom.cpp
+    bindings/js/JSIDBCursorWithValueCustom.cpp
     bindings/js/JSIDBDatabaseCustom.cpp
     bindings/js/JSIDBObjectStoreCustom.cpp
     bindings/js/JSImageConstructor.cpp

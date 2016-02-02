@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "IDBServer.h"
 #include "IDBTransactionInfo.h"
 #include "Logging.h"
+#include "ScopeGuard.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -674,37 +675,6 @@ ExecState& UniqueIDBDatabase::databaseThreadExecState()
     RELEASE_ASSERT(globalObject.get()->globalExec());
     return *globalObject.get()->globalExec();
 }
-
-class ScopeGuard {
-public:
-    ScopeGuard()
-    {
-    }
-
-    ScopeGuard(std::function<void()> function)
-        : m_function(WTFMove(function))
-    {
-    }
-
-    ~ScopeGuard()
-    {
-        if (m_function)
-            m_function();
-    }
-
-    void enable(std::function<void()> function)
-    {
-        m_function = WTFMove(function);
-    }
-
-    void disable()
-    {
-        m_function = nullptr;
-    }
-
-private:
-    std::function<void()> m_function { nullptr };
-};
 
 void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, const ThreadSafeDataBuffer& originalRecordValue, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
