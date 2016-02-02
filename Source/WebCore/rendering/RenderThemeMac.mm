@@ -2337,22 +2337,28 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
     }
 }
 
-static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
+static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
 {
-    RefPtr<Icon> icon;
-    String type = attachment.attachmentElement().attachmentType();
-    if (!type.isEmpty())
-        icon = Icon::createIconForMIMEType(type);
-    else {
-        Vector<String> filenames;
-        if (File* file = attachment.attachmentElement().file())
-            filenames.append(file->path());
-        icon = Icon::createIconForFiles(filenames);
+    String MIMEType = attachment.attachmentElement().attachmentType();
+    if (!MIMEType.isEmpty()) {
+        if (equalIgnoringASCIICase(MIMEType, "multipart/x-folder")) {
+            if (auto icon = Icon::createIconForUTI("public.directory"))
+                return icon;
+        } else if (auto icon = Icon::createIconForMIMEType(MIMEType))
+            return icon;
     }
 
-    if (!icon)
-        icon = Icon::createIconForUTI("public.data");
+    if (File* file = attachment.attachmentElement().file()) {
+        if (auto icon = Icon::createIconForFiles({ file->path() }))
+            return icon;
+    }
 
+    return Icon::createIconForUTI("public.data");
+}
+
+static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
+{
+    auto icon = iconForAttachment(attachment);
     if (!icon)
         return;
     icon->paint(context, layout.iconRect);

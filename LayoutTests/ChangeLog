@@ -1,3 +1,16 @@
+2016-02-02  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> icon should be a folder for the custom MIME type multipart/x-folder
+        https://bugs.webkit.org/show_bug.cgi?id=153795
+        <rdar://problem/24416632>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/attachment/attachment-folder-icon-expected.html: Added.
+        * fast/attachment/attachment-folder-icon.html: Added.
+        Make sure that the rendering of an attachment with multipart/x-folder
+        matches that of a file reference pointing at a folder.
+
 2016-02-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Layout Test fast/images/animated-gif-no-layout.html is failing

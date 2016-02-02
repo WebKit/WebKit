@@ -1,3 +1,19 @@
+2016-02-02  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> icon should be a folder for the custom MIME type multipart/x-folder
+        https://bugs.webkit.org/show_bug.cgi?id=153795
+        <rdar://problem/24416632>
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/attachment/attachment-folder-icon.html
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::iconForAttachment):
+        (WebCore::paintAttachmentIcon):
+        Mail uses this special MIME type to indicate that something is a folder, which there
+        isn't a normal non-deprecated MIME type for.
+
 2016-02-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-continue-validity.html fails.
