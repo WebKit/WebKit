@@ -746,7 +746,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         let displayName = WebInspector.TimelineTabContentView.displayNameForTimeline(timeline);
         let iconClassName = WebInspector.TimelineTabContentView.iconClassNameForTimeline(timeline);
-        let timelineTreeElement = new WebInspector.GeneralTreeElement([iconClassName, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], displayName, null, timeline);
+        let genericClassName = WebInspector.TimelineTabContentView.genericClassNameForTimeline(timeline);
+        let timelineTreeElement = new WebInspector.GeneralTreeElement([iconClassName, genericClassName, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], displayName, null, timeline);
         let tooltip = WebInspector.UIString("Close %s timeline view").format(displayName);
         let button = new WebInspector.TreeElementStatusButton(useSVGSymbol("Images/CloseLarge.svg", "close-button", tooltip));
         button.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this.showTimelineOverview, this);

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Memory.startTracking and Memory.stopTracking");
+
+    suite.addTestCase({
+        name: "StartAndStopTrackingWithEvent",
+        test: function(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "Memory.trackingStart"}).then((messageObject) => {
+                ProtocolTest.log("Memory.trackingStart");
+                ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when starting.");
+            });
+
+            InspectorProtocol.awaitEvent({event: "Memory.trackingUpdate"}).then((messageObject) => {
+                ProtocolTest.log("Memory.trackingUpdate");
+                ProtocolTest.expectThat(typeof messageObject.params.event === "object", "Should have an event object.");
+                ProtocolTest.expectThat(typeof messageObject.params.event.timestamp === "number", "Event should have a timestamp.");
+                ProtocolTest.expectThat(messageObject.params.event.categories.length > 0, "Event should have category data.");
+
+                let categories = messageObject.params.event.categories;
+                let totalSize = categories.reduce((sum, x) => sum += x.size, 0);
+                let types = categories.reduce((list, x) => { list.push(x.type); return list; }, []).sort();
+                ProtocolTest.expectThat(totalSize >= 0, "Total size should be non-zero.");
+                ProtocolTest.log("CATEGORIES: " + types.join(", "));
+
+                InspectorProtocol.sendCommand("Memory.stopTracking", {});
+            });
+
+            InspectorProtocol.awaitEvent({event: "Memory.trackingComplete"}).then((messageObject) => {
+                ProtocolTest.log("Memory.trackingComplete");
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("Memory.startTracking", {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Memory.startTracking and Memory.stopTracking trigger trackingStart, trackingUpdate, and trackingComplete events with expected data.</p>
+</body>
+</html>

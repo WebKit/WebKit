@@ -1192,6 +1192,12 @@ if (ENABLE_INDEXED_DATABASE)
     )
 endif ()
 
+if (ENABLE_RESOURCE_USAGE)
+    list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
+        ${JAVASCRIPTCORE_DIR}/inspector/protocol/Memory.json
+    )
+endif ()
+
 if (ENABLE_WEB_REPLAY)
     list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
         ${JAVASCRIPTCORE_DIR}/inspector/protocol/Replay.json

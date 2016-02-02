@@ -208,6 +208,11 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this.needsLayout();
     }
 
+    get scrollContainerWidth()
+    {
+        return this._cachedScrollContainerWidth;
+    }
+
     get visibleDuration()
     {
         if (isNaN(this._cachedScrollContainerWidth)) {

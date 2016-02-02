@@ -70,6 +70,9 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
 
             if (timelineType === WebInspector.TimelineRecord.Type.RenderingFrame)
                 return new WebInspector.RenderingFrameTimelineView(representedObject, extraArguments);
+
+            if (timelineType === WebInspector.TimelineRecord.Type.Memory)
+                return new WebInspector.MemoryTimelineView(representedObject, extraArguments);
         }
 
         if (representedObject instanceof WebInspector.Breakpoint) {

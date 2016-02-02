@@ -1,0 +1,15 @@
+Tests that Memory.startTracking and Memory.stopTracking trigger trackingStart, trackingUpdate, and trackingComplete events with expected data.
+
+
+== Running test suite: Memory.startTracking and Memory.stopTracking
+-- Running test case: StartAndStopTrackingWithEvent
+Memory.trackingStart
+PASS: Should have a timestamp when starting.
+Memory.trackingUpdate
+PASS: Should have an event object.
+PASS: Event should have a timestamp.
+PASS: Event should have category data.
+PASS: Total size should be non-zero.
+CATEGORIES: images, javascript, jit, layers, other, page
+Memory.trackingComplete
+

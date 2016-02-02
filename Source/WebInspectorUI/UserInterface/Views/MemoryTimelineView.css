@@ -1,0 +1,199 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-view.memory {
+    overflow: scroll;
+    border-top: 1px solid var(--memory-active-divider-color);
+}
+
+body.window-inactive .timeline-view.memory {
+    border-top-color: var(--memory-inactive-divider-color);
+}
+
+.timeline-view.memory > .content {
+    width: 970px;
+    margin: 10px auto;
+}
+
+.timeline-view.memory > .content > .overview {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--memory-active-divider-color);
+}
+
+.timeline-view.memory > .content .subtitle {
+    font-family: '-webkit-system-font';
+    font-size: 14px;
+}
+
+.timeline-view.memory > .content > .details > .timeline-ruler {
+    margin-left: 150px;
+    position: relative;
+    top: 9px;
+}
+
+.timeline-view.memory > .content > .details > .subtitle {
+    padding: 10px;
+    border-bottom: 1px solid var(--memory-active-divider-color);
+}
+
+.timeline-view.memory > .content > .overview {
+    display: flex;
+    justify-content: center;
+}
+
+.timeline-view.memory > .content > .overview > .chart {
+    width: 420px;
+    text-align: center;
+}
+
+.timeline-view.memory > .content > .overview > .chart > .subtitle {
+    margin-bottom: 1em;
+}
+
+.timeline-view.memory > .content > .overview > .chart > .container {
+    display: flex;
+    justify-content: center;
+}
+
+.timeline-view.memory > .content > .overview > .divider {
+    border-right: 1px solid var(--memory-active-divider-color);
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+body.window-inactive .timeline-view.memory > .content > .overview {
+    border-bottom-color: var(--memory-inactive-divider-color);
+}
+
+body.window-inactive .timeline-view.memory > .content > .details > .subtitle {
+    border-bottom-color: var(--memory-inactive-divider-color);
+}
+
+body.window-inactive .timeline-view.memory > .content > .overview > .divider {
+    border-right-color: var(--memory-inactive-divider-color);
+}
+
+.timeline-view.memory > .content > .overview .total-usage,
+.timeline-view.memory > .content > .overview .max-percentage {
+    margin: auto;
+    color: hsl(0, 0%, 70%);
+}
+
+.timeline-view.memory .legend {
+    width: 100px;
+    padding-left: 20px;
+    text-align: left;
+}
+
+.timeline-view.memory .legend > .row {
+    position: relative;
+    height: 27px;
+}
+
+.timeline-view.memory .legend > .row > .swatch {
+    position: absolute;
+    top: 1px;
+    left: 0;
+    width: 1em;
+    height: 1em;
+}
+
+.timeline-view.memory .legend > .row > p {
+    margin: 0;
+}
+
+.timeline-view.memory .legend > .row > .label {
+    position: absolute;
+    top: 0;
+    left: 20px;
+}
+
+.timeline-view.memory .legend > .row > .size {
+    position: absolute;
+    top: 12px;
+    left: 20px;
+    color: hsl(0, 0%, 70%);
+}
+
+.timeline-view.memory .legend > .row > .swatch.javascript {
+    border: 1px solid var(--memory-javascript-stroke-color);
+    background: var(--memory-javascript-fill-color);
+}
+
+.timeline-view.memory .legend > .row > .swatch.images {
+    border: 1px solid var(--memory-images-stroke-color);
+    background: var(--memory-images-fill-color);
+}
+
+.timeline-view.memory .legend > .row > .swatch.layers {
+    border: 1px solid var(--memory-layers-stroke-color);
+    background: var(--memory-layers-fill-color);
+}
+
+.timeline-view.memory .legend > .row > .swatch.page {
+    border: 1px solid var(--memory-page-stroke-color);
+    background: var(--memory-page-fill-color);
+}
+
+
+.timeline-view.memory .circle-chart > svg > path.javascript,
+.memory-category-view.javascript .line-chart > svg > path {
+    stroke: var(--memory-javascript-stroke-color);
+    fill: var(--memory-javascript-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.images,
+.memory-category-view.images .line-chart > svg > path {
+    stroke: var(--memory-images-stroke-color);
+    fill: var(--memory-images-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.layers,
+.memory-category-view.layers .line-chart > svg > path {
+    stroke: var(--memory-layers-stroke-color);
+    fill: var(--memory-layers-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.page,
+.memory-category-view.page .line-chart > svg > path {
+    stroke: var(--memory-page-stroke-color);
+    fill: var(--memory-page-fill-color);
+}
+
+.timeline-view.memory .legend > .row > .swatch.current {
+    border: 1px solid var(--memory-max-comparison-stroke-color);
+    background: var(--memory-max-comparison-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.current {
+    stroke: var(--memory-max-comparison-stroke-color);
+    fill: var(--memory-max-comparison-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.remainder {
+    stroke: none;
+    fill: none;
+}

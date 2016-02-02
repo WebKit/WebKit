@@ -1,3 +1,20 @@
+2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: High Level Memory Overview Instrument
+        https://bugs.webkit.org/show_bug.cgi?id=153516
+        <rdar://problem/24356378>
+
+        Reviewed by Brian Burg.
+
+        * inspector/memory/tracking-expected.txt: Added.
+        * inspector/memory/tracking.html: Added.
+        Basic test for the new domain tracking commands and events.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip the directory on ports that have not implemented ENABLE(RESOURCE_USAGE).
+
 2016-02-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping http/tests/plugins/visible_plugins.html on Yosemite during investigation.

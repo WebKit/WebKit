@@ -284,6 +284,28 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._stopAutoRecordingSoon();
     }
 
+    memoryTrackingStart(timestamp)
+    {
+        // Called from WebInspector.MemoryObserver.
+
+        this.capturingStarted(timestamp);
+    }
+
+    memoryTrackingUpdate(event)
+    {
+        // Called from WebInspector.MemoryObserver.
+
+        if (!this._isCapturing)
+            return;
+
+        this._addRecord(new WebInspector.MemoryTimelineRecord(event.timestamp, event.categories));
+    }
+
+    memoryTrackingComplete()
+    {
+        // Called from WebInspector.MemoryObserver.
+    }
+
     // Private
 
     _processRecord(recordPayload, parentRecordPayload)
@@ -492,6 +514,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (this._activeRecording && this._activeRecording.isEmpty())
             return;
 
+        // FIXME: <https://webkit.org/b/153672> Web Inspector: Timelines UI redesign: Provide a way to configure which instruments to use
         // FIXME: Move the list of instruments for a new recording to a Setting when new Instruments are supported.
         let instruments = WebInspector.TimelineManager.defaultInstruments();
 

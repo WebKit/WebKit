@@ -1,3 +1,229 @@
+2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: High Level Memory Overview Instrument
+        https://bugs.webkit.org/show_bug.cgi?id=153516
+        <rdar://problem/24356378>
+
+        Reviewed by Brian Burg.
+
+        Use the new "Memory" domain to track page memory size over time.
+        This allows the timeline to help visualize total process memory
+        broken down into a few different categories. The timeline graph
+        allows seeing the total size over time, and you can drill in to
+        a specific section and get a better breakdown and comparison
+        of the different categories of memory that we currently track.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI strings.
+
+        * UserInterface/Main.html:
+        New files.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Protocol/MemoryObserver.js:
+        (WebInspector.MemoryObserver.prototype.trackingStart):
+        (WebInspector.MemoryObserver.prototype.trackingUpdate):
+        (WebInspector.MemoryObserver.prototype.trackingComplete):
+        Add a memory observer.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.defaultInstruments):
+        (WebInspector.TimelineManager.prototype.memoryTrackingStart):
+        (WebInspector.TimelineManager.prototype.memoryTrackingUpdate):
+        (WebInspector.TimelineManager.prototype.memoryTrackingComplete):
+        Create Memory timeline records from Memory tracking updates.
+
+        * UserInterface/Models/MemoryCategory.js:
+        (WebInspector.MemoryCategory):
+        Consolidate some of the raw data of categories we get from the backend
+        into a set of 4 user-facing categories.
+
+        * UserInterface/Models/MemoryTimelineRecord.js: Added.
+        (WebInspector.MemoryTimelineRecord):
+        (WebInspector.MemoryTimelineRecord.memoryCategoriesFromProtocol):
+        (WebInspector.MemoryTimelineRecord.prototype.get timestamp):
+        (WebInspector.MemoryTimelineRecord.prototype.get categories):
+        (WebInspector.MemoryTimelineRecord.prototype.get totalSize):
+        (WebInspector.MemoryTimelineRecord.prototype.get startTime):
+        (WebInspector.MemoryTimelineRecord.prototype.get endTime):
+        Memory timeline record for the event data.
+
+        * UserInterface/Models/MemoryInstrument.js:
+        (WebInspector.MemoryInstrument):
+        (WebInspector.MemoryInstrument.supported):
+        (WebInspector.MemoryInstrument.prototype.get timelineRecordType):
+        (WebInspector.MemoryInstrument.prototype.startInstrumentation):
+        (WebInspector.MemoryInstrument.prototype.stopInstrumentation):
+        Instrument to start / stop memory tracking.
+
+        * UserInterface/Models/TimelineRecord.js:
+        Add a new "Memory" Timeline type.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording):
+        Add the new "Memory" Timeline.
+
+        (WebInspector.TimelineRecording.prototype.addRecord):
+        Memory timeline records do not show in the SourceCode Timelines Overview.
+
+        * UserInterface/Views/CircleChart.css:
+        (.circle-chart):
+        (.circle-chart > svg > path.background):
+        (.circle-chart > .center):
+        * UserInterface/Views/CircleChart.js: Added.
+        (WebInspector.CircleChart):
+        (WebInspector.CircleChart.prototype.get element):
+        (WebInspector.CircleChart.prototype.get points):
+        (WebInspector.CircleChart.prototype.get size):
+        (WebInspector.CircleChart.prototype.get centerElement):
+        (WebInspector.CircleChart.prototype.get segments):
+        (WebInspector.CircleChart.prototype.set segments):
+        (WebInspector.CircleChart.prototype.get values):
+        (WebInspector.CircleChart.prototype.set values):
+        (WebInspector.CircleChart.prototype.clear):
+        (WebInspector.CircleChart.prototype.needsLayout):
+        (WebInspector.CircleChart.prototype.updateLayout):
+        (WebInspector.CircleChart.prototype._needsLayout):
+        (WebInspector.CircleChart.prototype._createCompleteCirclePathData):
+        (WebInspector.CircleChart.prototype._createSegmentPathData):
+        (WebInspector.CircleChart.prototype._updateLayout):
+        Standalone circle "donut" chart, copied mostly from Rendering Frames Timeline.
+        Initialize the chart's segments, then feed it a set of ([v1, v2, ...]) values
+        corresponding to each of the segments.
+
+        * UserInterface/Views/LineChart.js: Added.
+        (WebInspector.LineChart):
+        (WebInspector.LineChart.prototype.get element):
+        (WebInspector.LineChart.prototype.get points):
+        (WebInspector.LineChart.prototype.get size):
+        (WebInspector.LineChart.prototype.set size):
+        (WebInspector.LineChart.prototype.addPoint):
+        (WebInspector.LineChart.prototype.clear):
+        (WebInspector.LineChart.prototype.needsLayout):
+        (WebInspector.LineChart.prototype.updateLayout):
+        (WebInspector.LineChart.prototype._needsLayout):
+        (WebInspector.LineChart.prototype._updateLayout):
+        Standalone line chart. Uses a single SVG path, given a set of (x, y) points.
+
+        * UserInterface/Views/StackedLineChart.js: Added.
+        (WebInspector.StackedLineChart):
+        (WebInspector.StackedLineChart.prototype.get element):
+        (WebInspector.StackedLineChart.prototype.get points):
+        (WebInspector.StackedLineChart.prototype.get size):
+        (WebInspector.StackedLineChart.prototype.set size):
+        (WebInspector.StackedLineChart.prototype.initializeSections):
+        (WebInspector.StackedLineChart.prototype.addPointSet):
+        (WebInspector.StackedLineChart.prototype.clear):
+        (WebInspector.StackedLineChart.prototype.needsLayout):
+        (WebInspector.StackedLineChart.prototype.updateLayout):
+        (WebInspector.StackedLineChart.prototype._needsLayout):
+        (WebInspector.StackedLineChart.prototype._updateLayout):
+        Standalone stacked line chart. Initialize the chart's sections,
+        then feed it a set of (x, [y1, y2 ...]) points where the y
+        values correspond to each of the sections.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.get scrollContainerWidth):
+        Add a way to get this value without forcing layout all the time.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.displayNameForTimeline):
+        (WebInspector.TimelineTabContentView.iconClassNameForTimeline):
+        (WebInspector.TimelineTabContentView.genericClassNameForTimeline):
+        (WebInspector.TimelineTabContentView.iconClassNameForRecord):
+        (WebInspector.TimelineTabContentView.displayNameForRecord):
+        Add placeholders for the new Memory Timeline Type.
+
+        * UserInterface/Views/MemoryCategoryView.css:
+        (.memory-category-view):
+        (.memory-category-view > .details):
+        (.memory-category-view > .details > .name):
+        (.memory-category-view > .graph):
+        * UserInterface/Views/MemoryCategoryView.js: Added.
+        (WebInspector.MemoryCategoryView):
+        (WebInspector.MemoryCategoryView.prototype.get element):
+        (WebInspector.MemoryCategoryView.prototype.get category):
+        (WebInspector.MemoryCategoryView.prototype.clear):
+        (WebInspector.MemoryCategoryView.prototype.layoutWithDataPoints):
+        (WebInspector.MemoryCategoryView.prototype._updateDetails):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.css:
+        (body .timeline-overview > .graphs-container > .timeline-overview-graph.memory):
+        (.timeline-overview-graph.memory):
+        (.timeline-overview-graph.memory > .legend):
+        (.timeline-overview-graph.memory > .stacked-line-chart > svg > path.javascript):
+        (.timeline-overview-graph.memory > .stacked-line-chart > svg > path.images):
+        (.timeline-overview-graph.memory > .stacked-line-chart > svg > path.layers):
+        (.timeline-overview-graph.memory > .stacked-line-chart > svg > path.page):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js: Added.
+        (WebInspector.MemoryTimelineOverviewGraph):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.get height):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.reset):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.layout.timeToX):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.layout.sizeToY):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.layout.sizesToYs):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.layout.ysForRecord):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype.layout):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype._updateLegend):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype._visibleRecords):
+        (WebInspector.MemoryTimelineOverviewGraph.prototype._memoryTimelineRecordAdded):
+        * UserInterface/Views/MemoryTimelineView.css: Added.
+        (.timeline-view.memory):
+        (.timeline-view.memory > .content):
+        (.timeline-view.memory > .content > .overview):
+        (.timeline-view.memory > .content .title):
+        (.timeline-view.memory > .content .subtitle):
+        (.timeline-view.memory > .content > .details > .timeline-ruler):
+        (.timeline-view.memory > .content > .details > .subtitle):
+        (.timeline-view.memory > .content > .overview > .chart):
+        (.timeline-view.memory > .content > .overview > .chart > .subtitle):
+        (.timeline-view.memory > .content > .overview > .chart > .container):
+        (.timeline-view.memory > .content > .overview > .divider):
+        (.timeline-view.memory > .content > .overview .max-percentage):
+        (.timeline-view.memory .legend):
+        (.timeline-view.memory .legend > .row):
+        (.timeline-view.memory .legend > .row > .swatch):
+        (.timeline-view.memory .legend > .row > p):
+        (.timeline-view.memory .legend > .row > .label):
+        (.timeline-view.memory .legend > .row > .size):
+        (.timeline-view.memory .legend > .row > .swatch.javascript):
+        (.timeline-view.memory .legend > .row > .swatch.images):
+        (.timeline-view.memory .legend > .row > .swatch.layers):
+        (.timeline-view.memory .legend > .row > .swatch.page):
+        (.memory-category-view.javascript .line-chart > svg > path):
+        (.memory-category-view.images .line-chart > svg > path):
+        (.memory-category-view.layers .line-chart > svg > path):
+        (.memory-category-view.page .line-chart > svg > path):
+        (.timeline-view.memory .legend > .row > .swatch.current):
+        (.timeline-view.memory .circle-chart > svg > path.current):
+        (.timeline-view.memory .circle-chart > svg > path.remainder):
+        * UserInterface/Views/MemoryTimelineView.js: Added.
+        (WebInspector.MemoryTimelineView):
+        (WebInspector.MemoryTimelineView.displayNameForCategory):
+        (WebInspector.MemoryTimelineView.prototype.get navigationSidebarTreeOutlineLabel):
+        (WebInspector.MemoryTimelineView.prototype.shown):
+        (WebInspector.MemoryTimelineView.prototype.hidden):
+        (WebInspector.MemoryTimelineView.prototype.closed):
+        (WebInspector.MemoryTimelineView.prototype.reset):
+        (WebInspector.MemoryTimelineView.prototype.treeElementPathComponentSelected):
+        (WebInspector.MemoryTimelineView.prototype.layout.timeToX):
+        (WebInspector.MemoryTimelineView.prototype.layout.sizeToY):
+        (WebInspector.MemoryTimelineView.prototype.layout.layoutCategoryView):
+        (WebInspector.MemoryTimelineView.prototype.layout):
+        (WebInspector.MemoryTimelineView.prototype._clearUsageLegend):
+        (WebInspector.MemoryTimelineView.prototype._updateUsageLegend):
+        (WebInspector.MemoryTimelineView.prototype._clearMaxComparisonLegend):
+        (WebInspector.MemoryTimelineView.prototype._updateMaxComparisonLegend):
+        (WebInspector.MemoryTimelineView.prototype._visibleRecords):
+        (WebInspector.MemoryTimelineView.prototype._initializeCategoryViews.appendLegendRow):
+        (WebInspector.MemoryTimelineView.prototype._initializeCategoryViews):
+        (WebInspector.MemoryTimelineView.prototype._memoryTimelineRecordAdded):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Memory timeline view styles.
+
 2016-02-01  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: add a LayoutReason enum to the View base class

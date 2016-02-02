@@ -70,6 +70,8 @@ WebInspector.loaded = function()
         InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
     if (InspectorBackend.registerHeapDispatcher)
         InspectorBackend.registerHeapDispatcher(new WebInspector.HeapObserver);
+    if (InspectorBackend.registerMemoryDispatcher)
+        InspectorBackend.registerMemoryDispatcher(new WebInspector.MemoryObserver);
     if (InspectorBackend.registerDatabaseDispatcher)
         InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseObserver);
     if (InspectorBackend.registerDOMStorageDispatcher)

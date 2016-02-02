@@ -46,6 +46,7 @@
 #include "InspectorIndexedDBAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorLayerTreeAgent.h"
+#include "InspectorMemoryAgent.h"
 #include "InspectorNetworkAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorReplayAgent.h"
@@ -143,6 +144,10 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
 #if ENABLE(INDEXED_DATABASE)
     m_agents.append(std::make_unique<InspectorIndexedDBAgent>(pageContext, pageAgent));
+#endif
+
+#if ENABLE(RESOURCE_USAGE)
+    m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
 #endif
 
 #if ENABLE(WEB_REPLAY)

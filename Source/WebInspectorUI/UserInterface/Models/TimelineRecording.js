@@ -41,6 +41,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
             WebInspector.TimelineRecord.Type.Layout,
             WebInspector.TimelineRecord.Type.Script,
             WebInspector.TimelineRecord.Type.RenderingFrame,
+            WebInspector.TimelineRecord.Type.Memory,
         ];
 
         for (let type of timelines) {
@@ -224,8 +225,10 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         // Add the record to the global timeline by type.
         timeline.addRecord(record);
 
-        // Network and RenderingFrame records don't have source code timelines.
-        if (record.type === WebInspector.TimelineRecord.Type.Network || record.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+        // Some records don't have source code timelines.
+        if (record.type === WebInspector.TimelineRecord.Type.Network
+            || record.type === WebInspector.TimelineRecord.Type.RenderingFrame
+            || record.type === WebInspector.TimelineRecord.Type.Memory)
             return;
 
         if (!WebInspector.TimelineRecording.sourceCodeTimelinesSupported())

@@ -67,14 +67,14 @@
         },
         {
             "name": "trackingUpdate",
-            "description": "While tracking is enabled the backend will periodically update the frontend with event data. The data includes tuples.",
+            "description": "Periodic tracking updates with event data.",
             "parameters": [
                 { "name": "event", "$ref": "Event" }
             ]
         },
         {
             "name": "trackingComplete",
-            "description": "When tracking is complete the backend will send any buffered data, such as profiling information.",
+            "description": "Tracking stopped. Includes any buffered data during tracking, such as profiling information.",
             "parameters": [
                 { "name": "samples", "$ref": "Samples", "optional": true, "description": "Stack traces." }
             ]

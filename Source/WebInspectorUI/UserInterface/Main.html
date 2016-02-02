@@ -45,6 +45,7 @@
     <link rel="stylesheet" href="Views/CallFrameIcons.css">
     <link rel="stylesheet" href="Views/CallFrameView.css">
     <link rel="stylesheet" href="Views/ChartDetailsSectionRow.css">
+    <link rel="stylesheet" href="Views/CircleChart.css">
     <link rel="stylesheet" href="Views/ClusterContentView.css">
     <link rel="stylesheet" href="Views/CodeMirrorOverrides.css">
     <link rel="stylesheet" href="Views/ColorPicker.css">
@@ -101,6 +102,9 @@
     <link rel="stylesheet" href="Views/LayoutTimelineView.css">
     <link rel="stylesheet" href="Views/LogContentView.css">
     <link rel="stylesheet" href="Views/LogIcon.css">
+    <link rel="stylesheet" href="Views/MemoryCategoryView.css">
+    <link rel="stylesheet" href="Views/MemoryTimelineOverviewGraph.css">
+    <link rel="stylesheet" href="Views/MemoryTimelineView.css">
     <link rel="stylesheet" href="Views/Main.css">
     <link rel="stylesheet" href="Views/NavigationBar.css">
     <link rel="stylesheet" href="Views/NavigationSidebarPanel.css">
@@ -246,6 +250,7 @@
     <script src="Protocol/InspectorObserver.js"></script>
     <script src="Protocol/LayerTreeObserver.js"></script>
     <script src="Protocol/LoadInspectorBackendCommands.js"></script>
+    <script src="Protocol/MemoryObserver.js"></script>
     <script src="Protocol/MessageDispatcher.js"></script>
     <script src="Protocol/NetworkObserver.js"></script>
     <script src="Protocol/PageObserver.js"></script>
@@ -311,6 +316,9 @@
     <script src="Models/LazySourceCodeLocation.js"></script>
     <script src="Models/LineWidget.js"></script>
     <script src="Models/LogObject.js"></script>
+    <script src="Models/MemoryCategory.js"></script>
+    <script src="Models/MemoryInstrument.js"></script>
+    <script src="Models/MemoryTimelineRecord.js"></script>
     <script src="Models/NativeFunctionParameters.js"></script>
     <script src="Models/NetworkInstrument.js"></script>
     <script src="Models/NetworkTimeline.js"></script>
@@ -434,6 +442,7 @@
     <script src="Views/CallFrameTreeElement.js"></script>
     <script src="Views/CallFrameView.js"></script>
     <script src="Views/ChartDetailsSectionRow.js"></script>
+    <script src="Views/CircleChart.js"></script>
     <script src="Views/ClusterContentView.js"></script>
     <script src="Views/CodeMirrorAdditions.js"></script>
     <script src="Views/CodeMirrorEditor.js"></script>
@@ -509,9 +518,13 @@
     <script src="Views/LayoutTimelineDataGridNode.js"></script>
     <script src="Views/LayoutTimelineOverviewGraph.js"></script>
     <script src="Views/LayoutTimelineView.js"></script>
+    <script src="Views/LineChart.js"></script>
     <script src="Views/LinearTimelineOverview.js"></script>
     <script src="Views/LogContentView.js"></script>
     <script src="Views/LogTreeElement.js"></script>
+    <script src="Views/MemoryCategoryView.js"></script>
+    <script src="Views/MemoryTimelineOverviewGraph.js"></script>
+    <script src="Views/MemoryTimelineView.js"></script>
     <script src="Views/MultipleScopeBarItem.js"></script>
     <script src="Views/NavigationBar.js"></script>
     <script src="Views/NetworkGridContentView.js"></script>
@@ -567,6 +580,7 @@
     <script src="Views/SourceCodeTimelineTreeElement.js"></script>
     <script src="Views/SourceMapResourceTreeElement.js"></script>
     <script src="Views/StackTraceView.js"></script>
+    <script src="Views/StackedLineChart.js"></script>
     <script src="Views/StorageSidebarPanel.js"></script>
     <script src="Views/SyntaxHighlightingSupport.js"></script>
     <script src="Views/TextContentView.js"></script>

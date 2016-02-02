@@ -637,6 +637,9 @@ webkit.org/b/152620 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailu
 # Requires ENABLE(SAMPLING_PROFILER)
 webkit.org/b/153466 inspector/sampling-profiler [ Skip ]
 
+# Requires ENABLE(RESOURCE_USAGE).
+inspector/memory [ Skip ]
+
 # This requires a specific font on Mac
 fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
 

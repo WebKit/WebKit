@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-:root {
-    --z-index-highlight: 64;
-    --z-index-header: 128;
-    --z-index-resizer: 256;
-    --z-index-popover: 512;
-    --z-index-tooltip: 1024;
-    --z-index-glass-pane-for-drag: 2048;
-    --z-index-uncaught-exception-sheet: 4096;
+WebInspector.MemoryInstrument = class MemoryInstrument extends WebInspector.Instrument
+{
+    constructor()
+    {
+        super();
 
-    --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
+        console.assert(WebInspector.MemoryInstrument.supported());
+    }
 
-    --syntax-highlight-number-color: hsl(248, 100%, 40%);
-    --syntax-highlight-boolean-color: hsl(309, 85%, 35%);
-    --syntax-highlight-string-color: hsl(1, 79%, 42%);
-    --syntax-highlight-regexp-color: hsl(20, 100%, 44%);
-    --syntax-highlight-symbol-color: hsl(172, 45%, 45%);
+    // Static
 
-    --memory-active-divider-color: hsl(0, 0%, 70%);
-    --memory-inactive-divider-color: hsl(0, 0%, 85%);
-    --memory-javascript-fill-color: hsl(269, 65%, 75%);
-    --memory-javascript-stroke-color: hsl(269, 33%, 50%);
-    --memory-images-fill-color: hsl(0, 65%, 75%);
-    --memory-images-stroke-color: hsl(0, 54%, 50%);
-    --memory-layers-fill-color: hsl(76, 49%, 75%);
-    --memory-layers-stroke-color: hsl(79, 45%, 50%);
-    --memory-page-fill-color: hsl(22, 60%, 70%);
-    --memory-page-stroke-color: hsl(22, 40%, 50%);
-    --memory-max-comparison-fill-color: hsl(220, 10%, 75%);
-    --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
-}
+    static supported()
+    {
+        // COMPATIBILITY (iOS 9): MemoryAgent did not exist.
+        return window.MemoryAgent;
+    }
+
+    // Protected
+
+    get timelineRecordType()
+    {
+        return WebInspector.TimelineRecord.Type.Memory;
+    }
+
+    startInstrumentation()
+    {
+        MemoryAgent.startTracking();
+    }
+
+    stopInstrumentation()
+    {
+        MemoryAgent.stopTracking();
+    }
+};

@@ -1,3 +1,19 @@
+2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: High Level Memory Overview Instrument
+        https://bugs.webkit.org/show_bug.cgi?id=153516
+        <rdar://problem/24356378>
+
+        Reviewed by Brian Burg.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * inspector/protocol/Memory.json: Added.
+        * inspector/scripts/codegen/generator.py:
+        New Memory domain guarded by ENABLE(RESOURCE_USAGE).
+        This feature flag was already used in WebCore.
+
 2016-02-01  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] IRC can coalesce the frame pointer with a Tmp that is modified

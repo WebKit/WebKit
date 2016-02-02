@@ -2274,6 +2274,9 @@ compositing/tiling/transform-origin-tiled.html [ Failure ]
 webkit.org/b/144737 inspector [ Skip ]
 webkit.org/b/144737 http/tests/inspector [ Skip ]
 
+# Requires ENABLE(RESOURCE_USAGE).
+inspector/memory [ Skip ]
+
 webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
 
 # Below tests are failed since efl buildbot disable USE_NATIVE_XDISPLAY.

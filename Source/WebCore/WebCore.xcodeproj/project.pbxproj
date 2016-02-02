@@ -4175,6 +4175,8 @@
 		A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E841C56D079009951BE /* ResourceUsageThread.h */; };
 		A5071E891C56D4FE009951BE /* ResourceUsageThreadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */; };
 		A5071E8B1C56FB31009951BE /* ResourceUsageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */; };
+		A5071E801C506B66009951BE /* InspectorMemoryAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5071E7E1C5067A0009951BE /* InspectorMemoryAgent.cpp */; };
+		A5071E811C506B69009951BE /* InspectorMemoryAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E7F1C5067A0009951BE /* InspectorMemoryAgent.h */; };
 		A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */; };
 		A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */; };
 		A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */; };
@@ -11808,6 +11810,8 @@
 		A5071E841C56D079009951BE /* ResourceUsageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsageThread.h; sourceTree = "<group>"; };
 		A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceUsageThreadCocoa.mm; sourceTree = "<group>"; };
 		A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageData.cpp; sourceTree = "<group>"; };
+		A5071E7E1C5067A0009951BE /* InspectorMemoryAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorMemoryAgent.cpp; sourceTree = "<group>"; };
+		A5071E7F1C5067A0009951BE /* InspectorMemoryAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorMemoryAgent.h; sourceTree = "<group>"; };
 		A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedDateCache.h; sourceTree = "<group>"; };
 		A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDateCache.mm; sourceTree = "<group>"; };
 		A518225417E2A0D400A9BA1D /* InspectorOverlayPage.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = InspectorOverlayPage.css; sourceTree = "<group>"; };
@@ -16144,6 +16148,8 @@
 				A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */,
 				71B1E123164048CC00B1880A /* InspectorLayerTreeAgent.cpp */,
 				71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */,
+				A5071E7E1C5067A0009951BE /* InspectorMemoryAgent.cpp */,
+				A5071E7F1C5067A0009951BE /* InspectorMemoryAgent.h */,
 				82AB1771125C826700C5069D /* InspectorNetworkAgent.cpp */,
 				82AB1772125C826700C5069D /* InspectorNetworkAgent.h */,
 				504AACCB1834455900E3D9BC /* InspectorNodeFinder.cpp */,
@@ -28343,6 +28349,7 @@
 				52D5A1A71C57489D00DE34A3 /* WebVideoFullscreenModel.h in Headers */,
 				52D5A1A81C5748A300DE34A3 /* WebVideoFullscreenModelVideoElement.h in Headers */,
 				F12171F616A8CF0B000053CA /* WebVTTElement.h in Headers */,
+				A5071E811C506B69009951BE /* InspectorMemoryAgent.h in Headers */,
 				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
 				B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */,
@@ -30666,6 +30673,7 @@
 				4E19592B0A39DACC00220FE5 /* MediaQueryEvaluator.cpp in Sources */,
 				4E19592D0A39DACC00220FE5 /* MediaQueryExp.cpp in Sources */,
 				D3A94A38122DABAC00A37BBC /* MediaQueryList.cpp in Sources */,
+				A5071E801C506B66009951BE /* InspectorMemoryAgent.cpp in Sources */,
 				D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */,
 				C90843CF1B18E47D00B68564 /* MediaRemoteControls.cpp in Sources */,
 				CEEFCD7919DB31F7003876D7 /* MediaResourceLoader.cpp in Sources */,

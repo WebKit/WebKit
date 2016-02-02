@@ -60,6 +60,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
             return WebInspector.UIString("JavaScript & Events");
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return WebInspector.UIString("Rendering Frames");
+        case WebInspector.TimelineRecord.Type.Memory:
+            return WebInspector.UIString("Memory");
         default:
             console.error("Unknown Timeline type:", timeline.type);
         }
@@ -74,10 +76,32 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
             return "network-icon";
         case WebInspector.TimelineRecord.Type.Layout:
             return "colors-icon";
+        case WebInspector.TimelineRecord.Type.Memory:
+            // FIXME: Need a new icon. For now fall through to the Script icon.
         case WebInspector.TimelineRecord.Type.Script:
             return "script-icon";
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return "rendering-frame-icon";
+        default:
+            console.error("Unknown Timeline type:", timeline.type);
+        }
+
+        return null;
+    }
+
+    static genericClassNameForTimeline(timeline)
+    {
+        switch (timeline.type) {
+        case WebInspector.TimelineRecord.Type.Network:
+            return "network";
+        case WebInspector.TimelineRecord.Type.Layout:
+            return "colors";
+        case WebInspector.TimelineRecord.Type.Memory:
+            return "memory";
+        case WebInspector.TimelineRecord.Type.Script:
+            return "script";
+        case WebInspector.TimelineRecord.Type.RenderingFrame:
+            return "rendering-frame";
         default:
             console.error("Unknown Timeline type:", timeline.type);
         }
@@ -140,6 +164,9 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return WebInspector.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass;
 
+        case WebInspector.TimelineRecord.Type.Memory:
+            // Not used. Fall through to error just in case.
+
         default:
             console.error("Unknown TimelineRecord type: " + timelineRecord.type, timelineRecord);
         }
@@ -158,6 +185,8 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
             return WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeDetailsInMainTitle);
         case WebInspector.TimelineRecord.Type.RenderingFrame:
             return WebInspector.UIString("Frame %d").format(timelineRecord.frameNumber);
+        case WebInspector.TimelineRecord.Type.Memory:
+            // Not used. Fall through to error just in case.
         default:
             console.error("Unknown TimelineRecord type: " + timelineRecord.type, timelineRecord);
         }

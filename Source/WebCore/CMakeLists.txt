@@ -1890,6 +1890,7 @@ set(WebCore_SOURCES
     inspector/InspectorInstrumentation.cpp
     inspector/InspectorInstrumentationCookie.cpp
     inspector/InspectorLayerTreeAgent.cpp
+    inspector/InspectorMemoryAgent.cpp
     inspector/InspectorNetworkAgent.cpp
     inspector/InspectorNodeFinder.cpp
     inspector/InspectorOverlay.cpp

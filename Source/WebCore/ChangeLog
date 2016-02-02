@@ -1,3 +1,36 @@
+2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: High Level Memory Overview Instrument
+        https://bugs.webkit.org/show_bug.cgi?id=153516
+        <rdar://problem/24356378>
+
+        Reviewed by Brian Burg.
+
+        Add a new agent that gathers data from the ResourceUsageThread
+        and sends to the frontend.
+
+        Test: inspector/memory/tracking.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        New files.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        Add the new agent.
+
+        * inspector/InspectorMemoryAgent.h: Added.
+        * inspector/InspectorMemoryAgent.cpp: Added.
+        (WebCore::InspectorMemoryAgent::InspectorMemoryAgent):
+        (WebCore::InspectorMemoryAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorMemoryAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorMemoryAgent::startTracking):
+        (WebCore::InspectorMemoryAgent::stopTracking):
+        (WebCore::InspectorMemoryAgent::collectSample):
+        Implement the agent by adding / removing it as a ResourceUsage
+        observer. When receiving the data forward it to the frontend.
+
 2016-02-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

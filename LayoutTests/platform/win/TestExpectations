@@ -2405,6 +2405,9 @@ http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 webkit.org/b/137157 inspector [ Skip ]
 webkit.org/b/137157 http/tests/inspector [ Skip ]
 
+# Requires ENABLE(RESOURCE_USAGE).
+inspector/memory [ Skip ]
+
 # webkit.org/b/143548 inspector/console [ Skip ]
 # webkit.org/b/137157 inspector/css [ Skip ]
 # webkit.org/b/147017 inspector/css/get-system-fonts.html [ Skip ]
