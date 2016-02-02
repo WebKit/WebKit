@@ -1,3 +1,35 @@
+2016-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix authentication with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=153779
+
+        Reviewed by Brady Eidson.
+
+        This fixes many tests, including http/tests/xmlhttprequest/cross-origin-authorization.html.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        NetworkingContexts are not used with NetworkSession.  NetworkSession is used instead.
+        Pass allowStoredCredentials to the NetworkLoad so it knows whether to use a session with credential storage or not.
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        Always call continueCanAuthenticateAgainstProtectionSpace because we might need credentials for synchronous requests.
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        Reject the protection space if we cannot authenticate against this protection space.
+        If the protection space is not password-based (such as ServerTrustEvaluationRequested) and we can authenticate against this protection space,
+        then perform default handling instead of asking the UI process for a password, which wouldn't mean anything.
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkSession.h:
+        Use a NSURLSession with configuration.URLCredentialStorage = nil but with the same cookie storage for requests without credentials.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        (WebKit::NetworkSession::takeDownloadID):
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::canAuthenticateAgainstProtectionSpace):
+        Always send a reply message so we can always do the callbacks of NSURLSession delegates.
+
 2016-02-01  Dave Hyatt  <hyatt@apple.com>
 
         Add a line grid pagination SPI to WebKit.

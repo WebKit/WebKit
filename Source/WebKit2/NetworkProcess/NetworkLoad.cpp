@@ -46,12 +46,14 @@ using namespace WebCore;
 NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters& parameters)
     : m_client(client)
     , m_parameters(parameters)
+#if !USE(NETWORK_SESSION)
     , m_networkingContext(RemoteNetworkingContext::create(parameters.sessionID, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect))
+#endif
     , m_currentRequest(parameters.request)
 {
 #if USE(NETWORK_SESSION)
     if (auto* networkSession = SessionTracker::networkSession(parameters.sessionID)) {
-        m_task = std::make_unique<NetworkDataTask>(*networkSession, *this, parameters.request);
+        m_task = std::make_unique<NetworkDataTask>(*networkSession, *this, parameters.request, parameters.allowStoredCredentials);
         if (!parameters.defersLoading)
             m_task->resume();
     } else
@@ -193,21 +195,21 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
     // Handle server trust evaluation at platform-level if requested, for performance reasons.
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
         && !NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation()) {
-        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
-        return;
-    }
-
-    if (m_client.isSynchronous()) {
-        // FIXME: We should ask the WebProcess like the asynchronous case below does.
-        // This is currently impossible as the WebProcess is blocked waiting on this synchronous load.
-        // It's possible that we can jump straight to the UI process to resolve this.
-        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
+        completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, Credential());
         return;
     }
 
     m_challengeCompletionHandler = completionHandler;
     m_challenge = challenge;
-    m_client.canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
+
+    if (m_client.isSynchronous()) {
+        // FIXME: We should ask the WebProcess like the asynchronous case below does.
+        // This is currently impossible as the WebProcess is blocked waiting on this synchronous load.
+        // It's possible that we can jump straight to the UI process to resolve this.
+        continueCanAuthenticateAgainstProtectionSpace(true);
+        return;
+    } else
+        m_client.canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
 }
 
 void NetworkLoad::didReceiveResponse(const ResourceResponse& response, ResponseCompletionHandler completionHandler)
@@ -322,6 +324,11 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
     ASSERT(m_challengeCompletionHandler);
     auto completionHandler = WTFMove(m_challengeCompletionHandler);
     if (!result) {
+        completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, Credential());
+        return;
+    }
+    
+    if (!m_challenge.protectionSpace().isPasswordBased()) {
         completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
         return;
     }

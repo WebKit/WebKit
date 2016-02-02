@@ -122,7 +122,6 @@ private:
 
     NetworkLoadClient& m_client;
     const NetworkLoadParameters m_parameters;
-    RefPtr<RemoteNetworkingContext> m_networkingContext;
 #if USE(NETWORK_SESSION)
     std::unique_ptr<NetworkDataTask> m_task;
     WebCore::AuthenticationChallenge m_challenge;
@@ -130,6 +129,7 @@ private:
     ResponseCompletionHandler m_responseCompletionHandler;
     RedirectCompletionHandler m_redirectCompletionHandler;
 #else
+    RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;
 #endif
 

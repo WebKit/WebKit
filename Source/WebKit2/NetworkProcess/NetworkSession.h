@@ -35,6 +35,7 @@ OBJC_CLASS WKNetworkSessionDelegate;
 
 #include "DownloadID.h"
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/ResourceHandleTypes.h>
 #include <WebCore/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
@@ -84,7 +85,7 @@ public:
 class NetworkDataTask {
     friend class NetworkSession;
 public:
-    explicit NetworkDataTask(NetworkSession&, NetworkSessionTaskClient&, const WebCore::ResourceRequest&);
+    explicit NetworkDataTask(NetworkSession&, NetworkSessionTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials);
 
     void suspend();
     void cancel();
@@ -146,7 +147,8 @@ private:
     HashMap<NetworkDataTask::TaskIdentifier, NetworkDataTask*> m_dataTaskMap;
     HashMap<NetworkDataTask::TaskIdentifier, DownloadID> m_downloadMap;
 #if PLATFORM(COCOA)
-    RetainPtr<NSURLSession> m_session;
+    RetainPtr<NSURLSession> m_sessionWithCredentialStorage;
+    RetainPtr<NSURLSession> m_sessionWithoutCredentialStorage;
     RetainPtr<WKNetworkSessionDelegate> m_sessionDelegate;
 #endif
 };
