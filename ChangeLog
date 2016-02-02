@@ -1,3 +1,11 @@
+2016-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed attempt to fix Mac CMake build after r195999.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        Add ENABLE_RESOURCE_USAGE to CMake builds.
+
 2016-02-02  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][EFL] Upgrade OpenWebRTC dependency
