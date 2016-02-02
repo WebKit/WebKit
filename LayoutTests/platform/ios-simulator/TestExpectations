@@ -2917,3 +2917,5 @@ webkit.org/b/152438 fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
 webkit.org/b/153311 fast/replaced/preferred-widths.html [ Pass Failure ]
 
 webkit.org/b/153336 imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window-4.htm [ Pass Failure ]
+
+webkit.org/b/153803 perf/show-hide-table-rows.html [ Pass Failure ]
