@@ -1,5 +1,14 @@
 2016-02-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skipping http/tests/plugins/visible_plugins.html on Yosemite during investigation.
+        https://bugs.webkit.org/show_bug.cgi?id=153752
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-02-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection-1.html as flaky on Mac debug
         https://bugs.webkit.org/show_bug.cgi?id=153781
 
