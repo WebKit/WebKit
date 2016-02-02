@@ -1,5 +1,13 @@
 2016-02-01  Dan Bernstein  <mitz@apple.com>
 
+        Copy sandbox profiles during installhdrs.
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/SandboxProfiles.xcconfig:
+
+2016-02-01  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Remove some more __has_include guards
         https://bugs.webkit.org/show_bug.cgi?id=153774
 
