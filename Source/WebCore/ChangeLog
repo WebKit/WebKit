@@ -1,3 +1,9 @@
+2016-02-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2016-02-01  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Cursors (still) do not keep their opening request alive.

@@ -354,7 +354,9 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
+    platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
     platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm
+    platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm
     platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm

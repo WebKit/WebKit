@@ -4,6 +4,7 @@ find_library(CARBON_LIBRARY Carbon)
 find_library(QUARTZ_LIBRARY Quartz)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
+add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
 list(APPEND WebKit2_LIBRARIES
     WebKit
@@ -399,6 +400,7 @@ set(WEBKIT2_EXTRA_DEPENDENCIES
 
 set(XPCService_SOURCES
     Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm
+    Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm
 )
 
 set(WebProcess_SOURCES
