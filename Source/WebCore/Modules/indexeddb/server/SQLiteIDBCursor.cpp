@@ -230,7 +230,6 @@ void SQLiteIDBCursor::resetAndRebindStatement()
             m_keyRange.lowerOpen = true;
             m_keyRange.lowerKey = m_currentLowerKey;
             m_statement = nullptr;
-            m_currentRecordID = -1;
         }
     } else {
         m_currentUpperKey = m_currentKey;
@@ -238,7 +237,6 @@ void SQLiteIDBCursor::resetAndRebindStatement()
             m_keyRange.upperOpen = true;
             m_keyRange.upperKey = m_currentUpperKey;
             m_statement = nullptr;
-            m_currentRecordID = -1;
         }
     }
 
@@ -357,16 +355,6 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
         m_errored = true;
         return AdvanceResult::Failure;
     }
-
-    int64_t recordID = m_statement->getColumnInt64(0);
-
-    // If the recordID of the record just fetched is the same as the current record ID
-    // then this statement must have been re-prepared in response to an object store change.
-    // We don't want to re-use the current record so we'll move on to the next one.
-    if (recordID == m_currentRecordID)
-        return AdvanceResult::ShouldAdvanceAgain;
-
-    m_currentRecordID = recordID;
 
     Vector<uint8_t> keyData;
     m_statement->getColumnBlobAsVector(1, keyData);

@@ -100,7 +100,6 @@ private:
     IDBKeyData m_currentLowerKey;
     IDBKeyData m_currentUpperKey;
 
-    int64_t m_currentRecordID { -1 };
     IDBKeyData m_currentKey;
     IDBKeyData m_currentPrimaryKey;
     Vector<uint8_t> m_currentValueBuffer;

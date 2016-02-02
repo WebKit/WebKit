@@ -1,3 +1,24 @@
+2016-02-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/cursor-continue-validity.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=153791
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Existing test now unskipped).
+
+        There was a preexisting check in the SQLite cursor for remembering the current record and
+        refusing to refetch it.
+        
+        This check was causing this bug, because we needed to refetch the current record.
+        
+        Removing the check (and its associated flag) doesn't regress any other test, and fixes this one.
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::resetAndRebindStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+
 2016-02-01  Dave Hyatt  <hyatt@apple.com>
 
         Add a line grid pagination SPI to WebKit.

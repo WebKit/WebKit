@@ -1,3 +1,20 @@
+2016-02-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/cursor-continue-validity.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=153791
+
+        Reviewed by Alex Christensen.
+
+        In addition to unskipping the test, I augmented it to print out more of what was going on.
+        
+        The additional printed info is what helped me track down the bug, and will make it more
+        likely to catch any future regressions.
+        
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/cursor-continue-validity-expected.txt:
+        * storage/indexeddb/cursor-continue-validity-private-expected.txt:
+        * storage/indexeddb/resources/cursor-continue-validity.js:
+
 2016-02-01  Dave Hyatt  <hyatt@apple.com>
 
         Add a line grid pagination SPI to WebKit.

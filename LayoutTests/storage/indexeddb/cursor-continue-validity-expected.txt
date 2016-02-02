@@ -783,151 +783,433 @@ Checking modification
 indexObject.openCursor(null, 'next')
 self.continueValue = 0
 cursor = event.target.result
+
+Index key is: 0
+Primary key is: 0
+Value.x is: 0
+Continue value: 1
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 1
+Primary key is: 1
+Value.x is: 1
+Continue value: 2
+New Index key for primary key 1 is 102
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 2
+Primary key is: 2
+Value.x is: 2
+Continue value: 3
+Deleting primary key 2 which currently has Index key 2
 cursor.delete()
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 3
+Primary key is: 3
+Value.x is: 3
+Continue value: 4
+New Index key for primary key 3 is 104
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 4
+Primary key is: 4
+Value.x is: 4
+Continue value: 5
 cursor.continue()
+Expecting exception setting new Index key for primary key 4 to 105
 Expecting exception from cursor.update({ x: 100 + self.continueValue})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
+
+Index key is: 5
+Primary key is: 5
+Value.x is: 5
+Continue value: 6
+New Index key for primary key 5 is 106
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 6
+Primary key is: 6
+Value.x is: 6
+Continue value: 7
 cursor.continue()
+Expecting exception deleting primary key 6 which currently has Index key 6
 Expecting exception from cursor.delete()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 Exception message: Failed to execute 'delete' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
+
+Index key is: 7
+Primary key is: 7
+Value.x is: 7
+Continue value: 8
+New Index key for primary key 7 is 108
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 8
+Primary key is: 8
+Value.x is: 8
+Continue value: 9
+Deleting primary key 8 which currently has Index key 8
 cursor.delete()
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 9
+Primary key is: 9
+Value.x is: 9
+Continue value: 10
+New Index key for primary key 9 is 110
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 10
+Primary key is: 10
+Value.x is: 10
+Continue value: 11
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 11
+Primary key is: 11
+Value.x is: 11
+Continue value: 12
+New Index key for primary key 11 is 112
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 12
+Primary key is: 12
+Value.x is: 12
+Continue value: 13
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 13
+Primary key is: 13
+Value.x is: 13
+Continue value: 14
+New Index key for primary key 13 is 114
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 14
+Primary key is: 14
+Value.x is: 14
+Continue value: 15
+Deleting primary key 14 which currently has Index key 14
 cursor.delete()
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 15
+Primary key is: 15
+Value.x is: 15
+Continue value: 16
+New Index key for primary key 15 is 116
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 16
+Primary key is: 16
+Value.x is: 16
+Continue value: 17
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 17
+Primary key is: 17
+Value.x is: 17
+Continue value: 18
+New Index key for primary key 17 is 118
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 18
+Primary key is: 18
+Value.x is: 18
+Continue value: 19
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 19
+Primary key is: 19
+Value.x is: 19
+Continue value: 20
+New Index key for primary key 19 is 120
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 20
+Primary key is: 20
+Value.x is: 20
+Continue value: 21
+Deleting primary key 20 which currently has Index key 20
 cursor.delete()
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 21
+Primary key is: 21
+Value.x is: 21
+Continue value: 22
+New Index key for primary key 21 is 122
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 22
+Primary key is: 22
+Value.x is: 22
+Continue value: 23
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 23
+Primary key is: 23
+Value.x is: 23
+Continue value: 24
+New Index key for primary key 23 is 124
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 24
+Primary key is: 24
+Value.x is: 24
+Continue value: 25
 cursor.continue()
+Expecting exception setting new Index key for primary key 24 to 125
 Expecting exception from cursor.update({ x: 100 + self.continueValue})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
+
+Index key is: 102
+Primary key is: 1
+Value.x is: 102
+Continue value: 26
+New Index key for primary key 1 is 126
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 104
+Primary key is: 3
+Value.x is: 104
+Continue value: 27
+Deleting primary key 3 which currently has Index key 104
 cursor.delete()
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 106
+Primary key is: 5
+Value.x is: 106
+Continue value: 28
+New Index key for primary key 5 is 128
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 108
+Primary key is: 7
+Value.x is: 108
+Continue value: 29
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 110
+Primary key is: 9
+Value.x is: 110
+Continue value: 30
+New Index key for primary key 9 is 130
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 112
+Primary key is: 11
+Value.x is: 112
+Continue value: 31
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 114
+Primary key is: 13
+Value.x is: 114
+Continue value: 32
+New Index key for primary key 13 is 132
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 116
+Primary key is: 15
+Value.x is: 116
+Continue value: 33
+Deleting primary key 15 which currently has Index key 116
 cursor.delete()
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 118
+Primary key is: 17
+Value.x is: 118
+Continue value: 34
+New Index key for primary key 17 is 134
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 120
+Primary key is: 19
+Value.x is: 120
+Continue value: 35
 cursor.continue()
+Expecting exception setting new Index key for primary key 19 to 135
 Expecting exception from cursor.update({ x: 100 + self.continueValue})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 Exception message: Failed to execute 'update' on 'IDBCursor': The cursor is being iterated or has iterated past its end.
 cursor = event.target.result
+
+Index key is: 122
+Primary key is: 21
+Value.x is: 122
+Continue value: 36
+New Index key for primary key 21 is 136
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 124
+Primary key is: 23
+Value.x is: 124
+Continue value: 37
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 126
+Primary key is: 1
+Value.x is: 126
+Continue value: 38
+New Index key for primary key 1 is 138
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 128
+Primary key is: 5
+Value.x is: 128
+Continue value: 39
+Deleting primary key 5 which currently has Index key 128
 cursor.delete()
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 130
+Primary key is: 9
+Value.x is: 130
+Continue value: 40
+New Index key for primary key 9 is 140
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 132
+Primary key is: 13
+Value.x is: 132
+Continue value: 41
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 134
+Primary key is: 17
+Value.x is: 134
+Continue value: 42
+New Index key for primary key 17 is 142
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 136
+Primary key is: 21
+Value.x is: 136
+Continue value: 43
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 138
+Primary key is: 1
+Value.x is: 138
+Continue value: 44
+New Index key for primary key 1 is 144
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 140
+Primary key is: 9
+Value.x is: 140
+Continue value: 45
+Deleting primary key 9 which currently has Index key 140
 cursor.delete()
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 142
+Primary key is: 17
+Value.x is: 142
+Continue value: 46
+New Index key for primary key 17 is 146
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 144
+Primary key is: 1
+Value.x is: 144
+Continue value: 47
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 146
+Primary key is: 17
+Value.x is: 146
+Continue value: 48
+New Index key for primary key 17 is 148
 cursor.update({ x: 100 + self.continueValue })
 cursor.continue()
 cursor = event.target.result
+
+Index key is: 148
+Primary key is: 17
+Value.x is: 148
+Continue value: 49
 cursor.continue()
+Expecting exception deleting primary key 17 which currently has Index key 148
 Expecting exception from cursor.delete()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR

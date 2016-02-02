@@ -125,25 +125,35 @@ function modifyContinueOrderCallback()
 
     self.continueValue++;
     if (cursor) {
+        debug("");
+        debug("Index key is: " + cursor.key);
+        debug("Primary key is: " + cursor.primaryKey);
+        debug("Value.x is: " + cursor.value.x);
+        debug("Continue value: " + self.continueValue);
+
         // we sprinkle these checks across the dataset, to sample
         // behavior against pre-fetching. Make sure to use prime
         // numbers for these checks to avoid overlap.
         if (self.continueValue % 2 == 0) {
             // it's ok to call update() and then continue..
+            debug("New Index key for primary key " + cursor.primaryKey + " is " + (100 + self.continueValue));
             evalAndLog("cursor.update({ x: 100 + self.continueValue })");
             evalAndLog("cursor.continue()");
         } else if (self.continueValue % 3 == 0) {
             // it's ok to call delete() and then continue
+            debug("Deleting primary key " + cursor.primaryKey + " which currently has Index key " + cursor.key);
             evalAndLog("cursor.delete()");
             evalAndLog("cursor.continue()");
         } else if (self.continueValue % 5 == 0) {
             // it's NOT ok to call continue and then update
             evalAndLog("cursor.continue()");
+            debug("Expecting exception setting new Index key for primary key " + cursor.primaryKey + " to " + (100 + self.continueValue));
             evalAndExpectException("cursor.update({ x: 100 + self.continueValue})",
                                    "DOMException.INVALID_STATE_ERR");
         } else if (self.continueValue % 7 == 0) {
             // it's NOT ok to call continue and then delete
             evalAndLog("cursor.continue()");
+            debug("Expecting exception deleting primary key " + cursor.primaryKey + " which currently has Index key " + cursor.key);
             evalAndExpectException("cursor.delete()",
                                    "DOMException.INVALID_STATE_ERR");
         } else {
