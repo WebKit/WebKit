@@ -33,6 +33,7 @@
 #import <UIKit/UIBarButtonItem_Private.h>
 #import <UIKit/UIDatePicker_Private.h>
 #import <UIKit/UIDevice_Private.h>
+#import <UIKit/UIDocumentMenuViewController_Private.h>
 #import <UIKit/UIDocumentPasswordView.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGeometry_Private.h>
