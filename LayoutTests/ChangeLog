@@ -1,3 +1,16 @@
+2016-02-02  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][EFL] Upgrade OpenWebRTC dependency
+        https://bugs.webkit.org/show_bug.cgi?id=153489
+
+        Reviewed by Philippe Normand.
+
+        Skiped the mediastream tests by default, until we have the code
+        ready and gstreamer dependency is bumped.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2016-02-01  Chris Dumez  <cdumez@apple.com>
 
         object.__lookupGetter__() / object.__lookupSetter__() does not work for native bindings

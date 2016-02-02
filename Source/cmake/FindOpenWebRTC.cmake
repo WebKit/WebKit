@@ -30,7 +30,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig)
-pkg_check_modules(OPENWEBRTC openwebrtc-0.1 openwebrtc-gst-0.1)
+pkg_check_modules(OPENWEBRTC openwebrtc-0.3 openwebrtc-gst-0.3)
 
 set(VERSION_OK TRUE)
 if (OPENWEBRTC_VERSION)
