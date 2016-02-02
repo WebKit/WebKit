@@ -29,6 +29,7 @@
 #include "RenderStyleConstants.h"
 #include "SelectorFilter.h"
 #include "StyleChange.h"
+#include "StyleSharingResolver.h"
 #include <functional>
 #include <wtf/RefPtr.h>
 
@@ -85,6 +86,7 @@ private:
     TreeResolver* m_shadowHostTreeResolver { nullptr };
 
     SelectorFilter m_selectorFilter;
+    SharingResolver m_sharingResolver;
 };
 
 void detachRenderTree(Element&);
@@ -94,6 +96,8 @@ void updateTextRendererAfterContentChange(Text&, unsigned offsetOfReplacedData, 
 
 void queuePostResolutionCallback(std::function<void ()>);
 bool postResolutionCallbacksAreSuspended();
+
+bool isPlaceholderStyle(const RenderStyle&);
 
 class PostResolutionCallbackDisabler {
 public:

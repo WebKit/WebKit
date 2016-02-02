@@ -41,7 +41,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline static const AtomicString* linkAttribute(Element& element)
+inline static const AtomicString* linkAttribute(const Element& element)
 {
     if (!element.isLink())
         return 0;
@@ -67,7 +67,7 @@ void VisitedLinkState::invalidateStyleForAllLinks()
     }
 }
 
-inline static LinkHash linkHashForElement(Document& document, Element& element)
+inline static LinkHash linkHashForElement(Document& document, const Element& element)
 {
     if (is<HTMLAnchorElement>(element))
         return downcast<HTMLAnchorElement>(element).visitedLinkHash();
@@ -86,7 +86,7 @@ void VisitedLinkState::invalidateStyleForLink(LinkHash linkHash)
     }
 }
 
-EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element& element)
+EInsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
 {
     ASSERT(element.isLink());
 

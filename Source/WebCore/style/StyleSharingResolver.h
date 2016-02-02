@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StyleMedia.h"
-
-#include "Document.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "NodeRenderStyle.h"
-#include "StyleResolver.h"
+#ifndef StyleSharingResolver_h
+#define StyleSharingResolver_h
 
 namespace WebCore {
 
-StyleMedia::StyleMedia(Frame* frame)
-    : DOMWindowProperty(frame)
-{
+class Document;
+class DocumentRuleSets;
+class Element;
+class Node;
+class RuleSet;
+class SelectorFilter;
+class SpaceSplitString;
+class StyledElement;
+
+namespace Style {
+
+class SharingResolver {
+public:
+    SharingResolver(const Document&, const DocumentRuleSets&, const SelectorFilter&);
+
+    const Element* resolve(const Element&) const;
+
+private:
+    struct Context;
+
+    StyledElement* findSibling(const Context&, Node*, unsigned& count) const;
+    Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
+    bool canShareStyleWithElement(const Context&, const StyledElement& candidateElement) const;
+    bool styleSharingCandidateMatchesRuleSet(const StyledElement&, const RuleSet*) const;
+    bool sharingCandidateHasIdenticalStyleAffectingAttributes(const Context&, const StyledElement& sharingCandidate) const;
+    bool classNamesAffectedByRules(const SpaceSplitString& classNames) const;
+
+    const Document& m_document;
+    const DocumentRuleSets& m_ruleSets;
+    const SelectorFilter& m_selectorFilter;
+};
+
+}
 }
 
-String StyleMedia::type() const
-{
-    FrameView* view = m_frame ? m_frame->view() : 0;
-    if (view)
-        return view->mediaType();
-
-    return String();
-}
-
-bool StyleMedia::matchMedium(const String& query) const
-{
-    if (!m_frame)
-        return false;
-
-    Document* document = m_frame->document();
-    ASSERT(document);
-    Element* documentElement = document->documentElement();
-    if (!documentElement)
-        return false;
-
-    RefPtr<RenderStyle> rootStyle = document->ensureStyleResolver().styleForElement(*documentElement, document->renderStyle(), MatchOnlyUserAgentRules);
-
-    RefPtr<MediaQuerySet> media = MediaQuerySet::create();
-    if (!media->parse(query))
-        return false;
-
-    MediaQueryEvaluator screenEval(type(), m_frame, rootStyle.get());
-    return screenEval.eval(media.get());
-}
-
-} // namespace WebCore
+#endif

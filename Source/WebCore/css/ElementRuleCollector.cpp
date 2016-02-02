@@ -68,7 +68,7 @@ static const StyleProperties& rightToLeftDeclaration()
 
 class MatchRequest {
 public:
-    MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false)
+    MatchRequest(const RuleSet* ruleSet, bool includeEmptyRules = false)
         : ruleSet(ruleSet)
         , includeEmptyRules(includeEmptyRules)
     {
@@ -529,7 +529,7 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
     }
 }
 
-bool ElementRuleCollector::hasAnyMatchingRules(RuleSet* ruleSet)
+bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet* ruleSet)
 {
     clearMatchedRules();
 

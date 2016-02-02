@@ -45,16 +45,16 @@ public:
 
     void invalidateStyleForAllLinks();
     void invalidateStyleForLink(LinkHash);
-    EInsideLink determineLinkState(Element&);
+    EInsideLink determineLinkState(const Element&);
 
 private:
-    EInsideLink determineLinkStateSlowCase(Element&);
+    EInsideLink determineLinkStateSlowCase(const Element&);
 
     Document& m_document;
     HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
 };
 
-inline EInsideLink VisitedLinkState::determineLinkState(Element& element)
+inline EInsideLink VisitedLinkState::determineLinkState(const Element& element)
 {
     if (!element.isLink())
         return NotInsideLink;

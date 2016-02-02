@@ -71,6 +71,7 @@ public:
     void dispatchFormControlInputEvent();
 
     virtual bool isDisabledFormControl() const override;
+    virtual bool isDefaultButtonForForm() const override;
 
     virtual bool isFocusable() const override;
     virtual bool isEnumeratable() const override { return false; }
@@ -168,7 +169,6 @@ private:
     virtual short tabIndex() const override final;
 
     virtual HTMLFormElement* virtualForm() const override;
-    virtual bool isDefaultButtonForForm() const override;
     bool isValidFormControlElement() const;
 
     bool computeIsDisabledByFieldsetAncestor() const;

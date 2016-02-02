@@ -96,10 +96,24 @@ private:
     bool m_didPush { false };
 };
 
+
+static RenderStyle* placeholderStyle;
+
+static void ensurePlaceholderStyle(Document& document)
+{
+    if (placeholderStyle)
+        return;
+    placeholderStyle = &RenderStyle::create().leakRef();
+    placeholderStyle->setDisplay(NONE);
+    placeholderStyle->fontCascade().update(&document.fontSelector());
+}
+
 TreeResolver::TreeResolver(Document& document)
     : m_document(document)
     , m_styleResolver(document.ensureStyleResolver())
+    , m_sharingResolver(document, m_styleResolver.ruleSets(), m_selectorFilter)
 {
+    ensurePlaceholderStyle(document);
 }
 
 TreeResolver::TreeResolver(ShadowRoot& shadowRoot, TreeResolver& shadowHostTreeResolver)
@@ -107,6 +121,7 @@ TreeResolver::TreeResolver(ShadowRoot& shadowRoot, TreeResolver& shadowHostTreeR
     , m_styleResolver(shadowRoot.styleResolver())
     , m_shadowRoot(&shadowRoot)
     , m_shadowHostTreeResolver(&shadowHostTreeResolver)
+    , m_sharingResolver(m_document, m_styleResolver.ruleSets(), m_selectorFilter)
 {
 }
 
@@ -123,11 +138,20 @@ static bool shouldCreateRenderer(const Element& element, const RenderElement& pa
 
 Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& inheritedStyle)
 {
+    if (!m_document.haveStylesheetsLoaded() && !element.renderer()) {
+        m_document.setHasNodesWithPlaceholderStyle();
+        return *placeholderStyle;
+    }
+
     if (element.hasCustomStyleResolveCallbacks()) {
         if (RefPtr<RenderStyle> style = element.customStyleForRenderer(inheritedStyle))
             return style.releaseNonNull();
     }
-    return m_styleResolver.styleForElement(element, &inheritedStyle, AllowStyleSharing, MatchAllRules, nullptr, &m_selectorFilter);
+
+    if (auto* sharingElement = m_sharingResolver.resolve(element))
+        return *sharingElement->renderStyle();
+
+    return m_styleResolver.styleForElement(element, &inheritedStyle, MatchAllRules, nullptr, &m_selectorFilter);
 }
 
 #if ENABLE(CSS_REGIONS)
@@ -946,6 +970,11 @@ PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler()
 bool postResolutionCallbacksAreSuspended()
 {
     return resolutionNestingDepth;
+}
+
+bool isPlaceholderStyle(const RenderStyle& style)
+{
+    return &style == placeholderStyle;
 }
 
 }

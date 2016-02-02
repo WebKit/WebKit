@@ -42,6 +42,7 @@
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
+#include "StyleTreeResolver.h"
 #include "WillChangeData.h"
 #include <wtf/MathExtras.h>
 #include <wtf/PointerComparison.h>
@@ -293,7 +294,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
 
 bool RenderStyle::isStyleAvailable() const
 {
-    return this != StyleResolver::styleNotYetAvailable();
+    return !Style::isPlaceholderStyle(*this);
 }
 
 bool RenderStyle::hasUniquePseudoStyle() const

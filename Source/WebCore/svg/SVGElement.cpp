@@ -793,7 +793,7 @@ RefPtr<RenderStyle> SVGElement::customStyleForRenderer(RenderStyle& parentStyle)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
     if (auto* styleElement = this->correspondingElement())
-        return styleElement->styleResolver().styleForElement(*styleElement, &parentStyle, DisallowStyleSharing);
+        return styleElement->styleResolver().styleForElement(*styleElement, &parentStyle);
 
     return resolveStyle(&parentStyle);
 }

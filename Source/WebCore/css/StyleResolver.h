@@ -93,11 +93,6 @@ class ViewportStyleResolver;
 class WebKitCSSFilterValue;
 struct ResourceLoaderOptions;
 
-enum StyleSharingBehavior {
-    AllowStyleSharing,
-    DisallowStyleSharing,
-};
-
 // MatchOnlyUserAgentRules is used in media queries, where relative units
 // are interpreted according to the document root element style, and styled only
 // from the User Agent Stylesheet rules.
@@ -135,8 +130,7 @@ public:
     StyleResolver(Document&);
     ~StyleResolver();
 
-    Ref<RenderStyle> styleForElement(Element&, RenderStyle* parentStyle, StyleSharingBehavior = AllowStyleSharing,
-        RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
+    Ref<RenderStyle> styleForElement(Element&, RenderStyle* parentStyle, RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
     void keyframeStylesForAnimation(Element&, const RenderStyle*, KeyframeList&);
 
@@ -160,12 +154,6 @@ public:
     const MediaQueryEvaluator& mediaQueryEvaluator() const { return *m_medium; }
 
 private:
-    RenderStyle* locateSharedStyle();
-    bool styleSharingCandidateMatchesRuleSet(RuleSet*);
-    Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
-    StyledElement* findSiblingForStyleSharing(Node*, unsigned& count) const;
-    bool canShareStyleWithElement(StyledElement&) const;
-
     Ref<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleKeyframe*, KeyframeValue&);
 
 public:
@@ -378,8 +366,6 @@ public:
 
         const RenderRegion* regionForStyling() const { return m_regionForStyling; }
         EInsideLink elementLinkState() const { return m_elementLinkState; }
-        void setElementAffectedByClassRules(bool isAffected) { m_elementAffectedByClassRules = isAffected; }
-        bool elementAffectedByClassRules() const { return m_elementAffectedByClassRules; }
 
         void setApplyPropertyToRegularStyle(bool isApply) { m_applyPropertyToRegularStyle = isApply; }
         void setApplyPropertyToVisitedLinkStyle(bool isApply) { m_applyPropertyToVisitedLinkStyle = isApply; }
@@ -435,7 +421,6 @@ public:
         
         EInsideLink m_elementLinkState { NotInsideLink };
 
-        bool m_elementAffectedByClassRules { false };
         bool m_applyPropertyToRegularStyle { true };
         bool m_applyPropertyToVisitedLinkStyle { false };
         bool m_fontDirty { false };
@@ -458,8 +443,6 @@ public:
     };
 
     State& state() { return m_state; }
-
-    static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
 
     PassRefPtr<StyleImage> styleImage(CSSPropertyID, CSSValue&);
     PassRefPtr<StyleImage> cachedOrPendingFromValue(CSSPropertyID, CSSImageValue&);
@@ -488,11 +471,7 @@ public:
     void setTextOrientation(TextOrientation textOrientation) { m_state.setTextOrientation(textOrientation); }
 
 private:
-    static RenderStyle* s_styleNotYetAvailable;
-
     void cacheBorderAndBackground();
-
-    bool canShareStyleWithControl(StyledElement&) const;
 
     void applyProperty(CSSPropertyID, CSSValue*, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault, const MatchResult* = nullptr);
     RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSVariableDependentValue&);
@@ -519,9 +498,6 @@ private:
     // Every N additions to the matched declaration cache trigger a sweep where entries holding
     // the last reference to a style declaration are garbage collected.
     void sweepMatchedPropertiesCache();
-
-    bool classNamesAffectedByRules(const SpaceSplitString&) const;
-    bool sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement&) const;
 
     unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep;
 

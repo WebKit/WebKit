@@ -1,3 +1,110 @@
+2016-02-02  Antti Koivisto  <antti@apple.com>
+
+        Factor style sharing code out of StyleResolver
+        https://bugs.webkit.org/show_bug.cgi?id=153768
+
+        Reviewed by Darin Adler.
+
+        Move the code to a new class, Style::SharingResolver.
+
+        When resolving document style we query the sharing resolver first before using the regular style resolver.
+        Other paths that call style resolver were mostly already disabling it with DisallowStyleSharing flag.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::MatchRequest::MatchRequest):
+        (WebCore::ElementRuleCollector::matchAllRules):
+        (WebCore::ElementRuleCollector::hasAnyMatchingRules):
+
+            More const.
+
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::setRegionForStyling):
+        (WebCore::ElementRuleCollector::setMedium):
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::prepareEvaluator):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::cacheBorderAndBackground):
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::sweepMatchedPropertiesCache):
+        (WebCore::StyleResolver::State::State):
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::isAtShadowBoundary):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::classNamesAffectedByRules): Deleted.
+        (WebCore::parentElementPreventsSharing): Deleted.
+        (WebCore::StyleResolver::locateCousinList): Deleted.
+        (WebCore::StyleResolver::styleSharingCandidateMatchesRuleSet): Deleted.
+        (WebCore::StyleResolver::canShareStyleWithControl): Deleted.
+        (WebCore::elementHasDirectionAuto): Deleted.
+        (WebCore::StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes): Deleted.
+        (WebCore::StyleResolver::canShareStyleWithElement): Deleted.
+        (WebCore::StyleResolver::findSiblingForStyleSharing): Deleted.
+        (WebCore::StyleResolver::locateSharedStyle): Deleted.
+
+            Style sharing code moves to SharingResolver.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::mediaQueryEvaluator):
+        (WebCore::StyleResolver::State::regionForStyling):
+        (WebCore::StyleResolver::State::elementLinkState):
+        (WebCore::StyleResolver::State::setApplyPropertyToRegularStyle):
+        (WebCore::StyleResolver::State::setApplyPropertyToVisitedLinkStyle):
+        (WebCore::StyleResolver::state):
+        (WebCore::StyleResolver::setTextOrientation):
+        (WebCore::StyleResolver::State::setElementAffectedByClassRules): Deleted.
+        (WebCore::StyleResolver::State::elementAffectedByClassRules): Deleted.
+        (WebCore::StyleResolver::styleNotYetAvailable): Deleted.
+
+            Placeholder code moves to TreeResolver.
+
+        * dom/VisitedLinkState.cpp:
+        (WebCore::linkAttribute):
+        (WebCore::VisitedLinkState::invalidateStyleForAllLinks):
+        (WebCore::linkHashForElement):
+        (WebCore::VisitedLinkState::invalidateStyleForLink):
+        (WebCore::VisitedLinkState::determineLinkStateSlowCase):
+        * dom/VisitedLinkState.h:
+        (WebCore::VisitedLinkState::determineLinkState):
+        * html/HTMLFormControlElement.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getUncachedPseudoStyle):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::computeStyleInRegion):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::isStyleAvailable):
+        (WebCore::RenderStyle::hasUniquePseudoStyle):
+        * style/StyleSharingResolver.cpp: Added.
+        (WebCore::Style::SharingResolver::SharingResolver):
+        (WebCore::Style::parentElementPreventsSharing):
+        (WebCore::Style::elementHasDirectionAuto):
+        (WebCore::Style::SharingResolver::searchSimilar):
+        (WebCore::Style::SharingResolver::findSibling):
+        (WebCore::Style::SharingResolver::locateCousinList):
+        (WebCore::Style::canShareStyleWithControl):
+        (WebCore::Style::SharingResolver::canShareStyleWithElement):
+        (WebCore::Style::SharingResolver::styleSharingCandidateMatchesRuleSet):
+        (WebCore::Style::SharingResolver::sharingCandidateHasIdenticalStyleAffectingAttributes):
+        (WebCore::Style::SharingResolver::classNamesAffectedByRules):
+        * style/StyleSharingResolver.h: Added.
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::ensurePlaceholderStyle):
+        (WebCore::Style::TreeResolver::TreeResolver):
+        (WebCore::Style::TreeResolver::styleForElement):
+
+            Try to use SharingResolver first.
+            Also move placeholder style handling here, it is only relevant when resolving document style.
+
+        (WebCore::Style::postResolutionCallbacksAreSuspended):
+        (WebCore::Style::isPlaceholderStyle):
+        * style/StyleTreeResolver.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::customStyleForRenderer):
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::overrideComputedStyle):
+
 2016-02-02  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> icon should be a folder for the custom MIME type multipart/x-folder

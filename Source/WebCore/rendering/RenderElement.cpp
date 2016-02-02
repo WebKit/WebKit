@@ -1590,7 +1590,7 @@ PassRefPtr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleR
     auto& styleResolver = element()->styleResolver();
 
     if (pseudoStyleRequest.pseudoId == FIRST_LINE_INHERITED) {
-        RefPtr<RenderStyle> result = styleResolver.styleForElement(*element(), parentStyle, DisallowStyleSharing);
+        RefPtr<RenderStyle> result = styleResolver.styleForElement(*element(), parentStyle);
         result->setStyleType(FIRST_LINE_INHERITED);
         return result.release();
     }
