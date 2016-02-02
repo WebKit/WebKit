@@ -6,7 +6,8 @@ The test passes if WebKit does not hit an assertion.</p>
 <script>
 
 if (window.testRunner) {
-    testRunner.waitUntilDone();
+    if ('attachShadow' in Element.prototype)
+        testRunner.waitUntilDone();
     testRunner.dumpAsText();
 }
 

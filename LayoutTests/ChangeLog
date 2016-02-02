@@ -1,3 +1,14 @@
+2016-02-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [GTK] [EFL] [AppleWin] Layout Test fast/shadow-dom/slot-removal-crash-2.html timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=153772
+
+        Reviewed by Michael Catanzaro.
+
+        Don't call wait untilDone if attachShadow is not available.
+
+        * fast/shadow-dom/slot-removal-crash-2.html:
+
 2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: High Level Memory Overview Instrument
