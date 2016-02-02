@@ -1,3 +1,14 @@
+2016-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        [Win] gardening after r195740.
+
+        Unreviewed.
+
+        * platform/win/editing/selection/5057506-2-expected.txt:
+        * platform/win/fast/block/margin-collapse/021-expected.txt:
+        * platform/win/fast/table/border-collapsing/cached-change-row-border-color-expected.txt:
+        * platform/win/tables/mozilla/marvin/x_tbody_style-expected.txt:
+
 2016-02-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-continue-validity.html fails.
