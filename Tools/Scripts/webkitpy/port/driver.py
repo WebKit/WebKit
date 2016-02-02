@@ -321,6 +321,7 @@ class Driver(object):
         environment['DIRHELPER_USER_DIR_SUFFIX'] = str(os.path.basename(str(self._driver_tempdir)))
         # Put certain normally persistent files into the temp directory (e.g. IndexedDB storage).
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
+        environment['__XPC_DUMPRENDERTREE_TEMP'] = environment['DUMPRENDERTREE_TEMP']
         environment['LOCAL_RESOURCE_ROOT'] = str(self._port.layout_tests_dir())
         environment['ASAN_OPTIONS'] = "allocator_may_return_null=1"
         environment['__XPC_ASAN_OPTIONS'] = environment['ASAN_OPTIONS']
