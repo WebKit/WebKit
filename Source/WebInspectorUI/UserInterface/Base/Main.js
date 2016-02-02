@@ -1341,8 +1341,8 @@ WebInspector._windowBlurred = function(event)
 
 WebInspector._windowResized = function(event)
 {
-    this.toolbar.updateLayout();
-    this.tabBar.updateLayout();
+    this.toolbar.updateLayout(WebInspector.View.LayoutReason.Resize);
+    this.tabBar.updateLayout(WebInspector.View.LayoutReason.Resize);
     this._tabBrowserSizeDidChange();
 };
 
@@ -1454,14 +1454,14 @@ WebInspector._updateDockNavigationItems = function()
 
 WebInspector._tabBrowserSizeDidChange = function()
 {
-    this.tabBrowser.updateLayout();
-    this.splitContentBrowser.updateLayout();
-    this.quickConsole.updateLayout();
+    this.tabBrowser.updateLayout(WebInspector.View.LayoutReason.Resize);
+    this.splitContentBrowser.updateLayout(WebInspector.View.LayoutReason.Resize);
+    this.quickConsole.updateLayout(WebInspector.View.LayoutReason.Resize);
 };
 
 WebInspector._quickConsoleDidResize = function(event)
 {
-    this.tabBrowser.updateLayout();
+    this.tabBrowser.updateLayout(WebInspector.View.LayoutReason.Resize);
 };
 
 WebInspector._sidebarWidthDidChange = function(event)

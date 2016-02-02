@@ -1,5 +1,62 @@
 2016-02-01  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: add a LayoutReason enum to the View base class
+        https://bugs.webkit.org/show_bug.cgi?id=153731
+        <rdar://problem/24430938>
+
+        Reviewed by Brian Burg.
+
+        Added a LayoutReason enum to the View base class, which can be passed as an optional
+        argument to needsLayout() and updateLayout(). The value is propagated to the view's
+        subtree during layout.
+
+        * UserInterface/Base/Main.js:
+        Update top-level views with Resize layout reason when window is resized.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._positionHeaderViews):
+        Update header view with Resize layout reason when column is resized.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.shown):
+        Assume the view has been resized when shown, and update layout.
+        (WebInspector.OverviewTimelineView.prototype.updateLayoutForResize): Deleted.
+        No longer needed, handled by the View base class.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.shown):
+        Assume the view has been resized when shown, and update layout.
+        (WebInspector.TimelineOverview.prototype.layout):
+        Invalidate cached scroll container width if resized.
+        (WebInspector.TimelineOverview.prototype.updateLayoutForResize): Deleted.
+        No longer needed, handled by the View base class.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.layout): Deleted.
+        No longer needed, handled by the View base class.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.needsLayout):
+        (WebInspector.TimelineRuler.prototype.layout):
+        Update cached client width if resized.
+        (WebInspector.TimelineRuler.prototype.resize): Deleted.
+        Moved resize logic to layout override.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View):
+        (WebInspector.View.prototype.updateLayout):
+        Set layout reason.
+        (WebInspector.View.prototype.needsLayout):
+        Set layout reason even if an animation frame has already been scheduled,
+        since the layout reason could have changed.
+        (WebInspector.View.prototype._layoutSubtree):
+        Propagate layout reason to subtree, and reset the value when done.
+        (WebInspector.View.prototype._setLayoutReason):
+        Helper method for updating the layout reason. Ensures that LayoutReason.Resize
+        has priority over the default (LayoutReason.Dirty).
+
+2016-02-01  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Rendering Frames timeline draws all frame bars at minimum height
         https://bugs.webkit.org/show_bug.cgi?id=153736
         <rdar://problem/21946301>

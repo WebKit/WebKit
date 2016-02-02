@@ -37,6 +37,7 @@ WebInspector.View = class View extends WebInspector.Object
         this._dirtyDescendantsCount = 0;
         this._needsLayoutWhenAttachedToRoot = false;
         this._isAttachedToRoot = false;
+        this._layoutReason = null;
     }
 
     // Static
@@ -137,9 +138,11 @@ WebInspector.View = class View extends WebInspector.Object
         this.removeSubview(oldView);
     }
 
-    updateLayout()
+    updateLayout(layoutReason)
     {
         WebInspector.View._cancelScheduledLayoutForView(this);
+
+        this._setLayoutReason(layoutReason);
         this._layoutSubtree();
     }
 
@@ -151,8 +154,10 @@ WebInspector.View = class View extends WebInspector.Object
         this.updateLayout();
     }
 
-    needsLayout()
+    needsLayout(layoutReason)
     {
+        this._setLayoutReason(layoutReason);
+
         if (this._dirty)
             return;
 
@@ -209,10 +214,22 @@ WebInspector.View = class View extends WebInspector.Object
         this._dirty = false;
         this._dirtyDescendantsCount = 0;
 
-        this.layout();
+        this.layout(this._layoutReason);
 
-        for (let view of this._subviews)
+        for (let view of this._subviews) {
+            view._setLayoutReason(this._layoutReason);
             view._layoutSubtree();
+        }
+
+        this._layoutReason = null;
+    }
+
+    _setLayoutReason(layoutReason)
+    {
+        if (this._layoutReason === WebInspector.View.LayoutReason.Resize)
+            return;
+
+        this._layoutReason = layoutReason || WebInspector.View.LayoutReason.Dirty;
     }
 
     // Layout controller logic
@@ -281,6 +298,11 @@ WebInspector.View = class View extends WebInspector.Object
             }
         }
     }
+};
+
+WebInspector.View.LayoutReason = {
+    Dirty: Symbol("layout-reason-dirty"),
+    Resize: Symbol("layout-reason-resize")
 };
 
 WebInspector.View._rootView = null;

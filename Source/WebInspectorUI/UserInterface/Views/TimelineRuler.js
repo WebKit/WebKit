@@ -358,7 +358,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
             this._updateSelection(visibleWidth, this.duration);
     }
 
-    needsLayout()
+    needsLayout(layoutReason)
     {
         if (this.layoutPending)
             return;
@@ -373,13 +373,16 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
             this._scheduledSelectionLayoutUpdateIdentifier = undefined;
         }
 
-        super.needsLayout();
+        super.needsLayout(layoutReason);
     }
 
     // Protected
 
-    layout()
+    layout(layoutReason)
     {
+        if (layoutReason === WebInspector.View.LayoutReason.Resize)
+            this._cachedClientWidth = this.element.clientWidth;
+
         let visibleWidth = this._recalculate();
         if (visibleWidth <= 0)
             return;
@@ -535,12 +538,6 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
             this._updateSelection(visibleWidth, this.duration);
         });
-    }
-
-    resize()
-    {
-        this._cachedClientWidth = this.element.clientWidth;
-        this._recalculate();
     }
 
     _recalculate()

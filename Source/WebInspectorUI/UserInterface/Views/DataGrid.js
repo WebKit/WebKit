@@ -742,7 +742,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             if (headerView) {
                 headerView.element.style.left = left + "px";
                 headerView.element.style.width = columnWidth + "px";
-                headerView.updateLayout();
+                headerView.updateLayout(WebInspector.View.LayoutReason.Resize);
             }
 
             left += columnWidth;

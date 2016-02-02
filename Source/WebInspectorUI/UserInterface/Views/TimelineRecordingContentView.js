@@ -324,17 +324,6 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         return true;
     }
 
-    // Protected
-
-    layout()
-    {
-        this._currentTimelineOverview.updateLayoutForResize();
-
-        let currentContentView = this._contentViewContainer.currentContentView;
-        if (currentContentView && currentContentView.updateLayoutForResize)
-            currentContentView.updateLayoutForResize();
-    }
-
     // Private
 
     _currentContentViewDidChange(event)

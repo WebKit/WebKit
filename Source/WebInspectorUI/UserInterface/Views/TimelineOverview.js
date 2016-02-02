@@ -265,12 +265,10 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
     {
         this._visible = true;
 
-        this._timelineRuler.resize()
-
         for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
             timelineOverviewGraph.shown();
 
-        this.updateLayout();
+        this.updateLayout(WebInspector.View.LayoutReason.Resize);
     }
 
     hidden()
@@ -320,13 +318,6 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         overviewGraph.selectedRecord = record;
     }
 
-    updateLayoutForResize()
-    {
-        this._cachedScrollContainerWidth = NaN;
-        this._timelineRuler.resize()
-        this.updateLayout();
-    }
-
     updateLayoutIfNeeded()
     {
         if (this.layoutPending) {
@@ -353,8 +344,11 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         console.error("Needs to be implemented by a subclass.");
     }
 
-    layout()
+    layout(layoutReason)
     {
+        if (layoutReason === WebInspector.View.LayoutReason.Resize)
+            this._cachedScrollContainerWidth = NaN;
+
         // Calculate the required width based on the duration and seconds per pixel.
         let duration = this._endTime - this._startTime;
         let newWidth = Math.ceil(duration / this._durationPerPixel);

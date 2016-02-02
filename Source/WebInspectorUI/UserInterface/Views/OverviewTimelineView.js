@@ -81,7 +81,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         super.shown();
 
         this._treeOutlineDataGridSynchronizer.synchronize();
-        this._timelineRuler.resize();
+        this._timelineRuler.updateLayout(WebInspector.View.LayoutReason.Resize);
     }
 
     closed()
@@ -158,11 +158,6 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         }
 
         WebInspector.showOriginalOrFormattedSourceCodeLocation(treeElement.sourceCodeTimeline.sourceCodeLocation);
-    }
-
-    updateLayoutForResize()
-    {
-        this._timelineRuler.resize();
     }
 
     layout()
