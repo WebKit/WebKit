@@ -746,14 +746,7 @@ webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html 
 webkit.org/b/144771 editing/selection/selection-invalid-offset.html [ Crash ]
 
 webkit.org/b/152043 [ Debug ] http/tests/media/clearkey/clear-key-hls-aes128.html [ Crash ]
-webkit.org/b/152043 [ Debug ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Crash ]
-webkit.org/b/152043 [ Debug ] http/tests/media/hls/hls-audio-tracks-has-audio.html [ Crash ]
-webkit.org/b/152043 [ Debug ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Crash ]
-webkit.org/b/152043 [ Debug ] http/tests/media/hls/hls-audio-tracks.html [ Crash ]
-webkit.org/b/152043 [ Debug ] http/tests/media/hls/hls-progress.html [ Crash ]
-webkit.org/b/152043 [ Debug ] http/tests/media/hls/video-controller-getStartDate.html [ Crash ]
-webkit.org/b/152043 [ Debug ] http/tests/media/hls/video-controls-live-stream.html [ Crash ]
-webkit.org/b/152043 [ Debug ] http/tests/media/hls/video-cookie.html [ Crash ]
+webkit.org/b/152043 [ Debug ] http/tests/media/hls [ Crash ]
 
 webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Crash Pass Timeout Failure ]
 
@@ -1249,6 +1242,8 @@ webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
 
+webkit.org/b/153771 animations/resume-after-page-cache.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1308,24 +1303,48 @@ webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
 
 Bug(GTK) [ Release ] http/tests/media/hls/video-cookie.html [ Pass Slow ]
 
-webkit.org/b/149916 inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
+webkit.org/b/149916 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Slow ]
 webkit.org/b/149916 inspector/codemirror/prettyprinting-css.html [ Pass Slow ]
+webkit.org/b/149916 inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
 webkit.org/b/149916 inspector/codemirror/prettyprinting-javascript.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/addInspectedNode.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/clearMessages.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/command-line-api.html [ Pass Slow ]
-webkit.org/b/149916 inspector/console/console-api.html [ Pass Slow ]
+webkit.org/b/149916 inspector/console/console-api.html [ Pass Timeout ]
+webkit.org/b/149916 inspector/console/console-table.html [ Pass Slow ]
+webkit.org/b/149916 inspector/console/js-isLikelyStackTrace.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/messageRepeatCountUpdated.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/messagesCleared.html [ Pass Slow ]
+webkit.org/b/149916 inspector/controller/runtime-controller.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/createStyleSheet.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/generate-css-rule-string.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/getAllStyleSheets.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/get-system-fonts.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/manager-preferredInspectorStyleSheetForFrame.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/matched-style-properties.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/stylesheet-events-basic.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/stylesheet-events-imports.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/stylesheet-events-inspector-stylesheet.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/stylesheet-events-multiple-documents.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/stylesheet-with-mutations.html [ Pass Slow ]
+webkit.org/b/149916 inspector/heap/garbageCollected.html [ Pass Slow ]
+webkit.org/b/149916 inspector/heap/gc.html [ Pass Slow ]
 webkit.org/b/149916 inspector/indexeddb/requestDatabaseNames.html [ Pass Slow ]
+webkit.org/b/149916 inspector/network/client-blocked-load.html [ Pass Slow ]
+webkit.org/b/149916 inspector/page/filter-cookies-for-domain.html [ Pass Slow ]
+webkit.org/b/149916 inspector/page/main-frame-resource.html [ Pass Slow ]
 webkit.org/b/149916 inspector/protocol/inspector-backend-invocation-return-value.html [ Pass Slow ]
-webkit.org/b/149916 inspector/runtime/parse.html [ Pass Slow ]
-webkit.org/b/149916 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Slow ]
+webkit.org/b/149916 inspector/runtime/parse.html [ Pass Timeout ]
+webkit.org/b/149916 inspector/unit-tests/array-utilities.html [ Pass Slow ]
+webkit.org/b/149916 inspector/unit-tests/event-listener.html [ Pass Slow ]
+webkit.org/b/149916 inspector/unit-tests/event-listener-set.html [ Pass Slow ]
+webkit.org/b/149916 inspector/unit-tests/inspector-test-dispatch-event-to-frontend.html [ Pass Slow ]
+webkit.org/b/149916 inspector/unit-tests/linked-list.html [ Pass Slow ]
+webkit.org/b/149916 inspector/unit-tests/list-multimap.html [ Pass Slow ]
+webkit.org/b/149916 inspector/unit-tests/object.html [ Pass Slow ]
+
+Bug(GTK) http/tests/misc/large-js-program.php [ Pass Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
@@ -1498,6 +1517,8 @@ webkit.org/b/152797 media/video-source-moved.html [ Timeout ]
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 
 Bug(GTK) fast/history/go-back-to-iframe-with-plugin.html [ Timeout Pass ]
+
+webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1749,7 +1770,7 @@ webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-she
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure Pass ]
 
-webkit.org/b/145253 http/tests/appcache/different-https-origin-resource-main.html  [ Failure ]
+webkit.org/b/145253 http/tests/appcache/different-https-origin-resource-main.html  [ Failure Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests failing

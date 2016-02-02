@@ -2728,3 +2728,5 @@ webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gest
 webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html [ Crash ]
 webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html [ Crash ]
 webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html [ Crash ]
+
+webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]

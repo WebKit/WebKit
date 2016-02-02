@@ -1,3 +1,11 @@
+2016-02-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK+ Gardening.
+
+        * platform/efl/TestExpectations: Add fast/shadow-dom/slot-removal-crash-2.html timeout expectation.
+        * platform/gtk/TestExpectations: Report and update a bunch of test expectations.
+        * platform/win/TestExpectations: Add fast/shadow-dom/slot-removal-crash-2.html timeout expectation.
+
 2016-02-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window-4.htm as flaky on ios-simulator
