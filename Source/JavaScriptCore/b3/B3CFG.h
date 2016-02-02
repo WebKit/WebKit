@@ -52,7 +52,7 @@ public:
     Node root() { return m_proc[0]; }
 
     template<typename T>
-    Map<T> newMap() { return IndexMap<BasicBlock, T>(m_proc.size()); }
+    Map<T> newMap() { return IndexMap<JSC::B3::BasicBlock, T>(m_proc.size()); }
 
     SuccessorCollection<BasicBlock, BasicBlock::SuccessorList> successors(Node node) { return node->successorBlocks(); }
     BasicBlock::PredecessorList& predecessors(Node node) { return node->predecessors(); }

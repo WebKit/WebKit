@@ -1071,10 +1071,14 @@ if (ENABLE_FTL_JIT)
         ftl/FTLValueRange.cpp
 
         llvm/InitializeLLVM.cpp
-        llvm/InitializeLLVMLinux.cpp
-        llvm/InitializeLLVMPOSIX.cpp
         llvm/LLVMAPI.cpp
     )
+    if (NOT WIN32)
+        list(APPEND JavaScriptCore_SOURCES
+            llvm/InitializeLLVMLinux.cpp
+            llvm/InitializeLLVMPOSIX.cpp
+        )
+    endif ()
 endif ()
 
 set(HASH_LUT_GENERATOR ${CMAKE_CURRENT_SOURCE_DIR}/create_hash_table)
@@ -1360,7 +1364,7 @@ endif ()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-if (ENABLE_FTL_JIT)
+if (ENABLE_FTL_JIT AND NOT WIN32)
     if (NOT llvmForJSC_LIBRARIES)
         set(llvmForJSC_LIBRARIES ${LLVM_STATIC_LIBRARIES})
     endif ()
