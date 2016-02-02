@@ -1,3 +1,32 @@
+2016-02-02  Saam barati  <sbarati@apple.com>
+
+        [ES6] bound functions .name property should be "bound " + the target function's name
+        https://bugs.webkit.org/show_bug.cgi?id=153796
+
+        Reviewed by Mark Lam.
+
+        See http://tc39.github.io/ecma262/#sec-function.prototype.bind for details.
+        What the spec says:
+        ```
+        function foo() { }
+        foo.bind(null).name === "bound foo"
+
+        (function bar() { }).bind(null).name === "bound bar"
+        ```
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::hasInstanceBoundFunction):
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::visitChildren):
+        (JSC::JSBoundFunction::toStringName):
+        * runtime/JSBoundFunction.h:
+        (JSC::JSBoundFunction::boundThis):
+        (JSC::JSBoundFunction::boundArgs):
+        (JSC::JSBoundFunction::createStructure):
+        * tests/es6.yaml:
+
 2016-02-02  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of anonymous stack slots

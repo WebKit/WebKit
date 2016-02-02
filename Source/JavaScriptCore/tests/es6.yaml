@@ -793,7 +793,7 @@
 - path: es6/function_name_property_accessor_properties.js
   cmd: runES6 :fail
 - path: es6/function_name_property_bound_functions.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/function_name_property_class_expressions.js
   cmd: runES6 :fail
 - path: es6/function_name_property_class_statements.js

@@ -24,7 +24,7 @@ Properties:
   arguments object TypeError: Type error
   caller object TypeError: Type error
   length number 0
-  name string Number
+  name string bound Number
 Internal properties:
   boundArgs object Array
   boundThis object Object

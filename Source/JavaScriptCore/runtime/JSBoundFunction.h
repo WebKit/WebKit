@@ -48,6 +48,8 @@ public:
     JSValue boundThis() { return m_boundThis.get(); }
     JSValue boundArgs() { return m_boundArgs.get(); }
 
+    String toStringName(ExecState*);
+
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
     {
         ASSERT(globalObject);

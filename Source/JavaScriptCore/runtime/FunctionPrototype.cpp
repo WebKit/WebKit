@@ -85,8 +85,14 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (thisValue.inherits(JSFunction::info())) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
-        if (function->isHostOrBuiltinFunction())
-            return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
+        if (function->isHostOrBuiltinFunction()) {
+            String name;
+            if (JSBoundFunction* boundFunction = jsDynamicCast<JSBoundFunction*>(function))
+                name = boundFunction->toStringName(exec);
+            else
+                name = function->name(exec);
+            return JSValue::encode(jsMakeNontrivialString(exec, "function ", name, "() {\n    [native code]\n}"));
+        }
 
         FunctionExecutable* executable = function->jsExecutable();
         
