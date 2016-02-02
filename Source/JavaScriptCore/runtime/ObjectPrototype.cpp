@@ -175,9 +175,17 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     PropertySlot slot(thisObject);
-    if (thisObject->getPropertySlot(exec, propertyName, slot) && slot.isAccessor()) {
-        GetterSetter* getterSetter = slot.getterSetter();
-        return getterSetter->isGetterNull() ? JSValue::encode(jsUndefined()) : JSValue::encode(getterSetter->getter());
+    if (thisObject->getPropertySlot(exec, propertyName, slot)) {
+        if (slot.isAccessor()) {
+            GetterSetter* getterSetter = slot.getterSetter();
+            return getterSetter->isGetterNull() ? JSValue::encode(jsUndefined()) : JSValue::encode(getterSetter->getter());
+        }
+        if (slot.attributes() & CustomAccessor) {
+            PropertyDescriptor descriptor;
+            ASSERT(slot.slotBase());
+            if (slot.slotBase()->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+                return descriptor.getterPresent() ? JSValue::encode(descriptor.getter()) : JSValue::encode(jsUndefined());
+        }
     }
 
     return JSValue::encode(jsUndefined());
@@ -194,9 +202,17 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     PropertySlot slot(thisObject);
-    if (thisObject->getPropertySlot(exec, propertyName, slot) && slot.isAccessor()) {
-        GetterSetter* getterSetter = slot.getterSetter();
-        return getterSetter->isSetterNull() ? JSValue::encode(jsUndefined()) : JSValue::encode(getterSetter->setter());
+    if (thisObject->getPropertySlot(exec, propertyName, slot)) {
+        if (slot.isAccessor()) {
+            GetterSetter* getterSetter = slot.getterSetter();
+            return getterSetter->isSetterNull() ? JSValue::encode(jsUndefined()) : JSValue::encode(getterSetter->setter());
+        }
+        if (slot.attributes() & CustomAccessor) {
+            PropertyDescriptor descriptor;
+            ASSERT(slot.slotBase());
+            if (slot.slotBase()->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+                return descriptor.setterPresent() ? JSValue::encode(descriptor.setter()) : JSValue::encode(jsUndefined());
+        }
     }
 
     return JSValue::encode(jsUndefined());

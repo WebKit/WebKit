@@ -1,5 +1,19 @@
 2016-02-01  Chris Dumez  <cdumez@apple.com>
 
+        object.__lookupGetter__() / object.__lookupSetter__() does not work for native bindings
+        https://bugs.webkit.org/show_bug.cgi?id=153765
+        <rdar://problem/24439699>
+
+        Reviewed by Oliver Hunt.
+
+        Add layout tests to test that object.__lookupGetter__() / object.__lookupSetter__()
+        works for native bindings.
+
+        * js/lookupGetterGetter-native-bindings-expected.txt: Added.
+        * js/lookupGetterGetter-native-bindings.html: Added.
+
+2016-02-01  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix http/tests/security/cross-origin-window-property-access.html
 
         Update http/tests/security/cross-origin-window-property-access.html that was
