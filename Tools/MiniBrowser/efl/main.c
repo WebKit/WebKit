@@ -2088,11 +2088,17 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
     elm_win_resize_object_add(window->elm_window, bg);
     evas_object_show(bg);
 
+    /* Create conformant widget. */
+    Evas_Object *conformant = elm_conformant_add(window->elm_window);
+    evas_object_size_hint_weight_set(conformant, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(window->elm_window, conformant);
+    evas_object_show(conformant);
+
     /* Create vertical layout */
     window->vertical_layout = elm_box_add(window->elm_window);
+    elm_object_content_set(conformant, window->vertical_layout);
     elm_box_padding_set(window->vertical_layout, 0, 2);
     evas_object_size_hint_weight_set(window->vertical_layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(window->elm_window, window->vertical_layout);
     evas_object_show(window->vertical_layout);
 
     /* Create horizontal layout for top bar */

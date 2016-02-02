@@ -1,3 +1,29 @@
+2016-01-29 Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Virtual Keyboard overlaps MiniBrowser's WebView
+        https://bugs.webkit.org/show_bug.cgi?id=153009
+
+        Reviewed by Gyuyoung Kim.
+
+        On mobile, virtual keyboard represented by ecore_imf module appears on
+        the top of application layer usually covering bottom part of the screen.
+        If the web page contains the editable content on the bottom of the page
+        it will be overlapped by keyboard which prevents user from seeing the
+        typed text.
+
+        Pack MiniBrowser layout into conformant widget to allow EFL to guess
+        the space that will be required by the keyboard, finally resizing it
+        to the desired size. As a result, webview gets resized and scrolled
+        into focused elements which makes the editable elements visible while
+        typing.
+
+        More details about elm_conformant widger can be found at:
+        https://docs.enlightenment.org/elementary/1.15.0/group__Conformant.html
+        https://docs.enlightenment.org/elementary/1.15.0/conformant_example.html
+
+        * MiniBrowser/efl/main.c:
+        (window_create): pack a box into conformant widget.
+
 2016-02-02  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][EFL] Upgrade OpenWebRTC dependency
