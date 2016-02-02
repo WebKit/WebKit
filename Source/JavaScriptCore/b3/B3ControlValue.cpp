@@ -59,9 +59,10 @@ void ControlValue::convertToJump(BasicBlock* destination)
 
     this->ControlValue::~ControlValue();
 
-    new (this) ControlValue(index, Jump, origin, FrequentedBlock(destination));
+    new (this) ControlValue(Jump, origin, FrequentedBlock(destination));
 
     this->owner = owner;
+    this->m_index = index;
 }
 
 void ControlValue::convertToOops()
@@ -72,9 +73,10 @@ void ControlValue::convertToOops()
 
     this->ControlValue::~ControlValue();
 
-    new (this) ControlValue(index, Oops, origin);
+    new (this) ControlValue(Oops, origin);
 
     this->owner = owner;
+    this->m_index = index;
 }
 
 void ControlValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const

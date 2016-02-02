@@ -48,14 +48,14 @@ struct Effects {
     // True if the instruction may change semantics if hoisted above some control flow.
     bool controlDependent { false };
 
-    // True if this writes to the SSA state. Operations that write SSA state don't write to anything
-    // in "memory" but they have a side-effect anyway. This is for modeling Upsilons. You can ignore
-    // this if you have your own way of modeling Upsilons or if you intend to just rebuild them
+    // True if this writes to the local state. Operations that write local state don't write to anything
+    // in "memory" but they have a side-effect anyway. This is for modeling Upsilons and Sets. You can ignore
+    // this if you have your own way of modeling Upsilons and Sets or if you intend to just rebuild them
     // anyway.
-    bool writesSSAState { false };
+    bool writesLocalState { false };
 
-    // True if this reads from the SSA state. This is only used for Phi.
-    bool readsSSAState { false };
+    // True if this reads from the local state. This is only used for Phi and Get.
+    bool readsLocalState { false };
 
     HeapRange writes;
     HeapRange reads;
@@ -77,7 +77,7 @@ struct Effects {
 
     bool mustExecute() const
     {
-        return terminal || exitsSideways || writesSSAState || writes;
+        return terminal || exitsSideways || writesLocalState || writes;
     }
 
     // Returns true if reordering instructions with these respective effects would change program

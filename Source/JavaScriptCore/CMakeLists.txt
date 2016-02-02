@@ -97,6 +97,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirSpecial.cpp
     b3/air/AirSpillEverything.cpp
     b3/air/AirStackSlot.cpp
+    b3/air/AirStackSlotKind.cpp
     b3/air/AirTmp.cpp
     b3/air/AirTmpWidth.cpp
     b3/air/AirValidate.cpp
@@ -151,7 +152,6 @@ set(JavaScriptCore_SOURCES
     b3/B3StackmapGenerationParams.cpp
     b3/B3StackmapSpecial.cpp
     b3/B3StackmapValue.cpp
-    b3/B3StackSlotKind.cpp
     b3/B3StackSlot.cpp
     b3/B3SwitchCase.cpp
     b3/B3SwitchValue.cpp
@@ -163,6 +163,8 @@ set(JavaScriptCore_SOURCES
     b3/B3Value.cpp
     b3/B3ValueKey.cpp
     b3/B3ValueRep.cpp
+    b3/B3Variable.cpp
+    b3/B3VariableValue.cpp
 
     bindings/ScriptFunctionCall.cpp
     bindings/ScriptObject.cpp

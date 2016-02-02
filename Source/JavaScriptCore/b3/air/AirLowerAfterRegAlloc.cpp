@@ -97,7 +97,7 @@ void lowerAfterRegAlloc(Code& code)
                 result[i] = Arg::stack(
                     code.addStackSlot(
                         Arg::bytes(Arg::conservativeWidth(type)),
-                        StackSlotKind::Anonymous));
+                        StackSlotKind::Spill));
             }
         }
         return result;
@@ -182,7 +182,7 @@ void lowerAfterRegAlloc(Code& code)
                         Arg arg(tmp);
                         Arg::Width width = Arg::conservativeWidth(arg.type());
                         StackSlot* stackSlot =
-                            code.addStackSlot(Arg::bytes(width), StackSlotKind::Anonymous);
+                            code.addStackSlot(Arg::bytes(width), StackSlotKind::Spill);
                         pairs.append(ShufflePair(arg, Arg::stack(stackSlot), width));
                         stackSlots.append(stackSlot);
                     });

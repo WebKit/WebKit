@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirSpecial.h"
+#ifndef B3VariableValue_h
+#define B3VariableValue_h
 
 #if ENABLE(B3_JIT)
 
-#include <limits.h>
-#include <wtf/StringPrintStream.h>
+#include "B3Value.h"
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC { namespace B3 {
 
-const char* const Special::dumpPrefix = "&";
+class Variable;
 
-Special::Special()
-{
-}
+class JS_EXPORT_PRIVATE VariableValue : public Value {
+public:
+    static bool accepts(Opcode opcode) { return opcode == Get || opcode == Set; }
 
-Special::~Special()
-{
-}
+    ~VariableValue();
 
-CString Special::name() const
-{
-    StringPrintStream out;
-    dumpImpl(out);
-    return out.toCString();
-}
+    Variable* variable() const { return m_variable; }
 
-bool Special::hasNonArgNonControlEffects()
-{
-    return true;
-}
+protected:
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
-void Special::dump(PrintStream& out) const
-{
-    out.print(dumpPrefix);
-    dumpImpl(out);
-    if (m_index != UINT_MAX)
-        out.print(m_index);
-}
+    Value* cloneImpl() const override;
 
-void Special::deepDump(PrintStream& out) const
-{
-    out.print(*this, ": ");
-    deepDumpImpl(out);
-}
+private:
+    friend class Procedure;
 
-} } } // namespace JSC::B3::Air
+    // Use this for Set.
+    VariableValue(Opcode, Origin, Variable*, Value*);
+
+    // Use this for Get.
+    VariableValue(Opcode, Origin, Variable*);
+
+    Variable* m_variable;
+};
+
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3VariableValue_h
+

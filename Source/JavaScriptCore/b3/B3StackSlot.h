@@ -28,7 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3StackSlotKind.h"
+#include "B3SparseCollection.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
@@ -49,8 +49,6 @@ public:
     ~StackSlot();
 
     unsigned byteSize() const { return m_byteSize; }
-    StackSlotKind kind() const { return m_kind; }
-    bool isLocked() const { return m_kind == StackSlotKind::Locked; }
     unsigned index() const { return m_index; }
 
     // This gets assigned at the end of compilation. But, you can totally pin stack slots. Use the
@@ -63,18 +61,18 @@ public:
         m_offsetFromFP = value;
     }
 
-    void dump(PrintStream& out) const;
+    void dump(PrintStream&) const;
     void deepDump(PrintStream&) const;
 
 private:
     friend class Air::StackSlot;
     friend class Procedure;
+    friend class SparseCollection<StackSlot>;
 
-    StackSlot(unsigned index, unsigned byteSize, StackSlotKind);
+    StackSlot(unsigned byteSize);
 
-    unsigned m_index;
-    unsigned m_byteSize;
-    StackSlotKind m_kind;
+    unsigned m_index { UINT_MAX };
+    unsigned m_byteSize { 0 };
     intptr_t m_offsetFromFP { 0 };
 };
 

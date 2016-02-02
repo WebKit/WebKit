@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirSpecial.h"
+#ifndef B3Variable_h
+#define B3Variable_h
 
 #if ENABLE(B3_JIT)
 
-#include <limits.h>
-#include <wtf/StringPrintStream.h>
+#include "B3SparseCollection.h"
+#include "B3Type.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PrintStream.h>
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC { namespace B3 {
 
-const char* const Special::dumpPrefix = "&";
+class Procedure;
 
-Special::Special()
+class Variable {
+    WTF_MAKE_NONCOPYABLE(Variable);
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    ~Variable();
+
+    Type type() const { return m_type; }
+    unsigned index() const { return m_index; }
+
+    void dump(PrintStream&) const;
+    void deepDump(PrintStream&) const;
+
+private:
+    friend class Procedure;
+    friend class SparseCollection<Variable>;
+
+    Variable(Type);
+    
+    unsigned m_index;
+    Type m_type;
+};
+
+class DeepVariableDump {
+public:
+    DeepVariableDump(const Variable* variable)
+        : m_variable(variable)
+    {
+    }
+
+    void dump(PrintStream& out) const
+    {
+        if (m_variable)
+            m_variable->deepDump(out);
+        else
+            out.print("<null>");
+    }
+
+private:
+    const Variable* m_variable;
+};
+
+inline DeepVariableDump deepDump(const Variable* variable)
 {
+    return DeepVariableDump(variable);
 }
 
-Special::~Special()
-{
-}
-
-CString Special::name() const
-{
-    StringPrintStream out;
-    dumpImpl(out);
-    return out.toCString();
-}
-
-bool Special::hasNonArgNonControlEffects()
-{
-    return true;
-}
-
-void Special::dump(PrintStream& out) const
-{
-    out.print(dumpPrefix);
-    dumpImpl(out);
-    if (m_index != UINT_MAX)
-        out.print(m_index);
-}
-
-void Special::deepDump(PrintStream& out) const
-{
-    out.print(*this, ": ");
-    deepDumpImpl(out);
-}
-
-} } } // namespace JSC::B3::Air
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3Variable_h
+

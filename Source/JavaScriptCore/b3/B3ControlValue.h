@@ -109,8 +109,8 @@ protected:
 
     // Use this for subclasses.
     template<typename... Arguments>
-    ControlValue(unsigned index, Opcode opcode, Type type, Origin origin, Arguments... arguments)
-        : Value(index, CheckedOpcode, opcode, type, origin, arguments...)
+    ControlValue(Opcode opcode, Type type, Origin origin, Arguments... arguments)
+        : Value(CheckedOpcode, opcode, type, origin, arguments...)
     {
         ASSERT(accepts(opcode));
     }
@@ -122,22 +122,22 @@ private:
     friend class Procedure;
 
     // Use this for Oops.
-    ControlValue(unsigned index, Opcode opcode, Origin origin)
-        : Value(index, CheckedOpcode, opcode, Void, origin)
+    ControlValue(Opcode opcode, Origin origin)
+        : Value(CheckedOpcode, opcode, Void, origin)
     {
         ASSERT(opcode == Oops);
     }
 
     // Use this for Return.
-    ControlValue(unsigned index, Opcode opcode, Origin origin, Value* result)
-        : Value(index, CheckedOpcode, opcode, Void, origin, result)
+    ControlValue(Opcode opcode, Origin origin, Value* result)
+        : Value(CheckedOpcode, opcode, Void, origin, result)
     {
         ASSERT(opcode == Return);
     }
 
     // Use this for Jump.
-    ControlValue(unsigned index, Opcode opcode, Origin origin, const FrequentedBlock& target)
-        : Value(index, CheckedOpcode, opcode, Void, origin)
+    ControlValue(Opcode opcode, Origin origin, const FrequentedBlock& target)
+        : Value(CheckedOpcode, opcode, Void, origin)
     {
         ASSERT(opcode == Jump);
         m_successors.append(target);
@@ -145,9 +145,9 @@ private:
 
     // Use this for Branch.
     ControlValue(
-        unsigned index, Opcode opcode, Origin origin, Value* predicate,
+        Opcode opcode, Origin origin, Value* predicate,
         const FrequentedBlock& yes, const FrequentedBlock& no)
-        : Value(index, CheckedOpcode, opcode, Void, origin, predicate)
+        : Value(CheckedOpcode, opcode, Void, origin, predicate)
     {
         ASSERT(opcode == Branch);
         m_successors.append(yes);

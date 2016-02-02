@@ -70,7 +70,7 @@ protected:
 private:
     friend class Procedure;
 
-    JS_EXPORT_PRIVATE PatchpointValue(unsigned index, Type, Origin);
+    JS_EXPORT_PRIVATE PatchpointValue(Type, Origin);
 };
 
 } } // namespace JSC::B3

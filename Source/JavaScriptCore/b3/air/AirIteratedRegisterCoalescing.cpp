@@ -1233,7 +1233,7 @@ private:
 
             // Allocate stack slot for each spilled value.
             StackSlot* stackSlot = m_code.addStackSlot(
-                m_tmpWidth.width(tmp) <= Arg::Width32 ? 4 : 8, StackSlotKind::Anonymous);
+                m_tmpWidth.width(tmp) <= Arg::Width32 ? 4 : 8, StackSlotKind::Spill);
             bool isNewTmp = stackSlots.add(tmp, stackSlot).isNewEntry;
             ASSERT_UNUSED(isNewTmp, isNewTmp);
         }

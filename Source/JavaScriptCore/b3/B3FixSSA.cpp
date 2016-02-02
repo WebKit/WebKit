@@ -34,14 +34,13 @@
 #include "B3Dominators.h"
 #include "B3IndexSet.h"
 #include "B3InsertionSetInlines.h"
-#include "B3MemoryValue.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3SSACalculator.h"
-#include "B3SlotBaseValue.h"
-#include "B3StackSlot.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
+#include "B3Variable.h"
+#include "B3VariableValue.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC { namespace B3 {
@@ -52,23 +51,16 @@ const bool verbose = false;
 
 void demoteValues(Procedure& proc, const IndexSet<Value>& values)
 {
-    HashMap<Value*, SlotBaseValue*> map;
-    HashMap<Value*, SlotBaseValue*> phiMap;
+    HashMap<Value*, Variable*> map;
+    HashMap<Value*, Variable*> phiMap;
 
     // Create stack slots.
-    InsertionSet insertionSet(proc);
     for (Value* value : values.values(proc.values())) {
-        SlotBaseValue* stack = insertionSet.insert<SlotBaseValue>(
-            0, value->origin(), proc.addAnonymousStackSlot(value->type()));
-        map.add(value, stack);
+        map.add(value, proc.addVariable(value->type()));
 
-        if (value->opcode() == Phi) {
-            SlotBaseValue* phiStack = insertionSet.insert<SlotBaseValue>(
-                0, value->origin(), proc.addAnonymousStackSlot(value->type()));
-            phiMap.add(value, phiStack);
-        }
+        if (value->opcode() == Phi)
+            phiMap.add(value, proc.addVariable(value->type()));
     }
-    insertionSet.execute(proc[0]);
 
     if (verbose) {
         dataLog("Demoting values as follows:\n");
@@ -85,36 +77,37 @@ void demoteValues(Procedure& proc, const IndexSet<Value>& values)
     }
 
     // Change accesses to the values to accesses to the stack slots.
+    InsertionSet insertionSet(proc);
     for (BasicBlock* block : proc) {
         for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
             Value* value = block->at(valueIndex);
 
             if (value->opcode() == Phi) {
-                if (SlotBaseValue* slotBase = phiMap.get(value)) {
+                if (Variable* variable = phiMap.get(value)) {
                     value->replaceWithIdentity(
-                        insertionSet.insert<MemoryValue>(
-                            valueIndex, Load, value->type(), value->origin(), slotBase));
+                        insertionSet.insert<VariableValue>(
+                            valueIndex, Get, value->origin(), variable));
                 }
             } else {
                 for (Value*& child : value->children()) {
-                    if (SlotBaseValue* slotBase = map.get(child)) {
-                        child = insertionSet.insert<MemoryValue>(
-                            valueIndex, Load, child->type(), value->origin(), slotBase);
+                    if (Variable* variable = map.get(child)) {
+                        child = insertionSet.insert<VariableValue>(
+                            valueIndex, Get, value->origin(), variable);
                     }
                 }
 
                 if (UpsilonValue* upsilon = value->as<UpsilonValue>()) {
-                    if (SlotBaseValue* slotBase = phiMap.get(upsilon->phi())) {
-                        insertionSet.insert<MemoryValue>(
-                            valueIndex, Store, upsilon->origin(), upsilon->child(0), slotBase);
+                    if (Variable* variable = phiMap.get(upsilon->phi())) {
+                        insertionSet.insert<VariableValue>(
+                            valueIndex, Set, upsilon->origin(), variable, upsilon->child(0));
                         value->replaceWithNop();
                     }
                 }
             }
 
-            if (SlotBaseValue* slotBase = map.get(value)) {
-                insertionSet.insert<MemoryValue>(
-                    valueIndex + 1, Store, value->origin(), value, slotBase);
+            if (Variable* variable = map.get(value)) {
+                insertionSet.insert<VariableValue>(
+                    valueIndex + 1, Set, value->origin(), variable, value);
             }
         }
         insertionSet.execute(block);
@@ -124,80 +117,22 @@ void demoteValues(Procedure& proc, const IndexSet<Value>& values)
 bool fixSSA(Procedure& proc)
 {
     PhaseScope phaseScope(proc, "fixSSA");
-    
-    // Collect the stack "variables". If there aren't any, then we don't have anything to do.
-    // That's a fairly common case.
-    HashMap<StackSlot*, Type> stackVariable;
+
+    // Just for sanity, remove any unused variables first. It's unlikely that this code has any
+    // bugs having to do with dead variables, but it would be silly to have to fix such a bug if
+    // it did arise.
+    IndexSet<Variable> liveVariables;
     for (Value* value : proc.values()) {
-        if (SlotBaseValue* slotBase = value->as<SlotBaseValue>()) {
-            StackSlot* stack = slotBase->slot();
-            if (stack->kind() == StackSlotKind::Anonymous)
-                stackVariable.add(stack, Void);
-        }
+        if (VariableValue* variableValue = value->as<VariableValue>())
+            liveVariables.add(variableValue->variable());
     }
 
-    if (stackVariable.isEmpty())
-        return false;
-
-    // Make sure that we know how to optimize all of these. We only know how to handle Load and
-    // Store on anonymous variables.
-    for (Value* value : proc.values()) {
-        auto reject = [&] (Value* value) {
-            if (SlotBaseValue* slotBase = value->as<SlotBaseValue>())
-                stackVariable.remove(slotBase->slot());
-        };
-        
-        auto handleAccess = [&] (Value* access, Type type) {
-            SlotBaseValue* slotBase = access->lastChild()->as<SlotBaseValue>();
-            if (!slotBase)
-                return;
-
-            StackSlot* stack = slotBase->slot();
-            
-            if (value->as<MemoryValue>()->offset()) {
-                stackVariable.remove(stack);
-                return;
-            }
-
-            auto result = stackVariable.find(stack);
-            if (result == stackVariable.end())
-                return;
-            if (result->value == Void) {
-                result->value = type;
-                return;
-            }
-            if (result->value == type)
-                return;
-            stackVariable.remove(result);
-        };
-        
-        switch (value->opcode()) {
-        case Load:
-            // We're OK with loads from stack variables at an offset of zero.
-            handleAccess(value, value->type());
-            break;
-        case Store:
-            // We're OK with stores to stack variables, but not storing stack variables.
-            reject(value->child(0));
-            handleAccess(value, value->child(0)->type());
-            break;
-        default:
-            for (Value* child : value->children())
-                reject(child);
-            break;
-        }
+    for (Variable* variable : proc.variables()) {
+        if (!liveVariables.contains(variable))
+            proc.deleteVariable(variable);
     }
 
-    Vector<StackSlot*> deadSlots;
-    for (auto& entry : stackVariable) {
-        if (entry.value == Void)
-            deadSlots.append(entry.key);
-    }
-
-    for (StackSlot* deadSlot : deadSlots)
-        stackVariable.remove(deadSlot);
-
-    if (stackVariable.isEmpty())
+    if (proc.variables().isEmpty())
         return false;
 
     // We know that we have variables to optimize, so do that now.
@@ -205,43 +140,38 @@ bool fixSSA(Procedure& proc)
 
     SSACalculator ssa(proc);
 
-    // Create a SSACalculator::Variable for every stack variable.
-    Vector<StackSlot*> variableToStack;
-    HashMap<StackSlot*, SSACalculator::Variable*> stackToVariable;
+    // Create a SSACalculator::Variable ("calcVar") for every variable.
+    Vector<Variable*> calcVarToVariable;
+    IndexMap<Variable, SSACalculator::Variable*> variableToCalcVar(proc.variables().size());
 
-    for (auto& entry : stackVariable) {
-        StackSlot* stack = entry.key;
-        SSACalculator::Variable* variable = ssa.newVariable();
-        RELEASE_ASSERT(variable->index() == variableToStack.size());
-        variableToStack.append(stack);
-        stackToVariable.add(stack, variable);
+    for (Variable* variable : proc.variables()) {
+        SSACalculator::Variable* calcVar = ssa.newVariable();
+        RELEASE_ASSERT(calcVar->index() == calcVarToVariable.size());
+        calcVarToVariable.append(variable);
+        variableToCalcVar[variable] = calcVar;
     }
 
     // Create Defs for all of the stores to the stack variable.
     for (BasicBlock* block : proc) {
         for (Value* value : *block) {
-            if (value->opcode() != Store)
+            if (value->opcode() != Set)
                 continue;
 
-            SlotBaseValue* slotBase = value->child(1)->as<SlotBaseValue>();
-            if (!slotBase)
-                continue;
+            Variable* variable = value->as<VariableValue>()->variable();
 
-            StackSlot* stack = slotBase->slot();
-
-            if (SSACalculator::Variable* variable = stackToVariable.get(stack))
-                ssa.newDef(variable, block, value->child(0));
+            if (SSACalculator::Variable* calcVar = variableToCalcVar[variable])
+                ssa.newDef(calcVar, block, value->child(0));
         }
     }
 
     // Decide where Phis are to be inserted. This creates them but does not insert them.
     ssa.computePhis(
-        [&] (SSACalculator::Variable* variable, BasicBlock* block) -> Value* {
-            StackSlot* stack = variableToStack[variable->index()];
-            Value* phi = proc.add<Value>(Phi, stackVariable.get(stack), block->at(0)->origin());
+        [&] (SSACalculator::Variable* calcVar, BasicBlock* block) -> Value* {
+            Variable* variable = calcVarToVariable[calcVar->index()];
+            Value* phi = proc.add<Value>(Phi, variable->type(), block->at(0)->origin());
             if (verbose) {
                 dataLog(
-                    "Adding Phi for ", pointerDump(stack), " at ", *block, ": ",
+                    "Adding Phi for ", pointerDump(variable), " at ", *block, ": ",
                     deepDump(proc, phi), "\n");
             }
             return phi;
@@ -249,24 +179,24 @@ bool fixSSA(Procedure& proc)
 
     // Now perform the conversion.
     InsertionSet insertionSet(proc);
-    HashMap<StackSlot*, Value*> mapping;
+    IndexMap<Variable, Value*> mapping(proc.variables().size());
     for (BasicBlock* block : proc.blocksInPreOrder()) {
         mapping.clear();
 
-        for (auto& entry : stackToVariable) {
-            StackSlot* stack = entry.key;
-            SSACalculator::Variable* variable = entry.value;
+        for (unsigned index = calcVarToVariable.size(); index--;) {
+            Variable* variable = calcVarToVariable[index];
+            SSACalculator::Variable* calcVar = ssa.variable(index);
 
-            SSACalculator::Def* def = ssa.reachingDefAtHead(block, variable);
+            SSACalculator::Def* def = ssa.reachingDefAtHead(block, calcVar);
             if (def)
-                mapping.set(stack, def->value());
+                mapping[variable] = def->value();
         }
 
         for (SSACalculator::Def* phiDef : ssa.phisForBlock(block)) {
-            StackSlot* stack = variableToStack[phiDef->variable()->index()];
+            Variable* variable = calcVarToVariable[phiDef->variable()->index()];
 
             insertionSet.insertValue(0, phiDef->value());
-            mapping.set(stack, phiDef->value());
+            mapping[variable] = phiDef->value();
         }
 
         for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
@@ -274,23 +204,25 @@ bool fixSSA(Procedure& proc)
             value->performSubstitution();
 
             switch (value->opcode()) {
-            case Load: {
-                if (SlotBaseValue* slotBase = value->child(0)->as<SlotBaseValue>()) {
-                    StackSlot* stack = slotBase->slot();
-                    if (Value* replacement = mapping.get(stack))
-                        value->replaceWithIdentity(replacement);
+            case Get: {
+                VariableValue* variableValue = value->as<VariableValue>();
+                Variable* variable = variableValue->variable();
+
+                if (Value* replacement = mapping[variable])
+                    value->replaceWithIdentity(replacement);
+                else {
+                    value->replaceWithIdentity(
+                        insertionSet.insertBottom(valueIndex, value));
                 }
                 break;
             }
                 
-            case Store: {
-                if (SlotBaseValue* slotBase = value->child(1)->as<SlotBaseValue>()) {
-                    StackSlot* stack = slotBase->slot();
-                    if (stackToVariable.contains(stack)) {
-                        mapping.set(stack, value->child(0));
-                        value->replaceWithNop();
-                    }
-                }
+            case Set: {
+                VariableValue* variableValue = value->as<VariableValue>();
+                Variable* variable = variableValue->variable();
+
+                mapping[variable] = value->child(0);
+                value->replaceWithNop();
                 break;
             }
 
@@ -304,14 +236,14 @@ bool fixSSA(Procedure& proc)
         for (BasicBlock* successorBlock : block->successorBlocks()) {
             for (SSACalculator::Def* phiDef : ssa.phisForBlock(successorBlock)) {
                 Value* phi = phiDef->value();
-                SSACalculator::Variable* variable = phiDef->variable();
-                StackSlot* stack = variableToStack[variable->index()];
+                SSACalculator::Variable* calcVar = phiDef->variable();
+                Variable* variable = calcVarToVariable[calcVar->index()];
 
-                Value* mappedValue = mapping.get(stack);
+                Value* mappedValue = mapping[variable];
                 if (verbose) {
                     dataLog(
-                        "Mapped value for ", *stack, " with successor Phi ", *phi, " at end of ",
-                        *block, ": ", pointerDump(mappedValue), "\n");
+                        "Mapped value for ", *variable, " with successor Phi ", *phi,
+                        " at end of ", *block, ": ", pointerDump(mappedValue), "\n");
                 }
                 
                 if (!mappedValue)

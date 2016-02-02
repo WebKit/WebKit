@@ -44,7 +44,7 @@ bool interferesWithTerminal(const Effects& terminal, const Effects& other)
 {
     if (!terminal.terminal)
         return false;
-    return other.terminal || other.controlDependent || other.writesSSAState || other.writes;
+    return other.terminal || other.controlDependent || other.writesLocalState || other.writes;
 }
 
 bool interferesWithExitSideways(const Effects& exitsSideways, const Effects& other)
@@ -54,11 +54,11 @@ bool interferesWithExitSideways(const Effects& exitsSideways, const Effects& oth
     return other.controlDependent || other.writes;
 }
 
-bool interferesWithWritesSSAState(const Effects& writesSSAState, const Effects& other)
+bool interferesWithWritesLocalState(const Effects& writesLocalState, const Effects& other)
 {
-    if (!writesSSAState.writesSSAState)
+    if (!writesLocalState.writesLocalState)
         return false;
-    return other.writesSSAState || other.readsSSAState;
+    return other.writesLocalState || other.readsLocalState;
 }
 
 } // anonymous namespace
@@ -69,7 +69,7 @@ bool Effects::interferes(const Effects& other) const
         return true;
     if (interferesWithExitSideways(*this, other) || interferesWithExitSideways(other, *this))
         return true;
-    if (interferesWithWritesSSAState(*this, other) || interferesWithWritesSSAState(other, *this))
+    if (interferesWithWritesLocalState(*this, other) || interferesWithWritesLocalState(other, *this))
         return true;
     return writes.overlaps(other.writes)
         || writes.overlaps(other.reads)
@@ -85,10 +85,10 @@ void Effects::dump(PrintStream& out) const
         out.print(comma, "ExitsSideways");
     if (controlDependent)
         out.print(comma, "ControlDependent");
-    if (writesSSAState)
-        out.print(comma, "WritesSSAState");
-    if (readsSSAState)
-        out.print(comma, "ReadsSSAState");
+    if (writesLocalState)
+        out.print(comma, "WritesLocalState");
+    if (readsLocalState)
+        out.print(comma, "ReadsLocalState");
     if (writes)
         out.print(comma, "Writes:", writes);
     if (reads)

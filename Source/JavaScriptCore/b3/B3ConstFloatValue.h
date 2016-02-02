@@ -68,8 +68,8 @@ protected:
 private:
     friend class Procedure;
 
-    ConstFloatValue(unsigned index, Origin origin, float value)
-        : Value(index, CheckedOpcode, ConstFloat, Float, origin)
+    ConstFloatValue(Origin origin, float value)
+        : Value(CheckedOpcode, ConstFloat, Float, origin)
         , m_value(value)
     {
     }

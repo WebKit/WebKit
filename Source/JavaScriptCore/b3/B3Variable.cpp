@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,29 +24,33 @@
  */
 
 #include "config.h"
-#include "B3StackSlotKind.h"
+#include "B3Variable.h"
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/PrintStream.h>
+namespace JSC { namespace B3 {
 
-namespace WTF {
-
-using namespace JSC::B3;
-
-void printInternal(PrintStream& out, StackSlotKind kind)
+Variable::~Variable()
 {
-    switch (kind) {
-    case StackSlotKind::Locked:
-        out.print("Locked");
-        return;
-    case StackSlotKind::Anonymous:
-        out.print("Anonymous");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace WTF
+void Variable::dump(PrintStream& out) const
+{
+    out.print("var", m_index);
+}
+
+void Variable::deepDump(PrintStream& out) const
+{
+    out.print(m_type, " var", m_index);
+}
+
+Variable::Variable(Type type)
+    : m_type(type)
+{
+    ASSERT(type != Void);
+}
+
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

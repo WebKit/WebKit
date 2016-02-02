@@ -37,6 +37,8 @@
 #include "B3StackSlot.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
+#include "B3Variable.h"
+#include "B3VariableValue.h"
 #include <wtf/HashSet.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/CString.h>
@@ -152,6 +154,14 @@ public:
             case ConstFloat:
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(value->type() == Float, ("At ", *value));
+                break;
+            case Set:
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->child(0)->type() == value->as<VariableValue>()->variable()->type(), ("At ", *value));
+                break;
+            case Get:
+                VALIDATE(!value->numChildren(), ("At ", *value));
+                VALIDATE(value->type() == value->as<VariableValue>()->variable()->type(), ("At ", *value));
                 break;
             case SlotBase:
             case FramePointer:
@@ -375,6 +385,9 @@ public:
 
             VALIDATE(!(value->effects().writes && value->key()), ("At ", *value));
         }
+
+        for (Variable* variable : m_procedure.variables())
+            VALIDATE(variable->type() != Void, ("At ", *variable));
     }
 
 private:

@@ -5961,8 +5961,8 @@ private:
 
         // Set some obvious things.
         patchpoint->effects.terminal = false;
-        patchpoint->effects.writesSSAState = false;
-        patchpoint->effects.readsSSAState = false;
+        patchpoint->effects.writesLocalState = false;
+        patchpoint->effects.readsLocalState = false;
         
         // This is how we tell B3 about the possibility of jump replacement.
         patchpoint->effects.exitsSideways = true;

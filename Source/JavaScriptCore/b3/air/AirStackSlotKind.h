@@ -23,47 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirStackSlot.h"
+#ifndef AirStackSlotKind_h
+#define AirStackSlotKind_h
 
 #if ENABLE(B3_JIT)
 
-#include "B3StackSlot.h"
-
 namespace JSC { namespace B3 { namespace Air {
 
-void StackSlot::setOffsetFromFP(intptr_t value)
-{
-    m_offsetFromFP = value;
-    if (m_b3Slot)
-        m_b3Slot->m_offsetFromFP = value;
-}
+enum class StackSlotKind : uint8_t {
+    // A locked stack slot is an area of stack requested by the client. It cannot be killed. The
+    // client can get its FP offset and write to it from stack walking code, so we must assume
+    // that reads and writes to a locked stack slot can be clobbered the same way as reads and
+    // writes to any memory location.
+    Locked,
 
-void StackSlot::dump(PrintStream& out) const
-{
-    if (isSpill())
-        out.print("spill");
-    else
-        out.print("stack");
-    out.print(m_index);
-}
+    // A spill slot. These have fundamentally different behavior than a typical memory location.
+    // They are lowered to from temporaries. This means for example that a 32-bit ZDef store to a
+    // 8 byte stack slot will zero the top 4 bytes, even though a 32-bit ZDef store to any other
+    // kind of memory location would do no such thing. UseAddr on a spill slot is not allowed, so
+    // they never escape.
+    Spill
 
-void StackSlot::deepDump(PrintStream& out) const
-{
-    out.print("byteSize = ", m_byteSize, ", offsetFromFP = ", m_offsetFromFP, ", kind = ", m_kind);
-    if (m_b3Slot)
-        out.print(", b3Slot = ", *m_b3Slot, ": (", B3::deepDump(m_b3Slot), ")");
-}
-
-StackSlot::StackSlot(unsigned byteSize, StackSlotKind kind, B3::StackSlot* b3Slot)
-    : m_byteSize(byteSize)
-    , m_offsetFromFP(b3Slot ? b3Slot->offsetFromFP() : 0)
-    , m_kind(kind)
-    , m_b3Slot(b3Slot)
-{
-    ASSERT(byteSize);
-}
+    // FIXME: We should add a third mode, which means that the stack slot will be read asynchronously
+    // as with Locked, but never written to asynchronously. Then, Air could optimize spilling and
+    // filling by tracking whether the value had been stored to a read-only locked slot. If it had,
+    // then we can refill from that slot.
+    // https://bugs.webkit.org/show_bug.cgi?id=150587
+};
 
 } } } // namespace JSC::B3::Air
 
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream&, JSC::B3::Air::StackSlotKind);
+
+} // namespace WTF
+
 #endif // ENABLE(B3_JIT)
+
+#endif // B3StackSlotKind_h
+

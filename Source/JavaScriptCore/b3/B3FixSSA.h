@@ -36,8 +36,8 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-// Turns all mentions of the given values into accesses to anonymous stack slots. This is meant
-// to be used from phases that don't like SSA for whatever reason.
+// Turns all mentions of the given values into accesses to variables. This is meant to be used
+// from phases that don't like SSA for whatever reason.
 void demoteValues(Procedure&, const IndexSet<Value>&);
 
 // This fixes SSA for you. Use this after you have done demoteValues() and you have performed

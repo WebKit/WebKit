@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirInst.h"
+#include "B3SparseCollection.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ScopedLambda.h>
@@ -98,10 +99,10 @@ protected:
 
 private:
     friend class Code;
+    friend class SparseCollection<Special>;
 
-    const char* m_name;
-    unsigned m_index;
-    Code* m_code;
+    unsigned m_index { UINT_MAX };
+    Code* m_code { nullptr };
 };
 
 class DeepSpecialDump {

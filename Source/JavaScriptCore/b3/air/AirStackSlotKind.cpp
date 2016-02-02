@@ -24,51 +24,29 @@
  */
 
 #include "config.h"
-#include "AirSpecial.h"
+#include "AirStackSlotKind.h"
 
 #if ENABLE(B3_JIT)
 
-#include <limits.h>
-#include <wtf/StringPrintStream.h>
+#include <wtf/PrintStream.h>
 
-namespace JSC { namespace B3 { namespace Air {
+namespace WTF {
 
-const char* const Special::dumpPrefix = "&";
+using namespace JSC::B3::Air;
 
-Special::Special()
+void printInternal(PrintStream& out, StackSlotKind kind)
 {
+    switch (kind) {
+    case StackSlotKind::Locked:
+        out.print("Locked");
+        return;
+    case StackSlotKind::Spill:
+        out.print("Spill");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-Special::~Special()
-{
-}
-
-CString Special::name() const
-{
-    StringPrintStream out;
-    dumpImpl(out);
-    return out.toCString();
-}
-
-bool Special::hasNonArgNonControlEffects()
-{
-    return true;
-}
-
-void Special::dump(PrintStream& out) const
-{
-    out.print(dumpPrefix);
-    dumpImpl(out);
-    if (m_index != UINT_MAX)
-        out.print(m_index);
-}
-
-void Special::deepDump(PrintStream& out) const
-{
-    out.print(*this, ": ");
-    deepDumpImpl(out);
-}
-
-} } } // namespace JSC::B3::Air
+} // namespace WTF
 
 #endif // ENABLE(B3_JIT)

@@ -261,7 +261,7 @@ private:
     
     static bool isSpillSlot(const Arg& arg)
     {
-        return arg.isStack() && !arg.stackSlot()->isLocked();
+        return arg.isStack() && arg.stackSlot()->isSpill();
     }
     
     struct RegConst {

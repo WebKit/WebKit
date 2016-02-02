@@ -1,3 +1,309 @@
+2016-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of anonymous stack slots
+        https://bugs.webkit.org/show_bug.cgi?id=151128
+
+        Reviewed by Mark Lam.
+
+        When I first designed stack slots, the idea was that an "anonymous" stack slot was one that
+        behaved exactly like a C variable: if it never escaped, it would not need to get stack space
+        for the entire lifetime of the function - it could get any slab of stack so long as it
+        didn't interfere with other stack slots that would be live at the same time. The reason I
+        called them "anonymous" is that external code could not get its address. This felt like it
+        gave the stack slot anonymity. But it was never a good name for this concept.
+
+        Then I had the register allocator lower temporaries to anonymous stack slots when it spilled
+        them. Spilling became the sole client of anonymous stack slots.
+
+        Then I realized that there was an aspect of how spill slots work that make them want
+        slightly different semantics than a normal C variable. A C variable is a proper memory
+        location - you could do a store to only some bytes in the variable, and it's reasonable to
+        expect that this will not destroy the other bytes in the variable. But that means that to
+        compute their liveness, you have to do something like a per-byte liveness. That's overkill
+        for spill slots. You want any store to the spill slot to kill the whole slot even if it
+        writes to just part of the slot. This matches how temporaries work. So rather than implement
+        per-byte liveness, I decided to change the semantics of anonymous stack slots to make them
+        work like how I wanted spill slots to work. This was quite dirty, and put B3 in the awkward
+        situation that B3's anonymous stack slots behaved like spill slots. But it was OK since
+        nobody used anonymous stack slots in B3.
+
+        Then I added tail duplication, which required having a mechanism for introducing non-SSA
+        variables in B3. I decided to use anonymous stack slots for this purpose. All of a sudden
+        this all felt like it made sense: anonymous stack slots were just like variables! Hooray for
+        the amazing foresight of anonymous stack slots!
+
+        But then I realized that this was all very bad. We want B3 to be able to optimize Store and
+        Load operations by reasoning about how they affect bytes in memory. For example, if you do
+        a Load of a 64-bit value, and then you modify just the low 32 bits of that value, and then
+        you do a 64-bit store back to the same location, then it would be better to transform this
+        into 32-bit operations. We don't do this optimization yet, but it's the kind of thing that
+        we want B3 to be able to do. To do it, we need Store to mean that it only affects N bytes
+        starting at the pointer, where N is the size of the thing being stored. But that's not what
+        Store means for anonymous stack slots. For anonymous slots, storing to any byte in the slot
+        clobbers all bytes in the slot. We were never clear if you need to store directly to an
+        anonymous slot to get this behavior, or if any pointer that points to an anoymous slot must
+        exhibit this behavior when stored to. Neither kinds of semantics make sense to me.
+
+        This change fixes the problem by eradicating anonymous stack slots. In B3, they are replaced
+        with Variables. In Air, they are replaced with a different stack slot kind, called Spill.
+        There is no such thing as stack slot kinds in B3 anymore, all B3 stack slots are locked. In
+        Air, there is still the concept of stack slot kind - Locked or Spill.
+
+        B3 Variables are awesome. They are exactly what they seem to be. They have a type. They are
+        declared at the top level in the Procedure. You can access them with new opcodes, Get and
+        Set. This greatly simplifies demoting SSA values to variables and promoting them back to
+        SSA. I even made the instruction selector do the right things for variables, which means
+        that introducing variables won't hurt instruction selection (there will be extra moves, but
+        IRC will kill them). It's great to have non-SSA variables as an explicit concept in IR
+        because it means that you don't have to do any magic to use them - they Just Work.
+
+        Air spill slots behave almost like anonymous stack slots, with one exception: you cannot
+        escape them. We validate this by making it illegal to UseAddr on a spill slot. This removes
+        the need to answer awkward questions like: does a 32-bit Def on a pointer that may point to
+        a 64-bit spill slot do anything to the 32 bits above the pointer?  Does it write zero to it?
+        Does it write zero to it just when the pointer actually points to a spill slot or always?
+        These are silly questions, and we don't have to answer them because the only way to refer to
+        a spill slot is directly. No escaping means no aliasing.
+
+        This doesn't affect performance. It just makes the compiler more fun to work with by
+        removing some cognitive dissonance.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3ArgumentRegValue.h:
+        * b3/B3CCallValue.h:
+        * b3/B3CheckValue.cpp:
+        (JSC::B3::CheckValue::cloneImpl):
+        (JSC::B3::CheckValue::CheckValue):
+        * b3/B3CheckValue.h:
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.h:
+        * b3/B3ConstPtrValue.h:
+        (JSC::B3::ConstPtrValue::ConstPtrValue):
+        * b3/B3ControlValue.cpp:
+        (JSC::B3::ControlValue::convertToJump):
+        (JSC::B3::ControlValue::convertToOops):
+        (JSC::B3::ControlValue::dumpMeta):
+        * b3/B3ControlValue.h:
+        * b3/B3Effects.cpp:
+        (JSC::B3::Effects::interferes):
+        (JSC::B3::Effects::dump):
+        * b3/B3Effects.h:
+        (JSC::B3::Effects::mustExecute):
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3FixSSA.cpp:
+        (JSC::B3::demoteValues):
+        (JSC::B3::fixSSA):
+        * b3/B3FixSSA.h:
+        * b3/B3IndexMap.h:
+        (JSC::B3::IndexMap::resize):
+        (JSC::B3::IndexMap::clear):
+        (JSC::B3::IndexMap::size):
+        (JSC::B3::IndexMap::operator[]):
+        * b3/B3IndexSet.h:
+        (JSC::B3::IndexSet::contains):
+        (JSC::B3::IndexSet::size):
+        (JSC::B3::IndexSet::isEmpty):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MemoryValue.h:
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::cloneImpl):
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        * b3/B3PatchpointValue.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::Procedure):
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::addStackSlot):
+        (JSC::B3::Procedure::addVariable):
+        (JSC::B3::Procedure::clone):
+        (JSC::B3::Procedure::addIntConstant):
+        (JSC::B3::Procedure::dump):
+        (JSC::B3::Procedure::deleteStackSlot):
+        (JSC::B3::Procedure::deleteVariable):
+        (JSC::B3::Procedure::deleteValue):
+        (JSC::B3::Procedure::deleteOrphans):
+        (JSC::B3::Procedure::calleeSaveRegisters):
+        (JSC::B3::Procedure::addValueImpl):
+        (JSC::B3::Procedure::setBlockOrderImpl):
+        (JSC::B3::Procedure::addAnonymousStackSlot): Deleted.
+        (JSC::B3::Procedure::addStackSlotIndex): Deleted.
+        (JSC::B3::Procedure::addValueIndex): Deleted.
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::setBlockOrder):
+        (JSC::B3::Procedure::stackSlots):
+        (JSC::B3::Procedure::variables):
+        (JSC::B3::Procedure::values):
+        (JSC::B3::Procedure::StackSlotsCollection::StackSlotsCollection): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::size): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::at): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::operator[]): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::iterator): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::operator*): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::operator++): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::operator==): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::operator!=): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::findNext): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::begin): Deleted.
+        (JSC::B3::Procedure::StackSlotsCollection::end): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::ValuesCollection): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::iterator::iterator): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator*): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator++): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator==): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator!=): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::iterator::findNext): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::begin): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::end): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::size): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::at): Deleted.
+        (JSC::B3::Procedure::ValuesCollection::operator[]): Deleted.
+        * b3/B3ProcedureInlines.h:
+        (JSC::B3::Procedure::add):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3SlotBaseValue.h:
+        * b3/B3SparseCollection.h: Added.
+        (JSC::B3::SparseCollection::SparseCollection):
+        (JSC::B3::SparseCollection::add):
+        (JSC::B3::SparseCollection::addNew):
+        (JSC::B3::SparseCollection::remove):
+        (JSC::B3::SparseCollection::size):
+        (JSC::B3::SparseCollection::isEmpty):
+        (JSC::B3::SparseCollection::at):
+        (JSC::B3::SparseCollection::operator[]):
+        (JSC::B3::SparseCollection::iterator::iterator):
+        (JSC::B3::SparseCollection::iterator::operator*):
+        (JSC::B3::SparseCollection::iterator::operator++):
+        (JSC::B3::SparseCollection::iterator::operator==):
+        (JSC::B3::SparseCollection::iterator::operator!=):
+        (JSC::B3::SparseCollection::iterator::findNext):
+        (JSC::B3::SparseCollection::begin):
+        (JSC::B3::SparseCollection::end):
+        * b3/B3StackSlot.cpp:
+        (JSC::B3::StackSlot::deepDump):
+        (JSC::B3::StackSlot::StackSlot):
+        * b3/B3StackSlot.h:
+        (JSC::B3::StackSlot::byteSize):
+        (JSC::B3::StackSlot::index):
+        (JSC::B3::StackSlot::setOffsetFromFP):
+        (JSC::B3::StackSlot::kind): Deleted.
+        (JSC::B3::StackSlot::isLocked): Deleted.
+        * b3/B3StackSlotKind.cpp: Removed.
+        * b3/B3StackSlotKind.h: Removed.
+        * b3/B3StackmapValue.cpp:
+        (JSC::B3::StackmapValue::dumpMeta):
+        (JSC::B3::StackmapValue::StackmapValue):
+        * b3/B3StackmapValue.h:
+        * b3/B3SwitchValue.cpp:
+        (JSC::B3::SwitchValue::cloneImpl):
+        (JSC::B3::SwitchValue::SwitchValue):
+        * b3/B3SwitchValue.h:
+        * b3/B3UpsilonValue.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::replaceWithIdentity):
+        (JSC::B3::Value::replaceWithNop):
+        (JSC::B3::Value::replaceWithPhi):
+        (JSC::B3::Value::dump):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::checkOpcode):
+        * b3/B3Value.h:
+        * b3/B3Variable.cpp: Added.
+        (JSC::B3::Variable::~Variable):
+        (JSC::B3::Variable::dump):
+        (JSC::B3::Variable::deepDump):
+        (JSC::B3::Variable::Variable):
+        * b3/B3Variable.h: Added.
+        (JSC::B3::Variable::type):
+        (JSC::B3::Variable::index):
+        (JSC::B3::DeepVariableDump::DeepVariableDump):
+        (JSC::B3::DeepVariableDump::dump):
+        (JSC::B3::deepDump):
+        * b3/B3VariableValue.cpp: Added.
+        (JSC::B3::VariableValue::~VariableValue):
+        (JSC::B3::VariableValue::dumpMeta):
+        (JSC::B3::VariableValue::cloneImpl):
+        (JSC::B3::VariableValue::VariableValue):
+        * b3/B3VariableValue.h: Added.
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addStackSlot):
+        (JSC::B3::Air::Code::addSpecial):
+        (JSC::B3::Air::Code::cCallSpecial):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::begin):
+        (JSC::B3::Air::Code::end):
+        (JSC::B3::Air::Code::stackSlots):
+        (JSC::B3::Air::Code::specials):
+        (JSC::B3::Air::Code::forAllTmps):
+        (JSC::B3::Air::Code::StackSlotsCollection::StackSlotsCollection): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::size): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::at): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::operator[]): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::iterator): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::operator*): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::operator++): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::operator==): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::operator!=): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::begin): Deleted.
+        (JSC::B3::Air::Code::StackSlotsCollection::end): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::SpecialsCollection): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::size): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::at): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::operator[]): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::iterator): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::operator*): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::operator++): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::operator==): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::operator!=): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::begin): Deleted.
+        (JSC::B3::Air::Code::SpecialsCollection::end): Deleted.
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirInstInlines.h:
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirLiveness.h:
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirSpecial.cpp:
+        (JSC::B3::Air::Special::Special):
+        * b3/air/AirSpecial.h:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirStackSlot.cpp:
+        (JSC::B3::Air::StackSlot::dump):
+        (JSC::B3::Air::StackSlot::deepDump):
+        (JSC::B3::Air::StackSlot::StackSlot):
+        * b3/air/AirStackSlot.h:
+        (JSC::B3::Air::StackSlot::byteSize):
+        (JSC::B3::Air::StackSlot::kind):
+        (JSC::B3::Air::StackSlot::isLocked):
+        (JSC::B3::Air::StackSlot::isSpill):
+        (JSC::B3::Air::StackSlot::index):
+        (JSC::B3::Air::StackSlot::ensureSize):
+        * b3/air/AirStackSlotKind.cpp: Copied from Source/JavaScriptCore/b3/B3StackSlotKind.cpp.
+        (WTF::printInternal):
+        * b3/air/AirStackSlotKind.h: Copied from Source/JavaScriptCore/b3/B3StackSlotKind.h.
+        * b3/air/opcode_generator.rb:
+        * b3/air/testair.cpp:
+        (JSC::B3::Air::testShuffleBroadcastAllRegs):
+        (JSC::B3::Air::testShuffleShiftAllRegs):
+        (JSC::B3::Air::testShuffleRotateAllRegs):
+        * b3/testb3.cpp:
+        (JSC::B3::testStackSlot):
+        (JSC::B3::testStoreLoadStackSlot):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::lockedStackSlot):
+        (JSC::FTL::Output::neg):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+
 2016-02-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Introduce BytecodeIntrinsic constant rep like @undefined

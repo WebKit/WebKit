@@ -68,9 +68,8 @@ Value* SwitchValue::cloneImpl() const
     return new SwitchValue(*this);
 }
 
-SwitchValue::SwitchValue(
-    unsigned index, Origin origin, Value* child, const FrequentedBlock& fallThrough)
-    : ControlValue(index, Switch, Void, origin, child)
+SwitchValue::SwitchValue(Origin origin, Value* child, const FrequentedBlock& fallThrough)
+    : ControlValue(Switch, Void, origin, child)
 {
     m_successors.append(fallThrough);
 }

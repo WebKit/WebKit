@@ -32,6 +32,7 @@
 #include "B3Effects.h"
 #include "B3Opcode.h"
 #include "B3Origin.h"
+#include "B3SparseCollection.h"
 #include "B3Type.h"
 #include "B3ValueKey.h"
 #include <wtf/CommaPrinter.h>
@@ -226,6 +227,7 @@ protected:
 
 private:
     friend class Procedure;
+    friend class SparseCollection<Value>;
 
     // Checks that this opcode is valid for use with B3::Value.
 #if ASSERT_DISABLED
@@ -243,27 +245,24 @@ protected:
     // Instantiate values via Procedure.
     // This form requires specifying the type explicitly:
     template<typename... Arguments>
-    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, Value* firstChild, Arguments... arguments)
-        : m_index(index)
-        , m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, Value* firstChild, Arguments... arguments)
+        : m_opcode(opcode)
         , m_type(type)
         , m_origin(origin)
         , m_children{ firstChild, arguments... }
     {
     }
     // This form is for specifying the type explicitly when the opcode has no children:
-    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin)
-        : m_index(index)
-        , m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin)
+        : m_opcode(opcode)
         , m_type(type)
         , m_origin(origin)
     {
     }
     // This form is for those opcodes that can infer their type from the opcode and first child:
     template<typename... Arguments>
-    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild)
-        : m_index(index)
-        , m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild)
+        : m_opcode(opcode)
         , m_type(typeFor(opcode, firstChild))
         , m_origin(origin)
         , m_children{ firstChild }
@@ -271,9 +270,8 @@ protected:
     }
     // This form is for those opcodes that can infer their type from the opcode and first and second child:
     template<typename... Arguments>
-    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild, Value* secondChild, Arguments... arguments)
-        : m_index(index)
-        , m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild, Value* secondChild, Arguments... arguments)
+        : m_opcode(opcode)
         , m_type(typeFor(opcode, firstChild, secondChild))
         , m_origin(origin)
         , m_children{ firstChild, secondChild, arguments... }
@@ -281,25 +279,22 @@ protected:
     }
     // This form is for those opcodes that can infer their type from the opcode alone, and that don't
     // take any arguments:
-    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Origin origin)
-        : m_index(index)
-        , m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Opcode opcode, Origin origin)
+        : m_opcode(opcode)
         , m_type(typeFor(opcode, nullptr))
         , m_origin(origin)
     {
     }
     // Use this form for varargs.
-    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, const AdjacencyList& children)
-        : m_index(index)
-        , m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, const AdjacencyList& children)
+        : m_opcode(opcode)
         , m_type(type)
         , m_origin(origin)
         , m_children(children)
     {
     }
-    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, AdjacencyList&& children)
-        : m_index(index)
-        , m_opcode(opcode)
+    explicit Value(CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, AdjacencyList&& children)
+        : m_opcode(opcode)
         , m_type(type)
         , m_origin(origin)
         , m_children(WTFMove(children))
@@ -309,8 +304,8 @@ protected:
     // This is the constructor you end up actually calling, if you're instantiating Value
     // directly.
     template<typename... Arguments>
-    explicit Value(unsigned index, Opcode opcode, Arguments&&... arguments)
-        : Value(index, CheckedOpcode, opcode, std::forward<Arguments>(arguments)...)
+    explicit Value(Opcode opcode, Arguments&&... arguments)
+        : Value(CheckedOpcode, opcode, std::forward<Arguments>(arguments)...)
     {
         checkOpcode(opcode);
     }
@@ -321,7 +316,9 @@ private:
     static Type typeFor(Opcode, Value* firstChild, Value* secondChild = nullptr);
 
     // This group of fields is arranged to fit in 64 bits.
-    unsigned m_index;
+protected:
+    unsigned m_index { UINT_MAX };
+private:
     Opcode m_opcode;
     Type m_type;
     

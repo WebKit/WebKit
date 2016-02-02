@@ -41,6 +41,8 @@
 #include "B3StackSlot.h"
 #include "B3ValueKey.h"
 #include "B3ValueInlines.h"
+#include "B3Variable.h"
+#include "B3VariableValue.h"
 #include "DFGGraph.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
@@ -131,12 +133,10 @@ public:
             m_impureBlockData[m_block] = m_data;
         }
 
-        for (SlotBaseValue* stack : m_stacks)
-            m_insertionSet.insertValue(0, stack);
         for (BasicBlock* block : m_proc) {
             for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
-                auto iter = m_stores.find(block->at(valueIndex));
-                if (iter == m_stores.end())
+                auto iter = m_sets.find(block->at(valueIndex));
+                if (iter == m_sets.end())
                     continue;
 
                 for (Value* value : iter->value)
@@ -369,21 +369,19 @@ private:
         // FIXME: It would be way better if this phase just did SSA calculation directly.
         // Right now we're relying on the fact that CSE's position in the phase order is
         // almost right before SSA fixup.
-            
-        SlotBaseValue* stack = m_proc.add<SlotBaseValue>(
-            m_value->origin(), m_proc.addAnonymousStackSlot(m_value->type()));
-        m_stacks.append(stack);
 
-        MemoryValue* load = m_insertionSet.insert<MemoryValue>(
-            m_index, Load, m_value->type(), m_value->origin(), stack);
+        Variable* variable = m_proc.addVariable(m_value->type());
+
+        VariableValue* get = m_insertionSet.insert<VariableValue>(
+            m_index, Get, m_value->origin(), variable);
         if (verbose)
-            dataLog("    Inserting load of value: ", *load, "\n");
-        m_value->replaceWithIdentity(load);
+            dataLog("    Inserting get of value: ", *get, "\n");
+        m_value->replaceWithIdentity(get);
             
         for (MemoryValue* match : matches) {
-            Vector<Value*>& stores = m_stores.add(match, Vector<Value*>()).iterator->value;
+            Vector<Value*>& sets = m_sets.add(match, Vector<Value*>()).iterator->value;
 
-            Value* value = replace(match, stores);
+            Value* value = replace(match, sets);
             if (!value) {
                 if (match->isStore())
                     value = match->child(0);
@@ -391,8 +389,8 @@ private:
                     value = match;
             }
                 
-            Value* store = m_proc.add<MemoryValue>(Store, m_value->origin(), value, stack);
-            stores.append(store);
+            Value* set = m_proc.add<VariableValue>(Set, m_value->origin(), variable, value);
+            sets.append(set);
         }
 
         return true;
@@ -499,8 +497,7 @@ private:
     unsigned m_index;
     Value* m_value;
 
-    Vector<SlotBaseValue*> m_stacks;
-    HashMap<Value*, Vector<Value*>> m_stores;
+    HashMap<Value*, Vector<Value*>> m_sets;
 
     InsertionSet m_insertionSet;
 

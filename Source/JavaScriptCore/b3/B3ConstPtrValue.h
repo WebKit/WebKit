@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,13 +54,13 @@ private:
     friend class Procedure;
 
     template<typename T>
-    ConstPtrValue(unsigned index, Origin origin, T* pointer)
-        : ConstPtrValueBase(index, origin, bitwise_cast<intptr_t>(pointer))
+    ConstPtrValue(Origin origin, T* pointer)
+        : ConstPtrValueBase(origin, bitwise_cast<intptr_t>(pointer))
     {
     }
     template<typename T>
-    ConstPtrValue(unsigned index, Origin origin, T pointer)
-        : ConstPtrValueBase(index, origin, static_cast<intptr_t>(pointer))
+    ConstPtrValue(Origin origin, T pointer)
+        : ConstPtrValueBase(origin, static_cast<intptr_t>(pointer))
     {
     }
 };

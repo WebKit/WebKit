@@ -36,11 +36,7 @@ namespace JSC { namespace B3 {
 template<typename ValueType, typename... Arguments>
 ValueType* Procedure::add(Arguments... arguments)
 {
-    size_t index = addValueIndex();
-    std::unique_ptr<ValueType> value(new ValueType(index, arguments...));
-    ValueType* result = value.get();
-    m_values[index] = WTFMove(value);
-    return result;
+    return static_cast<ValueType*>(addValueImpl(new ValueType(arguments...)));
 }
 
 } } // namespace JSC::B3

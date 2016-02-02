@@ -121,8 +121,7 @@ protected:
 private:
     friend class Procedure;
 
-    JS_EXPORT_PRIVATE SwitchValue(
-        unsigned index, Origin, Value* child, const FrequentedBlock& fallThrough);
+    JS_EXPORT_PRIVATE SwitchValue(Origin, Value* child, const FrequentedBlock& fallThrough);
 
     Vector<int64_t> m_values;
 };

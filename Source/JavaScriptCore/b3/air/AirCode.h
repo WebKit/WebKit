@@ -33,6 +33,7 @@
 #include "AirSpecial.h"
 #include "AirStackSlot.h"
 #include "AirTmp.h"
+#include "B3SparseCollection.h"
 #include "RegisterAtOffsetList.h"
 #include "StackAlignment.h"
 
@@ -184,125 +185,11 @@ public:
     iterator begin() const { return iterator(*this, 0); }
     iterator end() const { return iterator(*this, size()); }
 
-    class StackSlotsCollection {
-    public:
-        StackSlotsCollection(const Code& code)
-            : m_code(code)
-        {
-        }
+    const SparseCollection<StackSlot>& stackSlots() const { return m_stackSlots; }
+    SparseCollection<StackSlot>& stackSlots() { return m_stackSlots; }
 
-        unsigned size() const { return m_code.m_stackSlots.size(); }
-        StackSlot* at(unsigned index) const { return m_code.m_stackSlots[index].get(); }
-        StackSlot* operator[](unsigned index) const { return at(index); }
-
-        class iterator {
-        public:
-            iterator()
-                : m_collection(nullptr)
-                , m_index(0)
-            {
-            }
-
-            iterator(const StackSlotsCollection& collection, unsigned index)
-                : m_collection(&collection)
-                , m_index(index)
-            {
-            }
-
-            StackSlot* operator*()
-            {
-                return m_collection->at(m_index);
-            }
-
-            iterator& operator++()
-            {
-                m_index++;
-                return *this;
-            }
-
-            bool operator==(const iterator& other) const
-            {
-                return m_index == other.m_index;
-            }
-
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
-
-        private:
-            const StackSlotsCollection* m_collection;
-            unsigned m_index;
-        };
-
-        iterator begin() const { return iterator(*this, 0); }
-        iterator end() const { return iterator(*this, size()); }
-
-    private:
-        const Code& m_code;
-    };
-
-    StackSlotsCollection stackSlots() const { return StackSlotsCollection(*this); }
-    
-    class SpecialsCollection {
-    public:
-        SpecialsCollection(const Code& code)
-            : m_code(code)
-        {
-        }
-
-        unsigned size() const { return m_code.m_specials.size(); }
-        Special* at(unsigned index) const { return m_code.m_specials[index].get(); }
-        Special* operator[](unsigned index) const { return at(index); }
-
-        class iterator {
-        public:
-            iterator()
-                : m_collection(nullptr)
-                , m_index(0)
-            {
-            }
-
-            iterator(const SpecialsCollection& collection, unsigned index)
-                : m_collection(&collection)
-                , m_index(index)
-            {
-            }
-
-            Special* operator*()
-            {
-                return m_collection->at(m_index);
-            }
-
-            iterator& operator++()
-            {
-                m_index++;
-                return *this;
-            }
-
-            bool operator==(const iterator& other) const
-            {
-                return m_index == other.m_index;
-            }
-
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
-
-        private:
-            const SpecialsCollection* m_collection;
-            unsigned m_index;
-        };
-
-        iterator begin() const { return iterator(*this, 0); }
-        iterator end() const { return iterator(*this, size()); }
-
-    private:
-        const Code& m_code;
-    };
-
-    SpecialsCollection specials() const { return SpecialsCollection(*this); }
+    const SparseCollection<Special>& specials() const { return m_specials; }
+    SparseCollection<Special>& specials() { return m_specials; }
 
     template<typename Callback>
     void forAllTmps(const Callback& callback) const
@@ -331,9 +218,9 @@ private:
     Code(Procedure&);
 
     Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.
-    Vector<std::unique_ptr<StackSlot>> m_stackSlots;
+    SparseCollection<StackSlot> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
-    Vector<std::unique_ptr<Special>> m_specials;
+    SparseCollection<Special> m_specials;
     HashSet<Tmp> m_fastTmps;
     CCallSpecial* m_cCallSpecial { nullptr };
     unsigned m_numGPTmps { 0 };

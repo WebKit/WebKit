@@ -39,6 +39,7 @@
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
+#include "B3VariableValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 
@@ -72,9 +73,10 @@ void Value::replaceWithIdentity(Value* value)
 
     this->Value::~Value();
 
-    new (this) Value(index, Identity, type, origin, value);
+    new (this) Value(Identity, type, origin, value);
 
     this->owner = owner;
+    this->m_index = index;
 }
 
 void Value::replaceWithNop()
@@ -85,9 +87,10 @@ void Value::replaceWithNop()
 
     this->Value::~Value();
 
-    new (this) Value(index, Nop, Void, origin);
+    new (this) Value(Nop, Void, origin);
 
     this->owner = owner;
+    this->m_index = index;
 }
 
 void Value::replaceWithPhi()
@@ -104,9 +107,10 @@ void Value::replaceWithPhi()
 
     this->Value::~Value();
 
-    new (this) Value(index, Phi, type, origin);
+    new (this) Value(Phi, type, origin);
 
     this->owner = owner;
+    this->m_index = index;
 }
 
 void Value::dump(PrintStream& out) const
@@ -484,10 +488,12 @@ Effects Value::effects() const
         result.reads = HeapRange::top();
         break;
     case Upsilon:
-        result.writesSSAState = true;
+    case Set:
+        result.writesLocalState = true;
         break;
     case Phi:
-        result.readsSSAState = true;
+    case Get:
+        result.readsLocalState = true;
         break;
     case Jump:
     case Branch:
@@ -598,6 +604,7 @@ void Value::checkOpcode(Opcode opcode)
     ASSERT(!PatchpointValue::accepts(opcode));
     ASSERT(!SlotBaseValue::accepts(opcode));
     ASSERT(!UpsilonValue::accepts(opcode));
+    ASSERT(!VariableValue::accepts(opcode));
 }
 #endif // !ASSERT_DISABLED
 

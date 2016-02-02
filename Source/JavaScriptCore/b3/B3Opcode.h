@@ -48,9 +48,14 @@ enum Opcode : int16_t {
     ConstDouble,
     ConstFloat,
 
-    // The magical stack slot. This is viewed as executing at the top of the program regardless of
-    // where in control flow you put it. Each instance of a StackSlot Value gets a disjoint range of
-    // stack memory. Use the StackSlotValue class.
+    // B3 supports non-SSA variables. These are accessed using Get and Set opcodes. Use the
+    // VariableValue class. It's a good idea to run fixSSA() to turn these into SSA. The
+    // optimizer will do that eventually, but if your input tends to use these opcodes, you
+    // should run fixSSA() directly before launching the optimizer.
+    Set,
+    Get,
+
+    // Gets the base address of a StackSlot.
     SlotBase,
 
     // The magical argument register. This is viewed as executing at the top of the program

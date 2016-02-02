@@ -88,7 +88,7 @@ void spillEverything(Code& code)
         Arg::Type type = static_cast<Arg::Type>(typeIndex);
         stackSlots.resize(code.numTmps(type));
         for (unsigned tmpIndex = code.numTmps(type); tmpIndex--;)
-            stackSlots[tmpIndex] = code.addStackSlot(8, StackSlotKind::Anonymous);
+            stackSlots[tmpIndex] = code.addStackSlot(8, StackSlotKind::Spill);
     }
 
     InsertionSet insertionSet(code);

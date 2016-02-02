@@ -50,8 +50,8 @@ protected:
 private:
     friend class Procedure;
 
-    SlotBaseValue(unsigned index, Origin origin, StackSlot* slot)
-        : Value(index, CheckedOpcode, SlotBase, pointerType(), origin)
+    SlotBaseValue(Origin origin, StackSlot* slot)
+        : Value(CheckedOpcode, SlotBase, pointerType(), origin)
         , m_slot(slot)
     {
     }

@@ -85,7 +85,7 @@
       for the load.  We use the MemoryValue class for memory-accessing values, which all have
       such an offset.</p>
 
-    <h2>Stack Slot</h2>
+    <h2>Stack Slots</h2>
 
     <p>B3 exposes the concept of stack-allocated data and gives the client a lot of control.
       By default, stack slots get allocated wherever B3 chooses. It will try to pack them as
@@ -99,24 +99,23 @@
       for callee-saves.  Therefore, we recommend not using the frame pointer offset forcing
       feature unless you know a lot about the ABI and you have no other choice.</p>
 
-    <p>Stack slots are also used for creating non-SSA variables with the intention of having B3
-      convert them into SSA.  There are two kinds of stack slots.</p>
+    <h2>Variables</h2>
 
-    <dl>
-      <dt>Anonymous</dt>
-      <dd>Anonymous stack slots are used to represent local variables that aren't in SSA form.
-        B3 is allowed to assume that nobody will store to an anonymous stack slot except through
-        Store instructions in the B3 procedure.  B3 is allowed to assume that a Store that does
-        not write to the entire anonymous stack slot leaves the unwritten part in an undefined
-        state.  Usually, anonymous stack slots are allocated to have the same size as the type
-        of variable they are being used to represent.</dd>
+    <p>Sometimes, SSA is inconvenient. For example, it's hard to do path specialization over SSA.
+      B3 has the concept of Variables as a fall-back. The backend knows how to handle them and
+      will coalesce and copy-propagate them. Inside the B3 optimizer, there is a classic SSA
+      builder that eliminates variables and builds SSA in their place.</p>
 
-      <dt>Locked</dt>
-      <dd>These stack slots are assumed to operate "as if" they were in the heap, in the sense
-        that the may get read or written using operations not visible in B3 IR.</dd>
-    </dl>
+    <p>You can create Variables by using Procedure::addVariable(), and then you can access them
+      using the Get and Set opcodes.</p>
 
-    <p>The fixSSA() phase will convert anonymous stack slots to SSA.</p>
+    <p>The fixSSA() phase will convert variables to SSA. If you use a lot of variables in your
+      input to B3, it's a good idea to run fixSSA() manually before running the compiler. The
+      default optimizer only runs fixSSA() towards the middle of optimizations. Passing non-SSA code
+      as input to the optimizer may render the early phases ineffective. Fortunately, B3 phases
+      are super easy to run. The following runs SSA fix-up on a Procedure named "proc":</p>
+
+    <pre><code>fixSSA(proc);</code></pre>
 
     <h2>Control flow</h2>
 
@@ -175,6 +174,13 @@
 
       <dt>Double ConstDouble(constant)</dt>
       <dd>Double constant.  Must use the ConstDoubleValue class, which has space for the double constant.</dd>
+
+      <dt>Void Set(value, variable)</dt>
+      <dd>Assigns the given value to the given Variable. Must use the VariableValue class.</dd>
+
+      <dt>T Get(variable)</dt>
+      <dd>Returns the current value of the given Variable. Its return type depends on the
+        variable. Must use the VariableValue class.</dd>
 
       <dt>IntPtr SlotBase(stackSlot)</dt>
       <dd>Returns a pointer to the base of the given stack slot.  Must use the SlotBaseValue

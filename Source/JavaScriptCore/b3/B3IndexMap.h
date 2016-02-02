@@ -49,6 +49,11 @@ public:
         m_vector.fill(Value(), size);
     }
 
+    void clear()
+    {
+        m_vector.fill(Value(), m_vector.size());
+    }
+
     size_t size() const { return m_vector.size(); }
 
     Value& operator[](size_t index)
@@ -71,11 +76,6 @@ public:
         return m_vector[key->index()];
     }
 
-    void clear()
-    {
-        m_vector.clear();
-    }
-    
 private:
     Vector<Value> m_vector;
 };

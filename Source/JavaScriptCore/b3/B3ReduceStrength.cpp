@@ -45,6 +45,8 @@
 #include "B3UpsilonValue.h"
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
+#include "B3Variable.h"
+#include "B3VariableValue.h"
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/HashMap.h>
 
@@ -2283,13 +2285,15 @@ private:
         Vector<UpsilonValue*, 64> upsilons;
         for (BasicBlock* block : m_proc) {
             for (Value* value : *block) {
-                Effects effects = value->effects();
-                // We don't care about SSA Effects, since we model them more accurately than the
-                // effects() method does.
-                effects.writesSSAState = false;
-                effects.readsSSAState = false;
+                Effects effects;
+                // We don't care about effects of SSA operations, since we model them more
+                // accurately than the effects() method does.
+                if (value->opcode() != Phi && value->opcode() != Upsilon)
+                    effects = value->effects();
+                
                 if (effects.mustExecute())
                     worklist.push(value);
+                
                 if (UpsilonValue* upsilon = value->as<UpsilonValue>())
                     upsilons.append(upsilon);
             }
@@ -2314,7 +2318,7 @@ private:
                 break;
         }
 
-        IndexSet<StackSlot> liveStackSlots;
+        IndexSet<Variable> liveVariables;
         
         for (BasicBlock* block : m_proc) {
             size_t sourceIndex = 0;
@@ -2322,8 +2326,8 @@ private:
             while (sourceIndex < block->size()) {
                 Value* value = block->at(sourceIndex++);
                 if (worklist.saw(value)) {
-                    if (SlotBaseValue* slotBase = value->as<SlotBaseValue>())
-                        liveStackSlots.add(slotBase->slot());
+                    if (VariableValue* variableValue = value->as<VariableValue>())
+                        liveVariables.add(variableValue->variable());
                     block->at(targetIndex++) = value;
                 } else {
                     m_proc.deleteValue(value);
@@ -2338,10 +2342,9 @@ private:
             block->values().resize(targetIndex);
         }
 
-        for (StackSlot* slot : m_proc.stackSlots()) {
-            if (slot->isLocked() || liveStackSlots.contains(slot))
-                continue;
-            m_proc.deleteStackSlot(slot);
+        for (Variable* variable : m_proc.variables()) {
+            if (!liveVariables.contains(variable))
+                m_proc.deleteVariable(variable);
         }
     }
 

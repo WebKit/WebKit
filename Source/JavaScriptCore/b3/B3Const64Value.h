@@ -77,8 +77,8 @@ protected:
 
     friend class Procedure;
 
-    Const64Value(unsigned index, Origin origin, int64_t value)
-        : Value(index, CheckedOpcode, Const64, Int64, origin)
+    Const64Value(Origin origin, int64_t value)
+        : Value(CheckedOpcode, Const64, Int64, origin)
         , m_value(value)
     {
     }

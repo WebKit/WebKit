@@ -4990,7 +4990,7 @@ void testOverrideFramePointer()
         BasicBlock* root = proc.addBlock();
 
         // Add a stack slot to make the frame non trivial.
-        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(8, StackSlotKind::Locked));
+        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(8));
 
         // Sub on x86 UseDef the source. If FP is not protected correctly, it will be overridden since it is the last visible use.
         Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
@@ -5004,7 +5004,7 @@ void testOverrideFramePointer()
         Procedure proc;
         BasicBlock* root = proc.addBlock();
 
-        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(8, StackSlotKind::Locked));
+        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(8));
 
         Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
         Value* fp = root->appendNew<Value>(proc, FramePointer, Origin());
@@ -5024,8 +5024,7 @@ void testStackSlot()
     BasicBlock* root = proc.addBlock();
     root->appendNew<ControlValue>(
         proc, Return, Origin(),
-        root->appendNew<SlotBaseValue>(
-            proc, Origin(), proc.addStackSlot(1, StackSlotKind::Anonymous)));
+        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(1)));
 
     void* stackSlot = compileAndRun<void*>(proc);
     CHECK(stackSlot < &proc);
@@ -5053,8 +5052,8 @@ void testStoreLoadStackSlot(int value)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
-    SlotBaseValue* stack = root->appendNew<SlotBaseValue>(
-        proc, Origin(), proc.addStackSlot(sizeof(int), StackSlotKind::Anonymous));
+    SlotBaseValue* stack =
+        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(sizeof(int)));
 
     root->appendNew<MemoryValue>(
         proc, Store, Origin(),

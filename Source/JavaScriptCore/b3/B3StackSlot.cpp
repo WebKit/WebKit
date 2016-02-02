@@ -41,13 +41,11 @@ void StackSlot::dump(PrintStream& out) const
 
 void StackSlot::deepDump(PrintStream& out) const
 {
-    out.print("byteSize = ", m_byteSize, ", offsetFromFP = ", m_offsetFromFP, ", kind = ", m_kind);
+    out.print("byteSize = ", m_byteSize, ", offsetFromFP = ", m_offsetFromFP);
 }
 
-StackSlot::StackSlot(unsigned index, unsigned byteSize, StackSlotKind kind)
-    : m_index(index)
-    , m_byteSize(byteSize)
-    , m_kind(kind)
+StackSlot::StackSlot(unsigned byteSize)
+    : m_byteSize(byteSize)
 {
 }
 

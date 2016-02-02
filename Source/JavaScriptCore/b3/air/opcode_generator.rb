@@ -680,6 +680,18 @@ writeH("OpcodeUtils") {
                 filter = proc { false }
                 callback = proc {
                     | form |
+                    # This conservatively says that Stack is not a valid form for UseAddr,
+                    # because it's only valid if it's not a spill slot. This is consistent with
+                    # isValidForm() being conservative and it also happens to be practical since
+                    # we don't really use isValidForm for deciding when Stack is safe.
+                    overload.signature.length.times {
+                        | index |
+                        if overload.signature[index].role == "UA"
+                            outp.puts "if (opgenHiddenPtrIdentity(kinds)[#{index}] == Arg::Stack)"
+                            outp.puts "    return false;"
+                        end
+                    }
+                    
                     notCustom = (not form.kinds.detect { | kind | kind.custom })
                     if notCustom
                         beginArchs(outp, form.archs)
@@ -787,6 +799,11 @@ writeH("OpcodeGenerated") {
                     outp.puts "if (!Arg::isValidImmForm(args[#{index}].value()))"
                     outp.puts "OPGEN_RETURN(false);"
                 when "Addr"
+                    if arg.role == "UA"
+                        outp.puts "if (args[#{index}].isStack() && args[#{index}].stackSlot()->isSpill())"
+                        outp.puts "OPGEN_RETURN(false);"
+                    end
+                    
                     outp.puts "if (!Arg::isValidAddrForm(args[#{index}].offset()))"
                     outp.puts "OPGEN_RETURN(false);"
                 when "Index"
@@ -839,9 +856,11 @@ writeH("OpcodeGenerated") {
                 numNo = 0
                 opcode.overloads.each {
                     | overload |
+                    useAddr = (overload.signature[argIndex] and
+                               overload.signature[argIndex].role == "UA")
                     overload.forms.each {
                         | form |
-                        if form.kinds[argIndex] == "Addr"
+                        if form.kinds[argIndex] == "Addr" and not useAddr
                             numYes += 1
                         else
                             numNo += 1
@@ -864,12 +883,15 @@ writeH("OpcodeGenerated") {
                     opcode.overloads.each {
                         | overload |
 
+                        useAddr = (overload.signature[argIndex] and
+                                   overload.signature[argIndex].role == "UA")
+                        
                         # Again, check if all of them do what we want.
                         numYes = 0
                         numNo = 0
                         overload.forms.each {
                             | form |
-                            if form.kinds[argIndex] == "Addr"
+                            if form.kinds[argIndex] == "Addr" and not useAddr
                                 numYes += 1
                             else
                                 numNo += 1

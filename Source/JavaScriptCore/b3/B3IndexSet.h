@@ -69,6 +69,16 @@ public:
         return m_set.get(value->index());
     }
 
+    size_t size() const
+    {
+        return m_set.bitCount();
+    }
+
+    bool isEmpty() const
+    {
+        return !size();
+    }
+
     template<typename CollectionType>
     class Iterable {
     public:

@@ -1,3 +1,15 @@
+2016-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of anonymous stack slots
+        https://bugs.webkit.org/show_bug.cgi?id=151128
+
+        Reviewed by Mark Lam.
+
+        This changes the documentation to account for the addition of Variables and the Get and Set
+        opcodes, and the removal of anonymous stack slots from B3 IR.
+
+        * docs/b3/intermediate-representation.html:
+
 2016-02-02  Dan Bernstein  <mitz@apple.com>
 
         Tagline in B3 docs should match the rest of the website

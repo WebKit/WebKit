@@ -46,8 +46,8 @@ Value* CheckValue::cloneImpl() const
 }
 
 // Use this form for CheckAdd, CheckSub, and CheckMul.
-CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* left, Value* right)
-    : StackmapValue(index, CheckedOpcode, opcode, left->type(), origin)
+CheckValue::CheckValue(Opcode opcode, Origin origin, Value* left, Value* right)
+    : StackmapValue(CheckedOpcode, opcode, left->type(), origin)
 {
     ASSERT(B3::isInt(type()));
     ASSERT(left->type() == right->type());
@@ -57,8 +57,8 @@ CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* left
 }
 
 // Use this form for Check.
-CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* predicate)
-    : StackmapValue(index, CheckedOpcode, opcode, Void, origin)
+CheckValue::CheckValue(Opcode opcode, Origin origin, Value* predicate)
+    : StackmapValue(CheckedOpcode, opcode, Void, origin)
 {
     ASSERT(opcode == Check);
     append(ConstrainedValue(predicate, ValueRep::WarmAny));

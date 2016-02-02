@@ -38,6 +38,7 @@
 #include "B3OpaqueByproducts.h"
 #include "B3StackSlot.h"
 #include "B3ValueInlines.h"
+#include "B3Variable.h"
 
 namespace JSC { namespace B3 {
 
@@ -46,7 +47,6 @@ Procedure::Procedure()
     , m_lastPhaseName("initial")
     , m_byproducts(std::make_unique<OpaqueByproducts>())
     , m_code(new Air::Code(*this))
-    , m_valuesCollection(*this)
 {
 }
 
@@ -70,51 +70,22 @@ BasicBlock* Procedure::addBlock(double frequency)
     return result;
 }
 
-void Procedure::setBlockOrderImpl(Vector<BasicBlock*>& blocks)
+StackSlot* Procedure::addStackSlot(unsigned byteSize)
 {
-    IndexSet<BasicBlock> blocksSet;
-    blocksSet.addAll(blocks);
-
-    for (BasicBlock* block : *this) {
-        if (!blocksSet.contains(block))
-            blocks.append(block);
-    }
-
-    // Place blocks into this's block list by first leaking all of the blocks and then readopting
-    // them.
-    for (auto& entry : m_blocks)
-        entry.release();
-
-    m_blocks.resize(blocks.size());
-    for (unsigned i = 0; i < blocks.size(); ++i) {
-        BasicBlock* block = blocks[i];
-        block->m_index = i;
-        m_blocks[i] = std::unique_ptr<BasicBlock>(block);
-    }
+    return m_stackSlots.addNew(byteSize);
 }
 
-StackSlot* Procedure::addStackSlot(unsigned byteSize, StackSlotKind kind)
+Variable* Procedure::addVariable(Type type)
 {
-    size_t index = addStackSlotIndex();
-    std::unique_ptr<StackSlot> slot(new StackSlot(index, byteSize, kind));
-    StackSlot* result = slot.get();
-    m_stackSlots[index] = WTFMove(slot);
-    return result;
-}
-
-StackSlot* Procedure::addAnonymousStackSlot(Type type)
-{
-    return addStackSlot(sizeofType(type), StackSlotKind::Anonymous);
+    return m_variables.addNew(type); 
 }
 
 Value* Procedure::clone(Value* value)
 {
     std::unique_ptr<Value> clone(value->cloneImpl());
-    Value* result = clone.get();
-    clone->m_index = addValueIndex();
+    clone->m_index = UINT_MAX;
     clone->owner = nullptr;
-    m_values[clone->m_index] = WTFMove(clone);
-    return result;
+    return m_values.add(WTFMove(clone));
 }
 
 Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
@@ -208,6 +179,11 @@ void Procedure::dump(PrintStream& out) const
         }
         dataLog("    ", deepDump(*this, value), "\n");
     }
+    if (variables().size()) {
+        out.print("Variables:\n");
+        for (Variable* variable : variables())
+            out.print("    ", deepDump(variable), "\n");
+    }
     if (stackSlots().size()) {
         out.print("Stack slots:\n");
         for (StackSlot* slot : stackSlots())
@@ -229,17 +205,17 @@ Vector<BasicBlock*> Procedure::blocksInPostOrder()
 
 void Procedure::deleteStackSlot(StackSlot* stackSlot)
 {
-    RELEASE_ASSERT(m_stackSlots[stackSlot->index()].get() == stackSlot);
-    RELEASE_ASSERT(!stackSlot->isLocked());
-    m_stackSlotIndexFreeList.append(stackSlot->index());
-    m_stackSlots[stackSlot->index()] = nullptr;
+    m_stackSlots.remove(stackSlot);
+}
+
+void Procedure::deleteVariable(Variable* variable)
+{
+    m_variables.remove(variable);
 }
 
 void Procedure::deleteValue(Value* value)
 {
-    RELEASE_ASSERT(m_values[value->index()].get() == value);
-    m_valueIndexFreeList.append(value->index());
-    m_values[value->index()] = nullptr;
+    m_values.remove(value);
 }
 
 void Procedure::deleteOrphans()
@@ -311,26 +287,32 @@ const RegisterAtOffsetList& Procedure::calleeSaveRegisters() const
     return code().calleeSaveRegisters();
 }
 
-size_t Procedure::addStackSlotIndex()
+Value* Procedure::addValueImpl(Value* value)
 {
-    if (m_stackSlotIndexFreeList.isEmpty()) {
-        size_t index = m_stackSlots.size();
-        m_stackSlots.append(nullptr);
-        return index;
-    }
-    
-    return m_stackSlotIndexFreeList.takeLast();
+    return m_values.add(std::unique_ptr<Value>(value));
 }
 
-size_t Procedure::addValueIndex()
+void Procedure::setBlockOrderImpl(Vector<BasicBlock*>& blocks)
 {
-    if (m_valueIndexFreeList.isEmpty()) {
-        size_t index = m_values.size();
-        m_values.append(nullptr);
-        return index;
+    IndexSet<BasicBlock> blocksSet;
+    blocksSet.addAll(blocks);
+
+    for (BasicBlock* block : *this) {
+        if (!blocksSet.contains(block))
+            blocks.append(block);
     }
-    
-    return m_valueIndexFreeList.takeLast();
+
+    // Place blocks into this's block list by first leaking all of the blocks and then readopting
+    // them.
+    for (auto& entry : m_blocks)
+        entry.release();
+
+    m_blocks.resize(blocks.size());
+    for (unsigned i = 0; i < blocks.size(); ++i) {
+        BasicBlock* block = blocks[i];
+        block->m_index = i;
+        m_blocks[i] = std::unique_ptr<BasicBlock>(block);
+    }
 }
 
 } } // namespace JSC::B3

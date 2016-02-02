@@ -95,30 +95,13 @@ void allocateStack(Code& code)
 {
     PhaseScope phaseScope(code, "allocateStack");
 
-    // Perform an escape analysis over stack slots. An escaping stack slot is one that is locked or
-    // is explicitly escaped in the code.
-    IndexSet<StackSlot> escapingStackSlots;
-    for (StackSlot* slot : code.stackSlots()) {
-        if (slot->isLocked())
-            escapingStackSlots.add(slot);
-    }
-    for (BasicBlock* block : code) {
-        for (Inst& inst : *block) {
-            inst.forEachArg(
-                [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
-                    if (role == Arg::UseAddr && arg.isStack())
-                        escapingStackSlots.add(arg.stackSlot());
-                });
-        }
-    }
-
     // Allocate all of the escaped slots in order. This is kind of a crazy algorithm to allow for
     // the possibility of stack slots being assigned frame offsets before we even get here.
     ASSERT(!code.frameSize());
     Vector<StackSlot*> assignedEscapedStackSlots;
     Vector<StackSlot*> escapedStackSlotsWorklist;
     for (StackSlot* slot : code.stackSlots()) {
-        if (escapingStackSlots.contains(slot)) {
+        if (slot->isLocked()) {
             if (slot->offsetFromFP())
                 assignedEscapedStackSlots.append(slot);
             else
@@ -136,7 +119,7 @@ void allocateStack(Code& code)
         assignedEscapedStackSlots.append(slot);
     }
 
-    // Now we handle the anonymous slots.
+    // Now we handle the spill slots.
     StackSlotLiveness liveness(code);
     IndexMap<StackSlot, HashSet<StackSlot*>> interference(code.stackSlots().size());
     Vector<StackSlot*> slots;
@@ -154,7 +137,7 @@ void allocateStack(Code& code)
                     if (!arg.isStack())
                         return;
                     StackSlot* slot = arg.stackSlot();
-                    if (slot->kind() != StackSlotKind::Anonymous)
+                    if (slot->kind() != StackSlotKind::Spill)
                         return;
 
                     for (StackSlot* otherSlot : localCalc.live()) {
@@ -187,7 +170,7 @@ void allocateStack(Code& code)
                             return;
                         }
                         StackSlot* slot = arg.stackSlot();
-                        if (slot->kind() != StackSlotKind::Anonymous) {
+                        if (slot->kind() != StackSlotKind::Spill) {
                             ok = false;
                             return;
                         }
@@ -287,7 +270,7 @@ void allocateStack(Code& code)
                     case Arg::Stack: {
                         StackSlot* slot = arg.stackSlot();
                         if (Arg::isZDef(role)
-                            && slot->kind() == StackSlotKind::Anonymous
+                            && slot->kind() == StackSlotKind::Spill
                             && slot->byteSize() > Arg::bytes(width)) {
                             // Currently we only handle this simple case because it's the only one
                             // that arises: ZDef's are only 32-bit right now. So, when we hit these

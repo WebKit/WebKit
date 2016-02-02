@@ -58,10 +58,10 @@ private:
     friend class Procedure;
 
     // Use this form for CheckAdd, CheckSub, and CheckMul.
-    JS_EXPORT_PRIVATE CheckValue(unsigned index, Opcode, Origin, Value* left, Value* right);
+    JS_EXPORT_PRIVATE CheckValue(Opcode, Origin, Value* left, Value* right);
 
     // Use this form for Check.
-    JS_EXPORT_PRIVATE CheckValue(unsigned index, Opcode, Origin, Value* predicate);
+    JS_EXPORT_PRIVATE CheckValue(Opcode, Origin, Value* predicate);
 };
 
 } } // namespace JSC::B3

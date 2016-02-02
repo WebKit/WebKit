@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3StackSlotKind_h
-#define B3StackSlotKind_h
+#include "config.h"
+#include "B3VariableValue.h"
 
 #if ENABLE(B3_JIT)
 
+#include "B3Variable.h"
+
 namespace JSC { namespace B3 {
 
-enum class StackSlotKind : uint8_t {
-    // A locked stack slot needs to be kept disjoint from all others because we intend to escape
-    // it even if that's not obvious. This happens when the runtime takes the address of a stack
-    // slot.
-    Locked,
+VariableValue::~VariableValue()
+{
+}
 
-    // These stack slots behave like variables. Undefined behavior happens if you store less than
-    // the width of the slot.
-    Anonymous
+void VariableValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
+{
+    out.print(comma, pointerDump(m_variable));
+}
 
-    // FIXME: We should add a third mode, which means that the stack slot will be read asynchronously
-    // as with Locked, but never written to asynchronously. Then, Air could optimize spilling and
-    // filling by tracking whether the value had been stored to a read-only locked slot. If it had,
-    // then we can refill from that slot.
-    // https://bugs.webkit.org/show_bug.cgi?id=150587
-};
+Value* VariableValue::cloneImpl() const
+{
+    return new VariableValue(*this);
+}
+
+VariableValue::VariableValue(Opcode opcode, Origin origin, Variable* variable, Value* value)
+    : Value(CheckedOpcode, opcode, Void, origin, value)
+    , m_variable(variable)
+{
+    ASSERT(opcode == Set);
+}
+
+VariableValue::VariableValue(Opcode opcode, Origin origin, Variable* variable)
+    : Value(CheckedOpcode, opcode, variable->type(), origin)
+    , m_variable(variable)
+{
+    ASSERT(opcode == Get);
+}
 
 } } // namespace JSC::B3
 
-namespace WTF {
-
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::B3::StackSlotKind);
-
-} // namespace WTF
-
 #endif // ENABLE(B3_JIT)
-
-#endif // B3StackSlotKind_h
 

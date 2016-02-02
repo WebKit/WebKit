@@ -31,6 +31,7 @@
 #include "AirBasicBlock.h"
 #include "AirCode.h"
 #include "AirInstInlines.h"
+#include "AirStackSlot.h"
 #include "AirTmpInlines.h"
 #include "B3IndexMap.h"
 #include "B3IndexSet.h"

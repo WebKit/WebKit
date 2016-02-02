@@ -28,7 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3StackSlotKind.h"
+#include "AirStackSlotKind.h"
+#include "B3SparseCollection.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
@@ -46,6 +47,7 @@ public:
     unsigned byteSize() const { return m_byteSize; }
     StackSlotKind kind() const { return m_kind; }
     bool isLocked() const { return m_kind == StackSlotKind::Locked; }
+    bool isSpill() const { return m_kind == StackSlotKind::Spill; }
     unsigned index() const { return m_index; }
 
     void ensureSize(unsigned requestedSize)
@@ -79,14 +81,15 @@ public:
 
 private:
     friend class Code;
+    friend class SparseCollection<StackSlot>;
 
-    StackSlot(unsigned byteSize, unsigned index, StackSlotKind, B3::StackSlot*);
+    StackSlot(unsigned byteSize, StackSlotKind, B3::StackSlot*);
     
-    unsigned m_byteSize;
-    unsigned m_index;
-    intptr_t m_offsetFromFP;
-    StackSlotKind m_kind;
-    B3::StackSlot* m_b3Slot;
+    unsigned m_byteSize { 0 };
+    unsigned m_index { UINT_MAX };
+    intptr_t m_offsetFromFP { 0 };
+    StackSlotKind m_kind { StackSlotKind::Locked };
+    B3::StackSlot* m_b3Slot { nullptr };
 };
 
 class DeepStackSlotDump {

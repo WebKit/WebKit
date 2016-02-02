@@ -408,7 +408,7 @@ void testShuffleBroadcastAllRegs()
             shuffle.append(Tmp(GPRInfo::regT0), Tmp(reg), Arg::widthArg(Arg::Width32));
     }
 
-    StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), B3::StackSlotKind::Locked);
+    StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), StackSlotKind::Locked);
     for (unsigned i = 0; i < regs.size(); ++i)
         root->append(Move32, nullptr, Tmp(regs[i]), Arg::stack(slot, i * sizeof(int32_t)));
 
@@ -869,7 +869,7 @@ void testShuffleShiftAllRegs()
     for (unsigned i = 1; i < regs.size(); ++i)
         shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Arg::Width32));
 
-    StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), B3::StackSlotKind::Locked);
+    StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), StackSlotKind::Locked);
     for (unsigned i = 0; i < regs.size(); ++i)
         root->append(Move32, nullptr, Tmp(regs[i]), Arg::stack(slot, i * sizeof(int32_t)));
 
@@ -906,7 +906,7 @@ void testShuffleRotateAllRegs()
         shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Arg::Width32));
     shuffle.append(Tmp(regs.last()), Tmp(regs[0]), Arg::widthArg(Arg::Width32));
 
-    StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), B3::StackSlotKind::Locked);
+    StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), StackSlotKind::Locked);
     for (unsigned i = 0; i < regs.size(); ++i)
         root->append(Move32, nullptr, Tmp(regs[i]), Arg::stack(slot, i * sizeof(int32_t)));
 

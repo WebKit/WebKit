@@ -54,23 +54,18 @@ BasicBlock* Code::addBlock(double frequency)
 
 StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind, B3::StackSlot* b3Slot)
 {
-    std::unique_ptr<StackSlot> slot(new StackSlot(byteSize, m_stackSlots.size(), kind, b3Slot));
-    StackSlot* result = slot.get();
-    m_stackSlots.append(WTFMove(slot));
-    return result;
+    return m_stackSlots.addNew(byteSize, kind, b3Slot);
 }
 
 StackSlot* Code::addStackSlot(B3::StackSlot* b3Slot)
 {
-    return addStackSlot(b3Slot->byteSize(), b3Slot->kind(), b3Slot);
+    return addStackSlot(b3Slot->byteSize(), StackSlotKind::Locked, b3Slot);
 }
 
 Special* Code::addSpecial(std::unique_ptr<Special> special)
 {
-    Special* result = special.get();
-    result->m_code = this;
-    m_specials.append(WTFMove(special));
-    return result;
+    special->m_code = this;
+    return m_specials.add(WTFMove(special));
 }
 
 CCallSpecial* Code::cCallSpecial()

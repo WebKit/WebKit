@@ -49,8 +49,8 @@ Value* PatchpointValue::cloneImpl() const
     return new PatchpointValue(*this);
 }
 
-PatchpointValue::PatchpointValue(unsigned index, Type type, Origin origin)
-    : Base(index, CheckedOpcode, Patchpoint, type, origin)
+PatchpointValue::PatchpointValue(Type type, Origin origin)
+    : Base(CheckedOpcode, Patchpoint, type, origin)
     , effects(Effects::forCall())
     , resultConstraint(type == Void ? ValueRep::WarmAny : ValueRep::SomeRegister)
 {

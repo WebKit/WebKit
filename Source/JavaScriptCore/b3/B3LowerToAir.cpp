@@ -53,6 +53,8 @@
 #include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
 #include "B3ValueInlines.h"
+#include "B3Variable.h"
+#include "B3VariableValue.h"
 #include <wtf/ListDump.h>
 
 #if COMPILER(GCC) && ASSERT_DISABLED
@@ -102,6 +104,8 @@ public:
 
         for (B3::StackSlot* stack : m_procedure.stackSlots())
             m_stackToStack.add(stack, m_code.addStackSlot(stack));
+        for (Variable* variable : m_procedure.variables())
+            m_variableToTmp.add(variable, m_code.newTmp(Arg::typeForB3Type(variable->type())));
 
         // Figure out which blocks are not rare.
         m_fastWorklist.push(m_procedure[0]);
@@ -2225,6 +2229,21 @@ private:
             return;
         }
 
+        case Set: {
+            Value* value = m_value->child(0);
+            append(
+                relaxedMoveForType(value->type()), immOrTmp(value),
+                m_variableToTmp.get(m_value->as<VariableValue>()->variable()));
+            return;
+        }
+
+        case Get: {
+            append(
+                relaxedMoveForType(m_value->type()),
+                m_variableToTmp.get(m_value->as<VariableValue>()->variable()), tmp(m_value));
+            return;
+        }
+
         case Branch: {
             m_insts.last().append(createBranch(m_value->child(0)));
             return;
@@ -2316,6 +2335,7 @@ private:
     IndexMap<Value, Tmp> m_phiToTmp; // Each Phi gets its own Tmp.
     IndexMap<B3::BasicBlock, Air::BasicBlock*> m_blockToBlock;
     HashMap<B3::StackSlot*, Air::StackSlot*> m_stackToStack;
+    HashMap<Variable*, Tmp> m_variableToTmp;
 
     UseCounts m_useCounts;
     PhiChildren m_phiChildren;
