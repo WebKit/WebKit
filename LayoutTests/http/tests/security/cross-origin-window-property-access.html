@@ -3,18 +3,21 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
-<body>
+<body onload="runTest()">
 <script>
 description("Tests that using another window's property getter does not bypass cross-origin checks.");
 jsTestIsAsync = true;
 if (window.testRunner)
     testRunner.setCanOpenWindows();
 
-var crossOriginWindow = window.open("http://127.0.0.1:8000/security/resources/blank.html");
-crossOriginWindow.onload = function() {
-    shouldThrow('Object.getOwnPropertyDescriptor(window, "document").get.call(crossOriginWindow)');
-    shouldThrow('Object.getOwnPropertyDescriptor(window, "location").get.call(crossOriginWindow)');
-    finishJSTest();
+function runTest()
+{
+    var crossOriginWindow = window.open("http://127.0.0.1:8000/security/resources/blank.html");
+    crossOriginWindow.onload = function() {
+        shouldThrow('Object.getOwnPropertyDescriptor(window, "document").get.call(crossOriginWindow)');
+        shouldThrow('Object.getOwnPropertyDescriptor(window, "location").get.call(crossOriginWindow)');
+        finishJSTest();
+    }
 }
 </script>
 </body>
