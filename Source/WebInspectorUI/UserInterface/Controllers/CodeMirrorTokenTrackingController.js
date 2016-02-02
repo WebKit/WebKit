@@ -164,6 +164,8 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
         // Nothing to do if we're trying to highlight the same range.
         if (this._codeMirrorMarkedText && this._codeMirrorMarkedText.className === this._classNameForHighlightedRange) {
             var highlightedRange = this._codeMirrorMarkedText.find();
+            if (!highlightedRange)
+                return;
             if (WebInspector.compareCodeMirrorPositions(highlightedRange.from, range.start) === 0 &&
                 WebInspector.compareCodeMirrorPositions(highlightedRange.to, range.end) === 0)
                 return;

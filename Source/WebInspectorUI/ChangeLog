@@ -1,3 +1,15 @@
+2016-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: TypeError: undefined is not an object (evaluating 'highlightedRange.from')
+        https://bugs.webkit.org/show_bug.cgi?id=153685
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.highlightRange):
+        The highlighted range could have just gotten removed, in which case the
+        marker would return undefined. Just bail in such cases.
+
 2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Option+Up/Down should not move cursor outside of number
