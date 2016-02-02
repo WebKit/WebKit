@@ -12,19 +12,19 @@ layer at (0,0) size 800x124
           RenderBlock (anonymous) at (8,3) size 174x15
             RenderText at (0,0) size 174x15
               text run at (0,0) width 174: "[Step 2] Set cell height to 20px"
-      RenderTable {TABLE} at (0,46) size 43x62
-        RenderTableSection {TBODY} at (0,0) size 43x62
-          RenderTableRow {TR} at (0,2) size 43x28
-            RenderTableCell {TD} at (2,2) size 19x28 [border: (4px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,46) size 42x62
+        RenderTableSection {TBODY} at (0,0) size 42x62
+          RenderTableRow {TR} at (0,2) size 42x28
+            RenderTableCell {TD} at (2,2) size 18x28 [border: (4px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (5,5) size 8x18
                 text run at (5,5) width 8: "1"
-            RenderTableCell {TD} at (22,2) size 19x28 [border: (4px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (22,2) size 18x28 [border: (4px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (5,5) size 8x18
                 text run at (5,5) width 8: "2"
-          RenderTableRow {TR} at (0,32) size 43x28
-            RenderTableCell {TD} at (2,32) size 19x28 [border: (4px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,32) size 42x28
+            RenderTableCell {TD} at (2,32) size 18x28 [border: (4px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (5,5) size 8x18
                 text run at (5,5) width 8: "2"
-            RenderTableCell {TD} at (22,32) size 19x28 [border: (4px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (22,32) size 18x28 [border: (4px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (5,5) size 8x18
                 text run at (5,5) width 8: "2"

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 77x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x18
                 text run at (2,2) width 29: "10%"
-            RenderTableCell {TD} at (80,2) size 700x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=5]
+            RenderTableCell {TD} at (80,2) size 701x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=5]
               RenderText {#text} at (2,2) size 93x18
                 text run at (2,2) width 93: "90% colspan 5"
           RenderTableRow {TR} at (0,26) size 782x22
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (236,26) size 389x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=3]
               RenderText {#text} at (2,2) size 93x18
                 text run at (2,2) width 93: "50% colspan 3"
-            RenderTableCell {TD} at (626,26) size 154x22 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (626,26) size 155x22 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x18
                 text run at (2,2) width 29: "20%"
           RenderTableRow {TR} at (0,50) size 782x22
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (315,50) size 310x22 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=2]
               RenderText {#text} at (2,2) size 93x18
                 text run at (2,2) width 93: "40% colspan 2"
-            RenderTableCell {TD} at (626,50) size 154x22 [border: (1px inset #808080)] [r=2 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (626,50) size 155x22 [border: (1px inset #808080)] [r=2 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x18
                 text run at (2,2) width 29: "20%"
           RenderTableRow {TR} at (0,74) size 782x22
@@ -39,13 +39,13 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (547,74) size 78x22 [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x18
                 text run at (2,2) width 29: "10%"
-            RenderTableCell {TD} at (626,74) size 154x22 [border: (1px inset #808080)] [r=3 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (626,74) size 155x22 [border: (1px inset #808080)] [r=3 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x18
                 text run at (2,2) width 29: "20%"
           RenderTableRow {TR} at (0,98) size 782x22
             RenderTableCell {TD} at (2,98) size 623x22 [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=5]
               RenderText {#text} at (2,2) size 93x18
                 text run at (2,2) width 93: "80% colspan 5"
-            RenderTableCell {TD} at (626,98) size 154x22 [border: (1px inset #808080)] [r=4 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (626,98) size 155x22 [border: (1px inset #808080)] [r=4 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x18
                 text run at (2,2) width 29: "20%"

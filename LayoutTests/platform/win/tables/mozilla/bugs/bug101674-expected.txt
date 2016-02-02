@@ -6,7 +6,7 @@ layer at (0,0) size 785x1582
       RenderTable {TABLE} at (0,0) size 769x75 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x73
           RenderTableRow {TR} at (0,2) size 767x69
-            RenderTableCell {TD} at (2,2) size 445x69 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 444x69 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 88x65
               RenderImage {IMG} at (90,2) size 88x65
               RenderImage {IMG} at (178,2) size 88x65
@@ -18,7 +18,7 @@ layer at (0,0) size 785x1582
       RenderTable {TABLE} at (0,75) size 769x335 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x333
           RenderTableRow {TR} at (0,2) size 767x329
-            RenderTableCell {TD} at (2,2) size 93x329 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 92x329 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 88x65
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (2,67) size 88x65
@@ -34,7 +34,7 @@ layer at (0,0) size 785x1582
       RenderTable {TABLE} at (0,410) size 769x335 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x333
           RenderTableRow {TR} at (0,2) size 767x329
-            RenderTableCell {TD} at (2,2) size 93x329 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 92x329 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 88x65
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (2,67) size 88x65
@@ -50,7 +50,7 @@ layer at (0,0) size 785x1582
       RenderTable {TABLE} at (0,745) size 769x79 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x77
           RenderTableRow {TR} at (0,2) size 767x73
-            RenderTableCell {TD} at (2,2) size 597x73 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 596x73 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,53) size 27x18
                 text run at (2,53) width 27: "One"
               RenderImage {IMG} at (29,2) size 88x65
@@ -72,7 +72,7 @@ layer at (0,0) size 785x1582
       RenderTable {TABLE} at (0,824) size 769x369 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x367
           RenderTableRow {TR} at (0,2) size 767x363
-            RenderTableCell {TD} at (2,2) size 130x363 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 129x363 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x18
                 text run at (2,2) width 27: "One"
               RenderImage {IMG} at (2,20) size 88x65
@@ -94,7 +94,7 @@ layer at (0,0) size 785x1582
       RenderTable {TABLE} at (0,1193) size 769x373 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x371
           RenderTableRow {TR} at (0,2) size 767x367
-            RenderTableCell {TD} at (2,2) size 138x367 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 137x367 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x87
                 text run at (2,2) width 27: "One"
                 text run at (2,71) width 12: "A"

@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
                   text run at (155,6) width 62: " - updated "
                   text run at (217,6) width 120: "12:15 PM ET Oct 24"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (630,0) size 45x59 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 41x55
-                RenderTableSection {TBODY} at (0,0) size 41x55
-                  RenderTableRow {TR} at (0,0) size 41x55
-                    RenderTableCell {TD} at (0,0) size 41x55 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (631,0) size 44x59 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 40x55
+                RenderTableSection {TBODY} at (0,0) size 40x55
+                  RenderTableRow {TR} at (0,0) size 40x55
+                    RenderTableCell {TD} at (0,0) size 40x55 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 16x16
                       RenderInline {FONT} at (0,0) size 34x33
                         RenderInline {A} at (0,0) size 34x33 [color=#0000EE]
@@ -49,10 +49,10 @@ layer at (0,0) size 800x600
                   text run at (217,6) width 120: "12:15 PM ET Oct 24"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (506,0) size 169x26 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 110x22
-                RenderTableSection {TBODY} at (0,0) size 110x22
-                  RenderTableRow {TR} at (0,0) size 110x22
-                    RenderTableCell {TD} at (0,0) size 110x22 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 109x22
+                RenderTableSection {TBODY} at (0,0) size 109x22
+                  RenderTableRow {TR} at (0,0) size 109x22
+                    RenderTableCell {TD} at (0,0) size 109x22 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 16x16
                       RenderInline {FONT} at (0,0) size 84x11
                         RenderInline {A} at (0,0) size 84x11 [color=#0000EE]

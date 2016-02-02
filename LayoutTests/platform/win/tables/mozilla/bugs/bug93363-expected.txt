@@ -17,28 +17,28 @@ layer at (0,0) size 800x600
                         text run at (2,38) width 564: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text."
                         text run at (2,56) width 564: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text."
                         text run at (2,74) width 280: "this is a bunch of text. this is a bunch of text."
-            RenderTableCell {TD} at (603,2) size 171x248 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 167x244 [border: (4px solid #008000)]
-                RenderTableSection {TBODY} at (4,4) size 159x236
-                  RenderTableRow {TR} at (0,2) size 159x232
-                    RenderTableCell {TD} at (2,2) size 155x232 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                      RenderBlock (anonymous) at (2,2) size 151x18
+            RenderTableCell {TD} at (604,2) size 170x248 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 166x244 [border: (4px solid #008000)]
+                RenderTableSection {TBODY} at (4,4) size 158x236
+                  RenderTableRow {TR} at (0,2) size 158x232
+                    RenderTableCell {TD} at (2,2) size 154x232 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock (anonymous) at (2,2) size 150x18
                         RenderText {#text} at (0,0) size 118x18
                           text run at (0,0) width 118: "this cell is nowrap."
-                      RenderTable {TABLE} at (2,20) size 151x210 [border: (4px solid #FF0000)]
-                        RenderTableSection {TBODY} at (4,4) size 143x202
-                          RenderTableRow {TR} at (0,2) size 143x198
-                            RenderTableCell {TD} at (2,2) size 139x198 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
-                              RenderBlock (anonymous) at (2,2) size 135x54
+                      RenderTable {TABLE} at (2,20) size 150x210 [border: (4px solid #FF0000)]
+                        RenderTableSection {TBODY} at (4,4) size 142x202
+                          RenderTableRow {TR} at (0,2) size 142x198
+                            RenderTableCell {TD} at (2,2) size 138x198 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+                              RenderBlock (anonymous) at (2,2) size 134x54
                                 RenderText {#text} at (0,0) size 133x54
                                   text run at (0,0) width 133: "this text is in a cell of"
                                   text run at (0,18) width 126: "a table, contained in"
                                   text run at (0,36) width 7: "a"
-                              RenderBlock {P} at (2,72) size 135x18
+                              RenderBlock {P} at (2,72) size 134x18
                                 RenderInline {B} at (0,0) size 134x18
                                   RenderText {#text} at (0,0) size 134x18
                                     text run at (0,0) width 134: "cell with NOWRAP"
-                              RenderBlock (anonymous) at (2,106) size 135x90
+                              RenderBlock (anonymous) at (2,106) size 134x90
                                 RenderText {#text} at (0,0) size 133x90
                                   text run at (0,0) width 119: "but this text should"
                                   text run at (0,18) width 41: "wrap! "

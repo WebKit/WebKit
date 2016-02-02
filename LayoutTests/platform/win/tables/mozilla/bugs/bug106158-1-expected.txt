@@ -17,10 +17,10 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 436x68
                   RenderTableRow {TR} at (0,2) size 436x64
                     RenderTableCell {TD} at (2,2) size 432x64 [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (1,1) size 317x62 [border: (1px solid #000000)]
-                        RenderTableSection {TBODY} at (1,1) size 315x60
-                          RenderTableRow {TR} at (0,2) size 315x56
-                            RenderTableCell {TD} at (2,2) size 311x56 [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 316x62 [border: (1px solid #000000)]
+                        RenderTableSection {TBODY} at (1,1) size 314x60
+                          RenderTableRow {TR} at (0,2) size 314x56
+                            RenderTableCell {TD} at (2,2) size 310x56 [r=0 c=0 rs=1 cs=1]
                               RenderImage {IMG} at (1,6) size 9x9
                               RenderText {#text} at (10,1) size 132x18
                                 text run at (10,1) width 132: " Shop Till You Drop"
