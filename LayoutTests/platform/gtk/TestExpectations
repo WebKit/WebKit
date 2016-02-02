@@ -116,6 +116,10 @@ Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass 
 # a caret in editable document even when none was requested programatically.
 editing/selection/designmode-no-caret.html [ Skip ]
 
+# Slightly lighter green second frame
+webkit.org/b/153798 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure ]
+webkit.org/b/153798 fast/images/gif-loop-count.html [ ImageOnlyFailure ]
+
 # These tests require loading a PDF as an image, which we do not support (via Chromium).
 fast/images/pdf-as-image-landscape.html [ WontFix Failure ]
 fast/replaced/pdf-as-image.html [ WontFix Failure ]
