@@ -36,6 +36,7 @@
 #include "Executable.h"
 #include "GetterSetter.h"
 #include "IndexingHeaderInlines.h"
+#include "JSBoundSlotBaseFunction.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Lookup.h"
@@ -2530,6 +2531,17 @@ Butterfly* JSObject::growOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize
     return Butterfly::createOrGrowPropertyStorage(m_butterfly.get(this), vm, this, structure(vm), oldSize, newSize);
 }
 
+static JSBoundSlotBaseFunction* getBoundSlotBaseFunctionForGetterSetter(ExecState* exec, PropertyName propertyName, JSC::PropertySlot& slot, CustomGetterSetter* getterSetter, JSBoundSlotBaseFunction::Type type)
+{
+    auto key = std::make_pair(getterSetter, (int)type);
+    JSBoundSlotBaseFunction* boundSlotBase = exec->vm().customGetterSetterFunctionMap.get(key);
+    if (!boundSlotBase) {
+        boundSlotBase = JSBoundSlotBaseFunction::create(exec->vm(), exec->lexicalGlobalObject(), slot.slotBase(), getterSetter, type, propertyName.publicName());
+        exec->vm().customGetterSetterFunctionMap.set(key, boundSlotBase);
+    }
+    return boundSlotBase;
+}
+
 bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSC::PropertySlot slot(this);
@@ -2540,9 +2552,20 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
         return false;
     if (slot.isAccessor())
         descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
-    else if (slot.attributes() & CustomAccessor)
+    else if (slot.attributes() & CustomAccessor) {
         descriptor.setCustomDescriptor(slot.attributes());
-    else
+
+        JSValue maybeGetterSetter = getDirect(exec->vm(), propertyName);
+        // FIXME: This currently does not work for properties that are on the instance and not reified.
+        if (maybeGetterSetter) {
+            auto* getterSetter = jsCast<CustomGetterSetter*>(maybeGetterSetter);
+            ASSERT(getterSetter);
+            if (getterSetter->getter())
+                descriptor.setGetter(getBoundSlotBaseFunctionForGetterSetter(exec, propertyName, slot, getterSetter, JSBoundSlotBaseFunction::Type::Getter));
+            if (getterSetter->setter())
+                descriptor.setSetter(getBoundSlotBaseFunctionForGetterSetter(exec, propertyName, slot, getterSetter, JSBoundSlotBaseFunction::Type::Setter));
+        }
+    } else
         descriptor.setDescriptor(slot.getValue(exec, propertyName), slot.attributes());
     return true;
 }

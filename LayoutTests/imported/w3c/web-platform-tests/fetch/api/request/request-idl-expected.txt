@@ -4,20 +4,20 @@ PASS Request interface object length
 PASS Request interface object name 
 PASS Request interface: existence and properties of interface prototype object 
 PASS Request interface: existence and properties of interface prototype object's "constructor" property 
-FAIL Request interface: attribute method assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute url assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute headers assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute destination assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute referrer assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute referrerPolicy assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute mode assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute credentials assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute cache assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute redirect assert_equals: getter must be Function expected "function" but got "undefined"
-FAIL Request interface: attribute integrity assert_equals: getter must be Function expected "function" but got "undefined"
+PASS Request interface: attribute method 
+PASS Request interface: attribute url 
+PASS Request interface: attribute headers 
+PASS Request interface: attribute type 
+PASS Request interface: attribute destination 
+PASS Request interface: attribute referrer 
+PASS Request interface: attribute referrerPolicy 
+PASS Request interface: attribute mode 
+PASS Request interface: attribute credentials 
+PASS Request interface: attribute cache 
+PASS Request interface: attribute redirect 
+PASS Request interface: attribute integrity 
 PASS Request interface: operation clone() 
-FAIL Request interface: attribute bodyUsed assert_equals: getter must be Function expected "function" but got "undefined"
+PASS Request interface: attribute bodyUsed 
 FAIL Request interface: operation arrayBuffer() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
                 memberHolderObject[member.n..." did not throw
 FAIL Request interface: operation blob() assert_throws: calling operation with this = null didn't throw TypeError function "function () {

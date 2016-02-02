@@ -1,5 +1,19 @@
 2016-02-01  Chris Dumez  <cdumez@apple.com>
 
+        Native Bindings Descriptors are Incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=140575
+        <rdar://problem/19506502>
+
+        Reviewed by Oliver Hunt.
+
+        Rebaseline several W3C tests now that a lot more checks are passing.
+
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-02-01  Chris Dumez  <cdumez@apple.com>
+
         Move properties that use custom bindings to the prototype
         https://bugs.webkit.org/show_bug.cgi?id=153735
 

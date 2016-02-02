@@ -1,3 +1,27 @@
+2016-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Native Bindings Descriptors are Incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=140575
+        <rdar://problem/19506502>
+
+        Reviewed by Oliver Hunt.
+
+        Add test coverage.
+
+        * http/tests/security/cross-origin-window-property-access-expected.txt: Added.
+        * http/tests/security/cross-origin-window-property-access.html: Added.
+        * inspector/runtime/getProperties-expected.txt:
+        * js/dom/native-bindings-descriptors-expected.txt: Added.
+        * js/dom/native-bindings-descriptors.html: Added.
+        * js/dom/native-bindings-descriptors2-expected.txt: Added.
+        * js/dom/native-bindings-descriptors2.html: Added.
+        * js/dom/native-bindings-descriptors3-expected.txt: Added.
+        * js/dom/native-bindings-descriptors3.html: Added.
+        * js/dom/native-bindings-descriptors4-expected.txt: Added.
+        * js/dom/native-bindings-descriptors4.html: Added.
+        * js/dom/native-bindings-descriptors5-expected.txt: Added.
+        * js/dom/native-bindings-descriptors5.html: Added.
+
 2016-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         [GTK] [EFL] [AppleWin] Layout Test fast/shadow-dom/slot-removal-crash-2.html timeouts

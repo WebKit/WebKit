@@ -653,6 +653,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSArrayBufferView.cpp
     runtime/JSArrayIterator.cpp
     runtime/JSBoundFunction.cpp
+    runtime/JSBoundSlotBaseFunction.cpp
     runtime/JSCJSValue.cpp
     runtime/JSCallee.cpp
     runtime/JSCell.cpp

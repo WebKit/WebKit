@@ -1,3 +1,46 @@
+2016-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Native Bindings Descriptors are Incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=140575
+        <rdar://problem/19506502>
+
+        Reviewed by Oliver Hunt.
+
+        This patch is based on initial work by Joe Pecoraro and Matthew Mirman.
+
+        This patch was initially rolled out for breaking chromeexperiments.com,
+        presumably because our IDL attributes were not marked as [configurable]
+        at the time. However, since r190104, our IDL attributes are now
+        configurable. Based on local testing, chromeexperiments.com seems to be
+        working fine now.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/InjectedScriptSource.js:
+        (endsWith):
+        (InjectedScript.prototype.processProperties):
+        * runtime/JSBoundSlotBaseFunction.cpp: Added.
+        (JSC::boundSlotBaseFunctionCall):
+        (JSC::JSBoundSlotBaseFunction::JSBoundSlotBaseFunction):
+        (JSC::JSBoundSlotBaseFunction::create):
+        (JSC::JSBoundSlotBaseFunction::visitChildren):
+        (JSC::JSBoundSlotBaseFunction::finishCreation):
+        * runtime/JSBoundSlotBaseFunction.h: Added.
+        (JSC::JSBoundSlotBaseFunction::createStructure):
+        (JSC::JSBoundSlotBaseFunction::boundSlotBase):
+        (JSC::JSBoundSlotBaseFunction::customGetterSetter):
+        (JSC::JSBoundSlotBaseFunction::isSetter):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::boundSlotBaseFunctionStructure):
+        * runtime/JSObject.cpp:
+        (JSC::getBoundSlotBaseFunctionForGetterSetter):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: High Level Memory Overview Instrument

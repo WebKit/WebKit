@@ -765,6 +765,9 @@
     <ClCompile Include="..\runtime\JSBoundFunction.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSBoundSlotBaseFunction.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSCallee.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2984,6 +2987,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSBoundFunction.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSBoundSlotBaseFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSCallee.h">

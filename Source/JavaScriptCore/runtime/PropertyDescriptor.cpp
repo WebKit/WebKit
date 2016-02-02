@@ -232,7 +232,7 @@ unsigned PropertyDescriptor::attributesOverridingCurrent(const PropertyDescripto
         overrideMask |= DontDelete;
     if (isAccessorDescriptor())
         overrideMask |= Accessor;
-    return (m_attributes & overrideMask) | (currentAttributes & ~overrideMask);
+    return (m_attributes & overrideMask) | (currentAttributes & ~overrideMask & ~CustomAccessor);
 }
 
 }

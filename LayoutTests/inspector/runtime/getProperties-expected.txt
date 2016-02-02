@@ -21,8 +21,8 @@ Properties:
   __proto__ function function () {
     [native code]
 }
-  arguments
-  caller
+  arguments object TypeError: Type error
+  caller object TypeError: Type error
   length number 0
   name string Number
 Internal properties:

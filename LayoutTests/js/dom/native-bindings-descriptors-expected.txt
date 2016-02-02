@@ -1,0 +1,45 @@
+CONSOLE MESSAGE: line 1: [object Object]
+CONSOLE MESSAGE: line 1: function nodeType() {
+    [native code]
+}
+document.title
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title') is not Object.getOwnPropertyDescriptor(Document.prototype, 'title')
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get is Object.getOwnPropertyDescriptor(Document.prototype, 'title').get
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set is Object.getOwnPropertyDescriptor(Document.prototype, 'title').set
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.toString() is "function title() {\n    [native code]\n}"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.length is 0
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.toString() is "function title() {\n    [native code]\n}"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.length is 1
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document) is document.title
+PASS document.title is "old title"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document) is "old title"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call() threw exception TypeError: The Document.title getter can only be used on instances of Document.
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(null) threw exception TypeError: The Document.title getter can only be used on instances of Document.
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document.documentElement) threw exception TypeError: The Document.title getter can only be used on instances of Document.
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.call(document, 'new title') is undefined.
+PASS document.title is "new title"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document) is "new title"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.call() threw exception TypeError: The Document.title setter can only be used on instances of Document.
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.call(null) threw exception TypeError: The Document.title setter can only be used on instances of Document.
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.call(document.documentElement) threw exception TypeError: The Document.title setter can only be used on instances of Document.
+
+document.readyState
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState') is not Object.getOwnPropertyDescriptor(Document.prototype, 'readyState')
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get is Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set is Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.toString() is "function readyState() {\n    [native code]\n}"
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.length is 0
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.call(document) is document.readyState
+PASS Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set is undefined.
+
+Node.nodeType
+PASS console.log(node_type) did not throw exception.
+PASS console.log(getter) did not throw exception.
+PASS node_type.get is defined.
+PASS node_type.get.call(document.body) is 1
+PASS node_type.enumerable is true
+PASS getter === otherGetter is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

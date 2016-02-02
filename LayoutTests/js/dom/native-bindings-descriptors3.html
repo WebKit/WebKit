@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+var descriptor = Object.getOwnPropertyDescriptor(document.body.__proto__.__proto__.__proto__, "id")
+var originalGetter = descriptor.get;
+var originalSetter = descriptor.set;
+
+var getterCallCount = 0;
+var setterCallCount = 0;
+
+shouldBe('originalGetter.call(document.body)', 'document.body.id');
+var countingGet = function () { getterCallCount++; return originalGetter.call(this); };
+var countingSet = function (s) { setterCallCount++; return originalSetter.call(this, s); };
+descriptor.get = countingGet;
+descriptor.set = countingSet;
+
+Object.defineProperty(document.body.__proto__.__proto__.__proto__, 'id', descriptor);
+
+debug('');
+shouldBe('getterCallCount', '0');
+shouldBe('setterCallCount', '0');
+
+debug('');
+debug('* Calling Getter');
+shouldBeEqualToString('document.body.id', '');
+
+shouldBe('getterCallCount', '1');
+shouldBe('setterCallCount', '0');
+
+debug('');
+debug('* Calling Setter');
+evalAndLog('document.body.id = "newid";');
+
+shouldBe('getterCallCount', '1');
+shouldBe('setterCallCount', '1');
+
+debug('');
+shouldBeEqualToString('document.body.id', 'newid');
+
+shouldBe('Object.getOwnPropertyDescriptor(document.body.__proto__.__proto__.__proto__, "id").set', 'countingSet');
+shouldBe('Object.getOwnPropertyDescriptor(document.body.__proto__.__proto__.__proto__, "id").get', 'countingGet');
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>
