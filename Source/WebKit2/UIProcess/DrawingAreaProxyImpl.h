@@ -53,6 +53,8 @@ public:
     void destroyNativeSurfaceHandleForCompositing();
 #endif
 
+    virtual void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
+
 private:
     // DrawingAreaProxy
     virtual void sizeDidChange() override;

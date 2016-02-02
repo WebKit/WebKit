@@ -322,6 +322,16 @@ void DrawingAreaProxyImpl::destroyNativeSurfaceHandleForCompositing()
 }
 #endif
 
+void DrawingAreaProxyImpl::dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)> callbackFunction)
+{
+    if (!m_webPageProxy.isValid()) {
+        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
+    RunLoop::main().dispatch([callbackFunction] { callbackFunction(CallbackBase::Error::None); });
+}
+
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 {
     ASSERT(isInAcceleratedCompositingMode());
