@@ -270,8 +270,5 @@ storage/indexeddb/modern/transaction-scheduler-6.html [ Skip ]
 storage/indexeddb/prefetch-invalidation.html [ Skip ]
 storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 
-# SQLite backend tests that crash or ASSERT
-storage/indexeddb/dont-wedge.html [ Skip ]
-
 ### END OF (3) IndexedDB failures with SQLite
 ########################################

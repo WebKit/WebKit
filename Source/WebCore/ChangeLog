@@ -1,3 +1,21 @@
+2016-02-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/dont-wedge.html sometimes ASSERTs.
+        https://bugs.webkit.org/show_bug.cgi?id=153790
+
+        Reviewed by Tim Horton.
+
+        No new tests (Failing test now unskipped).
+
+        This test uncovered an unhandled race where the main thread tried to perform an OpenDB operation 
+        multiple times while it was already in-progress on the server thread.
+
+        There was already a flag meant to cover this race, and it just needed to be applied to one more site.
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore):
+
 2016-02-02  Daniel Bates  <dabates@apple.com>
 
         CSP: Support checking content security policy without a script execution context

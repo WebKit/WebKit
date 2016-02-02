@@ -99,14 +99,17 @@ bool UniqueIDBDatabase::isVersionChangeInProgress()
 
 void UniqueIDBDatabase::performCurrentOpenOperation()
 {
-    LOG(IndexedDB, "(main) UniqueIDBDatabase::performCurrentOpenOperation");
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::performCurrentOpenOperation (%p)", this);
 
     ASSERT(m_currentOpenDBRequest);
     ASSERT(m_currentOpenDBRequest->isOpenRequest());
 
     if (!m_databaseInfo) {
-        m_isOpeningBackingStore = true;
-        m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::openBackingStore, m_identifier));
+        if (!m_isOpeningBackingStore) {
+            m_isOpeningBackingStore = true;
+            m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::openBackingStore, m_identifier));
+        }
+
         return;
     }
 
@@ -444,7 +447,7 @@ void UniqueIDBDatabase::addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnectio
 void UniqueIDBDatabase::openBackingStore(const IDBDatabaseIdentifier& identifier)
 {
     ASSERT(!isMainThread());
-    LOG(IndexedDB, "(db) UniqueIDBDatabase::openBackingStore");
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::openBackingStore (%p)", this);
 
     ASSERT(!m_backingStore);
     m_backingStore = m_server.createBackingStore(identifier);
