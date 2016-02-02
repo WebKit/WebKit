@@ -1,3 +1,28 @@
+2016-02-02  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile trivial self-loops
+        https://bugs.webkit.org/show_bug.cgi?id=153802
+        rdar://problem/24465632
+
+        Reviewed by Michael Saboff.
+
+        Tail-duplicating a self-loop would mean doing a kind of loop unrolling. It wouldn't be
+        profitable even if it did work. It turns out that it doesn't work, because we edit the target
+        block before reading the source block, which breaks if the target and source block are the
+        same.
+
+        This disables tail duplication of self-loops, adds a test, and adds better validation for this
+        issue.
+
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::resetReachability):
+        * b3/testb3.cpp:
+        (JSC::B3::testComputeDivisionMagic):
+        (JSC::B3::testTrivialInfiniteLoop):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+
 2016-02-02  Saam barati  <sbarati@apple.com>
 
         [ES6] bound functions .name property should be "bound " + the target function's name

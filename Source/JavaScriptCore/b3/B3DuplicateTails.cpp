@@ -105,6 +105,11 @@ public:
             if (!candidates.contains(tail))
                 continue;
 
+            // Don't tail duplicate a trivial self-loop, because the code below can't handle block and
+            // tail being the same block.
+            if (block == tail)
+                continue;
+
             // We're about to change 'block'. Make sure that nobody duplicates block after this
             // point.
             candidates.remove(block);

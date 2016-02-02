@@ -10026,6 +10026,17 @@ void testComputeDivisionMagic(T value, T magicMultiplier, unsigned shift)
     CHECK(magic.shift == shift);
 }
 
+void testTrivialInfiniteLoop()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loop = proc.addBlock();
+    root->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(loop));
+    loop->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(loop));
+
+    compile(proc);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -11426,6 +11437,8 @@ void run(const char* filter)
     RUN(testCheckMul64SShr());
 
     RUN(testComputeDivisionMagic<int32_t>(2, -2147483647, 0));
+
+    RUN(testTrivialInfiniteLoop());
 
     if (tasks.isEmpty())
         usage();
