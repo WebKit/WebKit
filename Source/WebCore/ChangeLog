@@ -1,3 +1,40 @@
+2016-02-01  Antti Koivisto  <antti@apple.com>
+
+        Tab suspension code shouldn't use page cache cacheability logic
+        https://bugs.webkit.org/show_bug.cgi?id=153680
+
+        Reviewed by Andreas Kling.
+
+        Most of PageCache::canCache() is unnecessary for tab suspension.
+
+        Also improve robustness and introduce 1 minute delay before suspending.
+
+        * page/Page.cpp:
+        (WebCore::Page::setPageActivityState):
+        (WebCore::Page::setIsVisible):
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::setIsPrerender):
+        (WebCore::Page::canTabSuspend):
+
+            Include visibility test here.
+
+            Instead of calling PageCache::canCache() just check for each frame
+            - that the document is loaded
+            - that active DOM objects allow suspension
+
+        (WebCore::Page::setIsTabSuspended):
+        (WebCore::Page::setTabSuspensionEnabled):
+        (WebCore::Page::updateTabSuspensionState):
+
+            Refactor for robustness.
+
+        (WebCore::Page::tabSuspensionTimerFired):
+
+            Call canTabSuspend, the result might have changed.
+
+        (WebCore::Page::scheduleTabSuspension): Deleted.
+        * page/Page.h:
+
 2016-02-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Introduce BytecodeIntrinsic constant rep like @undefined

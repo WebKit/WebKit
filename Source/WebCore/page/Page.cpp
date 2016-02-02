@@ -1305,10 +1305,7 @@ void Page::setPageActivityState(PageActivityState::Flags activityState)
 {
     chrome().client().setPageActivityState(activityState);
     
-    if (activityState == PageActivityState::NoFlags && !isVisible())
-        scheduleTabSuspension(true);
-    else
-        scheduleTabSuspension(false);
+    updateTabSuspensionState();
 }
 
 void Page::setIsVisible(bool isVisible)
@@ -1361,7 +1358,7 @@ void Page::setIsVisibleInternal(bool isVisible)
             view->hide();
     }
 
-    scheduleTabSuspension(!isVisible);
+    updateTabSuspensionState();
 }
 
 void Page::setIsPrerender()
@@ -1867,17 +1864,29 @@ bool Page::canTabSuspend()
         return false;
     if (m_isPrerender)
         return false;
+    if (isVisible())
+        return false;
     if (m_pageThrottler.activityState() != PageActivityState::NoFlags)
         return false;
-    // FIXME: PageCache::canCache does a bunch of checks that are not needed for the tab suspension case. There should be a specific check.
-    if (!PageCache::singleton().canCache(*this))
-        return false;
+
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (frame->loader().state() != FrameStateComplete)
+            return false;
+        if (frame->loader().isLoading())
+            return false;
+        if (!frame->document() || !frame->document()->canSuspendActiveDOMObjectsForDocumentSuspension(nullptr))
+            return false;
+    }
 
     return true;
 }
 
 void Page::setIsTabSuspended(bool shouldSuspend)
 {
+    if (m_isTabSuspended == shouldSuspend)
+        return;
+    m_isTabSuspended = shouldSuspend;
+
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document()) {
             if (shouldSuspend)
@@ -1893,26 +1902,20 @@ void Page::setTabSuspensionEnabled(bool enable)
     s_tabSuspensionIsEnabled = enable;
 }
 
-void Page::scheduleTabSuspension(bool shouldSuspend)
+void Page::updateTabSuspensionState()
 {
-    if (m_shouldTabSuspend == shouldSuspend)
+    if (canTabSuspend()) {
+        const auto tabSuspensionDelay = std::chrono::minutes(1);
+        m_tabSuspensionTimer.startOneShot(tabSuspensionDelay);
         return;
-    
-    if (shouldSuspend && canTabSuspend()) {
-        m_shouldTabSuspend = shouldSuspend;
-        m_tabSuspensionTimer.startOneShot(0);
-    } else {
-        m_tabSuspensionTimer.stop();
-        if (!shouldSuspend) {
-            m_shouldTabSuspend = shouldSuspend;
-            setIsTabSuspended(false);
-        }
     }
+    m_tabSuspensionTimer.stop();
+    setIsTabSuspended(false);
 }
 
 void Page::tabSuspensionTimerFired()
 {
-    setIsTabSuspended(true);
+    setIsTabSuspended(canTabSuspend());
 }
 
 } // namespace WebCore
