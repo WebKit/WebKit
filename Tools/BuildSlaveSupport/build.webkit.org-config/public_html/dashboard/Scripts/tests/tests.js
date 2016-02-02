@@ -31,11 +31,11 @@ module("Trac", {
 
 test("_loaded", function()
 {
+    this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
     var client = new XMLHttpRequest();
     client.open('GET', 'test-fixture-trac-rss.xml', false);
-    client.onreadystatechange = function () {
-        if (client.readyState === client.DONE)
-            this.trac._loaded(client.responseXML);
+    client.onload = function () {
+        this.trac._loaded(client.responseXML);
     }.bind(this);
     client.send();
     var commits = this.trac.recordedCommits;
@@ -45,6 +45,24 @@ test("_loaded", function()
         var secondRevision = commits[i].revisionNumber;
         strictEqual(secondRevision - firstRevision, 1, "commits should be in order " + firstRevision + ", " + secondRevision);
     }
+});
+
+test("parse gitBranches", function()
+{
+    var client = new XMLHttpRequest();
+    client.open("GET", "test-fixture-git-trac-rss.xml", false);
+    client.onload = function () {
+        this.trac._loaded(client.responseXML);
+    }.bind(this);
+    client.send();
+    var commits = this.trac.recordedCommits;
+    strictEqual(commits.length, 3, "should have 3 commits");
+    strictEqual(commits[0].branches.length, 0, "should have no branches");
+    strictEqual(commits[1].branches.length, 1, "should have one branch");
+    strictEqual(commits[1].branches.includes("master"), true, "should contain branch master");
+    strictEqual(commits[2].branches.length, 2, "should have two branches");
+    strictEqual(commits[2].branches.includes("master"), true, "should contain branch master");
+    strictEqual(commits[2].branches.includes("someOtherBranch"), true, "should contain branch someOtherBranch");
 });
 
 test("_parseRevisionFromURL", function()
@@ -57,6 +75,7 @@ test("_parseRevisionFromURL", function()
 module("BuildBotQueueView", {
     setup: function() {
         this.trac = new MockTrac();
+        this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
         this.queue = new MockBuildbotQueue();
         this.trunkBranch = {
             name: "trunk",

@@ -1,3 +1,21 @@
+2016-02-01  Jason Marcell  <jmarcell@apple.com>
+
+        Add code to parse the git branches out of the Trac RSS feed
+        https://bugs.webkit.org/show_bug.cgi?id=153624
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        (Trac.prototype.commitsOnBranch): Update filter to check for Git branches.
+        (Trac.prototype._convertCommitInfoElementToObject): Parse Git branches from the Trac RSS feed. Also changed "branchName" to
+        "branches" and updated the code to work with an array instead of a string.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockTrac.js:
+        (MockTrac): Refactored example commits out into a constant, MockTrac.EXAMPLE_TRAC_COMMITS.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/test-fixture-git-trac-rss.xml: Added. Test
+        fixture that contains XML with a Git branch.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/tests.js: Added unit test to test parsing Git
+        branches from Trac RSS feed. Also updated code to work with the new MockTrac.EXAMPLE_TRAC_COMMITS constant.
+
 2016-02-01  Brady Eidson  <beidson@apple.com>
 
         Add command line flag to DRT to output the number of tests completed in server mode.

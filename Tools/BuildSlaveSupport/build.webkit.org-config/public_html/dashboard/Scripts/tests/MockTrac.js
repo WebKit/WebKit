@@ -26,58 +26,6 @@
 MockTrac = function()
 {
     Trac.call(this, "https://trac.webkit.org/");
-    this.recordedCommits = [
-        {
-            "revisionNumber": 33018,
-            "link": "https://trac.webkit.org/changeset/33018",
-            "title": { innerHTML: "commit message" },
-            "author": "john@webkit.org",
-            "date": new Date("2015-11-15T17:05:44.000Z"),
-            "description": "description",
-            "containsBranchLocation": true,
-            "branchName": "trunk"
-        },
-        {
-            "revisionNumber": 33019,
-            "link": "https://trac.webkit.org/changeset/33019",
-            "title": { innerHTML: "commit message" },
-            "author": "paul@webkit.org",
-            "date": new Date("2015-11-16T01:18:23.000Z"),
-            "description": "description",
-            "containsBranchLocation": true,
-            "branchName": "someOtherBranch"
-        },
-        {
-            "revisionNumber": 33020,
-            "link": "https://trac.webkit.org/changeset/33020",
-            "title": { innerHTML: "commit message" },
-            "author": "george@webkit.org",
-            "date": new Date("2015-11-16T01:19:27.000Z"),
-            "description": "description",
-            "containsBranchLocation": true,
-            "branchName": "trunk"
-        },
-        {
-            "revisionNumber": 33021,
-            "link": "https://trac.webkit.org/changeset/33021",
-            "title": { innerHTML: "commit message" },
-            "author": "ringo@webkit.org",
-            "date": new Date("2015-11-16T01:20:58.000Z"),
-            "description": "description",
-            "containsBranchLocation": true,
-            "branchName": "someOtherBranch"
-        },
-        {
-            "revisionNumber": 33022,
-            "link": "https://trac.webkit.org/changeset/33022",
-            "title": { innerHTML: "commit message" },
-            "author": "bob@webkit.org",
-            "date": new Date("2015-11-16T01:22:01.000Z"),
-            "description": "description",
-            "containsBranchLocation": true,
-            "branchName": "trunk"
-        }
-    ];
 };
 
 BaseObject.addConstructorFunctions(MockTrac);
@@ -100,3 +48,56 @@ MockTrac.prototype = {
     {
     },
 };
+
+MockTrac.EXAMPLE_TRAC_COMMITS = [
+    {
+        "revisionNumber": 33018,
+        "link": "https://trac.webkit.org/changeset/33018",
+        "title": { innerHTML: "commit message" },
+        "author": "john@webkit.org",
+        "date": new Date("2015-11-15T17:05:44.000Z"),
+        "description": "description",
+        "containsBranchLocation": true,
+        "branches": ["trunk"]
+    },
+    {
+        "revisionNumber": 33019,
+        "link": "https://trac.webkit.org/changeset/33019",
+        "title": { innerHTML: "commit message" },
+        "author": "paul@webkit.org",
+        "date": new Date("2015-11-16T01:18:23.000Z"),
+        "description": "description",
+        "containsBranchLocation": true,
+        "branches": ["someOtherBranch"]
+    },
+    {
+        "revisionNumber": 33020,
+        "link": "https://trac.webkit.org/changeset/33020",
+        "title": { innerHTML: "commit message" },
+        "author": "george@webkit.org",
+        "date": new Date("2015-11-16T01:19:27.000Z"),
+        "description": "description",
+        "containsBranchLocation": true,
+        "branches": ["trunk"]
+    },
+    {
+        "revisionNumber": 33021,
+        "link": "https://trac.webkit.org/changeset/33021",
+        "title": { innerHTML: "commit message" },
+        "author": "ringo@webkit.org",
+        "date": new Date("2015-11-16T01:20:58.000Z"),
+        "description": "description",
+        "containsBranchLocation": true,
+        "branches": ["someOtherBranch"]
+    },
+    {
+        "revisionNumber": 33022,
+        "link": "https://trac.webkit.org/changeset/33022",
+        "title": { innerHTML: "commit message" },
+        "author": "bob@webkit.org",
+        "date": new Date("2015-11-16T01:22:01.000Z"),
+        "description": "description",
+        "containsBranchLocation": true,
+        "branches": ["trunk"]
+    }
+];

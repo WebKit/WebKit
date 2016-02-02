@@ -65,8 +65,8 @@ Trac.prototype = {
 
     commitsOnBranch: function(branchName, filter)
     {
-        return this.recordedCommits.filter(function(commit) {
-            return (!commit.containsBranchLocation || commit.branchName === branchName) && filter(commit);
+        return this.recordedCommits.filter(function(commit, index, array) {
+            return (!commit.containsBranchLocation || commit.branches.includes(branchName)) && filter(commit, index, array);
         });
     },
 
@@ -142,7 +142,8 @@ Trac.prototype = {
             author: author,
             date: date,
             description: parsedDescription.innerHTML,
-            containsBranchLocation: location !== ""
+            containsBranchLocation: location !== "",
+            branches: []
         };
 
         if (result.containsBranchLocation) {
@@ -151,11 +152,11 @@ Trac.prototype = {
             if (location.startsWith("tags/"))
                 result.tag = location.substr(5, location.indexOf("/", 5) - 5);
             else if (location.startsWith("branches/"))
-                result.branchName = location.substr(9, location.indexOf("/", 9) - 9);
+                result.branches.push(location.substr(9, location.indexOf("/", 9) - 9));
             else if (location.startsWith("releases/"))
                 result.release = location.substr(9, location.indexOf("/", 9) - 9);
             else if (location.startsWith("trunk/"))
-                result.branchName = "trunk";
+                result.branches.push("trunk");
             else if (location.startsWith("submissions/"))
                 ; // These changes are never relevant to the dashboard.
             else {
@@ -163,6 +164,12 @@ Trac.prototype = {
                 // not match any explicitly specified branches.
                 console.assert(false);
             }
+        }
+
+        var gitBranches = doc.evaluate("./branches", commitElement, null, XPathResult.STRING_TYPE).stringValue;
+        if (gitBranches) {
+            result.containsBranchLocation = true;
+            result.branches = result.branches.concat(gitBranches.split(", "));
         }
 
         return result;
