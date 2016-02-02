@@ -1,3 +1,63 @@
+2016-02-01  Dave Hyatt  <hyatt@apple.com>
+
+        Add a line grid pagination SPI to WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=153757
+        <rdar://problem/23041598>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/fast/multicol/pagination/BottomToTop-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTop-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/BottomToTopGrid-bt-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTopGrid-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTopGrid-lr-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTopGrid-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTopGrid-rl-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTopGrid-rl-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTopGrid-tb-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTopGrid-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRight-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/LeftToRightGrid-bt-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRightGrid-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRightGrid-lr-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRightGrid-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRightGrid-rl-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRightGrid-rl-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRightGrid-tb-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRightGrid-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-max-width-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeft-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/RightToLeftGrid-bt-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeftGrid-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeftGrid-lr-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeftGrid-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeftGrid-rl-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeftGrid-rl-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeftGrid-tb-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeftGrid-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-bt-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-lr-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-rl-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottom-tb-expected.png:
+        * platform/mac/fast/multicol/pagination/TopToBottomGrid-bt-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottomGrid-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottomGrid-lr-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottomGrid-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottomGrid-rl-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottomGrid-rl-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottomGrid-tb-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottomGrid-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/nested-transforms-expected.png:
+
 2016-02-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/dont-wedge.html sometimes ASSERTs.

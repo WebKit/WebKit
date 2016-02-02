@@ -356,6 +356,7 @@ void Internals::resetToConsistentState(Page* page)
 
     page->setPageScaleFactor(1, IntPoint(0, 0));
     page->setPagination(Pagination());
+    page->setPaginationLineGridEnabled(false);
 
     page->setDefersLoading(false);
     
@@ -1195,6 +1196,17 @@ void Internals::setPagination(const String& mode, int gap, int pageLength, Excep
     pagination.gap = gap;
     pagination.pageLength = pageLength;
     page->setPagination(pagination);
+}
+
+void Internals::setPaginationLineGridEnabled(bool enabled, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    Page* page = document->page();
+    page->setPaginationLineGridEnabled(enabled);
 }
 
 String Internals::configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode& ec)

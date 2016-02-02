@@ -213,6 +213,7 @@ messages -> WebPage LegacyReceiver {
     SetPaginationBehavesLikeColumns(bool behavesLikeColumns)
     SetPageLength(double pageLength)
     SetGapBetweenPages(double gap)
+    SetPaginationLineGridEnabled(bool lineGridEnabled)
 
     PostInjectedBundleMessage(String messageName, WebKit::UserData messageBody)
 

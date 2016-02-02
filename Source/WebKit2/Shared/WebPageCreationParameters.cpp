@@ -47,6 +47,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << paginationBehavesLikeColumns;
     encoder << pageLength;
     encoder << gapBetweenPages;
+    encoder << paginationLineGridEnabled;
     encoder << userAgent;
     encoder << itemStates;
     encoder << sessionID;
@@ -115,6 +116,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decode(parameters.pageLength))
         return false;
     if (!decoder.decode(parameters.gapBetweenPages))
+        return false;
+    if (!decoder.decode(parameters.paginationLineGridEnabled))
         return false;
     if (!decoder.decode(parameters.userAgent))
         return false;

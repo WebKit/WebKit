@@ -3358,6 +3358,16 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _page->setGapBetweenPages(gapBetweenPages);
 }
 
+- (BOOL)_paginationLineGridEnabled
+{
+    return _page->paginationLineGridEnabled();
+}
+
+- (void)_setPaginationLineGridEnabled:(BOOL)lineGridEnabled
+{
+    _page->setPaginationLineGridEnabled(lineGridEnabled);
+}
+
 - (NSUInteger)_pageCount
 {
     return _page->pageCount();

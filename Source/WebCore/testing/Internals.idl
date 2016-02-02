@@ -146,6 +146,7 @@ enum AutoFillButtonType {
     [RaisesException] void setViewBaseBackgroundColor(DOMString colorValue);
 
     [RaisesException] void setPagination(DOMString mode, long gap, optional long pageLength);
+    [RaisesException] void setPaginationLineGridEnabled(boolean enabled);
 
     [RaisesException] DOMString configurationForViewport(unrestricted float devicePixelRatio,
                                        long deviceWidth,

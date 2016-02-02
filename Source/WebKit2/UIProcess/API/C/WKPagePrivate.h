@@ -64,6 +64,8 @@ WK_EXPORT void WKPageSetPageLength(WKPageRef page, double pageLength);
 WK_EXPORT double WKPageGetPageLength(WKPageRef page);
 WK_EXPORT void WKPageSetGapBetweenPages(WKPageRef page, double gap);
 WK_EXPORT double WKPageGetGapBetweenPages(WKPageRef page);
+WK_EXPORT void WKPageSetPaginationLineGridEnabled(WKPageRef page, bool lineGridEnabled);
+WK_EXPORT bool WKPageGetPaginationLineGridEnabled(WKPageRef page);
 
 WK_EXPORT unsigned WKPageGetPageCount(WKPageRef page);
 

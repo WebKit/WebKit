@@ -713,6 +713,8 @@ public:
     double pageLength() const { return m_pageLength; }
     void setGapBetweenPages(double);
     double gapBetweenPages() const { return m_gapBetweenPages; }
+    void setPaginationLineGridEnabled(bool);
+    bool paginationLineGridEnabled() const { return m_paginationLineGridEnabled; }
     unsigned pageCount() const { return m_pageCount; }
 
 #if PLATFORM(COCOA)
@@ -1626,7 +1628,8 @@ private:
     bool m_paginationBehavesLikeColumns;
     double m_pageLength;
     double m_gapBetweenPages;
-
+    bool m_paginationLineGridEnabled;
+        
     // If the process backing the web page is alive and kicking.
     bool m_isValid;
 

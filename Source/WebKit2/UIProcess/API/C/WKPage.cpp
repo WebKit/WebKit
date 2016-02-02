@@ -720,6 +720,16 @@ double WKPageGetGapBetweenPages(WKPageRef pageRef)
     return toImpl(pageRef)->gapBetweenPages();
 }
 
+void WKPageSetPaginationLineGridEnabled(WKPageRef pageRef, bool lineGridEnabled)
+{
+    toImpl(pageRef)->setPaginationLineGridEnabled(lineGridEnabled);
+}
+
+bool WKPageGetPaginationLineGridEnabled(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->paginationLineGridEnabled();
+}
+
 unsigned WKPageGetPageCount(WKPageRef pageRef)
 {
     return toImpl(pageRef)->pageCount();

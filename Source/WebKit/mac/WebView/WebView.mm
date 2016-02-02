@@ -4452,6 +4452,24 @@ static Vector<String> toStringVector(NSArray* patterns)
     return page->pagination().gap;
 }
 
+- (void)_setPaginationLineGridEnabled:(BOOL)lineGridEnabled
+{
+    Page* page = core(self);
+    if (!page)
+        return;
+    
+    page->setPaginationLineGridEnabled(lineGridEnabled);
+}
+
+- (BOOL)_paginationLineGridEnabled
+{
+    Page* page = core(self);
+    if (!page)
+        return NO;
+    
+    return page->paginationLineGridEnabled();
+}
+
 - (NSUInteger)_pageCount
 {
     Page* page = core(self);

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderBox.h"
 
+#include "CSSFontSelector.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -428,6 +429,15 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         
         if (rootStyleChanged && is<RenderBlockFlow>(rootRenderer) && downcast<RenderBlockFlow>(*rootRenderer).multiColumnFlowThread())
             downcast<RenderBlockFlow>(*rootRenderer).updateStylesForColumnChildren();
+        
+        if (isBodyRenderer && pagination.mode != Pagination::Unpaginated && frame().page()->paginationLineGridEnabled()) {
+            // Propagate the body font back up to the RenderView and use it as
+            // the basis of the grid.
+            if (newStyle.fontDescription() != view().style().fontDescription()) {
+                view().style().setFontDescription(newStyle.fontDescription());
+                view().style().fontCascade().update(&document().fontSelector());
+            }
+        }
 
         if (diff != StyleDifferenceEqual)
             view().compositor().rootOrBodyStyleChanged(*this, oldStyle);

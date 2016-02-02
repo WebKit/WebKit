@@ -1,3 +1,39 @@
+2016-02-01  Dave Hyatt  <hyatt@apple.com>
+
+        Add a line grid pagination SPI to WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=153757
+        <rdar://problem/23041598>
+
+        Reviewed by Anders Carlsson.
+
+        New tests in fast/multicol/pagination.
+
+        * page/Page.cpp:
+        (WebCore::Page::setPaginationLineGridEnabled):
+        * page/Page.h:
+        (WebCore::Page::paginationLineGridEnabled):
+        Add a boolean to the page to turn the line grid on and off.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        Propagate the body's font up to the paginated RenderView so that
+        it can be used to establish the line grid.
+
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        Set up a line grid with containment snapping by default if the
+        line grid enabled flag is set.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setPagination):
+        (WebCore::Internals::setPaginationLineGridEnabled):
+        (WebCore::Internals::configurationForViewport):
+        * testing/Internals.h:
+        (WebCore::Internals::setPagination):
+        * testing/Internals.idl:
+        Add support for testing the grid being enabled.
+
 2016-02-01  Antti Koivisto  <antti@apple.com>
 
         Tab suspension code shouldn't use page cache cacheability logic

@@ -209,6 +209,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 // Set to 0 to have the page length equal the view length.
 @property (nonatomic, setter=_setPageLength:) CGFloat _pageLength;
 @property (nonatomic, setter=_setGapBetweenPages:) CGFloat _gapBetweenPages;
+@property (nonatomic, setter=_setPaginationLineGridEnabled:) BOOL _paginationLineGridEnabled;
 @property (readonly) NSUInteger _pageCount;
 
 @property (nonatomic, readonly) BOOL _supportsTextZoom;

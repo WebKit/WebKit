@@ -944,6 +944,17 @@ void Page::setPagination(const Pagination& pagination)
     PageCache::singleton().markPagesForFullStyleRecalc(*this);
 }
 
+void Page::setPaginationLineGridEnabled(bool enabled)
+{
+    if (m_paginationLineGridEnabled == enabled)
+        return;
+    
+    m_paginationLineGridEnabled = enabled;
+    
+    setNeedsRecalcStyleInAllFrames();
+    PageCache::singleton().markPagesForFullStyleRecalc(*this);
+}
+
 unsigned Page::pageCount() const
 {
     if (m_pagination.mode == Pagination::Unpaginated)

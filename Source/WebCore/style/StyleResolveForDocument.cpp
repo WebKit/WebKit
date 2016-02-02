@@ -94,6 +94,10 @@ Ref<RenderStyle> resolveForDocument(const Document& document)
         documentStyle.get().setColumnGap(pagination.gap);
         if (renderView.multiColumnFlowThread())
             renderView.updateColumnProgressionFromStyle(documentStyle.get());
+        if (renderView.frame().page()->paginationLineGridEnabled()) {
+            documentStyle.get().setLineGrid("-webkit-default-pagination-grid");
+            documentStyle.get().setLineSnap(LineSnapContain);
+        }
     }
 
     const Settings& settings = renderView.frame().settings();

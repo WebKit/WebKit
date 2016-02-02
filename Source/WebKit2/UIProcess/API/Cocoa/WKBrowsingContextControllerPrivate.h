@@ -56,6 +56,9 @@ typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
 @property CGFloat pageLength;
 @property CGFloat gapBetweenPages;
 
+// Whether or not to enable a line grid by default on the paginated content.
+@property BOOL paginationLineGridEnabled;
+
 @property (readonly) NSUInteger pageCount;
 
 @property (nonatomic, readonly) WKBrowsingContextHandle *handle;

@@ -743,6 +743,16 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     return _page->gapBetweenPages();
 }
 
+- (void)setPaginationLineGridEnabled:(BOOL)lineGridEnabled
+{
+    _page->setPaginationLineGridEnabled(lineGridEnabled);
+}
+
+- (BOOL)paginationLineGridEnabled
+{
+    return _page->paginationLineGridEnabled();
+}
+
 - (NSUInteger)pageCount
 {
     return _page->pageCount();
