@@ -1,3 +1,13 @@
+2016-02-02  Adrien Plazas  <aplazas@igalia.com>
+
+        REGRESSION(r195899): ASSERTION FAILED: is<Target>(source) in EventPath::retargetTouch() since r195899
+        https://bugs.webkit.org/show_bug.cgi?id=153741
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventPath::retargetTouch):
+
 2016-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: High Level Memory Overview Instrument

@@ -549,7 +549,7 @@ void EventPath::retargetTouch(TouchEventContext::TouchListType touchListType, co
     if (!targetNode)
         return;
 
-    RelatedNodeRetargeter retargeter(*targetNode, downcast<MouseOrFocusEventContext>(*m_path[0]).node()->treeScope());
+    RelatedNodeRetargeter retargeter(*targetNode, m_path[0]->node()->treeScope());
     TreeScope* previousTreeScope = nullptr;
     for (auto& context : m_path) {
         TreeScope& currentTreeScope = context->node()->treeScope();
