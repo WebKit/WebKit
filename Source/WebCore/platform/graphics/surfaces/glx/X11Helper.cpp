@@ -290,6 +290,10 @@ void X11Helper::destroyWindow(const uint32_t windowId)
     if (!display)
         return;
 
+    XWindowAttributes attribute;
+    XGetWindowAttributes(display, windowId, &attribute);
+
+    XFreeColormap(display, attribute.colormap);
     XDestroyWindow(display, windowId);
 }
 

@@ -1,3 +1,17 @@
+2016-02-01  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        Free Colormap when XWindow is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=153413
+
+        Reviewed by Žan Doberšek.
+
+        Colormap is needed to create XWindow and it should be freed when XWindow is destroyed.
+        Unless Colormap is freed before destroying XWindow, memory leak is suspected.
+        XFreeColormap therefore is needed on X11Helper.
+
+        * platform/graphics/surfaces/glx/X11Helper.cpp: Added XFreeColormap.
+        (WebCore::X11Helper::destroyWindow):
+
 2016-02-01  Tim Horton  <timothy_horton@apple.com>
 
         Move some SPI declarations into the appropriate SPI header
