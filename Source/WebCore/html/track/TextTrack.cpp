@@ -173,6 +173,15 @@ bool TextTrack::isValidKindKeyword(const AtomicString& value)
     return false;
 }
 
+AtomicString TextTrack::kind() const
+{
+    AtomicString kind = TrackBase::kind();
+    if (!m_manualSelectionMode || kind != forcedKeyword())
+        return kind;
+
+    return subtitlesKeyword();
+}
+
 void TextTrack::setKind(const AtomicString& newKind)
 {
     String oldKind = kind();

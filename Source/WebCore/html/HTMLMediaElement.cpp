@@ -3576,9 +3576,13 @@ void HTMLMediaElement::addTextTrack(PassRefPtr<TextTrack> track)
 
     if (!m_requireCaptionPreferencesChangedCallbacks) {
         m_requireCaptionPreferencesChangedCallbacks = true;
-        document().registerForCaptionPreferencesChangedCallbacks(this);
+        Document& document = this->document();
+        document.registerForCaptionPreferencesChangedCallbacks(this);
+        if (Page* page = document.page())
+            m_captionDisplayMode = page->group().captionPreferences()->captionDisplayMode();
     }
 
+    track->setManualSelectionMode(m_captionDisplayMode == CaptionUserPreferences::Manual);
     textTracks()->append(track);
 
     closeCaptionTracksChanged();
@@ -5722,6 +5726,11 @@ void HTMLMediaElement::captionPreferencesChanged()
     CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences()->captionDisplayMode();
     if (m_captionDisplayMode == displayMode)
         return;
+
+    if (m_captionDisplayMode == CaptionUserPreferences::Manual || displayMode == CaptionUserPreferences::Manual) {
+        for (unsigned i = 0; i < m_textTracks->length(); ++i)
+            m_textTracks->item(i)->setManualSelectionMode(displayMode == CaptionUserPreferences::Manual);
+    }
 
     m_captionDisplayMode = displayMode;
     setWebkitClosedCaptionsVisible(m_captionDisplayMode == CaptionUserPreferences::AlwaysOn);

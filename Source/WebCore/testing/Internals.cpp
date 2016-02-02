@@ -2784,6 +2784,8 @@ void Internals::setCaptionDisplayMode(const String& mode, ExceptionCode& ec)
         captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
     else if (equalLettersIgnoringASCIICase(mode, "alwayson"))
         captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::AlwaysOn);
+    else if (equalLettersIgnoringASCIICase(mode, "manual"))
+        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::Manual);
     else
         ec = SYNTAX_ERR;
 #else

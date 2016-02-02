@@ -62,8 +62,22 @@ void CaptionUserPreferences::timerFired()
     captionPreferencesChanged();
 }
 
+void CaptionUserPreferences::beginBlockingNotifications()
+{
+    ++m_blockNotificationsCounter;
+}
+
+void CaptionUserPreferences::endBlockingNotifications()
+{
+    ASSERT(m_blockNotificationsCounter);
+    --m_blockNotificationsCounter;
+}
+
 void CaptionUserPreferences::notify()
 {
+    if (m_blockNotificationsCounter)
+        return;
+
     m_havePreferences = true;
     if (!m_timer.isActive())
         m_timer.startOneShot(0);

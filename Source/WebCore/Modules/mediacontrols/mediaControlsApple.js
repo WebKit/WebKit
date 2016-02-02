@@ -1836,7 +1836,7 @@ Controller.prototype = {
 
             }
 
-            if (offMenu && displayMode === 'forced-only' && !trackMenuItemSelected) {
+            if (offMenu && (displayMode === 'forced-only' || displayMode === 'manual') && !trackMenuItemSelected) {
                 offMenu.classList.add(this.ClassNames.selected);
                 offMenu.setAttribute('tabindex', '0');
                 offMenu.setAttribute('aria-checked', 'true');

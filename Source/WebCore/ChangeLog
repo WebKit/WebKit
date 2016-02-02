@@ -1,3 +1,56 @@
+2016-02-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow ports to disable automatic text track selection
+        https://bugs.webkit.org/show_bug.cgi?id=153761
+        <rdar://problem/24416768>
+
+        Reviewed by Darin Adler.
+
+        Test: media/track/track-manual-mode.html
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::manualKeyword): New.
+        (WebCore::MediaControlsHost::captionDisplayMode): Support 'manual' mode.
+        * Modules/mediacontrols/MediaControlsHost.h:
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.buildCaptionMenu): Check the 'off' item when in manual mode.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTextTrack): Update m_captionDisplayMode when called for the first
+          time so it is always correct. Set the track's manual selection mode as appropriate.
+        (WebCore::HTMLMediaElement::captionPreferencesChanged): Set each track's manual selection 
+          mode as appropriate.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::kind): Return 'subtitles' for forced tracks when in manual mode.
+        * html/track/TextTrack.h:
+
+        * html/track/TrackBase.h:
+        (WebCore::TrackBase::kind): Make virtual.
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::beginBlockingNotifications): New.
+        (WebCore::CaptionUserPreferences::endBlockingNotifications): Ditto.
+        (WebCore::CaptionUserPreferences::notify): Don't notify when blocked.
+        * page/CaptionUserPreferences.h:
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF): Set manual mode 
+          when appropriate.
+        (WebCore::CaptionUserPreferencesMediaAF::captionDisplayMode): Check manual mode.
+        (WebCore::CaptionUserPreferencesMediaAF::setCaptionDisplayMode): Ditto.
+        (WebCore::CaptionUserPreferencesMediaAF::setPreferredLanguage): Ditto.
+        (WebCore::CaptionUserPreferencesMediaAF::textTrackSelectionScore): Return zero when in manual mode.
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu): Consider manual mode. Fix
+          typos in logging.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::mediaDescriptionForKind): Return 'auxiliary' when in manual mode.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setCaptionDisplayMode): Support manual mode.
+
 2016-02-02  Adrien Plazas  <aplazas@igalia.com>
 
         REGRESSION(r195899): ASSERTION FAILED: is<Target>(source) in EventPath::retargetTouch() since r195899

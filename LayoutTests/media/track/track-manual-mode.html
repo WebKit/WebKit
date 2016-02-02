@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-controls.js></script>
+        <script src=../trackmenu-test.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            function testTracks()
+            {
+                consoleWrite(`<br><i>** Forced tracks should be in .textTracks as well as in the menu,`);
+                consoleWrite(`<i>** but should be labeled as 'subtitles'</i><br>`);
+                testExpected("video.textTracks.length", 9);
+
+                // Click the CC button to show the menu because it isn't created until it becomes visible.
+                clickCCButton();
+
+                trackMenuItems = captionTrackMenuList();
+                if (!trackMenuItems) {
+                    failTest("Failed to find track menu!");
+                    return;
+                }
+                testExpected("trackMenuItems.length", 11);
+
+                consoleWrite("<br><i>** No track should be enabled by default<" + "/i>");
+                testExpected("video.textTracks[0].language", "en");
+                testExpected("video.textTracks[0].kind", "subtitles");
+                testExpected("video.textTracks[0].mode", "disabled");
+                consoleWrite("");
+
+                testExpected("video.textTracks[1].language", "en");
+                testExpected("video.textTracks[1].kind", "subtitles");
+                testExpected("video.textTracks[1].mode", "disabled");
+                consoleWrite("");
+
+                testExpected("video.textTracks[2].language", "fr");
+                testExpected("video.textTracks[2].kind", "subtitles");
+                testExpected("video.textTracks[2].mode", "disabled");
+                consoleWrite("");
+
+                testExpected("video.textTracks[3].language", "fr");
+                testExpected("video.textTracks[3].kind", "subtitles");
+                testExpected("video.textTracks[3].mode", "disabled");
+                consoleWrite("");
+
+                testExpected("video.textTracks[4].language", "es");
+                testExpected("video.textTracks[4].kind", "subtitles");
+                testExpected("video.textTracks[4].mode", "disabled");
+                consoleWrite("");
+
+                testExpected("video.textTracks[5].language", "es");
+                testExpected("video.textTracks[5].kind", "subtitles");
+                testExpected("video.textTracks[5].mode", "disabled");
+                consoleWrite("");
+
+                testExpected("video.textTracks[6].language", "de");
+                testExpected("video.textTracks[6].kind", "subtitles");
+                testExpected("video.textTracks[6].mode", "disabled");
+                consoleWrite("");
+
+                testExpected("video.textTracks[7].language", "de");
+                testExpected("video.textTracks[7].kind", "subtitles");
+                testExpected("video.textTracks[7].mode", "disabled");
+                consoleWrite("");
+
+                testExpected("video.textTracks[8].language", "en");
+                testExpected("video.textTracks[8].kind", "captions");
+                testExpected("video.textTracks[8].mode", "disabled");
+                consoleWrite("");
+
+                endTest();
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                run("internals.setUserPreferredLanguages(['en'])");
+                run("internals.setPrimaryAudioTrackLanguageOverride('fr')");
+                run("internals.setCaptionDisplayMode('manual')");
+                video.src = '../content/CC+Subtitles.mov';
+
+                waitForEvent('canplaythrough', testTracks);
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <p>Tests 'manual' caption mode.</p>
+        <video width="640" height="360" controls>
+        </video>
+    </body>
+</html>
