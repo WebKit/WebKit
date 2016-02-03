@@ -1,3 +1,14 @@
+2016-02-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][EFL] Switch FTL to B3
+        https://bugs.webkit.org/show_bug.cgi?id=153478
+
+        Reviewed by Csaba Osztrogonác.
+
+        Enable B3 by default on all x86.
+
+        * wtf/Platform.h:
+
 2016-02-03  Anders Carlsson  <andersca@apple.com>
 
         Fix BlockPtr's call operator

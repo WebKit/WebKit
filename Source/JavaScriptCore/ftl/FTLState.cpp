@@ -44,7 +44,11 @@ using namespace DFG;
 
 State::State(Graph& graph)
     : graph(graph)
+#if FTL_USES_B3
+    , context(nullptr)
+#else
     , context(llvm->ContextCreate())
+#endif
     , module(0)
     , function(0)
     , generatedFunction(0)
@@ -85,7 +89,9 @@ State::State(Graph& graph)
 
 State::~State()
 {
+#if !FTL_USES_B3
     llvm->ContextDispose(context);
+#endif
 }
 
 void State::dumpState(const char* when)

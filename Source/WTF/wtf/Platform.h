@@ -716,10 +716,6 @@
 #define HAVE_LLVM 1
 #endif
 
-#if PLATFORM(GTK) && HAVE(LLVM) && ENABLE(JIT) && !defined(ENABLE_FTL_JIT) && CPU(X86_64)
-#define ENABLE_FTL_JIT 1
-#endif
-
 /* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
 #if USE(JSVALUE32_64)
 #undef ENABLE_FTL_JIT
@@ -785,9 +781,8 @@
 #define ENABLE_CONCURRENT_JIT 1
 #endif
 
-/* The B3 compiler is an experimental backend that is still in development. We will keep it building
-   on Mac/x86-64 for now, though it is unused except for tests. */
-#if (PLATFORM(MAC) || PLATFORM(IOS)) && (CPU(X86_64) || CPU(ARM64)) && ENABLE(FTL_JIT)
+/* This controls whether B3 is built. It will not be used unless FTL_USES_B3 is enabled. */
+#if (CPU(X86_64) || CPU(ARM64)) && ENABLE(FTL_JIT)
 #define ENABLE_B3_JIT 1
 #endif
 

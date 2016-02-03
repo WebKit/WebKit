@@ -455,15 +455,20 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:", shouldDumpDisassembly(mode));
         
+#if HAVE(LLVM) && !FTL_USES_B3
         bool haveLLVM;
+#endif
         Safepoint::Result safepointResult;
         {
             GraphSafepoint safepoint(dfg, safepointResult);
+#if HAVE(LLVM) && !FTL_USES_B3
             haveLLVM = initializeLLVM();
+#endif
         }
         if (safepointResult.didGetCancelled())
             return CancelPath;
-        
+
+#if HAVE(LLVM) && !FTL_USES_B3
         if (!haveLLVM) {
             if (Options::ftlCrashesIfCantInitializeLLVM()) {
                 dataLog("LLVM can't be initialized.\n");
@@ -472,6 +477,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             finalizer = std::make_unique<FailedFinalizer>(*this);
             return FailPath;
         }
+#endif
 
         FTL::State state(dfg);
         FTL::lowerDFGToLLVM(state);

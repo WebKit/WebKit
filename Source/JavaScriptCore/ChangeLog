@@ -1,3 +1,23 @@
+2016-02-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][EFL] Switch FTL to B3
+        https://bugs.webkit.org/show_bug.cgi?id=153478
+
+        Reviewed by Csaba Osztrogonác.
+
+        Conditionalize code to make it possible to build FTL completely without LLVM.
+
+        * CMakeLists.txt:
+        * dfg/DFGCommon.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * ftl/FTLAbbreviatedTypes.h:
+        * ftl/FTLFail.cpp:
+        (JSC::FTL::fail):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        (JSC::FTL::State::~State):
+
 2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix JavaScriptCore build with B3 enabled.

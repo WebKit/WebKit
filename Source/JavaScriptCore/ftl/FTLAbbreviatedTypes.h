@@ -43,11 +43,20 @@ namespace JSC { namespace FTL {
 typedef B3::BasicBlock* LBasicBlock;
 typedef B3::Type LType;
 typedef B3::Value* LValue;
+
+typedef void* LAtomicOrdering;
+typedef void* LBuilder;
+typedef void* LCallConv;
+typedef void* LContext;
+typedef void* LIntPredicate;
+typedef void* LLinkage;
+typedef void* LModule;
+typedef void* LRealPredicate;
+typedef void* LMemoryBuffer;
 #else
 typedef LLVMBasicBlockRef LBasicBlock;
 typedef LLVMTypeRef LType;
 typedef LLVMValueRef LValue;
-#endif
 
 typedef LLVMAtomicOrdering LAtomicOrdering;
 typedef LLVMBuilderRef LBuilder;
@@ -58,6 +67,7 @@ typedef LLVMLinkage LLinkage;
 typedef LLVMModuleRef LModule;
 typedef LLVMRealPredicate LRealPredicate;
 typedef LLVMMemoryBufferRef LMemoryBuffer;
+#endif
 
 enum SynchronizationScope { SingleThread, CrossThread };
 

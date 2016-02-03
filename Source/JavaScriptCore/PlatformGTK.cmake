@@ -38,7 +38,7 @@ if (ENABLE_INTROSPECTION)
     )
 endif ()
 
-if (ENABLE_FTL_JIT)
+if (USE_LLVM_DISASSEMBLER)
     set(llvmForJSC_LIBRARIES ${LLVM_LIBRARIES})
     set(llvmForJSC_INSTALL_DIR "${LIB_INSTALL_DIR}/javascriptcoregtk-${WEBKITGTK_API_VERSION}")
 endif ()

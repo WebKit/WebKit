@@ -991,35 +991,10 @@ list(APPEND JavaScriptCore_SOURCES
     llint/LowLevelInterpreter.cpp
 )
 
-
 if (ENABLE_FTL_JIT)
-    # Configure llvmForJSC.so
-    set(llvmForJSC_SOURCES
-        llvm/library/LLVMAnchor.cpp
-        llvm/library/LLVMExports.cpp
-        llvm/library/LLVMOverrides.cpp
-    )
-    set(llvmForJSC_INCLUDE_DIRECTORIES
-        ${LLVM_INCLUDE_DIRS}
-        "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
-    )
-
-    add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
-        COMMAND ${CMAKE_COMMAND} -E touch ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
-        VERBATIM)
-
-    # Added extra items for JavaScriptCore
-    list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${LLVM_INCLUDE_DIRS}
-    )
-
     list(APPEND JavaScriptCore_SOURCES
         dfg/DFGToFTLDeferredCompilationCallback.cpp
         dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp
-
-        disassembler/LLVMDisassembler.cpp
-        disassembler/X86Disassembler.cpp
 
         ftl/FTLAbstractHeap.cpp
         ftl/FTLAbstractHeapRepository.cpp
@@ -1071,7 +1046,32 @@ if (ENABLE_FTL_JIT)
         ftl/FTLThunks.cpp
         ftl/FTLUnwindInfo.cpp
         ftl/FTLValueRange.cpp
+    )
+endif ()
 
+if (USE_LLVM_DISASSEMBLER)
+    # Configure llvmForJSC.so
+    set(llvmForJSC_SOURCES
+        llvm/library/LLVMAnchor.cpp
+        llvm/library/LLVMExports.cpp
+        llvm/library/LLVMOverrides.cpp
+    )
+    set(llvmForJSC_INCLUDE_DIRECTORIES
+        ${LLVM_INCLUDE_DIRS}
+        "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
+    )
+
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
+        COMMAND ${CMAKE_COMMAND} -E touch ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
+        VERBATIM)
+
+    # Added extra items for JavaScriptCore
+    list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${LLVM_INCLUDE_DIRS}
+    )
+
+    list(APPEND JavaScriptCore_SOURCES
         llvm/InitializeLLVM.cpp
         llvm/LLVMAPI.cpp
     )
@@ -1366,12 +1366,12 @@ endif ()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-if (ENABLE_FTL_JIT AND NOT WIN32)
+if (USE_LLVM_DISASSEMBLER AND NOT WIN32)
     if (NOT llvmForJSC_LIBRARIES)
         set(llvmForJSC_LIBRARIES ${LLVM_STATIC_LIBRARIES})
     endif ()
     if (NOT llvmForJSC_LIBRARIES)
-        message(FATAL_ERROR "No LLVM libs found, but FTL is enabled. Stopping build.")
+        message(FATAL_ERROR "No LLVM libs found, but LLVM disassembler is enabled. Stopping build.")
     endif ()
 
     WEBKIT_WRAP_SOURCELIST(${llvmForJSC_SOURCES})
@@ -1416,7 +1416,7 @@ if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")
     install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
 endif ()
 
-if (ENABLE_FTL_JIT)
+if (USE_LLVM_DISASSEMBLER)
     add_dependencies(JavaScriptCore llvmForJSC)
 endif ()
 
