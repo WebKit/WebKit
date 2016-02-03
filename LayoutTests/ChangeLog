@@ -1,3 +1,12 @@
+2016-02-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html on ios-simulator until it can be rewritten.
+        https://bugs.webkit.org/show_bug.cgi?id=152993
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-02-03  Dave Hyatt  <hyatt@apple.com>
 
         Implement hanging-punctuation property parsing.

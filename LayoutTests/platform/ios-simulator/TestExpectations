@@ -225,6 +225,9 @@ webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.htm
 
 webkit.org/b/150225 fast/custom-elements [ Pass ]
 
+# This test needs to be rewritten to use runUIScript to work on iOS
+webkit.org/b/152993 http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html [ Skip ]
+
 ###
 # Known failures
 ##
