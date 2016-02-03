@@ -1,3 +1,9 @@
+2016-02-03  Jer Noble  <jer.noble@apple.com>
+
+        Yosemite build fix; hide the entire WebCoreNSURLSessionDataTask class from Yosemite and prior.
+
+        * TestWebKitAPI/Tests/WebCore/WebCoreNSURLSession.mm:
+
 2016-02-03  Joonghun Park  <jh718.park@samsung.com>
 
         [Tools] Remove $additionalCMakeArgs variable because without this variable --cmakeargs options works well

@@ -26,20 +26,14 @@
 #import "config.h"
 #import "WebCoreNSURLSession.h"
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+
 #import "CachedRawResource.h"
 #import "CachedResourceLoader.h"
 #import "CachedResourceRequest.h"
-#import "SoftLinking.h"
 #import "SubresourceLoader.h"
 
 using namespace WebCore;
-
-#pragma mark - Soft linking
-
-// FIXME: Soft Linking is required for Yosemite; remove once Yosemite support is no longer needed.
-SOFT_LINK_FRAMEWORK(Foundation);
-SOFT_LINK_CONSTANT_MAY_FAIL(Foundation, NSURLSessionTaskPriorityDefault, float)
-#define NSURLSessionTaskPriorityDefault getNSURLSessionTaskPriorityDefault()
 
 #pragma mark - Private declarations
 
@@ -333,7 +327,7 @@ void WebCoreNSURLSessionDataTaskClient::notifyFinished(CachedResource* resource)
     self.taskIdentifier = identifier;
     self.session = session;
     self.state = NSURLSessionTaskStateSuspended;
-    self.priority = canLoadNSURLSessionTaskPriorityDefault() ? NSURLSessionTaskPriorityDefault : 0.5f;
+    self.priority = NSURLSessionTaskPriorityDefault;
     self.originalRequest = self.currentRequest = [NSURLRequest requestWithURL:url];
     _client = std::make_unique<WebCoreNSURLSessionDataTaskClient>(self);
 
@@ -345,7 +339,7 @@ void WebCoreNSURLSessionDataTaskClient::notifyFinished(CachedResource* resource)
     self.taskIdentifier = identifier;
     self.session = session;
     self.state = NSURLSessionTaskStateSuspended;
-    self.priority = canLoadNSURLSessionTaskPriorityDefault() ? NSURLSessionTaskPriorityDefault : 0.5f;
+    self.priority = NSURLSessionTaskPriorityDefault;
     self.originalRequest = self.currentRequest = request;
     _client = std::make_unique<WebCoreNSURLSessionDataTaskClient>(self);
 
@@ -546,3 +540,5 @@ void WebCoreNSURLSessionDataTaskClient::notifyFinished(CachedResource* resource)
     }];
 }
 @end
+
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
