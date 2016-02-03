@@ -84,6 +84,7 @@ private:
     String fullDatabasePath() const;
 
     bool ensureValidRecordsTable();
+    bool ensureValidIndexRecordsTable();
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();
 

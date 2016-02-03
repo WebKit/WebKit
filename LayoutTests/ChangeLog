@@ -1,3 +1,12 @@
+2016-02-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/cursor-primary-key-order.html fails with SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153800
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-02-02  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> should attempt to guess the icon from the file extension if all else fails

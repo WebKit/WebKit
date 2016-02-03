@@ -109,6 +109,41 @@ static const String& v2RecordsTableSchemaAlternate()
     return v2RecordsTableSchemaString;
 }
 
+static const String v1IndexRecordsTableSchema(const String& tableName)
+{
+    return makeString("CREATE TABLE ", tableName, " (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
+}
+
+static const String& v1IndexRecordsTableSchema()
+{
+    static NeverDestroyed<WTF::String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("IndexRecords"));
+    return v1IndexRecordsTableSchemaString;
+}
+
+static const String& v1IndexRecordsTableSchemaAlternate()
+{
+    static NeverDestroyed<WTF::String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("\"IndexRecords\""));
+    return v1IndexRecordsTableSchemaString;
+}
+
+static const String v2IndexRecordsTableSchema(const String& tableName)
+{
+    return makeString("CREATE TABLE ", tableName, " (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL)");
+}
+
+static const String& v2IndexRecordsTableSchema()
+{
+    static NeverDestroyed<WTF::String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("IndexRecords"));
+    return v2IndexRecordsTableSchemaString;
+}
+
+static const String& v2IndexRecordsTableSchemaAlternate()
+{
+    static NeverDestroyed<WTF::String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("\"IndexRecords\""));
+    return v2IndexRecordsTableSchemaString;
+}
+
+
 SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory)
     : m_identifier(identifier)
 {
@@ -240,6 +275,80 @@ bool SQLiteIDBBackingStore::ensureValidRecordsTable()
     return true;
 }
 
+bool SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
+{
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    String currentSchema;
+    {
+        // Fetch the schema for an existing index record table.
+        SQLiteStatement statement(*m_sqliteDB, "SELECT type, sql FROM sqlite_master WHERE tbl_name='IndexRecords'");
+        if (statement.prepare() != SQLITE_OK) {
+            LOG_ERROR("Unable to prepare statement to fetch schema for the IndexRecords table.");
+            return false;
+        }
+
+        int sqliteResult = statement.step();
+
+        // If there is no IndexRecords table at all, create it and then bail.
+        if (sqliteResult == SQLITE_DONE) {
+            if (!m_sqliteDB->executeCommand(v2IndexRecordsTableSchema())) {
+                LOG_ERROR("Could not create IndexRecords table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+                return false;
+            }
+
+            return true;
+        }
+
+        if (sqliteResult != SQLITE_ROW) {
+            LOG_ERROR("Error executing statement to fetch schema for the IndexRecords table.");
+            return false;
+        }
+
+        currentSchema = statement.getColumnText(1);
+    }
+
+    ASSERT(!currentSchema.isEmpty());
+
+    // If the schema in the backing store is the current schema, we're done.
+    if (currentSchema == v2IndexRecordsTableSchema() || currentSchema == v2IndexRecordsTableSchemaAlternate())
+        return true;
+
+    // If the record table is not the current schema then it must be one of the previous schemas.
+    // If it is not then the database is in an unrecoverable state and this should be considered a fatal error.
+    if (currentSchema != v1IndexRecordsTableSchema() && currentSchema != v1IndexRecordsTableSchemaAlternate())
+        RELEASE_ASSERT_NOT_REACHED();
+
+    SQLiteTransaction transaction(*m_sqliteDB);
+    transaction.begin();
+
+    // Create a temporary table with the correct schema and migrate all existing content over.
+    if (!m_sqliteDB->executeCommand(v2IndexRecordsTableSchema("_Temp_IndexRecords"))) {
+        LOG_ERROR("Could not create temporary index records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_IndexRecords SELECT * FROM IndexRecords")) {
+        LOG_ERROR("Could not migrate existing IndexRecords content (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    if (!m_sqliteDB->executeCommand("DROP TABLE IndexRecords")) {
+        LOG_ERROR("Could not drop existing IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords")) {
+        LOG_ERROR("Could not rename temporary IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    transaction.commit();
+
+    return true;
+}
+
 std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitialDatabaseInfo()
 {
     ASSERT(m_sqliteDB);
@@ -263,7 +372,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
         return nullptr;
     }
 
-    if (!m_sqliteDB->executeCommand("CREATE TABLE IndexRecords (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL);")) {
+    if (!ensureValidIndexRecordsTable()) {
         LOG_ERROR("Could not create IndexRecords table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         m_sqliteDB = nullptr;
         return nullptr;

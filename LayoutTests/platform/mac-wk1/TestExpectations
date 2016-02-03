@@ -253,18 +253,15 @@ inspector/script-profiler/event-type-API.html
 ########################################
 ### START OF (3) IndexedDB failures with SQLite
 
-# Completes successfully after ~40 seconds in a debug build with logging
+# Completes with passing results, but too slowly for our test timeouts.
 imported/w3c/indexeddb/idbindex-multientry-big.htm [ Failure ]
-
-# Integer part of the test iterates 0, 1, 2, Inf, -1, -2, -Inf - Should be in order from -Inf to Inf.
-storage/indexeddb/cursor-primary-key-order.html [ Failure ]
+imported/w3c/indexeddb/idbcursor_iterating.htm [ Failure ]
 
 # SQLite backend tests that timeout
 storage/indexeddb/modern/transaction-scheduler-1.html [ Skip ]
 storage/indexeddb/modern/transaction-scheduler-2.html [ Skip ]
 storage/indexeddb/modern/transaction-scheduler-5.html [ Skip ]
 storage/indexeddb/modern/transaction-scheduler-6.html [ Skip ]
-storage/indexeddb/prefetch-invalidation.html [ Skip ]
 storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 
 ### END OF (3) IndexedDB failures with SQLite
