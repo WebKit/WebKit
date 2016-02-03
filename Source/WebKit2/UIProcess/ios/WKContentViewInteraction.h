@@ -70,6 +70,7 @@ typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *auto
 typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *beforeText, NSString *afterText);
 typedef void (^UIWKSelectionCompletionHandler)(void);
 typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsMoving);
+typedef void (^UIWKKeyWebEventCompletionHandler)(WebIOSEvent *theEvent, BOOL wasHandled);
 
 namespace WebKit {
 struct WKSelectionDrawingInfo {
@@ -142,6 +143,7 @@ struct WKAutoCorrectionData {
     WebKit::AssistedNodeInformation _assistedNodeInformation;
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
     RetainPtr<UIEvent> _uiEventBeingResent;
+    UIWKKeyWebEventCompletionHandler _keyWebEventHandler;
 
     CGPoint _lastInteractionLocation;
 

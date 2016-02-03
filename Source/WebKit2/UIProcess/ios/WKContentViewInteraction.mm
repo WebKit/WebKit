@@ -2870,8 +2870,21 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
 }
 
+- (void)handleKeyWebEvent:(WebIOSEvent *)theEvent withCompletionHandler:(void (^)(WebIOSEvent *theEvent, BOOL wasHandled))completionHandler
+{
+    _keyWebEventHandler = [completionHandler copy];
+    _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
+}
+
 - (void)_didHandleKeyEvent:(WebIOSEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
+    if (_keyWebEventHandler) {
+        _keyWebEventHandler(event, eventWasHandled);
+        [_keyWebEventHandler release];
+        _keyWebEventHandler = nil;
+        return;
+    }
+        
     if (event.type == WebEventKeyDown) {
         // FIXME: This is only for staging purposes.
         if ([[UIKeyboardImpl sharedInstance] respondsToSelector:@selector(didHandleWebKeyEvent:)])
