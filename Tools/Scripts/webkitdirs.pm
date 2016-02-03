@@ -1977,7 +1977,7 @@ sub cmakeGeneratedBuildfile(@)
 
 sub generateBuildSystemFromCMakeProject
 {
-    my ($prefixPath, @cmakeArgs, $additionalCMakeArgs) = @_;
+    my ($prefixPath, @cmakeArgs) = @_;
     my $config = configuration();
     my $port = cmakeBasedPortName();
     my $buildPath = File::Spec->catdir(baseProductDir(), $config);
@@ -2018,7 +2018,6 @@ sub generateBuildSystemFromCMakeProject
     # Don't warn variables which aren't used by cmake ports.
     push @args, "--no-warn-unused-cli";
     push @args, @cmakeArgs if @cmakeArgs;
-    push @args, $additionalCMakeArgs if $additionalCMakeArgs;
 
     my $cmakeSourceDir = isCygwin() ? windowsSourceDir() : sourceDir();
     push @args, '"' . $cmakeSourceDir . '"';

@@ -1,3 +1,21 @@
+2016-02-03  Joonghun Park  <jh718.park@samsung.com>
+
+        [Tools] Remove $additionalCMakeArgs variable because without this variable --cmakeargs options works well
+        https://bugs.webkit.org/show_bug.cgi?id=153827
+
+        Reviewed by Michael Catanzaro.
+
+        When an array is passed to subroutines as argument in perl,
+        a list containing its element is returned from the array.
+        Currently @$ arguments are being passed, then it is going to be one list
+        including all the elements not only from @ but also from $.
+        As a result, --cmakeargs option's value is included in @cmakeArgs
+        at generateBuildSystemFromCMakeProject subroutine,
+        so $additionalCMakeArgs doesn't needed anymore.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2016-02-03  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Wrap a resource and resource loader in a NSURLSession-like object for use by lower level frameworks
