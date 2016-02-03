@@ -1,3 +1,17 @@
+2016-02-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Do not copy FP when lowering FramePointer
+        https://bugs.webkit.org/show_bug.cgi?id=153769
+
+        Reviewed by Michael Saboff.
+
+        That extra move is just wasted time. The fewer Moves we have,
+        the happier IRC is.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tmp):
+        (JSC::B3::Air::LowerToAir::lower):
+
 2016-02-02  Keith Miller  <keith_miller@apple.com>
 
         DFG, FTL, B3, and Air should all have a unique option for printing their graphs

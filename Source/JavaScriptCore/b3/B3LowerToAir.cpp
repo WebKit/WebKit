@@ -308,6 +308,10 @@ private:
         if (!tmp) {
             while (shouldCopyPropagate(value))
                 value = value->child(0);
+
+            if (value->opcode() == FramePointer)
+                return Tmp(GPRInfo::callFrameRegister);
+
             Tmp& realTmp = m_valueToTmp[value];
             if (!realTmp) {
                 realTmp = m_code.newTmp(Arg::typeForB3Type(value->type()));
@@ -1945,7 +1949,7 @@ private:
         }
 
         case FramePointer: {
-            append(Move, Tmp(GPRInfo::callFrameRegister), tmp(m_value));
+            ASSERT(tmp(m_value) == Tmp(GPRInfo::callFrameRegister));
             return;
         }
 
