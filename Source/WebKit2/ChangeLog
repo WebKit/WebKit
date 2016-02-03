@@ -1,3 +1,11 @@
+2016-02-03  Jeff Miller  <jeffm@apple.com>
+
+        Update WebKit2.framework copyright string to include 2016.
+
+        This framework no longer exists on trunk, so we missed this as part of the merge of r194479.
+
+        * mac/Info-WebKit2.plist:
+
 2016-01-29  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r194479.
