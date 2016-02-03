@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3SparseCollection.h"
+#include <limits.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>

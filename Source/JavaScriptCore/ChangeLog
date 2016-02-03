@@ -1,3 +1,12 @@
+2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix JavaScriptCore build with B3 enabled.
+
+        Include <limits.h> for UINT_MAX.
+
+        * b3/B3StackSlot.h:
+        * b3/air/AirStackSlot.h:
+
 2016-02-02  Caitlin Potter  <caitp@igalia.com>
 
         JSSymbolTableObject::deleteProperty() crashes deleting Symbols
