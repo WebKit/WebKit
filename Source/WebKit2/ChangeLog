@@ -1,3 +1,16 @@
+2016-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r195555.
+
+        Temporarily disable speculative revalidation to measure the
+        impact on the bots
+
+        Reverted changeset:
+
+        "[WK2][NetworkCache] Enable speculative revalidation"
+        https://bugs.webkit.org/show_bug.cgi?id=153443
+        http://trac.webkit.org/changeset/195555
+
 2016-02-03  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r194660): Legacy WebProcess crashes in ChildProcess::initializeSandbox()
