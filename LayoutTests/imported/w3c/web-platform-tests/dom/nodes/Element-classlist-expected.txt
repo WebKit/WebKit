@@ -62,5 +62,5 @@ PASS classList.add should treat \r as a space
 PASS classList.add should treat \n as a space 
 PASS classList.add should treat \f as a space 
 PASS classList.length must be read-only 
-PASS classList must be read-only 
+FAIL classList must have [PutForwards=value] assert_equals: expected 2 but got 1
 

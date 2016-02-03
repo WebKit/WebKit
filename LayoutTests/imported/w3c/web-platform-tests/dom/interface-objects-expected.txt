@@ -19,7 +19,5 @@ PASS Should be able to delete TreeWalker.
 PASS Should be able to delete NodeFilter. 
 PASS Should be able to delete NodeList. 
 PASS Should be able to delete HTMLCollection. 
-PASS Should be able to delete DOMStringList. 
 PASS Should be able to delete DOMTokenList. 
-PASS Should be able to delete DOMSettableTokenList. 
 

@@ -17,3 +17,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-empty-name.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-supported-property-names.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/collections/domstringmap-supported-property-names.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/collections/namednodemap-supported-property-names.html

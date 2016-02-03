@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-bubbles-false.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-handlers-changed.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-omitted-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-propagation-stopped.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-reenter.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-target-moved.html

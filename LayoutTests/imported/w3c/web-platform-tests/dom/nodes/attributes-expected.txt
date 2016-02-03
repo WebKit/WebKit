@@ -1,5 +1,5 @@
 
-FAIL AttrExodus assert_false: expected false got true
+FAIL AttrExodus assert_false: should not be a Node expected false got true
 PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttribute) 
 PASS setAttribute should lowercase its name argument (upper case attribute) 
 PASS setAttribute should lowercase its name argument (mixed case attribute) 
@@ -39,11 +39,19 @@ PASS Attribute loses its owner when removed
 PASS Basic functionality of getAttributeNode/getAttributeNodeNS 
 PASS Basic functionality of setAttributeNode 
 PASS Basic functionality of setAttributeNodeNS 
+FAIL If attr’s element is neither null nor element, throw an InUseAttributeError. Test bug: unrecognized DOMException code "INUSE_ATTRIBUTE_ERR" passed to assert_throws()
+PASS Replacing an attr by itself 
 PASS Basic functionality of removeAttributeNode 
 FAIL setAttributeNode on bound attribute should throw InUseAttributeError Test bug: unrecognized DOMException code "INUSE_ATTRIBUTE_ERR" passed to assert_throws()
+PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute 
+PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute (outer shell) 
+PASS setAttributeNode called with an Attr that has the same name as an existing one should not change attribute order 
 FAIL getAttributeNames tests el.getAttributeNames is not a function. (In 'el.getAttributeNames()', 'el.getAttributeNames' is undefined)
 FAIL Own property correctness with basic attributes assert_array_equals: lengths differ, expected 2 got 3
 FAIL Own property correctness with non-namespaced attribute before same-name namespaced one assert_array_equals: lengths differ, expected 3 got 4
 FAIL Own property correctness with namespaced attribute before same-name non-namespaced one assert_array_equals: lengths differ, expected 3 got 4
 FAIL Own property correctness with two namespaced attributes with the same name-with-prefix assert_array_equals: lengths differ, expected 3 got 4
+FAIL Own property names should only include all-lowercase qualified names for an HTML element in an HTML document assert_array_equals: lengths differ, expected 8 got 7
+FAIL Own property names should include all qualified names for a non-HTML element in an HTML document assert_array_equals: lengths differ, expected 12 got 7
+FAIL Own property names should include all qualified names for an HTML element in a non-HTML document assert_array_equals: lengths differ, expected 12 got 7
 

@@ -114,9 +114,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-compareDocumentPosition.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-constants.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-contains.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-contains.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-insertBefore.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-iframe1.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-iframe2.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-lookupNamespaceURI.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-lookupPrefix.xhtml

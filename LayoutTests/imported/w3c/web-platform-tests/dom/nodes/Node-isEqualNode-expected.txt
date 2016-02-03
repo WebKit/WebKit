@@ -1,17 +1,11 @@
- 
 
-PASS Node.isEqualNode 
-PASS Node.isEqualNode 1 
-PASS Node.isEqualNode 2 
-PASS Node.isEqualNode 3 
-PASS Node.isEqualNode 4 
-PASS Node.isEqualNode 5 
-PASS Node.isEqualNode 6 
-PASS isEqualNode should return true when the attributes are in a different order 
-PASS isEqualNode should return true if elements have same namespace, prefix, and local name 
-PASS isEqualNode should return false if elements have different namespace 
-PASS isEqualNode should return false if elements have different prefix 
-PASS isEqualNode should return false if elements have different local name 
-PASS isEqualNode should return true when the attributes have different prefixes 
-PASS isEqualNode should return true when only the internal subsets of DocumentTypes differ. 
+PASS doctypes should be compared on name, public ID, and system ID 
+PASS elements should be compared on namespace, namespace prefix, local name, and number of attributes 
+PASS elements should be compared on attribute namespace, local name, and value 
+PASS processing instructions should be compared on target and data 
+PASS text nodes should be compared on data 
+PASS comments should be compared on data 
+PASS document fragments should not be compared based on properties 
+FAIL documents should not be compared based on properties assert_true: default HTML documents, created different ways expected true got false
+PASS node equality testing should test descendant equality too 
 

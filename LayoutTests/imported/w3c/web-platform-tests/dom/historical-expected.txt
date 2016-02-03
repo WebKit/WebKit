@@ -7,6 +7,7 @@ PASS Historical DOM features must be removed: DOMImplementationList
 PASS Historical DOM features must be removed: DOMImplementationSource 
 PASS Historical DOM features must be removed: DOMLocator 
 PASS Historical DOM features must be removed: DOMObject 
+FAIL Historical DOM features must be removed: DOMSettableTokenList assert_equals: expected (undefined) undefined but got (object) object "[object DOMSettableTokenListConstructor]"
 PASS Historical DOM features must be removed: DOMUserData 
 PASS Historical DOM features must be removed: Entity 
 PASS Historical DOM features must be removed: EntityReference 

@@ -337,4 +337,6 @@ PASS createDocument test 177: characterSet aliases for "foo",null,DocumentType n
 PASS createDocument test 178: "foo","bar",DocumentType node,null 
 PASS createDocument test 178: metadata for "foo","bar",DocumentType node 
 PASS createDocument test 178: characterSet aliases for "foo","bar",DocumentType node 
+FAIL createDocument with missing arguments assert_throws: createDocument() should throw function "function () {
+    document.implementation.createDocument(..." did not throw
 

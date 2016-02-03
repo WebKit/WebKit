@@ -1,0 +1,12 @@
+Simple
+Simple
+John Doe
+Jane Doe
+Jim Doe
+
+PASS Object.getOwnPropertyNames on DOMStringMap, empty data attribute 
+PASS Object.getOwnPropertyNames on DOMStringMap, data attribute trailing hyphen 
+PASS Object.getOwnPropertyNames on DOMStringMap, multiple data attributes 
+PASS Object.getOwnPropertyNames on DOMStringMap, attribute set on dataset in JS 
+PASS Object.getOwnPropertyNames on DOMStringMap, attribute set on element in JS 
+
