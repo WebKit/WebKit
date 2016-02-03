@@ -9,15 +9,24 @@ function test()
         internals.setShowAllPlugins(false);
     }
 
-    var pluginList = "";
+    var unexpectedPlugins = [];
     Array.prototype.forEach.call(navigator.plugins, function(plugin) {
-        if (pluginList.length)
-            pluginList = pluginList + "\n";
-        pluginList = pluginList + plugin.name;
+        if (plugin.name.match(/Shockwave/i))
+            return;
+        if (plugin.name.match(/QuickTime/i))
+            return;
+        if (plugin.name.match(/Java/i))
+            return;
+        if (plugin.name.match(/WebKit built-in PDF/i))
+            return;
+
+        unexpectedPlugins.push(plugin.name);
     });
 
-    if (pluginList.length)
-        document.getElementById("result").innerText = pluginList;
+    if (unexpectedPlugins.length)
+        document.getElementById("result").innerText = "FAIL: Unexpected plugins: " + unexpectedPlugins.toString();
+    else
+        document.getElementById("result").innerText = "PASS: No unexpected plugins were found."
     if (window.testRunner)
         testRunner.notifyDone();
 }
@@ -27,6 +36,6 @@ function test()
 <p>
     Check we only display the valid set of "public" plugins.
 </p>
-<div id="result">None</div>
+<div id="result">TEST DID NOT RUN</div>
 </body>
 </html>

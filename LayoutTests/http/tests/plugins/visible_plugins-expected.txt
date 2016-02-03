@@ -1,3 +1,3 @@
 Check we only display the valid set of "public" plugins.
 
-None
+PASS: No unexpected plugins were found.

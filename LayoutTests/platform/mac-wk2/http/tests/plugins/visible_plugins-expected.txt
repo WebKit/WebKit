@@ -1,3 +1,0 @@
-Check we only display the valid set of "public" plugins.
-
-WebKit built-in PDF

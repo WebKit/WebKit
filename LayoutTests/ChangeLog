@@ -1,3 +1,17 @@
+2016-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION: LayoutTest http/tests/plugins/visible_plugins.html failing on Yosemite WK1
+        https://bugs.webkit.org/show_bug.cgi?id=153752
+
+        Reviewed by Alexey Proskuryakov.
+
+        Revise test to skip the plugins we expect to be displayed, and only display plugins
+        that are surprising.
+
+        * http/tests/plugins/visible_plugins.html:
+        * http/tests/plugins/visible_plugins-expected.txt:
+        * platform/mac-wk2/http/tests/plugins/visible_plugins-expected.txt: Removed.
+
 2016-02-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html on ios-simulator until it can be rewritten.
