@@ -126,10 +126,10 @@ void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
 
 void SchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
 {
-    if (scheme == "file")
+    if (equalLettersIgnoringASCIICase(scheme, "file"))
         return;
 #if PLATFORM(COCOA)
-    if (scheme == "applewebdata")
+    if (equalLettersIgnoringASCIICase(scheme, "applewebdata"))
         return;
 #endif
     localURLSchemes().remove(scheme);

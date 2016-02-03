@@ -36,8 +36,8 @@
 namespace WebCore {
     
 OriginAccessEntry::OriginAccessEntry(const String& protocol, const String& host, SubdomainSetting subdomainSetting)
-    : m_protocol(protocol.lower())
-    , m_host(host.lower())
+    : m_protocol(protocol.convertToASCIILowercase())
+    , m_host(host.convertToASCIILowercase())
     , m_subdomainSettings(subdomainSetting)
 {
     ASSERT(subdomainSetting == AllowSubdomains || subdomainSetting == DisallowSubdomains);
@@ -48,8 +48,8 @@ OriginAccessEntry::OriginAccessEntry(const String& protocol, const String& host,
 
 bool OriginAccessEntry::matchesOrigin(const SecurityOrigin& origin) const
 {
-    ASSERT(origin.host() == origin.host().lower());
-    ASSERT(origin.protocol() == origin.protocol().lower());
+    ASSERT(origin.host() == origin.host().convertToASCIILowercase());
+    ASSERT(origin.protocol() == origin.protocol().convertToASCIILowercase());
 
     if (m_protocol != origin.protocol())
         return false;

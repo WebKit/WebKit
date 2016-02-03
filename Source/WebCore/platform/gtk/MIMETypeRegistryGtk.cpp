@@ -28,9 +28,6 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
-#include <wtf/Assertions.h>
-#include <wtf/MainThread.h>
-
 namespace WebCore {
 
 struct ExtensionMap {
@@ -61,21 +58,14 @@ static const ExtensionMap extensionMap [] = {
     { "xhtml", "application/xhtml+xml" },
     { "wml", "text/vnd.wap.wml" },
     { "wmlc", "application/vnd.wap.wmlc" },
-    { 0, 0 }
 };
 
-String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
+String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 {
-    ASSERT(isMainThread());
-
-    String s = ext.lower();
-    const ExtensionMap *e = extensionMap;
-    while (e->extension) {
-        if (s == e->extension)
-            return e->mimeType;
-        ++e;
+    for (auto& entry : extensionMap) {
+        if (equalIgnoringASCIICase(extension, entry.extension))
+            return entry.mimeType;
     }
-
     return String();
 }
 

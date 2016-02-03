@@ -480,13 +480,9 @@ void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
 
 String HTMLCanvasElement::toEncodingMimeType(const String& mimeType)
 {
-    String lowercaseMimeType = mimeType.lower();
-
-    // FIXME: Make isSupportedImageMIMETypeForEncoding threadsafe (to allow this method to be used on a worker thread).
-    if (mimeType.isNull() || !MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(lowercaseMimeType))
-        lowercaseMimeType = "image/png";
-
-    return lowercaseMimeType;
+    if (!MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
+        return ASCIILiteral("image/png");
+    return mimeType.convertToASCIILowercase();
 }
 
 String HTMLCanvasElement::toDataURL(const String& mimeType, const double* quality, ExceptionCode& ec)
@@ -499,19 +495,17 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, const double* qualit
     if (m_size.isEmpty() || !buffer())
         return ASCIILiteral("data:,");
 
-    String encodingMimeType = toEncodingMimeType(mimeType);
+    String encodingMIMEType = toEncodingMimeType(mimeType);
 
 #if USE(CG)
     // Try to get ImageData first, as that may avoid lossy conversions.
-    RefPtr<ImageData> imageData = getImageData();
-
-    if (imageData)
-        return ImageDataToDataURL(*imageData, encodingMimeType, quality);
+    if (auto imageData = getImageData())
+        return ImageDataToDataURL(*imageData, encodingMIMEType, quality);
 #endif
 
     makeRenderingResultsAvailable();
 
-    return buffer()->toDataURL(encodingMimeType, quality);
+    return buffer()->toDataURL(encodingMIMEType, quality);
 }
 
 RefPtr<ImageData> HTMLCanvasElement::getImageData()

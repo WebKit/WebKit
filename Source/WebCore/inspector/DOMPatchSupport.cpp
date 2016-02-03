@@ -136,14 +136,13 @@ Node* DOMPatchSupport::patchNode(Node& node, const String& markup, ExceptionCode
         oldList.append(createDigest(child, nullptr));
 
     // Compose the new list.
-    String markupCopy = markup.lower();
     Vector<std::unique_ptr<Digest>> newList;
     for (Node* child = parentNode->firstChild(); child != &node; child = child->nextSibling())
         newList.append(createDigest(child, nullptr));
     for (Node* child = fragment->firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(headTag) && !child->firstChild() && markupCopy.find("</head>") == notFound)
+        if (child->hasTagName(headTag) && !child->firstChild() && !markup.containsIgnoringASCIICase("</head>"))
             continue; // HTML5 parser inserts empty <head> tag whenever it parses <body>
-        if (child->hasTagName(bodyTag) && !child->firstChild() && markupCopy.find("</body>") == notFound)
+        if (child->hasTagName(bodyTag) && !child->firstChild() && !markup.containsIgnoringASCIICase("</body>"))
             continue; // HTML5 parser inserts empty <body> tag whenever it parses </head>
         newList.append(createDigest(child, &m_unusedNodesMap));
     }
@@ -496,11 +495,12 @@ void DOMPatchSupport::markNodeAsUsed(Digest* digest)
 }
 
 #ifdef DEBUG_DOM_PATCH_SUPPORT
+
 static String nodeName(Node* node)
 {
     if (node->document().isXHTMLDocument())
          return node->nodeName();
-    return node->nodeName().lower();
+    return node->nodeName().convertToASCIILowercase();
 }
 
 void DOMPatchSupport::dumpMap(const ResultMap& map, const String& name)
@@ -509,6 +509,7 @@ void DOMPatchSupport::dumpMap(const ResultMap& map, const String& name)
     for (size_t i = 0; i < map.size(); ++i)
         fprintf(stderr, "%s[%lu]: %s (%p) - [%lu]\n", name.utf8().data(), i, map[i].first ? nodeName(map[i].first->m_node).utf8().data() : "", map[i].first, map[i].second);
 }
+
 #endif
 
 } // namespace WebCore

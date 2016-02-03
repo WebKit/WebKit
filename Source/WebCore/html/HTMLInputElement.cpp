@@ -1229,7 +1229,7 @@ static Vector<String> parseAcceptAttribute(const String& acceptString, bool (*pr
             continue;
         if (!predicate(trimmedType))
             continue;
-        types.append(trimmedType.lower());
+        types.append(trimmedType.convertToASCIILowercase());
     }
 
     return types;

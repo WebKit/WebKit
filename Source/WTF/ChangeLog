@@ -1,3 +1,13 @@
+2016-02-03  Darin Adler  <darin@apple.com>
+
+        Convert another batch of String::lower callsites to something better, typically convertToASCIILowercase
+        https://bugs.webkit.org/show_bug.cgi?id=153789
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::toInt): Added an overload without the out parameter.
+
 2016-02-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK][EFL] Switch FTL to B3

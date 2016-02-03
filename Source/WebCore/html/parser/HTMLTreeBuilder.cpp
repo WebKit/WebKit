@@ -511,7 +511,7 @@ template <typename TableQualifiedName> static HashMap<AtomicString, QualifiedNam
     for (unsigned i = 0; i < length; ++i) {
         const QualifiedName& name = *names[i];
         const AtomicString& localName = name.localName();
-        AtomicString loweredLocalName = localName.lower();
+        AtomicString loweredLocalName = localName.convertToASCIILowercase();
         if (loweredLocalName != localName)
             map.add(loweredLocalName, name);
     }

@@ -164,7 +164,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         return;
     }
     if (name == mediaAttr) {
-        m_media = value.string().lower();
+        m_media = value.string().convertToASCIILowercase();
         process();
         if (m_sheet && !isDisabled())
             document().styleResolverChanged(DeferRecalcStyle);

@@ -709,7 +709,7 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
     Element& element = *effectiveElement;
     bool isXHTML = element.document().isXHTMLDocument();
     auto elementData = Inspector::Protocol::OverlayTypes::ElementData::create()
-        .setTagName(isXHTML ? element.nodeName() : element.nodeName().lower())
+        .setTagName(isXHTML ? element.nodeName() : element.nodeName().convertToASCIILowercase())
         .setIdValue(element.getIdAttribute())
         .release();
 

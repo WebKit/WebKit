@@ -162,8 +162,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
             if (indexOfSemicolon >= 0)
                 type.truncate(indexOfSemicolon);
             type = stripLeadingAndTrailingHTMLSpaces(type);
-            type = type.lower();
-            if (!type.isEmpty() && !MIMETypeRegistry::isSupportedImageMIMEType(type) && type != "image/svg+xml")
+            if (!type.isEmpty() && !MIMETypeRegistry::isSupportedImageMIMEType(type) && !equalLettersIgnoringASCIICase(type, "image/svg+xml"))
                 continue;
         }
         MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), document().documentElement() ? document().documentElement()->computedStyle() : nullptr);

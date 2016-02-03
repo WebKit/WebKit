@@ -168,6 +168,7 @@
 #include "TreeWalker.h"
 #include "VisitedLinkState.h"
 #include "WheelEvent.h"
+#include "WindowFeatures.h"
 #include "XMLDocument.h"
 #include "XMLDocumentParser.h"
 #include "XMLNSNames.h"
@@ -3278,43 +3279,6 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
     }
 }
 
-static bool isSeparator(UChar character)
-{
-    return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '=' || character == ',';
-}
-
-static void processArguments(StringView features, std::function<void(StringView type, StringView value)> callback)
-{
-    unsigned length = features.length();
-    for (unsigned i = 0; i < length; ) {
-        // skip to first non-separator
-        while (i < length && isSeparator(features[i]))
-            ++i;
-        unsigned keyBegin = i;
-
-        // skip to first separator
-        while (i < length && !isSeparator(features[i]))
-            i++;
-        unsigned keyEnd = i;
-
-        // skip to first '=', but don't skip past a ','
-        while (i < length && features[i] != '=' && features[i] != ',')
-            ++i;
-
-        // skip to first non-separator, but don't skip past a ','
-        while (i < length && isSeparator(features[i]) && features[i] != ',')
-            ++i;
-        unsigned valueBegin = i;
-
-        // skip to first separator
-        while (i < length && !isSeparator(features[i]))
-            ++i;
-        unsigned valueEnd = i;
-
-        callback(features.substring(keyBegin, keyEnd - keyBegin), features.substring(valueBegin, valueEnd - valueBegin));
-    }
-}
-
 void Document::processViewport(const String& features, ViewportArguments::Type origin)
 {
     ASSERT(!features.isNull());
@@ -3324,7 +3288,7 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
 
     m_viewportArguments = ViewportArguments(origin);
 
-    processArguments(features, [this](StringView key, StringView value) {
+    processFeaturesString(features, [this](StringView key, StringView value) {
         setViewportFeature(m_viewportArguments, *this, key, value);
     });
 
@@ -3349,7 +3313,7 @@ void Document::updateViewportArguments()
 void Document::processFormatDetection(const String& features)
 {
     // FIXME: Find a better place for this function.
-    processArguments(features, [this](StringView key, StringView value) {
+    processFeaturesString(features, [this](StringView key, StringView value) {
         if (equalLettersIgnoringASCIICase(key, "telephone") && equalLettersIgnoringASCIICase(value, "no"))
             setIsTelephoneNumberParsingAllowed(false);
     });

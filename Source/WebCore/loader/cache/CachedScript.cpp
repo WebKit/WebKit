@@ -66,7 +66,7 @@ String CachedScript::encoding() const
 
 String CachedScript::mimeType() const
 {
-    return extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)).lower();
+    return extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase();
 }
 
 StringView CachedScript::script()

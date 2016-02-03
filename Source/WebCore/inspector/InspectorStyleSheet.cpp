@@ -350,9 +350,9 @@ bool InspectorStyle::getText(String* result) const
 static String lowercasePropertyName(const String& name)
 {
     // Custom properties are case-sensitive.
-    if (name.length() > 2 && name.characterAt(0) == '-' && name.characterAt(1) == '-')
+    if (name.startsWith("--"))
         return name;
-    return name.lower();
+    return name.convertToASCIILowercase();
 }
 
 bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* result) const
@@ -375,11 +375,8 @@ bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
 
     for (int i = 0, size = m_style->length(); i < size; ++i) {
         String name = m_style->item(i);
-        String lowerName = lowercasePropertyName(name);
-        if (sourcePropertyNames.contains(lowerName))
-            continue;
-        sourcePropertyNames.add(lowerName);
-        result->append(InspectorStyleProperty(CSSPropertySourceData(name, m_style->getPropertyValue(name), !m_style->getPropertyPriority(name).isEmpty(), true, SourceRange()), false, false));
+        if (sourcePropertyNames.add(lowercasePropertyName(name)))
+            result->append(InspectorStyleProperty(CSSPropertySourceData(name, m_style->getPropertyValue(name), !m_style->getPropertyPriority(name).isEmpty(), true, SourceRange()), false, false));
     }
 
     return true;
@@ -413,7 +410,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
         status = it->disabled ? Inspector::Protocol::CSS::CSSPropertyStatus::Disabled : Inspector::Protocol::CSS::CSSPropertyStatus::Active;
 
         RefPtr<Inspector::Protocol::CSS::CSSProperty> property = Inspector::Protocol::CSS::CSSProperty::create()
-            .setName(name.lower())
+            .setName(name.convertToASCIILowercase())
             .setValue(propertyEntry.value)
             .release();
 

@@ -268,10 +268,12 @@ static inline bool isValidXMLMIMETypeChar(UChar c)
 
 bool DOMImplementation::isXMLMIMEType(const String& mimeType)
 {
-    if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "text/xsl")
+    // FIXME: Can we move this logic to MIMETypeRegistry and have this just be a single function call?
+
+    if (equalLettersIgnoringASCIICase(mimeType, "text/xml") || equalLettersIgnoringASCIICase(mimeType, "application/xml") || equalLettersIgnoringASCIICase(mimeType, "text/xsl"))
         return true;
 
-    if (!mimeType.endsWith("+xml"))
+    if (!mimeType.endsWith("+xml", false))
         return false;
 
     size_t slashPosition = mimeType.find('/');
@@ -291,13 +293,14 @@ bool DOMImplementation::isXMLMIMEType(const String& mimeType)
 
 bool DOMImplementation::isTextMIMEType(const String& mimeType)
 {
-    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
-        || mimeType == "application/json" // Render JSON as text/plain.
-        || (mimeType.startsWith("text/") && mimeType != "text/html"
-            && mimeType != "text/xml" && mimeType != "text/xsl"))
-        return true;
+    // FIXME: Can we move this logic to MIMETypeRegistry and have this just be a single function call?
 
-    return false;
+    return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
+        || equalLettersIgnoringASCIICase(mimeType, "application/json") // Render JSON as text/plain.
+        || (mimeType.startsWith("text/", false)
+            && !equalLettersIgnoringASCIICase(mimeType, "text/html")
+            && !equalLettersIgnoringASCIICase(mimeType, "text/xml")
+            && !equalLettersIgnoringASCIICase(mimeType, "text/xsl"));
 }
 
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)

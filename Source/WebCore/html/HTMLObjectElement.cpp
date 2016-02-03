@@ -112,7 +112,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
     if (name == formAttr)
         formAttributeChanged();
     else if (name == typeAttr) {
-        m_serviceType = value.string().left(value.find(';')).lower();
+        m_serviceType = value.string().left(value.find(';')).convertToASCIILowercase();
         invalidateRenderer = !fastHasAttribute(classidAttr);
         setNeedsWidgetUpdate(true);
     } else if (name == dataAttr) {

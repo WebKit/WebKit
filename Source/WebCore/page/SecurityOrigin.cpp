@@ -97,11 +97,7 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     if (schemeRequiresHost(innerURL) && innerURL.host().isEmpty())
         return true;
 
-    // SchemeRegistry needs a lower case protocol because it uses HashMaps
-    // that assume the scheme has already been canonicalized.
-    String protocol = innerURL.protocol().lower();
-
-    if (SchemeRegistry::shouldTreatURLSchemeAsNoAccess(protocol))
+    if (SchemeRegistry::shouldTreatURLSchemeAsNoAccess(innerURL.protocol()))
         return true;
 
     // This is the common case.
@@ -109,8 +105,8 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
 }
 
 SecurityOrigin::SecurityOrigin(const URL& url)
-    : m_protocol(url.protocol().isNull() ? emptyString() : url.protocol().lower())
-    , m_host(url.host().isNull() ? emptyString() : url.host().lower())
+    : m_protocol(url.protocol().isNull() ? emptyString() : url.protocol().convertToASCIILowercase())
+    , m_host(url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase())
     , m_port(url.port())
     , m_isUnique(false)
     , m_universalAccess(false)
@@ -203,7 +199,7 @@ Ref<SecurityOrigin> SecurityOrigin::isolatedCopy() const
 void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 {
     m_domainWasSetInDOM = true;
-    m_domain = newDomain.lower();
+    m_domain = newDomain.convertToASCIILowercase();
 }
 
 bool SecurityOrigin::isSecure(const URL& url)
@@ -354,16 +350,16 @@ bool SecurityOrigin::canDisplay(const URL& url) const
     if (m_universalAccess)
         return true;
 
-    String protocol = url.protocol().lower();
-
     if (isFeedWithNestedProtocolInHTTPFamily(url))
         return true;
+
+    String protocol = url.protocol();
 
     if (SchemeRegistry::canDisplayOnlyIfCanRequest(protocol))
         return canRequest(url);
 
     if (SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(protocol))
-        return m_protocol == protocol || SecurityPolicy::isAccessToURLWhiteListed(this, url);
+        return equalIgnoringASCIICase(m_protocol, protocol) || SecurityPolicy::isAccessToURLWhiteListed(this, url);
 
     if (SecurityPolicy::restrictAccessToLocal() && SchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
         return canLoadLocalResources() || SecurityPolicy::isAccessToURLWhiteListed(this, url);

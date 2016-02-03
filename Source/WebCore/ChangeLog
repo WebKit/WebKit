@@ -1,3 +1,179 @@
+2016-02-03  Darin Adler  <darin@apple.com>
+
+        Convert another batch of String::lower callsites to something better, typically convertToASCIILowercase
+        https://bugs.webkit.org/show_bug.cgi?id=153789
+
+        Reviewed by Sam Weinig.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::isXMLMIMEType): Use equalLettersIgnoringASCIICase
+        and the boolean argument to endsWith to ignore ASCII case.
+        (WebCore::DOMImplementation::isTextMIMEType): Ditto. Also simplified the logic
+        by removing an if statement.
+
+        * dom/Document.cpp:
+        (WebCore::isSeparator): Deleted. Moved to WindowFeatures.cpp.
+        (WebCore::processArguments): Ditto.
+        (WebCore::Document::processViewport): Call the processFeaturesString function
+        from WindowFeatures.h; the code here was originally just a pasted copy of that code!
+        (WebCore::Document::processFormatDetection): Ditto.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toEncodingMimeType): Remove now-unneeded
+        lowercasing of MIME type before calling isSupportedImageMIMETypeForEncoding,
+        since the MIME type registry now ignores ASCII case. Use convertToASCIILowercase
+        on the return value, to preserve behavior.
+        (WebCore::HTMLCanvasElement::toDataURL): Minor coding style tweaks.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseAttribute): Use convertToASCIILowercase for
+        the service type here.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement): Remove now-unneeded
+        lowercasing since MIME type registry now ignores ASCII case. And use
+        equalLettersIgnoringASCIICase for the case here.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::parseAcceptAttribute): Use convertToASCIILowercase for the type here.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute): Use convertToASCIILowercase for the
+        media value here.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType): Use convertToASCIILowercase for the
+        content type here.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Ditto.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute): Use convertToASCIILowercase for
+        the service type here.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::parseAttribute): Use convertToASCIILowercase for
+        the kind here.
+        (WebCore::HTMLTrackElement::ensureTrack): Ditto. Also use fastGetAttribute
+        since this is neither the style attribute nor an animatable SVG attribute.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::createCaseMap): Use convertToASCIILowercase for the local names here.
+
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchNode): Use containsIgnoringASCIICase instead
+        of combining lower with find == notFound here.
+        (WebCore::nodeName): Use convertToASCIILowercase here.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementData): Use convertToASCIILowercase for node
+        name here.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::createXHRTextDecoder): Remove a now-unneeded call to lower since
+        DOMImplementation::isXMLMIMEType now ignores ASCII case.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::lowercasePropertyName): Use convertToASCIILowercase for property
+        names here. Also use startsWith rather than a hand-written alternative.
+        (WebCore::InspectorStyle::populateAllProperties): Use the return value of
+        the add function to avoid doing a double hash table lookp.
+        (WebCore::InspectorStyle::styleWithProperties): Use convertToASCIILowercase
+        to lowercase the property name.
+
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::createOtherResourceTextDecoder): Remove unneeded call to lower since
+        DOMImplement::isXMLMIMEType now ignores ASCII case.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAccessControlPreflightRequest): Use convertToASCIILowercase
+        to lowercase the access control request header field value.
+
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::mimeType): Use convertToASCIILowercase on the content type.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::languageIdentifier): Use convertToASCIILowercase on the language code.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::open): Call parseWindowFeatures instead of using the
+        constructor for WindowFeatures.
+        (WebCore::DOMWindow::showModalDialog): Call parseDialogFeatures instead of
+        using the constructor for WindowFeatures.
+
+        * page/EventHandler.cpp:
+        (WebCore::findDropZone): Remove unneeded lowercasing and empty string checking,
+        and use the option SpaceSplitString already has to convert to lowercase.
+        (WebCore::EventHandler::handleAccessKey): Remove unneeded call to lower since
+        getElementByAccessKey now ignores case. Also tweaked coding style a bit.
+
+        * page/OriginAccessEntry.cpp:
+        (WebCore::OriginAccessEntry::OriginAccessEntry): Use convertToASCIILowercase
+        on the protocol and host.
+        (WebCore::OriginAccessEntry::matchesOrigin): Ditto.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsUniqueOrigin): Remove unneeded call to lower since
+        SchemeRegistry now ignores ASCII case.
+        (WebCore::SecurityOrigin::SecurityOrigin): Use convertToASCIILowercase on
+        the protocol and host.
+        (WebCore::SecurityOrigin::setDomainFromDOM): Use convertToASCIILowercase on
+        the domain.
+        (WebCore::SecurityOrigin::canDisplay): Remove call to lower since SchemeRegistry
+        now ignores ASCII case and because this now uses equalIgnoringASCIICase in
+        one place that used to use exact matching.
+
+        * page/WindowFeatures.cpp: Refactored so this is now some helper functions
+        plus a struct rather than a class.
+        (WebCore::isSeparator): Renamed this and removed special handling for NUL.
+        (WebCore::parseWindowFeatures): Moved the code that was formerly in the
+        WindowFeatures constructor in here. Refactored the parsing into the
+        processFeaturesString function, shared with the functions in Document that
+        do the same kind of parsing. Removed the code that converts the entire string
+        to lowercase before parsing.
+        (WebCore::processFeaturesString): Moved the improved version of this function
+        here from Document.cpp; more efficient because it doesn't allocate strings.
+        (WebCore::setWindowFeature): Changed to be a function private to this file
+        with internal linkage. Use equalLettersIgnoringASCIICase so we no longer
+        rely on converting the string to lowercase before parsing.
+        (WebCore::parseDialogFeatures): Similar refactoring, but also changed all
+        the default handling to use Optional<> instead of default values.
+        (WebCore::boolFeature): Changed to use option and to ignore ASCII case.
+        (WebCore::floatFeature): Ditto.
+        (WebCore::parseDialogFeaturesMap): Removed the calls to lower, which are
+        not needed any more.
+
+        * page/WindowFeatures.h: Added default values for all the data members,
+        and removed all the functions from the WindowFeatures struct. Added the two
+        functions for parsing window and dialog features. Also added the
+        processFeaturesString function so we can share it with Document.cpp.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsLocal): Use
+        equalLettersIgnoringASCIICase to ignore ASCII case.
+
+        * platform/efl/MIMETypeRegistryEfl.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension): Use a modern for loop,
+        and equalIgnoringASCIICase rather than calling lower.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): Use convertToASCIILowercase on MIME type and
+        key system.
+        (WebCore::MediaPlayer::generateKeyRequest): Ditto.
+        (WebCore::MediaPlayer::addKey): Ditto.
+        (WebCore::MediaPlayer::cancelKeyRequest): Ditto.
+
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon): Use
+        convertToASCIILowercase on vendor string.
+
+        * platform/gtk/MIMETypeRegistryGtk.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension): Use a modern for loop,
+        and equalIgnoringASCIICase rather than calling lower.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType): Use convertToASCIILowercase
+        on the type. Also did a bit of renaming and tweaking the logic.
+
 2016-02-03  Dave Hyatt  <hyatt@apple.com>
 
         Implement hanging-punctuation property parsing.

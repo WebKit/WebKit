@@ -141,7 +141,7 @@ static RefPtr<TextResourceDecoder> createOtherResourceTextDecoder(const String& 
     RefPtr<TextResourceDecoder> decoder;
     if (!textEncodingName.isEmpty())
         decoder = TextResourceDecoder::create("text/plain", textEncodingName);
-    else if (DOMImplementation::isXMLMIMEType(mimeType.lower())) {
+    else if (DOMImplementation::isXMLMIMEType(mimeType)) {
         decoder = TextResourceDecoder::create("application/xml");
         decoder->useLenientXMLDecoding();
     } else if (equalLettersIgnoringASCIICase(mimeType, "text/html"))

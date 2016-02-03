@@ -324,10 +324,10 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
 {
     ASSERT(!m_reloadTimer.isActive());
 
-    m_contentMIMEType = contentType.type().lower();
+    m_contentMIMEType = contentType.type().convertToASCIILowercase();
     m_contentTypeCodecs = contentType.parameter(codecs());
     m_url = url;
-    m_keySystem = keySystem.lower();
+    m_keySystem = keySystem.convertToASCIILowercase();
     m_contentMIMETypeWasInferredFromExtension = false;
 
 #if ENABLE(MEDIA_SOURCE)
@@ -366,7 +366,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, MediaSour
     ASSERT(mediaSource);
 
     m_mediaSource = mediaSource;
-    m_contentMIMEType = contentType.type().lower();
+    m_contentMIMEType = contentType.type().convertToASCIILowercase();
     m_contentTypeCodecs = contentType.parameter(codecs());
     m_url = url;
     m_keySystem = "";
@@ -517,17 +517,17 @@ void MediaPlayer::setShouldBufferData(bool shouldBuffer)
 #if ENABLE(ENCRYPTED_MEDIA)
 MediaPlayer::MediaKeyException MediaPlayer::generateKeyRequest(const String& keySystem, const unsigned char* initData, unsigned initDataLength)
 {
-    return m_private->generateKeyRequest(keySystem.lower(), initData, initDataLength);
+    return m_private->generateKeyRequest(keySystem.convertToASCIILowercase(), initData, initDataLength);
 }
 
 MediaPlayer::MediaKeyException MediaPlayer::addKey(const String& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const String& sessionId)
 {
-    return m_private->addKey(keySystem.lower(), key, keyLength, initData, initDataLength, sessionId);
+    return m_private->addKey(keySystem.convertToASCIILowercase(), key, keyLength, initData, initDataLength, sessionId);
 }
 
 MediaPlayer::MediaKeyException MediaPlayer::cancelKeyRequest(const String& keySystem, const String& sessionId)
 {
-    return m_private->cancelKeyRequest(keySystem.lower(), sessionId);
+    return m_private->cancelKeyRequest(keySystem.convertToASCIILowercase(), sessionId);
 }
 #endif
 
