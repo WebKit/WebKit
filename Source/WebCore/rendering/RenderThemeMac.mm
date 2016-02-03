@@ -2353,6 +2353,12 @@ static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
             return icon;
     }
 
+    NSString *fileExtension = [static_cast<NSString *>(attachment.attachmentElement().attachmentTitle()) pathExtension];
+    if (fileExtension.length) {
+        if (auto icon = Icon::createIconForFileExtension(fileExtension))
+            return icon;
+    }
+
     return Icon::createIconForUTI("public.data");
 }
 

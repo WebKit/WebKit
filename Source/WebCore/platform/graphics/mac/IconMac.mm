@@ -73,6 +73,15 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     return adoptRef(new Icon(image));
 }
 
+RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
+{
+    NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[@"." stringByAppendingString:fileExtension]];
+    if (!image)
+        return nullptr;
+
+    return adoptRef(new Icon(image));
+}
+
 RefPtr<Icon> Icon::createIconForUTI(const String& UTI)
 {
     NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:UTI];

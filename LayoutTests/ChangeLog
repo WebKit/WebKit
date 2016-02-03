@@ -1,3 +1,14 @@
+2016-02-02  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> should attempt to guess the icon from the file extension if all else fails
+        https://bugs.webkit.org/show_bug.cgi?id=153804
+        <rdar://problem/24448146>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/attachment/attachment-icon-from-file-extension-expected.html: Added.
+        * fast/attachment/attachment-icon-from-file-extension.html: Added.
+
 2016-02-02  Saam barati  <sbarati@apple.com>
 
         [ES6] bound functions .name property should be "bound " + the target function's name

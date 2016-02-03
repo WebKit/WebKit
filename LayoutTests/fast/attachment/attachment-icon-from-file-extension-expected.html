@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<attachment></attachment>
+<script>
+if (window.internals)
+    file = window.internals.createFile("resources/test-file.txt");
+
+var attachments = document.getElementsByTagName("attachment");
+for (var i = 0; i < attachments.length; i++)
+    attachments[i].file = file;
+</script>
+</body>
+</html>
