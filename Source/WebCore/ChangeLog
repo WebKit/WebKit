@@ -1,5 +1,18 @@
 2016-02-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] Don't use RELEASE_ASSERT in TextureMapperLayer::computeTransformsRecursive()
+        https://bugs.webkit.org/show_bug.cgi?id=153822
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeTransformsRecursive):
+        Use ASSERT to check that the m_children members are indeed children
+        of the current layer, RELEASE_ASSERT probably slipped in unnoticed
+        at some point.
+
+2016-02-03  Zan Dobersek  <zdobersek@igalia.com>
+
         PlatformPathCairo: Lazily allocate the path surface
         https://bugs.webkit.org/show_bug.cgi?id=153821
 

@@ -65,7 +65,7 @@ void TextureMapperLayer::computeTransformsRecursive()
     if (m_state.replicaLayer)
         m_state.replicaLayer->computeTransformsRecursive();
     for (auto* child : m_children) {
-        RELEASE_ASSERT(child->m_parent == this);
+        ASSERT(child->m_parent == this);
         child->computeTransformsRecursive();
     }
 
