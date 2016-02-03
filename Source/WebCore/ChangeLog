@@ -1,3 +1,72 @@
+2016-02-03  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Wrap a resource and resource loader in a NSURLSession-like object for use by lower level frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=153669
+
+        Reviewed by Alex Christensen.
+
+        API Test: WebCore.WebCoreNSURLSession
+
+        Add a NSURLSession-like object, which wraps a CachedResourceLoader and CachedRawResource, which we can
+        hand to lower-level frameworks, so that network loads by those frameworks use WebKit's loader.
+
+        * platform/network/cocoa/WebCoreNSURLSession.h: Added.
+        * platform/network/cocoa/WebCoreNSURLSession.mm: Added.
+        (-[WebCoreNSURLSession initWithResourceLoader:delegate:delegateQueue:]):
+        (-[WebCoreNSURLSession dealloc]):
+        (-[WebCoreNSURLSession copyWithZone:]):
+        (-[WebCoreNSURLSession delegateQueue]):
+        (-[WebCoreNSURLSession configuration]):
+        (-[WebCoreNSURLSession loader]):
+        (-[WebCoreNSURLSession finishTasksAndInvalidate]):
+        (-[WebCoreNSURLSession invalidateAndCancel]):
+        (-[WebCoreNSURLSession resetWithCompletionHandler:]):
+        (-[WebCoreNSURLSession flushWithCompletionHandler:]):
+        (-[WebCoreNSURLSession getTasksWithCompletionHandler:]):
+        (-[WebCoreNSURLSession getAllTasksWithCompletionHandler:]):
+        (-[WebCoreNSURLSession dataTaskWithRequest:]):
+        (-[WebCoreNSURLSession dataTaskWithURL:]):
+        (-[WebCoreNSURLSession uploadTaskWithRequest:fromFile:]):
+        (-[WebCoreNSURLSession uploadTaskWithRequest:fromData:]):
+        (-[WebCoreNSURLSession uploadTaskWithStreamedRequest:]):
+        (-[WebCoreNSURLSession downloadTaskWithRequest:]):
+        (-[WebCoreNSURLSession downloadTaskWithURL:]):
+        (-[WebCoreNSURLSession downloadTaskWithResumeData:]):
+        (-[WebCoreNSURLSession streamTaskWithHostName:port:]):
+        (-[WebCoreNSURLSession streamTaskWithNetService:]):
+        (-[WebCoreNSURLSession isKindOfClass:]):
+
+        Add a C++ class which can act as a CachedRawResourceClient, passing the results back to a WebCoreNSURLSessionDataTask:
+
+        (WebCore::WebCoreNSURLSessionDataTaskClient::WebCoreNSURLSessionDataTaskClient):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::dataSent):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::responseReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::dataReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::redirectReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::notifyFinished):
+
+        Add a NSURLSessionDataTask-like object, which takes a request, then uses it to create and wrap a CachedRawResource.
+        Becase NSURSessionDataTask is intended to be used off-main-thread, care must be taken to dispatch back to the main-
+        (or web-) thread before calling CachedRawResource functions.
+
+        (-[WebCoreNSURLSessionDataTask initWithSession:identifier:URL:]):
+        (-[WebCoreNSURLSessionDataTask initWithSession:identifier:request:]):
+        (-[WebCoreNSURLSessionDataTask copyWithZone:]):
+        (-[WebCoreNSURLSessionDataTask _restart]):
+        (-[WebCoreNSURLSessionDataTask _cancel]):
+        (-[WebCoreNSURLSessionDataTask _finish]):
+        (-[WebCoreNSURLSessionDataTask _setDefersLoading:]):
+        (-[WebCoreNSURLSessionDataTask cancel]):
+        (-[WebCoreNSURLSessionDataTask suspend]):
+        (-[WebCoreNSURLSessionDataTask resume]):
+        (-[WebCoreNSURLSessionDataTask _timingData]):
+        (-[WebCoreNSURLSessionDataTask resource:sentBytes:totalBytesToBeSent:]):
+        (-[WebCoreNSURLSessionDataTask resource:receivedResponse:]):
+        (-[WebCoreNSURLSessionDataTask resource:receivedData:length:]):
+        (-[WebCoreNSURLSessionDataTask resource:receivedRedirect:request:]):
+        (-[WebCoreNSURLSessionDataTask resourceFinished:]):
+        * WebCore.xcodeproj/project.pbxproj: Add new files to project.
+
 2016-02-03  Darin Adler  <darin@apple.com>
 
         Convert another batch of String::lower callsites to something better, typically convertToASCIILowercase

@@ -1,3 +1,29 @@
+2016-02-03  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Wrap a resource and resource loader in a NSURLSession-like object for use by lower level frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=153669
+
+        Reviewed by Alex Christensen.
+
+        Add an API test for WebCoreNSURLSession, testing that it behaves like a regulare NSURLSession, including
+        calling appropriate NSURLSessionDelegate callbacks.
+
+        Drive-by fix: Add a FeatureDefines.xcconfig to TestWebKitAPI.  Without this, the ENABLE macros in WebCore
+        header files will not match the one used when compiling WebCore, leading to strange crashes and weird
+        inconsistencies when calling, e.g., inline methods.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/WebCoreNSURLSession.mm: Added.
+        (-[TestNSURLSessionLoaderDelegate webView:didCommitLoadForFrame:]):
+        (-[TestNSURLSessionDataDelegate URLSession:task:didCompleteWithError:]):
+        (-[TestNSURLSessionDataDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[TestNSURLSessionDataDelegate URLSession:dataTask:didReceiveData:]):
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        (TestWebKitAPI::WebCoreNSURLSessionTest::TearDown):
+        (TestWebKitAPI::TEST_F):
+
 2016-02-03  Konstantin Tokarev  <annulen@yandex.ru>
 
         [webkitdirs] Clarify logic behind is{PortName} functions.
