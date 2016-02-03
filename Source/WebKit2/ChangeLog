@@ -1,5 +1,49 @@
 2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Reduce IPC traffic due to view state changes
+        https://bugs.webkit.org/show_bug.cgi?id=153745
+
+        Reviewed by Sergio Villar Senin.
+
+        Very often view state changes happen one after another in a very
+        short period of time, even in the same run loop iteration. For
+        example, when you switch to the web view window, the view is
+        focused and the active window flag changes as well. In that case
+        we are sending two messages to the web process and the page
+        updates its status according to the new flags in two steps. So, we
+        could group all state changes happening in the same run loop
+        iteration and notify about them all in the next iteration. This
+        also prevents unnecessary changes of state when we quickly go back
+        to a previous state, for example in focus follows mouse
+        configurations if you move the mouse outside the window and then
+        inside the window again quickly.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate::_WebKitWebViewBasePrivate): Use
+        VirewState::Flags to keep the web view state instead of
+        boolean, and also to keep the flags that need to be updated. Use a
+        timer to update web view state flags.
+        (_WebKitWebViewBasePrivate::updateViewStateTimerFired): Call
+        WebPageProxy::viewStateDidChange() and reset the flags that need
+        to be updated.
+        (webkitWebViewBaseScheduleUpdateViewState): Update the flags that
+        need to be updated and schedule the timer if it's not active.
+        (toplevelWindowFocusInEvent): Use the flags and schedule an update.
+        (toplevelWindowFocusOutEvent): Ditto.
+        (toplevelWindowStateEvent): Also mark the view as hidden when minimized.
+        (webkitWebViewBaseSetToplevelOnScreenWindow): Connect to
+        window-state-event instead of deprecated visibility-notify-event.
+        (webkitWebViewBaseMap): Use the flags and schedule an update.
+        (webkitWebViewBaseUnmap): Ditto.
+        (webkitWebViewBaseSetFocus): Ditto.
+        (webkitWebViewBaseIsInWindowActive): Use the flags.
+        (webkitWebViewBaseIsFocused): Ditto
+        (webkitWebViewBaseIsVisible): Ditto.
+        (webkitWebViewBaseIsInWindow): Removed this since it was unused.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
+2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix incorrect ASSERT introduced in r196053.
 
         * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
