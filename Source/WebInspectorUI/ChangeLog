@@ -1,3 +1,14 @@
+2016-02-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception TimelineRuler.prototype.resize no longer exists
+        https://bugs.webkit.org/show_bug.cgi?id=153839
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype.shown):
+        After r195995 the resize method was eliminated in favor of this approach.
+
 2016-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: TypeError: undefined is not an object (evaluating 'highlightedRange.from')

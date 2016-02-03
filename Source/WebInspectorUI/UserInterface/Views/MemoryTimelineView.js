@@ -120,7 +120,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
     {
         super.shown();
 
-        this._timelineRuler.resize();
+        this._timelineRuler.updateLayout(WebInspector.View.LayoutReason.Resize);
     }
 
     hidden()
