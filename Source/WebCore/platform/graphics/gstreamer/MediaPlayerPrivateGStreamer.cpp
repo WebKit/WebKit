@@ -1903,16 +1903,12 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
         auto& player = *static_cast<MediaPlayerPrivateGStreamer*>(userData);
 
         if (!player.handleSyncMessage(message)) {
-            if (isMainThread())
-                player.handleMessage(message);
-            else {
-                GRefPtr<GstMessage> protectMessage(message);
-                auto weakThis = player.createWeakPtr();
-                RunLoop::main().dispatch([weakThis, protectMessage] {
-                    if (weakThis)
-                        weakThis->handleMessage(protectMessage.get());
-                });
-            }
+            GRefPtr<GstMessage> protectedMessage(message);
+            auto weakThis = player.createWeakPtr();
+            RunLoop::main().dispatch([weakThis, protectedMessage] {
+                if (weakThis)
+                    weakThis->handleMessage(protectedMessage.get());
+            });
         }
         gst_message_unref(message);
         return GST_BUS_DROP;

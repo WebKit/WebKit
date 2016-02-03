@@ -1489,10 +1489,7 @@ webkit.org/b/144690 editing/spelling/spelling-exactly-selected-word.html [ Timeo
 webkit.org/b/144690 editing/spelling/spelling-with-punctuation-selection.html [ Timeout ]
 webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout Pass ]
 
-webkit.org/b/141835 media/video-controls-no-scripting.html [ Failure Timeout ]
-webkit.org/b/152797 media/video-source-error.html [ Timeout ]
-webkit.org/b/152797 media/video-source-load.html [ Timeout ]
-webkit.org/b/152797 media/video-source-moved.html [ Timeout ]
+webkit.org/b/141835 media/video-controls-no-scripting.html [ Failure ]
 
 # May take too long on the bots.
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]

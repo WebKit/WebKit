@@ -1,3 +1,14 @@
+2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r191948): [GStreamer] 4 new timeouts on layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=152797
+
+        Reviewed by Darin Adler.
+
+        Update test expectations.
+
+        * platform/gtk/TestExpectations:
+
 2016-02-02  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result)
