@@ -2512,9 +2512,6 @@
     <ClInclude Include="..\interpreter\CallFrame.h">
       <Filter>interpreter</Filter>
     </ClInclude>
-    <ClInclude Include="..\interpreter\CallFrameInlines.h">
-      <Filter>interpreter</Filter>
-    </ClInclude>
     <ClInclude Include="..\interpreter\CallFrameClosure.h">
       <Filter>interpreter</Filter>
     </ClInclude>

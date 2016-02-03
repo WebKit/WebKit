@@ -1458,7 +1458,6 @@
     <ClInclude Include="..\interpreter\AbstractPC.h" />
     <ClInclude Include="..\interpreter\CachedCall.h" />
     <ClInclude Include="..\interpreter\CallFrame.h" />
-    <ClInclude Include="..\interpreter\CallFrameInlines.h" />
     <ClInclude Include="..\interpreter\CallFrameClosure.h" />
     <ClInclude Include="..\interpreter\VMEntryRecord.h" />
     <ClInclude Include="..\interpreter\Interpreter.h" />
