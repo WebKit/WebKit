@@ -154,6 +154,8 @@ my (
     $ftlJITSupport,
 );
 
+prohibitUnknownPort();
+
 my @features = (
     { option => "3d-rendering", desc => "Toggle 3D Rendering support",
       define => "ENABLE_3D_TRANSFORMS", default => (isAppleMacWebKit() || isIOSWebKit() || isGtk() || isEfl()), value => \$threeDTransformsSupport },

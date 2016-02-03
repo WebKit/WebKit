@@ -1,3 +1,33 @@
+2016-02-03  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [webkitdirs] Clarify logic behind is{PortName} functions.
+        https://bugs.webkit.org/show_bug.cgi?id=153554
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitdirs.pm:
+        (prohibitUnknownPort): This function makes determinePortName()
+        failure fatal.
+        (determinePortName): Added new function which decides which port are
+        we building based on command line switches and platform defaults.
+        (portName): Added getter for determined $portName.
+        (isEfl): Modified to use portName().
+        (isGtk): Ditto.
+        (isWinCairo): Ditto.
+        (isAppleMacWebKit): Ditto.
+        (isAppleWinWebKit): Ditto.
+        (isIOSWebKit): Ditto.
+        (cmakeBasedPortName): Return portName() with capitalized first letter.
+        (determineIsEfl): Deleted.
+        (determineIsGtk): Deleted.
+        (determineIsWinCairo): Deleted.
+
+        * Scripts/build-jsc: Call prohibitUnknownPort().
+        * Scripts/run-minibrowser: Ditto.
+        * Scripts/webkitperl/FeatureList.pm: Ditto.
+        * Scripts/update-webkit: Call determinePortName() instead of
+        determineIsWinCairo().
+
 2016-02-02  Dan Bernstein  <mitz@apple.com>
 
         Better fix for Layout Test fast/parser/external-entities-in-xslt.xml is flaky on El Capitan (but fails most of the time)

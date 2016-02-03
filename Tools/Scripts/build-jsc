@@ -37,6 +37,8 @@ use POSIX;
 
 sub writeCongrats();
 
+prohibitUnknownPort();
+
 my $shouldRunStaticAnalyzer = 0;
 my $coverageSupport = 0;
 my $showHelp = 0;

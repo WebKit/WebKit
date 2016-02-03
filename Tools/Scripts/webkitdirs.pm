@@ -94,6 +94,17 @@ BEGIN {
    @EXPORT_OK   = ();
 }
 
+# Ports
+use constant {
+    AppleWin => "AppleWin",
+    GTK      => "GTK",
+    Efl      => "Efl",
+    iOS      => "iOS",
+    Mac      => "Mac",
+    WinCairo => "WinCairo",
+    Unknown  => "Unknown"
+};
+
 use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
 use constant INCLUDE_OPTIONS_FOR_DEBUGGING => 1;
 use constant SIMULATOR_DEVICE_STATE_SHUTDOWN => "1";
@@ -124,16 +135,16 @@ my $osXVersion;
 my $iosVersion;
 my $generateDsym;
 my $isCMakeBuild;
-my $isGtk;
-my $isWinCairo;
 my $isWin64;
-my $isEfl;
 my $isInspectorFrontend;
+my $portName;
 my $shouldTargetWebProcess;
 my $shouldUseXPCServiceForWebProcess;
 my $shouldUseGuardMalloc;
 my $shouldNotUseNinja;
 my $xcodeVersion;
+
+my $unknownPortProhibited = 0;
 
 # Variables for Win32 support
 my $programFilesPath;
@@ -1024,28 +1035,73 @@ sub checkForArgumentAndRemoveFromArrayRef
     return scalar @indicesToRemove > 0;
 }
 
-sub determineIsEfl()
+sub prohibitUnknownPort()
 {
-    return if defined($isEfl);
-    $isEfl = checkForArgumentAndRemoveFromARGV("--efl");
+    $unknownPortProhibited = 1;
+}
+
+sub determinePortName()
+{
+    return if defined $portName;
+
+    my %argToPortName = (
+        efl => Efl,
+        gtk => GTK,
+        wincairo => WinCairo
+    );
+
+    for my $arg (sort keys %argToPortName) {
+        if (checkForArgumentAndRemoveFromARGV("--$arg")) {
+            die "Argument '--$arg' conflicts with selected port '$portName'\n"
+                if defined $portName;
+
+            $portName = $argToPortName{$arg};
+        }
+    }
+
+    return if defined $portName;
+
+    # Port was not selected via command line, use appropriate default value
+
+    if (isAnyWindows()) {
+        $portName = AppleWin;
+    } elsif (isDarwin()) {
+        determineXcodeSDK();
+        if (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK()) {
+            $portName = iOS;
+        } else {
+            $portName = Mac;
+        }
+    } else {
+        if ($unknownPortProhibited) {
+            my $portsChoice = join "\n\t", qw(
+                --efl
+                --gtk
+            );
+            die "Please specify which WebKit port to build using one of the following options:"
+                . "\n\t$portsChoice\n";
+        }
+
+        # If script is run without arguments we cannot determine port
+        # TODO: This state should be outlawed
+        $portName = Unknown;
+    }
+}
+
+sub portName()
+{
+    determinePortName();
+    return $portName;
 }
 
 sub isEfl()
 {
-    determineIsEfl();
-    return $isEfl;
-}
-
-sub determineIsGtk()
-{
-    return if defined($isGtk);
-    $isGtk = checkForArgumentAndRemoveFromARGV("--gtk");
+    return portName() eq Efl;
 }
 
 sub isGtk()
 {
-    determineIsGtk();
-    return $isGtk;
+    return portName() eq GTK;
 }
 
 # Determine if this is debian, ubuntu, linspire, or something similar.
@@ -1061,14 +1117,7 @@ sub isFedoraBased()
 
 sub isWinCairo()
 {
-    determineIsWinCairo();
-    return $isWinCairo;
-}
-
-sub determineIsWinCairo()
-{
-    return if defined($isWinCairo);
-    $isWinCairo = checkForArgumentAndRemoveFromARGV("--wincairo");
+    return portName() eq WinCairo;
 }
 
 sub isWin64()
@@ -1191,12 +1240,12 @@ sub isAppleWebKit()
 
 sub isAppleMacWebKit()
 {
-    return isDarwin() && !isGtk();
+    return (portName() eq Mac) || isIOSWebKit();
 }
 
 sub isAppleWinWebKit()
 {
-    return (isCygwin() || isWindows()) && !isWinCairo() && !isGtk();
+    return portName() eq AppleWin;
 }
 
 sub iOSSimulatorDevicesPath
@@ -1259,8 +1308,7 @@ sub willUseIOSSimulatorSDK()
 
 sub isIOSWebKit()
 {
-    determineXcodeSDK();
-    return isAppleMacWebKit() && (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK());
+    return portName() eq iOS;
 }
 
 sub determineNmPath()
@@ -2062,12 +2110,7 @@ sub cmakeBasedPortArguments()
 
 sub cmakeBasedPortName()
 {
-    return "Efl" if isEfl();
-    return "GTK" if isGtk();
-    return "Mac" if isAppleMacWebKit();
-    return "WinCairo" if isWinCairo();
-    return "AppleWin" if isAppleWinWebKit();
-    return "";
+    return ucfirst portName();
 }
 
 sub determineIsCMakeBuild()

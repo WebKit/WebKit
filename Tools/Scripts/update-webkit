@@ -43,7 +43,9 @@ use webkitdirs;
 my $quiet = '';
 my $showHelp;
 
-determineIsWinCairo();
+# This call is needed to eat --wincairo argument and avoid unknown option error.
+# FIXME: Allow port options explicitly or make this script port-agnostic.
+determinePortName();
 
 chdirWebKit();
 
