@@ -1,3 +1,81 @@
+2016-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [UNIX] Add support for windowless NPAPI plugins with no UI in non X11 platforms
+        https://bugs.webkit.org/show_bug.cgi?id=151992
+
+        Reviewed by Darin Adler.
+
+        We are currently disabling all plugins when running under wayland,
+        for example. There are some plugins, like the one used by
+        extensions.gnome.org, that don't do any rendering, so there's not
+        reason not to support those plugins under wayland or any other
+        unix non-x11 platform.
+        X11 specific code has been moved to a new class NetscapePluginX11,
+        only used under X11. The common code is in NetscapePluginUnix.cpp
+        that will use the X11 implementatin only when needed and
+        available. For windowed plugins we will fail the initialization
+        under non-X11 plaforms, while for windowless plugins we will just
+        return early from paint method.
+
+        * PlatformEfl.cmake: Add new files to compilation.
+        * PlatformGTK.cmake: Ditto.
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_set_enable_plugins): Do not disable plugins in wayland.
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore): Ditto.
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue): Use PlatformDisplay instead of
+        NetscapePlugin::x11HostDisplay() and don't claim to support X11
+        specific features under non-x11 platforms.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin): Remove X11 and GTK
+        specific memebers that are now moved to a dedicated class NetscapePluginX11.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (WebKit::NetscapePlugin::frameRectInWindowCoordinates): Make this public.
+        (WebKit::NetscapePlugin::clipRect): Add getter.
+        (WebKit::NetscapePlugin::size): Ditto.
+        (WebKit::NetscapePlugin::isWindowed): Ditto.
+        (WebKit::NetscapePlugin::isVisible): Ditto.
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp: Added.
+        (WebKit::NetscapePlugin::platformPreInitialize):
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        (WebKit::NetscapePlugin::platformDestroy):
+        (WebKit::NetscapePlugin::platformInvalidate):
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+        (WebKit::NetscapePlugin::platformVisibilityDidChange):
+        (WebKit::NetscapePlugin::platformPaint):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleWheelEvent):
+        (WebKit::NetscapePlugin::platformSetFocus):
+        (WebKit::NetscapePlugin::wantsPluginRelativeNPWindowCoordinates):
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.h: Added.
+        (WebKit::NetscapePluginUnix::~NetscapePluginUnix):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::getPluginDisplay):
+        (WebKit::displayDepth):
+        (WebKit::x11HostDisplay):
+        (WebKit::NetscapePluginX11::create):
+        (WebKit::NetscapePluginX11::NetscapePluginX11):
+        (WebKit::NetscapePluginX11::~NetscapePluginX11):
+        (WebKit::NetscapePluginX11::windowType):
+        (WebKit::NetscapePluginX11::window):
+        (WebKit::NetscapePluginX11::geometryDidChange):
+        (WebKit::NetscapePluginX11::visibilityDidChange):
+        (WebKit::NetscapePluginX11::paint):
+        (WebKit::initializeXEvent):
+        (WebKit::NetscapePluginX11::handleMouseEvent):
+        (WebKit::NetscapePluginX11::handleWheelEvent):
+        (WebKit::NetscapePluginX11::setFocus):
+        (WebKit::NetscapePluginX11::handleMouseEnterEvent):
+        (WebKit::NetscapePluginX11::handleMouseLeaveEvent):
+        (WebKit::NetscapePluginX11::handleKeyboardEvent):
+        (WebKit::setCommonMouseEventFields): Deleted.
+        (WebKit::setXKeyEventFields): Deleted.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.h: Added.
+
 2016-02-02  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove ENABLE(GLOBAL_FASTMALLOC_NEW) guard in WebMemorySamplerLinux.cpp

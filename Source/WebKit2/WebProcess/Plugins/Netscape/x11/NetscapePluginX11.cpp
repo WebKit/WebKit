@@ -25,10 +25,11 @@
  */
 
 #include "config.h"
+#include "NetscapePluginX11.h"
+
 #if PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NetscapePlugin.h"
-
 #include "PluginController.h"
 #include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
@@ -57,6 +58,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static inline Display* x11HostDisplay()
+{
+    return downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
+}
+
 static Display* getPluginDisplay()
 {
 #if PLATFORM(GTK)
@@ -66,7 +72,7 @@ static Display* getPluginDisplay()
 #elif PLATFORM(EFL) && defined(HAVE_ECORE_X)
     return static_cast<Display*>(ecore_x_display_get());
 #else
-    return 0;
+    return nullptr;
 #endif
 }
 
@@ -86,7 +92,7 @@ static inline int displayDepth()
 #if PLATFORM(GTK)
     return gdk_visual_get_depth(gdk_screen_get_system_visual(gdk_screen_get_default()));
 #elif PLATFORM(EFL) && defined(HAVE_ECORE_X)
-    return ecore_x_default_depth_get(NetscapePlugin::x11HostDisplay(), ecore_x_default_screen_get());
+    return ecore_x_default_depth_get(x11HostDisplay(), ecore_x_default_screen_get());
 #else
     return 0;
 #endif
@@ -103,11 +109,6 @@ static inline unsigned long rootWindowID()
 #endif
 }
 
-Display* NetscapePlugin::x11HostDisplay()
-{
-    return downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-}
-
 #if PLATFORM(GTK)
 static gboolean socketPlugRemovedCallback(GtkSocket*)
 {
@@ -119,17 +120,72 @@ static gboolean socketPlugRemovedCallback(GtkSocket*)
 }
 #endif
 
-bool NetscapePlugin::platformPostInitializeWindowed(bool needsXEmbed, uint64_t windowID)
+std::unique_ptr<NetscapePluginX11> NetscapePluginX11::create(NetscapePlugin& plugin)
 {
-    m_npWindow.type = NPWindowTypeWindow;
-    if (!needsXEmbed) {
+#if PLATFORM(GTK)
+    uint64_t windowID = 0;
+#endif
+    if (plugin.isWindowed()) {
+#if PLATFORM(GTK)
+        // NPPVplugiNeedsXEmbed is a boolean value, but at least the
+        // Flash player plugin is using an 'int' instead.
+        int needsXEmbed = 0;
+        plugin.NPP_GetValue(NPPVpluginNeedsXEmbed, &needsXEmbed);
+        if (needsXEmbed) {
+            windowID = plugin.controller()->createPluginContainer();
+            if (!windowID)
+                return nullptr;
+        } else {
+            notImplemented();
+            return nullptr;
+        }
+#else
         notImplemented();
-        return false;
+        return nullptr;
+#endif
     }
 
-    Display* display = x11HostDisplay();
+    Display* display = getPluginDisplay();
+    if (!display)
+        return nullptr;
 
 #if PLATFORM(GTK)
+    if (plugin.isWindowed())
+        return std::make_unique<NetscapePluginX11>(plugin, display, windowID);
+#endif
+
+    return std::make_unique<NetscapePluginX11>(plugin, display);
+}
+
+NetscapePluginX11::NetscapePluginX11(NetscapePlugin& plugin, Display* display)
+    : m_plugin(plugin)
+    , m_pluginDisplay(display)
+{
+    Display* hostDisplay = x11HostDisplay();
+    int depth = displayDepth();
+    m_setWindowCallbackStruct.display = hostDisplay;
+    m_setWindowCallbackStruct.depth = depth;
+
+    XVisualInfo visualTemplate;
+    visualTemplate.screen = x11Screen();
+    visualTemplate.depth = depth;
+    visualTemplate.c_class = TrueColor;
+    int numMatching;
+    XUniquePtr<XVisualInfo> visualInfo(XGetVisualInfo(hostDisplay, VisualScreenMask | VisualDepthMask | VisualClassMask, &visualTemplate, &numMatching));
+    ASSERT(visualInfo);
+    Visual* visual = visualInfo.get()[0].visual;
+    ASSERT(visual);
+
+    m_setWindowCallbackStruct.visual = visual;
+    m_setWindowCallbackStruct.colormap = XCreateColormap(hostDisplay, rootWindowID(), visual, AllocNone);
+}
+
+#if PLATFORM(GTK)
+NetscapePluginX11::NetscapePluginX11(NetscapePlugin& plugin, Display* display, uint64_t windowID)
+    : m_plugin(plugin)
+    , m_pluginDisplay(display)
+    , m_windowID(windowID)
+{
     // It seems flash needs the socket to be in the same process,
     // I guess it uses gdk_window_lookup(), so we create a new socket here
     // containing a plug with the UI process socket embedded.
@@ -146,153 +202,77 @@ bool NetscapePlugin::platformPostInitializeWindowed(bool needsXEmbed, uint64_t w
     gtk_container_add(GTK_CONTAINER(m_platformPluginWidget), socket);
     gtk_widget_show(socket);
 
-    m_npWindow.window = GINT_TO_POINTER(gtk_socket_get_id(GTK_SOCKET(socket)));
+    Display* hostDisplay = x11HostDisplay();
+    m_npWindowID = gtk_socket_get_id(GTK_SOCKET(socket));
     GdkWindow* window = gtk_widget_get_window(socket);
-    NPSetWindowCallbackStruct* callbackStruct = static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info);
-    callbackStruct->display = GDK_WINDOW_XDISPLAY(window);
-    callbackStruct->visual = GDK_VISUAL_XVISUAL(gdk_window_get_visual(window));
-    callbackStruct->depth = gdk_visual_get_depth(gdk_window_get_visual(window));
-    callbackStruct->colormap = XCreateColormap(display, GDK_ROOT_WINDOW(), callbackStruct->visual, AllocNone);
-#else
-    UNUSED_PARAM(windowID);
+    m_setWindowCallbackStruct.display = GDK_WINDOW_XDISPLAY(window);
+    m_setWindowCallbackStruct.visual = GDK_VISUAL_XVISUAL(gdk_window_get_visual(window));
+    m_setWindowCallbackStruct.depth = gdk_visual_get_depth(gdk_window_get_visual(window));
+    m_setWindowCallbackStruct.colormap = XCreateColormap(hostDisplay, GDK_ROOT_WINDOW(), m_setWindowCallbackStruct.visual, AllocNone);
+
+    XFlush(hostDisplay);
+}
 #endif
 
-    XFlush(display);
-
-    callSetWindow();
-
-    return true;
-}
-
-bool NetscapePlugin::platformPostInitializeWindowless()
+NetscapePluginX11::~NetscapePluginX11()
 {
-    Display* display = x11HostDisplay();
-    m_npWindow.type = NPWindowTypeDrawable;
-    m_npWindow.window = 0;
-
-    int depth = displayDepth();
-
-    NPSetWindowCallbackStruct* callbackStruct = static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info);
-    callbackStruct->display = display;
-    callbackStruct->depth = depth;
-
-    XVisualInfo visualTemplate;
-    visualTemplate.screen = x11Screen();
-    visualTemplate.depth = depth;
-    visualTemplate.c_class = TrueColor;
-    int numMatching;
-    XUniquePtr<XVisualInfo> visualInfo(XGetVisualInfo(display, VisualScreenMask | VisualDepthMask | VisualClassMask, &visualTemplate, &numMatching));
-    ASSERT(visualInfo);
-    Visual* visual = visualInfo.get()[0].visual;
-    ASSERT(visual);
-
-    callbackStruct->visual = visual;
-    callbackStruct->colormap = XCreateColormap(display, rootWindowID(), visual, AllocNone);
-
-    callSetWindow();
-
-    return true;
-}
-
-void NetscapePlugin::platformPreInitialize()
-{
-}
-
-bool NetscapePlugin::platformPostInitialize()
-{
-    uint64_t windowID = 0;
-    // NPPVpluginNeedsXEmbed is a boolean value, but at least the
-    // Flash player plugin is using an 'int' instead.
-    int needsXEmbed = 0;
-    if (m_isWindowed) {
-        NPP_GetValue(NPPVpluginNeedsXEmbed, &needsXEmbed);
-        if (needsXEmbed) {
-            windowID = controller()->createPluginContainer();
-            if (!windowID)
-                return false;
-        } else {
-            notImplemented();
-            return false;
-        }
-    }
-
-    if (!(m_pluginDisplay = getPluginDisplay()))
-        return false;
-
-    NPSetWindowCallbackStruct* callbackStruct = new NPSetWindowCallbackStruct;
-    callbackStruct->type = 0;
-    m_npWindow.ws_info = callbackStruct;
-
-    if (m_isWindowed)
-        return platformPostInitializeWindowed(needsXEmbed, windowID);
-
-    return platformPostInitializeWindowless();
-}
-
-void NetscapePlugin::platformDestroy()
-{
-    NPSetWindowCallbackStruct* callbackStruct = static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info);
-    Display* hostDisplay = x11HostDisplay();
-    XFreeColormap(hostDisplay, callbackStruct->colormap);
-    delete callbackStruct;
+    XFreeColormap(x11HostDisplay(), m_setWindowCallbackStruct.colormap);
 
     m_drawable.reset();
 
 #if PLATFORM(GTK)
-    if (m_platformPluginWidget) {
+    if (m_platformPluginWidget)
         gtk_widget_destroy(m_platformPluginWidget);
-        m_platformPluginWidget = 0;
-    }
 #endif
 }
 
-bool NetscapePlugin::platformInvalidate(const IntRect&)
+NPWindowType NetscapePluginX11::windowType() const
 {
-    notImplemented();
-    return false;
+    return m_plugin.isWindowed() ? NPWindowTypeWindow : NPWindowTypeDrawable;
 }
 
-void NetscapePlugin::platformGeometryDidChange()
+void* NetscapePluginX11::window() const
 {
-    if (m_isWindowed) {
+#if PLATFORM(GTK)
+    return m_plugin.isWindowed() ? GINT_TO_POINTER(m_npWindowID) : nullptr;
+#else
+    return nullptr;
+#endif
+}
+
+void NetscapePluginX11::geometryDidChange()
+{
+    if (m_plugin.isWindowed()) {
         uint64_t windowID = 0;
 #if PLATFORM(GTK)
         windowID = static_cast<uint64_t>(GDK_WINDOW_XID(gtk_plug_get_socket_window(GTK_PLUG(m_platformPluginWidget))));
 #endif
-        controller()->windowedPluginGeometryDidChange(m_frameRectInWindowCoordinates, m_clipRect, windowID);
+        m_plugin.controller()->windowedPluginGeometryDidChange(m_plugin.frameRectInWindowCoordinates(), m_plugin.clipRect(), windowID);
         return;
     }
 
     m_drawable.reset();
-    if (m_pluginSize.isEmpty())
+    if (m_plugin.size().isEmpty())
         return;
 
-    m_drawable = XCreatePixmap(x11HostDisplay(), rootWindowID(), m_pluginSize.width(), m_pluginSize.height(), displayDepth());
+    m_drawable = XCreatePixmap(x11HostDisplay(), rootWindowID(), m_plugin.size().width(), m_plugin.size().height(), displayDepth());
     XSync(x11HostDisplay(), false); // Make sure that the server knows about the Drawable.
 }
 
-void NetscapePlugin::platformVisibilityDidChange()
+void NetscapePluginX11::visibilityDidChange()
 {
-    if (!m_isWindowed)
-        return;
-
+    ASSERT(m_plugin.isWindowed());
     uint64_t windowID = 0;
 #if PLATFORM(GTK)
     windowID = static_cast<uint64_t>(GDK_WINDOW_XID(gtk_plug_get_socket_window(GTK_PLUG(m_platformPluginWidget))));
 #endif
-    controller()->windowedPluginVisibilityDidChange(m_isVisible, windowID);
-    controller()->windowedPluginGeometryDidChange(m_frameRectInWindowCoordinates, m_clipRect, windowID);
+    m_plugin.controller()->windowedPluginVisibilityDidChange(m_plugin.isVisible(), windowID);
+    m_plugin.controller()->windowedPluginGeometryDidChange(m_plugin.frameRectInWindowCoordinates(), m_plugin.clipRect(), windowID);
 }
 
-void NetscapePlugin::platformPaint(GraphicsContext& context, const IntRect& dirtyRect, bool /*isSnapshot*/)
+void NetscapePluginX11::paint(GraphicsContext& context, const IntRect& dirtyRect)
 {
-    if (m_isWindowed)
-        return;
-
-    if (!m_isStarted) {
-        // FIXME: we should paint a missing plugin icon.
-        return;
-    }
+    ASSERT(m_plugin.isWindowed());
 
     if (context.paintingDisabled() || !m_drawable)
         return;
@@ -313,14 +293,14 @@ void NetscapePlugin::platformPaint(GraphicsContext& context, const IntRect& dirt
     exposeEvent.width = exposedRect.width();
     exposeEvent.height = exposedRect.height();
 
-    NPP_HandleEvent(&xevent);
+    m_plugin.NPP_HandleEvent(&xevent);
 
     if (m_pluginDisplay != x11HostDisplay())
         XSync(m_pluginDisplay, false);
 
 #if PLATFORM(GTK) || (PLATFORM(EFL) && USE(CAIRO))
     RefPtr<cairo_surface_t> drawableSurface = adoptRef(cairo_xlib_surface_create(m_pluginDisplay, m_drawable.get(),
-        static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info)->visual, m_pluginSize.width(), m_pluginSize.height()));
+        m_setWindowCallbackStruct.visual, m_plugin.size().width(), m_plugin.size().height()));
     cairo_t* cr = context.platformContext()->cr();
     cairo_save(cr);
 
@@ -342,7 +322,7 @@ static inline void initializeXEvent(XEvent& event)
     memset(&event, 0, sizeof(XEvent));
     event.xany.serial = 0;
     event.xany.send_event = false;
-    event.xany.display = NetscapePlugin::x11HostDisplay();
+    event.xany.display = x11HostDisplay();
     event.xany.window = 0;
 }
 
@@ -440,15 +420,9 @@ static inline void setXCrossingEventFields(XEvent& xEvent, const WebMouseEvent& 
     xCrossing.focus = false;
 }
 
-bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
+bool NetscapePluginX11::handleMouseEvent(const WebMouseEvent& event)
 {
-    if (m_isWindowed)
-        return false;
-
-    if ((event.type() == WebEvent::MouseDown || event.type() == WebEvent::MouseUp)
-         && event.button() == WebMouseEvent::RightButton
-         && quirks().contains(PluginQuirks::IgnoreRightClickInWindowlessMode))
-        return false;
+    ASSERT(m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
@@ -456,10 +430,10 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
     switch (event.type()) {
     case WebEvent::MouseDown:
     case WebEvent::MouseUp:
-        setXButtonEventFields(xEvent, event, convertToRootView(IntPoint()));
+        setXButtonEventFields(xEvent, event, m_plugin.convertToRootView(IntPoint()));
         break;
     case WebEvent::MouseMove:
-        setXMotionEventFields(xEvent, event, convertToRootView(IntPoint()));
+        setXMotionEventFields(xEvent, event, m_plugin.convertToRootView(IntPoint()));
         break;
     case WebEvent::MouseForceChanged:
     case WebEvent::MouseForceDown:
@@ -479,7 +453,7 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
         return false;
     }
 
-    return !NPP_HandleEvent(&xEvent);
+    return !m_plugin.NPP_HandleEvent(&xEvent);
 }
 
 // We undefine these constants in npruntime_internal.h to avoid collision
@@ -489,22 +463,20 @@ const int kKeyReleaseType = 3;
 const int kFocusInType = 9;
 const int kFocusOutType = 10;
 
-bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& event)
+bool NetscapePluginX11::handleWheelEvent(const WebWheelEvent& event)
 {
-    if (m_isWindowed)
-        return false;
+    ASSERT(m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXButtonEventFieldsByWebWheelEvent(xEvent, event, convertToRootView(IntPoint()));
+    setXButtonEventFieldsByWebWheelEvent(xEvent, event, m_plugin.convertToRootView(IntPoint()));
 
-    return !NPP_HandleEvent(&xEvent);
+    return !m_plugin.NPP_HandleEvent(&xEvent);
 }
 
-void NetscapePlugin::platformSetFocus(bool focusIn)
+void NetscapePluginX11::setFocus(bool focusIn)
 {
-    if (m_isWindowed)
-        return;
+    ASSERT(m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
@@ -513,36 +485,29 @@ void NetscapePlugin::platformSetFocus(bool focusIn)
     focusEvent.mode = NotifyNormal;
     focusEvent.detail = NotifyDetailNone;
 
-    NPP_HandleEvent(&xEvent);
+    m_plugin.NPP_HandleEvent(&xEvent);
 }
 
-bool NetscapePlugin::wantsPluginRelativeNPWindowCoordinates()
+bool NetscapePluginX11::handleMouseEnterEvent(const WebMouseEvent& event)
 {
-    return true;
-}
-
-bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
-{
-    if (m_isWindowed)
-        return false;
+    ASSERT(m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXCrossingEventFields(xEvent, event, convertToRootView(IntPoint()), EnterNotify);
+    setXCrossingEventFields(xEvent, event, m_plugin.convertToRootView(IntPoint()), EnterNotify);
 
-    return !NPP_HandleEvent(&xEvent);
+    return !m_plugin.NPP_HandleEvent(&xEvent);
 }
 
-bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
+bool NetscapePluginX11::handleMouseLeaveEvent(const WebMouseEvent& event)
 {
-    if (m_isWindowed)
-        return false;
+    ASSERT(m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
-    setXCrossingEventFields(xEvent, event, convertToRootView(IntPoint()), LeaveNotify);
+    setXCrossingEventFields(xEvent, event, m_plugin.convertToRootView(IntPoint()), LeaveNotify);
 
-    return !NPP_HandleEvent(&xEvent);
+    return !m_plugin.NPP_HandleEvent(&xEvent);
 }
 
 static inline void setXKeyEventFields(XEvent& xEvent, const WebKeyboardEvent& webEvent)
@@ -565,8 +530,9 @@ static inline void setXKeyEventFields(XEvent& xEvent, const WebKeyboardEvent& we
     xKey.y_root = 0;
 }
 
-bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& event)
+bool NetscapePluginX11::handleKeyboardEvent(const WebKeyboardEvent& event)
 {
+    ASSERT(m_plugin.isWindowed());
     // We don't generate other types of keyboard events via WebEventFactory.
     ASSERT(event.type() == WebEvent::KeyDown || event.type() == WebEvent::KeyUp);
 
@@ -574,7 +540,7 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& event)
     initializeXEvent(xEvent);
     setXKeyEventFields(xEvent, event);
 
-    return !NPP_HandleEvent(&xEvent);
+    return !m_plugin.NPP_HandleEvent(&xEvent);
 }
 
 } // namespace WebKit

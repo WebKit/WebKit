@@ -42,6 +42,10 @@
 #include <utility>
 #include <wtf/text/CString.h>
 
+#if PLUGIN_ARCHITECTURE(X11)
+#include "NetscapePluginUnix.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -89,12 +93,6 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 #ifndef NP_NO_CARBON
     , m_nullEventTimer(RunLoop::main(), this, &NetscapePlugin::nullEventTimerFired)
     , m_npCGContext()
-#endif
-#elif PLUGIN_ARCHITECTURE(X11)
-    , m_drawable(0)
-    , m_pluginDisplay(0)
-#if PLATFORM(GTK)
-    , m_platformPluginWidget(0)
 #endif
 #endif
 {

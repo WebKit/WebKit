@@ -45,6 +45,10 @@
 #include <WebCore/MachSendRight.h>
 #endif
 
+#if PLUGIN_ARCHITECTURE(X11)
+#include <WebCore/PlatformDisplayX11.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -524,18 +528,21 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             break;
 #endif
 #elif PLUGIN_ARCHITECTURE(X11)
-       case NPNVxDisplay: {
-           if (!npp)
-               return NPERR_GENERIC_ERROR;
-           *reinterpret_cast<Display**>(value) = NetscapePlugin::x11HostDisplay();
-           break;
-       }
-       case NPNVSupportsXEmbedBool:
-           *static_cast<NPBool*>(value) = true;
-           break;
-       case NPNVSupportsWindowless:
-           *static_cast<NPBool*>(value) = true;
-           break;
+        case NPNVxDisplay: {
+            if (!npp)
+                return NPERR_GENERIC_ERROR;
+            auto& display = PlatformDisplay::sharedDisplay();
+            if (display.type() != PlatformDisplay::Type::X11)
+                return NPERR_GENERIC_ERROR;
+            *reinterpret_cast<Display**>(value) = downcast<PlatformDisplayX11>(display).native();
+            break;
+        }
+        case NPNVSupportsXEmbedBool:
+            *static_cast<NPBool*>(value) = PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11;
+            break;
+        case NPNVSupportsWindowless:
+            *static_cast<NPBool*>(value) = true;
+            break;
 
        case NPNVToolkit: {
            // Gtk based plugins need to be assured about the toolkit version.

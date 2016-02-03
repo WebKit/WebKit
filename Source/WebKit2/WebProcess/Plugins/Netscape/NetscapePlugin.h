@@ -38,10 +38,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
-#if PLUGIN_ARCHITECTURE(X11)
-#include <WebCore/XUniqueResource.h>
-#endif
-
 namespace WebCore {
 class MachSendRight;
 class HTTPHeaderMap;
@@ -54,7 +50,8 @@ OBJC_CLASS WKNPAPIPlugInContainer;
 namespace WebKit {
 
 class NetscapePluginStream;
-    
+class NetscapePluginUnix;
+
 class NetscapePlugin : public Plugin {
 public:
     static RefPtr<NetscapePlugin> create(PassRefPtr<NetscapePluginModule>);
@@ -95,6 +92,12 @@ public:
 
 #endif
 
+#if PLUGIN_ARCHITECTURE(X11)
+    const WebCore::IntRect& frameRectInWindowCoordinates() const { return m_frameRectInWindowCoordinates; }
+#endif
+    const WebCore::IntRect& clipRect() const { return m_clipRect; }
+    const WebCore::IntSize& size() const { return m_pluginSize; }
+
     PluginQuirks quirks() const { return m_pluginModule->pluginQuirks(); }
 
     void invalidate(const NPRect*);
@@ -109,6 +112,8 @@ public:
     bool evaluate(NPObject*, const String&scriptString, NPVariant* result);
     bool isPrivateBrowsingEnabled();
     bool isMuted() const;
+    bool isWindowed() const { return m_isWindowed; }
+    bool isVisible() const { return m_isVisible; }
 
     static void setSetExceptionFunction(void (*)(const String&));
 
@@ -154,6 +159,9 @@ public:
     bool NPP_URLRedirectNotify(const char* url, int32_t status, void* notifyData);
     NPError NPP_GetValue(NPPVariable, void *value);
     NPError NPP_SetValue(NPNVariable, void *value);
+
+    // Convert the given point from plug-in coordinates to root view coordinates.
+    virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const override;
 
 private:
     NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule);
@@ -258,9 +266,6 @@ private:
 
     virtual bool supportsSnapshotting() const override;
 
-    // Convert the given point from plug-in coordinates to root view coordinates.
-    virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const override;
-
     // Convert the given point from root view coordinates to plug-in coordinates. Returns false if the point can't be
     // converted (if the transformation matrix isn't invertible).
     bool convertFromRootView(const WebCore::IntPoint& pointInRootViewCoordinates, WebCore::IntPoint& pointInPluginCoordinates);
@@ -276,11 +281,6 @@ private:
     virtual void mutedStateChanged(bool) override;
 
     void updateNPNPrivateMode();
-
-#if PLUGIN_ARCHITECTURE(X11)
-    bool platformPostInitializeWindowed(bool needsXEmbed, uint64_t windowID);
-    bool platformPostInitializeWindowless();
-#endif
 
     uint64_t m_nextRequestID;
 
@@ -394,14 +394,7 @@ private:
     NP_CGContext m_npCGContext;
 #endif
 #elif PLUGIN_ARCHITECTURE(X11)
-    WebCore::XUniquePixmap m_drawable;
-    Display* m_pluginDisplay;
-#if PLATFORM(GTK)
-    GtkWidget* m_platformPluginWidget;
-#endif
-
-public: // Need to call it in the NPN_GetValue browser callback.
-    static Display* x11HostDisplay();
+    std::unique_ptr<NetscapePluginUnix> m_impl;
 #endif
 };
 

@@ -39,8 +39,6 @@ void WebPreferences::platformInitializeStore()
         // FIXME: Accelerated compositing under Wayland is not yet supported.
         // https://bugs.webkit.org/show_bug.cgi?id=115803
         setAcceleratedCompositingEnabled(false);
-
-        setPluginsEnabled(false);
     }
 #endif
 #if !ENABLE(OPENGL)
