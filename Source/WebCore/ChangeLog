@@ -1,5 +1,19 @@
 2016-02-03  Jer Noble  <jer.noble@apple.com>
 
+        [EME][Mac] MediaKeys.createSession() fails with initData containing a contentId whose length is > 1/2 the initData.
+        https://bugs.webkit.org/show_bug.cgi?id=153517
+        <rdar://problem/24303782>
+
+        Reviewed by Eric Carlson.
+
+        The length of contentId is given in bytes, not Uint16 characters. Use the former when extracting
+        the contentId string from the initData.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData):
+
+2016-02-03  Jer Noble  <jer.noble@apple.com>
+
         [Mac] Wrap a resource and resource loader in a NSURLSession-like object for use by lower level frameworks
         https://bugs.webkit.org/show_bug.cgi?id=153669
 

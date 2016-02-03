@@ -1042,7 +1042,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!status || offset + keyIDLength > initData->length())
         return false;
 
-    RefPtr<Uint16Array> keyIDArray = Uint16Array::create(initDataBuffer, offset, keyIDLength);
+    RefPtr<Uint8Array> keyIDArray = Uint8Array::create(initDataBuffer, offset, keyIDLength);
     if (!keyIDArray)
         return false;
 
