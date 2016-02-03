@@ -1,3 +1,16 @@
+2016-02-02  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove ENABLE(GLOBAL_FASTMALLOC_NEW) guard in WebMemorySamplerLinux.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=153812
+
+        Reviewed by Darin Adler.
+
+        r164261 already removed ENABLE_GLOBAL_FASTMALLOC_NEW guard though, WebMemorySamplerLinux
+        is still using it. That's why EFL and GTK memory sampler don't show fast malloc memory use.
+
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        (WebKit::WebMemorySampler::sampleWebKit): Deleted.
+
 2016-02-02  Enrica Casucci  <enrica@apple.com>
 
         Provide handleKeyWebEvent with completion handler.

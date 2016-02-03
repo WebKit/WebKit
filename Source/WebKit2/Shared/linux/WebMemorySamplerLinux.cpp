@@ -143,7 +143,6 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     size_t totalBytesInUse = 0;
     size_t totalBytesCommitted = 0;
 
-#if ENABLE(GLOBAL_FASTMALLOC_NEW)
     FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
     size_t fastMallocBytesInUse = fastMallocStatistics.committedVMBytes - fastMallocStatistics.freeListBytes;
     size_t fastMallocBytesCommitted = fastMallocStatistics.committedVMBytes;
@@ -152,7 +151,6 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
 
     appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Fast Malloc In Use"), fastMallocBytesInUse);
     appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Fast Malloc Committed Memory"), fastMallocBytesCommitted);
-#endif
 
     size_t jscHeapBytesInUse = JSDOMWindow::commonVM().heap.size();
     size_t jscHeapBytesCommitted = JSDOMWindow::commonVM().heap.capacity();
