@@ -89,6 +89,5 @@ function shouldBeDataProperty(expected, value, name) {
     var result = Object.getOwnPropertyDescriptors(global);
 
     shouldBeDataProperty(result[symbol], 'Symbol(test)', 'global[Symbol(test)]');
-    // FIXME: Can't delete Symbol properties from a JSSymbolTableObject.
-    // delete global[symbol];
+    delete global[symbol];
 })(this);

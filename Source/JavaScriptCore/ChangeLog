@@ -1,3 +1,21 @@
+2016-02-02  Caitlin Potter  <caitp@igalia.com>
+
+        JSSymbolTableObject::deleteProperty() crashes deleting Symbols
+        https://bugs.webkit.org/show_bug.cgi?id=153816
+
+        Reviewed by Darin Adler.
+
+        Changes JSSymbolTableObject::deleteProperty() to check if its
+        symbolTable() contains the property's uid() rather than publicName().
+        This ensures that it will not crash in the case of Symbols.
+
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::deleteProperty):
+        * tests/es6/Object_static_methods_Object.getOwnPropertyDescriptors.js:
+        (testGlobalProxy):
+        * tests/stress/regress-153816.js: Added.
+        (deleteSymbolFromJSSymbolTableObject):
+
 2016-02-02  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Do not copy FP when lowering FramePointer
