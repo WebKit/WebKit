@@ -1626,6 +1626,29 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineBreak e)
     }
 }
 
+template<> inline CSSPrimitiveValue::operator HangingPunctuation() const
+{
+    ASSERT(isValueID());
+    
+    switch (m_value.valueID) {
+    case CSSValueNone:
+        return NoHangingPunctuation;
+    case CSSValueFirst:
+        return FirstHangingPunctuation;
+    case CSSValueLast:
+        return LastHangingPunctuation;
+    case CSSValueAllowEnd:
+        return AllowEndHangingPunctuation;
+    case CSSValueForceEnd:
+        return ForceEndHangingPunctuation;
+    default:
+        break;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return NoHangingPunctuation;
+}
+
 template<> inline CSSPrimitiveValue::operator LineBreak() const
 {
     ASSERT(isValueID());

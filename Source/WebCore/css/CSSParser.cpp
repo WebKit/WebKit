@@ -3087,6 +3087,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         break;
 
+    case CSSPropertyHangingPunctuation:
+        return parseHangingPunctuation(important);
     case CSSPropertyWebkitLineBoxContain:
         if (id == CSSValueNone)
             validPrimitive = true;
@@ -10509,6 +10511,50 @@ RefPtr<CSSValue> CSSParser::parseTextIndent()
         return nullptr;
 
     return list.release();
+}
+
+bool CSSParser::parseHangingPunctuation(bool important)
+{
+    CSSParserValue* value = m_valueList->current();
+    if (value && value->id == CSSValueNone) {
+        addProperty(CSSPropertyHangingPunctuation, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        m_valueList->next();
+        return true;
+    }
+    
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    bool isValid = true;
+    std::bitset<numCSSValueKeywords> seenValues;
+    while (isValid && value) {
+        if (seenValues[value->id]
+            || (value->id == CSSValueAllowEnd && seenValues[CSSValueForceEnd])
+            || (value->id == CSSValueForceEnd && seenValues[CSSValueAllowEnd])) {
+            isValid = false;
+            break;
+        }
+        switch (value->id) {
+        case CSSValueAllowEnd:
+        case CSSValueFirst:
+        case CSSValueForceEnd:
+        case CSSValueLast:
+            list->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            seenValues.set(value->id);
+            break;
+        default:
+            isValid = false;
+            break;
+        }
+        if (isValid)
+            value = m_valueList->next();
+    }
+    
+    // Values are either valid or in shorthand scope.
+    if (list->length() && isValid) {
+        addProperty(CSSPropertyHangingPunctuation, list.release(), important);
+        return true;
+    }
+    
+    return false;
 }
 
 bool CSSParser::parseLineBoxContain(bool important)

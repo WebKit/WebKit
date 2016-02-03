@@ -236,6 +236,7 @@ font-variant [Inherited, Longhands=font-variant-ligatures|font-variant-position|
 font-stretch [SkipBuilder]
 glyph-orientation-horizontal [Inherited, SVG, Converter=GlyphOrientation]
 glyph-orientation-vertical [Inherited, SVG, Converter=GlyphOrientationOrAuto]
+hanging-punctuation [Inherited, Converter=HangingPunctuation]
 height [Initial=initialSize, Converter=LengthSizing]
 #if defined(ENABLE_CSS_IMAGE_ORIENTATION) && ENABLE_CSS_IMAGE_ORIENTATION
 image-orientation [Inherited]

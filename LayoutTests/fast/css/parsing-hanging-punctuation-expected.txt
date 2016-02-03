@@ -1,0 +1,27 @@
+This tests checks that all of the input values for hanging-punctuation parse correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("hanging-punctuation: none;") is "none"
+PASS test("hanging-punctuation: first;") is "first"
+PASS test("hanging-punctuation: last;") is "last"
+PASS test("hanging-punctuation: allow-end;") is "allow-end"
+PASS test("hanging-punctuation: force-end;") is "force-end"
+PASS test("hanging-punctuation: first last;") is "first last"
+PASS test("hanging-punctuation: last first;") is "last first"
+PASS test("hanging-punctuation: first allow-end;") is "first allow-end"
+PASS test("hanging-punctuation: first force-end;") is "first force-end"
+PASS test("hanging-punctuation: first allow-end last;") is "first allow-end last"
+PASS test("hanging-punctuation: last allow-end;") is "last allow-end"
+PASS test("hanging-punctuation: first first;") is ""
+PASS test("hanging-punctuation: nonsense;") is ""
+PASS test("hanging-punctuation: allow-end force-end;") is ""
+PASS test("hanging-punctuation: force-end allow-end;") is ""
+PASS test("hanging-punctuation: last last;") is ""
+PASS test("hanging-punctuation: 20px;") is ""
+PASS test("hanging-punctuation: first allow-end force-end last;") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -879,6 +879,8 @@ public:
     BreakInside breakInside() const { return static_cast<BreakInside>(rareNonInheritedData->m_breakInside); }
     BreakBetween breakBefore() const { return static_cast<BreakBetween>(rareNonInheritedData->m_breakBefore); }
     BreakBetween breakAfter() const { return static_cast<BreakBetween>(rareNonInheritedData->m_breakAfter); }
+    
+    HangingPunctuation hangingPunctuation() const { return static_cast<HangingPunctuation>(rareInheritedData->m_hangingPunctuation); }
 
     float outlineOffset() const
     {
@@ -1622,6 +1624,8 @@ public:
     void setBreakBefore(BreakBetween breakBehavior) { SET_VAR(rareNonInheritedData, m_breakBefore, breakBehavior); }
     void setBreakAfter(BreakBetween breakBehavior) { SET_VAR(rareNonInheritedData, m_breakAfter, breakBehavior); }
     void setBreakInside(BreakInside breakBehavior) { SET_VAR(rareNonInheritedData, m_breakInside, breakBehavior); }
+    
+    void setHangingPunctuation(HangingPunctuation punctuation) { SET_VAR(rareInheritedData, m_hangingPunctuation, punctuation); }
 
     // End CSS3 Setters
 
@@ -1881,6 +1885,7 @@ public:
     static EFloat initialFloating() { return NoFloat; }
     static BreakBetween initialBreakBetween() { return AutoBreakBetween; }
     static BreakInside initialBreakInside() { return AutoBreakInside; }
+    static HangingPunctuation initialHangingPunctuation() { return NoHangingPunctuation; }
     static ETableLayout initialTableLayout() { return TAUTO; }
     static EBorderCollapse initialBorderCollapse() { return BSEPARATE; }
     static EBorderStyle initialBorderStyle() { return BNONE; }

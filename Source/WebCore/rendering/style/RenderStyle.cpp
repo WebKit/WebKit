@@ -613,6 +613,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
 #endif
             || rareInheritedData->m_lineSnap != other.rareInheritedData->m_lineSnap
             || rareInheritedData->m_lineAlign != other.rareInheritedData->m_lineAlign
+            || rareInheritedData->m_hangingPunctuation != other.rareInheritedData->m_hangingPunctuation
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
             || rareInheritedData->useTouchOverflowScrolling != other.rareInheritedData->useTouchOverflowScrolling
 #endif

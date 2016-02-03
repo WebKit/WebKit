@@ -135,6 +135,8 @@ public:
     static BreakBetween convertRegionBreakBetween(StyleResolver&, CSSValue&);
     static BreakInside convertRegionBreakInside(StyleResolver&, CSSValue&);
 #endif
+    
+    static HangingPunctuation convertHangingPunctuation(StyleResolver&, CSSValue&);
 
 private:
     friend class StyleBuilderCustom;
@@ -1278,6 +1280,16 @@ inline BreakInside StyleBuilderConverter::convertRegionBreakInside(StyleResolver
     return primitiveValue;
 }
 #endif
+
+inline HangingPunctuation StyleBuilderConverter::convertHangingPunctuation(StyleResolver&, CSSValue& value)
+{
+    HangingPunctuation result = RenderStyle::initialHangingPunctuation();
+    if (is<CSSValueList>(value)) {
+        for (auto& currentValue : downcast<CSSValueList>(value))
+            result |= downcast<CSSPrimitiveValue>(currentValue.get());
+    }
+    return result;
+}
 
 } // namespace WebCore
 

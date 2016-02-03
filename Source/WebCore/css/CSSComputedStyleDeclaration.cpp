@@ -1695,6 +1695,23 @@ static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(TextEmphasisPosition 
     return list.releaseNonNull();
 }
 
+static Ref<CSSValue> hangingPunctuationToCSSValue(HangingPunctuation hangingPunctuation)
+{
+    auto& cssValuePool = CSSValuePool::singleton();
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    if (hangingPunctuation & FirstHangingPunctuation)
+        list->append(cssValuePool.createIdentifierValue(CSSValueFirst));
+    if (hangingPunctuation & AllowEndHangingPunctuation)
+        list->append(cssValuePool.createIdentifierValue(CSSValueAllowEnd));
+    if (hangingPunctuation & ForceEndHangingPunctuation)
+        list->append(cssValuePool.createIdentifierValue(CSSValueForceEnd));
+    if (hangingPunctuation & LastHangingPunctuation)
+        list->append(cssValuePool.createIdentifierValue(CSSValueLast));
+    if (!list->length())
+        return cssValuePool.createIdentifierValue(CSSValueNone);
+    return list.releaseNonNull();
+}
+    
 static Ref<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat)
 {
     // For backwards compatibility, if both values are equal, just return one of them. And
@@ -3018,6 +3035,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return cssValuePool.createValue(style->breakBefore());
         case CSSPropertyBreakInside:
             return cssValuePool.createValue(style->breakInside());
+        case CSSPropertyHangingPunctuation:
+            return hangingPunctuationToCSSValue(style->hangingPunctuation());
         case CSSPropertyPosition:
             return cssValuePool.createValue(style->position());
         case CSSPropertyRight:

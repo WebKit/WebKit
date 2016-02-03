@@ -125,6 +125,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(CSS_TRAILING_WORD)
     , trailingWord(static_cast<unsigned>(RenderStyle::initialTrailingWord()))
 #endif
+    , m_hangingPunctuation(RenderStyle::initialHangingPunctuation())
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -207,6 +208,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
 #if ENABLE(CSS_TRAILING_WORD)
     , trailingWord(o.trailingWord)
 #endif
+    , m_hangingPunctuation(o.m_hangingPunctuation)
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
@@ -313,6 +315,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #if ENABLE(CSS_TRAILING_WORD)
         && trailingWord == o.trailingWord
 #endif
+        && m_hangingPunctuation == o.m_hangingPunctuation
         && m_customProperties == o.m_customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage);
 }

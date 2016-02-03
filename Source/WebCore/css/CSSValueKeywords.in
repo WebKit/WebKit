@@ -1191,3 +1191,9 @@ contents
 // touch-action
 manipulation
 #endif
+
+// hanging-punctuation
+allow-end
+first
+force-end
+last

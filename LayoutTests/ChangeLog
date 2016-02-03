@@ -1,3 +1,15 @@
+2016-02-03  Dave Hyatt  <hyatt@apple.com>
+
+        Implement hanging-punctuation property parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=18109.
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/parsing-hanging-punctuation-expected.txt: Added.
+        * fast/css/parsing-hanging-punctuation.html: Added.
+        * fast/css/resources/parsing-hanging-punctuation.js: Added.
+        (test):
+
 2016-02-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip fast/forms/input-user-input-sanitization.html on ios-simulator

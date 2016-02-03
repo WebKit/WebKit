@@ -137,6 +137,8 @@ public:
     unsigned trailingWord : 1;
 #endif
 
+    unsigned m_hangingPunctuation : 4;
+
     AtomicString hyphenationString;
     short hyphenationLimitBefore;
     short hyphenationLimitAfter;

@@ -337,6 +337,8 @@ public:
 
     RefPtr<CSSValue> parseTextIndent();
     
+    bool parseHangingPunctuation(bool important);
+
     bool parseLineBoxContain(bool important);
     RefPtr<CSSCalcValue> parseCalculation(CSSParserValue&, CalculationPermittedValueRange);
 

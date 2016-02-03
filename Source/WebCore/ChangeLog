@@ -1,3 +1,43 @@
+2016-02-03  Dave Hyatt  <hyatt@apple.com>
+
+        Implement hanging-punctuation property parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=18109.
+
+        Reviewed by Zalan Bujtas.
+
+        Added parsing test in fast/css.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderEmphasisPositionFlagsToCSSValue):
+        (WebCore::hangingPunctuationToCSSValue):
+        (WebCore::fillRepeatToCSSValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseTextIndent):
+        (WebCore::CSSParser::parseHangingPunctuation):
+        (WebCore::CSSParser::parseLineBoxContain):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator HangingPunctuation):
+        (WebCore::CSSPrimitiveValue::operator LineBreak):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertRegionBreakInside):
+        (WebCore::StyleBuilderConverter::convertHangingPunctuation):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::operator| ):
+        (WebCore::operator|= ):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2016-02-03  Jessie Berlin  <jberlin@webkit.org>
 
         Build fix.
