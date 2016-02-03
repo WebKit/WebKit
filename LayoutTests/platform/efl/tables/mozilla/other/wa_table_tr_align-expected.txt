@@ -70,24 +70,24 @@ layer at (0,0) size 785x1309
           RenderText {#text} at (0,0) size 498x17
             text run at (0,0) width 498: "Verify that the sample text displays as stated in each of the following test cases:"
         RenderBlock {P} at (40,34) size 729x70
-          RenderTable {TABLE} at (0,0) size 719x70 [bgcolor=#F08080]
-            RenderTableSection {TBODY} at (0,0) size 719x70
-              RenderTableRow {TR} at (0,2) size 719x32
-                RenderTableCell {TD} at (2,2) size 97x32 [r=0 c=0 rs=1 cs=1]
+          RenderTable {TABLE} at (0,0) size 718x70 [bgcolor=#F08080]
+            RenderTableSection {TBODY} at (0,0) size 718x70
+              RenderTableRow {TR} at (0,2) size 718x32
+                RenderTableCell {TD} at (2,2) size 96x32 [r=0 c=0 rs=1 cs=1]
                   RenderInline {A} at (0,0) size 82x17 [color=#0000EE]
                     RenderText {#text} at (7,7) size 82x17
                       text run at (7,7) width 82: "Test Case #1"
-                RenderTableCell {TD} at (100,2) size 617x32 [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (100,2) size 616x32 [r=0 c=1 rs=1 cs=1]
                   RenderInline {FONT} at (0,0) size 602x17 [color=#0000FF]
                     RenderInline {B} at (0,0) size 602x17
                       RenderText {#text} at (7,7) size 602x17
                         text run at (7,7) width 602: "Table displaying Header \"CENTER \"& Data \"LEFT\" default horizontal row alignment"
-              RenderTableRow {TR} at (0,36) size 719x32
-                RenderTableCell {TD} at (2,36) size 97x32 [r=1 c=0 rs=1 cs=1]
+              RenderTableRow {TR} at (0,36) size 718x32
+                RenderTableCell {TD} at (2,36) size 96x32 [r=1 c=0 rs=1 cs=1]
                   RenderInline {A} at (0,0) size 82x17 [color=#0000EE]
                     RenderText {#text} at (7,7) size 82x17
                       text run at (7,7) width 82: "Test Case #2"
-                RenderTableCell {TD} at (100,36) size 617x32 [r=1 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (100,36) size 616x32 [r=1 c=1 rs=1 cs=1]
                   RenderInline {FONT} at (0,0) size 596x17 [color=#0000FF]
                     RenderInline {B} at (0,0) size 596x17
                       RenderText {#text} at (7,7) size 596x17

@@ -9,21 +9,21 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,18) size 784x36
         RenderTableSection {TBODY} at (0,0) size 784x36
           RenderTableRow {TR} at (0,1) size 784x34
-            RenderTableCell {TD} at (1,1) size 10x34 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-                RenderFlexibleBox {DIV} at (4,6) size 1x18
+            RenderTableCell {TD} at (1,1) size 9x34 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+                RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x18
                   RenderBlock {DIV} at (0,1) size 16x16
-            RenderTableCell {TD} at (11,1) size 10x34 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-                RenderFlexibleBox {DIV} at (4,6) size 1x18
+            RenderTableCell {TD} at (11,1) size 9x34 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+                RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x18
                   RenderBlock {DIV} at (0,1) size 16x16
-            RenderTableCell {TD} at (21,1) size 10x34 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-                RenderFlexibleBox {DIV} at (4,6) size 1x18
+            RenderTableCell {TD} at (21,1) size 9x34 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+                RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x18
                   RenderBlock {DIV} at (0,1) size 16x16
@@ -36,21 +36,21 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,90) size 784x36
         RenderTableSection {TBODY} at (0,0) size 784x36
           RenderTableRow {TR} at (0,1) size 784x34
-            RenderTableCell {TD} at (1,1) size 10x34 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-                RenderFlexibleBox {DIV} at (4,6) size 1x18
+            RenderTableCell {TD} at (1,1) size 9x34 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+                RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,1) size 18x16
                   RenderBlock {DIV} at (18,0) size 0x18
                   RenderBlock {DIV} at (18,1) size 16x16
-            RenderTableCell {TD} at (11,1) size 10x34 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-                RenderFlexibleBox {DIV} at (4,6) size 1x18
+            RenderTableCell {TD} at (11,1) size 9x34 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+                RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,1) size 18x16
                   RenderBlock {DIV} at (18,0) size 0x18
                   RenderBlock {DIV} at (18,1) size 16x16
-            RenderTableCell {TD} at (21,1) size 10x34 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-                RenderFlexibleBox {DIV} at (4,6) size 1x18
+            RenderTableCell {TD} at (21,1) size 9x34 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+                RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,1) size 18x16
                   RenderBlock {DIV} at (18,0) size 0x18
                   RenderBlock {DIV} at (18,1) size 16x16

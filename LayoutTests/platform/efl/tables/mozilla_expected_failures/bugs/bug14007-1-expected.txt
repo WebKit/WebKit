@@ -64,7 +64,7 @@ layer at (0,0) size 785x664
                         text run at (0,252) width 296: "# # # # # # # # # # # # # # # # # # # # # # # # #"
                         text run at (0,270) width 296: "# # # # # # # # # # # # # # # # # # # # # # # # #"
                         text run at (0,288) width 236: "# # # # # # # # # # # # # # # # # # # #"
-            RenderTableCell {TD} at (538,0) size 231x324 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (538,0) size 232x324 [r=0 c=2 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 231x324
                 RenderTableSection {THEAD} at (0,0) size 231x18
                   RenderTableRow {TR} at (0,0) size 231x18
@@ -93,7 +93,7 @@ layer at (0,0) size 785x664
                         text run at (0,252) width 230: "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
                         text run at (0,270) width 230: "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !"
                         text run at (0,288) width 41: "! ! ! ! !"
-            RenderTableCell {TD} at (768,0) size 1x0 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (769,0) size 0x0 [r=0 c=3 rs=1 cs=1]
           RenderTableRow {TR} at (0,324) size 769x324
             RenderTableCell {TD} at (0,324) size 231x324 [r=1 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 231x324
@@ -153,7 +153,7 @@ layer at (0,0) size 785x664
                         text run at (0,252) width 296: "# # # # # # # # # # # # # # # # # # # # # # # # #"
                         text run at (0,270) width 296: "# # # # # # # # # # # # # # # # # # # # # # # # #"
                         text run at (0,288) width 236: "# # # # # # # # # # # # # # # # # # # #"
-            RenderTableCell {TD} at (538,324) size 231x324 [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (538,324) size 232x324 [r=1 c=2 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 231x324
                 RenderTableSection {THEAD} at (0,0) size 231x18
                   RenderTableRow {TR} at (0,0) size 231x18

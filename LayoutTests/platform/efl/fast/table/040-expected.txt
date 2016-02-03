@@ -28,9 +28,9 @@ layer at (0,0) size 785x626
         RenderTableSection {TBODY} at (0,0) size 600x40
           RenderTableRow {TR} at (0,0) size 600x20
             RenderTableCell {TD} at (0,10) size 200x0 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (200,10) size 401x0 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (200,10) size 400x0 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
           RenderTableRow {TR} at (0,20) size 600x20
-            RenderTableCell {TD} at (0,30) size 601x0 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,30) size 600x0 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
               RenderBlock {DIV} at (0,0) size 600x0
       RenderBlock {P} at (0,250) size 769x55
         RenderText {#text} at (0,0) size 145x17
@@ -49,12 +49,12 @@ layer at (0,0) size 785x626
               RenderText {#text} at (0,0) size 188x35
                 text run at (0,0) width 188: "Fixed cell in column one with"
                 text run at (0,18) width 64: "some text."
-            RenderTableCell {TD} at (200,0) size 401x36 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (200,0) size 400x36 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 398x35
                 text run at (0,0) width 398: "Fixed cell in column two with a lot more text. Will the ratios be"
                 text run at (0,18) width 68: "preserved?"
           RenderTableRow {TR} at (0,36) size 600x20
-            RenderTableCell {TD} at (0,46) size 601x0 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,46) size 600x0 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
               RenderBlock {DIV} at (0,0) size 600x0
       RenderBlock {P} at (0,402) size 769x55
         RenderText {#text} at (0,0) size 145x17
@@ -71,10 +71,10 @@ layer at (0,0) size 785x626
           RenderTableRow {TR} at (0,0) size 600x20
             RenderTableCell {TD} at (0,10) size 200x0 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 100x0
-            RenderTableCell {TD} at (200,10) size 401x0 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (200,10) size 400x0 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 250x0
           RenderTableRow {TR} at (0,20) size 600x20
-            RenderTableCell {TD} at (0,30) size 601x0 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,30) size 600x0 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
               RenderBlock {DIV} at (0,0) size 600x0
       RenderBlock {P} at (0,538) size 769x55
         RenderText {#text} at (0,0) size 145x17

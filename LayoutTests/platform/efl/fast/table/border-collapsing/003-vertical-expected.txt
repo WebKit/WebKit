@@ -21,11 +21,11 @@ layer at (396,0) size 404x600
           text run at (18,314) width 267: "bug fix changed our behavior to match the"
           text run at (36,0) width 32: "spec."
       RenderBlock {DIV} at (86,32) size 270x520 [border: (1px solid #0000FF)]
-        RenderTable {DIV} at (1,1) size 220x116 [border: (1px none #000000)]
-          RenderTableSection (anonymous) at (10,1) size 200x105
-            RenderTableRow {P} at (0,0) size 100x105
-              RenderTableCell {SPAN} at (0,0) size 100x-36 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {SPAN} at (0,52) size 100x21 [border: (10px solid #000000)] [r=0 c=1 rs=1 cs=1]
-            RenderTableRow {P} at (0,100) size 100x105 [border: (1px solid #0000FF)]
-              RenderTableCell {SPAN} at (100,0) size 100x-27 [border: (10px solid #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderTableCell {SPAN} at (100,52) size 100x21 [border: (10px solid #000000)] [r=1 c=1 rs=1 cs=1]
+        RenderTable {DIV} at (1,1) size 220x115 [border: (1px none #000000)]
+          RenderTableSection (anonymous) at (10,1) size 200x104
+            RenderTableRow {P} at (0,0) size 100x104
+              RenderTableCell {SPAN} at (0,0) size 100x-37 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (0,52) size 100x20 [border: (10px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableRow {P} at (0,100) size 100x104 [border: (1px solid #0000FF)]
+              RenderTableCell {SPAN} at (100,0) size 100x-28 [border: (10px solid #000000)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (100,52) size 100x20 [border: (10px solid #000000)] [r=1 c=1 rs=1 cs=1]

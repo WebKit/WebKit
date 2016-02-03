@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (0,0) size 22x69 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 17x8
                   text run at (1,1) width 8: "1"
-              RenderTableCell {TD} at (0,70) size 22x242 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (0,70) size 22x243 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 17x8
                   text run at (1,1) width 8: "2"
-              RenderTableCell {TD} at (0,313) size 22x7 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (0,314) size 22x7 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
                 RenderImage {IMG} at (1,1) size 20x4 [bgcolor=#FFA500]
         RenderBlock {P} at (38,0) size 0x320
         RenderTable {TABLE} at (38,0) size 40x320
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (0,0) size 20x64 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 17x8
                   text run at (1,1) width 8: "1"
-              RenderTableCell {TD} at (0,67) size 20x249 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (0,68) size 20x248 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
                 RenderImage {IMG} at (5,-3) size 10x254 [bgcolor=#FFA500]
             RenderTableRow {TR} at (0,20) size 20x320
               RenderTableCell {TD} at (20,0) size 20x320 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=3]

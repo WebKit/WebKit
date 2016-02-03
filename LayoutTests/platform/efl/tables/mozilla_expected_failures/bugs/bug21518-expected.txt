@@ -25,7 +25,7 @@ layer at (0,0) size 800x440
             RenderTableCell {TD} at (168,2) size 166x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 41x17
                 text run at (2,2) width 41: "Cell B"
-            RenderTableCell {TD} at (335,2) size 161x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (335,2) size 162x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 41x17
                 text run at (2,2) width 41: "Cell C"
           RenderTableRow {TR} at (0,26) size 498x22
@@ -35,7 +35,7 @@ layer at (0,0) size 800x440
             RenderTableCell {TD} at (168,26) size 166x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 40x17
                 text run at (2,2) width 40: "Cell E"
-            RenderTableCell {TD} at (335,26) size 161x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (335,26) size 162x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 39x17
                 text run at (2,2) width 39: "Cell F"
           RenderTableRow {TR} at (0,50) size 498x22
@@ -45,7 +45,7 @@ layer at (0,0) size 800x440
             RenderTableCell {TD} at (168,50) size 166x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 42x17
                 text run at (2,2) width 42: "Cell H"
-            RenderTableCell {TD} at (335,50) size 161x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (335,50) size 162x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
       RenderBlock {HR} at (0,218) size 784x3 [border: (1px inset #000000)]
@@ -68,7 +68,7 @@ layer at (0,0) size 800x440
             RenderTableCell {TD} at (168,2) size 166x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 41x17
                 text run at (2,2) width 41: "Cell B"
-            RenderTableCell {TD} at (335,2) size 161x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (335,2) size 162x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 41x17
                 text run at (2,2) width 41: "Cell C"
           RenderTableRow {TR} at (0,26) size 498x22
@@ -78,7 +78,7 @@ layer at (0,0) size 800x440
             RenderTableCell {TD} at (168,26) size 166x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 40x17
                 text run at (2,2) width 40: "Cell E"
-            RenderTableCell {TD} at (335,26) size 161x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (335,26) size 162x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 39x17
                 text run at (2,2) width 39: "Cell F"
           RenderTableRow {TR} at (0,50) size 498x22
@@ -88,7 +88,7 @@ layer at (0,0) size 800x440
             RenderTableCell {TD} at (168,50) size 166x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 42x17
                 text run at (2,2) width 42: "Cell H"
-            RenderTableCell {TD} at (335,50) size 161x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (335,50) size 162x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
       RenderBlock {HR} at (0,421) size 784x3 [border: (1px inset #000000)]

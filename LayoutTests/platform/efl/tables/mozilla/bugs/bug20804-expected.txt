@@ -22,19 +22,19 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (1,1) size 250x60
             RenderTableCell {TD} at (301,0) size 22x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (2,1) size 19x20
-            RenderTableCell {TD} at (322,1) size 460x20 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=2]
+            RenderTableCell {TD} at (322,1) size 461x20 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=2]
               RenderText {#text} at (76,1) size 383x17
                 text run at (76,1) width 172: "  All Products  |  Support  | "
                 text run at (247,1) width 212: "  Search  |  microsoft.com Home  "
           RenderTableRow {TR} at (0,22) size 782x42
             RenderTableCell {TD} at (301,22) size 22x42 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 19x40
-            RenderTableCell {TD} at (322,22) size 460x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=2]
+            RenderTableCell {TD} at (322,22) size 461x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=2]
               RenderImage {IMG} at (146,1) size 201x40
               RenderImage {IMG} at (346,1) size 113x40
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,64) size 782x20
-            RenderTableCell {TD} at (0,64) size 782x20 [bgcolor=#6699CC] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=4]
+            RenderTableCell {TD} at (0,64) size 783x20 [bgcolor=#6699CC] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=4]
               RenderText {#text} at (1,1) size 699x17
                 text run at (1,1) width 62: "  Home  | "
                 text run at (63,1) width 124: "  Events/Training  | "
@@ -56,19 +56,19 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (1,1) size 250x60
             RenderTableCell {TD} at (301,0) size 22x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (2,1) size 19x20
-            RenderTableCell {TD} at (322,1) size 460x20 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (322,1) size 461x20 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (76,1) size 383x17
                 text run at (76,1) width 172: "  All Products  |  Support  | "
                 text run at (247,1) width 212: "  Search  |  microsoft.com Home  "
           RenderTableRow {TR} at (0,22) size 782x42
             RenderTableCell {TD} at (301,22) size 22x42 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 19x40
-            RenderTableCell {TD} at (322,22) size 460x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (322,22) size 461x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderImage {IMG} at (146,1) size 201x40
               RenderImage {IMG} at (346,1) size 113x40
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,64) size 782x20
-            RenderTableCell {TD} at (0,64) size 782x20 [bgcolor=#6699CC] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (0,64) size 783x20 [bgcolor=#6699CC] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
               RenderText {#text} at (1,1) size 699x17
                 text run at (1,1) width 62: "  Home  | "
                 text run at (63,1) width 124: "  Events/Training  | "

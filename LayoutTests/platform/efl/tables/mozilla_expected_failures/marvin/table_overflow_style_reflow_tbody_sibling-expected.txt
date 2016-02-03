@@ -12,7 +12,7 @@ layer at (0,0) size 785x483
             RenderTableCell {TD} at (30,48) size 54x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "foo"
-            RenderTableCell {TD} at (113,30) size 55x56 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (114,30) size 54x56 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 20x17
                 text run at (1,1) width 20: "bar"
               RenderBR {BR} at (21,1) size 0x17
@@ -28,7 +28,7 @@ layer at (0,0) size 785x483
                 text run at (1,1) width 43: "foo"
                 text run at (1,38) width 41: "bar"
                 text run at (1,75) width 44: "baz"
-            RenderTableCell {TD} at (113,59) size 55x54 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (114,59) size 54x54 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 52x52 [border: (1px solid #008000)]
                 RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]
                   RenderText {#text} at (1,1) size 16x36

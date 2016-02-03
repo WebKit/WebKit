@@ -9,12 +9,12 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,18) size 784x36
         RenderTableSection {TBODY} at (0,0) size 784x36
           RenderTableRow {TR} at (0,1) size 784x34
-            RenderTableCell {TD} at (1,1) size 10x34 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-            RenderTableCell {TD} at (11,1) size 10x34 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-            RenderTableCell {TD} at (21,1) size 10x34 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
+            RenderTableCell {TD} at (1,1) size 9x34 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+            RenderTableCell {TD} at (11,1) size 9x34 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+            RenderTableCell {TD} at (21,1) size 9x34 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (31,8) size 752x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x17
                 text run at (1,1) width 4: " "
@@ -24,36 +24,12 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,90) size 784x36
         RenderTableSection {TBODY} at (0,0) size 784x36
           RenderTableRow {TR} at (0,1) size 784x34
-            RenderTableCell {TD} at (1,1) size 10x34 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-            RenderTableCell {TD} at (11,1) size 10x34 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
-            RenderTableCell {TD} at (21,1) size 10x34 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 8x28 [bgcolor=#FFFFFF]
+            RenderTableCell {TD} at (1,1) size 9x34 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+            RenderTableCell {TD} at (11,1) size 9x34 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
+            RenderTableCell {TD} at (21,1) size 9x34 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (31,8) size 752x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x17
                 text run at (1,1) width 4: " "
-layer at (14,36) size 0x18 scrollWidth 68
-  RenderBlock {DIV} at (4,6) size 1x18
-    RenderText {#text} at (0,0) size 67x17
-      text run at (0,0) width 67: "New Mail"
-layer at (24,36) size 0x18 scrollWidth 43
-  RenderBlock {DIV} at (4,6) size 1x18
-    RenderText {#text} at (0,0) size 42x17
-      text run at (0,0) width 42: "Reply"
-layer at (34,36) size 0x18 scrollWidth 66
-  RenderBlock {DIV} at (4,6) size 1x18
-    RenderText {#text} at (0,0) size 65x17
-      text run at (0,0) width 65: "Reply All"
-layer at (14,108) size 0x18 scrollWidth 68
-  RenderBlock {DIV} at (4,6) size 1x18
-    RenderText {#text} at (0,0) size 67x17
-      text run at (0,0) width 67: "New Mail"
-layer at (24,108) size 0x18 scrollWidth 43
-  RenderBlock {DIV} at (4,6) size 1x18
-    RenderText {#text} at (0,0) size 42x17
-      text run at (0,0) width 42: "Reply"
-layer at (34,108) size 0x18 scrollWidth 66
-  RenderBlock {DIV} at (4,6) size 1x18
-    RenderText {#text} at (0,0) size 65x17
-      text run at (0,0) width 65: "Reply All"

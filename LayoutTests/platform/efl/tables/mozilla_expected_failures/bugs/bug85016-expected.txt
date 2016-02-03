@@ -18,8 +18,8 @@ layer at (0,0) size 785x2059
         RenderText {#text} at (0,0) size 471x17
           text run at (0,0) width 471: "percentage height image in table cell (red), in a DIV with no height (green)"
       RenderBlock {DIV} at (32,1474) size 657x521
-        RenderTable {TABLE} at (0,0) size 261x521 [border: (1px solid #FF0000)]
-          RenderTableSection {TBODY} at (1,1) size 259x519
-            RenderTableRow {TR} at (0,2) size 259x515
-              RenderTableCell {TD} at (2,172) size 255x175 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 260x521 [border: (1px solid #FF0000)]
+          RenderTableSection {TBODY} at (1,1) size 258x519
+            RenderTableRow {TR} at (0,2) size 258x515
+              RenderTableCell {TD} at (2,172) size 254x175 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (2,2) size 250x170

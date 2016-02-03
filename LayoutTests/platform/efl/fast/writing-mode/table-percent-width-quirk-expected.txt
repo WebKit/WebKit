@@ -13,22 +13,22 @@ layer at (8,50) size 20x40
 layer at (8,125) size 100x50
   RenderBlock (positioned) {DIV} at (8,125) size 100x50 [bgcolor=#808080]
 layer at (8,125) size 20x40
-  RenderBlock (positioned) {DIV} at (0,0) size 21x40 [bgcolor=#0000FF]
+  RenderBlock (positioned) {DIV} at (0,0) size 20x40 [bgcolor=#0000FF]
     RenderBlock {DIV} at (0,0) size 20x20
-    RenderTable {TABLE} at (0,20) size 21x20 [bgcolor=#008000]
-      RenderTableSection {TBODY} at (0,0) size 21x20
-        RenderTableRow {TR} at (0,0) size 21x20
-          RenderTableCell {TD} at (0,0) size 21x20 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (0,20) size 20x20 [bgcolor=#008000]
+      RenderTableSection {TBODY} at (0,0) size 20x20
+        RenderTableRow {TR} at (0,0) size 20x20
+          RenderTableCell {TD} at (0,0) size 20x20 [r=0 c=0 rs=1 cs=1]
             RenderBlock {DIV} at (0,0) size 20x20
 layer at (692,200) size 100x50
   RenderBlock (positioned) {DIV} at (692,200) size 100x50 [bgcolor=#808080]
 layer at (752,200) size 40x20
-  RenderBlock (positioned) {DIV} at (0,0) size 40x21 [bgcolor=#0000FF]
+  RenderBlock (positioned) {DIV} at (0,0) size 40x20 [bgcolor=#0000FF]
     RenderBlock {DIV} at (0,0) size 20x20
-    RenderTable {TABLE} at (20,0) size 20x21 [bgcolor=#008000]
-      RenderTableSection {TBODY} at (0,0) size 20x21
-        RenderTableRow {TR} at (0,0) size 20x21
-          RenderTableCell {TD} at (0,0) size 20x21 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (20,0) size 20x20 [bgcolor=#008000]
+      RenderTableSection {TBODY} at (0,0) size 20x20
+        RenderTableRow {TR} at (0,0) size 20x20
+          RenderTableCell {TD} at (0,0) size 20x20 [r=0 c=0 rs=1 cs=1]
             RenderBlock {DIV} at (0,0) size 20x20
 layer at (692,275) size 100x50
   RenderBlock (positioned) {DIV} at (692,275) size 100x50 [bgcolor=#808080]
