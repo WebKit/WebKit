@@ -1,3 +1,9 @@
+2016-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix after r195979.
+
+        * PlatformMac.cmake:
+
 2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Reduce IPC traffic due to view state changes

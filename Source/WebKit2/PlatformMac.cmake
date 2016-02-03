@@ -341,6 +341,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/platform/network/cf"
     "${WEBCORE_DIR}/platform/network/cocoa"
+    "${WEBCORE_DIR}/platform/spi/cocoa"
     "${WEBCORE_DIR}/platform/spi/mac"
     "${WEBCORE_DIR}/platform/graphics/ca"
     "${WEBCORE_DIR}/platform/graphics/cg"
