@@ -1,3 +1,19 @@
+2016-02-03  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r194660): Legacy WebProcess crashes in ChildProcess::initializeSandbox()
+        https://bugs.webkit.org/show_bug.cgi?id=153734
+        <rdar://problem/24433179>
+
+        Reviewed by Dan Bernstein.
+
+        Fixes an issue where clients that used the legacy WebProcess bootstrapping process would crash.
+
+        Additionally, only consider the extra initialization parameter user-directory-suffix for
+        unsigned apps (e.g. WebKitTestRunner).
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
 2016-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed speculative buildfix after r195979.
