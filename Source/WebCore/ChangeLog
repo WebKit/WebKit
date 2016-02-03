@@ -1,3 +1,22 @@
+2016-02-02  Jinyoung Hur  <hur.ims@navercorp.com>
+
+        WEBGL_debug_shaders should be disabled for OpenGLES backend also
+        https://bugs.webkit.org/show_bug.cgi?id=153788
+
+        Reviewed by Darin Adler.
+
+        WEBGL_debug_shaders extension is disabled for OpenGL backed platform
+        because the implementation is not fully compliant to the spec yet.
+        Because this is not an OpenGL-specific problem, WEBGL_debug_shaders extension
+        should be disabled for OpenGLES backed platforms also.
+
+        No new tests, already covered by existing tests.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension): Deleted.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::supports):
+
 2016-02-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-primary-key-order.html fails with SQLite backend.

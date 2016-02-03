@@ -171,12 +171,6 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
             && (m_availableExtensions.contains("GL_ARB_draw_instanced") || m_availableExtensions.contains("GL_EXT_draw_instanced"));
     }
 
-    // We explicitly do not support this extension until
-    // we fix the following bug:
-    // https://bugs.webkit.org/show_bug.cgi?id=149734
-    if (name == "GL_ANGLE_translated_shader_source")
-        return false;
-
     if (name == "GL_EXT_sRGB")
 #if PLATFORM(IOS)
         return m_availableExtensions.contains("GL_EXT_sRGB");
