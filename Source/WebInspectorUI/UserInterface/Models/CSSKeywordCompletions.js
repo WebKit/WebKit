@@ -93,7 +93,7 @@ WebInspector.CSSKeywordCompletions.InheritedProperties = [
     "azimuth", "border-collapse", "border-spacing", "caption-side", "clip-rule", "color", "color-interpolation",
     "color-interpolation-filters", "color-rendering", "cursor", "direction", "elevation", "empty-cells", "fill",
     "fill-opacity", "fill-rule", "font", "font-family", "font-size", "font-style", "font-variant", "font-weight",
-    "glyph-orientation-horizontal", "glyph-orientation-vertical", "image-rendering", "kerning", "letter-spacing",
+    "glyph-orientation-horizontal", "glyph-orientation-vertical", "hanging-punctuation", "image-rendering", "kerning", "letter-spacing",
     "line-height", "list-style", "list-style-image", "list-style-position", "list-style-type", "marker", "marker-end",
     "marker-mid", "marker-start", "orphans", "pitch", "pitch-range", "pointer-events", "quotes", "resize", "richness",
     "shape-rendering", "speak", "speak-header", "speak-numeral", "speak-punctuation", "speech-rate", "stress", "stroke",
@@ -282,6 +282,9 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "float": [
         "none", "left", "right"
+    ],
+    "hanging-punctuation": [
+        "none", "first", "last", "allow-end", "force-end"
     ],
     "overflow-x": [
         "hidden", "auto", "visible", "overlay", "scroll", "marquee"

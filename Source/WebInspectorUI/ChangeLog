@@ -1,3 +1,12 @@
+2016-02-03  Dave Hyatt  <hyatt@apple.com>
+
+        Add hanging-punctuation property to Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=153841
+
+        Reviewed by Zalan Bujtas.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2016-02-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught exception TimelineRuler.prototype.resize no longer exists
