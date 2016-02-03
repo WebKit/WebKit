@@ -43,18 +43,11 @@
 
 namespace WebCore {
 
-CompositingCoordinator::~CompositingCoordinator()
-{
-    purgeBackingStores();
-
-    for (auto& registeredLayer : m_registeredLayers.values())
-        registeredLayer->setCoordinator(0);
-}
-
 CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinator::Client* client)
     : m_page(page)
     , m_client(client)
-    , m_rootCompositingLayer(0)
+    , m_rootCompositingLayer(nullptr)
+    , m_isDestructing(false)
     , m_isPurging(false)
     , m_isFlushingLayerChanges(false)
     , m_shouldSyncFrame(false)
@@ -64,6 +57,16 @@ CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinato
     , m_lastAnimationServiceTime(0)
 #endif
 {
+}
+
+CompositingCoordinator::~CompositingCoordinator()
+{
+    m_isDestructing = true;
+
+    purgeBackingStores();
+
+    for (auto& registeredLayer : m_registeredLayers.values())
+        registeredLayer->setCoordinator(nullptr);
 }
 
 void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* compositingLayer, GraphicsLayer* overlayLayer)
@@ -240,10 +243,9 @@ void CompositingCoordinator::notifyAnimationStarted(const GraphicsLayer*, const 
 
 void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
 {
-    if (!isFlushingLayerChanges())
+    if (!m_isDestructing && !isFlushingLayerChanges())
         m_client->notifyFlushRequired();
 }
-
 
 void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect)
 {

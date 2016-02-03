@@ -139,6 +139,7 @@ private:
     Vector<std::unique_ptr<UpdateAtlas>> m_updateAtlases;
 
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.
+    bool m_isDestructing;
     bool m_isPurging;
     bool m_isFlushingLayerChanges;
 
