@@ -1,3 +1,16 @@
+2016-02-03  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Engineering builds use manual sandboxing, but don’t need to
+        https://bugs.webkit.org/show_bug.cgi?id=153834
+
+        Reviewed by Anders Carlsson.
+
+        Now that engineering builds use the non-re-execing variant of XPC services, they can be
+        statically sandboxed and no longer need to be manually sandboxed.
+
+        * Configurations/DebugRelease.xcconfig: Don’t set WK_MANUAL_SANDBOXING_ENABLED to YES.
+        * WebKit2.xcodeproj/project.pbxproj: Let Xcode make changes to the built product references.
+
 2016-02-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r195555.

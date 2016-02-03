@@ -3128,7 +3128,7 @@
 		51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkResourceLoaderMac.mm; sourceTree = "<group>"; };
 		51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoaderMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
-		51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Databases.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Databases.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Databases.Development.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Databases.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		51FA1E28180CCADE00C44BE9 /* DatabaseProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DatabaseProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleDOMWindowExtension.h; sourceTree = "<group>"; };
 		51FA2D5A15211A1E00C1BA0B /* InjectedBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleDOMWindowExtension.h; sourceTree = "<group>"; };
@@ -3534,7 +3534,7 @@
 		BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleRangeHandle.cpp; sourceTree = "<group>"; };
 		BC39C4331626366F008BC689 /* WKDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMRange.mm; sourceTree = "<group>"; };
 		BC39C4341626366F008BC689 /* WKDOMRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMRange.h; sourceTree = "<group>"; };
-		BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.Development.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC3DE46815A91763008D26FC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BC4075D7124FF0270068F20A /* WKArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKArray.cpp; sourceTree = "<group>"; };
 		BC4075D8124FF0270068F20A /* WKArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKArray.h; sourceTree = "<group>"; };
@@ -3650,12 +3650,12 @@
 		BC8283A316B4BD9100A278FE /* Info-OSX.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
 		BC8283A816B4BD9100A278FE /* NetworkServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkService.xcconfig; sourceTree = "<group>"; };
-		BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Networking.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.Development.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Networking.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283F216B4FC5300A278FE /* PluginService.32.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.32.xcconfig; sourceTree = "<group>"; };
 		BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.64.xcconfig; sourceTree = "<group>"; };
-		BC8283F916B4FDDE00A278FE /* com.apple.WebKit.Plugin.32.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Plugin.32.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Plugin.64.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC8283F916B4FDDE00A278FE /* com.apple.WebKit.Plugin.32.Development.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Plugin.32.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.Development.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Plugin.64.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		BC8452A61162C80900CAB9B5 /* DrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingArea.h; sourceTree = "<group>"; };
 		BC84EB1712A7100C0083F2DA /* WebPreferencesMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesMac.mm; sourceTree = "<group>"; };

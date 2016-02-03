@@ -47,8 +47,6 @@ SDKROOT = $(SDKROOT_$(PLATFORM_NAME)_$(USE_INTERNAL_SDK));
 SDKROOT_macosx_ = macosx;
 SDKROOT_macosx_YES = macosx.internal;
 
-WK_MANUAL_SANDBOXING_ENABLED[sdk=iphoneos*] = YES;
-
 WK_RELOCATABLE_FRAMEWORKS = YES;
 WK_XPC_SERVICE_SUFFIX[sdk=macosx*] = .Development;
 WK_XPC_SERVICE_SUFFIX[sdk=*simulator*] = .Development;
