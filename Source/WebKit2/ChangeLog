@@ -1,3 +1,17 @@
+2016-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Use proposed credentials in authentication challenges with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=153811
+
+        Reviewed by Darin Adler.
+
+        This fixes http/tests/xmlhttprequest/basic-auth-default.html
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        Use the proposed credential if there is one.  This matches behavior in
+        ResourceHandle::tryHandlePasswordBasedAuthentication.
+
 2016-02-03  Jessie Berlin  <jberlin@webkit.org>
 
         Build fix.

@@ -312,6 +312,11 @@ bool NetworkDataTask::tryPasswordBasedAuthentication(const WebCore::Authenticati
         m_password = String();
         return true;
     }
+    
+    if (!challenge.proposedCredential().isEmpty() && !challenge.previousFailureCount()) {
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, challenge.proposedCredential());
+        return true;
+    }
 
     return false;
 }
