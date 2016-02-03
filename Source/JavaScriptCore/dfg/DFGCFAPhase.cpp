@@ -56,7 +56,7 @@ public:
         
         m_count = 0;
         
-        if (m_verbose && !shouldDumpGraphAtEachPhase()) {
+        if (m_verbose && !shouldDumpGraphAtEachPhase(m_graph.m_plan.mode)) {
             dataLog("Graph before CFA:\n");
             m_graph.dump();
         }

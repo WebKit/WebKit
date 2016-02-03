@@ -39,7 +39,7 @@ PhaseScope::PhaseScope(Code& code, const char* name)
     , m_name(name)
     , m_timingScope(name)
 {
-    if (shouldDumpIRAtEachPhase()) {
+    if (shouldDumpIRAtEachPhase(AirMode)) {
         dataLog("Air after ", code.lastPhaseName(), ", before ", name, ":\n");
         dataLog(code);
     }

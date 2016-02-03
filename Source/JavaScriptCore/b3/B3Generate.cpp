@@ -67,7 +67,7 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
 {
     TimingScope timingScope("generateToAir");
     
-    if (shouldDumpIR() && !shouldDumpIRAtEachPhase()) {
+    if (shouldDumpIR(B3Mode) && !shouldDumpIRAtEachPhase(B3Mode)) {
         dataLog("Initial B3:\n");
         dataLog(procedure);
     }
@@ -108,7 +108,7 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
     
     // If we're doing super verbose dumping, the phase scope of any phase will already do a dump.
     // Note that lowerToAir() acts like a phase in this regard.
-    if (shouldDumpIR() && !shouldDumpIRAtEachPhase()) {
+    if (shouldDumpIR(B3Mode) && !shouldDumpIRAtEachPhase(B3Mode)) {
         dataLog("B3 after ", procedure.lastPhaseName(), ", before generation:\n");
         dataLog(procedure);
     }

@@ -82,9 +82,11 @@ inline bool logCompilationChanges(CompilationMode mode = DFGMode)
     return verboseCompilationEnabled(mode) || Options::logCompilationChanges();
 }
 
-inline bool shouldDumpGraphAtEachPhase()
+inline bool shouldDumpGraphAtEachPhase(CompilationMode mode)
 {
-    return Options::dumpGraphAtEachPhase();
+    if (isFTL(mode))
+        return Options::dumpGraphAtEachPhase() || Options::dumpDFGFTLGraphAtEachPhase();
+    return Options::dumpGraphAtEachPhase() || Options::dumpDFGGraphAtEachPhase();
 }
 
 inline bool validationEnabled()

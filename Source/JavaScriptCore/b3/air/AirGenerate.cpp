@@ -65,7 +65,7 @@ void prepareForGeneration(Code& code)
         validate(code);
 
     // If we're doing super verbose dumping, the phase scope of any phase will already do a dump.
-    if (shouldDumpIR() && !shouldDumpIRAtEachPhase()) {
+    if (shouldDumpIR(AirMode) && !shouldDumpIRAtEachPhase(AirMode)) {
         dataLog("Initial air:\n");
         dataLog(code);
     }
@@ -130,7 +130,7 @@ void prepareForGeneration(Code& code)
 
     // Do a final dump of Air. Note that we have to do this even if we are doing per-phase dumping,
     // since the final generation is not a phase.
-    if (shouldDumpIR()) {
+    if (shouldDumpIR(AirMode)) {
         dataLog("Air after ", code.lastPhaseName(), ", before generation:\n");
         dataLog(code);
     }

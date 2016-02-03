@@ -34,14 +34,16 @@
 
 namespace JSC { namespace B3 {
 
-bool shouldDumpIR()
+bool shouldDumpIR(B3ComplitationMode mode)
 {
-    return FTL::verboseCompilationEnabled() || FTL::shouldDumpDisassembly() || shouldDumpIRAtEachPhase();
+    return FTL::verboseCompilationEnabled() || FTL::shouldDumpDisassembly() || shouldDumpIRAtEachPhase(mode);
 }
 
-bool shouldDumpIRAtEachPhase()
+bool shouldDumpIRAtEachPhase(B3ComplitationMode mode)
 {
-    return Options::dumpGraphAtEachPhase();
+    if (mode == B3Mode)
+        return Options::dumpGraphAtEachPhase() || Options::dumpB3GraphAtEachPhase();
+    return Options::dumpGraphAtEachPhase() || Options::dumpAirGraphAtEachPhase();
 }
 
 bool shouldValidateIR()

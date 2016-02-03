@@ -41,7 +41,7 @@ PhaseScope::PhaseScope(Procedure& procedure, const char* name)
     , m_name(name)
     , m_timingScope(name)
 {
-    if (shouldDumpIRAtEachPhase()) {
+    if (shouldDumpIRAtEachPhase(B3Mode)) {
         dataLog("B3 after ", procedure.lastPhaseName(), ", before ", name, ":\n");
         dataLog(procedure);
     }

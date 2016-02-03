@@ -33,8 +33,13 @@ namespace JSC { namespace B3 {
 inline bool is64Bit() { return sizeof(void*) == 8; }
 inline bool is32Bit() { return !is64Bit(); }
 
-bool shouldDumpIR();
-bool shouldDumpIRAtEachPhase();
+enum B3ComplitationMode {
+    B3Mode,
+    AirMode
+};
+
+bool shouldDumpIR(B3ComplitationMode);
+bool shouldDumpIRAtEachPhase(B3ComplitationMode);
 bool shouldValidateIR();
 bool shouldValidateIRAtEachPhase();
 bool shouldSaveIRBeforePhase();
