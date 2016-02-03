@@ -129,6 +129,7 @@ private:
 
     std::unique_ptr<GraphicsLayer> m_rootLayer;
     GraphicsLayer* m_rootCompositingLayer;
+    GraphicsLayer* m_overlayCompositingLayer;
 
     CoordinatedGraphicsState m_state;
 

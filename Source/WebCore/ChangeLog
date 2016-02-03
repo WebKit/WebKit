@@ -1,5 +1,26 @@
 2016-02-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] CompositingCoordinator should store the overlay layer, flush it as appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=152058
+
+        Reviewed by Michael Catanzaro.
+
+        Previously, the CompositingCoordinator only added the overlay layer to the
+        layer tree, but flushing its compositing state is also required. For that to
+        happen, CompositingCoordinator has to store a pointer to the overlay layer
+        object and flush it in ::flushPendingLayerChanges().
+
+        Overlay layers are most prominently used by the Web Inspector to highlight
+        the DOM elements on the Web page that are being hovered in the inspector.
+
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::CompositingCoordinator):
+        (WebCore::CompositingCoordinator::setRootCompositingLayer):
+        (WebCore::CompositingCoordinator::flushPendingLayerChanges):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.h:
+
+2016-02-03  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordinatedGraphics] CompositingCoordinator destructor is scheduling layer flushes
         https://bugs.webkit.org/show_bug.cgi?id=153823
 
