@@ -28,6 +28,7 @@
 namespace JSC {
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptors(ExecState*);
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(ExecState*);
 EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
 EncodedJSValue JSC_HOST_CALL ownEnumerablePropertyKeys(ExecState*);
@@ -93,6 +94,7 @@ inline JSObject* constructEmptyObject(ExecState* exec)
 JSObject* objectConstructorFreeze(ExecState*, JSObject*);
 JSValue objectConstructorGetPrototypeOf(ExecState*, JSObject*);
 JSValue objectConstructorGetOwnPropertyDescriptor(ExecState*, JSObject*, const Identifier&);
+JSValue objectConstructorGetOwnPropertyDescriptors(ExecState*, JSObject*);
 JSArray* ownPropertyKeys(ExecState*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);
 bool toPropertyDescriptor(ExecState*, JSValue, PropertyDescriptor&);
 

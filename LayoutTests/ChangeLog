@@ -1,3 +1,13 @@
+2016-02-02  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Implement Object.getOwnPropertyDescriptors() proposal
+        https://bugs.webkit.org/show_bug.cgi?id=153799
+
+        Reviewed by Darin Adler.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-02-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-primary-key-order.html fails with SQLite backend.

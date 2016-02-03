@@ -68,6 +68,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   getPrototypeOf            objectConstructorGetPrototypeOf             DontEnum|Function 1
   setPrototypeOf            objectConstructorSetPrototypeOf             DontEnum|Function 2
   getOwnPropertyDescriptor  objectConstructorGetOwnPropertyDescriptor   DontEnum|Function 2
+  getOwnPropertyDescriptors objectConstructorGetOwnPropertyDescriptors  DontEnum|Function 1
   getOwnPropertyNames       objectConstructorGetOwnPropertyNames        DontEnum|Function 1
   keys                      objectConstructorKeys                       DontEnum|Function 1
   defineProperty            objectConstructorDefineProperty             DontEnum|Function 3
@@ -247,6 +248,26 @@ JSValue objectConstructorGetOwnPropertyDescriptor(ExecState* exec, JSObject* obj
     return description;
 }
 
+JSValue objectConstructorGetOwnPropertyDescriptors(ExecState* exec, JSObject* object)
+{
+    PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
+    object->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    if (exec->hadException())
+        return jsUndefined();
+
+    JSObject* descriptors = constructEmptyObject(exec);
+
+    for (auto& propertyName : properties) {
+        JSValue fromDescriptor = objectConstructorGetOwnPropertyDescriptor(exec, object, propertyName);
+        if (exec->hadException())
+            return jsUndefined();
+
+        descriptors->putDirect(exec->vm(), propertyName, fromDescriptor, 0);
+    }
+
+    return descriptors;
+}
+
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
 {
     JSObject* object = exec->argument(0).toObject(exec);
@@ -256,6 +277,14 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     return JSValue::encode(objectConstructorGetOwnPropertyDescriptor(exec, object, propertyName));
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptors(ExecState* exec)
+{
+    JSObject* object = exec->argument(0).toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(objectConstructorGetOwnPropertyDescriptors(exec, object));
 }
 
 // FIXME: Use the enumeration cache.

@@ -50,7 +50,7 @@ var expectedPropertyNamesSet = {
     "encodeURI": "['length', 'name']",
     "encodeURIComponent": "['length', 'name']",
 // Built-in ECMA objects
-    "Object": "['assign', 'create', 'defineProperties', 'defineProperty', 'freeze', 'getOwnPropertyDescriptor', 'getOwnPropertyNames', 'getOwnPropertySymbols', 'getPrototypeOf', 'is', 'isExtensible', 'isFrozen', 'isSealed', 'keys', 'length', 'name', 'preventExtensions', 'prototype', 'seal', 'setPrototypeOf']",
+    "Object": "['assign', 'create', 'defineProperties', 'defineProperty', 'freeze', 'getOwnPropertyDescriptor', 'getOwnPropertyDescriptors', 'getOwnPropertyNames', 'getOwnPropertySymbols', 'getPrototypeOf', 'is', 'isExtensible', 'isFrozen', 'isSealed', 'keys', 'length', 'name', 'preventExtensions', 'prototype', 'seal', 'setPrototypeOf']",
     "Object.prototype": "['__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__', '__proto__', 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf']",
     "Function": "['length', 'name', 'prototype']",
     "Function.prototype": "['apply', 'bind', 'call', 'constructor', 'length', 'name', 'toString']",
