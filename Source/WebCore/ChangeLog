@@ -1,3 +1,22 @@
+2016-02-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        PlatformPathCairo: Lazily allocate the path surface
+        https://bugs.webkit.org/show_bug.cgi?id=153821
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the static variable that holds the Cairo surface into
+        the pathSurface() function (previously getPathSurface). This
+        way the surface will only be allocated once the function is
+        called for the first time from the CairoPath surface.
+
+        No change in functionality, just a cleanup.
+
+        * platform/graphics/cairo/PlatformPathCairo.cpp:
+        (WebCore::pathSurface):
+        (WebCore::CairoPath::CairoPath):
+        (WebCore::getPathSurface): Deleted.
+
 2016-02-02  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result)
