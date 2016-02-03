@@ -8,10 +8,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 782: "This tests for a bug where moving the selection to the end of the document would move it outside of an editable region if the"
           text run at (0,18) width 219: "selection started just before a table."
       RenderBlock {DIV} at (0,52) size 784x44
-        RenderTable {TABLE} at (0,0) size 30x26 [border: (1px solid #AAAAAA)]
-          RenderTableSection {TBODY} at (1,1) size 28x24
-            RenderTableRow {TR} at (0,2) size 28x20
-              RenderTableCell {TD} at (2,2) size 24x20 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 29x26 [border: (1px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (1,1) size 27x24
+            RenderTableRow {TR} at (0,2) size 27x20
+              RenderTableCell {TD} at (2,2) size 23x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 21x17
                   text run at (1,1) width 21: "foo"
         RenderBlock (anonymous) at (0,26) size 784x18

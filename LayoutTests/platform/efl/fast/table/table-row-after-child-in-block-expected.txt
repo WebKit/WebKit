@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (19,19) size 746x18
           RenderText {#text} at (0,0) size 77x17
             text run at (0,0) width 77: "CONTENT"
-        RenderTable at (19,37) size 53x18
-          RenderTableSection (anonymous) at (0,0) size 53x18
-            RenderTableRow (anonymous) at (0,0) size 53x18 [border: (3px solid #0000FF)]
-              RenderTableCell (anonymous) at (0,0) size 53x18 [r=0 c=0 rs=1 cs=1]
+        RenderTable at (19,37) size 52x18
+          RenderTableSection (anonymous) at (0,0) size 52x18
+            RenderTableRow (anonymous) at (0,0) size 52x18 [border: (3px solid #0000FF)]
+              RenderTableCell (anonymous) at (0,0) size 52x18 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 52x17
                   text run at (0,0) width 52: "AFTER"

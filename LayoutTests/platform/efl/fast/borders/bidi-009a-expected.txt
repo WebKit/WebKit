@@ -9,10 +9,10 @@ layer at (0,0) size 800x290
           text run at (498,0) width 10 RTL: "\x{5D0}"
           text run at (508,0) width 5: ")"
       RenderBlock {DIV} at (32,50) size 720x80 [color=#FFFF00] [bgcolor=#000000]
-        RenderTable at (24,24) size 262x32
-          RenderTableSection (anonymous) at (0,0) size 262x32
-            RenderTableRow {P} at (0,0) size 262x32
-              RenderTableCell (anonymous) at (0,0) size 262x32 [r=0 c=0 rs=1 cs=1]
+        RenderTable at (24,24) size 261x32
+          RenderTableSection (anonymous) at (0,0) size 261x32
+            RenderTableRow {P} at (0,0) size 261x32
+              RenderTableCell (anonymous) at (0,0) size 261x32 [r=0 c=0 rs=1 cs=1]
                 RenderInline {SPAN} at (0,0) size 14x36
                   RenderText {#text} at (0,-2) size 14x36
                     text run at (0,-2) width 14: "a"
@@ -53,10 +53,10 @@ layer at (0,0) size 800x290
                   RenderText {#text} at (236,-2) size 25x36
                     text run at (236,-2) width 25: "m"
       RenderBlock {DIV} at (32,162) size 720x80 [color=#FFFF00] [bgcolor=#000000]
-        RenderTable at (24,24) size 262x32
-          RenderTableSection (anonymous) at (0,0) size 262x32
-            RenderTableRow {P} at (0,0) size 262x32
-              RenderTableCell (anonymous) at (0,0) size 262x32 [r=0 c=0 rs=1 cs=1]
+        RenderTable at (24,24) size 261x32
+          RenderTableSection (anonymous) at (0,0) size 261x32
+            RenderTableRow {P} at (0,0) size 261x32
+              RenderTableCell (anonymous) at (0,0) size 261x32 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,-2) size 236x36
                   text run at (0,-2) width 14: "a"
                   text run at (49,-2) width 0 LTR override: "\x{202D}"

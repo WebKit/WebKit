@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 358x17
           text run at (0,0) width 358: "Buttons should appear next to each other in a single row:"
-      RenderTable {TABLE} at (0,70) size 286x50
-        RenderTableSection {TBODY} at (0,0) size 286x50
-          RenderTableRow {TR} at (0,2) size 286x46
-            RenderTableCell {TD} at (2,2) size 282x46 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,70) size 285x50
+        RenderTableSection {TBODY} at (0,0) size 285x50
+          RenderTableRow {TR} at (0,2) size 285x46
+            RenderTableCell {TD} at (2,2) size 281x46 [r=0 c=0 rs=1 cs=1]
               RenderButton {BUTTON} at (3,3) size 119x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (17,10) size 85x18
                   RenderText {#text} at (0,0) size 85x17

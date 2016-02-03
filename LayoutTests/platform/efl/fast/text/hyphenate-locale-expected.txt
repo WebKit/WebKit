@@ -1,40 +1,42 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 130x246
+layer at (0,0) size 785x631
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x631
+  RenderBlock {HTML} at (0,0) size 785x631
+    RenderBody {BODY} at (8,8) size 769x615
+      RenderBlock {DIV} at (0,0) size 130x287
         RenderBlock {DIV} at (0,0) size 130x41
           RenderText {#text} at (0,0) size 158x40
             text run at (0,0) width 158: "throughout"
-        RenderBlock {DIV} at (0,41) size 130x41
-          RenderText {#text} at (0,0) size 158x40
-            text run at (0,0) width 158: "throughout"
-        RenderBlock {DIV} at (0,82) size 130x82
+        RenderBlock {DIV} at (0,41) size 130x82
           RenderText {#text} at (0,0) size 106x81
             text run at (0,0) width 106: "throug" + hyphen string "\x{2010}"
             text run at (0,41) width 64: "hout"
-        RenderBlock {DIV} at (0,164) size 130x41
-          RenderText {#text} at (0,0) size 158x40
-            text run at (0,0) width 158: "throughout"
+        RenderBlock {DIV} at (0,123) size 130x82
+          RenderText {#text} at (0,0) size 106x81
+            text run at (0,0) width 106: "throug" + hyphen string "\x{2010}"
+            text run at (0,41) width 64: "hout"
         RenderBlock {DIV} at (0,205) size 130x41
           RenderText {#text} at (0,0) size 158x40
             text run at (0,0) width 158: "throughout"
-      RenderBlock {DIV} at (0,246) size 135x287
+        RenderBlock {DIV} at (0,246) size 130x41
+          RenderText {#text} at (0,0) size 158x40
+            text run at (0,0) width 158: "throughout"
+      RenderBlock {DIV} at (0,287) size 135x328
         RenderBlock {DIV} at (0,0) size 135x41
           RenderText {#text} at (0,0) size 156x40
             text run at (0,0) width 156: "reciprocity"
-        RenderBlock {DIV} at (0,41) size 135x41
-          RenderText {#text} at (0,0) size 156x40
-            text run at (0,0) width 156: "reciprocity"
-        RenderBlock {DIV} at (0,82) size 135x82
+        RenderBlock {DIV} at (0,41) size 135x82
           RenderText {#text} at (0,0) size 114x81
             text run at (0,0) width 114: "recipro" + hyphen string "\x{2010}"
             text run at (0,41) width 54: "city"
-        RenderBlock {DIV} at (0,164) size 135x82
+        RenderBlock {DIV} at (0,123) size 135x82
+          RenderText {#text} at (0,0) size 114x81
+            text run at (0,0) width 114: "recipro" + hyphen string "\x{2010}"
+            text run at (0,41) width 54: "city"
+        RenderBlock {DIV} at (0,205) size 135x82
           RenderText {#text} at (0,0) size 96x81
             text run at (0,0) width 96: "recipr" + hyphen string "\x{2010}"
             text run at (0,41) width 72: "ocity"
-        RenderBlock {DIV} at (0,246) size 135x41
+        RenderBlock {DIV} at (0,287) size 135x41
           RenderText {#text} at (0,0) size 156x40
             text run at (0,0) width 156: "reciprocity"
