@@ -251,7 +251,7 @@ JSValue objectConstructorGetOwnPropertyDescriptor(ExecState* exec, JSObject* obj
 JSValue objectConstructorGetOwnPropertyDescriptors(ExecState* exec, JSObject* object)
 {
     PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
-    object->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     if (exec->hadException())
         return jsUndefined();
 

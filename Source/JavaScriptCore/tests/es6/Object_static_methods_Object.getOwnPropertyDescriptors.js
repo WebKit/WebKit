@@ -81,3 +81,14 @@ function shouldBeDataProperty(expected, value, name) {
     shouldBe(result.c.writable, false);
     shouldBe(result.c.value, 'C');
 })();
+
+(function testGlobalProxy(global) {
+    var symbol = Symbol('test');
+    global[symbol] = 'Symbol(test)';
+
+    var result = Object.getOwnPropertyDescriptors(global);
+
+    shouldBeDataProperty(result[symbol], 'Symbol(test)', 'global[Symbol(test)]');
+    // FIXME: Can't delete Symbol properties from a JSSymbolTableObject.
+    // delete global[symbol];
+})(this);
