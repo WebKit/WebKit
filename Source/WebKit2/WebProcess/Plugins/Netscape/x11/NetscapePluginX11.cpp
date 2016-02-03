@@ -272,7 +272,7 @@ void NetscapePluginX11::visibilityDidChange()
 
 void NetscapePluginX11::paint(GraphicsContext& context, const IntRect& dirtyRect)
 {
-    ASSERT(m_plugin.isWindowed());
+    ASSERT(!m_plugin.isWindowed());
 
     if (context.paintingDisabled() || !m_drawable)
         return;
