@@ -1,3 +1,14 @@
+2016-02-03  Jessie Berlin  <jberlin@webkit.org>
+
+        Build fix.
+
+        [NSEvent context] has always returned nil. Replace uses with nullptr.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+
 2016-02-03  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Engineering builds use manual sandboxing, but don’t need to

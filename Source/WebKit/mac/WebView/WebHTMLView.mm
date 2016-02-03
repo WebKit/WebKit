@@ -1349,7 +1349,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 {
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:flagsChangedEvent.window.mouseLocationOutsideOfEventStream
         modifierFlags:flagsChangedEvent.modifierFlags timestamp:flagsChangedEvent.timestamp windowNumber:flagsChangedEvent.windowNumber
-        context:flagsChangedEvent.context eventNumber:0 clickCount:0 pressure:0];
+        context:nullptr eventNumber:0 clickCount:0 pressure:0];
 
     [self mouseMoved:fakeEvent];
 }
@@ -1659,7 +1659,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         modifierFlags:[[NSApp currentEvent] modifierFlags]
         timestamp:[NSDate timeIntervalSinceReferenceDate]
         windowNumber:[[self window] windowNumber]
-        context:[[NSApp currentEvent] context]
+        context:nullptr
         eventNumber:0 clickCount:0 pressure:0];
 #pragma clang diagnostic pop
 
@@ -2115,7 +2115,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
             modifierFlags:[[NSApp currentEvent] modifierFlags]
             timestamp:[NSDate timeIntervalSinceReferenceDate]
             windowNumber:[[view window] windowNumber]
-            context:[[NSApp currentEvent] context]
+            context:nullptr
             eventNumber:0 clickCount:0 pressure:0];
         if (Frame* lastHitCoreFrame = core([lastHitView _frame]))
             lastHitCoreFrame->eventHandler().mouseMoved(event, [[self _webView] _pressureEvent]);
@@ -2305,7 +2305,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         modifierFlags:[[NSApp currentEvent] modifierFlags]
         timestamp:[NSDate timeIntervalSinceReferenceDate]
         windowNumber:[[self window] windowNumber]
-        context:[[NSApp currentEvent] context]
+        context:nullptr
         eventNumber:0 clickCount:0 pressure:0];
 #pragma clang diagnostic pop
     [self mouseDragged:fakeEvent];
@@ -4593,7 +4593,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
                                        modifierFlags:[[NSApp currentEvent] modifierFlags]
                                            timestamp:[NSDate timeIntervalSinceReferenceDate]
                                         windowNumber:[[self window] windowNumber]
-                                             context:[[NSApp currentEvent] context]
+                                             context:nullptr
                                          eventNumber:0 clickCount:0 pressure:0];
     [self mouseUp:fakeEvent]; // This will also update the mouseover state.
 }

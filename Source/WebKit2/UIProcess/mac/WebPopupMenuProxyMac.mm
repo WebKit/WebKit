@@ -174,7 +174,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
                                        modifierFlags:[initiatingNSEvent modifierFlags]
                                            timestamp:[initiatingNSEvent timestamp]
                                         windowNumber:[initiatingNSEvent windowNumber]
-                                             context:[initiatingNSEvent context]
+                                             context:nullptr
                                          eventNumber:[initiatingNSEvent eventNumber]
                                           clickCount:[initiatingNSEvent clickCount]
                                             pressure:[initiatingNSEvent pressure]];
@@ -187,7 +187,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
                               modifierFlags:[initiatingNSEvent modifierFlags]
                                   timestamp:[initiatingNSEvent timestamp]
                                windowNumber:[initiatingNSEvent windowNumber]
-                                    context:[initiatingNSEvent context]
+                                    context:nullptr
                                 eventNumber:0
                                  clickCount:0
                                    pressure:0];

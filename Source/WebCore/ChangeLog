@@ -1,3 +1,12 @@
+2016-02-03  Jessie Berlin  <jberlin@webkit.org>
+
+        Build fix.
+
+        [NSEvent context] has always returned nil. Replace uses with nullptr.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+
 2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Layout Test http/tests/appcache/different-https-origin-resource-main.html is failing

@@ -577,7 +577,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                       modifierFlags:[initiatingEvent modifierFlags]
                                           timestamp:[initiatingEvent timestamp]
                                        windowNumber:[initiatingEvent windowNumber]
-                                            context:[initiatingEvent context]
+                                            context:nullptr
                                         eventNumber:[initiatingEvent eventNumber]
                                          clickCount:[initiatingEvent clickCount]
                                            pressure:[initiatingEvent pressure]];
@@ -589,7 +589,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                     modifierFlags:[initiatingEvent modifierFlags]
                                         timestamp:[initiatingEvent timestamp]
                                      windowNumber:[initiatingEvent windowNumber]
-                                          context:[initiatingEvent context]
+                                          context:nullptr
                                        characters:[initiatingEvent characters] 
                       charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
                                         isARepeat:[initiatingEvent isARepeat] 
@@ -606,7 +606,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                   modifierFlags:[initiatingEvent modifierFlags]
                                       timestamp:[initiatingEvent timestamp]
                                    windowNumber:[initiatingEvent windowNumber]
-                                        context:[initiatingEvent context]
+                                        context:nullptr
                                     eventNumber:0
                                      clickCount:0
                                        pressure:0];

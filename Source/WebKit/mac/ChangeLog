@@ -1,3 +1,16 @@
+2016-02-03  Jessie Berlin  <jberlin@webkit.org>
+
+        Build fix.
+
+        [NSEvent context] has always returned nil. Replace uses with nullptr.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _postFakeMouseMovedEventForFlagsChangedEvent:]):
+        (-[WebHTMLView _updateMouseoverWithFakeEvent]):
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[WebHTMLView _autoscroll]):
+        (-[WebHTMLView draggedImage:endedAt:operation:]):
+
 2016-02-01  Dave Hyatt  <hyatt@apple.com>
 
         Add a line grid pagination SPI to WebKit.
