@@ -1,5 +1,16 @@
 2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Layout Test http/tests/appcache/different-https-origin-resource-main.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=145253
+
+        Reviewed by Michael Catanzaro.
+
+        Update test expectation.
+
+        * platform/gtk/TestExpectations:
+
+2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r191948): [GStreamer] 4 new timeouts on layout tests.
         https://bugs.webkit.org/show_bug.cgi?id=152797
 

@@ -1,5 +1,22 @@
 2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Layout Test http/tests/appcache/different-https-origin-resource-main.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=145253
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that when the load is cancelled while the
+        connection is still being established,
+        SoupMessage::notify::tls-errors is emitted and the handler calls
+        ResourceHandleClient::didFail() which can delete the ResourceHandle.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::tlsErrorsChangedCallback): Protect the ResourceHandle
+        for the scope of the callback because
+        ResourceHandleClient::didFail() could delete the object.
+
+2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r191948): [GStreamer] 4 new timeouts on layout tests.
         https://bugs.webkit.org/show_bug.cgi?id=152797
 

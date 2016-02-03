@@ -1748,7 +1748,7 @@ webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-she
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure Pass ]
 
-webkit.org/b/145253 http/tests/appcache/different-https-origin-resource-main.html  [ Failure Crash ]
+webkit.org/b/145253 http/tests/appcache/different-https-origin-resource-main.html  [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests failing
