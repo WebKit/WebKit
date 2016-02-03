@@ -1,3 +1,12 @@
+2016-02-02  Darin Adler  <darin@apple.com>
+
+        Follow up for:
+        Cut down on calls to String::lower; mostly replace with convertToASCIILowercase
+        https://bugs.webkit.org/show_bug.cgi?id=153732
+
+        * fast/viewport/viewport-warnings-7-expected.txt: Updated expected results now that
+        viewport parsing doesn't lowercase the string to parse it.
+
 2016-02-02  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed. EFL gardening: rebaseline tests after r195740.
