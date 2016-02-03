@@ -1,5 +1,30 @@
 2016-02-02  Dan Bernstein  <mitz@apple.com>
 
+        Better fix for Layout Test fast/parser/external-entities-in-xslt.xml is flaky on El Capitan (but fails most of the time)
+        https://bugs.webkit.org/show_bug.cgi?id=153683
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver): Reverted change from r196013. DUMPRENDERTREE_TEMP is not
+          used by any code in the Web Content process. If that ever changed, we should send it over
+          as a bundle parameter.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_environ_for_server): Reverted change from r196013.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.setup_environ_for_server): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/ios/InjectedBundleIOS.mm:
+        (WTR::InjectedBundle::platformInitialize): Set XML_CATALOG_FILES in the Web Process
+          environment. This is early enough that libxml2 has not been initialized yet.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize): Ditto.
+
+2016-02-02  Dan Bernstein  <mitz@apple.com>
+
         Layout Test fast/parser/external-entities-in-xslt.xml is flaky on El Capitan (but fails most of the time)
         https://bugs.webkit.org/show_bug.cgi?id=153683
 

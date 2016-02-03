@@ -35,6 +35,9 @@ namespace WTR {
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
+    // Work around missing /etc/catalog <rdar://problem/4292995>.
+    setenv("XML_CATALOG_FILES", "", 0);
+
     // Language was set up earlier in main(). Don't clobber it.
     NSArray *languages = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] valueForKey:@"AppleLanguages"];
 

@@ -271,9 +271,7 @@ class IOSSimulatorPort(Port):
                 self._append_value_colon_separated(env, 'DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
                 self._append_value_colon_separated(env, '__XPC_DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
             self._append_value_colon_separated(env, 'DYLD_INSERT_LIBRARIES', self._build_path("libWebCoreTestShim.dylib"))
-        # work around missing /etc/catalog <rdar://problem/4292995>
-        env['XML_CATALOG_FILES'] = ''
-        env['__XPC_XML_CATALOG_FILES'] = ''
+        env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 
     def operating_system(self):
