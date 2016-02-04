@@ -88,6 +88,22 @@
         "category": "css"
     },
     {
+        "name": "CSS Variables",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://www.w3.org/TR/css-variables/",
+        "keywords": ["css variable", "css custom property"],
+        "category": "css",
+        "description": "Allows developers to define reusable custom property values.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "CSS Will Change",
         "status": {
             "status": "Done",
@@ -106,6 +122,22 @@
         "url": "https://dom.spec.whatwg.org",
         "keywords": ["dom", "dom4"],
         "category": "html"
+    },
+    {
+        "name": "Fetch API",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://fetch.spec.whatwg.org",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=151937",
+        "keywords": ["fetch", "http", "cors", "request", "response", "header"],
+        "category": "webapps",
+        "description": "An underlying unified architecture for making resource requests.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
     },
     {
         "name": "Filter Effects Module Level 2",
