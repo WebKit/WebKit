@@ -50,7 +50,8 @@ public:
     enum CaptionDisplayMode {
         Automatic,
         ForcedOnly,
-        AlwaysOn
+        AlwaysOn,
+        Manual,
     };
     virtual CaptionDisplayMode captionDisplayMode() const;
     virtual void setCaptionDisplayMode(CaptionDisplayMode);
@@ -98,18 +99,21 @@ public:
 
 protected:
     void updateCaptionStyleSheetOveride();
+    void beginBlockingNotifications();
+    void endBlockingNotifications();
 
 private:
     void timerFired();
     void notify();
 
     PageGroup& m_pageGroup;
-    CaptionDisplayMode m_displayMode;
+    mutable CaptionDisplayMode m_displayMode;
     Timer m_timer;
     String m_userPreferredLanguage;
     String m_userPreferredAudioCharacteristic;
     String m_captionsStyleSheetOverride;
     String m_primaryAudioTrackLanguageOverride;
+    unsigned m_blockNotificationsCounter { 0 };
     bool m_testingMode;
     bool m_havePreferences;
 };

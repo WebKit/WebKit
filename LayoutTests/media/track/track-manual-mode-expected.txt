@@ -1,0 +1,53 @@
+Tests 'manual' caption mode.
+
+
+RUN(internals.setUserPreferredLanguages(['en']))
+RUN(internals.setPrimaryAudioTrackLanguageOverride('fr'))
+RUN(internals.setCaptionDisplayMode('manual'))
+EVENT(canplaythrough)
+
+** Forced tracks should be in .textTracks as well as in the menu,
+** but should be labeled as 'subtitles'
+
+EXPECTED (video.textTracks.length == '9') OK
+EXPECTED (trackMenuItems.length == '11') OK
+
+** No track should be enabled by default
+EXPECTED (video.textTracks[0].language == 'en') OK
+EXPECTED (video.textTracks[0].kind == 'subtitles') OK
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[1].language == 'en') OK
+EXPECTED (video.textTracks[1].kind == 'subtitles') OK
+EXPECTED (video.textTracks[1].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[2].language == 'fr') OK
+EXPECTED (video.textTracks[2].kind == 'subtitles') OK
+EXPECTED (video.textTracks[2].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[3].language == 'fr') OK
+EXPECTED (video.textTracks[3].kind == 'subtitles') OK
+EXPECTED (video.textTracks[3].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[4].language == 'es') OK
+EXPECTED (video.textTracks[4].kind == 'subtitles') OK
+EXPECTED (video.textTracks[4].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[5].language == 'es') OK
+EXPECTED (video.textTracks[5].kind == 'subtitles') OK
+EXPECTED (video.textTracks[5].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[6].language == 'de') OK
+EXPECTED (video.textTracks[6].kind == 'subtitles') OK
+EXPECTED (video.textTracks[6].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[7].language == 'de') OK
+EXPECTED (video.textTracks[7].kind == 'subtitles') OK
+EXPECTED (video.textTracks[7].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[8].language == 'en') OK
+EXPECTED (video.textTracks[8].kind == 'captions') OK
+EXPECTED (video.textTracks[8].mode == 'disabled') OK
+
+END OF TEST
+

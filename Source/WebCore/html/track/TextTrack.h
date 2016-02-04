@@ -92,7 +92,8 @@ public:
     static const AtomicString& hiddenKeyword();
     static const AtomicString& showingKeyword();
 
-    virtual void setKind(const AtomicString&) override;
+    void setKind(const AtomicString&) override;
+    AtomicString kind() const override;
 
     virtual AtomicString inBandMetadataTrackDispatchType() const { return emptyString(); }
 
@@ -158,6 +159,8 @@ public:
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
 
+    void setManualSelectionMode(bool mode) { m_manualSelectionMode = mode; }
+
     using RefCounted<TrackBase>::ref;
     using RefCounted<TrackBase>::deref;
 
@@ -195,6 +198,7 @@ private:
     int m_trackIndex;
     int m_renderedTrackIndex;
     bool m_hasBeenConfigured;
+    bool m_manualSelectionMode { false };
 };
 
 inline TextTrack* toTextTrack(TrackBase* track)
