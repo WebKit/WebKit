@@ -1,3 +1,22 @@
+2016-02-03  Andreas Kling  <akling@apple.com>
+
+        [iOS] Throw away linked code when navigating to a new page.
+        <https://webkit.org/b/153851>
+
+        Reviewed by Gavin Barraclough.
+
+        When navigating to a new page, tell JSC to throw out any linked code it has lying around.
+        Linked code is tied to a specific global object, and as we're creating a new one for the
+        new page, none of it is useful to us here.
+        In the event that the user navigates back, the cost of relinking some code will be far
+        lower than the memory cost of keeping all of it around.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::deleteAllLinkedCode):
+        * bindings/js/GCController.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2016-02-03  Alex Christensen  <achristensen@webkit.org>
 
         Report wasBlocked and cannotShowURL errors when using NetworkSession
