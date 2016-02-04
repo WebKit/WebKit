@@ -60,6 +60,7 @@ BEGIN {
         &exitStatus
         &fixChangeLogPatch
         &gitBranch
+        &gitDirectory
         &gitTreeDirectory
         &gitdiff2svndiff
         &isGit

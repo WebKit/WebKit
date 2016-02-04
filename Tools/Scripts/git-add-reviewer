@@ -31,6 +31,11 @@ use Getopt::Long;
 use POSIX;
 use IPC::Open2;
 
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+use VCSUtils;
+
 my $defaultReviewer = "NOBODY";
 
 sub addReviewer(\%);
@@ -80,6 +85,8 @@ my $getOptionsResult = GetOptions(
     'h|help' => \$showHelp,
     'i|interactive' => \$interactive,
 );
+
+my $gitDirectory = gitDirectory();
 
 usage() if !$getOptionsResult || $showHelp;
 
@@ -181,8 +188,7 @@ sub nonInteractive()
     $item{changeLogs} or die;
 
     unless ((($commit eq $headCommit) or checkout($commit))
-            # FIXME: We need to use $ENV{GIT_DIR}/.git/MERGE_MSG
-            && writeCommitMessageToFile(".git/MERGE_MSG")
+            && writeCommitMessageToFile("$gitDirectory/MERGE_MSG")
             && addReviewer(%item)
             && commit(1)
             && (($commit eq $headCommit) or rebaseOntoHead($commit, $head))) {
@@ -233,7 +239,7 @@ sub addReviewer(\%)
         addReviewerToChangeLog($item->{reviewer}, $item->{rubberstamp}, $log) or return fail();
     }
 
-    addReviewerToCommitMessage($item->{reviewer}, $item->{rubberstamp}, ".git/MERGE_MSG") or return fail();
+    addReviewerToCommitMessage($item->{reviewer}, $item->{rubberstamp}, "$gitDirectory/MERGE_MSG") or return fail();
 
     return 1;
 }
@@ -242,7 +248,8 @@ sub commit(;$)
 {
     my ($amend) = @_;
 
-    my @command = qw(git commit -F .git/MERGE_MSG);
+    my @command = qw(git commit -F);
+    push @command, "$gitDirectory/MERGE_MSG";
     push @command, "--amend" if $amend;
     my $result = system @command;
     !($result >> 8) or return fail("Failed to commit revision");
@@ -329,7 +336,7 @@ sub changeLogsForCommit($)
     my @files = runCommandWithOutput('git', 'diff', '-r', '--name-status', "$commit^", "$commit");
     @files or return fail("Couldn't determine changed files for $commit.");
 
-    my @changeLogs = map { /^[ACMR]\s*(.*)/; $1 } grep { /^[ACMR].*[^-]ChangeLog/ } @files;
+    my @changeLogs = map { /^[ACMR]\s*(.*)/; makeFilePathRelative($1) } grep { /^[ACMR].*[^-]ChangeLog/ } @files;
     return \@changeLogs;
 }
 

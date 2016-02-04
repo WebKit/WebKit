@@ -1,3 +1,25 @@
+2016-02-03  Brian Burg  <bburg@apple.com>
+
+        git-add-reviewer should work when run from a subdirectory within the repository
+        https://bugs.webkit.org/show_bug.cgi?id=153842
+
+        Reviewed by David Kilzer.
+
+        There are two problems that needed to be fixed:
+
+         - We can't assume .git is in $PWD/.git
+         - We can't specify absolute paths to `git commit`
+
+        Fix these problems using the helpers in VCSUtils that were added to
+        fix this same issue for prepare-changeCogs.
+
+        * Scripts/VCSUtils.pm: Export gitDirectory()
+        * Scripts/git-add-reviewer:
+        (nonInteractive): Cache gitDirectory() result.
+        (addReviewer):
+        (commit):
+        (changeLogsForCommit): Make paths relative.
+
 2016-02-03  Jer Noble  <jer.noble@apple.com>
 
         Yet another Yosemite build fix.
