@@ -497,6 +497,9 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 # Bindings changes in https://bugs.webkit.org/show_bug.cgi?id=150868 cause this to fail, but this test is probably wrong
 storage/indexeddb/keypath-basics.html [ Skip ]
 
+webkit.org/b/153849 [ Yosemite Release ] imported/w3c/indexeddb/idbcursor-direction-index-keyrange.htm [ Skip ]
+webkit.org/b/153848 [ Yosemite Release ] imported/w3c/indexeddb/idbcursor-advance-invalid.htm [ Skip ]
+
 ### END OF (5) IndexedDB related failures
 ########################################
 

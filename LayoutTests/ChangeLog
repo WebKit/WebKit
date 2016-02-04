@@ -1,3 +1,11 @@
+2016-02-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip two flaky indexeddb tests on Yosemite Release WK2
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         Don't discard in-band cues with negative start times
