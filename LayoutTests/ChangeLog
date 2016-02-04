@@ -1,3 +1,12 @@
+2016-02-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking transitions/clip-path-transitions.html and transitions/clip-path-path-transitions.html as flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=153809
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-02-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JS PrettyPrinting unary - and + issues

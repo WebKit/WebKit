@@ -1313,3 +1313,6 @@ webkit.org/b/152009 [ Debug ElCapitan ] fast/canvas/canvas-too-large-to-draw.htm
 webkit.org/b/153086 sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.3_encodeURI/S15.1.3.3_A2.4_T2.html [ Pass Crash ]
 
 webkit.org/b/153752 [ Yosemite ] http/tests/plugins/visible_plugins.html [ Skip ]
+
+webkit.org/b/153809 transitions/clip-path-transitions.html [ Pass Failure ]
+webkit.org/b/153809 transitions/clip-path-path-transitions.html [ Pass Failure ]
