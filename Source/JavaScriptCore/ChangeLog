@@ -1,3 +1,15 @@
+2016-02-04  Andreas Kling  <akling@apple.com>
+
+        Remove dead ENABLE(BYTECODE_COMMENTS) cruft.
+        <https://webkit.org/b/153888>
+
+        Reviewed by Antti Koivisto.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::shrinkToFit): Deleted.
+
 2016-02-04  Saam barati  <sbarati@apple.com>
 
         JSC Sampling Profiler: (host) is confusing in cases where I would expect to see JS name

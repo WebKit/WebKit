@@ -79,9 +79,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_objectAllocationProfileCount(0)
     , m_valueProfileCount(0)
     , m_llintCallLinkInfoCount(0)
-#if ENABLE(BYTECODE_COMMENTS)
-    , m_bytecodeCommentIterator(0)
-#endif
 {
     for (auto& constantRegisterIndex : m_linkTimeConstants)
         constantRegisterIndex = 0;

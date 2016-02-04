@@ -218,9 +218,6 @@ public:
         m_propertyAccessInstructions.shrinkToFit();
         m_expressionInfo.shrinkToFit();
 
-#if ENABLE(BYTECODE_COMMENTS)
-        m_bytecodeComments.shrinkToFit();
-#endif
         if (m_rareData) {
             m_rareData->m_exceptionHandlers.shrinkToFit();
             m_rareData->m_regexps.shrinkToFit();
@@ -411,11 +408,6 @@ private:
     FunctionExpressionVector m_functionExprs;
 
     Vector<unsigned> m_propertyAccessInstructions;
-
-#if ENABLE(BYTECODE_COMMENTS)
-    Vector<Comment>  m_bytecodeComments;
-    size_t m_bytecodeCommentIterator;
-#endif
 
     unsigned m_arrayProfileCount;
     unsigned m_arrayAllocationProfileCount;
