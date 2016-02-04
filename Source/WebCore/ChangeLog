@@ -1,5 +1,18 @@
 2016-02-03  Jer Noble  <jer.noble@apple.com>
 
+        [Win] Pass entire request (rather than just URL) to clients of WebCoreAVCFResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=153653
+
+        Reviewed by Brent Fulgham.
+
+        This will allow those clients to see the byte-range request ("Range:") header and respond
+        appropriately.
+
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::startLoading):
+
+2016-02-03  Jer Noble  <jer.noble@apple.com>
+
         Yosemite build fix; hide the entire WebCoreNSURLSessionDataTask class from Yosemite and prior.
 
         * platform/network/cocoa/WebCoreNSURLSession.h:
