@@ -25,7 +25,7 @@ interface HTMLAreaElement : HTMLElement {
     [Reflect] attribute boolean noHref;
 
     // FIXME: This is supposed to be:
-    // [PutForwards=value] readonly attribute DOMSettableTokenList ping;
+    // [PutForwards=value] readonly attribute DOMTokenList ping;
     [Reflect] attribute DOMString ping;
 
     [Reflect] attribute DOMString rel;
@@ -49,6 +49,6 @@ interface HTMLAreaElement : HTMLElement {
     readonly attribute URL absoluteLinkURL;
 #endif
 
-    readonly attribute DOMTokenList relList;
+    [PutForwards=value] readonly attribute DOMTokenList relList;
 };
 

@@ -28,7 +28,7 @@ interface HTMLLinkElement : HTMLElement {
     [Reflect] attribute DOMString rel;
     [Reflect] attribute DOMString rev;
 #if (defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT) || (defined(LANGUAGE_GOBJECT) || LANGUAGE_GOBJECT)
-    [PutForwards=value] readonly attribute DOMSettableTokenList sizes;
+    [PutForwards=value] readonly attribute DOMTokenList sizes;
 #endif
     [Reflect] attribute DOMString target;
     [Reflect] attribute DOMString type;
@@ -41,6 +41,6 @@ interface HTMLLinkElement : HTMLElement {
     readonly attribute URL absoluteLinkURL;
 #endif
 
-    readonly attribute DOMTokenList relList;
+    [PutForwards=value] readonly attribute DOMTokenList relList;
 };
 

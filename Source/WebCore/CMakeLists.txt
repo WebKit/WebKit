@@ -1636,7 +1636,6 @@ set(WebCore_SOURCES
     html/CheckboxInputType.cpp
     html/ColorInputType.cpp
     html/DOMFormData.cpp
-    html/DOMSettableTokenList.cpp
     html/DOMTokenList.cpp
     html/DOMURL.cpp
     html/DateInputType.cpp

@@ -53,7 +53,7 @@ function test()
 
     createElement('x');
     element.relList = 'y';
-    shouldBeEqualToString('String(element.relList)', 'x');
+    shouldBeEqualToString('String(element.relList)', 'y');
 
     createElement('');
     shouldEvaluateTo('element.relList.length', 0);

@@ -23,7 +23,7 @@ PASS element.relList.length is 2
 PASS element.relList.contains("marshmallow") is true
 PASS element.relList.contains("chips") is true
 PASS element.relList.contains("orange") is false
-PASS String(element.relList) is "x"
+PASS String(element.relList) is "y"
 PASS element.relList.length is 0
 PASS element.relList.length is 1
 PASS element.relList.length is 1
@@ -146,7 +146,7 @@ PASS element.relList.length is 2
 PASS element.relList.contains("marshmallow") is true
 PASS element.relList.contains("chips") is true
 PASS element.relList.contains("orange") is false
-PASS String(element.relList) is "x"
+PASS String(element.relList) is "y"
 PASS element.relList.length is 0
 PASS element.relList.length is 1
 PASS element.relList.length is 1
@@ -269,7 +269,7 @@ PASS element.relList.length is 2
 PASS element.relList.contains("marshmallow") is true
 PASS element.relList.contains("chips") is true
 PASS element.relList.contains("orange") is false
-PASS String(element.relList) is "x"
+PASS String(element.relList) is "y"
 PASS element.relList.length is 0
 PASS element.relList.length is 1
 PASS element.relList.length is 1

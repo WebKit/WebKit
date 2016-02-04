@@ -28,7 +28,7 @@ interface HTMLTableCellElement : HTMLElement {
     attribute long colSpan;
 
     // FIXME: This is supposed to be:
-    // [PutForwards=value] readonly attribute DOMSettableTokenList headers;
+    // [PutForwards=value] readonly attribute DOMTokenList headers;
     [Reflect] attribute DOMString headers;
 
     [Reflect] attribute DOMString height;

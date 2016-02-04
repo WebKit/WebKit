@@ -39,7 +39,7 @@
 
              [Reflect] attribute DOMString webkitdropzone;
              // FIXME: Support the standard HTML equivalent.
-             // [PutForwards=value] readonly attribute DOMSettableTokenList dropzone;
+             // [PutForwards=value] readonly attribute DOMTokenList dropzone;
 
              [Reflect] attribute boolean hidden;
              [Reflect] attribute DOMString accessKey;

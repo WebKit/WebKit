@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Tests from http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/
-PASS String(element.classList) is "x"
+PASS String(element.classList) is "y"
 PASS element.classList.length is 0
 PASS element.classList.length is 1
 PASS element.classList.length is 1

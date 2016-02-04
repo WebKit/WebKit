@@ -127,7 +127,7 @@ void HTMLOutputElement::setDefaultValue(const String& value)
         setTextContentInternal(value);
 }
 
-DOMSettableTokenList& HTMLOutputElement::htmlFor()
+DOMTokenList& HTMLOutputElement::htmlFor()
 {
     if (!m_tokens)
         m_tokens = std::make_unique<AttributeDOMTokenList>(*this, forAttr);

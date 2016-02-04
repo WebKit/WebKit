@@ -45,7 +45,7 @@ namespace WebCore {
 class Attribute;
 class ClassCollection;
 class ContainerNode;
-class DOMSettableTokenList;
+class DOMTokenList;
 class Document;
 class Element;
 class Event;

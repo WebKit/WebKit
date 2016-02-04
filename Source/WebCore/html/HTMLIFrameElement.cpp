@@ -48,7 +48,7 @@ Ref<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLIFrameElement(tagName, document));
 }
 
-DOMSettableTokenList& HTMLIFrameElement::sandbox()
+DOMTokenList& HTMLIFrameElement::sandbox()
 {
     if (!m_sandbox)
         m_sandbox = std::make_unique<AttributeDOMTokenList>(*this, sandboxAttr);

@@ -44,7 +44,7 @@ public:
     void setValue(const String&);
     String defaultValue() const;
     void setDefaultValue(const String&);
-    DOMSettableTokenList& htmlFor();
+    DOMTokenList& htmlFor();
     
     virtual bool canContainRangeEndPoint() const override { return false; }
 

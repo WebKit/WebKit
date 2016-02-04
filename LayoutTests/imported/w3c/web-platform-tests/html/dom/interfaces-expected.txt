@@ -1371,7 +1371,7 @@ PASS HTMLLinkElement interface: existence and properties of interface prototype 
 PASS HTMLLinkElement interface: attribute href 
 FAIL HTMLLinkElement interface: attribute crossOrigin assert_true: The prototype object must have a property "crossOrigin" expected true got false
 PASS HTMLLinkElement interface: attribute rel 
-FAIL HTMLLinkElement interface: attribute relList assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS HTMLLinkElement interface: attribute relList 
 PASS HTMLLinkElement interface: attribute media 
 PASS HTMLLinkElement interface: attribute hreflang 
 PASS HTMLLinkElement interface: attribute type 
@@ -1598,7 +1598,7 @@ PASS HTMLAnchorElement interface: attribute target
 FAIL HTMLAnchorElement interface: attribute download assert_true: The prototype object must have a property "download" expected true got false
 PASS HTMLAnchorElement interface: attribute ping 
 PASS HTMLAnchorElement interface: attribute rel 
-FAIL HTMLAnchorElement interface: attribute relList assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS HTMLAnchorElement interface: attribute relList 
 PASS HTMLAnchorElement interface: attribute hreflang 
 PASS HTMLAnchorElement interface: attribute type 
 PASS HTMLAnchorElement interface: attribute text 

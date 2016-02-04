@@ -367,7 +367,7 @@ bool HTMLLinkElement::styleSheetIsLoading() const
     return m_sheet->contents().isLoading();
 }
 
-DOMSettableTokenList& HTMLLinkElement::sizes()
+DOMTokenList& HTMLLinkElement::sizes()
 {
     if (!m_sizes)
         m_sizes = std::make_unique<AttributeDOMTokenList>(*this, sizesAttr);

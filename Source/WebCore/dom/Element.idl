@@ -126,7 +126,7 @@
              
 
     [Reflect=class] attribute DOMString className;
-    readonly attribute DOMTokenList classList;
+    [PutForwards=value] readonly attribute DOMTokenList classList;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     readonly attribute DOMStringMap dataset;

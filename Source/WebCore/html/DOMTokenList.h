@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,9 +58,11 @@ public:
 
     virtual Element* element() const { return nullptr; }
 
+    void setValue(const String&);
+    const AtomicString& value() const;
+
 protected:
     DOMTokenList() = default;
-    const AtomicString& value() const;
     void setValueInternal(const String&);
 
     virtual void updateAfterTokenChange() { m_cachedValue = nullAtom; }

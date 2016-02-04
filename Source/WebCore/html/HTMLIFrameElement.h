@@ -34,7 +34,7 @@ class HTMLIFrameElement final : public HTMLFrameElementBase {
 public:
     static Ref<HTMLIFrameElement> create(const QualifiedName&, Document&);
 
-    DOMSettableTokenList& sandbox();
+    DOMTokenList& sandbox();
 
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);

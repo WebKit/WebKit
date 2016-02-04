@@ -22,7 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+
 [
+    NoInterfaceObject,
     JSGenerateToJSObject,
     SkipVTableValidation,
 ] interface DOMSettableTokenList : DOMTokenList {
@@ -31,3 +34,4 @@
     [TreatReturnedNullStringAs=Null] getter DOMString (unsigned long index);
 };
 
+#endif

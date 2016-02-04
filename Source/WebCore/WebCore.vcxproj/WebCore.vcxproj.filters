@@ -3635,9 +3635,6 @@
     <ClCompile Include="..\html\DOMFormData.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\DOMSettableTokenList.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\DOMTokenList.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -5218,9 +5215,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMSelection.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMSettableTokenList.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMStringList.cpp">
@@ -10801,9 +10795,6 @@
     <ClInclude Include="..\html\DOMFormData.h">
       <Filter>html</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\DOMSettableTokenList.h">
-      <Filter>html</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\DOMTokenList.h">
       <Filter>html</Filter>
     </ClInclude>
@@ -12643,9 +12634,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMSelection.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMSettableTokenList.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMStringList.h">

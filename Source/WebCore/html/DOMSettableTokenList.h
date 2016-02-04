@@ -32,15 +32,9 @@
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
+// Only used by ObjC and GObject bindings.
 class DOMSettableTokenList : public DOMTokenList {
     WTF_MAKE_FAST_ALLOCATED;
-public:
-    void setValue(const String&);
-
-    // Make public.
-    using DOMTokenList::value;
 };
 
 } // namespace WebCore

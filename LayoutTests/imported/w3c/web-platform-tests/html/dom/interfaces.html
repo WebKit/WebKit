@@ -1502,7 +1502,7 @@ interface HTMLAreaElement : HTMLElement {
   attribute DOMString download;
   [PutForwards=value] readonly attribute DOMTokenList ping;
   attribute DOMString rel;
-  readonly attribute DOMTokenList relList;
+  [PutForwards=value] readonly attribute DOMTokenList relList;
   // hreflang and type are not reflected
 };
 HTMLAreaElement implements HTMLHyperlinkElementUtils;

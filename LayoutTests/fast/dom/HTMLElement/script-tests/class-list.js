@@ -11,15 +11,9 @@ function createElement(className)
 debug('Tests from http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/');
 
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/setting/001.htm
-// Firefox throws here but WebKit does not throw on setting readonly idl
-// attributes.
 createElement('x');
-try {
-    element.classList = 'y';
-    shouldBeEqualToString('String(element.classList)', 'x');
-} catch (ex) {
-    testPassed('Throwing on set is acceptable');
-}
+element.classList = 'y';
+shouldBeEqualToString('String(element.classList)', 'y');
 
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/getting/001.htm
 createElement('');

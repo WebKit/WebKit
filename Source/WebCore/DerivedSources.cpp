@@ -142,7 +142,6 @@
 #include "JSDOMPluginArray.cpp"
 #include "JSDOMSecurityPolicy.cpp"
 #include "JSDOMSelection.cpp"
-#include "JSDOMSettableTokenList.cpp"
 #include "JSDOMStringList.cpp"
 #include "JSDOMStringMap.cpp"
 #include "JSDOMTokenList.cpp"
