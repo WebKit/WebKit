@@ -1,5 +1,14 @@
 2016-02-03  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking http/tests/history/back-to-post.php as flaky on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=153314
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-02-03  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html on ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=153850
 
