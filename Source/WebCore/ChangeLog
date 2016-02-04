@@ -1,3 +1,20 @@
+2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not show context menu when right clicking on a scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=153493
+
+        Reviewed by Michael Catanzaro.
+
+        Scrollbars don't currently handle right clicks, but we are showing
+        the context menu when they are right clicked. This is not desired
+        at least in GTK+ and I've checked that it isn't consistent with
+        other applications in Mac either.
+
+        Test: fast/events/contextmenu-on-scrollbars.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent):
+
 2016-02-03  Andreas Kling  <akling@apple.com>
 
         [iOS] Throw away linked code when navigating to a new page.

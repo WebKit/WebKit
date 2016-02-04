@@ -2692,20 +2692,23 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
 bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
 {
     Document* doc = m_frame.document();
-    FrameView* v = m_frame.view();
-    if (!v)
+    FrameView* view = m_frame.view();
+    if (!view)
         return false;
-    
+
     // Clear mouse press state to avoid initiating a drag while context menu is up.
     m_mousePressed = false;
     bool swallowEvent;
-    LayoutPoint viewportPos = v->windowToContents(event.position());
+    LayoutPoint viewportPos = view->windowToContents(event.position());
     HitTestRequest request(HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     MouseEventWithHitTestResults mouseEvent = doc->prepareMouseEvent(request, viewportPos, event);
 
+    // Do not show context menus when clicking on scrollbars.
+    if (mouseEvent.scrollbar() || view->scrollbarAtPoint(event.position()))
+        return false;
+
     if (m_frame.editor().behavior().shouldSelectOnContextualMenuClick()
         && !m_frame.selection().contains(viewportPos)
-        && !mouseEvent.scrollbar()
         // FIXME: In the editable case, word selection sometimes selects content that isn't underneath the mouse.
         // If the selection is non-editable, we do word selection to make it easier to use the contextual menu items
         // available for text selections.  But only if we're above text.
