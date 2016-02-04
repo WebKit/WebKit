@@ -1,3 +1,14 @@
+2016-02-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Symbol structure has unnecessary flags
+        https://bugs.webkit.org/show_bug.cgi?id=153840
+
+        Reviewed by Saam Barati.
+
+        * runtime/Symbol.h:
+        * tests/stress/symbol-get-own-property.js: Added.
+        (shouldBe):
+
 2016-02-03  Andreas Kling  <akling@apple.com>
 
         [iOS] Throw away linked code when navigating to a new page.
