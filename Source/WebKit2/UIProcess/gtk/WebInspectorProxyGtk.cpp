@@ -80,7 +80,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifier(), false, false);
 
     auto pageConfiguration = API::PageConfiguration::create();
-    pageConfiguration->setProcessPool(&inspectorProcessPool());
+    pageConfiguration->setProcessPool(&inspectorProcessPool(inspectionLevel()));
     pageConfiguration->setPreferences(preferences.get());
     pageConfiguration->setPageGroup(pageGroup.get());
     m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(*pageConfiguration.ptr()));

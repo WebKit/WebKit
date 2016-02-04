@@ -1,3 +1,32 @@
+2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Give nested inspectors their own process pool
+        https://bugs.webkit.org/show_bug.cgi?id=153880
+        <rdar://problem/24508310>
+
+        Reviewed by Timothy Hatcher.
+
+        When inspecting the inspector both inspectors were using the same
+        Inspector process and sharing the same VM. This meant that profiling
+        information was confusing (memory and JavaScript sampling) because
+        it was showing data about both inspectors sharing the same process.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorProcessPool):
+        (WebKit::WebInspectorProxy::isInspectorProcessPool):
+        Have two process pools. The main inspector process pool (1st level inspectors)
+        and a nested inspector process pool (inspecting the inspector, only expected
+        by WebKit developers).
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Pass the inspectionLevel to determine the appropriate pool to use.
+
 2016-02-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(NETSCAPE_PLUGIN_API) build after r196053

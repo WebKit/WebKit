@@ -106,7 +106,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     if (!m_inspectorWindow)
         return 0;
 
-    WKContextRef wkContext = toAPI(&inspectorProcessPool());
+    WKContextRef wkContext = toAPI(&inspectorProcessPool(inspectionLevel()));
     WKRetainPtr<WKStringRef> wkGroupIdentifier = adoptWK(WKStringCreateWithUTF8CString(inspectorPageGroupIdentifier().utf8().data()));
     WKPageGroupRef wkPageGroup = WKPageGroupCreateWithIdentifier(wkGroupIdentifier.get());
 

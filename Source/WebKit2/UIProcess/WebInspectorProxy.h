@@ -153,7 +153,7 @@ public:
 private:
     explicit WebInspectorProxy(WebPageProxy*);
 
-    static WebProcessPool& inspectorProcessPool();
+    static WebProcessPool& inspectorProcessPool(unsigned inspectionLevel);
 
     void eagerlyCreateInspectorPage();
 

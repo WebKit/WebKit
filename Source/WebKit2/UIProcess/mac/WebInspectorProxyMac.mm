@@ -375,7 +375,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
     }
 
-    [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool())];
+    [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool(inspectionLevel()))];
     [configuration _setGroupIdentifier:inspectorPageGroupIdentifier()];
 
     m_inspectorView = adoptNS([[WKWebInspectorWKWebView alloc] initWithFrame:initialRect configuration:configuration.get()]);
