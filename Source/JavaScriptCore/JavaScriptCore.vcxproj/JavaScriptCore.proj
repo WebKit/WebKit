@@ -68,6 +68,9 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\ForwardingHeaders\JavaScriptCore\**\*.*">
       <Output TaskParameter="Include" ItemName="IncFiles" />
     </CreateItem>
+    <CreateItem Include="$(SRCROOT)\API\*.h">
+      <Output TaskParameter="Include" ItemName="APIFiles" />
+    </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\*">
       <Output TaskParameter="Include" ItemName="Bin32Files" />
     </CreateItem>
@@ -106,6 +109,7 @@
     </CreateItem>
 
     <Copy SourceFiles="@(IncFiles)" DestinationFiles="@(IncFiles->'$(DSTROOT)\AppleInternal\include\private\JavaScriptCore\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(APIFiles)" DestinationFiles="@(IncFiles->'$(DSTROOT)\AppleInternal\include\JavaScriptCore\%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Lib32Files)" DestinationFolder="$(AppleInternalLib32)" />
     <Copy SourceFiles="@(Lib64Files)" DestinationFolder="$(AppleInternalLib64)" />
     <Copy SourceFiles="@(Bin32Files)" DestinationFolder="$(AppleInternalBin32)" />

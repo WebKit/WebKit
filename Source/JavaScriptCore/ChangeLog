@@ -1,3 +1,22 @@
+2016-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=153886
+        <rdar://problem/24499887>
+
+        Reviewed by Mark Lam.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+        In r190253 I changed the directory of the headers from AppleInternal/include/JavaScriptCore 
+        to AppleInternal/include/private/JavaScriptCore.  This is ok for WebCore and WebKit, but not
+        other projects, such as CFNetwork, which expect the public API headers to be in the old location.
+        This used to be done by a combination of copy-files.cmd and the old JavaScriptCore.proj.
+        This change copies all the API headers, which copies everything in copy-files.cmd except APIShims.h
+        which does not exist any more.  It copies additional headers that were not copied before, but
+        I think this is beneficial so we do not forget to add new public headers to a list of public headers
+        to be copied in the internal build.  Having extra public headers in the internal Windows build is
+        not a problem because only internal clients use the internal Windows build.
+
 2016-02-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Make some classes non JSDestructibleObject
