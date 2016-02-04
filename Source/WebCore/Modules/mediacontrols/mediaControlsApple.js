@@ -463,6 +463,7 @@ Controller.prototype = {
         captionButton.setAttribute('pseudo', '-webkit-media-controls-toggle-closed-captions-button');
         captionButton.setAttribute('aria-label', this.UIString('Captions'));
         captionButton.setAttribute('aria-haspopup', 'true');
+        captionButton.setAttribute('aria-owns', 'audioTrackMenu');
         this.listenFor(captionButton, 'click', this.handleCaptionButtonClicked);
 
         var fullscreenButton = this.controls.fullscreenButton = document.createElement('button');
@@ -1645,6 +1646,7 @@ Controller.prototype = {
 
         this.captionMenu = document.createElement('div');
         this.captionMenu.setAttribute('pseudo', '-webkit-media-controls-closed-captions-container');
+        this.captionMenu.setAttribute('id', 'audioTrackMenu');
         this.base.appendChild(this.captionMenu);
         this.captionMenuItems = [];
 
