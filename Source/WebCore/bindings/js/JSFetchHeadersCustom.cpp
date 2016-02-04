@@ -29,6 +29,8 @@
 #include "config.h"
 #include "JSFetchHeaders.h"
 
+#if ENABLE(FETCH_API)
+
 #include "JSKeyValueIterator.h"
 
 namespace WebCore {
@@ -59,3 +61,5 @@ JSC::JSValue JSFetchHeaders::values(JSC::ExecState&)
 }
 
 }
+
+#endif

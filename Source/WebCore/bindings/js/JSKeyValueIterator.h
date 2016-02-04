@@ -64,7 +64,7 @@ class JSKeyValueIterator: public JSDOMObject {
 public:
     typedef JSDOMObject Base;
 
-    DECLARE_EXPORT_INFO;
+    DECLARE_INFO;
 
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
