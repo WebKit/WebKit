@@ -1,0 +1,14 @@
+This test makes sure that array IDBKeys are correctly compared for equality during object store additions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Successfully added all 500 array keys, without any conflicts.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

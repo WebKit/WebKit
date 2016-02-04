@@ -276,7 +276,7 @@ String IDBKeyData::loggingString() const
         result = "<string> - " + m_stringValue;
         break;
     case KeyType::Date:
-        return String::format("Date m_type - %f", m_numberValue);
+        return String::format("<date> - %f", m_numberValue);
     case KeyType::Number:
         return String::format("<number> - %f", m_numberValue);
     case KeyType::Max:
@@ -356,13 +356,7 @@ bool IDBKeyData::operator==(const IDBKeyData& other) const
     case KeyType::String:
         return m_stringValue == other.m_stringValue;
     case KeyType::Array:
-        if (m_arrayValue.size() != other.m_arrayValue.size())
-            return false;
-        for (size_t i = 0; i < m_arrayValue.size(); ++i) {
-            if (m_arrayValue[0] != other.m_arrayValue[0])
-                return false;
-        }
-        return true;
+        return m_arrayValue == other.m_arrayValue;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

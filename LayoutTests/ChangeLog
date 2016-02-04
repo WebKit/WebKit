@@ -1,3 +1,18 @@
+2016-02-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: LayoutTest imported/w3c/indexeddb/keyorder-private.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=153438.
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations: Re-enable the flaky test.
+        * resources/js-test.js:
+        * storage/indexeddb/modern/idbkey-array-equality-expected.txt: Added.
+        * storage/indexeddb/modern/idbkey-array-equality-private-expected.txt: Added.
+        * storage/indexeddb/modern/idbkey-array-equality-private.html: Added.
+        * storage/indexeddb/modern/idbkey-array-equality.html: Added.
+        * storage/indexeddb/modern/resources/idbkey-array-equality.js: Added.
+
 2016-02-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip two flaky indexeddb tests on Yosemite Release WK2

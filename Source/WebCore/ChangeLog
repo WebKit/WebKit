@@ -1,3 +1,17 @@
+2016-02-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: LayoutTest imported/w3c/indexeddb/keyorder-private.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=153438.
+
+        Reviewed by Alex Christensen.
+
+        Tests: storage/indexeddb/modern/idbkey-array-equality-private.html
+               storage/indexeddb/modern/idbkey-array-equality.html
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString):
+        (WebCore::IDBKeyData::operator==): Fix obvious bug.
+
 2016-02-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix the EFL clean build after r196123

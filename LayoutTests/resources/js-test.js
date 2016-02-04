@@ -6,7 +6,7 @@ if (self.testRunner) {
         testRunner.dumpAsText();
 
     // If the test file URL ends in "-private.html", enable private browsing.
-    if (window.location.href.endsWith("-private.html"))
+    if (window.location.href.endsWith("-private.html") || self.enablePrivateBrowsing)
         testRunner.setPrivateBrowsingEnabled(true);
 }
 
