@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src=../../editing.js language="javascript" type="text/javascript"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+function editingTest() {
+    edit = document.getElementById('edit');
+    edit.focus();
+    var s = window.getSelection();
+    typeCharacterCommand('i');
+    typeCharacterCommand('t');
+    typeCharacterCommand('\'');
+    typeCharacterCommand('s');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    if (window.internals)
+        internals.handleAcceptedCandidate("mesage");
+    typeCharacterCommand(' ');
+
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
+}
+
+</script>
+</head>
+<body>
+<p>This test verifies that accepted candidates are not autocorrected. You should see phrase "it's a mesage." The bug occurs if "mesage" was corrected to "message."</p>
+<div contenteditable="true" id="edit"/>
+<script>
+runEditingTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

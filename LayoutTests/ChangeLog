@@ -1,3 +1,15 @@
+2016-02-03  Beth Dakin  <bdakin@apple.com>
+
+        Accepted candidates should not be autocorrected
+        https://bugs.webkit.org/show_bug.cgi?id=153813
+        -and corresponding-
+        rdar://problem/24066924
+
+        Reviewed by Darin Adler.
+
+        * editing/mac/spelling/accept-misspelled-candidate-expected.txt: Added.
+        * editing/mac/spelling/accept-misspelled-candidate.html: Added.
+
 2016-02-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/history/back-to-post.php as flaky on ios-simulator
