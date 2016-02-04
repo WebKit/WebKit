@@ -1,3 +1,14 @@
+2016-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix the EFL clean build after r196123
+        https://bugs.webkit.org/show_bug.cgi?id=153875
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * html/DOMSettableTokenList.h:
+        * html/DOMSettableTokenList.idl:
+
 2016-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         PageGroup::captionPreferences should return a reference

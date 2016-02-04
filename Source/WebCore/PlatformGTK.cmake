@@ -715,7 +715,6 @@ list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
     dom/Touch.idl
     dom/WebKitNamedFlow.idl
 
-    html/DOMSettableTokenList.idl
     html/DOMTokenList.idl
     html/HTMLDetailsElement.idl
     html/HTMLKeygenElement.idl

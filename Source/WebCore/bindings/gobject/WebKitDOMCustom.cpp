@@ -19,10 +19,9 @@
 #include "config.h"
 #include "WebKitDOMCustom.h"
 
-#include "DOMSettableTokenList.h"
+#include "DOMTokenList.h"
 #include "JSMainThreadExecState.h"
 #include "SerializedScriptValue.h"
-#include "WebKitDOMDOMSettableTokenListPrivate.h"
 #include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMHTMLInputElement.h"
 #include "WebKitDOMHTMLInputElementPrivate.h"

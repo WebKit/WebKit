@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-// Only used by ObjC and GObject bindings.
+// Only used by ObjC bindings.
 class DOMSettableTokenList : public DOMTokenList {
     WTF_MAKE_FAST_ALLOCATED;
 };

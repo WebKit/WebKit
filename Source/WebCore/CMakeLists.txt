@@ -436,7 +436,6 @@ set(WebCore_NON_SVG_IDL_FILES
     fileapi/FileReaderSync.idl
 
     html/DOMFormData.idl
-    html/DOMSettableTokenList.idl
     html/DOMTokenList.idl
     html/DOMURL.idl
     html/HTMLAllCollection.idl

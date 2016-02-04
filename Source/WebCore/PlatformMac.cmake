@@ -791,6 +791,7 @@ set(ObjC_Bindings_IDL_FILES
     fileapi/File.idl
     fileapi/FileList.idl
 
+    html/DOMSettableTokenList.idl
     html/DOMTokenList.idl
     html/HTMLAnchorElement.idl
     html/HTMLAppletElement.idl
