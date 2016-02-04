@@ -1,3 +1,12 @@
+2016-02-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=153844
+
+        Reviewed by Chris Dumez.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         media/video-size.html is flaky
