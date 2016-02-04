@@ -1,3 +1,41 @@
+2016-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Add support for iterating over Headers
+        https://bugs.webkit.org/show_bug.cgi?id=153787
+
+        Reviewed by Darin Adler.
+
+        Relanding, updating bindings/js/JSKeyValueIterator.h for Windows bots.
+
+        Covered by updated tests.
+        Introducing template class (JSKeyValueIterator) to support key-value iterators in DOM classes.
+        Using JSKeyValueIterator to implement Headers entries(), keys() and values() as custom methods.
+        Binding generator should be updated to generate directly these custom methods and handle iterator Symbol.
+
+        * CMakeLists.txt:
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::FetchHeaders::Iterator::next):
+        (WebCore::FetchHeaders::Iterator::Iterator):
+        * Modules/fetch/FetchHeaders.h:
+        (WebCore::FetchHeaders::createIterator):
+        * Modules/fetch/FetchHeaders.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsPair):
+        * bindings/js/JSFetchHeadersCustom.cpp: Added.
+        (WebCore::JSFetchHeaders::entries):
+        (WebCore::JSFetchHeaders::keys):
+        (WebCore::JSFetchHeaders::values):
+        * bindings/js/JSKeyValueIterator.h: Added.
+        (WebCore::JSKeyValueIteratorPrototype::create):
+        (WebCore::JSKeyValueIteratorPrototype::createStructure):
+        (WebCore::JSKeyValueIteratorPrototype::JSKeyValueIteratorPrototype):
+        (WebCore::createIterator):
+        (WebCore::DOMWrapped>::destroy):
+        (WebCore::DOMWrapped>::next):
+        (WebCore::DOMWrapped>::finishCreation):
+
 2016-02-04  Chris Dumez  <cdumez@apple.com>
 
         Merge DOMTokenList and DOMSettableTokenList

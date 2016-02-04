@@ -514,6 +514,14 @@ template<typename T, size_t inlineCapacity> inline JSC::JSValue jsArray(JSC::Exe
     return jsArray(exec, globalObject, *vector);
 }
 
+template<typename Value1, typename Value2> inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, const Value1& value1, const Value2& value2)
+{
+    JSC::MarkedArgumentBuffer args;
+    args.append(toJS(&state, globalObject, value1));
+    args.append(toJS(&state, globalObject, value2));
+    return constructArray(&state, 0, globalObject, args);
+}
+
 WEBCORE_EXPORT JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<DOMStringList>);
 
 inline PassRefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue value)

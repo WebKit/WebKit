@@ -1,3 +1,21 @@
+2016-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Add support for iterating over Headers
+        https://bugs.webkit.org/show_bug.cgi?id=153787
+
+        Reviewed by Darin Adler.
+
+        Relanding.
+
+        * web-platform-tests/fetch/api/headers/headers-basic-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-basic.html:
+        * web-platform-tests/fetch/api/headers/headers-structure-expected.txt:
+        * web-platform-tests/fetch/api/request/request-clone.sub-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-003.sub-expected.txt:
+        * web-platform-tests/fetch/api/resources/utils.js:
+        (checkRequest):
+        (readTextStream):
+
 2016-02-04  Chris Dumez  <cdumez@apple.com>
 
         Merge DOMTokenList and DOMSettableTokenList

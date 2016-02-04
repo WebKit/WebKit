@@ -26,26 +26,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=FETCH_API,
-    GlobalContext=DOMWindow&WorkerGlobalScope,
-    ImplementationLacksVTable,
-    InterfaceName=Headers,
-    JSBuiltinConstructor
-]
-interface FetchHeaders {
-    [RaisesException] void append(DOMString name, DOMString value);
-    [RaisesException, ImplementedAs=remove] void delete(DOMString name);
-    [RaisesException, TreatReturnedNullStringAs=Null] DOMString get(DOMString name);
-    [RaisesException] boolean has(DOMString name);
-    [RaisesException] void set(DOMString name, DOMString value);
+#include "config.h"
+#include "JSFetchHeaders.h"
 
-    // FIXME: Support iterable within binding generator.
-    //iterable<DOMString, DOMString>;
-    [Custom] any entries();
-    [Custom] any keys();
-    [Custom] any values();
+#if ENABLE(FETCH_API)
 
-    [Private, RaisesException, ImplementedAs=append] void appendFromJS(DOMString name, DOMString value);
-    [Private, RaisesException] void initializeWith(FetchHeaders headers);
-};
+#include "JSKeyValueIterator.h"
+
+namespace WebCore {
+
+// FIXME: Move this code to JSFetchHeaders.
+using FetchHeadersIterator = JSKeyValueIterator<JSFetchHeaders, FetchHeaders>;
+using FetchHeadersIteratorPrototype = JSKeyValueIteratorPrototype<JSFetchHeaders, FetchHeaders>;
+
+template<>
+const JSC::ClassInfo FetchHeadersIterator::s_info = { "Headers Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(FetchHeadersIterator) };
+
+template<>
+const JSC::ClassInfo FetchHeadersIteratorPrototype::s_info = { "Headers Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(FetchHeadersIteratorPrototype) };
+
+JSC::JSValue JSFetchHeaders::entries(JSC::ExecState&)
+{
+    return createIterator<JSFetchHeaders, FetchHeaders>(*globalObject(), *this, IterationKind::KeyValue);
+}
+
+JSC::JSValue JSFetchHeaders::keys(JSC::ExecState&)
+{
+    return createIterator<JSFetchHeaders, FetchHeaders>(*globalObject(), *this, IterationKind::Key);
+}
+
+JSC::JSValue JSFetchHeaders::values(JSC::ExecState&)
+{
+    return createIterator<JSFetchHeaders, FetchHeaders>(*globalObject(), *this, IterationKind::Value);
+}
+
+}
+
+#endif
