@@ -1,3 +1,59 @@
+2016-02-04  Saam barati  <sbarati@apple.com>
+
+        JSC Sampling Profiler: (host) is confusing in cases where I would expect to see JS name
+        https://bugs.webkit.org/show_bug.cgi?id=153663
+        <rdar://problem/24415092>
+
+        Reviewed by Geoffrey Garen.
+
+        We now collect the Callee in the processed StackFrame
+        when the Callee is a valid GC object. We later ask
+        the Callee for it's .displayName or .name property.
+        When we don't have a valid callee, we will still
+        use the Executable for this information.
+
+        This helps us come up with good names for frames where 
+        the Callee object is a bound function or an InternalFunction.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::addEvent):
+        (Inspector::buildSamples):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::reportStats):
+        (JSC::FrameWalker::walk):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::visit):
+        (JSC::SamplingProfiler::shutdown):
+        (JSC::SamplingProfiler::clearData):
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::StackFrame::displayNameForJSONTests):
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::UnprocessedStackFrame::UnprocessedStackFrame):
+        (JSC::SamplingProfiler::StackFrame::StackFrame):
+        * tests/stress/sampling-profiler-basic.js:
+        (platformSupportsSamplingProfiler.nothing):
+        (platformSupportsSamplingProfiler.top):
+        * tests/stress/sampling-profiler-bound-function-name.js: Added.
+        (platformSupportsSamplingProfiler.foo):
+        (platformSupportsSamplingProfiler.bar):
+        (platformSupportsSamplingProfiler.let.baz):
+        (platformSupportsSamplingProfiler):
+        * tests/stress/sampling-profiler-display-name.js: Added.
+        (platformSupportsSamplingProfiler.foo):
+        (platformSupportsSamplingProfiler.baz):
+        (platformSupportsSamplingProfiler.):
+        (platformSupportsSamplingProfiler.bar):
+        (platformSupportsSamplingProfiler.jaz):
+        (platformSupportsSamplingProfiler.makeFunction.let.result):
+        (platformSupportsSamplingProfiler.makeFunction):
+        * tests/stress/sampling-profiler-internal-function-name.js: Added.
+        (platformSupportsSamplingProfiler.foo):
+        (platformSupportsSamplingProfiler.bar):
+        (platformSupportsSamplingProfiler):
+
 2016-02-04  Chris Dumez  <cdumez@apple.com>
 
         Object.getOwnPropertyDescriptor() returns incomplete descriptor for instance properties

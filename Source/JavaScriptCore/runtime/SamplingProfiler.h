@@ -45,35 +45,20 @@ class SamplingProfiler : public ThreadSafeRefCounted<SamplingProfiler> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    enum class UnprocessedFrameType { 
-        UnverifiedCallee,
-        VerifiedCodeBlock
-    };
-
     struct UnprocessedStackFrame {
-        UnprocessedStackFrame(EncodedJSValue callee)
-            : frameType(UnprocessedFrameType::UnverifiedCallee)
-        {
-            u.unverifiedCallee = callee;
-        }
-        UnprocessedStackFrame(CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
-            : frameType(UnprocessedFrameType::VerifiedCodeBlock)
+        UnprocessedStackFrame(CodeBlock* codeBlock, EncodedJSValue callee, CallSiteIndex callSiteIndex)
+            : unverifiedCallee(callee)
+            , verifiedCodeBlock(codeBlock)
             , callSiteIndex(callSiteIndex)
-        {
-            u.unverifiedCallee = JSValue::encode(JSValue());
-            u.verifiedCodeBlock = codeBlock;
-        }
+        { }
         UnprocessedStackFrame()
-            : frameType(UnprocessedFrameType::UnverifiedCallee)
         {
-            u.unverifiedCallee = JSValue::encode(JSValue());
+            unverifiedCallee = JSValue::encode(JSValue());
+            verifiedCodeBlock = nullptr;
         }
 
-        UnprocessedFrameType frameType;
-        union {
-            EncodedJSValue unverifiedCallee;
-            CodeBlock* verifiedCodeBlock;
-        } u;
+        EncodedJSValue unverifiedCallee;
+        CodeBlock* verifiedCodeBlock;
         CallSiteIndex callSiteIndex;
     };
 
@@ -88,21 +73,21 @@ public:
             : frameType(FrameType::Executable)
             , executable(executable)
         { }
+
         StackFrame()
-            : frameType(FrameType::Unknown)
-            , executable(nullptr)
         { }
 
-        FrameType frameType;
-        ExecutableBase* executable;
-
+        FrameType frameType { FrameType::Unknown };
+        ExecutableBase* executable { nullptr };
+        JSObject* callee { nullptr };
         // These attempt to be expression-level line and column number.
         unsigned lineNumber { std::numeric_limits<unsigned>::max() };
         unsigned columnNumber { std::numeric_limits<unsigned>::max() };
 
         // These are function-level data.
-        String displayName();
-        String displayNameForJSONTests(); // Used for JSC stress tests because they want the "(anonymous function)" string for anonymous functions and they want "(eval)" for eval'd code.
+        String nameFromCallee(VM&);
+        String displayName(VM&);
+        String displayNameForJSONTests(VM&); // Used for JSC stress tests because they want the "(anonymous function)" string for anonymous functions and they want "(eval)" for eval'd code.
         int functionStartLine();
         unsigned functionStartColumn();
         intptr_t sourceID();
@@ -168,7 +153,7 @@ private:
     bool m_isActive;
     bool m_isPaused;
     bool m_hasDispatchedFunction;
-    HashSet<ExecutableBase*> m_seenExecutables;
+    HashSet<JSCell*> m_liveCellPointers;
     Vector<UnprocessedStackFrame> m_currentFrames;
 };
 

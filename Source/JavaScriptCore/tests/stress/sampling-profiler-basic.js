@@ -17,7 +17,7 @@ if (platformSupportsSamplingProfiler()) {
     function nothing(x) { return x; }
     noInline(nothing);
 
-    runTest(foo, ["(host)", "bar", "foo"]);
+    runTest(foo, ["Error", "bar", "foo"]);
 
     function top() { 
         let x = 0;

@@ -44,6 +44,7 @@
 #include "PCToCodeOriginMap.h"
 #include "SlotVisitor.h"
 #include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 #include "VM.h"
 #include "VMEntryScope.h"
 
@@ -58,7 +59,6 @@ static const bool sReportStatsOnlyWhenTheyreAboveThreshold = false;
 static const bool sReportStats = false;
 
 using FrameType = SamplingProfiler::FrameType;
-using UnprocessedFrameType = SamplingProfiler::UnprocessedFrameType;
 using UnprocessedStackFrame = SamplingProfiler::UnprocessedStackFrame;
 
 ALWAYS_INLINE static void reportStats()
@@ -89,14 +89,14 @@ public:
         resetAtMachineFrame();
         size_t maxStackTraceSize = stackTrace.size();
         while (!isAtTop() && !m_bailingOut && m_depth < maxStackTraceSize) {
-            if (CodeBlock* codeBlock = m_callFrame->codeBlock()) {
+            CallSiteIndex callSiteIndex;
+            JSValue unsafeCallee = m_callFrame->unsafeCallee();
+            CodeBlock* codeBlock = m_callFrame->codeBlock();
+            if (codeBlock) {
                 ASSERT(isValidCodeBlock(codeBlock));
-                stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, m_callFrame->callSiteIndex());
-            } else {
-                RELEASE_ASSERT(codeBlock == nullptr);
-                JSValue unsafeCallee = m_callFrame->unsafeCallee();
-                stackTrace[m_depth] = UnprocessedStackFrame(JSValue::encode(unsafeCallee));
+                callSiteIndex = m_callFrame->callSiteIndex();
             }
+            stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, JSValue::encode(unsafeCallee), callSiteIndex);
             m_depth++;
             advanceToParentFrame();
             resetAtMachineFrame();
@@ -330,7 +330,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
 
         auto appendCodeBlock = [&] (CodeBlock* codeBlock, unsigned bytecodeIndex) {
             stackTrace.frames.append(StackFrame(codeBlock->ownerExecutable()));
-            m_seenExecutables.add(codeBlock->ownerExecutable());
+            m_liveCellPointers.add(codeBlock->ownerExecutable());
 
             if (bytecodeIndex < codeBlock->instructionCount()) {
                 int divot;
@@ -341,16 +341,24 @@ void SamplingProfiler::processUnverifiedStackTraces()
             }
         };
 
-        auto appendUnverifiedCallee = [&] (JSValue callee) {
+        auto appendEmptyFrame = [&] {
             stackTrace.frames.append(StackFrame());
+        };
+
+        auto storeCalleeIntoTopFrame = [&] (EncodedJSValue encodedCallee) {
+            // Set the callee if it's a valid GC object.
+            JSValue callee = JSValue::decode(encodedCallee);
             StackFrame& stackFrame = stackTrace.frames.last();
+            bool alreadyHasExecutable = !!stackFrame.executable;
             if (!Heap::isValueGCObject(filter, markedBlockSet, callee)) {
-                stackFrame.frameType = FrameType::Unknown;
+                if (!alreadyHasExecutable)
+                    stackFrame.frameType = FrameType::Unknown;
                 return;
             }
 
             JSCell* calleeCell = callee.asCell();
-            auto frameTypeFromCallData = [&] () -> FrameType {
+            auto setFallbackFrameType = [&] {
+                ASSERT(!alreadyHasExecutable);
                 FrameType result = FrameType::Unknown;
                 CallData callData;
                 CallType callType;
@@ -358,30 +366,47 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 if (callType == CallTypeHost)
                     result = FrameType::Host;
 
-                return result;
+                stackFrame.frameType = result;
+            };
+
+            auto addCallee = [&] (JSObject* callee) {
+                stackFrame.callee = callee;
+                m_liveCellPointers.add(callee);
             };
 
             if (calleeCell->type() != JSFunctionType) {
-                stackFrame.frameType = frameTypeFromCallData();
+                if (JSObject* object = jsDynamicCast<JSObject*>(calleeCell))
+                    addCallee(object);
+
+                if (!alreadyHasExecutable)
+                    setFallbackFrameType();
+
                 return;
             }
-            ExecutableBase* executable = static_cast<JSFunction*>(calleeCell)->executable();
+
+            addCallee(jsCast<JSFunction*>(calleeCell));
+
+            if (alreadyHasExecutable)
+                return;
+
+            ExecutableBase* executable = jsCast<JSFunction*>(calleeCell)->executable();
             if (!executable) {
-                stackFrame.frameType = frameTypeFromCallData();
+                setFallbackFrameType();
                 return;
             }
 
             RELEASE_ASSERT(Heap::isPointerGCObject(filter, markedBlockSet, executable));
             stackFrame.frameType = FrameType::Executable;
             stackFrame.executable = executable;
-            m_seenExecutables.add(executable);
+            m_liveCellPointers.add(executable);
         };
+
 
         // Prepend the top-most inlined frame if needed and gather
         // location information about where the top frame is executing.
         size_t startIndex = 0;
-        if (unprocessedStackTrace.frames.size() && unprocessedStackTrace.frames[0].frameType == UnprocessedFrameType::VerifiedCodeBlock) {
-            CodeBlock* topCodeBlock = unprocessedStackTrace.frames[0].u.verifiedCodeBlock;
+        if (unprocessedStackTrace.frames.size() && !!unprocessedStackTrace.frames[0].verifiedCodeBlock) {
+            CodeBlock* topCodeBlock = unprocessedStackTrace.frames[0].verifiedCodeBlock;
             if (unprocessedStackTrace.topFrameIsLLInt) {
                 // We reuse LLInt CodeBlocks for the baseline JIT, so we need to check for both jit types.
                 // This might also be false for various reasons (known and unknown), even though
@@ -403,20 +428,21 @@ void SamplingProfiler::processUnverifiedStackTraces()
                     UNUSED_PARAM(isValidPC); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
 
                     appendCodeBlock(topCodeBlock, bytecodeIndex);
+                    storeCalleeIntoTopFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
                     startIndex = 1;
                 }
             } else if (Optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
                 codeOrigin->walkUpInlineStack([&] (const CodeOrigin& codeOrigin) {
                     appendCodeBlock(codeOrigin.inlineCallFrame ? codeOrigin.inlineCallFrame->baselineCodeBlock.get() : topCodeBlock, codeOrigin.bytecodeIndex);
                 });
+                storeCalleeIntoTopFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
                 startIndex = 1;
             }
         }
 
         for (size_t i = startIndex; i < unprocessedStackTrace.frames.size(); i++) {
             UnprocessedStackFrame& unprocessedStackFrame = unprocessedStackTrace.frames[i];
-            if (unprocessedStackFrame.frameType == UnprocessedFrameType::VerifiedCodeBlock) {
-                CodeBlock* codeBlock = unprocessedStackFrame.u.verifiedCodeBlock;
+            if (CodeBlock* codeBlock = unprocessedStackFrame.verifiedCodeBlock) {
                 CallSiteIndex callSiteIndex = unprocessedStackFrame.callSiteIndex;
 
                 auto appendCodeBlockNoInlining = [&] {
@@ -437,10 +463,12 @@ void SamplingProfiler::processUnverifiedStackTraces()
 #else
                 appendCodeBlockNoInlining();
 #endif
-            } else {
-                ASSERT(unprocessedStackFrame.frameType == UnprocessedFrameType::UnverifiedCallee);
-                appendUnverifiedCallee(JSValue::decode(unprocessedStackFrame.u.unverifiedCallee));
-            }
+            } else
+                appendEmptyFrame();
+
+            // Note that this is okay to do if we walked the inline stack because
+            // the machine frame will be at the top of the processed stack trace.
+            storeCalleeIntoTopFrame(unprocessedStackFrame.unverifiedCallee);
         }
     }
 
@@ -450,8 +478,8 @@ void SamplingProfiler::processUnverifiedStackTraces()
 void SamplingProfiler::visit(SlotVisitor& slotVisitor)
 {
     RELEASE_ASSERT(m_lock.isLocked());
-    for (ExecutableBase* executable : m_seenExecutables)
-        slotVisitor.appendUnbarrieredReadOnlyPointer(executable);
+    for (JSCell* cell : m_liveCellPointers)
+        slotVisitor.appendUnbarrieredReadOnlyPointer(cell);
 }
 
 void SamplingProfiler::shutdown()
@@ -539,12 +567,44 @@ void SamplingProfiler::clearData(const LockHolder&)
 {
     ASSERT(m_lock.isLocked());
     m_stackTraces.clear();
-    m_seenExecutables.clear();
+    m_liveCellPointers.clear();
     m_unprocessedStackTraces.clear();
 }
 
-String SamplingProfiler::StackFrame::displayName()
+String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
 {
+    if (!callee)
+        return String();
+
+    ExecState* exec = callee->globalObject()->globalExec();
+    auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
+        PropertySlot slot(callee);
+        PropertyName propertyName(ident);
+        if (callee->getPropertySlot(exec, propertyName, slot)) {
+            if (slot.isValue()) {
+                JSValue nameValue = slot.getValue(exec, propertyName);
+                if (isJSString(nameValue))
+                    return asString(nameValue)->tryGetValue();
+            }
+        }
+        return String();
+    };
+
+    String name = getPropertyIfPureOperation(vm.propertyNames->displayName);
+    if (!name.isEmpty())
+        return name;
+
+    return getPropertyIfPureOperation(vm.propertyNames->name);
+}
+
+String SamplingProfiler::StackFrame::displayName(VM& vm)
+{
+    {
+        String name = nameFromCallee(vm);
+        if (!name.isEmpty())
+            return name;
+    }
+
     if (frameType == FrameType::Unknown)
         return ASCIILiteral("(unknown)");
     if (frameType == FrameType::Host)
@@ -564,8 +624,14 @@ String SamplingProfiler::StackFrame::displayName()
     return String();
 }
 
-String SamplingProfiler::StackFrame::displayNameForJSONTests()
+String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
 {
+    {
+        String name = nameFromCallee(vm);
+        if (!name.isEmpty())
+            return name;
+    }
+
     if (frameType == FrameType::Unknown)
         return ASCIILiteral("(unknown)");
     if (frameType == FrameType::Host)
@@ -674,7 +740,7 @@ String SamplingProfiler::stackTracesAsJSON()
         for (StackFrame& stackFrame : stackTrace.frames) {
             comma();
             json.appendLiteral("\"");
-            json.append(stackFrame.displayNameForJSONTests());
+            json.append(stackFrame.displayNameForJSONTests(m_vm));
             json.appendLiteral("\"");
             loopedOnce = true;
         }
