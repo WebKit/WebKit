@@ -12,4 +12,7 @@ PASS Check set method
 PASS Check has method 
 PASS Check delete method 
 PASS Check get method 
+PASS Check keys method 
+PASS Check values method 
+PASS Check entries method 
 

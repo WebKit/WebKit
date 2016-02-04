@@ -111,6 +111,58 @@
 
         assert_equals(headers.get("nameNotInHeaders"), null, "header: nameNotInHeaders has no value");
       }, "Check get method");
-    </script>
+
+      var headerEntriesDict = {"name1": "value1",
+                               "Name2": "value2",
+                               "name": "value3",
+                               "content-Type": "value4",
+                               "Content-Typ": "value5",
+                               "Content-Types": "value6"
+      };
+      var sortedHeaderDict = {};
+      var sortedHeaderKeys = Object.keys(headerEntriesDict).map(function(value) {
+        sortedHeaderDict[value.toLowerCase()] = headerEntriesDict[value];
+        return value.toLowerCase();
+      }).sort();
+
+      test(function() {
+        var headers = new Headers(headerEntriesDict);
+        var actual = headers.keys();
+        sortedHeaderKeys.forEach(function(key) {
+            entry = actual.next();
+            assert_false(entry.done);
+            assert_equals(entry.value, key);
+        });
+        assert_true(actual.next().done);
+        assert_true(actual.next().done);
+      }, "Check keys method");
+
+      test(function() {
+        var headers = new Headers(headerEntriesDict);
+        var actual = headers.values();
+
+        sortedHeaderKeys.forEach(function(key) {
+            entry = actual.next();
+            assert_false(entry.done);
+            assert_equals(entry.value, sortedHeaderDict[key]);
+        });
+        assert_true(actual.next().done);
+        assert_true(actual.next().done);
+      }, "Check values method");
+
+      test(function() {
+        var headers = new Headers(headerEntriesDict);
+        var actual = headers.entries();
+
+        sortedHeaderKeys.forEach(function(key) {
+            entry = actual.next();
+            assert_false(entry.done);
+            assert_equals(entry.value[0], key);
+            assert_equals(entry.value[1], sortedHeaderDict[key]);
+        });
+        assert_true(actual.next().done);
+        assert_true(actual.next().done);
+      }, "Check entries method");
+   </script>
   </body>
 </html>

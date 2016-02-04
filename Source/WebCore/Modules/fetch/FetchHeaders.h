@@ -62,6 +62,23 @@ public:
     String fastGet(HTTPHeaderName name) const { return m_headers.get(name); }
     void fastSet(HTTPHeaderName name, const String& value) { m_headers.set(name, value); }
 
+    class Iterator {
+    public:
+        explicit Iterator(FetchHeaders&);
+
+        // FIXME: Binding generator should be able to generate iterator key and value types.
+        using Key = String;
+        using Value = String;
+
+        bool next(String& nextKey, String& nextValue);
+
+    private:
+        Ref<FetchHeaders> m_headers;
+        size_t m_currentIndex = 0;
+        Vector<String> m_keys;
+    };
+    Iterator createIterator() { return Iterator(*this); }
+
 private:
     FetchHeaders(Guard guard) : m_guard(guard) { }
     FetchHeaders(Guard guard, const HTTPHeaderMap& headers) : m_guard(guard), m_headers(headers) { }

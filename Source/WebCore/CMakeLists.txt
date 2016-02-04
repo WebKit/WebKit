@@ -1164,6 +1164,7 @@ set(WebCore_SOURCES
     bindings/js/JSEventListener.cpp
     bindings/js/JSEventTargetCustom.cpp
     bindings/js/JSExceptionBase.cpp
+    bindings/js/JSFetchHeadersCustom.cpp
     bindings/js/JSFileReaderCustom.cpp
     bindings/js/JSGeolocationCustom.cpp
     bindings/js/JSHTMLAllCollectionCustom.cpp
