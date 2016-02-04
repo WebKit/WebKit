@@ -1315,3 +1315,5 @@ webkit.org/b/153752 [ Yosemite ] http/tests/plugins/visible_plugins.html [ Skip 
 
 webkit.org/b/153809 transitions/clip-path-transitions.html [ Pass Failure ]
 webkit.org/b/153809 transitions/clip-path-path-transitions.html [ Pass Failure ]
+
+webkit.org/b/153883 webgl/1.0.3/conformance/extensions/oes-texture-half-float-linear.html [ Pass Failure ]
