@@ -608,7 +608,7 @@ PassRefPtr<ChannelSplitterNode> AudioContext::createChannelSplitter(size_t numbe
     RefPtr<ChannelSplitterNode> node = ChannelSplitterNode::create(this, m_destinationNode->sampleRate(), numberOfOutputs);
 
     if (!node.get()) {
-        ec = SYNTAX_ERR;
+        ec = INDEX_SIZE_ERR;
         return nullptr;
     }
 
@@ -629,7 +629,7 @@ PassRefPtr<ChannelMergerNode> AudioContext::createChannelMerger(size_t numberOfI
     RefPtr<ChannelMergerNode> node = ChannelMergerNode::create(this, m_destinationNode->sampleRate(), numberOfInputs);
 
     if (!node.get()) {
-        ec = SYNTAX_ERR;
+        ec = INDEX_SIZE_ERR;
         return nullptr;
     }
 
@@ -655,7 +655,7 @@ PassRefPtr<PeriodicWave> AudioContext::createPeriodicWave(Float32Array* real, Fl
     ASSERT(isMainThread());
     
     if (!real || !imag || (real->length() != imag->length() || (real->length() > MaxPeriodicWaveLength) || (real->length() <= 0))) {
-        ec = SYNTAX_ERR;
+        ec = INDEX_SIZE_ERR;
         return nullptr;
     }
     

@@ -1,3 +1,23 @@
+2016-02-04  Hyemi Shin  <hyemi.sin@samsung.com>
+
+        Specify an exception for createChannelMerger, createChannelSplitter and createPeriodicWave
+        https://bugs.webkit.org/show_bug.cgi?id=150925
+
+        Reviewed by Darin Adler.
+
+        createChannelMerger and createChannelSplitter should throw INDEX_SIZE_ERR
+        for invalid numberOfInputs value.
+        createPeriodicWave should throw INDEX_SIZE_ERR for invalid lengths of parameters.
+
+        Tests: webaudio/audiochannelmerger-basic.html
+               webaudio/audiochannelsplitter.html
+               webaudio/periodicwave-lengths.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createChannelSplitter):
+        (WebCore::AudioContext::createChannelMerger):
+        (WebCore::AudioContext::createPeriodicWave):
+
 2016-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add support for iterating over Headers

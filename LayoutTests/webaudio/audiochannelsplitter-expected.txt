@@ -2,8 +2,8 @@ Tests AudioChannelSplitter.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS Exception been thrown for numberOfOutputs <= 0.
-PASS Exception been thrown for numberOfOutputs >= 32.
+PASS IndexSizeError been thrown for numberOfOutputs <= 0.
+PASS IndexSizeError been thrown for numberOfOutputs > 32.
 PASS AudioChannelSplitter created successfully with numberOfOutputs = 32.
 PASS AudioChannelSplitter has 32 outputs when it is created with numberOfOutputs = 32.
 PASS AudioChannelSplitter has one input.

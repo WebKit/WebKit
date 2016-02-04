@@ -85,16 +85,22 @@ function runTest() {
 
     try {
         var splitternode = context.createChannelSplitter(0);
-        testFailed("Exception should be thrown for numberOfOutputs <= 0.");
+        testFailed("IndexSizeError should be thrown for numberOfOutputs <= 0.");
     } catch(e) {
-        testPassed("Exception been thrown for numberOfOutputs <= 0.");
+        if (e.code === DOMException.INDEX_SIZE_ERR)
+            testPassed("IndexSizeError been thrown for numberOfOutputs <= 0.");
+        else
+            testFailed("IndexSizeError should be thrown for numberOfOutputs <= 0.");
     }
 
     try {
         var splitternode = context.createChannelSplitter(33);
-        testFailed("Exception should be thrown for numerOfOutputs >= 32.");
+        testFailed("IndexSizeError should be thrown for numerOfOutputs > 32.");
     } catch(e) {
-        testPassed("Exception been thrown for numberOfOutputs >= 32.");
+        if (e.code === DOMException.INDEX_SIZE_ERR)
+            testPassed("IndexSizeError been thrown for numberOfOutputs > 32.");
+        else
+            testFailed("IndexSizeError should be thrown for numerOfOutputs > 32.");
     }
 
     try {

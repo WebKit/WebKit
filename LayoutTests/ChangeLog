@@ -1,3 +1,21 @@
+2016-02-04  Hyemi Shin  <hyemi.sin@samsung.com>
+
+        Specify an exception for createChannelMerger, createChannelSplitter and createPeriodicWave
+        https://bugs.webkit.org/show_bug.cgi?id=150925
+
+        Reviewed by Darin Adler.
+
+        createChannelMerger and createChannelSplitter should throw INDEX_SIZE_ERR
+        for invalid numberOfInputs value.
+        createPeriodicWave should throw INDEX_SIZE_ERR for invalid lengths of parameters.
+
+        * webaudio/audiochannelmerger-basic-expected.txt: numberOfInputs could be 32.
+        * webaudio/audiochannelmerger-basic.html: Ditto.
+        * webaudio/audiochannelsplitter-expected.txt: Ditto.
+        * webaudio/audiochannelsplitter.html: Ditto.
+        * webaudio/periodicwave-lengths-expected.txt: Added.
+        * webaudio/periodicwave-lengths.html: Added.
+
 2016-02-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html for ios-simulator

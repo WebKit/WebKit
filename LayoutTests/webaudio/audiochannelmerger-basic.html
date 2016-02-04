@@ -26,16 +26,22 @@ function runTest() {
 
     try {
         var mergernode = context.createChannelMerger(0);
-        testFailed("Exception should be thrown for numberOfInputs <= 0.");
+        testFailed("IndexSizeError should be thrown for numberOfInputs <= 0.");
     } catch(e) {
-        testPassed("Exception was thrown for numberOfInputs <= 0.");
+        if (e.code === DOMException.INDEX_SIZE_ERR)
+            testPassed("IndexSizeError was thrown for numberOfInputs <= 0.");
+        else
+            testFailed("IndexSizeError should be thrown for numberOfInputs <= 0.");
     }
 
     try {
         var mergernode = context.createChannelMerger(33);
-        testFailed("Exception should be thrown for numberOfInputs >= 32.");
+        testFailed("IndexSizeError should be thrown for numberOfInputs > 32.");
     } catch(e) {
-        testPassed("Exception was thrown for numberOfInputs >= 32.");
+        if (e.code === DOMException.INDEX_SIZE_ERR)
+            testPassed("IndexSizeError was thrown for numberOfInputs > 32.");
+        else
+            testFailed("IndexSizeError should be thrown for numberOfInputs > 32.");
     }
 
     try {
