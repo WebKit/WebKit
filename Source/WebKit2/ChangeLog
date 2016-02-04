@@ -1,3 +1,35 @@
+2016-02-03  Alex Christensen  <achristensen@webkit.org>
+
+        Report wasBlocked and cannotShowURL errors when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=153846
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::didSendData):
+        (WebKit::NetworkLoad::wasBlocked):
+        (WebKit::NetworkLoad::cannotShowURL):
+        (WebKit::NetworkLoad::didReceiveResponseAsync):
+        * NetworkProcess/NetworkLoad.h:
+        NetworkDataTask is now RefCounted so we can protect it when reporting errors which delete the NetworkLoad.
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSessionTaskClient::~NetworkSessionTaskClient):
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::takeDownloadID):
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        Check the validity of the requested url and check if the port is allowed like we do in the ResourceHandle constructor.
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        Don't remove the task from the NetworkSession's map if we didn't make it because there was an error.
+        (WebKit::NetworkDataTask::scheduleFailure):
+        (WebKit::NetworkDataTask::failureTimerFired):
+        Implemented like ResourceHandle's.
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        (WebKit::NetworkDataTask::resume):
+        (WebKit::NetworkDataTask::suspend):
+        Handle the failure timer like we do in ResourceHandle::setDefersLoading.
+
 2016-02-02  Alex Christensen  <achristensen@webkit.org>
 
         Use proposed credentials in authentication challenges with NetworkSession

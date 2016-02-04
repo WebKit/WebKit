@@ -53,7 +53,7 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters&
 {
 #if USE(NETWORK_SESSION)
     if (auto* networkSession = SessionTracker::networkSession(parameters.sessionID)) {
-        m_task = std::make_unique<NetworkDataTask>(*networkSession, *this, parameters.request, parameters.allowStoredCredentials);
+        m_task = NetworkDataTask::create(*networkSession, *this, parameters.request, parameters.allowStoredCredentials);
         if (!parameters.defersLoading)
             m_task->resume();
     } else
@@ -248,6 +248,16 @@ void NetworkLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpect
     m_client.didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
+void NetworkLoad::wasBlocked()
+{
+    m_client.didFailLoading(blockedError(m_currentRequest));
+}
+
+void NetworkLoad::cannotShowURL()
+{
+    m_client.didFailLoading(cannotShowURLError(m_currentRequest));
+}
+    
 #else
 
 void NetworkLoad::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse& receivedResponse)
