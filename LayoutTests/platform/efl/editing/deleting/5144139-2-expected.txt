@@ -11,26 +11,26 @@ layer at (0,0) size 800x600
           text run at (694,18) width 77: "The caret"
           text run at (0,36) width 266: "should be just before the second."
       RenderBlock {DIV} at (0,70) size 784x48
-        RenderTable {TABLE} at (0,0) size 151x24
-          RenderTableSection {TBODY} at (0,0) size 151x24
-            RenderTableRow {TR} at (0,2) size 151x20
-              RenderTableCell {TD} at (2,2) size 16x20 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 150x24
+          RenderTableSection {TBODY} at (0,0) size 150x24
+            RenderTableRow {TR} at (0,2) size 150x20
+              RenderTableCell {TD} at (2,2) size 15x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 13x17
                   text run at (1,1) width 13: "\x{21D2}"
-              RenderTableCell {TD} at (19,2) size 113x20 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (19,2) size 112x20 [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 110x17
                   text run at (1,1) width 110: "ToDo Content"
-              RenderTableCell {TD} at (133,2) size 16x20 [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (133,2) size 15x20 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 13x17
                   text run at (1,1) width 13: "\x{21E3}"
-        RenderTable {TABLE} at (0,24) size 41x24
-          RenderTableSection {TBODY} at (0,0) size 41x24
-            RenderTableRow {TR} at (0,2) size 41x20
-              RenderTableCell {TD} at (2,2) size 16x20 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,24) size 40x24
+          RenderTableSection {TBODY} at (0,0) size 40x24
+            RenderTableRow {TR} at (0,2) size 40x20
+              RenderTableCell {TD} at (2,2) size 15x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 13x17
                   text run at (1,1) width 13: "\x{21D2}"
-              RenderTableCell {TD} at (19,2) size 3x20 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (23,2) size 16x20 [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (19,2) size 2x20 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (23,2) size 15x20 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 13x17
                   text run at (1,1) width 13: "\x{21E3}"
 caret: position 0 of child 3 {TABLE} of child 2 {DIV} of body

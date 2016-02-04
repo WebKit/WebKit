@@ -12,7 +12,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 247.000000, 78.000000 }
+AXSize: { 246.000000, 78.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Cell A<\n>COLSPAN="2"<\n>ROWSPAN="2"
@@ -34,7 +34,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 247.000000, 78.000000 }
+AXSize: { 246.000000, 78.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Cell A<\n>COLSPAN="2"<\n>ROWSPAN="2"

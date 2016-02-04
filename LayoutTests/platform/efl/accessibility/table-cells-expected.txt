@@ -54,7 +54,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 144.000000, 66.000000 }
+AXSize: { 143.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -74,7 +74,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 70.000000, 30.000000 }
+AXSize: { 69.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 3333

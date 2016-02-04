@@ -1,3 +1,22 @@
+2016-02-04  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed. EFL gardening after r195740.
+
+        * platform/efl/accessibility/table-attributes-expected.txt:
+        * platform/efl/accessibility/table-cell-spans-expected.txt:
+        * platform/efl/accessibility/table-cells-expected.txt:
+        * platform/efl/accessibility/table-sections-expected.txt:
+        * platform/efl/accessibility/table-with-rules-expected.txt:
+        * platform/efl/css2.1/20110323/table-height-algorithm-023-expected.txt:
+        * platform/efl/css2.1/20110323/table-height-algorithm-024-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-43b-expected.txt:
+        * platform/efl/editing/deleting/5099303-expected.txt:
+        * platform/efl/editing/deleting/5144139-2-expected.txt:
+        * platform/efl/editing/deleting/5483370-expected.txt:
+        * platform/efl/editing/deleting/delete-to-select-table-expected.txt:
+        * platform/efl/editing/deleting/table-cells-expected.txt:
+        * platform/efl/fast/text/atsui-multiple-renderers-expected.txt:
+
 2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Do not show context menu when right clicking on a scrollbar

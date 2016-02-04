@@ -82,7 +82,7 @@ AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 29.000000, 20.000000 }
+AXSize: { 28.000000, 20.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: asdf
