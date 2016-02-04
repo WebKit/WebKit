@@ -124,7 +124,7 @@ BuildbotQueueView.prototype = {
             linkElement.className = "revision";
             linkElement.href = trac.revisionURL(commit.revisionNumber);
             linkElement.target = "_blank";
-            linkElement.textContent = "r" + commit.revisionNumber;
+            linkElement.textContent = this._formatRevisionForDisplay(commit.revisionNumber, branch.repository);
             result.appendChild(linkElement);
 
             var authorElement = document.createElement("span");
@@ -146,7 +146,7 @@ BuildbotQueueView.prototype = {
         // the queue, see _should_file_trigger_build in wkbuild.py.
         var commits = trac.commitsOnBranch(branch.name, function(commit) { return commit.revisionNumber >= firstRevisionNumber && commit.revisionNumber <= lastRevisionNumber; });
         return commits.map(function(commit) {
-            return lineForCommit(trac, commit);
+            return lineForCommit.call(this, trac, commit);
         }, this).reverse();
     },
 
@@ -221,14 +221,7 @@ BuildbotQueueView.prototype = {
         var repositoryName = repository.name;
         console.assert(iteration.revision[repositoryName]);
         var content = document.createElement("span");
-        var revision = iteration.revision[repositoryName];
-        if (repository.isSVN)
-            content.textContent = "r" + revision;
-        else if (repository.isGit) {
-            // Truncating for display. Git traditionally uses seven characters for a short hash.
-            content.textContent = revision.substr(0, 7);
-        } else
-            console.assert(false, "Should not get here; " + repository.name + " did not specify a known VCS type.");
+        content.textContent = this._formatRevisionForDisplay(iteration.revision[repositoryName], repository);
         content.classList.add("revision-number");
 
         if (previousIteration) {
@@ -340,6 +333,14 @@ BuildbotQueueView.prototype = {
     _unauthorizedAccess: function(event)
     {
         this.updateSoon();
-    }
+    },
 
+    _formatRevisionForDisplay: function(revision, repository)
+    {
+        console.assert(repository.isSVN || repository.isGit, "Should not get here; " + repository.name + " did not specify a known VCS type.");
+        if (repository.isSVN)
+            return "r" + revision;
+        // Truncating for display. Git traditionally uses seven characters for a short hash.
+        return revision.substr(0, 7);
+    }
 };

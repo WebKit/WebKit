@@ -173,6 +173,22 @@ test("_revisionContentWithPopoverForIteration has previousIteration", function()
     strictEqual(nodeList.length, 2, "has 2 commits");
 });
 
+test("_formatRevisionForDisplay Subversion", function()
+{
+    var repository = this.trunkBranch.repository;
+    repository.isSVN = true;
+    repository.isGit = false;
+    strictEqual(this.view._formatRevisionForDisplay(33018, repository), "r33018", "Should be r33018")
+});
+
+test("_formatRevisionForDisplay Git", function()
+{
+    var repository = this.trunkBranch.repository;
+    repository.isSVN = false;
+    repository.isGit = true;
+    strictEqual(this.view._formatRevisionForDisplay("0e498db5d8e5b5a342631", repository), "0e498db", "Should be 0e498db");
+});
+
 module("BuildBotQueue", {
     setup: function() {
         this.queue = new MockBuildbotQueue();
