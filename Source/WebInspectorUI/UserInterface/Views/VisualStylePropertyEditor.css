@@ -55,8 +55,6 @@
     width: 10px;
     height: 10px;
     margin-right: 4px;
-    content: "";
-    background-image: url(../Images/Warning.svg);
 }
 
 .visual-style-property-container.layout-reversed > .visual-style-property-editor-warning {
@@ -66,6 +64,12 @@
 
 .visual-style-property-container > .visual-style-property-editor-warning.missing-dependency {
     display: block;
+    content: url(../Images/Warning.svg);
+}
+
+.visual-style-property-container > .visual-style-property-editor-warning.invalid-value {
+    display: block;
+    content: url(../Images/Error.svg);
 }
 
 .visual-style-property-container > .visual-style-property-value-container {

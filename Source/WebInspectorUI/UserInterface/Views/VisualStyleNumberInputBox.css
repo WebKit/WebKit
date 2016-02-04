@@ -66,6 +66,10 @@
     text-align: right;
     border: none;
     outline: none;
+    pointer-events: none;
+}
+
+.visual-style-property-container > .visual-style-property-value-container > .visual-style-special-property-placeholder[hidden] ~ .number-input-container > .number-input-value {
     pointer-events: all;
 }
 

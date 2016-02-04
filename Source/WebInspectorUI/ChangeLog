@@ -1,3 +1,51 @@
+2016-02-04  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Show error icons if invalid values already exist for properties in the Visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=153702
+        <rdar://problem/24424025>
+
+        Reviewed by Timothy Hatcher.
+
+        When CSS properties have invalid values, instead of displaying the computed
+        value for that property in the Visual sidebar, show an error icon with the
+        the invalid value.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/VisualStyleNumberInputBox.css:
+        (.visual-style-property-container > .visual-style-property-value-container > .number-input-container > .number-input-value):
+        (.visual-style-property-container > .visual-style-property-value-container > .visual-style-special-property-placeholder[hidden] ~ .number-input-container > .number-input-value):
+        By default, do not allow any pointer events to interact with the input element.
+        Instead, only allow interaction when the placeholder element is hidden to ensure
+        that the user cannot add a value when the computed value is displayed.
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox.prototype.set specialPropertyPlaceholderElementText):
+        Reset the selected keyword to "Unchanged" since this is either a warning
+        message or the computed value.
+
+        * UserInterface/Views/VisualStylePropertyEditor.css:
+        (.visual-style-property-container > .visual-style-property-editor-warning.missing-dependency):
+        (.visual-style-property-container > .visual-style-property-editor-warning.invalid-value):
+        (.visual-style-property-container > .visual-style-property-editor-warning):
+
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor):
+        Replaced document.createElement with [element].createChild for simplicity.
+
+        (WebInspector.VisualStylePropertyEditor.prototype.update):
+        Before assigning the value of the property to the editor, check to see if
+        the property is valid. If not, display an Error icon and message stating
+        that the current value is invalid.
+
+        (WebInspector.VisualStylePropertyEditor.prototype.updateEditorValues):
+        (WebInspector.VisualStylePropertyEditor.prototype.set specialPropertyPlaceholderElementText):
+        Unhides the special placeholder element with the given text as its content.
+
+        (WebInspector.VisualStylePropertyEditor.prototype._valueDidChange):
+        (WebInspector.VisualStylePropertyEditor.prototype._checkDependencies):
+        (WebInspector.VisualStylePropertyEditor.prototype.addDependency):
+
 2016-02-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JS PrettyPrinting unary - and + issues

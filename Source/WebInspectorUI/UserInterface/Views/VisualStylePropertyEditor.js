@@ -69,30 +69,23 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         this._element.classList.toggle("layout-reversed", !!layoutReversed);
 
         if (label && label.length) {
-            let titleContainer = document.createElement("div");
-            titleContainer.classList.add("visual-style-property-title");
+            let titleContainer = this._element.createChild("div", "visual-style-property-title");
 
-            this._titleElement = document.createElement("span");
-            this._titleElement.appendChild(document.createTextNode(label));
+            this._titleElement = titleContainer.createChild("span");
+            this._titleElement.append(label);
             this._titleElement.addEventListener("mouseover", this._titleElementMouseOver.bind(this));
             this._titleElement.addEventListener("mouseout", this._titleElementMouseOut.bind(this));
             this._titleElement.addEventListener("click", this._titleElementClick.bind(this));
-            titleContainer.appendChild(this._titleElement);
-
-            this._element.appendChild(titleContainer);
 
             this._boundTitleElementPrepareForClick = this._titleElementPrepareForClick.bind(this);
         }
 
-        this._contentElement = document.createElement("div");
-        this._contentElement.classList.add("visual-style-property-value-container");
+        this._contentElement = this._element.createChild("div", "visual-style-property-value-container");
 
-        this._specialPropertyPlaceholderElement = document.createElement("span");
-        this._specialPropertyPlaceholderElement.classList.add("visual-style-special-property-placeholder");
+        this._specialPropertyPlaceholderElement = this._contentElement.createChild("span", "visual-style-special-property-placeholder");
         this._specialPropertyPlaceholderElement.hidden = true;
-        this._contentElement.appendChild(this._specialPropertyPlaceholderElement);
 
-        this._element.appendChild(this._contentElement);
+        this._warningElement = this._element.createChild("div", "visual-style-property-editor-warning");
 
         this._updatedValues = {};
         this._lastValue = null;
@@ -296,6 +289,13 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
             if (!propertyMissing && property && property.anonymous)
                 this._representedProperty = property;
 
+            if (!propertyMissing && !property.valid) {
+                this._warningElement.classList.add("invalid-value");
+                this._warningElement.title = WebInspector.UIString("The value '%s' is not supported for this property.").format(propertyText);
+                this.specialPropertyPlaceholderElementText = propertyText;
+                return;
+            }
+
             let newValues = this.getValuesFromText(propertyText, propertyMissing);
             if (this._updatedValues.placeholder && this._updatedValues.placeholder !== newValues.placeholder)
                 propertyValuesConflict = true;
@@ -305,7 +305,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
             if (propertyValuesConflict) {
                 this._updatedValues.conflictingValues = true;
-                this._specialPropertyPlaceholderElement.textContent = WebInspector.UIString("(multiple)");
+                this.specialPropertyPlaceholderElementText = WebInspector.UIString("(multiple)");
                 break;
             }
         }
@@ -325,6 +325,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         this._lastValue = this.synthesizedValue;
         this.disabled = false;
 
+        this._warningElement.classList.remove("invalid-value");
         this._checkDependencies();
     }
 
@@ -409,11 +410,6 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
         for (let property of propertyNames)
             this._dependencies.set(property, propertyValues);
-
-        if (!this._warningElement) {
-            this._warningElement = this._element.appendChild(document.createElement("div"));
-            this._warningElement.classList.add("visual-style-property-editor-warning");
-        }
     }
 
     // Protected
@@ -426,6 +422,15 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
     get specialPropertyPlaceholderElement()
     {
         return this._specialPropertyPlaceholderElement;
+    }
+
+    set specialPropertyPlaceholderElementText(text)
+    {
+        if (!text || !text.length)
+            return;
+
+        this._specialPropertyPlaceholderElement.hidden = false;
+        this._specialPropertyPlaceholderElement.textContent = text;
     }
 
     parseValue(text)
@@ -495,6 +500,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         this._specialPropertyPlaceholderElement.hidden = true;
 
         this._checkDependencies();
+        this._warningElement.classList.remove("invalid-value");
 
         this.dispatchEventToListeners(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange);
         return true;
@@ -525,9 +531,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
     _checkDependencies()
     {
         if (!this._dependencies.size || !this._style || !this.synthesizedValue) {
-            if (this._warningElement)
-                this._warningElement.classList.remove("missing-dependency");
-
+            this._warningElement.classList.remove("missing-dependency");
             return;
         }
 
