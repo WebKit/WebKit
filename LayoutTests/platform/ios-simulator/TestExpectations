@@ -2928,3 +2928,5 @@ webkit.org/b/153336 imported/w3c/web-platform-tests/XMLHttpRequest/open-url-mult
 webkit.org/b/153803 perf/show-hide-table-rows.html [ Pass Failure ]
 
 webkit.org/b/152306 fast/forms/input-user-input-sanitization.html [ Skip ]
+
+webkit.org/b/153850 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html [ Skip ]
