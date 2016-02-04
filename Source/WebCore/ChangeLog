@@ -1,3 +1,14 @@
+2016-02-04  Daniel Bates  <dabates@apple.com>
+
+        WebKit for iOS Simulator fails to build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=153881
+
+        Reviewed by Alex Christensen.
+
+        Make constants have internal linkage to match the Apple Internal SDK.
+
+        * platform/spi/ios/MobileGestaltSPI.h:
+
 2016-02-04  Chris Dumez  <cdumez@apple.com>
 
         Object.getOwnPropertyDescriptor() returns incomplete descriptor for instance properties

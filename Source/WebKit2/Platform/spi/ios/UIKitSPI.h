@@ -233,7 +233,9 @@ typedef enum {
 
 @interface UIGestureRecognizer ()
 - (void)requireOtherGestureToFail:(UIGestureRecognizer *)gestureRecognizer;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90200
 @property(nonatomic, copy) NSArray<NSNumber *> *allowedTouchTypes;
+#endif
 @end
 
 @interface UILongPressGestureRecognizer ()
@@ -287,6 +289,7 @@ typedef enum {
 - (CADisplay *)_display;
 @end
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90100
 typedef enum {
     UITouchTypeDirect
 } UITouchType;
@@ -294,6 +297,7 @@ typedef enum {
 @interface UITouch ()
 @property(nonatomic,readonly) UITouchType type;
 @end
+#endif
 
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;

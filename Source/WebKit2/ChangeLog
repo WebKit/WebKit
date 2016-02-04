@@ -1,3 +1,16 @@
+2016-02-04  Daniel Bates  <dabates@apple.com>
+
+        WebKit for iOS Simulator fails to build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=153881
+
+        Reviewed by Alex Christensen.
+
+        Add version guards around SPI that is now API as of iOS SDK 9.2. Until we upgrade the iOS EWS
+        and iOS buildbots to use the 9.2 SDK we need to keep these SPI declarations to avoid breaking
+        the build.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Give nested inspectors their own process pool

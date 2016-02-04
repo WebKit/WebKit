@@ -38,12 +38,12 @@
 
 #else
 
-EXTERN_C const CFStringRef kMGQAppleInternalInstallCapability = CFSTR("apple-internal-install");
-EXTERN_C const CFStringRef kMGQMainScreenPitch = CFSTR("main-screen-pitch");
-EXTERN_C const CFStringRef kMGQMainScreenScale = CFSTR("main-screen-scale");
-EXTERN_C const CFStringRef kMGQiPadCapability = CFSTR("ipad");
-EXTERN_C const CFStringRef kMGQDeviceName = CFSTR("DeviceName");
-EXTERN_C const CFStringRef kMGQDeviceClassNumber = CFSTR("DeviceClassNumber");
+static const CFStringRef kMGQAppleInternalInstallCapability = CFSTR("apple-internal-install");
+static const CFStringRef kMGQMainScreenPitch = CFSTR("main-screen-pitch");
+static const CFStringRef kMGQMainScreenScale = CFSTR("main-screen-scale");
+static const CFStringRef kMGQiPadCapability = CFSTR("ipad");
+static const CFStringRef kMGQDeviceName = CFSTR("DeviceName");
+static const CFStringRef kMGQDeviceClassNumber = CFSTR("DeviceClassNumber");
 
 typedef enum {
     MGDeviceClassInvalid = -1,
