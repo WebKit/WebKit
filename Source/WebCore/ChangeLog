@@ -1,3 +1,51 @@
+2016-02-04  Eric Carlson  <eric.carlson@apple.com>
+
+        PageGroup::captionPreferences should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=153877
+        <rdar://problem/24506917>
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::sortedTrackListForMenu):
+        (WebCore::MediaControlsHost::displayNameForTrack):
+        (WebCore::MediaControlsHost::captionMenuOffItem):
+        (WebCore::MediaControlsHost::captionDisplayMode):
+        * dom/Document.cpp:
+        (WebCore::Document::registerForCaptionPreferencesChangedCallbacks):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::addTextTrack):
+        (WebCore::HTMLMediaElement::configureTextTrackGroup):
+        (WebCore::HTMLMediaElement::setSelectedTextTrack):
+        (WebCore::HTMLMediaElement::configureTextTracks):
+        (WebCore::HTMLMediaElement::captionPreferencesChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        (WebCore::MediaControlTextTrackContainerElement::updateActiveCuesFontSize):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::captionPreferencesChanged):
+        (WebCore::PageGroup::captionPreferences):
+        * page/PageGroup.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::updateLegibleOptions):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setShouldDisplayTrackKind):
+        (WebCore::InternalSettings::shouldDisplayTrackKind):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::userPreferredAudioCharacteristics):
+        (WebCore::Internals::setUserPreferredAudioCharacteristic):
+        (WebCore::Internals::captionsStyleSheetOverride):
+        (WebCore::Internals::setCaptionsStyleSheetOverride):
+        (WebCore::Internals::setPrimaryAudioTrackLanguageOverride):
+        (WebCore::Internals::setCaptionDisplayMode):
+
 2016-02-04  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed unused Settings::setPrivateBrowsingEnabled.

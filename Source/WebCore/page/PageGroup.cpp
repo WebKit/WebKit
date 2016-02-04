@@ -114,7 +114,7 @@ void PageGroup::captionPreferencesChanged()
     PageCache::singleton().markPagesForCaptionPreferencesChanged();
 }
 
-CaptionUserPreferences* PageGroup::captionPreferences()
+CaptionUserPreferences& PageGroup::captionPreferences()
 {
     if (!m_captionPreferences) {
 #if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -124,7 +124,7 @@ CaptionUserPreferences* PageGroup::captionPreferences()
 #endif
     }
 
-    return m_captionPreferences.get();
+    return *m_captionPreferences.get();
 }
 #endif
 

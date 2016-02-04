@@ -398,14 +398,14 @@ void InternalSettings::setShouldDisplayTrackKind(const String& kind, bool enable
 #if ENABLE(VIDEO_TRACK)
     if (!page())
         return;
-    CaptionUserPreferences* captionPreferences = page()->group().captionPreferences();
 
+    auto& captionPreferences = page()->group().captionPreferences();
     if (equalLettersIgnoringASCIICase(kind, "subtitles"))
-        captionPreferences->setUserPrefersSubtitles(enabled);
+        captionPreferences.setUserPrefersSubtitles(enabled);
     else if (equalLettersIgnoringASCIICase(kind, "captions"))
-        captionPreferences->setUserPrefersCaptions(enabled);
+        captionPreferences.setUserPrefersCaptions(enabled);
     else if (equalLettersIgnoringASCIICase(kind, "textdescriptions"))
-        captionPreferences->setUserPrefersTextDescriptions(enabled);
+        captionPreferences.setUserPrefersTextDescriptions(enabled);
     else
         ec = SYNTAX_ERR;
 #else
@@ -421,14 +421,14 @@ bool InternalSettings::shouldDisplayTrackKind(const String& kind, ExceptionCode&
 #if ENABLE(VIDEO_TRACK)
     if (!page())
         return false;
-    CaptionUserPreferences* captionPreferences = page()->group().captionPreferences();
 
+    auto& captionPreferences = page()->group().captionPreferences();
     if (equalLettersIgnoringASCIICase(kind, "subtitles"))
-        return captionPreferences->userPrefersSubtitles();
+        return captionPreferences.userPrefersSubtitles();
     if (equalLettersIgnoringASCIICase(kind, "captions"))
-        return captionPreferences->userPrefersCaptions();
+        return captionPreferences.userPrefersCaptions();
     if (equalLettersIgnoringASCIICase(kind, "textdescriptions"))
-        return captionPreferences->userPrefersTextDescriptions();
+        return captionPreferences.userPrefersTextDescriptions();
 
     ec = SYNTAX_ERR;
     return false;

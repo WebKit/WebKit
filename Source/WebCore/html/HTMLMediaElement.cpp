@@ -444,7 +444,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 
 #if ENABLE(VIDEO_TRACK)
     if (document.page())
-        m_captionDisplayMode = document.page()->group().captionPreferences()->captionDisplayMode();
+        m_captionDisplayMode = document.page()->group().captionPreferences().captionDisplayMode();
 #endif
 
 #if ENABLE(MEDIA_SESSION)
@@ -3581,7 +3581,7 @@ void HTMLMediaElement::addTextTrack(PassRefPtr<TextTrack> track)
         Document& document = this->document();
         document.registerForCaptionPreferencesChangedCallbacks(this);
         if (Page* page = document.page())
-            m_captionDisplayMode = page->group().captionPreferences()->captionDisplayMode();
+            m_captionDisplayMode = page->group().captionPreferences().captionDisplayMode();
     }
 
     track->setManualSelectionMode(m_captionDisplayMode == CaptionUserPreferences::Manual);
@@ -3785,7 +3785,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     LOG(Media, "HTMLMediaElement::configureTextTrackGroup(%p)", this);
 
     Page* page = document().page();
-    CaptionUserPreferences* captionPreferences = page ? page->group().captionPreferences() : 0;
+    CaptionUserPreferences* captionPreferences = page ? &page->group().captionPreferences() : 0;
     CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences ? captionPreferences->captionDisplayMode() : CaptionUserPreferences::Automatic;
 
     // First, find the track in the group that should be enabled (if any).
@@ -4008,10 +4008,10 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
             trackList->item(i)->setMode(TextTrack::disabledKeyword());
     }
 
-    CaptionUserPreferences* captionPreferences = document().page() ? document().page()->group().captionPreferences() : 0;
-    if (!captionPreferences)
+    if (!document().page())
         return;
 
+    auto& captionPreferences = document().page()->group().captionPreferences();
     CaptionUserPreferences::CaptionDisplayMode displayMode;
     if (trackToSelect == TextTrack::captionMenuOffItem())
         displayMode = CaptionUserPreferences::ForcedOnly;
@@ -4020,10 +4020,10 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
     else {
         displayMode = CaptionUserPreferences::AlwaysOn;
         if (trackToSelect->language().length())
-            captionPreferences->setPreferredLanguage(trackToSelect->language());
+            captionPreferences.setPreferredLanguage(trackToSelect->language());
     }
 
-    captionPreferences->setCaptionDisplayMode(displayMode);
+    captionPreferences.setCaptionDisplayMode(displayMode);
 }
 
 void HTMLMediaElement::configureTextTracks()
@@ -5725,7 +5725,7 @@ void HTMLMediaElement::captionPreferencesChanged()
     if (!document().page())
         return;
 
-    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences()->captionDisplayMode();
+    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences().captionDisplayMode();
     if (m_captionDisplayMode == displayMode)
         return;
 
@@ -6167,9 +6167,8 @@ String HTMLMediaElement::mediaPlayerSourceApplicationIdentifier() const
 
 Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() const
 {
-    Page* page = document().page();
-    if (CaptionUserPreferences* captionPreferences = page ? page->group().captionPreferences() : nullptr)
-        return captionPreferences->preferredAudioCharacteristics();
+    if (Page* page = document().page())
+        return page->group().captionPreferences().preferredAudioCharacteristics();
     return Vector<String>();
 }
 

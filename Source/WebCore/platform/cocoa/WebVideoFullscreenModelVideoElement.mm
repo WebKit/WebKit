@@ -313,11 +313,11 @@ void WebVideoFullscreenModelVideoElement::updateLegibleOptions()
     WTF::AtomicString displayMode = m_videoElement->mediaControlsHost()->captionDisplayMode();
     TextTrack* offItem = m_videoElement->mediaControlsHost()->captionMenuOffItem();
     TextTrack* automaticItem = m_videoElement->mediaControlsHost()->captionMenuAutomaticItem();
-    CaptionUserPreferences& captionPreferences = *m_videoElement->document().page()->group().captionPreferences();
-    m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
 
+    auto& captionPreferences = m_videoElement->document().page()->group().captionPreferences();
+    m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
     m_audioTracksForMenu = captionPreferences.sortedTrackListForMenu(audioTrackList);
-    
+
     Vector<String> audioTrackDisplayNames;
     uint64_t selectedAudioIndex = 0;
     

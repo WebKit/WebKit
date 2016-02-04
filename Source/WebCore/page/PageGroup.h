@@ -57,7 +57,7 @@ namespace WebCore {
 
 #if ENABLE(VIDEO_TRACK)
         WEBCORE_EXPORT void captionPreferencesChanged();
-        WEBCORE_EXPORT CaptionUserPreferences* captionPreferences();
+        WEBCORE_EXPORT CaptionUserPreferences& captionPreferences();
 #endif
 
     private:

@@ -4715,7 +4715,7 @@ void Document::unregisterForPrivateBrowsingStateChangedCallbacks(Element* e)
 void Document::registerForCaptionPreferencesChangedCallbacks(Element* e)
 {
     if (page())
-        page()->group().captionPreferences()->setInterestedInCaptionPreferenceChanges();
+        page()->group().captionPreferences().setInterestedInCaptionPreferenceChanges();
 
     m_captionPreferencesChangedElements.add(e);
 }

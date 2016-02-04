@@ -375,8 +375,8 @@ void Internals::resetToConsistentState(Page* page)
     WebCore::Settings::setUsesOverlayScrollbars(false);
     page->inspectorController().setProfilerEnabled(false);
 #if ENABLE(VIDEO_TRACK)
-    page->group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
-    page->group().captionPreferences()->setTestingMode(false);
+    page->group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
+    page->group().captionPreferences().setTestingMode(false);
 #endif
     if (!page->mainFrame().editor().isContinuousSpellCheckingEnabled())
         page->mainFrame().editor().toggleContinuousSpellChecking();
@@ -407,7 +407,7 @@ Internals::Internals(Document* document)
 {
 #if ENABLE(VIDEO_TRACK)
     if (document && document->page())
-        document->page()->group().captionPreferences()->setTestingMode(true);
+        document->page()->group().captionPreferences().setTestingMode(true);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1468,7 +1468,7 @@ Vector<String> Internals::userPreferredAudioCharacteristics() const
     if (!document || !document->page())
         return Vector<String>();
 #if ENABLE(VIDEO_TRACK)
-    return document->page()->group().captionPreferences()->preferredAudioCharacteristics();
+    return document->page()->group().captionPreferences().preferredAudioCharacteristics();
 #else
     return Vector<String>();
 #endif
@@ -1480,7 +1480,7 @@ void Internals::setUserPreferredAudioCharacteristic(const String& characteristic
     if (!document || !document->page())
         return;
 #if ENABLE(VIDEO_TRACK)
-    document->page()->group().captionPreferences()->setPreferredAudioCharacteristic(characteristic);
+    document->page()->group().captionPreferences().setPreferredAudioCharacteristic(characteristic);
 #else
     UNUSED_PARAM(characteristic);
 #endif
@@ -2755,7 +2755,7 @@ String Internals::captionsStyleSheetOverride(ExceptionCode& ec)
     }
 
 #if ENABLE(VIDEO_TRACK)
-    return document->page()->group().captionPreferences()->captionsStyleSheetOverride();
+    return document->page()->group().captionPreferences().captionsStyleSheetOverride();
 #else
     return emptyString();
 #endif
@@ -2770,7 +2770,7 @@ void Internals::setCaptionsStyleSheetOverride(const String& override, ExceptionC
     }
 
 #if ENABLE(VIDEO_TRACK)
-    document->page()->group().captionPreferences()->setCaptionsStyleSheetOverride(override);
+    document->page()->group().captionPreferences().setCaptionsStyleSheetOverride(override);
 #else
     UNUSED_PARAM(override);
 #endif
@@ -2785,7 +2785,7 @@ void Internals::setPrimaryAudioTrackLanguageOverride(const String& language, Exc
     }
 
 #if ENABLE(VIDEO_TRACK)
-    document->page()->group().captionPreferences()->setPrimaryAudioTrackLanguageOverride(language);
+    document->page()->group().captionPreferences().setPrimaryAudioTrackLanguageOverride(language);
 #else
     UNUSED_PARAM(language);
 #endif
@@ -2800,16 +2800,16 @@ void Internals::setCaptionDisplayMode(const String& mode, ExceptionCode& ec)
     }
     
 #if ENABLE(VIDEO_TRACK)
-    CaptionUserPreferences* captionPreferences = document->page()->group().captionPreferences();
+    auto& captionPreferences = document->page()->group().captionPreferences();
     
     if (equalLettersIgnoringASCIICase(mode, "automatic"))
-        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::Automatic);
+        captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::Automatic);
     else if (equalLettersIgnoringASCIICase(mode, "forcedonly"))
-        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
+        captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
     else if (equalLettersIgnoringASCIICase(mode, "alwayson"))
-        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::AlwaysOn);
+        captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::AlwaysOn);
     else if (equalLettersIgnoringASCIICase(mode, "manual"))
-        captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::Manual);
+        captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::Manual);
     else
         ec = SYNTAX_ERR;
 #else
