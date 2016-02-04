@@ -1,0 +1,14 @@
+Tests that calling an instance property getter on another instance works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS locationGetter is an instance of function Function() {
+    [native code]
+}
+PASS locationGetter.call(otherWindow.document).toString() is "about:blank"
+FAIL locationGetter.call(window.document) === window.document.location should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

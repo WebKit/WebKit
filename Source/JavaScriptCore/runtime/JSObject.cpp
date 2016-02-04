@@ -1683,6 +1683,26 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
     structure(vm)->setStaticFunctionsReified(true);
 }
 
+void JSObject::reifyAllStaticProperties(ExecState* exec)
+{
+    VM& vm = exec->vm();
+
+    for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
+        const HashTable* hashTable = info->staticPropHashTable;
+        if (!hashTable)
+            continue;
+
+        for (auto iter = hashTable->begin(); iter != hashTable->end(); ++iter) {
+            unsigned attributes;
+            PropertyOffset offset = getDirectOffset(vm, Identifier::fromString(&vm, iter.key()), attributes);
+            if (!isValidOffset(offset))
+                reifyStaticProperty(vm, *iter.value(), *this);
+        }
+    }
+
+    structure(vm)->setStaticFunctionsReified(true);
+}
+
 bool JSObject::removeDirect(VM& vm, PropertyName propertyName)
 {
     Structure* structure = this->structure(vm);
@@ -2555,16 +2575,22 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
     else if (slot.attributes() & CustomAccessor) {
         descriptor.setCustomDescriptor(slot.attributes());
 
-        JSValue maybeGetterSetter = getDirect(exec->vm(), propertyName);
-        // FIXME: This currently does not work for properties that are on the instance and not reified.
-        if (maybeGetterSetter) {
-            auto* getterSetter = jsCast<CustomGetterSetter*>(maybeGetterSetter);
-            ASSERT(getterSetter);
-            if (getterSetter->getter())
-                descriptor.setGetter(getBoundSlotBaseFunctionForGetterSetter(exec, propertyName, slot, getterSetter, JSBoundSlotBaseFunction::Type::Getter));
-            if (getterSetter->setter())
-                descriptor.setSetter(getBoundSlotBaseFunctionForGetterSetter(exec, propertyName, slot, getterSetter, JSBoundSlotBaseFunction::Type::Setter));
+        JSObject* thisObject = this;
+        if (auto* proxy = jsDynamicCast<JSProxy*>(this))
+            thisObject = proxy->target();
+
+        JSValue maybeGetterSetter = thisObject->getDirect(exec->vm(), propertyName);
+        if (!maybeGetterSetter) {
+            thisObject->reifyAllStaticProperties(exec);
+            maybeGetterSetter = thisObject->getDirect(exec->vm(), propertyName);
         }
+
+        ASSERT(maybeGetterSetter);
+        auto* getterSetter = jsCast<CustomGetterSetter*>(maybeGetterSetter);
+        if (getterSetter->getter())
+            descriptor.setGetter(getBoundSlotBaseFunctionForGetterSetter(exec, propertyName, slot, getterSetter, JSBoundSlotBaseFunction::Type::Getter));
+        if (getterSetter->setter())
+            descriptor.setSetter(getBoundSlotBaseFunctionForGetterSetter(exec, propertyName, slot, getterSetter, JSBoundSlotBaseFunction::Type::Setter));
     } else
         descriptor.setDescriptor(slot.getValue(exec, propertyName), slot.attributes());
     return true;

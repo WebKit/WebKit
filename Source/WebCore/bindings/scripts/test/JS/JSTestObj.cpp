@@ -810,6 +810,9 @@ EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* state, JSObject* slotBa
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(slotBase);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject))
+        return throwGetterTypeError(*state, "TestObj", "TestSubObj");
     return JSValue::encode(JSTestSubObj::getConstructor(state->vm(), castedThis->globalObject()));
 }
 
@@ -820,6 +823,9 @@ EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* state, 
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(slotBase);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject))
+        return throwGetterTypeError(*state, "TestObj", "TestSubObjEnabledBySetting");
     if (!castedThis->wrapped().frame())
         return JSValue::encode(jsUndefined());
     Settings& settings = castedThis->wrapped().frame()->settings();
@@ -1506,6 +1512,9 @@ EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* state, JSObject* 
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(slotBase);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject))
+        return throwGetterTypeError(*state, "TestObj", "conditionalAttr4");
     return JSValue::encode(JSTestObjectA::getConstructor(state->vm(), castedThis->globalObject()));
 }
 
@@ -1518,6 +1527,9 @@ EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* state, JSObject* 
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(slotBase);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject))
+        return throwGetterTypeError(*state, "TestObj", "conditionalAttr5");
     return JSValue::encode(JSTestObjectB::getConstructor(state->vm(), castedThis->globalObject()));
 }
 
@@ -1530,6 +1542,9 @@ EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* state, JSObject* 
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(slotBase);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject))
+        return throwGetterTypeError(*state, "TestObj", "conditionalAttr6");
     return JSValue::encode(JSTestObjectC::getConstructor(state->vm(), castedThis->globalObject()));
 }
 
@@ -1589,6 +1604,9 @@ EncodedJSValue jsTestObjContentDocument(ExecState* state, JSObject* slotBase, En
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(slotBase);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject))
+        return throwGetterTypeError(*state, "TestObj", "contentDocument");
     auto& impl = castedThis->wrapped();
     return JSValue::encode(shouldAllowAccessToNode(state, impl.contentDocument()) ? toJS(state, castedThis->globalObject(), WTF::getPtr(impl.contentDocument())) : jsNull());
 }
@@ -1884,10 +1902,12 @@ void setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* state, JSObjec
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
-    UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
-    UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(state);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject)) {
+        throwSetterTypeError(*state, "TestObj", "TestSubObjEnabledBySetting");
+        return;
+    }
     // Shadowing a built-in constructor.
     castedThis->putDirect(state->vm(), Identifier::fromString(state, "TestSubObjEnabledBySetting"), value);
 }
@@ -2670,10 +2690,12 @@ void setJSTestObjConditionalAttr4Constructor(ExecState* state, JSObject* baseObj
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
-    UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
-    UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(state);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject)) {
+        throwSetterTypeError(*state, "TestObj", "conditionalAttr4");
+        return;
+    }
     // Shadowing a built-in constructor.
     castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr4"), value);
 }
@@ -2685,10 +2707,12 @@ void setJSTestObjConditionalAttr5Constructor(ExecState* state, JSObject* baseObj
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
-    UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
-    UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(state);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject)) {
+        throwSetterTypeError(*state, "TestObj", "conditionalAttr5");
+        return;
+    }
     // Shadowing a built-in constructor.
     castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr5"), value);
 }
@@ -2700,10 +2724,12 @@ void setJSTestObjConditionalAttr6Constructor(ExecState* state, JSObject* baseObj
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
-    UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
-    UNUSED_PARAM(thisValue);
-    UNUSED_PARAM(state);
+    JSTestObj* castedThisObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject)) {
+        throwSetterTypeError(*state, "TestObj", "conditionalAttr6");
+        return;
+    }
     // Shadowing a built-in constructor.
     castedThis->putDirect(state->vm(), Identifier::fromString(state, "conditionalAttr6"), value);
 }

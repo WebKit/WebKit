@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("Tests that Object.getOwnPropertyDescriptor() works correctly for Window properties");
+
+function checkWindowPropertyDescriptor(descriptor, readOnly)
+{
+    shouldBeType("descriptor.get", "Function");
+    if (readOnly)
+        shouldBeUndefined("descriptor.set");
+    else
+        shouldBeType("descriptor.set", "Function");
+    shouldBeTrue("descriptor.enumerable");
+    shouldBeTrue("descriptor.configurable");
+    nonWindowObject = document;
+    shouldThrow("descriptor.get.call(nonWindowObject)");
+}
+
+// The properties of global objects (such as Window) need to be on the instance as per the Web IDL specification,
+// even if they are not marked as [Unforgeable].
+
+debug("* Window.screen");
+descriptor = Object.getOwnPropertyDescriptor(window, "screen");
+checkWindowPropertyDescriptor(descriptor, false);
+shouldBeTrue("descriptor.get.call(window) === window.screen");
+shouldBeTrue("descriptor.get.call() === window.screen");
+
+debug("");
+debug("* Window.navigator");
+descriptor = Object.getOwnPropertyDescriptor(window, "navigator");
+checkWindowPropertyDescriptor(descriptor, false);
+shouldBeTrue("descriptor.get.call(window) === window.navigator");
+shouldBeTrue("descriptor.get.call() === window.navigator");
+
+debug("");
+debug("* Window.frameElement");
+descriptor = Object.getOwnPropertyDescriptor(window, "frameElement");
+checkWindowPropertyDescriptor(descriptor, true);
+shouldBeTrue("descriptor.get.call(window) === window.frameElement");
+shouldBeTrue("descriptor.get.call() === window.frameElement");
+
+debug("");
+debug("* Window.name");
+descriptor = Object.getOwnPropertyDescriptor(window, "name");
+checkWindowPropertyDescriptor(descriptor, false);
+shouldBeTrue("descriptor.get.call(window) === window.name");
+shouldBeTrue("descriptor.get.call() === window.name");
+
+</script>
+<script src="../resources/js-test-post.js"></script>

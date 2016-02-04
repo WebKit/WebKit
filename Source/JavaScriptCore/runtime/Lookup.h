@@ -298,43 +298,47 @@ inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base
     return true;
 }
 
+inline void reifyStaticProperty(VM& vm, const HashTableValue& value, JSObject& thisObj)
+{
+    if (!value.m_key)
+        return;
+
+    Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
+    if (value.attributes() & Builtin) {
+        if (value.attributes() & Accessor)
+            reifyStaticAccessor(vm, value, thisObj, propertyName);
+        else
+            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
+        return;
+    }
+
+    if (value.attributes() & Function) {
+        thisObj.putDirectNativeFunction(
+            vm, thisObj.globalObject(), propertyName, value.functionLength(),
+            value.function(), value.intrinsic(), attributesForStructure(value.attributes()));
+        return;
+    }
+
+    if (value.attributes() & ConstantInteger) {
+        thisObj.putDirect(vm, propertyName, jsNumber(value.constantInteger()), attributesForStructure(value.attributes()));
+        return;
+    }
+
+    if (value.attributes() & Accessor) {
+        reifyStaticAccessor(vm, value, thisObj, propertyName);
+        return;
+    }
+
+    CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, value.propertyGetter(), value.propertyPutter());
+    thisObj.putDirectCustomAccessor(vm, propertyName, customGetterSetter, attributesForStructure(value.attributes()));
+}
+
 template<unsigned numberOfValues>
 inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberOfValues], JSObject& thisObj)
 {
     BatchedTransitionOptimizer transitionOptimizer(vm, &thisObj);
-    for (auto& value : values) {
-        if (!value.m_key)
-            continue;
-
-        Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
-        if (value.attributes() & Builtin) {
-            if (value.attributes() & Accessor)
-                reifyStaticAccessor(vm, value, thisObj, propertyName);
-            else
-                thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
-            continue;
-        }
-
-        if (value.attributes() & Function) {
-            thisObj.putDirectNativeFunction(
-                vm, thisObj.globalObject(), propertyName, value.functionLength(),
-                value.function(), value.intrinsic(), attributesForStructure(value.attributes()));
-            continue;
-        }
-
-        if (value.attributes() & ConstantInteger) {
-            thisObj.putDirect(vm, propertyName, jsNumber(value.constantInteger()), attributesForStructure(value.attributes()));
-            continue;
-        }
-
-        if (value.attributes() & Accessor) {
-            reifyStaticAccessor(vm, value, thisObj, propertyName);
-            continue;
-        }
-
-        CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, value.propertyGetter(), value.propertyPutter());
-        thisObj.putDirectCustomAccessor(vm, propertyName, customGetterSetter, attributesForStructure(value.attributes()));
-    }
+    for (auto& value : values)
+        reifyStaticProperty(vm, value, thisObj);
 }
 
 } // namespace JSC

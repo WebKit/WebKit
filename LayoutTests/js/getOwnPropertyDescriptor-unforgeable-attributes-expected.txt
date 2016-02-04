@@ -1,0 +1,134 @@
+Tests that Object.getOwnPropertyDescriptor() works correctly for [Unforgeable] IDL attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Document.location
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Document.location getter can only be used on instances of Document.
+PASS descriptor.get.call(document) is document.location
+
+* Location.href
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.href getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.href is true
+
+* Location.protocol
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.protocol getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.protocol is true
+
+* Location.host
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.host getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.host is true
+
+* Location.hostname
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.hostname getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.hostname is true
+
+* Location.port
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.port getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.port is true
+
+* Location.pathname
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.pathname getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.pathname is true
+
+* Location.search
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.search getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.search is true
+
+* Location.hash
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.hash getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.hash is true
+
+* Location.origin
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is undefined.
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.origin getter can only be used on instances of Location.
+PASS descriptor.get.call(document.location) === document.location.origin is true
+
+* Location.ancestorOrigins
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is undefined.
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The Location.ancestorOrigins getter can only be used on instances of Location.
+
+* Window.location
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.location getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(window) === window.location is true
+
+* Window.self
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.self getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(window) === window.self is true
+
+* Window.window
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is undefined.
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.window getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(window) === window.window is true
+
+* Window.top
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is undefined.
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.top getter can only be used on instances of DOMWindow.
+PASS descriptor.get.call(window) === window.top is true
+
+* Window.document
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is undefined.
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(invalidObject) threw exception TypeError: The DOMWindow.document getter can only be used on instances of DOMWindow.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

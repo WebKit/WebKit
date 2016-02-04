@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("Tests that Object.getOwnPropertyDescriptor() works correctly for [Unforgeable] IDL attributes.");
+
+function checkUnforgeablePropertyDescriptor(descriptor, readOnly)
+{
+    shouldBeType("descriptor.get", "Function");
+    if (readOnly)
+        shouldBeUndefined("descriptor.set");
+    else
+        shouldBeType("descriptor.set", "Function");
+    shouldBeTrue("descriptor.enumerable");
+    shouldBeFalse("descriptor.configurable");
+    invalidObject = { };
+    shouldThrow("descriptor.get.call(invalidObject)");
+}
+
+debug("* Document.location");
+descriptor = Object.getOwnPropertyDescriptor(document, "location");
+checkUnforgeablePropertyDescriptor(descriptor);
+shouldBe("descriptor.get.call(document)", "document.location");
+
+var locationProperties = Object.getOwnPropertyNames(document.location);
+for (var i = 0; i < locationProperties.length; i++) {
+    var propertyName = locationProperties[i];
+    descriptor = Object.getOwnPropertyDescriptor(document.location, propertyName);
+    if (descriptor.value)
+        continue;
+
+    debug("");
+    debug("* Location." + propertyName);
+    var isReadOnly = propertyName == "origin" || propertyName == "ancestorOrigins";
+    checkUnforgeablePropertyDescriptor(descriptor, isReadOnly);
+    if (propertyName != "ancestorOrigins")
+        shouldBeTrue("descriptor.get.call(document.location) === document.location." + propertyName);
+}
+
+debug("");
+debug("* Window.location");
+descriptor = Object.getOwnPropertyDescriptor(window, "location");
+checkUnforgeablePropertyDescriptor(descriptor);
+shouldBeTrue("descriptor.get.call(window) === window.location");
+
+debug("");
+debug("* Window.self");
+descriptor = Object.getOwnPropertyDescriptor(window, "self");
+checkUnforgeablePropertyDescriptor(descriptor);
+shouldBeTrue("descriptor.get.call(window) === window.self");
+
+debug("");
+debug("* Window.window");
+descriptor = Object.getOwnPropertyDescriptor(window, "window");
+checkUnforgeablePropertyDescriptor(descriptor, true);
+shouldBeTrue("descriptor.get.call(window) === window.window");
+
+debug("");
+debug("* Window.top");
+descriptor = Object.getOwnPropertyDescriptor(window, "top");
+checkUnforgeablePropertyDescriptor(descriptor, true);
+shouldBeTrue("descriptor.get.call(window) === window.top");
+
+debug("");
+debug("* Window.document");
+descriptor = Object.getOwnPropertyDescriptor(window, "document");
+checkUnforgeablePropertyDescriptor(descriptor, true);
+
+</script>
+<script src="../resources/js-test-post.js"></script>

@@ -2285,23 +2285,26 @@ sub GenerateImplementation
             push(@implContent, "    UNUSED_PARAM(slotBase);\n");
             push(@implContent, "    UNUSED_PARAM(thisValue);\n");
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
+                my $variableForTypeCheck = "castedThis";
                 if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
                     push(@implContent, "    auto* castedThis = to${className}(JSValue::decode(thisValue));\n");
                 } elsif (AttributeShouldBeOnInstance($interface, $attribute)) {
+                    # FIXME: This does not seem right, we should likely use thisValue instead of slotBase here to match the specification:
+                    # http://heycam.github.io/webidl/#dfn-attribute-getter
                     push(@implContent, "    auto* castedThis = jsCast<JS${interfaceName}*>(slotBase);\n");
-                    if (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
-                        push(@implContent, "    ${className}* castedThisObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-                        push(@implContent, "    if (UNLIKELY(!castedThisObject))\n");
-                        push(@implContent, "        reportDeprecatedGetterError(*state, \"$interfaceName\", \"$name\");\n");
-                    }
+                    push(@implContent, "    ${className}* castedThisObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
+                    $variableForTypeCheck = "castedThisObject";
                 } else {
                     push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-                    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-                    if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
-                        push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                    } else {
-                        push(@implContent, "        return throwGetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
-                    }
+                }
+                # FIXME: Getters on a global should not require an explicit this.
+                push(@implContent, "    if (UNLIKELY(!$variableForTypeCheck))\n");
+                if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
+                    push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
+                    push(@implContent, "        reportDeprecatedGetterError(*state, \"$interfaceName\", \"$name\");\n");
+                } else {
+                    push(@implContent, "        return throwGetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
                 }
             }
 
@@ -2619,28 +2622,26 @@ sub GenerateImplementation
             push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
             push(@implContent, "    UNUSED_PARAM(baseObject);\n");
             if (!$attribute->isStatic) {
+                my $variableForTypeCheck = "castedThis";
                 if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
                     push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
                 } elsif (AttributeShouldBeOnInstance($interface, $attribute)) {
-                    push(@implContent, "    UNUSED_PARAM(thisValue);\n");
                     push(@implContent, "    auto* castedThis = jsCast<JS${interfaceName}*>(baseObject);\n");
-                    if (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
-                        push(@implContent, "    ${className}* castedThisObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-                        push(@implContent, "    if (UNLIKELY(!castedThisObject))\n");
-                        push(@implContent, "        reportDeprecatedSetterError(*state, \"$interfaceName\", \"$name\");\n");
-                    } else {
-                        push(@implContent, "    UNUSED_PARAM(thisValue);\n");
-                        push(@implContent, "    UNUSED_PARAM(state);\n");
-                    }
+                    push(@implContent, "    ${className}* castedThisObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
+                    $variableForTypeCheck = "castedThisObject";
                 } else {
                     push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-                    push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
-                    if (!$attribute->signature->extendedAttributes->{"LenientThis"}) {
-                        push(@implContent, "        throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
-                    }
-                    push(@implContent, "        return;\n");
-                    push(@implContent, "    }\n");
                 }
+                push(@implContent, "    if (UNLIKELY(!$variableForTypeCheck)) {\n");
+                if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
+                    push(@implContent, "        return;\n");
+                } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
+                    push(@implContent, "        reportDeprecatedSetterError(*state, \"$interfaceName\", \"$name\");\n");
+                } else {
+                    push(@implContent, "        throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
+                    push(@implContent, "        return;\n");
+                }
+                push(@implContent, "    }\n");
             }
             if ($interface->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                 if ($interfaceName eq "DOMWindow") {

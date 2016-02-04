@@ -1,3 +1,63 @@
+2016-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() returns incomplete descriptor for instance properties
+        https://bugs.webkit.org/show_bug.cgi?id=153817
+
+        Reviewed by Geoffrey Garen.
+
+        Update the bindings generator so that property getters / setters now
+        make sure |this| has the right type and throw a TypeError if it does
+        not, as per:
+        - http://heycam.github.io/webidl/#dfn-attribute-getter (step 2.4.2)
+        - http://heycam.github.io/webidl/#dfn-attribute-setter (step 3.5)
+
+        This was an issue when doing something like:
+        Object.getOwnPropertyDescriptor(window, "location").get.call(nonWindow)
+
+        We would call toJSDOMWindow(thisValue), which would return null as
+        thisValue is not a JSDOMWindow. We would then dereference this null
+        pointer and crash. We now do a null check and throw a TypeError in
+        this case, as per the Web IDL specification.
+
+        The generated bindings still have some non-spec compliant behavior
+        though:
+        1. The getters / setters of instance properties use slotBase instead
+           of thisValue, which means that calling instanceA's getter on
+           instanceB returns instanceA's property insteas of instanceB's.
+        2. Global object property getters should not require an explicit
+           |this| so calling the following should work:
+           - Object.getOwnPropertyDescriptor(window, "location").get.call()
+           We currently throw in this case.
+
+        These issues will be addressed in follow-up patches.
+
+        Tests: js/getOwnPropertyDescriptor-unforgeable-attributes.html
+               js/getOwnPropertyDescriptor-window-attributes.html
+               js/instance-property-getter-other-instance.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectExcitingAttr):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::jsTestExceptionName):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjConstructorTestSubObj):
+        (WebCore::jsTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::jsTestObjConditionalAttr4Constructor):
+        (WebCore::jsTestObjConditionalAttr5Constructor):
+        (WebCore::jsTestObjConditionalAttr6Constructor):
+        (WebCore::jsTestObjContentDocument):
+        (WebCore::setJSTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::setJSTestObjConditionalAttr4Constructor):
+        (WebCore::setJSTestObjConditionalAttr5Constructor):
+        (WebCore::setJSTestObjConditionalAttr6Constructor):
+        (WebCore::setJSTestObjConstructor): Deleted.
+        (WebCore::setJSTestObjConstructorStaticStringAttr): Deleted.
+        (WebCore::setJSTestObjConditionalAttr3): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsConstructorTestSubObj):
+
 2016-02-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: LayoutTest imported/w3c/indexeddb/keyorder-private.html is flaky.

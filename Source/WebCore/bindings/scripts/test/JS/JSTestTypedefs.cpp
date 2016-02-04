@@ -244,6 +244,9 @@ EncodedJSValue jsTestTypedefsConstructorTestSubObj(ExecState* state, JSObject* s
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestTypedefs*>(slotBase);
+    JSTestTypedefs* castedThisObject = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThisObject))
+        return throwGetterTypeError(*state, "TestTypedefs", "TestSubObj");
     return JSValue::encode(JSTestSubObj::getConstructor(state->vm(), castedThis->globalObject()));
 }
 

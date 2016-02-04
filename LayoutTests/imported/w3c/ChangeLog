@@ -1,3 +1,17 @@
+2016-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() returns incomplete descriptor for instance properties
+        https://bugs.webkit.org/show_bug.cgi?id=153817
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline W3C HTML test now that more checks are passing. Some checks are still
+        failing because getter.call(undefined) / getter.call() currently throws an exception
+        for Window properties but shouldn't. Global object property getters should not require
+        an explicit |this|.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add support for iterating over Headers

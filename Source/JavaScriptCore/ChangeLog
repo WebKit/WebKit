@@ -1,3 +1,44 @@
+2016-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() returns incomplete descriptor for instance properties
+        https://bugs.webkit.org/show_bug.cgi?id=153817
+
+        Reviewed by Geoffrey Garen.
+
+        Extend support for Object.getOwnPropertyDescriptor() on native bindings
+        to instance properties (e.g. Unforgeable properties or Global object
+        properties) so that the returned descriptor has getter / setter
+        functions, as expected.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::reifyAllStaticProperties):
+        Add method that reifies all static properties, including the custom
+        accessors. This is similar to what is done eagerly on the prototype
+        objects in the bindings code.
+
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        getOwnPropertyDescriptor() would previously fails for custom accessors
+        that are on the instance because getDirect() does not check the static
+        property table and those custom accessors were not reified (We only
+        reified all properties eagerly - including custom accessors - on
+        prototype objects. To address this issue, we now call
+        reifyAllStaticProperties() if the call to getDirect() fails and then
+        call getDirect() again. This fix is however insufficient for Window
+        properties because |this| is a JSDOMWindowShell / JSProxy in this case
+        and getDirect() / reifyAllStaticProperties() would fail as the proxy
+        does not actually have the properties. This issue was addressed by
+        checking if |this| is a JSProxy and then using JSProxy::target() instead
+        of |this| for the calls to getDirect() and for the reification.
+
+        * runtime/JSObject.h:
+        * runtime/Lookup.h:
+        (JSC::reifyStaticProperty):
+        (JSC::reifyStaticProperties):
+        Move most code in reifyStaticProperties() to a separate function so the
+        code can be shared with JSObject::reifyAllStaticProperties().
+        reifyStaticProperties() is currently called by the bindings on the
+        prototype objects.
+
 2016-02-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal Windows build

@@ -1,3 +1,31 @@
+2016-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() returns incomplete descriptor for instance properties
+        https://bugs.webkit.org/show_bug.cgi?id=153817
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage for calling Object.getOwnPropertyDescriptor()
+        on instance properties (e.g. Unforgeable properties and Window properties).
+
+        * http/tests/security/cross-origin-window-property-access-expected.txt:
+        * http/tests/security/cross-origin-window-property-access.html:
+        - Fix bug causing the onload function to not find the crossOriginWindow variable.
+        - Update the case for accessing crossOriginWindow.location property as this is
+          actually expected to work as per the specification:
+          https://html.spec.whatwg.org/multipage/browsers.html#security-window
+
+        * js/dom/dom-as-prototype-assignment-exception-expected.txt:
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/dom/script-tests/dom-as-prototype-assignment-exception.js:
+        * js/getOwnPropertyDescriptor-unforgeable-attributes-expected.txt: Added.
+        * js/getOwnPropertyDescriptor-unforgeable-attributes.html: Added.
+        * js/getOwnPropertyDescriptor-window-attributes-expected.txt: Added.
+        * js/getOwnPropertyDescriptor-window-attributes.html: Added.
+        * js/instance-property-getter-other-instance-expected.txt: Added.
+        * js/instance-property-getter-other-instance.html: Added.
+        * js/resources/getOwnPropertyDescriptor.js:
+
 2016-02-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html as flaky on Mac
