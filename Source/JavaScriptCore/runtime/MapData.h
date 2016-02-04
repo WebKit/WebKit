@@ -88,6 +88,7 @@ public:
         const MapDataImpl* m_mapData;
         mutable int32_t m_index;
     };
+    STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IteratorData);
 
     struct KeyType {
         ALWAYS_INLINE KeyType() { }

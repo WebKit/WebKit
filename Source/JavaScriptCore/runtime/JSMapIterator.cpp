@@ -43,12 +43,6 @@ void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject)
     m_map.set(vm, this, iteratedObject);
 }
 
-void JSMapIterator::destroy(JSCell* cell)
-{
-    JSMapIterator* thisObject = jsCast<JSMapIterator*>(cell);
-    thisObject->JSMapIterator::~JSMapIterator();
-}
-
 void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSMapIterator* thisObject = jsCast<JSMapIterator*>(cell);

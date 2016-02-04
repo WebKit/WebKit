@@ -1,5 +1,24 @@
 2016-02-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Make some classes non JSDestructibleObject
+        https://bugs.webkit.org/show_bug.cgi?id=153838
+
+        Reviewed by Geoffrey Garen.
+
+        SymbolPrototype, JSMapIterator and JSSetIterator are trivially destructible.
+        So there is no need to inherit JSDestructibleObject.
+
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::destroy): Deleted.
+        * runtime/JSMapIterator.h:
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::destroy): Deleted.
+        * runtime/JSSetIterator.h:
+        * runtime/MapData.h:
+        * runtime/SymbolPrototype.h:
+
+2016-02-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Symbol structure has unnecessary flags
         https://bugs.webkit.org/show_bug.cgi?id=153840
 

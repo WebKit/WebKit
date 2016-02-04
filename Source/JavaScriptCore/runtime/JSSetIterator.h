@@ -26,7 +26,7 @@
 #ifndef JSSetIterator_h
 #define JSSetIterator_h
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 #include "JSSet.h"
 
 #include "MapData.h"
@@ -38,9 +38,9 @@ enum SetIterationKind : uint32_t {
     SetIterateKeyValue,
 };
 
-class JSSetIterator : public JSDestructibleObject {
+class JSSetIterator : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSNonFinalObject Base;
 
     DECLARE_EXPORT_INFO;
 
@@ -90,7 +90,6 @@ private:
     {
     }
 
-    static void destroy(JSCell*);
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSSet*);
     JS_EXPORT_PRIVATE JSValue createPair(CallFrame*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -99,6 +98,7 @@ private:
     JSSet::SetData::IteratorData m_iterator;
     SetIterationKind m_kind;
 };
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSSetIterator);
 
 }
 

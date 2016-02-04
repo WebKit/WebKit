@@ -33,9 +33,9 @@
 namespace JSC {
 
 // In the ES6 spec, Symbol.prototype object is an ordinary JS object, not one of the symbol wrapper object instance.
-class SymbolPrototype : public JSDestructibleObject {
+class SymbolPrototype : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static SymbolPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
@@ -59,6 +59,7 @@ protected:
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(SymbolPrototype);
 
 } // namespace JSC
 

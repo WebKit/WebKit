@@ -51,12 +51,6 @@ void JSSetIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_set);
 }
 
-void JSSetIterator::destroy(JSCell* cell)
-{
-    JSSetIterator* thisObject = jsCast<JSSetIterator*>(cell);
-    thisObject->JSSetIterator::~JSSetIterator();
-}
-
 JSValue JSSetIterator::createPair(CallFrame* callFrame, JSValue key, JSValue value)
 {
     MarkedArgumentBuffer args;

@@ -26,8 +26,8 @@
 #ifndef JSMapIterator_h
 #define JSMapIterator_h
 
-#include "JSDestructibleObject.h"
 #include "JSMap.h"
+#include "JSObject.h"
 #include "MapData.h"
 
 namespace JSC {
@@ -37,9 +37,9 @@ enum MapIterationKind : uint32_t {
     MapIterateKeyValue,
 };
 
-class JSMapIterator : public JSDestructibleObject {
+class JSMapIterator : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSNonFinalObject Base;
 
     DECLARE_EXPORT_INFO;
 
@@ -103,7 +103,6 @@ private:
     {
     }
 
-    static void destroy(JSCell*);
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSMap*);
     JSValue createPair(CallFrame*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -112,6 +111,7 @@ private:
     JSMap::MapData::IteratorData m_iterator;
     MapIterationKind m_kind;
 };
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSMapIterator);
 
 }
 
