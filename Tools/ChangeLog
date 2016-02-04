@@ -6,7 +6,7 @@
         Reviewed by Martin Robinson.
 
         WKBundlePageCopyContextMenuAtPointInWindow() returns nullptr when
-        the context menu event is not hanlded, but we are using the
+        the context menu event is not handled, but we are using the
         returned value without null checking it.
 
         * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
