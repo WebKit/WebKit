@@ -27,7 +27,7 @@
 #ifndef NetscapePluginX11_h
 #define NetscapePluginX11_h
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NetscapePluginUnix.h"
 #include <WebCore/XUniqueResource.h>
@@ -71,6 +71,6 @@ private:
 };
 } // namespace WebKit
 
-#endif // PLUGIN_ARCHITECTURE(X11)
+#endif // PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NetscapePluginX11_h
