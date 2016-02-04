@@ -1,3 +1,66 @@
+2016-02-04  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Implement mediastream mediaplayer
+        https://bugs.webkit.org/show_bug.cgi?id=153541
+
+        Reviewed by Martin Robinson.
+
+        Added the implementation of the mediaplayer for the
+        mediastream. The code was implemented by Philippe Normand and
+        Alessandro Decina.
+
+        * PlatformGTK.cmake: Added the file to the compilation.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSrcObject): Set the src of the
+        media element to the mediastream.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector): Register the mediastream
+        mediaplayer as an option in the media engines vector.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp: Added.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::MediaPlayerPrivateGStreamerOwr):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::~MediaPlayerPrivateGStreamerOwr):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::play):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::pause):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::hasVideo):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::hasAudio):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::currentTime):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::load):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::loadingFailed):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::didLoadingProgress):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::internalLoad):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::stop):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::supportsType):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::isAvailable):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::createGSTAudioSinkBin):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::sourceStopped):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::sourceMutedChanged):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::sourceSettingsChanged):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::preventSourceFromStopping):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::createVideoSink):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.h: Added.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::engineDescription):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::load):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::cancelLoad):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::prepareToPlay):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::duration):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::seek):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::seeking):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::setRate):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::setPreservesPitch):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::paused):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::hasClosedCaptions):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::setClosedCaptionsVisible):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::buffered):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::totalBytes):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::bytesLoaded):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::canLoadPoster):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::setPoster):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::isLiveStream):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::audioSink):
+
 2016-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add support for iterating over Headers

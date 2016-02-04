@@ -407,6 +407,9 @@ if (ENABLE_MEDIA_STREAM)
     list(APPEND WebCore_LIBRARIES
         ${OPENWEBRTC_LIBRARIES}
     )
+    list(APPEND WebCore_SOURCES
+        platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp
+    )
 endif ()
 
 if (USE_TEXTURE_MAPPER)

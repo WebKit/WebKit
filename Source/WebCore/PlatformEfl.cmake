@@ -388,6 +388,9 @@ if (ENABLE_MEDIA_STREAM)
     list(APPEND WebCore_LIBRARIES
         ${OPENWEBRTC_LIBRARIES}
     )
+    list(APPEND WebCore_SOURCES
+        platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp
+    )
 endif ()
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)

@@ -53,6 +53,9 @@
 
 #if USE(GSTREAMER)
 #include "MediaPlayerPrivateGStreamer.h"
+#if ENABLE(MEDIA_STREAM) && USE(OPENWEBRTC)
+#include "MediaPlayerPrivateGStreamerOwr.h"
+#endif
 #define PlatformMediaEngineClassName MediaPlayerPrivateGStreamer
 #endif
 
@@ -207,6 +210,11 @@ static void buildMediaEnginesVector()
 #if PLATFORM(MAC)
     if (Settings::isQTKitEnabled())
         MediaPlayerPrivateQTKit::registerMediaEngine(addMediaEngine);
+#endif
+
+
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
+    MediaPlayerPrivateGStreamerOwr::registerMediaEngine(addMediaEngine);
 #endif
 
 #if defined(PlatformMediaEngineClassName)
