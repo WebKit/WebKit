@@ -554,6 +554,9 @@ JSValueRef EventSendingController::contextClick()
     WKRetainPtr<WKArrayRef> menuEntries = adoptWK(WKBundlePageCopyContextMenuAtPointInWindow(page, m_position));
 #endif
     JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    if (!menuEntries)
+        return arrayResult;
+
     JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     size_t entriesSize = WKArrayGetSize(menuEntries.get());
     for (size_t i = 0; i < entriesSize; ++i) {
