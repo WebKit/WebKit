@@ -1,3 +1,31 @@
+2016-02-03  Filip Pizlo  <fpizlo@apple.com>
+
+        run-jsc-stress-tests should be better at telling you details about test failures
+        https://bugs.webkit.org/show_bug.cgi?id=153845
+
+        Reviewed by Geoffrey Garen.
+
+        Here's an example of the contents of results/resultsByFamily, one of the new files that this
+        generates, for some local testing I'm doing.  Notice how it groups families of tests together.
+
+        You won't see this unless you cat results/resultsByFamily.
+
+        regress.yaml/Regress/radar-24289839.js:
+            regress.yaml/Regress/radar-24289839.js.default: PASS
+            regress.yaml/Regress/radar-24289839.js.ftl: PASS
+            regress.yaml/Regress/radar-24289839.js.ftl-no-cjit: FAIL
+            regress.yaml/Regress/radar-24289839.js.ftl-eager-no-cjit: FAIL
+        
+        regress.yaml/Regress/radar-24290639.js:
+            regress.yaml/Regress/radar-24290639.js.default: PASS
+            regress.yaml/Regress/radar-24290639.js.ftl: PASS
+            regress.yaml/Regress/radar-24290639.js.ftl-no-cjit: PASS
+            regress.yaml/Regress/radar-24290639.js.ftl-eager-no-cjit: FAIL
+        
+        regress.yaml/Regress/radar-24290670.js: FAILED
+        
+        * Scripts/run-jsc-stress-tests:
+
 2016-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WTR] Crash in EventSendingController::contextClick() when context menu event is not handled

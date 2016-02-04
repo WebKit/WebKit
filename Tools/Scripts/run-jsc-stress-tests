@@ -37,6 +37,12 @@ module URI
     @@schemes['SSH'] = SSH
 end
 
+class String
+    def scrub
+        encode("UTF-16be", :invalid=>:replace, :replace=>"?").encode('UTF-8')
+    end
+end
+
 THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
 SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
 WEBKIT_PATH = SCRIPTS_PATH.dirname.dirname
@@ -387,6 +393,7 @@ if !$testRunnerType
 end
 
 $numFailures = 0
+$numPasses = 0
 
 BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true"]
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000"]
@@ -599,12 +606,13 @@ end
 $runCommandOptions = {}
 
 class Plan
-    attr_reader :directory, :arguments, :name, :outputHandler, :errorHandler
+    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler
     attr_accessor :index
     
-    def initialize(directory, arguments, name, outputHandler, errorHandler)
+    def initialize(directory, arguments, family, name, outputHandler, errorHandler)
         @directory = directory
         @arguments = arguments
+        @family = family
         @name = name
         @outputHandler = outputHandler
         @errorHandler = errorHandler
@@ -689,7 +697,9 @@ def addRunCommand(kind, command, outputHandler, errorHandler)
     if $filter and name !~ $filter
         return
     end
-    plan = Plan.new($benchmarkDirectory, command, name, outputHandler, errorHandler)
+    plan = Plan.new(
+        $benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}", name, outputHandler,
+        errorHandler)
     if $numChildProcesses > 1 and $runCommandOptions[:isSlow]
         $runlist.unshift plan
     else
@@ -1411,6 +1421,21 @@ def appendFailure(plan)
     $numFailures += 1
 end
 
+def appendPass(plan)
+    File.open($outputDir + "passed", "a") {
+        | outp |
+        outp.puts plan.name
+    }
+    $numPasses += 1
+end
+
+def appendResult(plan, didPass)
+    File.open($outputDir + "results", "a") {
+        | outp |
+        outp.puts "#{plan.name}: #{didPass ? 'PASS' : 'FAIL'}"
+    }
+end
+
 def prepareBundle
     raise if $bundle
 
@@ -1688,7 +1713,7 @@ def runAndMonitorTestRunnerCommand(*cmd)
            | inp |
            inp.each_line {
                | line |
-               line.chomp!
+               line = line.scrub.chomp
                if line =~ /^Running /
                    running[$~.post_match] = true
                elsif line =~ /^PASS: /
@@ -1774,20 +1799,82 @@ end
 def detectFailures
     raise if $bundle
 
+    failures = []
+    
     if $remote
         output = sshRead("cd #{$remoteDirectory}/#{$outputDir.basename}/.runner && find . -maxdepth 1 -name \"test_fail_*\"")
         output.split(/\n/).each {
             | line |
             next unless line =~ /test_fail_/
-            appendFailure($runlist[$~.post_match.to_i])
+            failures << $~.post_match.to_i
         }
     else
         Dir.foreach($runnerDir) {
             | filename |
             next unless filename =~ /test_fail_/
-            appendFailure($runlist[$~.post_match.to_i])
+            failures << $~.post_match.to_i
         }
     end
+
+    failureSet = {}
+
+    failures.each {
+        | failure | 
+        appendFailure($runlist[failure])
+        failureSet[failure] = true
+    }
+
+    familyMap = {}
+    $runlist.each_with_index {
+        | plan, index |
+        unless familyMap[plan.family]
+            familyMap[plan.family] = []
+        end
+        if failureSet[index]
+            appendResult(plan, false)
+            familyMap[plan.family] << {:result => "FAIL", :plan => plan};
+            next
+        else
+            appendResult(plan, true)
+            familyMap[plan.family] << {:result => "PASS", :plan => plan};
+        end
+        appendPass(plan)
+    }
+
+    File.open($outputDir + "resultsByFamily", "w") {
+        | outp |
+        first = true
+        familyMap.keys.sort.each {
+            | familyName |
+            if first
+                first = false
+            else
+                outp.puts
+            end
+            
+            outp.print "#{familyName}:"
+
+            numPassed = 0
+            familyMap[familyName].each {
+                | entry |
+                if entry[:result] == "PASS"
+                    numPassed += 1
+                end
+            }
+
+            if numPassed == familyMap[familyName].size
+                outp.puts " PASSED"
+            elsif numPassed == 0
+                outp.puts " FAILED"
+            else
+                outp.puts
+                familyMap[familyName].each {
+                    | entry |
+                    outp.puts "    #{entry[:plan].name}: #{entry[:result]}"
+                }
+            end
+        }
+    }
 end
 
 def compressBundle
@@ -1801,6 +1888,9 @@ def clean(file)
 end
 
 clean($outputDir + "failed")
+clean($outputDir + "passed")
+clean($outputDir + "results")
+clean($outputDir + "resultsByFamily")
 clean($outputDir + ".vm")
 clean($outputDir + ".helpers")
 clean($outputDir + ".runner")
