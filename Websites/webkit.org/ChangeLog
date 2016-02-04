@@ -1,3 +1,12 @@
+2016-02-04  Jonathan Davis  <jond@apple.com>
+
+        Fix bad link on the Feature Status page.
+        https://bugs.webkit.org/show_bug.cgi?id=152086
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/status.php:
+
 2016-02-02  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of anonymous stack slots

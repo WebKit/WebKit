@@ -382,7 +382,7 @@ h3 a[name], .admin-bar h3 a[name] {
             <template id="success-template">
                 <ul class="features" id="features-container"></ul>
                 <p>Cannot find something? You can contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or contact the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list for questions.</p>
-                <p>You can also <a href="coding/contributing.html">contribute to features</a> directly, the entire project is Open Source. To report bugs on existing features or check existing bug reports, see <a href="https://bugs.webkit.org">https://bugs.webkit.org</a>.</p>
+                <p>You can also <a href="/contributing-code/">contribute to features</a> directly, the entire project is Open Source. To report bugs on existing features or check existing bug reports, see <a href="https://bugs.webkit.org">https://bugs.webkit.org</a>.</p>
             </template>
             <template id="error-template">
                 <p>Error: unable to load the features list (<span id="error-message"></span>).</p>
