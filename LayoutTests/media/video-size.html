@@ -8,6 +8,7 @@
             var movieInfo = 
             {
                 current:0,
+                retryCount: 0,
                 movies: 
                 [ 
                     {   
@@ -61,6 +62,8 @@
             function setupNextConfiguration()
             {
                 consoleWrite("");
+                movieInfo.current++;
+                movieInfo.retryCount = 0;
                 if (movieInfo.current >= movieInfo.movies.length)
                 {
                     endTest();
@@ -100,6 +103,16 @@
                 var temp = document.body.offsetWidth;
                 var movie = movieInfo.movies[movieInfo.current];
 
+                // We can't detect when the poster has loaded and the 100ms timeout may
+                // not be long enough on a slow/loaded machine.
+                if (video.clientWidth != movie.width || video.clientHeight != movie.height
+                    || video.videoWidth != movie.videoWidth || video.videoHeight != movie.videoHeight) {
+                    if (++movieInfo.retryCount <= 2) {
+                        setTimeout(testMovie, 100);
+                        return;
+                    }
+                }
+
                 var desc = "<b>Testing movie with " + movie.description + ".</b>";
                 consoleWrite(desc);
 
@@ -108,7 +121,6 @@
                 testExpected("video.videoWidth", movie.videoWidth);
                 testExpected("video.videoHeight", movie.videoHeight);
 
-                movieInfo.current++;
                 setupNextConfiguration();
             }
 
