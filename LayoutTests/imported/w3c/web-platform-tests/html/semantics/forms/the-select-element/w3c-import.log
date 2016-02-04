@@ -17,5 +17,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-namedItem.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-named-getter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-remove.html

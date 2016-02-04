@@ -17,4 +17,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/document.writeln-01.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/document.writeln-02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/document.writeln-03.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/original-id.json

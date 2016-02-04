@@ -1,0 +1,3 @@
+
+PASS 'tfoot' element, 'rows' attribute 
+

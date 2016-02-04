@@ -265,6 +265,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test1.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-ltr-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-frame.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1a.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1b.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html [ Skip ]

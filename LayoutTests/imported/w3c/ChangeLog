@@ -1,5 +1,101 @@
 2016-02-03  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync W3C HTML web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=153832
+
+        Reviewed by Sam Weinig.
+
+        Re-sync W3C HTML web-platform-tests from:
+        https://github.com/w3c/web-platform-tests/tree/master/html
+
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/document.writeln-03-expected.txt: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/document.writeln-03.html: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/w3c-import.log:
+        * web-platform-tests/html/dom/elements-obsolete.js:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/semantics/document-metadata/styling/LinkStyle-expected.txt: Added.
+        * web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/styling/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-processing-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-processing.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/support/hit-test.js: Added.
+        (onload):
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.nocontext.html:
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_javascript_url_01-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_javascript_url_01.htm: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_script-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_script.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_01-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_01.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_02-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_02.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_03-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_03.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_04-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_04.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/sandbox_allow_script.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/form-submission-0/url-encoded-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/textfieldselection/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-button-element/button-activate-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-button-element/button-activate-frame.html: Added.
+        * web-platform-tests/html/semantics/forms/the-button-element/button-activate.html: Added.
+        * web-platform-tests/html/semantics/forms/the-button-element/button-events-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-button-element/button-events.html:
+        * web-platform-tests/html/semantics/forms/the-button-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-elements-sameobject-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-form-element/form-elements-sameobject.html: Added.
+        * web-platform-tests/html/semantics/forms/the-form-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/maxlength-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/maxlength.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/radio-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/radio.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-option-element/option-selected-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-option-element/option-selected.html: Added.
+        * web-platform-tests/html/semantics/forms/the-option-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html: Added.
+        * web-platform-tests/html/semantics/forms/the-select-element/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/the-details-element/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-text.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/rows-expected.txt: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/rows.html: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/the-tfoot-element/rows-expected.txt: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-tfoot-element/rows.html: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-tfoot-element/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log.
+        * web-platform-tests/html/semantics/tabular-data/the-thead-element/rows-expected.txt: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-thead-element/rows.html: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-thead-element/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log.
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/cells-expected.txt: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/cells.html: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/w3c-import.log:
+
+2016-02-03  Chris Dumez  <cdumez@apple.com>
+
         Re-sync W3C DOM web-platform-tests
         https://bugs.webkit.org/show_bug.cgi?id=153831
 

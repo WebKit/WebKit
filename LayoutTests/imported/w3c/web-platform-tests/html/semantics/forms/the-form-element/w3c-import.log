@@ -20,4 +20,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-matches.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-nameditem-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-nameditem-02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-sameobject.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-nameditem.html

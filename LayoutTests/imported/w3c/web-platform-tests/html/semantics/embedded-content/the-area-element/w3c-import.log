@@ -15,4 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-processing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-shape.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-stringifier.html

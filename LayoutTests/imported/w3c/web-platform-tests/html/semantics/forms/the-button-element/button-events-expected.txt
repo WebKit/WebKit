@@ -1,5 +1,5 @@
 
-FAIL The submit event must be fired when click a button in submit status assert_true: The isTrusted attribute of the submit event shoud be true. expected true got undefined
-FAIL The reset event must be fired when click a button in reset status assert_true: The isTrusted attribute of the reset event shoud be true. expected true got undefined
+FAIL The submit event must be fired when click a button in submit status assert_true: The isTrusted attribute of the submit event should be true. expected true got undefined
+FAIL The reset event must be fired when click a button in reset status assert_true: The isTrusted attribute of the reset event should be true. expected true got undefined
 FAIL The show event must be fired when click a button in menu status assert_equals: The button type should be 'menu'. expected "menu" but got "submit"
 

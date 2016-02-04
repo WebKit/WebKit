@@ -1,0 +1,18 @@
+
+
+PASS missing value default: "2,2,10,10" (null) 
+FAIL missing value default: "20,40,10" (null) assert_equals: elementFromPoint(21, 41) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="null" coords="20,40,10"></area>
+PASS missing value default: null (null) 
+PASS invalid value default: "2,2,10,10" (foobar invalid) 
+PASS invalid value default: "2,2,10,10" () 
+PASS empty string: "" (default) 
+PASS omitted coords: null (DEFAULT) 
+PASS simple: "20,40,10" (circle) 
+PASS simple: "20,40,10" (circ) 
+PASS simple: "20,40,10" (CIRCLE) 
+PASS simple: "20,40,10" (CIRC) 
+FAIL LATIN CAPITAL LETTER I WITH DOT ABOVE: "20,40,10" (CİRCLE) assert_equals: elementFromPoint(21, 41) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="CİRCLE" coords="20,40,10"></area>
+FAIL LATIN SMALL LETTER DOTLESS I: "20,40,10" (cırcle) assert_equals: elementFromPoint(21, 41) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="cırcle" coords="20,40,10"></area>
+PASS simple: "100,100,120,100,100,120" (poly) 
+PASS simple: "100,100,120,100,100,120" (polygon) 
+

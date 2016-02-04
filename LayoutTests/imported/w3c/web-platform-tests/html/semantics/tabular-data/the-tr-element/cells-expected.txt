@@ -1,0 +1,6 @@
+
+First	Second	Third
+Nested first
+
+PASS HTMLTableRowElement cells ignores nested tables and non-HTML elements 
+

@@ -15,5 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-validation.html

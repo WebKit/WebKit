@@ -17,6 +17,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-label-value.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-label.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-selected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-backslash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-label.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-recurse.html

@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-tr-element/cells.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-tr-element/deleteCell.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-tr-element/insertCell.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/the-tr-element/rowIndex.html

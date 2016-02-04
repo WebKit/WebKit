@@ -1,0 +1,3 @@
+
+PASS 'thead' element, 'rows' attribute 
+

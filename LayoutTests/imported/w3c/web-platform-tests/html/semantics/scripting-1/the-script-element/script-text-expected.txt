@@ -4,4 +4,5 @@ PASS Setter (non-empty string)
 FAIL Setter (empty string) assert_equals: expected null but got Text node ""
 FAIL Setter (null) assert_equals: expected "null" but got ""
 PASS Setter (undefined) 
+FAIL Setter (text node reuse) assert_not_equals: got disallowed value Text node "two"
 

@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-button.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/month.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/password.html
