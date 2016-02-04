@@ -40,11 +40,8 @@ interface FetchHeaders {
     [RaisesException] boolean has(DOMString name);
     [RaisesException] void set(DOMString name, DOMString value);
 
-    // FIXME: Support iterable within binding generator.
+    // FIXME: Support iterable.
     //iterable<DOMString, DOMString>;
-    [Custom] any entries();
-    [Custom] any keys();
-    [Custom] any values();
 
     [Private, RaisesException, ImplementedAs=append] void appendFromJS(DOMString name, DOMString value);
     [Private, RaisesException] void initializeWith(FetchHeaders headers);

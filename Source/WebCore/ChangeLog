@@ -1,3 +1,8 @@
+2016-02-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Unreviewed.
+        Reverting r196115 and r19116, related tohttps://bugs.webkit.org/show_bug.cgi?id=153787.
+
 2016-02-04  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Implement mediastream mediaplayer

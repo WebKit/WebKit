@@ -179,31 +179,6 @@ void FetchHeaders::fill(const FetchHeaders* headers)
     }
 }
 
-bool FetchHeaders::Iterator::next(String& nextKey, String& nextValue)
-{
-    while (m_currentIndex < m_keys.size()) {
-        auto& key = m_keys[m_currentIndex++];
-        String value = m_headers->m_headers.get(key);
-        if (!value.isNull()) {
-            nextKey = key;
-            nextValue = WTFMove(value);
-            return false;
-        }
-    }
-    m_keys.clear();
-    return true;
-}
-
-FetchHeaders::Iterator::Iterator(FetchHeaders& headers)
-    : m_headers(headers)
-{
-    m_keys.reserveInitialCapacity(headers.m_headers.size());
-    for (auto& header : headers.m_headers)
-        m_keys.uncheckedAppend(header.key.convertToASCIILowercase());
-
-    std::sort(m_keys.begin(), m_keys.end(), WTF::codePointCompareLessThan);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)
