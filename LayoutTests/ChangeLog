@@ -1,3 +1,17 @@
+2016-02-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Don't discard in-band cues with negative start times
+        https://bugs.webkit.org/show_bug.cgi?id=153867
+        <rdar://problem/19588632>
+
+        Reviewed by Jer Noble.
+
+        * http/tests/media/track-in-band-hls-metadata-expected.txt:
+        * http/tests/media/track-in-band-hls-metadata.html: Test more attributes for correctness,
+          fail test immediately if cue.value is undefined so the test doesn't generate an exception
+          and exit without any results.
+        * platform/mac/TestExpectations: Unskip test.
+
 2016-02-04  Hyemi Shin  <hyemi.sin@samsung.com>
 
         Specify an exception for createChannelMerger, createChannelSplitter and createPeriodicWave

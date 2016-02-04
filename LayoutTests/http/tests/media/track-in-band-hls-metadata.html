@@ -19,6 +19,7 @@
                  {"key" : "TXXX", "data" : "Text Blob"},
             ];
             var imageSizes = [ [76, 103], [100, 100] ];
+            var cue;
         
             function addtrack(event)
             {
@@ -56,7 +57,7 @@
 
             function compareCues(observed, expected)
             {
-                // Make a mutable copy of the cue so we can remove attributes as they are processed.
+                // Make a mutable copy of observed so we can remove attributes as they are processed.
                 observed = JSON.parse(JSON.stringify(observed));
                 for (property in expected) {
                     observedValue = observed[property];
@@ -65,14 +66,14 @@
 
                     observedValue = JSON.stringify(observedValue);
                     expectedValue = JSON.stringify(expectedValue);
-                    reportExpected(observedValue == expectedValue, "cue.value." + property, "==", expectedValue, observedValue);
+                    reportExpected(observedValue == expectedValue, `cue.value.${property}`, "==", expectedValue, observedValue);
                     delete observed[property];
                 }
 
                 for (property in observed) {
                     observedName = property;
                     observedValue = observed[property];
-                    logResult(Failed, "Error: unexpected cue property <em>cue.value." + observedName + "</em> = <em>'" + observedValue + "'</em> ");
+                    logResult(Failed, `Error: unexpected cue property <em>cue.value. ${observedName}</em> = <em>' ${observedValue}'</em>`);
                 }
             }
 
@@ -87,10 +88,18 @@
                 video.pause();
 
                 for (var i = 0; i < 6; i++) {
-                    consoleWrite("<em>* " + (i + 1) + "</em>");
+                    consoleWrite(`<em>* ${i + 1}</em>`);
                     cue = track.cues[i];
+
+                    testExpected("typeof(cue)", undefined, "!=");
                     testExpected("cue.type", "org.id3");
                     testExpected("cue.data", null);
+                    testExpected("cue.value", null, "!=");
+                    if (typeof(cue.value) == undefined) {
+                        failTest(`Error: cue.value is undefined!`);
+                        return;
+                    }
+
                     compareCues(cue.value, cueData[i]);
                     consoleWrite("");
                 }
@@ -114,7 +123,7 @@
                 run("video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8'");
 
                 consoleWrite("");
-                waitForEvent("canplaythrough", canplaythrough);
+                waitForEventOnce("canplaythrough", canplaythrough);
                 waitForEvent('addtrack', addtrack, false, false, video.textTracks);
             }
         </script>

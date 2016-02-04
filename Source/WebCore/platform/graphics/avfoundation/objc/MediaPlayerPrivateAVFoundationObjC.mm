@@ -2861,6 +2861,8 @@ void MediaPlayerPrivateAVFoundationObjC::processMetadataTrack()
 
 void MediaPlayerPrivateAVFoundationObjC::processCue(NSArray *attributedStrings, NSArray *nativeSamples, const MediaTime& time)
 {
+    ASSERT(time >= MediaTime::zeroTime());
+
     if (!m_currentTextTrack)
         return;
 
@@ -3239,14 +3241,14 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> me
     // Set the duration of all incomplete cues before adding new ones.
     MediaTime earliestStartTime = MediaTime::positiveInfiniteTime();
     for (AVMetadataItemType *item in m_currentMetaData.get()) {
-        MediaTime start = toMediaTime(item.time);
+        MediaTime start = std::max(toMediaTime(item.time), MediaTime::zeroTime());
         if (start < earliestStartTime)
             earliestStartTime = start;
     }
     m_metadataTrack->updatePendingCueEndTimes(earliestStartTime);
 
     for (AVMetadataItemType *item in m_currentMetaData.get()) {
-        MediaTime start = toMediaTime(item.time);
+        MediaTime start = std::max(toMediaTime(item.time), MediaTime::zeroTime());
         MediaTime end = MediaTime::positiveInfiniteTime();
         if (CMTIME_IS_VALID(item.duration))
             end = start + toMediaTime(item.duration);
@@ -3560,7 +3562,8 @@ NSArray* playerKVOProperties()
         MediaPlayerPrivateAVFoundationObjC* callback = strongSelf->m_callback;
         if (!callback)
             return;
-        callback->processCue(strongStrings.get(), strongSamples.get(), toMediaTime(itemTime));
+        MediaTime time = std::max(toMediaTime(itemTime), MediaTime::zeroTime());
+        callback->processCue(strongStrings.get(), strongSamples.get(), time);
     });
 }
 

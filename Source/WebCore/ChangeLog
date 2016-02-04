@@ -1,3 +1,23 @@
+2016-02-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Don't discard in-band cues with negative start times
+        https://bugs.webkit.org/show_bug.cgi?id=153867
+        <rdar://problem/19588632>
+
+        Reviewed by Jer Noble.
+
+        No new tests, updated and un-skipped http/tests/media/track-in-band-hls-metadata.html.
+
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+        (WebCore::InbandMetadataTextTrackPrivateAVF::addDataCue):  ASSERT if passed negative time value.
+        (WebCore::InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes): Ditto. Correct logging.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processCue): ASSERT if passed negative time value.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive): Convert negative cue times to zero.
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+          Ditto.
+
 2016-02-04  Hyemi Shin  <hyemi.sin@samsung.com>
 
         Specify an exception for createChannelMerger, createChannelSplitter and createPeriodicWave

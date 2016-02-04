@@ -24,26 +24,34 @@ EVENT(cuechange)
 
 ** Validate cue data
 * 1
+EXPECTED (typeof(cue) != 'undefined') OK
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
+EXPECTED (cue.value != 'null') OK
 EXPECTED (cue.value.key == '"TIT2"') OK
 EXPECTED (cue.value.data == '"Stream Counting"') OK
 
 * 2
+EXPECTED (typeof(cue) != 'undefined') OK
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
+EXPECTED (cue.value != 'null') OK
 EXPECTED (cue.value.key == '"TPE1"') OK
 EXPECTED (cue.value.data == '"Andy"') OK
 
 * 3
+EXPECTED (typeof(cue) != 'undefined') OK
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
+EXPECTED (cue.value != 'null') OK
 EXPECTED (cue.value.key == '"TALB"') OK
 EXPECTED (cue.value.data == '"Greatest Hits"') OK
 
 * 4
+EXPECTED (typeof(cue) != 'undefined') OK
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
+EXPECTED (cue.value != 'null') OK
 EXPECTED (cue.value.key == '"GEOB"') OK
 EXPECTED (cue.value.data == '{}') OK
 EXPECTED (cue.value.type == '"image/png"') OK
@@ -51,15 +59,19 @@ EXPECTED (cue.value.info == '"Our Hero"') OK
 EXPECTED (cue.value.name == '"abe.png"') OK
 
 * 5
+EXPECTED (typeof(cue) != 'undefined') OK
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
+EXPECTED (cue.value != 'null') OK
 EXPECTED (cue.value.key == '"APIC"') OK
 EXPECTED (cue.value.data == '{}') OK
 EXPECTED (cue.value.type == '"image/png"') OK
 
 * 6
+EXPECTED (typeof(cue) != 'undefined') OK
 EXPECTED (cue.type == 'org.id3') OK
 EXPECTED (cue.data == 'null') OK
+EXPECTED (cue.value != 'null') OK
 EXPECTED (cue.value.key == '"TXXX"') OK
 EXPECTED (cue.value.data == '"Text Blob"') OK
 

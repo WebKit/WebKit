@@ -57,6 +57,8 @@ InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF()
 void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation> prpCueData, const String& type)
 {
     ASSERT(cueFormat() == Data);
+    ASSERT(start >= MediaTime::zeroTime());
+
     if (!client())
         return;
 
@@ -69,15 +71,17 @@ void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const
 
 void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime& time)
 {
+    ASSERT(time >= MediaTime::zeroTime());
+
     if (time >= m_currentCueStartTime) {
         if (client()) {
             for (auto& partialCue : m_incompleteCues) {
-                LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue(%p) - updating cue: start=%s, end=%s", this, toString(partialCue.startTime).utf8().data(), toString(time).utf8().data());
+                LOG(Media, "InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(%p) - updating cue: start=%s, end=%s", this, toString(partialCue.startTime).utf8().data(), toString(time).utf8().data());
                 client()->updateDataCue(this, partialCue.startTime, time, partialCue.cueData);
             }
         }
     } else
-        LOG(Media, "InbandMetadataTextTrackPrivateAVF::addDataCue negative length cue(s) ignored: start=%s, end=%s\n", toString(m_currentCueStartTime).utf8().data(), toString(time).utf8().data());
+        LOG(Media, "InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes negative length cue(s) ignored: start=%s, end=%s\n", toString(m_currentCueStartTime).utf8().data(), toString(time).utf8().data());
 
     m_incompleteCues.resize(0);
     m_currentCueStartTime = MediaTime::zeroTime();
