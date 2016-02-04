@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebCoreNSURLSession.h"
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
 #import "CachedRawResource.h"
 #import "CachedResourceLoader.h"
@@ -541,4 +541,4 @@ void WebCoreNSURLSessionDataTaskClient::notifyFinished(CachedResource* resource)
 }
 @end
 
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#endif // PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100

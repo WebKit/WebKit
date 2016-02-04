@@ -1,3 +1,10 @@
+2016-02-03  Jer Noble  <jer.noble@apple.com>
+
+        iOS build fix after Yosemite build fix broke iOS build.
+
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+
 2016-02-03  Beth Dakin  <bdakin@apple.com>
 
         Accepted candidates should not be autocorrected

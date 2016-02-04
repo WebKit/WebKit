@@ -26,7 +26,7 @@
 #ifndef WebCoreNSURLSession_h
 #define WebCoreNSURLSession_h
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
 #import "CachedRawResource.h"
 #import "CachedResourceHandle.h"
@@ -131,6 +131,6 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 
 NS_ASSUME_NONNULL_END
 
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#endif // PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
 #endif

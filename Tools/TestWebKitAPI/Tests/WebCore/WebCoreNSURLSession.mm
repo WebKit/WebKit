@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
 #import "PlatformUtilities.h"
 #import <WebKit/WebView.h>

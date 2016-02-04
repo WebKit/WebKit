@@ -1,5 +1,11 @@
 2016-02-03  Jer Noble  <jer.noble@apple.com>
 
+        iOS build fix after Yosemite build fix broke iOS build.
+
+        * TestWebKitAPI/Tests/WebCore/WebCoreNSURLSession.mm:
+
+2016-02-03  Jer Noble  <jer.noble@apple.com>
+
         Yosemite build fix; hide the entire WebCoreNSURLSessionDataTask class from Yosemite and prior.
 
         * TestWebKitAPI/Tests/WebCore/WebCoreNSURLSession.mm:
