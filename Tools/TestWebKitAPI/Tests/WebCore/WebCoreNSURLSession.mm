@@ -160,6 +160,6 @@ TEST_F(WebCoreNSURLSessionTest, InvalidateEmpty)
     [session release];
 }
 
-#endif
-
 }
+
+#endif
