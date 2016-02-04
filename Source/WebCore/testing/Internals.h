@@ -221,6 +221,8 @@ public:
     void setAutomaticTextReplacementEnabled(bool enabled, ExceptionCode&);
     void setAutomaticSpellingCorrectionEnabled(bool enabled, ExceptionCode&);
 
+    void handleAcceptedCandidate(const String& candidate, ExceptionCode&);
+
     bool isOverwriteModeEnabled(ExceptionCode&);
     void toggleOverwriteModeEnabled(ExceptionCode&);
 

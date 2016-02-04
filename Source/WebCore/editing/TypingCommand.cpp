@@ -301,6 +301,8 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
         && !frame.editor().isAutomaticDashSubstitutionEnabled()
         && !frame.editor().isAutomaticTextReplacementEnabled())
             return;
+    if (frame.editor().isHandlingAcceptedCandidate())
+        return;
 #else
     if (!frame.editor().isContinuousSpellCheckingEnabled())
         return;

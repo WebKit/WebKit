@@ -457,6 +457,7 @@ public:
 
     WEBCORE_EXPORT String stringForCandidateRequest() const;
     WEBCORE_EXPORT void handleAcceptedCandidate(TextCheckingResult);
+    bool isHandlingAcceptedCandidate() const { return m_isHandlingAcceptedCandidate; }
 
 private:
     class WebContentReader;
@@ -519,6 +520,7 @@ private:
     Timer m_editorUIUpdateTimer;
     bool m_editorUIUpdateTimerShouldCheckSpellingAndGrammar;
     bool m_editorUIUpdateTimerWasTriggeredByDictation;
+    bool m_isHandlingAcceptedCandidate { false };
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
     bool shouldDetectTelephoneNumbers();

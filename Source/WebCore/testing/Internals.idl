@@ -205,6 +205,8 @@ enum AutoFillButtonType {
     [RaisesException] void setAutomaticTextReplacementEnabled(boolean enabled);
     [RaisesException] void setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
+    [RaisesException] void handleAcceptedCandidate(DOMString candidate);
+
     [RaisesException] boolean isOverwriteModeEnabled();
     [RaisesException] void toggleOverwriteModeEnabled();
 

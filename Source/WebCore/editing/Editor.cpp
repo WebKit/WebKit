@@ -3557,6 +3557,9 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
 {
     const VisibleSelection& selection = m_frame.selection().selection();
     RefPtr<Range> candidateRange = candidateRangeForSelection(m_frame);
+    int candidateLength = acceptedCandidate.length;
+
+    m_isHandlingAcceptedCandidate = true;
 
     if (candidateWouldReplaceText(selection))
         m_frame.selection().setSelectedRange(candidateRange.get(), UPSTREAM, true);
@@ -3564,8 +3567,16 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
     insertText(acceptedCandidate.replacement, 0);
 
     // Some candidates come with a space built in, and we do not need to add another space in that case.
-    if (!acceptedCandidate.replacement.endsWith(' '))
+    if (!acceptedCandidate.replacement.endsWith(' ')) {
         insertText(ASCIILiteral(" "), 0);
+        ++candidateLength;
+    }
+
+    RefPtr<Range> insertedCandidateRange = rangeExpandedAroundPositionByCharacters(selection.visibleStart(), candidateLength);
+    if (insertedCandidateRange)
+        insertedCandidateRange->startContainer().document().markers().addMarker(insertedCandidateRange.get(), DocumentMarker::AcceptedCandidate, acceptedCandidate.replacement);
+
+    m_isHandlingAcceptedCandidate = false;
 }
 
 bool Editor::unifiedTextCheckerEnabled() const

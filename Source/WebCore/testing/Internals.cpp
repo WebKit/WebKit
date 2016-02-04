@@ -1790,6 +1790,18 @@ void Internals::setAutomaticSpellingCorrectionEnabled(bool enabled, ExceptionCod
 #endif
 }
 
+void Internals::handleAcceptedCandidate(const String& candidate, ExceptionCode&)
+{
+    if (!contextDocument() || !contextDocument()->frame())
+        return;
+
+    TextCheckingResult result;
+    result.type = TextCheckingTypeNone;
+    result.length = candidate.length();
+    result.replacement = candidate;
+    contextDocument()->frame()->editor().handleAcceptedCandidate(result);
+}
+
 bool Internals::isOverwriteModeEnabled(ExceptionCode&)
 {
     Document* document = contextDocument();

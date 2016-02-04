@@ -600,6 +600,9 @@ bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const T
     if (markerController.hasMarkers(rangeWithAlternative, DocumentMarker::RejectedCorrection))
         return false;
 
+    if (markerController.hasMarkers(rangeWithAlternative, DocumentMarker::AcceptedCandidate))
+        return false;
+
     Position beginningOfRange = rangeWithAlternative->startPosition();
     Position precedingCharacterPosition = beginningOfRange.previous();
     RefPtr<Range> precedingCharacterRange = Range::create(*m_frame.document(), precedingCharacterPosition, beginningOfRange);
