@@ -1,3 +1,18 @@
+2016-02-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed unused Settings::setPrivateBrowsingEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=153869
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implementation of Settings::setPrivateBrowsingEnabled was removed
+        in r166661, but declaration is still here.
+
+        No new tests needed.
+
+        * page/Settings.h:
+        (WebCore::Settings::setPrivateBrowsingEnabled): Deleted.
+
 2016-02-04  Eric Carlson  <eric.carlson@apple.com>
 
         Don't discard in-band cues with negative start times
