@@ -299,7 +299,7 @@ SOFT_LINK_POINTER(AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)
 
 SOFT_LINK_FRAMEWORK(MediaToolbox)
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
 SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
 #endif
 
