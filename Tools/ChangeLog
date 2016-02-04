@@ -1,3 +1,14 @@
+2016-02-03  Aakash Jain  <aakash_jain@apple.com>
+
+        Logs/CoreSimulator filling up OS disk on WebKit testers
+        https://bugs.webkit.org/show_bug.cgi?id=153853
+        <rdar://problem/24496003>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.clean_up_test_run): Delete Logs during cleanup.
+
 2016-02-03  Brian Burg  <bburg@apple.com>
 
         git-add-reviewer should work when run from a subdirectory within the repository

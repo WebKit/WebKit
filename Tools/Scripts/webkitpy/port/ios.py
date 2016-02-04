@@ -257,6 +257,8 @@ class IOSSimulatorPort(Port):
             try:
                 subprocess.call([self.LSREGISTER_PATH, "-v", "-u", self.get_simulator_path(i)])
                 shutil.rmtree(self.get_simulator_path(i), ignore_errors=True)
+                shutil.rmtree(os.path.join(os.path.expanduser("~"), "Library/Logs/CoreSimulator/",
+                    self.testing_device(i).udid), ignore_errors=True)
                 Simulator().delete_device(self.testing_device(i).udid)
             except:
                 _log.warning('Unable to remove Simulator' + str(i))
