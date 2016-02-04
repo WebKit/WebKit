@@ -35,7 +35,7 @@ CodeMirror.extendMode("javascript", {
             if (content === "(") // Most keywords like "if (" but not "function(" or "typeof(".
                 return lastToken && /\bkeyword\b/.test(lastToken) && (lastContent !== "function" && lastContent !== "typeof" && lastContent !== "instanceof");
             if (content === ":") // Ternary.
-                return (state.lexical.type === "stat" || state.lexical.type === ")");
+                return (state.lexical.type === "stat" || state.lexical.type === ")" || state.lexical.type === "]");
             return false;
         }
 
@@ -43,9 +43,11 @@ CodeMirror.extendMode("javascript", {
             return true;
 
         if (/\boperator\b/.test(token)) {
+            if (!lastToken && (content === "+" || content === "-" || content === "~") && (lastContent !== ")" && lastContent !== "]")) // Possible Unary +/-.
+                return false;
             if (content === "!") // Unary ! should not be confused with "!=".
                 return false;
-            return "+-/*&&||!===+=-=>=<=?".indexOf(content) >= 0; // Operators.
+            return "+-/*%&&||!===+=-=>=<=?".indexOf(content) >= 0; // Operators.
         }
 
         if (/\bkeyword\b/.test(token)) { // Most keywords require spaces before them, unless a '}' can come before it.
@@ -86,7 +88,11 @@ CodeMirror.extendMode("javascript", {
         if (lastContent === "!") // Unary ! should not be confused with "!=".
             return false;
 
-        return ",+-/*&&||:!===+=-=>=<=?".indexOf(lastContent) >= 0; // Operators.
+        // If this unary operator did not have a leading expression it is probably unary.
+        if ((lastContent === "+" || lastContent === "-" || lastContent === "~") && !state._jsPrettyPrint.unaryOperatorHadLeadingExpr)
+            return false;
+
+        return ",+-/*%&&||:!===+=-=>=<=?".indexOf(lastContent) >= 0; // Operators.
     },
 
     newlinesAfterToken: function(lastToken, lastContent, token, state, content, isComment)
@@ -120,7 +126,7 @@ CodeMirror.extendMode("javascript", {
             if (content === ";") // "x = {};" or ";;".
                 return "};".indexOf(lastContent) >= 0;
             if (content === ":") // Ternary.
-                return lastContent === "}" && (state.lexical.type === "stat" || state.lexical.type === ")");
+                return lastContent === "}" && (state.lexical.type === "stat" || state.lexical.type === ")" || state.lexical.type === "]");
             if (",().".indexOf(content) >= 0) // "})", "}.bind", "function() { ... }()", or "}, false)".
                 return lastContent === "}";
             return false;
@@ -194,6 +200,7 @@ CodeMirror.extendMode("javascript", {
                 lastIfIndentCount: 0, // Keep track of the indent the last time we saw an if without braces.
                 openBraceStartMarkers: [],  // Keep track of non-single statement blocks.
                 openBraceTrackingCount: -1, // Keep track of "{" and "}" in non-single statement blocks.
+                unaryOperatorHadLeadingExpr: false, // Try to detect if a unary operator had a leading expression and therefore may be binary.
             };
         }
 
@@ -303,6 +310,11 @@ CodeMirror.extendMode("javascript", {
             state._jsPrettyPrint.dedentSize = 0;
             state._jsPrettyPrint.shouldDedent = false;
         }
+
+        if ((content === "+" || content === "-" || content === "~") && (lastContent === ")" || lastContent === "]" || /\b(?:variable|number)\b/.test(lastToken)))
+            state._jsPrettyPrint.unaryOperatorHadLeadingExpr = true;
+        else
+            state._jsPrettyPrint.unaryOperatorHadLeadingExpr = false;
     }
 });
 

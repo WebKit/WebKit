@@ -11,3 +11,6 @@ PASS
 -- Running test case: CodeMirror.PrettyPrinting.JavaScript.switch-case-default.js
 PASS
 
+-- Running test case: CodeMirror.PrettyPrinting.JavaScript.unary-binary-operators.js
+PASS
+
