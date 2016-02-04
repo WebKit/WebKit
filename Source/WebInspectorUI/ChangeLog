@@ -1,3 +1,51 @@
+2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: New timeline images for instruments
+        https://bugs.webkit.org/show_bug.cgi?id=153884
+        <rdar://problem/24509429>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.iconClassNameForTimeline):
+        Better names and give Memory timeline a name for an icon.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline.large .item .icon):
+        Add more padding next to large icons.
+
+        * UserInterface/Images/ColorsLarge.png: Removed.
+        * UserInterface/Images/ColorsLarge@2x.png: Removed.
+        * UserInterface/Images/Frames.png: Removed.
+        * UserInterface/Images/Frames@2x.png: Removed.
+        * UserInterface/Images/LayoutInstrument.svg: Added.
+        * UserInterface/Images/MemoryInstrument.svg: Added.
+        * UserInterface/Images/NetworkInstrument.svg: Added.
+        * UserInterface/Images/NetworkLarge.png: Removed.
+        * UserInterface/Images/NetworkLarge@2x.png: Removed.
+        * UserInterface/Images/RenderingFramesInstrument.svg: Added.
+        * UserInterface/Images/ScriptLarge.png: Removed.
+        * UserInterface/Images/ScriptLarge@2x.png: Removed.
+        Remove old timeline pngs.
+
+        * UserInterface/Images/ScriptsInstrument.svg: Added.
+        * UserInterface/Views/TimelineIcons.css:
+        (.network-icon .icon):
+        (.script-icon .icon):
+        (.memory-icon .icon):
+        (.layout-icon .icon):
+        (.rendering-frame-icon .icon):
+        Use the new SVGs.
+
+        (body:not(.mac-platform, .windows-platform) .network-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .network-icon.large .icon):
+        (body:not(.mac-platform, .windows-platform) .layout-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .layout-icon.large .icon):
+        (body:not(.mac-platform, .windows-platform) .script-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .script-icon.large .icon):
+        (body:not(.mac-platform, .windows-platform) .rendering-frame-icon .icon):
+        Fallback to old icons for non-Mac/Windows ports using Images/gtk images.
+
 2016-02-04  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Show error icons if invalid values already exist for properties in the Visual sidebar

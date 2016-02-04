@@ -24,30 +24,51 @@
  */
 
 .network-icon .icon {
-    content: -webkit-image-set(url(../Images/Network.png) 1x, url(../Images/Network@2x.png) 2x);
-}
-
-.network-icon.large .icon {
-    content: -webkit-image-set(url(../Images/NetworkLarge.png) 1x, url(../Images/NetworkLarge@2x.png) 2x);
-}
-
-.colors-icon .icon {
-    content: -webkit-image-set(url(../Images/Colors.png) 1x, url(../Images/Colors@2x.png) 2x);
-}
-
-.colors-icon.large .icon {
-    content: -webkit-image-set(url(../Images/ColorsLarge.png) 1x, url(../Images/ColorsLarge@2x.png) 2x);
+    content: url(../Images/NetworkInstrument.svg);
 }
 
 .script-icon .icon {
-    content: -webkit-image-set(url(../Images/Script.png) 1x, url(../Images/Script@2x.png) 2x);
+    content: url(../Images/ScriptsInstrument.svg);
 }
 
-.script-icon.large .icon {
-    content: -webkit-image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
+.memory-icon .icon {
+    content: url(../Images/MemoryInstrument.svg);
+}
+
+.layout-icon .icon {
+    content: url(../Images/LayoutInstrument.svg);
 }
 
 .rendering-frame-icon .icon {
+    content: url(../Images/RenderingFramesInstrument.svg);
+}
+
+/* FIXME: <https://webkit.org/b/153892> [GTK] Web Inspector: Add new GTK+ icons for instrument icons */
+body:not(.mac-platform, .windows-platform) .network-icon .icon {
+    content: -webkit-image-set(url(../Images/Network.png) 1x, url(../Images/Network@2x.png) 2x);
+}
+
+body:not(.mac-platform, .windows-platform) .network-icon.large .icon {
+    content: -webkit-image-set(url(../Images/NetworkLarge.png) 1x, url(../Images/NetworkLarge@2x.png) 2x);
+}
+
+body:not(.mac-platform, .windows-platform) .layout-icon .icon {
+    content: -webkit-image-set(url(../Images/Colors.png) 1x, url(../Images/Colors@2x.png) 2x);
+}
+
+body:not(.mac-platform, .windows-platform) .layout-icon.large .icon {
+    content: -webkit-image-set(url(../Images/ColorsLarge.png) 1x, url(../Images/ColorsLarge@2x.png) 2x);
+}
+ 
+body:not(.mac-platform, .windows-platform) .script-icon .icon {
+    content: -webkit-image-set(url(../Images/Script.png) 1x, url(../Images/Script@2x.png) 2x);
+}
+ 
+body:not(.mac-platform, .windows-platform) .script-icon.large .icon {
+    content: -webkit-image-set(url(../Images/ScriptLarge.png) 1x, url(../Images/ScriptLarge@2x.png) 2x);
+}
+ 
+body:not(.mac-platform, .windows-platform) .rendering-frame-icon .icon {
     content: -webkit-image-set(url(../Images/Frames.png) 1x, url(../Images/Frames@2x.png) 2x);
 }
 

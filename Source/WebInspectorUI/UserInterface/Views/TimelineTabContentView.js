@@ -75,9 +75,9 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         case WebInspector.TimelineRecord.Type.Network:
             return "network-icon";
         case WebInspector.TimelineRecord.Type.Layout:
-            return "colors-icon";
+            return "layout-icon";
         case WebInspector.TimelineRecord.Type.Memory:
-            // FIXME: Need a new icon. For now fall through to the Script icon.
+            return "memory-icon";
         case WebInspector.TimelineRecord.Type.Script:
             return "script-icon";
         case WebInspector.TimelineRecord.Type.RenderingFrame:
