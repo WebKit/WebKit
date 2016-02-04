@@ -297,7 +297,7 @@ SOFT_LINK_POINTER(AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)
 #define AVURLAssetBoundNetworkInterfaceName getAVURLAssetBoundNetworkInterfaceName()
 #endif
 
-#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+#if ENABLE(AVF_CAPTIONS)
 SOFT_LINK_FRAMEWORK(MediaToolbox)
 SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
 #endif
