@@ -124,16 +124,12 @@ public:
 
     void add32(TrustedImm32 imm, Address address)
     {
-        if (!imm.m_value)
-            return;
-        add32AndSetFlags(imm, address);
+        m_assembler.addl_im(imm.m_value, address.offset, address.base);
     }
 
     void add32(TrustedImm32 imm, BaseIndex address)
     {
-        if (!imm.m_value)
-            return;
-        add32AndSetFlags(imm, address);
+        m_assembler.addl_im(imm.m_value, address.offset, address.base, address.index, address.scale);
     }
 
     void add8(TrustedImm32 imm, Address address)
@@ -158,9 +154,10 @@ public:
 
     void add32(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_value)
-            return;
-        add32AndSetFlags(imm, dest);
+        if (imm.m_value == 1)
+            m_assembler.inc_r(dest);
+        else
+            m_assembler.addl_ir(imm.m_value, dest);
     }
     
     void add32(Address src, RegisterID dest)
@@ -1684,13 +1681,13 @@ public:
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        add32AndSetFlags(imm, dest);
+        add32(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchAdd32(ResultCondition cond, TrustedImm32 src, Address dest)
     {
-        add32AndSetFlags(src, dest);
+        add32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
@@ -2052,24 +2049,6 @@ private:
             m_assembler.testb_im(mask.m_value >> 24, address.offset + 3, address.base);
         else
             m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
-    }
-
-    void add32AndSetFlags(TrustedImm32 imm, RegisterID dest)
-    {
-        if (imm.m_value == 1)
-            m_assembler.inc_r(dest);
-        else
-            m_assembler.addl_ir(imm.m_value, dest);
-    }
-
-    void add32AndSetFlags(TrustedImm32 imm, Address address)
-    {
-        m_assembler.addl_im(imm.m_value, address.offset, address.base);
-    }
-
-    void add32AndSetFlags(TrustedImm32 imm, BaseIndex address)
-    {
-        m_assembler.addl_im(imm.m_value, address.offset, address.base, address.index, address.scale);
     }
 
     // If lzcnt is not available, use this after BSR

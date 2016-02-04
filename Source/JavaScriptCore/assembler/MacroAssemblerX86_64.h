@@ -57,9 +57,6 @@ public:
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        if (!imm.m_value)
-            return;
-
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
         add32(imm, Address(scratchRegister()));
     }
@@ -276,33 +273,29 @@ public:
 
     void add64(TrustedImm32 imm, RegisterID srcDest)
     {
-        if (!imm.m_value)
-            return;
-        add64AndSetFlags(imm, srcDest);
+        if (imm.m_value == 1)
+            m_assembler.incq_r(srcDest);
+        else
+            m_assembler.addq_ir(imm.m_value, srcDest);
     }
 
-    void add64(TrustedImm64 imm, RegisterID srcDest)
+    void add64(TrustedImm64 imm, RegisterID dest)
     {
-        if (!imm.m_value)
-            return;
-        add64AndSetFlags(imm, srcDest);
+        if (imm.m_value == 1)
+            m_assembler.incq_r(dest);
+        else {
+            move(imm, scratchRegister());
+            add64(scratchRegister(), dest);
+        }
     }
 
     void add64(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_value) {
-            move(src, dest);
-            return;
-        }
-
         m_assembler.leaq_mr(imm.m_value, src, dest);
     }
 
     void add64(TrustedImm32 imm, Address address)
     {
-        if (!imm.m_value)
-            return;
-
         if (imm.m_value == 1)
             m_assembler.incq_m(address.offset, address.base);
         else
@@ -311,9 +304,6 @@ public:
 
     void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
-        if (!imm.m_value)
-            return;
-
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
         add64(imm, Address(scratchRegister()));
     }
@@ -873,7 +863,7 @@ public:
 
     Jump branchAdd64(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        add64AndSetFlags(imm, dest);
+        add64(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
@@ -1115,24 +1105,6 @@ public:
     }
 
 private:
-    void add64AndSetFlags(TrustedImm32 imm, RegisterID srcDest)
-    {
-        if (imm.m_value == 1)
-            m_assembler.incq_r(srcDest);
-        else
-            m_assembler.addq_ir(imm.m_value, srcDest);
-    }
-
-    void add64AndSetFlags(TrustedImm64 imm, RegisterID dest)
-    {
-        if (imm.m_value == 1)
-            m_assembler.incq_r(dest);
-        else {
-            move(imm, scratchRegister());
-            add64(scratchRegister(), dest);
-        }
-    }
-
     // If lzcnt is not available, use this after BSR
     // to count the leading zeros.
     void clz64AfterBsr(RegisterID dst)

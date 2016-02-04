@@ -1,3 +1,32 @@
+2016-02-04  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(192409): Cannot rely on add32() to zero-extend
+        https://bugs.webkit.org/show_bug.cgi?id=153897
+
+        Unreviewed rollout of r192409.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::add32):
+        (JSC::MacroAssemblerARM64::add64):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::add32):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::add32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::add8):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::generateTest32):
+        (JSC::MacroAssemblerX86Common::clz32AfterBsr):
+        (JSC::MacroAssemblerX86Common::add32AndSetFlags): Deleted.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add32):
+        (JSC::MacroAssemblerX86_64::add64):
+        (JSC::MacroAssemblerX86_64::branchAdd64):
+        (JSC::MacroAssemblerX86_64::repatchCall):
+        (JSC::MacroAssemblerX86_64::clz64AfterBsr):
+        (JSC::MacroAssemblerX86_64::add64AndSetFlags): Deleted.
+
 2016-02-04  Andreas Kling  <akling@apple.com>
 
         Remove dead ENABLE(BYTECODE_COMMENTS) cruft.

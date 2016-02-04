@@ -153,19 +153,11 @@ public:
 
     void add32(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_value)
-            return;
-
         add32(imm, dest, dest);
     }
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_value) {
-            move(src, dest);
-            return;
-        }
-
         if (isUInt12(imm.m_value))
             m_assembler.add<32>(dest, src, UInt12(imm.m_value));
         else if (isUInt12(-imm.m_value))
@@ -178,9 +170,6 @@ public:
 
     void add32(TrustedImm32 imm, Address address)
     {
-        if (!imm.m_value)
-            return;
-
         load32(address, getCachedDataTempRegisterIDAndInvalidate());
 
         if (isUInt12(imm.m_value))
@@ -197,9 +186,6 @@ public:
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        if (!imm.m_value)
-            return;
-
         load32(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
 
         if (isUInt12(imm.m_value)) {
@@ -243,9 +229,6 @@ public:
 
     void add64(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_value)
-            return;
-
         if (isUInt12(imm.m_value)) {
             m_assembler.add<64>(dest, dest, UInt12(imm.m_value));
             return;
@@ -262,8 +245,6 @@ public:
     void add64(TrustedImm64 imm, RegisterID dest)
     {
         intptr_t immediate = imm.m_value;
-        if (!immediate)
-            return;
 
         if (isUInt12(immediate)) {
             m_assembler.add<64>(dest, dest, UInt12(static_cast<int32_t>(immediate)));
@@ -280,11 +261,6 @@ public:
 
     void add64(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_value) {
-            move(src, dest);
-            return;
-        }
-
         if (isUInt12(imm.m_value)) {
             m_assembler.add<64>(dest, src, UInt12(imm.m_value));
             return;
@@ -300,9 +276,6 @@ public:
 
     void add64(TrustedImm32 imm, Address address)
     {
-        if (!imm.m_value)
-            return;
-
         load64(address, getCachedDataTempRegisterIDAndInvalidate());
 
         if (isUInt12(imm.m_value))
@@ -319,9 +292,6 @@ public:
 
     void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
-        if (!imm.m_value)
-            return;
-
         load64(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
 
         if (isUInt12(imm.m_value)) {

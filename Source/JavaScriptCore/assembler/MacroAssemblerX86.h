@@ -58,19 +58,11 @@ public:
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_value) {
-            move(src, dest);
-            return;
-        }
-
         m_assembler.leal_mr(imm.m_value, src, dest);
     }
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        if (!imm.m_value)
-            return;
-
         m_assembler.addl_im(imm.m_value, address.m_ptr);
     }
     
