@@ -48,6 +48,10 @@ public:
 
     bool didChangeConstructorProperty() const { return m_didChangeConstructorProperty; }
 
+    static const bool needsDestruction = false;
+    // We don't need destruction since we use a finalizer.
+    static void destroy(JSC::JSCell*);
+
 protected:
     void finishCreation(VM&, JSGlobalObject*);
 

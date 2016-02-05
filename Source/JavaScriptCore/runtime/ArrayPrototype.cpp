@@ -74,6 +74,7 @@ ArrayPrototype* ArrayPrototype::create(VM& vm, JSGlobalObject* globalObject, Str
 {
     ArrayPrototype* prototype = new (NotNull, allocateCell<ArrayPrototype>(vm.heap)) ArrayPrototype(vm, structure);
     prototype->finishCreation(vm, globalObject);
+    vm.heap.addFinalizer(prototype, destroy);
     return prototype;
 }
 
@@ -136,6 +137,12 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     for (const char* unscopableName : unscopableNames)
         unscopables->putDirect(vm, Identifier::fromString(&vm, unscopableName), jsBoolean(true));
     putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, unscopables, DontEnum | ReadOnly);
+}
+
+void ArrayPrototype::destroy(JSC::JSCell* cell)
+{
+    ArrayPrototype* thisObject = static_cast<ArrayPrototype*>(cell);
+    thisObject->ArrayPrototype::~ArrayPrototype();
 }
 
 // ------------------------------ Array Functions ----------------------------

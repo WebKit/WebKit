@@ -319,6 +319,7 @@ typedef const char* optionString;
     \
     v(gcLogLevel, logGC, GCLogging::None, "debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)") \
     v(bool, useGC, true, nullptr) \
+    v(bool, gcAtEnd, false, "If true, the jsc CLI will do a GC before exiting") \
     v(bool, forceGCSlowPaths, false, "If true, we will force all JIT fast allocations down their slow paths.")\
     v(unsigned, gcMaxHeapSize, 0, nullptr) \
     v(unsigned, forceRAMSize, 0, nullptr) \

@@ -1,3 +1,23 @@
+2016-02-04  Keith Miller  <keith_miller@apple.com>
+
+        ArrayPrototype should have a destroy function
+        https://bugs.webkit.org/show_bug.cgi?id=153847
+
+        Reviewed by Filip Pizlo.
+
+        ArrayPrototype should have an destroy function as it now has a unique_ptr member that
+        needs to be freed at the end of the object's life cycle. Also, this patch adds an
+        option, gcAtEnd, that will cause jsc.cpp to do a garbage collection before exiting.
+
+        * jsc.cpp:
+        (runJSC):
+        (jscmain):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::create):
+        (JSC::ArrayPrototype::destroy):
+        * runtime/ArrayPrototype.h:
+        * runtime/Options.h:
+
 2016-02-04  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(192409): Cannot rely on add32() to zero-extend
