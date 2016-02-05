@@ -2930,3 +2930,5 @@ webkit.org/b/153803 perf/show-hide-table-rows.html [ Pass Failure ]
 webkit.org/b/152306 fast/forms/input-user-input-sanitization.html [ Skip ]
 
 webkit.org/b/153314 http/tests/history/back-to-post.php [ Pass Timeout ]
+
+webkit.org/b/153929 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Pass Failure ]
