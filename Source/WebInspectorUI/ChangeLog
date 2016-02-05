@@ -1,5 +1,15 @@
 2016-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        REGRESSION (r193913): Web Inspector: Wrong z-index of inner sections
+        https://bugs.webkit.org/show_bug.cgi?id=153914
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section .details-section > .header):
+
+2016-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Decrease font-weight of inner sections
         https://bugs.webkit.org/show_bug.cgi?id=153913
         <rdar://problem/24520326>

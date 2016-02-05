@@ -81,7 +81,7 @@
     font-weight: 500;
 
     /* Ensure these headers are displayed below the parent header but above scrollbars. */
-    z-index: var(--z-index-header);
+    z-index: calc(var(--z-index-header) - 1);
 }
 
 .details-section .details-section:not(.collapsed) > .header {
