@@ -1,3 +1,25 @@
+2016-02-05  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Remove DOMWrapped parameter from JSKeyValueIterator
+        https://bugs.webkit.org/show_bug.cgi?id=153859
+
+        Reviewed by Sam Weinig.
+
+        No change in behavior.
+
+        Using std::declval to infer DOMWrapped from JSWrapper::wrapped.
+
+        * bindings/js/JSFetchHeadersCustom.cpp:
+        (WebCore::JSFetchHeaders::entries):
+        (WebCore::JSFetchHeaders::keys):
+        (WebCore::JSFetchHeaders::values):
+        * bindings/js/JSKeyValueIterator.h:
+        (WebCore::createIterator):
+        (WebCore::JSKeyValueIterator<JSWrapper>::destroy):
+        (WebCore::JSKeyValueIterator<JSWrapper>::next):
+        (WebCore::JSKeyValueIteratorPrototypeFunctionNext):
+        (WebCore::JSKeyValueIteratorPrototype<JSWrapper>::finishCreation):
+
 2016-02-05  Nan Wang  <n_wang@apple.com>
 
         AX: WebKit hanging when VoiceOver attempts to focus in on page

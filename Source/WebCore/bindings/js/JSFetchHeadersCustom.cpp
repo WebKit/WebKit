@@ -36,8 +36,8 @@
 namespace WebCore {
 
 // FIXME: Move this code to JSFetchHeaders.
-using FetchHeadersIterator = JSKeyValueIterator<JSFetchHeaders, FetchHeaders>;
-using FetchHeadersIteratorPrototype = JSKeyValueIteratorPrototype<JSFetchHeaders, FetchHeaders>;
+using FetchHeadersIterator = JSKeyValueIterator<JSFetchHeaders>;
+using FetchHeadersIteratorPrototype = JSKeyValueIteratorPrototype<JSFetchHeaders>;
 
 template<>
 const JSC::ClassInfo FetchHeadersIterator::s_info = { "Headers Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(FetchHeadersIterator) };
@@ -47,17 +47,17 @@ const JSC::ClassInfo FetchHeadersIteratorPrototype::s_info = { "Headers Iterator
 
 JSC::JSValue JSFetchHeaders::entries(JSC::ExecState&)
 {
-    return createIterator<JSFetchHeaders, FetchHeaders>(*globalObject(), *this, IterationKind::KeyValue);
+    return createIterator<JSFetchHeaders>(*globalObject(), *this, IterationKind::KeyValue);
 }
 
 JSC::JSValue JSFetchHeaders::keys(JSC::ExecState&)
 {
-    return createIterator<JSFetchHeaders, FetchHeaders>(*globalObject(), *this, IterationKind::Key);
+    return createIterator<JSFetchHeaders>(*globalObject(), *this, IterationKind::Key);
 }
 
 JSC::JSValue JSFetchHeaders::values(JSC::ExecState&)
 {
-    return createIterator<JSFetchHeaders, FetchHeaders>(*globalObject(), *this, IterationKind::Value);
+    return createIterator<JSFetchHeaders>(*globalObject(), *this, IterationKind::Value);
 }
 
 }
