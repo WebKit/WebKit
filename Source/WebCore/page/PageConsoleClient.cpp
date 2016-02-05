@@ -184,11 +184,13 @@ void PageConsoleClient::count(JSC::ExecState* exec, RefPtr<ScriptArguments>&& ar
 
 void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
 {
+    // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
     InspectorInstrumentation::startProfiling(m_page, exec, title);
 }
 
 void PageConsoleClient::profileEnd(JSC::ExecState* exec, const String& title)
 {
+    // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
     if (RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(m_page, exec, title))
         m_profiles.append(WTFMove(profile));
 }

@@ -1,3 +1,16 @@
+2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler
+        https://bugs.webkit.org/show_bug.cgi?id=153500
+        <rdar://problem/24352458>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebInspector.cpp:
+        (WebInspector::isJavaScriptProfilingEnabled):
+        (WebInspector::setJavaScriptProfilingEnabled):
+        Switch to the new API names.
+
 2016-01-31  Darin Adler  <darin@apple.com>
 
         Replace CaseFoldingHash with ASCIICaseInsensitiveHash

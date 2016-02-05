@@ -174,7 +174,7 @@ namespace JSC {
 
 const ClassInfo JSGlobalObject::s_info = { "GlobalObject", &Base::s_info, &globalObjectTable, CREATE_METHOD_TABLE(JSGlobalObject) };
 
-const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, nullptr, &shouldInterruptScriptBeforeTimeout, nullptr, nullptr, nullptr, nullptr, nullptr };
+const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsLegacyProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, nullptr, &shouldInterruptScriptBeforeTimeout, nullptr, nullptr, nullptr, nullptr, nullptr };
 
 /* Source for JSGlobalObject.lut.h
 @begin globalObjectTable
@@ -606,12 +606,9 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     resetPrototype(vm, prototype());
 }
 
-bool JSGlobalObject::hasProfiler() const
+bool JSGlobalObject::hasLegacyProfiler() const
 {
-    if (m_debugger && m_debugger->hasProfilingClient())
-        return true;
-
-    return globalObjectMethodTable()->supportsProfiling(this);
+    return globalObjectMethodTable()->supportsLegacyProfiling(this);
 }
 
 void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -974,7 +971,7 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     ParserError error;
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     DebuggerMode debuggerMode = hasDebugger() ? DebuggerOn : DebuggerOff;
-    ProfilerMode profilerMode = hasProfiler() ? ProfilerOn : ProfilerOff;
+    ProfilerMode profilerMode = hasLegacyProfiler() ? ProfilerOn : ProfilerOff;
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getProgramCodeBlock(
         vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, 
         debuggerMode, profilerMode, error);
@@ -995,7 +992,7 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
     ParserError error;
     JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     DebuggerMode debuggerMode = hasDebugger() ? DebuggerOn : DebuggerOff;
-    ProfilerMode profilerMode = hasProfiler() ? ProfilerOn : ProfilerOff;
+    ProfilerMode profilerMode = hasLegacyProfiler() ? ProfilerOn : ProfilerOff;
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = vm().codeCache()->getEvalCodeBlock(
         vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, strictMode, thisTDZMode, isArrowFunctionContext, debuggerMode, profilerMode, error, variablesUnderTDZ);
 
@@ -1014,7 +1011,7 @@ UnlinkedModuleProgramCodeBlock* JSGlobalObject::createModuleProgramCodeBlock(Cal
 {
     ParserError error;
     DebuggerMode debuggerMode = hasDebugger() ? DebuggerOn : DebuggerOff;
-    ProfilerMode profilerMode = hasProfiler() ? ProfilerOn : ProfilerOff;
+    ProfilerMode profilerMode = hasLegacyProfiler() ? ProfilerOn : ProfilerOff;
     UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = vm().codeCache()->getModuleProgramCodeBlock(
         vm(), executable, executable->source(), JSParserBuiltinMode::NotBuiltin, debuggerMode, profilerMode, error);
 

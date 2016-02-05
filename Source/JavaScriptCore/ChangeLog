@@ -1,3 +1,26 @@
+2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler
+        https://bugs.webkit.org/show_bug.cgi?id=153500
+        <rdar://problem/24352458>
+
+        Reviewed by Timothy Hatcher.
+
+        Be more explicit about enabling legacy profiling.
+
+        * jsc.cpp:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::hasLegacyProfiler):
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        (JSC::JSGlobalObject::createModuleProgramCodeBlock):
+        (JSC::JSGlobalObject::hasProfiler): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::supportsLegacyProfiling):
+        (JSC::JSGlobalObject::supportsProfiling): Deleted.
+
 2016-02-04  Keith Miller  <keith_miller@apple.com>
 
         ArrayPrototype should have a destroy function

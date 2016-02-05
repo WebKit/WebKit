@@ -1,3 +1,18 @@
+2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler
+        https://bugs.webkit.org/show_bug.cgi?id=153500
+        <rdar://problem/24352458>
+
+        Reviewed by Timothy Hatcher.
+
+        * fast/profiler/*.html
+        Be more explicit about enabling legacy profiling.
+
+        * inspector/sampling-profiler/eval-source-url.html
+        Remove an inner loop that was causing tail call optimizations
+        to eliminate the sourceURL we were expecting.
+
 2016-02-04  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed. EFL gardening. Mark some video tests to failure.

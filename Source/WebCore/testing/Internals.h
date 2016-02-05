@@ -281,7 +281,7 @@ public:
 
     RefPtr<DOMWindow> openDummyInspectorFrontend(const String& url);
     void closeDummyInspectorFrontend();
-    void setJavaScriptProfilingEnabled(bool enabled, ExceptionCode&);
+    void setLegacyJavaScriptProfilingEnabled(bool enabled, ExceptionCode&);
     void setInspectorIsUnderTest(bool isUnderTest, ExceptionCode&);
 
     String counterValue(Element*);

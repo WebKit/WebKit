@@ -1,3 +1,52 @@
+2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler
+        https://bugs.webkit.org/show_bug.cgi?id=153500
+        <rdar://problem/24352458>
+
+        Reviewed by Timothy Hatcher.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsLegacyProfiling):
+        (WebCore::JSDOMWindowBase::supportsRichSourceInfo):
+        (WebCore::JSDOMWindowBase::supportsProfiling): Deleted.
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::supportsLegacyProfiling):
+        (WebCore::JSWorkerGlobalScopeBase::supportsProfiling): Deleted.
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::legacyProfilerEnabled):
+        (WebCore::InspectorController::setLegacyProfilerEnabled):
+        Be more explicit about enabling legacy profiling.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorTimelineAgent::didCreateFrontendAndBackend): Deleted.
+        TimelineAgent doesn't need to recompile if using the sampling profiler.
+        This breaks console.profile, but console.profile should move to using
+        the sampling profiler as well.
+
+        (WebCore::InspectorTimelineAgent::startFromConsole):
+        (WebCore::InspectorTimelineAgent::stopFromConsole):
+        (WebCore::startProfiling): Deleted.
+        (WebCore::stopProfiling): Deleted.
+        Inlined the use once static functions.
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::profile):
+        (WebCore::PageConsoleClient::profileEnd):
+        Added FIXMEs for improving console.profile and profileEnd.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setLegacyJavaScriptProfilingEnabled):
+        (WebCore::Internals::setJavaScriptProfilingEnabled): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Be more explicit about enabling legacy profiling.
+
 2016-02-04  Brent Fulgham  <bfulgham@apple.com>
 
         Follow-up: Add "WebKit built-in PDF" Plugin to set of publicly visible plugins

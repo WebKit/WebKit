@@ -84,18 +84,11 @@ InspectorTimelineAgent::~InspectorTimelineAgent()
 void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
     m_instrumentingAgents.setPersistentInspectorTimelineAgent(this);
-
-    // Recompile to include profiling information.
-    // FIXME: This doesn't seem like the most appropriate place.
-    m_environment.scriptDebugServer().recompileAllJSFunctions();
 }
 
-void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
+void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_instrumentingAgents.setPersistentInspectorTimelineAgent(nullptr);
-
-    if (reason != Inspector::DisconnectReason::InspectedTargetDestroyed)
-        m_environment.scriptDebugServer().recompileAllJSFunctions();
 
     ErrorString unused;
     stop(unused);
@@ -203,18 +196,10 @@ double InspectorTimelineAgent::timestamp()
     return m_environment.executionStopwatch()->elapsedTime();
 }
 
-static inline void startProfiling(JSC::ExecState* exec, const String& title, RefPtr<Stopwatch>&& stopwatch)
-{
-    JSC::LegacyProfiler::profiler()->startProfiling(exec, title, WTFMove(stopwatch));
-}
-
-static inline RefPtr<JSC::Profile> stopProfiling(JSC::ExecState* exec, const String& title)
-{
-    return JSC::LegacyProfiler::profiler()->stopProfiling(exec, title);
-}
-
 void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String &title)
 {
+    // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
+
     // Only allow recording of a profile if it is anonymous (empty title) or does not match
     // the title of an already recording profile.
     if (!title.isEmpty()) {
@@ -229,13 +214,15 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
     if (!m_enabled && m_pendingConsoleProfileRecords.isEmpty())
         internalStart();
 
-    startProfiling(exec, title, m_environment.executionStopwatch());
+    JSC::LegacyProfiler::profiler()->startProfiling(exec, title, m_environment.executionStopwatch());
 
     m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true, frameFromExecState(exec)));
 }
 
 RefPtr<JSC::Profile> InspectorTimelineAgent::stopFromConsole(JSC::ExecState* exec, const String& title)
 {
+    // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
+
     // Stop profiles in reverse order. If the title is empty, then stop the last profile.
     // Otherwise, match the title of the profile to stop.
     for (ptrdiff_t i = m_pendingConsoleProfileRecords.size() - 1; i >= 0; --i) {
@@ -245,7 +232,7 @@ RefPtr<JSC::Profile> InspectorTimelineAgent::stopFromConsole(JSC::ExecState* exe
         record.data->getString(ASCIILiteral("title"), recordTitle);
 
         if (title.isEmpty() || recordTitle == title) {
-            RefPtr<JSC::Profile> profile = stopProfiling(exec, title);
+            RefPtr<JSC::Profile> profile = JSC::LegacyProfiler::profiler()->stopProfiling(exec, title);
             if (profile)
                 TimelineRecordFactory::appendProfile(record.data.get(), profile.copyRef());
 
