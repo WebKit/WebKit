@@ -1,3 +1,20 @@
+2016-02-05  Nan Wang  <n_wang@apple.com>
+
+        AX: WebKit hanging when VoiceOver attempts to focus in on page
+        https://bugs.webkit.org/show_bug.cgi?id=153899
+        <rdar://problem/24506603>
+
+        Reviewed by Chris Fleizach.
+
+        The VisiblePosition to CharacterOffset conversion will lead to an infinite loop if the
+        nextVisiblePostion call is returning the original VisiblePosition. Fixed it by breaking out
+        of the loop early in that situation. 
+
+        Test: accessibility/text-marker/character-offset-visible-position-conversion-hang.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+
 2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler
