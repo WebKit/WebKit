@@ -1,3 +1,23 @@
+2016-02-05  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Replace all instances of '%s' with “%s“
+        https://bugs.webkit.org/show_bug.cgi?id=153891
+        <rdar://problem/24510236>
+
+        Reviewed by Timothy Hatcher.
+
+        Switched all WebInspector.UIString() from using '' to ““.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleSelectorPaste):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded):
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor.prototype.update):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._updateSelectorIcon):
+
 2016-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r193913): Web Inspector: Wrong z-index of inner sections

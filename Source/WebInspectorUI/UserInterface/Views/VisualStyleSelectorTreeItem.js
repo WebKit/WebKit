@@ -261,8 +261,8 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         this._hasInvalidSelector = event && event.data && !event.data.valid;
         this._listItemNode.classList.toggle("selector-invalid", !!this._hasInvalidSelector);
         if (this._hasInvalidSelector) {
-            this._iconElement.title = WebInspector.UIString("The selector '%s' is invalid.\nClick to revert to the previous selector.").format(this.selectorText);
-            this.mainTitleElement.title = WebInspector.UIString("Using the previous selector '%s'.").format(this.representedObject.ownerRule.selectorText);
+            this._iconElement.title = WebInspector.UIString("The selector “%s” is invalid.\nClick to revert to the previous selector.").format(this.selectorText);
+            this.mainTitleElement.title = WebInspector.UIString("Using the previous selector “%s”.").format(this.representedObject.ownerRule.selectorText);
             return;
         }
 

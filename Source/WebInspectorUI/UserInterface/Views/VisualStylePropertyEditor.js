@@ -291,7 +291,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
             if (!propertyMissing && !property.valid) {
                 this._warningElement.classList.add("invalid-value");
-                this._warningElement.title = WebInspector.UIString("The value '%s' is not supported for this property.").format(propertyText);
+                this._warningElement.title = WebInspector.UIString("The value “%s” is not supported for this property.").format(propertyText);
                 this.specialPropertyPlaceholderElementText = propertyText;
                 return;
             }

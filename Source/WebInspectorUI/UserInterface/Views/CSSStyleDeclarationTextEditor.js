@@ -1073,14 +1073,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             // This property has a prefix and is valid without the prefix and the rule containing this property does not have the unprefixed version of the property.
             generateInvalidMarker.call(this, {
                 position: from,
-                title: WebInspector.UIString("The 'webkit' prefix is not necessary.\nClick to insert a duplicate without the prefix."),
+                title: WebInspector.UIString("The “webkit” prefix is not necessary.\nClick to insert a duplicate without the prefix."),
                 correction: property.text + "\n" + property.text.replace("-webkit-", ""),
                 autocomplete: false
             });
         } else if (instances > 1) {
             invalidMarkerInfo = {
                 position: from,
-                title: WebInspector.UIString("Duplicate property '%s'.\nClick to delete this property.").format(property.name),
+                title: WebInspector.UIString("Duplicate property “%s”.\nClick to delete this property.").format(property.name),
                 correction: "",
                 autocomplete: false
             };
@@ -1104,12 +1104,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             if (/^(?:\d+)$/.test(property.value)) {
                 invalidMarkerInfo = {
                     position: start,
-                    title: WebInspector.UIString("The value '%s' needs units.\nClick to add 'px' to the value.").format(property.value),
+                    title: WebInspector.UIString("The value “%s” needs units.\nClick to add “px” to the value.").format(property.value),
                     correction: property.name + ": " + property.value + "px;",
                     autocomplete: false
                 };
             } else {
-                var valueReplacement = property.value.length ? WebInspector.UIString("The value '%s' is not supported for this property.\nClick to delete and open autocomplete.").format(property.value) : WebInspector.UIString("This property needs a value.\nClick to open autocomplete.");
+                var valueReplacement = property.value.length ? WebInspector.UIString("The value “%s” is not supported for this property.\nClick to delete and open autocomplete.").format(property.value) : WebInspector.UIString("This property needs a value.\nClick to open autocomplete.");
 
                 invalidMarkerInfo = {
                     position: start,
@@ -1122,7 +1122,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             // The property is valid and exists in the rule while its prefixed version does not.
             invalidMarkerInfo = {
                 position: from,
-                title: WebInspector.UIString("The 'webkit' prefix is needed for this property.\nClick to insert a duplicate with the prefix."),
+                title: WebInspector.UIString("The “webkit” prefix is needed for this property.\nClick to insert a duplicate with the prefix."),
                 correction: "-webkit-" + property.text + "\n" + property.text,
                 autocomplete: false
             };
@@ -1134,7 +1134,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 // The property name has less than 3 other properties that have the same Levenshtein distance.
                 invalidMarkerInfo = {
                     position: from,
-                    title: WebInspector.UIString("Did you mean '%s'?\nClick to replace.").format(closestPropertyName),
+                    title: WebInspector.UIString("Did you mean “%s”?\nClick to replace.").format(closestPropertyName),
                     correction: property.text.replace(property.name, closestPropertyName),
                     autocomplete: true
                 };
@@ -1142,7 +1142,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 // The unprefixed property name has less than 3 other properties that have the same Levenshtein distance.
                 invalidMarkerInfo = {
                     position: from,
-                    title: WebInspector.UIString("Did you mean '%s'?\nClick to replace.").format("-webkit-" + closestPropertyName),
+                    title: WebInspector.UIString("Did you mean “%s”?\nClick to replace.").format("-webkit-" + closestPropertyName),
                     correction: property.text.replace(property.canonicalName, closestPropertyName),
                     autocomplete: true
                 };
@@ -1150,7 +1150,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 // The property name is so vague or nonsensical that there are more than 3 other properties that have the same Levenshtein value.
                 invalidMarkerInfo = {
                     position: from,
-                    title: WebInspector.UIString("The property '%s' is not supported.").format(property.name),
+                    title: WebInspector.UIString("The property “%s” is not supported.").format(property.name),
                     correction: false,
                     autocomplete: false
                 };
