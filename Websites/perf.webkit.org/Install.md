@@ -28,13 +28,10 @@ Remove "basicAuth" entry for production servers that doesn't require a basic aut
 }
 ```
 
-Then run `tools/run-with-remote-server.py`. This launches a httpd server on port 8080.
-
-The initial few page loads after starting the script could take as much as a few minutes depending on your production sever's configurations
-since Apache needs to start a pool of processes. Reloading the dashboards few times should bring the load time under control.
+Then run `tools/remote-cache-server.py start`. This launches a httpd server on port 8080.
 
 The script caches remote server's responses under `public/data/remote-cache` and never revalidates them (to allow offline work).
-If you needed the latest content, delete caches stored in this directory by running `rm -rf public/data/remote-cache`.
+If you needed the latest content, delete caches stored in this directory by running `tools/remote-cache-server.py reset`.
 
 
 # Configuring Apache

@@ -19,7 +19,7 @@
     "remoteServer": {
         "httpdConfig": "tools/remote-server-relay.conf",
         "httpdPID": "tools/remote-server-relay.pid",
-        "httpdErroLog": "tools/remote-server-relay.log",
+        "httpdErrorLog": "tools/remote-server-relay.log",
         "url": "http://perf.webkit.org",
         "basicAuth": {
             "username": "username",
