@@ -28,6 +28,7 @@
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
 #import "PlatformUtilities.h"
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebKit/WebView.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/MainFrame.h>
@@ -108,6 +109,9 @@ public:
 
     virtual void SetUp()
     {
+#if PLATFORM(IOS)
+        JSC::initializeThreading();
+#endif
         view = [[WebView alloc] initWithFrame:NSZeroRect];
         view.frameLoadDelegate = [[[TestNSURLSessionLoaderDelegate alloc] init] autorelease];
 
