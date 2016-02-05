@@ -1,3 +1,21 @@
+2016-02-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should have a script to setup database
+        https://bugs.webkit.org/show_bug.cgi?id=153906
+
+        Reviewed by Chris Dumez.
+
+        Added tools/setup-database.py to setup the database. It retrieves the database name, username, password
+        and initializes a database at the specified location.
+
+        * Install.md: Updated instruction to setup postgres to use setup-database.py.
+        * tools/setup-database.py: Added.
+        (main):
+        (load_database_config):
+        (determine_psql_dir):
+        (start_or_stop_database):
+        (execute_psql_command):
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         buildbot syncing scripts sometimes schedule more than one requests per builder

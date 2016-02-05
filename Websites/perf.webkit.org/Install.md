@@ -39,14 +39,6 @@ If you needed the latest content, delete caches stored in this directory by runn
 
 # Configuring Apache
 
-You can use apachectl to start/stop/restart apache server from the command line:
-
- - Starting httpd: `sudo apachectl start`
- - Stopping httpd: `sudo apachectl stop`
- - Restarting httpd: `sudo apachectl restart`
-
-The apache logs are located at `/private/var/log/apache2`.
-
 ## Instructions if you're using Server.app
 
  - Enable PHP web applications
@@ -67,6 +59,16 @@ The apache logs are located at `/private/var/log/apache2`.
     `sudo cp /Applications/Server.app/Contents/ServerRoot/etc/php.ini /etc/`
  - In El Capitan and later, comment out the `LockFile` directive in `/private/etc/apache2/extra/httpd-mpm.conf`
    since the directive has been superseded by `Mutex` directive.
+
+## Starting Apache
+
+You can use apachectl to start/stop/restart apache server from the command line:
+
+- Starting httpd: `sudo apachectl start`
+- Stopping httpd: `sudo apachectl stop`
+- Restarting httpd: `sudo apachectl restart`
+
+The apache logs are located at `/private/var/log/apache2`.
 
 ## Production Configurations
 
@@ -102,18 +104,17 @@ Require valid-user
 
 # Configuring PostgreSQL
 
-1. Create database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/initdb /Volumes/Data/perf.webkit.org/PostgresSQL`
-2. Start database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
+Run the following command to setup a Postgres server at `/Volumes/Data/perf.webkit.org/PostgresSQL` (or wherever you'd prefer):
+`python ./setup-database.py /Volumes/Data/perf.webkit.org/PostgresSQL`
 
-## Creating a Database and a User
+It automatically retrieves the database name, the username, and the password from `config.json`.
 
-The binaries located in PostgreSQL's directory, or if you're using Server.app in /Applications/Server.app/Contents/ServerRoot/usr/bin/
+## Starting PostgreSQL
 
-1. Create a database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/createdb webkit-perf-db -h localhost`
-2. Create a user: `/Applications/Server.app/Contents/ServerRoot/usr/bin/createuser -P -S -e webkit-perf-db-user -h localhost`
-3. Connect to database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost`
-4. Grant all permissions to the new user: `grant all privileges on database "webkit-perf-db" to "webkit-perf-db-user";`
-5. Update database/config.json.
+The setup script automatically starts the database but you may need to run the following command to manually start the database after reboot.
+
+- Starting the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
+- Stopping the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l /Volumes/Data/perf.webkit.org/PostgresSQL/logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
 
 ## Initializing the Database
 
@@ -122,7 +123,5 @@ Run `database/init-database.sql` in psql as `webkit-perf-db-user`:
 
 ## Making a Backup and Restoring
 
-Run `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost --no-owner -f <filepath> webkit-perf-db | gzip > backup.gz`
-
-To restore, setup a new database and run
-`gunzip backup.gz | /Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost --username webkit-perf-db-user`
+- Backing up the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost --no-owner -f <filepath> webkit-perf-db | gzip > backup.gz`
+- Restoring the database: `gunzip -c backup.gz | /Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost --username webkit-perf-db-user`
