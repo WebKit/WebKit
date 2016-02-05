@@ -1,5 +1,14 @@
 2016-02-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Remove ios-simulator-wk2 specific expectation for imported/w3c/web-platform-tests/html/dom/interfaces.html
+        https://bugs.webkit.org/show_bug.cgi?id=153844
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Removed.
+
+2016-02-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=153844
 
