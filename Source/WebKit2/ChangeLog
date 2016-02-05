@@ -1,5 +1,52 @@
 2016-02-05  Alex Christensen  <achristensen@webkit.org>
 
+        Move NetworkDataTask to its own header and source files
+        https://bugs.webkit.org/show_bug.cgi?id=153922
+
+        Reviewed by Tim Horton.
+
+        Also renamed NetworkSessionTaskClient to NetworkDataTaskClient.
+
+        * NetworkProcess/NetworkDataTask.h: Added.
+        (WebKit::NetworkDataTaskClient::~NetworkDataTaskClient):
+        (WebKit::NetworkDataTask::create):
+        (WebKit::NetworkDataTask::client):
+        (WebKit::NetworkDataTask::pendingDownloadID):
+        (WebKit::NetworkDataTask::pendingDownload):
+        (WebKit::NetworkDataTask::setPendingDownloadID):
+        (WebKit::NetworkDataTask::setPendingDownload):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSessionTaskClient::~NetworkSessionTaskClient): Deleted.
+        (WebKit::NetworkDataTask::create): Deleted.
+        (WebKit::NetworkDataTask::client): Deleted.
+        (WebKit::NetworkDataTask::pendingDownloadID): Deleted.
+        (WebKit::NetworkDataTask::pendingDownload): Deleted.
+        (WebKit::NetworkDataTask::setPendingDownloadID): Deleted.
+        (WebKit::NetworkDataTask::setPendingDownload): Deleted.
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm: Added.
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        (WebKit::NetworkDataTask::scheduleFailure):
+        (WebKit::NetworkDataTask::failureTimerFired):
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        (WebKit::NetworkDataTask::cancel):
+        (WebKit::NetworkDataTask::resume):
+        (WebKit::NetworkDataTask::suspend):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::takeDownloadID):
+        (WebKit::NetworkDataTask::NetworkDataTask): Deleted.
+        (WebKit::NetworkDataTask::~NetworkDataTask): Deleted.
+        (WebKit::NetworkDataTask::scheduleFailure): Deleted.
+        (WebKit::NetworkDataTask::failureTimerFired): Deleted.
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication): Deleted.
+        (WebKit::NetworkDataTask::cancel): Deleted.
+        (WebKit::NetworkDataTask::resume): Deleted.
+        (WebKit::NetworkDataTask::suspend): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2016-02-05  Alex Christensen  <achristensen@webkit.org>
+
         Clean up Blob code
         https://bugs.webkit.org/show_bug.cgi?id=153910
 

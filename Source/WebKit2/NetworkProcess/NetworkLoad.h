@@ -42,7 +42,7 @@ namespace WebKit {
 
 class NetworkLoad
 #if USE(NETWORK_SESSION)
-    : public NetworkSessionTaskClient
+    : public NetworkDataTaskClient
 #else
     : public WebCore::ResourceHandleClient
 #endif
