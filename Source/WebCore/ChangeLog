@@ -1,3 +1,26 @@
+2016-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Scrollbars not correctly rendered in non GNOME environments
+        https://bugs.webkit.org/show_bug.cgi?id=153860
+
+        Reviewed by Michael Catanzaro.
+
+        I noticed this in a matchbox environment, where there's no
+        gnome-setting-daemon running. The problem is only with the
+        scrollbars, because we initialize the GtkSettings in
+        RenderThemeGtk and notify the ScrollbarTheme when it changes, but
+        ScrollbarTheme is created before RenderThemeGtk so we initialize
+        the theme properties before the GtkSettings have been
+        initialized. We can just let the ScrollbarTheme monitor the
+        theme itself instead of relying on being notified by the WebCore
+        layer.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::themeChangedCallback):
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::gtkStyleChangedCallback): Deleted.
+
 2016-02-05  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove DOMWrapped parameter from JSKeyValueIterator

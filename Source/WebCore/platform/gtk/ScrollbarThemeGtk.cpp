@@ -229,6 +229,11 @@ static GRefPtr<GtkStyleContext> createChildStyleContext(GtkStyleContext* parent,
     return styleContext;
 }
 
+static void themeChangedCallback()
+{
+    ScrollbarTheme::theme().themeChanged();
+}
+
 ScrollbarThemeGtk::ScrollbarThemeGtk()
 {
 #if GTK_CHECK_VERSION(3, 19, 2)
@@ -240,6 +245,12 @@ ScrollbarThemeGtk::ScrollbarThemeGtk()
     m_usesOverlayScrollbars = !g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "1");
 #endif
 #endif
+    static bool themeMonitorInitialized = false;
+    if (!themeMonitorInitialized) {
+        g_signal_connect_swapped(gtk_settings_get_default(), "notify::gtk-theme-name", G_CALLBACK(themeChangedCallback), nullptr);
+        themeMonitorInitialized = true;
+    }
+
     updateThemeProperties();
 }
 

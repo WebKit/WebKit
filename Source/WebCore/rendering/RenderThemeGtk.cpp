@@ -168,7 +168,6 @@ enum RenderThemePart {
 
 static void gtkStyleChangedCallback(GObject*, GParamSpec*)
 {
-    static_cast<ScrollbarThemeGtk&>(ScrollbarTheme::theme()).themeChanged();
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
