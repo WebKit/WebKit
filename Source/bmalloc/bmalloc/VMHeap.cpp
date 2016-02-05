@@ -53,7 +53,9 @@ void VMHeap::grow()
         m_mediumPages.push(it);
 
     LargeChunk* largeChunk = superChunk->largeChunk();
-    m_largeObjects.insert(LargeObject(LargeObject::init(largeChunk).begin()));
+    LargeObject result(LargeObject::init(largeChunk).begin());
+    BASSERT(result.size() == largeMax);
+    m_largeObjects.insert(result);
 }
 
 } // namespace bmalloc

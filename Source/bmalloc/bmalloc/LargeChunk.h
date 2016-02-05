@@ -78,6 +78,9 @@ private:
 #endif
 };
 
+static_assert(largeChunkMetadataSize == sizeof(LargeChunk), "'largeChunkMetadataSize' should be the same number as sizeof(LargeChunk) or our computation in Sizes.h for 'largeMax' is wrong");
+static_assert(largeChunkMetadataSize + largeMax <= largeChunkSize, "We will think we can accommodate larger objects than we can in reality");
+
 inline LargeChunk* LargeChunk::get(void* object)
 {
     BASSERT(!isSmallOrMedium(object));

@@ -1,3 +1,29 @@
+2016-02-05  Saam barati  <sbarati@apple.com>
+
+        bmalloc: largeMax calculation is wrong on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=153923
+
+        Reviewed by Mark Lam.
+
+        Our number for largeMax was larger than what we had
+        space to actually allocate inside the LargeChunk. This made 
+        it so that we would allocate a large object for something
+        that really should be extra large. Previously:
+        largeMax + sizeof(LargeChunk) > 1MB
+        which meant that when we would grow() to accommodate an allocation
+        of a particular size inside a LargeObject despite the fact that
+        the allocation size would be too large to actually fit in the LargeObject.
+        This would manifest when we had an allocation size in the range:
+        1MB - sizeof(LargeChunk) < allocation size < largeMax
+
+        We fix this bug by being precise in our calculation of largeMax
+        instead of just assuming largeChunkSize * 99/100 is enough
+        space for the metadata.
+
+        * bmalloc/LargeChunk.h:
+        (bmalloc::LargeChunk::get):
+        * bmalloc/Sizes.h:
+
 2016-01-31  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove unused definition of HAVE_HEADER_DETECTION_H

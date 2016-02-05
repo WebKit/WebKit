@@ -72,11 +72,16 @@ namespace Sizes {
     static const size_t mediumChunkMask = ~(mediumChunkSize - 1ul);
 
     static const size_t largeChunkSize = superChunkSize / 2;
+#if BPLATFORM(IOS)
+    static const size_t largeChunkMetadataSize = 16 * kB;
+#else
+    static const size_t largeChunkMetadataSize = 4 * kB;
+#endif
     static const size_t largeChunkOffset = 0;
     static const size_t largeChunkMask = ~(largeChunkSize - 1ul);
 
     static const size_t largeAlignment = 64;
-    static const size_t largeMax = largeChunkSize * 99 / 100; // Plenty of room for metadata.
+    static const size_t largeMax = largeChunkSize - largeChunkMetadataSize;
     static const size_t largeMin = mediumMax;
     
     static const size_t xLargeAlignment = vmPageSize;
