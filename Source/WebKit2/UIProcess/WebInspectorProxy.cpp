@@ -572,7 +572,6 @@ void WebInspectorProxy::didClose()
         return;
 
     m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID());
-    m_inspectorPage = nullptr;
 
     m_isVisible = false;
     m_isProfilingPage = false;
@@ -581,9 +580,14 @@ void WebInspectorProxy::didClose()
 
     if (m_isAttached)
         platformDetach();
+
+    // Null out m_inspectorPage after platformDetach(), so the views can be cleaned up correctly.
+    m_inspectorPage = nullptr;
+
     m_isAttached = false;
     m_canAttach = false;
     m_underTest = false;
+
     m_connectionIdentifier = IPC::Attachment();
 
     platformDidClose();
