@@ -130,13 +130,14 @@ BuildbotCombinedQueueView.prototype = {
                         new PopoverTracker(status.statusBubbleElement, this._presentIndividualQueuePopover.bind(this), mostRecentFinishedIteration);
                 }
 
+                var statusMessagePassed = "all " + (queue.builder ? "builds succeeded" : "tests passed");
                 if (mostRecentSuccessfulIteration && mostRecentSuccessfulIteration.loaded) {
                     var message = this.revisionContentForIteration(mostRecentSuccessfulIteration);
                     var url = queue.buildbot.buildPageURLForIteration(mostRecentSuccessfulIteration);
-                    var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentUnsuccessfulIteration ? "last succeeded" : "all tests passed", null, url);
+                    var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentUnsuccessfulIteration ? "last succeeded" : statusMessagePassed, null, url);
                     this.element.appendChild(status.element);
                 } else {
-                    var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, firstRecentUnsuccessfulIteration ? "last succeeded" : "all tests passed");
+                    var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, firstRecentUnsuccessfulIteration ? "last succeeded" : statusMessagePassed);
                     this.element.appendChild(status.element);
 
                     if (firstRecentUnsuccessfulIteration) {

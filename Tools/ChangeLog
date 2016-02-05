@@ -1,3 +1,14 @@
+2016-02-04  Jason Marcell  <jmarcell@apple.com>
+
+        The status message for passing combined builder queues should say "all builds succeeded" when expanded.
+        https://bugs.webkit.org/show_bug.cgi?id=153882
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView.prototype.update): Set status to "all builds succeeded" for combined builder queues
+        when expanded.
+
 2016-02-03  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-stress-tests should be better at telling you details about test failures
