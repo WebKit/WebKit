@@ -1,5 +1,20 @@
 2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed, follow-up fix to r196151 that removes some more images.
+
+        * UserInterface/Images/Colors.png: Removed.
+        * UserInterface/Images/Colors@2x.png: Removed.
+        * UserInterface/Images/Network.png: Removed.
+        * UserInterface/Images/Network@2x.png: Removed.
+        * UserInterface/Images/Script.png: Removed.
+        * UserInterface/Images/Script@2x.png: Removed.
+        These images were supposed to also be removed.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        Also remove references to now removed images.
+
+2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: New timeline images for instruments
         https://bugs.webkit.org/show_bug.cgi?id=153884
         <rdar://problem/24509429>

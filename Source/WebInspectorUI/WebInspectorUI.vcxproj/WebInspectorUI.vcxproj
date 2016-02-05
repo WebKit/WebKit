@@ -482,8 +482,6 @@
     <None Include="..\UserInterface\Images\ClippingJS%402x.png" />
     <None Include="..\UserInterface\Images\ClippingJS.png" />
     <None Include="..\UserInterface\Images\Close.svg" />
-    <None Include="..\UserInterface\Images\Colors%402x.png" />
-    <None Include="..\UserInterface\Images\Colors.png" />
     <None Include="..\UserInterface\Images\Cookie%402x.png" />
     <None Include="..\UserInterface\Images\Cookie.png" />
     <None Include="..\UserInterface\Images\Crosshair.svg" />
@@ -527,10 +525,6 @@
     <None Include="..\UserInterface\Images\FolderGeneric.png" />
     <None Include="..\UserInterface\Images\ForwardArrow.svg" />
     <None Include="..\UserInterface\Images\ForwardArrowLegacy.svg" />
-    <None Include="..\UserInterface\Images\Frames.png" />
-    <None Include="..\UserInterface\Images\Frames%402x.png" />
-    <None Include="..\UserInterface\Images\FramesLarge.png" />
-    <None Include="..\UserInterface\Images\FramesLarge%402x.png" />
     <None Include="..\UserInterface\Images\Function.svg" />
     <None Include="..\UserInterface\Images\GoToArrow.svg" />
     <None Include="..\UserInterface\Images\HierarchicalNavigationItemChevron.svg" />
@@ -574,8 +568,6 @@
     <None Include="..\UserInterface\Images\NavigationItemStorage.svg" />
     <None Include="..\UserInterface\Images\NavigationItemTrash.svg" />
     <None Include="..\UserInterface\Images\NavigationItemVariable.svg" />
-    <None Include="..\UserInterface\Images\Network%402x.png" />
-    <None Include="..\UserInterface\Images\Network.png" />
     <None Include="..\UserInterface\Images\NetworkBarBlue%402x.png" />
     <None Include="..\UserInterface\Images\NetworkBarBlue.png" />
     <None Include="..\UserInterface\Images\NetworkBarGray%402x.png" />
@@ -630,8 +622,6 @@
     <None Include="..\UserInterface\Images\Response.svg" />
     <None Include="..\UserInterface\Images\ResultLine.svg" />
     <None Include="..\UserInterface\Images\Resume.svg" />
-    <None Include="..\UserInterface\Images\Script%402x.png" />
-    <None Include="..\UserInterface\Images\Script.png" />
     <None Include="..\UserInterface\Images\SessionStorage%402x.png" />
     <None Include="..\UserInterface\Images\SessionStorage.png" />
     <None Include="..\UserInterface\Images\ShadowDOM.svg" />
