@@ -78,6 +78,7 @@
 .details-section .details-section > .header {
     top: 21px;
     background-color: hsl(0, 0%, 100%);
+    font-weight: 500;
 
     /* Ensure these headers are displayed below the parent header but above scrollbars. */
     z-index: var(--z-index-header);
