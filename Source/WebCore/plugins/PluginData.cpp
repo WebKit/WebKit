@@ -60,9 +60,14 @@ static inline bool isBuiltInPDFPlugIn(const PluginInfo&)
 
 static bool shouldBePubliclyVisible(const PluginInfo& plugin)
 {
-    // For practical website compatibility, there are a few plugins that need to be
-    // visible. We are matching the set of plugins that Mozilla has been using since
-    // there is a good track record that this does not harm compatibility.
+    // We can greatly reduce fingerprinting opportunities by only advertising plug-ins
+    // that are widely needed for general website compatibility. Since many users
+    // will have these plug-ins, we are not revealing much user-specific information.
+    //
+    // Web compatibility data indicate that Flash, QuickTime, Java, and PDF support
+    // are frequently accessed through the bad practice of iterating over the contents
+    // of the navigator.plugins list. Luckily, these plug-ins happen to be the least
+    // user-specific.
     return plugin.name.containsIgnoringASCIICase("Shockwave")
         || plugin.name.containsIgnoringASCIICase("QuickTime")
         || plugin.name.containsIgnoringASCIICase("Java")

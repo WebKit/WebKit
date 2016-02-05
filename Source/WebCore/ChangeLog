@@ -1,3 +1,15 @@
+2016-02-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Follow-up: Add "WebKit built-in PDF" Plugin to set of publicly visible plugins
+        https://bugs.webkit.org/show_bug.cgi?id=153657
+        <rdar://problem/24413107>
+
+        Reviewed by Darin Adler.
+
+        * plugins/PluginData.cpp:
+        (WebCore::shouldBePubliclyVisible): Revise comments to provide a
+        better explanation of the function and why it exists.
+
 2016-02-04  Jonathan Davis  <jond@apple.com>
 
         Add Fetch API and CSS Variables to feature status
