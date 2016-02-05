@@ -481,6 +481,12 @@ RefPtr<MemoryObjectStore> MemoryIDBBackingStore::takeObjectStoreByIdentifier(uin
     return objectStoreByIdentifier;
 }
 
+IDBObjectStoreInfo* MemoryIDBBackingStore::infoForObjectStore(uint64_t objectStoreIdentifier)
+{
+    ASSERT(m_databaseInfo);
+    return m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
+}
+
 void MemoryIDBBackingStore::deleteBackingStore()
 {
     // The in-memory IDB backing store doesn't need to do any cleanup when it is deleted.

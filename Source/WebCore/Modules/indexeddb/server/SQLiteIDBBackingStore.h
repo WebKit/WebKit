@@ -73,6 +73,7 @@ public:
     virtual IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult) override final;
     virtual IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBKeyData&, uint32_t count, IDBGetResult& outResult) override final;
 
+    virtual IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) override final;
     virtual void deleteBackingStore() override final;
     virtual bool supportsSimultaneousTransactions() override final { return false; }
 
@@ -104,6 +105,7 @@ private:
 
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
+    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfoBeforeVersionChange;
 
     std::unique_ptr<SQLiteDatabase> m_sqliteDB;
 

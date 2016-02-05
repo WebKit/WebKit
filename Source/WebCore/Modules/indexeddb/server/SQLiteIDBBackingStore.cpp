@@ -612,6 +612,7 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
 
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
+    ASSERT(m_databaseInfo);
 
     auto addResult = m_transactions.add(info.identifier(), nullptr);
     if (!addResult.isNewEntry) {
@@ -620,7 +621,12 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     }
 
     addResult.iterator->value = std::make_unique<SQLiteIDBTransaction>(*this, info);
-    return addResult.iterator->value->begin(*m_sqliteDB);
+
+    auto error = addResult.iterator->value->begin(*m_sqliteDB);
+    if (error.isNull() && info.mode() == IndexedDB::TransactionMode::VersionChange)
+        m_originalDatabaseInfoBeforeVersionChange = std::make_unique<IDBDatabaseInfo>(*m_databaseInfo);
+
+    return error;
 }
 
 IDBError SQLiteIDBBackingStore::abortTransaction(const IDBResourceIdentifier& identifier)
@@ -634,6 +640,12 @@ IDBError SQLiteIDBBackingStore::abortTransaction(const IDBResourceIdentifier& id
     if (!transaction) {
         LOG_ERROR("Attempt to commit a transaction that hasn't been established");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to abort a transaction that hasn't been established") };
+    }
+
+
+    if (transaction->mode() == IndexedDB::TransactionMode::VersionChange) {
+        ASSERT(m_originalDatabaseInfoBeforeVersionChange);
+        m_databaseInfo = WTFMove(m_originalDatabaseInfoBeforeVersionChange);
     }
 
     return transaction->abort();
@@ -652,7 +664,16 @@ IDBError SQLiteIDBBackingStore::commitTransaction(const IDBResourceIdentifier& i
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to commit a transaction that hasn't been established") };
     }
 
-    return transaction->commit();
+    auto error = transaction->commit();
+    if (!error.isNull()) {
+        if (transaction->mode() == IndexedDB::TransactionMode::VersionChange) {
+            ASSERT(m_originalDatabaseInfoBeforeVersionChange);
+            m_databaseInfo = WTFMove(m_originalDatabaseInfoBeforeVersionChange);
+        }
+    } else
+        m_originalDatabaseInfoBeforeVersionChange = nullptr;
+
+    return error;
 }
 
 IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& info)
@@ -701,6 +722,8 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
             return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not seed initial key generator value for object store") };
         }
     }
+
+    m_databaseInfo->addExistingObjectStore(info);
 
     return { };
 }
@@ -776,6 +799,8 @@ IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
             return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not delete IDBIndex records for deleted object store") };
         }
     }
+
+    m_databaseInfo->deleteObjectStore(objectStoreIdentifier);
 
     return true;
 }
@@ -889,6 +914,10 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
             return { IDBDatabaseException::UnknownError, ASCIILiteral("Error advancing cursor while indexing existing records for new index") };
         }
     }
+
+    auto* objectStore = m_databaseInfo->infoForExistingObjectStore(info.objectStoreIdentifier());
+    ASSERT(objectStore);
+    objectStore->addExistingIndex(info);
 
     return { };
 }
@@ -1031,6 +1060,10 @@ IDBError SQLiteIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
             return { IDBDatabaseException::UnknownError, ASCIILiteral("Error deleting index records from database") };
         }
     }
+
+    auto* objectStore = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
+    ASSERT(objectStore);
+    objectStore->deleteIndex(indexIdentifier);
 
     return { };
 }
@@ -1620,6 +1653,12 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
 
     cursor->currentData(result);
     return { };
+}
+
+IDBObjectStoreInfo* SQLiteIDBBackingStore::infoForObjectStore(uint64_t objectStoreIdentifier)
+{
+    ASSERT(m_databaseInfo);
+    return m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
 }
 
 void SQLiteIDBBackingStore::deleteBackingStore()
