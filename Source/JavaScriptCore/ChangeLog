@@ -1,3 +1,18 @@
+2016-02-05  Saam barati  <sbarati@apple.com>
+
+        follow-up to: JSC Sampling Profiler: (host) is confusing in cases where I would expect to see JS name
+        https://bugs.webkit.org/show_bug.cgi?id=153663
+        <rdar://problem/24415092>
+
+        Rubber stamped by Joseph Pecoraro.
+
+        We were performing operations that required us to
+        hold the VM lock even when we might not have been holding it.
+        We now ensure we're holding it.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+
 2016-02-05  Filip Pizlo  <fpizlo@apple.com>
 
         Arrayify for a typed array shouldn't create a monster

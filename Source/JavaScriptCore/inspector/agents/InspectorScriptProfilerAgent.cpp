@@ -190,6 +190,7 @@ void InspectorScriptProfilerAgent::trackingComplete()
 {
 #if ENABLE(SAMPLING_PROFILER)
     if (m_enabledSamplingProfiler) {
+        JSLockHolder lock(m_environment.scriptDebugServer().vm());
         SamplingProfiler* samplingProfiler = m_environment.scriptDebugServer().vm().samplingProfiler();
         RELEASE_ASSERT(samplingProfiler);
         LockHolder locker(samplingProfiler->getLock());
