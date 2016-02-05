@@ -17,6 +17,14 @@
             ]
         },
         {
+            "id": "ExpressionLocation",
+            "type": "object",
+            "properties": [
+                { "name": "line", "type": "integer" },
+                { "name": "column", "type": "integer" }
+            ]
+        },
+        {
             "id": "StackFrame",
             "type": "object",
             "properties": [
@@ -24,7 +32,8 @@
                 { "name": "name", "type": "string", "description": "A displayable name for the stack frame. i.e function name, (program), etc." },
                 { "name": "line", "type": "integer" },
                 { "name": "column", "type": "integer" },
-                { "name": "url", "type": "string" }
+                { "name": "url", "type": "string" },
+                { "name": "expressionLocation", "$ref": "ExpressionLocation", "optional": true }
             ]
         },
         {

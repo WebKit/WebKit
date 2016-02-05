@@ -1,3 +1,14 @@
+2016-02-05  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Include SamplingProfiler's expression-level data for stack frames in the protocol
+        https://bugs.webkit.org/show_bug.cgi?id=153455
+        <rdar://problem/24335884>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/sampling-profiler/expression-location-info-expected.txt: Added.
+        * inspector/sampling-profiler/expression-location-info.html: Added.
+
 2016-02-05  Nan Wang  <n_wang@apple.com>
 
         AX: WebKit hanging when VoiceOver attempts to focus in on page

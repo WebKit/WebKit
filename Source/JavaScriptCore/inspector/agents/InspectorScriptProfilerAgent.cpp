@@ -170,6 +170,15 @@ static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<Sampli
                 .setColumn(stackFrame.functionStartColumn())
                 .setUrl(stackFrame.url())
                 .release();
+
+            if (stackFrame.hasExpressionInfo()) {
+                Ref<Protocol::ScriptProfiler::ExpressionLocation> expressionLocation = Protocol::ScriptProfiler::ExpressionLocation::create()
+                    .setLine(stackFrame.lineNumber)
+                    .setColumn(stackFrame.columnNumber)
+                    .release();
+                frame->setExpressionLocation(WTFMove(expressionLocation));
+            }
+
             frames->addItem(WTFMove(frame));
         }
         Ref<Protocol::ScriptProfiler::StackTrace> inspectorStackTrace = Protocol::ScriptProfiler::StackTrace::create()

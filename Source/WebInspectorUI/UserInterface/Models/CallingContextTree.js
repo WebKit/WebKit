@@ -41,11 +41,11 @@ WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.
     {
         this._totalNumberOfSamples++;
         let node = this._root;
-        node.addTimestamp(timestamp);
+        node.addTimestampAndExpressionLocation(timestamp, null);
         for (let i = stackFrames.length; i--; ) {
             let stackFrame = stackFrames[i];
             node = node.findOrMakeChild(stackFrame);
-            node.addTimestamp(timestamp);
+            node.addTimestampAndExpressionLocation(timestamp, stackFrame.expressionLocation || null);
         }
     }
 
@@ -126,8 +126,10 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         this._column = column;
         this._name = name;
         this._url = url;
-        this._timestamps = [];
         this._uid = WebInspector.CCTNode.__uid++;
+
+        this._timestamps = [];
+        this._expressionLocations = {}; // Keys are "line:column" strings. Values are arrays of timestamps in sorted order.
     }
 
     // Static and Private
@@ -196,10 +198,23 @@ WebInspector.CCTNode = class CCTNode extends WebInspector.Object
         return node;
     }
 
-    addTimestamp(timestamp)
+    addTimestampAndExpressionLocation(timestamp, expressionLocation)
     {
         console.assert(!this._timestamps.length || this._timestamps.lastValue <= timestamp, "Expected timestamps to be added in sorted, increasing, order.");
         this._timestamps.push(timestamp);
+
+        if (!expressionLocation)
+            return;
+
+        let {line, column} = expressionLocation;    
+        let hashCons = line + ":" + column;
+        let timestamps = this._expressionLocations[hashCons];
+        if (!timestamps) {
+            timestamps = [];
+            this._expressionLocations[hashCons] = timestamps;
+        }
+        console.assert(!timestamps.length || timestamps.lastValue <= timestamp, "Expected timestamps to be added in sorted, increasing, order.");
+        timestamps.push(timestamp);
     }
 
     forEachChild(callback)

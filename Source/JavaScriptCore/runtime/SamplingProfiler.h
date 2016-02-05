@@ -84,6 +84,12 @@ public:
         unsigned lineNumber { std::numeric_limits<unsigned>::max() };
         unsigned columnNumber { std::numeric_limits<unsigned>::max() };
 
+        bool hasExpressionInfo() const
+        {
+            return lineNumber != std::numeric_limits<unsigned>::max()
+                && columnNumber != std::numeric_limits<unsigned>::max();
+        }
+
         // These are function-level data.
         String nameFromCallee(VM&);
         String displayName(VM&);

@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+
+function runFor(func, millis) {
+    let start = Date.now();
+    do {
+        func();
+    } while (Date.now() - start < millis);
+}
+
+function foo() {
+    {
+        let o = {};
+        for (let i = 0; i < 10000; i++) {
+            o["s" + i] = i; // line 19, column 14("[")
+        }
+    }
+    {
+        let o = {};
+        for (let i = 0; i < 10000; i++) {
+            o["s" + i] = i; // line 25, column 14("[")
+        }
+    }
+}
+noInline(foo);
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.Samples.ExpressionLocation");
+
+    suite.addTestCase({
+        name: "Sampling Profiler Expression Location",
+        description: "Make sure we properly collect location information.",
+        test: (resolve, reject) => {
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
+                let tree = WebInspector.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
+                let foundLine19Column14 = false;
+                let foundLine25Column14 = false;
+                tree.forEachNode((node) => {
+                    if (node.name !== "foo")
+                        return;
+
+                    for (let lineColumnHashedString of Object.getOwnPropertyNames(node._expressionLocations)) {
+                        let [lineNumber, columnNumber] = lineColumnHashedString.split(":").map(Number);
+                        if (lineNumber === 19 && columnNumber === 14)
+                            foundLine19Column14 = true;
+                        if (lineNumber === 25 && columnNumber === 14)
+                            foundLine25Column14 = true;
+                    }
+                });
+
+                ProtocolTest.expectThat(foundLine19Column14, "Should have seen line 19, column 14.");
+                ProtocolTest.expectThat(foundLine25Column14, "Should have seen line 25, column 14.");
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {includeSamples: true});
+            ProtocolTest.evaluateInPage("runFor(foo, 100)");
+            InspectorProtocol.sendCommand('ScriptProfiler.stopTracking', {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

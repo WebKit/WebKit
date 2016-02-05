@@ -1,5 +1,22 @@
 2016-02-05  Saam barati  <sbarati@apple.com>
 
+        Web Inspector: Include SamplingProfiler's expression-level data for stack frames in the protocol
+        https://bugs.webkit.org/show_bug.cgi?id=153455
+        <rdar://problem/24335884>
+
+        Reviewed by Joseph Pecoraro.
+
+        We now send the sampling profiler's expression-level
+        line/column info in the inspector protocol.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::buildSamples):
+        * inspector/protocol/ScriptProfiler.json:
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::StackFrame::hasExpressionInfo):
+
+2016-02-05  Saam barati  <sbarati@apple.com>
+
         follow-up to: JSC Sampling Profiler: (host) is confusing in cases where I would expect to see JS name
         https://bugs.webkit.org/show_bug.cgi?id=153663
         <rdar://problem/24415092>

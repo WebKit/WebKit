@@ -1,3 +1,23 @@
+2016-02-05  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Include SamplingProfiler's expression-level data for stack frames in the protocol
+        https://bugs.webkit.org/show_bug.cgi?id=153455
+        <rdar://problem/24335884>
+
+        Reviewed by Joseph Pecoraro.
+
+        JSC has been collecting expression-level data in the sampling
+        profiler, and with this patch, we now get that information
+        in the inspector. With this information, we probably have
+        all the data we need to make real heat maps.
+
+        * UserInterface/Models/CallingContextTree.js:
+        (WebInspector.CallingContextTree.prototype.updateTreeWithStackTrace):
+        (WebInspector.CCTNode):
+        (WebInspector.CCTNode.prototype.findOrMakeChild):
+        (WebInspector.CCTNode.prototype.addTimestampAndExpressionLocation):
+        (WebInspector.CCTNode.prototype.addTimestamp): Deleted.
+
 2016-02-05  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Navigation bar in sidebars should always fit on a single line
