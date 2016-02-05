@@ -1,3 +1,17 @@
+2016-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: console.table background stripes are misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=152954
+        <rdar://problem/24197735>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-item .data-grid table.data):
+        (.console-item .data-grid table.data tr:nth-child(even)):
+        Replace CSS gradient that produces fixed height stripes with
+        a rule that sets background only on even table rows.
+
 2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, follow-up fix to r196151 that removes some more images.
