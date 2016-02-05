@@ -1,3 +1,18 @@
+2016-02-05  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Navigation bar in sidebars should always fit on a single line
+        https://bugs.webkit.org/show_bug.cgi?id=153412
+        <rdar://problem/24318706>
+
+        Reviewed by Timothy Hatcher.
+
+        This happened because the allowed maximum width of the sidebar was greater
+        than the minimum width derived from the currently visible sidebar.
+
+        * UserInterface/Base/Utilities.js:
+        (Number.constrain):
+        Added logic to reverse the values of min and max if max is less than min.
+
 2016-02-05  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Don't wrap labels in Breakpoint Editor popover

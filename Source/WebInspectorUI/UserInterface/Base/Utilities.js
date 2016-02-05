@@ -852,6 +852,11 @@ Object.defineProperty(Number, "constrain",
 {
     value: function(num, min, max)
     {
+        if (max < min) {
+            let temp = max;
+            max = min;
+            min = temp;
+        }
         if (num < min)
             num = min;
         else if (num > max)
