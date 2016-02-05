@@ -23,17 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <Foundation/NSPrivateDecls.h>
-
-#else
-
-@interface NSInvocation ()
-- (void)invokeUsingIMP:(IMP)imp;
-@end
-
-#endif // USE(APPLE_INTERNAL_SDK)
-
 @interface NSBlockInvocation : NSInvocation
 @end

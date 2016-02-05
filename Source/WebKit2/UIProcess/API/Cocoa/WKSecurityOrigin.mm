@@ -28,7 +28,6 @@
 
 #if WK_API_ENABLED
 
-#import "NSInvocationSPI.h"
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/RefPtr.h>
@@ -70,32 +69,5 @@
 }
 
 @end
-
-#pragma mark iOS 8 Safari binary compatibility
-
-#if PLATFORM(IOS)
-
-WK_CLASS_AVAILABLE(NA, 8_0)
-@interface _WKSecurityOrigin : WKSecurityOrigin
-@end
-
-@implementation _WKSecurityOrigin
-@end
-
-@implementation WKSecurityOrigin (WKBinaryCompatibility)
-
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector
-{
-    return [_WKSecurityOrigin instanceMethodSignatureForSelector:selector];
-}
-
-- (void)forwardInvocation:(NSInvocation *)invocation
-{
-    [invocation invokeUsingIMP:[_WKSecurityOrigin instanceMethodForSelector:invocation.selector]];
-}
-
-@end
-
-#endif // PLATFORM(IOS)
 
 #endif // WK_API_ENABLED

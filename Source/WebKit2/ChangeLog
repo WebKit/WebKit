@@ -1,3 +1,22 @@
+2016-02-05  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Get rid of unused SPI declarations
+        https://bugs.webkit.org/show_bug.cgi?id=153915
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/Cocoa/NSInvocationSPI.h: Removed NSInvocation SPI method declaration.
+
+        * Platform/spi/ios/SafariServicesSPI.h: Removed.
+
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm:
+        (-[WKSecurityOrigin methodSignatureForSelector:]): Deleted.
+        (-[WKSecurityOrigin forwardInvocation:]): Deleted.
+
+        * UIProcess/ios/WKContentViewInteraction.mm: Removed unused #import.
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed reference to deleted header.
+
 2016-02-04  Daniel Bates  <dabates@apple.com>
 
         WebKit for iOS Simulator fails to build with public iOS SDK
