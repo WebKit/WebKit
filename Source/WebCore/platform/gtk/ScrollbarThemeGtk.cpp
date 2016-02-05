@@ -220,6 +220,7 @@ static GRefPtr<GtkStyleContext> createChildStyleContext(GtkStyleContext* parent,
 #if GTK_CHECK_VERSION(3, 19, 2)
     gtk_widget_path_iter_set_object_name(path.get(), -1, name);
 #else
+    gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_SCROLLBAR);
     gtk_widget_path_iter_add_class(path.get(), -1, name);
 #endif
 

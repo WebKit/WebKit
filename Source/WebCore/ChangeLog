@@ -1,5 +1,19 @@
 2016-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Scrollbars incorrectly rendered with older versions of GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=153861
+
+        Reviewed by Michael Catanzaro.
+
+        The theme doesn't really know it's a scrollbar. Older versions of
+        GTK+ require to explicitly add the scrollbar style class to the
+        child GtkStyleContext.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::createChildStyleContext):
+
+2016-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Scrollbars not correctly rendered in non GNOME environments
         https://bugs.webkit.org/show_bug.cgi?id=153860
 
