@@ -1,3 +1,14 @@
+2016-02-05  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Don't wrap labels in Breakpoint Editor popover
+        https://bugs.webkit.org/show_bug.cgi?id=153926
+        rdar://problem/24149542
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (.popover .edit-breakpoint-popover-content > table > tr > th): Added white-space: nowrap.
+
 2016-02-05  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Replace all instances of '%s' with “%s“

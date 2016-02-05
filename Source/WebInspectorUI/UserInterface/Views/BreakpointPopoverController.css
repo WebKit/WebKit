@@ -50,6 +50,7 @@
     width: 1px; /* Shrink to fit. */
     vertical-align: top;
     line-height: 23px;
+    white-space: nowrap;
 }
 
 .popover .edit-breakpoint-popover-content > table > tr > td {
