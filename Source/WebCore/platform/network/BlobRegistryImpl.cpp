@@ -44,17 +44,13 @@
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(IOS)
-#include "WebCoreThread.h"
-#endif
-
 namespace WebCore {
 
 BlobRegistryImpl::~BlobRegistryImpl()
 {
 }
 
-static PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
+static RefPtr<ResourceHandle> createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
     return static_cast<BlobRegistryImpl&>(blobRegistry()).createResourceHandle(request, client);
 }
@@ -75,14 +71,14 @@ static void registerBlobResourceHandleConstructor()
     }
 }
 
-PassRefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
+RefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
-    RefPtr<BlobResourceHandle> handle = BlobResourceHandle::createAsync(getBlobDataFromURL(request.url()), request, client);
+    auto handle = BlobResourceHandle::createAsync(getBlobDataFromURL(request.url()), request, client);
     if (!handle)
-        return 0;
+        return nullptr;
 
     handle->start();
-    return handle.release();
+    return handle;
 }
 
 void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItemList& items, long long offset, long long length)
@@ -114,7 +110,7 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
     ASSERT(!length);
 }
 
-void BlobRegistryImpl::registerFileBlobURL(const URL& url, PassRefPtr<BlobDataFileReference> file, const String& contentType)
+void BlobRegistryImpl::registerFileBlobURL(const URL& url, RefPtr<BlobDataFileReference>&& file, const String& contentType)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -148,10 +144,10 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobPart
             break;
         }
         case BlobPart::Blob: {
-            if (!m_blobs.contains(part.url().string()))
-                return;
-            for (const BlobDataItem& item : m_blobs.get(part.url().string())->items())
-                blobData->m_items.append(item);
+            if (auto blob = m_blobs.get(part.url().string())) {
+                for (const BlobDataItem& item : blob->items())
+                    blobData->m_items.append(item);
+            }
             break;
         }
         }

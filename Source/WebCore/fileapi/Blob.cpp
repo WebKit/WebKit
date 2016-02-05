@@ -100,7 +100,7 @@ Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, lon
     , m_size(size)
 {
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(0, m_internalURL, srcURL);
+    ThreadableBlobRegistry::registerBlobURL(nullptr, m_internalURL, srcURL);
 }
 
 Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
@@ -146,6 +146,7 @@ String Blob::normalizedContentType(const String& contentType)
     return contentType.convertToASCIILowercase();
 }
 
+#if !ASSERT_DISABLED
 bool Blob::isNormalizedContentType(const String& contentType)
 {
     // FIXME: Do we really want to treat the empty string and null string as valid content types?
@@ -172,6 +173,7 @@ bool Blob::isNormalizedContentType(const CString& contentType)
     }
     return true;
 }
+#endif
 
 URLRegistry& Blob::registry() const
 {

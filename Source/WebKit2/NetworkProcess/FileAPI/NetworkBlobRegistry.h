@@ -46,7 +46,7 @@ public:
     NetworkBlobRegistry();
     static NetworkBlobRegistry& singleton();
 
-    void registerFileBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const String& path, PassRefPtr<SandboxExtension>, const String& contentType);
+    void registerFileBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const String& path, RefPtr<SandboxExtension>&&, const String& contentType);
     void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType);
     void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL);
     void registerBlobURLForSlice(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);

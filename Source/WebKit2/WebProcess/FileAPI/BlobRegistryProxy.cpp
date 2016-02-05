@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, PassRefPtr<BlobDataFileReference> file, const String& contentType)
+void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, RefPtr<BlobDataFileReference>&& file, const String& contentType)
 {
     SandboxExtension::Handle extensionHandle;
 

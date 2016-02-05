@@ -22,7 +22,6 @@
 #define StyleSheet_h
 
 #include "CSSParserMode.h"
-#include "URLHash.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>

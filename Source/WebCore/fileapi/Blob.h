@@ -76,9 +76,10 @@ public:
     static bool isValidContentType(const String&);
     // The normalization procedure described in the File API spec.
     static String normalizedContentType(const String&);
-    // Intended for use in ASSERT statements.
+#if !ASSERT_DISABLED
     static bool isNormalizedContentType(const String&);
     static bool isNormalizedContentType(const CString&);
+#endif
 
     // URLRegistrable
     virtual URLRegistry& registry() const override;

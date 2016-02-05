@@ -33,6 +33,7 @@
 
 #include "BlobData.h"
 #include "BlobRegistry.h"
+#include "URLHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -52,12 +53,12 @@ public:
 
     BlobData* getBlobDataFromURL(const URL&) const;
 
-    PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
+    RefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 
 private:
     void appendStorageItems(BlobData*, const BlobDataItemList&, long long offset, long long length);
 
-    virtual void registerFileBlobURL(const WebCore::URL&, PassRefPtr<BlobDataFileReference>, const String& contentType) override;
+    virtual void registerFileBlobURL(const URL&, RefPtr<BlobDataFileReference>&&, const String& contentType) override;
     virtual void registerBlobURL(const URL&, Vector<BlobPart>, const String& contentType) override;
     virtual void registerBlobURL(const URL&, const URL& srcURL) override;
     virtual void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) override;

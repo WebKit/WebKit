@@ -48,7 +48,7 @@ NetworkBlobRegistry::NetworkBlobRegistry()
 {
 }
 
-void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, const String& path, PassRefPtr<SandboxExtension> sandboxExtension, const String& contentType)
+void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, const String& path, RefPtr<SandboxExtension>&& sandboxExtension, const String& contentType)
 {
     blobRegistry().registerFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, sandboxExtension), contentType);
 

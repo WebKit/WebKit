@@ -156,7 +156,7 @@ void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const Res
 }
 
 BlobResourceHandle::BlobResourceHandle(BlobData* blobData, const ResourceRequest& request, ResourceHandleClient* client, bool async)
-    : ResourceHandle(0, request, client, false, false)
+    : ResourceHandle(nullptr, request, client, false, false)
     , m_blobData(blobData)
     , m_async(async)
 {

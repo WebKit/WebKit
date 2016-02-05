@@ -1,3 +1,45 @@
+2016-02-05  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up Blob code
+        https://bugs.webkit.org/show_bug.cgi?id=153910
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, no change in behavior.
+
+        * css/StyleSheet.h:
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::normalizedContentType):
+        (WebCore::Blob::isNormalizedContentType):
+        (WebCore::Blob::registry):
+        * fileapi/Blob.h:
+        * fileapi/BlobURL.cpp:
+        (WebCore::BlobURL::createPublicURL):
+        * fileapi/BlobURL.h:
+        (WebCore::BlobURL::BlobURL):
+        (WebCore::BlobURL::blobProtocol): Deleted.
+        * platform/PlatformStrategies.cpp:
+        (WebCore::setPlatformStrategies):
+        (WebCore::hasPlatformStrategies): Deleted.
+        * platform/PlatformStrategies.h:
+        * platform/network/BlobRegistry.cpp:
+        (WebCore::blobRegistry):
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::~BlobRegistryImpl):
+        (WebCore::createResourceHandle):
+        (WebCore::registerBlobResourceHandleConstructor):
+        (WebCore::BlobRegistryImpl::createResourceHandle):
+        (WebCore::BlobRegistryImpl::appendStorageItems):
+        (WebCore::BlobRegistryImpl::registerFileBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::loadResourceSynchronously):
+        (WebCore::BlobResourceHandle::BlobResourceHandle):
+        * platform/network/ResourceHandle.h:
+
 2016-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Scrollbars incorrectly rendered with older versions of GTK+

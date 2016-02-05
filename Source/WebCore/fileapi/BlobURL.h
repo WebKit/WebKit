@@ -52,11 +52,9 @@ public:
     static URL createInternalURL();
     static String getOrigin(const URL&);
     static String getIdentifier(const URL&);
-    static const char* blobProtocol() { return kBlobProtocol; }
 
 private:
     static URL createBlobURL(const String& originString);
-    static const char kBlobProtocol[];
     BlobURL() { }
 };
 
