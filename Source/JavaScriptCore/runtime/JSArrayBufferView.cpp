@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -206,4 +206,29 @@ void JSArrayBufferView::finalize(JSCell* cell)
 }
 
 } // namespace JSC
+
+namespace WTF {
+
+using namespace JSC;
+
+void printInternal(PrintStream& out, TypedArrayMode mode)
+{
+    switch (mode) {
+    case FastTypedArray:
+        out.print("FastTypedArray");
+        return;
+    case OversizeTypedArray:
+        out.print("OversizeTypedArray");
+        return;
+    case WastefulTypedArray:
+        out.print("WastefulTypedArray");
+        return;
+    case DataViewMode:
+        out.print("DataViewMode");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
 

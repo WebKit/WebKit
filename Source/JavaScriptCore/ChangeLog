@@ -1,3 +1,33 @@
+2016-02-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Arrayify for a typed array shouldn't create a monster
+        https://bugs.webkit.org/show_bug.cgi?id=153908
+        rdar://problem/24290639
+
+        Reviewed by Mark Lam.
+
+        Previously if you convinced the DFG to emit an Arrayify to ArrayStorage and then gave it a
+        typed array, you'd corrupt the object.
+
+        * runtime/JSArrayBufferView.cpp:
+        (WTF::printInternal):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::ensureInt32Slow):
+        (JSC::JSObject::ensureDoubleSlow):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC::JSObject::growOutOfLineStorage):
+        (JSC::getBoundSlotBaseFunctionForGetterSetter):
+        * runtime/Structure.h:
+        * tests/stress/arrayify-array-storage-typed-array.js: Added. This test failed.
+        * tests/stress/arrayify-int32-typed-array.js: Added. This test case already had other protections, but we beefed them up.
+
 2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler

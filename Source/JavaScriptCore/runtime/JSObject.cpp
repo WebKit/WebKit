@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2006, 2008, 2009, 2012-2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2006, 2008, 2009, 2012-2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -105,7 +105,7 @@ ALWAYS_INLINE void JSObject::copyButterfly(CopyVisitor& visitor, Butterfly* butt
     size_t capacityInBytes = Butterfly::totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
     if (visitor.checkIfShouldCopy(butterfly->base(preCapacity, propertyCapacity))) {
         Butterfly* newButterfly = Butterfly::createUninitializedDuringCollection(visitor, preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-        
+
         // Copy the properties.
         PropertyStorage currentTarget = newButterfly->propertyStorage();
         PropertyStorage currentSource = butterfly->propertyStorage();
@@ -590,8 +590,11 @@ void JSObject::enterDictionaryIndexingMode(VM& vm)
     case ALL_DOUBLE_INDEXING_TYPES:
     case ALL_CONTIGUOUS_INDEXING_TYPES:
         // NOTE: this is horribly inefficient, as it will perform two conversions. We could optimize
-        // this case if we ever cared.
-        enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, ensureArrayStorageSlow(vm));
+        // this case if we ever cared. Note that ensureArrayStorage() can return null if the object
+        // doesn't support traditional indexed properties. At the time of writing, this just affects
+        // typed arrays.
+        if (ArrayStorage* storage = ensureArrayStorageSlow(vm))
+            enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, storage);
         break;
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
         enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(vm, m_butterfly.get(this)->arrayStorage());
@@ -968,6 +971,9 @@ ContiguousJSValues JSObject::ensureInt32Slow(VM& vm)
 {
     ASSERT(inherits(info()));
     
+    if (structure(vm)->hijacksIndexingHeader())
+        return ContiguousJSValues();
+    
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
         if (UNLIKELY(indexingShouldBeSparse() || structure(vm)->needsSlowPutIndexing()))
@@ -991,6 +997,9 @@ ContiguousJSValues JSObject::ensureInt32Slow(VM& vm)
 ContiguousDoubles JSObject::ensureDoubleSlow(VM& vm)
 {
     ASSERT(inherits(info()));
+    
+    if (structure(vm)->hijacksIndexingHeader())
+        return ContiguousDoubles();
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -1017,6 +1026,9 @@ ContiguousDoubles JSObject::ensureDoubleSlow(VM& vm)
 ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm)
 {
     ASSERT(inherits(info()));
+    
+    if (structure(vm)->hijacksIndexingHeader())
+        return ContiguousJSValues();
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -1045,6 +1057,9 @@ ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm)
 ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)
 {
     ASSERT(inherits(info()));
+
+    if (structure(vm)->hijacksIndexingHeader())
+        return nullptr;
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -2547,7 +2562,7 @@ Butterfly* JSObject::growOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize
 
     // It's important that this function not rely on structure(), for the property
     // capacity, since we might have already mutated the structure in-place.
-    
+
     return Butterfly::createOrGrowPropertyStorage(m_butterfly.get(this), vm, this, structure(vm), oldSize, newSize);
 }
 

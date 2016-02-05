@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -320,11 +320,16 @@ public:
             && offset <= m_offset
             && (offset < m_inlineCapacity || offset >= firstOutOfLineOffset);
     }
+
+    bool hijacksIndexingHeader() const
+    {
+        return isTypedView(m_classInfo->typedArrayStorageType);
+    }
     
     bool couldHaveIndexingHeader() const
     {
         return hasIndexedProperties(indexingType())
-            || isTypedView(m_classInfo->typedArrayStorageType);
+            || hijacksIndexingHeader();
     }
     
     bool hasIndexingHeader(const JSCell*) const;
