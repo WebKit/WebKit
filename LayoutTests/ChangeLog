@@ -1,3 +1,9 @@
+2016-02-04  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed. EFL gardening. Mark some video tests to failure.
+
+        * platform/efl/TestExpectations:
+
 2016-02-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove ios-simulator-wk2 specific expectation for imported/w3c/web-platform-tests/html/dom/interfaces.html
