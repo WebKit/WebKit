@@ -1,3 +1,15 @@
+2016-02-05  Aakash Jain  <aakash_jain@apple.com>
+
+        tests fail if display sleeps while run-webkit-tests is running
+        https://bugs.webkit.org/show_bug.cgi?id=153919
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (addDisplaySleepAssertion): Add the assertion so that the display doesn't turn off.
+        (releaseDisplaySleepAssertion): Release the DisplaySleep Assertion.
+        (simpleSignalHandler): Release the DisplaySleepAssertion in case of any iterrupt.
+
 2016-02-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS API tests after r196082

@@ -33,6 +33,7 @@
 
 #import <AppKit/AppKit.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <IOKit/pwr_mgt/IOPMLib.h>
 #import <getopt.h>
 #import <signal.h>
 #import <stdio.h>
@@ -44,6 +45,7 @@
 // running layout tests.
 
 static int installColorProfile = false;
+static uint32_t assertionID = 0;
 
 static NSMutableDictionary *originalColorProfileURLs()
 {
@@ -191,10 +193,16 @@ static void restoreUserColorProfile(void)
     restoreDisplayColorProfiles(displays);
 }
 
+static void releaseDisplaySleepAssertion()
+{
+    IOPMAssertionRelease(assertionID);
+}
+
 static void simpleSignalHandler(int sig)
 {
     // Try to restore the color profile and try to go down cleanly
     restoreUserColorProfile();
+    releaseDisplaySleepAssertion();
     exit(128 + sig);
 }
 
@@ -230,6 +238,14 @@ void lockDownDiscreteGraphics()
         NSLog(@"IOObjectRelease() failed in %s with kernResult = %d", __FUNCTION__, kernResult);
 }
 
+void addDisplaySleepAssertion() 
+{
+    CFStringRef assertionName = CFSTR("WebKit LayoutTestHelper");
+    CFStringRef assertionDetails = CFSTR("WebKit layout-test helper tool is preventing sleep.");
+    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep,
+        assertionName, assertionDetails, assertionDetails, NULL, 0, NULL, &assertionID);
+}
+
 int main(int argc, char* argv[])
 {
     struct option options[] = {
@@ -251,6 +267,7 @@ int main(int argc, char* argv[])
     signal(SIGHUP, simpleSignalHandler);
     signal(SIGTERM, simpleSignalHandler);
 
+    addDisplaySleepAssertion();
     lockDownDiscreteGraphics();
 
     // Save off the current profile, and then install the layout test profile.
@@ -265,6 +282,7 @@ int main(int argc, char* argv[])
 
     // Restore the profile
     restoreUserColorProfile();
+    releaseDisplaySleepAssertion();
 
     return 0;
 }
