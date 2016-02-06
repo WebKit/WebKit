@@ -1,3 +1,28 @@
+2016-02-06  Andreas Kling  <akling@apple.com>
+
+        [iOS] Throw away linked code when navigating to a new page.
+        <https://webkit.org/b/153851>
+
+        Reviewed by Gavin Barraclough.
+
+        When navigating to a new page, tell JSC to throw out any linked code it has lying around.
+        Linked code is tied to a specific global object, and as we're creating a new one for the
+        new page, none of it is useful to us here.
+
+        In the event that the user navigates back, the cost of relinking some code will be far
+        lower than the memory cost of keeping all of it around.
+
+        This landed previously but was rolled out due to a Speedometer regression. I've made one
+        minor but important change here: only throw away code if we're navigating away from an
+        existing history item. Or in other words, don't throw away code for "force peeks" or any
+        other navigations that are not traditional top-level main frame navigations.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::deleteAllLinkedCode):
+        * bindings/js/GCController.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2016-02-06  Konstantin Tokarev  <annulen@yandex.ru>
 
         Added implementations of AXObjectCache methods for !HAVE(ACCESSIBILITY).
