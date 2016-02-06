@@ -1,3 +1,11 @@
+2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Gardening for unexpected passes
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-02-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed test expectations gardening.
