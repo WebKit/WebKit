@@ -23,12 +23,15 @@
 #ifndef RenderTheme_h
 #define RenderTheme_h
 
+#include "BorderData.h"
 #include "ControlStates.h"
+#include "FillLayer.h"
 #if USE(NEW_THEME)
 #include "Theme.h"
 #else
 #include "ThemeTypes.h"
 #endif
+#include "PaintInfo.h"
 #include "PopupMenuStyle.h"
 #include "RenderObject.h"
 #include "ScrollTypes.h"
@@ -163,7 +166,8 @@ public:
     static Color focusRingColor();
     virtual Color platformFocusRingColor() const { return Color(0, 0, 0); }
     static void setCustomFocusRingColor(const Color&);
-    virtual int platformFocusRingWidth() const { return 3; }
+    static float platformFocusRingWidth() { return 3; }
+    static float platformFocusRingOffset(float outlineWidth) { return std::max<float>(outlineWidth - platformFocusRingWidth(), 0); }
 #if ENABLE(TOUCH_EVENTS)
     static Color tapHighlightColor();
     virtual Color platformTapHighlightColor() const { return RenderTheme::defaultTapHighlightColor; }

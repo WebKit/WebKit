@@ -179,6 +179,8 @@ void InlineFlowBox::addToLine(InlineBox* child)
             || (is<RenderListMarker>(child->renderer()) && !downcast<RenderListMarker>(child->renderer()).isInside())
             || childStyle.hasBorderImageOutsets()))
             child->clearKnownToHaveNoOverflow();
+        else if (childStyle.hasOutlineInVisualOverflow())
+            child->clearKnownToHaveNoOverflow();
         
         if (knownToHaveNoOverflow() && is<InlineFlowBox>(*child) && !downcast<InlineFlowBox>(*child).knownToHaveNoOverflow())
             clearKnownToHaveNoOverflow();
@@ -946,6 +948,20 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, Glyp
     textBox.setLogicalOverflowRect(logicalVisualOverflow);
 }
 
+inline void InlineFlowBox::addOutlineVisualOverflow(LayoutRect& logicalVisualOverflow)
+{
+    const auto& lineStyle = this->lineStyle();
+    if (!lineStyle.hasOutlineInVisualOverflow())
+        return;
+    LayoutUnit outlineSize = lineStyle.outlineSize();
+    LayoutUnit logicalTopVisualOverflow = std::min(LayoutUnit(logicalTop() - outlineSize), logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = std::max(LayoutUnit(logicalBottom() + outlineSize), logicalVisualOverflow.maxY());
+    LayoutUnit logicalLeftVisualOverflow = std::min(LayoutUnit(logicalLeft() - outlineSize), logicalVisualOverflow.x());
+    LayoutUnit logicalRightVisualOverflow = std::max(LayoutUnit(logicalRight() + outlineSize), logicalVisualOverflow.maxX());
+    logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
+        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
+}
+
 inline void InlineFlowBox::addReplacedChildOverflow(const InlineBox* inlineBox, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow)
 {
     const RenderBox& box = downcast<RenderBox>(inlineBox->renderer());
@@ -983,6 +999,7 @@ void InlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, G
     LayoutRect logicalVisualOverflow(logicalLayoutOverflow);
   
     addBoxShadowVisualOverflow(logicalVisualOverflow);
+    addOutlineVisualOverflow(logicalVisualOverflow);
     addBorderOutsetVisualOverflow(logicalVisualOverflow);
 
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
@@ -1146,7 +1163,6 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         return;
 
     LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
-    renderer().adjustRectWithMaximumOutline(paintInfo.phase, overflowRect);
     flipForWritingMode(overflowRect);
     overflowRect.moveBy(paintOffset);
     

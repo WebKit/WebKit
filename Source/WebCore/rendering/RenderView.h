@@ -98,9 +98,6 @@ public:
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    void setMaximalOutlineSize(float);
-    float maximalOutlineSize() const { return m_maximalOutlineSize; }
-
     LayoutRect viewRect() const;
 
     // layoutDelta is used transiently during layout to store how far an object has moved from its
@@ -349,9 +346,6 @@ private:
     };
     LegacyPrinting m_legacyPrinting;
     // End deprecated members.
-
-    // Used to inflate compositing layers and repaint rects.
-    float m_maximalOutlineSize { 0 };
 
     bool shouldUsePrintingLayout() const;
 

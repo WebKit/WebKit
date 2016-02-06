@@ -851,3 +851,7 @@ loader/stateobjects/pushstate-size-iframe.html [ Slow ]
 loader/stateobjects/pushstate-size.html [ Slow ]
 loader/stateobjects/replacestate-size-iframe.html [ Slow ]
 loader/stateobjects/replacestate-size.html [ Slow ]
+
+# outline: auto -focusring.
+imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
+fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]

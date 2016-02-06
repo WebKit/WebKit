@@ -178,6 +178,8 @@ void RenderTableRow::layout()
         }
     }
 
+    clearOverflow();
+    addVisualEffectOverflow();
     // We only ever need to repaint if our cells didn't, which menas that they didn't need
     // layout, so we know that our bounds didn't change. This code is just making up for
     // the fact that we did not repaint in setStyle() because we had a layout hint.
@@ -196,7 +198,6 @@ void RenderTableRow::layout()
 LayoutRect RenderTableRow::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
     ASSERT(parent());
-    
     // Rows and cells are in the same coordinate space. We need to both compute our overflow rect (which
     // will accommodate a row outline and any visual effects on the row itself), but we also need to add in
     // the repaint rects of cells.

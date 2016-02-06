@@ -235,6 +235,8 @@ public:
 
     void suspendAnimations(double time = 0);
 
+    RenderBoxModelObject* continuation() const;
+
 protected:
     RenderBoxModelObject(Element&, Ref<RenderStyle>&&, BaseTypeFlags);
     RenderBoxModelObject(Document&, Ref<RenderStyle>&&, BaseTypeFlags);
@@ -253,7 +255,6 @@ protected:
 
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&);
 
-    RenderBoxModelObject* continuation() const;
     void setContinuation(RenderBoxModelObject*);
 
     LayoutRect localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset);

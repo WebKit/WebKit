@@ -12,13 +12,13 @@ Initial
       (contentsOpaque 1)
       (children 3
         (GraphicsLayer
-          (position 14.00 6.00)
+          (position 18.00 10.00)
           (anchor 0.50 0.50)
-          (bounds 757.00 152.00)
+          (bounds 749.00 144.00)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (bounds 100.00 100.00)
               (contentsVisible 0)
             )
           )
@@ -30,8 +30,8 @@ Initial
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
-              (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (position 24.00 24.00)
+              (bounds 100.00 100.00)
               (contentsVisible 0)
             )
           )
@@ -43,8 +43,8 @@ Initial
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
-              (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (position 24.00 24.00)
+              (bounds 100.00 100.00)
             )
           )
         )
@@ -63,13 +63,13 @@ After step 1
       (contentsOpaque 1)
       (children 3
         (GraphicsLayer
-          (position 14.00 6.00)
+          (position 18.00 10.00)
           (anchor 0.50 0.50)
-          (bounds 757.00 152.00)
+          (bounds 749.00 144.00)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (bounds 100.00 100.00)
             )
           )
         )
@@ -80,8 +80,8 @@ After step 1
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
-              (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (position 24.00 24.00)
+              (bounds 100.00 100.00)
               (contentsVisible 0)
             )
           )
@@ -93,8 +93,8 @@ After step 1
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
-              (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (position 24.00 24.00)
+              (bounds 100.00 100.00)
             )
           )
         )
@@ -113,13 +113,13 @@ After step 2
       (contentsOpaque 1)
       (children 3
         (GraphicsLayer
-          (position 14.00 6.00)
+          (position 18.00 10.00)
           (anchor 0.50 0.50)
-          (bounds 757.00 152.00)
+          (bounds 749.00 144.00)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (bounds 100.00 100.00)
             )
           )
         )
@@ -130,8 +130,8 @@ After step 2
           (drawsContent 1)
           (children 1
             (GraphicsLayer
-              (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (position 24.00 24.00)
+              (bounds 100.00 100.00)
             )
           )
         )
@@ -142,8 +142,8 @@ After step 2
           (contentsVisible 0)
           (children 1
             (GraphicsLayer
-              (position 20.00 20.00)
-              (bounds 108.00 108.00)
+              (position 24.00 24.00)
+              (bounds 100.00 100.00)
             )
           )
         )

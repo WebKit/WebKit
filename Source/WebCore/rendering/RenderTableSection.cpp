@@ -537,6 +537,8 @@ void RenderTableSection::layoutRows()
             rowRenderer->setLogicalWidth(logicalWidth());
             rowRenderer->setLogicalHeight(m_rowPos[r + 1] - m_rowPos[r] - vspacing);
             rowRenderer->updateLayerTransform();
+            rowRenderer->clearOverflow();
+            rowRenderer->addVisualEffectOverflow();
         }
 
         LayoutUnit rowHeightIncreaseForPagination = 0;
@@ -707,7 +709,6 @@ void RenderTableSection::computeOverflowFromCells(unsigned totalRows, unsigned n
             }
         }
     }
-
     ASSERT(hasOverflowingCell == this->hasOverflowingCell());
 }
 
@@ -1230,7 +1231,6 @@ static BoxSide physicalBorderForDirection(RenderStyle* styleForCellFlow, Collaps
 void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     LayoutRect localRepaintRect = paintInfo.rect;
-    adjustRectWithMaximumOutline(paintInfo.phase, localRepaintRect);
     localRepaintRect.moveBy(-paintOffset);
 
     LayoutRect tableAlignedRect = logicalRectForWritingModeAndDirection(localRepaintRect);

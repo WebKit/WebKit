@@ -2177,17 +2177,10 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject
 {
     if (style().visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return LayoutRect();
-
     LayoutRect r = visualOverflowRect();
-
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().layoutDelta());
-    
-    // We have to use maximalOutlineSize() because a child might have an outline
-    // that projects outside of our overflowRect.
-    ASSERT(style().outlineSize() <= view().maximalOutlineSize());
-    r.inflate(view().maximalOutlineSize());
     return computeRectForRepaint(r, repaintContainer);
 }
 
@@ -4500,11 +4493,10 @@ bool RenderBox::avoidsFloats() const
 
 void RenderBox::addVisualEffectOverflow()
 {
-    if (!style().boxShadow() && !style().hasBorderImageOutsets())
+    if (!style().boxShadow() && !style().hasBorderImageOutsets() && !outlineStyleForRepaint().hasOutlineInVisualOverflow())
         return;
 
-    LayoutRect borderBox = borderBoxRect();
-    addVisualOverflow(applyVisualEffectOverflow(borderBox));
+    addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
 
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (flowThread)
@@ -4548,6 +4540,13 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
         overflowMaxY = std::max(overflowMaxY, borderBox.maxY() + ((!isFlipped || !isHorizontal) ? borderOutsets.bottom() : borderOutsets.top()));
     }
 
+    if (outlineStyleForRepaint().hasOutlineInVisualOverflow()) {
+        LayoutUnit outlineSize = outlineStyleForRepaint().outlineSize();
+        overflowMinX = std::min(overflowMinX, borderBox.x() - outlineSize);
+        overflowMaxX = std::max(overflowMaxX, borderBox.maxX() + outlineSize);
+        overflowMinY = std::min(overflowMinY, borderBox.y() - outlineSize);
+        overflowMaxY = std::max(overflowMaxY, borderBox.maxY() + outlineSize);
+    }
     // Add in the final overflow with shadows and outsets combined.
     return LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY);
 }

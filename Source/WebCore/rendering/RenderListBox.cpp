@@ -59,6 +59,7 @@
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include "StyleResolver.h"
+#include "StyleTreeResolver.h"
 #include "WheelEventTestTrigger.h"
 #include <math.h>
 #include <wtf/StackStats.h>
@@ -198,7 +199,8 @@ void RenderListBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, L
 
 void RenderListBox::computePreferredLogicalWidths()
 {
-    ASSERT(!m_optionsChanged);
+    // Nested style recal do not fire post recal callbacks. see webkit.org/b/153767
+    ASSERT(!m_optionsChanged || Style::postResolutionCallbacksAreSuspended());
 
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;

@@ -501,6 +501,7 @@ public:
     bool isDragging() const { return m_bitfields.hasRareData() && rareData().isDragging(); }
     bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
     bool isRenderFlowThread() const { return m_bitfields.hasRareData() && rareData().isRenderFlowThread(); }
+    bool hasOutlineAutoAncestor() const { return m_bitfields.hasRareData() && rareData().hasOutlineAutoAncestor(); }
     bool isRegisteredForVisibleInViewportCallback() { return m_bitfields.hasRareData() && rareData().isRegisteredForVisibleInViewportCallback(); }
 
     enum VisibleInViewportState {
@@ -618,6 +619,7 @@ public:
     void setIsDragging(bool);
     void setHasReflection(bool = true);
     void setIsRenderFlowThread(bool = true);
+    void setHasOutlineAutoAncestor(bool = true);
     void setIsRegisteredForVisibleInViewportCallback(bool);
     void setVisibleInViewportState(VisibleInViewportState);
 
@@ -751,9 +753,6 @@ public:
 
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
 
-    // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
-    void adjustRectWithMaximumOutline(PaintPhase, LayoutRect&) const;
-
     enum SelectionState {
         SelectionNone, // The object is not selected.
         SelectionStart, // The object either contains the start of a selection run or is the start of a run
@@ -885,6 +884,8 @@ private:
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadIncludingDescendants(bool);
     Node* generatingPseudoHostElement() const;
+
+    void propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderLayerModelObject& repaintContainer, const LayoutRect& repaintRect) const;
 
     virtual bool isWBR() const { ASSERT_NOT_REACHED(); return false; }
 
@@ -1026,6 +1027,7 @@ private:
             : m_isDragging(false)
             , m_hasReflection(false)
             , m_isRenderFlowThread(false)
+            , m_hasOutlineAutoAncestor(false)
             , m_isRegisteredForVisibleInViewportCallback(false)
             , m_visibleInViewportState(VisibilityUnknown)
         {
@@ -1033,6 +1035,7 @@ private:
         ADD_BOOLEAN_BITFIELD(isDragging, IsDragging);
         ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
         ADD_BOOLEAN_BITFIELD(isRenderFlowThread, IsRenderFlowThread);
+        ADD_BOOLEAN_BITFIELD(hasOutlineAutoAncestor, HasOutlineAutoAncestor);
 
         // From RenderElement
         ADD_BOOLEAN_BITFIELD(isRegisteredForVisibleInViewportCallback, IsRegisteredForVisibleInViewportCallback);

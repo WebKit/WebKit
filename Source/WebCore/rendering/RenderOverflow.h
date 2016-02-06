@@ -35,7 +35,7 @@ namespace WebCore
 // Layout overflow examples include other boxes that spill out of our box,  For example, in the inline case a tall image
 // could spill out of a line box. 
     
-// Examples of visual overflow are shadows, text stroke (and eventually outline and border-image).
+// Examples of visual overflow are shadows, text stroke, outline (and eventually border-image).
 
 // This object is allocated only when some of these fields have non-default values in the owning box.
 class RenderOverflow : public WTF::RefCounted<RenderOverflow> {

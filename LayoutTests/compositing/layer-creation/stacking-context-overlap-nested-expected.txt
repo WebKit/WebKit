@@ -19,8 +19,9 @@
           )
         )
         (GraphicsLayer
-          (position 65.00 65.00)
-          (bounds 76.00 76.00)
+          (position 75.00 75.00)
+          (bounds 56.00 56.00)
+          (contentsOpaque 1)
         )
       )
     )

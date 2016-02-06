@@ -1986,9 +1986,10 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
         if (region)
             region->addLayoutOverflowForBox(this, curr->paddedLayoutOverflowRect(endPadding));
         if (!hasOverflowClip()) {
-            addVisualOverflow(curr->visualOverflowRect(curr->lineTop(), curr->lineBottom()));
+            LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
+            addVisualOverflow(childVisualOverflowRect);
             if (region)
-                region->addVisualOverflowForBox(this, curr->visualOverflowRect(curr->lineTop(), curr->lineBottom()));
+                region->addVisualOverflowForBox(this, childVisualOverflowRect);
         }
     }
 }

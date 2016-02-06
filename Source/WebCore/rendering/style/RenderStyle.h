@@ -667,15 +667,11 @@ public:
     float borderEndWidth() const;
 
     float outlineSize() const { return std::max<float>(0, outlineWidth() + outlineOffset()); }
-    float outlineWidth() const
-    {
-        if (m_background->outline().style() == BNONE)
-            return 0;
-        return m_background->outline().width();
-    }
-    bool hasOutline() const { return outlineWidth() > 0 && outlineStyle() > BHIDDEN; }
+    float outlineWidth() const;
+    bool hasOutline() const { return outlineStyle() > BHIDDEN && outlineWidth() > 0; }
     EBorderStyle outlineStyle() const { return m_background->outline().style(); }
     OutlineIsAuto outlineStyleIsAuto() const { return static_cast<OutlineIsAuto>(m_background->outline().isAuto()); }
+    bool hasOutlineInVisualOverflow() const { return hasOutline() && outlineSize() > 0; }
     
     EOverflow overflowX() const { return noninherited_flags.overflowX(); }
     EOverflow overflowY() const { return noninherited_flags.overflowY(); }
@@ -882,13 +878,7 @@ public:
     
     HangingPunctuation hangingPunctuation() const { return static_cast<HangingPunctuation>(rareInheritedData->m_hangingPunctuation); }
 
-    float outlineOffset() const
-    {
-        if (m_background->outline().style() == BNONE)
-            return 0;
-        return m_background->outline().offset();
-    }
-
+    float outlineOffset() const;
     const ShadowData* textShadow() const { return rareInheritedData->textShadow.get(); }
     void getTextShadowExtent(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const { getShadowExtent(textShadow(), top, right, bottom, left); }
     void getTextShadowHorizontalExtent(LayoutUnit& left, LayoutUnit& right) const { getShadowHorizontalExtent(textShadow(), left, right); }

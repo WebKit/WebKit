@@ -1,3 +1,37 @@
+2016-02-06  Zalan Bujtas  <zalan@apple.com>
+
+        Outline should contribute to visual overflow.
+        https://bugs.webkit.org/show_bug.cgi?id=153299
+
+        This patch eliminates the special outline handling (RenderView::setMaximalOutlineSize).
+        Now that outline is part of visual overflow, we don't have to inflate the layers to accomodate
+        outline borders.
+        This patch fixes several focusring related repaint issues. However when both the outline: auto
+        and the descendant renderer are composited, we still don't paint properly in certain cases. -not a regression.
+        (Also when parent renderer has overflow: hidden repaint does not take outline into account. -regression.)
+        It changes column behavior (see TestExpectations) since outline behaves now like any other visual overflow properties.
+
+        Reviewed by David Hyatt.
+
+        * fast/repaint/focus-ring-repaint-expected.txt: Added.
+        * fast/repaint/focus-ring-repaint.html: Added.
+        * fast/repaint/focus-ring-repaint-expected-with-negative-offset.txt: Added.
+        * fast/repaint/focus-ring-repaint-with-negative-offset.html: Added.
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/compositing/geometry/ancestor-overflow-change-expected.txt:
+        * platform/mac/compositing/geometry/composited-in-columns-expected.txt:
+        * platform/mac/compositing/layer-creation/overlap-animation-container-expected.txt:
+        * platform/mac/compositing/layer-creation/stacking-context-overlap-nested-expected.txt:
+        * platform/mac/compositing/visibility/visibility-image-layers-dynamic-expected.txt:
+        * platform/mac/fast/clip/outline-overflowClip-expected.txt:
+        * platform/mac/fast/inline/continuation-outlines-with-layers-expected.txt:
+        * platform/mac/fast/repaint/4776765-expected.txt: Added.
+        * platform/mac/fast/repaint/focus-ring-expected.txt: Added.
+        * platform/mac/fast/repaint/layer-outline-expected.txt:
+        * platform/mac/fast/repaint/layer-outline-horizontal-expected.txt:
+        * platform/mac/svg/custom/focus-ring-expected.txt:
+
 2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Various tests are flaky

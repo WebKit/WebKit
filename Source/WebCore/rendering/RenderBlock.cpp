@@ -1003,7 +1003,6 @@ void RenderBlock::addOverflowFromChildren()
 void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool)
 {
     clearOverflow();
-
     // Add overflow from children.
     addOverflowFromChildren();
 
@@ -1025,7 +1024,7 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool)
             m_overflow->setLayoutClientAfterEdge(oldClientAfterEdge);
     }
         
-    // Add visual overflow from box-shadow and border-image-outset.
+    // Add visual overflow from box-shadow, border-image-outset and outline.
     addVisualEffectOverflow();
 
     // Add visual overflow from theme.
@@ -1409,7 +1408,6 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!isDocumentElementRenderer()) {
         LayoutRect overflowBox = overflowRectForPaintRejection(namedFlowFragment);
         flipForWritingMode(overflowBox);
-        adjustRectWithMaximumOutline(phase, overflowBox);
         overflowBox.moveBy(adjustedPaintOffset);
         if (!overflowBox.intersects(paintInfo.rect)
 #if PLATFORM(IOS)
@@ -3390,7 +3388,7 @@ void RenderBlock::updateDragState(bool dragOn)
 
 const RenderStyle& RenderBlock::outlineStyleForRepaint() const
 {
-    return isAnonymousBlockContinuation() ? continuation()->style() : style();
+    return isAnonymousBlockContinuation() ? continuation()->style() : RenderElement::outlineStyleForRepaint();
 }
 
 void RenderBlock::childBecameNonInline(RenderElement&)

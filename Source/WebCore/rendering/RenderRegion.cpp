@@ -152,31 +152,26 @@ LayoutPoint RenderRegion::flowThreadPortionLocation() const
 LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType overflowType)
 {
     ASSERT(isValid());
-
     if (shouldClipFlowThreadContent())
         return flowThreadPortionRect;
 
     LayoutRect flowThreadOverflow = overflowType == VisualOverflow ? visualOverflowRectForBox(*m_flowThread) : layoutOverflowRectForBox(m_flowThread);
-
-    // We are interested about the outline size only when computing the visual overflow.
-    LayoutUnit outlineSize = overflowType == VisualOverflow ? LayoutUnit(view().maximalOutlineSize()) : LayoutUnit();
     LayoutRect clipRect;
     if (m_flowThread->isHorizontalWritingMode()) {
-        LayoutUnit minY = isFirstPortion ? (flowThreadOverflow.y() - outlineSize) : flowThreadPortionRect.y();
-        LayoutUnit maxY = isLastPortion ? std::max(flowThreadPortionRect.maxY(), flowThreadOverflow.maxY()) + outlineSize : flowThreadPortionRect.maxY();
+        LayoutUnit minY = isFirstPortion ? flowThreadOverflow.y() : flowThreadPortionRect.y();
+        LayoutUnit maxY = isLastPortion ? std::max(flowThreadPortionRect.maxY(), flowThreadOverflow.maxY()) : flowThreadPortionRect.maxY();
         bool clipX = style().overflowX() != OVISIBLE;
-        LayoutUnit minX = clipX ? flowThreadPortionRect.x() : std::min(flowThreadPortionRect.x(), flowThreadOverflow.x() - outlineSize);
-        LayoutUnit maxX = clipX ? flowThreadPortionRect.maxX() : std::max(flowThreadPortionRect.maxX(), (flowThreadOverflow.maxX() + outlineSize));
+        LayoutUnit minX = clipX ? flowThreadPortionRect.x() : std::min(flowThreadPortionRect.x(), flowThreadOverflow.x());
+        LayoutUnit maxX = clipX ? flowThreadPortionRect.maxX() : std::max(flowThreadPortionRect.maxX(), flowThreadOverflow.maxX());
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     } else {
-        LayoutUnit minX = isFirstPortion ? (flowThreadOverflow.x() - outlineSize) : flowThreadPortionRect.x();
-        LayoutUnit maxX = isLastPortion ? std::max(flowThreadPortionRect.maxX(), flowThreadOverflow.maxX()) + outlineSize : flowThreadPortionRect.maxX();
+        LayoutUnit minX = isFirstPortion ? flowThreadOverflow.x() : flowThreadPortionRect.x();
+        LayoutUnit maxX = isLastPortion ? std::max(flowThreadPortionRect.maxX(), flowThreadOverflow.maxX()) : flowThreadPortionRect.maxX();
         bool clipY = style().overflowY() != OVISIBLE;
-        LayoutUnit minY = clipY ? flowThreadPortionRect.y() : std::min(flowThreadPortionRect.y(), (flowThreadOverflow.y() - outlineSize));
-        LayoutUnit maxY = clipY ? flowThreadPortionRect.maxY() : std::max(flowThreadPortionRect.y(), (flowThreadOverflow.maxY() + outlineSize));
+        LayoutUnit minY = clipY ? flowThreadPortionRect.y() : std::min(flowThreadPortionRect.y(), flowThreadOverflow.y());
+        LayoutUnit maxY = clipY ? flowThreadPortionRect.maxY() : std::max(flowThreadPortionRect.y(), flowThreadOverflow.maxY());
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     }
-
     return clipRect;
 }
 

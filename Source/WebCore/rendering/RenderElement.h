@@ -216,6 +216,7 @@ public:
     void drawLineForBoxSide(GraphicsContext&, const FloatRect&, BoxSide, Color, EBorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false) const;
 
     bool childRequiresTable(const RenderObject& child) const;
+    bool hasContinuation() const { return m_hasContinuation; }
 
 protected:
     enum BaseTypeFlag {
@@ -255,7 +256,6 @@ protected:
     bool renderInlineAlwaysCreatesLineBoxes() const { return m_renderInlineAlwaysCreatesLineBoxes; }
 
     void setHasContinuation(bool b) { m_hasContinuation = b; }
-    bool hasContinuation() const { return m_hasContinuation; }
 
     static bool hasControlStatesForRenderer(const RenderObject*);
     static ControlStates* controlStatesForRenderer(const RenderObject*);
@@ -276,6 +276,7 @@ protected:
 
     void paintFocusRing(PaintInfo&, const LayoutPoint&, const RenderStyle&);
     void paintOutline(PaintInfo&, const LayoutRect&);
+    void updateOutlineAutoAncestor(bool hasOutlineAuto) const;
 
 private:
     RenderElement(ContainerNode&, Ref<RenderStyle>&&, BaseTypeFlags);
@@ -314,8 +315,7 @@ private:
     void clearLayoutRootIfNeeded() const;
     
     bool shouldWillChangeCreateStackingContext() const;
-
-    void computeMaxOutlineSize(const RenderStyle&) const;
+    void issueRepaintForOutlineAuto(float outlineSize);
 
     unsigned m_baseTypeFlags : 6;
     unsigned m_ancestorLineBoxDirty : 1;

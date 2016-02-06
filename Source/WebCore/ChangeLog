@@ -1,3 +1,113 @@
+2016-02-06  Zalan Bujtas  <zalan@apple.com>
+
+        Outline should contribute to visual overflow.
+        https://bugs.webkit.org/show_bug.cgi?id=153299
+
+        This patch eliminates the special outline handling (RenderView::setMaximalOutlineSize).
+        Now that outline is part of visual overflow, we don't have to inflate the layers to accomodate
+        outline borders.
+        This patch fixes several focusring related repaint issues. However when both the outline: auto
+        and the descendant renderer are composited, we still don't paint properly in certain cases. -not a regression.
+        (Also when parent renderer has overflow: hidden repaint does not take outline into account. -regression.)
+        It changes column behavior (see TestExpectations) since outline behaves now like any other visual overflow properties.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/repaint/focus-ring-repaint.html
+              fast/repaint/focus-ring-repaint-with-negative-offset.html
+
+        * css/html.css: resetting to old behavior.
+        (:focus):
+        (input:focus, textarea:focus, isindex:focus, keygen:focus, select:focus):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::addOutlineVisualOverflow):
+        (WebCore::InlineFlowBox::computeOverflow):
+        (WebCore::InlineFlowBox::paint): Deleted.
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+        (WebCore::RenderBlock::outlineStyleForRepaint):
+        (WebCore::RenderBlock::paint): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock): Deleted.
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren): Deleted.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addVisualEffectOverflow):
+        (WebCore::RenderBox::applyVisualEffectOverflow):
+        (WebCore::RenderBox::clippedOverflowRectForRepaint): Deleted.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::paint): Deleted.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertChildInternal):
+        (WebCore::RenderElement::styleDidChange):
+        (WebCore::RenderElement::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderElement::issueRepaintForOutlineAuto):
+        (WebCore::RenderElement::updateOutlineAutoAncestor):
+        (WebCore::RenderElement::computeMaxOutlineSize): Deleted.
+        (WebCore::RenderElement::styleWillChange): Deleted.
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasContinuation):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::anyLineIntersectsRect):
+        (WebCore::RenderLineBoxList::lineIntersectsDirtyRect):
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::isOutlinePhase): Deleted.
+        * rendering/RenderLineBoxList.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computePreferredLogicalWidths):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint): Deleted.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded): The renderer with outline: auto is responsible for
+        painting focusring around the descendants. If we issued repaint only on the descendant when it changes,
+        the focusring would not refresh properly. We have to find the ancestor with outline: auto, inflate the repaint rect and
+        issue the repaint on the ancestor if we crossed repaint container.
+ 
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow):
+        (WebCore::RenderObject::setHasOutlineAutoAncestor):
+        (WebCore::RenderObject::adjustRectWithMaximumOutline): Deleted.
+        
+        * rendering/RenderObject.h: We mark the descendants of outline: auto so that
+        when a child renderer changes we can propagate the repaint to the ancestor with outline.
+
+        (WebCore::RenderObject::hasOutlineAutoAncestor):
+        (WebCore::RenderObject::RenderObjectRareData::RenderObjectRareData):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::overflowRectForFlowThreadPortion):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint): Deleted.
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint): Deleted.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint): Deleted.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint): Deleted.
+        (WebCore::RenderTableCell::paintCollapsedBorders): Deleted.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        (WebCore::RenderTableRow::clippedOverflowRectForRepaint): Deleted.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::computeOverflowFromCells): Deleted.
+        (WebCore::RenderTableSection::paintObject): Deleted.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformFocusRingWidth):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setMaximalOutlineSize): Deleted.
+        * rendering/RenderView.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeAffectsVisualOverflow):
+        (WebCore::RenderStyle::outlineWidth):
+        * rendering/style/RenderStyle.h:
+
 2016-02-06  Andreas Kling  <akling@apple.com>
 
         [iOS] Throw away linked code when navigating to a new page.

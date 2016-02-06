@@ -383,7 +383,6 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModel
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().layoutDelta());
-
     return computeRectForRepaint(r, repaintContainer);
 }
 
@@ -1182,8 +1181,6 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
         return;
 
     LayoutRect localRepaintRect = paintInfo.rect;
-    adjustRectWithMaximumOutline(paintInfo.phase, localRepaintRect);
-
     LayoutRect paintRect = LayoutRect(paintOffset + location(), frameRect().size());
     if (paintRect.y() - table()->outerBorderTop() >= localRepaintRect.maxY())
         return;

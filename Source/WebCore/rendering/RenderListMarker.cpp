@@ -1184,8 +1184,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     LayoutPoint boxOrigin(paintOffset + location());
     LayoutRect overflowRect(visualOverflowRect());
     overflowRect.moveBy(boxOrigin);
-    adjustRectWithMaximumOutline(paintInfo.phase, overflowRect);
-
     if (!paintInfo.rect.intersects(overflowRect))
         return;
 

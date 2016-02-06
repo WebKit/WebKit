@@ -371,22 +371,6 @@ void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const Shap
 }
 #endif
 
-void RenderElement::computeMaxOutlineSize(const RenderStyle& style) const
-{
-    // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
-    // during styleDidChange (it's used by clippedOverflowRectForRepaint()).
-    if (!style.outlineWidth())
-        return;
-    float maxOutlineSize = style.outlineSize();
-    if (style.outlineStyleIsAuto())
-        maxOutlineSize = std::max(theme().platformFocusRingWidth() + style.outlineOffset(), maxOutlineSize);
-
-    if (maxOutlineSize < view().maximalOutlineSize())
-        return;
-
-    view().setMaximalOutlineSize(maxOutlineSize);
-}
-
 void RenderElement::initializeStyle()
 {
     styleWillChange(StyleDifferenceNewStyle, style());
@@ -615,6 +599,8 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
         cache->childrenChanged(this, newChild);
     if (is<RenderBlockFlow>(*this))
         downcast<RenderBlockFlow>(*this).invalidateLineLayoutPath();
+    if (hasOutlineAutoAncestor() || outlineStyleForRepaint().outlineStyleIsAuto())
+        newChild->setHasOutlineAutoAncestor();
 }
 
 void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
@@ -926,11 +912,6 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
 
     if (isDocumentElementRenderer() || isBody())
         view().frameView().updateExtendBackgroundIfNecessary();
-
-    if (!oldStyle || (oldStyle->outlineSize() != newStyle.outlineSize()
-        || (oldStyle->outlineStyleIsAuto() && !newStyle.outlineStyleIsAuto())
-        || (!oldStyle->outlineStyleIsAuto() && newStyle.outlineStyleIsAuto())))
-        computeMaxOutlineSize(newStyle);
 }
 
 void RenderElement::handleDynamicFloatPositionChange()
@@ -1037,6 +1018,12 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     if (oldStyle && !areCursorsEqual(oldStyle, &style()))
         frame().eventHandler().scheduleCursorUpdate();
 #endif
+    bool hadOutlineAuto = oldStyle && oldStyle->outlineStyleIsAuto();
+    bool hasOutlineAuto = outlineStyleForRepaint().outlineStyleIsAuto();
+    if (hasOutlineAuto != hadOutlineAuto) {
+        updateOutlineAutoAncestor(hasOutlineAuto);
+        issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().outlineSize() : oldStyle->outlineSize());
+    }
 }
 
 void RenderElement::insertedIntoTree()
@@ -1315,8 +1302,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         // This ASSERT fails due to animations. See https://bugs.webkit.org/show_bug.cgi?id=37048
         // ASSERT(!newOutlineBoxRectPtr || *newOutlineBoxRectPtr == outlineBoundsForRepaint(repaintContainer));
         newOutlineBox = newOutlineBoxRectPtr ? *newOutlineBoxRectPtr : outlineBoundsForRepaint(repaintContainer);
-        if (newOutlineBox.location() != oldOutlineBox.location() || (mustRepaintBackgroundOrBorder(*this) && (newBounds != oldBounds || newOutlineBox != oldOutlineBox)))
-            fullRepaint = true;
+        fullRepaint = (newOutlineBox.location() != oldOutlineBox.location() || (mustRepaintBackgroundOrBorder(*this) && (newBounds != oldBounds || newOutlineBox != oldOutlineBox)));
     }
 
     if (!repaintContainer)
@@ -2103,7 +2089,7 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const LayoutPoint& pain
     addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
 #if PLATFORM(MAC)
     bool needsRepaint;
-    paintInfo.context().drawFocusRing(focusRingRects, theme().platformFocusRingWidth(), style.outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
+    paintInfo.context().drawFocusRing(focusRingRects, style.outlineWidth(), style.outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
     if (needsRepaint)
         document().page()->focusController().setFocusedElementNeedsRepaint();
 #else
@@ -2177,6 +2163,35 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
 
     if (useTransparencyLayer)
         graphicsContext.endTransparencyLayer();
+}
+
+void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
+{
+    LayoutRect repaintRect;
+    Vector<IntRect> focusRingRects;
+    addFocusRingRects(focusRingRects, LayoutPoint(), containerForRepaint());
+    for (auto rect : focusRingRects) {
+        rect.inflate(outlineSize);
+        repaintRect.unite(rect);
+    }
+    repaintRectangle(repaintRect);
+}
+
+void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto) const
+{
+    for (auto* child = firstChild(); child; child = child->nextSibling()) {
+        if (hasOutlineAuto == child->hasOutlineAutoAncestor())
+            continue;
+        child->setHasOutlineAutoAncestor(hasOutlineAuto);
+        bool childHasOutlineAuto = child->outlineStyleForRepaint().outlineStyleIsAuto();
+        if (childHasOutlineAuto)
+            continue;
+        if (!is<RenderElement>(child))
+            continue;
+        downcast<RenderElement>(*child).updateOutlineAutoAncestor(hasOutlineAuto);
+    }
+    if (hasContinuation())
+        downcast<RenderBoxModelObject>(*this).continuation()->updateOutlineAutoAncestor(hasOutlineAuto);
 }
 
 }

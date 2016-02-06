@@ -825,20 +825,6 @@ void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
     }
 }
 
-// Compositing layer dimensions take outline size into account, so we have to recompute layer
-// bounds when it changes.
-// FIXME: This is ugly; it would be nice to have a better way to do this.
-void RenderView::setMaximalOutlineSize(float outlineSize)
-{
-    if (outlineSize == m_maximalOutlineSize)
-        return;
-    
-    m_maximalOutlineSize = outlineSize;
-    // maximalOutlineSize affects compositing layer dimensions.
-    // FIXME: this really just needs to be a geometry update.
-    compositor().setCompositingLayersNeedRebuild();
-}
-
 void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode)
 {
     // Make sure both our start and end objects are defined.

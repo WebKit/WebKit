@@ -233,7 +233,6 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     }
     
     LayoutRect localRepaintRect = paintInfo.rect;
-    adjustRectWithMaximumOutline(paintInfo.phase, localRepaintRect);
     if (adjustedPaintOffset.x() + visualOverflowRect().x() >= localRepaintRect.maxX() || adjustedPaintOffset.x() + visualOverflowRect().maxX() <= localRepaintRect.x())
         return false;
 
@@ -614,7 +613,6 @@ LayoutRect RenderReplaced::clippedOverflowRectForRepaint(const RenderLayerModelO
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().layoutDelta());
-    r.inflate(style().outlineSize());
     return computeRectForRepaint(r, repaintContainer);
 }
 

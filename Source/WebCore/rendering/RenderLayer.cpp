@@ -5612,12 +5612,6 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
 
         foregroundRect = backgroundRect;
         outlineRect = backgroundRect;
-
-        // If the region does not clip its overflow, inflate the outline rect.
-        if (namedFlowFragment) {
-            if (!(namedFlowFragment->parent()->hasOverflowClip() && (&namedFlowFragment->fragmentContainerLayer() != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)))
-                outlineRect.inflate(renderer().view().maximalOutlineSize());
-        }
     }
 
     // Update the clip rects that will be passed to child layers.
@@ -5656,7 +5650,6 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
             bounds.move(offsetFromRootLocal);
             if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)
                 backgroundRect.intersect(bounds);
-            
             // Boxes inside flow threads don't have their logical left computed to avoid
             // floats. Instead, that information is kept in their RenderBoxRegionInfo structure.
             // As such, the layer bounds must be enlarged to encompass their background rect
@@ -5769,12 +5762,8 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
         return false;
 
     // If we aren't an inline flow, and our layer bounds do intersect the damage rect, then we can return true.
-    if (!renderer().isRenderInline()) {
-        LayoutRect b = layerBounds;
-        b.inflate(renderer().view().maximalOutlineSize());
-        if (b.intersects(damageRect))
-            return true;
-    }
+    if (!renderer().isRenderInline() && layerBounds.intersects(damageRect))
+        return true;
 
     RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
     // When using regions, some boxes might have their frame rect relative to the flow thread, which could
@@ -5782,10 +5771,9 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
     // e.g. an absolutely positioned box with bottom:0px and right:0px would have it's frameRect.x relative
     // to the flow thread, not the last region (in which it will end up because of bottom:0px)
     if (namedFlowFragment && renderer().flowThreadContainingBlock()) {
-        LayoutRect b = layerBounds;
-        b.moveBy(namedFlowFragment->visualOverflowRectForBox(downcast<RenderBoxModelObject>(renderer())).location());
-        b.inflate(renderer().view().maximalOutlineSize());
-        if (b.intersects(damageRect))
+        LayoutRect adjustedBounds = layerBounds;
+        adjustedBounds.moveBy(namedFlowFragment->visualOverflowRectForBox(downcast<RenderBoxModelObject>(renderer())).location());
+        if (adjustedBounds.intersects(damageRect))
             return true;
     }
     
@@ -5836,8 +5824,6 @@ LayoutRect RenderLayer::localBoundingBox(CalculateLayerBoundsFlags flags) const
                 result.unite(overflowRect);
         }
     }
-
-    result.inflate(renderer().view().maximalOutlineSize());
     return result;
 }
 
@@ -5925,7 +5911,6 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     }
 
     LayoutRect boundingBoxRect = localBoundingBox(flags);
-
     if (renderer().view().frameView().hasFlippedBlockRenderers()) {
         if (is<RenderBox>(renderer()))
             downcast<RenderBox>(renderer()).flipForWritingMode(boundingBoxRect);

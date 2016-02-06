@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that we repaint focus ring properly when outline-offset is negative.</title>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+    for (var i = 0; i < 10; ++i) {
+        var element = document.createElement("div");
+        element.style.outlineOffset = -i + "px";
+        element.style.top = (30 * i) + "px";
+        document.body.insertBefore(element);
+    }
+}
+onload = runRepaintTest;
+</script>
+<style>
+div {
+  margin-top: 10px;
+  position: absolute;
+  top: 10px;
+  height: 20px;
+  width: 20px;
+  outline: auto;
+}
+</style>
+</head>
+<body>
+</body>
+</html>

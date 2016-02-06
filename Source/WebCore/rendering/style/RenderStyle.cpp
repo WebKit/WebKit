@@ -35,6 +35,7 @@
 #include "Pagination.h"
 #include "QuotesData.h"
 #include "RenderObject.h"
+#include "RenderTheme.h"
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"
 #include "StyleImage.h"
@@ -55,10 +56,6 @@
 
 #if ENABLE(TEXT_AUTOSIZING)
 #include "TextAutosizer.h"
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-#include "RenderTheme.h"
 #endif
 
 namespace WebCore {
@@ -480,6 +477,8 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         return visualOverflowForDecorations(*this, nullptr) != visualOverflowForDecorations(other, nullptr);
     }
 
+    if (hasOutlineInVisualOverflow() != other.hasOutlineInVisualOverflow())
+        return true;
     return false;
 }
 
@@ -2024,6 +2023,24 @@ void RenderStyle::checkVariablesInCustomProperties()
         customProperties.set(resolvedValue->name(), resolvedValue->value());
 
     rareInheritedData.access()->m_customProperties.access()->setContainsVariables(false);
+}
+
+float RenderStyle::outlineWidth() const
+{
+    if (m_background->outline().style() == BNONE)
+        return 0;
+    if (outlineStyleIsAuto())
+        return std::max(m_background->outline().width(), RenderTheme::platformFocusRingWidth());
+    return m_background->outline().width();
+}
+
+float RenderStyle::outlineOffset() const
+{
+    if (m_background->outline().style() == BNONE)
+        return 0;
+    if (outlineStyleIsAuto())
+        return (m_background->outline().offset() + RenderTheme::platformFocusRingOffset(outlineWidth()));
+    return m_background->outline().offset();
 }
 
 } // namespace WebCore

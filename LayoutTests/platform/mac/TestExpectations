@@ -1322,3 +1322,7 @@ webkit.org/b/153871 imported/w3c/web-platform-tests/html/semantics/document-meta
 
 # This test is already run with run-jsc-stress-tests
 webkit.org/b/153879 js/basic-set.html [ Skip ]
+
+# outline: auto -focusring.
+accessibility/mac/selection-element-tabbing-to-link.html [ Pass Failure ]
+accessibility/mac/selection-notification-focus-change.html [ Pass Failure ]

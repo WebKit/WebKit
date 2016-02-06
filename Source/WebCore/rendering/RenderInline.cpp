@@ -1644,9 +1644,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
     float outlineWidth = styleToUse.outlineWidth();
     float outlineOffset = style().outlineOffset();
     EBorderStyle outlineStyle = styleToUse.outlineStyle();
-
     bool antialias = shouldAntialiasLines(graphicsContext);
-
 
     LayoutRect box(LayoutPoint(paintOffset.x() + thisline.x() - outlineOffset, paintOffset.y() + thisline.y() - outlineOffset),
         LayoutSize(thisline.width() + 2 * outlineOffset, thisline.height() + 2 * outlineOffset));

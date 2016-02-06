@@ -888,6 +888,38 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
     return repaintContainer;
 }
 
+void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderLayerModelObject& repaintContainer, const LayoutRect& repaintRect) const
+{
+    if (!hasOutlineAutoAncestor())
+        return;
+
+    // FIXME: We should really propagate only when the the child renderer sticks out.
+    bool repaintRectNeedsConverting = false;
+    // Issue repaint on the renderer with outline: auto.
+    for (const auto* renderer = this; renderer; renderer = renderer->parent()) {
+        bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor();
+        ASSERT(rendererHasOutlineAutoAncestor
+            || renderer->outlineStyleForRepaint().outlineStyleIsAuto()
+            || (is<RenderElement>(*renderer) && downcast<RenderElement>(*renderer).hasContinuation()));
+        if (renderer == &repaintContainer && rendererHasOutlineAutoAncestor)
+            repaintRectNeedsConverting = true;
+        if (rendererHasOutlineAutoAncestor)
+            continue;
+        // Issue repaint on the correct repaint container.
+        LayoutRect adjustedRepaintRect = repaintRect;
+        adjustedRepaintRect.inflate(renderer->outlineStyleForRepaint().outlineSize());
+        if (!repaintRectNeedsConverting)
+            repaintContainer.repaintRectangle(adjustedRepaintRect);
+        else if (is<RenderLayerModelObject>(renderer)) {
+            const auto& rendererWithOutline = downcast<RenderLayerModelObject>(*renderer);
+            adjustedRepaintRect = LayoutRect(repaintContainer.localToContainerQuad(FloatRect(adjustedRepaintRect), &rendererWithOutline).boundingBox());
+            rendererWithOutline.repaintRectangle(adjustedRepaintRect);
+        }
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
 void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect& r, bool shouldClipToLayer) const
 {
     if (r.isEmpty())
@@ -900,6 +932,8 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         downcast<RenderFlowThread>(*repaintContainer).repaintRectangleInRegions(r);
         return;
     }
+
+    propagateRepaintToParentWithOutlineAutoIfNeeded(*repaintContainer, r);
 
     if (repaintContainer->hasFilter() && repaintContainer->layer() && repaintContainer->layer()->requiresFullLayerImageForFilters()) {
         repaintContainer->layer()->setFilterBackendNeedsRepaintingInRect(r);
@@ -918,7 +952,6 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
             return;
         }
     }
-    
 
     if (view().usesCompositing()) {
         ASSERT(repaintContainer->isComposited());
@@ -1919,13 +1952,6 @@ void RenderObject::collectAnnotatedRegions(Vector<AnnotatedRegionValue>& regions
 }
 #endif
 
-void RenderObject::adjustRectWithMaximumOutline(PaintPhase phase, LayoutRect& rect) const
-{
-    if (phase != PaintPhaseOutline && phase != PaintPhaseSelfOutline && phase != PaintPhaseChildOutlines)
-        return;
-    rect.inflate(view().maximalOutlineSize());
-}
-
 int RenderObject::caretMinOffset() const
 {
     return 0;
@@ -1957,9 +1983,7 @@ int RenderObject::nextOffset(int current) const
 
 void RenderObject::adjustRectForOutlineAndShadow(LayoutRect& rect) const
 {
-    float outlineSize = outlineStyleForRepaint().outlineSize();
-    if (outlineStyleForRepaint().outlineStyleIsAuto())
-        outlineSize = std::max(theme().platformFocusRingWidth() + outlineStyleForRepaint().outlineOffset(), outlineSize);
+    LayoutUnit outlineSize = outlineStyleForRepaint().outlineSize();
     if (const ShadowData* boxShadow = style().boxShadow()) {
         boxShadow->adjustRectForShadow(rect, outlineSize);
         return;
@@ -2208,6 +2232,12 @@ void RenderObject::setIsRenderFlowThread(bool isFlowThread)
 {
     if (isFlowThread || hasRareData())
         ensureRareData().setIsRenderFlowThread(isFlowThread);
+}
+
+void RenderObject::setHasOutlineAutoAncestor(bool hasOutlineAutoAncestor)
+{
+    if (hasOutlineAutoAncestor || hasRareData())
+        ensureRareData().setHasOutlineAutoAncestor(hasOutlineAutoAncestor);
 }
 
 void RenderObject::setIsRegisteredForVisibleInViewportCallback(bool registered)
