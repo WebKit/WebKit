@@ -1,3 +1,12 @@
+2016-02-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html as failing on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=153315
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-02-05  Chris Dumez  <cdumez@apple.com>
 
         Instance property getters / setters cannot be called on another instance of the same type
