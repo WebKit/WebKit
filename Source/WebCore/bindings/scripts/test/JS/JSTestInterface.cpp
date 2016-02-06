@@ -434,8 +434,9 @@ EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* state, JSObject* slotBas
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestInterface", "implementsStr1");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.implementsStr1());
     return JSValue::encode(result);
@@ -450,8 +451,9 @@ EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* state, JSObject* slotBas
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestInterface", "implementsStr2");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.implementsStr2());
     return JSValue::encode(result);
@@ -466,8 +468,9 @@ EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* state, JSObject* slotBas
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestInterface", "implementsStr3");
+    }
     return JSValue::encode(castedThis->implementsStr3(*state));
 }
 
@@ -480,8 +483,9 @@ EncodedJSValue jsTestInterfaceImplementsNode(ExecState* state, JSObject* slotBas
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestInterface", "implementsNode");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsNode()));
     return JSValue::encode(result);
@@ -520,8 +524,9 @@ EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* state, JSObject* slotB
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestInterface", "supplementalStr1");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, WebCore::TestSupplemental::supplementalStr1(impl));
     return JSValue::encode(result);
@@ -536,8 +541,9 @@ EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* state, JSObject* slotB
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestInterface", "supplementalStr2");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, WebCore::TestSupplemental::supplementalStr2(impl));
     return JSValue::encode(result);
@@ -552,8 +558,9 @@ EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* state, JSObject* slotB
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestInterface", "supplementalStr3");
+    }
     return JSValue::encode(castedThis->supplementalStr3(*state));
 }
 
@@ -566,8 +573,9 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, JSObject* slotB
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestInterface", "supplementalNode");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalNode(impl)));
     return JSValue::encode(result);

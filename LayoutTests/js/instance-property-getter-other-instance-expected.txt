@@ -7,7 +7,7 @@ PASS locationGetter is an instance of function Function() {
     [native code]
 }
 PASS locationGetter.call(otherWindow.document).toString() is "about:blank"
-FAIL locationGetter.call(window.document) === window.document.location should be true. Was false.
+PASS locationGetter.call(window.document) === window.document.location is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

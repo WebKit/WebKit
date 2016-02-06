@@ -1,3 +1,25 @@
+2016-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Instance property getters / setters cannot be called on another instance of the same type
+        https://bugs.webkit.org/show_bug.cgi?id=153895
+
+        Reviewed by Gavin Barraclough.
+
+        * js/dom/script-tests/shadow-navigator-geolocation-in-strict-mode-does-not-throw.js:
+        * js/dom/shadow-navigator-geolocation-in-strict-mode-does-not-throw-expected.txt:
+        Extend this layout test coverage to cover the getter case in addition to the
+        setter case. This test covers the compatibility mode where we don't throw.
+        I made sure to maintain this behavior when refactoring the bindings to avoid
+        breakage.
+
+        * js/instance-property-getter-other-instance-expected.txt:
+        Rebaseline now that this test passes.
+
+        * js/instance-property-setter-other-instance-expected.txt: Added.
+        * js/instance-property-setter-other-instance.html: Added.
+        Add test to cover the setter case.
+
+
 2016-02-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/security/cross-frame-access-custom.html as flaky on ios-simulator-wk2

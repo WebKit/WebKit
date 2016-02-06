@@ -143,8 +143,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicReadonlyAttr(ExecState* sta
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestNondeterministic", "nondeterministicReadonlyAttr");
+    }
 #if ENABLE(WEB_REPLAY)
     JSGlobalObject* globalObject = state->lexicalGlobalObject();
     InputCursor& cursor = globalObject->inputCursor();
@@ -177,8 +178,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicWriteableAttr(ExecState* st
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestNondeterministic", "nondeterministicWriteableAttr");
+    }
 #if ENABLE(WEB_REPLAY)
     JSGlobalObject* globalObject = state->lexicalGlobalObject();
     InputCursor& cursor = globalObject->inputCursor();
@@ -211,8 +213,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicExceptionAttr(ExecState* st
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestNondeterministic", "nondeterministicExceptionAttr");
+    }
 #if ENABLE(WEB_REPLAY)
     JSGlobalObject* globalObject = state->lexicalGlobalObject();
     InputCursor& cursor = globalObject->inputCursor();
@@ -245,8 +248,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicGetterExceptionAttr(ExecSta
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestNondeterministic", "nondeterministicGetterExceptionAttr");
+    }
     ExceptionCode ec = 0;
 #if ENABLE(WEB_REPLAY)
     JSGlobalObject* globalObject = state->lexicalGlobalObject();
@@ -283,8 +287,9 @@ EncodedJSValue jsTestNondeterministicNondeterministicSetterExceptionAttr(ExecSta
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestNondeterministic", "nondeterministicSetterExceptionAttr");
+    }
 #if ENABLE(WEB_REPLAY)
     JSGlobalObject* globalObject = state->lexicalGlobalObject();
     InputCursor& cursor = globalObject->inputCursor();

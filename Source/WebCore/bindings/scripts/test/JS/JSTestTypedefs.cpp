@@ -216,8 +216,9 @@ EncodedJSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* state, JSObject* sl
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestTypedefs", "unsignedLongLongAttr");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.unsignedLongLongAttr());
     return JSValue::encode(result);
@@ -230,8 +231,9 @@ EncodedJSValue jsTestTypedefsImmutableSerializedScriptValue(ExecState* state, JS
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestTypedefs", "immutableSerializedScriptValue");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = impl.immutableSerializedScriptValue() ? impl.immutableSerializedScriptValue()->deserialize(state, castedThis->globalObject(), 0) : jsNull();
     return JSValue::encode(result);
@@ -243,10 +245,10 @@ EncodedJSValue jsTestTypedefsConstructorTestSubObj(ExecState* state, JSObject* s
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestTypedefs*>(slotBase);
-    JSTestTypedefs* castedThisObject = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThisObject))
+    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestTypedefs", "TestSubObj");
+    }
     return JSValue::encode(JSTestSubObj::getConstructor(state->vm(), castedThis->globalObject()));
 }
 
@@ -257,8 +259,9 @@ EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* state, JSObject*
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestTypedefs", "attrWithGetterException");
+    }
     ExceptionCode ec = 0;
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.attrWithGetterException(ec));
@@ -273,8 +276,9 @@ EncodedJSValue jsTestTypedefsAttrWithSetterException(ExecState* state, JSObject*
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestTypedefs", "attrWithSetterException");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.attrWithSetterException());
     return JSValue::encode(result);
@@ -287,8 +291,9 @@ EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* state, JSO
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestTypedefs", "stringAttrWithGetterException");
+    }
     ExceptionCode ec = 0;
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.stringAttrWithGetterException(ec));
@@ -303,8 +308,9 @@ EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* state, JSO
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestTypedefs", "stringAttrWithSetterException");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.stringAttrWithSetterException());
     return JSValue::encode(result);

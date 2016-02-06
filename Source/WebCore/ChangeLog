@@ -1,3 +1,48 @@
+2016-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Instance property getters / setters cannot be called on another instance of the same type
+        https://bugs.webkit.org/show_bug.cgi?id=153895
+
+        Reviewed by Gavin Barraclough.
+
+        It should be possible to call instance property getters / setters on
+        other instances of the same type, as per the WEB IDL specification:
+        - http://heycam.github.io/webidl/#dfn-attribute-getter
+        - http://heycam.github.io/webidl/#dfn-attribute-setter
+
+        This matches the behavior of Firefox.
+
+        The issue without our bindings was that the getters / setters were
+        using |slotBase| instead of |thisValue| and therefore ended up using
+        the instance the getter was taken from instead of the actual target
+        object.
+
+        Test:
+        js/instance-property-getter-other-instance.html
+        js/instance-property-setter-other-instance.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        - Have instance getters / setters use thisValue instead of slotBase.
+        - In the case of interfaces that have attributes on the instance for
+          compatibility reasons, try the prototype object if |thisValue| does
+          does have the right type, instead of using slotBase like previously.
+          I believe this maintains the original compatibility intention while
+          also behaving correctly when called on another instance.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        Rebaseline bindings tests.
+
 2016-02-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: UniqueIDBDatabase's m_databaseInfo is unsafely used from multiple threads.

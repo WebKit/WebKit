@@ -122,8 +122,9 @@ EncodedJSValue jsTestNodeName(ExecState* state, JSObject* slotBase, EncodedJSVal
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestNode* castedThis = jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestNode", "name");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.name());
     return JSValue::encode(result);

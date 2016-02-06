@@ -139,10 +139,10 @@ EncodedJSValue jsTestExceptionName(ExecState* state, JSObject* slotBase, Encoded
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestException*>(slotBase);
-    JSTestException* castedThisObject = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThisObject))
+    JSTestException* castedThis = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestException", "name");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.name());
     return JSValue::encode(result);

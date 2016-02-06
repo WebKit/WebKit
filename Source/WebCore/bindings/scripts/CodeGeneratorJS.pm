@@ -2285,27 +2285,28 @@ sub GenerateImplementation
             push(@implContent, "    UNUSED_PARAM(slotBase);\n");
             push(@implContent, "    UNUSED_PARAM(thisValue);\n");
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
-                my $variableForTypeCheck = "castedThis";
                 if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
                     push(@implContent, "    auto* castedThis = to${className}(JSValue::decode(thisValue));\n");
-                } elsif (AttributeShouldBeOnInstance($interface, $attribute)) {
-                    # FIXME: This does not seem right, we should likely use thisValue instead of slotBase here to match the specification:
-                    # http://heycam.github.io/webidl/#dfn-attribute-getter
-                    push(@implContent, "    auto* castedThis = jsCast<JS${interfaceName}*>(slotBase);\n");
-                    push(@implContent, "    ${className}* castedThisObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-                    $variableForTypeCheck = "castedThisObject";
                 } else {
                     push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
                 }
-                # FIXME: Getters on a global should not require an explicit this.
-                push(@implContent, "    if (UNLIKELY(!$variableForTypeCheck))\n");
+                push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                 if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                 } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
+                    # Fallback to trying to searching the prototype chain for compatibility reasons.
+                    push(@implContent, "        JSObject* thisObject = JSValue::decode(thisValue).getObject();\n");
+                    push(@implContent, "        for (thisObject = thisObject ? thisObject->prototype().getObject() : nullptr; thisObject; thisObject = thisObject->prototype().getObject()) {\n");
+                    push(@implContent, "            if ((castedThis = " . GetCastingHelperForThisObject($interface) . "(thisObject)))\n");
+                    push(@implContent, "                break;\n");
+                    push(@implContent, "        }\n");
+                    push(@implContent, "        if (!castedThis)\n");
+                    push(@implContent, "            return throwGetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
                     push(@implContent, "        reportDeprecatedGetterError(*state, \"$interfaceName\", \"$name\");\n");
                 } else {
                     push(@implContent, "        return throwGetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
                 }
+                push(@implContent, "    }\n");
             }
 
             my @arguments = ();
@@ -2622,20 +2623,23 @@ sub GenerateImplementation
             push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
             push(@implContent, "    UNUSED_PARAM(baseObject);\n");
             if (!$attribute->isStatic) {
-                my $variableForTypeCheck = "castedThis";
                 if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
                     push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
-                } elsif (AttributeShouldBeOnInstance($interface, $attribute)) {
-                    push(@implContent, "    auto* castedThis = jsCast<JS${interfaceName}*>(baseObject);\n");
-                    push(@implContent, "    ${className}* castedThisObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-                    $variableForTypeCheck = "castedThisObject";
                 } else {
                     push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
                 }
-                push(@implContent, "    if (UNLIKELY(!$variableForTypeCheck)) {\n");
+                push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                 if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
                     push(@implContent, "        return;\n");
                 } elsif (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
+                    # Fallback to trying to searching the prototype chain for compatibility reasons.
+                    push(@implContent, "        JSObject* thisObject = JSValue::decode(thisValue).getObject();\n");
+                    push(@implContent, "        for (thisObject = thisObject ? thisObject->prototype().getObject() : nullptr; thisObject; thisObject = thisObject->prototype().getObject()) {\n");
+                    push(@implContent, "            if ((castedThis = " . GetCastingHelperForThisObject($interface) . "(thisObject)))\n");
+                    push(@implContent, "                break;\n");
+                    push(@implContent, "        }\n");
+                    push(@implContent, "        if (!castedThis)\n");
+                    push(@implContent, "            return throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
                     push(@implContent, "        reportDeprecatedSetterError(*state, \"$interfaceName\", \"$name\");\n");
                 } else {
                     push(@implContent, "        throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");

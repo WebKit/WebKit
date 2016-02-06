@@ -162,8 +162,9 @@ EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, JSObject* slotBase,
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestEventConstructor", "attr1");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.attr1());
     return JSValue::encode(result);
@@ -176,8 +177,9 @@ EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, JSObject* slotBase,
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestEventConstructor", "attr2");
+    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.attr2());
     return JSValue::encode(result);

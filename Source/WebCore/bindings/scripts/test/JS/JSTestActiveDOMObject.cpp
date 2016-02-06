@@ -149,10 +149,10 @@ EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, JSObject* slo
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    auto* castedThis = jsCast<JSTestActiveDOMObject*>(slotBase);
-    JSTestActiveDOMObject* castedThisObject = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThisObject))
+    JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestActiveDOMObject", "excitingAttr");
+    }
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();

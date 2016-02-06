@@ -131,8 +131,9 @@ EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(ExecState* state, J
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestJSBuiltinConstructor* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestJSBuiltinConstructor", "testAttributeCustom");
+    }
     return JSValue::encode(castedThis->testAttributeCustom(*state));
 }
 
@@ -143,8 +144,9 @@ EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state,
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestJSBuiltinConstructor* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
+    if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestJSBuiltinConstructor", "testAttributeRWCustom");
+    }
     return JSValue::encode(castedThis->testAttributeRWCustom(*state));
 }
 

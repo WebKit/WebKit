@@ -1,10 +1,14 @@
+CONSOLE MESSAGE: line 218: Deprecated attempt to access property 'geolocation' on a non-Navigator object.
 CONSOLE MESSAGE: line 588: Deprecated attempt to set property 'geolocation' on a non-Navigator object.
+CONSOLE MESSAGE: line 218: Deprecated attempt to access property 'geolocation' on a non-Navigator object.
 Tests that we don't throw a type error in strict mode when assigning to an instance attribute that shadows navigator.geolocation. See https://bugs.webkit.org/show_bug.cgi?id=133559
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'use strict'; var myNavigator = createObjectWithPrototype(window.navigator); myNavigator.geolocation = 1 did not throw exception.
+PASS myNavigator.geolocation is navigator.geolocation
+PASS myNavigator.geolocation = 1 did not throw exception.
+PASS myNavigator.geolocation is navigator.geolocation
 PASS successfullyParsed is true
 
 TEST COMPLETE
