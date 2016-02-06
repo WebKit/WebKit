@@ -73,6 +73,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
             this._titleElement = titleContainer.createChild("span");
             this._titleElement.append(label);
+            this._titleElement.title = label;
             this._titleElement.addEventListener("mouseover", this._titleElementMouseOver.bind(this));
             this._titleElement.addEventListener("mouseout", this._titleElementMouseOut.bind(this));
             this._titleElement.addEventListener("click", this._titleElementClick.bind(this));

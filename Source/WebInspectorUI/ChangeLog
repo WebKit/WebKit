@@ -1,3 +1,23 @@
+2016-02-05  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Visual Styles sidebar should be more forgiving to long labels
+        https://bugs.webkit.org/show_bug.cgi?id=153927
+        <rdar://problem/24343897>
+
+        Reviewed by Timothy Hatcher.
+
+        If a label is too long for it's container, it overflows and is visible
+        above the rest of the elements nearby.
+
+        * UserInterface/Views/VisualStylePropertyEditor.css:
+        (.visual-style-property-container > .visual-style-property-title):
+        Adds text overflow to properties that extend beyond the container's width.
+
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor):
+        Now also adds the label value as a title attribute to the element, just in
+        case the content overflows.
+
 2016-02-05  Saam barati  <sbarati@apple.com>
 
         Web Inspector: Include SamplingProfiler's expression-level data for stack frames in the protocol

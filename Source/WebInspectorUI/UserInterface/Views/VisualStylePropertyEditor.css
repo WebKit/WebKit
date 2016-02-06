@@ -32,6 +32,8 @@
 .visual-style-property-container > .visual-style-property-title {
     margin: 4px;
     text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .visual-style-property-container.layout-reversed > .visual-style-property-title {
