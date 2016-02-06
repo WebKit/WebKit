@@ -1,5 +1,14 @@
 2016-02-05  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking pageoverlay/overlay-small-frame-paints.html as flaky on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=153898
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-02-05  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html as failing on ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=153315
 
