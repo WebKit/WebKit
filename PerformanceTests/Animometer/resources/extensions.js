@@ -48,10 +48,24 @@ if (!Array.prototype.find) {
     };
 }
 
+Array.prototype.shuffle = function()
+{
+    for (var index = this.length - 1; index >= 0; --index) {
+        var randomIndex = Math.floor(Math.random() * (index + 1));
+        this.swap(index, randomIndex);
+    }
+    return this;
+}
+
 function Point(x, y)
 {
     this.x = x;
     this.y = y;
+}
+
+Point.zero = function()
+{
+    return new Point(0, 0);
 }
 
 Point.pointOnCircle = function(angle, radius)
@@ -90,6 +104,11 @@ Point.prototype =
         return new Point(this.x / 2, this.y / 2);
     },
 
+    str: function()
+    {
+        return "x = " + this.x + ", y = " + this.y;
+    },
+    
     add: function(other)
     {
         if(isNaN(other.x))

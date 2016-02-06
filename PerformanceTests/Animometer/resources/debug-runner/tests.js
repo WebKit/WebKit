@@ -235,7 +235,11 @@ Suites.push(new Suite("Basic canvas path suite",
         {
             url: "simple/simple-canvas-paths.html?pathType=rectFill",
             name: "Canvas rects, fill"
-        }
+        },
+        {
+            url: "simple/tiled-canvas-image.html",
+            name: "Canvas put/get image data"
+        },
     ]
 ));
 

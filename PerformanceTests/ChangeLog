@@ -1,3 +1,37 @@
+2016-02-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add a new graphics test for CanvasRenderingContext2D functions: getImageData and putImageData
+        https://bugs.webkit.org/show_bug.cgi?id=151716
+
+        Reviewed by Darin Adler.
+
+        The purpose of this test is to measure the performance of getImageData
+        and putImageData functions. This test draws a background on the canvas
+        and then gets some random tiles from this background and draw them in
+        destinations different from their original sources.
+        
+        * Animometer/resources/debug-runner/tests.js: Adding the new test to the canvas simple tests suite.
+        
+        * Animometer/resources/extensions.js:
+        (Array.prototype.shuffle): Shuffles the elements of an array.
+        
+        (Point.zero): Returns a new Point object whose x and y are equal zero.
+        (Point.prototype.str): Used for debugging the Point object.
+        
+        * Animometer/tests/simple/resources/tiled-canvas-image.js: Added.
+        (CanvasImageTile):
+        (CanvasImageTile.prototype.getImageData):
+        (CanvasImageTile.prototype.putImageData):
+        (Stage.call.initialize):
+        (Stage.call._createTiles):
+        (Stage.call._nextTilePosition):
+        (Stage.call.tune):
+        (Stage.call._drawBackground):
+        (Stage.call.animate):
+        (Stage.call.complexity):
+        (Stage.call):
+        * Animometer/tests/simple/tiled-canvas-image.html: Added.
+
 2016-01-07  Jon Lee  <jonlee@apple.com>
 
         Fix new test.
