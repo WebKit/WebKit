@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<iframe id="testFrame" src="about:blank"></iframe>
+<script>
+description("Tests that calling Object.getOwnPropertyDescriptor() on a sub-frame's window works as expected");
+
+otherWindow = frames[0];
+
+evalAndLog("descriptor = Object.getOwnPropertyDescriptor(otherWindow, 'location')");
+shouldNotBe("descriptor", "undefined");
+shouldBeType("descriptor.get", "Function");
+shouldBeType("descriptor.set", "Function");
+shouldBeTrue("descriptor.enumerable");
+shouldBeFalse("descriptor.configurable");
+shouldBeEqualToString("descriptor.get.call(otherWindow).toString()", "about:blank");
+shouldBeEqualToString("descriptor.get.call().toString()", "about:blank");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+<html>

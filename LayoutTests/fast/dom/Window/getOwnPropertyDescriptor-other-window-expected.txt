@@ -1,0 +1,17 @@
+Tests that calling Object.getOwnPropertyDescriptor() on a sub-frame's window works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+descriptor = Object.getOwnPropertyDescriptor(otherWindow, 'location')
+PASS descriptor is not undefined
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.enumerable is true
+PASS descriptor.configurable is false
+PASS descriptor.get.call(otherWindow).toString() is "about:blank"
+FAIL descriptor.get.call().toString() should be about:blank. Threw exception TypeError: The DOMWindow.location getter can only be used on instances of DOMWindow
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

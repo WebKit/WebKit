@@ -1,3 +1,27 @@
+2016-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() does not work on sub-frame's window
+        https://bugs.webkit.org/show_bug.cgi?id=153925
+
+        Reviewed by Darin Adler.
+
+        Calling Object.getOwnPropertyDescriptor() on a sub-frame's window was
+        returning undefined for that window's own properties. The reason was
+        that the check getOwnPropertySlot() is using to make sure the
+        PropertySlot is not for a property coming from the prototype was wrong.
+
+        The check was checking that 'this != slotBase' which works fine unless
+        this is a JSProxy (e.g. JSDOMWindowShell). To handle proxies, the code
+        was also checking that 'slotBase.toThis() != this', attempting to
+        get the slotBase/Window's proxy. However, due to the implementation of
+        toThis(), we were getting the lexical global object's proxy instead of
+        slotBase's proxy. To avoid this issue, the new code explicitly checks
+        if 'this' is a JSProxy and makes sure 'JSProxy::target() != slotBase',
+        instead of using toThis().
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+
 2016-02-06  Andreas Kling  <akling@apple.com>
 
         [iOS] Throw away linked code when navigating to a new page.

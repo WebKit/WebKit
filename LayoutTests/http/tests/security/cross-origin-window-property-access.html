@@ -4,20 +4,36 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body onload="runTest()">
+<iframe src="http://localhost:8000/security/resources/blank.html"></iframe>
 <script>
 description("Tests that using another window's property getter does not bypass cross-origin checks.");
 jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.setCanOpenWindows();
+
+function shouldThrowOrReturnUndefined(expression)
+{
+    try {
+        result = eval(expression);
+    } catch (e) {
+        testPassed(expression + " threw exception " + e + ".");
+        return;
+    }
+    if (result === undefined)
+        testPassed(expression + " returned undefined.");
+    else
+        testFailed(expression + " returned " + result);
+}
 
 function runTest()
 {
-    crossOriginWindow = window.open("http://127.0.0.1:8000/security/resources/blank.html");
-    crossOriginWindow.onload = function() {
-        shouldThrow('Object.getOwnPropertyDescriptor(window, "document").get.call(crossOriginWindow)');
-        shouldBeTrue('Object.getOwnPropertyDescriptor(window, "location").get.call(crossOriginWindow) === crossOriginWindow.location')
-        finishJSTest();
-    }
+    crossOriginWindow = frames[0];
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "document").get.call(crossOriginWindow)');
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "name").get.call(crossOriginWindow)');
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "menubar").get.call(crossOriginWindow)');
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "scrollbars").get.call(crossOriginWindow)');
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "navigator").get.call(crossOriginWindow)');
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "screenX").get.call(crossOriginWindow)');
+    shouldBeTrue('Object.getOwnPropertyDescriptor(window, "location").get.call(crossOriginWindow) === crossOriginWindow.location');
+    finishJSTest();
 }
 </script>
 </body>

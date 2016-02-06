@@ -1,3 +1,42 @@
+2016-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Object.getOwnPropertyDescriptor() does not work on sub-frame's window
+        https://bugs.webkit.org/show_bug.cgi?id=153925
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Window/getOwnPropertyDescriptor-other-window-expected.txt: Added.
+        * fast/dom/Window/getOwnPropertyDescriptor-other-window.html: Added.
+        Add test case to test calling Object.getOwnPropertyDescriptor() on a
+        sub-frame's window.
+
+        * http/tests/security/cross-origin-window-property-access-expected.txt:
+        * http/tests/security/cross-origin-window-property-access.html:
+        - Update test use use an iframe instead of opening a Window for convenience.
+        - Use an actual cross-origin URL. The previous URL was same-origin and therefore
+          the test would have failed if window.location was a proper getter/setter
+          instead of a 'value' descriptor.
+        - Add more tests to cover other Window properties (such as 'name') which are
+          actual getter / setters to make sure using the current window's getter on
+          a cross origin window does not bypass the security origin checks.
+
+        * http/tests/security/cross-frame-access-getOwnPropertyDescriptor-expected.txt:
+        * http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html:
+        - Drop checks for properties for which cross-origin access via
+        getOwnPropertyDescriptor() now works. They used to not work because of the bug
+        this patch fixes, and not due to security checks.
+        - Most of these properties are part of the properties that the specification
+        states can be accessed cross-origin:
+          https://html.spec.whatwg.org/multipage/browsers.html#security-window
+        - ALL of these properties could already be accessed cross origin via regular
+        property getters (e.g. crossOriginWindow.blur) in Safari 9 so there should not
+        be any reason for getOwnPropertyDescriptor() not to work.
+        - I have also verified that Firefox allows cross-origin access for all these
+          properties (via regular getters or getOwnPropertyDescriptor), except for
+          the 'history' property. We may want to align our behavior here and prevent
+          cross-origin access to 'window.history' but this is not a regression in this
+          patch. You could already access crossOriginWindow.history in Safari 9.
+
 2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Various tests are flaky
