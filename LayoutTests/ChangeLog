@@ -1,5 +1,13 @@
 2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Various tests are flaky
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
+2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Gardening for unexpected passes
 
         Unreviewed test gardening.

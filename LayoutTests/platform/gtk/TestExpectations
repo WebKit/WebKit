@@ -1230,6 +1230,11 @@ webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
 
 webkit.org/b/153771 animations/resume-after-page-cache.html [ Timeout Pass ]
 
+webkit.org/b/153942 plugins/private-browsing-mode-2.html [ Failure Pass ]
+webkit.org/b/153942 plugins/private-browsing-mode.html [ Failure Pass ]
+
+webkit.org/b/153943 webaudio/convolution-mono-mono.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1502,6 +1507,8 @@ Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 Bug(GTK) fast/history/go-back-to-iframe-with-plugin.html [ Timeout Pass ]
 
 webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]
+
+webkit.org/b/153944 plugins/get-url-notify-with-url-that-fails-to-load.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
