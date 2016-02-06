@@ -1,3 +1,21 @@
+2016-02-06  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added implementations of AXObjectCache methods for !HAVE(ACCESSIBILITY).
+        https://bugs.webkit.org/show_bug.cgi?id=153924
+
+        Reviewed by Andreas Kling.
+
+        No new tests needed.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::ariaModalNode): Added stub implementation.
+        (WebCore::AXObjectCache::postLiveRegionChangeNotification): Ditto.
+        (WebCore::AXObjectCache::rangeForNodeContents): Ditto.
+        (WebCore::AXObjectCache::setIsSynchronizingSelection): Ditto.
+        (WebCore::AXObjectCache::setTextSelectionIntent): Ditto.
+        (WebCore::AXAttributeCacheEnabler::AXAttributeCacheEnabler): Ditto.
+        (WebCore::AXAttributeCacheEnabler::~AXAttributeCacheEnabler): Ditto.
+
 2016-02-04  Antti Koivisto  <antti@apple.com>
 
         Use scope stack instead of nested TreeResolvers for shadow trees

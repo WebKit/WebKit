@@ -28,6 +28,7 @@
 
 #include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
+#include "Range.h"
 #include "Timer.h"
 #include <limits.h>
 #include <wtf/Forward.h>
@@ -347,11 +348,13 @@ class AXAttributeCacheEnabler
 public:
     explicit AXAttributeCacheEnabler(AXObjectCache *cache);
     ~AXAttributeCacheEnabler();
-    
+
+#if HAVE(ACCESSIBILITY)
 private:
     AXObjectCache* m_cache;
+#endif
 };
-    
+
 bool nodeHasRole(Node*, const String& role);
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node*);
@@ -376,6 +379,7 @@ inline void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates(
 inline void AXObjectCache::stopCachingComputedObjectAttributes() { }
 inline bool isNodeAriaVisible(Node*) { return true; }
 inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return nullptr; }
+inline Node* AXObjectCache::ariaModalNode() { return nullptr; }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
@@ -404,12 +408,16 @@ inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXN
 inline void AXObjectCache::postNotification(RenderObject*, AXNotification, PostTarget, PostType) { }
 inline void AXObjectCache::postNotification(Node*, AXNotification, PostTarget, PostType) { }
 inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
+inline void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject*) { }
+inline RefPtr<Range> AXObjectCache::rangeForNodeContents(Node*) { return nullptr; }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }
 inline void AXObjectCache::remove(Node*) { }
 inline void AXObjectCache::remove(Widget*) { }
 inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
 inline void AXObjectCache::selectedChildrenChanged(Node*) { }
+inline void AXObjectCache::setIsSynchronizingSelection(bool) { }
+inline void AXObjectCache::setTextSelectionIntent(const AXTextStateChangeIntent&) { }
 #if PLATFORM(COCOA)
 inline void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*, const AXTextStateChangeIntent&, const VisibleSelection&) { }
 inline void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, const String&, const VisiblePosition&) { }
@@ -418,6 +426,10 @@ inline void AXObjectCache::postTextReplacementPlatformNotification(Accessibility
 inline AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType) { return AXTextInserted; }
 inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
 #endif
+
+inline AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache*) { }
+inline AXAttributeCacheEnabler::~AXAttributeCacheEnabler() { }
+
 #endif
 
 }
