@@ -1,3 +1,9 @@
+2016-02-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed test expectations gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-02-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark css3/filters/multiple-filters-invalidation.html  as flaky on ios-simulator
