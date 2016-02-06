@@ -1235,6 +1235,11 @@ webkit.org/b/153942 plugins/private-browsing-mode.html [ Failure Pass ]
 
 webkit.org/b/153943 webaudio/convolution-mono-mono.html [ Failure Pass ]
 
+webkit.org/b/153947 imported/w3c/css/css-color-3/t424-hsl-parsing-f.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/153947 imported/w3c/css/css-color-3/t425-hsla-parsing-f.xht [ ImageOnlyFailure Pass ]
+
+webkit.org/b/153948 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1461,8 +1466,11 @@ webkit.org/b/143875 media/track/track-css-matching.html [ Timeout Pass ]
 
 webkit.org/b/143986 fast/dom/Node/mutation-blur.html [ Timeout Pass ]
 webkit.org/b/143987 media/auto-play-in-sandbox-with-allow-scripts.html [ Timeout Pass ]
+
 webkit.org/b/143990 media/track/track-css-matching-timestamps.html [ Timeout Pass ]
-webkit.org/b/143992 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Timeout Pass ]
+webkit.org/b/143990 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Timeout Pass ]
+webkit.org/b/143990 media/track/track-disabled-addcue.html [ Timeout Pass ]
+webkit.org/b/143990 media/track/track-disabled.html [ Timeout Pass ]
 
 webkit.org/b/132055 media/track/track-datacue.html  [ Timeout ]
 
@@ -1509,6 +1517,10 @@ Bug(GTK) fast/history/go-back-to-iframe-with-plugin.html [ Timeout Pass ]
 webkit.org/b/153772 fast/shadow-dom/slot-removal-crash-2.html [ Timeout ]
 
 webkit.org/b/153944 plugins/get-url-notify-with-url-that-fails-to-load.html [ Timeout Pass ]
+
+webkit.org/b/153946 imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html [ Timeout Pass ]
+
+webkit.org/b/153949 media/media-volume-slider-rendered-normal.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2550,6 +2562,8 @@ webkit.org/b/152643 storage/indexeddb/clone-exception.html [ Failure ]
 webkit.org/b/152643 storage/indexeddb/connection-leak.html [ Failure ]
 webkit.org/b/152643 storage/indexeddb/database-wrapper.html [ Failure ]
 webkit.org/b/152643 storage/indexeddb/keypath-basics.html [ Failure ]
+
+webkit.org/b/152643 storage/indexeddb/mozilla/cursor-update-updates-indexes.html [ Failure Pass ]
 
 webkit.org/b/152788 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure ]
 webkit.org/b/152788 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]

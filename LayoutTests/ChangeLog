@@ -1,3 +1,11 @@
+2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Various tests are flaky
+
+        More unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-02-06  Chris Dumez  <cdumez@apple.com>
 
         Object.getOwnPropertyDescriptor() does not work on sub-frame's window
