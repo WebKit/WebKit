@@ -1,3 +1,60 @@
+2016-02-06  Darin Adler  <darin@apple.com>
+
+        Finish auditing call sites of upper() and lower(), eliminate many, and rename the functions
+        https://bugs.webkit.org/show_bug.cgi?id=153905
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/CustomProtocols/CustomProtocolManager.h: Use ASCII case-insensitive hash
+        for set of registered schemes.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginInfoFromPropertyLists): Use convertToASCIILowercase for MIME type and
+        for file extensions.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::parseMIMEDescription): Use convertToASCIILowercase for
+        MIME description.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_preferred_languages_set): Use convertToASCIILowercase for language.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_preferred_languages): Use convertToASCIILowercase for language.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::findPluginForExtension): Use Vector::contains instead of
+        writing it out using std::find.
+        (WebKit::pathExtension): Lowercase the result with convertToASCIILowercase instead of
+        leaving that to the caller.
+        (WebKit::PluginInfoStore::findPlugin): Removed call to lower since pathExtension
+        handles that now.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin): Use convertToASCIILowercase for MIME type.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::globalURLSchemesWithCustomProtocolHandlers): Use
+        an ASCII case-insensitive hash.
+        (WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers):
+        Remove lowercasing, since the hash is now ASCII case-insensitive.
+        (WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers):
+        Ditto.
+
+        * UIProcess/WebProcessPool.h: Use an ASCII case-insensitive hash.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::initialize): Use convertToASCIILowercase on parameter names
+        and values.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::pluginSupportsExtension): Use convertToASCIILowercase for extension assertion.
+        Also use a modern for loop.
+        (WebKit::WebFrameLoaderClient::objectContentType): Make the checks for empty MIME types
+        a little less redundant. Reordered logic to avoid checking the list of supported MIME
+        types extra times, and to eliminate the need for a boolean. Use convertToASCIILowercase
+        on the extension.
+
 2016-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix more incorrect ASSERT introduced in r196053.

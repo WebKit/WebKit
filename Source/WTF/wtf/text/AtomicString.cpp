@@ -32,22 +32,6 @@
 
 namespace WTF {
 
-AtomicString AtomicString::lower() const
-{
-    // Note: This is a hot function in the Dromaeo benchmark.
-    StringImpl* impl = this->impl();
-    if (UNLIKELY(!impl))
-        return AtomicString();
-
-    RefPtr<StringImpl> lowercasedString = impl->lower();
-    if (LIKELY(lowercasedString == impl))
-        return *this;
-
-    AtomicString result;
-    result.m_string = AtomicStringImpl::add(lowercasedString.get());
-    return result;
-}
-
 template<AtomicString::CaseConvertType type>
 ALWAYS_INLINE AtomicString AtomicString::convertASCIICase() const
 {

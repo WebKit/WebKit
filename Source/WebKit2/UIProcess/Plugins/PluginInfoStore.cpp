@@ -138,9 +138,7 @@ PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension
             continue;
 
         for (const auto& mimeClassInfo : plugin.info.mimes) {
-            const Vector<String>& extensions = mimeClassInfo.extensions;
-            
-            if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end()) {
+            if (mimeClassInfo.extensions.contains(extension)) {
                 // We found a supported extension, set the correct MIME type.
                 mimeType = mimeClassInfo.type;
                 return plugin;
@@ -160,11 +158,11 @@ static inline String pathExtension(const URL& url)
         if (extensionPos != notFound)
             extension = filename.substring(extensionPos + 1);
     }
-    
-    return extension;
+    return extension.convertToASCIILowercase();
 }
 
 #if !PLATFORM(COCOA)
+
 PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginModuleInfo&)
 {
     return PluginModuleLoadNormally;
@@ -190,7 +188,7 @@ PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const URL& url, P
     }
 
     // Next, check if any plug-ins claim to support the URL extension.
-    String extension = pathExtension(url).lower();
+    String extension = pathExtension(url);
     if (!extension.isNull() && mimeType.isEmpty()) {
         PluginModuleInfo plugin = findPluginForExtension(extension, mimeType, allowedPluginTypes);
         if (!plugin.path.isNull())

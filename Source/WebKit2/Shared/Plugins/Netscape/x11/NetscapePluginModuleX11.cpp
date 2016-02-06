@@ -76,7 +76,7 @@ void NetscapePluginModule::parseMIMEDescription(const String& mimeDescription, V
     ASSERT_ARG(result, result.isEmpty());
 
     Vector<String> types;
-    mimeDescription.lower().split(UChar(';'), false, types);
+    mimeDescription.convertToASCIILowercase().split(UChar(';'), false, types);
     result.reserveInitialCapacity(types.size());
 
     size_t mimeInfoCount = 0;

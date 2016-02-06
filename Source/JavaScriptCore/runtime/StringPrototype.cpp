@@ -1406,17 +1406,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
         return throwVMTypeError(exec);
     JSString* sVal = thisValue.toString(exec);
     const String& s = sVal->value(exec);
-
-    int sSize = s.length();
-    if (!sSize)
+    String lowercasedString = s.convertToLowercaseWithoutLocale();
+    if (lowercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
-    RELEASE_ASSERT(sSize >= 0);
-
-    StringImpl* ourImpl = s.impl();
-    RefPtr<StringImpl> lower = ourImpl->lower();
-    if (ourImpl == lower)
-        return JSValue::encode(sVal);
-    return JSValue::encode(jsString(exec, String(lower.release())));
+    return JSValue::encode(jsString(exec, lowercasedString));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
@@ -1426,16 +1419,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
         return throwVMTypeError(exec);
     JSString* sVal = thisValue.toString(exec);
     const String& s = sVal->value(exec);
-
-    int sSize = s.length();
-    if (!sSize)
+    String uppercasedString = s.convertToUppercaseWithoutLocale();
+    if (uppercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
-
-    StringImpl* sImpl = s.impl();
-    RefPtr<StringImpl> upper = sImpl->upper();
-    if (sImpl == upper)
-        return JSValue::encode(sVal);
-    return JSValue::encode(jsString(exec, String(upper.release())));
+    return JSValue::encode(jsString(exec, uppercasedString));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)

@@ -913,9 +913,9 @@ void WebProcessPool::registerURLSchemeAsCORSEnabled(const String& urlScheme)
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCORSEnabled(urlScheme));
 }
 
-HashSet<String>& WebProcessPool::globalURLSchemesWithCustomProtocolHandlers()
+HashSet<String, ASCIICaseInsensitiveHash>& WebProcessPool::globalURLSchemesWithCustomProtocolHandlers()
 {
-    static NeverDestroyed<HashSet<String>> set;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> set;
     return set;
 }
 
@@ -924,10 +924,9 @@ void WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const
     if (!urlScheme)
         return;
 
-    String schemeLower = urlScheme.lower();
-    globalURLSchemesWithCustomProtocolHandlers().add(schemeLower);
+    globalURLSchemesWithCustomProtocolHandlers().add(urlScheme);
     for (auto* processPool : allProcessPools())
-        processPool->registerSchemeForCustomProtocol(schemeLower);
+        processPool->registerSchemeForCustomProtocol(urlScheme);
 }
 
 void WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
@@ -935,10 +934,9 @@ void WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(con
     if (!urlScheme)
         return;
 
-    String schemeLower = urlScheme.lower();
-    globalURLSchemesWithCustomProtocolHandlers().remove(schemeLower);
+    globalURLSchemesWithCustomProtocolHandlers().remove(urlScheme);
     for (auto* processPool : allProcessPools())
-        processPool->unregisterSchemeForCustomProtocol(schemeLower);
+        processPool->unregisterSchemeForCustomProtocol(urlScheme);
 }
 
 #if ENABLE(CACHE_PARTITIONING)

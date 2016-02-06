@@ -39,8 +39,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    typedef HashMap<String, String> MIMEToDescriptionsMap;
-    typedef HashMap<String, Vector<String> > MIMEToExtensionsMap;
+
+    typedef HashMap<String, String, ASCIICaseInsensitiveHash> MIMEToDescriptionsMap;
+    typedef HashMap<String, Vector<String>, ASCIICaseInsensitiveHash> MIMEToExtensionsMap;
 
     class PluginPackage : public RefCounted<PluginPackage> {
     public:

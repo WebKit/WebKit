@@ -216,18 +216,15 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         MimeClassInfo mimeClassInfo;
         
         NSArray *extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
-        for (NSUInteger i = 0; i < [extensions count]; ++i) {
+        for (NSString *extension in extensions) {
             // The DivX plug-in lists multiple extensions in a comma separated string instead of using
             // multiple array elements in the property list. Work around this here by splitting the
             // extension string into components.
-            NSArray *extensionComponents = [[extensions objectAtIndex:i] componentsSeparatedByString:@","];
-
-            for (NSString *extension in extensionComponents)
-                mimeClassInfo.extensions.append(extension);
+            for (NSString *component in [extension componentsSeparatedByString:@","])
+                mimeClassInfo.extensions.append(component);
         }
 
-        mimeClassInfo.type = String(MIME).lower();
-
+        mimeClassInfo.type = String(MIME).convertToASCIILowercase();
         mimeClassInfo.desc = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
 
         pluginInfo.mimes.append(mimeClassInfo);
@@ -284,12 +281,10 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
 - (BOOL)supportsExtension:(const String&)extension
 {
-    ASSERT(extension.lower() == extension);
+    ASSERT(extension.convertToASCIILowercase() == extension);
     
-    for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
-        const Vector<String>& extensions = pluginInfo.mimes[i].extensions;
-
-        if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end())
+    for (auto& entry : pluginInfo.mimes) {
+        if (entry.extensions.contains(extension))
             return YES;
     }
 
@@ -298,26 +293,23 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
 - (BOOL)supportsMIMEType:(const WTF::String&)mimeType
 {
-    ASSERT(mimeType.lower() == mimeType);
+    ASSERT(mimeType.convertToASCIILowercase() == mimeType);
     
-    for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
-        if (pluginInfo.mimes[i].type == mimeType)
+    for (auto& entry : pluginInfo.mimes) {
+        if (entry.type == mimeType)
             return YES;
     }
-    
+
     return NO;
 }
 
 - (NSString *)MIMETypeForExtension:(const String&)extension
 {
-    ASSERT(extension.lower() == extension);
+    ASSERT(extension.convertToASCIILowercase() == extension);
     
-    for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
-        const MimeClassInfo& mimeClassInfo = pluginInfo.mimes[i];
-        const Vector<String>& extensions = mimeClassInfo.extensions;
-
-        if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end())
-            return mimeClassInfo.type;
+    for (auto& entry : pluginInfo.mimes) {
+        if (entry.extensions.contains(extension))
+            return entry.type;
     }
 
     return nil;

@@ -331,16 +331,12 @@ public:
     String left(unsigned len) const { return substring(0, len); }
     String right(unsigned len) const { return substring(length() - len, len); }
 
-    // Returns a lowercase/uppercase version of the string.
-    // The convertToASCIILowercase is useful in many contexts such as HTML where we don't
-    // want to do any conversion for non-ASCII letters.
     WTF_EXPORT_STRING_API String convertToASCIILowercase() const;
-    WTF_EXPORT_STRING_API String lower() const;
     WTF_EXPORT_STRING_API String convertToASCIIUppercase() const;
-    WTF_EXPORT_STRING_API String upper() const;
-
-    WTF_EXPORT_STRING_API String lower(const AtomicString& localeIdentifier) const;
-    WTF_EXPORT_STRING_API String upper(const AtomicString& localeIdentifier) const;
+    WTF_EXPORT_STRING_API String convertToLowercaseWithoutLocale() const;
+    WTF_EXPORT_STRING_API String convertToUppercaseWithoutLocale() const;
+    WTF_EXPORT_STRING_API String convertToLowercaseWithLocale(const AtomicString& localeIdentifier) const;
+    WTF_EXPORT_STRING_API String convertToUppercaseWithLocale(const AtomicString& localeIdentifier) const;
 
     WTF_EXPORT_STRING_API String stripWhiteSpace() const;
     WTF_EXPORT_STRING_API String stripWhiteSpace(IsWhiteSpaceFunctionPtr) const;

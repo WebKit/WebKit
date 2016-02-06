@@ -322,7 +322,7 @@ static String canonicalLangTag(const Vector<String>& parts)
         if (isValidRegion) {
             ++currentIndex;
             canonical.append('-');
-            canonical.append(region.upper());
+            canonical.append(region.convertToASCIIUppercase());
         }
     }
 

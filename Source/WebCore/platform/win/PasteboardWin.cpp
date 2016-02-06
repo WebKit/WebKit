@@ -182,14 +182,14 @@ enum ClipboardDataType { ClipboardDataTypeNone, ClipboardDataTypeURL, ClipboardD
 
 static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
 {
-    String qType = type.stripWhiteSpace().lower();
+    String strippedType = type.stripWhiteSpace();
 
     // two special cases for IE compatibility
-    if (qType == "text" || qType == "text/plain" || qType.startsWith("text/plain;"))
+    if (equalLettersIgnoringASCIICase(strippedType, "text") || equalLettersIgnoringASCIICase(strippedType, "text/plain") || strippedType.startsWith("text/plain;", false))
         return ClipboardDataTypeText;
-    if (qType == "url" || qType == "text/uri-list")
+    if (equalLettersIgnoringASCIICase(strippedType, "url") || equalLettersIgnoringASCIICase(strippedType, "text/uri-list"))
         return ClipboardDataTypeURL;
-    if (qType == "text/html")
+    if (equalLettersIgnoringASCIICase(strippedType, "text/html"))
         return ClipboardDataTypeTextHTML;
 
     return ClipboardDataTypeNone;

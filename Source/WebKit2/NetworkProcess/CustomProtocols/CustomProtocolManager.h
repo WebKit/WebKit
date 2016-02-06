@@ -36,6 +36,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/StringHash.h>
 OBJC_CLASS NSURLSessionConfiguration;
 OBJC_CLASS WKCustomProtocol;
 #else
@@ -99,7 +100,7 @@ private:
     RefPtr<WorkQueue> m_messageQueue;
 
 #if PLATFORM(COCOA)
-    HashSet<String> m_registeredSchemes;
+    HashSet<String, ASCIICaseInsensitiveHash> m_registeredSchemes;
     Lock m_registeredSchemesMutex;
 
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocol>> CustomProtocolMap;

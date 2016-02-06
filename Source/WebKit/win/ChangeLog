@@ -1,3 +1,22 @@
+2016-02-06  Darin Adler  <darin@apple.com>
+
+        Finish auditing call sites of upper() and lower(), eliminate many, and rename the functions
+        https://bugs.webkit.org/show_bug.cgi?id=153905
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::pluginForMIMEType): Use ASCII case-insensitive map rather
+        than lowercasing the MIME type.
+        (WebCore::PluginDatabase::setPreferredPluginForMIMEType): Ditto.
+
+        * Plugins/PluginDatabase.h: Make m_preferredPlugins use an ASCII case-insensitive hash.
+
+        * Plugins/PluginPackage.h: Use ASCII case-insensitive hash for maps keyed by MIME type.
+
+        * Plugins/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::fetchInfo): Use convertToASCIILowercase to lowercase a MIME type.
+
 2016-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler

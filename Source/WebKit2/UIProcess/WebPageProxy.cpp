@@ -1863,7 +1863,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
 
     MESSAGE_CHECK_URL(urlString);
 
-    newMimeType = mimeType.lower();
+    newMimeType = mimeType.convertToASCIILowercase();
     pluginLoadPolicy = PluginModuleLoadNormally;
 
     PluginData::AllowedPluginTypes allowedPluginTypes = allowOnlyApplicationPlugins ? PluginData::OnlyApplicationPlugins : PluginData::AllPlugins;

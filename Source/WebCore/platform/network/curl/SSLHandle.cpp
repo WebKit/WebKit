@@ -39,9 +39,9 @@
 
 namespace WebCore {
 
-typedef std::tuple<WTF::String, WTF::String> clientCertificate;
-static HashMap<String, ListHashSet<String>> allowedHosts;
-static HashMap<String, clientCertificate> allowedClientHosts;
+typedef std::tuple<String, String> clientCertificate;
+static HashMap<String, ListHashSet<String>, ASCIICaseInsensitiveHash> allowedHosts;
+static HashMap<String, clientCertificate, ASCIICaseInsensitiveHash> allowedClientHosts;
 
 void allowsAnyHTTPSCertificateHosts(const String& host)
 {
@@ -52,13 +52,13 @@ void allowsAnyHTTPSCertificateHosts(const String& host)
 void addAllowedClientCertificate(const String& host, const String& certificate, const String& key)
 {
     clientCertificate clientInfo(certificate, key);
-    allowedClientHosts.set(host.lower(), clientInfo);
+    allowedClientHosts.set(host, clientInfo);
 }
 
 void setSSLClientCertificate(ResourceHandle* handle)
 {
     String host = handle->firstRequest().url().host();
-    HashMap<String, clientCertificate>::iterator it = allowedClientHosts.find(host.lower());
+    auto it = allowedClientHosts.find(host);
     if (it == allowedClientHosts.end())
         return;
 
@@ -71,7 +71,7 @@ void setSSLClientCertificate(ResourceHandle* handle)
 
 bool sslIgnoreHTTPSCertificate(const String& host, const ListHashSet<String>& certificates)
 {
-    HashMap<String, ListHashSet<String>>::iterator it = allowedHosts.find(host);
+    auto it = allowedHosts.find(host);
     if (it != allowedHosts.end()) {
         if ((it->value).isEmpty()) {
             it->value = certificates;
@@ -79,8 +79,8 @@ bool sslIgnoreHTTPSCertificate(const String& host, const ListHashSet<String>& ce
         }
         if (certificates.size() != it->value.size())
             return false;
-        ListHashSet<String>::const_iterator certsIter = certificates.begin();
-        ListHashSet<String>::iterator valueIter = (it->value).begin();
+        auto certsIter = certificates.begin();
+        auto valueIter = (it->value).begin();
         for (; valueIter != (it->value).end(); ++valueIter, ++certsIter) {
             if (*certsIter != *valueIter)
                 return false;
@@ -198,13 +198,13 @@ static int certVerifyCallback(int ok, X509_STORE_CTX* ctx)
     d->m_sslErrors = sslCertificateFlag(err);
 
 #if PLATFORM(WIN)
-    HashMap<String, ListHashSet<String>>::iterator it = allowedHosts.find(host);
+    auto it = allowedHosts.find(host);
     ok = (it != allowedHosts.end());
 #else
     ListHashSet<String> certificates;
     if (!pemData(ctx, certificates))
         return 0;
-    ok = sslIgnoreHTTPSCertificate(host.lower(), certificates);
+    ok = sslIgnoreHTTPSCertificate(host, certificates);
 #endif
 
     if (ok) {

@@ -82,16 +82,15 @@ namespace WebCore {
 
 #if USE(CFNETWORK)
 
-static HashSet<String>& allowsAnyHTTPSCertificateHosts()
+static HashSet<String, ASCIICaseInsensitiveHash>& allowsAnyHTTPSCertificateHosts()
 {
-    static NeverDestroyed<HashSet<String>> hosts;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> hosts;
     return hosts;
 }
 
-static HashMap<String, RetainPtr<CFDataRef>>& clientCerts()
+static HashMap<String, RetainPtr<CFDataRef>, ASCIICaseInsensitiveHash>& clientCertificates()
 {
-    typedef HashMap<String, RetainPtr<CFDataRef>> CertsMap;
-    static NeverDestroyed<CertsMap> certs;
+    static NeverDestroyed<HashMap<String, RetainPtr<CFDataRef>, ASCIICaseInsensitiveHash>> certs;
     return certs;
 }
 
@@ -169,7 +168,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 #if PLATFORM(IOS)
     sslProps = adoptCF(ResourceHandle::createSSLPropertiesFromNSURLRequest(firstRequest()));
 #else
-    if (allowsAnyHTTPSCertificateHosts().contains(firstRequest().url().host().lower())) {
+    if (allowsAnyHTTPSCertificateHosts().contains(firstRequest().url().host())) {
         sslProps = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsAnyRoot, kCFBooleanTrue);
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsExpiredRoots, kCFBooleanTrue);
@@ -177,8 +176,8 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
     }
 
-    HashMap<String, RetainPtr<CFDataRef>>::iterator clientCert = clientCerts().find(firstRequest().url().host().lower());
-    if (clientCert != clientCerts().end()) {
+    auto clientCert = clientCertificates().find(firstRequest().url().host());
+    if (clientCert != clientCertificates().end()) {
         if (!sslProps)
             sslProps = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 #if PLATFORM(WIN)
@@ -603,12 +602,12 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
-    allowsAnyHTTPSCertificateHosts().add(host.lower());
+    allowsAnyHTTPSCertificateHosts().add(host);
 }
 
-void ResourceHandle::setClientCertificate(const String& host, CFDataRef cert)
+void ResourceHandle::setClientCertificate(const String& host, CFDataRef certificate)
 {
-    clientCerts().set(host.lower(), cert);
+    clientCertificates().set(host, certificate);
 }
 
 void ResourceHandle::platformSetDefersLoading(bool defers)

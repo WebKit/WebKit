@@ -346,7 +346,7 @@ void MultipartHandle::didReceiveResponse()
         String contentType = m_headers.get(HTTPHeaderName::ContentType);
         String mimeType = extractMIMETypeFromMediaType(contentType);
 
-        response->setMimeType(mimeType.lower());
+        response->setMimeType(mimeType.convertToASCIILowercase());
         response->setTextEncodingName(extractCharsetFromMediaType(contentType));
 
         d->client()->didReceiveResponse(m_resourceHandle, *response);

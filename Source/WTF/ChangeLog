@@ -1,3 +1,30 @@
+2016-02-06  Darin Adler  <darin@apple.com>
+
+        Finish auditing call sites of upper() and lower(), eliminate many, and rename the functions
+        https://bugs.webkit.org/show_bug.cgi?id=153905
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::lower): Deleted.
+        * wtf/text/AtomicString.h: Deleted the lower function.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::convertToLowercaseWithoutLocale): Renamed from lower.
+        (WTF::StringImpl::convertToUppercaseWithoutLocale): Renamed from upper.
+        (WTF::StringImpl::convertToLowercaseWithLocale): Renamed from lower.
+        (WTF::StringImpl::convertToUppercaseWithLocale): Renamed from upper.
+        (WTF::StringImpl::foldCase): Added fast cases for ASCII since this is
+        now used in some more-performance-critical code.
+        * wtf/text/StringImpl.h: Renamed lower and upper.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::convertToLowercaseWithoutLocale): Renamed from lower.
+        (WTF::String::convertToUppercaseWithoutLocale): Renamed from upper.
+        (WTF::String::convertToLowercaseWithLocale): Renamed from lower.
+        (WTF::String::convertToUppercaseWithLocale): Renamed from upper.
+        * wtf/text/WTFString.h: Renamed lower and upper. Removed unneeded comment.
+
 2016-02-03  Darin Adler  <darin@apple.com>
 
         Convert another batch of String::lower callsites to something better, typically convertToASCIILowercase

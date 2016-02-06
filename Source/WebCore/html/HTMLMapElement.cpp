@@ -78,10 +78,8 @@ bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size,
 HTMLImageElement* HTMLMapElement::imageElement()
 {
     if (m_name.isEmpty())
-        return 0;
-    AtomicString lowercasedName = m_name.lower();
-    ASSERT(lowercasedName.impl());
-    return document().imageElementByLowercasedUsemap(*lowercasedName.impl());
+        return nullptr;
+    return document().imageElementByCaseFoldedUsemap(*AtomicString(m_name.string().foldCase()).impl());
 }
 
 void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -101,7 +99,7 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         String mapName = value;
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
-        m_name = document().isHTMLDocument() ? mapName.lower() : mapName;
+        m_name = document().isHTMLDocument() ? mapName.foldCase() : mapName;
         if (inDocument())
             treeScope().addImageMap(*this);
 

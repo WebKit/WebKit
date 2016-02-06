@@ -155,7 +155,6 @@ public:
 
     WTF_EXPORT_STRING_API AtomicString convertToASCIILowercase() const;
     WTF_EXPORT_STRING_API AtomicString convertToASCIIUppercase() const;
-    WTF_EXPORT_STRING_API AtomicString lower() const;
 
     int toInt(bool* ok = 0) const { return m_string.toInt(ok); }
     double toDouble(bool* ok = 0) const { return m_string.toDouble(ok); }

@@ -201,18 +201,16 @@ void TreeScope::removeImageMap(HTMLMapElement& imageMap)
 
 HTMLMapElement* TreeScope::getImageMap(const String& url) const
 {
-    if (url.isNull())
-        return nullptr;
     if (!m_imageMapsByName)
         return nullptr;
-    size_t hashPos = url.find('#');
-    String name = (hashPos == notFound ? String() : url.substring(hashPos + 1)).impl();
+    auto hashPosition = url.find('#');
+    if (hashPosition == notFound)
+        return nullptr;
+    String name = url.substring(hashPosition + 1);
     if (name.isEmpty())
         return nullptr;
-    if (m_rootNode.document().isHTMLDocument()) {
-        AtomicString lowercasedName = name.lower();
-        return m_imageMapsByName->getElementByLowercasedMapName(*lowercasedName.impl(), *this);
-    }
+    if (m_rootNode.document().isHTMLDocument())
+        return m_imageMapsByName->getElementByCaseFoldedMapName(*AtomicString(name.foldCase()).impl(), *this);
     return m_imageMapsByName->getElementByMapName(*AtomicString(name).impl(), *this);
 }
 

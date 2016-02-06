@@ -638,7 +638,7 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
 
 #if PLUGIN_ARCHITECTURE(MAC)
         if (m_pluginModule->pluginQuirks().contains(PluginQuirks::WantsLowercaseParameterNames))
-            parameterName = parameterName.lower();
+            parameterName = parameterName.convertToASCIILowercase();
 #endif
 
         paramNames.append(parameterName.utf8());
@@ -675,7 +675,7 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
     if (m_pluginModule->pluginQuirks().contains(PluginQuirks::MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists)) {
         for (size_t i = 0; i < parameters.names.size(); ++i) {
             if (equalLettersIgnoringASCIICase(parameters.names[i], "background")) {
-                setIsTransparent(isTransparentSilverlightBackgroundValue(parameters.values[i].lower()));
+                setIsTransparent(isTransparentSilverlightBackgroundValue(parameters.values[i].convertToASCIILowercase()));
                 break;
             }
         }

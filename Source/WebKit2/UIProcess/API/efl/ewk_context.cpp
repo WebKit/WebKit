@@ -563,7 +563,7 @@ void ewk_context_preferred_languages_set(Eina_List* languages)
         Eina_List* l;
         void* data;
         EINA_LIST_FOREACH(languages, l, data)
-            preferredLanguages.append(String::fromUTF8(static_cast<char*>(data)).lower().replace("_", "-"));
+            preferredLanguages.append(String::fromUTF8(static_cast<char*>(data)).convertToASCIILowercase().replace("_", "-"));
     }
 
     WebCore::overrideUserPreferredLanguages(preferredLanguages);

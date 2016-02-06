@@ -60,8 +60,8 @@ public:
     Element* getElementById(const AtomicStringImpl&, const TreeScope&) const;
     Element* getElementByName(const AtomicStringImpl&, const TreeScope&) const;
     HTMLMapElement* getElementByMapName(const AtomicStringImpl&, const TreeScope&) const;
-    HTMLMapElement* getElementByLowercasedMapName(const AtomicStringImpl&, const TreeScope&) const;
-    HTMLImageElement* getElementByLowercasedUsemap(const AtomicStringImpl&, const TreeScope&) const;
+    HTMLMapElement* getElementByCaseFoldedMapName(const AtomicStringImpl&, const TreeScope&) const;
+    HTMLImageElement* getElementByCaseFoldedUsemap(const AtomicStringImpl&, const TreeScope&) const;
     HTMLLabelElement* getElementByLabelForAttribute(const AtomicStringImpl&, const TreeScope&) const;
     Element* getElementByWindowNamedItem(const AtomicStringImpl&, const TreeScope&) const;
     Element* getElementByDocumentNamedItem(const AtomicStringImpl&, const TreeScope&) const;

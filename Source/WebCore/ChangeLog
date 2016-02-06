@@ -1,3 +1,130 @@
+2016-02-06  Darin Adler  <darin@apple.com>
+
+        Finish auditing call sites of upper() and lower(), eliminate many, and rename the functions
+        https://bugs.webkit.org/show_bug.cgi?id=153905
+
+        Reviewed by Sam Weinig.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::isTypeSupported): Use convertToASCIILowercase on MIME type.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectText): Use new names for lower and upper. Also
+        tweaked style a tiny bit and used u_toupper rather than converting an entire
+        string to uppercase.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addImageElementByCaseFoldedUsemap): Renamed to reflect the use
+        of case folding rather than lowercasing.
+        (WebCore::Document::removeImageElementByCaseFoldedUsemap): Ditto.
+        (WebCore::Document::imageElementByCaseFoldedUsemap): Ditto.
+        * dom/Document.h: Ditto.
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::getElementByCaseFoldedMapName): Ditto.
+        (WebCore::DocumentOrderedMap::getElementByCaseFoldedUsemap): Ditto.
+        * dom/DocumentOrderedMap.h: Ditto.
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getImageMap): Removed unneeded special case for null string.
+        Simplified logic for cases where the URL does not have a "#" character in it.
+        Use case folding instead of lowercase.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_processText): Removed unneded special case for the empty string.
+        Use makCapitalized instead of Cocoa function for "capitalize". Use upper and lower
+        functions by their new names.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute): Use case folding instead of
+        lowerasing for the usemap attribute.
+        (WebCore::HTMLImageElement::insertedInto): Ditto.
+        (WebCore::HTMLImageElement::removedFrom): Ditto.
+        (WebCore::HTMLImageElement::matchesCaseFoldedUsemap): Ditto.
+        * html/HTMLImageElement.h: Rename since usemap is case folded now, not lowercased.
+
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement): Use case folding instead of lowercasing
+        for usemap.
+        (WebCore::HTMLMapElement::parseAttribute): Ditto.
+
+        * platform/Language.cpp:
+        (WebCore::canonicalLanguageIdentifier): Use convertToASCIILowercase for language code.
+        (WebCore::indexOfBestMatchingLanguageInList): Ditto.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns): Use new name for the upper function.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseContentTypeOptionsHeader): Use equalLettersIgnoringASCIICase instead
+        of lowercasing to check for a specific header value.
+
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::retrieveKeyValuePairs): Use convertToASCIILowercase for MIME header name.
+        (WebCore::MIMEHeader::parseContentTransferEncoding): Use equalLettersIgnoringASCIICase
+        instead of lowercasing.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::allowsAnyHTTPSCertificateHosts): Make this hash ASCII case-insensitive.
+        (WebCore::clientCertificates): Ditto.
+        (WebCore::ResourceHandle::createCFURLConnection): Remove call to lower since the
+        set is now ASCII case-insensitive.
+        (WebCore::ResourceHandle::setHostAllowsAnyHTTPSCertificate): Ditto.
+        (WebCore::ResourceHandle::setClientCertificate): Ditto.
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::getNetscapeCookieFormat): Use equalLettersIgnoringASCIICase instead of
+        lowercasing.
+
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::didReceiveResponse): Use convertToASCIILowercase to
+        make a MIME type lowercase.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setHostAllowsAnyHTTPSCertificate): Removed unneeded
+        conversion to lowercase now that the set is ASCII case-insensitive.
+        (WebCore::ResourceHandle::setClientCertificate): Removed code that populates a map
+        that is then never used for anything.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback): Use convertToASCIILowercase for MIME type.
+
+        * platform/network/curl/SSLHandle.cpp: Made hash maps keyed by host names
+        ASCII case-insensitive.
+        (WebCore::addAllowedClientCertificate): Removed lowercasing since the map itself
+        is now ASCII case insensitve.
+        (WebCore::setSSLClientCertificate): Ditto. Also use auto for iterator type so we
+        don't have to write out the map type.
+        (WebCore::sslIgnoreHTTPSCertificate): Ditto.
+        (WebCore::certVerifyCallback): Ditto.
+
+        * platform/network/soup/ResourceHandleSoup.cpp: Made hash maps keyed by host names
+        ASCII case-insensitive.
+        (WebCore::allowsAnyHTTPSCertificateHosts): Ditto.
+        (WebCore::handleUnignoredTLSErrors): Ditto.
+        (WebCore::ResourceHandle::setHostAllowsAnyHTTPSCertificate): Ditto.
+        (WebCore::ResourceHandle::setClientCertificate): Ditto.
+
+        * platform/text/LocaleToScriptMappingDefault.cpp: Made hash maps keyed by script
+        names ASCII case-insensitive. USE WTF_ARRAY_LENGTH as appropriate.
+        (WebCore::scriptNameToCode): Use modern style to initialize the map. Removed
+        unnecessary lowercasing of the script name before looking at the map.
+        (WebCore::localeToScriptCodeForFontSelection): Ditto.
+
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::convertLocaleNameToLCID): Made map ASCII case-insensitive and removed
+        unneeded lowercasing.
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::clipboardTypeFromMIMEType): Use equalLettersIgnoringASCIICase instead
+        of lowercasing.
+
+        * rendering/RenderText.cpp:
+        (WebCore::applyTextTransform): Use new names for the upper and lower functions.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseIsXML): Remove unneeded lowercasing, since
+        DOMImplementation now has ASCII case-insensitive handling of MIME types.
+
 2016-02-06  Zalan Bujtas  <zalan@apple.com>
 
         Outline should contribute to visual overflow.

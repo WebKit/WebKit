@@ -761,31 +761,28 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
         bool replaceSelection = false;
         if (frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, true)) {
             switch (activity) {
-            case FindAndCapitalize: {
+            case FindAndCapitalize:
                 replacementString = closestString;
                 makeCapitalized(&replacementString, 0);
                 replaceSelection = true;
                 break;
-            }
             case FindAndUppercase:
-                replacementString = closestString.upper();
+                replacementString = closestString.convertToUppercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
                 replaceSelection = true;
                 break;
             case FindAndLowercase:
-                replacementString = closestString.lower();
+                replacementString = closestString.convertToLowercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
                 replaceSelection = true;
                 break;
             case FindAndReplaceActivity: {
                 replaceSelection = true;
-                
                 // When applying find and replace activities, we want to match the capitalization of the replaced text,
                 // (unless we're replacing with an abbreviation.)
-                String uppercaseReplacementString = replacementString.upper();
-                if (closestString.length() > 0 && replacementString.length() > 2 && replacementString != uppercaseReplacementString) {
-                    if (closestString[0] == closestString.upper()[0])
+                if (closestString.length() > 0 && replacementString.length() > 2 && replacementString != replacementString.convertToUppercaseWithoutLocale()) {
+                    if (closestString[0] == u_toupper(closestString[0]))
                         makeCapitalized(&replacementString, 0);
                     else
-                        replacementString = replacementString.lower();
+                        replacementString = replacementString.convertToLowercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
                 }
                 break;
             }

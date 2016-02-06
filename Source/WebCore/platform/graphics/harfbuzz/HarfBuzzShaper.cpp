@@ -482,7 +482,7 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns(bool shouldSetDirection)
         hb_buffer_add_utf16(harfBuzzBuffer.get(), &preContext, 1, 1, 0);
 
         if (m_font->isSmallCaps() && u_islower(m_normalizedBuffer[currentRun->startIndex()])) {
-            String upperText = String(m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters()).upper();
+            String upperText = String(m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters()).convertToUppercaseWithoutLocale();
             currentFontData = m_font->glyphDataForCharacter(upperText[0], false, SmallCapsVariant).font;
             const UChar* characters = StringView(upperText).upconvertedCharacters();
             hb_buffer_add_utf16(harfBuzzBuffer.get(), reinterpret_cast<const uint16_t*>(characters), currentRun->numCharacters(), 0, currentRun->numCharacters());

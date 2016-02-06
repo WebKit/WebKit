@@ -351,32 +351,32 @@ String String::convertToASCIIUppercase() const
     return m_impl->convertToASCIIUppercase();
 }
 
-String String::lower() const
+String String::convertToLowercaseWithoutLocale() const
 {
     if (!m_impl)
         return String();
-    return m_impl->lower();
+    return m_impl->convertToLowercaseWithoutLocale();
 }
 
-String String::upper() const
+String String::convertToUppercaseWithoutLocale() const
 {
     if (!m_impl)
         return String();
-    return m_impl->upper();
+    return m_impl->convertToUppercaseWithoutLocale();
 }
 
-String String::lower(const AtomicString& localeIdentifier) const
+String String::convertToLowercaseWithLocale(const AtomicString& localeIdentifier) const
 {
     if (!m_impl)
         return String();
-    return m_impl->lower(localeIdentifier);
+    return m_impl->convertToLowercaseWithLocale(localeIdentifier);
 }
 
-String String::upper(const AtomicString& localeIdentifier) const
+String String::convertToUppercaseWithLocale(const AtomicString& localeIdentifier) const
 {
     if (!m_impl)
         return String();
-    return m_impl->upper(localeIdentifier);
+    return m_impl->convertToUppercaseWithLocale(localeIdentifier);
 }
 
 String String::stripWhiteSpace() const

@@ -733,7 +733,7 @@ bool MediaSource::isTypeSupported(const String& type)
         return false;
 
     // FIXME: Why do we convert to lowercase here, but not in MediaSource::addSourceBuffer?
-    ContentType contentType(type.lower());
+    ContentType contentType(type.convertToASCIILowercase());
     String codecs = contentType.parameter("codecs");
 
     // 2. If type does not contain a valid MIME type string, then return false.

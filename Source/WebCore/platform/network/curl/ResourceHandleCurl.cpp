@@ -122,7 +122,7 @@ void ResourceHandle::cancel()
 
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
-    allowsAnyHTTPSCertificateHosts(host.lower());
+    allowsAnyHTTPSCertificateHosts(host);
 }
 
 void ResourceHandle::setClientCertificateInfo(const String& host, const String& certificate, const String& key)
@@ -134,18 +134,11 @@ void ResourceHandle::setClientCertificateInfo(const String& host, const String& 
 }
 
 #if PLATFORM(WIN) && USE(CF)
-// FIXME:  The CFDataRef will need to be something else when
-// building without 
-static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
+
+void ResourceHandle::setClientCertificate(const String&, CFDataRef)
 {
-    static HashMap<String, RetainPtr<CFDataRef> > certs;
-    return certs;
 }
 
-void ResourceHandle::setClientCertificate(const String& host, CFDataRef cert)
-{
-    clientCerts().set(host.lower(), cert);
-}
 #endif
 
 void ResourceHandle::platformSetDefersLoading(bool defers)

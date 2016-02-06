@@ -56,6 +56,7 @@
 #import "NSAttributedStringSPI.h"
 #import "RGBColor.h"
 #import "RenderImage.h"
+#import "RenderText.h"
 #import "SoftLinking.h"
 #import "StyleProperties.h"
 #import "StyledElement.h"
@@ -2278,15 +2279,12 @@ void HTMLConverter::_processText(CharacterData& characterData)
 
     if (outputString.length()) {
         String textTransform = _caches->propertyValueForNode(characterData, CSSPropertyTextTransform);
-        if (textTransform.length()) {
-            if (textTransform == "capitalize") {// FIXME: This is extremely inefficient.
-                NSString *temporaryString = outputString;
-                outputString = [temporaryString capitalizedString];
-            } else if (textTransform == "uppercase")
-                outputString = outputString.upper();
-            else if (textTransform == "lowercase")
-                outputString = outputString.lower();
-        }
+        if (textTransform == "capitalize")
+            makeCapitalized(&outputString, 0); // FIXME: Needs to take locale into account to work correctly.
+        else if (textTransform == "uppercase")
+            outputString = outputString.convertToUppercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
+        else if (textTransform == "lowercase")
+            outputString = outputString.convertToLowercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
 
         [_attrStr replaceCharactersInRange:rangeToReplace withString:outputString];
         rangeToReplace.length = outputString.length();

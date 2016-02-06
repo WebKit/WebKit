@@ -157,20 +157,21 @@ static const ScriptNameCode scriptNameCodeList[] = {
 };
 
 struct ScriptNameCodeMapHashTraits : public HashTraits<String> {
-    static const int minimumTableSize = WTF::HashTableCapacityForSize<sizeof(scriptNameCodeList) / sizeof(ScriptNameCode)>::value;
+    static const int minimumTableSize = WTF::HashTableCapacityForSize<WTF_ARRAY_LENGTH(scriptNameCodeList)>::value;
 };
 
-typedef HashMap<String, UScriptCode, DefaultHash<String>::Hash, ScriptNameCodeMapHashTraits> ScriptNameCodeMap;
+typedef HashMap<String, UScriptCode, ASCIICaseInsensitiveHash, ScriptNameCodeMapHashTraits> ScriptNameCodeMap;
 
 UScriptCode scriptNameToCode(const String& scriptName)
 {
-    static NeverDestroyed<ScriptNameCodeMap> scriptNameCodeMap;
-    if (scriptNameCodeMap.get().isEmpty()) {
-        for (size_t i = 0; i < sizeof(scriptNameCodeList) / sizeof(ScriptNameCode); ++i)
-            scriptNameCodeMap.get().set(ASCIILiteral(scriptNameCodeList[i].name), scriptNameCodeList[i].code);
-    }
+    static NeverDestroyed<ScriptNameCodeMap> scriptNameCodeMap = []() {
+        ScriptNameCodeMap map;
+        for (auto& nameAndCode : scriptNameCodeList)
+            map.add(ASCIILiteral(nameAndCode.name), nameAndCode.code);
+        return map;
+    }();
 
-    ScriptNameCodeMap::iterator it = scriptNameCodeMap.get().find(scriptName.lower());
+    auto it = scriptNameCodeMap.get().find(scriptName);
     if (it != scriptNameCodeMap.get().end())
         return it->value;
     return USCRIPT_INVALID_CODE;
@@ -383,31 +384,33 @@ static const LocaleScript localeScriptList[] = {
 };
 
 struct LocaleScriptMapHashTraits : public HashTraits<String> {
-    static const int minimumTableSize = WTF::HashTableCapacityForSize<sizeof(localeScriptList) / sizeof(LocaleScript)>::value;
+    static const int minimumTableSize = WTF::HashTableCapacityForSize<WTF_ARRAY_LENGTH(localeScriptList)>::value;
 };
 
-typedef HashMap<String, UScriptCode, DefaultHash<String>::Hash, LocaleScriptMapHashTraits> LocaleScriptMap;
+typedef HashMap<String, UScriptCode, ASCIICaseInsensitiveHash, LocaleScriptMapHashTraits> LocaleScriptMap;
 
 UScriptCode localeToScriptCodeForFontSelection(const String& locale)
 {
-    static NeverDestroyed<LocaleScriptMap> localeScriptMap;
-    if (localeScriptMap.get().isEmpty()) {
-        for (size_t i = 0; i < sizeof(localeScriptList) / sizeof(LocaleScript); ++i)
-            localeScriptMap.get().set(ASCIILiteral(localeScriptList[i].locale), localeScriptList[i].script);
-    }
+    static NeverDestroyed<LocaleScriptMap> localeScriptMap = []() {
+        LocaleScriptMap map;
+        for (auto& localeAndScript : localeScriptList)
+            map.add(ASCIILiteral(localeAndScript.locale), localeAndScript.script);
+        return map;
+    }();
 
-    String canonicalLocale = locale.lower().replace('-', '_');
+    String canonicalLocale = locale;
+    canonicalLocale.replace('-', '_');
     while (!canonicalLocale.isEmpty()) {
-        LocaleScriptMap::iterator it = localeScriptMap.get().find(canonicalLocale);
+        auto it = localeScriptMap.get().find(canonicalLocale);
         if (it != localeScriptMap.get().end())
             return it->value;
-        size_t pos = canonicalLocale.reverseFind('_');
-        if (pos == notFound)
+        auto underscorePosition = canonicalLocale.reverseFind('_');
+        if (underscorePosition == notFound)
             break;
-        UScriptCode code = scriptNameToCode(canonicalLocale.substring(pos + 1));
+        UScriptCode code = scriptNameToCode(canonicalLocale.substring(underscorePosition + 1));
         if (code != USCRIPT_INVALID_CODE && code != USCRIPT_UNKNOWN)
             return code;
-        canonicalLocale = canonicalLocale.substring(0, pos);
+        canonicalLocale = canonicalLocale.substring(0, underscorePosition);
     }
     return USCRIPT_COMMON;
 }

@@ -104,8 +104,8 @@ bool PluginDatabase::refresh()
         getDeletedPlugins(pluginsToUnload);
 
         // Unload plugins
-        PluginSet::const_iterator end = pluginsToUnload.end();
-        for (PluginSet::const_iterator it = pluginsToUnload.begin(); it != end; ++it)
+        auto end = pluginsToUnload.end();
+        for (auto it = pluginsToUnload.begin(); it != end; ++it)
             remove(it->get());
 
         pluginSetChanged = !pluginsToUnload.isEmpty();
@@ -121,8 +121,8 @@ bool PluginDatabase::refresh()
     // of RealPlayer installed and just removed the newer one, we'll pick up the older one.
     bool shouldSkipUnchangedFiles = !pluginSetChanged;
 
-    HashSet<String>::const_iterator pathsEnd = paths.end();
-    for (HashSet<String>::const_iterator it = paths.begin(); it != pathsEnd; ++it) {
+    auto pathsEnd = paths.end();
+    for (auto it = paths.begin(); it != pathsEnd; ++it) {
         time_t lastModified;
         if (!getFileModificationTime(*it, lastModified))
             continue;
@@ -156,11 +156,11 @@ bool PluginDatabase::refresh()
     m_registeredMIMETypes.clear();
 
     // Register plug-in MIME types
-    PluginSet::const_iterator end = m_plugins.end();
-    for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
+    auto end = m_plugins.end();
+    for (auto it = m_plugins.begin(); it != end; ++it) {
         // Get MIME types
-        MIMEToDescriptionsMap::const_iterator map_it = (*it)->mimeToDescriptions().begin();
-        MIMEToDescriptionsMap::const_iterator map_end = (*it)->mimeToDescriptions().end();
+        auto map_it = (*it)->mimeToDescriptions().begin();
+        auto map_end = (*it)->mimeToDescriptions().end();
         for (; map_it != map_end; ++map_it)
             m_registeredMIMETypes.add(map_it->key);
     }
@@ -172,8 +172,8 @@ Vector<PluginPackage*> PluginDatabase::plugins() const
 {
     Vector<PluginPackage*> result;
 
-    PluginSet::const_iterator end = m_plugins.end();
-    for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it)
+    auto end = m_plugins.end();
+    for (auto it = m_plugins.begin(); it != end; ++it)
         result.append((*it).get());
 
     return result;
@@ -190,26 +190,25 @@ int PluginDatabase::preferredPluginCompare(const void* a, const void* b)
 PluginPackage* PluginDatabase::pluginForMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
-        return 0;
+        return nullptr;
 
-    String key = mimeType.lower();
-    PluginSet::const_iterator end = m_plugins.end();
-    PluginPackage* preferredPlugin = m_preferredPlugins.get(key);
+    PluginPackage* preferredPlugin = m_preferredPlugins.get(mimeType);
     if (preferredPlugin
         && preferredPlugin->isEnabled()
-        && preferredPlugin->mimeToDescriptions().contains(key)) {
+        && preferredPlugin->mimeToDescriptions().contains(mimeType)) {
         return preferredPlugin;
     }
 
     Vector<PluginPackage*, 2> pluginChoices;
 
-    for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
+    auto end = m_plugins.end();
+    for (auto it = m_plugins.begin(); it != end; ++it) {
         PluginPackage* plugin = (*it).get();
 
         if (!plugin->isEnabled())
             continue;
 
-        if (plugin->mimeToDescriptions().contains(key)) {
+        if (plugin->mimeToDescriptions().contains(mimeType)) {
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
             if (!plugin->ensurePluginLoaded())
                 continue;
@@ -231,18 +230,18 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
     if (extension.isEmpty())
         return String();
 
-    PluginSet::const_iterator end = m_plugins.end();
+    auto end = m_plugins.end();
     String mimeType;
     Vector<PluginPackage*, 2> pluginChoices;
     HashMap<PluginPackage*, String> mimeTypeForPlugin;
 
-    for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
+    for (auto it = m_plugins.begin(); it != end; ++it) {
         if (!(*it)->isEnabled())
             continue;
 
-        MIMEToExtensionsMap::const_iterator mime_end = (*it)->mimeToExtensions().end();
+        auto mime_end = (*it)->mimeToExtensions().end();
 
-        for (MIMEToExtensionsMap::const_iterator mime_it = (*it)->mimeToExtensions().begin(); mime_it != mime_end; ++mime_it) {
+        for (auto mime_it = (*it)->mimeToExtensions().begin(); mime_it != mime_end; ++mime_it) {
             mimeType = mime_it->key;
             PluginPackage* preferredPlugin = m_preferredPlugins.get(mimeType);
             const Vector<String>& extensions = mime_it->value;
@@ -305,7 +304,7 @@ PluginPackage* PluginDatabase::findPlugin(const URL& url, String& mimeType)
 void PluginDatabase::setPreferredPluginForMIMEType(const String& mimeType, PluginPackage* plugin)
 {
     if (!plugin || plugin->mimeToExtensions().contains(mimeType))
-        m_preferredPlugins.set(mimeType.lower(), plugin);
+        m_preferredPlugins.set(mimeType, plugin);
 }
 
 bool PluginDatabase::fileExistsAndIsNotDisabled(const String& filePath) const
@@ -319,8 +318,8 @@ bool PluginDatabase::fileExistsAndIsNotDisabled(const String& filePath) const
 
 void PluginDatabase::getDeletedPlugins(PluginSet& plugins) const
 {
-    PluginSet::const_iterator end = m_plugins.end();
-    for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
+    auto end = m_plugins.end();
+    for (auto it = m_plugins.begin(); it != end; ++it) {
         if (!fileExistsAndIsNotDisabled((*it)->path()))
             plugins.add(*it);
     }
@@ -341,10 +340,10 @@ bool PluginDatabase::add(PassRefPtr<PluginPackage> prpPackage)
 
 void PluginDatabase::remove(PluginPackage* package)
 {
-    MIMEToExtensionsMap::const_iterator it = package->mimeToExtensions().begin();
-    MIMEToExtensionsMap::const_iterator end = package->mimeToExtensions().end();
+    auto it = package->mimeToExtensions().begin();
+    auto end = package->mimeToExtensions().end();
     for ( ; it != end; ++it) {
-        PluginPackageByNameMap::iterator packageInMap = m_preferredPlugins.find(it->key);
+        auto packageInMap = m_preferredPlugins.find(it->key);
         if (packageInMap != m_preferredPlugins.end() && packageInMap->value == package)
             m_preferredPlugins.remove(packageInMap);
     }
@@ -408,11 +407,11 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 
     String fileNameFilter("");
 
-    Vector<String>::const_iterator dirsEnd = m_pluginDirectories.end();
-    for (Vector<String>::const_iterator dIt = m_pluginDirectories.begin(); dIt != dirsEnd; ++dIt) {
+    auto dirsEnd = m_pluginDirectories.end();
+    for (auto dIt = m_pluginDirectories.begin(); dIt != dirsEnd; ++dIt) {
         Vector<String> pluginPaths = listDirectory(*dIt, fileNameFilter);
-        Vector<String>::const_iterator pluginsEnd = pluginPaths.end();
-        for (Vector<String>::const_iterator pIt = pluginPaths.begin(); pIt != pluginsEnd; ++pIt) {
+        auto pluginsEnd = pluginPaths.end();
+        for (auto pIt = pluginPaths.begin(); pIt != pluginsEnd; ++pIt) {
             if (!fileExistsAndIsNotDisabled(*pIt))
                 continue;
 
@@ -583,8 +582,8 @@ void PluginDatabase::updatePersistentMetadataCache()
         return;
     }
 
-    PluginSet::const_iterator end = m_plugins.end();
-    for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
+    auto end = m_plugins.end();
+    for (auto it = m_plugins.begin(); it != end; ++it) {
         if (!(writeUTF8String(file, (*it)->path())
               && writeTime(file, (*it)->lastModified())
               && writeUTF8String(file, (*it)->name())

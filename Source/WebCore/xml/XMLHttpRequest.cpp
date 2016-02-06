@@ -1030,9 +1030,7 @@ String XMLHttpRequest::responseMIMEType() const
 
 bool XMLHttpRequest::responseIsXML() const
 {
-    // FIXME: Remove the lower() call when DOMImplementation.isXMLMIMEType() is modified
-    //        to do case insensitive MIME type matching.
-    return DOMImplementation::isXMLMIMEType(responseMIMEType().lower());
+    return DOMImplementation::isXMLMIMEType(responseMIMEType());
 }
 
 int XMLHttpRequest::status() const

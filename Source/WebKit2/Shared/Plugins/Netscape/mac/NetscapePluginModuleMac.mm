@@ -186,7 +186,7 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginModuleInfo&
         if (mimeTypeDescription && CFGetTypeID(mimeTypeDescription) != CFStringGetTypeID())
             mimeTypeDescription = 0;
 
-        mimeClassInfo.type = String(mimeType).lower();
+        mimeClassInfo.type = String(mimeType).convertToASCIILowercase();
         mimeClassInfo.desc = mimeTypeDescription;
 
         // Now get the extensions for this MIME type.
@@ -204,10 +204,10 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginModuleInfo&
             // multiple array elements in the property list. Work around this here by splitting the
             // extension string into components.
             Vector<String> extensionComponents;
-            String(extension).lower().split(',', extensionComponents);
+            String(extension).convertToASCIILowercase().split(',', extensionComponents);
 
-            for (size_t i = 0; i < extensionComponents.size(); ++i)
-                mimeClassInfo.extensions.append(extensionComponents[i]);
+            for (auto& component : extensionComponents)
+                mimeClassInfo.extensions.append(component);
         }
 
         // Add this MIME type.

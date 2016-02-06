@@ -456,7 +456,7 @@ ContentSecurityPolicy::ReflectedXSSDisposition parseXSSProtectionHeader(const St
 #if ENABLE(NOSNIFF)
 ContentTypeOptionsDisposition parseContentTypeOptionsHeader(const String& header)
 {
-    if (header.stripWhiteSpace().lower() == "nosniff")
+    if (equalLettersIgnoringASCIICase(header.stripWhiteSpace(), "nosniff"))
         return ContentTypeOptionsNosniff;
     return ContentTypeOptionsNone;
 }

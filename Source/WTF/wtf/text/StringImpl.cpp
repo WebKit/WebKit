@@ -361,9 +361,9 @@ UChar32 StringImpl::characterStartingAt(unsigned i)
     return 0;
 }
 
-Ref<StringImpl> StringImpl::lower()
+Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
 {
-    // Note: This is a hot function in the Dromaeo benchmark, specifically the
+    // Note: At one time this was a hot function in the Dromaeo benchmark, specifically the
     // no-op code path up through the first 'return' statement.
 
     // First scan the string for uppercase and non-ASCII characters:
@@ -442,11 +442,12 @@ SlowPath:
     return newImpl.releaseNonNull();
 }
 
-Ref<StringImpl> StringImpl::upper()
+Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
 {
-    // This function could be optimized for no-op cases the way lower() is,
-    // but in empirical testing, few actual calls to upper() are no-ops, so
-    // it wouldn't be worth the extra time for pre-scanning.
+    // This function could be optimized for no-op cases the way
+    // convertToLowercaseWithoutLocale() is, but in empirical testing,
+    // few actual calls to upper() are no-ops, so it wouldn't be worth
+    // the extra time for pre-scanning.
 
     if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
         CRASH();
@@ -477,7 +478,7 @@ Ref<StringImpl> StringImpl::upper()
         int numberSharpSCharacters = 0;
 
         // There are two special cases.
-        //  1. latin-1 characters when converted to upper case are 16 bit characters.
+        //  1. Some Latin-1 characters when converted to upper case are 16 bit characters.
         //  2. Lower case sharp-S converts to "SS" (two characters)
         for (int32_t i = 0; i < length; ++i) {
             LChar c = m_data8[i];
@@ -485,7 +486,7 @@ Ref<StringImpl> StringImpl::upper()
                 ++numberSharpSCharacters;
             ASSERT(u_toupper(c) <= 0xFFFF);
             UChar upper = u_toupper(c);
-            if (UNLIKELY(upper > 0xff)) {
+            if (UNLIKELY(upper > 0xFF)) {
                 // Since this upper-cased character does not fit in an 8-bit string, we need to take the 16-bit path.
                 goto upconvert;
             }
@@ -554,14 +555,14 @@ static inline bool needsTurkishCasingRules(const AtomicString& localeIdentifier)
         && (localeIdentifier.length() == 2 || localeIdentifier[2] == '-');
 }
 
-Ref<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
+Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomicString& localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules.
     // FIXME: Could possibly optimize further by looking for the specific sequences
     // that have locale-specific lowercasing. There are only three of them.
     if (!needsTurkishCasingRules(localeIdentifier))
-        return lower();
+        return convertToLowercaseWithoutLocale();
 
     // FIXME: Could share more code with the main StringImpl::lower by factoring out
     // this last part into a shared function that takes a locale string, since this is
@@ -590,13 +591,13 @@ Ref<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
     return newString.releaseNonNull();
 }
 
-Ref<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
+Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomicString& localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules,
     // and that the only affected character is lowercase "i".
     if (!needsTurkishCasingRules(localeIdentifier) || find('i') == notFound)
-        return upper();
+        return convertToUppercaseWithoutLocale();
 
     if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
         CRASH();
@@ -623,60 +624,86 @@ Ref<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
 
 Ref<StringImpl> StringImpl::foldCase()
 {
-    // FIXME: Why doesn't this function have a preflight like the one in StringImpl::lower?
+    if (is8Bit()) {
+        unsigned failingIndex;
+        for (unsigned i = 0; i < m_length; ++i) {
+            auto character = m_data8[i];
+            if (UNLIKELY(!isASCII(character) || isASCIIUpper(character))) {
+                failingIndex = i;
+                goto SlowPath;
+            }
+        }
+        // String was all ASCII and no uppercase, so just return as-is.
+        return *this;
+
+SlowPath:
+        bool need16BitCharacters = false;
+        for (unsigned i = failingIndex; i < m_length; ++i) {
+            auto character = m_data8[i];
+            if (character == 0xB5 || character == 0xDF) {
+                need16BitCharacters = true;
+                break;
+            }
+        }
+
+        if (!need16BitCharacters) {
+            LChar* data8;
+            auto folded = createUninitializedInternalNonEmpty(m_length, data8);
+            for (unsigned i = 0; i < failingIndex; ++i)
+                data8[i] = m_data8[i];
+            for (unsigned i = failingIndex; i < m_length; ++i) {
+                auto character = m_data8[i];
+                if (isASCII(character))
+                    data8[i] = toASCIILower(character);
+                else {
+                    ASSERT(u_foldCase(character, U_FOLD_CASE_DEFAULT) <= 0xFF);
+                    data8[i] = static_cast<LChar>(u_foldCase(character, U_FOLD_CASE_DEFAULT));
+                }
+            }
+            return folded;
+        }
+    } else {
+        // FIXME: Unclear why we use goto in the 8-bit case, and a different approach in the 16-bit case.
+        bool noUpper = true;
+        unsigned ored = 0;
+        for (unsigned i = 0; i < m_length; ++i) {
+            UChar character = m_data16[i];
+            if (UNLIKELY(isASCIIUpper(character)))
+                noUpper = false;
+            ored |= character;
+        }
+        if (!(ored & ~0x7F)) {
+            if (noUpper) {
+                // String was all ASCII and no uppercase, so just return as-is.
+                return *this;
+            }
+            UChar* data16;
+            auto folded = createUninitializedInternalNonEmpty(m_length, data16);
+            for (unsigned i = 0; i < m_length; ++i)
+                data16[i] = toASCIILower(m_data16[i]);
+            return folded;
+        }
+    }
 
     if (m_length > static_cast<unsigned>(std::numeric_limits<int32_t>::max()))
         CRASH();
-    int32_t length = m_length;
 
-    if (is8Bit()) {
-        // Do a faster loop for the case where all the characters are ASCII.
-        LChar* data;
-        auto newImpl = createUninitialized(m_length, data);
-        LChar ored = 0;
+    auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
 
-        for (int32_t i = 0; i < length; ++i) {
-            LChar c = m_data8[i];
-            data[i] = toASCIILower(c);
-            ored |= c;
-        }
-
-        if (!(ored & ~0x7F))
-            return newImpl;
-
-        // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
-        // FIXME: Shouldn't this use u_foldCase instead of u_tolower?
-        for (int32_t i = 0; i < length; ++i) {
-            ASSERT(u_tolower(m_data8[i]) <= 0xFF);
-            data[i] = static_cast<LChar>(u_tolower(m_data8[i]));
-        }
-
-        return newImpl;
-    }
-
-    // Do a faster loop for the case where all the characters are ASCII.
     UChar* data;
-    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
-    UChar ored = 0;
-    for (int32_t i = 0; i < length; ++i) {
-        UChar c = m_data16[i];
-        ored |= c;
-        data[i] = toASCIILower(c);
-    }
-    if (!(ored & ~0x7F))
-        return newImpl.releaseNonNull();
-
-    // Do a slower implementation for cases that include non-ASCII characters.
+    auto folded = createUninitializedInternalNonEmpty(m_length, data);
+    int32_t length = m_length;
     UErrorCode status = U_ZERO_ERROR;
-    int32_t realLength = u_strFoldCase(data, length, m_data16, m_length, U_FOLD_CASE_DEFAULT, &status);
+    int32_t realLength = u_strFoldCase(data, length, upconvertedCharacters, length, U_FOLD_CASE_DEFAULT, &status);
     if (U_SUCCESS(status) && realLength == length)
-        return newImpl.releaseNonNull();
-    newImpl = createUninitialized(realLength, data);
+        return folded;
+    ASSERT(realLength > length);
+    folded = createUninitializedInternalNonEmpty(realLength, data);
     status = U_ZERO_ERROR;
-    u_strFoldCase(data, realLength, m_data16, m_length, U_FOLD_CASE_DEFAULT, &status);
+    u_strFoldCase(data, realLength, upconvertedCharacters, length, U_FOLD_CASE_DEFAULT, &status);
     if (U_FAILURE(status))
         return *this;
-    return newImpl.releaseNonNull();
+    return folded;
 }
 
 template<StringImpl::CaseConvertType type, typename CharacterType>

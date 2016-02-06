@@ -1508,14 +1508,11 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& p
 
 static bool pluginSupportsExtension(const PluginData& pluginData, const String& extension)
 {
-    ASSERT(extension.lower() == extension);
-
+    ASSERT(extension.convertToASCIILowercase() == extension);
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
     pluginData.getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
-    for (size_t i = 0; i < mimes.size(); ++i) {
-        const MimeClassInfo& mimeClassInfo = mimes[i];
-
+    for (auto& mimeClassInfo : mimes) {
         if (mimeClassInfo.extensions.contains(extension))
             return true;
     }
@@ -1524,42 +1521,37 @@ static bool pluginSupportsExtension(const PluginData& pluginData, const String& 
 
 ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const String& mimeTypeIn)
 {
-    // FIXME: This should be merged with WebCore::FrameLoader::defaultObjectContentType when the plugin code
-    // is consolidated.
+    // FIXME: This should eventually be merged with WebCore::FrameLoader::defaultObjectContentType.
 
     String mimeType = mimeTypeIn;
     if (mimeType.isEmpty()) {
-        String extension = url.path().substring(url.path().reverseFind('.') + 1).lower();
+        String path = url.path();
+        auto dotPosition = path.reverseFind('.');
+        if (dotPosition == notFound)
+            return ObjectContentFrame;
+        String extension = path.substring(dotPosition + 1).convertToASCIILowercase();
 
         // Try to guess the MIME type from the extension.
         mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
-
         if (mimeType.isEmpty()) {
             // Check if there's a plug-in around that can handle the extension.
             if (WebPage* webPage = m_frame->page()) {
                 if (pluginSupportsExtension(webPage->corePage()->pluginData(), extension))
                     return ObjectContentNetscapePlugin;
             }
+            return ObjectContentFrame;
         }
     }
 
-    if (mimeType.isEmpty())
-        return ObjectContentFrame;
-
-    bool plugInSupportsMIMEType = false;
-    if (WebPage* webPage = m_frame->page()) {
-        const PluginData& pluginData = webPage->corePage()->pluginData();
-        if (pluginData.supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader().subframeLoader().allowPlugins())
-            plugInSupportsMIMEType = true;
-        else if (pluginData.supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins))
-            plugInSupportsMIMEType = true;
-    }
-    
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return ObjectContentImage;
 
-    if (plugInSupportsMIMEType)
-        return ObjectContentNetscapePlugin;
+    if (WebPage* webPage = m_frame->page()) {
+        auto allowedPluginTypes = webFrame()->coreFrame()->loader().subframeLoader().allowPlugins()
+            ? PluginData::AllPlugins : PluginData::OnlyApplicationPlugins;
+        if (webPage->corePage()->pluginData().supportsMimeType(mimeType, allowedPluginTypes))
+            return ObjectContentNetscapePlugin;
+    }
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;

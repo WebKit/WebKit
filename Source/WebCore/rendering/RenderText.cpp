@@ -1035,10 +1035,10 @@ void applyTextTransform(const RenderStyle& style, String& text, UChar previousCh
         makeCapitalized(&text, previousCharacter);
         break;
     case UPPERCASE:
-        text = text.upper(style.locale());
+        text = text.convertToUppercaseWithLocale(style.locale());
         break;
     case LOWERCASE:
-        text = text.lower(style.locale());
+        text = text.convertToLowercaseWithLocale(style.locale());
         break;
     }
 }

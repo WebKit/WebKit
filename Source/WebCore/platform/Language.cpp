@@ -99,7 +99,7 @@ Vector<String> userPreferredLanguages()
 
 static String canonicalLanguageIdentifier(const String& languageCode)
 {
-    String lowercaseLanguageCode = languageCode.lower();
+    String lowercaseLanguageCode = languageCode.convertToASCIILowercase();
     
     if (lowercaseLanguageCode.length() >= 3 && lowercaseLanguageCode[2] == '_')
         lowercaseLanguageCode.replace(2, 1, "-");
@@ -109,7 +109,7 @@ static String canonicalLanguageIdentifier(const String& languageCode)
 
 size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch)
 {
-    String lowercaseLanguage = language.lower();
+    String lowercaseLanguage = language.convertToASCIILowercase();
     String languageWithoutLocaleMatch;
     String languageMatchButNotLocale;
     size_t languageWithoutLocaleMatchIndex = 0;

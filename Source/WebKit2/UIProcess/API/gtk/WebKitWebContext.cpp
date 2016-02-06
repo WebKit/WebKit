@@ -968,7 +968,7 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
 
     Vector<String> languages;
     for (size_t i = 0; languageList[i]; ++i)
-        languages.append(String::fromUTF8(languageList[i]).lower().replace("_", "-"));
+        languages.append(String::fromUTF8(languageList[i]).convertToASCIILowercase().replace("_", "-"));
 
     WebCore::overrideUserPreferredLanguages(languages);
     WebCore::languageDidChange();

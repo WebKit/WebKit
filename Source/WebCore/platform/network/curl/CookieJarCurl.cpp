@@ -195,20 +195,20 @@ static String getNetscapeCookieFormat(const URL& url, const String& value)
         if (attribute->contains('=')) {
             Vector<String> keyValuePair;
             attribute->split('=', true, keyValuePair);
-            String key = keyValuePair[0].stripWhiteSpace().lower();
+            String key = keyValuePair[0].stripWhiteSpace();
             String val = keyValuePair[1].stripWhiteSpace();
-            if (key == "expires") {
+            if (equalLettersIgnoringASCIICase(key, "expires")) {
                 CString dateStr(reinterpret_cast<const char*>(val.characters8()), val.length());
                 expires = WTF::parseDateFromNullTerminatedCharacters(dateStr.data()) / WTF::msPerSecond;
-            } else if (key == "max-age")
+            } else if (equalLettersIgnoringASCIICase(key, "max-age"))
                 expires = time(0) + val.toInt();
-            else if (key == "domain") 
+            else if (equalLettersIgnoringASCIICase(key, "domain"))
                 domain = val;
-            else if (key == "path") 
+            else if (equalLettersIgnoringASCIICase(key, "path"))
                 path = val;
         } else {
-            String key = attribute->stripWhiteSpace().lower();
-            if (key == "secure")
+            String key = attribute->stripWhiteSpace();
+            if (equalLettersIgnoringASCIICase(key, "secure"))
                 secure = "TRUE";
         }
     }

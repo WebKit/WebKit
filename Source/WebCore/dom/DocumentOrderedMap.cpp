@@ -147,18 +147,18 @@ HTMLMapElement* DocumentOrderedMap::getElementByMapName(const AtomicStringImpl& 
     }));
 }
 
-HTMLMapElement* DocumentOrderedMap::getElementByLowercasedMapName(const AtomicStringImpl& key, const TreeScope& scope) const
+HTMLMapElement* DocumentOrderedMap::getElementByCaseFoldedMapName(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return downcast<HTMLMapElement>(get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
-        return is<HTMLMapElement>(element) && downcast<HTMLMapElement>(element).getName().lower().impl() == &key;
+        return is<HTMLMapElement>(element) && equal(downcast<HTMLMapElement>(element).getName().string().foldCase().impl(), &key);
     }));
 }
 
-HTMLImageElement* DocumentOrderedMap::getElementByLowercasedUsemap(const AtomicStringImpl& key, const TreeScope& scope) const
+HTMLImageElement* DocumentOrderedMap::getElementByCaseFoldedUsemap(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     return downcast<HTMLImageElement>(get(key, scope, [] (const AtomicStringImpl& key, const Element& element) {
         // FIXME: HTML5 specification says we should match both image and object elements.
-        return is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element).matchesLowercasedUsemap(key);
+        return is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element).matchesCaseFoldedUsemap(key);
     }));
 }
 

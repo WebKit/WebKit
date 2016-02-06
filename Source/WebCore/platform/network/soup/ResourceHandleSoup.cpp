@@ -244,13 +244,14 @@ static void continueAfterDidReceiveResponse(ResourceHandle*);
 
 static bool gIgnoreSSLErrors = false;
 
-static HashSet<String>& allowsAnyHTTPSCertificateHosts()
+typedef HashSet<String, ASCIICaseInsensitiveHash> HostsSet;
+static HostsSet& allowsAnyHTTPSCertificateHosts()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, hosts, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HostsSet, hosts, ());
     return hosts;
 }
 
-typedef HashMap<String, HostTLSCertificateSet> CertificatesMap;
+typedef HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash> CertificatesMap;
 static CertificatesMap& clientCertificates()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(CertificatesMap, certificates, ());
@@ -322,12 +323,12 @@ static bool handleUnignoredTLSErrors(ResourceHandle* handle, SoupMessage* messag
     if (!tlsErrors)
         return false;
 
-    String lowercaseHostURL = handle->firstRequest().url().host().lower();
-    if (allowsAnyHTTPSCertificateHosts().contains(lowercaseHostURL))
+    String host = handle->firstRequest().url().host();
+    if (allowsAnyHTTPSCertificateHosts().contains(host))
         return false;
 
     // We aren't ignoring errors globally, but the user may have already decided to accept this certificate.
-    auto it = clientCertificates().find(lowercaseHostURL);
+    auto it = clientCertificates().find(host);
     if (it != clientCertificates().end() && it->value.contains(certificate))
         return false;
 
@@ -1087,12 +1088,12 @@ bool ResourceHandle::shouldUseCredentialStorage()
 
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
-    allowsAnyHTTPSCertificateHosts().add(host.lower());
+    allowsAnyHTTPSCertificateHosts().add(host);
 }
 
 void ResourceHandle::setClientCertificate(const String& host, GTlsCertificate* certificate)
 {
-    clientCertificates().add(host.lower(), HostTLSCertificateSet()).iterator->value.add(certificate);
+    clientCertificates().add(host, HostTLSCertificateSet()).iterator->value.add(certificate);
 }
 
 void ResourceHandle::setIgnoreSSLErrors(bool ignoreSSLErrors)
