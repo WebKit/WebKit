@@ -70,7 +70,7 @@ window.optionsManager =
             var type = formElement.type;
 
             if (type == "number")
-                options[name] = formElement.value;
+                options[name] = +formElement.value;
             else if (type == "checkbox")
                 options[name] = formElement.checked;
             else if (type == "radio")
@@ -157,9 +157,8 @@ window.suitesManager =
         this._updateStartButtonState();
     },
 
-    _onChangeTestCheckbox: function(event)
+    _onChangeTestCheckbox: function(suiteCheckbox)
     {
-        var suiteCheckbox = event.target.suiteCheckbox;
         this._updateSuiteCheckboxState(suiteCheckbox);
         this._updateStartButtonState();
     },
@@ -186,12 +185,20 @@ window.suitesManager =
 
         var testCheckbox = DocumentExtension.createElement("input", { type: "checkbox" }, span);
         testCheckbox.test = test;
-        testCheckbox.onchange = this._onChangeTestCheckbox.bind(this);
+        testCheckbox.onchange = function(event) {
+            this._onChangeTestCheckbox(event.target.suiteCheckbox);
+        }.bind(this);
         testCheckbox.suiteCheckbox = suiteCheckbox;
 
         suiteCheckbox.testsElements.push(testElement);
         span.appendChild(document.createTextNode(" " + test.name));
-        DocumentExtension.createElement("input", { type: "number" }, testElement);
+        var complexity = DocumentExtension.createElement("input", { type: "number" }, testElement);
+        complexity.relatedCheckbox = testCheckbox;
+        complexity.oninput = function(event) {
+            var relatedCheckbox = event.target.relatedCheckbox;
+            relatedCheckbox.checked = true;
+            this._onChangeTestCheckbox(relatedCheckbox.suiteCheckbox);
+        }.bind(this);
         return testElement;
     },
 
@@ -303,7 +310,9 @@ window.suitesManager =
                 var complexity = Math.round(data[Strings.json.measurements.average]);
 
                 var value = { checked: true, complexity: complexity };
-                localStorage.setItem(this._localStorageNameForTest(suiteName, testName), JSON.stringify(value));
+                try {
+                    localStorage.setItem(this._localStorageNameForTest(suiteName, testName), JSON.stringify(value));
+                } catch (e) {}
             }
         }
     }

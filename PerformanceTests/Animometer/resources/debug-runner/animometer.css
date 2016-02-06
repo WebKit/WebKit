@@ -143,12 +143,12 @@ label.tree-label {
 
 #suites {
     padding-left: 15vw;
-    padding-right: 2em;
-    flex: 0 1 40%;
+    padding-right: 3em;
+    flex: 1 1 30%;
 }
 
 #options {
-    flex: 1 1 auto;
+    flex: 10 1 auto;
 }
 
 #intro input[type="number"] {
@@ -454,7 +454,15 @@ label.tree-label {
     stroke-width: 1px;
 }
 
-#rawFPS circle,
-#intervalFPS circle {
+#rawFPS circle {
     fill: rgb(250, 73, 37);
+}
+
+#intervalFPS path {
+    stroke: hsla(30, 96%, 56%, .7);
+    stroke-width: 1px;
+}
+
+#intervalFPS circle {
+    fill: hsl(30, 96%, 56%);
 }

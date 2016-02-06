@@ -1,5 +1,26 @@
 2016-02-06  Jon Lee  <jonlee@apple.com>
 
+        Minor improvements to debug harness.
+
+        * Animometer/developer.html:
+        * Animometer/resources/debug-runner/animometer.css:
+        (#suites): Put the complexity text boxes closer to the test names.
+        (#options):
+        (#rawFPS circle): Make the interval FPS appear as a separate data series, with a line.
+        (#intervalFPS path):
+        (#intervalFPS circle):
+        * Animometer/resources/debug-runner/animometer.js:
+        (window.optionsManager.updateLocalStorageFromUI): Convert number inputs from text.
+        (window.suitesManager._onChangeTestCheckbox): Refactor to take a checkbox.
+        (window.suitesManager._createTestElement): Enhance such that typing into the complexity
+        input will automatically select that test for running.
+        (window.suitesManager.updateLocalStorageFromJSON): Make the harness work for private
+        browsing.
+        * Animometer/resources/debug-runner/graph.js: Separate the intervalFPS data, and show
+        more accuracy in timestamps.
+
+2016-02-06  Jon Lee  <jonlee@apple.com>
+
         Refactor helper methods for getting random values for a stage.
 
         Instead of requiring a Stage instance, just attach it to the Stage object.
