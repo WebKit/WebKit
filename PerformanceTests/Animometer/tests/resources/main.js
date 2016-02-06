@@ -82,35 +82,9 @@ BenchmarkState.prototype =
     }
 }
 
-
 function Stage() {}
 
-Stage.prototype =
-{
-    initialize: function(benchmark)
-    {
-        this._benchmark = benchmark;
-        this._element = document.getElementById("stage");
-        this._element.setAttribute("width", document.body.offsetWidth);
-        this._element.setAttribute("height", document.body.offsetHeight);
-        this._size = Point.elementClientSize(this._element).subtract(Insets.elementPadding(this._element).size);
-    },
-
-    get element()
-    {
-        return this._element;
-    },
-
-    get size()
-    {
-        return this._size;
-    },
-
-    complexity: function()
-    {
-        return 0;
-    },
-
+Utilities.extendObject(Stage, {
     random: function(min, max)
     {
         return (Math.random() * (max - min)) + min;
@@ -160,6 +134,33 @@ Stage.prototype =
     randomRotater: function()
     {
         return new Rotater(this.random(1000, 10000));
+    }
+});
+
+Stage.prototype =
+{
+    initialize: function(benchmark)
+    {
+        this._benchmark = benchmark;
+        this._element = document.getElementById("stage");
+        this._element.setAttribute("width", document.body.offsetWidth);
+        this._element.setAttribute("height", document.body.offsetHeight);
+        this._size = Point.elementClientSize(this._element).subtract(Insets.elementPadding(this._element).size);
+    },
+
+    get element()
+    {
+        return this._element;
+    },
+
+    get size()
+    {
+        return this._size;
+    },
+
+    complexity: function()
+    {
+        return 0;
     },
 
     tune: function()

@@ -1,3 +1,21 @@
+2016-02-06  Jon Lee  <jonlee@apple.com>
+
+        Refactor helper methods for getting random values for a stage.
+
+        Instead of requiring a Stage instance, just attach it to the Stage object.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+        * Animometer/tests/master/resources/canvas-tests.js:
+        * Animometer/tests/master/resources/particles.js:
+        * Animometer/tests/misc/resources/canvas-electrons.js:
+        * Animometer/tests/misc/resources/canvas-stars.js:
+        * Animometer/tests/misc/resources/compositing-transforms.js:
+        * Animometer/tests/resources/main.js:
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+
 2016-02-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add a new graphics test for CanvasRenderingContext2D functions: getImageData and putImageData

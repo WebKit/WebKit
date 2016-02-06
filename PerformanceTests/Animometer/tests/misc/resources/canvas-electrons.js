@@ -6,15 +6,15 @@ function CanvasElectron(stage)
     this._stageSize = stage.size;
 
     var minSide = Math.min(this._stageSize.width, this._stageSize.height);
-    var radiusX = stage.random(minSide / 8, 7 * minSide / 16);
-    var radiusY = stage.random(minSide / 8, 3 * radiusX / 4);
+    var radiusX = Stage.random(minSide / 8, 7 * minSide / 16);
+    var radiusY = Stage.random(minSide / 8, 3 * radiusX / 4);
     this._orbitRadiuses = new Point(radiusX, radiusY);
-    this._radius = stage.random(5, 15);
-    this._direction = stage.randomInt(0, 2);
-    this._angle = stage.randomInt(0, 360);
-    this._color = stage.randomColor();
-    this._rotater = stage.randomRotater();
-    this._rotater.next(stage.random(0, this._rotater.interval));
+    this._radius = Stage.random(5, 15);
+    this._direction = Stage.randomInt(0, 2);
+    this._angle = Stage.randomInt(0, 360);
+    this._color = Stage.randomColor();
+    this._rotater = Stage.randomRotater();
+    this._rotater.next(Stage.random(0, this._rotater.interval));
 }
 
 CanvasElectron.prototype = {

@@ -11,7 +11,7 @@ BouncingCompositedImage = Utilities.createSubclass(BouncingParticle,
         this.element.setAttribute("src", stage.imageSrc);
 
         if (stage.useFilters)
-            this.element.style.filter = "hue-rotate(" + stage.randomAngle() + "rad)";
+            this.element.style.filter = "hue-rotate(" + Stage.randomAngle() + "rad)";
 
         stage.element.appendChild(this.element);
         this._move();

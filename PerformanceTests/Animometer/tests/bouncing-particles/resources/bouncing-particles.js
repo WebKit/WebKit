@@ -3,10 +3,10 @@ function BouncingParticle(stage)
     this._stageSize = stage.size;
     this.size = stage.particleSize;
 
-    this.position = stage.randomPosition(stage.size.subtract(stage.particleSize));
-    this._angle = stage.randomAngle();
-    this._velocity = stage.randomVelocity(stage.maxVelocity);
-    this.rotater = stage.randomRotater();
+    this.position = Stage.randomPosition(stage.size.subtract(stage.particleSize));
+    this._angle = Stage.randomAngle();
+    this._velocity = Stage.randomVelocity(stage.maxVelocity);
+    this.rotater = Stage.randomRotater();
 }
 
 BouncingParticle.prototype =

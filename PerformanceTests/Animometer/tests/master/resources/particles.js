@@ -1,7 +1,7 @@
 function Particle(stage)
 {
     this.stage = stage;
-    this.rotater = this.stage.randomRotater();
+    this.rotater = Stage.randomRotater();
     this.reset();
     this.move();
 }
@@ -15,9 +15,9 @@ Particle.prototype =
         this.maxPosition = this.stage.size.subtract(this.size);
         this.position = new Point(this.stage.size.x / 2, this.stage.size.y / 4);
 
-        var angle = this.stage.randomInt(0, this.stage.emitSteps) / this.stage.emitSteps * Math.PI * 2 + Date.now()/1000*this.stage.emissionSpin;
+        var angle = Stage.randomInt(0, this.stage.emitSteps) / this.stage.emitSteps * Math.PI * 2 + Date.now()/1000*this.stage.emissionSpin;
         this._velocity = new Point(Math.sin(angle), Math.cos(angle))
-            .multiply(this.stage.random(.8, 1.2));
+            .multiply(Stage.random(.8, 1.2));
     },
 
     animate: function(timeDelta)
@@ -81,8 +81,8 @@ ParticlesStage = Utilities.createSubclass(Stage,
     initialize: function(benchmark)
     {
         Stage.prototype.initialize.call(this, benchmark);
-        this.emissionSpin = this.random(0, 3);
-        this.emitSteps = this.randomInt(4, 6);
+        this.emissionSpin = Stage.random(0, 3);
+        this.emitSteps = Stage.randomInt(4, 6);
     },
 
     animate: function(timeDelta)

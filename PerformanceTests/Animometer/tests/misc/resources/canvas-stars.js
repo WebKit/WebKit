@@ -4,10 +4,10 @@ function CanvasStar(stage)
 {
     this._context = stage.context;
 
-    this._size = stage.randomSquareSize(5, 20);
-    this._center = stage.randomPosition(stage.size.subtract(this._size)).add(this._size.center);
+    this._size = Stage.randomSquareSize(5, 20);
+    this._center = Stage.randomPosition(stage.size.subtract(this._size)).add(this._size.center);
     this._rotateX = 0;
-    this._rotateDeltaX = stage.random(0.3, 0.7);
+    this._rotateDeltaX = Stage.random(0.3, 0.7);
 }
 
 CanvasStar.prototype = {

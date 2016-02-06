@@ -39,7 +39,7 @@ BouncingSvgShape = Utilities.createSubclass(BouncingSvgParticle,
 
         case "solid":
         default:
-            this.element.setAttribute("fill", stage.randomColor());
+            this.element.setAttribute("fill", Stage.randomColor());
             break;
         }
     }
@@ -64,7 +64,7 @@ BouncingSvgShapesStage = Utilities.createSubclass(BouncingSvgParticlesStage,
         var gradient = DocumentExtension.createSvgElement("linearGradient", attrs, {}, this._ensureDefsIsCreated());
 
         for (var i = 0; i < stops; ++i) {
-            attrs = { offset: i * 100 / stops + "%", 'stop-color': this.randomColor() };
+            attrs = { offset: i * 100 / stops + "%", 'stop-color': Stage.randomColor() };
             DocumentExtension.createSvgElement("stop", attrs, {}, gradient);
         }
 

@@ -4,11 +4,11 @@
 
 function CanvasLineSegment(stage)
 {
-    var circle = stage.randomInt(0, 2);
+    var circle = Stage.randomInt(0, 2);
     this._color = ["#e01040", "#10c030", "#e05010"][circle];
     this._lineWidth = Math.pow(Math.random(), 12) * 20 + 3;
     this._omega = Math.random() * 3 + 0.2;
-    var theta = stage.randomAngle();
+    var theta = Stage.randomAngle();
     this._cosTheta = Math.cos(theta);
     this._sinTheta = Math.sin(theta);
     this._startX = stage.circleRadius * this._cosTheta + (0.5 + circle) / 3 * stage.size.x;
@@ -36,21 +36,21 @@ function CanvasArc(stage)
     var maxX = 6, maxY = 3;
     var distanceX = stage.size.x / maxX;
     var distanceY = stage.size.y / (maxY + 1);
-    var randY = stage.randomInt(0, maxY);
-    var randX = stage.randomInt(0, maxX - 1 * (randY % 2));
+    var randY = Stage.randomInt(0, maxY);
+    var randX = Stage.randomInt(0, maxX - 1 * (randY % 2));
 
     this._point = new Point(distanceX * (randX + (randY % 2) / 2), distanceY * (randY + .5));
 
     this._radius = 20 + Math.pow(Math.random(), 5) * (Math.min(distanceX, distanceY) / 1.8);
-    this._startAngle = stage.randomAngle();
-    this._endAngle = stage.randomAngle();
+    this._startAngle = Stage.randomAngle();
+    this._endAngle = Stage.randomAngle();
     this._omega = (Math.random() - 0.5) * 0.3;
-    this._counterclockwise = stage.randomBool();
+    this._counterclockwise = Stage.randomBool();
     var colors = ["#101010", "#808080", "#c0c0c0"];
     colors.push(["#e01040", "#10c030", "#e05010"][(randX + Math.ceil(randY / 2)) % 3]);
     this._color = colors[Math.floor(Math.random() * colors.length)];
     this._lineWidth = 1 + Math.pow(Math.random(), 5) * 30;
-    this._doStroke = stage.randomInt(0, 3) != 0;
+    this._doStroke = Stage.randomInt(0, 3) != 0;
 };
 
 CanvasArc.prototype.draw = function(context)
