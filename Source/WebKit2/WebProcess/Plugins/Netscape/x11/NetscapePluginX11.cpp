@@ -422,7 +422,7 @@ static inline void setXCrossingEventFields(XEvent& xEvent, const WebMouseEvent& 
 
 bool NetscapePluginX11::handleMouseEvent(const WebMouseEvent& event)
 {
-    ASSERT(m_plugin.isWindowed());
+    ASSERT(!m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
@@ -465,7 +465,7 @@ const int kFocusOutType = 10;
 
 bool NetscapePluginX11::handleWheelEvent(const WebWheelEvent& event)
 {
-    ASSERT(m_plugin.isWindowed());
+    ASSERT(!m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
@@ -476,7 +476,7 @@ bool NetscapePluginX11::handleWheelEvent(const WebWheelEvent& event)
 
 void NetscapePluginX11::setFocus(bool focusIn)
 {
-    ASSERT(m_plugin.isWindowed());
+    ASSERT(!m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
@@ -490,7 +490,7 @@ void NetscapePluginX11::setFocus(bool focusIn)
 
 bool NetscapePluginX11::handleMouseEnterEvent(const WebMouseEvent& event)
 {
-    ASSERT(m_plugin.isWindowed());
+    ASSERT(!m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
@@ -501,7 +501,7 @@ bool NetscapePluginX11::handleMouseEnterEvent(const WebMouseEvent& event)
 
 bool NetscapePluginX11::handleMouseLeaveEvent(const WebMouseEvent& event)
 {
-    ASSERT(m_plugin.isWindowed());
+    ASSERT(!m_plugin.isWindowed());
 
     XEvent xEvent;
     initializeXEvent(xEvent);
@@ -532,7 +532,7 @@ static inline void setXKeyEventFields(XEvent& xEvent, const WebKeyboardEvent& we
 
 bool NetscapePluginX11::handleKeyboardEvent(const WebKeyboardEvent& event)
 {
-    ASSERT(m_plugin.isWindowed());
+    ASSERT(!m_plugin.isWindowed());
     // We don't generate other types of keyboard events via WebEventFactory.
     ASSERT(event.type() == WebEvent::KeyDown || event.type() == WebEvent::KeyUp);
 

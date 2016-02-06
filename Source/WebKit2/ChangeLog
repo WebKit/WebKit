@@ -1,3 +1,15 @@
+2016-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix more incorrect ASSERT introduced in r196053.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePluginX11::handleMouseEvent):
+        (WebKit::NetscapePluginX11::handleWheelEvent):
+        (WebKit::NetscapePluginX11::setFocus):
+        (WebKit::NetscapePluginX11::handleMouseEnterEvent):
+        (WebKit::NetscapePluginX11::handleMouseLeaveEvent):
+        (WebKit::NetscapePluginX11::handleKeyboardEvent):
+
 2016-02-05  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Error when closing page with WebInspector open
