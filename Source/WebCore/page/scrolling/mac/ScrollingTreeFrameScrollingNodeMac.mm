@@ -67,6 +67,13 @@ ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(Scrolling
 
 ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac()
 {
+    if (m_verticalScrollbarPainter || m_horizontalScrollbarPainter) {
+        // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
+        // on a non-main thread. rdar://problem/24535055
+        RetainPtr<ScrollbarPainter> retainedVerticalScrollbarPainter = m_verticalScrollbarPainter;
+        RetainPtr<ScrollbarPainter> retainedHorizontalScrollbarPainter = m_horizontalScrollbarPainter;
+        WTF::callOnMainThread([retainedVerticalScrollbarPainter, retainedHorizontalScrollbarPainter] { });
+    }
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -108,6 +115,14 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
         m_footerLayer = scrollingStateNode.footerLayer();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::PainterForScrollbar)) {
+        {
+            // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
+            // on a non-main thread. rdar://problem/24535055
+            RetainPtr<ScrollbarPainter> retainedVerticalScrollbarPainter = m_verticalScrollbarPainter;
+            RetainPtr<ScrollbarPainter> retainedHorizontalScrollbarPainter = m_horizontalScrollbarPainter;
+            WTF::callOnMainThread([retainedVerticalScrollbarPainter, retainedHorizontalScrollbarPainter]
+                {});
+        }
         m_verticalScrollbarPainter = scrollingStateNode.verticalScrollbarPainter();
         m_horizontalScrollbarPainter = scrollingStateNode.horizontalScrollbarPainter();
     }
