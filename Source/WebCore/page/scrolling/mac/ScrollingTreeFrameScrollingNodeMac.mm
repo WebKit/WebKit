@@ -67,12 +67,20 @@ ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(Scrolling
 
 ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac()
 {
+    releaseReferencesToScrollbarPaintersOnTheMainThread();
+}
+
+void ScrollingTreeFrameScrollingNodeMac::releaseReferencesToScrollbarPaintersOnTheMainThread()
+{
     if (m_verticalScrollbarPainter || m_horizontalScrollbarPainter) {
         // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
         // on a non-main thread. rdar://problem/24535055
-        RetainPtr<ScrollbarPainter> retainedVerticalScrollbarPainter = WTFMove(m_verticalScrollbarPainter);
-        RetainPtr<ScrollbarPainter> retainedHorizontalScrollbarPainter = WTFMove(m_horizontalScrollbarPainter);
-        WTF::callOnMainThread([retainedVerticalScrollbarPainter, retainedHorizontalScrollbarPainter] { });
+        ScrollbarPainter retainedVerticalScrollbarPainter = m_verticalScrollbarPainter.leakRef();
+        ScrollbarPainter retainedHorizontalScrollbarPainter = m_horizontalScrollbarPainter.leakRef();
+        WTF::callOnMainThread([retainedVerticalScrollbarPainter, retainedHorizontalScrollbarPainter] {
+            [retainedVerticalScrollbarPainter release];
+            [retainedHorizontalScrollbarPainter release];
+        });
     }
 }
 
@@ -115,14 +123,7 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
         m_footerLayer = scrollingStateNode.footerLayer();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::PainterForScrollbar)) {
-        {
-            // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
-            // on a non-main thread. rdar://problem/24535055
-            RetainPtr<ScrollbarPainter> retainedVerticalScrollbarPainter = WTFMove(m_verticalScrollbarPainter);
-            RetainPtr<ScrollbarPainter> retainedHorizontalScrollbarPainter = WTFMove(m_horizontalScrollbarPainter);
-            WTF::callOnMainThread([retainedVerticalScrollbarPainter, retainedHorizontalScrollbarPainter]
-                {});
-        }
+        releaseReferencesToScrollbarPaintersOnTheMainThread();
         m_verticalScrollbarPainter = scrollingStateNode.verticalScrollbarPainter();
         m_horizontalScrollbarPainter = scrollingStateNode.horizontalScrollbarPainter();
     }
