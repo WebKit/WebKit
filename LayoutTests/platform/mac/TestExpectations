@@ -1173,12 +1173,12 @@ webkit.org/b/136109 [ Yosemite+ ] fast/multicol/mixed-opacity-fixed-test.html  [
 
 # Also, these tests are flaky in Debug/Release builds, <https://bugs.webkit.org/show_bug.cgi?id=138636>
 # and <https://bugs.webkit.org/show_bug.cgi?id=129817>.
-[ Yosemite+ ] inspector/css/matched-style-properties.html [ Pass Timeout ]
-[ Yosemite+ ] inspector/css/pseudo-element-matches.html [ Pass Timeout ]
-[ Yosemite+ ] inspector/css/selector-specificity.html [ Pass Timeout Crash ]
+[ Yosemite+ ] inspector/css/matched-style-properties.html [ Skip ]
+[ Yosemite+ ] inspector/css/pseudo-element-matches.html [ Skip ]
+[ Yosemite+ ] inspector/css/selector-specificity.html [ Skip ]
 [ Yosemite+ ] inspector/dom/content-flow-content-removal.html [ Skip ]
 [ Yosemite+ ] inspector/dom/content-flow-list.html [ Skip ]
-[ Yosemite+ ] inspector/model/parse-script-syntax-tree.html [ Pass Timeout ]
+[ Yosemite+ ] inspector/model/parse-script-syntax-tree.html [ Skip ]
 [ Yosemite+ ] inspector/test-harness-trivially-works.html [ Skip ]
 
 # Specific to Yosemite's font fallback
