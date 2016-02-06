@@ -1,3 +1,14 @@
+2016-02-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=153930
+        <rdar://problem/24534864>
+
+        Reviewed by Mark Lam.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+        I made a typo in r196144.
+
 2016-02-05  Saam barati  <sbarati@apple.com>
 
         Web Inspector: Include SamplingProfiler's expression-level data for stack frames in the protocol
