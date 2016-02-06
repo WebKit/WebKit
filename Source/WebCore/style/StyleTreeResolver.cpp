@@ -110,19 +110,40 @@ static void ensurePlaceholderStyle(Document& document)
 
 TreeResolver::TreeResolver(Document& document)
     : m_document(document)
-    , m_styleResolver(document.ensureStyleResolver())
-    , m_sharingResolver(document, m_styleResolver.ruleSets(), m_selectorFilter)
 {
     ensurePlaceholderStyle(document);
+
+    m_scopeStack.append(adoptRef(*new Scope(document)));
 }
 
-TreeResolver::TreeResolver(ShadowRoot& shadowRoot, TreeResolver& shadowHostTreeResolver)
-    : m_document(shadowRoot.document())
-    , m_styleResolver(shadowRoot.styleResolver())
-    , m_shadowRoot(&shadowRoot)
-    , m_shadowHostTreeResolver(&shadowHostTreeResolver)
-    , m_sharingResolver(m_document, m_styleResolver.ruleSets(), m_selectorFilter)
+TreeResolver::Scope::Scope(Document& document)
+    : styleResolver(document.ensureStyleResolver())
+    , sharingResolver(document, styleResolver.ruleSets(), selectorFilter)
 {
+}
+
+TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
+    : styleResolver(shadowRoot.styleResolver())
+    , sharingResolver(shadowRoot.documentScope(), styleResolver.ruleSets(), selectorFilter)
+    , shadowRoot(&shadowRoot)
+    , enclosingScope(&enclosingScope)
+{
+}
+
+void TreeResolver::pushScope(ShadowRoot& shadowRoot)
+{
+    m_scopeStack.append(adoptRef(*new Scope(shadowRoot, scope())));
+}
+
+void TreeResolver::pushEnclosingScope()
+{
+    ASSERT(scope().enclosingScope);
+    m_scopeStack.append(*scope().enclosingScope);
+}
+
+void TreeResolver::popScope()
+{
+    return m_scopeStack.removeLast();
 }
 
 static bool shouldCreateRenderer(const Element& element, const RenderElement& parentRenderer)
@@ -148,10 +169,10 @@ Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& in
             return style.releaseNonNull();
     }
 
-    if (auto* sharingElement = m_sharingResolver.resolve(element))
+    if (auto* sharingElement = scope().sharingResolver.resolve(element))
         return *sharingElement->renderStyle();
 
-    return m_styleResolver.styleForElement(element, &inheritedStyle, MatchAllRules, nullptr, &m_selectorFilter);
+    return scope().styleResolver.styleForElement(element, &inheritedStyle, MatchAllRules, nullptr, &scope().selectorFilter);
 }
 
 #if ENABLE(CSS_REGIONS)
@@ -369,11 +390,13 @@ void TreeResolver::createRenderTreeForShadowRoot(ShadowRoot& shadowRoot)
     ASSERT(shadowRoot.host());
     ASSERT(shadowRoot.host()->renderer());
 
-    TreeResolver shadowTreeResolver(shadowRoot, *this);
+    pushScope(shadowRoot);
 
     auto& renderer = *shadowRoot.host()->renderer();
     RenderTreePosition renderTreePosition(renderer);
-    shadowTreeResolver.createRenderTreeForChildren(shadowRoot, renderer.style(), renderTreePosition);
+    createRenderTreeForChildren(shadowRoot, renderer.style(), renderTreePosition);
+
+    popScope();
 
     shadowRoot.clearNeedsStyleRecalc();
     shadowRoot.clearChildNeedsStyleRecalc();
@@ -457,15 +480,16 @@ void TreeResolver::createRenderTreeForBeforeOrAfterPseudoElement(Element& curren
 void TreeResolver::createRenderTreeForSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition)
 {
     if (auto* assignedNodes = slot.assignedNodes()) {
-        ASSERT(m_shadowHostTreeResolver);
+        pushEnclosingScope();
         for (auto* child : *assignedNodes) {
             if (is<Text>(*child))
                 attachTextRenderer(downcast<Text>(*child), renderTreePosition);
             else if (is<Element>(*child))
-                m_shadowHostTreeResolver->createRenderTreeRecursively(downcast<Element>(*child), inheritedStyle, renderTreePosition, nullptr);
+                createRenderTreeRecursively(downcast<Element>(*child), inheritedStyle, renderTreePosition, nullptr);
         }
+        popScope();
     } else {
-        SelectorFilterPusher selectorFilterPusher(m_selectorFilter, slot);
+        SelectorFilterPusher selectorFilterPusher(scope().selectorFilter, slot);
         createRenderTreeForChildren(slot, inheritedStyle, renderTreePosition);
     }
 
@@ -492,7 +516,7 @@ void TreeResolver::createRenderTreeRecursively(Element& current, RenderStyle& in
     createRenderer(current, inheritedStyle, renderTreePosition, WTFMove(resolvedStyle));
 
     if (auto* renderer = current.renderer()) {
-        SelectorFilterPusher selectorFilterPusher(m_selectorFilter, current, SelectorFilterPusher::NoPush);
+        SelectorFilterPusher selectorFilterPusher(scope().selectorFilter, current, SelectorFilterPusher::NoPush);
 
         RenderTreePosition childRenderTreePosition(*renderer);
         createRenderTreeForBeforeOrAfterPseudoElement(current, BEFORE, childRenderTreePosition);
@@ -657,7 +681,7 @@ Change TreeResolver::resolveLocally(Element& current, RenderStyle& inheritedStyl
     // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
     if (m_document.authorStyleSheets().usesRemUnits() && m_document.documentElement() == &current && localChange != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
         // Cached RenderStyles may depend on the re units.
-        m_styleResolver.invalidateMatchedPropertiesCache();
+        scope().styleResolver.invalidateMatchedPropertiesCache();
         return Force;
     }
     if (inheritedChange == Force)
@@ -702,17 +726,17 @@ void TreeResolver::resolveChildAtShadowBoundary(Node& child, RenderStyle& inheri
 
 void TreeResolver::resolveShadowTree(Style::Change change, RenderStyle& inheritedStyle)
 {
-    ASSERT(m_shadowRoot);
-    auto& host = *m_shadowRoot->host();
+    ASSERT(scope().shadowRoot);
+    auto& host = *scope().shadowRoot->host();
     ASSERT(host.renderer());
-    if (m_shadowRoot->styleChangeType() >= FullStyleChange)
+    if (scope().shadowRoot->styleChangeType() >= FullStyleChange)
         change = Force;
     RenderTreePosition renderTreePosition(*host.renderer());
-    for (auto* child = m_shadowRoot->firstChild(); child; child = child->nextSibling())
+    for (auto* child = scope().shadowRoot->firstChild(); child; child = child->nextSibling())
         resolveChildAtShadowBoundary(*child, inheritedStyle, renderTreePosition, change);
 
-    m_shadowRoot->clearNeedsStyleRecalc();
-    m_shadowRoot->clearChildNeedsStyleRecalc();
+    scope().shadowRoot->clearNeedsStyleRecalc();
+    scope().shadowRoot->clearChildNeedsStyleRecalc();
 }
 
 void TreeResolver::resolveBeforeOrAfterPseudoElement(Element& current, Change change, PseudoId pseudoId, RenderTreePosition& renderTreePosition)
@@ -787,7 +811,7 @@ private:
 
 void TreeResolver::resolveChildren(Element& current, RenderStyle& inheritedStyle, Change change, RenderTreePosition& childRenderTreePosition)
 {
-    SelectorFilterPusher selectorFilterPusher(m_selectorFilter, current, SelectorFilterPusher::NoPush);
+    SelectorFilterPusher selectorFilterPusher(scope().selectorFilter, current, SelectorFilterPusher::NoPush);
 
     bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle = false;
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
@@ -818,9 +842,10 @@ void TreeResolver::resolveChildren(Element& current, RenderStyle& inheritedStyle
 void TreeResolver::resolveSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Change change)
 {
     if (auto* assignedNodes = slot.assignedNodes()) {
-        ASSERT(m_shadowHostTreeResolver);
+        pushEnclosingScope();
         for (auto* child : *assignedNodes)
-            m_shadowHostTreeResolver->resolveChildAtShadowBoundary(*child, inheritedStyle, renderTreePosition, change);
+            resolveChildAtShadowBoundary(*child, inheritedStyle, renderTreePosition, change);
+        popScope();
     } else
         resolveChildren(slot, inheritedStyle, change, renderTreePosition);
 
@@ -860,10 +885,11 @@ void TreeResolver::resolveRecursively(Element& current, RenderStyle& inheritedSt
     if (change != Detach && renderer) {
         auto* shadowRoot = current.shadowRoot();
         if (shadowRoot && (change >= Inherit || shadowRoot->childNeedsStyleRecalc() || shadowRoot->needsStyleRecalc())) {
-            SelectorFilterPusher selectorFilterPusher(m_selectorFilter, current);
+            SelectorFilterPusher selectorFilterPusher(scope().selectorFilter, current);
 
-            TreeResolver shadowTreeResolver(*shadowRoot, *this);
-            shadowTreeResolver.resolveShadowTree(change, renderer->style());
+            pushScope(*shadowRoot);
+            resolveShadowTree(change, renderer->style());
+            popScope();
         }
 
         RenderTreePosition childRenderTreePosition(*renderer);
@@ -887,7 +913,7 @@ void TreeResolver::resolveRecursively(Element& current, RenderStyle& inheritedSt
 
 void TreeResolver::resolve(Change change)
 {
-    ASSERT(!m_shadowRoot);
+    ASSERT(!scope().shadowRoot);
 
     auto& renderView = *m_document.renderView();
 
@@ -898,14 +924,14 @@ void TreeResolver::resolve(Change change)
         return;
 
     // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
-    renderView.setUsesFirstLineRules(renderView.usesFirstLineRules() || m_styleResolver.usesFirstLineRules());
-    renderView.setUsesFirstLetterRules(renderView.usesFirstLetterRules() || m_styleResolver.usesFirstLetterRules());
+    renderView.setUsesFirstLineRules(renderView.usesFirstLineRules() || scope().styleResolver.usesFirstLineRules());
+    renderView.setUsesFirstLetterRules(renderView.usesFirstLetterRules() || scope().styleResolver.usesFirstLetterRules());
 
     RenderTreePosition renderTreePosition(renderView);
     resolveRecursively(*documentElement, *m_document.renderStyle(), renderTreePosition, change);
 
-    renderView.setUsesFirstLineRules(m_styleResolver.usesFirstLineRules());
-    renderView.setUsesFirstLetterRules(m_styleResolver.usesFirstLetterRules());
+    renderView.setUsesFirstLineRules(scope().styleResolver.usesFirstLineRules());
+    renderView.setUsesFirstLetterRules(scope().styleResolver.usesFirstLetterRules());
 }
 
 void detachRenderTree(Element& element)

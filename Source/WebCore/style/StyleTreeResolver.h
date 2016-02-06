@@ -56,8 +56,6 @@ public:
     void resolve(Change);
 
 private:
-    TreeResolver(ShadowRoot&, TreeResolver& shadowHostTreeResolver);
-
     void resolveShadowTree(Change, RenderStyle& inheritedStyle);
 
     Ref<RenderStyle> styleForElement(Element&, RenderStyle& inheritedStyle);
@@ -79,14 +77,23 @@ private:
     void createRenderTreeForSlotAssignees(HTMLSlotElement&, RenderStyle& inheritedStyle, RenderTreePosition&);
 #endif
 
+    struct Scope : RefCounted<Scope> {
+        StyleResolver& styleResolver;
+        SelectorFilter selectorFilter;
+        SharingResolver sharingResolver;
+        ShadowRoot* shadowRoot { nullptr };
+        Scope* enclosingScope { nullptr };
+
+        Scope(Document&);
+        Scope(ShadowRoot&, Scope& enclosingScope);
+    };
+    Scope& scope() { return m_scopeStack.last(); }
+    void pushScope(ShadowRoot&);
+    void pushEnclosingScope();
+    void popScope();
+
     Document& m_document;
-    StyleResolver& m_styleResolver;
-
-    ShadowRoot* m_shadowRoot { nullptr };
-    TreeResolver* m_shadowHostTreeResolver { nullptr };
-
-    SelectorFilter m_selectorFilter;
-    SharingResolver m_sharingResolver;
+    Vector<Ref<Scope>, 4> m_scopeStack;
 };
 
 void detachRenderTree(Element&);

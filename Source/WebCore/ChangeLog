@@ -1,3 +1,38 @@
+2016-02-04  Antti Koivisto  <antti@apple.com>
+
+        Use scope stack instead of nested TreeResolvers for shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=153893
+
+        Reviewed by Andreas Kling.
+
+        Make TreeResolver per-document. This is a step towards iterative style resolve.
+
+        This is done replacing use of nested TreeResolvers with a scope stack that maintains
+        the style resolver and the selector filter for the current tree scope.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::ensurePlaceholderStyle):
+        (WebCore::Style::TreeResolver::Scope::Scope):
+        (WebCore::Style::TreeResolver::TreeResolver):
+        (WebCore::Style::shouldCreateRenderer):
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::TreeResolver::createRenderTreeForShadowRoot):
+        (WebCore::Style::TreeResolver::createRenderTreeForSlotAssignees):
+        (WebCore::Style::TreeResolver::createRenderTreeRecursively):
+        (WebCore::Style::TreeResolver::resolveLocally):
+        (WebCore::Style::TreeResolver::resolveShadowTree):
+        (WebCore::Style::TreeResolver::resolveBeforeOrAfterPseudoElement):
+        (WebCore::Style::TreeResolver::resolveChildren):
+        (WebCore::Style::TreeResolver::resolveSlotAssignees):
+        (WebCore::Style::TreeResolver::resolveRecursively):
+        (WebCore::Style::TreeResolver::resolve):
+        (WebCore::Style::detachRenderTree):
+        * style/StyleTreeResolver.h:
+        (WebCore::Style::TreeResolver::scope):
+        (WebCore::Style::TreeResolver::pushScope):
+        (WebCore::Style::TreeResolver::pushEnclosingScope):
+        (WebCore::Style::TreeResolver::popScope):
+
 2016-02-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196104.
