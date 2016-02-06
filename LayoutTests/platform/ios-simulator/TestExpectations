@@ -2936,3 +2936,5 @@ webkit.org/b/153929 imported/w3c/web-platform-tests/html/semantics/document-meta
 webkit.org/b/153315 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
 
 webkit.org/b/153898 pageoverlay/overlay-small-frame-paints.html [ Pass Failure ]
+
+webkit.org/b/153933 css3/filters/multiple-filters-invalidation.html [ Pass Crash ]

@@ -1,5 +1,14 @@
 2016-02-05  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark css3/filters/multiple-filters-invalidation.html  as flaky on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=153933
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-02-05  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking pageoverlay/overlay-small-frame-paints.html as flaky on ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=153898
 
