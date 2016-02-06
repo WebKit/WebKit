@@ -70,8 +70,8 @@ ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac()
     if (m_verticalScrollbarPainter || m_horizontalScrollbarPainter) {
         // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
         // on a non-main thread. rdar://problem/24535055
-        RetainPtr<ScrollbarPainter> retainedVerticalScrollbarPainter = m_verticalScrollbarPainter;
-        RetainPtr<ScrollbarPainter> retainedHorizontalScrollbarPainter = m_horizontalScrollbarPainter;
+        RetainPtr<ScrollbarPainter> retainedVerticalScrollbarPainter = WTFMove(m_verticalScrollbarPainter);
+        RetainPtr<ScrollbarPainter> retainedHorizontalScrollbarPainter = WTFMove(m_horizontalScrollbarPainter);
         WTF::callOnMainThread([retainedVerticalScrollbarPainter, retainedHorizontalScrollbarPainter] { });
     }
 }
@@ -118,8 +118,8 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
         {
             // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
             // on a non-main thread. rdar://problem/24535055
-            RetainPtr<ScrollbarPainter> retainedVerticalScrollbarPainter = m_verticalScrollbarPainter;
-            RetainPtr<ScrollbarPainter> retainedHorizontalScrollbarPainter = m_horizontalScrollbarPainter;
+            RetainPtr<ScrollbarPainter> retainedVerticalScrollbarPainter = WTFMove(m_verticalScrollbarPainter);
+            RetainPtr<ScrollbarPainter> retainedHorizontalScrollbarPainter = WTFMove(m_horizontalScrollbarPainter);
             WTF::callOnMainThread([retainedVerticalScrollbarPainter, retainedHorizontalScrollbarPainter]
                 {});
         }
