@@ -1,3 +1,11 @@
+2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] imported/blink/compositing/squashing/abspos-under-abspos-overflow-scroll.html is flaky
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-02-06  Chris Dumez  <cdumez@apple.com>
 
         Prevent cross-origin access to window.history

@@ -2408,7 +2408,7 @@ imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm
 
 webkit.org/b/151267 imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/compositing/invisible-subtree-compositing-and-preserves-3d.html [ ImageOnlyFailure Pass ]
-webkit.org/b/151267 imported/blink/compositing/squashing/abspos-under-abspos-overflow-scroll.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/compositing/squashing/abspos-under-abspos-overflow-scroll.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/compositing/squashing/clip-to-squashed-layer-size.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/overflow-scroll-grandchildren.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
