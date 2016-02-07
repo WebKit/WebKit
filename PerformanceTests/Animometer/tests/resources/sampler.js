@@ -1,19 +1,12 @@
-function Experiment()
-{
-    this._sum = 0;
-    this._squareSum = 0;
-    this._numberOfSamples = 0;
-    this._maxHeap = Algorithm.createMaxHeap(Experiment.defaults.CONCERN_SIZE);
-}
+Experiment = Utilities.createClass(
+    function()
+    {
+        this._sum = 0;
+        this._squareSum = 0;
+        this._numberOfSamples = 0;
+        this._maxHeap = Algorithm.createMaxHeap(Experiment.defaults.CONCERN_SIZE);
+    }, {
 
-Experiment.defaults =
-{
-    CONCERN: 5,
-    CONCERN_SIZE: 100,
-}
-
-Experiment.prototype =
-{
     sample: function(value)
     {
         this._sum += value;
@@ -49,24 +42,29 @@ Experiment.prototype =
     {
         return Statistics.geometricMean([this.mean(), Math.max(this.concern(percentage), 1)]);
     }
+});
+
+Experiment.defaults =
+{
+    CONCERN: 5,
+    CONCERN_SIZE: 100,
 }
 
-function Sampler(seriesCount, expectedSampleCount, processor)
-{
-    this._processor = processor;
+Sampler = Utilities.createClass(
+    function(seriesCount, expectedSampleCount, processor)
+    {
+        this._processor = processor;
 
-    this.samples = [];
-    for (var i = 0; i < seriesCount; ++i) {
-        var array = new Array(expectedSampleCount);
-        array.fill(0);
-        this.samples[i] = array;
-    }
-    this.sampleCount = 0;
-    this.marks = {};
-}
+        this.samples = [];
+        for (var i = 0; i < seriesCount; ++i) {
+            var array = new Array(expectedSampleCount);
+            array.fill(0);
+            this.samples[i] = array;
+        }
+        this.sampleCount = 0;
+        this.marks = {};
+    }, {
 
-Sampler.prototype =
-{
     record: function() {
         // Assume that arguments.length == this.samples.length
         for (var i = 0; i < arguments.length; i++) {
@@ -99,4 +97,4 @@ Sampler.prototype =
 
         return results;
     }
-}
+});

@@ -1,5 +1,36 @@
 2016-02-06  Jon Lee  <jonlee@apple.com>
 
+        Add a convenience function for creating a class.
+
+        The pattern for creating a class is common enough to add as a Utilities
+        helper function. It also makes it easy to collapse class definitions when
+        editing.
+
+        * Animometer/resources/debug-runner/animometer.js: Move ProgressBar definition,
+        since it is only used here.
+        * Animometer/resources/runner/animometer.js: Move ResultsDashboard and
+        ResultsTable definition, since it is only used here.
+        * Animometer/resources/extensions.js: Move Utilities definition to the top. Convert
+        Point, Insets, SimplePromise.
+        (ProgressBar): Moved to animometer.js.
+        (ResultsDashboard): Moved to animometer.js.
+        (ResultsTable): Moved to animometer.js.
+        * Animometer/resources/runner/benchmark-runner.js: Convert BenchmarkRunnerState,
+        BenchmarkRunner.
+        * Animometer/tests/resources/main.js: Convert Rotater, Stage, Animator, Benchmark.
+        * Animometer/tests/resources/sampler.js: Convert Experiment, Sampler.
+
+        Convert test primitives.
+        * Animometer/tests/master/resources/canvas-tests.js: Convert CanvasLineSegment,
+        CanvasArc, CanvasLinePoint.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js: Convert CanvasLineSegment,
+        CanvasLinePoint, CanvasQuadraticSegment, CanvasQuadraticPoint, CanvasBezierSegment,
+        CanvasBezierPoint, CanvasArcToSegment, CanvasArcToSegmentFill, CanvasArcSegment,
+        CanvasArcSegmentFill, CanvasRect, CanvasRectFill.
+        * Animometer/tests/simple/resources/tiled-canvas-image.js: Convert CanvasImageTile.
+
+2016-02-06  Jon Lee  <jonlee@apple.com>
+
         Minor improvements to debug harness.
 
         * Animometer/developer.html:
@@ -48,15 +79,15 @@
         and putImageData functions. This test draws a background on the canvas
         and then gets some random tiles from this background and draw them in
         destinations different from their original sources.
-        
+
         * Animometer/resources/debug-runner/tests.js: Adding the new test to the canvas simple tests suite.
-        
+
         * Animometer/resources/extensions.js:
         (Array.prototype.shuffle): Shuffles the elements of an array.
-        
+
         (Point.zero): Returns a new Point object whose x and y are equal zero.
         (Point.prototype.str): Used for debugging the Point object.
-        
+
         * Animometer/tests/simple/resources/tiled-canvas-image.js: Added.
         (CanvasImageTile):
         (CanvasImageTile.prototype.getImageData):

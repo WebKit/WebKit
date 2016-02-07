@@ -1,12 +1,12 @@
-function BenchmarkRunnerState(suites)
-{
-    this._suites = suites;
-    this._suiteIndex = -1;
-    this._testIndex = 0;
-    this.next();
-}
+BenchmarkRunnerState = Utilities.createClass(
+    function(suites)
+    {
+        this._suites = suites;
+        this._suiteIndex = -1;
+        this._testIndex = 0;
+        this.next();
+    }, {
 
-BenchmarkRunnerState.prototype = {
     currentSuite: function()
     {
         return this._suites[this._suiteIndex];
@@ -49,16 +49,16 @@ BenchmarkRunnerState.prototype = {
         frame.src = "tests/" + test.url;
         return promise;
     }
-};
+});
 
-function BenchmarkRunner(suites, frameContainer, client)
-{
-    this._suites = suites;
-    this._client = client;
-    this._frameContainer = frameContainer;
-}
+BenchmarkRunner = Utilities.createClass(
+    function(suites, frameContainer, client)
+    {
+        this._suites = suites;
+        this._client = client;
+        this._frameContainer = frameContainer;
+    }, {
 
-BenchmarkRunner.prototype = {
     _appendFrame: function()
     {
         var frame = document.createElement("iframe");
@@ -173,4 +173,4 @@ BenchmarkRunner.prototype = {
         if (this._runNextIteration)
             this._runNextIteration();
     }
-};
+});

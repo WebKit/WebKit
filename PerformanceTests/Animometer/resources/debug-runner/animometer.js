@@ -1,3 +1,24 @@
+ProgressBar = Utilities.createClass(
+    function(element, ranges)
+    {
+        this._element = element;
+        this._ranges = ranges;
+        this._currentRange = 0;
+        this._updateElement();
+    }, {
+
+    _updateElement: function()
+    {
+        this._element.style.width = (this._currentRange * (100 / this._ranges)) + "%";
+    },
+
+    incrementRange: function()
+    {
+        ++this._currentRange;
+        this._updateElement();
+    }
+});
+
 Utilities.extendObject(window.benchmarkRunnerClient, {
     testsCount: null,
     progressBar: null,

@@ -1,21 +1,23 @@
 (function() {
 
-function CanvasImageTile(stage, source)
-{
-    this._context = stage.context;
-    this._size = stage.tileSize;
-    this.source = source;
-}
+CanvasImageTile = Utilities.createClass(
+    function(stage, source)
+    {
+        this._context = stage.context;
+        this._size = stage.tileSize;
+        this.source = source;
+    }, {
 
-CanvasImageTile.prototype.getImageData = function()
-{
-    this._imagedata = this._context.getImageData(this.source.x, this.source.y, this._size.width, this._size.height);
-}
+    getImageData: function()
+    {
+        this._imagedata = this._context.getImageData(this.source.x, this.source.y, this._size.width, this._size.height);
+    },
 
-CanvasImageTile.prototype.putImageData = function(destination)
-{
-    this._context.putImageData(this._imagedata, destination.x, destination.y);
-}
+    putImageData: function(destination)
+    {
+        this._context.putImageData(this._imagedata, destination.x, destination.y);
+    }
+});
 
 TiledCanvasImageStage = Utilities.createSubclass(Stage,
     function(element, options)
@@ -62,7 +64,7 @@ TiledCanvasImageStage = Utilities.createSubclass(Stage,
     {
         this._ctiles += count;
 
-        this._ctiles = Math.max(this._ctiles, 0);    
+        this._ctiles = Math.max(this._ctiles, 0);
         this._ctiles = Math.min(this._ctiles, this._tiles.length);
 
         return this._ctiles;
@@ -100,7 +102,7 @@ TiledCanvasImageStage = Utilities.createSubclass(Stage,
         for (var index = 0; index < this._ctiles; ++index)
             this._tiles[index].putImageData(destinations[index]);
     },
-    
+
     complexity: function()
     {
         return this._ctiles;

@@ -2,176 +2,212 @@
 
 // === PAINT OBJECTS ===
 
-function CanvasLineSegment(stage) {
-    var radius = Stage.randomInt(10, 100);
-    var center = Stage.randomPosition(stage.size);
-    var delta = Point.pointOnCircle(Stage.randomAngle(), radius/2);
+CanvasLineSegment = Utilities.createClass(
+    function(stage) {
+        var radius = Stage.randomInt(10, 100);
+        var center = Stage.randomPosition(stage.size);
+        var delta = Point.pointOnCircle(Stage.randomAngle(), radius/2);
 
-    this._point1 = center.add(delta);
-    this._point2 = center.subtract(delta);
-    this._color = Stage.randomColor();
-    this._lineWidth = Stage.randomInt(1, 100);
-}
-CanvasLineSegment.prototype.draw = function(context) {
-    context.strokeStyle = this._color;
-    context.lineWidth = this._lineWidth;
-    context.beginPath();
-    context.moveTo(this._point1.x, this._point1.y);
-    context.lineTo(this._point2.x, this._point2.y);
-    context.stroke();
-};
+        this._point1 = center.add(delta);
+        this._point2 = center.subtract(delta);
+        this._color = Stage.randomColor();
+        this._lineWidth = Stage.randomInt(1, 100);
+    }, {
 
-function CanvasLinePoint(stage, coordinateMaximumFactor) {
-    var pointMaximum = new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y));
-    this._point = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
-}
-CanvasLinePoint.prototype.draw = function(context) {
-    context.lineTo(this._point.x, this._point.y);
-};
+    draw: function(context) {
+        context.strokeStyle = this._color;
+        context.lineWidth = this._lineWidth;
+        context.beginPath();
+        context.moveTo(this._point1.x, this._point1.y);
+        context.lineTo(this._point2.x, this._point2.y);
+        context.stroke();
+    }
+});
 
-function CanvasQuadraticSegment(stage) {
-    var maxSize = Stage.randomInt(20, 200);
-    var toCenter = Stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
+CanvasLinePoint = Utilities.createClass(
+    function(stage, coordinateMaximumFactor) {
+        var pointMaximum = new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y));
+        this._point = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+    }, {
 
-    this._point1 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._point2 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._point3 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._color = Stage.randomColor();
-    this._lineWidth = Stage.randomInt(1, 50);
-};
-CanvasQuadraticSegment.prototype.draw = function(context) {
-    context.strokeStyle = this._color;
-    context.lineWidth = this._lineWidth;
-    context.beginPath();
-    context.moveTo(this._point1.x, this._point1.y);
-    context.quadraticCurveTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y);
-    context.stroke();
-};
+    draw: function(context) {
+        context.lineTo(this._point.x, this._point.y);
+    }
+})
 
-function CanvasQuadraticPoint(stage, coordinateMaximumFactor) {
-    var pointMaximum = Stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y)));
-    this._point1 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
-    this._point2 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
-};
-CanvasQuadraticPoint.prototype.draw = function(context) {
-    context.quadraticCurveTo(this._point1.x, this._point1.y, this._point2.x, this._point2.y);
-};
+CanvasQuadraticSegment = Utilities.createClass(
+    function(stage) {
+        var maxSize = Stage.randomInt(20, 200);
+        var toCenter = Stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
 
-function CanvasBezierSegment(stage) {
-    var maxSize = Stage.randomInt(20, 200);
-    var toCenter = Stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
+        this._point1 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._point2 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._point3 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._color = Stage.randomColor();
+        this._lineWidth = Stage.randomInt(1, 50);
+    }, {
 
-    this._point1 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._point2 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._point3 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._point4 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._color = Stage.randomColor();
-    this._lineWidth = Stage.randomInt(1, 50);
-};
-CanvasBezierSegment.prototype.draw = function(context) {
-    context.strokeStyle = this._color;
-    context.lineWidth = this._lineWidth;
-    context.beginPath();
-    context.moveTo(this._point1.x, this._point1.y);
-    context.bezierCurveTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this._point4.x, this._point4.y);
-    context.stroke();
-};
+    draw: function(context) {
+        context.strokeStyle = this._color;
+        context.lineWidth = this._lineWidth;
+        context.beginPath();
+        context.moveTo(this._point1.x, this._point1.y);
+        context.quadraticCurveTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y);
+        context.stroke();
+    }
+});
 
-function CanvasBezierPoint(stage, coordinateMaximumFactor) {
-    var pointMaximum = Stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y)));
-    this._point1 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
-    this._point2 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
-    this._point3 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
-};
-CanvasBezierPoint.prototype.draw = function(context) {
-    context.bezierCurveTo(this._point1.x, this._point1.y, this._point2.x, this._point2.y, this._point3.x, this._point3.y);
-};
+CanvasQuadraticPoint = Utilities.createClass(
+    function(stage, coordinateMaximumFactor) {
+        var pointMaximum = Stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y)));
+        this._point1 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+        this._point2 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+    }, {
 
-function CanvasArcToSegment(stage) {
-    var maxSize = Stage.randomInt(20, 200);
-    var toCenter = Stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
+    draw: function(context) {
+        context.quadraticCurveTo(this._point1.x, this._point1.y, this._point2.x, this._point2.y);
+    }
+});
 
-    this._point1 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._point2 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._point3 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._radius = Stage.randomInt(20, 200);
-    this._color = Stage.randomColor();
-    this._lineWidth = Stage.randomInt(1, 50);
-};
-CanvasArcToSegment.prototype.draw = function(context) {
-    context.strokeStyle = this._color;
-    context.lineWidth = this._lineWidth;
-    context.beginPath();
-    context.moveTo(this._point1.x, this._point1.y);
-    context.arcTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this._radius);
-    context.stroke();
-};
+CanvasBezierSegment = Utilities.createClass(
+    function(stage) {
+        var maxSize = Stage.randomInt(20, 200);
+        var toCenter = Stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
 
-function CanvasArcToSegmentFill(stage) {
-    CanvasArcToSegment.call(this, stage);
-};
-CanvasArcToSegmentFill.prototype.draw = function(context) {
-    context.fillStyle = this._color;
-    context.beginPath();
-    context.moveTo(this._point1.x, this._point1.y);
-    context.arcTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this._radius);
-    context.fill();
-};
+        this._point1 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._point2 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._point3 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._point4 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._color = Stage.randomColor();
+        this._lineWidth = Stage.randomInt(1, 50);
+    }, {
 
-function CanvasArcSegment(stage) {
-    var maxSize = Stage.randomInt(20, 200);
-    var toCenter = Stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
+    draw: function(context) {
+        context.strokeStyle = this._color;
+        context.lineWidth = this._lineWidth;
+        context.beginPath();
+        context.moveTo(this._point1.x, this._point1.y);
+        context.bezierCurveTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this._point4.x, this._point4.y);
+        context.stroke();
+    }
+});
 
-    this._point = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
-    this._radius = Stage.randomInt(20, 200);
-    this._startAngle = Stage.randomAngle();
-    this._endAngle = Stage.randomAngle();
-    this._counterclockwise = Stage.randomBool();
-    this._color = Stage.randomColor();
-    this._lineWidth = Stage.randomInt(1, 50);
-};
-CanvasArcSegment.prototype.draw = function(context) {
-    context.strokeStyle = this._color;
-    context.lineWidth = this._lineWidth;
-    context.beginPath();
-    context.arc(this._point.x, this._point.y, this._radius, this._startAngle, this._endAngle, this._counterclockwise);
-    context.stroke();
-};
+CanvasBezierPoint = Utilities.createClass(
+    function(stage, coordinateMaximumFactor) {
+        var pointMaximum = Stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y)));
+        this._point1 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+        this._point2 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+        this._point3 = Stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+    }, {
 
-function CanvasArcSegmentFill(stage) {
-    CanvasArcSegment.call(this, stage);
-};
-CanvasArcSegmentFill.prototype.draw = function(context) {
-    context.fillStyle = this._color;
-    context.beginPath();
-    context.arc(this._point.x, this._point.y, this._radius, this._startAngle, this._endAngle, this._counterclockwise);
-    context.fill();
-};
+    draw: function(context) {
+        context.bezierCurveTo(this._point1.x, this._point1.y, this._point2.x, this._point2.y, this._point3.x, this._point3.y);
+    }
+});
 
-function CanvasRect(stage) {
-    this._width = Stage.randomInt(20, 200);
-    this._height = Stage.randomInt(20, 200);
-    this._point = Stage.randomPosition(stage.size).subtract(new Point(this._width/2, this._height/2));
-    this._color = Stage.randomColor();
-    this._lineWidth = Stage.randomInt(1, 20);
-}
-CanvasRect.prototype.draw = function(context) {
-    context.strokeStyle = this._color;
-    context.lineWidth = this._lineWidth;
-    context.beginPath();
-    context.rect(this._point.x, this._point.y, this._width, this._height);
-    context.stroke();
-};
+CanvasArcToSegment = Utilities.createClass(
+    function(stage) {
+        var maxSize = Stage.randomInt(20, 200);
+        var toCenter = Stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
 
-function CanvasRectFill(stage) {
-    CanvasRect.call(this, stage);
-}
-CanvasRectFill.prototype.draw = function(context) {
-    context.fillStyle = this._color;
-    context.beginPath();
-    context.rect(this._point.x, this._point.y, this._width, this._height);
-    context.fill();
-};
+        this._point1 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._point2 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._point3 = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._radius = Stage.randomInt(20, 200);
+        this._color = Stage.randomColor();
+        this._lineWidth = Stage.randomInt(1, 50);
+    }, {
+
+    draw: function(context) {
+        context.strokeStyle = this._color;
+        context.lineWidth = this._lineWidth;
+        context.beginPath();
+        context.moveTo(this._point1.x, this._point1.y);
+        context.arcTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this._radius);
+        context.stroke();
+    }
+});
+
+CanvasArcToSegmentFill = Utilities.createClass(
+    function(stage) {
+        CanvasArcToSegment.call(this, stage);
+    }, {
+
+    draw: function(context) {
+        context.fillStyle = this._color;
+        context.beginPath();
+        context.moveTo(this._point1.x, this._point1.y);
+        context.arcTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this._radius);
+        context.fill();
+    }
+});
+
+CanvasArcSegment = Utilities.createClass(
+    function(stage) {
+        var maxSize = Stage.randomInt(20, 200);
+        var toCenter = Stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
+
+        this._point = Stage.randomPosition(new Point(maxSize, maxSize)).add(toCenter);
+        this._radius = Stage.randomInt(20, 200);
+        this._startAngle = Stage.randomAngle();
+        this._endAngle = Stage.randomAngle();
+        this._counterclockwise = Stage.randomBool();
+        this._color = Stage.randomColor();
+        this._lineWidth = Stage.randomInt(1, 50);
+    }, {
+
+    draw: function(context) {
+        context.strokeStyle = this._color;
+        context.lineWidth = this._lineWidth;
+        context.beginPath();
+        context.arc(this._point.x, this._point.y, this._radius, this._startAngle, this._endAngle, this._counterclockwise);
+        context.stroke();
+    }
+});
+
+CanvasArcSegmentFill = Utilities.createClass(
+    function(stage) {
+        CanvasArcSegment.call(this, stage);
+    }, {
+
+    draw: function(context) {
+        context.fillStyle = this._color;
+        context.beginPath();
+        context.arc(this._point.x, this._point.y, this._radius, this._startAngle, this._endAngle, this._counterclockwise);
+        context.fill();
+    }
+});
+
+CanvasRect = Utilities.createClass(
+    function(stage) {
+        this._width = Stage.randomInt(20, 200);
+        this._height = Stage.randomInt(20, 200);
+        this._point = Stage.randomPosition(stage.size).subtract(new Point(this._width/2, this._height/2));
+        this._color = Stage.randomColor();
+        this._lineWidth = Stage.randomInt(1, 20);
+    }, {
+
+    draw: function(context) {
+        context.strokeStyle = this._color;
+        context.lineWidth = this._lineWidth;
+        context.beginPath();
+        context.rect(this._point.x, this._point.y, this._width, this._height);
+        context.stroke();
+    }
+});
+
+CanvasRectFill = Utilities.createClass(
+    function(stage) {
+        CanvasRect.call(this, stage);
+    }, {
+
+    draw: function(context) {
+        context.fillStyle = this._color;
+        context.beginPath();
+        context.rect(this._point.x, this._point.y, this._width, this._height);
+        context.fill();
+    }
+});
 
 // === STAGES ===
 
