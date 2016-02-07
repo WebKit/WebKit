@@ -1,3 +1,14 @@
+2016-02-06  Daniel Bates  <dabates@apple.com>
+
+        Call CFRelease() on SecRequirementRef when no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=153954
+        <rdar://problem/24540259>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
 2016-02-06  Darin Adler  <darin@apple.com>
 
         Finish auditing call sites of upper() and lower(), eliminate many, and rename the functions

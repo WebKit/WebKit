@@ -102,7 +102,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
             RELEASE_ASSERT(code);
 
             CFStringRef appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement = CFSTR("(anchor apple) or (anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.9]) or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13])");
-            SecRequirementRef signingRequirement;
+            SecRequirementRef signingRequirement = nullptr;
             OSStatus status = SecRequirementCreateWithString(appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement, kSecCSDefaultFlags, &signingRequirement);
             RELEASE_ASSERT(status == errSecSuccess);
 
@@ -126,6 +126,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
                     sandboxParameters.setUserDirectorySuffix([makeString(userDirectorySuffix->value, '/', String([[NSBundle mainBundle] bundleIdentifier])) fileSystemRepresentation]);
                 sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier));
             }
+            CFRelease(signingRequirement);
         } else {
             // Legacy client
             sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier));
