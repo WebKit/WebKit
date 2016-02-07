@@ -39,73 +39,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    // When accessing History cross-domain, functions are always the native built-in ones.
-    // See JSDOMWindow::getOwnPropertySlotDelegate for additional details.
-
-    // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
-    // allowed, return false so the normal lookup will take place.
-    String message;
-    if (shouldAllowAccessToFrame(exec, wrapped().frame(), message))
-        return false;
-
-    // Check for the few functions that we allow, even when called cross-domain.
-    // Make these read-only / non-configurable to prevent writes via defineProperty.
-    if (propertyName == exec->propertyNames().back) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHistoryPrototypeFunctionBack, 0>);
-        return true;
-    }
-    if (propertyName == exec->propertyNames().forward) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHistoryPrototypeFunctionForward, 0>);
-        return true;
-    }
-    if (propertyName == exec->propertyNames().go) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHistoryPrototypeFunctionGo, 1>);
-        return true;
-    }
-    // Allow access to toString() cross-domain, but always Object.toString.
-    if (propertyName == exec->propertyNames().toString) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, objectToStringFunctionGetter);
-        return true;
-    }
-
-    printErrorMessageForFrame(wrapped().frame(), message);
-    slot.setUndefined();
-    return true;
-}
-
-bool JSHistory::putDelegate(ExecState* exec, PropertyName, JSValue, PutPropertySlot&)
-{
-    if (!shouldAllowAccessToFrame(exec, wrapped().frame()))
-        return true;
-    return false;
-}
-
-bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
-{
-    JSHistory* thisObject = jsCast<JSHistory*>(cell);
-    if (!shouldAllowAccessToFrame(exec, thisObject->wrapped().frame()))
-        return false;
-    return Base::deleteProperty(thisObject, exec, propertyName);
-}
-
-bool JSHistory::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
-{
-    JSHistory* thisObject = jsCast<JSHistory*>(cell);
-    if (!shouldAllowAccessToFrame(exec, thisObject->wrapped().frame()))
-        return false;
-    return Base::deletePropertyByIndex(thisObject, exec, propertyName);
-}
-
-void JSHistory::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    JSHistory* thisObject = jsCast<JSHistory*>(object);
-    if (!shouldAllowAccessToFrame(exec, thisObject->wrapped().frame()))
-        return;
-    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
-}
-
 JSValue JSHistory::state(ExecState& state) const
 {
     History& history = wrapped();
@@ -122,9 +55,6 @@ JSValue JSHistory::state(ExecState& state) const
 
 JSValue JSHistory::pushState(ExecState& state)
 {
-    if (!shouldAllowAccessToFrame(&state, wrapped().frame()))
-        return jsUndefined();
-
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(&state, state.argument(0), 0, 0);
     if (state.hadException())
         return jsUndefined();
@@ -151,9 +81,6 @@ JSValue JSHistory::pushState(ExecState& state)
 
 JSValue JSHistory::replaceState(ExecState& state)
 {
-    if (!shouldAllowAccessToFrame(&state, wrapped().frame()))
-        return jsUndefined();
-
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(&state, state.argument(0), 0, 0);
     if (state.hadException())
         return jsUndefined();

@@ -18,13 +18,10 @@
             targetWindow = document.getElementById("target").contentWindow;
 
             shouldBeFalse("targetWindow instanceof Array");
-            shouldBeFalse("targetWindow.history instanceof Array");
 
             shouldBe("Object.setPrototypeOf(targetWindow, Array.prototype)", "targetWindow");
-            shouldBe("Object.setPrototypeOf(targetWindow.history, Array.prototype)", "targetWindow.history");
 
             shouldBeFalse("targetWindow instanceof Array");
-            shouldBeFalse("targetWindow.history instanceof Array");
 
             if (window.testRunner)
                 testRunner.notifyDone();

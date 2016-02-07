@@ -194,6 +194,7 @@
             "status", 
             "statusbar", 
             "toolbar",
+            "history",
         ];
 
         window.onload = function()
@@ -265,15 +266,10 @@
             log("----- tests access to cross domain history object -----");
             window.targetHistory = targetWindow.history;
             var historyPropertiesNotAllowed = [
-                "length", "pushState", "replaceState", "customProperty"
-            ];
-            var historyPropertiesAllowed = [
-                "back", "forward", "go"
+                "length", "pushState", "replaceState", "customProperty", "back", "forward", "go"
             ];
             for (var i = 0; i < historyPropertiesNotAllowed.length; i++)
                 shouldBeFalse("canGetDescriptor(targetHistory, '" + historyPropertiesNotAllowed[i] + "')");
-            for (var i = 0; i < historyPropertiesAllowed.length; i++)
-                shouldBeTrue("canGetDescriptor(targetHistory, '" + historyPropertiesAllowed[i] + "')");
         }
     </script>
 </head>

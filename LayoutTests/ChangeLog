@@ -1,3 +1,27 @@
+2016-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Prevent cross-origin access to window.history
+        https://bugs.webkit.org/show_bug.cgi?id=153931
+
+        Reviewed by Darin Adler.
+
+        Update / rebaseline several layout tests now that cross-origin access to
+        window.history is prevented.
+
+        * fast/frames/sandboxed-iframe-history-denied-expected.txt:
+        * http/tests/history/cross-origin-replace-history-object-child-expected.txt:
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html:
+        * http/tests/security/cross-frame-access-delete-expected.txt:
+        * http/tests/security/cross-frame-access-delete.html:
+        * http/tests/security/cross-frame-access-history-prototype-expected.txt:
+        * http/tests/security/cross-frame-access-history-put.html: Removed.
+        * http/tests/security/cross-frame-access-object-getPrototypeOf-expected.txt:
+        * http/tests/security/cross-frame-access-object-getPrototypeOf.html:
+        * http/tests/security/cross-frame-access-object-setPrototypeOf-expected.txt:
+        * http/tests/security/cross-frame-access-object-setPrototypeOf.html:
+        * http/tests/security/resources/cross-frame-iframe-for-history-put-test.html: Removed.
+
 2016-02-06  Zalan Bujtas  <zalan@apple.com>
 
         Outline should contribute to visual overflow.

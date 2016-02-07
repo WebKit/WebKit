@@ -64,8 +64,7 @@ window.onload = function()
     shouldBe("window.location.toString.call(targetWindow.location)", "undefined");
 
     // - Tests for the History object -
-    shouldBe("history.pushState.call(targetWindow.history, {}, '', 'http://localhost:8000/foobar')", "undefined"), 
-    shouldBe("history.replaceState.call(targetWindow.history, {}, '', 'http://localhost:8000/foobar')", "undefined"), 
+    shouldBeUndefined("targetWindow.history");
 
     // Work around DRT bug that causes subsequent tests to fail.
     window.stop();

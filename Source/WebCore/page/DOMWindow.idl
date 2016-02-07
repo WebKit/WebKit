@@ -41,7 +41,7 @@
 ] interface DOMWindow {
     // DOM Level 0
     [Replaceable] readonly attribute Screen screen;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute History history;
+    [Replaceable] readonly attribute History history;
     [Replaceable] readonly attribute BarProp locationbar;
     [Replaceable] readonly attribute BarProp menubar;
     [Replaceable] readonly attribute BarProp personalbar;

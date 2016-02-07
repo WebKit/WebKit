@@ -21,8 +21,6 @@
 
             shouldBe("eval('delete targetWindow.existingProperty')", "false");
             shouldBe("eval('delete targetWindow[1]')", "false");
-            shouldBe("eval('delete targetWindow.history.existingProperty')", "false");
-            shouldBe("eval('delete targetWindow.history[1]')", "false");
             shouldBe("eval('delete targetWindow.location.existingProperty')", "false");
             shouldBe("eval('delete targetWindow.location[1]')", "false");
 

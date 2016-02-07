@@ -1,3 +1,25 @@
+2016-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Prevent cross-origin access to window.history
+        https://bugs.webkit.org/show_bug.cgi?id=153931
+
+        Reviewed by Darin Adler.
+
+        Prevent cross-origin access to window.history to match the specification [1]
+        and the behavior of other browsers (tested Firefox and Chrome).
+
+        [1] https://html.spec.whatwg.org/multipage/browsers.html#security-window
+
+        No new tests, already covered by existing tests that
+        were updated in this patch.
+
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        (WebCore::JSHistory::state): Deleted.
+        * page/DOMWindow.idl:
+        * page/History.idl:
+
 2016-02-06  Beth Dakin  <bdakin@apple.com>
 
         ScrollbarPainters needs to be deallocated on the main thread

@@ -19,7 +19,7 @@
             targetWindow = document.getElementById("target").contentWindow;
 
             shouldBeUndefined("Object.getPrototypeOf(targetWindow)");
-            shouldBeUndefined("Object.getPrototypeOf(targetWindow.history)");
+            shouldBeUndefined("targetWindow.history");
 
             if (window.testRunner)
                 testRunner.notifyDone();

@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to initiate navigation for frame with URL 'script>'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
-
+CONSOLE MESSAGE: line 1: Sandbox access violation: Blocked a frame at "null" from accessing a frame at "".  The frame requesting access is sandboxed and lacks the "allow-same-origin" flag.
+CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'top.history.back')
 ALERT: PASS
 This test verifies that a sandboxed IFrame cannot navigate the top-level frame using the history API.
 

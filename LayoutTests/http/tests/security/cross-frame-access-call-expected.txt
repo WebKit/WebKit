@@ -26,8 +26,7 @@ CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" fro
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 10: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 
 
 ----- tests for calling methods of another frame using Function.call -----
@@ -61,6 +60,5 @@ PASS: window.resizeTo.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.showModalDialog.call(targetWindow); should be 'undefined' and is.
 PASS: window.eval.call(targetWindow, '1+2'); should be '3' and is.
 PASS: window.location.toString.call(targetWindow.location) should be 'undefined' and is.
-PASS: history.pushState.call(targetWindow.history, {}, '', 'http://localhost:8000/foobar') should be 'undefined' and is.
-PASS: history.replaceState.call(targetWindow.history, {}, '', 'http://localhost:8000/foobar') should be 'undefined' and is.
+PASS: targetWindow.history should be 'undefined' and is.
 
