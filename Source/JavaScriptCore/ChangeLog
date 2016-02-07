@@ -1,3 +1,19 @@
+2016-02-07  Saam barati  <sbarati@apple.com>
+
+        Follow up patch to: [ES6] bound functions .name property should be "bound " + the target function's name 
+        https://bugs.webkit.org/show_bug.cgi?id=153796
+
+        Reviewed by Darin Adler.
+
+        This follow-up patch addresses some comments/suggestions by
+        Ryosuke, Darin, and Joe. It simplifies JSBoundFunction::toStringName
+        and adds some tests for bound names.
+
+        * runtime/JSBoundFunction.cpp:
+        (JSC::hasInstanceBoundFunction):
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::toStringName):
+
 2016-02-07  Filip Pizlo  <fpizlo@apple.com>
 
         String.match should defend against matches that would crash the VM

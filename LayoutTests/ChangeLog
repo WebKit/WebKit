@@ -1,3 +1,17 @@
+2016-02-07  Saam barati  <sbarati@apple.com>
+
+        [ES6] bound functions .name property should be "bound " + the target function's name
+        https://bugs.webkit.org/show_bug.cgi?id=153796
+
+        Reviewed by Darin Adler.
+
+        * js/bound-function-name-expected.txt: Added.
+        * js/bound-function-name.html: Added.
+        * js/script-tests/bound-function-name.js: Added.
+        (assert):
+        (assert.foo):
+        (bar):
+
 2016-02-07  Daniel Bates  <dabates@apple.com>
 
         CSP: Allow Web Workers initiated from an isolated world to bypass the main world Content Security Policy

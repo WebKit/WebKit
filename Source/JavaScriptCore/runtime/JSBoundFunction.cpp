@@ -87,8 +87,6 @@ EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(ExecState* exec)
     return JSValue::encode(jsBoolean(boundObject->targetFunction()->hasInstance(exec, value)));
 }
 
-static const char* const boundPrefix = "bound ";
-
 JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int length, const String& name)
 {
     ConstructData constructData;
@@ -97,7 +95,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
     NativeExecutable* executable = vm.getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor, ASCIILiteral("Function.prototype.bind result"));
     JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, globalObject->boundFunctionStructure(), targetFunction, boundThis, boundArgs);
 
-    function->finishCreation(vm, executable, length, makeString(ASCIILiteral(boundPrefix), name));
+    function->finishCreation(vm, executable, length, makeString("bound ", name));
     return function;
 }
 
@@ -136,10 +134,7 @@ void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 String JSBoundFunction::toStringName(ExecState* exec)
 {
-    String result = name(exec);
-    ASSERT(result.find(ASCIILiteral(boundPrefix)) == 0);
-    static const size_t boundPrefixLength = 6;
-    return result.substring(boundPrefixLength);
+    return m_targetFunction->get(exec, exec->vm().propertyNames->name).toWTFString(exec);
 }
 
 } // namespace JSC
