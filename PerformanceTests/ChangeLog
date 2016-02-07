@@ -1,5 +1,12 @@
 2016-02-06  Jon Lee  <jonlee@apple.com>
 
+        Update the JS includes due to ResultsTable move.
+
+        * Animometer/developer.html:
+        * Animometer/index.html:
+
+2016-02-06  Jon Lee  <jonlee@apple.com>
+
         Move createElement and createSVGElement to Utilities.
 
         * Animometer/resources/extensions.js:
