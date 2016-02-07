@@ -76,7 +76,7 @@
 
 .sidebar > .panel.details.css-style > .content ~ .options-container {
     bottom: 0;
-    height: 30px;
+    height: 29px;
 }
 
 .sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) ~ :matches(.options-container, .class-list-container) {
@@ -123,7 +123,7 @@
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container {
     flex-wrap: wrap;
-    bottom: 30px;
+    bottom: 29px;
     max-height: 65px;
     padding: 3px 2px;
     overflow-y: scroll;

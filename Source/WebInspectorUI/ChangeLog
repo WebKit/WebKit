@@ -1,3 +1,16 @@
+2016-02-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r195432): Web Inspector: bottom right section of the styles sidebar is 1px taller than the console prompt
+        https://bugs.webkit.org/show_bug.cgi?id=153959
+        <rdar://problem/24541053>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .options-container):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container)::
+        Revert the height to what it used to be prior r195432.
+
 2016-02-05  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Visual Styles sidebar should be more forgiving to long labels
