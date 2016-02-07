@@ -28,10 +28,8 @@
 
 #if OS(DARWIN)
 
-#if defined(__has_include)
-#if __has_include(<CommonCrypto/CommonRandomSPI.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <CommonCrypto/CommonRandomSPI.h>
-#endif
 #endif
 
 typedef struct __CCRandom* CCRandomRef;

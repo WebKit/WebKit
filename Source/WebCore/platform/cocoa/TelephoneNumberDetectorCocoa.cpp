@@ -30,7 +30,7 @@
 
 #include "SoftLinking.h"
 
-#if __has_include(<DataDetectorsCore/DDDFAScanner.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <DataDetectorsCore/DDDFAScanner.h>
 #else
 typedef struct __DDDFAScanner DDDFAScanner, * DDDFAScannerRef;

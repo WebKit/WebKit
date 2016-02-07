@@ -32,10 +32,8 @@
 #include "SoftLinking.h"
 #include <wtf/text/CString.h>
 
-#if defined(__has_include)
-#if __has_include(<Bom/BOMCopier.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <Bom/BOMCopier.h>
-#endif
 #endif
 
 typedef struct _BOMCopier* BOMCopier;

@@ -32,16 +32,9 @@
 #include <CommonCrypto/CommonCryptor.h>
 #include <wtf/Vector.h>
 
-#if defined(__has_include)
-#if __has_include(<CommonCrypto/CommonRSACryptor.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <CommonCrypto/CommonRSACryptor.h>
-#endif
-#endif
-
-#if defined(__has_include) && PLATFORM(COCOA)
-#if __has_include(<CommonCrypto/CommonRandomSPI.h>)
 #include <CommonCrypto/CommonRandomSPI.h>
-#endif
 #endif
 
 #ifndef _CC_RSACRYPTOR_H_

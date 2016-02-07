@@ -58,7 +58,7 @@
 #import <wtf/text/CString.h>
 
 #if USE(CFNETWORK)
-#if __has_include(<CFNetwork/CFURLConnectionPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <CFNetwork/CFURLConnectionPriv.h>
 #endif
 typedef struct _CFURLConnection* CFURLConnectionRef;

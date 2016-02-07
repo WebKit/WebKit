@@ -1,3 +1,12 @@
+2016-02-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Replace __has_include guards around inclusion of Apple-internal-SDK headers with USE(APPLE_INTERNAL_SDK)
+        https://bugs.webkit.org/show_bug.cgi?id=153963
+
+        Reviewed by Sam Weinig.
+
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+
 2016-02-06  Filip Pizlo  <fpizlo@apple.com>
 
         FTL must store the call site index before runtime calls, even if it's the tail call slow path

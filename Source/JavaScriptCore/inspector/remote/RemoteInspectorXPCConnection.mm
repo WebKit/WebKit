@@ -37,7 +37,7 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
-#if __has_include(<CoreFoundation/CFXPCBridge.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <CoreFoundation/CFXPCBridge.h>
 #else
 extern "C" {

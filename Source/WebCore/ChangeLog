@@ -1,3 +1,23 @@
+2016-02-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Replace __has_include guards around inclusion of Apple-internal-SDK headers with USE(APPLE_INTERNAL_SDK)
+        https://bugs.webkit.org/show_bug.cgi?id=153963
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        * crypto/CommonCryptoUtilities.cpp:
+        * crypto/CommonCryptoUtilities.h:
+        * editing/mac/TextUndoInsertionMarkupMac.h:
+        * editing/mac/TextUndoInsertionMarkupMac.mm:
+        * platform/cocoa/TelephoneNumberDetectorCocoa.cpp:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+        * platform/network/ios/NetworkStateNotifierIOS.mm:
+        * platform/network/mac/BlobDataFileReferenceMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * rendering/RenderThemeMac.mm:
+
 2016-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r195661): [GTK] Scrollbar tests crashing after overlay scrollbar groundwork

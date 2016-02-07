@@ -35,10 +35,8 @@
 #import <objc/objc-class.h>
 #import <wtf/RetainPtr.h>
 
-#ifdef __has_include
-#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <ApplicationServices/ApplicationServicesPriv.h>
-#endif
 #endif
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, PDFKit)

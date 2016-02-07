@@ -34,7 +34,7 @@
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "WebCoreSystemInterface.h"
 
-#if __has_include(<HIServices/AccessibilityPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <HIServices/AccessibilityPriv.h>
 #endif
 

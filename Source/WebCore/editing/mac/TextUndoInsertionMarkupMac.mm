@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TextUndoInsertionMarkupMac.h"
 
-#if __has_include(<Foundation/NSUndoManager_Private.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <Foundation/NSUndoManager_Private.h>
 #else
 @interface NSUndoManager (WebCorePrivate)

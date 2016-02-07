@@ -92,15 +92,11 @@
 
 #if ENABLE(SERVICE_CONTROLS) && HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
 
-#if __has_include(<AppKit/AppKitDefines_Private.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <AppKit/AppKitDefines_Private.h>
-#else
-#define APPKIT_PRIVATE_CLASS
-#endif
-
-#if __has_include(<AppKit/NSServicesRolloverButtonCell.h>)
 #import <AppKit/NSServicesRolloverButtonCell.h>
 #else
+#define APPKIT_PRIVATE_CLASS
 @interface NSServicesRolloverButtonCell : NSButtonCell
 @end
 #endif

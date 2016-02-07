@@ -26,11 +26,9 @@
 #ifndef SystemTracing_h
 #define SystemTracing_h
 
-#if defined(__has_include)
-#if __has_include(<System/sys/kdebug.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <System/sys/kdebug.h>
 #define HAVE_KDEBUG_H 1
-#endif
 #endif
 
 // No namespaces because this file has to be includable from C and Objective-C.

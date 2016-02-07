@@ -28,7 +28,7 @@
 
 #if USE(INSERTION_UNDO_GROUPING)
 
-#if __has_include(<AppKit/NSTextInputContext_Private.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <AppKit/NSTextInputContext_Private.h>
 #else
 extern "C" NSString *NSTextInsertionUndoableAttributeName;

@@ -28,10 +28,8 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#if defined(__has_include)
-#if __has_include(<CommonCrypto/CommonBigNum.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <CommonCrypto/CommonBigNum.h>
-#endif
 #endif
 
 typedef CCCryptorStatus CCStatus;

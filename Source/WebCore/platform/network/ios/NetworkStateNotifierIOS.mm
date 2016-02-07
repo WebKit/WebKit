@@ -29,7 +29,7 @@
 #import "SoftLinking.h"
 #import "WebCoreThreadRun.h"
 
-#if defined(__has_include) && __has_include(<AppSupport/CPNetworkObserver.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <AppSupport/CPNetworkObserver.h>
 #else
 extern NSString * const CPNetworkObserverReachable;

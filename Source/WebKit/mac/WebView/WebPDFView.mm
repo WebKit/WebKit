@@ -67,10 +67,8 @@
 
 #import <PDFKit/PDFKit.h>
 
-#ifdef __has_include
-#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <ApplicationServices/ApplicationServicesPriv.h>
-#endif
 #endif
 
 extern "C" {

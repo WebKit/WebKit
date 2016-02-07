@@ -44,7 +44,7 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if __has_include(<ImageIO/CGImageSourcePrivate.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <ImageIO/CGImageSourcePrivate.h>
 #else
 const CFStringRef kCGImageSourceSubsampleFactor = CFSTR("kCGImageSourceSubsampleFactor");
