@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2013, 2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2015 Jordan Harband (ljharb@gmail.com)
  *
@@ -996,6 +996,13 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     // return array of matches
     MarkedArgumentBuffer list;
     while (result) {
+        // We defend ourselves from crazy.
+        const size_t maximumReasonableMatchSize = 1000000000;
+        if (list.size() > maximumReasonableMatchSize) {
+            throwOutOfMemoryError(exec);
+            return JSValue::encode(jsUndefined());
+        }
+        
         size_t end = result.end;
         size_t length = end - result.start;
         list.append(jsSubstring(exec, s, result.start, length));

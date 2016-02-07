@@ -1,3 +1,32 @@
+2016-02-07  Filip Pizlo  <fpizlo@apple.com>
+
+        String.match should defend against matches that would crash the VM
+        https://bugs.webkit.org/show_bug.cgi?id=153964
+        rdar://problem/24301119
+
+        Reviewed by Saam Barati.
+
+        This fixes a crash in an internal test case.
+
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::slowAppend): Use best practices to ensure that the size we
+            compute makes sense. Crash if it stops making sense, since most users of this API assume
+            that they are creating something small enough to fit on the stack.
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::~MarkedArgumentBuffer):
+        (JSC::MarkedArgumentBuffer::size):
+        (JSC::MarkedArgumentBuffer::operator new): Deleted. These were ineffective. According to the
+            debugger, we were still calling system malloc. So, I changed the code to use fastMalloc()
+            directly.
+        (JSC::MarkedArgumentBuffer::operator delete): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch): Explicitly defend against absurd sizes. Of course, it's still
+            possible to crash the VM on OOME. That's sort of always been the philosophy of JSC - we
+            don't guarantee that you'll get a nice-looking error whenever you run out of memory,
+            since in a GC'd environment you can't really guarantee those things. But, if you have a
+            match that obvious won't fit in memory, then reporting an error is useful in case this is
+            a developer experimenting with a buggy regexp.
+
 2016-02-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Replace __has_include guards around inclusion of Apple-internal-SDK headers with USE(APPLE_INTERNAL_SDK)
