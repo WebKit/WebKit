@@ -1,5 +1,12 @@
 2016-02-06  Jon Lee  <jonlee@apple.com>
 
+        Code clean up: Move Rotater function closer to Stage static methods.
+        The Rotater is used together with those methods; keep them close.
+
+        * Animometer/tests/resources/main.js:
+
+2016-02-06  Jon Lee  <jonlee@apple.com>
+
         Update the JS includes due to ResultsTable move.
 
         * Animometer/developer.html:

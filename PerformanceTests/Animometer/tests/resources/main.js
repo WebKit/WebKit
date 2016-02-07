@@ -1,37 +1,3 @@
-Rotater = Utilities.createClass(
-    function(rotateInterval)
-    {
-        this._timeDelta = 0;
-        this._rotateInterval = rotateInterval;
-        this._isSampling = false;
-    }, {
-
-    get interval()
-    {
-        return this._rotateInterval;
-    },
-
-    next: function(timeDelta)
-    {
-        this._timeDelta = (this._timeDelta + timeDelta) % this._rotateInterval;
-    },
-
-    degree: function()
-    {
-        return (360 * this._timeDelta) / this._rotateInterval;
-    },
-
-    rotateZ: function()
-    {
-        return "rotateZ(" + Math.floor(this.degree()) + "deg)";
-    },
-
-    rotate: function(center)
-    {
-        return "rotate(" + Math.floor(this.degree()) + ", " + center.x + "," + center.y + ")";
-    }
-});
-
 function BenchmarkState(testInterval)
 {
     this._currentTimeOffset = 0;
@@ -177,6 +143,40 @@ Utilities.extendObject(Stage, {
     randomRotater: function()
     {
         return new Rotater(this.random(1000, 10000));
+    }
+});
+
+Rotater = Utilities.createClass(
+    function(rotateInterval)
+    {
+        this._timeDelta = 0;
+        this._rotateInterval = rotateInterval;
+        this._isSampling = false;
+    }, {
+
+    get interval()
+    {
+        return this._rotateInterval;
+    },
+
+    next: function(timeDelta)
+    {
+        this._timeDelta = (this._timeDelta + timeDelta) % this._rotateInterval;
+    },
+
+    degree: function()
+    {
+        return (360 * this._timeDelta) / this._rotateInterval;
+    },
+
+    rotateZ: function()
+    {
+        return "rotateZ(" + Math.floor(this.degree()) + "deg)";
+    },
+
+    rotate: function(center)
+    {
+        return "rotate(" + Math.floor(this.degree()) + ", " + center.x + "," + center.y + ")";
     }
 });
 
