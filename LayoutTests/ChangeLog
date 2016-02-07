@@ -1,5 +1,16 @@
 2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Rebaseline some tests and update expectations after r196222
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/clip/outline-overflowClip-expected.txt:
+        * platform/gtk/fast/repaint/layer-outline-expected.txt:
+        * platform/gtk/fast/repaint/layer-outline-horizontal-expected.txt:
+
+2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] imported/blink/compositing/squashing/abspos-under-abspos-overflow-scroll.html is flaky
 
         Unreviewed test gardening.
