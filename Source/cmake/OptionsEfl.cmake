@@ -282,11 +282,6 @@ if (ENABLE_SPEECH_SYNTHESIS)
     find_package(Espeak REQUIRED)
 endif ()
 
-if (USE_LLVM_DISASSEMBLER)
-    find_package(LLVM REQUIRED)
-    SET_AND_EXPOSE_TO_BUILD(HAVE_LLVM TRUE)
-endif ()
-
 if (ENABLE_FTL_JIT AND NOT WTF_CPU_X86_64 AND NOT DEVELOPER_MODE)
     message(FATAL_ERROR "FTL JIT is only available on X86_64 architecture.")
 endif ()
