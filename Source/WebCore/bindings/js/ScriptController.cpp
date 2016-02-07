@@ -519,17 +519,6 @@ Deprecated::ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld& 
     return evaluateInWorld(sourceCode, world);
 }
 
-bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
-{
-    CallFrame* callFrame = JSDOMWindow::commonVM().topCallFrame;
-    if (callFrame == CallFrame::noCaller()) 
-        return false;
-    DOMWrapperWorld& domWrapperWorld = currentWorld(callFrame);
-    if (domWrapperWorld.isNormal())
-        return false;
-    return true;
-}
-
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
 {
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxScripts)) {

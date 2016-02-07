@@ -603,6 +603,7 @@ public:
     void prepareForDestruction();
 
     // Override ScriptExecutionContext methods to do additional work
+    bool shouldBypassMainWorldContentSecurityPolicy() const override final;
     virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override final;
     virtual void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override final;
     virtual void stopActiveDOMObjects() override final;

@@ -68,10 +68,10 @@ namespace WebCore {
 #endif
 
     protected:
-        WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, const SecurityOrigin* topOrigin);
+        WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin);
 
         // Factory method for creating a new worker context for the thread.
-        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, PassRefPtr<SecurityOrigin> topOrigin) = 0;
+        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin) = 0;
 
         // Executes the event loop for the worker thread. Derived classes can override to perform actions before/after entering the event loop.
         virtual void runEventLoop();

@@ -87,6 +87,8 @@ RefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String& url
     if (scriptURL.isEmpty())
         return nullptr;
 
+    worker->m_shouldBypassMainWorldContentSecurityPolicy = context.shouldBypassMainWorldContentSecurityPolicy();
+
     // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
     worker->setPendingActivity(worker.ptr());
 
@@ -166,7 +168,7 @@ void Worker::notifyFinished()
         dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else {
         const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : scriptExecutionContext()->contentSecurityPolicy()->responseHeaders();
-        m_contextProxy->startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, DontPauseWorkerGlobalScopeOnStart);
+        m_contextProxy->startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, DontPauseWorkerGlobalScopeOnStart);
         InspectorInstrumentation::scriptImported(scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
     }
     m_scriptLoader = nullptr;

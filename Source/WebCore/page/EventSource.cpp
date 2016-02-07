@@ -85,8 +85,7 @@ RefPtr<EventSource> EventSource::create(ScriptExecutionContext& context, const S
     }
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    bool shouldBypassMainWorldContentSecurityPolicy = ContentSecurityPolicy::shouldBypassMainWorldContentSecurityPolicy(context);
-    if (!context.contentSecurityPolicy()->allowConnectToSource(fullURL, shouldBypassMainWorldContentSecurityPolicy)) {
+    if (!context.contentSecurityPolicy()->allowConnectToSource(fullURL, context.shouldBypassMainWorldContentSecurityPolicy())) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
         return nullptr;

@@ -2431,6 +2431,17 @@ void Document::resumeDeviceMotionAndOrientationUpdates()
 #endif
 }
 
+bool Document::shouldBypassMainWorldContentSecurityPolicy() const
+{
+    JSC::CallFrame* callFrame = JSDOMWindow::commonVM().topCallFrame;
+    if (callFrame == JSC::CallFrame::noCaller())
+        return false;
+    DOMWrapperWorld& domWrapperWorld = currentWorld(callFrame);
+    if (domWrapperWorld.isNormal())
+        return false;
+    return true;
+}
+
 void Document::platformSuspendOrStopActiveDOMObjects()
 {
 #if PLATFORM(IOS)

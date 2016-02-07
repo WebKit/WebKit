@@ -48,11 +48,11 @@ namespace WebCore {
         WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
 
     protected:
-        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, PassRefPtr<SecurityOrigin> topOrigin) override;
+        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin) override;
         virtual void runEventLoop() override;
 
     private:
-        DedicatedWorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, const SecurityOrigin* topOrigin);
+        DedicatedWorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin);
 
         WorkerObjectProxy& m_workerObjectProxy;
     };

@@ -1,3 +1,86 @@
+2016-02-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: Allow Web Workers initiated from an isolated world to bypass the main world Content Security Policy
+        https://bugs.webkit.org/show_bug.cgi?id=153622
+        <rdar://problem/24400023>
+
+        Reviewed by Gavin Barraclough.
+
+        Fixes an issue where Web Workers initiated from an isolated world (say, a Safari Content Script Extension)
+        would be subject to the Content Security Policy of the page.
+
+        Currently code in an isolated world that does not execute in a Web Worker is exempt from the CSP of
+        the page. However, code that runs inside a Web Worker that was initiated from an isolated world is
+        subject to the CSP of the page. Instead, such Web Worker code should also be exempt from the CSP of
+        the page.
+
+        Tests: http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-eval.html
+               http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-xhr.html
+               http/tests/security/isolatedWorld/bypass-main-world-csp-worker.html
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect): Modified to ask the script execution context whether to bypass the
+        main world Content Security Policy now that script execution context knows this information.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::shouldBypassMainWorldContentSecurityPolicy): Deleted; moved logic from here...
+        * bindings/js/ScriptController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::shouldBypassMainWorldContentSecurityPolicy): ...to here.
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::shouldBypassMainWorldContentSecurityPolicy): Added; defaults to false -
+        do not bypass the main world Content Security Policy.
+        * page/EventSource.cpp:
+        (WebCore::EventSource::create): Modified to ask the script execution context whether to bypass the
+        main world Content Security Policy now that script execution context knows this information.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::shouldBypassMainWorldContentSecurityPolicy): Deleted.
+        * page/csp/ContentSecurityPolicy.h:
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::resolveURL): Bypass the main world Content Security Policy if applicable.
+        Added FIXME comment to enforce the child-src directive of the document's CSP (as opposed to the script-src
+        directive) on the worker's script URL. Also, scriptExecutionContext()->contentSecurityPolicy() should
+        always be non-null just as we expect scriptExecutionContext()->securityOrigin() to be non-null. Assert
+        this invariant to catch cases where a ScriptExecutionContext is not properly initialized.
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create): Modified to take boolean argument shouldBypassMainWorldContentSecurityPolicy
+        as to whether to bypass the main world Content Security Policy and only apply the Content Security
+        Policy headers when shouldBypassMainWorldContentSecurityPolicy is false.
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope): Pass through a boolean argument shouldBypassMainWorldContentSecurityPolicy
+        as to whether to bypass the main world Content Security Policy.
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread): Ditto.
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope): Ditto.
+        * workers/DedicatedWorkerThread.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::create): Store whether we should bypass the main world Content Security Policy so
+        that we can pass it to WorkerMessagingProxy::startWorkerGlobalScope() in Worker::notifyFinished().
+        We need to store this decision here as opposed to determining it at any later time (say, in Worker::notifyFinished())
+        because it is dependent on the current JavaScript program stack at the time this function is invoked.
+        (WebCore::Worker::notifyFinished): Pass whether to bypass the main world Content Security Policy.
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope): Modified to take a boolean as to whether to bypass the
+        main world Content Security Policy and store it in a member field. Also, always instantiate a Content
+        Security Policy object as our current code assumes that one is always created.
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope): Pass through a boolean argument shouldBypassMainWorldContentSecurityPolicy
+        as to whether to bypass the main world Content Security Policy.
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData): Modified to take a boolean argument as to
+        whether to bypass the main world Content Security Policy and store it in a member field.
+        (WebCore::WorkerThread::WorkerThread): Pass through a boolean argument shouldBypassMainWorldContentSecurityPolicy
+        as to whether to bypass the main world Content Security Policy.
+        (WebCore::WorkerThread::workerThread): Ditto.
+        * workers/WorkerThread.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): Modified to ask the script execution context whether to bypass the
+        main world Content Security Policy now that script execution context knows this information.
+
 2016-02-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Replace __has_include guards around inclusion of Apple-internal-SDK headers with USE(APPLE_INTERNAL_SDK)

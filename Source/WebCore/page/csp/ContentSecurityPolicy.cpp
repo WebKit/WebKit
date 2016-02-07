@@ -1775,15 +1775,5 @@ bool ContentSecurityPolicy::experimentalFeaturesEnabled() const
     return false;
 #endif
 }
-
-bool ContentSecurityPolicy::shouldBypassMainWorldContentSecurityPolicy(ScriptExecutionContext& context)
-{
-    if (is<Document>(context)) {
-        auto& document = downcast<Document>(context);
-        return document.frame() && document.frame()->script().shouldBypassMainWorldContentSecurityPolicy();
-    }
-    
-    return false;
-}
     
 }

@@ -86,6 +86,7 @@ namespace WebCore {
         RefPtr<WorkerScriptLoader> m_scriptLoader;
         WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
         Optional<ContentSecurityPolicyResponseHeaders> m_contentSecurityPolicyResponseHeaders;
+        bool m_shouldBypassMainWorldContentSecurityPolicy { false };
     };
 
 } // namespace WebCore

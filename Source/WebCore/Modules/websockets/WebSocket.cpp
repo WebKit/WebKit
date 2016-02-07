@@ -238,8 +238,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
     }
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    bool shouldBypassMainWorldContentSecurityPolicy = ContentSecurityPolicy::shouldBypassMainWorldContentSecurityPolicy(*scriptExecutionContext());
-    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(m_url, shouldBypassMainWorldContentSecurityPolicy)) {
+    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(m_url, scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy())) {
         m_state = CLOSED;
 
         // FIXME: Should this be throwing an exception?

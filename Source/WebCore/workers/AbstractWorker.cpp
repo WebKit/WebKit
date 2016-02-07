@@ -62,7 +62,10 @@ URL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
         return URL();
     }
 
-    if (scriptExecutionContext()->contentSecurityPolicy() && !scriptExecutionContext()->contentSecurityPolicy()->allowScriptFromSource(scriptURL)) {
+    // FIXME: Enforce the child-src directive instead of script-src per <https://w3c.github.io/webappsec-csp/2/#directive-child-src-workers> (29 August 2015).
+    // See <https://bugs.webkit.org/show_bug.cgi?id=153562>.
+    ASSERT(scriptExecutionContext()->contentSecurityPolicy());
+    if (!scriptExecutionContext()->contentSecurityPolicy()->allowScriptFromSource(scriptURL, scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy())) {
         ec = SECURITY_ERR;
         return URL();
     }

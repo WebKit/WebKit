@@ -1,3 +1,21 @@
+2016-02-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: Allow Web Workers initiated from an isolated world to bypass the main world Content Security Policy
+        https://bugs.webkit.org/show_bug.cgi?id=153622
+        <rdar://problem/24400023>
+
+        Reviewed by Gavin Barraclough and Andy Estes.
+
+        Add tests to ensure that a Web Worker initiated from an isolated world can bypass the main world
+        Content Security Policy.
+
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-eval-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-eval.html: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-xhr-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-xhr.html: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker.html: Added.
+
 2016-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r195661): [GTK] Scrollbar tests crashing after overlay scrollbar groundwork

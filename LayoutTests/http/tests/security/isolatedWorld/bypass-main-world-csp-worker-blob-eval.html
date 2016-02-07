@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that in an isolated world the Content Security Policy of the parent origin (this page) is bypassed and a Web Worker is allowed to call <code>eval()</code>.</p>
+<pre id="result"></pre>
+<script>
+window.onmessage = function (event)
+{
+    document.getElementById("result").textContent = event.data;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest()
+{
+    var script = [
+        'try {',
+        '    eval("1 + 0");',
+        '    self.postMessage("PASS worker called eval().");',
+        '} catch (exception) {',
+        '    self.postMessage("FAIL should not have thrown an exception. Threw exception " + exception + ".");',
+        '}',
+    ].join("\n");
+
+    var worker;
+    try {
+        worker = new Worker(window.URL.createObjectURL(new Blob([script])));
+        worker.onmessage = function (event) { window.postMessage(event.data, "*") };
+    } catch (exception) {
+        window.postMessage("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".", "*");
+    }
+}
+
+if (window.testRunner)
+    testRunner.evaluateScriptInIsolatedWorld(0, runTest.toString() + ";runTest();");
+</script>
+</body>
+</html>

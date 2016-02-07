@@ -49,7 +49,7 @@ namespace WebCore {
 
         virtual ~WorkerGlobalScopeProxy() { }
 
-        virtual void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, WorkerThreadStartMode) = 0;
+        virtual void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, WorkerThreadStartMode) = 0;
 
         virtual void terminateWorkerGlobalScope() = 0;
 

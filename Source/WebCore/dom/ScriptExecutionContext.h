@@ -82,6 +82,8 @@ public:
 
     virtual SecurityOrigin* topOrigin() const = 0;
 
+    virtual bool shouldBypassMainWorldContentSecurityPolicy() const { return false; }
+
     PublicURLManager& publicURLManager();
 
     // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.

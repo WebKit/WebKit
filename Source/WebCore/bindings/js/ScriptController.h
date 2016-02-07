@@ -166,8 +166,6 @@ public:
     WEBCORE_EXPORT NPObject* windowScriptNPObject();
 #endif
 
-    bool shouldBypassMainWorldContentSecurityPolicy();
-
 private:
     WEBCORE_EXPORT JSDOMWindowShell* initScript(DOMWrapperWorld&);
 

@@ -67,6 +67,8 @@ namespace WebCore {
 
         virtual void disableEval(const String& errorMessage) override;
 
+        bool shouldBypassMainWorldContentSecurityPolicy() const override final { return m_shouldBypassMainWorldContentSecurityPolicy; }
+
         WorkerScriptController* script() { return m_script.get(); }
         void clearScript() { m_script = nullptr; }
 
@@ -130,7 +132,7 @@ namespace WebCore {
 #endif
 
     protected:
-        WorkerGlobalScope(const URL&, const String& userAgent, WorkerThread&, PassRefPtr<SecurityOrigin> topOrigin);
+        WorkerGlobalScope(const URL&, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin);
         void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
         virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) override;
@@ -159,6 +161,7 @@ namespace WebCore {
         WorkerThread& m_thread;
 
         bool m_closing;
+        bool m_shouldBypassMainWorldContentSecurityPolicy;
 
         HashSet<Observer*> m_workerObservers;
 
