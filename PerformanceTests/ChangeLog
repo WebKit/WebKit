@@ -1,5 +1,21 @@
 2016-02-06  Jon Lee  <jonlee@apple.com>
 
+        Move createElement and createSVGElement to Utilities.
+
+        * Animometer/resources/extensions.js:
+        (Utilities.createElement): Added.
+        (Utilities.createSVGElement): Added.
+        (DocumentExtension.createElement): Deleted.
+        (DocumentExtension.createSvgElement): Deleted.
+
+        * Animometer/resources/debug-runner/animometer.js:
+        * Animometer/resources/runner/animometer.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+
+2016-02-06  Jon Lee  <jonlee@apple.com>
+
         Add a convenience function for creating a class.
 
         The pattern for creating a class is common enough to add as a Utilities

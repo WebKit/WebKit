@@ -186,11 +186,11 @@ window.suitesManager =
 
     _createSuiteElement: function(treeElement, suite, id)
     {
-        var suiteElement = DocumentExtension.createElement("li", {}, treeElement);
-        var expand = DocumentExtension.createElement("input", { type: "checkbox",  class: "expand-button", id: id }, suiteElement);
-        var label = DocumentExtension.createElement("label", { class: "tree-label", for: id }, suiteElement);
+        var suiteElement = Utilities.createElement("li", {}, treeElement);
+        var expand = Utilities.createElement("input", { type: "checkbox",  class: "expand-button", id: id }, suiteElement);
+        var label = Utilities.createElement("label", { class: "tree-label", for: id }, suiteElement);
 
-        var suiteCheckbox = DocumentExtension.createElement("input", { type: "checkbox" }, label);
+        var suiteCheckbox = Utilities.createElement("input", { type: "checkbox" }, label);
         suiteCheckbox.suite = suite;
         suiteCheckbox.onchange = this._onChangeSuiteCheckbox.bind(this);
         suiteCheckbox.testsElements = [];
@@ -201,10 +201,10 @@ window.suitesManager =
 
     _createTestElement: function(listElement, test, suiteCheckbox)
     {
-        var testElement = DocumentExtension.createElement("li", {}, listElement);
-        var span = DocumentExtension.createElement("label", { class: "tree-label" }, testElement);
+        var testElement = Utilities.createElement("li", {}, listElement);
+        var span = Utilities.createElement("label", { class: "tree-label" }, testElement);
 
-        var testCheckbox = DocumentExtension.createElement("input", { type: "checkbox" }, span);
+        var testCheckbox = Utilities.createElement("input", { type: "checkbox" }, span);
         testCheckbox.test = test;
         testCheckbox.onchange = function(event) {
             this._onChangeTestCheckbox(event.target.suiteCheckbox);
@@ -213,7 +213,7 @@ window.suitesManager =
 
         suiteCheckbox.testsElements.push(testElement);
         span.appendChild(document.createTextNode(" " + test.name));
-        var complexity = DocumentExtension.createElement("input", { type: "number" }, testElement);
+        var complexity = Utilities.createElement("input", { type: "number" }, testElement);
         complexity.relatedCheckbox = testCheckbox;
         complexity.oninput = function(event) {
             var relatedCheckbox = event.target.relatedCheckbox;
@@ -229,7 +229,7 @@ window.suitesManager =
 
         Suites.forEach(function(suite, index) {
             var suiteElement = this._createSuiteElement(treeElement, suite, "suite-" + index);
-            var listElement = DocumentExtension.createElement("ul", {}, suiteElement);
+            var listElement = Utilities.createElement("ul", {}, suiteElement);
             var suiteCheckbox = this._checkboxElement(suiteElement);
 
             suite.tests.forEach(function(test) {

@@ -18,13 +18,13 @@ BouncingSvgShape = Utilities.createSubclass(BouncingSvgParticle,
         switch (this._shape) {
         case "rect":
             var attrs = { x: 0, y: 0, width: this.size.x, height: this.size.y };
-            this.element = DocumentExtension.createSvgElement("rect", attrs, {}, stage.element);
+            this.element = Utilities.createSVGElement("rect", attrs, {}, stage.element);
             break;
 
         case "circle":
         default:
             var attrs = { cx: this.size.x / 2, cy: this.size.y / 2, r: Math.min(this.size.x, this.size.y) / 2 };
-            this.element = DocumentExtension.createSvgElement("circle", attrs, {}, stage.element);
+            this.element = Utilities.createSVGElement("circle", attrs, {}, stage.element);
             break;
         }
     },
@@ -61,11 +61,11 @@ BouncingSvgShapesStage = Utilities.createSubclass(BouncingSvgParticlesStage,
     createGradient: function(stops)
     {
         var attrs = { id: "gradient-" + ++this._gradientsCount };
-        var gradient = DocumentExtension.createSvgElement("linearGradient", attrs, {}, this._ensureDefsIsCreated());
+        var gradient = Utilities.createSVGElement("linearGradient", attrs, {}, this._ensureDefsIsCreated());
 
         for (var i = 0; i < stops; ++i) {
             attrs = { offset: i * 100 / stops + "%", 'stop-color': Stage.randomColor() };
-            DocumentExtension.createSvgElement("stop", attrs, {}, gradient);
+            Utilities.createSVGElement("stop", attrs, {}, gradient);
         }
 
         return gradient;

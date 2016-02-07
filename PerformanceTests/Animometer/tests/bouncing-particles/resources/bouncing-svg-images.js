@@ -7,7 +7,7 @@ BouncingSvgImage = Utilities.createSubclass(BouncingSvgParticle,
 
         var attrs = { x: 0, y: 0, width: this.size.x, height: this.size.y };
         var xlinkAttrs = { href: stage.imageSrc };
-        this.element = DocumentExtension.createSvgElement("image", attrs, xlinkAttrs, stage.element);
+        this.element = Utilities.createSVGElement("image", attrs, xlinkAttrs, stage.element);
         this._move();
     }
 );

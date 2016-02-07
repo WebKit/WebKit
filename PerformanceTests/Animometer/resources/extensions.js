@@ -54,6 +54,34 @@ Utilities =
         if (classMethods)
             Utilities.extendObject(classConstructor.prototype, classMethods);
         return classConstructor;
+    },
+
+    createElement: function(name, attrs, parentElement)
+    {
+        var element = document.createElement(name);
+
+        for (var key in attrs)
+            element.setAttribute(key, attrs[key]);
+
+        parentElement.appendChild(element);
+        return element;
+    },
+
+    createSVGElement: function(name, attrs, xlinkAttrs, parentElement)
+    {
+        const svgNamespace = "http://www.w3.org/2000/svg";
+        const xlinkNamespace = "http://www.w3.org/1999/xlink";
+
+        var element = document.createElementNS(svgNamespace, name);
+
+        for (var key in attrs)
+            element.setAttribute(key, attrs[key]);
+
+        for (var key in xlinkAttrs)
+            element.setAttributeNS(xlinkNamespace, key, xlinkAttrs[key]);
+
+        parentElement.appendChild(element);
+        return element;
     }
 };
 
@@ -304,36 +332,5 @@ Statistics =
             return 0;
         var roots = values.map(function(value) { return  Math.pow(value, 1 / values.length); })
         return roots.reduce(function(a, b) { return a * b; });
-    }
-};
-
-DocumentExtension =
-{
-    createElement: function(name, attrs, parentElement)
-    {
-        var element = document.createElement(name);
-
-        for (var key in attrs)
-            element.setAttribute(key, attrs[key]);
-
-        parentElement.appendChild(element);
-        return element;
-    },
-
-    createSvgElement: function(name, attrs, xlinkAttrs, parentElement)
-    {
-        const svgNamespace = "http://www.w3.org/2000/svg";
-        const xlinkNamespace = "http://www.w3.org/1999/xlink";
-
-        var element = document.createElementNS(svgNamespace, name);
-
-        for (var key in attrs)
-            element.setAttribute(key, attrs[key]);
-
-        for (var key in xlinkAttrs)
-            element.setAttributeNS(xlinkNamespace, key, xlinkAttrs[key]);
-
-        parentElement.appendChild(element);
-        return element;
     }
 };

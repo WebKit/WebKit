@@ -86,11 +86,11 @@ ResultsTable = Utilities.createClass(
 
     _addHeader: function()
     {
-        var thead = DocumentExtension.createElement("thead", {}, this.element);
-        var row = DocumentExtension.createElement("tr", {}, thead);
+        var thead = Utilities.createElement("thead", {}, this.element);
+        var row = Utilities.createElement("tr", {}, thead);
 
         this._headers.forEach(function (header) {
-            var th = DocumentExtension.createElement("th", {}, row);
+            var th = Utilities.createElement("th", {}, row);
             if (header.title != Strings.text.results.graph)
                 th.textContent = header.title;
             if (header.children)
@@ -104,7 +104,7 @@ ResultsTable = Utilities.createClass(
         if (!data)
             return;
 
-        var button = DocumentExtension.createElement("button", { class: "small-button" }, td);
+        var button = Utilities.createElement("button", { class: "small-button" }, td);
 
         button.addEventListener("click", function() {
             var score = testResults[Strings.json.score].toFixed(2);
@@ -152,15 +152,15 @@ ResultsTable = Utilities.createClass(
 
     _addEmptyRow: function()
     {
-        var row = DocumentExtension.createElement("tr", {}, this.element);
+        var row = Utilities.createElement("tr", {}, this.element);
         this._flattenedHeaders.forEach(function (header) {
-            return DocumentExtension.createElement("td", { class: "suites-separator" }, row);
+            return Utilities.createElement("td", { class: "suites-separator" }, row);
         });
     },
 
     _addTest: function(testName, testResults, options)
     {
-        var row = DocumentExtension.createElement("tr", {}, this.element);
+        var row = Utilities.createElement("tr", {}, this.element);
 
         var isNoisy = false;
         [Strings.json.experiments.complexity, Strings.json.experiments.frameRate].forEach(function (experiment) {
@@ -184,12 +184,12 @@ ResultsTable = Utilities.createClass(
                 var titleClassName = className;
                 if (isNoisy)
                     titleClassName += " noisy-results";
-                var td = DocumentExtension.createElement("td", { class: titleClassName }, row);
+                var td = Utilities.createElement("td", { class: titleClassName }, row);
                 td.textContent = testName;
                 return;
             }
 
-            var td = DocumentExtension.createElement("td", { class: className }, row);
+            var td = Utilities.createElement("td", { class: className }, row);
             if (header.title == Strings.text.results.graph) {
                 this._addGraphButton(td, testName, testResults);
             } else if (!("text" in header)) {

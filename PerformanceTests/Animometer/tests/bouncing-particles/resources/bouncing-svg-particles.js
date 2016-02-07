@@ -37,7 +37,7 @@ BouncingSvgParticlesStage = Utilities.createSubclass(BouncingParticlesStage,
 
     _createDefs: function()
     {
-        return DocumentExtension.createSvgElement("defs", {}, {}, this.element);
+        return Utilities.createSVGElement("defs", {}, {}, this.element);
     },
 
     _ensureDefsIsCreated: function()
@@ -48,10 +48,10 @@ BouncingSvgParticlesStage = Utilities.createSubclass(BouncingParticlesStage,
     _createClipStar: function()
     {
         var attrs = { id: "star-clip", clipPathUnits: "objectBoundingBox" };
-        var clipPath  = DocumentExtension.createSvgElement("clipPath", attrs, {}, this._ensureDefsIsCreated());
+        var clipPath  = Utilities.createSVGElement("clipPath", attrs, {}, this._ensureDefsIsCreated());
 
         attrs = { d: "M.50,0L.38,.38L0,.38L.30,.60L.18,1L.50,.75L.82,1L.70,.60L1,.38L.62,.38z" };
-        DocumentExtension.createSvgElement("path", attrs, {}, clipPath);
+        Utilities.createSVGElement("path", attrs, {}, clipPath);
         return clipPath;
     },
 
