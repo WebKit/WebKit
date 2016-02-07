@@ -1,3 +1,16 @@
+2016-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update several layout tests for WK1 after r196227.
+
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration.html:
+        * http/tests/security/cross-frame-access-get-expected.txt:
+        * http/tests/security/cross-frame-access-get.html:
+        * http/tests/security/cross-frame-access-history-get-expected.txt:
+        * http/tests/security/cross-frame-access-history-get-override-expected.txt:
+        * http/tests/security/cross-frame-access-history-get-override.html:
+        * http/tests/security/cross-frame-access-history-get.html:
+
 2016-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Rebaseline some tests and update expectations after r196222

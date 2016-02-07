@@ -39,18 +39,11 @@
             // history object
             shouldBeFalse("canGet('targetWindow.history.length')");
 
-            shouldBeTrue("canGet('targetWindow.history.back')");
-            shouldBeTrue("canGet('targetWindow.history.forward')");
-            shouldBeTrue("canGet('targetWindow.history.go')");
+            shouldBeFalse("canGet('targetWindow.history.back')");
+            shouldBeFalse("canGet('targetWindow.history.forward')");
+            shouldBeFalse("canGet('targetWindow.history.go')");
 
-            // FIXME: Calling these currently cause the subsequent test to include a dump of this test's render tree.
-            // (see http://bugs.webkit.org/show_bug.cgi?id=16510)
-            // shouldBeTrue("canCall('targetWindow.history.back')");
-            // shouldBeTrue("canCall('targetWindow.history.forward')");
-            // shouldBeTrue("canCall('targetWindow.history.go', '-1')");
-
-            shouldBeTrue("canGet('targetWindow.history.toString')");
-            shouldBe("toString('targetWindow.history')", "'[object History]'");
+            shouldBeFalse("canGet('targetWindow.history.toString')");
 
             shouldBeFalse("canGet('targetWindow.__proto__')");
             shouldBeFalse("canGet('targetWindow.constructor')");

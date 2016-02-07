@@ -187,6 +187,7 @@ CONSOLE MESSAGE: line 55: Blocked a frame with origin "http://127.0.0.1:8000" fr
 CONSOLE MESSAGE: line 55: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 55: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 55: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 55: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 This test checks cross-frame access security (rdar://problem/5251309).
 
 
@@ -204,7 +205,6 @@ PASS: canGet('targetWindow.focus') should be 'true' and is.
 
 PASS: canGet('targetWindow.closed') should be 'true' and is.
 PASS: canGet('targetWindow.frames') should be 'true' and is.
-PASS: canGet('targetWindow.history') should be 'true' and is.
 PASS: canGet('targetWindow.length') should be 'true' and is.
 PASS: canGet('targetWindow.opener') should be 'true' and is.
 PASS: canGet('targetWindow.parent') should be 'true' and is.
@@ -363,6 +363,7 @@ PASS: canGet('targetWindow.embeds') should be 'false' and is.
 PASS: canGet('targetWindow.eval') should be 'false' and is.
 PASS: canGet('targetWindow.event') should be 'false' and is.
 PASS: canGet('targetWindow.frameElement') should be 'false' and is.
+PASS: canGet('targetWindow.history') should be 'false' and is.
 PASS: canGet('targetWindow.images') should be 'false' and is.
 PASS: canGet('targetWindow.innerHeight') should be 'false' and is.
 PASS: canGet('targetWindow.innerWidth') should be 'false' and is.

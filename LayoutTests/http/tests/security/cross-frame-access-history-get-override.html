@@ -38,16 +38,13 @@
                 " desired behavior is for the targetWindow to return the builtin function, not the override -----\n");
 
             // Overriden using window.history.back = function() { return "new back" }
-            shouldBeTrue("canGet('targetWindow.history.back')");
-            shouldBe("toString('targetWindow.history.back')", "toString('window.history.back')");
+            shouldBeFalse("canGet('targetWindow.history.back')");
 
             // Overriden using window.history.__proto__.forward = function() { return "new forward;" }
-            shouldBeTrue("canGet('targetWindow.history.forward')");
-            shouldBe("toString('targetWindow.history.forward')", "toString('window.history.forward')");
+            shouldBeFalse("canGet('targetWindow.history.forward')");
 
             // Overriden using window.history.go = "new go"
-            shouldBeTrue("canGet('targetWindow.history.go')");
-            shouldBe("toString('targetWindow.history.go')", "toString('window.history.go')");
+            shouldBeFalse("canGet('targetWindow.history.go')");
         }
     </script>
 </head>
