@@ -35,6 +35,7 @@ class ScrollableArea;
 
 class ScrollAnimation {
 public:
+    virtual ~ScrollAnimation() { };
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) = 0;
     virtual void stop() = 0;
     virtual void updateVisibleLengths() = 0;

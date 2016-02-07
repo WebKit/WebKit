@@ -1,3 +1,17 @@
+2016-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r195661): [GTK] Scrollbar tests crashing after overlay scrollbar groundwork
+        https://bugs.webkit.org/show_bug.cgi?id=153695
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that ScrollAnimation objects are not destroyed by
+        the ScrollAnimator destructor, because I forgot to add a virtual
+        destructor for ScrollAnimation in r195661.
+
+        * platform/ScrollAnimation.h:
+        (WebCore::ScrollAnimation::~ScrollAnimation):
+
 2016-02-06  Chris Dumez  <cdumez@apple.com>
 
         Prevent cross-origin access to window.history

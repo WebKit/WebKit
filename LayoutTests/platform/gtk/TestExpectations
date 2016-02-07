@@ -735,12 +735,6 @@ webkit.org/b/153060 imported/blink/editing/selection/selectstart-event-crash.htm
 
 webkit.org/b/153692 imported/blink/fast/css/first-letter-float-block.html [ Crash Pass ]
 
-webkit.org/b/153695 fast/repaint/fixed-move-after-scroll.html [ Crash Pass ]
-webkit.org/b/153695 fast/scrolling/scroll-position-on-reload-rtl.html [ Crash Pass ]
-webkit.org/b/153695 scrollbars/scrollbar-initial-position.html [ Crash Pass ]
-
-webkit.org/b/153936 editing/input/password-echo-passnode2.html [ Crash Pass ]
-
 webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Timeout Pass Crash ]
 
 webkit.org/b/153937 http/tests/misc/detach-during-notifyDone.html [ Crash Pass ]
