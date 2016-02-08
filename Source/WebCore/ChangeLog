@@ -1,3 +1,23 @@
+2016-02-08  Jeremy Jones  <jeremyj@apple.com>
+
+        WebVideoFullscreenInterface should handle video resizing.
+        https://bugs.webkit.org/show_bug.cgi?id=153982
+        rdar://problem/22031249
+
+        Reviewed by Eric Carlson.
+
+        Video fullscreen can be initiated before video dimension are available.
+        Protect against an initial width or height of zero and observe resize events 
+        to update once video dimensions become available or change.
+
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::updateForEventName):
+        (WebVideoFullscreenModelVideoElement::observedEventNames):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer layoutSublayers]):
+        (-[WebAVPlayerLayer videoRect]):
+        (WebVideoFullscreenInterfaceAVKit::setVideoDimensions):
+
 2016-02-08  Adrien Plazas  <aplazas@igalia.com>
 
         Indent inline box test fails due to assertion in VisibleSelection::selectionFromContentsOfNode()
