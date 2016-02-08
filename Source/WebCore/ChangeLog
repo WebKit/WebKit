@@ -1,3 +1,137 @@
+2016-02-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r181345): SVG polyline and polygon leak page
+        https://bugs.webkit.org/show_bug.cgi?id=152759
+
+        Reviewed by Darin Adler.
+
+        The leak happens because of cyclic reference between SVGListPropertyTearOff 
+        and SVGAnimatedListPropertyTearOff which is derived from SVGAnimatedProperty.
+        There is also cyclic reference between SVGAnimatedProperty and SVGElement
+        and this causes the whole document to be leaked. So if the JS requests, for
+        example, an instance of SVGPolylineElement.points, the whole document will be
+        leaked.
+
+        The fix depends on having the cyclic reference as is since the owning and the
+        owned classes have to live together if any of them is referenced. But the owning
+        class caches a raw 'ref-counted' pointer of the owned class. If it is requested
+        for an instance of the owned class it returned a RefPtr<> of it. Once the owned
+        class is not used, it can delete itself. The only thing needed here is to notify
+        the owner class of the deletion so it cleans its caches and be able to create a
+        new pointer if it is requested for an instance of the owned class later.
+
+        Revert the change of r181345 in SVGAnimatedProperty::lookupOrCreateWrapper()
+        to break the cyclic reference between SVGElement and SVGAnimatedProperty.
+        
+        Also apply the same approach in SVGAnimatedListPropertyTearOff::baseVal() and
+        animVal() to break cyclic reference between SVGListPropertyTearOff and
+        SVGAnimatedListPropertyTearOff.
+
+        Test: svg/animations/smil-leak-list-property-instances.svg
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): The SVG non-string list tear-off properties became of
+        type RefPtr<>. So we need to use get() with the casting expressions.
+        
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::orientType):
+        Use 'auto' type for the return of SVGAnimatedProperty::lookupWrapper().
+
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::pathByteStream):
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper):
+        Since SVGAnimatedProperty::lookupWrappe() returns a RefPtr<> we need to 
+        use get() for the casting expressions.
+        
+        (WebCore::SVGPathElement::pathSegList):
+        (WebCore::SVGPathElement::normalizedPathSegList):
+        (WebCore::SVGPathElement::animatedPathSegList):
+        (WebCore::SVGPathElement::animatedNormalizedPathSegList):
+        * svg/SVGPathElement.h:
+        Change the return value from raw pointer to RefPtr<>.
+
+        * svg/SVGPathSegWithContext.h:
+        (WebCore::SVGPathSegWithContext::animatedProperty):
+        Change the return type to be RefPtr<> to preserve the value from being deleted.
+        
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseAttribute):
+        Since SVGAnimatedProperty::lookupWrapper() returns a RefPtr<> we need to 
+        use get() for the casting expressions.
+        
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::animatedPoints):
+        * svg/SVGPolyElement.h:
+        Change the return value from raw pointer to RefPtr<>.
+        
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::setTransformString):
+        Since SVGAnimatedProperty::lookupWrapper() returns a RefPtr<> we need to 
+        use get() for the casting expressions.
+
+        (WebCore::SVGViewSpec::transform):
+        * svg/SVGViewSpec.h:
+        Change the return value from raw pointer to RefPtr<>.
+        
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::baseVal):
+        (WebCore::SVGAnimatedListPropertyTearOff::animVal):
+        Change the return value from raw pointer to RefPtr<> and change the cached
+        value from RefPtr<> to raw pointer. If the property is null, it will be
+        created, its raw pointer will be cached and the only ref-counted RefPtr<>
+        will be returned. This will guarantee, the RefPtr<> will be deleted once
+        it is not used anymore. 
+        
+        (WebCore::SVGAnimatedListPropertyTearOff::propertyWillBeDeleted):
+        Clean the raw pointer caches m_baseVal and m_animVal upon deleting the
+        actual pointer. This function will be called from the destructor of
+        SVGListPropertyTearOff.
+        
+        (WebCore::SVGAnimatedListPropertyTearOff::findItem):
+        (WebCore::SVGAnimatedListPropertyTearOff::removeItemFromList):
+        We have to ensure the baseVal() is created before using it.
+        
+        (WebCore::SVGAnimatedListPropertyTearOff::detachListWrappers):
+        (WebCore::SVGAnimatedListPropertyTearOff::currentAnimatedValue):
+        (WebCore::SVGAnimatedListPropertyTearOff::animationStarted):
+        (WebCore::SVGAnimatedListPropertyTearOff::animationEnded):
+        (WebCore::SVGAnimatedListPropertyTearOff::synchronizeWrappersIfNeeded):
+        (WebCore::SVGAnimatedListPropertyTearOff::animValWillChange):
+        (WebCore::SVGAnimatedListPropertyTearOff::animValDidChange):
+        For animation, a separate RefPtr<> 'm_animatingAnimVal' will be assigned
+        to the animVal(). This will prevent deleting m_animVal while animation.
+        
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::baseVal):
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::animVal):
+        Same as what is done in SVGAnimatedListPropertyTearOff.
+        
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::findItem):
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::removeItemFromList):
+        Same as what is done in SVGAnimatedListPropertyTearOff.
+        
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::lookupOrCreateWrapper):
+        Change the return value from raw reference to Ref<> and change the
+        cached value from Ref<> to raw pointer. This reverts the change of
+        r181345 in this function.
+        
+        (WebCore::SVGAnimatedProperty::lookupWrapper):
+        Change the return value from raw pointer to RefPtr<>.
+        
+        * svg/properties/SVGAnimatedPropertyMacros.h:
+        Use 'auto' type for the return of SVGAnimatedProperty::lookupWrapper().
+        
+        * svg/properties/SVGAnimatedTransformListPropertyTearOff.h:
+        (WebCore::SVGAnimatedTransformListPropertyTearOff::baseVal):
+        (WebCore::SVGAnimatedTransformListPropertyTearOff::animVal):
+        Same as what is done in SVGAnimatedListPropertyTearOff.
+
+        * svg/properties/SVGListPropertyTearOff.h:
+        (WebCore::SVGListPropertyTearOff::~SVGListPropertyTearOff):
+        Call the SVGAnimatedListPropertyTearOff::propertyWillBeDeleted() to clean
+        its raw pointers when the RefPtr<> deletes itself.
+
 2016-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView should send crossing events to the WebProcess

@@ -32,7 +32,7 @@ public:
     {
     }
 
-    SVGAnimatedProperty* animatedProperty() const
+    RefPtr<SVGAnimatedProperty> animatedProperty() const
     {
         if (!m_element)
             return nullptr;

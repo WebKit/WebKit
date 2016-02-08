@@ -68,7 +68,7 @@ public:
     void resetContextElement() { m_contextElement = nullptr; }
 
     // Custom non-animated 'transform' property.
-    SVGTransformListPropertyTearOff* transform();
+    RefPtr<SVGTransformListPropertyTearOff> transform();
     SVGTransformList transformBaseValue() const { return m_transform; }
 
     // Custom animated 'viewBox' property.

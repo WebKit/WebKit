@@ -637,12 +637,6 @@ webkit.org/b/141695 [ Debug ] fast/selectors/nth-last-child-of-register-requirem
 # Content extensions are Mac-WK2-only for now
 http/tests/contentextensions [ Skip ]
 
-# These tests were flaky on Mac only but they became flaky on all ports after r181345
-webkit.org/b/114280 svg/animations/smil-leak-dynamically-added-element-instances.svg [ Pass Failure ]
-webkit.org/b/114280 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
-webkit.org/b/114280 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
-webkit.org/b/114280 svg/animations/smil-leak-elements.svg [ Pass Failure ]
-
 webkit.org/b/149072 svg/animations/svgboolean-animation-1.html [ Pass Failure ]
 
 webkit.org/b/143085 media/track/track-mode.html [ Pass Timeout ]
