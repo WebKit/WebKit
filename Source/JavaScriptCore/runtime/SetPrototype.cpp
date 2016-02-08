@@ -43,7 +43,7 @@
 
 namespace JSC {
 
-const ClassInfo SetPrototype::s_info = { "Set", &Base::s_info, 0, CREATE_METHOD_TABLE(SetPrototype) };
+const ClassInfo SetPrototype::s_info = { "Set", &Base::s_info, &setPrototypeTable, CREATE_METHOD_TABLE(SetPrototype) };
 
 /* Source for SetIteratorPrototype.lut.h
 @begin setPrototypeTable

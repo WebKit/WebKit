@@ -1,3 +1,13 @@
+2016-02-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        {Map,Set}.prototype.forEach should be visible as own properties
+        https://bugs.webkit.org/show_bug.cgi?id=153974
+
+        Reviewed by Darin Adler.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: copy({x:1}) should copy "{x:1}", not "[object Object]"

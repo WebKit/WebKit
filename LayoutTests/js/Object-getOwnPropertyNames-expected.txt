@@ -63,6 +63,14 @@ PASS getSortedOwnPropertyNames(Math) is ['E','LN10','LN2','LOG10E','LOG2E','PI',
 PASS getSortedOwnPropertyNames(JSON) is ['parse', 'stringify']
 PASS getSortedOwnPropertyNames(Symbol) is ['for', 'hasInstance', 'iterator', 'keyFor', 'length', 'name', 'prototype', 'species', 'toStringTag', 'unscopables']
 PASS getSortedOwnPropertyNames(Symbol.prototype) is ['constructor', 'toString', 'valueOf']
+PASS getSortedOwnPropertyNames(Map) is ['length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(Map.prototype) is ['clear', 'constructor', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values']
+PASS getSortedOwnPropertyNames(Set) is ['length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(Set.prototype) is ['add', 'clear', 'constructor', 'delete', 'entries', 'forEach', 'has', 'keys', 'size', 'values']
+PASS getSortedOwnPropertyNames(WeakMap) is ['length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(WeakMap.prototype) is ['constructor', 'delete', 'get', 'has', 'set']
+PASS getSortedOwnPropertyNames(WeakSet) is ['length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(WeakSet.prototype) is ['add', 'constructor', 'delete', 'has']
 PASS globalPropertyNames.indexOf('NaN') != -1 is true
 PASS globalPropertyNames.indexOf('Infinity') != -1 is true
 PASS globalPropertyNames.indexOf('undefined') != -1 is true
@@ -88,6 +96,10 @@ PASS globalPropertyNames.indexOf('RegExp') != -1 is true
 PASS globalPropertyNames.indexOf('Error') != -1 is true
 PASS globalPropertyNames.indexOf('Math') != -1 is true
 PASS globalPropertyNames.indexOf('JSON') != -1 is true
+PASS globalPropertyNames.indexOf('Map') != -1 is true
+PASS globalPropertyNames.indexOf('Set') != -1 is true
+PASS globalPropertyNames.indexOf('WeakMap') != -1 is true
+PASS globalPropertyNames.indexOf('WeakSet') != -1 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

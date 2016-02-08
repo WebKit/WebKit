@@ -71,7 +71,15 @@ var expectedPropertyNamesSet = {
     "Math": "['E','LN10','LN2','LOG10E','LOG2E','PI','SQRT1_2','SQRT2','abs','acos','acosh','asin','asinh','atan','atan2','atanh','cbrt','ceil','clz32','cos','cosh','exp','expm1','floor','fround','hypot','imul','log','log10','log1p','log2','max','min','pow','random','round','sign','sin','sinh','sqrt','tan','tanh','trunc']",
     "JSON": "['parse', 'stringify']",
     "Symbol": "['for', 'hasInstance', 'iterator', 'keyFor', 'length', 'name', 'prototype', 'species', 'toStringTag', 'unscopables']",
-    "Symbol.prototype": "['constructor', 'toString', 'valueOf']"
+    "Symbol.prototype": "['constructor', 'toString', 'valueOf']",
+    "Map": "['length', 'name', 'prototype']",
+    "Map.prototype": "['clear', 'constructor', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values']",
+    "Set": "['length', 'name', 'prototype']",
+    "Set.prototype": "['add', 'clear', 'constructor', 'delete', 'entries', 'forEach', 'has', 'keys', 'size', 'values']",
+    "WeakMap": "['length', 'name', 'prototype']",
+    "WeakMap.prototype": "['constructor', 'delete', 'get', 'has', 'set']",
+    "WeakSet": "['length', 'name', 'prototype']",
+    "WeakSet.prototype": "['add', 'constructor', 'delete', 'has']"
 };
 
 function getSortedOwnPropertyNames(obj)
@@ -110,7 +118,11 @@ var expectedGlobalPropertyNames = [
     "RegExp",
     "Error",
     "Math",
-    "JSON"
+    "JSON",
+    "Map",
+    "Set",
+    "WeakMap",
+    "WeakSet"
 ];
 
 for (var i = 0; i < expectedGlobalPropertyNames.length; ++i)
