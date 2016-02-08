@@ -4576,10 +4576,8 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
     case WebEvent::MouseMove:
         m_processingMouseMoveEvent = false;
-        if (m_nextMouseMoveEvent) {
-            handleMouseEvent(*m_nextMouseMoveEvent);
-            m_nextMouseMoveEvent = nullptr;
-        }
+        if (m_nextMouseMoveEvent)
+            handleMouseEvent(*std::exchange(m_nextMouseMoveEvent, nullptr));
         break;
     case WebEvent::MouseDown:
         break;

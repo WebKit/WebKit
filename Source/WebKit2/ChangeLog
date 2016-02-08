@@ -1,3 +1,24 @@
+2016-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Infinite loop when processing mouse events synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=153995
+
+        Reviewed by Darin Adler.
+
+        This happened with WTR in the GTK+ port after landing patch in bug
+        #153740. The thing is that WTR forces events handling IPC messages
+        to be synchronous. When a drag and drop operation is in progress,
+        the web process ignores mouse move events and replies with
+        DidReceiveEvent signal. The DidReceiveEvent message handler in
+        WebPageProxy checks if we have a m_nextMouseMoveEvent and handles
+        it, but when all this happens synchronously the
+        m_nextMouseMoveEvent is the current one because we haven't
+        returned yet from handleMouseEvent(). We need to invalidate the
+        m_nextMouseMoveEvent before calling handleMouseEvent().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+
 2016-02-08  Jeremy Jones  <jeremyj@apple.com>
 
         Remove __weak from WKAirPlayRoutePicker.mm to fix build warning.
