@@ -336,6 +336,8 @@ HRESULT WebFrame::paintDocumentRectToContext(RECT rect, HDC deviceContext)
     dirtyRect.setHeight(height);
     gc.clip(dirtyRect);
     gc.translate(-rect.left, -rect.top);
+    float scaleFactor = webView()->deviceScaleFactor();
+    gc.scale(WebCore::FloatSize(scaleFactor, scaleFactor));
     view->paintContents(&gc, rect);
     gc.restore();
 
@@ -360,6 +362,8 @@ HRESULT WebFrame::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, HDC d
     gc.save();
     IntRect dirtyRect(rect);
     dirtyRect.move(-pt.x, -pt.y);
+    float scaleFactor = webView()->deviceScaleFactor();
+    gc.scale(WebCore::FloatSize(scaleFactor, scaleFactor));
     view->paint(&gc, dirtyRect);
     gc.restore();
 

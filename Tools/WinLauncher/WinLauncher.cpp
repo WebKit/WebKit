@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008, 2013-2015 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2013 Alex Christensen. All rights reserved.
@@ -47,6 +47,10 @@
 #include <string>
 #include <vector>
 
+namespace WebCore {
+float deviceScaleFactorForWindow(HWND);
+}
+
 static const int maxHistorySize = 10;
 
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
@@ -61,6 +65,8 @@ WinLauncher::WinLauncher(HWND mainWnd, HWND urlBarWnd, bool useLayeredWebView, b
 
 HRESULT WinLauncher::init()
 {
+    updateDeviceScaleFactor();
+
     HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, reinterpret_cast<void**>(&m_webView.GetInterfacePtr()));
     if (FAILED(hr))
         return hr;
@@ -477,4 +483,20 @@ void WinLauncher::zoomOut()
         return;
 
     webActions->zoomPageOut(nullptr);
+}
+
+void WinLauncher::generateFontForScaleFactor(float scaleFactor)
+{
+    if (m_hURLBarFont)
+        ::DeleteObject(m_hURLBarFont);
+
+    m_hURLBarFont = ::CreateFont(scaleFactor * 18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+        OUT_TT_ONLY_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, L"Times New Roman");
+}
+
+
+void WinLauncher::updateDeviceScaleFactor()
+{
+    m_deviceScaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
+    generateFontForScaleFactor(m_deviceScaleFactor);
 }

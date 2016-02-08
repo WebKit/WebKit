@@ -65,6 +65,10 @@
 
 static const int maxHistorySize = 10;
 
+#ifndef WM_DPICHANGED
+#define WM_DPICHANGED 0x02E0
+#endif
+
 typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
 typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
 
@@ -72,6 +76,7 @@ typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequ
 HINSTANCE hInst;
 HWND hMainWnd;
 HWND hURLBarWnd;
+HGDIOBJ hURLFont;
 HWND hBackButtonWnd;
 HWND hForwardButtonWnd;
 HWND hCacheWnd;
@@ -101,17 +106,29 @@ INT_PTR CALLBACK Caches(HWND, UINT, WPARAM, LPARAM);
 static void loadURL(BSTR urlBStr);
 static void updateStatistics(HWND hDlg);
 
+namespace WebCore {
+float deviceScaleFactorForWindow(HWND);
+}
+
 static void resizeSubViews()
 {
     if (gWinLauncher->usesLayeredWebView() || !gViewWindow)
         return;
 
+    float scaleFactor = WebCore::deviceScaleFactorForWindow(gViewWindow);
+
     RECT rcClient;
     GetClientRect(hMainWnd, &rcClient);
-    MoveWindow(hBackButtonWnd, 0, 0, CONTROLBUTTON_WIDTH, URLBAR_HEIGHT, TRUE);
-    MoveWindow(hForwardButtonWnd, CONTROLBUTTON_WIDTH, 0, CONTROLBUTTON_WIDTH, URLBAR_HEIGHT, TRUE);
-    MoveWindow(hURLBarWnd, CONTROLBUTTON_WIDTH * 2, 0, rcClient.right, URLBAR_HEIGHT, TRUE);
-    MoveWindow(gViewWindow, 0, URLBAR_HEIGHT, rcClient.right, rcClient.bottom - URLBAR_HEIGHT, TRUE);
+
+    int height = scaleFactor * URLBAR_HEIGHT;
+    int width = scaleFactor * CONTROLBUTTON_WIDTH;
+
+    MoveWindow(hBackButtonWnd, 0, 0, width, height, TRUE);
+    MoveWindow(hForwardButtonWnd, width, 0, width, height, TRUE);
+    MoveWindow(hURLBarWnd, width * 2, 0, rcClient.right, height, TRUE);
+    MoveWindow(gViewWindow, 0, height, rcClient.right, rcClient.bottom - height, TRUE);
+
+    ::SendMessage(hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(gWinLauncher->urlBarFont()), TRUE);
 }
 
 static void subclassForLayeredWindow()
@@ -132,10 +149,12 @@ static void computeFullDesktopFrame()
     if (!::SystemParametersInfo(SPI_GETWORKAREA, 0, static_cast<void*>(&desktop), 0))
         return;
 
+    float scaleFactor = WebCore::deviceScaleFactorForWindow(nullptr);
+
     s_windowPosition.x = 0;
     s_windowPosition.y = 0;
-    s_windowSize.cx = desktop.right - desktop.left;
-    s_windowSize.cy = desktop.bottom - desktop.top;
+    s_windowSize.cx = scaleFactor * (desktop.right - desktop.left);
+    s_windowSize.cy = scaleFactor * (desktop.bottom - desktop.top);
 }
 
 BOOL WINAPI DllMain(HINSTANCE dllInstance, DWORD reason, LPVOID)
@@ -421,13 +440,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // For testing our transparent window, we need a region to use as a handle for
             // dragging. The right way to do this would be to query the web view to see what's
             // under the mouse. However, for testing purposes we just use an arbitrary
-            // 30 pixel band at the top of the view as an arbitrary gripping location.
+            // 30 logical pixel band at the top of the view as an arbitrary gripping location.
             //
             // When we are within this bad, return HT_CAPTION to tell Windows we want to
             // treat this region as if it were the title bar on a normal window.
             int y = HIWORD(lParam);
-
-            if ((y > window.top) && (y < window.top + dragBarHeight))
+            float scaledDragBarHeightFactor = dragBarHeight * gWinLauncher->deviceScaleFactor();
+            if ((y > window.top) && (y < window.top + scaledDragBarHeightFactor))
                 return HTCAPTION;
         }
         return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
@@ -519,6 +538,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         resizeSubViews();
         break;
+    case WM_DPICHANGED:
+        if (gWinLauncher)
+            gWinLauncher->updateDeviceScaleFactor();
+        return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
     default:
         return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
     }

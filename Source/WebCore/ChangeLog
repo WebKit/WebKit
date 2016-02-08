@@ -1,3 +1,33 @@
+2016-02-08  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187245.
+
+    2015-07-23  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Implement High DPI support features
+            https://bugs.webkit.org/show_bug.cgi?id=146335
+            <rdar://problem/21558269>
+
+            Reviewed by Alex Christensen.
+
+            * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+            (WebCore::PlatformCALayerWinInternal::drawTile): Don't translate the CGContext to the position
+            of the CACFLayerRef; the underlying context is already in the right position.
+            * platform/win/PlatformMouseEventWin.cpp: Update class to adjust mouse
+            event coordinates based on scaling factor.
+            (WebCore::deviceScaleFactor):
+            (WebCore::positionForEvent):
+            * platform/win/ScrollbarThemeWin.cpp:
+            (WebCore::scrollbarThicknessInPixels):
+            (WebCore::ScrollbarThemeWin::scrollbarThickness):
+            (WebCore::ScrollbarThemeWin::themeChanged):
+            * platform/win/WheelEventWin.cpp: Update class to adjust wheel event
+            coordinates based on scaling factor.
+            (WebCore::deviceScaleFactor):
+            (WebCore::positionForEvent):
+            (WebCore::globalPositionForEvent):
+            (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2016-01-19  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r192700.

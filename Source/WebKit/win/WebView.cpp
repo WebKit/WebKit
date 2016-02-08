@@ -107,6 +107,7 @@
 #include <WebCore/FrameWin.h>
 #include <WebCore/FullScreenController.h>
 #include <WebCore/GDIObjectCounter.h>
+#include <WebCore/GDIUtilities.h>
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationError.h>
 #include <WebCore/GraphicsContext.h>
@@ -363,6 +364,7 @@ const LPCWSTR kWebViewWindowClassName = L"WebViewWindowClass";
 
 const int WM_XP_THEMECHANGED = 0x031A;
 const int WM_VISTA_MOUSEHWHEEL = 0x020E;
+const int WM_DPICHANGED = 0x02E0;
 
 static const int maxToolTipWidth = 250;
 
@@ -821,8 +823,11 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     return S_OK;
 }
 
-void WebView::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
+void WebView::repaint(const WebCore::IntRect& logicalWindowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
+    WebCore::IntRect windowRect(logicalWindowRect);
+    windowRect.scale(deviceScaleFactor());
+
     if (isAcceleratedCompositing()) {
         // The contentChanged, immediate, and repaintContentOnly parameters are all based on a non-
         // compositing painting/scrolling model.
@@ -920,9 +925,18 @@ void WebView::addToDirtyRegion(GDIObject<HRGN> newRegion)
         m_uiDelegatePrivate->webViewDidInvalidate(this);
 }
 
-void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
+void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logicalDy, const IntRect& logicalScrollViewRect, const IntRect& logicalClipRect)
 {
     m_needsDisplay = true;
+
+    // Dimensions passed to us from WebCore are in logical units. We must convert to pixels:
+    float scaleFactor = deviceScaleFactor();
+    int dx = clampTo<int>(scaleFactor * logicalDx);
+    int dy = clampTo<int>(scaleFactor * logicalDy);
+    IntRect scrollViewRect(logicalScrollViewRect);
+    scrollViewRect.scale(scaleFactor);
+    IntRect clipRect(logicalClipRect);
+    clipRect.scale(scaleFactor);
 
     if (isAcceleratedCompositing()) {
         // FIXME: We should be doing something smarter here, like moving tiles around and painting
@@ -952,7 +966,7 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
     HWndDC windowDC(m_viewWindow);
     auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
     HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), m_backingStoreBitmap->get());
-    
+
     // Scroll the bitmap.
     RECT scrollRectWin(scrollViewRect);
     RECT clipRectWin(clipRect);
@@ -982,8 +996,11 @@ void WebView::sizeChanged(const IntSize& newSize)
 
     deleteBackingStore();
 
-    if (Frame* coreFrame = core(topLevelFrame()))
-        coreFrame->view()->resize(newSize);
+    if (Frame* coreFrame = core(topLevelFrame())) {
+        IntSize logicalSize = newSize;
+        logicalSize.scale(1.0f / deviceScaleFactor());
+        coreFrame->view()->resize(logicalSize);
+    }
 
 #if USE(CA)
     if (m_layerTreeHost)
@@ -997,6 +1014,16 @@ void WebView::sizeChanged(const IntSize& newSize)
     if (m_acceleratedCompositingContext)
         m_acceleratedCompositingContext->resizeRootLayer(newSize);
 #endif
+}
+
+bool WebView::dpiChanged(float, const WebCore::IntSize& newSize)
+{
+    if (!IsProcessDPIAware())
+        return false;
+
+    sizeChanged(newSize);
+
+    return true;
 }
 
 // This emulates the Mac smarts for painting rects intelligently.  This is very
@@ -1199,7 +1226,7 @@ void WebView::paint(HDC dc, LPARAM options)
         deleteBackingStoreSoon();
 }
 
-void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const IntRect& dirtyRect, WindowsToPaint windowsToPaint)
+void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const IntRect& dirtyRectPixels, WindowsToPaint windowsToPaint)
 {
     // FIXME: This function should never be called in accelerated compositing mode, and we should
     // assert as such. But currently it *is* sometimes called, so we can't assert yet. See
@@ -1211,7 +1238,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
     // but it was being hit during our layout tests, and is being investigated in
     // http://webkit.org/b/29350.
 
-    RECT rect = dirtyRect;
+    RECT rect = dirtyRectPixels;
 
 #if FLASH_BACKING_STORE_REDRAW
     {
@@ -1220,15 +1247,21 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
         FillRect(dc, &rect, yellowBrush.get());
         GdiFlush();
         Sleep(50);
-        paintIntoWindow(bitmapDC, dc, dirtyRect);
+        paintIntoWindow(bitmapDC, dc, dirtyRectPixels);
     }
 #endif
+
+    float scaleFactor = deviceScaleFactor();
+    float inverseScaleFactor = 1.0f / scaleFactor;
+
+    IntRect logicalDirtyRect = dirtyRectPixels;
+    logicalDirtyRect.scale(inverseScaleFactor);
 
     GraphicsContext gc(bitmapDC, m_transparent);
     gc.setShouldIncludeChildWindows(windowsToPaint == PaintWebViewAndChildren);
     gc.save();
     if (m_transparent)
-        gc.clearRect(dirtyRect);
+        gc.clearRect(logicalDirtyRect);
     else
         FillRect(bitmapDC, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
@@ -1237,15 +1270,18 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
         uiPrivate->drawBackground(this, bitmapDC, &rect);
 
     if (frameView && frameView->frame().contentRenderer()) {
-        gc.clip(dirtyRect);
-        frameView->paint(&gc, dirtyRect);
+        gc.save();
+        gc.scale(FloatSize(scaleFactor, scaleFactor));
+        gc.clip(logicalDirtyRect);
+        frameView->paint(&gc, logicalDirtyRect);
+        gc.restore();
         if (m_shouldInvertColors)
-            gc.fillRect(dirtyRect, Color::white, ColorSpaceDeviceRGB, CompositeDifference);
+            gc.fillRect(logicalDirtyRect, Color::white, ColorSpaceDeviceRGB, CompositeDifference);
     }
     gc.restore();
 }
 
-void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, const IntRect& dirtyRect)
+void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, const IntRect& dirtyRectPixels)
 {
     // FIXME: This function should never be called in accelerated compositing mode, and we should
     // assert as such. But currently it *is* sometimes called, so we can't assert yet. See
@@ -1254,7 +1290,7 @@ void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, const IntRect& dirtyRe
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 #if FLASH_WINDOW_REDRAW
     auto greenBrush = adoptGDIObject(::CreateSolidBrush(RGB(0, 255, 0)));
-    RECT rect = dirtyRect;
+    RECT rect = dirtyRectPixels;
     FillRect(windowDC, &rect, greenBrush.get());
     GdiFlush();
     Sleep(50);
@@ -1262,8 +1298,8 @@ void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, const IntRect& dirtyRe
 
     // Blit the dirty rect from the backing store into the same position
     // in the destination DC.
-    BitBlt(windowDC, dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height(), bitmapDC,
-           dirtyRect.x(), dirtyRect.y(), SRCCOPY);
+    BitBlt(windowDC, dirtyRectPixels.x(), dirtyRectPixels.y(), dirtyRectPixels.width(), dirtyRectPixels.height(), bitmapDC,
+        dirtyRectPixels.x(), dirtyRectPixels.y(), SRCCOPY);
 
     m_needsDisplay = false;
 }
@@ -1410,9 +1446,15 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
 
     lParam = MAKELPARAM(coords.x, coords.y);
 
+    // Convert coordinates to logical pixels
+    float scaleFactor = deviceScaleFactor();
+    float inverseScaleFactor = 1.0f / scaleFactor;
+    IntPoint logicalCoords(coords);
+    logicalCoords.scale(inverseScaleFactor, inverseScaleFactor);
+
     m_page->contextMenuController().clearContextMenu();
 
-    IntPoint documentPoint(m_page->mainFrame().view()->windowToContents(coords));
+    IntPoint documentPoint(m_page->mainFrame().view()->windowToContents(logicalCoords));
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(documentPoint);
     Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
 
@@ -1437,9 +1479,11 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!view)
         return false;
 
-    POINT point(view->contentsToWindow(contextMenuController.hitTestResult().roundedPointInInnerNodeFrame()));
+    IntPoint logicalPoint = view->contentsToWindow(contextMenuController.hitTestResult().roundedPointInInnerNodeFrame());
+    logicalPoint.scale(scaleFactor, scaleFactor);
 
     // Translate the point to screen coordinates
+    POINT point = logicalPoint;
     if (!::ClientToScreen(m_viewWindow, &point))
         return false;
 
@@ -1632,6 +1676,12 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
 
     bool hitScrollbar = false;
     POINT gestureBeginPoint = {gn->ptsLocation.x, gn->ptsLocation.y};
+
+    float scaleFactor = deviceScaleFactor();
+    float inverseScaleFactor = 1.0f / scaleFactor;
+    IntPoint logicalGestureBeginPoint(gestureBeginPoint);
+    logicalGestureBeginPoint.scale(inverseScaleFactor, inverseScaleFactor);
+
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
     for (Frame* childFrame = &m_page->mainFrame(); childFrame; childFrame = EventHandler::subframeForTargetNode(m_gestureTargetNode.get())) {
         FrameView* frameView = childFrame->view();
@@ -1644,7 +1694,7 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
         if (!layer)
             break;
 
-        HitTestResult result(frameView->screenToContents(gestureBeginPoint));
+        HitTestResult result(frameView->screenToContents(logicalGestureBeginPoint));
         layer->hitTest(request, result);
         m_gestureTargetNode = result.innerNode();
 
@@ -1749,13 +1799,15 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
         }
 
         ScrollableArea* scrolledArea = 0;
+        float scaleFactor = deviceScaleFactor();
+        IntSize logicalScrollDelta(-deltaX * scaleFactor, -deltaY * scaleFactor);
 
         if (!m_gestureTargetNode || !m_gestureTargetNode->renderer()) {
             // We might directly hit the document without hitting any nodes
-            coreFrame->view()->scrollBy(IntSize(-deltaX, -deltaY));
+            coreFrame->view()->scrollBy(logicalScrollDelta);
             scrolledArea = coreFrame->view();
         } else
-            m_gestureTargetNode->renderer()->enclosingLayer()->enclosingScrollableLayer()->scrollByRecursively(IntSize(-deltaX, -deltaY), WebCore::RenderLayer::ScrollOffsetClamped, &scrolledArea);
+            m_gestureTargetNode->renderer()->enclosingLayer()->enclosingScrollableLayer()->scrollByRecursively(logicalScrollDelta, WebCore::RenderLayer::ScrollOffsetClamped, &scrolledArea);
 
         if (!(UpdatePanningFeedbackPtr() && BeginPanningFeedbackPtr() && EndPanningFeedbackPtr())) {
             CloseGestureInfoHandlePtr()(gestureHandle);
@@ -2194,7 +2246,11 @@ void WebView::setShouldInvertColors(bool shouldInvertColors)
 
     RECT windowRect = {0};
     frameRect(&windowRect);
-    repaint(windowRect, true, true);
+
+    // repaint expects logical pixels, so rescale here.
+    IntRect logicalRect(windowRect);
+    logicalRect.scale(1.0f / deviceScaleFactor());
+    repaint(logicalRect, true, true);
 }
 
 bool WebView::registerWebViewWindowClass()
@@ -2336,6 +2392,9 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
         case WM_SIZE:
             if (lParam != 0)
                 webView->sizeChanged(IntSize(LOWORD(lParam), HIWORD(lParam)));
+            break;
+        case WM_DPICHANGED:
+            webView->dpiChanged(LOWORD(wParam), IntSize(LOWORD(lParam), HIWORD(lParam)));
             break;
         case WM_SHOWWINDOW:
             lResult = DefWindowProc(hWnd, message, wParam, lParam);
@@ -2904,7 +2963,7 @@ void WebView::initializeToolTipWindow()
     info.uId = reinterpret_cast<UINT_PTR>(m_viewWindow);
 
     ::SendMessage(m_toolTipHwnd, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&info));
-    ::SendMessage(m_toolTipHwnd, TTM_SETMAXTIPWIDTH, 0, maxToolTipWidth);
+    ::SendMessage(m_toolTipHwnd, TTM_SETMAXTIPWIDTH, 0, clampTo<int>(maxToolTipWidth * deviceScaleFactor()));
 
     ::SetWindowPos(m_toolTipHwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
@@ -3675,17 +3734,19 @@ HRESULT STDMETHODCALLTYPE WebView::generateSelectionImage(BOOL forceWhiteText, H
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::selectionRect(RECT* rc)
+HRESULT WebView::selectionRect(RECT* rc)
 {
     WebCore::Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     IntRect ir = enclosingIntRect(frame.selection().selectionBounds());
     ir = frame.view()->convertToContainingWindow(ir);
     ir.move(-frame.view()->scrollOffset().width(), -frame.view()->scrollOffset().height());
-    rc->left = ir.x();
-    rc->top = ir.y();
-    rc->bottom = rc->top + ir.height();
-    rc->right = rc->left + ir.width();
+
+    float scaleFactor = deviceScaleFactor();
+    rc->left = ir.x() * scaleFactor;
+    rc->top = ir.y() * scaleFactor;
+    rc->bottom = rc->top + ir.height() * scaleFactor;
+    rc->right = rc->left + ir.width() * scaleFactor;
 
     return S_OK;
 }
@@ -3762,9 +3823,7 @@ HRESULT STDMETHODCALLTYPE WebView::isLoading(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE WebView::elementAtPoint( 
-        /* [in] */ LPPOINT point,
-        /* [retval][out] */ IPropertyBag** elementDictionary)
+HRESULT WebView::elementAtPoint(LPPOINT point, IPropertyBag** elementDictionary)
 {
     if (!elementDictionary) {
         ASSERT_NOT_REACHED();
@@ -3778,6 +3837,8 @@ HRESULT STDMETHODCALLTYPE WebView::elementAtPoint(
         return E_FAIL;
 
     IntPoint webCorePoint = IntPoint(point->x, point->y);
+    float inverseScaleFactor = 1.0f / deviceScaleFactor();
+    webCorePoint.scale(inverseScaleFactor, inverseScaleFactor);
     HitTestResult result = HitTestResult(webCorePoint);
     if (frame->contentRenderer())
         result = frame->eventHandler().hitTestResultAtPoint(webCorePoint);
@@ -5300,32 +5361,37 @@ HRESULT STDMETHODCALLTYPE WebView::frameLoadDelegatePrivate(
     return m_frameLoadDelegatePrivate.copyRefTo(d);
 }
 
-HRESULT STDMETHODCALLTYPE WebView::scrollOffset( 
-    /* [retval][out] */ LPPOINT offset)
+HRESULT WebView::scrollOffset(LPPOINT offset)
 {
     if (!offset)
         return E_POINTER;
     IntSize offsetIntSize = m_page->mainFrame().view()->scrollOffset();
+
+    offsetIntSize.scale(deviceScaleFactor());
+
     offset->x = offsetIntSize.width();
     offset->y = offsetIntSize.height();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::scrollBy( 
-    /* [in] */ LPPOINT offset)
+HRESULT WebView::scrollBy(LPPOINT offset)
 {
     if (!offset)
         return E_POINTER;
-    m_page->mainFrame().view()->scrollBy(IntSize(offset->x, offset->y));
+
+    IntSize scrollDelta(offset->x, offset->y);
+    scrollDelta.scale(1.0f / deviceScaleFactor());
+    m_page->mainFrame().view()->scrollBy(scrollDelta);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::visibleContentRect( 
-    /* [retval][out] */ LPRECT rect)
+HRESULT WebView::visibleContentRect(LPRECT rect)
 {
     if (!rect)
         return E_POINTER;
+
     FloatRect visibleContent = m_page->mainFrame().view()->visibleContentRect();
+    visibleContent.scale(deviceScaleFactor());
     rect->left = (LONG) visibleContent.x();
     rect->top = (LONG) visibleContent.y();
     rect->right = (LONG) visibleContent.maxX();
@@ -5680,6 +5746,8 @@ void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext)
         caret = targetFrame->editor().firstRectForRange(tempRange.get());
     }
     caret = targetFrame->view()->contentsToWindow(caret);
+    caret.scale(deviceScaleFactor());
+
     CANDIDATEFORM form;
     form.dwIndex = 0;
     form.dwStyle = CFS_EXCLUDE;
@@ -5939,6 +6007,7 @@ LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* c
         caret = targetFrame->editor().firstRectForRange(tempRange.get());
     }
     caret = targetFrame->view()->contentsToWindow(caret);
+    caret.scale(deviceScaleFactor());
     charPos->pt.x = caret.x();
     charPos->pt.y = caret.y();
     ::ClientToScreen(m_viewWindow, &charPos->pt);
@@ -6644,7 +6713,6 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             ::GetClientRect(m_viewWindow, &clientRect);
             m_backingLayer->setSize(IntRect(clientRect).size());
             m_backingLayer->setNeedsDisplay();
-
             m_layerTreeHost->setRootChildLayer(PlatformCALayer::platformCALayer(m_backingLayer->platformLayer()));
 
             // We aren't going to be using our backing store while we're in accelerated compositing
@@ -6793,15 +6861,22 @@ void WebView::notifyFlushRequired(const GraphicsLayer*)
     flushPendingGraphicsLayerChangesSoon();
 }
 
-void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& inClip)
+void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& inClipPixels)
 {
     Frame* frame = core(m_mainFrame);
     if (!frame)
         return;
 
+    float scaleFactor = deviceScaleFactor();
+    float inverseScaleFactor = 1.0f / scaleFactor;
+
+    FloatRect logicalClip = inClipPixels;
+    logicalClip.scale(inverseScaleFactor);
+
     context.save();
-    context.clip(inClip);
-    frame->view()->paint(&context, enclosingIntRect(inClip));
+    context.scale(FloatSize(scaleFactor, scaleFactor));
+    context.clip(logicalClip);
+    frame->view()->paint(&context, enclosingIntRect(logicalClip));
     context.restore();
 }
 
@@ -7144,6 +7219,8 @@ HRESULT STDMETHODCALLTYPE WebView::firstRectForCharacterRangeForTesting(
     IntRect rect = frame.editor().firstRectForRange(range.get());
     resultIntRect = frame.view()->contentsToWindow(rect);
 
+    resultIntRect.scale(deviceScaleFactor());
+
     resultRect->left = resultIntRect.x();
     resultRect->top = resultIntRect.y();
     resultRect->right = resultIntRect.x() + resultIntRect.width();
@@ -7195,12 +7272,6 @@ HRESULT WebView::dispatchPendingLoadRequests()
     return S_OK;
 }
 
-static float scaleFactorFromWindow(HWND window)
-{
-    HWndDC dc(window);
-    return ::GetDeviceCaps(dc, LOGPIXELSX) / 96.0f;
-}
-
 float WebView::deviceScaleFactor() const
 {
     if (m_customDeviceScaleFactor)
@@ -7209,12 +7280,12 @@ float WebView::deviceScaleFactor() const
     // FIXME(146335): Should check for Windows 8.1 High DPI Features here first.
 
     if (m_viewWindow)
-        return scaleFactorFromWindow(m_viewWindow);
+        return WebCore::deviceScaleFactorForWindow(m_viewWindow);
 
     if (m_hostWindow)
-        return scaleFactorFromWindow(m_hostWindow);
+        return WebCore::deviceScaleFactorForWindow(m_hostWindow);
 
-    return scaleFactorFromWindow(0);
+    return WebCore::deviceScaleFactorForWindow(nullptr);
 }
 
 HRESULT WebView::setCustomBackingScaleFactor(double customScaleFactor)

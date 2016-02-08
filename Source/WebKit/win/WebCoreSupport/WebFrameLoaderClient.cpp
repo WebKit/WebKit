@@ -1017,11 +1017,13 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
     WebView* view = m_webFrame->webView();
 
-    RECT rect;
-    view->frameRect(&rect);
+    RECT pixelRect;
+    view->frameRect(&pixelRect);
     bool transparent = view->transparent();
     Color backgroundColor = transparent ? Color::transparent : Color::white;
-    core(m_webFrame)->createView(IntRect(rect).size(), backgroundColor, transparent);
+    IntRect logicalFrame(pixelRect);
+    logicalFrame.scale(1.0f / view->deviceScaleFactor());
+    core(m_webFrame)->createView(logicalFrame.size(), backgroundColor, transparent);
 }
 
 void WebFrameLoaderClient::didSaveToPageCache()

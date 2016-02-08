@@ -7269,6 +7269,9 @@
     <ClCompile Include="..\platform\graphics\ca\win\WebTiledBackingLayerWin.cpp">
       <Filter>platform\graphics\ca\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\win\GDIUtilities.cpp">
+      <Filter>platform\graphics\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -15260,6 +15263,9 @@
     <ClInclude Include="..\dom\ClassCollection.h" />
     <ClInclude Include="..\platform\graphics\ca\win\WebTiledBackingLayerWin.h">
       <Filter>platform\graphics\ca\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\win\GDIUtilities.h">
+      <Filter>platform\graphics\win</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
