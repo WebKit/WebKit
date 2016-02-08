@@ -167,13 +167,6 @@ enum ScrollbarOverlayStyle {
     ScrollbarOverlayStyleLight
 };
 
-enum ScrollbarOverlayState {
-    ScrollbarOverlayStateHidden,
-    ScrollbarOverlayStateThumbShown,
-    ScrollbarOverlayStateAllShown,
-    ScrollbarOverlayStatePulseThumb
-};
-
 typedef unsigned ScrollbarControlPartMask;
 
 enum ScrollPinningBehavior {
