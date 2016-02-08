@@ -9,7 +9,6 @@ PASS E.getParentStaticValue() is expectedValue
 PASS f.prop is expectedValue + "-" + expectedValue
 PASS f.prop is expectedValue + "-" + "new-value"
 PASS (new F()).getParentValue() is expectedValue
-PASS (new F()).getParentValueWithError()() threw exception TypeError: undefined is not an object (evaluating 'super.getValue').
 PASS successfullyParsed is true
 
 TEST COMPLETE

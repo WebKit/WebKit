@@ -131,6 +131,19 @@ PASS var arr1 = [a, b] => a + b; threw exception SyntaxError: Unexpected token '
 PASS var arr2 = {a, b} => a + b; threw exception SyntaxError: Unexpected token '=>'. Expected ';' after variable declaration..
 PASS var arr3 = {c:a,d:b} => a + b; threw exception SyntaxError: Unexpected token '=>'. Expected ';' after variable declaration..
 PASS var arr3 = {c:b,d:a} => a + b; threw exception SyntaxError: Unexpected token '=>'. Expected ';' after variable declaration..
+PASS var arr4 = () => { super(); }; threw exception SyntaxError: Cannot call super() outside of a class constructor..
+PASS var arr4 = () => { super; }; threw exception SyntaxError: Cannot reference super..
+PASS var arr5 = () => { super.getValue(); }; threw exception SyntaxError: super can only be used in a method of a derived class..
+PASS var arr6 = () =>  super(); threw exception SyntaxError: Cannot call super() outside of a class constructor..
+PASS var arr7 = () =>  super; threw exception SyntaxError: Cannot reference super..
+PASS var arr8 = () =>  super.getValue(); threw exception SyntaxError: super can only be used in a method of a derived class..
+PASS class A { constructor() { function a () { return () => { super(); };}} threw exception SyntaxError: Cannot call super() outside of a class constructor..
+PASS class B { constructor() { function b () { return () => { super; }; }; }} threw exception SyntaxError: Cannot reference super..
+PASS class C { constructor() { function c () { return () => { super.getValue(); };}} threw exception SyntaxError: super can only be used in a method of a derived class..
+PASS class D { constructor() { function a () { return () => super(); }} threw exception SyntaxError: Cannot call super() outside of a class constructor..
+PASS class E { constructor() { function b () { return () => super; }; }} threw exception SyntaxError: Cannot reference super..
+PASS class F { constructor() { function c () { return () => super.getValue(); }} threw exception SyntaxError: super can only be used in a method of a derived class..
+PASS class G {}; class G2 extends G { getValue() { function c () { return () => super.getValue(); }} threw exception SyntaxError: super can only be used in a method of a derived class..
 PASS successfullyParsed is true
 
 TEST COMPLETE

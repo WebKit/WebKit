@@ -123,12 +123,6 @@ var G = class G extends A {
      getParentValue() {
          return super.getValue();
      }
-     getParentValueWithError() {
-         var f =  function () {
-             return () => super.getValue();
-         };
-         return f();
-     }
  };
 
  var g = new G();
@@ -148,20 +142,6 @@ for (var i = 0; i < 10000; i++) {
     setValue('new-value');
     testCase(getValue(), 'new-value', 'Error: Some problem with using arrow and "super" inside of the method that retun arrow function');
 }
-
-var g2 = new G();
-for (var i = 0; i < 10000; i++) {
-    let error = false;
-    try {
-       g2.getParentValueWithError()();
-    } catch(e) {
-      // FIXME: should by check if e instanceof SyntaxError
-      // https://bugs.webkit.org/show_bug.cgi?id=150893
-      error = true;
-    }
-    testCase(error, true, 'Error: using "super" should lead to error');
-}
-
 
 var H = class H extends A {
     constructor() {

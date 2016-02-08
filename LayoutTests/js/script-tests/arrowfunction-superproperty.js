@@ -63,12 +63,6 @@ class F extends A {
         let arrow = () => () => super.getValue();
         return arrow()();
     }
-    getParentValueWithError() {
-        var f =  function () {
-            return () => super.getValue();
-        };
-        return f();
-    }
  };
 
 shouldBe('(new B()).getValueParentFunction()', 'expectedValue');
@@ -89,7 +83,5 @@ f.prop = 'new-value';
 shouldBe('f.prop', 'expectedValue + "-" + "new-value"');
 
 shouldBe('(new F()).getParentValue()', 'expectedValue');
-
-shouldThrow('(new F()).getParentValueWithError()()');
 
 var successfullyParsed = true;

@@ -175,6 +175,8 @@ struct Scope {
         , m_isFunctionBoundary(false)
         , m_isValidStrictMode(true)
         , m_hasArguments(false)
+        , m_constructorKind(static_cast<unsigned>(ConstructorKind::None))
+        , m_expectedSuperBinding(static_cast<unsigned>(SuperBinding::NotNeeded))
         , m_loopDepth(0)
         , m_switchDepth(0)
     {
@@ -197,6 +199,8 @@ struct Scope {
         , m_isFunctionBoundary(rhs.m_isFunctionBoundary)
         , m_isValidStrictMode(rhs.m_isValidStrictMode)
         , m_hasArguments(rhs.m_hasArguments)
+        , m_constructorKind(rhs.m_constructorKind)
+        , m_expectedSuperBinding(rhs.m_expectedSuperBinding)
         , m_loopDepth(rhs.m_loopDepth)
         , m_switchDepth(rhs.m_switchDepth)
         , m_moduleScopeData(rhs.m_moduleScopeData)
@@ -458,6 +462,11 @@ struct Scope {
 
     bool needsSuperBinding() { return m_needsSuperBinding; }
     void setNeedsSuperBinding() { m_needsSuperBinding = true; }
+    
+    void setExpectedSuperBinding(SuperBinding superBinding) { m_expectedSuperBinding = static_cast<unsigned>(superBinding); }
+    SuperBinding expectedSuperBinding() const { return static_cast<SuperBinding>(m_expectedSuperBinding); }
+    void setConstructorKind(ConstructorKind constructorKind) { m_constructorKind = static_cast<unsigned>(constructorKind); }
+    ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
 
     void collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
     {
@@ -614,6 +623,8 @@ private:
     bool m_isFunctionBoundary : 1;
     bool m_isValidStrictMode : 1;
     bool m_hasArguments : 1;
+    unsigned m_constructorKind : 2;
+    unsigned m_expectedSuperBinding : 2;
     int m_loopDepth;
     int m_switchDepth;
 
@@ -866,6 +877,15 @@ private:
         return ScopeRef(&m_scopeStack, i);
     }
 
+    ScopeRef closestParentNonArrowFunctionNonLexicalScope()
+    {
+        unsigned i = m_scopeStack.size() - 1;
+        ASSERT(i < m_scopeStack.size() && m_scopeStack.size());
+        while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isArrowFunction()))
+            i--;
+        // When reaching the top level scope (it can be non function scope), we return it.
+        return ScopeRef(&m_scopeStack, i);
+    }
     
     ScopeRef pushScope()
     {

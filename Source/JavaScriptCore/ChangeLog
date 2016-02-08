@@ -1,3 +1,37 @@
+2016-02-08  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Using 'super' in arrow function that declared out of the class should lead to Syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=150893
+
+        Reviewed by Saam Barati.
+
+        'super' and 'super()' inside of the arrow function should lead to syntax error if they are used 
+        out of the class context or they wrapped by ordinary function. Now JSC returns ReferenceError but 
+        should return SyntaxError according to the following specs:
+        http://www.ecma-international.org/ecma-262/6.0/#sec-function-definitions-static-semantics-early-errors
+        and http://www.ecma-international.org/ecma-262/6.0/#sec-arrow-function-definitions-runtime-semantics-evaluation 
+        Curren patch implemented only one case when super/super() are used inside of the arrow function
+        Case when super/super() are used within the eval:
+           class A {} 
+           class B extends A { 
+               costructor() { eval("super()");} 
+           }
+        is not part of this patch and will be implemented in this issue https://bugs.webkit.org/show_bug.cgi?id=153864. 
+        The same for case when eval with super/super() is invoked in arrow function will be 
+        implemented in issue https://bugs.webkit.org/show_bug.cgi?id=153977. 
+ 
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::setExpectedSuperBinding):
+        (JSC::Scope::expectedSuperBinding):
+        (JSC::Scope::setConstructorKind):
+        (JSC::Scope::constructorKind):
+        (JSC::Parser::closestParentNonArrowFunctionNonLexicalScope):
+        * tests/stress/arrowfunction-lexical-bind-supercall-4.js:
+        * tests/stress/arrowfunction-lexical-bind-superproperty.js:
+
 2016-02-08  Filip Pizlo  <fpizlo@apple.com>
 
         Parser should detect error before calls to parseAssignmentExpression()
