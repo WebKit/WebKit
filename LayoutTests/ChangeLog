@@ -1,3 +1,12 @@
+2016-02-08  Adrien Plazas  <aplazas@igalia.com>
+
+        Timeouts in tests because of non implemented UIScriptController::singleTapAtPoint()
+        https://bugs.webkit.org/show_bug.cgi?id=153833
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations:
+
 2016-02-07  Zalan Bujtas  <zalan@apple.com>
 
         Outline does not clip when ancestor has overflow: hidden and requires layer.

@@ -641,6 +641,11 @@ media/airplay-target-availability.html
 webkit.org/b/153540 fast/mediastream [ Skip ]
 webkit.org/b/153540 http/tests/media/media-stream [ Skip ]
 
+# Skip tests requiring UIScriptController
+webkit.org/b/153833 css3/touch-action/touch-action-manipulation-fast-clicks.html [ Skip ]
+webkit.org/b/153833 fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html [ Skip ]
+webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
