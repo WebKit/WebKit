@@ -67,19 +67,18 @@ WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDa
 
     createCellContent(columnIdentifier, cell)
     {
-        const emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
         case "startTime":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value - this._baseStartTime, true);
+            return isNaN(value) ? emDash : Number.secondsToString(value - this._baseStartTime, true);
 
         case "scriptTime":
         case "layoutTime":
         case "paintTime":
         case "otherTime":
         case "totalTime":
-            return (isNaN(value) || value === 0) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
+            return (isNaN(value) || value === 0) ? emDash : Number.secondsToString(value, true);
         }
 
         return super.createCellContent(columnIdentifier, cell);

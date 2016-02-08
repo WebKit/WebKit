@@ -767,7 +767,6 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
         // If there were valuePreviews, convert to a flat list.
         if (rows.length) {
-            var emDash = "\u2014";
             columnNames.unshift(WebInspector.UIString("(Index)"));
             for (var i = 0; i < rows.length; ++i) {
                 var rowName = rows[i][0];

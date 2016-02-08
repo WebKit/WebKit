@@ -109,7 +109,6 @@ WebInspector.MemoryCategoryView = class MemoryCategoryView extends WebInspector.
 
     _updateDetails(minSize, maxSize)
     {
-        const emDash = "\u2014";
         this._detailsMaxElement.textContent = WebInspector.UIString("Highest: %s").format(Number.isFinite(maxSize) ? Number.bytesToString(maxSize) : emDash);
         this._detailsMinElement.textContent = WebInspector.UIString("Lowest: %s").format(Number.isFinite(minSize) ? Number.bytesToString(minSize) : emDash);
     }

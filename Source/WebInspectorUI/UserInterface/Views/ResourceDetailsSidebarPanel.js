@@ -287,7 +287,6 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         // If we don't have a value, we set an em-dash to keep the row from hiding.
         // This keeps the UI from shifting around as data comes in.
-        var emDash = "\u2014";
 
         this._requestMethodRow.value = resource.requestMethod || emDash;
 
@@ -304,7 +303,6 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
     {
         // If we don't have a value, we set an em-dash to keep the row from hiding.
         // This keeps the UI from shifting around as data comes in.
-        var emDash = "\u2014";
         return size > 0 ? Number.bytesToString(size) : emDash;
     }
 

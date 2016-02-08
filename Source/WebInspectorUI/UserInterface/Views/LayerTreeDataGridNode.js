@@ -64,7 +64,7 @@ WebInspector.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WebInsp
 
         this.data = {
             name: domNode ? WebInspector.displayNameForNode(domNode) : WebInspector.UIString("Unknown node"),
-            paintCount: layer.paintCount || "\u2014",
+            paintCount: layer.paintCount || emDash,
             memory: Number.bytesToString(layer.memory || 0)
         };
     }

@@ -244,7 +244,7 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
     {
         var truncatedDisplayName = this._displayName;
         if (this._truncatedDisplayNameLength && truncatedDisplayName.length > this._truncatedDisplayNameLength)
-            truncatedDisplayName = truncatedDisplayName.substring(0, this._truncatedDisplayNameLength) + "\u2026";
+            truncatedDisplayName = truncatedDisplayName.substring(0, this._truncatedDisplayNameLength) + ellipsis;
 
         this._element.title = this._displayName;
         this._titleContentElement.textContent = truncatedDisplayName;
@@ -258,7 +258,7 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
         {
             var optionElement = document.createElement("option");
             var maxPopupMenuLength = 130; // <rdar://problem/13445374> <select> with very long option has clipped text and popup menu is still very wide
-            optionElement.textContent = component.displayName.length <= maxPopupMenuLength ? component.displayName : component.displayName.substring(0, maxPopupMenuLength) + "\u2026";
+            optionElement.textContent = component.displayName.length <= maxPopupMenuLength ? component.displayName : component.displayName.substring(0, maxPopupMenuLength) + ellipsis;
             optionElement._pathComponent = component;
             return optionElement;
         }

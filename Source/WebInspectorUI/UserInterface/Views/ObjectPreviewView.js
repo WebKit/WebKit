@@ -180,7 +180,7 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
         if (overflow) {
             if (limit > 0)
                 element.append(", ");
-            element.append("\u2026");
+            element.append(ellipsis);
         }
 
         element.append(isIterator ? "]" : "}");
@@ -245,7 +245,7 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
         if (overflow) {
             if (limit > 0)
                 element.append(", ");
-            element.append("\u2026");
+            element.append(ellipsis);
         }
 
         element.append(isArray ? "]" : "}");

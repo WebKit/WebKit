@@ -72,7 +72,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
             this._setConsoleItemValue(category, dashboard[category]);
 
         var timeItem = this._items.time;
-        timeItem.text = dashboard.time ? Number.secondsToString(dashboard.time) : "\u2014";
+        timeItem.text = dashboard.time ? Number.secondsToString(dashboard.time) : emDash;
         this._setItemEnabled(timeItem, dashboard.time > 0);
 
         var countItem = this._items.resourcesCount;
@@ -80,7 +80,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
         this._setItemEnabled(countItem, dashboard.resourcesCount > 0);
 
         var sizeItem = this._items.resourcesSize;
-        sizeItem.text = dashboard.resourcesSize ? Number.bytesToString(dashboard.resourcesSize, false) : "\u2014";
+        sizeItem.text = dashboard.resourcesSize ? Number.bytesToString(dashboard.resourcesSize, false) : emDash;
         this._setItemEnabled(sizeItem, dashboard.resourcesSize > 0);
     }
 

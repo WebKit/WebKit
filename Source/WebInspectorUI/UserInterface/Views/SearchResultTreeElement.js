@@ -50,7 +50,7 @@ WebInspector.SearchResultTreeElement = class SearchResultTreeElement extends Web
         // at the end of the string.
         var modifiedTitle = null;
         if (searchTermIndex > WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch) {
-            modifiedTitle = "\u2026" + title.substring(searchTermIndex - WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch);
+            modifiedTitle = ellipsis + title.substring(searchTermIndex - WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch);
             searchTermIndex = WebInspector.SearchResultTreeElement.CharactersToShowBeforeSearchMatch + 1;
         } else
             modifiedTitle = title;

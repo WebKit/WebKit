@@ -1233,7 +1233,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WebInspector.DOMTreeElement.ForbiddenClosingTagElements[tagName]))) {
                     if (this.hasChildren) {
                         var textNodeElement = info.titleDOM.createChild("span", "html-text-node");
-                        textNodeElement.textContent = "\u2026";
+                        textNodeElement.textContent = ellipsis;
                         info.titleDOM.append("\u200B");
                     }
                     this._buildTagDOM(info.titleDOM, tagName, true, false);

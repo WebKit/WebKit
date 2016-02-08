@@ -78,7 +78,7 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
         {
             var optionElement = document.createElement("option");
             var maxPopupMenuLength = 130; // <rdar://problem/13445374> <select> with very long option has clipped text and popup menu is still very wide
-            optionElement.textContent = scopeBarItem.label.length <= maxPopupMenuLength ? scopeBarItem.label : scopeBarItem.label.substring(0, maxPopupMenuLength) + "\u2026";
+            optionElement.textContent = scopeBarItem.label.length <= maxPopupMenuLength ? scopeBarItem.label : scopeBarItem.label.substring(0, maxPopupMenuLength) + ellipsis;
             return optionElement;
         }
 

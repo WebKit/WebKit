@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var emDash = "\u2014";
+var ellipsis = "\u2026";
+
 Object.defineProperty(Object, "shallowCopy",
 {
     value: function(object)
@@ -477,7 +480,7 @@ Object.defineProperty(String.prototype, "trimMiddle",
             return this;
         var leftHalf = maxLength >> 1;
         var rightHalf = maxLength - leftHalf - 1;
-        return this.substr(0, leftHalf) + "\u2026" + this.substr(this.length - rightHalf, rightHalf);
+        return this.substr(0, leftHalf) + ellipsis + this.substr(this.length - rightHalf, rightHalf);
     }
 });
 
@@ -487,7 +490,7 @@ Object.defineProperty(String.prototype, "trimEnd",
     {
         if (this.length <= maxLength)
             return this;
-        return this.substr(0, maxLength - 1) + "\u2026";
+        return this.substr(0, maxLength - 1) + ellipsis;
     }
 });
 
@@ -505,7 +508,7 @@ Object.defineProperty(String.prototype, "truncate",
         if (indexOfLastWhitespace > Math.floor(maxLength / 2))
             clipped = clipped.slice(0, indexOfLastWhitespace - 1);
 
-        return clipped + "\u2026";
+        return clipped + ellipsis;
     }
 });
 

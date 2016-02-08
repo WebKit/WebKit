@@ -101,7 +101,7 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
 
         var value = this.data[columnIdentifier];
         if (!value)
-            return "\u2014";
+            return emDash;
 
         if (value instanceof WebInspector.SourceCodeLocation) {
             if (value.sourceCode instanceof WebInspector.Resource) {

@@ -79,7 +79,7 @@ WebInspector.TypeTreeView = class TypeTreeView extends WebInspector.Object
             this._outline.appendChild(new WebInspector.TypeTreeElement(type.name, type.structure, false));
 
         if (this._typeDescription.truncated) {
-            var truncatedMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement("\u2026");
+            var truncatedMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(ellipsis);
             this._outline.appendChild(new WebInspector.TreeElement(truncatedMessageElement, null, false));
         }
 

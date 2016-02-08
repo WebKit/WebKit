@@ -1,5 +1,68 @@
 2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Extract a few common unicode characters into global variables
+        https://bugs.webkit.org/show_bug.cgi?id=154008
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js:
+        Create global variables for `emDash` and `ellipsis` to use all over the tools.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsTable): Deleted.
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView.prototype._updateDisplay):
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        (WebInspector.HierarchicalPathComponent.prototype._updateElementTitleAndText):
+        (WebInspector.HierarchicalPathComponent.prototype._updateSelectElement.createOption):
+        (WebInspector.HierarchicalPathComponent.prototype._updateSelectElement):
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WebInspector.HierarchicalPathNavigationItem.prototype.updateLayout):
+        * UserInterface/Views/LayerTreeDataGridNode.js:
+        (WebInspector.LayerTreeDataGridNode.prototype.set layer):
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.LayoutTimelineDataGridNode):
+        * UserInterface/Views/MemoryCategoryView.js:
+        (WebInspector.MemoryCategoryView.prototype._updateDetails): Deleted.
+        (WebInspector.MemoryCategoryView): Deleted.
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype._clearUsageLegend):
+        (WebInspector.MemoryTimelineView.prototype._updateUsageLegend):
+        (WebInspector.MemoryTimelineView.prototype._clearMaxComparisonLegend):
+        (WebInspector.MemoryTimelineView.prototype._updateMaxComparisonLegend):
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WebInspector.MultipleScopeBarItem.set scopeBarItems.createOption):
+        (WebInspector.MultipleScopeBarItem.prototype.set scopeBarItems):
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendEntryPreviews):
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+        * UserInterface/Views/ProfileNodeDataGridNode.js:
+        (WebInspector.ProfileNodeDataGridNode.prototype.createCellContent):
+        (WebInspector.ProfileNodeDataGridNode):
+        * UserInterface/Views/RenderingFrameTimelineDataGridNode.js:
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.RenderingFrameTimelineDataGridNode):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRequestAndResponse): Deleted.
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._valueForSize): Deleted.
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.ScriptTimelineDataGridNode):
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WebInspector.SearchResultTreeElement.truncateAndHighlightTitle):
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/TypeTreeElement.js:
+        (WebInspector.TypeTreeElement.prototype.onpopulate):
+        * UserInterface/Views/TypeTreeView.js:
+        (WebInspector.TypeTreeView.prototype._populate):
+        (WebInspector.TypeTreeView):
+
+2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: ⇧⌘→ when editing text in the Elements tree shouldn't switch inspector tab
         https://bugs.webkit.org/show_bug.cgi?id=154006
         <rdar://problem/22892489>

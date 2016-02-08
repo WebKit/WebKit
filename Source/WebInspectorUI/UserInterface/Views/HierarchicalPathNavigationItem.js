@@ -170,7 +170,7 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
         var i = middle;
 
         // Create a component that will represent the hidden components with a ellipse as the display name.
-        this._collapsedComponent = new WebInspector.HierarchicalPathComponent("\u2026", []);
+        this._collapsedComponent = new WebInspector.HierarchicalPathComponent(ellipsis, []);
         this._collapsedComponent.collapsed = true;
 
         // Insert it in the middle, it doesn't matter exactly where since the elements around it will be hidden soon.

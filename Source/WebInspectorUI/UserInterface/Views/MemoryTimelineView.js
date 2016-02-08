@@ -243,7 +243,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
     _clearUsageLegend()
     {
         for (let sizeElement of this._usageLegendSizeElementMap.values())
-            sizeElement.textContent = "\u2014";
+            sizeElement.textContent = emDash;
 
         let totalElement = this._usageCircleChart.centerElement.firstChild;
         if (totalElement) {
@@ -256,7 +256,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
     {
         for (let {type, size} of record.categories) {
             let sizeElement = this._usageLegendSizeElementMap.get(type);
-            sizeElement.textContent = Number.isFinite(size) ? Number.bytesToString(size) : "\u2014";
+            sizeElement.textContent = Number.isFinite(size) ? Number.bytesToString(size) : emDash;
         }
 
         let centerElement = this._usageCircleChart.centerElement;
@@ -276,8 +276,8 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
     _clearMaxComparisonLegend()
     {
-        this._maxComparisonMaximumSizeElement.textContent = "\u2014";
-        this._maxComparisonCurrentSizeElement.textContent = "\u2014";
+        this._maxComparisonMaximumSizeElement.textContent = emDash;
+        this._maxComparisonCurrentSizeElement.textContent = emDash;
 
         let totalElement = this._maxComparisonCircleChart.centerElement.firstChild;
         if (totalElement)
@@ -286,8 +286,8 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
     _updateMaxComparisonLegend(currentSize)
     {
-        this._maxComparisonMaximumSizeElement.textContent = Number.isFinite(this._maxSize) ? Number.bytesToString(this._maxSize) : "\u2014";
-        this._maxComparisonCurrentSizeElement.textContent = Number.isFinite(currentSize) ? Number.bytesToString(currentSize) : "\u2014";
+        this._maxComparisonMaximumSizeElement.textContent = Number.isFinite(this._maxSize) ? Number.bytesToString(this._maxSize) : emDash;
+        this._maxComparisonCurrentSizeElement.textContent = Number.isFinite(currentSize) ? Number.bytesToString(currentSize) : emDash;
 
         let centerElement = this._maxComparisonCircleChart.centerElement;
         let totalElement = centerElement.firstChild;

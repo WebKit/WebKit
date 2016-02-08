@@ -64,7 +64,6 @@ WebInspector.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode exten
 
     createCellContent(columnIdentifier, cell)
     {
-        const emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
@@ -73,16 +72,16 @@ WebInspector.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode exten
 
         case "width":
         case "height":
-            return isNaN(value) ? emptyValuePlaceholderString : WebInspector.UIString("%fpx").format(value);
+            return isNaN(value) ? emDash : WebInspector.UIString("%fpx").format(value);
 
         case "area":
-            return isNaN(value) ? emptyValuePlaceholderString : WebInspector.UIString("%fpx²").format(value);
+            return isNaN(value) ? emDash : WebInspector.UIString("%fpx²").format(value);
 
         case "startTime":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value - this._baseStartTime, true);
+            return isNaN(value) ? emDash : Number.secondsToString(value - this._baseStartTime, true);
 
         case "totalTime":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
+            return isNaN(value) ? emDash : Number.secondsToString(value, true);
         }
 
         return super.createCellContent(columnIdentifier, cell);

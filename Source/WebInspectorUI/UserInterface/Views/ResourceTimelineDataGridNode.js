@@ -93,7 +93,6 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         if (resource.failed || resource.canceled || resource.statusCode >= 400)
             cell.classList.add("error");
 
-        const emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
@@ -102,22 +101,22 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
         case "statusCode":
             cell.title = resource.statusText || "";
-            return value || emptyValuePlaceholderString;
+            return value || emDash;
 
         case "cached":
             return value ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
 
         case "domain":
-            return value || emptyValuePlaceholderString;
+            return value || emDash;
 
         case "size":
         case "transferSize":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.bytesToString(value, true);
+            return isNaN(value) ? emDash : Number.bytesToString(value, true);
 
         case "requestSent":
         case "latency":
         case "duration":
-            return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
+            return isNaN(value) ? emDash : Number.secondsToString(value, true);
         }
 
         return super.createCellContent(columnIdentifier, cell);
