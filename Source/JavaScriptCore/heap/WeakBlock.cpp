@@ -109,6 +109,8 @@ void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
 
     SlotVisitor& visitor = heapRootVisitor.visitor();
 
+    visitor.reportMemoryVisited(WeakBlock::blockSize);
+
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
         if (weakImpl->state() != WeakImpl::Live)

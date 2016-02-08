@@ -1,3 +1,21 @@
+2016-02-08  Andreas Kling  <akling@apple.com>
+
+        Visiting a WeakBlock should report bytes visited, since we reported them allocated.
+        <https://webkit.org/b/153978>
+
+        Reviewed by Darin Adler.
+
+        When creating a WeakBlock, we tell Heap that we've allocated 1 KB (WeakBlock::blockSize)
+        of memory. Consequently, when visiting a WeakBlock, we should also report 1 KB of memory
+        visited. Otherwise Heap will think that those 1 KB already went away.
+
+        This was causing us to underestimate heap size, which affects collection scheduling.
+
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::reportMemoryVisited):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::visit):
+
 2016-02-07  Saam barati  <sbarati@apple.com>
 
         Follow up patch to: [ES6] bound functions .name property should be "bound " + the target function's name 
