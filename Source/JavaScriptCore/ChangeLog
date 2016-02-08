@@ -1,3 +1,17 @@
+2016-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Parser should detect error before calls to parseAssignmentExpression()
+        https://bugs.webkit.org/show_bug.cgi?id=153975
+        rdar://problem/24291231
+
+        Reviewed by Saam Barati.
+
+        Fixes a very hard-to-create situation that an internal test picked up.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+
 2016-02-08  Andreas Kling  <akling@apple.com>
 
         Visiting a WeakBlock should report bytes visited, since we reported them allocated.
