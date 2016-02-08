@@ -1,5 +1,29 @@
 2016-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebKitWebView should send crossing events to the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=153740
+
+        Reviewed by Michael Catanzaro.
+
+        We don't currently handle crossing events in the web view
+        (enter/leave). That's why if you hover a scrollbar and leave the
+        window, the scrollbar is still rendered as hovered.
+
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::buttonForEvent): Handle the case of GDK_ENTER_NOTIFY and
+        GDK_LEAVE_NOTIFY events.
+        (WebKit::WebEventFactory::createWebMouseEvent): Ditto.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): Add GDK_ENTER_NOTIFY_MASK and
+        GDK_LEAVE_NOTIFY_MASK flags to the web view event mask.
+        (webkitWebViewBaseCrossingNotifyEvent): Handle enter/leave notify
+        events by generating a mouse move event, ensuring the double to
+        int conversion will not cause any problem.
+        (webkit_web_view_base_class_init): Add an implementation for
+        enter_notify_event and leave_notify_event.
+
+2016-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Infinite loop when processing mouse events synchronously
         https://bugs.webkit.org/show_bug.cgi?id=153995
 

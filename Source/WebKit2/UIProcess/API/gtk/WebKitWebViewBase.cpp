@@ -359,6 +359,8 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
         | GDK_SCROLL_MASK
         | GDK_SMOOTH_SCROLL_MASK
         | GDK_POINTER_MOTION_MASK
+        | GDK_ENTER_NOTIFY_MASK
+        | GDK_LEAVE_NOTIFY_MASK
         | GDK_KEY_PRESS_MASK
         | GDK_KEY_RELEASE_MASK
         | GDK_BUTTON_MOTION_MASK
@@ -835,6 +837,47 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     return FALSE;
 }
 
+static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEventCrossing* crosssingEvent)
+{
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+    if (priv->authenticationDialog)
+        return FALSE;
+
+    // In the case of crossing events, it's very important the actual coordinates the WebProcess receives, because once the mouse leaves
+    // the web view, the WebProcess won't receive more events until the mouse enters again in the web view. So, if the coordinates of the leave
+    // event are not accurate, the WebProcess might not know the mouse left the view. This can happen because of double to integer conversion,
+    // if the coordinates of the leave event are for example (25.2, -0.9), the WebProcess will receive (25, 0) and any hit test will succeed
+    // because those coordinates are inside the web view.
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(widget, &allocation);
+    double width = allocation.width;
+    double height = allocation.height;
+    double x = crosssingEvent->x;
+    double y = crosssingEvent->y;
+    if (x < 0 && x > -1)
+        x = -1;
+    else if (x >= width && x < width + 1)
+        x = width + 1;
+    if (y < 0 && y > -1)
+        y = -1;
+    else if (y >= height && y < height + 1)
+        y = height + 1;
+
+    GdkEvent* event = reinterpret_cast<GdkEvent*>(crosssingEvent);
+    GUniquePtr<GdkEvent> copiedEvent;
+    if (x != crosssingEvent->x || y != crosssingEvent->y) {
+        copiedEvent.reset(gdk_event_copy(event));
+        copiedEvent->crossing.x = x;
+        copiedEvent->crossing.y = y;
+    }
+
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(copiedEvent ? copiedEvent.get() : event, 0 /* currentClickCount */));
+
+    return FALSE;
+}
+
 #if ENABLE(TOUCH_EVENTS)
 static void appendTouchEvent(Vector<WebPlatformTouchPoint>& touchPoints, const GdkEvent* event, WebPlatformTouchPoint::TouchPointState state)
 {
@@ -1079,6 +1122,8 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->button_release_event = webkitWebViewBaseButtonReleaseEvent;
     widgetClass->scroll_event = webkitWebViewBaseScrollEvent;
     widgetClass->motion_notify_event = webkitWebViewBaseMotionNotifyEvent;
+    widgetClass->enter_notify_event = webkitWebViewBaseCrossingNotifyEvent;
+    widgetClass->leave_notify_event = webkitWebViewBaseCrossingNotifyEvent;
 #if ENABLE(TOUCH_EVENTS)
     widgetClass->touch_event = webkitWebViewBaseTouchEvent;
 #endif
