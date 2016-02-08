@@ -1,5 +1,23 @@
 2016-02-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Introduce @isObject bytecode intrinsic and use it instead of JS implemented one
+        https://bugs.webkit.org/show_bug.cgi?id=153976
+
+        Reviewed by Darin Adler.
+
+        Use bytecode op_is_object directly.
+
+        * builtins/GlobalObject.js:
+        (isObject): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_toString):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isObject):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Deleted.
+
+2016-02-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         {Map,Set}.prototype.forEach should be visible as own properties
         https://bugs.webkit.org/show_bug.cgi?id=153974
 

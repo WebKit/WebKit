@@ -51,13 +51,6 @@ function toLength(target)
     return length > 0 ? (length < maxSafeInteger ? length : maxSafeInteger) : 0;
 }
 
-function isObject(object)
-{
-    "use strict";
-
-    return (object !== null && typeof object === "object") || typeof object === "function";
-}
-
 function isDictionary(object)
 {
     "use strict";
