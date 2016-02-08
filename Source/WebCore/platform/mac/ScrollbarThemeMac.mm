@@ -68,14 +68,14 @@ static ScrollbarPainterMap* scrollbarMap()
 }
 
 + (void)registerAsObserver;
-+ (void)appearancePrefsChanged:(NSNotification*)theNotification;
-+ (void)behaviorPrefsChanged:(NSNotification*)theNotification;
++ (void)appearancePrefsChanged:(NSNotification *)theNotification;
++ (void)behaviorPrefsChanged:(NSNotification *)theNotification;
 
 @end
 
 @implementation WebScrollbarPrefsObserver
 
-+ (void)appearancePrefsChanged:(NSNotification*)unusedNotification
++ (void)appearancePrefsChanged:(NSNotification *)unusedNotification
 {
     UNUSED_PARAM(unusedNotification);
 
@@ -93,7 +93,7 @@ static ScrollbarPainterMap* scrollbarMap()
     }
 }
 
-+ (void)behaviorPrefsChanged:(NSNotification*)unusedNotification
++ (void)behaviorPrefsChanged:(NSNotification *)unusedNotification
 {
     UNUSED_PARAM(unusedNotification);
 
@@ -135,13 +135,6 @@ static bool gJumpOnTrackClick = false;
 static bool gUsesOverlayScrollbars = false;
 
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
-
-static bool supportsExpandedScrollbars()
-{
-    // FIXME: This is temporary until all platforms that support ScrollbarPainter support this part of the API.
-    static bool globalSupportsExpandedScrollbars = [[NSScrollerImp class] instancesRespondToSelector:@selector(setExpanded:)];
-    return globalSupportsExpandedScrollbars;
-}
 
 static NSControlSize scrollbarControlSizeToNSControlSize(ScrollbarControlSize controlSize)
 {
@@ -226,8 +219,7 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     ScrollbarPainter scrollbarPainter = [NSScrollerImp scrollerImpWithStyle:recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(controlSize) horizontal:NO replacingScrollerImp:nil];
-    if (supportsExpandedScrollbars())
-        [scrollbarPainter setExpanded:YES];
+    [scrollbarPainter setExpanded:YES];
     return [scrollbarPainter trackBoxWidth];
     END_BLOCK_OBJC_EXCEPTIONS;
 }

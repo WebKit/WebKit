@@ -45,25 +45,6 @@
 
 using namespace WebCore;
 
-static bool supportsUIStateTransitionProgress()
-{
-    // FIXME: This is temporary until all platforms that support ScrollbarPainter support this part of the API.
-    static const bool globalSupportsUIStateTransitionProgress = [[NSScrollerImp class] instancesRespondToSelector:@selector(mouseEnteredScroller)];
-    return globalSupportsUIStateTransitionProgress;
-}
-
-static bool supportsExpansionTransitionProgress()
-{
-    static const bool globalSupportsExpansionTransitionProgress = [[NSScrollerImp class] instancesRespondToSelector:@selector(expansionTransitionProgress)];
-    return globalSupportsExpansionTransitionProgress;
-}
-
-static bool supportsContentAreaScrolledInDirection()
-{
-    static const bool globalSupportsContentAreaScrolledInDirection = [[NSScrollerImpPair class] instancesRespondToSelector:@selector(contentAreaScrolledInDirection:)];
-    return globalSupportsContentAreaScrolledInDirection;
-}
-
 static ScrollbarThemeMac* macScrollbarTheme()
 {
     ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
@@ -556,9 +537,6 @@ enum FeatureToAnimate {
     if (!_scrollbar)
         return;
 
-    if (!supportsUIStateTransitionProgress())
-        return;
-
     ASSERT(scrollerImp == scrollbarPainterForScrollbar(*_scrollbar));
 
     ScrollbarPainter scrollbarPainter = (ScrollbarPainter)scrollerImp;
@@ -588,9 +566,6 @@ enum FeatureToAnimate {
 - (void)scrollerImp:(NSScrollerImp *)scrollerImp animateExpansionTransitionWithDuration:(NSTimeInterval)duration
 {
     if (!_scrollbar)
-        return;
-
-    if (!supportsExpansionTransitionProgress())
         return;
 
     ASSERT(scrollerImp == scrollbarPainterForScrollbar(*_scrollbar));
@@ -840,8 +815,6 @@ void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
     if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
-    if (!supportsUIStateTransitionProgress())
-        return;
     if (ScrollbarPainter painter = scrollbarPainterForScrollbar(*scrollbar))
         [painter mouseEnteredScroller];
 }
@@ -855,8 +828,6 @@ void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
     if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
-    if (!supportsUIStateTransitionProgress())
-        return;
     if (ScrollbarPainter painter = scrollbarPainterForScrollbar(*scrollbar))
         [painter mouseExitedScroller];
 }
@@ -1403,10 +1374,7 @@ void ScrollAnimatorMac::sendContentAreaScrolledSoon(const FloatSize& delta)
 
 void ScrollAnimatorMac::sendContentAreaScrolled(const FloatSize& delta)
 {
-    if (supportsContentAreaScrolledInDirection())
-        [m_scrollbarPainterController contentAreaScrolledInDirection:NSMakePoint(delta.width(), delta.height())];
-    else
-        [m_scrollbarPainterController contentAreaScrolled];
+    [m_scrollbarPainterController contentAreaScrolledInDirection:NSMakePoint(delta.width(), delta.height())];
 }
 
 void ScrollAnimatorMac::sendContentAreaScrolledTimerFired()

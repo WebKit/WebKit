@@ -1,5 +1,32 @@
 2016-02-07  Sam Weinig  <sam@webkit.org>
 
+        Remove unnecessary respondsToSelector checks for methods that exist on all supported platforms
+        https://bugs.webkit.org/show_bug.cgi?id=153970
+
+        Reviewed by Dan Bernstein.
+
+        -[NSScrollerImp mouseEnteredScroller], -[NSScrollerImp expansionTransitionProgress],
+        -[NSScrollerImpPair contentAreaScrolledInDirection:], and -[NSScrollerImp setExpanded:]
+        are now available on all supported OS's. No need to check for them.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (macScrollbarTheme):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateExpansionTransitionWithDuration:]):
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar):
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolled):
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolledTimerFired):
+        (supportsUIStateTransitionProgress): Deleted.
+        (supportsExpansionTransitionProgress): Deleted.
+        (supportsContentAreaScrolledInDirection): Deleted.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[WebScrollbarPrefsObserver appearancePrefsChanged:]):
+        (+[WebScrollbarPrefsObserver behaviorPrefsChanged:]):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+
+2016-02-07  Sam Weinig  <sam@webkit.org>
+
         Use modern SPI header idiom for NSScrollerImp and NSScrollerImpPair
         https://bugs.webkit.org/show_bug.cgi?id=153969
 
