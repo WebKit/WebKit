@@ -1882,10 +1882,8 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
         if (!m_mousePressed && scrollbar)
             scrollbar->mouseMoved(platformMouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
 #endif
-        if (onlyUpdateScrollbars) {
-            updateMouseEventTargetNode(mouseEvent.targetNode(), platformMouseEvent, true);
+        if (onlyUpdateScrollbars)
             return true;
-        }
     }
 
     bool swallowEvent = false;
