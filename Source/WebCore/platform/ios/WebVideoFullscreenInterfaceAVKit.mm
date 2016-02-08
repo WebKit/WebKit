@@ -363,6 +363,21 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     self.delegate->fastSeek(time);
 }
 
+- (NSTimeInterval)currentTimeWithinEndTimes
+{
+    return self.timing.currentValue;
+}
+
+- (void)setCurrentTimeWithinEndTimes:(NSTimeInterval)currentTimeWithinEndTimes
+{
+    [self seekToTime:currentTimeWithinEndTimes];
+}
+
++ (NSSet *)keyPathsForValuesAffectingCurrentTimeWithinEndTimes
+{
+    return [NSSet setWithObject:@"timing"];
+}
+
 - (BOOL)hasLiveStreamingContent
 {
     if ([self status] == AVPlayerControllerStatusReadyToPlay)

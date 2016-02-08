@@ -1,3 +1,19 @@
+2016-02-08  Jeremy Jones  <jeremyj@apple.com>
+
+        WebAVPlayerController should implement currentTimeWithinEndTimes.
+        https://bugs.webkit.org/show_bug.cgi?id=153983
+        rdar://problem/22864621
+
+        Reviewed by Eric Carlson.
+
+        Implement currentTimeWithinEndTimes in terms of seekToTime and AVTiming. This is a trivial
+        implementation becuase AVPlayer start and end times aren't used.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController currentTimeWithinEndTimes]):
+        (-[WebAVPlayerController setCurrentTimeWithinEndTimes:]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingCurrentTimeWithinEndTimes]):
+
 2016-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView should send crossing events to the WebProcess
