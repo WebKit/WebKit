@@ -1,3 +1,12 @@
+2016-02-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark fast/text/crash-complex-text-surrogate.html as flaky on mac-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=154005
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-02-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r181345): SVG polyline and polygon leak page

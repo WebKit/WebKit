@@ -575,3 +575,5 @@ imported/blink/fast/transforms/transform-update-frame-overflow.html [ Pass Image
 imported/blink/fast/multicol/vertical-rl/float-big-line.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/multicol/span/adjacent-spanners-with-margin.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/overflow/hidden-html-auto-body.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/154005 [ ElCapitan+ ] fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
