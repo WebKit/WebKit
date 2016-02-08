@@ -1,3 +1,26 @@
+2016-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeCache should give up on evals if there are variables under TDZ
+        https://bugs.webkit.org/show_bug.cgi?id=154002
+        rdar://problem/24300998
+
+        Reviewed by Mark Lam.
+
+        Disable the code cache optimization because our approach to TDZ for scoped variables - using
+        a separate check_tdz opcode when logically it's the get_from_scope's job to do it - makes
+        caching code impossible if there are any variables in TDZ.
+
+        We should do the right thing in the future, and fold the TDZ check into the get_from_scope.
+        This is better not only because it will restore caching, but because our bytecode for heap
+        accesses is usually at the highest practically doable level of abstraction, so that ICs,
+        compilers and caches can see the intended meaning of the bytecode more easily.
+
+        This doesn't appear to slow anything down, but that's just because we don't have enough ES6
+        benchmarks. I've filed: https://bugs.webkit.org/show_bug.cgi?id=154010
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+
 2016-02-08  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Using 'super' in arrow function that declared out of the class should lead to Syntax error
