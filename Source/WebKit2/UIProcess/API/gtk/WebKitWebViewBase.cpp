@@ -42,6 +42,7 @@
 #include "WebEventFactory.h"
 #include "WebFullScreenClientGtk.h"
 #include "WebInspectorProxy.h"
+#include "WebKit2Initialize.h"
 #include "WebKitAuthenticationDialog.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBaseAccessible.h"
@@ -1102,6 +1103,11 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     containerClass->add = webkitWebViewBaseContainerAdd;
     containerClass->remove = webkitWebViewBaseContainerRemove;
     containerClass->forall = webkitWebViewBaseContainerForall;
+
+    // Before creating a WebKitWebViewBasePriv we need to be sure that WebKit is started.
+    // Usually starting a context triggers InitializeWebKit2, but in case
+    // we create a view without asking before for a default_context we get a crash.
+    WebKit::InitializeWebKit2();
 }
 
 WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration& configuration)
