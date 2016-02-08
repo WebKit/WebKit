@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.cyclicObject = {};
+window.cyclicObject["cycle"] = window.cyclicObject;
+
+function pasteAndReturnString() {
+    let textarea = document.getElementById("textarea");
+    textarea.value = "";
+    textarea.focus();
+    document.execCommand("Paste");
+    return textarea.value;
+}
+
+function test()
+{
+    function stringify(value) {
+        return JSON.stringify(value, null, "  ");
+    }
+
+    function commandLineAPICopyAndPaste(expression, callback) {
+        const objectGroup = "test";
+        const includeCommandLineAPI = true;
+        const ignorePauseOnExceptionsAndMute = false;
+        const shouldReturnByValue = false;
+        const shouldGeneratePreview = false;
+        const shouldSaveResult = false;
+        InspectorTest.assert(typeof expression === "string", "Test requires string expression to evaluate on the page.");
+        WebInspector.runtimeManager.evaluateInInspectedWindow(`copy(${expression})`, objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, () => {
+            InspectorTest.evaluateInPage("pasteAndReturnString()", (error, remoteObjectPayload) => {
+                let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+                InspectorTest.assert(remoteObject.type === "string", "RemoteObject from pasteAndReturnString should return a string.");
+                callback(remoteObject.value);
+            });
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Console.CommandLineAPI.Copy");
+
+    let expressions = [
+        // Primitives
+        { name: "Primitive.Boolean",       expression: "true", expected: "true" },
+        { name: "Primitive.Number",        expression: "1", expected: "1" },
+        { name: "Primitive.Number",        expression: "123", expected: "123" },
+        { name: "Primitive.Number",        expression: "123.456", expected: "123.456" },
+        { name: "Primitive.Number",        expression: "-1e3", expected: "-1000" },
+        { name: "Primitive.String",        expression: "'string'", expected: "string" },
+        { name: "Primitive.UnicodeString", expression: "'Unicode…'", expected: "Unicode…" },
+        { name: "Primitive.Undefined",     expression: "undefined", expected: "undefined" },
+        { name: "Primitive.OtherNumbers",  expression: "Math.PI", expected: "3.141592653589793" },
+        { name: "Primitive.OtherNumbers",  expression: "NaN", expected: "NaN" },
+        { name: "Primitive.OtherNumbers",  expression: "-Infinity", expected: "-Infinity" },
+
+        // Other Types
+        { name: "Null",                    expression: "null", expected: "null" },
+        { name: "Regex",                   expression: "/regex/i", expected: "/regex/i" },
+        { name: "Symbol",                  expression: "Symbol('test')", expected: "Symbol(test)" },
+        { name: "Function",                expression: "function    foo( a, b ) {return 1}", expected: "function foo( a, b ) {return 1}" },
+        { name: "Array",                   expression: "[1,2,3]", expected: stringify([1,2,3]) },
+        { name: "Object",                  expression: "{x:1, y:2}", expected: stringify({x:1, y:2}) },
+        { name: "Object.Cyclic",           expression: "window.cyclicObject", expected: "[object Object]" },
+        { name: "Node",                    expression: "document.getElementById('target')", expected: '<div id="target" style="display:none"><p>Test</p></div>' },
+    ];
+
+    for (let {name, expression, expected} of expressions) {
+        suite.addTestCase({
+            name: `Console.CommandLineAPI.Copy.${name}`,
+            description: "Should be able to copy values.",
+            test: (resolve, reject) => {
+                InspectorTest.log(`TEST: copy(${expression})`);
+                commandLineAPICopyAndPaste(expression, (result) => {
+                    if (result !== expected) {
+                        InspectorTest.log("CLIPBOARD: " + result);
+                        InspectorTest.log("EXPECTED: " + expected);
+                    }
+                    InspectorTest.expectThat(result === expected, "Pasted value should be as expected.");
+                    resolve();
+                });
+            }
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest();">
+<p>Tests for the `copy` function in the Command Line API.</p>
+<textarea id="textarea"></textarea>
+<div id="target" style="display:none"><p>Test</p></div>
+</body>
+</html>

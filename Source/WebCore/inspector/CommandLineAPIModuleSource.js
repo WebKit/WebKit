@@ -291,9 +291,27 @@ CommandLineAPIImpl.prototype = {
 
     copy: function(object)
     {
-        if (injectedScript._subtype(object) === "node")
-            object = object.outerHTML;
-        CommandLineAPIHost.copyText(object);
+        var string;
+        var subtype = injectedScript._subtype(object);
+        if (subtype === "node")
+            string = object.outerHTML;
+        else if (subtype === "regexp")
+            string = "" + object;
+        else if (injectedScript.isPrimitiveValue(object))
+            string = "" + object;
+        else if (typeof object === "symbol")
+            string = String(object);
+        else if (typeof object === "function")
+            string = "" + object;
+        else {
+            try {
+                string = JSON.stringify(object, null, "  ");
+            } catch (e) {
+                string = "" + object;
+            }
+        }
+
+        CommandLineAPIHost.copyText(string);
     },
 
     clear: function()

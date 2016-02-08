@@ -1,3 +1,18 @@
+2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: copy({x:1}) should copy "{x:1}", not "[object Object]"
+        https://bugs.webkit.org/show_bug.cgi?id=148605
+
+        Reviewed by Brian Burg.
+
+        Test: inspector/console/command-line-api-copy.html
+
+        * inspector/CommandLineAPIModuleSource.js:
+        (CommandLineAPIImpl.prototype.copy):
+        Support copying different types. This is meant to be more
+        convenient then just JSON.stringify, so it handles types
+        like Node, Symbol, RegExp, and Function a bit better.
+
 2016-02-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r181345): SVG polyline and polygon leak page
