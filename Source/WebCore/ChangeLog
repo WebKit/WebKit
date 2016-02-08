@@ -1,3 +1,65 @@
+2016-02-07  Sam Weinig  <sam@webkit.org>
+
+        Use modern SPI header idiom for NSScrollerImp and NSScrollerImpPair
+        https://bugs.webkit.org/show_bug.cgi?id=153969
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new file NSScrollerImpSPI.h
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        Use new include of NSScrollerImpSPI.h.
+
+        * platform/ScrollbarThemeComposite.h:
+        Define ScrollbarPainter more precisely as NSScrollerImp * now that the type is available to us.
+
+        * platform/mac/NSScrollerImpDetails.h:
+        Remove NSObject category based SPI usage with the modern one NSScrollerImpSPI.h
+
+        * platform/mac/NSScrollerImpDetails.mm:
+        (WebCore::recommendedScrollerStyle):
+        Simplify recommendedScrollerStyle() now that all OS's we ship on have +[NSScroller preferredScrollerStyle].
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (supportsUIStateTransitionProgress):
+        (supportsExpansionTransitionProgress):
+        (supportsContentAreaScrolledInDirection):
+        Stop using NSClassFromString now that we can reference the classes explicitly.
+
+        (-[WebScrollbarPainterControllerDelegate invalidate]):
+        (-[WebScrollbarPainterControllerDelegate contentAreaRectForScrollerImpPair:]):
+        (-[WebScrollbarPainterControllerDelegate inLiveResizeForScrollerImpPair:]):
+        (-[WebScrollbarPainterControllerDelegate mouseLocationInContentAreaForScrollerImpPair:]):
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:setContentAreaNeedsDisplayInRect:]):
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (-[WebScrollbarPainterDelegate layer]):
+        (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]):
+        (-[WebScrollbarPainterDelegate convertRectToLayer:]):
+        (-[WebScrollbarPainterDelegate shouldUseLayerPerPartForScrollerImp:]):
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:animateAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateExpansionTransitionWithDuration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:overlayScrollerStateChangedTo:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::lockOverlayScrollbarStateToHidden):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        Add proper conforming to protocols and replace ids with proper types.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::supportsExpandedScrollbars):
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::setUpContentShadowLayer):
+        Stop using NSClassFromString now that we can reference the classes explicitly.
+
+        * platform/spi/mac/NSScrollerImpSPI.h: Added.
+
 2016-02-07  Zalan Bujtas  <zalan@apple.com>
 
         Outline does not clip when ancestor has overflow: hidden and requires layer.

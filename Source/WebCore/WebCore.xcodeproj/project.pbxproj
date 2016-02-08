@@ -4168,13 +4168,13 @@
 		A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A456FA2511AD4A830020B420 /* LabelsNodeList.h */; };
 		A501920E132EBF2E008BFE55 /* Autocapitalize.h in Headers */ = {isa = PBXBuildFile; fileRef = A501920C132EBF2E008BFE55 /* Autocapitalize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A502C5DF13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A502C5DD13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h */; };
+		A5071E801C506B66009951BE /* InspectorMemoryAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5071E7E1C5067A0009951BE /* InspectorMemoryAgent.cpp */; };
+		A5071E811C506B69009951BE /* InspectorMemoryAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E7F1C5067A0009951BE /* InspectorMemoryAgent.h */; };
 		A5071E851C56D0DC009951BE /* ResourceUsageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E821C56D079009951BE /* ResourceUsageData.h */; };
 		A5071E861C56D0DF009951BE /* ResourceUsageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5071E831C56D079009951BE /* ResourceUsageThread.cpp */; };
 		A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E841C56D079009951BE /* ResourceUsageThread.h */; };
 		A5071E891C56D4FE009951BE /* ResourceUsageThreadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */; };
 		A5071E8B1C56FB31009951BE /* ResourceUsageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */; };
-		A5071E801C506B66009951BE /* InspectorMemoryAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5071E7E1C5067A0009951BE /* InspectorMemoryAgent.cpp */; };
-		A5071E811C506B69009951BE /* InspectorMemoryAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E7F1C5067A0009951BE /* InspectorMemoryAgent.h */; };
 		A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */; };
 		A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */; };
 		A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */; };
@@ -10287,6 +10287,7 @@
 		7AF9B20918CFB5F200C64BEF /* JSVTTRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTRegion.h; sourceTree = "<group>"; };
 		7AF9B20A18CFB5F300C64BEF /* JSVTTRegionList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVTTRegionList.cpp; sourceTree = "<group>"; };
 		7AF9B20B18CFB5F300C64BEF /* JSVTTRegionList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTRegionList.h; sourceTree = "<group>"; };
+		7C0406121C66EE9C00AF0711 /* NSScrollerImpSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScrollerImpSPI.h; sourceTree = "<group>"; };
 		7C1E97251A9F9834007BF0FB /* AutoFillButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutoFillButtonElement.cpp; sourceTree = "<group>"; };
 		7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoFillButtonElement.h; sourceTree = "<group>"; };
 		7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGlobalObjectTask.cpp; sourceTree = "<group>"; };
@@ -11805,13 +11806,13 @@
 		A456FA2511AD4A830020B420 /* LabelsNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelsNodeList.h; sourceTree = "<group>"; };
 		A501920C132EBF2E008BFE55 /* Autocapitalize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Autocapitalize.h; sourceTree = "<group>"; };
 		A502C5DD13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSafeGCActivityCallbackIOS.h; sourceTree = "<group>"; };
+		A5071E7E1C5067A0009951BE /* InspectorMemoryAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorMemoryAgent.cpp; sourceTree = "<group>"; };
+		A5071E7F1C5067A0009951BE /* InspectorMemoryAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorMemoryAgent.h; sourceTree = "<group>"; };
 		A5071E821C56D079009951BE /* ResourceUsageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsageData.h; sourceTree = "<group>"; };
 		A5071E831C56D079009951BE /* ResourceUsageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageThread.cpp; sourceTree = "<group>"; };
 		A5071E841C56D079009951BE /* ResourceUsageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsageThread.h; sourceTree = "<group>"; };
 		A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceUsageThreadCocoa.mm; sourceTree = "<group>"; };
 		A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageData.cpp; sourceTree = "<group>"; };
-		A5071E7E1C5067A0009951BE /* InspectorMemoryAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorMemoryAgent.cpp; sourceTree = "<group>"; };
-		A5071E7F1C5067A0009951BE /* InspectorMemoryAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorMemoryAgent.h; sourceTree = "<group>"; };
 		A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedDateCache.h; sourceTree = "<group>"; };
 		A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDateCache.mm; sourceTree = "<group>"; };
 		A518225417E2A0D400A9BA1D /* InspectorOverlayPage.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = InspectorOverlayPage.css; sourceTree = "<group>"; };
@@ -18872,6 +18873,7 @@
 				9321D58F1A3906FA008052BE /* NSImmediateActionGestureRecognizerSPI.h */,
 				937F4CCD1A2D4B0100BB39F5 /* NSMenuSPI.h */,
 				93F1E1EB1A40FDDC00348D13 /* NSPopoverSPI.h */,
+				7C0406121C66EE9C00AF0711 /* NSScrollerImpSPI.h */,
 				F40EA8AA1B867D6500CE5581 /* NSScrollingInputFilterSPI.h */,
 				2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */,
 				2DCB837819F99BBA00A7FBE4 /* NSSharingServiceSPI.h */,

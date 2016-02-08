@@ -29,7 +29,8 @@
 #include "ScrollbarTheme.h"
 
 #if PLATFORM(COCOA)
-typedef id ScrollbarPainter;
+OBJC_CLASS NSScrollerImp;
+typedef NSScrollerImp *ScrollbarPainter;
 #else
 typedef void* ScrollbarPainter;
 #endif

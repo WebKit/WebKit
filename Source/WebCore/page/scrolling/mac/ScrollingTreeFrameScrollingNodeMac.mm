@@ -31,7 +31,7 @@
 #import "FrameView.h"
 #import "LayoutSize.h"
 #import "Logging.h"
-#import "NSScrollerImpDetails.h"
+#import "NSScrollerImpSPI.h"
 #import "PlatformWheelEvent.h"
 #import "ScrollableArea.h"
 #import "ScrollingCoordinator.h"

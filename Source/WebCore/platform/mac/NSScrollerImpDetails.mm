@@ -27,16 +27,16 @@
 
 #include "config.h"
 #include "NSScrollerImpDetails.h"
+
 #include "Settings.h"
 
 namespace WebCore {
 
-NSScrollerStyle recommendedScrollerStyle() {
+NSScrollerStyle recommendedScrollerStyle()
+{
     if (Settings::usesOverlayScrollbars())
         return NSScrollerStyleOverlay;
-    if ([NSScroller respondsToSelector:@selector(preferredScrollerStyle)])
-        return [NSScroller preferredScrollerStyle];
-    return NSScrollerStyleLegacy;
+    return [NSScroller preferredScrollerStyle];
 }
 
 }
