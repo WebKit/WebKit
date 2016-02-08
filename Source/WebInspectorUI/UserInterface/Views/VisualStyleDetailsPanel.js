@@ -205,12 +205,16 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         group.section.element.classList.toggle("has-set-property", groupHasSetProperty);
         this._sectionModified(group);
 
-        let autocompleteCompatibleProperties = group.autocompleteCompatibleProperties;
-        if (!autocompleteCompatibleProperties || !autocompleteCompatibleProperties.length)
-            return;
+        if (group.autocompleteCompatibleProperties) {
+            for (let editor of group.autocompleteCompatibleProperties)
+                this._updateAutocompleteCompatiblePropertyEditor(editor, forceStyleUpdate);
+        }
 
-        for (let editor of autocompleteCompatibleProperties)
-            this._updateAutocompleteCompatiblePropertyEditor(editor, forceStyleUpdate);
+        if (group.specifiedWidthProperties) {
+            let width = this.element.realOffsetWidth;
+            for (let editor of group.specifiedWidthProperties)
+                editor.specifiedWidth = width;
+        }
     }
 
     _updateAutocompleteCompatiblePropertyEditor(editor, force)
@@ -713,6 +717,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         fontStyleRow.element.appendChild(properties.fontFeatureSettings.element);
 
         group.autocompleteCompatibleProperties = [properties.fontFamily];
+        group.specifiedWidthProperties = [properties.fontFamily];
 
         let fontGroup = new WebInspector.DetailsSectionGroup([fontFamilyRow, fontSizeRow, fontStyleRow]);
         this._populateSection(group, [fontGroup]);
@@ -902,6 +907,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         properties.background.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, commaSeparatedEditorTreeItemSelected, this);
 
         group.autocompleteCompatibleProperties = [properties.backgroundColor];
+        group.specifiedWidthProperties = [properties.background];
 
         let backgroundStyleGroup = new WebInspector.DetailsSectionGroup([backgroundStyleRow, backgroundClipRow, backgroundSizeRow, backgroundRow, backgroundImageRow, backgroundPositionRow, backgroundRepeatRow]);
         this._populateSection(group, [backgroundStyleGroup]);
@@ -1194,6 +1200,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         properties.boxShadow.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, commaSeparatedEditorTreeItemSelected, this);
 
         group.autocompleteCompatibleProperties = [boxShadowColor];
+        group.specifiedWidthProperties = [properties.boxShadow];
 
         let boxShadow = new WebInspector.DetailsSectionGroup([boxShadowRow, boxShadowHRow, boxShadowVRow, boxShadowBlurRow, boxShadowColorRow]);
         this._populateSection(group, [boxShadow]);
@@ -1273,6 +1280,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         properties.transition.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, commaSeparatedEditorTreeItemSelected, this);
 
         group.autocompleteCompatibleProperties = [transitionProperty];
+        group.specifiedWidthProperties = [properties.transition];
 
         let transitionGroup = new WebInspector.DetailsSectionGroup([transitionRow, transitionPropertyRow, transitionDurationRow]);
         this._populateSection(group, [transitionGroup]);

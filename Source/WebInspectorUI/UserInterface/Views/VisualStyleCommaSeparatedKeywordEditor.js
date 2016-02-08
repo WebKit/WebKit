@@ -125,6 +125,20 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         return this.value || null;
     }
 
+    set specifiedWidth(value)
+    {
+        if (this._titleElement) {
+            // 55px width and 4px margin on left and right for title element,
+            // plus the 11px margin right on the content element
+            value -= 74;
+        } else {
+            // 11px margin on left and right of the content element
+            value -= 22;
+        }
+
+        this.contentElement.style.width = Math.max(value, 0) + "px";
+    }
+
     // Private
 
     _generateTextFromLonghandProperties()

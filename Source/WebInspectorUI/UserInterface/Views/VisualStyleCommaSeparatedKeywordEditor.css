@@ -30,26 +30,17 @@
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container {
     border: 1px solid hsl(0, 0%, 83%);
     overflow: auto;
-    font-size: 11px;
 }
 
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list {
     min-height: 51px;
     max-height: 94px;
-    margin: 0;
-    padding: 0;
     background-color: hsl(0, 0%, 95%);
-    overflow: auto;
-    outline: none;
-    list-style-type: none;
 }
 
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item {
     position: relative;
-    width: 100%;
     height: 17px;
-    line-height: 17px;
-    overflow: hidden;
 }
 
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item:nth-child(odd) {
@@ -75,13 +66,13 @@
     right: 0;
     bottom: 0;
     left: 5px;
-    margin: 0;
     padding: 0;
     line-height: 17px;
+    font-family: inherit;
+    font-size: inherit;
+    color: white;
     border: none;
     background-color: transparent;
-    font-family: inherit;
-    color: white;
     z-index: 1;
 }
 
@@ -89,9 +80,18 @@
     display: none;
 }
 
+.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles {
+    top: 1px;
+    line-height: 15px;
+}
+
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle {
     font-size: 9px;
     color: hsl(0, 0%, 83%);
+}
+
+.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle {
+    content: none;
 }
 
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item:not(.no-value) > .titles > .subtitle {

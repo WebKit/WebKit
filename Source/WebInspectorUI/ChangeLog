@@ -1,3 +1,47 @@
+2016-02-08  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Long values for comma separated CSS properties overflow the Visual sidebar area
+        https://bugs.webkit.org/show_bug.cgi?id=153890
+        <rdar://problem/24510216>
+
+        Reviewed by Timothy Hatcher.
+
+        For especially long values in comma-separated CSS properties (such as
+        background-image), the text will not be clipped as expected due to the
+        way in which the width is calculated for the element (the value, inside
+        the title element, is the only child with a specified width other than
+        100%). This overflowing causes the width of the section containing that
+        property to expand, pushing content outside of the inspector window. To
+        remedy this, a specified width is set on the relevant properties based
+        on the width of the sidebar to ensure proper text clipping.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.visual-style-font-family-list-item > .visual-style-comma-separated-keyword-item-editor):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container): Deleted.
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list): Deleted.
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item): Deleted.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.set specifiedWidth):
+        Calculates the necessary subtractions from the given width value based on
+        the margins and size of sibling elements.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateProperties):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateFontSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBackgroundStyleSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection):
+        Added another list to each group which, if set, will pass the current
+        sidebar width to all contained property editors.
+
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor.prototype.update):
+        Somewhat unrelated (r196146), but added another check to ensure that the
+        CSS property exists before checking to see if it has an invalid value.
+
 2016-02-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: WebInspector.Setting should have a "reset" method
