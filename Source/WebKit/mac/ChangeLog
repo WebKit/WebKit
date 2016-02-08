@@ -1,3 +1,22 @@
+2016-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Crash when trying to chain to the old -[NSView setNeedsDisplayInRect:]
+        https://bugs.webkit.org/show_bug.cgi?id=154001
+        rdar://problem/24519975
+
+        Reviewed by Dan Bernstein.
+
+        If our replaced -[NSView setNeedsDisplayInRect:] is called before the old IMP has been initialized,
+        we can end up trying to call a null pointer. 
+        
+        Fix this by using method_exchangeImplementations instead of method_setImplementation, since the former is done
+        atomically.
+
+        * WebView/WebHTMLView.mm:
+        (-[NSView _web_setNeedsDisplayInRect:]):
+        (+[WebHTMLViewPrivate initialize]):
+        (setNeedsDisplayInRect): Deleted.
+
 2016-02-07  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Replace __has_include guards around inclusion of Apple-internal-SDK headers with USE(APPLE_INTERNAL_SDK)
