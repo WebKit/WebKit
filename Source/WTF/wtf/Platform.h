@@ -800,7 +800,7 @@
  * JSC to measure where time is spent inside a JavaScript program.
  * In configurations other than Windows and Darwin, because layout of mcontext_t depends on standard libraries (like glibc),
  * sampling profiler is enabled if WebKit uses pthreads and glibc. */
-#if (OS(DARWIN) || OS(WINDOWS) || (USE(PTHREADS) && defined(__GLIBC__))) && ENABLE(JIT)
+#if (OS(DARWIN) || OS(WINDOWS) || PLATFORM(GTK) || PLATFORM(EFL)) && ENABLE(JIT)
 #define ENABLE_SAMPLING_PROFILER 1
 #else
 #define ENABLE_SAMPLING_PROFILER 0

@@ -1,3 +1,17 @@
+2016-02-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][EFL] Enable SamplingProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=153638
+
+        Reviewed by Michael Catanzaro.
+
+        Enable SamplingProfiler in GTK and EFL.
+        And added option to CMake to switch this from the build command.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2016-02-07  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Move LLVM detection for LLVMDisassembler to OptionsCommon.cmake
