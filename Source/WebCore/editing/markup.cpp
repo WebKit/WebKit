@@ -538,7 +538,7 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
         specialCommonAncestor = ancestorToRetainStructureAndAppearance(commonAncestor);
 
         if (Node* parentListNode = enclosingNodeOfType(firstPositionInOrBeforeNode(range->firstNode()), isListItem)) {
-            if (WebCore::areRangesEqual(VisibleSelection::selectionFromContentsOfNode(parentListNode).toNormalizedRange().get(), range)) {
+            if (!editingIgnoresContent(parentListNode) && WebCore::areRangesEqual(VisibleSelection::selectionFromContentsOfNode(parentListNode).toNormalizedRange().get(), range)) {
                 specialCommonAncestor = parentListNode->parentNode();
                 while (specialCommonAncestor && !isListElement(specialCommonAncestor))
                     specialCommonAncestor = specialCommonAncestor->parentNode();

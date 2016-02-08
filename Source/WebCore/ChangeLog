@@ -1,3 +1,13 @@
+2016-02-08  Adrien Plazas  <aplazas@igalia.com>
+
+        Indent inline box test fails due to assertion in VisibleSelection::selectionFromContentsOfNode()
+        https://bugs.webkit.org/show_bug.cgi?id=153824
+
+        Reviewed by Michael Catanzaro.
+
+        * editing/markup.cpp:
+        (WebCore::highestAncestorToWrapMarkup):
+
 2016-02-07  Sam Weinig  <sam@webkit.org>
 
         Remove unused enum ScrollbarOverlayState.
