@@ -12,7 +12,7 @@ layer at (39,65) size 100x100
   RenderBlock {DIV} at (11,11) size 100x100 [bgcolor=#008000]
 layer at (39,65) size 100x100 clip at (39,65) size 85x85 scrollHeight 500
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x100
-layer at (39,65) size 85x500 backgroundClip at (39,65) size 85x85 clip at (39,65) size 85x85 outlineClip at (39,65) size 85x85
+layer at (39,65) size 85x500 backgroundClip at (39,65) size 85x85 clip at (39,65) size 85x85
   RenderBlock {DIV} at (0,0) size 85x500
     RenderText {#text} at (0,0) size 83x414
       text run at (0,0) width 43: "Lorem"

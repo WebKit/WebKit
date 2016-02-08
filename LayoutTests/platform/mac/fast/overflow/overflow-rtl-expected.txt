@@ -69,23 +69,23 @@ layer at (15,338) size 115x43 clip at (25,338) size 100x43
   RenderBlock (relative positioned) {DIV} at (5,146) size 115x44 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
 layer at (71,358) size 8x4
   RenderBlock (positioned) {DIV} at (56,20) size 8x4 [bgcolor=#0000FF]
-layer at (-25,338) size 70x20 backgroundClip at (25,338) size 100x43 clip at (25,338) size 100x43 outlineClip at (25,338) size 100x43
+layer at (-25,338) size 70x20 backgroundClip at (25,338) size 100x43 clip at (25,338) size 100x43
   RenderBlock (positioned) {DIV} at (-40,0) size 70x20 [bgcolor=#808000]
 layer at (15,385) size 115x43 clip at (25,385) size 100x28 scrollWidth 150
   RenderBlock (relative positioned) {DIV} at (5,193) size 115x44 [bgcolor=#FFFF00] [border: none (5px solid #008000) none (10px solid #FF0000)]
 layer at (71,405) size 8x4
   RenderBlock (positioned) {DIV} at (56,20) size 8x4 [bgcolor=#0000FF]
-layer at (105,385) size 70x20 backgroundClip at (25,385) size 100x28 clip at (25,385) size 100x28 outlineClip at (25,385) size 100x28
+layer at (105,385) size 70x20 backgroundClip at (25,385) size 100x28 clip at (25,385) size 100x28
   RenderBlock (positioned) {DIV} at (90,0) size 70x20 [bgcolor=#808000]
 layer at (142,338) size 115x43 clip at (147,338) size 100x43
   RenderBlock (relative positioned) {DIV} at (5,146) size 115x44 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
 layer at (193,358) size 8x4
   RenderBlock (positioned) {DIV} at (51,20) size 8x4 [bgcolor=#0000FF]
-layer at (227,338) size 70x20 backgroundClip at (147,338) size 100x43 clip at (147,338) size 100x43 outlineClip at (147,338) size 100x43
+layer at (227,338) size 70x20 backgroundClip at (147,338) size 100x43 clip at (147,338) size 100x43
   RenderBlock (positioned) {DIV} at (85,0) size 70x20 [bgcolor=#808000]
 layer at (142,385) size 115x43 clip at (147,385) size 100x28 scrollX 50 scrollWidth 150
   RenderBlock (relative positioned) {DIV} at (5,193) size 115x44 [bgcolor=#FFFF00] [border: none (10px solid #FF0000) none (5px solid #008000)]
 layer at (193,405) size 8x4
   RenderBlock (positioned) {DIV} at (51,20) size 8x4 [bgcolor=#0000FF]
-layer at (97,385) size 70x20 backgroundClip at (147,385) size 100x28 clip at (147,385) size 100x28 outlineClip at (147,385) size 100x28
+layer at (97,385) size 70x20 backgroundClip at (147,385) size 100x28 clip at (147,385) size 100x28
   RenderBlock (positioned) {DIV} at (-45,0) size 70x20 [bgcolor=#808000]

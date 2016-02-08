@@ -35,9 +35,9 @@ layer at (19,239) size 25x25
     RenderBlock (floating) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
 layer at (69,301) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
-layer at (69,301) size 75x75 backgroundClip at (19,301) size 100x85 clip at (19,301) size 100x85 outlineClip at (19,301) size 100x85
+layer at (69,301) size 75x75 backgroundClip at (19,301) size 100x85 clip at (19,301) size 100x85
   RenderBlock (positioned) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
 layer at (19,463) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
-layer at (19,463) size 75x75 backgroundClip at (19,413) size 85x100 clip at (19,413) size 85x100 outlineClip at (19,413) size 85x100
+layer at (19,463) size 75x75 backgroundClip at (19,413) size 85x100 clip at (19,413) size 85x100
   RenderBlock (positioned) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]

@@ -589,21 +589,19 @@ enum LayerPaintPhase {
     LayerPaintPhaseForeground = 1
 };
 
-static void write(TextStream& ts, RenderLayer& l,
-                  const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect, const LayoutRect& outlineClipRect,
-                  LayerPaintPhase paintPhase = LayerPaintPhaseAll, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
+static void write(TextStream& ts, const RenderLayer& layer, const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect,
+    LayerPaintPhase paintPhase = LayerPaintPhaseAll, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
 {
     IntRect adjustedLayoutBounds = snappedIntRect(layerBounds);
     IntRect adjustedBackgroundClipRect = snappedIntRect(backgroundClipRect);
     IntRect adjustedClipRect = snappedIntRect(clipRect);
-    IntRect adjustedOutlineClipRect = snappedIntRect(outlineClipRect);
 
     writeIndent(ts, indent);
 
     ts << "layer ";
     
     if (behavior & RenderAsTextShowAddresses)
-        ts << static_cast<const void*>(&l) << " ";
+        ts << static_cast<const void*>(&layer) << " ";
       
     ts << adjustedLayoutBounds;
 
@@ -612,19 +610,17 @@ static void write(TextStream& ts, RenderLayer& l,
             ts << " backgroundClip " << adjustedBackgroundClipRect;
         if (!adjustedClipRect.contains(adjustedLayoutBounds))
             ts << " clip " << adjustedClipRect;
-        if (!adjustedOutlineClipRect.contains(adjustedLayoutBounds))
-            ts << " outlineClip " << adjustedOutlineClipRect;
     }
 
-    if (l.renderer().hasOverflowClip()) {
-        if (l.scrollOffset().x())
-            ts << " scrollX " << l.scrollOffset().x();
-        if (l.scrollOffset().y())
-            ts << " scrollY " << l.scrollOffset().y();
-        if (l.renderBox() && roundToInt(l.renderBox()->clientWidth()) != l.scrollWidth())
-            ts << " scrollWidth " << l.scrollWidth();
-        if (l.renderBox() && roundToInt(l.renderBox()->clientHeight()) != l.scrollHeight())
-            ts << " scrollHeight " << l.scrollHeight();
+    if (layer.renderer().hasOverflowClip()) {
+        if (layer.scrollOffset().x())
+            ts << " scrollX " << layer.scrollOffset().x();
+        if (layer.scrollOffset().y())
+            ts << " scrollY " << layer.scrollOffset().y();
+        if (layer.renderBox() && roundToInt(layer.renderBox()->clientWidth()) != layer.scrollWidth())
+            ts << " scrollWidth " << layer.scrollWidth();
+        if (layer.renderBox() && roundToInt(layer.renderBox()->clientHeight()) != layer.scrollHeight())
+            ts << " scrollHeight " << layer.scrollHeight();
     }
 
     if (paintPhase == LayerPaintPhaseBackground)
@@ -633,21 +629,23 @@ static void write(TextStream& ts, RenderLayer& l,
         ts << " layerType: foreground only";
 
     if (behavior & RenderAsTextShowCompositedLayers) {
-        if (l.isComposited())
-            ts << " (composited, bounds=" << l.backing()->compositedBounds() << ", drawsContent=" << l.backing()->graphicsLayer()->drawsContent() << ", paints into ancestor=" << l.backing()->paintsIntoCompositedAncestor() << ")";
+        if (layer.isComposited()) {
+            ts << " (composited, bounds=" << layer.backing()->compositedBounds() << ", drawsContent=" << layer.backing()->graphicsLayer()->drawsContent()
+                << ", paints into ancestor=" << layer.backing()->paintsIntoCompositedAncestor() << ")";
+        }
     }
 
 #if ENABLE(CSS_COMPOSITING)
-    if (l.isolatesBlending())
+    if (layer.isolatesBlending())
         ts << " isolatesBlending";
-    if (l.hasBlendMode())
-        ts << " blendMode: " << compositeOperatorName(CompositeSourceOver, l.blendMode());
+    if (layer.hasBlendMode())
+        ts << " blendMode: " << compositeOperatorName(CompositeSourceOver, layer.blendMode());
 #endif
     
     ts << "\n";
 
     if (paintPhase != LayerPaintPhaseBackground)
-        write(ts, l.renderer(), indent + 1, behavior);
+        write(ts, layer.renderer(), indent + 1, behavior);
 }
 
 static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, TextStream& ts, int indent)
@@ -746,8 +744,9 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     
     // Calculate the clip rects we should use.
     LayoutRect layerBounds;
-    ClipRect damageRect, clipRectToApply, outlineRect;
-    l->calculateRects(RenderLayer::ClipRectsContext(rootLayer, TemporaryClipRects), paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, l->offsetFromAncestor(rootLayer));
+    ClipRect damageRect;
+    ClipRect clipRectToApply;
+    l->calculateRects(RenderLayer::ClipRectsContext(rootLayer, TemporaryClipRects), paintDirtyRect, layerBounds, damageRect, clipRectToApply, l->offsetFromAncestor(rootLayer));
 
     // Ensure our lists are up-to-date.
     l->updateLayerListsIfNeeded();
@@ -756,7 +755,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     Vector<RenderLayer*>* negList = l->negZOrderList();
     bool paintsBackgroundSeparately = negList && negList->size() > 0;
     if (shouldPaint && paintsBackgroundSeparately)
-        write(ts, *l, layerBounds, damageRect.rect(), clipRectToApply.rect(), outlineRect.rect(), LayerPaintPhaseBackground, indent, behavior);
+        write(ts, *l, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, indent, behavior);
 
     if (negList) {
         int currIndent = indent;
@@ -770,7 +769,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     }
 
     if (shouldPaint)
-        write(ts, *l, layerBounds, damageRect.rect(), clipRectToApply.rect(), outlineRect.rect(), paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
+        write(ts, *l, layerBounds, damageRect.rect(), clipRectToApply.rect(), paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
 
     if (Vector<RenderLayer*>* normalFlowList = l->normalFlowList()) {
         int currIndent = indent;

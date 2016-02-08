@@ -4468,7 +4468,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         // For unpaginated layers, there is only one fragment.
         LayerFragment fragment;
         ClipRectsContext clipRectsContext(rootLayer, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip);
-        calculateRects(clipRectsContext, dirtyRect, fragment.layerBounds, fragment.backgroundRect, fragment.foregroundRect, fragment.outlineRect, offsetFromRoot);
+        calculateRects(clipRectsContext, dirtyRect, fragment.layerBounds, fragment.backgroundRect, fragment.foregroundRect, offsetFromRoot);
         fragments.append(fragment);
         return;
     }
@@ -4482,9 +4482,8 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     LayoutRect layerBoundsInFlowThread;
     ClipRect backgroundRectInFlowThread;
     ClipRect foregroundRectInFlowThread;
-    ClipRect outlineRectInFlowThread;
     calculateRects(paginationClipRectsContext, LayoutRect::infiniteRect(), layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread,
-        outlineRectInFlowThread, offsetWithinPaginatedLayer);
+        offsetWithinPaginatedLayer);
     
     // Take our bounding box within the flow thread and clip it.
     LayoutRect layerBoundingBoxInFlowThread = layerBoundingBox ? *layerBoundingBox : boundingBox(paginationLayer, offsetWithinPaginatedLayer);
@@ -4528,7 +4527,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
                 LayerFragment& fragment = fragments.at(i);
                 
                 // Set our four rects with all clipping applied that was internal to the flow thread.
-                fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, outlineRectInFlowThread, &layerBoundingBoxInFlowThread);
+                fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, &layerBoundingBoxInFlowThread);
                 
                 // Shift to the root-relative physical position used when painting the flow thread in this fragment.
                 fragment.moveBy(toLayoutPoint(ancestorFragment.paginationOffset + fragment.paginationOffset + offsetWithinParentPaginatedLayer));
@@ -4571,7 +4570,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
 
     for (auto& fragment : fragments) {
         // Set our four rects with all clipping applied that was internal to the flow thread.
-        fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, outlineRectInFlowThread, &layerBoundingBoxInFlowThread);
+        fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, &layerBoundingBoxInFlowThread);
         
         // Shift to the root-relative physical position used when painting the flow thread in this fragment.
         fragment.moveBy(toLayoutPoint(fragment.paginationOffset + offsetOfPaginationLayerFromRoot));
@@ -4699,18 +4698,6 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     if (!selectionOnly) {
         paintForegroundForFragmentsWithPhase(PaintPhaseFloat, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
         paintForegroundForFragmentsWithPhase(PaintPhaseForeground, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
-
-        // Switch the clipping rectangle to the outline version.
-        if (shouldClip && clippedRect != layerFragments[0].outlineRect) {
-            restoreClip(context, localPaintingInfo.paintDirtyRect, clippedRect);
-            
-            if (!layerFragments[0].outlineRect.isEmpty()) {
-                clippedRect = layerFragments[0].outlineRect;
-                clipToRect(localPaintingInfo, context, clippedRect);
-            } else
-                shouldClip = false;
-        }
-
         paintForegroundForFragmentsWithPhase(PaintPhaseChildOutlines, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
     }
     
@@ -4744,14 +4731,14 @@ void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments,
     PaintBehavior paintBehavior, RenderObject* subtreePaintRootForRenderer)
 {
     for (const auto& fragment : layerFragments) {
-        if (fragment.outlineRect.isEmpty())
+        if (fragment.backgroundRect.isEmpty())
             continue;
     
         // Paint our own outline
-        PaintInfo paintInfo(context, fragment.outlineRect.rect(), PaintPhaseSelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer());
-        clipToRect(localPaintingInfo, context, fragment.outlineRect, DoNotIncludeSelfForBorderRadius);
+        PaintInfo paintInfo(context, fragment.backgroundRect.rect(), PaintPhaseSelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer());
+        clipToRect(localPaintingInfo, context, fragment.backgroundRect, DoNotIncludeSelfForBorderRadius);
         renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelAccumulation));
-        restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.outlineRect);
+        restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
     }
 }
 
@@ -5567,7 +5554,7 @@ ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContex
 }
 
 void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
-    ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, const LayoutSize& offsetFromRoot) const
+    ClipRect& backgroundRect, ClipRect& foregroundRect, const LayoutSize& offsetFromRoot) const
 {
     if (clipRectsContext.rootLayer != this && parent()) {
         backgroundRect = backgroundClipRect(clipRectsContext);
@@ -5587,7 +5574,6 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
     layerBounds = LayoutRect(toLayoutPoint(offsetFromRootLocal), size());
 
     foregroundRect = backgroundRect;
-    outlineRect = backgroundRect;
 
     RenderFlowThread* flowThread = namedFlowFragment ? namedFlowFragment->flowThread() : nullptr;
     if (isSelfPaintingLayer() && flowThread && !renderer().isInFlowRenderFlowThread()) {
@@ -5611,7 +5597,6 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         backgroundRect.intersect(layerBoundsWithVisualOverflow);
 
         foregroundRect = backgroundRect;
-        outlineRect = backgroundRect;
     }
 
     // Update the clip rects that will be passed to child layers.
@@ -5628,7 +5613,6 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
             LayoutRect newPosClip = downcast<RenderBox>(renderer()).clipRect(toLayoutPoint(offsetFromRootLocal), namedFlowFragment);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
-            outlineRect.intersect(newPosClip);
         }
 
         // If we establish a clip at all, then make sure our background rect is intersected with our layer's bounds including our visual overflow,
@@ -5671,10 +5655,11 @@ LayoutRect RenderLayer::childrenClipRect() const
     // FIXME: Regions not accounted for.
     RenderLayer* clippingRootLayer = clippingRootForPainting();
     LayoutRect layerBounds;
-    ClipRect backgroundRect, foregroundRect, outlineRect;
+    ClipRect backgroundRect;
+    ClipRect foregroundRect;
     ClipRectsContext clipRectsContext(clippingRootLayer, TemporaryClipRects);
     // Need to use temporary clip rects, because the value of 'dontClipToOverflow' may be different from the painting path (<rdar://problem/11844909>).
-    calculateRects(clipRectsContext, renderer().view().unscaledDocumentRect(), layerBounds, backgroundRect, foregroundRect, outlineRect, offsetFromAncestor(clipRectsContext.rootLayer));
+    calculateRects(clipRectsContext, renderer().view().unscaledDocumentRect(), layerBounds, backgroundRect, foregroundRect, offsetFromAncestor(clipRectsContext.rootLayer));
     return clippingRootLayer->renderer().localToAbsoluteQuad(FloatQuad(foregroundRect.rect())).enclosingBoundingBox();
 }
 
@@ -5684,9 +5669,10 @@ LayoutRect RenderLayer::selfClipRect() const
     // FIXME: Regions not accounted for.
     RenderLayer* clippingRootLayer = clippingRootForPainting();
     LayoutRect layerBounds;
-    ClipRect backgroundRect, foregroundRect, outlineRect;
+    ClipRect backgroundRect;
+    ClipRect foregroundRect;
     ClipRectsContext clipRectsContext(clippingRootLayer, PaintingClipRects);
-    calculateRects(clipRectsContext, renderer().view().documentRect(), layerBounds, backgroundRect, foregroundRect, outlineRect, offsetFromAncestor(clippingRootLayer));
+    calculateRects(clipRectsContext, renderer().view().documentRect(), layerBounds, backgroundRect, foregroundRect, offsetFromAncestor(clippingRootLayer));
     return clippingRootLayer->renderer().localToAbsoluteQuad(FloatQuad(backgroundRect.rect())).enclosingBoundingBox();
 }
 
@@ -5699,9 +5685,10 @@ LayoutRect RenderLayer::localClipRect(bool& clipExceedsBounds) const
     LayoutSize offsetFromRoot = offsetFromAncestor(clippingRootLayer);
 
     LayoutRect layerBounds;
-    ClipRect backgroundRect, foregroundRect, outlineRect;
+    ClipRect backgroundRect;
+    ClipRect foregroundRect;
     ClipRectsContext clipRectsContext(clippingRootLayer, PaintingClipRects);
-    calculateRects(clipRectsContext, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect, offsetFromRoot);
+    calculateRects(clipRectsContext, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, offsetFromRoot);
 
     LayoutRect clipRect = backgroundRect.rect();
     if (clipRect.isInfinite())

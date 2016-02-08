@@ -64,7 +64,7 @@ layer at (10,566) size 96x30
 layer at (24,650) size 35x71
   RenderBlock {DIV} at (16,0) size 35x71 [border: (3px solid #C0C0C0) (2px solid #C0C0C0) (4px solid #C0C0C0) (1px solid #C0C0C0)]
     RenderMultiColumnSet at (2,3) size 32x64
-layer at (-39,653) size 96x64 backgroundClip at (0,0) size 785x856 clip at (0,0) size 785x856 outlineClip at (0,0) size 785x856
+layer at (-39,653) size 96x64 backgroundClip at (0,0) size 785x856 clip at (0,0) size 785x856
   RenderMultiColumnFlowThread at (2,3) size 96x64
     RenderBlock {DIV} at (0,0) size 24x64 [bgcolor=#770077] [border: (2px dotted #FFFFFF) (4px dotted #000000) none]
     RenderBlock {DIV} at (24,0) size 24x64 [bgcolor=#0000FF] [border: (2px dotted #FFFFFF) (4px dotted #000000) none]
@@ -73,7 +73,7 @@ layer at (-39,653) size 96x64 backgroundClip at (0,0) size 785x856 clip at (0,0)
 layer at (8,769) size 35x71
   RenderBlock {DIV} at (0,119) size 35x71 [border: (3px solid #C0C0C0) (2px solid #C0C0C0) (4px solid #C0C0C0) (1px solid #C0C0C0)]
     RenderMultiColumnSet at (2,3) size 32x64
-layer at (-55,772) size 96x30 backgroundClip at (0,0) size 785x856 clip at (0,0) size 785x856 outlineClip at (0,0) size 785x856
+layer at (-55,772) size 96x30 backgroundClip at (0,0) size 785x856 clip at (0,0) size 785x856
   RenderMultiColumnFlowThread at (2,3) size 96x30
     RenderBlock {DIV} at (0,0) size 24x30 [bgcolor=#770077] [border: (2px dotted #FFFFFF) (4px dotted #000000) none]
     RenderBlock {DIV} at (24,0) size 24x30 [bgcolor=#0000FF] [border: (2px dotted #FFFFFF) (4px dotted #000000) none]

@@ -8,5 +8,5 @@ layer at (0,0) size 800x158
           text run at (0,0) width 255: "Test passes if you see a green rectangle."
 layer at (8,50) size 100x100 scrollWidth 400 isolatesBlending
   RenderBlock {DIV} at (0,34) size 100x100
-layer at (8,50) size 400x20 backgroundClip at (8,50) size 100x100 clip at (8,50) size 100x100 outlineClip at (8,50) size 100x100 blendMode: difference
+layer at (8,50) size 400x20 backgroundClip at (8,50) size 100x100 clip at (8,50) size 100x100 blendMode: difference
   RenderBlock {DIV} at (0,0) size 400x20 [bgcolor=#00FF00]

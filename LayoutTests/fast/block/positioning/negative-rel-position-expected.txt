@@ -3,5 +3,5 @@ layer at (0,0) size 850x585
 layer at (0,0) size 800x136
   RenderBlock {HTML} at (0,0) size 800x136
     RenderBody {BODY} at (8,8) size 784x120
-layer at (-30,8) size 880x120 backgroundClip at (0,0) size 850x585 clip at (0,0) size 850x585 outlineClip at (0,0) size 850x585
+layer at (-30,8) size 880x120 backgroundClip at (0,0) size 850x585 clip at (0,0) size 850x585
   RenderBlock (relative positioned) {DIV} at (392,0) size 880x120 [bgcolor=#00FF00]

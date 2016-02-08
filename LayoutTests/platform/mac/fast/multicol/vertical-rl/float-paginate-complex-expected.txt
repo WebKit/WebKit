@@ -1,12 +1,12 @@
 layer at (0,0) size 1680x1208
   RenderView at (0,0) size 785x585
-layer at (-895,0) size 1680x585 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
+layer at (-895,0) size 1680x585 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208
   RenderBlock {HTML} at (0,0) size 1680x585
     RenderBody {BODY} at (8,8) size 1664x1200
 layer at (373,8) size 404x1200
   RenderBlock {DIV} at (0,0) size 404x1200 [border: (2px solid #000000)]
     RenderMultiColumnSet at (2,2) size 400x1196
-layer at (-113,10) size 888x388 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
+layer at (-113,10) size 888x388 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208
   RenderMultiColumnFlowThread at (2,2) size 888x388
     RenderBlock (anonymous) at (0,0) size 252x388
       RenderText {#text} at (0,0) size 18x113
@@ -133,10 +133,10 @@ layer at (-113,10) size 888x388 backgroundClip at (0,0) size 1680x1208 clip at (
       RenderText {#text} at (586,0) size 18x113
         text run at (586,0) width 113: "This is some text."
       RenderBR {BR} at (600,112) size 0x1
-layer at (-47,8) size 404x1200 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
+layer at (-47,8) size 404x1200 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208
   RenderBlock {DIV} at (420,0) size 404x1200 [border: (2px solid #000000)]
     RenderMultiColumnSet at (2,2) size 400x1196
-layer at (-533,10) size 888x388 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
+layer at (-533,10) size 888x388 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208
   RenderMultiColumnFlowThread at (2,2) size 888x388
     RenderBlock (anonymous) at (0,0) size 252x388
       RenderText {#text} at (0,0) size 18x113

@@ -1,9 +1,9 @@
 layer at (0,0) size 1600x585
   RenderView at (0,0) size 800x585
     RenderMultiColumnSet at (0,0) size 800x585
-layer at (-422,0) size 1222x585 backgroundClip at (0,0) size 1600x585 clip at (0,0) size 1600x585 outlineClip at (0,0) size 1600x585
+layer at (-422,0) size 1222x585 backgroundClip at (0,0) size 1600x585 clip at (0,0) size 1600x585
   RenderMultiColumnFlowThread at (0,0) size 1222x585
-layer at (-422,0) size 1222x585 backgroundClip at (0,0) size 1600x585 clip at (0,0) size 1600x585 outlineClip at (0,0) size 1600x585
+layer at (-422,0) size 1222x585 backgroundClip at (0,0) size 1600x585 clip at (0,0) size 1600x585
   RenderBlock {HTML} at (0,0) size 1222x585
     RenderBody {BODY} at (8,8) size 1206x569
       RenderBlock {DIV} at (0,0) size 1206x569 [border: (3px solid #000000)]

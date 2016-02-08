@@ -1,3 +1,31 @@
+2016-02-07  Zalan Bujtas  <zalan@apple.com>
+
+        Outline does not clip when ancestor has overflow: hidden and requires layer.
+        https://bugs.webkit.org/show_bug.cgi?id=153901
+
+        Now that outline is part of visual overflow, we no longer need the special outline cliprect.
+        PaintPhaseChildOutlines drawing will switch to foreground cliprect. It ensures proper overflow clipping
+        at parent level. PaintPhaseSelfOutline drawing will start using the visual overflow inflated background cliprect.
+        With this change, outline will be using the same cliprects as the other visual overflow properties (box-shadow etc). 
+
+        Reviewed by David Hyatt.
+
+        Test: fast/repaint/outline-with-overflow-hidden-ancestor.html
+
+        * rendering/LayerFragment.h:
+        (WebCore::LayerFragment::setRects):
+        (WebCore::LayerFragment::moveBy): Deleted.
+        (WebCore::LayerFragment::intersect): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::paintOutlineForFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::paintForegroundForFragments): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::writeLayers):
+
 2016-02-07  Daniel Bates  <dabates@apple.com>
 
         CSP: Allow Web Workers initiated from an isolated world to bypass the main world Content Security Policy

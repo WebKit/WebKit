@@ -1,6 +1,6 @@
 layer at (0,0) size 4480x585
   RenderView at (0,0) size 800x585
-layer at (-3680,0) size 4480x585 backgroundClip at (0,0) size 4480x585 clip at (0,0) size 4480x585 outlineClip at (0,0) size 4480x585
+layer at (-3680,0) size 4480x585 backgroundClip at (0,0) size 4480x585 clip at (0,0) size 4480x585
   RenderBlock {HTML} at (0,0) size 4481x585
     RenderBody {BODY} at (58,46) size 4364x493
       RenderBlock {H1} at (0,0) size 48x492

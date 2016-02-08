@@ -14,5 +14,5 @@ layer at (8,8) size 202x202
   RenderBlock (relative positioned) {DIV} at (0,0) size 202x202 [border: (1px solid #000000)]
 layer at (59,59) size 60x60
   RenderBlock (positioned) {DIV} at (51,51) size 60x60 [bgcolor=#008000]
-layer at (-41,-41) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+layer at (-41,-41) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderBlock (positioned) {DIV} at (-49,-49) size 100x100 [bgcolor=#808080]

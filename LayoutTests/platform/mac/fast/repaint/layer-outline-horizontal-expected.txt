@@ -21,15 +21,15 @@ layer at (8,52) size 784x130
   RenderBlock (relative positioned) {DIV} at (0,44) size 784x130
 layer at (18,62) size 100x100
   RenderBlock (positioned) {DIV} at (10,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (148,62) size 100x100 backgroundClip at (138,52) size 100x100 clip at (138,52) size 100x100 outlineClip at (138,52) size 100x100
+layer at (148,62) size 100x100 backgroundClip at (138,52) size 100x100 clip at (138,52) size 100x100
   RenderBlock (positioned) {DIV} at (140,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (278,62) size 100x100 backgroundClip at (268,52) size 5x5 clip at (268,52) size 5x5 outlineClip at (268,52) size 5x5
+layer at (278,62) size 100x100 backgroundClip at (268,52) size 5x5 clip at (268,52) size 5x5
   RenderBlock (positioned) {DIV} at (270,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
 layer at (408,62) size 100x100
   RenderBlock (positioned) {DIV} at (400,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (538,62) size 100x100 backgroundClip at (548,72) size 100x100 clip at (548,72) size 100x100 outlineClip at (548,72) size 100x100
+layer at (538,62) size 100x100 backgroundClip at (548,72) size 100x100 clip at (548,72) size 100x100
   RenderBlock (positioned) {DIV} at (530,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (668,62) size 100x100 backgroundClip at (773,167) size 5x5 clip at (773,167) size 5x5 outlineClip at (773,167) size 5x5
+layer at (668,62) size 100x100 backgroundClip at (773,167) size 5x5 clip at (773,167) size 5x5
   RenderBlock (positioned) {DIV} at (660,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
 layer at (18,322) size 100x100
   RenderBlock (relative positioned) {DIV} at (0,294) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]

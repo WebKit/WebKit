@@ -1,3 +1,158 @@
+2016-02-07  Zalan Bujtas  <zalan@apple.com>
+
+        Outline does not clip when ancestor has overflow: hidden and requires layer.
+        https://bugs.webkit.org/show_bug.cgi?id=153901
+
+        Now that outline is part of visual overflow, we no longer need the special outline cliprect.
+        PaintPhaseChildOutlines drawing will switch to foreground cliprect. It ensures proper overflow clipping
+        at parent level. PaintPhaseSelfOutline drawing will start using the visual overflow inflated background cliprect.
+        With this change, outline will be using the same cliprects as the other visual overflow properties (box-shadow etc). 
+
+        Reviewed by David Hyatt.
+
+        * compositing/geometry/limit-layer-bounds-overflow-repaint-expected.txt:
+        * compositing/masks/mask-of-clipped-layer-expected.txt:
+        * css2.1/20110323/abspos-non-replaced-width-margin-000-expected.txt:
+        * css2.1/20110323/abspos-replaced-width-margin-000-expected.txt:
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer2-expected.txt:
+        * css3/blending/blend-mode-isolation-turn-on-self-painting-layer-expected.txt:
+        * fast/block/positioning/negative-rel-position-expected.txt:
+        * fast/dynamic/staticY-expected.txt:
+        * fast/inline/absolute-positioned-block-in-centred-block-expected.txt:
+        * fast/multicol/flipped-blocks-border-after-expected.txt:
+        * fast/multicol/pagination-h-horizontal-bt-expected.txt:
+        * fast/multicol/pagination-h-horizontal-tb-expected.txt:
+        * fast/multicol/pagination-h-vertical-rl-expected.txt:
+        * fast/multicol/pagination-v-horizontal-bt-expected.txt:
+        * fast/multicol/pagination-v-vertical-lr-expected.txt:
+        * fast/multicol/pagination-v-vertical-rl-expected.txt:
+        * fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt:
+        * fast/multicol/pagination/RightToLeft-rl-hittest-expected.txt:
+        * fast/multicol/progression-reverse-expected.txt:
+        * fast/multicol/vertical-rl/rules-with-border-before-expected.txt:
+        * fast/overflow/overflow-update-transform-expected.txt:
+        * fast/overflow/position-relative-expected.txt:
+        * fast/repaint/focus-ring-expected.txt:
+        * fast/repaint/focus-ring-repaint.html:
+        * fast/repaint/outline-with-overflow-hidden-ancestor-expected.html: Added.
+        * fast/repaint/outline-with-overflow-hidden-ancestor.html: Added.
+        * fast/table/overflow-table-collapsed-borders-cell-painting-expected.txt:
+        * fast/table/overflow-table-collapsed-borders-cell-painting-table-self-painting-layer-expected.txt:
+        * fast/table/overflow-table-collapsed-borders-section-layer-painting-expected.txt:
+        * fast/table/overflow-table-collapsed-borders-section-layer-table-self-painting-layer-expected.txt:
+        * fast/table/overflow-table-collapsed-borders-section-self-painting-layer-painting-expected.txt:
+        * fast/table/overflow-table-collapsed-borders-section-self-painting-layer-table-self-painting-layer-expected.txt:
+        * platform/mac/compositing/geometry/clipping-foreground-expected.txt:
+        * platform/mac/compositing/geometry/root-layer-update-expected.txt:
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.txt:
+        * platform/mac/compositing/overflow/nested-scrolling-expected.txt:
+        * platform/mac/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/mac/compositing/overflow/parent-overflow-expected.txt:
+        * platform/mac/compositing/overflow/scrollbar-painting-expected.txt:
+        * platform/mac/compositing/reflections/nested-reflection-on-overflow-expected.txt:
+        * platform/mac/compositing/sibling-positioning-expected.txt:
+        * platform/mac/css3/blending/blend-mode-overflow-expected.txt:
+        * platform/mac/css3/unicode-bidi-isolate-basic-expected.txt:
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/mac/fast/block/positioning/auto/vertical-rl/007-expected.txt:
+        * platform/mac/fast/block/positioning/vertical-rl/fixed-positioning-expected.txt:
+        * platform/mac/fast/borders/border-antialiasing-expected.txt:
+        * platform/mac/fast/clip/001-expected.txt:
+        * platform/mac/fast/clip/013-expected.txt:
+        * platform/mac/fast/clip/014-expected.txt:
+        * platform/mac/fast/clip/016-expected.txt:
+        * platform/mac/fast/clip/outline-overflowClip-expected.txt:
+        * platform/mac/fast/css/clip-zooming-expected.txt:
+        * platform/mac/fast/forms/validation-message-appearance-expected.txt:
+        * platform/mac/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+        * platform/mac/fast/line-grid/line-grid-inside-columns-expected.txt:
+        * platform/mac/fast/line-grid/line-grid-into-columns-expected.txt:
+        * platform/mac/fast/lists/scrolled-marker-paint-expected.txt:
+        * platform/mac/fast/multicol/client-rects-expected.txt:
+        * platform/mac/fast/multicol/column-break-with-balancing-expected.txt:
+        * platform/mac/fast/multicol/column-rules-expected.txt:
+        * platform/mac/fast/multicol/column-rules-stacking-expected.txt:
+        * platform/mac/fast/multicol/columns-shorthand-parsing-expected.txt:
+        * platform/mac/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/mac/fast/multicol/float-paginate-empty-lines-expected.txt:
+        * platform/mac/fast/multicol/float-paginate-expected.txt:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/mac/fast/multicol/layers-split-across-columns-expected.txt:
+        * platform/mac/fast/multicol/max-height-columns-block-expected.txt:
+        * platform/mac/fast/multicol/nested-columns-expected.txt:
+        * platform/mac/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/mac/fast/multicol/overflow-across-columns-expected.txt:
+        * platform/mac/fast/multicol/overflow-across-columns-percent-height-expected.txt:
+        * platform/mac/fast/multicol/overflow-unsplittable-expected.txt:
+        * platform/mac/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/mac/fast/multicol/pagination/BottomToTop-bt-expected.txt:
+        * platform/mac/fast/multicol/pagination/BottomToTop-lr-expected.txt:
+        * platform/mac/fast/multicol/pagination/BottomToTop-rl-expected.txt:
+        * platform/mac/fast/multicol/pagination/BottomToTop-tb-expected.txt:
+        * platform/mac/fast/multicol/pagination/LeftToRight-bt-expected.txt:
+        * platform/mac/fast/multicol/pagination/LeftToRight-rl-expected.txt:
+        * platform/mac/fast/multicol/pagination/LeftToRight-tb-expected.txt:
+        * platform/mac/fast/multicol/pagination/RightToLeft-bt-expected.txt:
+        * platform/mac/fast/multicol/pagination/RightToLeft-lr-expected.txt:
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt:
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-expected.txt:
+        * platform/mac/fast/multicol/pagination/RightToLeft-tb-expected.txt:
+        * platform/mac/fast/multicol/pagination/TopToBottom-bt-expected.txt:
+        * platform/mac/fast/multicol/pagination/TopToBottom-lr-expected.txt:
+        * platform/mac/fast/multicol/pagination/TopToBottom-rl-expected.txt:
+        * platform/mac/fast/multicol/positive-leading-expected.txt:
+        * platform/mac/fast/multicol/scrolling-column-rules-expected.txt:
+        * platform/mac/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/mac/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/mac/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/mac/fast/multicol/table-vertical-align-expected.txt:
+        * platform/mac/fast/multicol/tall-image-behavior-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/column-rules-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-complex-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/column-rules-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/mac/fast/overflow/clip-rects-fixed-ancestor-expected.txt:
+        * platform/mac/fast/overflow/float-in-relpositioned-expected.txt:
+        * platform/mac/fast/overflow/overflow-auto-position-absolute-expected.txt:
+        * platform/mac/fast/overflow/overflow-rtl-expected.txt:
+        * platform/mac/fast/overflow/paged-x-div-expected.txt:
+        * platform/mac/fast/overflow/paged-x-div-with-column-gap-expected.txt:
+        * platform/mac/fast/overflow/paged-x-on-root-expected.txt:
+        * platform/mac/fast/overflow/paged-x-with-column-gap-expected.txt:
+        * platform/mac/fast/overflow/paged-y-div-expected.txt:
+        * platform/mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/mac/fast/regions/repaint/region-painting-via-layout-expected.txt:
+        * platform/mac/fast/repaint/box-shadow-h-expected.txt:
+        * platform/mac/fast/repaint/box-shadow-v-expected.txt:
+        * platform/mac/fast/repaint/layer-outline-expected.txt:
+        * platform/mac/fast/repaint/layer-outline-horizontal-expected.txt:
+        * platform/mac/fast/table/edge-offsets-expected.txt:
+        * platform/mac/fast/transforms/overflow-with-transform-expected.txt:
+        * platform/mac/fast/transforms/rotated-transform-affects-scrolling-1-expected.txt:
+        * platform/mac/fast/transforms/rotated-transform-affects-scrolling-2-expected.txt:
+        * platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/mac/printing/single-line-must-not-be-split-into-two-pages-expected.txt:
+        * platform/mac/scrollbars/scrollbars-on-positioned-content-expected.txt:
+        * platform/mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt:
+        * platform/mac/svg/custom/image-rescale-clip-expected.txt:
+        * svg/overflow/overflow-on-foreignObject-expected.txt:
+
 2016-02-07  Saam barati  <sbarati@apple.com>
 
         [ES6] bound functions .name property should be "bound " + the target function's name

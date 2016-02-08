@@ -47,7 +47,7 @@ layer at (18,258) size 50x40
   RenderTableSection {DIV} at (10,10) size 50x40
     RenderTableRow {DIV} at (0,0) size 50x40
       RenderTableCell {DIV} at (0,0) size 50x30 [border: (10px none #008000)] [r=0 c=0 rs=1 cs=1]
-layer at (18,258) size 70x10 backgroundClip at (18,258) size 50x40 clip at (18,258) size 50x40 outlineClip at (18,258) size 50x40
+layer at (18,258) size 70x10 backgroundClip at (18,258) size 50x40 clip at (18,258) size 50x40
   RenderInline {SPAN} at (0,0) size 70x10 [color=#0000FF]
     RenderText {#text} at (10,10) size 70x10
       text run at (10,10) width 70: "XXXXXXX"
@@ -58,7 +58,7 @@ layer at (18,318) size 50x40
     RenderTableRow {DIV} at (0,0) size 50x40
 layer at (18,318) size 50x40
   RenderTableCell {DIV} at (0,0) size 50x30 [border: (10px none #008000)] [r=0 c=0 rs=1 cs=1]
-layer at (18,318) size 70x10 backgroundClip at (18,318) size 50x40 clip at (18,318) size 50x40 outlineClip at (18,318) size 50x40
+layer at (18,318) size 70x10 backgroundClip at (18,318) size 50x40 clip at (18,318) size 50x40
   RenderInline {SPAN} at (0,0) size 70x10 [color=#0000FF]
     RenderText {#text} at (10,10) size 70x10
       text run at (10,10) width 70: "XXXXXXX"
@@ -89,7 +89,7 @@ layer at (18,498) size 50x40
     RenderTableRow {DIV} at (0,0) size 50x40
 layer at (18,498) size 50x40
   RenderTableCell {DIV} at (0,0) size 50x30 [border: (10px none #008000)] [r=0 c=0 rs=1 cs=1]
-layer at (18,498) size 70x10 backgroundClip at (18,498) size 50x40 clip at (18,498) size 50x40 outlineClip at (18,498) size 50x40
+layer at (18,498) size 70x10 backgroundClip at (18,498) size 50x40 clip at (18,498) size 50x40
   RenderInline {SPAN} at (0,0) size 70x10 [color=#0000FF]
     RenderText {#text} at (10,10) size 70x10
       text run at (10,10) width 70: "XXXXXXX"

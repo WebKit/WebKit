@@ -81,5 +81,5 @@ layer at (232,376) size 150x150 isolatesBlending
   RenderBlock (relative positioned) {DIV} at (0,0) size 150x150
 layer at (242,386) size 150x150 scrollWidth 170 scrollHeight 170
   RenderBlock (positioned) {DIV} at (10,10) size 150x150
-layer at (262,406) size 150x150 backgroundClip at (242,386) size 150x150 clip at (242,386) size 150x150 outlineClip at (242,386) size 150x150 blendMode: difference
+layer at (262,406) size 150x150 backgroundClip at (242,386) size 150x150 clip at (242,386) size 150x150 blendMode: difference
   RenderImage {IMG} at (20,20) size 150x150

@@ -140,12 +140,12 @@ layer at (527,352) size 118x30
   RenderBlock (relative positioned) {DIV} at (11,29) size 118x30 [border: (1px solid #999999)]
     RenderText {#text} at (6,6) size 52x18
       text run at (6,6) width 52: ".relative"
-layer at (705,149) size 162x370 backgroundClip at (0,0) size 785x1029 clip at (0,0) size 785x1029 outlineClip at (0,0) size 785x1029
+layer at (705,149) size 162x370 backgroundClip at (0,0) size 785x1029 clip at (0,0) size 785x1029
   RenderBlock (positioned) {DIV} at (705,85) size 162x370 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 150x18
       RenderText {#text} at (0,0) size 48x18
         text run at (0,0) width 48: "#fixed3"
-layer at (716,178) size 140x330 backgroundClip at (716,178) size 69x330 clip at (717,179) size 68x328 outlineClip at (0,0) size 785x1029
+layer at (716,178) size 140x330 backgroundClip at (716,178) size 69x330 clip at (717,179) size 68x328
   RenderBlock {DIV} at (11,29) size 140x330 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 128x18
       RenderText {#text} at (0,0) size 108x18
@@ -153,7 +153,7 @@ layer at (716,178) size 140x330 backgroundClip at (716,178) size 69x330 clip at 
     RenderBlock {DIV} at (11,29) size 118x30 [border: (1px solid #999999)]
       RenderText {#text} at (6,6) size 51x18
         text run at (6,6) width 51: "no style"
-layer at (727,277) size 118x70 backgroundClip at (727,277) size 58x70 clip at (728,278) size 57x68 outlineClip at (717,179) size 68x328
+layer at (727,277) size 118x70 backgroundClip at (727,277) size 58x70 clip at (728,278) size 57x68
   RenderBlock {DIV} at (11,99) size 118x70 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 106x18
       RenderText {#text} at (0,0) size 108x18
@@ -161,25 +161,25 @@ layer at (727,277) size 118x70 backgroundClip at (727,277) size 58x70 clip at (7
     RenderBlock {DIV} at (11,29) size 96x30 [border: (1px solid #999999)]
       RenderText {#text} at (6,6) size 51x18
         text run at (6,6) width 51: "no style"
-layer at (727,352) size 118x70 backgroundClip at (727,352) size 58x70 clip at (728,353) size 57x68 outlineClip at (717,179) size 68x328
+layer at (727,352) size 118x70 backgroundClip at (727,352) size 58x70 clip at (728,353) size 57x68
   RenderBlock {DIV} at (11,174) size 118x70 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 106x18
       RenderText {#text} at (0,0) size 108x18
         text run at (0,0) width 108: ".overflowHidden"
-layer at (727,427) size 118x70 backgroundClip at (727,427) size 58x70 clip at (728,428) size 57x68 outlineClip at (717,179) size 68x328
+layer at (727,427) size 118x70 backgroundClip at (727,427) size 58x70 clip at (728,428) size 57x68
   RenderBlock {DIV} at (11,249) size 118x70 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 106x18
       RenderText {#text} at (0,0) size 108x18
         text run at (0,0) width 108: ".overflowHidden"
-layer at (738,456) size 96x30 backgroundClip at (738,456) size 47x30 clip at (739,457) size 46x28 outlineClip at (728,428) size 57x68 scrollWidth 118
+layer at (738,456) size 96x30 backgroundClip at (738,456) size 47x30 clip at (739,457) size 46x28 scrollWidth 118
   RenderBlock {DIV} at (11,29) size 96x30 [border: (1px solid #999999)]
     RenderText {#text} at (6,6) size 108x18
       text run at (6,6) width 108: ".overflowHidden"
-layer at (727,242) size 118x30 backgroundClip at (717,179) size 68x328 clip at (717,179) size 68x328 outlineClip at (717,179) size 68x328
+layer at (727,242) size 118x30 backgroundClip at (717,179) size 68x328 clip at (717,179) size 68x328
   RenderBlock (relative positioned) {DIV} at (11,64) size 118x30 [border: (1px solid #999999)]
     RenderText {#text} at (6,6) size 52x18
       text run at (6,6) width 52: ".relative"
-layer at (738,381) size 96x30 backgroundClip at (728,353) size 57x68 clip at (728,353) size 57x68 outlineClip at (728,353) size 57x68
+layer at (738,381) size 96x30 backgroundClip at (728,353) size 57x68 clip at (728,353) size 57x68
   RenderBlock (relative positioned) {DIV} at (11,29) size 96x30 [border: (1px solid #999999)]
     RenderText {#text} at (6,6) size 52x18
       text run at (6,6) width 52: ".relative"

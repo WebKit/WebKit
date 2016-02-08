@@ -36,7 +36,7 @@ layer at (8,26) size 702x802 clip at (9,27) size 685x785 scrollHeight 1286
         text run at (0,73) width 668: "ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu"
         text run at (0,106) width 651: "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt"
         text run at (0,139) width 174: "mollit anim id est laborum."
-layer at (19,469) size 602x402 backgroundClip at (19,469) size 602x343 clip at (20,470) size 585x342 outlineClip at (9,27) size 685x785 scrollHeight 508
+layer at (19,469) size 602x402 backgroundClip at (19,469) size 602x343 clip at (20,470) size 585x342 scrollHeight 508
   RenderBlock {DIV} at (11,443) size 602x402 [border: (1px solid #000000)]
     RenderBlock {P} at (1,17) size 585x198
       RenderText {#text} at (0,7) size 583x183

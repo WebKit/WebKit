@@ -2,7 +2,7 @@ A single line must not be split into two pages. This test checks if a single lin
 
 Non-overflowed lines:
 
-layer at (0,0) size 769x7200 backgroundClip at (8,78) size 769x7200 clip at (8,78) size 769x7200 outlineClip at (8,78) size 769x7200
+layer at (0,0) size 769x7200 backgroundClip at (8,78) size 769x7200 clip at (8,78) size 769x7200
   RenderBlock (relative positioned) {DIV} at (0,70) size 769x7200
     RenderText {#text} at (0,0) size 91x18
       text run at (0,0) width 91: "WWWWWW"
@@ -1206,7 +1206,7 @@ layer at (0,0) size 769x7200 backgroundClip at (8,78) size 769x7200 clip at (8,7
     RenderBR {BR} at (90,7196) size 1x0
 Overflowed lines:
 
-layer at (0,0) size 4742x7200 backgroundClip at (8,7278) size 4742x7200 clip at (8,7278) size 4742x7200 outlineClip at (8,7278) size 4742x7200
+layer at (0,0) size 4742x7200 backgroundClip at (8,7278) size 4742x7200 clip at (8,7278) size 4742x7200
   RenderBlock (relative positioned) {DIV} at (0,7270) size 769x7200
     RenderText {#text} at (0,0) size 4742x18
       text run at (0,0) width 4742: "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"

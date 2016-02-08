@@ -34,12 +34,12 @@ layer at (158,192) size 150x150
       text run at (22,22) width 34: "In"
       text run at (22,62) width 85: "Front"
 layer at (392,102) size 200x200 clip at (402,112) size 180x180 scrollWidth 230 scrollHeight 230 layerType: background only
-layer at (352,62) size 150x150 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180 outlineClip at (402,112) size 180x180
+layer at (352,62) size 150x150 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180
   RenderBlock (positioned) zI: -1 {DIV} at (-40,-40) size 150x150 [color=#808080] [bgcolor=#C86464] [border: (2px solid #000000)]
     RenderText zI: -1 {#text} at (22,22) size 107x40
       text run at (22,22) width 107: "Behind"
     RenderText zI: -1 {#text} at (0,0) size 0x0
-layer at (374,144) size 100x100 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180 outlineClip at (402,112) size 180x180
+layer at (374,144) size 100x100 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180
   RenderBlock (positioned) {DIV} at (22,82) size 100x100 [bgcolor=#008000] [border: (2px solid #000000)]
     RenderText {#text} at (22,22) size 56x44
       text run at (22,22) width 56: "Behind"
@@ -51,7 +51,7 @@ layer at (392,102) size 200x200 clip at (402,112) size 180x180 scrollWidth 230 s
       text run at (30,70) width 125: "contents"
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
-layer at (482,192) size 150x150 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180 outlineClip at (402,112) size 180x180
+layer at (482,192) size 150x150 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180
   RenderBlock (positioned) zI: 1 {DIV} at (90,90) size 150x150 [color=#808080] [bgcolor=#C8C880] [border: (2px solid #000000)]
     RenderText zI: 1 {#text} at (22,22) size 85x80
       text run at (22,22) width 34: "In"
