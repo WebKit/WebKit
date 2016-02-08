@@ -1,5 +1,20 @@
 2016-02-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Baseline JIT should not require its input to be constant-propagated
+        https://bugs.webkit.org/show_bug.cgi?id=154011
+        rdar://problem/24290933
+
+        Reviewed by Mark Lam.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBitBinaryOpFastPath):
+        (JSC::JIT::emitRightShiftFastPath):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+
+2016-02-08  Filip Pizlo  <fpizlo@apple.com>
+
         CodeCache should give up on evals if there are variables under TDZ
         https://bugs.webkit.org/show_bug.cgi?id=154002
         rdar://problem/24300998

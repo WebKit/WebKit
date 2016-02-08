@@ -525,7 +525,7 @@ void JIT::emitBitBinaryOpFastPath(Instruction* currentInstruction)
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
-    if (isOperandConstantInt(op2))
+    else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
@@ -628,7 +628,7 @@ void JIT::emitRightShiftFastPath(Instruction* currentInstruction, OpcodeID opcod
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
-    if (isOperandConstantInt(op2))
+    else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
@@ -702,10 +702,10 @@ void JIT::emit_op_add(Instruction* currentInstruction)
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
-    if (isOperandConstantInt(op2))
+    else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
 
-    ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+    RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
     if (!leftOperand.isConst())
         emitGetVirtualRegister(op1, leftRegs);
@@ -779,7 +779,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
         rightOperand.setConstDouble(getOperandConstantDouble(op2));
 #endif
 
-    ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+    RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
     if (!leftOperand.isConst())
         emitGetVirtualRegister(op1, leftRegs);
@@ -842,10 +842,10 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
-    if (isOperandConstantInt(op2))
+    else if (isOperandConstantInt(op2))
         rightOperand.setConstInt32(getOperandConstantInt(op2));
 
-    ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+    RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
     if (!leftOperand.isPositiveConstInt32())
         emitGetVirtualRegister(op1, leftRegs);
