@@ -507,7 +507,7 @@ bool dequeue(
 
 } // anonymous namespace
 
-bool ParkingLot::parkConditionally(
+NEVER_INLINE bool ParkingLot::parkConditionally(
     const void* address,
     std::function<bool()> validation,
     std::function<void()> beforeSleep,
@@ -592,7 +592,7 @@ bool ParkingLot::parkConditionally(
     return !didFind;
 }
 
-bool ParkingLot::unparkOne(const void* address)
+NEVER_INLINE bool ParkingLot::unparkOne(const void* address)
 {
     if (verbose)
         dataLog(toString(currentThread(), ": unparking one.\n"));
@@ -623,7 +623,7 @@ bool ParkingLot::unparkOne(const void* address)
     return result;
 }
 
-void ParkingLot::unparkOne(
+NEVER_INLINE void ParkingLot::unparkOne(
     const void* address,
     std::function<void(bool didUnparkThread, bool mayHaveMoreThreads)> callback)
 {
@@ -656,7 +656,7 @@ void ParkingLot::unparkOne(
     threadData->parkingCondition.notify_one();
 }
 
-void ParkingLot::unparkAll(const void* address)
+NEVER_INLINE void ParkingLot::unparkAll(const void* address)
 {
     if (verbose)
         dataLog(toString(currentThread(), ": unparking all from ", RawPointer(address), ".\n"));
@@ -690,7 +690,7 @@ void ParkingLot::unparkAll(const void* address)
         dataLog(toString(currentThread(), ": done unparking.\n"));
 }
 
-void ParkingLot::forEach(std::function<void(ThreadIdentifier, const void*)> callback)
+NEVER_INLINE void ParkingLot::forEach(std::function<void(ThreadIdentifier, const void*)> callback)
 {
     Vector<Bucket*> bucketsToUnlock = lockHashtable();
 

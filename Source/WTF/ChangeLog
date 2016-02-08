@@ -1,3 +1,25 @@
+2016-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Make sure that locking code that relies on module boundaries for compiler fences uses NEVER_INLINE
+        https://bugs.webkit.org/show_bug.cgi?id=153972
+
+        Reviewed by Andreas Kling.
+
+        When this code was written, we assumed that module boundaries were compiler fences. That might
+        not be the case if we ever do LTO.
+
+        * wtf/Lock.cpp:
+        (WTF::LockBase::lockSlow):
+        (WTF::LockBase::unlockSlow):
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkAll):
+        (WTF::ParkingLot::forEach):
+        * wtf/WordLock.cpp:
+        (WTF::WordLock::lockSlow):
+        (WTF::WordLock::unlockSlow):
+
 2016-02-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][EFL] Enable SamplingProfiler
