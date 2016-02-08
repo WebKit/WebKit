@@ -1,3 +1,15 @@
+2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ⇧⌘→ when editing text in the Elements tree shouldn't switch inspector tab
+        https://bugs.webkit.org/show_bug.cgi?id=154006
+        <rdar://problem/22892489>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/EditingSupport.js:
+        (WebInspector.isEventTargetAnEditableField):
+        Check the WebInspector's custom __editing state.
+
 2016-02-08  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Long values for comma separated CSS properties overflow the Visual sidebar area

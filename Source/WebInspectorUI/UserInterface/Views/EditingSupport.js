@@ -71,6 +71,9 @@ WebInspector.isEventTargetAnEditableField = function(event)
     if (event.target.enclosingNodeOrSelfWithClass("text-prompt"))
         return true;
 
+    if (WebInspector.isBeingEdited(event.target))
+        return true;
+
     return false;
 };
 
