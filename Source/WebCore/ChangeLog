@@ -1,3 +1,20 @@
+2016-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView should send crossing events to the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=153740
+
+        Reviewed by Michael Catanzaro.
+
+        Update the target element under the mouse also when only updating
+        scrollbars, so that if the mouse enters the page when the window
+        is not active, the scroll animator is notified that the mouse
+        entered the scrollable area.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent): Call
+        updateMouseEventTargetNode() before early returning in case of
+        only updating scrollbars.
+
 2016-02-08  Jeremy Jones  <jeremyj@apple.com>
 
         WebVideoFullscreenInterface should handle video resizing.
