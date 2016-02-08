@@ -155,6 +155,7 @@ static const double DefaultWatchdogTimerInterval = 1;
 @property (retain) WebAVMediaSelectionOption *currentLegibleMediaSelectionOption;
 
 @property (readonly, getter=isPlayingOnExternalScreen) BOOL playingOnExternalScreen;
+@property (readonly, getter=isPlayingOnSecondScreen) BOOL playingOnSecondScreen;
 @property (getter=isExternalPlaybackActive) BOOL externalPlaybackActive;
 @property AVPlayerControllerExternalPlaybackType externalPlaybackType;
 @property (retain) NSString *externalPlaybackAirPlayDeviceLocalizedName;
@@ -603,12 +604,12 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
 
 - (BOOL)isPlayingOnExternalScreen
 {
-    return [self isExternalPlaybackActive];
+    return [self isExternalPlaybackActive] || [self isPlayingOnSecondScreen];
 }
 
 + (NSSet *)keyPathsForValuesAffectingPlayingOnExternalScreen
 {
-    return [NSSet setWithObjects:@"externalPlaybackActive", nil];
+    return [NSSet setWithObjects:@"externalPlaybackActive", @"playingOnSecondScreen", nil];
 }
 
 - (BOOL)isPictureInPicturePossible
