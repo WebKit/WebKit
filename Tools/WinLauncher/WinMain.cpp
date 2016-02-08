@@ -31,6 +31,10 @@
 #include "WinLauncherWebHost.h"
 #include "Common.cpp"
 
+namespace WebCore {
+float deviceScaleFactorForWindow(HWND);
+}
+
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 {
 #ifdef _CRTDBG_MAP_ALLOC
@@ -65,10 +69,12 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
     // Init COM
     OleInitialize(nullptr);
 
+    float scaleFactor = WebCore::deviceScaleFactorForWindow(nullptr);
+
     if (usesLayeredWebView) {
         hURLBarWnd = CreateWindow(L"EDIT", L"Type URL Here",
             WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 
-            s_windowPosition.x, s_windowPosition.y + s_windowSize.cy, s_windowSize.cx, URLBAR_HEIGHT,
+            scaleFactor * s_windowPosition.x, scaleFactor * (s_windowPosition.y + s_windowSize.cy), scaleFactor * s_windowSize.cx, scaleFactor * URLBAR_HEIGHT,
             0, 0, hInst, 0);
     } else {
         hMainWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
@@ -78,8 +84,8 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
             return FALSE;
 
         hBackButtonWnd = CreateWindow(L"BUTTON", L"<", WS_CHILD | WS_VISIBLE  | BS_TEXT, 0, 0, 0, 0, hMainWnd, 0, hInst, 0);
-        hForwardButtonWnd = CreateWindow(L"BUTTON", L">", WS_CHILD | WS_VISIBLE  | BS_TEXT, CONTROLBUTTON_WIDTH, 0, 0, 0, hMainWnd, 0, hInst, 0);
-        hURLBarWnd = CreateWindow(L"EDIT", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, CONTROLBUTTON_WIDTH * 2, 0, 0, 0, hMainWnd, 0, hInst, 0);
+        hForwardButtonWnd = CreateWindow(L"BUTTON", L">", WS_CHILD | WS_VISIBLE | BS_TEXT, scaleFactor * CONTROLBUTTON_WIDTH, 0, 0, 0, hMainWnd, 0, hInst, 0);
+        hURLBarWnd = CreateWindow(L"EDIT", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, scaleFactor * CONTROLBUTTON_WIDTH * 2, 0, 0, 0, hMainWnd, 0, hInst, 0);
 
         ShowWindow(hMainWnd, nCmdShow);
         UpdateWindow(hMainWnd);
@@ -93,7 +99,11 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 
     SetFocus(hURLBarWnd);
 
-    RECT clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
+    RECT clientRect;
+    ::GetClientRect(hMainWnd, &clientRect);
+
+    if (usesLayeredWebView)
+        clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
 
     WinLauncherWebHost* webHost = nullptr;
 

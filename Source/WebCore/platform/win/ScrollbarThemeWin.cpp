@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ScrollbarThemeWin.h"
 
+#include "GDIUtilities.h"
 #include "GraphicsContext.h"
+#include "HWndDC.h"
 #include "LocalWindowsContext.h"
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
@@ -107,12 +109,16 @@ ScrollbarThemeWin::~ScrollbarThemeWin()
 {
 }
 
+static int scrollbarThicknessInPixels()
+{
+    static int thickness = ::GetSystemMetrics(SM_CXVSCROLL);
+    return thickness;
+}
+
 int ScrollbarThemeWin::scrollbarThickness(ScrollbarControlSize)
 {
-    static int thickness;
-    if (!thickness)
-        thickness = ::GetSystemMetrics(SM_CXVSCROLL);
-    return thickness;
+    float inverseScaleFactor = 1.0f / deviceScaleFactorForWindow(0);
+    return clampTo<int>(inverseScaleFactor * scrollbarThicknessInPixels());
 }
 
 void ScrollbarThemeWin::themeChanged()

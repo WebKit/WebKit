@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2015 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,11 @@
 #include "config.h"
 #include "PlatformMouseEvent.h"
 
+#include "GDIUtilities.h"
+#include "HWndDC.h"
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/MathExtras.h>
 #include <windows.h>
 #include <windowsx.h>
 
@@ -38,7 +41,9 @@ namespace WebCore {
 
 static IntPoint positionForEvent(HWND hWnd, LPARAM lParam)
 {
-    POINT point = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+    IntPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    float inverseScaleFactor = 1.0f / deviceScaleFactorForWindow(hWnd);
+    point.scale(inverseScaleFactor, inverseScaleFactor);
     return point;
 }
 
