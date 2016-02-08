@@ -50,7 +50,7 @@ using namespace WebKit;
     RetainPtr<MPAVRoutingController> _routingController;
     RetainPtr<MPAudioVideoRoutingPopoverController> _popoverController;  // iPad
     RetainPtr<MPAudioVideoRoutingActionSheet> _actionSheet;              // iPhone
-    __weak WKContentView* _view;   // Weak reference.
+    WKContentView* _view; // Weak reference.
 }
 
 - (instancetype)initWithView:(WKContentView *)view
