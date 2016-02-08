@@ -41,7 +41,8 @@ function cursorSuccess()
         request.onerror = unexpectedErrorCallback;
         return;
     }
-    evalAndLog("event.target.result.delete()");
+    evalAndLog("deleteRequest = event.target.result.delete()");
+    shouldBe("deleteRequest.source", "event.target.result");
     shouldBeEqualToString("event.target.result.value", "myValue" + counter++);
     evalAndLog("event.target.result.continue()");
 }
@@ -72,7 +73,8 @@ function openCursor2()
 function deleteObject()
 {
     shouldBeNonNull(event.target.result);
-    evalAndLog("event.target.result.delete()");
+    evalAndLog("deleteRequest = event.target.result.delete()");
+    shouldBe("deleteRequest.source", "event.target.result");
     request = evalAndLog("objectStore.get('myKey1')");
     request.onsuccess = verifyObjectDeleted;
     request.onerror = unexpectedErrorCallback;

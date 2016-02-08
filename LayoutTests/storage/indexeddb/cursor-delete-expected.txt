@@ -18,16 +18,20 @@ objectStore.add('myValue4', 'myKey4')
 openCursor1
 trans = db.transaction(['test'], 'readwrite')
 trans.objectStore('test').openCursor(keyRange)
-event.target.result.delete()
+deleteRequest = event.target.result.delete()
+PASS deleteRequest.source is event.target.result
 PASS event.target.result.value is "myValue1"
 event.target.result.continue()
-event.target.result.delete()
+deleteRequest = event.target.result.delete()
+PASS deleteRequest.source is event.target.result
 PASS event.target.result.value is "myValue2"
 event.target.result.continue()
-event.target.result.delete()
+deleteRequest = event.target.result.delete()
+PASS deleteRequest.source is event.target.result
 PASS event.target.result.value is "myValue3"
 event.target.result.continue()
-event.target.result.delete()
+deleteRequest = event.target.result.delete()
+PASS deleteRequest.source is event.target.result
 PASS event.target.result.value is "myValue4"
 event.target.result.continue()
 PASS counter is 5
@@ -39,7 +43,8 @@ objectStore.add('myValue1', 'myKey1')
 openCursor2
 objectStore.openCursor(keyRange)
 PASS [object IDBCursorWithValue] is non-null.
-event.target.result.delete()
+deleteRequest = event.target.result.delete()
+PASS deleteRequest.source is event.target.result
 objectStore.get('myKey1')
 PASS event.target.result is undefined
 PASS successfullyParsed is true

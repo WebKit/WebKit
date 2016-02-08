@@ -1,3 +1,14 @@
+2016-02-08  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB: No test covers cursor.delete() setting the source of the request to the cursor.
+        https://bugs.webkit.org/show_bug.cgi?id=153992
+
+        Reviewed by Jer Noble.
+
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/cursor-delete-private-expected.txt:
+        * storage/indexeddb/resources/cursor-delete.js:
+
 2016-02-08  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Using 'super' in arrow function that declared out of the class should lead to Syntax error
