@@ -3431,17 +3431,22 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
 RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, RegisterID* dst, ExpressionNode* rhs)
 {
     if (!rhs->isSimpleArray())
-        return 0;
+        return nullptr;
+
+    ElementNode* elementNodes = static_cast<ArrayNode*>(rhs)->elements();
+    Vector<ExpressionNode*> elements;
+    for (; elementNodes; elementNodes = elementNodes->next()) {
+        ExpressionNode* value = elementNodes->value();
+        if (value->isSpreadExpression())
+            return nullptr;
+        elements.append(value);
+    }
 
     RefPtr<RegisterID> resultRegister;
     if (dst && dst != generator.ignoredResult())
         resultRegister = generator.emitNewArray(generator.newTemporary(), 0, 0);
-    ElementNode* elementNodes = static_cast<ArrayNode*>(rhs)->elements();
-    Vector<ExpressionNode*> elements;
-    for (; elementNodes; elementNodes = elementNodes->next())
-        elements.append(elementNodes->value());
     if (m_targetPatterns.size() != elements.size())
-        return 0;
+        return nullptr;
     Vector<RefPtr<RegisterID>> registers;
     registers.reserveCapacity(m_targetPatterns.size());
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {

@@ -1,3 +1,26 @@
+2016-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Spread expressions are not fair game for direct binding
+        https://bugs.webkit.org/show_bug.cgi?id=154042
+        rdar://problem/24291413
+
+        Reviewed by Saam Barati.
+
+        Prior to this change we crashed on this:
+
+            var [x] = [...y];
+
+        Because NodesCodegen thinks that this is a direct binding.  It's not, because we cannot
+        directly generate bytecode for "...y".  This is a unique property of spread expressions, so
+        its sufficient to just bail out of direct binding if we see a spread expression. That's what
+        this patch does.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::emitDirectBinding):
+        * tests/stress/spread-in-tail.js: Added.
+        (foo):
+        (catch):
+
 2016-02-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196286.
@@ -38,6 +61,7 @@
 
         runtimeTypeForValue should protect against seeing TDZ value
         https://bugs.webkit.org/show_bug.cgi?id=154023
+        rdar://problem/24291413
 
         Reviewed by Michael Saboff.
 
