@@ -1637,112 +1637,142 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
 }
 
 void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const LayoutPoint& paintOffset,
-                                       const LayoutRect& lastline, const LayoutRect& thisline, const LayoutRect& nextline,
-                                       const Color outlineColor)
+    const LayoutRect& previousLine, const LayoutRect& thisLine, const LayoutRect& nextLine, const Color outlineColor)
 {
-    const RenderStyle& styleToUse = style();
+    const auto& styleToUse = style();
+    float outlineOffset = styleToUse.outlineOffset();
+    LayoutRect outlineBoxRect = thisLine;
+    outlineBoxRect.inflate(outlineOffset);
+    outlineBoxRect.moveBy(paintOffset);
+    if (outlineBoxRect.isEmpty())
+        return;
+
     float outlineWidth = styleToUse.outlineWidth();
-    float outlineOffset = style().outlineOffset();
     EBorderStyle outlineStyle = styleToUse.outlineStyle();
     bool antialias = shouldAntialiasLines(graphicsContext);
 
-    LayoutRect box(LayoutPoint(paintOffset.x() + thisline.x() - outlineOffset, paintOffset.y() + thisline.y() - outlineOffset),
-        LayoutSize(thisline.width() + 2 * outlineOffset, thisline.height() + 2 * outlineOffset));
-
-    IntRect pixelSnappedBox = snappedIntRect(box);
-    if (pixelSnappedBox.isEmpty())
-        return;
-    IntRect pixelSnappedLastLine = snappedIntRect(paintOffset.x() + lastline.x(), 0, lastline.width(), 0);
-    IntRect pixelSnappedNextLine = snappedIntRect(paintOffset.x() + nextline.x(), 0, nextline.width(), 0);
+    auto adjustedPreviousLine = previousLine;
+    adjustedPreviousLine.moveBy(paintOffset);
+    auto adjustedNextLine = nextLine;
+    adjustedNextLine.moveBy(paintOffset);
     
+    float adjacentWidth1 = 0;
+    float adjacentWidth2 = 0;
     // left edge
-    drawLineForBoxSide(graphicsContext,
-        FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
-        pixelSnappedBox.y() - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? outlineWidth : 0)),
-        FloatPoint(pixelSnappedBox.x(),
-        pixelSnappedBox.maxY() + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? outlineWidth : 0))),
-        BSLeft,
-        outlineColor, outlineStyle,
-        (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? outlineWidth : -outlineWidth),
-        (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? outlineWidth : -outlineWidth),
-        antialias);
+    auto topLeft = outlineBoxRect.minXMinYCorner();
+    if (previousLine.isEmpty() || thisLine.x() < previousLine.x() || (previousLine.maxX()) <= thisLine.x()) {
+        topLeft.move(-outlineWidth, -outlineWidth);
+        adjacentWidth1 = outlineWidth;
+    } else {
+        topLeft.move(-outlineWidth, 2 * outlineOffset);
+        adjacentWidth1 = -outlineWidth;
+    }
+    auto bottomRight = outlineBoxRect.minXMaxYCorner();
+    if (nextLine.isEmpty() || thisLine.x() <= nextLine.x() || (nextLine.maxX()) <= thisLine.x()) {
+        bottomRight.move(0, outlineWidth);
+        adjacentWidth2 = outlineWidth;
+    } else {
+        bottomRight.move(0, -2 * outlineOffset);
+        adjacentWidth2 = -outlineWidth;
+    }
+    drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSLeft, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     
     // right edge
-    drawLineForBoxSide(graphicsContext,
-        FloatRect(FloatPoint(pixelSnappedBox.maxX(),
-        pixelSnappedBox.y() - (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? outlineWidth : 0)),
-        FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
-        pixelSnappedBox.maxY() + (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? outlineWidth : 0))),
-        BSRight,
-        outlineColor, outlineStyle,
-        (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? outlineWidth : -outlineWidth),
-        (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? outlineWidth : -outlineWidth),
-        antialias);
-    // upper edge
-    if (thisline.x() < lastline.x())
-        drawLineForBoxSide(graphicsContext,
-            FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
-            pixelSnappedBox.y() - outlineWidth),
-            FloatPoint(std::min<float>(pixelSnappedBox.maxX() + outlineWidth, (lastline.isEmpty() ? 1000000 : pixelSnappedLastLine.x())),
-            pixelSnappedBox.y())),
-            BSTop, outlineColor, outlineStyle,
-            outlineWidth,
-            (!lastline.isEmpty() && paintOffset.x() + lastline.x() + 1 < pixelSnappedBox.maxX() + outlineWidth) ? -outlineWidth : outlineWidth,
-            antialias);
-    
-    if (lastline.maxX() < thisline.maxX())
-        drawLineForBoxSide(graphicsContext,
-            FloatRect(FloatPoint(std::max<float>(lastline.isEmpty() ? -1000000 : pixelSnappedLastLine.maxX(), pixelSnappedBox.x() - outlineWidth),
-            pixelSnappedBox.y() - outlineWidth),
-            FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
-            pixelSnappedBox.y())),
-            BSTop, outlineColor, outlineStyle,
-            (!lastline.isEmpty() && pixelSnappedBox.x() - outlineWidth < paintOffset.x() + lastline.maxX()) ? -outlineWidth : outlineWidth,
-            outlineWidth, antialias);
+    topLeft = outlineBoxRect.maxXMinYCorner();
+    if (previousLine.isEmpty() || previousLine.maxX() < thisLine.maxX() || thisLine.maxX() <= previousLine.x()) {
+        topLeft.move(0, -outlineWidth);
+        adjacentWidth1 = outlineWidth;
+    } else {
+        topLeft.move(0, 2 * outlineOffset);
+        adjacentWidth1 = -outlineWidth;
+    }
+    bottomRight = outlineBoxRect.maxXMaxYCorner();
+    if (nextLine.isEmpty() || nextLine.maxX() <= thisLine.maxX() || thisLine.maxX() <= nextLine.x()) {
+        bottomRight.move(outlineWidth, outlineWidth);
+        adjacentWidth2 = outlineWidth;
+    } else {
+        bottomRight.move(outlineWidth, -2 * outlineOffset);
+        adjacentWidth2 = -outlineWidth;
+    }
+    drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSRight, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
 
-    if (thisline.x() == thisline.maxX())
-        drawLineForBoxSide(graphicsContext,
-            FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
-            pixelSnappedBox.y() - outlineWidth),
-            FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
-            pixelSnappedBox.y())),
-            BSTop, outlineColor, outlineStyle,
-            outlineWidth,
-            outlineWidth,
-            antialias);
+    // upper edge
+    if (thisLine.x() < previousLine.x()) {
+        topLeft = outlineBoxRect.minXMinYCorner();
+        topLeft.move(-outlineWidth, -outlineWidth);
+        adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMinYCorner();
+        bottomRight.move(outlineWidth, 0);
+        if (!previousLine.isEmpty() && adjustedPreviousLine.x() < bottomRight.x()) {
+            bottomRight.setX(adjustedPreviousLine.x() - outlineOffset);
+            adjacentWidth2 = -outlineWidth;
+        } else
+            adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSTop, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
+    
+    if (previousLine.maxX() < thisLine.maxX()) {
+        topLeft = outlineBoxRect.minXMinYCorner();
+        topLeft.move(-outlineWidth, -outlineWidth);
+        if (!previousLine.isEmpty() && adjustedPreviousLine.maxX() > topLeft.x()) {
+            topLeft.setX(adjustedPreviousLine.maxX() + outlineOffset);
+            adjacentWidth1 = -outlineWidth;
+        } else
+            adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMinYCorner();
+        bottomRight.move(outlineWidth, 0);
+        adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSTop, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
+
+    if (thisLine.x() == thisLine.maxX()) {
+        topLeft = outlineBoxRect.minXMinYCorner();
+        topLeft.move(-outlineWidth, -outlineWidth);
+        adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMinYCorner();
+        bottomRight.move(outlineWidth, 0);
+        adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSTop, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
 
     // lower edge
-    if (thisline.x() < nextline.x())
-        drawLineForBoxSide(graphicsContext,
-            FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
-            pixelSnappedBox.maxY()),
-            FloatPoint(std::min<float>(pixelSnappedBox.maxX() + outlineWidth, !nextline.isEmpty() ? pixelSnappedNextLine.x() + 1 : 1000000),
-            pixelSnappedBox.maxY() + outlineWidth)),
-            BSBottom, outlineColor, outlineStyle,
-            outlineWidth,
-            (!nextline.isEmpty() && paintOffset.x() + nextline.x() + 1 < pixelSnappedBox.maxX() + outlineWidth) ? -outlineWidth : outlineWidth,
-            antialias);
+    if (thisLine.x() < nextLine.x()) {
+        topLeft = outlineBoxRect.minXMaxYCorner();
+        topLeft.move(-outlineWidth, 0);
+        adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMaxYCorner();
+        bottomRight.move(outlineWidth, outlineWidth);
+        if (!nextLine.isEmpty() && (adjustedNextLine.x() < bottomRight.x())) {
+            bottomRight.setX(adjustedNextLine.x() - outlineOffset);
+            adjacentWidth2 = -outlineWidth;
+        } else
+            adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSBottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
     
-    if (nextline.maxX() < thisline.maxX())
-        drawLineForBoxSide(graphicsContext,
-            FloatRect(FloatPoint(std::max<float>(!nextline.isEmpty() ? pixelSnappedNextLine.maxX() : -1000000, pixelSnappedBox.x() - outlineWidth),
-            pixelSnappedBox.maxY()),
-            FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
-            pixelSnappedBox.maxY() + outlineWidth)),
-            BSBottom, outlineColor, outlineStyle,
-            (!nextline.isEmpty() && pixelSnappedBox.x() - outlineWidth < paintOffset.x() + nextline.maxX()) ? -outlineWidth : outlineWidth,
-            outlineWidth, antialias);
+    if (nextLine.maxX() < thisLine.maxX()) {
+        topLeft = outlineBoxRect.minXMaxYCorner();
+        topLeft.move(-outlineWidth, 0);
+        if (!nextLine.isEmpty() && adjustedNextLine.maxX() > topLeft.x()) {
+            topLeft.setX(adjustedNextLine.maxX() + outlineOffset);
+            adjacentWidth1 = -outlineWidth;
+        } else
+            adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMaxYCorner();
+        bottomRight.move(outlineWidth, outlineWidth);
+        adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSBottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
 
-    if (thisline.x() == thisline.maxX())
-        drawLineForBoxSide(graphicsContext,
-            FloatRect(FloatPoint(pixelSnappedBox.x() - outlineWidth,
-            pixelSnappedBox.maxY()),
-            FloatPoint(pixelSnappedBox.maxX() + outlineWidth,
-            pixelSnappedBox.maxY() + outlineWidth)),
-            BSBottom, outlineColor, outlineStyle,
-            outlineWidth,
-            outlineWidth,
-            antialias);
+    if (thisLine.x() == thisLine.maxX()) {
+        topLeft = outlineBoxRect.minXMaxYCorner();
+        topLeft.move(-outlineWidth, 0);
+        adjacentWidth1 = outlineWidth;
+        bottomRight = outlineBoxRect.maxXMaxYCorner();
+        bottomRight.move(outlineWidth, outlineWidth);
+        adjacentWidth2 = outlineWidth;
+        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BSBottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    }
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)

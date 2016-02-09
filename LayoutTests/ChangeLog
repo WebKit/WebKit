@@ -1,5 +1,19 @@
 2016-02-09  Zalan Bujtas  <zalan@apple.com>
 
+        Outline corners do not align properly for multiline inlines.
+        https://bugs.webkit.org/show_bug.cgi?id=154025
+
+        Reviewed by David Hyatt.
+
+        Adjust border position when outline-offset > 0. This patch also
+        removes integral pixelsnapping (drawLineForBoxSide takes care of
+        device pixelsnapping). 
+
+        * fast/inline/outline-corners-with-offset-expected.html: Added.
+        * fast/inline/outline-corners-with-offset.html: Added.
+
+2016-02-09  Zalan Bujtas  <zalan@apple.com>
+
         [Win] Rebaseline after r196244.
 
         Unreviewed test gardening.
