@@ -66,8 +66,6 @@ TiledCanvasImageStage = Utilities.createSubclass(Stage,
 
         this._ctiles = Math.max(this._ctiles, 0);
         this._ctiles = Math.min(this._ctiles, this._tiles.length);
-
-        return this._ctiles;
     },
 
     _drawBackground: function()

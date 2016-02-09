@@ -107,12 +107,12 @@ ParticlesStage = Utilities.createSubclass(Stage,
     tune: function(count)
     {
         if (count == 0)
-            return this.particles.length;
+            return;
 
         if (count > 0) {
             for (var i = 0; i < count; ++i)
                 this.particles.push(this.createParticle());
-            return this.particles.length;
+            return;
         }
 
         count = Math.min(-count, this.particles.length);
@@ -123,7 +123,6 @@ ParticlesStage = Utilities.createSubclass(Stage,
         }
 
         this.particles.splice(0, count);
-        return this.particles.length;
     },
 
     complexity: function()

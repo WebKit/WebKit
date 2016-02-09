@@ -1,5 +1,25 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Refactor tune() to not return the complexity of the scene.
+
+        We have stage.complexity() now, so returning the complexity through tune
+        is unnecessary.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        * Animometer/tests/master/resources/canvas-stage.js:
+        * Animometer/tests/master/resources/particles.js:
+        * Animometer/tests/misc/resources/canvas-electrons.js:
+        * Animometer/tests/misc/resources/canvas-stars.js:
+        * Animometer/tests/resources/main.js:
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        * Animometer/tests/simple/resources/tiled-canvas-image.js:
+        * Animometer/tests/template/resources/template-canvas.js:
+        * Animometer/tests/template/resources/template-css.js:
+        * Animometer/tests/template/resources/template-svg.js:
+        * Animometer/tests/text/resources/layering-text.js:
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Make the fixed controller a step controller instead. Halfway through the test
         it will bump up the complexity 4-fold. Calculate the step timestamp using options
         instead of a separate parameter to the Controller constructor.

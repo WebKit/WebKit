@@ -70,18 +70,16 @@ CanvasElectronsStage = Utilities.createSubclass(Stage,
     tune: function(count)
     {
         if (count == 0)
-            return this._electrons.length;
+            return;
 
         if (count > 0) {
             for (var i = 0; i < count; ++i)
                 this._electrons.push(new CanvasElectron(this));
-            return this._electrons.length;
+            return;
         }
 
         count = Math.min(-count, this._electrons.length);
         this._electrons.splice(-count, count);
-
-        return this._electrons.length;
     },
 
     animate: function(timeDelta)

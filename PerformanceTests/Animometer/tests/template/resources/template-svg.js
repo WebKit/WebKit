@@ -20,12 +20,6 @@ TemplateSvgStage = Utilities.createSubclass(Stage,
         // the stage.
 
         // TODO: Change objects in the stage.
-
-        // Return the number of all the elements in the stage.
-        // This number is recorded in the sampled data.
-
-        // TODO: Return the count of the objects in the stage.
-        return 0;
     },
 
     animate: function(timeDelta)

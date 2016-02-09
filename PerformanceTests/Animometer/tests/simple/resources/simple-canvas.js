@@ -2,7 +2,7 @@ Utilities.extendObject(SimpleCanvasStage.prototype, {
     tune: function(count)
     {
         if (count == 0)
-            return this.objects.length;
+            return;
 
         if (count > 0) {
             // For some tests, it may be easier to see how well the test is going
@@ -10,11 +10,10 @@ Utilities.extendObject(SimpleCanvasStage.prototype, {
             var coordinateMaximumFactor = Math.min(this.objects.length, Math.min(this.size.x, this.size.y)) / Math.min(this.size.x, this.size.y);
             for (var i = 0; i < count; ++i)
                 this.objects.push(new this._canvasObject(this, coordinateMaximumFactor));
-            return this.objects.length;
+            return;
         }
 
         count = Math.min(-count, this.objects.length);
         this.objects.splice(-count, count);
-        return this.objects.length;
     }
 });

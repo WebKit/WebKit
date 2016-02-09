@@ -15,17 +15,16 @@ SimpleCanvasStage = Utilities.createSubclass(Stage,
     tune: function(count)
     {
         if (count == 0)
-            return this.objects.length;
+            return;
 
         if (count > 0) {
             for (var i = 0; i < count; ++i)
                 this.objects.push(new this._canvasObject(this));
-            return this.objects.length;
+            return;
         }
 
         count = Math.min(-count, this.objects.length);
         this.objects.splice(0, count);
-        return this.objects.length;
     },
 
     animate: function()

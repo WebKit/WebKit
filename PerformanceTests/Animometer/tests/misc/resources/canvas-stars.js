@@ -67,18 +67,16 @@ CanvasStarsStage = Utilities.createSubclass(Stage,
     tune: function(count)
     {
         if (count == 0)
-            return this._objects.length;
+            return;
 
         if (count > 0) {
             for (var i = 0; i < count; ++i)
                 this._objects.push(new CanvasStar(this));
-            return this._objects.length;
+            return;
         }
 
         count = Math.min(-count, this._objects.length);
         this._objects.splice(-count, count);
-
-        return this._objects.length;
     },
 
     animate: function(timeDelta)

@@ -20,12 +20,6 @@ TemplateCssStage = Utilities.createSubclass(Stage,
         // the stage.
 
         // Change objects in the stage.
-
-        // Return the number of all the elements in the stage.
-        // This number is recorded in the sampled data.
-
-        // Return the count of the objects in the stage.
-        return 0;
     },
 
     animate: function(timeDelta)

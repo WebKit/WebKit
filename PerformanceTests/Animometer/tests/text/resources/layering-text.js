@@ -100,19 +100,17 @@ LayeringTextStage = Utilities.createSubclass(Stage,
     tune: function(count)
     {
         if (count == 0)
-            return this._textElements.length;
+            return;
 
         if (count > 0) {
             for (var i = 0; i < count; ++i)
                 this._pushTextElement();
-            return this._textElements.length;
+            return;
         }
 
         count = Math.min(-count, this._textElements.length);
         for (var i = 0; i < count; ++i)
             this._popTextElement();
-
-        return this._textElements.length;
     },
 
     complexity: function()
