@@ -1,3 +1,21 @@
+2016-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+        checkValidity() sometimes asserts in WebUserMediaClient::pageDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=154029
+        <rdar://problem/24065022>
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebUserMediaClient.mm:
+        (WebUserMediaClient::pageDestroyed): Copy map keys to a vector and clear the map before
+          enumerating the vector and canceling the requests. ASSERT that the map is not modified
+          during cleanup. Clean up the permission check map.
+        (WebUserMediaClient::requestUserMediaAccess): Add the request to the map before calling the
+          UI delegate in case it works synchronously (as it does in DRT).
+        (WebUserMediaClient::checkUserMediaPermission): Ditto.
+        (WebUserMediaClient::cancelUserMediaPermissionCheck): White-space cleanup.
+        (-[WebUserMediaPolicyListener allow]): Ditto.
+
 2016-02-08  Anders Carlsson  <andersca@apple.com>
 
         Crash when trying to chain to the old -[NSView setNeedsDisplayInRect:]

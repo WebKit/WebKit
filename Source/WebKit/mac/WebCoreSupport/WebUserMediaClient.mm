@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,7 +96,6 @@ static void RemovePermissionCheckFromMap(UserMediaPermissionCheck* request)
     userMediaCheckMap().remove(request);
 }
 
-
 WebUserMediaClient::WebUserMediaClient(WebView* webView)
     : m_webView(webView)
 {
@@ -108,11 +107,25 @@ WebUserMediaClient::~WebUserMediaClient()
 
 void WebUserMediaClient::pageDestroyed()
 {
-    UserMediaRequestsMap& requestsMap = userMediaRequestsMap();
-    for (UserMediaRequestsMap::iterator it = requestsMap.begin(); it != requestsMap.end(); ++it) {
-        [it->value cancelUserMediaAccessRequest];
-        requestsMap.remove(it);
-    }
+    auto& requestsMap = userMediaRequestsMap();
+    Vector<RetainPtr<WebUserMediaPolicyListener>> pendingRequests;
+    copyValuesToVector(requestsMap, pendingRequests);
+    requestsMap.clear();
+
+    for (auto& request : pendingRequests)
+        [request cancelUserMediaAccessRequest];
+
+    ASSERT(userMediaRequestsMap().isEmpty());
+
+    auto& checkMap = userMediaCheckMap();
+    Vector<RetainPtr<WebUserMediaPolicyCheckerListener>> pendingChecks;
+    copyValuesToVector(checkMap, pendingChecks);
+    checkMap.clear();
+
+    for (auto& check : pendingChecks)
+        [check cancelUserMediaPermissionCheck];
+
+    ASSERT(userMediaCheckMap().isEmpty());
 
     delete this;
 }
@@ -130,8 +143,8 @@ void WebUserMediaClient::requestUserMediaAccess(UserMediaRequest& request)
     WebUserMediaPolicyListener *listener = [[WebUserMediaPolicyListener alloc] initWithUserMediaRequest:&request];
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request.securityOrigin()];
 
-    CallUIDelegate(m_webView, selector, webOrigin, listener);
     AddRequestToRequestMap(&request, listener);
+    CallUIDelegate(m_webView, selector, webOrigin, listener);
 
     [webOrigin release];
     [listener release];
@@ -163,15 +176,14 @@ void WebUserMediaClient::checkUserMediaPermission(UserMediaPermissionCheck& requ
     WebUserMediaPolicyCheckerListener *listener = [[WebUserMediaPolicyCheckerListener alloc] initWithUserMediaPermissionCheck:&request];
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request.securityOrigin()];
 
-    CallUIDelegate(m_webView, selector, webOrigin, listener);
     AddPermissionCheckToMap(&request, listener);
+    CallUIDelegate(m_webView, selector, webOrigin, listener);
 
     [webOrigin release];
     [listener release];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
-
 
 void WebUserMediaClient::cancelUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck& request)
 {
@@ -215,7 +227,6 @@ void WebUserMediaClient::cancelUserMediaPermissionCheck(WebCore::UserMediaPermis
         return;
     
     _request->userMediaAccessGranted(_request->allowedAudioDeviceUID(), _request->allowedVideoDeviceUID());
-
     RemoveRequestFromRequestMap(_request.get());
 #endif
 }
