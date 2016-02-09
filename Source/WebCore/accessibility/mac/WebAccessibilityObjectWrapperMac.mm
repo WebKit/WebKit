@@ -900,16 +900,21 @@ static id textMarkerForCharacterOffset(AXObjectCache* cache, Node& node, int off
     return cache->rangeForUnorderedCharacterOffsets(startCharacterOffset, endCharacterOffset);
 }
 
-- (CharacterOffset)characterOffsetForTextMarker:(id)textMarker
+static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFTypeRef textMarker)
 {
-    if (!textMarker || isTextMarkerIgnored(textMarker))
+    if (!cache || !textMarker)
         return CharacterOffset();
     
     TextMarkerData textMarkerData;
     if (!wkGetBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
         return CharacterOffset();
     
-    return CharacterOffset(textMarkerData.node, textMarkerData.characterStartIndex, textMarkerData.characterOffset);
+    return cache->characterOffsetForTextMarkerData(textMarkerData);
+}
+
+- (CharacterOffset)characterOffsetForTextMarker:(id)textMarker
+{
+    return characterOffsetForTextMarker(m_object->axObjectCache(), textMarker);
 }
 
 static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)

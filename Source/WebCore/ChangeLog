@@ -1,3 +1,27 @@
+2016-02-08  Nan Wang  <n_wang@apple.com>
+
+        AX: crash at WebCore::Range::selectNodeContents(WebCore::Node*, int&)
+        https://bugs.webkit.org/show_bug.cgi?id=154018
+
+        Reviewed by Chris Fleizach.
+
+        Sometimes rangeForUnorderedCharacterOffsets call is accessing derefed node objects
+        and leading to a crash. Fixed it by checking isNodeInUse before creating the CharacterOffset
+        object.
+
+        Test: accessibility/text-marker/text-marker-range-stale-node-crash.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+        (WebCore::AXObjectCache::characterOffsetForTextMarkerData):
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        * accessibility/AXObjectCache.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper rangeForTextMarkerRange:]):
+        (characterOffsetForTextMarker):
+        (-[WebAccessibilityObjectWrapper characterOffsetForTextMarker:]):
+        (textMarkerForVisiblePosition):
+
 2016-02-08  Andreas Kling  <akling@apple.com>
 
         [iOS] Throw away some unlinked code when navigating to a new page.

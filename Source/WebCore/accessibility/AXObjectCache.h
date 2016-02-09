@@ -185,6 +185,7 @@ public:
     // Text marker utilities.
     void textMarkerDataForVisiblePosition(TextMarkerData&, const VisiblePosition&);
     VisiblePosition visiblePositionForTextMarkerData(TextMarkerData&);
+    CharacterOffset characterOffsetForTextMarkerData(TextMarkerData&);
     void textMarkerDataForCharacterOffset(TextMarkerData&, Node&, int, bool toNodeEnd = false);
     void startOrEndTextMarkerDataForRange(TextMarkerData&, RefPtr<Range>, bool);
     AccessibilityObject* accessibilityObjectForTextMarkerData(TextMarkerData&);

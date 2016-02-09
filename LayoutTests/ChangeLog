@@ -1,3 +1,13 @@
+2016-02-08  Nan Wang  <n_wang@apple.com>
+
+        AX: crash at WebCore::Range::selectNodeContents(WebCore::Node*, int&)
+        https://bugs.webkit.org/show_bug.cgi?id=154018
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/text-marker/text-marker-range-stale-node-crash-expected.txt: Added.
+        * accessibility/text-marker/text-marker-range-stale-node-crash.html: Added.
+
 2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Zooming in on the timeline graph does not increase its time resolution from minutes

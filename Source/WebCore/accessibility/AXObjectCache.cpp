@@ -1423,6 +1423,17 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
     return visiblePos;
 }
 
+CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(TextMarkerData& textMarkerData)
+{
+    if (!isNodeInUse(textMarkerData.node))
+        return CharacterOffset();
+    
+    if (textMarkerData.ignored)
+        return CharacterOffset();
+    
+    return CharacterOffset(textMarkerData.node, textMarkerData.characterStartIndex, textMarkerData.characterOffset);
+}
+
 CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int offset, bool toNodeEnd, bool stayWithinRange)
 {
     if (!range)
