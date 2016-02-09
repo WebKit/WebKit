@@ -95,7 +95,7 @@ void JSModuleNamespaceObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_moduleRecord);
 }
 
-static EncodedJSValue callbackGetter(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName propertyName)
+static EncodedJSValue callbackGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(JSValue::decode(thisValue));
     JSModuleRecord* moduleRecord = thisObject->moduleRecord();

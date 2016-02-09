@@ -1,3 +1,61 @@
+2016-02-07  Gavin Barraclough  <barraclough@apple.com>
+
+        GetValueFunc/PutValueFunc should not take both slotBase and thisValue
+        https://bugs.webkit.org/show_bug.cgi?id=154009
+
+        Reviewed by Geoff Garen.
+
+        In JavaScript there are two types of properties - regular value properties, and accessor properties.
+        One difference between these is how they are reflected by getOwnPropertyDescriptor, and another is
+        what object they operate on in the case of a prototype access. If you access a value property of a
+        prototype object it return a value pertinent to the prototype, but in the case of a prototype object
+        returning an accessor, then the accessor function is applied to the base object of the access.
+
+        JSC supports special 'custom' properties implemented as a c++ callback, and these custom properties
+        can be used to implement either value- or accessor-like behavior. getOwnPropertyDescriptor behavior
+        is selected via the CustomAccessor attribute. Value- or accessor-like object selection is current
+        supported by passing both the slotBase and the thisValue to the callback,and hoping it uses the
+        right one. This is probably inefficient, bug-prone, and leads to crazy like JSBoundSlotBaseFunction.
+
+        Instead, just pass one thisValue to the callback functions, consistent with CustomAccessor.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::printErrorMessageForFrame):
+        (WebCore::objectToStringFunctionGetter):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::propertyNameToString):
+        (WebCore::getStaticValueSlotEntryWithoutCaching<JSDOMObject>):
+        (WebCore::nonCachingStaticFunctionGetter):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitAdditionalChildren):
+        (WebCore::childFrameGetter):
+        (WebCore::namedItemGetter):
+        (WebCore::jsDOMWindowWebKit):
+        (WebCore::jsDOMWindowIndexedDB):
+            - add missing null check, in case indexDB acessor is applied to non-window object.
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginScriptObject):
+        (WebCore::pluginElementPropertyGetter):
+        * bindings/js/JSPluginElementFunctions.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::destroy):
+        (JSC::RuntimeArray::lengthGetter):
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::finishCreation):
+        (JSC::RuntimeMethod::lengthGetter):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::invalidate):
+        (JSC::Bindings::RuntimeObject::fallbackObjectGetter):
+        (JSC::Bindings::RuntimeObject::fieldGetter):
+        (JSC::Bindings::RuntimeObject::methodGetter):
+        * bridge/runtime_object.h:
+            - Merged slotBase & thisValue to custom property callbacks.
+
 2016-02-09  Jer Noble  <jer.noble@apple.com>
 
         Build-fix; add Nullibility macros around previously un-macro'd class definitions.

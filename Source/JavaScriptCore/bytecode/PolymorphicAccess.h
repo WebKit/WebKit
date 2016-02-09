@@ -58,8 +58,10 @@ public:
         Miss,
         Getter,
         Setter,
-        CustomGetter,
-        CustomSetter,
+        CustomValueGetter,
+        CustomAccessorGetter,
+        CustomValueSetter,
+        CustomAccessorSetter,
         IntrinsicGetter,
         InHit,
         InMiss,
@@ -73,14 +75,16 @@ public:
         case Transition:
         case Replace:
         case Setter:
-        case CustomSetter:
+        case CustomValueSetter:
+        case CustomAccessorSetter:
         case InHit:
         case InMiss:
             return false;
         case Load:
         case Miss:
         case Getter:
-        case CustomGetter:
+        case CustomValueGetter:
+        case CustomAccessorGetter:
         case IntrinsicGetter:
         case ArrayLength:
         case StringLength:
@@ -94,7 +98,8 @@ public:
         case Load:
         case Miss:
         case Getter:
-        case CustomGetter:
+        case CustomValueGetter:
+        case CustomAccessorGetter:
         case IntrinsicGetter:
         case InHit:
         case InMiss:
@@ -104,7 +109,8 @@ public:
         case Transition:
         case Replace:
         case Setter:
-        case CustomSetter:
+        case CustomValueSetter:
+        case CustomAccessorSetter:
             return true;
         }
     }
@@ -115,12 +121,14 @@ public:
         case Load:
         case Miss:
         case Getter:
-        case CustomGetter:
+        case CustomValueGetter:
+        case CustomAccessorGetter:
         case IntrinsicGetter:
         case Transition:
         case Replace:
         case Setter:
-        case CustomSetter:
+        case CustomValueSetter:
+        case CustomAccessorSetter:
         case ArrayLength:
         case StringLength:
             return false;
@@ -208,8 +216,10 @@ public:
         switch (type()) {
         case Getter:
         case Setter:
-        case CustomGetter:
-        case CustomSetter:
+        case CustomValueGetter:
+        case CustomAccessorGetter:
+        case CustomValueSetter:
+        case CustomAccessorSetter:
             return true;
         default:
             return false;
@@ -220,7 +230,8 @@ public:
     {
         switch (type()) {
         case Getter:
-        case CustomGetter:
+        case CustomValueGetter:
+        case CustomAccessorGetter:
             return true;
         default:
             return false;

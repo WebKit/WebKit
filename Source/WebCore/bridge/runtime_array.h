@@ -83,7 +83,7 @@ protected:
 
 private:
     RuntimeArray(ExecState*, Structure*);
-    static EncodedJSValue lengthGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue lengthGetter(ExecState*, EncodedJSValue, PropertyName);
 
     BindingsArray* m_array;
 };

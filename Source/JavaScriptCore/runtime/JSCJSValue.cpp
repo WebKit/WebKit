@@ -169,7 +169,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             }
 
             if (gs.isCustomGetterSetter()) {
-                callCustomSetter(exec, gs, obj, slot.thisValue(), value);
+                callCustomSetter(exec, gs, attributes & CustomAccessor, obj, slot.thisValue(), value);
                 return;
             }
 

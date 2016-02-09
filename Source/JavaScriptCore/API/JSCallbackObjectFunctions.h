@@ -600,9 +600,9 @@ JSValue JSCallbackObject<Parent>::getStaticValue(ExecState* exec, PropertyName p
 }
 
 template <class Parent>
-EncodedJSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, JSObject* slotParent, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
-    JSCallbackObject* thisObj = asCallbackObject(slotParent);
+    JSCallbackObject* thisObj = asCallbackObject(thisValue);
     
     // Check for cached or override property.
     PropertySlot slot2(thisObj);
@@ -628,9 +628,9 @@ EncodedJSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, J
 }
 
 template <class Parent>
-EncodedJSValue JSCallbackObject<Parent>::callbackGetter(ExecState* exec, JSObject* slotParent, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue JSCallbackObject<Parent>::callbackGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
-    JSCallbackObject* thisObj = asCallbackObject(slotParent);
+    JSCallbackObject* thisObj = asCallbackObject(thisValue);
     
     JSObjectRef thisRef = toRef(thisObj);
     RefPtr<OpaqueJSString> propertyNameRef;

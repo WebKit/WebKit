@@ -400,8 +400,11 @@ void JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
                 return;
             }
             if (gs.isCustomGetterSetter()) {
-                callCustomSetter(exec, gs, obj, slot.thisValue(), value);
-                slot.setCustomProperty(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
+                callCustomSetter(exec, gs, attributes & CustomAccessor, obj, slot.thisValue(), value);
+                if (attributes & CustomAccessor)
+                    slot.setCustomAccessor(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
+                else
+                    slot.setCustomValue(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
                 return;
             }
             ASSERT(!(attributes & Accessor));

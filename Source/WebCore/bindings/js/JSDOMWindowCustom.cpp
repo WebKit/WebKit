@@ -66,14 +66,14 @@ void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(frame);
 }
 
-static EncodedJSValue childFrameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
+static EncodedJSValue childFrameGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
-    return JSValue::encode(toJS(exec, jsCast<JSDOMWindow*>(slotBase)->wrapped().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))->document()->domWindow()));
+    return JSValue::encode(toJS(exec, jsCast<JSDOMWindow*>(JSValue::decode(thisValue))->wrapped().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))->document()->domWindow()));
 }
 
-static EncodedJSValue namedItemGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
+static EncodedJSValue namedItemGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
-    JSDOMWindowBase* thisObj = jsCast<JSDOMWindow*>(slotBase);
+    JSDOMWindowBase* thisObj = jsCast<JSDOMWindow*>(JSValue::decode(thisValue));
     Document* document = thisObj->wrapped().frame()->document();
 
     ASSERT(BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObj->wrapped()));
@@ -93,7 +93,7 @@ static EncodedJSValue namedItemGetter(ExecState* exec, JSObject* slotBase, Encod
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
+static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
     JSDOMWindow* castedThis = toJSDOMWindow(JSValue::decode(thisValue));
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->wrapped()))
@@ -103,15 +103,13 @@ static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, JSObject*, EncodedJSVal
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-static EncodedJSValue jsDOMWindowIndexedDB(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+static EncodedJSValue jsDOMWindowIndexedDB(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    UNUSED_PARAM(slotBase);
-    UNUSED_PARAM(thisValue);
     auto* castedThis = toJSDOMWindow(JSValue::decode(thisValue));
     if (!RuntimeEnabledFeatures::sharedFeatures().indexedDBEnabled())
         return JSValue::encode(jsUndefined());
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->wrapped()))
+    if (!castedThis || !BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->wrapped()))
         return JSValue::encode(jsUndefined());
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(DOMWindowIndexedDatabase::indexedDB(&impl)));

@@ -276,8 +276,12 @@ inline void putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     } else if (!(entry->attributes() & ReadOnly)) {
-        entry->propertyPutter()(exec, base, JSValue::encode(slot.thisValue()), JSValue::encode(value));
-        slot.setCustomProperty(base, entry->propertyPutter());
+        JSValue thisValue = entry->attributes() & CustomAccessor ? slot.thisValue() : JSValue(base);
+        entry->propertyPutter()(exec, JSValue::encode(thisValue), JSValue::encode(value));
+        if (entry->attributes() & CustomAccessor)
+            slot.setCustomAccessor(base, entry->propertyPutter());
+        else
+            slot.setCustomValue(base, entry->propertyPutter());
     } else if (slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
 }

@@ -523,8 +523,10 @@ void AccessCase::generate(AccessGenerationState& state)
     case Load:
     case Getter:
     case Setter:
-    case CustomGetter:
-    case CustomSetter: {
+    case CustomValueGetter:
+    case CustomAccessorGetter:
+    case CustomValueSetter:
+    case CustomAccessorSetter: {
         if (isValidOffset(m_offset)) {
             Structure* currStructure;
             if (m_conditionSet.isEmpty())
@@ -553,7 +555,7 @@ void AccessCase::generate(AccessGenerationState& state)
             baseForAccessGPR = baseForGetGPR;
 
         GPRReg loadedValueGPR = InvalidGPRReg;
-        if (m_type != CustomGetter && m_type != CustomSetter) {
+        if (m_type != CustomValueGetter && m_type != CustomAccessorGetter && m_type != CustomValueSetter && m_type != CustomAccessorSetter) {
             if (m_type == Load)
                 loadedValueGPR = valueRegs.payloadGPR();
             else
@@ -750,24 +752,26 @@ void AccessCase::generate(AccessGenerationState& state)
             if (needsToMakeRoomOnStackForCCall)
                 jit.makeSpaceOnStackForCCall();
 
-            // getter: EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
-            // setter: void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
+            // getter: EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
+            // setter: void (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
+            // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisVaule (reciever).
+            GPRReg baseForCustomValue = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForGetGPR;
 #if USE(JSVALUE64)
-            if (m_type == CustomGetter) {
+            if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 jit.setupArgumentsWithExecState(
-                    baseForAccessGPR, baseForGetGPR,
+                    baseForCustomValue,
                     CCallHelpers::TrustedImmPtr(ident.impl()));
             } else
-                jit.setupArgumentsWithExecState(baseForAccessGPR, baseForGetGPR, valueRegs.gpr());
+                jit.setupArgumentsWithExecState(baseForCustomValue, valueRegs.gpr());
 #else
-            if (m_type == CustomGetter) {
+            if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 jit.setupArgumentsWithExecState(
-                    baseForAccessGPR, baseForGetGPR,
+                    baseForCustomValue,
                     CCallHelpers::TrustedImm32(JSValue::CellTag),
                     CCallHelpers::TrustedImmPtr(ident.impl()));
             } else {
                 jit.setupArgumentsWithExecState(
-                    baseForAccessGPR, baseForGetGPR,
+                    baseForCustomValue,
                     CCallHelpers::TrustedImm32(JSValue::CellTag),
                     valueRegs.payloadGPR(), valueRegs.tagGPR());
             }
@@ -775,7 +779,7 @@ void AccessCase::generate(AccessGenerationState& state)
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
             operationCall = jit.call();
-            if (m_type == CustomGetter)
+            if (m_type == CustomValueGetter || m_type == CustomAccessorGetter)
                 jit.setupResults(valueRegs);
             if (needsToMakeRoomOnStackForCCall)
                 jit.reclaimSpaceOnStackForCCall();
@@ -1418,11 +1422,17 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
     case AccessCase::Setter:
         out.print("Setter");
         return;
-    case AccessCase::CustomGetter:
-        out.print("CustomGetter");
+    case AccessCase::CustomValueGetter:
+        out.print("CustomValueGetter");
         return;
-    case AccessCase::CustomSetter:
-        out.print("CustomSetter");
+    case AccessCase::CustomAccessorGetter:
+        out.print("CustomAccessorGetter");
+        return;
+    case AccessCase::CustomValueSetter:
+        out.print("CustomValueSetter");
+        return;
+    case AccessCase::CustomAccessorSetter:
+        out.print("CustomAccessorSetter");
         return;
     case AccessCase::IntrinsicGetter:
         out.print("IntrinsicGetter");

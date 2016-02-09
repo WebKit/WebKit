@@ -23,6 +23,7 @@
 
 #include "GetterSetter.h"
 #include "JSCJSValueInlines.h"
+#include "JSObject.h"
 
 namespace JSC {
 
@@ -30,6 +31,12 @@ JSValue PropertySlot::functionGetter(ExecState* exec) const
 {
     ASSERT(m_thisValue);
     return callGetter(exec, m_thisValue, m_data.getter.getterSetter);
+}
+
+JSValue PropertySlot::customGetter(ExecState* exec, PropertyName propertyName) const
+{
+    JSValue thisValue = m_attributes & CustomAccessor ? m_thisValue : JSValue(slotBase());
+    return JSValue::decode(m_data.custom.getValue(exec, JSValue::encode(thisValue), propertyName));
 }
 
 } // namespace JSC

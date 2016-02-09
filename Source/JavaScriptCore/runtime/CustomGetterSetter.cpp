@@ -27,6 +27,7 @@
 #include "CustomGetterSetter.h"
 
 #include "JSCJSValueInlines.h"
+#include "JSObject.h"
 #include "SlotVisitorInlines.h"
 #include <wtf/Assertions.h>
 
@@ -36,12 +37,14 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(CustomGetterSetter);
 
 const ClassInfo CustomGetterSetter::s_info = { "CustomGetterSetter", 0, 0, CREATE_METHOD_TABLE(CustomGetterSetter) };
 
-void callCustomSetter(ExecState* exec, JSValue customGetterSetter, JSObject* base, JSValue thisValue, JSValue value)
+void callCustomSetter(ExecState* exec, JSValue customGetterSetter, bool isAccessor, JSObject* base, JSValue thisValue, JSValue value)
 {
     CustomGetterSetter::CustomSetter setter = jsCast<CustomGetterSetter*>(customGetterSetter)->setter();
     if (!setter)
         return;
-    setter(exec, base, JSValue::encode(thisValue), JSValue::encode(value));
+    if (!isAccessor)
+        thisValue = base;
+    setter(exec, JSValue::encode(thisValue), JSValue::encode(value));
 }
 
 } // namespace JSC

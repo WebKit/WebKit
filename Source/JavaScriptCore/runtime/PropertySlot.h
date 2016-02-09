@@ -82,7 +82,7 @@ public:
     {
     }
 
-    typedef EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
+    typedef EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
 
     JSValue getValue(ExecState*, PropertyName) const;
     JSValue getValue(ExecState*, unsigned propertyName) const;
@@ -249,6 +249,7 @@ public:
 
 private:
     JS_EXPORT_PRIVATE JSValue functionGetter(ExecState*) const;
+    JS_EXPORT_PRIVATE JSValue customGetter(ExecState*, PropertyName) const;
 
     unsigned m_attributes;
     union {
@@ -275,7 +276,7 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, PropertyName prope
         return JSValue::decode(m_data.value);
     if (m_propertyType == TypeGetter)
         return functionGetter(exec);
-    return JSValue::decode(m_data.custom.getValue(exec, slotBase(), JSValue::encode(m_thisValue), propertyName));
+    return customGetter(exec, propertyName);
 }
 
 ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, unsigned propertyName) const
@@ -284,7 +285,7 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, unsigned propertyN
         return JSValue::decode(m_data.value);
     if (m_propertyType == TypeGetter)
         return functionGetter(exec);
-    return JSValue::decode(m_data.custom.getValue(exec, slotBase(), JSValue::encode(m_thisValue), Identifier::from(exec, propertyName)));
+    return customGetter(exec, Identifier::from(exec, propertyName));
 }
 
 } // namespace JSC

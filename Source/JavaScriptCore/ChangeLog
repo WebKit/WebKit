@@ -1,3 +1,131 @@
+2016-02-07  Gavin Barraclough  <barraclough@apple.com>
+
+        GetValueFunc/PutValueFunc should not take both slotBase and thisValue
+        https://bugs.webkit.org/show_bug.cgi?id=154009
+
+        Reviewed by Geoff Garen.
+
+        In JavaScript there are two types of properties - regular value properties, and accessor properties.
+        One difference between these is how they are reflected by getOwnPropertyDescriptor, and another is
+        what object they operate on in the case of a prototype access. If you access a value property of a
+        prototype object it return a value pertinent to the prototype, but in the case of a prototype object
+        returning an accessor, then the accessor function is applied to the base object of the access.
+
+        JSC supports special 'custom' properties implemented as a c++ callback, and these custom properties
+        can be used to implement either value- or accessor-like behavior. getOwnPropertyDescriptor behavior
+        is selected via the CustomAccessor attribute. Value- or accessor-like object selection is current
+        supported by passing both the slotBase and the thisValue to the callback,and hoping it uses the
+        right one. This is probably inefficient, bug-prone, and leads to crazy like JSBoundSlotBaseFunction.
+
+        Instead, just pass one thisValue to the callback functions, consistent with CustomAccessor.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getStaticValue):
+        (JSC::JSCallbackObject<Parent>::staticFunctionGetter):
+        (JSC::JSCallbackObject<Parent>::callbackGetter):
+            - Merged slotBase & thisValue to custom property callbacks.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+            - Modified the call being JIT generated - GetValueFunc/PutValueFunc now only take 3,
+              rather than 4 arguments. Selects which one to keep/drop based on access type.
+        (WTF::printInternal):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::isGet):
+        (JSC::AccessCase::isPut):
+        (JSC::AccessCase::isIn):
+        (JSC::AccessCase::doesCalls):
+        (JSC::AccessCase::isGetter):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+            - Split the CustomGetter/Setter access types into Value/Accessor variants.
+        * jsc.cpp:
+        (WTF::CustomGetter::getOwnPropertySlot):
+        (WTF::CustomGetter::customGetter):
+        (WTF::RuntimeArray::RuntimeArray):
+        (WTF::RuntimeArray::lengthGetter):
+            - Merged slotBase & thisValue to custom property callbacks.
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter):
+            - Pass 3 arguments when calling PutValueFunc.
+        * runtime/CustomGetterSetter.h:
+        * runtime/JSBoundSlotBaseFunction.cpp:
+        (JSC::boundSlotBaseFunctionCall):
+        (JSC::JSBoundSlotBaseFunction::JSBoundSlotBaseFunction):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+            - callCustomSetter currently takes a flag to distinguish value/accessor calls.
+        * runtime/JSFunction.cpp:
+        (JSC::retrieveArguments):
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::retrieveCallerFunction):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::lengthGetter):
+        (JSC::JSFunction::nameGetter):
+        * runtime/JSFunction.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::visitChildren):
+        (JSC::callbackGetter):
+            - Merged slotBase & thisValue to custom property callbacks.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+            - callCustomSetter currently takes a flag to distinguish value/accessor calls.
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+            - split PutPropertySlot setCustom into Value/Accessor variants.
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+        (JSC::PropertySlot::customGetter):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::getValue):
+            - added customGetter helper to call GetValueFunc.
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::setNewProperty):
+        (JSC::PutPropertySlot::setCustomValue):
+        (JSC::PutPropertySlot::setCustomAccessor):
+        (JSC::PutPropertySlot::setThisValue):
+        (JSC::PutPropertySlot::customSetter):
+        (JSC::PutPropertySlot::context):
+        (JSC::PutPropertySlot::isStrictMode):
+        (JSC::PutPropertySlot::isCacheablePut):
+        (JSC::PutPropertySlot::isCacheableSetter):
+        (JSC::PutPropertySlot::isCacheableCustom):
+        (JSC::PutPropertySlot::isCustomAccessor):
+        (JSC::PutPropertySlot::isInitialization):
+        (JSC::PutPropertySlot::cachedOffset):
+        (JSC::PutPropertySlot::setCustomProperty): Deleted.
+            - split PutPropertySlot setCustom into Value/Accessor variants.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getOwnPropertySlot):
+        (JSC::regExpConstructorDollar1):
+        (JSC::regExpConstructorDollar2):
+        (JSC::regExpConstructorDollar3):
+        (JSC::regExpConstructorDollar4):
+        (JSC::regExpConstructorDollar5):
+        (JSC::regExpConstructorDollar6):
+        (JSC::regExpConstructorDollar7):
+        (JSC::regExpConstructorDollar8):
+        (JSC::regExpConstructorDollar9):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::defineOwnProperty):
+        (JSC::regExpObjectSetLastIndexStrict):
+        (JSC::regExpObjectSetLastIndexNonStrict):
+        (JSC::RegExpObject::put):
+            - Merged slotBase & thisValue to custom property callbacks.
+
 2016-02-09  Filip Pizlo  <fpizlo@apple.com>
 
         Spread expressions are not fair game for direct binding

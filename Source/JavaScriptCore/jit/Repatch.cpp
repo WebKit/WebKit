@@ -303,8 +303,10 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 type = AccessCase::Miss;
             else if (slot.isCacheableGetter())
                 type = AccessCase::Getter;
+            else if (slot.attributes() & CustomAccessor)
+                type = AccessCase::CustomAccessorGetter;
             else
-                type = AccessCase::CustomGetter;
+                type = AccessCase::CustomValueGetter;
 
             newCase = AccessCase::get(
                 vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
@@ -434,7 +436,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
             }
 
             newCase = AccessCase::setter(
-                vm, codeBlock, AccessCase::CustomSetter, structure, invalidOffset, conditionSet,
+                vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, structure, invalidOffset, conditionSet,
                 slot.customSetter(), slot.base());
         } else {
             ObjectPropertyConditionSet conditionSet;

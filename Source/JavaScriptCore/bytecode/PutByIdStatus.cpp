@@ -238,7 +238,8 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 break;
             }
                 
-            case AccessCase::CustomSetter:
+            case AccessCase::CustomValueSetter:
+            case AccessCase::CustomAccessorSetter:
                 return PutByIdStatus(MakesCalls);
 
             default:

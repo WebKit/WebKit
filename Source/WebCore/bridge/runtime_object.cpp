@@ -62,9 +62,9 @@ void RuntimeObject::invalidate()
     m_instance = nullptr;
 }
 
-EncodedJSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
-    RuntimeObject* thisObj = jsCast<RuntimeObject*>(slotBase);
+    RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
@@ -80,9 +80,9 @@ EncodedJSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, JSObject* sl
     return JSValue::encode(result);
 }
 
-EncodedJSValue RuntimeObject::fieldGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue RuntimeObject::fieldGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {    
-    RuntimeObject* thisObj = jsCast<RuntimeObject*>(slotBase);
+    RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
@@ -99,9 +99,9 @@ EncodedJSValue RuntimeObject::fieldGetter(ExecState* exec, JSObject* slotBase, E
     return JSValue::encode(result);
 }
 
-EncodedJSValue RuntimeObject::methodGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue RuntimeObject::methodGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
-    RuntimeObject* thisObj = jsCast<RuntimeObject*>(slotBase);
+    RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)

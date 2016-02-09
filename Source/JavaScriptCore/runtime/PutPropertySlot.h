@@ -38,9 +38,9 @@ class JSFunction;
     
 class PutPropertySlot {
 public:
-    enum Type { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomProperty };
+    enum Type { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomValue, CustomAccessor };
     enum Context { UnknownContext, PutById, PutByIdEval };
-    typedef void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
+    typedef void (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
 
     PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext, bool isInitialization = false)
         : m_type(Uncachable)
@@ -68,9 +68,16 @@ public:
         m_offset = offset;
     }
 
-    void setCustomProperty(JSObject* base, PutValueFunc function)
+    void setCustomValue(JSObject* base, PutValueFunc function)
     {
-        m_type = CustomProperty;
+        m_type = CustomValue;
+        m_base = base;
+        m_putFunction = function;
+    }
+
+    void setCustomAccessor(JSObject* base, PutValueFunc function)
+    {
+        m_type = CustomAccessor;
         m_base = base;
         m_putFunction = function;
     }
@@ -87,7 +94,11 @@ public:
         m_thisValue = thisValue;
     }
 
-    PutValueFunc customSetter() const { return m_putFunction; }
+    PutValueFunc customSetter() const
+    {
+        ASSERT(isCacheableCustom());
+        return m_putFunction;
+    }
 
     Context context() const { return static_cast<Context>(m_context); }
 
@@ -98,7 +109,8 @@ public:
     bool isStrictMode() const { return m_isStrictMode; }
     bool isCacheablePut() const { return m_type == NewProperty || m_type == ExistingProperty; }
     bool isCacheableSetter() const { return m_type == SetterProperty; }
-    bool isCacheableCustom() const { return m_type == CustomProperty; }
+    bool isCacheableCustom() const { return m_type == CustomValue || m_type == CustomAccessor; }
+    bool isCustomAccessor() const { return m_type == CustomAccessor; }
     bool isInitialization() const { return m_isInitialization; }
 
     PropertyOffset cachedOffset() const

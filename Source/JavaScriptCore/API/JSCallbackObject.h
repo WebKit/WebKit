@@ -211,8 +211,8 @@ private:
     static EncodedJSValue JSC_HOST_CALL construct(ExecState*);
    
     JSValue getStaticValue(ExecState*, PropertyName);
-    static EncodedJSValue staticFunctionGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
-    static EncodedJSValue callbackGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue staticFunctionGetter(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue callbackGetter(ExecState*, EncodedJSValue, PropertyName);
 
     std::unique_ptr<JSCallbackObjectData> m_callbackObjectData;
 };

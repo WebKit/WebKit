@@ -42,7 +42,7 @@ EncodedJSValue JSC_HOST_CALL boundSlotBaseFunctionCall(ExecState* exec)
     CustomGetterSetter* customGetterSetter = boundSlotBaseFunction->customGetterSetter();
 
     if (boundSlotBaseFunction->isSetter()) {
-        callCustomSetter(exec, customGetterSetter, baseObject, exec->thisValue(), exec->argument(0));
+        callCustomSetter(exec, customGetterSetter, true, baseObject, exec->thisValue(), exec->argument(0));
         return JSValue::encode(jsUndefined());
     }
 
@@ -51,7 +51,7 @@ EncodedJSValue JSC_HOST_CALL boundSlotBaseFunctionCall(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     const String& name = boundSlotBaseFunction->name(exec);
-    return getter(exec, baseObject, JSValue::encode(exec->thisValue()), PropertyName(Identifier::fromString(exec, name)));
+    return getter(exec, JSValue::encode(exec->thisValue()), PropertyName(Identifier::fromString(exec, name)));
 }
 
 JSBoundSlotBaseFunction::JSBoundSlotBaseFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, const Type type)
