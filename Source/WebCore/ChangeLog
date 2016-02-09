@@ -1,3 +1,19 @@
+2016-02-09  Nan Wang  <n_wang@apple.com>
+
+        [iOS Simulator] accessibility/text-marker/text-marker-range-stale-node-crash.html crashing
+        https://bugs.webkit.org/show_bug.cgi?id=154039
+
+        Reviewed by Chris Fleizach.
+
+        We are accessing the derefed node in the CharacterOffset object, we should create an empty
+        CharacterOffset object if the node is not in use.
+
+        It's covered by the test accessibility/text-marker/text-marker-range-stale-node-crash.html.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityTextMarker characterOffset]):
+        (-[WebAccessibilityTextMarker isIgnored]):
+
 2016-02-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed build fix after r196322

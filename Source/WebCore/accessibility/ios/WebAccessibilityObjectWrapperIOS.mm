@@ -219,9 +219,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 - (CharacterOffset)characterOffset
 {
-    if (_textMarkerData.ignored)
-        return CharacterOffset();
-    return CharacterOffset(_textMarkerData.node, _textMarkerData.characterStartIndex, _textMarkerData.characterOffset);
+    return _cache->characterOffsetForTextMarkerData(_textMarkerData);
 }
 
 - (BOOL)isIgnored
