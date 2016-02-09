@@ -1979,6 +1979,8 @@
 		51405C89190B014400754F94 /* SelectionRectGatherer.h in Headers */ = {isa = PBXBuildFile; fileRef = 51405C87190B014400754F94 /* SelectionRectGatherer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5141298E1C5FD83A0059E714 /* JSIDBCursorWithValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5141298D1C5FD7E90059E714 /* JSIDBCursorWithValueCustom.cpp */; };
 		514129901C601ACC0059E714 /* ScopeGuard.h in Headers */ = {isa = PBXBuildFile; fileRef = 5141298F1C601A890059E714 /* ScopeGuard.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		514129981C6976900059E714 /* IDBRequestCompletionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514129961C6976150059E714 /* IDBRequestCompletionEvent.cpp */; };
+		514129991C6976900059E714 /* IDBRequestCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 514129971C6976150059E714 /* IDBRequestCompletionEvent.h */; };
 		5145B1091BC48E2E00E86219 /* IDBResourceIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5145B1071BC4890B00E86219 /* IDBResourceIdentifier.cpp */; };
 		5145B10A1BC48E2E00E86219 /* IDBResourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5145B1081BC4890B00E86219 /* IDBResourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5148453E1BB9D07E006A72ED /* IDBError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5148453C1BB9D076006A72ED /* IDBError.cpp */; };
@@ -9474,6 +9476,8 @@
 		51405C87190B014400754F94 /* SelectionRectGatherer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionRectGatherer.h; sourceTree = "<group>"; };
 		5141298D1C5FD7E90059E714 /* JSIDBCursorWithValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursorWithValueCustom.cpp; sourceTree = "<group>"; };
 		5141298F1C601A890059E714 /* ScopeGuard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeGuard.h; sourceTree = "<group>"; };
+		514129961C6976150059E714 /* IDBRequestCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBRequestCompletionEvent.cpp; sourceTree = "<group>"; };
+		514129971C6976150059E714 /* IDBRequestCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRequestCompletionEvent.h; sourceTree = "<group>"; };
 		5145B1071BC4890B00E86219 /* IDBResourceIdentifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBResourceIdentifier.cpp; sourceTree = "<group>"; };
 		5145B1081BC4890B00E86219 /* IDBResourceIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBResourceIdentifier.h; sourceTree = "<group>"; };
 		5148453C1BB9D076006A72ED /* IDBError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBError.cpp; sourceTree = "<group>"; };
@@ -19481,6 +19485,8 @@
 				51645B4E1B9F889B00F789CE /* IDBRequest.cpp */,
 				51645B4F1B9F889B00F789CE /* IDBRequest.h */,
 				51D719A3181106E00016DC51 /* IDBRequest.idl */,
+				514129961C6976150059E714 /* IDBRequestCompletionEvent.cpp */,
+				514129971C6976150059E714 /* IDBRequestCompletionEvent.h */,
 				510A326E18318431003C5326 /* IDBServerConnection.h */,
 				51645B501B9F889B00F789CE /* IDBTransaction.cpp */,
 				51645B511B9F889B00F789CE /* IDBTransaction.h */,
@@ -27608,6 +27614,7 @@
 				F55B3DD21251F12D003EF269 /* SearchInputType.h in Headers */,
 				AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */,
 				0E7058F41BC5CEDA0045A507 /* SearchPopupMenuCocoa.h in Headers */,
+				514129991C6976900059E714 /* IDBRequestCompletionEvent.h in Headers */,
 				976F36EB14686225005E93B4 /* SecurityContext.h in Headers */,
 				BCD0E0FB0E972C3500265DEA /* SecurityOrigin.h in Headers */,
 				51E3AA0B1B98BCAB0036AD81 /* SecurityOriginData.h in Headers */,
@@ -28817,6 +28824,7 @@
 				FDB052DF1561A42C00B500D6 /* AudioSummingJunction.cpp in Sources */,
 				BE88E0D81715D2A200658D98 /* AudioTrack.cpp in Sources */,
 				BE88E0DB1715D2A200658D98 /* AudioTrackList.cpp in Sources */,
+				514129981C6976900059E714 /* IDBRequestCompletionEvent.cpp in Sources */,
 				CDE3A85717F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm in Sources */,
 				CD54A762180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp in Sources */,
 				FD31608A12B026F700C1A359 /* AudioUtilities.cpp in Sources */,

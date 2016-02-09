@@ -1,3 +1,32 @@
+2016-02-09  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: IDBOpenDBRequests leak.
+        https://bugs.webkit.org/show_bug.cgi?id=154032
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Currently untestable).
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add a simple Event subclass that holds a ref to an IDBRequest, to make sure that we
+        drop the last ref to the request after its last event fires or is otherwise destroyed:
+        * Modules/indexeddb/IDBRequestCompletionEvent.cpp: Added.
+        (WebCore::IDBRequestCompletionEvent::IDBRequestCompletionEvent):
+        * Modules/indexeddb/IDBRequestCompletionEvent.h: Added.
+        (WebCore::IDBRequestCompletionEvent::create):
+
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::onError): IDBRequestCompletionEvent instead of Event.
+        (WebCore::IDBClient::IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit): Ditto.
+        (WebCore::IDBClient::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion): Ditto.
+        (WebCore::IDBClient::IDBOpenDBRequest::onSuccess): Ditto.
+
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::dispatchEvent): After setting up the request's 
+          completion event to fire, clear the back-ref to the request.
+
 2016-02-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196286.

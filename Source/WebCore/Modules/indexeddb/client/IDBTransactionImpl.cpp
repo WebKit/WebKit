@@ -442,6 +442,8 @@ bool IDBTransaction::dispatchEvent(Event& event)
             else
                 m_openDBRequest->fireSuccessAfterVersionChangeCommit();
         }
+
+        m_openDBRequest = nullptr;
     }
 
     return result;

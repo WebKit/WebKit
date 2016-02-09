@@ -30,6 +30,7 @@
 
 #include "IDBDatabaseImpl.h"
 #include "IDBError.h"
+#include "IDBRequestCompletionEvent.h"
 #include "IDBResultData.h"
 #include "IDBTransactionImpl.h"
 #include "IDBVersionChangeEventImpl.h"
@@ -65,7 +66,7 @@ IDBOpenDBRequest::~IDBOpenDBRequest()
 void IDBOpenDBRequest::onError(const IDBResultData& data)
 {
     m_domError = DOMError::create(data.error().name());
-    enqueueEvent(Event::create(eventNames().errorEvent, true, true));
+    enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, true, true, *this));
 }
 
 void IDBOpenDBRequest::versionChangeTransactionDidFinish()
@@ -84,7 +85,7 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
     ASSERT(m_result->type() == IDBAny::Type::IDBDatabase);
     m_transaction->addRequest(*this);
 
-    auto event = Event::create(eventNames().successEvent, false, false);
+    auto event = IDBRequestCompletionEvent::create(eventNames().successEvent, false, false, *this);
     m_openDatabaseSuccessEvent = &event.get();
 
     enqueueEvent(WTFMove(event));
@@ -101,7 +102,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     m_result = IDBAny::createUndefined();
 
     m_transaction->addRequest(*this);
-    enqueueEvent(Event::create(eventNames().errorEvent, true, true));
+    enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, true, true, *this));
 }
 
 bool IDBOpenDBRequest::dispatchEvent(Event& event)
@@ -125,7 +126,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
     m_result = IDBAny::create(WTFMove(database));
     m_readyState = IDBRequestReadyState::Done;
 
-    enqueueEvent(Event::create(eventNames().successEvent, false, false));
+    enqueueEvent(IDBRequestCompletionEvent::create(eventNames().successEvent, false, false, *this));
 }
 
 void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
