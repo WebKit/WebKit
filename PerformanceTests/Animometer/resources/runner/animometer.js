@@ -98,58 +98,6 @@ ResultsTable = Utilities.createClass(
         });
     },
 
-    _addGraphButton: function(td, testName, testResults)
-    {
-        var data = testResults[Strings.json.samples];
-        if (!data)
-            return;
-
-        var button = Utilities.createElement("button", { class: "small-button" }, td);
-
-        button.addEventListener("click", function() {
-            var score = testResults[Strings.json.score].toFixed(2);
-            var complexity = testResults[Strings.json.experiments.complexity];
-            var mean = [
-                "mean: ",
-                complexity[Strings.json.measurements.average].toFixed(2),
-                " ± ",
-                complexity[Strings.json.measurements.stdev].toFixed(2),
-                " (",
-                complexity[Strings.json.measurements.percent].toFixed(2),
-                "%), worst 5%: ",
-                complexity[Strings.json.measurements.concern].toFixed(2)].join("");
-
-            var graphData = {
-                axes: [Strings.text.experiments.complexity, Strings.text.experiments.frameRate],
-                mean: [
-                    testResults[Strings.json.experiments.complexity][Strings.json.measurements.average],
-                    1000 / testResults[Strings.json.experiments.frameRate][Strings.json.measurements.average]
-                ],
-                samples: data,
-                marks: testResults[Strings.json.marks]
-            }
-            if (testResults[Strings.json.targetFrameLength])
-                graphData.targetFrameLength = testResults[Strings.json.targetFrameLength];
-            benchmarkController.showTestGraph(testName, score, mean, graphData);
-        });
-
-        button.textContent = Strings.text.results.graph + "...";
-    },
-
-    _isNoisyMeasurement: function(jsonExperiment, data, measurement, options)
-    {
-        const percentThreshold = 10;
-        const averageThreshold = 2;
-
-        if (measurement == Strings.json.measurements.percent)
-            return data[Strings.json.measurements.percent] >= percentThreshold;
-
-        if (jsonExperiment == Strings.json.experiments.frameRate && measurement == Strings.json.measurements.average)
-            return Math.abs(data[Strings.json.measurements.average] - options["frame-rate"]) >= averageThreshold;
-
-        return false;
-    },
-
     _addEmptyRow: function()
     {
         var row = Utilities.createElement("tr", {}, this.element);
@@ -162,45 +110,15 @@ ResultsTable = Utilities.createClass(
     {
         var row = Utilities.createElement("tr", {}, this.element);
 
-        var isNoisy = false;
-        [Strings.json.experiments.complexity, Strings.json.experiments.frameRate].forEach(function (experiment) {
-            var data = testResults[experiment];
-            for (var measurement in data) {
-                if (this._isNoisyMeasurement(experiment, data, measurement, options))
-                    isNoisy = true;
-            }
-        }, this);
-
         this._flattenedHeaders.forEach(function (header) {
-            var className = "";
-            if (header.className) {
-                if (typeof header.className == "function")
-                    className = header.className(testResults, options);
-                else
-                    className = header.className;
-            }
-
+            var td = Utilities.createElement("td", {}, row);
             if (header.title == Strings.text.testName) {
-                var titleClassName = className;
-                if (isNoisy)
-                    titleClassName += " noisy-results";
-                var td = Utilities.createElement("td", { class: titleClassName }, row);
                 td.textContent = testName;
-                return;
-            }
-
-            var td = Utilities.createElement("td", { class: className }, row);
-            if (header.title == Strings.text.results.graph) {
-                this._addGraphButton(td, testName, testResults);
-            } else if (!("text" in header)) {
-                td.textContent = testResults[header.title];
-            } else if (typeof header.text == "string") {
+            } else if (header.text) {
                 var data = testResults[header.text];
                 if (typeof data == "number")
                     data = data.toFixed(2);
                 td.textContent = data;
-            } else {
-                td.textContent = header.text(testResults, testName);
             }
         }, this);
     },

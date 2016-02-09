@@ -19,6 +19,111 @@ ProgressBar = Utilities.createClass(
     }
 });
 
+DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
+    function(element, headers)
+    {
+        ResultsTable.call(this, element, headers);
+    }, {
+
+    _addGraphButton: function(td, testName, testResults)
+    {
+        var data = testResults[Strings.json.samples];
+        if (!data)
+            return;
+
+        var button = Utilities.createElement("button", { class: "small-button" }, td);
+
+        button.addEventListener("click", function() {
+            var graphData = {
+                axes: [Strings.text.complexity, Strings.text.frameRate],
+                samples: data,
+                complexityAverageSamples: testResults[Strings.json.complexityAverageSamples],
+                averages: {},
+                marks: testResults[Strings.json.marks]
+            };
+            [Strings.json.experiments.complexity, Strings.json.experiments.frameRate].forEach(function(experiment) {
+                if (experiment in testResults)
+                    graphData.averages[experiment] = testResults[experiment];
+            });
+
+            [
+                Strings.json.score,
+                Strings.json.regressions.timeRegressions,
+                Strings.json.regressions.complexityRegression,
+                Strings.json.regressions.complexityAverageRegression,
+                Strings.json.targetFrameLength
+            ].forEach(function(key) {
+                if (testResults[key])
+                    graphData[key] = testResults[key];
+            });
+
+            benchmarkController.showTestGraph(testName, graphData);
+        });
+
+        button.textContent = Strings.text.graph + "...";
+    },
+
+    _isNoisyMeasurement: function(jsonExperiment, data, measurement, options)
+    {
+        const percentThreshold = 10;
+        const averageThreshold = 2;
+
+        if (measurement == Strings.json.measurements.percent)
+            return data[Strings.json.measurements.percent] >= percentThreshold;
+
+        if (jsonExperiment == Strings.json.experiments.frameRate && measurement == Strings.json.measurements.average)
+            return Math.abs(data[Strings.json.measurements.average] - options["frame-rate"]) >= averageThreshold;
+
+        return false;
+    },
+
+    _addTest: function(testName, testResults, options)
+    {
+        var row = Utilities.createElement("tr", {}, this.element);
+
+        var isNoisy = false;
+        [Strings.json.experiments.complexity, Strings.json.experiments.frameRate].forEach(function (experiment) {
+            var data = testResults[experiment];
+            for (var measurement in data) {
+                if (this._isNoisyMeasurement(experiment, data, measurement, options))
+                    isNoisy = true;
+            }
+        }, this);
+
+        this._flattenedHeaders.forEach(function (header) {
+            var className = "";
+            if (header.className) {
+                if (typeof header.className == "function")
+                    className = header.className(testResults, options);
+                else
+                    className = header.className;
+            }
+
+            if (header.title == Strings.text.testName) {
+                if (isNoisy)
+                    className += " noisy-results";
+                var td = Utilities.createElement("td", { class: className }, row);
+                td.textContent = testName;
+                return;
+            }
+
+            var td = Utilities.createElement("td", { class: className }, row);
+            if (header.title == Strings.text.graph) {
+                this._addGraphButton(td, testName, testResults);
+            } else if (!("text" in header)) {
+                td.textContent = testResults[header.title];
+            } else if (typeof header.text == "string") {
+                var data = testResults[header.text];
+                if (typeof data == "number")
+                    data = data.toFixed(2);
+                td.textContent = data;
+            } else {
+                td.textContent = header.text(testResults, testName);
+            }
+        }, this);
+    }
+});
+
 Utilities.extendObject(window.benchmarkRunnerClient, {
     testsCount: null,
     progressBar: null,
@@ -45,6 +150,12 @@ Utilities.extendObject(window.sectionsManager, {
     setSectionHeader: function(sectionIdentifier, title)
     {
         document.querySelector("#" + sectionIdentifier + " h1").textContent = title;
+    },
+
+    populateTable: function(tableIdentifier, headers, data)
+    {
+        var table = new DeveloperResultsTable(document.getElementById(tableIdentifier), headers);
+        table.showIterations(data, benchmarkRunnerClient.options);
     }
 });
 
@@ -343,7 +454,7 @@ Utilities.extendObject(window.benchmarkController, {
     initialize: function()
     {
         document.forms["benchmark-options"].addEventListener("change", benchmarkController.onBenchmarkOptionsChanged, true);
-        document.forms["graph-options"].addEventListener("change", benchmarkController.onGraphOptionsChanged, true);
+        document.forms["time-graph-options"].addEventListener("change", benchmarkController.onTimeGraphOptionsChanged, true);
         optionsManager.updateUIFromLocalStorage();
         suitesManager.createElements();
         suitesManager.updateUIFromLocalStorage();
@@ -397,10 +508,9 @@ Utilities.extendObject(window.benchmarkController, {
         document.querySelector("#results-json div").classList.remove("hidden");
     },
 
-    showTestGraph: function(testName, score, mean, graphData)
+    showTestGraph: function(testName, graphData)
     {
         sectionsManager.setSectionHeader("test-graph", testName);
-        sectionsManager.setSectionScore("test-graph", score, mean);
         sectionsManager.showSection("test-graph", true);
         this.updateGraphData(graphData);
     }

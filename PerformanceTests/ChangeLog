@@ -1,5 +1,23 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Move ResultsTable functionality not needed for release tests out.
+        Move reporting of score and mean to selection of the time-based graph.
+
+        * Animometer/developer.html: Rename graph-options to time-graph-options.
+        * Animometer/resources/debug-runner/animometer.js:
+        (DeveloperResultsTable): Moved from runner/animometer.js. Switch from mean
+        values to "average" objects which can hold stdev. Move graph button and
+        calculation of noisy measurements here. Sophisticated header processing
+        is not needed in release suite.
+        (populateTable): Use DeveloperResultsTable.
+        * Animometer/resources/debug-runner/graph.js: Pull time graph creation to
+        its own function, and add a new onGraphTypeChanged handler in preparation
+        of a complexity graph to be added later.
+        * Animometer/resources/runner/animometer.js:
+        (ResultsTable): Simplify to just handle test names and scores.
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Tests: reuse objects already made.
 
         Avoid thrash of object creation and removal by maintaining an index that

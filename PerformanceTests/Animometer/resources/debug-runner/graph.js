@@ -5,12 +5,22 @@ Utilities.extendObject(window.benchmarkController, {
     {
         var element = document.getElementById("test-graph-data");
         element.innerHTML = "";
+        element.graphData = graphData;
         document.querySelector("hr").style.width = this.layoutCounter++ + "px";
 
         var margins = new Insets(30, 30, 30, 40);
         var size = Point.elementClientSize(element).subtract(margins.size);
 
+        this.createTimeGraph(graphData, margins, size);
+        this.onTimeGraphOptionsChanged();
+
+        this.onGraphTypeChanged();
+    },
+
+    createTimeGraph: function(graphData, margins, size)
+    {
         var svg = d3.select("#test-graph-data").append("svg")
+            .attr("id", "time-graph")
             .attr("width", size.width + margins.left + margins.right)
             .attr("height", size.height + margins.top + margins.bottom)
             .append("g")
@@ -22,10 +32,14 @@ Utilities.extendObject(window.benchmarkController, {
         // Axis scales
         var x = d3.scale.linear()
                 .range([0, size.width])
-                .domain([0, d3.max(graphData.samples, function(s) { return s.time; })]);
+                .domain([
+                    Math.min(d3.min(graphData.samples, function(s) { return s.time; }), 0),
+                    d3.max(graphData.samples, function(s) { return s.time; })]);
+        var complexityMax = d3.max(graphData.samples, function(s) { return s.complexity; });
+
         var yLeft = d3.scale.linear()
                 .range([size.height, 0])
-                .domain([0, d3.max(graphData.samples, function(s) { return s.complexity; })]);
+                .domain([0, complexityMax]);
         var yRight = d3.scale.linear()
                 .range([size.height, 0])
                 .domain([1000/20, 1000/60]);
@@ -98,31 +112,32 @@ Utilities.extendObject(window.benchmarkController, {
                 .attr("class", "marker")
                 .attr("transform", "translate(" + xLocation + ", 0)");
             markerGroup.append("text")
-                    .attr("transform", "translate(10, " + (yMin - 10) + ") rotate(-90)")
-                    .style("text-anchor", "start")
-                    .text(markName)
+                .attr("transform", "translate(10, " + (yMin - 10) + ") rotate(-90)")
+                .style("text-anchor", "start")
+                .text(markName)
             markerGroup.append("line")
-                    .attr("x1", 0)
-                    .attr("x2", 0)
-                    .attr("y1", yMin)
-                    .attr("y2", yMax);
+                .attr("x1", 0)
+                .attr("x2", 0)
+                .attr("y1", yMin)
+                .attr("y2", yMax);
         }
 
-        // left-mean
-        svg.append("line")
-            .attr("x1", x(0))
-            .attr("x2", size.width)
-            .attr("y1", yLeft(graphData.mean[0]))
-            .attr("y2", yLeft(graphData.mean[0]))
-            .attr("class", "left-mean mean");
-
-        // right-mean
-        svg.append("line")
-            .attr("x1", x(0))
-            .attr("x2", size.width)
-            .attr("y1", yRight(graphData.mean[1]))
-            .attr("y2", yRight(graphData.mean[1]))
-            .attr("class", "right-mean mean");
+        if (Strings.json.experiments.complexity in graphData.averages) {
+            var complexity = graphData.averages[Strings.json.experiments.complexity];
+            var regression = svg.append("g")
+                .attr("class", "complexity mean");
+            this._addRegressionLine(regression, x, yLeft, [[graphData.samples[0].time, complexity.average], [graphData.samples[graphData.samples.length - 1].time, complexity.average]], complexity.stdev);
+        }
+        if (Strings.json.experiments.frameRate in graphData.averages) {
+            var frameRate = graphData.averages[Strings.json.experiments.frameRate];
+            var average = yRight(1000/frameRate.average);
+            svg.append("line")
+                .attr("x1", x(0))
+                .attr("x2", size.width)
+                .attr("y1", average)
+                .attr("y2", average)
+                .attr("class", "fps mean");
+        }
 
         // right-target
         if (targetFrameLength) {
@@ -135,7 +150,7 @@ Utilities.extendObject(window.benchmarkController, {
         }
 
         // Cursor
-        var cursorGroup = svg.append("g").attr("id", "cursor");
+        var cursorGroup = svg.append("g").attr("class", "cursor");
         cursorGroup.append("line")
             .attr("x1", 0)
             .attr("x2", 0)
@@ -179,19 +194,19 @@ Utilities.extendObject(window.benchmarkController, {
             .attr("fill", "transparent")
             .attr("x", 0)
             .attr("y", 0)
-            .attr("width", size.x)
-            .attr("height", size.y);
+            .attr("width", size.width)
+            .attr("height", size.height);
 
         var timeBisect = d3.bisector(function(d) { return d.time; }).right;
         var statsToHighlight = ["complexity", "rawFPS", "filteredFPS"];
         area.on("mouseover", function() {
-            document.getElementById("cursor").classList.remove("hidden");
+            document.querySelector("#time-graph .cursor").classList.remove("hidden");
             document.querySelector("#test-graph nav").classList.remove("hide-data");
         }).on("mouseout", function() {
-            document.getElementById("cursor").classList.add("hidden");
+            document.querySelector("#time-graph .cursor").classList.add("hidden");
             document.querySelector("#test-graph nav").classList.add("hide-data");
         }).on("mousemove", function() {
-            var form = document.forms["graph-options"].elements;
+            var form = document.forms["time-graph-options"].elements;
 
             var mx_domain = x.invert(d3.mouse(this)[0]);
             var index = Math.min(timeBisect(allData, mx_domain), allData.length - 1);
@@ -229,9 +244,9 @@ Utilities.extendObject(window.benchmarkController, {
                     cursorGroup.select("." + name)
                         .attr("cx", cursor_x)
                         .attr("cy", data_y);
-                    document.querySelector("#cursor ." + name).classList.remove("hidden");
+                    document.querySelector("#time-graph .cursor ." + name).classList.remove("hidden");
                 } else
-                    document.querySelector("#cursor ." + name).classList.add("hidden");
+                    document.querySelector("#time-graph .cursor ." + name).classList.add("hidden");
             });
 
             if (form["rawFPS"].checked)
@@ -243,27 +258,58 @@ Utilities.extendObject(window.benchmarkController, {
                 .attr("y2", Math.max.apply(null, ys));
 
         });
-        this.onGraphOptionsChanged();
     },
 
-    onGraphOptionsChanged: function() {
-        var form = document.forms["graph-options"].elements;
+    _showOrHideNodes: function(isShown, selector) {
+        var nodeList = document.querySelectorAll(selector);
+        if (isShown) {
+            for (var i = 0; i < nodeList.length; ++i)
+                nodeList[i].classList.remove("hidden");
+        } else {
+            for (var i = 0; i < nodeList.length; ++i)
+                nodeList[i].classList.add("hidden");
+        }
+    },
 
-        function showOrHideNodes(isShown, selector) {
-            var nodeList = document.querySelectorAll(selector);
-            if (isShown) {
-                for (var i = 0; i < nodeList.length; ++i)
-                    nodeList[i].classList.remove("hidden");
-            } else {
-                for (var i = 0; i < nodeList.length; ++i)
-                    nodeList[i].classList.add("hidden");
+    onTimeGraphOptionsChanged: function() {
+        var form = document.forms["time-graph-options"].elements;
+        benchmarkController._showOrHideNodes(form["markers"].checked, ".marker");
+        benchmarkController._showOrHideNodes(form["averages"].checked, "#test-graph-data .mean");
+        benchmarkController._showOrHideNodes(form["complexity"].checked, "#complexity");
+        benchmarkController._showOrHideNodes(form["rawFPS"].checked, "#rawFPS");
+        benchmarkController._showOrHideNodes(form["filteredFPS"].checked, "#filteredFPS");
+        benchmarkController._showOrHideNodes(form["regressions"].checked, "#regressions");
+    },
+
+    onGraphTypeChanged: function() {
+        var form = document.forms["graph-type"].elements;
+        var graphData = document.getElementById("test-graph-data").graphData;
+        var isTimeSelected = true; 
+
+        benchmarkController._showOrHideNodes(isTimeSelected, "#time-graph");
+        benchmarkController._showOrHideNodes(isTimeSelected, "form[name=time-graph-options]");
+
+        var score, mean;
+        if (isTimeSelected) {
+            score = graphData.score.toFixed(2);
+
+            var regression = graphData.averages.complexity;
+            mean = [
+                "mean: ",
+                regression.average.toFixed(2),
+                " ± ",
+                regression.stdev.toFixed(2),
+                " (",
+                regression.percent.toFixed(2),
+                "%)"];
+            if (regression.concern) {
+                mean = mean.concat([
+                    ", worst 5%: ",
+                    regression.concern.toFixed(2)]);
             }
+            mean = mean.join("");
         }
 
-        showOrHideNodes(form["markers"].checked, ".marker");
-        showOrHideNodes(form["averages"].checked, ".mean");
-        showOrHideNodes(form["complexity"].checked, "#complexity");
-        showOrHideNodes(form["rawFPS"].checked, "#rawFPS");
-        showOrHideNodes(form["filteredFPS"].checked, "#filteredFPS");
+        sectionsManager.setSectionScore("test-graph", score, mean);
     }
 });
