@@ -316,6 +316,11 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         DebuggerAgent.continueToLocation({scriptId: scriptIdentifier, lineNumber, columnNumber});
     }
 
+    get searchableScripts()
+    {
+        return this.knownNonResourceScripts.filter((script) => !!script.url);
+    }
+
     get knownNonResourceScripts()
     {
         let knownScripts = [];

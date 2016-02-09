@@ -270,7 +270,7 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         if (window.PageAgent)
             PageAgent.searchInResources(searchQuery, isCaseSensitive, isRegex, resourcesCallback.bind(this));
 
-        setTimeout(searchScripts.bind(this, WebInspector.debuggerManager.knownNonResourceScripts), 0);
+        setTimeout(searchScripts.bind(this, WebInspector.debuggerManager.searchableScripts), 0);
 
         if (window.DOMAgent) {
             if (this._domSearchIdentifier) {
