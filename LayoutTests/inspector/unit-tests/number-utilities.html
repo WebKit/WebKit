@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("NumberUtilities");
+
+    suite.addTestCase({
+        name: "Number.constrain",
+        test: () => {
+            InspectorTest.expectThat(Number.constrain(0, -1, 1) === 0, "constrain of a value between min and max does not change");
+            InspectorTest.expectThat(Number.constrain(0.5, -1, 1) === 0.5, "constrain of a value between min and max does not change");
+            InspectorTest.expectThat(Number.constrain(1, -1, 1) === 1, "constrain of a value between min and max does not change");
+            InspectorTest.expectThat(Number.constrain(-1, -1, 1) === -1, "constrain of a value between min and max does not change");
+            
+            InspectorTest.expectThat(Number.constrain(-1.01, -1, 1) === -1, "constrain of a value below min becomes min");
+            InspectorTest.expectThat(Number.constrain(-2, -1, 1) === -1, "constrain of a value below min becomes min");
+            InspectorTest.expectThat(Number.constrain(-Infinity, -1, 1) === -1, "constrain of a value below min becomes min");
+
+            InspectorTest.expectThat(Number.constrain(1.01, -1, 1) === 1, "constrain of a value above max becomes max");
+            InspectorTest.expectThat(Number.constrain(2, -1, 1) === 1, "constrain of a value above max becomes max");
+            InspectorTest.expectThat(Number.constrain(Infinity, -1, 1) === 1, "constrain of a value above max becomes max");
+            
+            InspectorTest.expectThat(Number.constrain(NaN, -1, 1) === -1, "constrain of NaN becomes min");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Number.secondsToString",
+        test: () => {
+            // Normal resolution.
+            InspectorTest.expectThat(Number.secondsToString(0.000123456, false) === "0.12ms", "normal resolution of sub 1ms should be ms");
+            InspectorTest.expectThat(Number.secondsToString(0.00123456, false) === "1.23ms", "normal resolution of sub 10ms should be ms");
+            InspectorTest.expectThat(Number.secondsToString(0.0123456, false) === "12.3ms", "normal resolution of sub 100ms should be ms");
+            InspectorTest.expectThat(Number.secondsToString(0.123456, false) === "123ms", "normal resolution of greater than 100ms but sub 1s should be ms");
+            InspectorTest.expectThat(Number.secondsToString(1.123456, false) === "1.12s", "normal resolution of greater than 1s but sub 1min should be seconds");
+            InspectorTest.expectThat(Number.secondsToString(30.123456, false) === "30.12s", "normal resolution of greater than 1s but sub 1min should be seconds");
+            InspectorTest.expectThat(Number.secondsToString(60.123456, false) === "1.0min", "normal resolution of greater than 1min but sub 1hr should be minutes");
+            InspectorTest.expectThat(Number.secondsToString(100.123456, false) === "1.7min", "normal resolution of greater than 1min but sub 1hr should be minutes");
+            InspectorTest.expectThat(Number.secondsToString(12345, false) === "3.4hrs", "normal resolution of greater than 1hr but sub 1 day should be hrs");
+            InspectorTest.expectThat(Number.secondsToString(123456, false) === "1.4 days", "normal resolution of greater than 1 day should be days");
+            InspectorTest.expectThat(Number.secondsToString(1234567, false) === "14.3 days", "normal resolution of greater than 1 day should be days");
+
+            // High resolution.
+            InspectorTest.expectThat(Number.secondsToString(0.000123456, true) === "0.123ms", "high resolution of sub 1ms should be ms with decimals");
+            InspectorTest.expectThat(Number.secondsToString(0.00123456, true) === "1.235ms", "high resolution of sub 10ms should be ms with decimals");
+            InspectorTest.expectThat(Number.secondsToString(0.0123456, true) === "12.35ms", "high resolution of sub 100ms should be ms with decimals");
+            InspectorTest.expectThat(Number.secondsToString(0.123456, true) === "123.5ms", "high resolution of greater than 100ms but sub 1s should be ms with decimals");
+            InspectorTest.expectThat(Number.secondsToString(1.123456, true) === "1.12s", "high resolution of greater than 1s should be seconds with decimals");
+            InspectorTest.expectThat(Number.secondsToString(30.123456, true) === "30.12s", "high resolution of greater than 1s should be seconds with decimals");
+            InspectorTest.expectThat(Number.secondsToString(60.123456, true) === "60.12s", "high resolution of greater than 1s should be seconds with decimals");
+            InspectorTest.expectThat(Number.secondsToString(100.123456, true) === "100.12s", "high resolution greater than 1s should be seconds with decimals");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Number.bytesToString",
+        test: () => {
+            const kb = 1024;
+            const mb = kb * 1024;
+
+            // Normal resolution.
+            InspectorTest.expectThat(Number.bytesToString(123, false) === "123 B", "normal resolution of sub 1k should be bytes");
+            InspectorTest.expectThat(Number.bytesToString(1.23 * kb, false) === "1.23 KB", "normal resolution of sub 10k should be kilobytes");
+            InspectorTest.expectThat(Number.bytesToString(10.123 * kb, false) === "10.1 KB", "normal resolution of sub 10k should be kilobytes");
+            InspectorTest.expectThat(Number.bytesToString(1.123 * mb, false) === "1.12 MB", "normal resolution of sub 10mb should be megabytes");
+            InspectorTest.expectThat(Number.bytesToString(10.123 * mb, false) === "10.1 MB", "normal resolution of greater than 10mb should be megabytes");
+
+            // High resolution.
+            InspectorTest.expectThat(Number.bytesToString(123, true) === "123 B", "high resolution of sub 1k should be bytes");
+            InspectorTest.expectThat(Number.bytesToString(1.23 * kb, true) === "1.23 KB", "high resolution of sub 10k should be kilobytes");
+            InspectorTest.expectThat(Number.bytesToString(10.123 * kb, true) === "10.12 KB", "high resolution of sub 10k should be kilobytes");
+            InspectorTest.expectThat(Number.bytesToString(1.123 * mb, true) === "1.12 MB", "high resolution of sub 10mb should be megabytes");
+            InspectorTest.expectThat(Number.bytesToString(10.123 * mb, true) === "10.12 MB", "high resolution of greater than 10mb should be megabytes");
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

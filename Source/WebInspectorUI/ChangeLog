@@ -1,5 +1,27 @@
 2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Zooming in on the timeline graph does not increase its time resolution from minutes
+        https://bugs.webkit.org/show_bug.cgi?id=154013
+        <rdar://problem/23844527>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Utilities.js:
+        (Number.secondsToString):
+        Simplify logic and ensure that when under high resolution we
+        don't go above seconds for our units.
+
+        (Number.bytesToString):
+        Simplify logic.
+
+        * UserInterface/Views/LinearTimelineOverview.js:
+        (WebInspector.LinearTimelineOverview):
+        Reduce the rather large maximum seconds per pixel from 60 seconds
+        per pixel to 2 seconds per pixel. This means when the user zooms
+        out of a timeline they don't see such large time values.
+
+2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Extract a few common unicode characters into global variables
         https://bugs.webkit.org/show_bug.cgi?id=154008
 

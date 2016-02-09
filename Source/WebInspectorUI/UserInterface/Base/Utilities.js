@@ -872,35 +872,39 @@ Object.defineProperty(Number, "secondsToString",
 {
     value: function(seconds, higherResolution)
     {
-        var ms = seconds * 1000;
+        let ms = seconds * 1000;
 
-        if (higherResolution && Math.abs(ms) < 10)
-            return WebInspector.UIString("%.3fms").format(ms);
-        else if (Math.abs(ms) < 10)
+        if (Math.abs(ms) < 10) {
+            if (higherResolution)
+                return WebInspector.UIString("%.3fms").format(ms);
             return WebInspector.UIString("%.2fms").format(ms);
+        }
 
-        if (higherResolution && Math.abs(ms) < 100)
-            return WebInspector.UIString("%.2fms").format(ms);
-        else if (Math.abs(ms) < 100)
+        if (Math.abs(ms) < 100) {
+            if (higherResolution)
+                return WebInspector.UIString("%.2fms").format(ms);
             return WebInspector.UIString("%.1fms").format(ms);
+        }
 
-        if (higherResolution && Math.abs(ms) < 1000)
-            return WebInspector.UIString("%.1fms").format(ms);
-        else if (Math.abs(ms) < 1000)
+        if (Math.abs(ms) < 1000) {
+            if (higherResolution)
+                return WebInspector.UIString("%.1fms").format(ms);
             return WebInspector.UIString("%.0fms").format(ms);
+        }
 
-        if (Math.abs(seconds) < 60)
+        // Do not go over seconds when in high resolution mode.
+        if (higherResolution || Math.abs(seconds) < 60)
             return WebInspector.UIString("%.2fs").format(seconds);
 
-        var minutes = seconds / 60;
+        let minutes = seconds / 60;
         if (Math.abs(minutes) < 60)
             return WebInspector.UIString("%.1fmin").format(minutes);
 
-        var hours = minutes / 60;
+        let hours = minutes / 60;
         if (Math.abs(hours) < 24)
             return WebInspector.UIString("%.1fhrs").format(hours);
 
-        var days = hours / 24;
+        let days = hours / 24;
         return WebInspector.UIString("%.1f days").format(days);
     }
 });
@@ -915,17 +919,17 @@ Object.defineProperty(Number, "bytesToString",
         if (Math.abs(bytes) < 1024)
             return WebInspector.UIString("%.0f B").format(bytes);
 
-        var kilobytes = bytes / 1024;
-        if (Math.abs(kilobytes) < 10 || (higherResolution && Math.abs(kilobytes) < 1024))
-            return WebInspector.UIString("%.2f KB").format(kilobytes);
-        else if (Math.abs(kilobytes) < 1024)
+        let kilobytes = bytes / 1024;
+        if (Math.abs(kilobytes) < 1024) {
+            if (higherResolution || Math.abs(kilobytes) < 10)
+                return WebInspector.UIString("%.2f KB").format(kilobytes);
             return WebInspector.UIString("%.1f KB").format(kilobytes);
+        }
 
-        var megabytes = kilobytes / 1024;
+        let megabytes = kilobytes / 1024;
         if (higherResolution || Math.abs(megabytes) < 10)
             return WebInspector.UIString("%.2f MB").format(megabytes);
-        else
-            return WebInspector.UIString("%.1f MB").format(megabytes);
+        return WebInspector.UIString("%.1f MB").format(megabytes);
     }
 });
 

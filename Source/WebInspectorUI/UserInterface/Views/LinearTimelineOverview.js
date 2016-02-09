@@ -33,7 +33,7 @@ WebInspector.LinearTimelineOverview = class LinearTimelineOverview extends WebIn
             selectionDuration: 15
         };
 
-        super("linear", timelineRecording, 0.0001, 60, defaultSettingsValues);
+        super("linear", timelineRecording, 0.0001, 2, defaultSettingsValues);
     }
 
     // Protected

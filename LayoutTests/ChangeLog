@@ -1,3 +1,15 @@
+2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Zooming in on the timeline graph does not increase its time resolution from minutes
+        https://bugs.webkit.org/show_bug.cgi?id=154013
+        <rdar://problem/23844527>
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/number-utilities-expected.txt: Added.
+        * inspector/unit-tests/number-utilities.html: Added.
+        Basic tests for our Number utilities methods.
+
 2016-02-08  Daniel Bates  <dabates@apple.com>
 
         CSP connect-src directive should block redirects
