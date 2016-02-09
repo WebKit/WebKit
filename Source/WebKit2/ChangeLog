@@ -1,3 +1,21 @@
+2016-02-09  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Exiting fullscreen through the placeholder action leaves window in empty state
+        https://bugs.webkit.org/show_bug.cgi?id=152979
+        <rdar://problem/24132309>
+
+        Reviewed by Brent Fulgham.
+
+        In r194593, we relaxed the _fullScreenState requirement in -finishedExitFullScreenAnimation: to handle
+        the case where the request to exit fullscreen came from outside the process. However, in so doing, we
+        allowed -finishedExitFullScreenAnimation: to be called twice, and in so doing, leave the original window
+        empty of its WebView.  Tighten up the restriction of _fullScreenState to allow only the "InFullScreen"
+        state (to take care of the external exit command) and the "ExitingFullScreen" state, to handle the
+        normal teardown path.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+
 2016-02-04  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Adopt NSURLSession properties in AVAssetResourceLoader
