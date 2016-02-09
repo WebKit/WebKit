@@ -1,3 +1,33 @@
+2016-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline more tests for ios-simulator after r196244
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/ios-simulator-wk2/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.txt:
+        * platform/ios-simulator-wk2/css2.1/20110323/abspos-replaced-width-margin-000-expected.txt:
+        * platform/ios-simulator-wk2/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/ios-simulator-wk2/fast/clip/014-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/overflow-unsplittable-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/BottomToTop-bt-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/BottomToTop-lr-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/BottomToTop-rl-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/BottomToTop-tb-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-bt-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-lr-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-rl-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-tb-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/vertical-rl/column-rules-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+        * platform/ios-simulator-wk2/fast/overflow/float-in-relpositioned-expected.txt:
+        * platform/ios-simulator-wk2/fast/overflow/overflow-auto-position-absolute-expected.txt:
+        * platform/ios-simulator-wk2/fast/overflow/paged-x-div-expected.txt:
+        * platform/ios-simulator-wk2/fast/overflow/paged-x-div-with-column-gap-expected.txt:
+        * platform/ios-simulator-wk2/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+
 2016-02-09  Zalan Bujtas  <zalan@apple.com>
 
         Outline corners do not align properly for multiline inlines.
