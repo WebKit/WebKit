@@ -58,6 +58,13 @@
                             <li><label>Measurement error (R): <input type="number" id="kalman-measurement-error" value="4"></label></li>
                         </ul>
                     </li>
+                    <li>
+                        <h3>Time measurement method:</h3>
+                        <ul>
+                            <li><label><input name="time-measurement" type="radio" value="performance" checked> <code>performance.now()</code></label></li>
+                            <li><label><input name="time-measurement" type="radio" value="date"> <code>Date.now()</code></label></li>
+                        </ul>
+                    </li>
                     </ul>
                     </form>
                 </div>

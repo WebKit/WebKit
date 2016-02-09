@@ -329,6 +329,16 @@ Benchmark = Utilities.createClass(
         this._stage = stage;
         this._stage.initialize(this, options);
 
+        switch (options["time-measurement"])
+        {
+        case "performance":
+            this._getTimestamp = performance.now.bind(performance);
+            break;
+        case "date":
+            this._getTimestamp = Date.now;
+            break;
+        }
+
         var testIntervalMilliseconds = options["test-interval"] * 1000;
         switch (options["adjustment"])
         {
@@ -351,7 +361,7 @@ Benchmark = Utilities.createClass(
     {
         return this.waitUntilReady().then(function() {
             this._finishPromise = new SimplePromise;
-            this._previousTimestamp = performance.now();
+            this._previousTimestamp = this._getTimestamp();
             this._didWarmUp = false;
             this._stage.tune(this._controller.initialComplexity - this._stage.complexity());
             this._animateLoop();
@@ -369,7 +379,7 @@ Benchmark = Utilities.createClass(
 
     _animateLoop: function()
     {
-        this._currentTimestamp = performance.now();
+        this._currentTimestamp = this._getTimestamp();
 
         if (!this._didWarmUp) {
             if (this._currentTimestamp - this._previousTimestamp >= 100) {

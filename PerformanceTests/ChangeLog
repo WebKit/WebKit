@@ -1,5 +1,16 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Add option to use different methods for retrieving a timestamp.
+
+        * Animometer/developer.html: Add performance.now and Date.now options.
+        * Animometer/resources/runner/animometer.js: Default to performance.now.
+        (window.benchmarkController.startBenchmark):
+        * Animometer/tests/resources/main.js: Tie the desired method to _getTimestamp.
+        (run): Use _getTimestamp.
+        (_animateLoop): Ditto.
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Allow adding any number of markers to the graph. The markers can be labeled
         and contain timestamp and sample index data. Make it a part of the controller
         rather than keeping it in the sampler.
