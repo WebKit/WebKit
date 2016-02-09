@@ -137,7 +137,6 @@ CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
     animate: function()
     {
         var context = this.context;
-        var stage = this;
 
         context.clearRect(0, 0, this.size.x, this.size.y);
         context.lineWidth = 30;
@@ -145,14 +144,13 @@ CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
             context.strokeStyle = ["#e01040", "#10c030", "#e05010"][i];
             context.fillStyle = ["#70051d", "#016112", "#702701"][i];
             context.beginPath();
-                context.arc((0.5 + i) / 3 * stage.size.x, stage.size.y/2, stage.circleRadius, 0, Math.PI*2);
+                context.arc((0.5 + i) / 3 * this.size.x, this.size.y/2, this.circleRadius, 0, Math.PI*2);
             context.stroke();
             context.fill();
         }
 
-        this.objects.forEach(function(object) {
-            object.draw(context);
-        });
+        for (var i = this.offsetIndex, length = this.objects.length; i < length; ++i)
+            this.objects[i].draw(context);
     }
 });
 
@@ -171,12 +169,12 @@ CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasStage,
 
     animate: function() {
         var context = this.context;
-        var stage = this;
 
         context.clearRect(0, 0, this.size.x, this.size.y);
         context.beginPath();
-        this.objects.forEach(function(object, index) {
-            if (index == 0) {
+        for (var i = this.offsetIndex, length = this.objects.length; i < length; ++i) {
+            var object = this.objects[i];
+            if (i == this.offsetIndex) {
                 context.lineWidth = object.width;
                 context.strokeStyle = object.color;
                 context.moveTo(object.point.x, object.point.y);
@@ -194,7 +192,7 @@ CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasStage,
                 if (Math.random() > 0.999)
                     object.isSplit = !object.isSplit;
             }
-        });
+        }
         context.stroke();
     }
 });

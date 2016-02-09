@@ -1,5 +1,35 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Tests: reuse objects already made.
+
+        Avoid thrash of object creation and removal by maintaining an index that
+        moves along the array as the adjust values change. If the tune value
+        requires more objects than the maximum size of the object array, then create
+        new objects. This means that the object array size never decreases.
+
+        * Animometer/tests/master/resources/canvas-stage.js: Maintain a separate
+        offsetIndex. For these tests, we want to avoid drawing the oldest objects,
+        so the scene will draw the object at offsetIndex to the end of the array.
+        (tune): Reverse the logic since "removal" of objects is much simpler and
+        involves simply changing the offsetIndex.
+        (animate): Update the for loop to draw from offsetIndex to the end.
+        (complexity): Update the definition.
+        * Animometer/tests/master/resources/canvas-tests.js: Maintain a separate
+        offsetIndex. For these tests, we want to avoid drawing the newest objects,
+        so the scene will draw the object at index 0 to the object at offsetIndex.
+        (SimpleCanvasStage.animate): Fly-by removal of local stage variable,
+        which is unneeded. Update the for loop to draw from offsetIndex to the end.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        (SimpleCanvasStage.animate): Update the for loop to draw from 0 to
+        offsetIndex.
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        (tune): Update logic. Here, offsetIndex represents the boundary of the last
+        index to render.
+        (animate): Update the for loop to draw from 0 to offsetIndex.
+        (complexity): Update the definition.
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Tests: refactor and update styles.
 
         * Animometer/tests/resources/main.js: Add helper methods that return

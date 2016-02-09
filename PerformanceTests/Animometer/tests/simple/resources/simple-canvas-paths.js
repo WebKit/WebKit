@@ -224,9 +224,8 @@ SimpleCanvasPathStrokeStage = Utilities.createSubclass(SimpleCanvasStage,
         context.strokeStyle = Stage.rotatingColor();
         context.beginPath();
         context.moveTo(this.size.x / 2, this.size.y / 2);
-        this.objects.forEach(function(object) {
-            object.draw(context);
-        });
+        for (var i = 0, length = this.offsetIndex; i < length; ++i)
+            this.objects[i].draw(context);
         context.stroke();
     }
 });
@@ -243,9 +242,8 @@ SimpleCanvasPathFillStage = Utilities.createSubclass(SimpleCanvasStage,
         context.fillStyle = Stage.rotatingColor();
         context.beginPath();
         context.moveTo(this.size.x / 2, this.size.y / 2);
-        this.objects.forEach(function(object) {
-            object.draw(context);
-        });
+        for (var i = 0, length = this.offsetIndex; i < length; ++i)
+            this.objects[i].draw(context);
         context.fill();
     }
 });
@@ -298,9 +296,8 @@ CanvasLineDashStage = Utilities.createSubclass(SimpleCanvasStage,
         context.lineDashOffset = this._step++;
         context.beginPath();
         context.moveTo(this.size.x / 2, this.size.y / 2);
-        this.objects.forEach(function(object) {
-            object.draw(context);
-        });
+        for (var i = 0, length = this.offsetIndex; i < length; ++i)
+            this.objects[i].draw(context);
         context.stroke();
     }
 });
