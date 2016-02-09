@@ -41,6 +41,7 @@ namespace API {
 class Array;
 class UserContentExtension;
 class UserScript;
+class UserStyleSheet;
 }
 
 namespace IPC {
@@ -48,8 +49,6 @@ class DataReference;
 }
 
 namespace WebCore {
-class UserScript;
-class UserStyleSheet;
 struct SecurityOriginData;
 }
 
@@ -74,9 +73,12 @@ public:
 
     API::Array& userScripts() { return m_userScripts.get(); }
     void addUserScript(API::UserScript&);
+    void removeUserScript(const API::UserScript&);
     void removeAllUserScripts();
 
-    void addUserStyleSheet(WebCore::UserStyleSheet);
+    API::Array& userStyleSheets() { return m_userStyleSheets.get(); }
+    void addUserStyleSheet(API::UserStyleSheet&);
+    void removeUserStyleSheet(const API::UserStyleSheet&);
     void removeAllUserStyleSheets();
 
     // Returns false if there was a name conflict.
@@ -98,7 +100,7 @@ private:
     uint64_t m_identifier;
     HashSet<WebProcessProxy*> m_processes;    
     Ref<API::Array> m_userScripts;
-    Vector<WebCore::UserStyleSheet> m_userStyleSheets;
+    Ref<API::Array> m_userStyleSheets;
     HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
 
 #if ENABLE(CONTENT_EXTENSIONS)

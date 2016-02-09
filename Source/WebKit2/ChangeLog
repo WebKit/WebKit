@@ -1,3 +1,32 @@
+2016-02-09  Anders Carlsson  <andersca@apple.com>
+
+        Add SPI to remove individual user scripts or user style sheets
+        https://bugs.webkit.org/show_bug.cgi?id=154046
+        rdar://problem/23596352
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController _removeUserScript:]):
+        (-[WKUserContentController _userStyleSheets]):
+        (-[WKUserContentController _addUserStyleSheet:]):
+        (-[WKUserContentController _removeUserStyleSheet:]):
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::userStyleSheets):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::removeUserScript):
+        (WebKit::WebUserContentController::removeUserStyleSheet):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+
 2016-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         GetValueFunc/PutValueFunc should not take both slotBase and thisValue
