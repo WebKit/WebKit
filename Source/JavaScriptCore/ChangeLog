@@ -1,3 +1,17 @@
+2016-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't crash if we fail to parse a builtin
+        https://bugs.webkit.org/show_bug.cgi?id=154047
+        rdar://problem/24300617
+
+        Reviewed by Mark Lam.
+
+        Crashing probably seemed like a good idea at the time, but we could get here in case of a
+        near stack overflow, so that the parser bails because of recursion.
+
+        * parser/Parser.h:
+        (JSC::parse):
+
 2016-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         GetValueFunc/PutValueFunc should not take both slotBase and thisValue

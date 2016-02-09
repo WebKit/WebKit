@@ -1542,8 +1542,8 @@ std::unique_ptr<ParsedNode> parse(
         if (builtinMode == JSParserBuiltinMode::Builtin) {
             if (!result)
                 WTF::dataLog("Error compiling builtin: ", error.message(), "\n");
-            RELEASE_ASSERT(result);
-            result->setClosedVariables(parser.closedVariables());
+            else
+                result->setClosedVariables(parser.closedVariables());
         }
         return result;
     }
