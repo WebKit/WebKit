@@ -1,3 +1,30 @@
+2016-02-08  Andreas Kling  <akling@apple.com>
+
+        [iOS] Throw away some unlinked code when navigating to a new page.
+        <https://webkit.org/b/154014>
+
+        Reviewed by Gavin Barraclough.
+
+        Extended the mechanism introduced earlier to also throw away unlinked code
+        that's only relevant to the page that we're navigating away from.
+
+        The new JSC::VM API is deleteAllCodeExceptCaches() and it does what it sounds
+        like, deleting unlinked and linked code but leaving code caches alone.
+
+        This means that if the page we're navigating to wants to parse some of the
+        same JS that the page we're leaving had on it, it might still be found in the
+        JSC::CodeCache.
+
+        Doing a back navigation to a PageCache'd page may now incur some reparsing,
+        just like leaving the app or tab would.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::deleteAllCodeExceptCaches):
+        (WebCore::GCController::deleteAllLinkedCode): Deleted.
+        * bindings/js/GCController.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2016-02-08  Daniel Bates  <dabates@apple.com>
 
         CSP connect-src directive should block redirects

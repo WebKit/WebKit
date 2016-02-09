@@ -542,10 +542,11 @@ void VM::whenIdle(std::function<void()> callback)
     entryScope->addDidPopListener(callback);
 }
 
-void VM::deleteAllLinkedCode()
+void VM::deleteAllCodeExceptCaches()
 {
     whenIdle([this]() {
         heap.deleteAllCodeBlocks();
+        heap.deleteAllUnlinkedCodeBlocks();
         heap.reportAbandonedObjectGraph();
     });
 }

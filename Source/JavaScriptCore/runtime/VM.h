@@ -574,7 +574,7 @@ public:
     JS_EXPORT_PRIVATE void whenIdle(std::function<void()>);
 
     JS_EXPORT_PRIVATE void deleteAllCode();
-    JS_EXPORT_PRIVATE void deleteAllLinkedCode();
+    JS_EXPORT_PRIVATE void deleteAllCodeExceptCaches();
 
     void registerWatchpointForImpureProperty(const Identifier&, Watchpoint*);
     

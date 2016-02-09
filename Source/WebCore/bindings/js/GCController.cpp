@@ -122,10 +122,10 @@ void GCController::deleteAllCode()
     JSDOMWindow::commonVM().deleteAllCode();
 }
 
-void GCController::deleteAllLinkedCode()
+void GCController::deleteAllCodeExceptCaches()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM().deleteAllLinkedCode();
+    JSDOMWindow::commonVM().deleteAllCodeExceptCaches();
 }
 
 } // namespace WebCore

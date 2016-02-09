@@ -1,3 +1,15 @@
+2016-02-08  Andreas Kling  <akling@apple.com>
+
+        [iOS] Throw away some unlinked code when navigating to a new page.
+        <https://webkit.org/b/154014>
+
+        Reviewed by Gavin Barraclough.
+
+        * runtime/VM.cpp:
+        (JSC::VM::deleteAllCodeExceptCaches):
+        (JSC::VM::deleteAllLinkedCode): Deleted.
+        * runtime/VM.h:
+
 2016-02-08  Filip Pizlo  <fpizlo@apple.com>
 
         B3::foldPathConstants() needs to execute its insertion set
