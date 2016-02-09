@@ -71,10 +71,14 @@ class TestGroup extends LabeledObject {
         var beforeMean = Statistics.sum(beforeValues) / beforeValues.length;
         var afterMean = Statistics.sum(afterValues) / afterValues.length;
 
+        var metric = AnalysisTask.findById(this._taskId).metric();
+        console.assert(metric);
+
         var result = {changeType: null, status: 'failed', label: 'Failed', fullLabel: 'Failed', isStatisticallySignificant: false};
         if (beforeValues.length && afterValues.length) {
             var diff = afterMean - beforeMean;
-            result.changeType = diff < 0 == this._smallerIsBetter ? 'better' : 'worse';
+            var smallerIsBetter = metric.isSmallerBetter();
+            result.changeType = diff < 0 == smallerIsBetter ? 'better' : 'worse';
             result.label = Math.abs(diff / beforeMean * 100).toFixed(2) + '% ' + result.changeType;
             result.isStatisticallySignificant = Statistics.testWelchsT(beforeValues, afterValues);
             result.status = result.isStatisticallySignificant ? result.changeType : 'unchanged';
