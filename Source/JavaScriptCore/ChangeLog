@@ -1,3 +1,15 @@
+2016-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::foldPathConstants() needs to execute its insertion set
+        https://bugs.webkit.org/show_bug.cgi?id=154020
+
+        Reviewed by Saam Barati.
+
+        * b3/B3FoldPathConstants.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testFoldPathEqual): Added this. It used to crash in validation.
+        (JSC::B3::run):
+
 2016-02-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Introduce @isObject bytecode intrinsic and use it instead of JS implemented one

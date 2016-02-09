@@ -10037,6 +10037,34 @@ void testTrivialInfiniteLoop()
     compile(proc);
 }
 
+void testFoldPathEqual()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenBlock = proc.addBlock();
+    BasicBlock* elseBlock = proc.addBlock();
+
+    Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(), arg, FrequentedBlock(thenBlock), FrequentedBlock(elseBlock));
+
+    thenBlock->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenBlock->appendNew<Value>(
+            proc, Equal, Origin(), arg, thenBlock->appendNew<ConstPtrValue>(proc, Origin(), 0)));
+
+    elseBlock->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseBlock->appendNew<Value>(
+            proc, Equal, Origin(), arg, elseBlock->appendNew<ConstPtrValue>(proc, Origin(), 0)));
+
+    auto code = compile(proc);
+    CHECK(invoke<intptr_t>(*code, 0) == 1);
+    CHECK(invoke<intptr_t>(*code, 1) == 0);
+    CHECK(invoke<intptr_t>(*code, 42) == 0);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -11435,10 +11463,9 @@ void run(const char* filter)
     RUN(testSShrShl64(-42000000000, 8, 8));
 
     RUN(testCheckMul64SShr());
-
     RUN(testComputeDivisionMagic<int32_t>(2, -2147483647, 0));
-
     RUN(testTrivialInfiniteLoop());
+    RUN(testFoldPathEqual());
 
     if (tasks.isEmpty())
         usage();

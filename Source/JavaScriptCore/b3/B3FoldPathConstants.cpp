@@ -194,6 +194,7 @@ public:
                         child = override.valueNode;
                 }
             }
+            m_insertionSet.execute(block);
         }
 
         if (changed) {
