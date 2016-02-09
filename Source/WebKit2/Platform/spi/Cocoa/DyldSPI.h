@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessShim_h
-#define PluginProcessShim_h
+#if USE(APPLE_INTERNAL_SDK)
 
-@class NSWindow;
+#import <mach-o/dyld_priv.h>
 
-#include <Carbon/Carbon.h>
+#else
 
-namespace WebKit {
+#import <mach-o/dyld_images.h>
+#import <stdint.h>
 
-struct PluginProcessShimCallbacks {
-    bool (*shouldCallRealDebugger)();
-    bool (*isWindowActive)(WindowRef, bool& result);
-    UInt32 (*getCurrentEventButtonState)();
-    void (*beginModal)();
-    void (*endModal)();
-    void (*carbonWindowShown)(WindowRef);
-    void (*carbonWindowHidden)(WindowRef);
-    void (*setModal)(bool);
-    bool (*openCFURLRef)(CFURLRef, int32_t& returnValue, CFURLRef* launchedURL);
-    bool (*shouldMapMemoryExecutable)(int flags);
+enum dyld_image_states {
+    dyld_image_state_bound = 40,
 };
 
-typedef void (*PluginProcessShimInitializeFunc)(const PluginProcessShimCallbacks&);
+typedef const char* (*dyld_image_state_change_handler)(enum dyld_image_states state, uint32_t infoCount, const struct dyld_image_info info[]);
 
-}
+extern "C" void dyld_register_image_state_change_handler(enum dyld_image_states state, bool batch, dyld_image_state_change_handler handler);
 
-#endif // PluginProcessShim_h
+#endif

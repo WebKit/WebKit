@@ -30,6 +30,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "ArgumentCoders.h"
+#import "DyldSPI.h"
 #import "NetscapePlugin.h"
 #import "PluginProcessCreationParameters.h"
 #import "PluginProcessProxyMessages.h"
@@ -41,6 +42,9 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
+#import <mach-o/getsect.h>
+#import <mach/mach_vm.h>
+#import <mach/vm_statistics.h>
 #import <objc/runtime.h>
 #import <sysexits.h>
 #import <wtf/HashSet.h>
@@ -203,6 +207,30 @@ static bool openCFURLRef(CFURLRef url, int32_t& status, CFURLRef* launchedURL)
     return true;
 }
 
+static bool isMallocTinyMemoryTag(int tag)
+{
+    switch (tag) {
+    case VM_MEMORY_MALLOC_TINY:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+static bool shouldMapMallocMemoryExecutable;
+
+static bool shouldMapMemoryExecutable(int flags)
+{
+    if (!shouldMapMallocMemoryExecutable)
+        return false;
+
+    if (!isMallocTinyMemoryTag((flags >> 24) & 0xff))
+        return false;
+
+    return true;
+}
+
 #endif
 
 static void setModal(bool modalWindowIsShowing)
@@ -257,6 +285,7 @@ static void initializeShim()
         carbonWindowHidden,
         setModal,
         openCFURLRef,
+        shouldMapMemoryExecutable,
     };
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
@@ -419,11 +448,9 @@ void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParamet
 void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
 {
 #if defined(__i386__)
-    // Initialize the shim.
     initializeShim();
 #endif
 
-    // Initialize Cocoa overrides.
     initializeCocoaOverrides();
 
     // FIXME: It would be better to proxy SetCursor calls over to the UI process instead of
@@ -439,6 +466,65 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
         return;
 
     m_pluginBundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
+
+#if defined(__i386__)
+    if (m_pluginBundleIdentifier == "com.microsoft.SilverlightPlugin") {
+        // Set this so that any calls to mach_vm_map for pages reserved by malloc will be executable.
+        shouldMapMallocMemoryExecutable = true;
+
+        // Go through the address space looking for already existing malloc regions and change the
+        // protection to make them executable.
+        mach_vm_size_t size;
+        uint32_t depth = 0;
+        struct vm_region_submap_info_64 info = { };
+        mach_msg_type_number_t count = VM_REGION_SUBMAP_INFO_COUNT_64;
+        for (mach_vm_address_t addr = 0; ; addr += size) {
+            kern_return_t kr = mach_vm_region_recurse(mach_task_self(), &addr, &size, &depth, (vm_region_recurse_info_64_t)&info, &count);
+            if (kr != KERN_SUCCESS)
+                break;
+
+            if (isMallocTinyMemoryTag(info.user_tag))
+                mach_vm_protect(mach_task_self(), addr, size, false, info.protection | VM_PROT_EXECUTE);
+        }
+
+        // Silverlight expects the data segment of its coreclr library to be executable.
+        // Register with dyld to get notified when libraries are bound, then look for the
+        // coreclr image and make its __DATA segment executable.
+        dyld_register_image_state_change_handler(dyld_image_state_bound, false, [](enum dyld_image_states state, uint32_t infoCount, const struct dyld_image_info info[]) -> const char* {
+            for (uint32_t i = 0; i < infoCount; ++i) {
+                const char* pathSuffix = "/Silverlight.plugin/Contents/MacOS/CoreCLR.bundle/Contents/MacOS/coreclr";
+
+                int pathSuffixLength = strlen(pathSuffix);
+                int imageFilePathLength = strlen(info[i].imageFilePath);
+
+                if (imageFilePathLength < pathSuffixLength)
+                    continue;
+
+                if (strcmp(info[i].imageFilePath + (imageFilePathLength - pathSuffixLength), pathSuffix))
+                    continue;
+
+                unsigned long segmentSize;
+                const uint8_t* segmentData = getsegmentdata(info[i].imageLoadAddress, "__DATA", &segmentSize);
+                if (!segmentData)
+                    break;
+
+                mach_vm_size_t size;
+                uint32_t depth = 0;
+                struct vm_region_submap_info_64 info = { };
+                mach_msg_type_number_t count = VM_REGION_SUBMAP_INFO_COUNT_64;
+                for (mach_vm_address_t addr = reinterpret_cast<mach_vm_address_t>(segmentData); addr < reinterpret_cast<mach_vm_address_t>(segmentData) + segmentSize ; addr += size) {
+                    kern_return_t kr = mach_vm_region_recurse(mach_task_self(), &addr, &size, &depth, (vm_region_recurse_info_64_t)&info, &count);
+                    if (kr != KERN_SUCCESS)
+                        break;
+
+                    mach_vm_protect(mach_task_self(), addr, size, false, info.protection | VM_PROT_EXECUTE);
+                }
+            }
+
+            return nullptr;
+        });
+    }
+#endif
 
     // FIXME: Workaround for Java not liking its plugin process to be suppressed - <rdar://problem/14267843>
     if (m_pluginBundleIdentifier == "com.oracle.java.JavaAppletPlugin")

@@ -32,6 +32,7 @@
 #import <Carbon/Carbon.h>
 #import <WebCore/DynamicLinkerInterposing.h>
 #import <WebKitSystemInterface.h>
+#import <mach/mach_vm.h>
 #import <objc/message.h>
 #import <stdio.h>
 #import <sys/ipc.h>
@@ -110,6 +111,18 @@ shimLSOpenCFURLRef(CFURLRef url, CFURLRef* launchedURL)
     return LSOpenCFURLRef(url, launchedURL);
 }
 
+static kern_return_t shimMachVMMap(vm_map_t task, mach_vm_address_t *address, mach_vm_size_t size, mach_vm_offset_t mask, int flags, mem_entry_name_port_t object, memory_object_offset_t offset, boolean_t copy, vm_prot_t currentProtection, vm_prot_t maxProtection, vm_inherit_t inheritance)
+{
+    if (task == mach_task_self()) {
+        if (pluginProcessShimCallbacks.shouldMapMemoryExecutable && pluginProcessShimCallbacks.shouldMapMemoryExecutable(flags)) {
+            currentProtection |= VM_PROT_EXECUTE;
+            maxProtection |= VM_PROT_EXECUTE;
+        }
+    }
+
+    return mach_vm_map(task, address, size, mask, flags, object, offset, copy, currentProtection, maxProtection, inheritance);
+}
+
 DYLD_INTERPOSE(shimDebugger, Debugger);
 DYLD_INTERPOSE(shimGetCurrentEventButtonState, GetCurrentEventButtonState);
 DYLD_INTERPOSE(shimIsWindowActive, IsWindowActive);
@@ -118,6 +131,7 @@ DYLD_INTERPOSE(shimAlert, Alert);
 DYLD_INTERPOSE(shimShowWindow, ShowWindow);
 DYLD_INTERPOSE(shimHideWindow, HideWindow);
 DYLD_INTERPOSE(shimLSOpenCFURLRef, LSOpenCFURLRef);
+DYLD_INTERPOSE(shimMachVMMap, mach_vm_map);
 
 #pragma clang diagnostic pop
 

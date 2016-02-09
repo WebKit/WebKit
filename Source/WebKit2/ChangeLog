@@ -1,3 +1,36 @@
+2016-02-09  Anders Carlsson  <andersca@apple.com>
+
+        All 32-bit plug-ins should use the XPC service
+        https://bugs.webkit.org/show_bug.cgi?id=154036
+        rdar://problem/16059483
+
+        Reviewed by Dan Bernstein.
+        
+        Silverlight expects malloced memory from the tiny zone to be executable. It also expects
+        the data segment from its coreclr image to be executable.
+        
+        Make this possible by:
+        
+        1. Shimming mach_vm_map, making sure to add the VM_PROT_EXECUTABLE bit to any memory in the tiny zone.
+        2. Go through the address space, looking for any existing ranges from the tiny zone and mach_vm_protect them
+           to be executable.
+        3. Register with dyld so we'll get callbacks whenever a library is bound, look for the coreclr image, and
+           mach_vm_protect its __DATA segment to be executable.
+
+        * Platform/spi/Cocoa/DyldSPI.h: Copied from Source/WebKit2/PluginProcess/mac/PluginProcessShim.h.
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::isMallocMemoryTag):
+        (WebKit::shouldMapMemoryExecutable):
+        (WebKit::initializeShim):
+        (WebKit::PluginProcess::platformInitializeProcess):
+        * PluginProcess/mac/PluginProcessShim.h:
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shimMachVMMap):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+        (WebKit::shouldUseXPC): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-02-09  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         possible buffer overrun in Connection::processMessage of Source/WebKit2/Platform/IPC/unix/ConnectionUnix.cpp

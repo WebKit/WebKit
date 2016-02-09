@@ -205,6 +205,7 @@
 		1A2D92211281DC1B001EB962 /* PluginProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */; };
 		1A2D956F12848564001EB962 /* ChildProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D956D12848564001EB962 /* ChildProcess.h */; };
 		1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D956E12848564001EB962 /* ChildProcess.cpp */; };
+		1A2E17EF1C6A590C00D04CF6 /* DyldSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E17EE1C6A590C00D04CF6 /* DyldSPI.h */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */; };
 		1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */; };
@@ -2226,6 +2227,7 @@
 		1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProxyMac.mm; sourceTree = "<group>"; };
 		1A2D956D12848564001EB962 /* ChildProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcess.h; sourceTree = "<group>"; };
 		1A2D956E12848564001EB962 /* ChildProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildProcess.cpp; sourceTree = "<group>"; };
+		1A2E17EE1C6A590C00D04CF6 /* DyldSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DyldSPI.h; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ConnectionMac.mm; sourceTree = "<group>"; };
 		1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaMap.messages.in; sourceTree = "<group>"; };
@@ -5121,6 +5123,7 @@
 			isa = PBXGroup;
 			children = (
 				1A5705101BE410E500874AF1 /* BlockSPI.h */,
+				1A2E17EE1C6A590C00D04CF6 /* DyldSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 			);
 			path = Cocoa;
@@ -7945,6 +7948,7 @@
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
 				7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
+				1A2E17EF1C6A590C00D04CF6 /* DyldSPI.h in Headers */,
 				1A4832D71A9CDF96008B4DFE /* WebsiteData.h in Headers */,
 				1A4832D11A9BDC2F008B4DFE /* WebsiteDataRecord.h in Headers */,
 				1A53C2AA1A325730004E8C70 /* WebsiteDataStore.h in Headers */,
