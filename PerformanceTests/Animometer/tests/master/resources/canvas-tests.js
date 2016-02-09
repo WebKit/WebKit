@@ -23,7 +23,7 @@ CanvasLineSegment = Utilities.createClass(
         context.strokeStyle = this._color;
         context.lineWidth = this._lineWidth;
 
-        this._length += Math.sin(Date.now()/100*this._omega);
+        this._length += Math.sin(Stage.dateCounterValue(100) * this._omega);
 
         context.beginPath();
         context.moveTo(this._startX, this._startY);

@@ -15,7 +15,7 @@ Particle.prototype =
         this.maxPosition = this.stage.size.subtract(this.size);
         this.position = new Point(this.stage.size.x / 2, this.stage.size.y / 4);
 
-        var angle = Stage.randomInt(0, this.stage.emitSteps) / this.stage.emitSteps * Math.PI * 2 + Date.now()/1000*this.stage.emissionSpin;
+        var angle = Stage.randomInt(0, this.stage.emitSteps) / this.stage.emitSteps * Math.PI * 2 + Stage.dateCounterValue(1000) * this.stage.emissionSpin;
         this._velocity = new Point(Math.sin(angle), Math.cos(angle))
             .multiply(Stage.random(.8, 1.2));
     },
@@ -87,7 +87,7 @@ ParticlesStage = Utilities.createSubclass(Stage,
 
     animate: function(timeDelta)
     {
-        var offset = (Date.now() / 2000) % 1;
+        var offset = Stage.dateFractionalValue();
         this.element.style.background = [
             "linear-gradient(",
             offset * 360,

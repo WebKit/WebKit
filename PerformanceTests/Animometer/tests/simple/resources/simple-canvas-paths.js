@@ -221,7 +221,7 @@ SimpleCanvasPathStrokeStage = Utilities.createSubclass(SimpleCanvasStage,
         var context = this.context;
         context.clearRect(0, 0, this.size.x, this.size.y);
         context.lineWidth = Stage.randomInt(1, 20);
-        context.strokeStyle = Stage.randomColor();
+        context.strokeStyle = Stage.rotatingColor();
         context.beginPath();
         context.moveTo(this.size.x / 2, this.size.y / 2);
         this.objects.forEach(function(object) {
@@ -240,7 +240,7 @@ SimpleCanvasPathFillStage = Utilities.createSubclass(SimpleCanvasStage,
     {
         var context = this.context;
         context.clearRect(0, 0, this.size.x, this.size.y);
-        context.fillStyle = Stage.randomColor();
+        context.fillStyle = Stage.rotatingColor();
         context.beginPath();
         context.moveTo(this.size.x / 2, this.size.y / 2);
         this.objects.forEach(function(object) {

@@ -269,7 +269,7 @@ Utilities.extendObject(Stage, {
 
     randomInt: function(min, max)
     {
-        return Math.round(this.random(min, max));
+        return Math.floor(this.random(min, max + 1));
     },
 
     randomPosition: function(maxPosition)
@@ -301,6 +301,26 @@ Utilities.extendObject(Stage, {
             + this.randomInt(min, max).toString(16)
             + this.randomInt(min, max).toString(16)
             + this.randomInt(min, max).toString(16);
+    },
+
+    rotatingColor: function(cycleLengthMs, saturation, lightness)
+    {
+        return "hsl("
+            + Stage.dateFractionalValue(cycleLengthMs) * 360 + ", "
+            + ((saturation || .8) * 100).toFixed(0) + "%, "
+            + ((lightness || .35) * 100).toFixed(0) + "%)";
+    },
+
+    // Returns a fractional value that wraps around within [0,1]
+    dateFractionalValue: function(cycleLengthMs)
+    {
+        return (Date.now() / (cycleLengthMs || 2000)) % 1;
+    },
+
+    // Returns an increasing value slowed down by factor
+    dateCounterValue: function(factor)
+    {
+        return Date.now() / factor;
     },
 
     randomRotater: function()

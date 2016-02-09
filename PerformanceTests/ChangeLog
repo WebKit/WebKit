@@ -1,5 +1,25 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Tests: refactor and update styles.
+
+        * Animometer/tests/resources/main.js: Add helper methods that return
+        a color that hue rotates based on the date, and a counter value that
+        increases based on the date. Fix randomInt() to not bias against the min and
+        max values.
+
+        * Animometer/tests/master/resources/canvas-tests.js: Use new helper methods.
+        * Animometer/tests/master/resources/dom-particles.js: Ditto.
+        * Animometer/tests/master/resources/particles.js: Ditto.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js: Refactor to
+        use a rotating color instead of a random color. The fast switching of color
+        is too vivid to watch.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+        (BouncingSvgParticlesStage.call.createGradient): Fix the gradient so
+        that the last stop is located at the end.
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Refactor tune() to not return the complexity of the scene.
 
         We have stage.complexity() now, so returning the complexity through tune

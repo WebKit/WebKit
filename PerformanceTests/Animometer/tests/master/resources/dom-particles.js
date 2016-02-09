@@ -14,7 +14,7 @@ DOMParticle = Utilities.createSubclass(Particle,
         Particle.prototype.reset.call(this);
         this.element.style.width = this.size.x + "px";
         this.element.style.height = this.size.y + "px";
-        this.element.style.backgroundColor = "hsl(" + ((Date.now()/2000)%1)*360 + ", 70%, 45%)";
+        this.element.style.backgroundColor = Stage.rotatingColor(2000, .7, .45);
     },
 
     move: function()
