@@ -1,3 +1,14 @@
+2016-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Attribute getters should not require an explicit 'this' value for Window properties
+        https://bugs.webkit.org/show_bug.cgi?id=153968
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-02-04  Chris Dumez  <cdumez@apple.com>
 
         Object.getOwnPropertyDescriptor() returns incomplete descriptor for instance properties

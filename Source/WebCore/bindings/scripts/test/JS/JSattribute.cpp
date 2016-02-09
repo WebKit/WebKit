@@ -117,7 +117,8 @@ EncodedJSValue jsattributeReadonly(ExecState* state, JSObject* slotBase, Encoded
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    JSattribute* castedThis = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSattribute*>(decodedThisValue);
     if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "attribute", "readonly");
     }

@@ -25,6 +25,7 @@
  */
 
 [
+    ImplicitThis,
     CheckSecurity,
     JSCustomDefineOwnProperty,
     CustomDeleteProperty,

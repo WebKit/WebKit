@@ -3800,30 +3800,30 @@ PASS Window interface object length
 PASS Window interface object name 
 FAIL Window interface: existence and properties of interface prototype object assert_equals: Class name for prototype of Window.prototype is not "WindowProperties" expected "[object WindowProperties]" but got "[object Object]"
 FAIL Window interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Window.prototype does not have own property "constructor" expected property "constructor" missing
-FAIL Window interface: attribute self The DOMWindow.self getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute name The DOMWindow.name getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute history The DOMWindow.history getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute locationbar The DOMWindow.locationbar getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute menubar The DOMWindow.menubar getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute personalbar The DOMWindow.personalbar getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute scrollbars The DOMWindow.scrollbars getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute statusbar The DOMWindow.statusbar getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute toolbar The DOMWindow.toolbar getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute status The DOMWindow.status getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute self assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute name assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute history assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute locationbar assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute menubar assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute personalbar assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute scrollbars assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute statusbar assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute toolbar assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute status assert_true: property must be configurable expected true got false
 FAIL Window interface: operation close() assert_equals: property should be writable if and only if not unforgeable expected true but got false
-FAIL Window interface: attribute closed The DOMWindow.closed getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute closed assert_true: property must be configurable expected true got false
 FAIL Window interface: operation stop() desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation focus() assert_equals: property should be writable if and only if not unforgeable expected true but got false
 FAIL Window interface: operation blur() assert_equals: property should be writable if and only if not unforgeable expected true but got false
-FAIL Window interface: attribute frames The DOMWindow.frames getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute length The DOMWindow.length getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute opener The DOMWindow.opener getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute parent The DOMWindow.parent getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute frameElement The DOMWindow.frameElement getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute frames assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute length assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute opener assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute parent assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute frameElement assert_true: property must be configurable expected true got false
 FAIL Window interface: operation open(DOMString,DOMString,DOMString,boolean) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: attribute navigator The DOMWindow.navigator getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute navigator assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute external assert_own_property: The global object must have a property "external" expected property "external" missing
-FAIL Window interface: attribute applicationCache The DOMWindow.applicationCache getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute applicationCache assert_true: property must be configurable expected true got false
 FAIL Window interface: operation alert() desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation confirm(DOMString) desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation prompt(DOMString,DOMString) desc is not an Object. (evaluating '"get" in desc')
@@ -3832,82 +3832,82 @@ FAIL Window interface: operation showModalDialog(DOMString,any) desc is not an O
 FAIL Window interface: operation postMessage(any,DOMString,[object Object]) assert_equals: property should be writable if and only if not unforgeable expected true but got false
 FAIL Window interface: operation captureEvents() desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation releaseEvents() desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: attribute onabort The DOMWindow.onabort getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute onabort assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute onautocomplete assert_own_property: The global object must have a property "onautocomplete" expected property "onautocomplete" missing
 FAIL Window interface: attribute onautocompleteerror assert_own_property: The global object must have a property "onautocompleteerror" expected property "onautocompleteerror" missing
-FAIL Window interface: attribute onblur The DOMWindow.onblur getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute onblur assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute oncancel assert_own_property: The global object must have a property "oncancel" expected property "oncancel" missing
-FAIL Window interface: attribute oncanplay The DOMWindow.oncanplay getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute oncanplaythrough The DOMWindow.oncanplaythrough getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onchange The DOMWindow.onchange getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onclick The DOMWindow.onclick getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute oncanplay assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute oncanplaythrough assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onchange assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onclick assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute onclose assert_own_property: The global object must have a property "onclose" expected property "onclose" missing
-FAIL Window interface: attribute oncontextmenu The DOMWindow.oncontextmenu getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute oncontextmenu assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute oncuechange assert_own_property: The global object must have a property "oncuechange" expected property "oncuechange" missing
-FAIL Window interface: attribute ondblclick The DOMWindow.ondblclick getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ondrag The DOMWindow.ondrag getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ondragend The DOMWindow.ondragend getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ondragenter The DOMWindow.ondragenter getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute ondblclick assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ondrag assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ondragend assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ondragenter assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute ondragexit assert_own_property: The global object must have a property "ondragexit" expected property "ondragexit" missing
-FAIL Window interface: attribute ondragleave The DOMWindow.ondragleave getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ondragover The DOMWindow.ondragover getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ondragstart The DOMWindow.ondragstart getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ondrop The DOMWindow.ondrop getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ondurationchange The DOMWindow.ondurationchange getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onemptied The DOMWindow.onemptied getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onended The DOMWindow.onended getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onerror The DOMWindow.onerror getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onfocus The DOMWindow.onfocus getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute oninput The DOMWindow.oninput getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute oninvalid The DOMWindow.oninvalid getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onkeydown The DOMWindow.onkeydown getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onkeypress The DOMWindow.onkeypress getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onkeyup The DOMWindow.onkeyup getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onload The DOMWindow.onload getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onloadeddata The DOMWindow.onloadeddata getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onloadedmetadata The DOMWindow.onloadedmetadata getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onloadstart The DOMWindow.onloadstart getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onmousedown The DOMWindow.onmousedown getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onmouseenter assert_equals: Gets on a global should not require an explicit this expected (undefined) undefined but got (object) null
-FAIL Window interface: attribute onmouseleave assert_equals: Gets on a global should not require an explicit this expected (undefined) undefined but got (object) null
-FAIL Window interface: attribute onmousemove The DOMWindow.onmousemove getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onmouseout The DOMWindow.onmouseout getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onmouseover The DOMWindow.onmouseover getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onmouseup The DOMWindow.onmouseup getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onmousewheel The DOMWindow.onmousewheel getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onpause The DOMWindow.onpause getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onplay The DOMWindow.onplay getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onplaying The DOMWindow.onplaying getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onprogress The DOMWindow.onprogress getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onratechange The DOMWindow.onratechange getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onreset The DOMWindow.onreset getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onresize The DOMWindow.onresize getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onscroll The DOMWindow.onscroll getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onseeked The DOMWindow.onseeked getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onseeking The DOMWindow.onseeking getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onselect The DOMWindow.onselect getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute ondragleave assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ondragover assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ondragstart assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ondrop assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ondurationchange assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onemptied assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onended assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onerror assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onfocus assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute oninput assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute oninvalid assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onkeydown assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onkeypress assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onkeyup assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onload assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onloadeddata assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onloadedmetadata assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onloadstart assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onmousedown assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onmouseenter assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onmouseleave assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onmousemove assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onmouseout assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onmouseover assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onmouseup assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onmousewheel assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onpause assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onplay assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onplaying assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onprogress assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onratechange assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onreset assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onresize assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onscroll assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onseeked assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onseeking assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onselect assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute onshow assert_own_property: The global object must have a property "onshow" expected property "onshow" missing
 FAIL Window interface: attribute onsort assert_own_property: The global object must have a property "onsort" expected property "onsort" missing
-FAIL Window interface: attribute onstalled The DOMWindow.onstalled getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onsubmit The DOMWindow.onsubmit getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onsuspend The DOMWindow.onsuspend getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ontimeupdate The DOMWindow.ontimeupdate getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute onstalled assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onsubmit assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onsuspend assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ontimeupdate assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute ontoggle assert_own_property: The global object must have a property "ontoggle" expected property "ontoggle" missing
-FAIL Window interface: attribute onvolumechange The DOMWindow.onvolumechange getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onwaiting The DOMWindow.onwaiting getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute onvolumechange assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onwaiting assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute onafterprint assert_own_property: The global object must have a property "onafterprint" expected property "onafterprint" missing
 FAIL Window interface: attribute onbeforeprint assert_own_property: The global object must have a property "onbeforeprint" expected property "onbeforeprint" missing
-FAIL Window interface: attribute onbeforeunload The DOMWindow.onbeforeunload getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onhashchange The DOMWindow.onhashchange getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute onbeforeunload assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onhashchange assert_true: property must be configurable expected true got false
 FAIL Window interface: attribute onlanguagechange assert_own_property: The global object must have a property "onlanguagechange" expected property "onlanguagechange" missing
-FAIL Window interface: attribute onmessage The DOMWindow.onmessage getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onoffline The DOMWindow.onoffline getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute ononline The DOMWindow.ononline getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onpagehide The DOMWindow.onpagehide getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onpageshow The DOMWindow.onpageshow getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onpopstate The DOMWindow.onpopstate getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onstorage The DOMWindow.onstorage getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute onunload The DOMWindow.onunload getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute onmessage assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onoffline assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute ononline assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onpagehide assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onpageshow assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onpopstate assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onstorage assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute onunload assert_true: property must be configurable expected true got false
 FAIL Window interface: operation btoa(DOMString) desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation atob(DOMString) desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation setTimeout(Function,long,any) desc is not an Object. (evaluating '"get" in desc')
@@ -3917,8 +3917,8 @@ FAIL Window interface: operation setInterval(Function,long,any) desc is not an O
 FAIL Window interface: operation setInterval(DOMString,long,any) desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation clearInterval(long) desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation createImageBitmap(ImageBitmapSource,long,long,long,long) assert_own_property: global object missing non-static operation expected property "createImageBitmap" missing
-FAIL Window interface: attribute sessionStorage The DOMWindow.sessionStorage getter can only be used on instances of DOMWindow
-FAIL Window interface: attribute localStorage The DOMWindow.localStorage getter can only be used on instances of DOMWindow
+FAIL Window interface: attribute sessionStorage assert_true: property must be configurable expected true got false
+FAIL Window interface: attribute localStorage assert_true: property must be configurable expected true got false
 PASS Window must be primary interface of window 
 PASS Stringification of window 
 PASS Window interface: window must have own property "window" 

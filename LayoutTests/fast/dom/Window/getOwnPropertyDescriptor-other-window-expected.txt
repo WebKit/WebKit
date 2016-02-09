@@ -10,7 +10,7 @@ PASS descriptor.set is an instance of Function
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is false
 PASS descriptor.get.call(otherWindow).toString() is "about:blank"
-FAIL descriptor.get.call().toString() should be about:blank. Threw exception TypeError: The DOMWindow.location getter can only be used on instances of DOMWindow
+PASS descriptor.get.call() is descriptor.get.call(window)
 PASS successfullyParsed is true
 
 TEST COMPLETE

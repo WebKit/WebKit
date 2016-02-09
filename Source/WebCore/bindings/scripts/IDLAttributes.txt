@@ -71,6 +71,7 @@ Immutable
 ImplementationLacksVTable
 ImplementationNamespace=*
 ImplementedAs=*
+ImplicitThis
 InitializedByEventConstructor
 InterfaceName=*
 IsWeakCallback

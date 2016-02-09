@@ -10,7 +10,7 @@ PASS descriptor.enumerable is true
 FAIL descriptor.configurable should be true. Was false.
 PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.screen getter can only be used on instances of DOMWindow.
 PASS descriptor.get.call(window) === window.screen is true
-FAIL descriptor.get.call() === window.screen should be true. Threw exception TypeError: The DOMWindow.screen getter can only be used on instances of DOMWindow
+PASS descriptor.get.call() === window.screen is true
 
 * Window.navigator
 PASS descriptor.get is an instance of Function
@@ -19,7 +19,7 @@ PASS descriptor.enumerable is true
 FAIL descriptor.configurable should be true. Was false.
 PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.navigator getter can only be used on instances of DOMWindow.
 PASS descriptor.get.call(window) === window.navigator is true
-FAIL descriptor.get.call() === window.navigator should be true. Threw exception TypeError: The DOMWindow.navigator getter can only be used on instances of DOMWindow
+PASS descriptor.get.call() === window.navigator is true
 
 * Window.frameElement
 PASS descriptor.get is an instance of Function
@@ -28,7 +28,7 @@ PASS descriptor.enumerable is true
 FAIL descriptor.configurable should be true. Was false.
 PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.frameElement getter can only be used on instances of DOMWindow.
 PASS descriptor.get.call(window) === window.frameElement is true
-FAIL descriptor.get.call() === window.frameElement should be true. Threw exception TypeError: The DOMWindow.frameElement getter can only be used on instances of DOMWindow
+PASS descriptor.get.call() === window.frameElement is true
 
 * Window.name
 PASS descriptor.get is an instance of Function
@@ -37,7 +37,7 @@ PASS descriptor.enumerable is true
 FAIL descriptor.configurable should be true. Was false.
 PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.name getter can only be used on instances of DOMWindow.
 PASS descriptor.get.call(window) === window.name is true
-FAIL descriptor.get.call() === window.name should be true. Threw exception TypeError: The DOMWindow.name getter can only be used on instances of DOMWindow
+PASS descriptor.get.call() === window.name is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

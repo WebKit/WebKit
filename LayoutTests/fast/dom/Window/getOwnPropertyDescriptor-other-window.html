@@ -15,7 +15,7 @@ shouldBeType("descriptor.set", "Function");
 shouldBeTrue("descriptor.enumerable");
 shouldBeFalse("descriptor.configurable");
 shouldBeEqualToString("descriptor.get.call(otherWindow).toString()", "about:blank");
-shouldBeEqualToString("descriptor.get.call().toString()", "about:blank");
+shouldBe("descriptor.get.call()", "descriptor.get.call(window)");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

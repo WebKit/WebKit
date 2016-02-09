@@ -1,3 +1,16 @@
+2016-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Attribute getters should not require an explicit 'this' value for Window properties
+        https://bugs.webkit.org/show_bug.cgi?id=153968
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing tests now that more checks are passing.
+
+        * fast/dom/Window/getOwnPropertyDescriptor-other-window-expected.txt:
+        * fast/dom/Window/getOwnPropertyDescriptor-other-window.html:
+        * js/getOwnPropertyDescriptor-window-attributes-expected.txt:
+
 2016-02-08  Nan Wang  <n_wang@apple.com>
 
         AX: crash at WebCore::Range::selectNodeContents(WebCore::Node*, int&)

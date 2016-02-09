@@ -2284,11 +2284,15 @@ sub GenerateImplementation
             push(@implContent, "    UNUSED_PARAM(state);\n");
             push(@implContent, "    UNUSED_PARAM(slotBase);\n");
             push(@implContent, "    UNUSED_PARAM(thisValue);\n");
+
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
-                if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                    push(@implContent, "    auto* castedThis = to${className}(JSValue::decode(thisValue));\n");
+                push(@implContent, "    JSValue decodedThisValue = JSValue::decode(thisValue);\n");
+                my $castingFunction = $interface->extendedAttributes->{"CustomProxyToJSObject"} ? "to${className}" : GetCastingHelperForThisObject($interface);
+                # http://heycam.github.io/webidl/#ImplicitThis
+                if ($interface->extendedAttributes->{"ImplicitThis"}) {
+                    push(@implContent, "    auto* castedThis = decodedThisValue.isUndefinedOrNull() ? $castingFunction(state->thisValue().toThis(state, NotStrictMode)) : $castingFunction(decodedThisValue);\n");
                 } else {
-                    push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
+                    push(@implContent, "    auto* castedThis = $castingFunction(decodedThisValue);\n");
                 }
                 push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                 if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
