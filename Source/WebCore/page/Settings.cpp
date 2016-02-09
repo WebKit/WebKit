@@ -75,6 +75,7 @@ static void invalidateAfterGenericFamilyChange(Page* page)
 
 #if USE(AVFOUNDATION)
 bool Settings::gAVFoundationEnabled = true;
+bool Settings::gAVFoundationNSURLSessionEnabled = false;
 #endif
 
 #if PLATFORM(COCOA)
@@ -588,6 +589,14 @@ void Settings::setAVFoundationEnabled(bool enabled)
 
     gAVFoundationEnabled = enabled;
     HTMLMediaElement::resetMediaEngines();
+}
+
+void Settings::setAVFoundationNSURLSessionEnabled(bool enabled)
+{
+    if (gAVFoundationEnabled == enabled)
+        return;
+
+    gAVFoundationEnabled = enabled;
 }
 #endif
 

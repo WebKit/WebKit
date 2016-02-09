@@ -1,3 +1,21 @@
+2016-02-04  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Adopt NSURLSession properties in AVAssetResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=153873
+
+        Reviewed by Eric Carlson.
+
+        Add a WebKit2 preference to control the WebCore isAVFoundationNSURLSessionEnabled()
+        setting.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAVFoundationNSURLSessionEnabled):
+        (WKPreferencesGetAVFoundationNSURLSessionEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-02-09  Anders Carlsson  <andersca@apple.com>
 
         All 32-bit plug-ins should use the XPC service

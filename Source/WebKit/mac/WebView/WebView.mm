@@ -2431,6 +2431,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
 #if USE(AVFOUNDATION)
     settings.setAVFoundationEnabled([preferences isAVFoundationEnabled]);
+    settings.setAVFoundationNSURLSessionEnabled([preferences isAVFoundationNSURLSessionEnabled]);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

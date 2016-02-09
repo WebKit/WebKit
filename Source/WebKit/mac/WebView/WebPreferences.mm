@@ -517,6 +517,7 @@ public:
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
+        [NSNumber numberWithBool:NO],   WebKitAVFoundationNSURLSessionEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitSuppressesIncrementalRenderingKey,
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
@@ -2066,6 +2067,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isAVFoundationEnabled
 {
     return [self _boolValueForKey:WebKitAVFoundationEnabledKey];
+}
+
+- (void)setAVFoundationNSURLSessionEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAVFoundationNSURLSessionEnabledKey];
+}
+
+- (BOOL)isAVFoundationNSURLSessionEnabled
+{
+    return [self _boolValueForKey:WebKitAVFoundationNSURLSessionEnabledKey];
 }
 
 - (void)setQTKitEnabled:(BOOL)flag

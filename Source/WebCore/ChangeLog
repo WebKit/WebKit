@@ -1,3 +1,21 @@
+2016-02-04  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Adopt NSURLSession properties in AVAssetResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=153873
+
+        Reviewed by Eric Carlson.
+
+        Adopt a new AVAssetResourceLoader API allowing clients to specify a NSURLSession object to
+        use for media loading, and control the use of this property with a new Setting.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setAVFoundationNSURLSessionEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::isAVFoundationNSURLSessionEnabled):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2016-02-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Decouple font creation from font loading

@@ -699,6 +699,16 @@ bool WKPreferencesGetAVFoundationEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->isAVFoundationEnabled();
 }
 
+void WKPreferencesSetAVFoundationNSURLSessionEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAVFoundationNSURLSessionEnabled(enabled);
+}
+
+bool WKPreferencesGetAVFoundationNSURLSessionEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->isAVFoundationNSURLSessionEnabled();
+}
+
 void WKPreferencesSetWebSecurityEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setWebSecurityEnabled(enabled);

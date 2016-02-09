@@ -57,12 +57,14 @@
 #import "QuartzCoreSPI.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformRepresentationMac.h"
+#import "Settings.h"
 #import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
 #import "UUID.h"
 #import "VideoTrackPrivateAVFObjC.h"
 #import "WebCoreAVFResourceLoader.h"
 #import "WebCoreCALayerExtras.h"
+#import "WebCoreNSURLSession.h"
 #import "WebCoreSystemInterface.h"
 #import <functional>
 #import <map>
@@ -912,7 +914,17 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     m_avAsset = adoptNS([allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
-    [[m_avAsset.get() resourceLoader] setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
+    AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
+    [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
+
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    if (Settings::isAVFoundationNSURLSessionEnabled()
+        && [resourceLoader respondsToSelector:@selector(setURLSession:)]
+        && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegate)]
+        && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegateQueue)])
+        resourceLoader.URLSession = (NSURLSession *)[[[WebCoreNSURLSession alloc] initWithResourceLoader:*player()->cachedResourceLoader() delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue] autorelease];
+#endif
+
 #endif
 
     m_haveCheckedPlayability = false;

@@ -370,6 +370,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setAVFoundationEnabled:(BOOL)flag;
 - (BOOL)isAVFoundationEnabled;
 
+- (void)setAVFoundationNSURLSessionEnabled:(BOOL)flag;
+- (BOOL)isAVFoundationNSURLSessionEnabled;
+
 - (void)setQTKitEnabled:(BOOL)flag;
 - (BOOL)isQTKitEnabled;
 
