@@ -35,6 +35,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
+#include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "Document.h"
@@ -53,31 +54,44 @@
 
 namespace WebCore {
 
-void DocumentThreadableLoader::loadResourceSynchronously(Document& document, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
+void DocumentThreadableLoader::loadResourceSynchronously(Document& document, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
 {
     // The loader will be deleted as soon as this function exits.
-    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadSynchronously, request, options));
+    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadSynchronously, request, options, WTFMove(contentSecurityPolicy)));
     ASSERT(loader->hasOneRef());
 }
 
-PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+void DocumentThreadableLoader::loadResourceSynchronously(Document& document, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
-    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadAsynchronously, request, options));
+    loadResourceSynchronously(document, request, client, options, nullptr);
+}
+
+PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, const ResourceRequest& request, const ThreadableLoaderOptions& options, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
+{
+    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadAsynchronously, request, options, WTFMove(contentSecurityPolicy)));
     if (!loader->m_resource)
         loader = nullptr;
     return loader.release();
 }
 
-DocumentThreadableLoader::DocumentThreadableLoader(Document& document, ThreadableLoaderClient& client, BlockingBehavior blockingBehavior, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+{
+    return DocumentThreadableLoader::create(document, client, request, options, nullptr);
+}
+
+DocumentThreadableLoader::DocumentThreadableLoader(Document& document, ThreadableLoaderClient& client, BlockingBehavior blockingBehavior, const ResourceRequest& request, const ThreadableLoaderOptions& options, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
     : m_client(&client)
     , m_document(document)
     , m_options(options)
     , m_sameOriginRequest(securityOrigin()->canRequest(request.url()))
     , m_simpleRequest(true)
     , m_async(blockingBehavior == LoadAsynchronously)
+    , m_contentSecurityPolicy(WTFMove(contentSecurityPolicy))
 {
     // Setting an outgoing referer is only supported in the async code path.
     ASSERT(m_async || request.httpReferrer().isEmpty());
+
+    ASSERT_WITH_SECURITY_IMPLICATION(isAllowedByContentSecurityPolicy(request.url()));
 
     if (m_sameOriginRequest || m_options.crossOriginRequestPolicy == AllowCrossOriginRequests) {
         loadRequest(request, DoSecurityCheck);
@@ -177,6 +191,12 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     ASSERT_UNUSED(resource, resource == m_resource);
 
     Ref<DocumentThreadableLoader> protect(*this);
+    if (!isAllowedByContentSecurityPolicy(request.url())) {
+        m_client->didFailRedirectCheck();
+        request = ResourceRequest();
+        return;
+    }
+
     // Allow same origin requests to continue after allowing clients to audit the redirect.
     if (isAllowedRedirect(request.url()))
         return;
@@ -406,7 +426,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     // FIXME: FrameLoader::loadSynchronously() does not tell us whether a redirect happened or not, so we guess by comparing the
     // request and response URLs. This isn't a perfect test though, since a server can serve a redirect to the same URL that was
     // requested. Also comparing the request and response URLs as strings will fail if the requestURL still has its credentials.
-    if (requestURL != response.url() && !isAllowedRedirect(response.url())) {
+    if (requestURL != response.url() && (!isAllowedByContentSecurityPolicy(response.url()) || !isAllowedRedirect(response.url()))) {
         m_client->didFailRedirectCheck();
         return;
     }
@@ -416,6 +436,20 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     if (data)
         didReceiveData(identifier, data->data(), data->size());
     didFinishLoading(identifier, 0.0);
+}
+
+bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url)
+{
+    switch (m_options.contentSecurityPolicyEnforcement) {
+    case ContentSecurityPolicyEnforcement::DoNotEnforce:
+        return true;
+    case ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective:
+        return contentSecurityPolicy().allowConnectToSource(url, false); // Do not override policy
+    case ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective:
+        return contentSecurityPolicy().allowScriptFromSource(url, false); // Do not override policy
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool DocumentThreadableLoader::isAllowedRedirect(const URL& url)
@@ -434,6 +468,14 @@ bool DocumentThreadableLoader::isXMLHttpRequest() const
 SecurityOrigin* DocumentThreadableLoader::securityOrigin() const
 {
     return m_options.securityOrigin ? m_options.securityOrigin.get() : m_document.securityOrigin();
+}
+
+const ContentSecurityPolicy& DocumentThreadableLoader::contentSecurityPolicy() const
+{
+    if (m_contentSecurityPolicy)
+        return *m_contentSecurityPolicy.get();
+    ASSERT(m_document.contentSecurityPolicy());
+    return *m_document.contentSecurityPolicy();
 }
 
 } // namespace WebCore

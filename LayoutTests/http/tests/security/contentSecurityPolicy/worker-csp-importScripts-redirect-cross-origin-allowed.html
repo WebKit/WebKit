@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests a Web Worker without a Content Security Policy is allowed to import a script from a different origin through a redirect.</p>
+<pre id="result"></pre>
+<script>
+function reportResultAndNotifyDone(message)
+{
+    document.getElementById("result").textContent = message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var worker;
+try {
+    worker = new Worker("resources/worker-importScript-redirect-cross-origin-allowed.php?csp=" + encodeURIComponent("script-src 'self' http://localhost:8000"));
+    worker.onmessage = function (event) { reportResultAndNotifyDone(event.data); };
+} catch (exception) {
+    reportResultAndNotifyDone("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".");
+}
+</script>
+</body>
+</html>

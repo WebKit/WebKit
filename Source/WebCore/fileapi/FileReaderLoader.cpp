@@ -97,6 +97,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     options.preflightPolicy = ConsiderPreflight;
     options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = DenyCrossOriginRequests;
+    options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     if (m_client)
         m_loader = ThreadableLoader::create(scriptExecutionContext, this, request, options);

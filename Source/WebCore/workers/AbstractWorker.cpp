@@ -43,7 +43,7 @@ AbstractWorker::~AbstractWorker()
 {
 }
 
-URL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
+URL AbstractWorker::resolveURL(const String& url, bool shouldBypassMainWorldContentSecurityPolicy, ExceptionCode& ec)
 {
     if (url.isEmpty()) {
         ec = SYNTAX_ERR;
@@ -65,7 +65,7 @@ URL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
     // FIXME: Enforce the child-src directive instead of script-src per <https://w3c.github.io/webappsec-csp/2/#directive-child-src-workers> (29 August 2015).
     // See <https://bugs.webkit.org/show_bug.cgi?id=153562>.
     ASSERT(scriptExecutionContext()->contentSecurityPolicy());
-    if (!scriptExecutionContext()->contentSecurityPolicy()->allowScriptFromSource(scriptURL, scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy())) {
+    if (!scriptExecutionContext()->contentSecurityPolicy()->allowScriptFromSource(scriptURL, shouldBypassMainWorldContentSecurityPolicy)) {
         ec = SECURITY_ERR;
         return URL();
     }

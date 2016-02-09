@@ -59,15 +59,22 @@ namespace WebCore {
         PreventPreflight
     };
 
+    enum class ContentSecurityPolicyEnforcement {
+        DoNotEnforce,
+        EnforceConnectSrcDirective,
+        EnforceScriptSrcDirective,
+    };
+
     struct ThreadableLoaderOptions : ResourceLoaderOptions {
         ThreadableLoaderOptions();
-        ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, CrossOriginRequestPolicy, RefPtr<SecurityOrigin>&&, String&& initiator);
+        ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, CrossOriginRequestPolicy, ContentSecurityPolicyEnforcement, RefPtr<SecurityOrigin>&&, String&& initiator);
         ~ThreadableLoaderOptions();
 
         std::unique_ptr<ThreadableLoaderOptions> isolatedCopy() const;
 
         PreflightPolicy preflightPolicy; // If AccessControl is used, how to determine if a preflight is needed.
         CrossOriginRequestPolicy crossOriginRequestPolicy;
+        ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
         RefPtr<SecurityOrigin> securityOrigin;
         String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
     };

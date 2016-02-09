@@ -1,1 +1,1 @@
-window.result = true;
+self.result = true;

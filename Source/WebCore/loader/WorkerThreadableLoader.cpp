@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WorkerThreadableLoader.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "DocumentThreadableLoader.h"
 #include "ResourceError.h"
@@ -51,7 +52,7 @@ static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMo
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerGlobalScope* workerGlobalScope, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, const ThreadableLoaderOptions& options)
     : m_workerGlobalScope(workerGlobalScope)
     , m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client))
-    , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, m_workerGlobalScope->thread().workerLoaderProxy(), taskMode, request, options, workerGlobalScope->url().strippedForUseAsReferrer())))
+    , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, workerGlobalScope->thread().workerLoaderProxy(), taskMode, request, options, workerGlobalScope->url().strippedForUseAsReferrer(), workerGlobalScope->securityOrigin(), workerGlobalScope->contentSecurityPolicy())))
 {
 }
 
@@ -83,7 +84,8 @@ void WorkerThreadableLoader::cancel()
 }
 
 WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, WorkerLoaderProxy& loaderProxy, const String& taskMode,
-                                                           const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer)
+    const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer,
+    const SecurityOrigin* securityOrigin, const ContentSecurityPolicy* contentSecurityPolicy)
     : m_workerClientWrapper(workerClientWrapper)
     , m_loaderProxy(loaderProxy)
     , m_taskMode(taskMode.isolatedCopy())
@@ -92,8 +94,14 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<Threadable
 
     auto* requestData = request.copyData().release();
     auto* optionsCopy = options.isolatedCopy().release();
+
+    ASSERT(securityOrigin);
+    ASSERT(contentSecurityPolicy);
+    auto* contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(*securityOrigin).release();
+    contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
+
     StringCapture capturedOutgoingReferrer(outgoingReferrer);
-    m_loaderProxy.postTaskToLoader([this, requestData, optionsCopy, capturedOutgoingReferrer](ScriptExecutionContext& context) {
+    m_loaderProxy.postTaskToLoader([this, requestData, optionsCopy, contentSecurityPolicyCopy, capturedOutgoingReferrer](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
 
@@ -105,7 +113,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<Threadable
         // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
         // will return a 0 value. Either this should return 0 or the other code path should do a callback with
         // a failure.
-        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, *request, *options);
+        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, *request, *options, std::unique_ptr<ContentSecurityPolicy>(contentSecurityPolicyCopy));
         ASSERT(m_mainThreadLoader);
     });
 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- FIXME: Change 'self' to 'blob:' once we fix <https://bugs.webkit.org/show_bug.cgi?id=153158>. -->
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php 'unsafe-inline'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that the Content Security Policy of the parent origin (this page) blocks a Web Worker from importing a script from a different origin, not listed in script-src, through a redirect.</p>
+<pre id="result"></pre>
+<script>
+function reportResultAndNotifyDone(message)
+{
+    document.getElementById("result").textContent = message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var script = [
+    'var exception;',
+    'try {',
+    '    importScripts("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/script-set-value.js");',
+    '} catch (e) {',
+    '    exception = e;',
+    '}',
+    'var expectedExceptionCode = 19; // DOMException.NETWORK_ERR',
+    'if (!exception)',
+    '    self.postMessage("FAIL should throw " + expectedExceptionCode + ". But did not throw an exception.");',
+    'else {',
+    '    if (exception.code == expectedExceptionCode)',
+    '        self.postMessage("PASS threw exception " + exception + ".");',
+    '    else',
+    '        self.postMessage("FAIL should throw " + expectedExceptionCode + ". Threw exception " + exception + ".");',
+    '}',
+].join("\n");
+
+var worker;
+try {
+    worker = new Worker(window.URL.createObjectURL(new Blob([script])));
+    worker.onmessage = function (event) { reportResultAndNotifyDone(event.data); };
+} catch (exception) {
+    reportResultAndNotifyDone("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".");
+}
+</script>
+</body>
+</html>

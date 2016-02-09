@@ -1,3 +1,53 @@
+2016-02-08  Daniel Bates  <dabates@apple.com>
+
+        CSP connect-src directive should block redirects
+        https://bugs.webkit.org/show_bug.cgi?id=69359
+        <rdar://problem/24383025>
+
+        Reviewed by Brent Fulgham.
+
+        Add more tests, update erroneous expected results, and remove some entries from TestExpectations for tests
+        that now pass.
+
+        * TestExpectations: Remove entries for tests that now pass. The failure of test http/tests/security/contentSecurityPolicy/worker-importscripts-blocked.html
+        was erroneously attributed to <https://bugs.webkit.org/show_bug.cgi?id=153562>.
+        * http/tests/security/contentSecurityPolicy/resources/determine-content-security-policy-header.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/script-set-value.js: Use global variable self instead of window so as to
+        make this script work both from a Document and a Web Worker. In a document, self refers to the Window object and in a worker
+        it refers to the WorkerGlobalScope object.
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-allowed.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-blocked.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-allowed.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-allowed.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-blocked.php: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-expected.txt: Remove Blink-specific messages so that the test passes.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-block-aborts-all-subsequent-imports-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-block-aborts-all-subsequent-imports.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-importscripts-blocked-expected.txt: Substitute Blink-specific error text with the analogous WebKit error text.
+        * http/tests/security/contentSecurityPolicy/worker-importscripts-blocked.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/worker-without-csp-importScripts-redirect-cross-origin-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-without-csp-importScripts-redirect-cross-origin-allowed.html: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr-redirect-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr-redirect.html: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-importScript-redirect-cross-origin-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-importScript-redirect-cross-origin.html: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-importScripts-redirect-cross-origin-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-importScript-redirect-cross-origin-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-importScripts-redirect-cross-origin-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-importScripts-redirect-cross-origin.html: Added.
+        * http/tests/security/isolatedWorld/bypass-worker-csp-for-xhr-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-worker-csp-for-xhr-redirect-cross-origin-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-worker-csp-for-xhr-redirect-cross-origin.html: Added.
+        * http/tests/security/isolatedWorld/bypass-worker-csp-for-xhr.html: Added.
+
 2016-02-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         {Map,Set}.prototype.forEach should be visible as own properties

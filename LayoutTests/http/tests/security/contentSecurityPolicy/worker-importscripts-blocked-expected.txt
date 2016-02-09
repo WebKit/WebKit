@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Refused to load the script 'http://localhost:8000/security/contentSecurityPolicy/resources/post-message.js' because it violates the following Content Security Policy directive: "script-src 'unsafe-eval' 'unsafe-inline' 127.0.0.1:8000".
 
-PASS result is "importScripts blocked: NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:8000/security/contentSecurityPolicy/resources/post-message.js' failed to load."
+PASS result is "importScripts blocked: Error: NetworkError: DOM Exception 19"
 PASS successfullyParsed is true
 
 TEST COMPLETE

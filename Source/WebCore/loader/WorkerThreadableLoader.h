@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+    class ContentSecurityPolicy;
     class ResourceError;
     class ResourceRequest;
     class WorkerGlobalScope;
@@ -94,7 +95,7 @@ namespace WebCore {
         class MainThreadBridge : public ThreadableLoaderClient {
         public:
             // All executed on the worker context's thread.
-            MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper>, WorkerLoaderProxy&, const String& taskMode, const ResourceRequest&, const ThreadableLoaderOptions&, const String& outgoingReferrer);
+            MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper>, WorkerLoaderProxy&, const String& taskMode, const ResourceRequest&, const ThreadableLoaderOptions&, const String& outgoingReferrer, const SecurityOrigin*, const ContentSecurityPolicy*);
             void cancel();
             void destroy();
 

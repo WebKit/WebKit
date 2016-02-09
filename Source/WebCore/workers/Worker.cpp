@@ -83,18 +83,19 @@ RefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String& url
 
     worker->suspendIfNeeded();
 
-    URL scriptURL = worker->resolveURL(url, ec);
+    bool shouldBypassMainWorldContentSecurityPolicy = context.shouldBypassMainWorldContentSecurityPolicy();
+    URL scriptURL = worker->resolveURL(url, shouldBypassMainWorldContentSecurityPolicy, ec);
     if (scriptURL.isEmpty())
         return nullptr;
 
-    worker->m_shouldBypassMainWorldContentSecurityPolicy = context.shouldBypassMainWorldContentSecurityPolicy();
+    worker->m_shouldBypassMainWorldContentSecurityPolicy = shouldBypassMainWorldContentSecurityPolicy;
 
     // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
     worker->setPendingActivity(worker.ptr());
 
     worker->m_scriptLoader = WorkerScriptLoader::create();
-    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, worker.ptr());
-
+    // FIXME: Enforce Content Security Policy child-src directive when shouldBypassMainWorldContentSecurityPolicy is false. See <https://bugs.webkit.org/show_bug.cgi?id=153562>.
+    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, ContentSecurityPolicyEnforcement::DoNotEnforce, worker.ptr());
     return WTFMove(worker);
 }
 

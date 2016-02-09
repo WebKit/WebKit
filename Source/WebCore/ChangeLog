@@ -1,3 +1,89 @@
+2016-02-08  Daniel Bates  <dabates@apple.com>
+
+        CSP connect-src directive should block redirects
+        https://bugs.webkit.org/show_bug.cgi?id=69359
+        <rdar://problem/24383025>
+
+        Reviewed by Brent Fulgham.
+
+        Inspired by Blink patch:
+        <https://src.chromium.org/viewvc/blink?revision=150246&view=revision>
+
+        Apply the connect-src directive of the Content Security Policy for the document or worker to the redirect URL
+        of an XMLHttpRequest and EventSource load so as to conform to section Paths and Redirects of the CSP 2.0 spec.,
+        <https://w3c.github.io/webappsec-csp/2/#source-list-paths-and-redirects> (29 August 2015).
+
+        Additionally, check that each requested script URL passed to WorkerGlobalScope.importScripts() is allowed by
+        the CSP of the worker before initiating a load for it. If some URL i is blocked by the CSP policy
+        then we do not try to load URLs j >= i.
+
+        Tests: http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-block-aborts-all-subsequent-imports.html
+               http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked.html
+               http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin.html
+               http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-allowed.html
+               http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked.html
+               http/tests/security/contentSecurityPolicy/worker-without-csp-importScripts-redirect-cross-origin-allowed.html
+               http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr-redirect.html
+               http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-importScript-redirect-cross-origin.html
+               http/tests/security/isolatedWorld/bypass-main-world-csp-worker-importScripts-redirect-cross-origin.html
+               http/tests/security/isolatedWorld/bypass-worker-csp-for-xhr-redirect-cross-origin.html
+               http/tests/security/isolatedWorld/bypass-worker-csp-for-xhr.html
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start): Do not enforce a CSP directive as CSP is not applicable to File API.
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::loadResource): Do not enforce a CSP directive as CSP should not interfere
+        with the Web Inspector.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously): Modified to take an optional ContentSecurityPolicy
+        and pass it through to DocumentThreadableLoader::create().
+        (WebCore::DocumentThreadableLoader::create): Modified to take an optional ContentSecurityPolicy and pass it through
+        to DocumentThreadableLoader::DocumentThreadableLoader().
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader): Modified to take an optional ContentSecurityPolicy.
+        Asserts that the CSP allows the load of the request URL so as to catch when a caller creates a loader for a request
+        that is not allowed by the CSP. The caller should not create a loader for such a request.
+        (WebCore::DocumentThreadableLoader::redirectReceived): Check if the CSP allows the redirect URL. If it does not
+        then notify the client that the redirect check failed.
+        (WebCore::DocumentThreadableLoader::loadRequest): Ditto.
+        (WebCore::DocumentThreadableLoader::isAllowedByContentSecurityPolicy): Checks that the specified URL is allowed
+        by the enforced CSP directive.
+        (WebCore::DocumentThreadableLoader::contentSecurityPolicy): Returns the ContentSecurityPolicy object passed to
+        DocumentThreadableLoader on instantiation or the ContentSecurityPolicy object of the associated document.
+        * loader/DocumentThreadableLoader.h: Add overloaded variants of DocumentThreadableLoader::{create, loadResourceSynchronously}()
+        that take a std::unique_ptr<ContentSecurityPolicy>&&. Remove some unnecessary headers.
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions): Take the CSP directive to enforce and store it.
+        (WebCore::ThreadableLoaderOptions::isolatedCopy): Copy the CSP directive to enforce.
+        * loader/ThreadableLoader.h: Added member field to store the CSP directive to enforce (defaults to enforce the
+        directive connect-src - the most appropriate directive in most circumstances). As of the time of writing,
+        only WorkerGlobalScope.importScripts() enforces a different directive: script-src.
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader): Pass the SecurityOrigin and ContentSecurityPolicy associated
+        with the WorkerGlobalScope to WorkerThreadableLoader::MainThreadBridge::MainThreadBridge().
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge): Pass a copy of the worker's ContentSecurityPolicy
+        to the DocumentThreadableLoader.
+        * loader/WorkerThreadableLoader.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect): Enforce the CSP directive connect-src on redirects unless we are running in an isolated world.
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::resolveURL): Modified to take a boolean whether to bypass the main world Content Security Policy
+        instead of querying for it directly.
+        * workers/AbstractWorker.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::create): Added FIXME to enforce child-src directive of the document's CSP to the worker's script URL
+        on redirect once we fix <https://bugs.webkit.org/show_bug.cgi?id=153562>. For now, do not enforce a CSP policy on redirect
+        of the worker's script URL.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::importScripts): Check that the requested URL is allowed by the CSP of the worker (if applicable).
+        Enforce the CSP directive script-src on redirects unless we are running in an isolated world.
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously): Pass SecurityOrigin and ContentSecurityPolicyEnforcement to WorkerThreadableLoader.
+        (WebCore::WorkerScriptLoader::loadAsynchronously): Ditto.
+        * workers/WorkerScriptLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest): Enforce the CSP directive connect-src on redirects unless we are running in
+        an isolated world.
+
 2016-02-08  Antti Koivisto  <antti@apple.com>
 
         Try to fix Yosemite build.

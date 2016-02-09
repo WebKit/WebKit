@@ -183,8 +183,15 @@ void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode&
     }
 
     for (auto& url : completedURLs) {
+        // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
+        bool shouldBypassMainWorldContentSecurityPolicy = scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy();
+        if (!scriptExecutionContext()->contentSecurityPolicy()->allowScriptFromSource(url, shouldBypassMainWorldContentSecurityPolicy)) {
+            ec = NETWORK_ERR;
+            return;
+        }
+
         Ref<WorkerScriptLoader> scriptLoader = WorkerScriptLoader::create();
-        scriptLoader->loadSynchronously(scriptExecutionContext(), url, AllowCrossOriginRequests);
+        scriptLoader->loadSynchronously(scriptExecutionContext(), url, AllowCrossOriginRequests, shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective);
 
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
         if (scriptLoader->failed()) {

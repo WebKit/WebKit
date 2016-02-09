@@ -54,8 +54,8 @@ namespace WebCore {
             return adoptRef(*new WorkerScriptLoader);
         }
 
-        void loadSynchronously(ScriptExecutionContext*, const URL&, CrossOriginRequestPolicy);
-        void loadAsynchronously(ScriptExecutionContext*, const URL&, CrossOriginRequestPolicy, WorkerScriptLoaderClient*);
+        void loadSynchronously(ScriptExecutionContext*, const URL&, CrossOriginRequestPolicy, ContentSecurityPolicyEnforcement);
+        void loadAsynchronously(ScriptExecutionContext*, const URL&, CrossOriginRequestPolicy, ContentSecurityPolicyEnforcement, WorkerScriptLoaderClient*);
 
         void notifyError();
 

@@ -679,6 +679,7 @@ void InspectorNetworkAgent::loadResource(ErrorString& errorString, const String&
     options.setAllowCredentials(AllowStoredCredentials);
     options.setDefersLoadingPolicy(DefersLoadingPolicy::DisallowDefersLoading); // So the request is never deferred.
     options.crossOriginRequestPolicy = AllowCrossOriginRequests;
+    options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     // InspectorThreadableLoaderClient deletes itself when the load completes.
     InspectorThreadableLoaderClient* inspectorThreadableLoaderClient = new InspectorThreadableLoaderClient(callback.copyRef());

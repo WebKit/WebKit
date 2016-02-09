@@ -1,0 +1,3 @@
+This tests a Web Worker with Content Security Policy "script-src 'self'" blocks the import of a script from a different origin through a redirect.
+
+PASS threw exception Error: NetworkError: DOM Exception 19.
