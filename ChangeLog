@@ -1,3 +1,9 @@
+2016-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.5 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-02-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][EFL] Enable SamplingProfiler

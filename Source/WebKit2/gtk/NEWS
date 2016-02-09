@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 2.11.5
+=================
+
+What's new in WebKitGTK+ 2.11.5?
+
+  - Switch FTL to use B3 backend instead of LLVM.
+  - Add support for windowless NPAPI plugins with no UI in non X11 platforms.
+  - Fix a deadlock in the Web Process when JavaScript garbage collector was running for a web
+    worker thread that made google maps to hang.
+  - Fix a Web Process crash when quickly attempting many DnD operations.
+  - Fix scrollbars rendering with older versions of GTK+.
+  - Fix a crash when creating a WebKitWebView without providing a WebKitWebContext.
+
+=================
 WebKitGTK+ 2.11.4
 =================
 

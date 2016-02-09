@@ -1,3 +1,9 @@
+2016-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.5 release.
+
+        * gtk/NEWS: Add release notes for 2.11.5.
+
 2016-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView should send crossing events to the WebProcess
