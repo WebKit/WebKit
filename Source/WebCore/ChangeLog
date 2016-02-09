@@ -1,3 +1,9 @@
+2016-02-09  Jer Noble  <jer.noble@apple.com>
+
+        Build-fix; add Nullibility macros around previously un-macro'd class definitions.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2016-02-04  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Adopt NSURLSession properties in AVAssetResourceLoader

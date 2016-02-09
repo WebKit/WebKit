@@ -37,6 +37,8 @@
 
 #import <AVFoundation/AVPlayer.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class AVOutputContext;
 @interface AVOutputContext : NSObject <NSSecureCoding>
 @property (nonatomic, readonly) NSString *deviceName;
@@ -46,6 +48,8 @@
 @interface AVPlayer (AVPlayerExternalPlaybackSupportPrivate)
 @property (nonatomic, retain) AVOutputContext *outputContext;
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif
 
