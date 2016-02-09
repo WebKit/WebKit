@@ -131,7 +131,7 @@ layer at (8,1119) size 760x536
       RenderText {#text} at (0,1) size 221x28
         text run at (0,1) width 221: "This is a second span."
     RenderMultiColumnSet at (5,390) size 750x141
-layer at (13,1124) size 367x732 backgroundClip at (0,0) size 800x1671 clip at (0,0) size 800x1671 outlineClip at (0,0) size 800x1671
+layer at (13,1124) size 367x732 backgroundClip at (0,0) size 800x1671 clip at (0,0) size 800x1671
   RenderMultiColumnFlowThread at (5,5) size 367x732
     RenderBlock (anonymous) at (0,0) size 367x0
       RenderInline {SPAN} at (0,0) size 0x0

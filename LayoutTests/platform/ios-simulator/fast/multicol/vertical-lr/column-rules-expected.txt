@@ -6,7 +6,7 @@ layer at (0,0) size 866x600
 layer at (8,8) size 850x584
   RenderBlock {DIV} at (0,0) size 850x584 [border: (5px solid #000000)]
     RenderMultiColumnSet at (5,15) size 840x554
-layer at (13,23) size 2520x174 backgroundClip at (0,0) size 866x600 clip at (0,0) size 866x600 outlineClip at (0,0) size 866x600
+layer at (13,23) size 2520x174 backgroundClip at (0,0) size 866x600 clip at (0,0) size 866x600
   RenderMultiColumnFlowThread at (5,15) size 2520x174
     RenderText {#text} at (0,0) size 2519x174
       text run at (0,0) width 143: "Lorem ipsum dolor sit"

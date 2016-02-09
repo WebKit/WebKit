@@ -294,7 +294,7 @@ layer at (10,850) size 382x440
 layer at (8,1268) size 784x404
   RenderBlock {DIV} at (0,1260) size 784x404 [border: (2px solid #000000)]
     RenderMultiColumnSet at (2,2) size 780x400
-layer at (10,1270) size 382x670 backgroundClip at (0,0) size 1188x1680 clip at (0,0) size 1188x1680 outlineClip at (0,0) size 1188x1680
+layer at (10,1270) size 382x670 backgroundClip at (0,0) size 1188x1680 clip at (0,0) size 1188x1680
   RenderMultiColumnFlowThread at (2,2) size 382x670
     RenderImage {IMG} at (0,0) size 382x380 [bgcolor=#0000FF]
     RenderInline {SPAN} at (0,0) size 379x268

@@ -66,7 +66,7 @@ layer at (461,33) size 100x600
 layer at (8,658) size 220x310
   RenderBlock {DIV} at (0,20) size 220x310 [border: (5px solid #000000)]
     RenderMultiColumnSet at (5,5) size 210x300
-layer at (13,663) size 100x600 backgroundClip at (0,0) size 800x976 clip at (0,0) size 800x976 outlineClip at (0,0) size 800x976
+layer at (13,663) size 100x600 backgroundClip at (0,0) size 800x976 clip at (0,0) size 800x976
   RenderMultiColumnFlowThread at (5,5) size 100x600
     RenderBlock (anonymous) at (0,0) size 100x100
       RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#000000]
@@ -86,7 +86,7 @@ layer at (461,133) size 100x400
     RenderBlock {DIV} at (0,100) size 100x100 [bgcolor=#0000D0]
     RenderBlock {DIV} at (0,200) size 100x100 [bgcolor=#0000B0]
     RenderBlock {DIV} at (0,300) size 100x100 [bgcolor=#000090]
-layer at (13,763) size 100x400 backgroundClip at (0,0) size 800x976 clip at (0,0) size 800x976 outlineClip at (0,0) size 800x976
+layer at (13,763) size 100x400 backgroundClip at (0,0) size 800x976 clip at (0,0) size 800x976
   RenderBlock {DIV} at (0,100) size 100x400
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#0000F0]
     RenderBlock {DIV} at (0,100) size 100x100 [bgcolor=#0000D0]

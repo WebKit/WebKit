@@ -172,7 +172,7 @@ layer at (8,1443) size 750x620
         text run at (640,1) width 93: "It should"
         text run at (0,31) width 569: "collapse its margins with the spanning element above it."
     RenderMultiColumnSet at (0,399) size 750x221
-layer at (8,1443) size 367x880 backgroundClip at (0,0) size 800x2079 clip at (0,0) size 800x2079 outlineClip at (0,0) size 800x2079
+layer at (8,1443) size 367x880 backgroundClip at (0,0) size 800x2079 clip at (0,0) size 800x2079
   RenderMultiColumnFlowThread at (0,0) size 367x880
     RenderBlock (anonymous) at (0,0) size 367x440
       RenderText {#text} at (0,0) size 367x439

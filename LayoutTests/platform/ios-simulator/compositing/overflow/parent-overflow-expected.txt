@@ -14,13 +14,13 @@ layer at (0,0) size 800x227
         RenderText {#text} at (0,0) size 0x0
 layer at (28,72) size 122x122 clip at (29,73) size 120x120 scrollHeight 320
   RenderBlock {DIV} at (20,20) size 122x122 [border: (1px solid #000000)]
-layer at (39,83) size 100x300 backgroundClip at (29,73) size 120x120 clip at (29,73) size 120x120 outlineClip at (29,73) size 120x120
+layer at (39,83) size 100x300 backgroundClip at (29,73) size 120x120 clip at (29,73) size 120x120
   RenderBlock {DIV} at (11,11) size 100x300 [bgcolor=#808080]
 layer at (194,72) size 122x122 clip at (195,73) size 120x120 scrollHeight 320
   RenderBlock (relative positioned) {DIV} at (186,20) size 122x122 [border: (1px solid #000000)]
-layer at (205,83) size 100x300 backgroundClip at (195,73) size 120x120 clip at (195,73) size 120x120 outlineClip at (195,73) size 120x120
+layer at (205,83) size 100x300 backgroundClip at (195,73) size 120x120 clip at (195,73) size 120x120
   RenderBlock {DIV} at (11,11) size 100x300 [bgcolor=#808080]
 layer at (360,72) size 122x122 clip at (361,73) size 120x120 scrollHeight 320
   RenderBlock (relative positioned) {DIV} at (352,20) size 122x122 [border: (1px solid #000000)]
-layer at (371,83) size 100x300 backgroundClip at (361,73) size 120x120 clip at (361,73) size 120x120 outlineClip at (361,73) size 120x120
+layer at (371,83) size 100x300 backgroundClip at (361,73) size 120x120 clip at (361,73) size 120x120
   RenderBlock {DIV} at (11,11) size 100x300 [bgcolor=#808080]

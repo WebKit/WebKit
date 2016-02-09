@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
 layer at (8,8) size 506x505
   RenderBlock {DIV} at (0,0) size 506x505 [border: (3px solid #000000)]
     RenderMultiColumnSet at (3,3) size 500x499
-layer at (11,11) size 159x1521 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+layer at (11,11) size 159x1521 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderMultiColumnFlowThread at (3,3) size 159x1521
     RenderBlock (anonymous) at (0,0) size 159x360
       RenderText {#text} at (0,5) size 159x350
@@ -56,23 +56,25 @@ layer at (11,11) size 159x1521 backgroundClip at (0,0) size 800x600 clip at (0,0
         text run at (0,632) width 159: "ipsum sit amet ligula mattis"
         text run at (0,656) width 159: "porttitor sit amet id felis. Integer"
         text run at (0,699) width 157: "volutpat aliquam odio et feugiat."
-layer at (11,510) size 159x304 backgroundClip at (11,510) size 159x90 clip at (13,512) size 155x88 outlineClip at (0,0) size 800x600 scrollHeight 408
+layer at (11,510) size 159x304 backgroundClip at (11,510) size 159x90 clip at (13,512) size 140x88 scrollHeight 456
   RenderBlock {DIV} at (0,499) size 160x304 [border: (2px solid #000000)]
-    RenderText {#text} at (2,7) size 156x398
-      text run at (2,7) width 156: "Aenean diam enim, suscipit id"
-      text run at (2,31) width 156: "pellentesque vel, hendrerit et"
-      text run at (2,55) width 156: "metus. Suspendisse felis erat,"
-      text run at (2,79) width 156: "hendrerit a congue in, euismod"
-      text run at (2,103) width 156: "ac erat. Donec pulvinar"
-      text run at (2,127) width 156: "venenatis tortor, a lobortis erat"
-      text run at (2,151) width 156: "scelerisque et. Class aptent"
-      text run at (2,175) width 156: "taciti sociosqu ad litora torquent"
-      text run at (2,199) width 156: "per conubia nostra, per inceptos"
-      text run at (2,223) width 156: "himenaeos. Aliquam in orci id"
-      text run at (2,247) width 156: "felis mollis porta ac et orci."
-      text run at (2,271) width 156: "Donec viverra, eros ac mattis"
-      text run at (2,295) width 156: "dapibus, quam ante porta lectus,"
-      text run at (2,319) width 156: "accumsan pellentesque nibh"
-      text run at (2,343) width 156: "metus non felis. Vivamus sed"
-      text run at (2,367) width 156: "eros quis magna scelerisque"
-      text run at (2,391) width 100: "ultrices ac eget velit."
+    RenderText {#text} at (2,7) size 141x446
+      text run at (2,7) width 141: "Aenean diam enim, suscipit"
+      text run at (2,31) width 141: "id pellentesque vel, hendrerit"
+      text run at (2,55) width 141: "et metus. Suspendisse felis"
+      text run at (2,79) width 141: "erat, hendrerit a congue in,"
+      text run at (2,103) width 141: "euismod ac erat. Donec"
+      text run at (2,127) width 141: "pulvinar venenatis tortor, a"
+      text run at (2,151) width 141: "lobortis erat scelerisque et."
+      text run at (2,175) width 141: "Class aptent taciti sociosqu"
+      text run at (2,199) width 141: "ad litora torquent per"
+      text run at (2,223) width 141: "conubia nostra, per inceptos"
+      text run at (2,247) width 141: "himenaeos. Aliquam in orci"
+      text run at (2,271) width 141: "id felis mollis porta ac et"
+      text run at (2,295) width 141: "orci. Donec viverra, eros ac"
+      text run at (2,319) width 141: "mattis dapibus, quam ante"
+      text run at (2,343) width 141: "porta lectus, accumsan"
+      text run at (2,367) width 141: "pellentesque nibh metus non"
+      text run at (2,391) width 141: "felis. Vivamus sed eros quis"
+      text run at (2,415) width 141: "magna scelerisque ultrices ac"
+      text run at (2,439) width 48: "eget velit."

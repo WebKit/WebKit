@@ -1,3 +1,105 @@
+2016-02-09  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Rebaseline after r196244.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/compositing/geometry/clipping-foreground-expected.txt:
+        * platform/ios-simulator/compositing/geometry/root-layer-update-expected.txt:
+        * platform/ios-simulator/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/ios-simulator/compositing/overflow/parent-overflow-expected.txt:
+        * platform/ios-simulator/compositing/overflow/scrollbar-painting-expected.txt:
+        * platform/ios-simulator/compositing/sibling-positioning-expected.txt:
+        * platform/ios-simulator/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.txt: Added.
+        * platform/ios-simulator/css2.1/20110323/abspos-replaced-width-margin-000-expected.txt: Added.
+        * platform/ios-simulator/css3/blending/blend-mode-overflow-expected.txt:
+        * platform/ios-simulator/css3/unicode-bidi-isolate-basic-expected.txt:
+        * platform/ios-simulator/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/ios-simulator/fast/borders/border-antialiasing-expected.txt:
+        * platform/ios-simulator/fast/clip/001-expected.txt:
+        * platform/ios-simulator/fast/clip/013-expected.txt:
+        * platform/ios-simulator/fast/clip/014-expected.txt:
+        * platform/ios-simulator/fast/clip/016-expected.txt:
+        * platform/ios-simulator/fast/clip/outline-overflowClip-expected.txt:
+        * platform/ios-simulator/fast/css/clip-zooming-expected.txt:
+        * platform/ios-simulator/fast/frames/flattening/iframe-flattening-offscreen-expected.txt:
+        * platform/ios-simulator/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+        * platform/ios-simulator/fast/line-grid/line-grid-inside-columns-expected.txt:
+        * platform/ios-simulator/fast/line-grid/line-grid-into-columns-expected.txt:
+        * platform/ios-simulator/fast/lists/scrolled-marker-paint-expected.txt:
+        * platform/ios-simulator/fast/multicol/client-rects-expected.txt:
+        * platform/ios-simulator/fast/multicol/column-break-with-balancing-expected.txt:
+        * platform/ios-simulator/fast/multicol/column-rules-expected.txt:
+        * platform/ios-simulator/fast/multicol/column-rules-stacking-expected.txt:
+        * platform/ios-simulator/fast/multicol/columns-shorthand-parsing-expected.txt:
+        * platform/ios-simulator/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/ios-simulator/fast/multicol/float-paginate-empty-lines-expected.txt:
+        * platform/ios-simulator/fast/multicol/float-paginate-expected.txt:
+        * platform/ios-simulator/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/ios-simulator/fast/multicol/layers-split-across-columns-expected.txt:
+        * platform/ios-simulator/fast/multicol/max-height-columns-block-expected.txt:
+        * platform/ios-simulator/fast/multicol/nested-columns-expected.txt:
+        * platform/ios-simulator/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/ios-simulator/fast/multicol/overflow-across-columns-expected.txt:
+        * platform/ios-simulator/fast/multicol/overflow-across-columns-percent-height-expected.txt:
+        * platform/ios-simulator/fast/multicol/overflow-unsplittable-expected.txt:
+        * platform/ios-simulator/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/ios-simulator/fast/multicol/pagination/BottomToTop-bt-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/TopToBottom-bt-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/BottomToTop-lr-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/TopToBottom-lr-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/BottomToTop-rl-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/TopToBottom-rl-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/BottomToTop-tb-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/TopToBottom-bt-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/LeftToRight-bt-expected.txt:
+        * platform/ios-simulator/fast/multicol/pagination/LeftToRight-rl-expected.txt:
+        * platform/ios-simulator/fast/multicol/pagination/LeftToRight-tb-expected.txt:
+        * platform/ios-simulator/fast/multicol/pagination/RightToLeft-bt-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/LeftToRight-tb-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/RightToLeft-lr-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/LeftToRight-rl-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/LeftToRight-rl-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/RightToLeft-rl-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/LeftToRight-rl-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/RightToLeft-tb-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/pagination/LeftToRight-tb-expected.txt.
+        * platform/ios-simulator/fast/multicol/pagination/TopToBottom-bt-expected.txt:
+        * platform/ios-simulator/fast/multicol/pagination/TopToBottom-lr-expected.txt:
+        * platform/ios-simulator/fast/multicol/pagination/TopToBottom-rl-expected.txt:
+        * platform/ios-simulator/fast/multicol/positive-leading-expected.txt:
+        * platform/ios-simulator/fast/multicol/scrolling-column-rules-expected.txt:
+        * platform/ios-simulator/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/ios-simulator/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/ios-simulator/fast/multicol/table-vertical-align-expected.txt:
+        * platform/ios-simulator/fast/multicol/tall-image-behavior-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-lr/column-rules-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-lr/float-paginate-complex-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-lr/float-paginate-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt.
+        * platform/ios-simulator/fast/multicol/vertical-rl/column-rules-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/vertical-lr/column-rules-expected.txt.
+        * platform/ios-simulator/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-rl/float-paginate-complex-expected.txt: Copied from LayoutTests/platform/ios-simulator/fast/multicol/vertical-lr/float-paginate-complex-expected.txt.
+        * platform/ios-simulator/fast/multicol/vertical-rl/float-paginate-expected.txt:
+        * platform/ios-simulator/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/ios-simulator/fast/overflow/float-in-relpositioned-expected.txt:
+        * platform/ios-simulator/fast/overflow/overflow-auto-position-absolute-expected.txt:
+        * platform/ios-simulator/fast/overflow/overflow-rtl-expected.txt:
+        * platform/ios-simulator/fast/overflow/paged-x-div-expected.txt:
+        * platform/ios-simulator/fast/overflow/paged-x-div-with-column-gap-expected.txt:
+        * platform/ios-simulator/fast/overflow/paged-x-on-root-expected.txt:
+        * platform/ios-simulator/fast/overflow/paged-x-with-column-gap-expected.txt:
+        * platform/ios-simulator/fast/overflow/paged-y-div-expected.txt:
+        * platform/ios-simulator/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/ios-simulator/fast/regions/repaint/region-painting-via-layout-expected.txt:
+        * platform/ios-simulator/fast/table/edge-offsets-expected.txt:
+        * platform/ios-simulator/fast/transforms/overflow-with-transform-expected.txt:
+        * platform/ios-simulator/svg/custom/image-rescale-clip-expected.txt:
+
 2016-02-08  Chris Dumez  <cdumez@apple.com>
 
         Attribute getters should not require an explicit 'this' value for Window properties

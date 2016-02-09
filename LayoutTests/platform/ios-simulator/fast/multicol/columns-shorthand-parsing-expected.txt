@@ -6,7 +6,7 @@ layer at (0,0) size 800x776
 layer at (8,8) size 784x760
   RenderBlock {DIV} at (0,0) size 784x760
     RenderMultiColumnSet at (0,0) size 784x760
-layer at (8,8) size 384x1500 backgroundClip at (0,0) size 800x776 clip at (0,0) size 800x776 outlineClip at (0,0) size 800x776
+layer at (8,8) size 384x1500 backgroundClip at (0,0) size 800x776 clip at (0,0) size 800x776
   RenderMultiColumnFlowThread at (0,0) size 384x1500
     RenderText {#text} at (0,0) size 380x1499
       text run at (0,0) width 380: "This content should be split into two columns. This content"
