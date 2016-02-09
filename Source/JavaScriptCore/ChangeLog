@@ -1,3 +1,24 @@
+2016-02-08  Keith Miller  <keith_miller@apple.com>
+
+        Error construction for inlined operations should not use the inliner's CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=154021
+
+        Reviewed by Mark Lam.
+
+        Previously, if one function, A, was inlined into another function, B, in the DFG/FTL
+        we would use B's DFG/FTL CodeBlock to construct source information about the Error.
+        We would correctly compute the bytecodeOffset in A for the an expression but we would
+        not use one of A's CodeBlocks when looking up source. This caused crashes during
+        operationIn as we expected to be able to find the text "in" in the source.
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::appendSourceToError):
+        * tests/stress/inlined-error-gets-correct-codeblock-for-bytecodeoffset.js: Added.
+        (map):
+        (n):
+        (one):
+        (catch):
+
 2016-02-08  Saam Barati  <sbarati@apple.com>
 
         runtimeTypeForValue should protect against seeing TDZ value

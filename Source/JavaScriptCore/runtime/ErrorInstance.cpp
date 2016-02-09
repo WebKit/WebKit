@@ -22,6 +22,7 @@
 #include "ErrorInstance.h"
 
 #include "CodeBlock.h"
+#include "InlineCallFrame.h"
 #include "JSScope.h"
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
@@ -53,8 +54,14 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     int divotPoint = 0;
     unsigned line = 0;
     unsigned column = 0;
-    
-    CodeBlock* codeBlock = callFrame->codeBlock();
+
+    CodeBlock* codeBlock;
+    CodeOrigin codeOrigin = callFrame->codeOrigin();
+    if (codeOrigin && codeOrigin.inlineCallFrame)
+        codeBlock = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame);
+    else
+        codeBlock = callFrame->codeBlock();
+
     codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset, line, column);
     
     int expressionStart = divotPoint - startOffset;
