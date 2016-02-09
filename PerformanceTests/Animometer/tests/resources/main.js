@@ -1,12 +1,12 @@
 Controller = Utilities.createClass(
-    function(testLength, benchmark, options)
+    function(benchmark, options)
     {
         // Initialize timestamps relative to the start of the benchmark
         // In start() the timestamps are offset by the start timestamp
         this._startTimestamp = 0;
-        this._endTimestamp = testLength;
+        this._endTimestamp = options["test-interval"];
         // Default data series: timestamp, complexity, estimatedFrameLength
-        this._sampler = new Sampler(options["series-count"] || 3, 60 * testLength, this);
+        this._sampler = new Sampler(options["series-count"] || 3, (60 * options["test-interval"] / 1000), this);
         this._estimator = new SimpleKalmanEstimator(options["kalman-process-error"], options["kalman-measurement-error"]);
         this._marks = {};
 
@@ -41,6 +41,12 @@ Controller = Utilities.createClass(
     {
         this._estimator.sample(timestamp - this._sampler.samples[0][this._sampler.sampleCount - 1]);
         this._sampler.record(timestamp, stage.complexity(), this._estimator.estimate);
+
+        this.tune(stage, timestamp);
+    },
+
+    tune: function(stage, timestamp)
+    {
     },
 
     shouldStop: function(timestamp)
@@ -113,22 +119,40 @@ Controller = Utilities.createClass(
     }
 });
 
-FixedComplexityController = Utilities.createSubclass(Controller,
-    function(testInterval, benchmark, options)
+StepController = Utilities.createSubclass(Controller,
+    function(benchmark, options)
     {
-        Controller.call(this, testInterval, benchmark, options);
+        Controller.call(this, benchmark, options);
         this.initialComplexity = options["complexity"];
+        this._stepped = false;
+        this._stepTime = options["test-interval"] / 2;
+    }, {
+
+    start: function(stage, startTimestamp)
+    {
+        Controller.prototype.start.call(this, stage, startTimestamp);
+        this._stepTime += startTimestamp;
+    },
+
+    tune: function(stage, timestamp)
+    {
+        if (this._stepped || timestamp < this._stepTime)
+            return;
+
+        this.mark(Strings.json.samplingEndTimeOffset, timestamp);
+        this._stepped = true;
+        stage.tune(stage.complexity() * 3);
     }
-);
+});
 
 AdaptiveController = Utilities.createSubclass(Controller,
-    function(testInterval, benchmark, options)
+    function(benchmark, options)
     {
         // Data series: timestamp, complexity, estimatedIntervalFrameLength
-        Controller.call(this, testInterval, benchmark, options);
+        Controller.call(this, benchmark, options);
 
         // All tests start at 0, so we expect to see 60 fps quickly.
-        this._samplingTimestamp = testInterval / 2;
+        this._samplingTimestamp = options["test-interval"] / 2;
         this._startedSampling = false;
         this._targetFrameRate = options["frame-rate"];
         this._pid = new PIDController(this._targetFrameRate);
@@ -337,15 +361,15 @@ Benchmark = Utilities.createClass(
             break;
         }
 
-        var testIntervalMilliseconds = options["test-interval"] * 1000;
+        options["test-interval"] *= 1000;
         switch (options["adjustment"])
         {
-        case "fixed":
-            this._controller = new FixedComplexityController(testIntervalMilliseconds, this, options);
+        case "step":
+            this._controller = new StepController(this, options);
             break;
         case "adaptive":
         default:
-            this._controller = new AdaptiveController(testIntervalMilliseconds, this, options);
+            this._controller = new AdaptiveController(this, options);
             break;
         }
     }, {

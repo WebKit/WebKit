@@ -1,5 +1,20 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Make the fixed controller a step controller instead. Halfway through the test
+        it will bump up the complexity 4-fold. Calculate the step timestamp using options
+        instead of a separate parameter to the Controller constructor.
+
+        * Animometer/developer.html: Change value to "step"
+        * Animometer/resources/debug-runner/animometer.js:
+        (window.suitesManager.updateEditsElementsState): Show number inputs when set to "step".
+        * Animometer/tests/resources/main.js:
+        (update): Provide a hook for subclasses to tune.
+        (StepController): Maintain a flag determining whether we've stepped, and the time
+        we should step.
+        (Benchmark): Use the new StepController.
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Adjust the FPS graph scale.
 
         Instead of making the FPS graph linearly scale, scale it based on the frame length,

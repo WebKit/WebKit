@@ -241,7 +241,7 @@ window.suitesManager =
     updateEditsElementsState: function()
     {
         var editsElements = this._editsElements();
-        var showComplexityInputs = optionsManager.valueForOption("adjustment") == "fixed";
+        var showComplexityInputs = optionsManager.valueForOption("adjustment") == "step";
 
         for (var i = 0; i < editsElements.length; ++i) {
             var editElement = editsElements[i];
