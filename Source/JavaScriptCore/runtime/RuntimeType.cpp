@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) Saam Barati <saambarati1@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,9 @@ namespace JSC {
 
 RuntimeType runtimeTypeForValue(JSValue value)
 {
+    if (UNLIKELY(!value))
+        return TypeNothing;
+
     if (value.isUndefined())
         return TypeUndefined;
     if (value.isNull())

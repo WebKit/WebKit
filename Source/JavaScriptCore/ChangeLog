@@ -1,3 +1,20 @@
+2016-02-08  Saam Barati  <sbarati@apple.com>
+
+        runtimeTypeForValue should protect against seeing TDZ value
+        https://bugs.webkit.org/show_bug.cgi?id=154023
+
+        Reviewed by Michael Saboff.
+
+        There are a few back traces I've seen from crashes that bottom out
+        inside runtimeTypeForValue. I haven't been able to reproduce
+        any such crash, but it's likely that we're encountering the
+        empty JSValue. It's better to just have this function protect
+        against seeing the empty value instead of dereferencing a null
+        pointer when it thinks the value is a cell.
+
+        * runtime/RuntimeType.cpp:
+        (JSC::runtimeTypeForValue):
+
 2016-02-08  Andreas Kling  <akling@apple.com>
 
         [iOS] Throw away some unlinked code when navigating to a new page.
