@@ -1763,9 +1763,9 @@ void FrameLoader::commitProvisionalLoad()
         PageCache::singleton().addIfCacheable(*history().currentItem(), m_frame.page());
 
 #if PLATFORM(IOS)
-        // For top-level navigations, have JSC throw away all code used by the current page.
-        // The immediate memory savings far outweigh the cost of recompiling in the case of a future backwards navigation.
-        GCController::singleton().deleteAllCodeExceptCaches();
+        // For top-level navigations, have JSC throw away linked code. The immediate memory savings far
+        // outweigh the cost of recompiling in the case of a future backwards navigation.
+        GCController::singleton().deleteAllLinkedCode();
 #endif
     }
 
