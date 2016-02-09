@@ -10,14 +10,23 @@ Controller = Utilities.createClass(
         this._marks = {};
 
         this._frameLengthEstimator = new SimpleKalmanEstimator(options["kalman-process-error"], options["kalman-measurement-error"]);
+        this._isFrameLengthEstimatorEnabled = true;
+
+        // Length of subsequent intervals; a value of 0 means use no intervals
+        this._intervalLength = options["interval-length"] || 100;
 
         this.initialComplexity = 0;
     }, {
+
+    set isFrameLengthEstimatorEnabled(enabled) {
+        this._isFrameLengthEstimatorEnabled = enabled;
+    },
 
     start: function(startTimestamp, stage)
     {
         this._startTimestamp = startTimestamp;
         this._endTimestamp += startTimestamp;
+        this._measureAndResetInterval(startTimestamp);
         this.recordFirstSample(startTimestamp, stage);
     },
 
@@ -38,15 +47,51 @@ Controller = Utilities.createClass(
         return comment in this._marks;
     },
 
-    update: function(timestamp, stage)
+    _measureAndResetInterval: function(currentTimestamp)
     {
-        this._frameLengthEstimator.sample(timestamp - this._sampler.samples[0][this._sampler.sampleCount - 1]);
-        this._sampler.record(timestamp, stage.complexity(), this._frameLengthEstimator.estimate);
+        var sampleCount = this._sampler.sampleCount;
+        var averageFrameLength = 0;
 
-        this.tune(timestamp, stage);
+        if (this._intervalEndTimestamp) {
+            var intervalStartTimestamp = this._sampler.samples[0][this._intervalStartIndex];
+            averageFrameLength = (currentTimestamp - intervalStartTimestamp) / (sampleCount - this._intervalStartIndex);
+        }
+
+        this._intervalStartIndex = sampleCount;
+        this._intervalEndTimestamp = currentTimestamp + this._intervalLength;
+
+        return averageFrameLength;
     },
 
-    tune: function(timestamp, stage)
+    update: function(timestamp, stage)
+    {
+        var frameLengthEstimate = -1;
+        var didFinishInterval = false;
+        if (!this._intervalLength) {
+            if (this._isFrameLengthEstimatorEnabled) {
+                this._frameLengthEstimator.sample(timestamp - this._sampler.samples[0][this._sampler.sampleCount - 1]);
+                frameLengthEstimate = this._frameLengthEstimator.estimate;
+            }
+        } else if (timestamp >= this._intervalEndTimestamp) {
+            var intervalStartTimestamp = this._sampler.samples[0][this._intervalStartIndex];
+            intervalAverageFrameLength = this._measureAndResetInterval(timestamp);
+            if (this._isFrameLengthEstimatorEnabled) {
+                this._frameLengthEstimator.sample(intervalAverageFrameLength);
+                frameLengthEstimate = this._frameLengthEstimator.estimate;
+            }
+            didFinishInterval = true;
+            this.didFinishInterval(timestamp, stage, intervalAverageFrameLength);
+        }
+
+        this._sampler.record(timestamp, stage.complexity(), frameLengthEstimate);
+        this.tune(timestamp, stage, didFinishInterval);
+    },
+
+    didFinishInterval: function(timestamp, stage, intervalAverageFrameLength)
+    {
+    },
+
+    tune: function(timestamp, stage, didFinishInterval)
     {
     },
 
@@ -123,6 +168,7 @@ Controller = Utilities.createClass(
 StepController = Utilities.createSubclass(Controller,
     function(benchmark, options)
     {
+        options["interval-length"] = 0;
         Controller.call(this, benchmark, options);
         this.initialComplexity = options["complexity"];
         this._stepped = false;

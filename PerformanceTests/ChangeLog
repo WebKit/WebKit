@@ -1,5 +1,19 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Teach Controller to measure intervals, and turn off the frame length estimator.
+
+        * Animometer/tests/resources/main.js: Default interval length is 100 ms.
+        (start): Set the first interval.
+        (_measureAndResetInterval): Reports the average frame length of the interval that just
+        completed, and sets up the next interval.
+        (update): If there is no length, then just use the estimator per frame, otherwise the
+        estimator measures per interval. Add a didFinishInterval for subclasses to process
+        prior to recording the sample. Update tune() to include whether an interval had
+        finished.
+        (StepController): Step controllers don't measure on an interval basis.
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Minor refactoring. Rename Controller._estimator to Controller._frameLengthEstimator
         and switch the parameters for start(), update(), and tune(), so that the timestamp
         is first and stage is second.
