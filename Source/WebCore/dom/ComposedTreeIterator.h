@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "NodeTraversal.h"
+#include "ElementAndTextDescendantIterator.h"
 #include "ShadowRoot.h"
 
 #ifndef ComposedTreeIterator_h
@@ -35,115 +35,118 @@ class HTMLSlotElement;
 
 class ComposedTreeIterator {
 public:
+    ComposedTreeIterator();
     ComposedTreeIterator(ContainerNode& root);
     ComposedTreeIterator(ContainerNode& root, Node& current);
 
-    Node& operator*() { return *m_current; }
-    Node* operator->() { return m_current; }
+    Node& operator*() { return current(); }
+    Node* operator->() { return &current(); }
 
-    bool operator==(const ComposedTreeIterator& other) const { return m_current == other.m_current; }
-    bool operator!=(const ComposedTreeIterator& other) const { return m_current != other.m_current; }
+    bool operator==(const ComposedTreeIterator& other) const { return context().iterator == other.context().iterator; }
+    bool operator!=(const ComposedTreeIterator& other) const { return context().iterator != other.context().iterator; }
 
-    ComposedTreeIterator& operator++() { return traverseNextSibling(); }
+    ComposedTreeIterator& operator++() { return traverseNext(); }
 
     ComposedTreeIterator& traverseNext();
+    ComposedTreeIterator& traverseNextSkippingChildren();
     ComposedTreeIterator& traverseNextSibling();
     ComposedTreeIterator& traversePreviousSibling();
-    ComposedTreeIterator& traverseParent();
+
+    unsigned depth() const;
 
 private:
-    void initializeShadowStack();
+    void initializeContextStack(ContainerNode& root, Node& current);
     void traverseNextInShadowTree();
-    void traverseParentInShadowTree();
+    void traverseNextLeavingContext();
+    bool pushContext(ShadowRoot&);
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-    void traverseNextSiblingSlot();
-    void traversePreviousSiblingSlot();
+    bool advanceInSlot(int direction);
+    void traverseSiblingInSlot(int direction);
 #endif
 
-    ContainerNode& m_root;
-    Node* m_current { 0 };
-
-    struct ShadowContext {
-        ShadowContext(Element* host)
-            : host(host)
+    struct Context {
+        Context() { }
+        explicit Context(ContainerNode& root)
+            : iterator(root)
+        { }
+        Context(ContainerNode& root, Node& node, size_t slotNodeIndex = notFound)
+            : iterator(root, &node)
+            , slotNodeIndex(slotNodeIndex)
         { }
 
-        Element* host;
+        ElementAndTextDescendantIterator iterator;
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-        HTMLSlotElement* currentSlot { nullptr };
-        unsigned currentSlotNodeIndex { 0 };
+        size_t slotNodeIndex { notFound };
 #endif
     };
-    Vector<ShadowContext, 4> m_shadowStack;
+    Context& context() { return m_contextStack.last(); }
+    const Context& context() const { return m_contextStack.last(); }
+    Node& current() { return *context().iterator; }
+
+    Vector<Context, 4> m_contextStack;
 };
 
-inline ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root)
-    : m_root(root)
+inline ComposedTreeIterator::ComposedTreeIterator()
+    : m_contextStack({ { } })
 {
-    ASSERT(!is<ShadowRoot>(m_root));
-}
-
-inline ComposedTreeIterator::ComposedTreeIterator(ContainerNode& root, Node& current)
-    : m_root(root)
-    , m_current(&current)
-{
-    ASSERT(!is<ShadowRoot>(m_root));
-    ASSERT(!is<ShadowRoot>(m_current));
-
-    bool mayNeedShadowStack = m_root.shadowRoot() || (m_current != &m_root && current.parentNode() != &m_root);
-    if (mayNeedShadowStack)
-        initializeShadowStack();
 }
 
 inline ComposedTreeIterator& ComposedTreeIterator::traverseNext()
 {
-    if (auto* shadowRoot = m_current->shadowRoot()) {
-        m_shadowStack.append(shadowRoot->host());
-        m_current = shadowRoot;
+    if (auto* shadowRoot = context().iterator->shadowRoot()) {
+        if (pushContext(*shadowRoot))
+            return *this;
     }
 
-    if (m_shadowStack.isEmpty())
-        m_current = NodeTraversal::next(*m_current, &m_root);
-    else
+    if (m_contextStack.size() > 1) {
         traverseNextInShadowTree();
+        return *this;
+    }
 
+    context().iterator.traverseNext();
+    return *this;
+}
+
+inline ComposedTreeIterator& ComposedTreeIterator::traverseNextSkippingChildren()
+{
+    context().iterator.traverseNextSkippingChildren();
+
+    if (!context().iterator && m_contextStack.size() > 1)
+        traverseNextLeavingContext();
+    
     return *this;
 }
 
 inline ComposedTreeIterator& ComposedTreeIterator::traverseNextSibling()
 {
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-    bool isAssignedToSlot = !m_shadowStack.isEmpty() && m_current->parentNode()->shadowRoot();
-    if (isAssignedToSlot) {
-        traverseNextSiblingSlot();
+    if (current().parentNode()->shadowRoot()) {
+        traverseSiblingInSlot(1);
         return *this;
     }
 #endif
-    m_current = m_current->nextSibling();
+    context().iterator.traverseNextSibling();
     return *this;
 }
 
 inline ComposedTreeIterator& ComposedTreeIterator::traversePreviousSibling()
 {
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-    bool isAssignedToSlot = !m_shadowStack.isEmpty() && m_current->parentNode()->shadowRoot();
-    if (isAssignedToSlot) {
-        traversePreviousSiblingSlot();
+    if (current().parentNode()->shadowRoot()) {
+        traverseSiblingInSlot(-1);
         return *this;
     }
 #endif
-    m_current = m_current->previousSibling();
+    context().iterator.traversePreviousSibling();
     return *this;
 }
 
-inline ComposedTreeIterator& ComposedTreeIterator::traverseParent()
+inline unsigned ComposedTreeIterator::depth() const
 {
-    if (m_shadowStack.isEmpty())
-        m_current = m_current->parentNode();
-    else
-        traverseParentInShadowTree();
-
-    return *this;
+    unsigned depth = 0;
+    for (auto& context : m_contextStack)
+        depth += context.iterator.depth();
+    return depth;
 }
 
 class ComposedTreeDescendantAdapter {
@@ -152,8 +155,8 @@ public:
         : m_parent(parent)
     { }
 
-    ComposedTreeIterator begin() { return ComposedTreeIterator(m_parent, m_parent).traverseNext(); }
-    ComposedTreeIterator end() { return ComposedTreeIterator(m_parent); }
+    ComposedTreeIterator begin() { return ComposedTreeIterator(m_parent); }
+    ComposedTreeIterator end() { return { }; }
     ComposedTreeIterator at(const Node& child) { return ComposedTreeIterator(m_parent, const_cast<Node&>(child)); }
     
 private:
@@ -164,7 +167,8 @@ class ComposedTreeChildAdapter {
 public:
     class Iterator : public ComposedTreeIterator {
     public:
-        Iterator(ContainerNode& root)
+        Iterator() = default;
+        explicit Iterator(ContainerNode& root)
             : ComposedTreeIterator(root)
         { }
         Iterator(ContainerNode& root, Node& current)
@@ -179,8 +183,8 @@ public:
         : m_parent(parent)
     { }
 
-    Iterator begin() { return static_cast<Iterator&>(Iterator(m_parent, m_parent).traverseNext()); }
-    Iterator end() { return Iterator(m_parent); }
+    Iterator begin() { return Iterator(m_parent); }
+    Iterator end() { return { }; }
     Iterator at(const Node& child) { return Iterator(m_parent, const_cast<Node&>(child)); }
 
 private:

@@ -6530,6 +6530,7 @@
 		E43A023D17EB3713004CDD25 /* RenderElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43A023C17EB3713004CDD25 /* RenderElement.cpp */; };
 		E43AF8E61AC5B7E800CA717E /* CacheValidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43AF8E41AC5B7DD00CA717E /* CacheValidation.cpp */; };
 		E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E43AF8E51AC5B7DD00CA717E /* CacheValidation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E440AA961C68420800A265CC /* ElementAndTextDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E440AA951C68420800A265CC /* ElementAndTextDescendantIterator.h */; };
 		E44613A10CD6331000FADA75 /* HTMLAudioElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */; };
 		E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613900CD6331000FADA75 /* HTMLAudioElement.h */; };
 		E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44613920CD6331000FADA75 /* HTMLMediaElement.cpp */; };
@@ -14508,6 +14509,7 @@
 		E43A023C17EB3713004CDD25 /* RenderElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderElement.cpp; sourceTree = "<group>"; };
 		E43AF8E41AC5B7DD00CA717E /* CacheValidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheValidation.cpp; sourceTree = "<group>"; };
 		E43AF8E51AC5B7DD00CA717E /* CacheValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheValidation.h; sourceTree = "<group>"; };
+		E440AA951C68420800A265CC /* ElementAndTextDescendantIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementAndTextDescendantIterator.h; sourceTree = "<group>"; };
 		E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLAudioElement.cpp; sourceTree = "<group>"; };
 		E44613900CD6331000FADA75 /* HTMLAudioElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLAudioElement.h; sourceTree = "<group>"; };
 		E44613910CD6331000FADA75 /* HTMLAudioElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAudioElement.idl; sourceTree = "<group>"; };
@@ -24091,6 +24093,7 @@
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
 				E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */,
+				E440AA951C68420800A265CC /* ElementAndTextDescendantIterator.h */,
 				E46A2B1D17CA76B1000DBCD8 /* ElementChildIterator.h */,
 				B5B7A16F17C1080600E4AA0A /* ElementData.cpp */,
 				B5B7A16E17C1048000E4AA0A /* ElementData.h */,
@@ -25850,6 +25853,7 @@
 				93309E0E099E64920056E581 /* FrameSelection.h in Headers */,
 				C4CD629B18383766007EBAF1 /* FrameSnapshotting.h in Headers */,
 				65A21485097A3F5300B9050A /* FrameTree.h in Headers */,
+				E440AA961C68420800A265CC /* ElementAndTextDescendantIterator.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
 				97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */,
 				51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */,

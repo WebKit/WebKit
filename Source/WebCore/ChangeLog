@@ -1,3 +1,63 @@
+2016-02-08  Antti Koivisto  <antti@apple.com>
+
+        Implement ComposedTreeIterator in terms of ElementAndTextDescendantIterator
+        https://bugs.webkit.org/show_bug.cgi?id=154003
+
+        Reviewed by Darin Adler.
+
+        Currently ComposedTreeIterator implements tree traversal using NodeTraversal. This makes it overly complicated.
+        It can also return nodes other than Element and Text which should not be part of the composed tree.
+
+        This patch adds a new iterator type, ElementAndTextDescendantIterator, similar to the existing ElementDescendantIterator.
+        ComposedTreeIterator is then implemented using this new iterator.
+
+        When entering a shadow tree or a slot the local iterator is pushed along with the context stack and a new local
+        iterator is initialized for the new context. When leaving a shadow tree the context stack is popped and the previous
+        local iterator becomes active.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::ComposedTreeIterator):
+        (WebCore::ComposedTreeIterator::initializeContextStack):
+        (WebCore::ComposedTreeIterator::pushContext):
+        (WebCore::ComposedTreeIterator::traverseNextInShadowTree):
+        (WebCore::ComposedTreeIterator::traverseNextLeavingContext):
+        (WebCore::ComposedTreeIterator::advanceInSlot):
+        (WebCore::ComposedTreeIterator::traverseSiblingInSlot):
+        (WebCore::ComposedTreeIterator::initializeShadowStack): Deleted.
+        (WebCore::ComposedTreeIterator::traverseParentInShadowTree): Deleted.
+        (WebCore::ComposedTreeIterator::traverseNextSiblingSlot): Deleted.
+        (WebCore::ComposedTreeIterator::traversePreviousSiblingSlot): Deleted.
+        * dom/ComposedTreeIterator.h:
+        (WebCore::ComposedTreeIterator::operator*):
+        (WebCore::ComposedTreeIterator::operator->):
+        (WebCore::ComposedTreeIterator::operator==):
+        (WebCore::ComposedTreeIterator::operator!=):
+        (WebCore::ComposedTreeIterator::operator++):
+        (WebCore::ComposedTreeIterator::Context::Context):
+        (WebCore::ComposedTreeIterator::context):
+        (WebCore::ComposedTreeIterator::current):
+        (WebCore::ComposedTreeIterator::ComposedTreeIterator):
+        (WebCore::ComposedTreeIterator::traverseNext):
+        (WebCore::ComposedTreeIterator::traverseNextSkippingChildren):
+        (WebCore::ComposedTreeIterator::traverseNextSibling):
+        (WebCore::ComposedTreeIterator::traversePreviousSibling):
+        (WebCore::ComposedTreeDescendantAdapter::ComposedTreeDescendantAdapter):
+        (WebCore::ComposedTreeDescendantAdapter::begin):
+        (WebCore::ComposedTreeDescendantAdapter::end):
+        (WebCore::ComposedTreeDescendantAdapter::at):
+        (WebCore::ComposedTreeChildAdapter::Iterator::Iterator):
+        (WebCore::ComposedTreeChildAdapter::ComposedTreeChildAdapter):
+        (WebCore::ComposedTreeChildAdapter::begin):
+        (WebCore::ComposedTreeChildAdapter::end):
+        (WebCore::ComposedTreeChildAdapter::at):
+        (WebCore::ComposedTreeIterator::ShadowContext::ShadowContext): Deleted.
+        (WebCore::ComposedTreeIterator::traverseParent): Deleted.
+        * dom/ElementAndTextDescendantIterator.h: Added.
+
+            New iterator type that traverses Element and Text nodes (that is renderable nodes only).
+            It also tracks depth for future use.
+
 2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: copy({x:1}) should copy "{x:1}", not "[object Object]"
