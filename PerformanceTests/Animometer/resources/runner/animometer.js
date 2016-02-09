@@ -123,13 +123,13 @@ ResultsTable = Utilities.createClass(
                 axes: [Strings.text.experiments.complexity, Strings.text.experiments.frameRate],
                 mean: [
                     testResults[Strings.json.experiments.complexity][Strings.json.measurements.average],
-                    testResults[Strings.json.experiments.frameRate][Strings.json.measurements.average]
+                    1000 / testResults[Strings.json.experiments.frameRate][Strings.json.measurements.average]
                 ],
                 samples: data,
                 marks: testResults[Strings.json.marks]
             }
-            if (testResults[Strings.json.targetFPS])
-                graphData.targetFPS = testResults[Strings.json.targetFPS];
+            if (testResults[Strings.json.targetFrameLength])
+                graphData.targetFrameLength = testResults[Strings.json.targetFrameLength];
             benchmarkController.showTestGraph(testName, score, mean, graphData);
         });
 

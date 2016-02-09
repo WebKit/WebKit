@@ -23,7 +23,7 @@ Controller = Utilities.createClass(
     recordFirstSample: function(stage, startTimestamp)
     {
         this._sampler.record(startTimestamp, stage.complexity(), -1);
-        this.mark(Strings.json.samplingTimeOffset, startTimestamp);
+        this.mark(Strings.json.samplingStartTimeOffset, startTimestamp);
     },
 
     mark: function(comment, timestamp, data) {
@@ -40,7 +40,7 @@ Controller = Utilities.createClass(
     update: function(stage, timestamp)
     {
         this._estimator.sample(timestamp - this._sampler.samples[0][this._sampler.sampleCount - 1]);
-        this._sampler.record(timestamp, stage.complexity(), 1000 / this._estimator.estimate);
+        this._sampler.record(timestamp, stage.complexity(), this._estimator.estimate);
     },
 
     shouldStop: function(timestamp)
@@ -56,16 +56,15 @@ Controller = Utilities.createClass(
     processSamples: function(results)
     {
         var complexityExperiment = new Experiment;
-        var smoothedFPSExperiment = new Experiment;
+        var smoothedFrameLengthExperiment = new Experiment;
 
         var samples = this._sampler.samples;
 
-        var samplingIndex = 0;
-        var samplingMark = this._marks[Strings.json.samplingTimeOffset];
-        if (samplingMark) {
-            samplingIndex = samplingMark.index;
-            results[Strings.json.samplingTimeOffset] = samplingMark.time;
-        }
+        var samplingStartIndex = 0, samplingEndIndex = -1;
+        if (Strings.json.samplingStartTimeOffset in this._marks)
+            samplingStartIndex = this._marks[Strings.json.samplingStartTimeOffset].index;
+        if (Strings.json.samplingEndTimeOffset in this._marks)
+            samplingEndIndex = this._marks[Strings.json.samplingEndTimeOffset].index;
 
         for (var markName in this._marks)
             this._marks[markName].time -= this._startTimestamp;
@@ -73,25 +72,24 @@ Controller = Utilities.createClass(
 
         results[Strings.json.samples] = samples[0].map(function(timestamp, i) {
             var result = {
-                // Represent time in seconds
+                // Represent time in milliseconds
                 time: timestamp - this._startTimestamp,
                 complexity: samples[1][i]
             };
 
-            // time offsets represented as FPS
             if (i == 0)
-                result.fps = 60;
+                result.frameLength = 1000/60;
             else
-                result.fps = 1000 / (timestamp - samples[0][i - 1]);
+                result.frameLength = timestamp - samples[0][i - 1];
 
             if (samples[2][i] != -1)
-                result.smoothedFPS = samples[2][i];
+                result.smoothedFrameLength = samples[2][i];
 
             // Don't start adding data to the experiments until we reach the sampling timestamp
-            if (i >= samplingIndex) {
+            if (i >= samplingStartIndex && (samplingEndIndex == -1 || i < samplingEndIndex)) {
                 complexityExperiment.sample(result.complexity);
-                if (result.smoothedFPS && result.smoothedFPS != -1)
-                    smoothedFPSExperiment.sample(result.smoothedFPS);
+                if (result.smoothedFrameLength && result.smoothedFrameLength != -1)
+                    smoothedFrameLengthExperiment.sample(result.smoothedFrameLength);
             }
 
             return result;
@@ -106,12 +104,12 @@ Controller = Utilities.createClass(
         complexityResults[Strings.json.measurements.stdev] = complexityExperiment.standardDeviation();
         complexityResults[Strings.json.measurements.percent] = complexityExperiment.percentage();
 
-        var smoothedFPSResults = {};
-        results[Strings.json.experiments.frameRate] = smoothedFPSResults;
-        smoothedFPSResults[Strings.json.measurements.average] = smoothedFPSExperiment.mean();
-        smoothedFPSResults[Strings.json.measurements.concern] = smoothedFPSExperiment.concern(Experiment.defaults.CONCERN);
-        smoothedFPSResults[Strings.json.measurements.stdev] = smoothedFPSExperiment.standardDeviation();
-        smoothedFPSResults[Strings.json.measurements.percent] = smoothedFPSExperiment.percentage();
+        var smoothedFrameLengthResults = {};
+        results[Strings.json.experiments.frameRate] = smoothedFrameLengthResults;
+        smoothedFrameLengthResults[Strings.json.measurements.average] = 1000 / smoothedFrameLengthExperiment.mean();
+        smoothedFrameLengthResults[Strings.json.measurements.concern] = smoothedFrameLengthExperiment.concern(Experiment.defaults.CONCERN);
+        smoothedFrameLengthResults[Strings.json.measurements.stdev] = smoothedFrameLengthExperiment.standardDeviation();
+        smoothedFrameLengthResults[Strings.json.measurements.percent] = smoothedFrameLengthExperiment.percentage();
     }
 });
 
@@ -156,7 +154,7 @@ AdaptiveController = Utilities.createSubclass(Controller,
     {
         if (!this._startedSampling && timestamp > this._samplingTimestamp) {
             this._startedSampling = true;
-            this.mark(Strings.json.samplingTimeOffset, this._samplingTimestamp);
+            this.mark(Strings.json.samplingStartTimeOffset, this._samplingTimestamp);
         }
 
         // Start the work for the next frame.
@@ -175,7 +173,7 @@ AdaptiveController = Utilities.createSubclass(Controller,
         tuneValue = tuneValue > 0 ? Math.floor(tuneValue) : Math.ceil(tuneValue);
         stage.tune(tuneValue);
 
-        this._sampler.record(timestamp, stage.complexity(), intervalEstimatedFrameRate);
+        this._sampler.record(timestamp, stage.complexity(), this._estimator.estimate);
 
         // Start the next interval.
         this._intervalFrameCount = 0;
@@ -185,7 +183,7 @@ AdaptiveController = Utilities.createSubclass(Controller,
     processSamples: function(results)
     {
         Controller.prototype.processSamples.call(this, results);
-        results[Strings.json.targetFPS] = this._targetFrameRate;
+        results[Strings.json.targetFrameLength] = 1000 / this._targetFrameRate;
     }
 });
 

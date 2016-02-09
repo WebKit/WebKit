@@ -1,5 +1,27 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Adjust the FPS graph scale.
+
+        Instead of making the FPS graph linearly scale, scale it based on the frame length,
+        but show the data in terms of FPS. Because it is inversely proportional, and most
+        of the data never gets below 20, concentrate the axis from 20-60 FPS, since otherwise
+        over half of the available graph space ends up blank.
+
+        This means we should convert all of the FPS data to frame length data.
+
+        * Animometer/resources/debug-runner/graph.js: Update the domain to be based on
+        frame length in milliseconds instead of FPS. Update the cursor to consider all of the
+        values being shown, and then pick the min and max values to represent the length of the
+        cursor.
+        * Animometer/resources/runner/animometer.js:
+        * Animometer/resources/strings.js:
+        * Animometer/tests/resources/main.js:
+        (processSamples): Add the ability to only sample a range of the data instead of everything
+        after an offset index. Update sampler to record the frame lengths instead of the frame
+        rate.
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Add option to use different methods for retrieving a timestamp.
 
         * Animometer/developer.html: Add performance.now and Date.now options.

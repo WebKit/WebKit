@@ -27,8 +27,9 @@ var Strings = {
         samples: "samples",
         marks: "marks",
 
-        targetFPS: "targetFPS",
-        samplingTimeOffset: "samplingTimeOffset",
+        targetFrameLength: "targetFrameLength",
+        samplingStartTimeOffset: "Start sampling",
+        samplingEndTimeOffset: "End sampling",
 
         experiments: {
             complexity: "complexity",

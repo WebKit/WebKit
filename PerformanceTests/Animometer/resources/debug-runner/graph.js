@@ -17,7 +17,7 @@ Utilities.extendObject(window.benchmarkController, {
                 .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
         var axes = graphData.axes;
-        var targetFPS = graphData.targetFPS;
+        var targetFrameLength = graphData.targetFrameLength;
 
         // Axis scales
         var x = d3.scale.linear()
@@ -28,7 +28,7 @@ Utilities.extendObject(window.benchmarkController, {
                 .domain([0, d3.max(graphData.samples, function(s) { return s.complexity; })]);
         var yRight = d3.scale.linear()
                 .range([size.height, 0])
-                .domain([0, 60]);
+                .domain([1000/20, 1000/60]);
 
         // Axes
         var xAxis = d3.svg.axis()
@@ -40,6 +40,8 @@ Utilities.extendObject(window.benchmarkController, {
                 .orient("left");
         var yAxisRight = d3.svg.axis()
                 .scale(yRight)
+                .tickValues([1000/20, 1000/25, 1000/30, 1000/35, 1000/40, 1000/45, 1000/50, 1000/55, 1000/60])
+                .tickFormat(function(d) { return (1000/d).toFixed(0); })
                 .orient("right");
 
         // x-axis
@@ -123,12 +125,12 @@ Utilities.extendObject(window.benchmarkController, {
             .attr("class", "right-mean mean");
 
         // right-target
-        if (targetFPS) {
+        if (targetFrameLength) {
             svg.append("line")
                 .attr("x1", x(0))
                 .attr("x2", size.width)
-                .attr("y1", yRight(targetFPS))
-                .attr("y2", yRight(targetFPS))
+                .attr("y1", yRight(targetFrameLength))
+                .attr("y2", yRight(targetFrameLength))
                 .attr("class", "target-fps marker");
         }
 
@@ -143,7 +145,7 @@ Utilities.extendObject(window.benchmarkController, {
         // Data
         var allData = graphData.samples;
         var filteredData = graphData.samples.filter(function (sample) {
-            return "smoothedFPS" in sample;
+            return "smoothedFrameLength" in sample;
         });
 
         function addData(name, data, yCoordinateCallback, pointRadius, omitLine) {
@@ -169,8 +171,8 @@ Utilities.extendObject(window.benchmarkController, {
         }
 
         addData("complexity", allData, function(d) { return yLeft(d.complexity); }, 2);
-        addData("rawFPS", allData, function(d) { return yRight(d.fps); }, 1);
-        addData("filteredFPS", filteredData, function(d) { return yRight(d.smoothedFPS); }, 2);
+        addData("rawFPS", allData, function(d) { return yRight(d.frameLength); }, 1);
+        addData("filteredFPS", filteredData, function(d) { return yRight(d.smoothedFrameLength); }, 2);
 
         // Area to handle mouse events
         var area = svg.append("rect")
@@ -196,12 +198,7 @@ Utilities.extendObject(window.benchmarkController, {
             var data = allData[index];
             var cursor_x = x(data.time);
             var cursor_y = yAxisRight.scale().domain()[1];
-            if (form["rawFPS"].checked)
-                cursor_y = Math.max(cursor_y, data.fps);
-            cursorGroup.select("line")
-                .attr("x1", cursor_x)
-                .attr("x2", cursor_x)
-                .attr("y2", yRight(cursor_y));
+            var ys = [yRight(yAxisRight.scale().domain()[0]), yRight(yAxisRight.scale().domain()[1])];
 
             document.querySelector("#test-graph nav .time").textContent = (data.time / 1000).toFixed(4) + "s (" + index + ")";
             statsToHighlight.forEach(function(name) {
@@ -214,13 +211,13 @@ Utilities.extendObject(window.benchmarkController, {
                     data_y = yLeft(data.complexity);
                     break;
                 case "rawFPS":
-                    content = data.fps.toFixed(2);
-                    data_y = yRight(data.fps);
+                    content = (1000/data.frameLength).toFixed(2);
+                    data_y = yRight(data.frameLength);
                     break;
                 case "filteredFPS":
-                    if ("smoothedFPS" in data) {
-                        content = data.smoothedFPS.toFixed(2);
-                        data_y = yRight(data.smoothedFPS);
+                    if ("smoothedFrameLength" in data) {
+                        content = (1000/data.smoothedFrameLength).toFixed(2);
+                        data_y = yRight(data.smoothedFrameLength);
                     }
                     break;
                 }
@@ -228,6 +225,7 @@ Utilities.extendObject(window.benchmarkController, {
                 element.textContent = content;
 
                 if (form[name].checked && data_y !== null) {
+                    ys.push(data_y);
                     cursorGroup.select("." + name)
                         .attr("cx", cursor_x)
                         .attr("cy", data_y);
@@ -235,6 +233,15 @@ Utilities.extendObject(window.benchmarkController, {
                 } else
                     document.querySelector("#cursor ." + name).classList.add("hidden");
             });
+
+            if (form["rawFPS"].checked)
+                cursor_y = Math.max(cursor_y, data.frameLength);
+            cursorGroup.select("line")
+                .attr("x1", cursor_x)
+                .attr("x2", cursor_x)
+                .attr("y1", Math.min.apply(null, ys))
+                .attr("y2", Math.max.apply(null, ys));
+
         });
         this.onGraphOptionsChanged();
     },
