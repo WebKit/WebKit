@@ -87,8 +87,8 @@ private:
 };
 
 inline ComposedTreeIterator::ComposedTreeIterator()
-    : m_contextStack({ { } })
 {
+    m_contextStack.uncheckedAppend({ });
 }
 
 inline ComposedTreeIterator& ComposedTreeIterator::traverseNext()
