@@ -95,7 +95,7 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
             return Font::create(FontCache::singleton().lastResortFallbackFont(fontDescription)->platformData(), true, true);
         case CSSFontFaceSource::Status::Success:
             if (RefPtr<Font> result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_variantSettings))
-                return WTFMove(result);
+                return result;
             break;
         case CSSFontFaceSource::Status::Failure:
             break;
