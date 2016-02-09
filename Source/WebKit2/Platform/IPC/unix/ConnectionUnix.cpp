@@ -259,9 +259,8 @@ bool Connection::processMessage()
 
     if (attachmentFileDescriptorCount) {
         if (m_fileDescriptorsSize > attachmentFileDescriptorCount) {
-            size_t fileDescriptorsLength = attachmentFileDescriptorCount * sizeof(int);
-            memmove(m_fileDescriptors.data(), m_fileDescriptors.data() + fileDescriptorsLength, m_fileDescriptorsSize - fileDescriptorsLength);
-            m_fileDescriptorsSize -= fileDescriptorsLength;
+            memmove(m_fileDescriptors.data(), m_fileDescriptors.data() + attachmentFileDescriptorCount, (m_fileDescriptorsSize - attachmentFileDescriptorCount) * sizeof(int));
+            m_fileDescriptorsSize -= attachmentFileDescriptorCount;
         } else
             m_fileDescriptorsSize = 0;
     }

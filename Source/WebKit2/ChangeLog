@@ -1,3 +1,13 @@
+2016-02-09  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
+
+        possible buffer overrun in Connection::processMessage of Source/WebKit2/Platform/IPC/unix/ConnectionUnix.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=153637
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage): Fix invalid arguments of memmove.
+
 2016-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.5 release.
