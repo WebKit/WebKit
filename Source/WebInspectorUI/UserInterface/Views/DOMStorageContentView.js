@@ -37,7 +37,7 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
         representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemRemoved, this.itemRemoved, this);
         representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemUpdated, this.itemUpdated, this);
 
-        var columns = {};
+        let columns = {};
         columns.key = {title: WebInspector.UIString("Key"), sortable: true};
         columns.value = {title: WebInspector.UIString("Value"), sortable: true};
 
@@ -68,7 +68,7 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
 
     itemRemoved(event)
     {
-        for (var node of this._dataGrid.children) {
+        for (let node of this._dataGrid.children) {
             if (node.data.key === event.data.key)
                 return this._dataGrid.removeChild(node);
         }
@@ -76,27 +76,26 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
 
     itemAdded(event)
     {
-        var key = event.data.key;
-        var value = event.data.value;
+        let {key, value} = event.data;
+        value = this._truncateValue(value);
 
         // Enforce key uniqueness.
-        for (var node of this._dataGrid.children) {
+        for (let node of this._dataGrid.children) {
             if (node.data.key === key)
                 return;
         }
 
-        var data = {key, value};
-        this._dataGrid.appendChild(new WebInspector.DataGridNode(data, false));
+        this._dataGrid.appendChild(new WebInspector.DataGridNode({key, value}, false));
         this._sortDataGrid();
     }
 
     itemUpdated(event)
     {
-        var key = event.data.key;
-        var value = event.data.value;
+        let {key, value} = event.data;
+        value = this._truncateValue(value);
 
-        var keyFound = false;
-        for (var childNode of this._dataGrid.children) {
+        let keyFound = false;
+        for (let childNode of this._dataGrid.children) {
             if (childNode.data.key === key) {
                 // Remove any rows that are now duplicates.
                 if (keyFound) {
@@ -121,18 +120,23 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
 
     // Private
 
+    _truncateValue(value)
+    {
+        return value.truncate(200);
+    }
+
     _populate()
     {
         this.representedObject.getEntries(function(error, entries) {
             if (error)
                 return;
 
-            var nodes = [];
-            for (var entry of entries) {
-                if (!entry[0] || !entry[1])
+            for (let [key, value] of entries) {
+                if (!key || !value)
                     continue;
-                var data = {key: entry[0], value: entry[1]};
-                var node = new WebInspector.DataGridNode(data, false);
+
+                value = this._truncateValue(value);
+                let node = new WebInspector.DataGridNode({key, value}, false);
                 this._dataGrid.appendChild(node);
             }
 
@@ -144,7 +148,7 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
 
     _sortDataGrid()
     {
-        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier || "key";
+        let sortColumnIdentifier = this._dataGrid.sortColumnIdentifier || "key";
 
         function comparator(a, b)
         {

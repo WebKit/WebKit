@@ -1,5 +1,36 @@
 2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: localStorage inspector very slow on big values
+        https://bugs.webkit.org/show_bug.cgi?id=123750
+        <rdar://problem/15384930>
+
+        Reviewed by Timothy Hatcher.
+
+        It is not useful to show very large strings in the DOM Storage DataGrid.
+        This change truncates display strings to roughly 200 characters. If the
+        developer really wants the full value of the string they can just access
+        it through localStorage.
+
+        * UserInterface/Models/DOMStorageObject.js:
+        (WebInspector.DOMStorageObject.prototype.getEntries.innerCallback):
+        (WebInspector.DOMStorageObject.prototype.getEntries):
+        (WebInspector.DOMStorageObject.prototype.itemUpdated):
+        Modernize.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView):
+        (WebInspector.DOMStorageContentView.prototype.itemRemoved):
+        Modernize.
+
+        (WebInspector.DOMStorageContentView.prototype.itemAdded):
+        (WebInspector.DOMStorageContentView.prototype.itemUpdated):
+        (WebInspector.DOMStorageContentView.prototype._truncateValue):
+        (WebInspector.DOMStorageContentView.prototype._populate):
+        Whenever we get a value that we will display, truncate it to
+        just 200 characters.
+
+2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Expiration column in Storage tab can't be sorted
         https://bugs.webkit.org/show_bug.cgi?id=154043
         <rdar://problem/24572272>
