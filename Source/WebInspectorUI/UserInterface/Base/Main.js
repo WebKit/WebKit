@@ -259,6 +259,8 @@ WebInspector.contentLoaded = function()
 
     this._increaseZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Plus, this._increaseZoom.bind(this));
     this._decreaseZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Minus, this._decreaseZoom.bind(this));
+    this._increaseZoomKeyboardShortcut.implicitlyPreventsDefault = this._decreaseZoomKeyboardShortcut.implicitlyPreventsDefault = false;
+
     this._resetZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "0", this._resetZoom.bind(this));
 
     this._showTabAtIndexKeyboardShortcuts = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, `${i}`, this._showTabAtIndex.bind(this, i)));
@@ -1938,29 +1940,42 @@ WebInspector._copy = function(event)
     event.preventDefault();
 };
 
-WebInspector._increaseZoom = function(event) {
+WebInspector._increaseZoom = function(event)
+{
+    const epsilon = 0.0001;
+    const maximumZoom = 2.4;
     let currentZoom = InspectorFrontendHost.zoomFactor();
-    InspectorFrontendHost.setZoomFactor(currentZoom + 0.2);
+    if (currentZoom + epsilon >= maximumZoom)
+        return;
+
+    let newZoom = Math.min(maximumZoom, currentZoom + 0.2);
+    InspectorFrontendHost.setZoomFactor(newZoom);
     event.preventDefault();
 };
 
-WebInspector._decreaseZoom = function(event) {
-    let currentZoom = InspectorFrontendHost.zoomFactor();
-    InspectorFrontendHost.setZoomFactor(currentZoom - 0.2);
+WebInspector._decreaseZoom = function(event)
+{
+    const epsilon = 0.0001;
+    const minimumZoom = 0.6;
+    let currentZoom = InspectorFrontendHost.zoomFactor();    
+    if (currentZoom - epsilon <= minimumZoom)
+        return;
+
+    let newZoom = Math.max(minimumZoom, currentZoom - 0.2);
+    InspectorFrontendHost.setZoomFactor(newZoom);
     event.preventDefault();
 };
 
-WebInspector._resetZoom = function(event) {
+WebInspector._resetZoom = function(event)
+{
     InspectorFrontendHost.setZoomFactor(1);
-    event.preventDefault();
 };
 
-WebInspector._showTabAtIndex = function(i, event) {
+WebInspector._showTabAtIndex = function(i, event)
+{
     if (i <= WebInspector.tabBar.tabBarItems.length)
         WebInspector.tabBar.selectedTabBarItem = i - 1;
-
-    event.preventDefault();
-}
+};
 
 WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor, eventTarget)
 {

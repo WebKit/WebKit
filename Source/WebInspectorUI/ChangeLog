@@ -1,3 +1,32 @@
+2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Limit max and min zoom factor of Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=154041
+        <rdar://problem/24571326>
+
+        Reviewed by Brian Burg.
+
+        Chose reasonable zoom levels that looked good to my eye and
+        roughly matched Safari's page zoom levels.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Do not implicitly prevent default for zoom in/out keyboard shortcuts to
+        allow for a system beep if we do not do anything. 
+
+        (WebInspector._increaseZoom):
+        (WebInspector._decreaseZoom):
+        Do not go beyond a max or min zoom level. Prevent default in the case
+        where we actually zoom, but don't prevent default where we do not
+        actually zoom to cause a system beep. Allow for a slight drift of
+        the floating point value as it increases / decreases by 0.2 at the
+        different zoom factors.
+
+        (WebInspector._resetZoom):
+        (WebInspector._showTabAtIndex):
+        Remove redundant prevent default calls, since it would happen
+        implicitly for these keyboard shortcuts.
+
 2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught exception merging script profiler records
