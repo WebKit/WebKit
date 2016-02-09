@@ -1,5 +1,16 @@
 2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Uncaught exception merging script profiler records
+        https://bugs.webkit.org/show_bug.cgi?id=154004
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._mergeScriptProfileRecords):
+        Stop if we've merged all script profiler records.
+
+2016-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Search doesn't seem to find text that is present in multiple places
         https://bugs.webkit.org/show_bug.cgi?id=154016
         <rdar://problem/23391307>

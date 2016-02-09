@@ -751,7 +751,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         let webRecord = nextWebTimelineRecord();
         let profilerRecord = nextScriptProfilerRecord();
 
-        while (webRecord) {
+        while (webRecord && profilerRecord) {
             // Skip web records with parent web records. For example an EvaluateScript with an EvaluateScript parent.
             if (webRecord.parent instanceof WebInspector.ScriptTimelineRecord) {
                 console.assert(recordEnclosesRecord(webRecord.parent, webRecord), "Timeline Record incorrectly wrapping another Timeline Record");
