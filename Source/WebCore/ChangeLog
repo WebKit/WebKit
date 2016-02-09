@@ -1,3 +1,14 @@
+2016-02-09  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Adopt NSURLSession properties in AVAssetResourceLoader
+
+        Rubber-stamped by Eric Carlson;
+
+        Set the correct global variable from setAVFoundationNSURLSessionEnabled().
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setAVFoundationNSURLSessionEnabled):
+
 2016-02-07  Gavin Barraclough  <barraclough@apple.com>
 
         GetValueFunc/PutValueFunc should not take both slotBase and thisValue

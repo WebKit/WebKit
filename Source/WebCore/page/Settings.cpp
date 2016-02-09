@@ -593,10 +593,10 @@ void Settings::setAVFoundationEnabled(bool enabled)
 
 void Settings::setAVFoundationNSURLSessionEnabled(bool enabled)
 {
-    if (gAVFoundationEnabled == enabled)
+    if (gAVFoundationNSURLSessionEnabled == enabled)
         return;
 
-    gAVFoundationEnabled = enabled;
+    gAVFoundationNSURLSessionEnabled = enabled;
 }
 #endif
 
