@@ -1,5 +1,39 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Get rid of options member variable in Benchmark.
+
+        Options are only needed when initializing the stage or benchmark, so there's no
+        need to also keep a reference to it.
+
+        * Animometer/tests/resources/main.js: Get rid of options variable in Benchmark.
+        Pass options to Controllers and Stages.
+        (Controller.Utilities.createClass):
+        (Benchmark.Utilities.createClass):
+        (get options): Deleted.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+        * Animometer/tests/master/resources/canvas-stage.js:
+        * Animometer/tests/master/resources/canvas-tests.js:
+        * Animometer/tests/master/resources/particles.js:
+        * Animometer/tests/misc/resources/canvas-electrons.js:
+        * Animometer/tests/misc/resources/canvas-stars.js:
+        * Animometer/tests/misc/resources/compositing-transforms.js:
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        * Animometer/tests/simple/resources/tiled-canvas-image.js:
+        * Animometer/tests/template/resources/template-canvas.js:
+        * Animometer/tests/template/resources/template-css.js:
+        * Animometer/tests/template/resources/template-svg.js:
+        * Animometer/tests/text/resources/layering-text.js:
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Update how the benchmark is run
         https://bugs.webkit.org/show_bug.cgi?id=153960
 

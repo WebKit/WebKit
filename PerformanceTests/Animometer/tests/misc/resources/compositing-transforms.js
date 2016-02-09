@@ -35,12 +35,12 @@ CompositingTransformsStage = Utilities.createSubclass(BouncingParticlesStage,
         BouncingParticlesStage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        BouncingParticlesStage.prototype.initialize.call(this, benchmark);
+        BouncingParticlesStage.prototype.initialize.call(this, benchmark, options);
 
-        this.imageSrc = benchmark.options["imageSrc"] || "../resources/yin-yang.svg";
-        this.useFilters = benchmark.options["filters"] == "yes";
+        this.imageSrc = options["imageSrc"] || "../resources/yin-yang.svg";
+        this.useFilters = options["filters"] == "yes";
     },
 
     createParticle: function()

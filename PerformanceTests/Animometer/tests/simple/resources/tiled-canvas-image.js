@@ -25,9 +25,9 @@ TiledCanvasImageStage = Utilities.createSubclass(Stage,
         Stage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        Stage.prototype.initialize.call(this, benchmark);
+        Stage.prototype.initialize.call(this, benchmark, options);
         this.context = this.element.getContext("2d");
         this._setupTiles();
     },

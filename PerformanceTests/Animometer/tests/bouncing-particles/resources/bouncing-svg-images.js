@@ -18,10 +18,10 @@ BouncingSvgImagesStage = Utilities.createSubclass(BouncingSvgParticlesStage,
         BouncingSvgParticlesStage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        BouncingSvgParticlesStage.prototype.initialize.call(this, benchmark);
-        this.imageSrc = benchmark.options["imageSrc"] || "resources/yin-yang.svg";
+        BouncingSvgParticlesStage.prototype.initialize.call(this, benchmark, options);
+        this.imageSrc = options["imageSrc"] || "resources/yin-yang.svg";
     },
 
     createParticle: function()

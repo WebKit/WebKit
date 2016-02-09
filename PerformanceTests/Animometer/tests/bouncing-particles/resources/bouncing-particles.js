@@ -72,11 +72,11 @@ BouncingParticlesStage = Utilities.createSubclass(Stage,
         this.particles = [];
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        Stage.prototype.initialize.call(this, benchmark);
-        this.particleSize = new Point(parseInt(benchmark.options["particleWidth"]) || 10, parseInt(benchmark.options["particleHeight"]) || 10);
-        this.maxVelocity = Math.max(parseInt(benchmark.options["maxVelocity"]) || 500, 100);
+        Stage.prototype.initialize.call(this, benchmark, options);
+        this.particleSize = new Point(parseInt(options["particleWidth"]) || 10, parseInt(options["particleHeight"]) || 10);
+        this.maxVelocity = Math.max(parseInt(options["maxVelocity"]) || 500, 100);
     },
 
     parseShapeParameters: function(options)

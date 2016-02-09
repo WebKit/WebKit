@@ -61,9 +61,9 @@ CanvasElectronsStage = Utilities.createSubclass(Stage,
         this._electrons = [];
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        Stage.prototype.initialize.call(this, benchmark);
+        Stage.prototype.initialize.call(this, benchmark, options);
         this.context = this.element.getContext("2d");
     },
 

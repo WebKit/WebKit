@@ -51,10 +51,10 @@ BouncingSvgShapesStage = Utilities.createSubclass(BouncingSvgParticlesStage,
         BouncingSvgParticlesStage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        BouncingSvgParticlesStage.prototype.initialize.call(this, benchmark);
-        this.parseShapeParameters(benchmark.options);
+        BouncingSvgParticlesStage.prototype.initialize.call(this, benchmark, options);
+        this.parseShapeParameters(options);
         this._gradientsCount = 0;
     },
 

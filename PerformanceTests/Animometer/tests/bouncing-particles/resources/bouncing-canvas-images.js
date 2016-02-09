@@ -22,10 +22,10 @@ BouncingCanvasImagesStage = Utilities.createSubclass(BouncingCanvasParticlesStag
         BouncingCanvasParticlesStage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        BouncingCanvasParticlesStage.prototype.initialize.call(this, benchmark);
-        var imageSrc = benchmark.options["imageSrc"] || "resources/yin-yang.svg";
+        BouncingCanvasParticlesStage.prototype.initialize.call(this, benchmark, options);
+        var imageSrc = options["imageSrc"] || "resources/yin-yang.svg";
         this.imageElement = document.querySelector(".hidden[src=\"" + imageSrc + "\"]");
     },
 

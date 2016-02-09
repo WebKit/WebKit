@@ -72,9 +72,9 @@ BouncingCanvasParticlesStage = Utilities.createSubclass(BouncingParticlesStage,
         BouncingParticlesStage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        BouncingParticlesStage.prototype.initialize.call(this, benchmark);
+        BouncingParticlesStage.prototype.initialize.call(this, benchmark, options);
         this.context = this.element.getContext("2d");
     },
 

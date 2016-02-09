@@ -127,10 +127,10 @@ CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
         SimpleCanvasStage.call(this, CanvasLineSegment);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        SimpleCanvasStage.prototype.initialize.call(this, benchmark);
-        this.context.lineCap = benchmark.options["lineCap"] || "butt";
+        SimpleCanvasStage.prototype.initialize.call(this, benchmark, options);
+        this.context.lineCap = options["lineCap"] || "butt";
         this.circleRadius = this.size.x / 3 / 2 - 20;
     },
 
@@ -162,11 +162,11 @@ CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasStage,
         SimpleCanvasStage.call(this, CanvasLinePoint);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        SimpleCanvasStage.prototype.initialize.call(this, benchmark);
-        this.context.lineJoin = benchmark.options["lineJoin"] || "bevel";
-        this.context.lineCap = benchmark.options["lineCap"] || "butt";
+        SimpleCanvasStage.prototype.initialize.call(this, benchmark, options);
+        this.context.lineJoin = options["lineJoin"] || "bevel";
+        this.context.lineCap = options["lineCap"] || "butt";
     },
 
     animate: function() {

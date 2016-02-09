@@ -63,10 +63,10 @@ BouncingCanvasShapesStage = Utilities.createSubclass(BouncingCanvasParticlesStag
         BouncingCanvasParticlesStage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        BouncingCanvasParticlesStage.prototype.initialize.call(this, benchmark);
-        this.parseShapeParameters(benchmark.options);
+        BouncingCanvasParticlesStage.prototype.initialize.call(this, benchmark, options);
+        this.parseShapeParameters(options);
     },
 
     createParticle: function()

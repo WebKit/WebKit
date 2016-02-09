@@ -78,9 +78,9 @@ ParticlesStage = Utilities.createSubclass(Stage,
         this.particles = [];
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        Stage.prototype.initialize.call(this, benchmark);
+        Stage.prototype.initialize.call(this, benchmark, options);
         this.emissionSpin = Stage.random(0, 3);
         this.emitSteps = Stage.randomInt(4, 6);
     },

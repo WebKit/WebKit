@@ -256,10 +256,10 @@ CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
         SimpleCanvasStage.call(this, CanvasLineSegment);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        SimpleCanvasStage.prototype.initialize.call(this, benchmark);
-        this.context.lineCap = benchmark.options["lineCap"] || "butt";
+        SimpleCanvasStage.prototype.initialize.call(this, benchmark, options);
+        this.context.lineCap = options["lineCap"] || "butt";
     }
 });
 
@@ -269,10 +269,10 @@ CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasPathStrokeStage,
         SimpleCanvasPathStrokeStage.call(this, CanvasLinePoint);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        SimpleCanvasPathStrokeStage.prototype.initialize.call(this, benchmark);
-        this.context.lineJoin = benchmark.options["lineJoin"] || "bevel";
+        SimpleCanvasPathStrokeStage.prototype.initialize.call(this, benchmark, options);
+        this.context.lineJoin = options["lineJoin"] || "bevel";
     }
 });
 
@@ -283,9 +283,9 @@ CanvasLineDashStage = Utilities.createSubclass(SimpleCanvasStage,
         this._step = 0;
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        SimpleCanvasStage.prototype.initialize.call(this, benchmark);
+        SimpleCanvasStage.prototype.initialize.call(this, benchmark, options);
         this.context.setLineDash([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
         this.context.lineWidth = 1;
         this.context.strokeStyle = "#000";

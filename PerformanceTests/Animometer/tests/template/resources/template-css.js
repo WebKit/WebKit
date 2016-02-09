@@ -6,9 +6,9 @@ TemplateCssStage = Utilities.createSubclass(Stage,
         Stage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        Stage.prototype.initialize.call(this, benchmark);
+        Stage.prototype.initialize.call(this, benchmark, options);
 
         // Do initialization here.
     },

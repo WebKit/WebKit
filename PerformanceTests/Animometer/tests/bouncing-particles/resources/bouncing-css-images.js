@@ -32,10 +32,10 @@ BouncingCssImagesStage = Utilities.createSubclass(BouncingParticlesStage,
         BouncingParticlesStage.call(this);
     }, {
 
-    initialize: function(benchmark)
+    initialize: function(benchmark, options)
     {
-        BouncingParticlesStage.prototype.initialize.call(this, benchmark);
-        this.imageSrc = benchmark.options["imageSrc"] || "../resources/yin-yang.svg";
+        BouncingParticlesStage.prototype.initialize.call(this, benchmark, options);
+        this.imageSrc = options["imageSrc"] || "../resources/yin-yang.svg";
     },
 
     createParticle: function()

@@ -1,14 +1,13 @@
-
 Controller = Utilities.createClass(
-    function(testLength, benchmark, seriesCount)
+    function(testLength, benchmark, options)
     {
         // Initialize timestamps relative to the start of the benchmark
         // In start() the timestamps are offset by the start timestamp
         this._startTimestamp = 0;
         this._endTimestamp = testLength;
         // Default data series: timestamp, complexity, estimatedFrameLength
-        this._sampler = new Sampler(seriesCount || 3, 60 * testLength, this);
-        this._estimator = new SimpleKalmanEstimator(benchmark.options["kalman-process-error"], benchmark.options["kalman-measurement-error"]);
+        this._sampler = new Sampler(options["series-count"] || 3, 60 * testLength, this);
+        this._estimator = new SimpleKalmanEstimator(options["kalman-process-error"], options["kalman-measurement-error"]);
 
         this.initialComplexity = 0;
     }, {
@@ -101,23 +100,23 @@ Controller = Utilities.createClass(
 });
 
 FixedComplexityController = Utilities.createSubclass(Controller,
-    function(testInterval, benchmark)
+    function(testInterval, benchmark, options)
     {
-        Controller.call(this, testInterval, benchmark);
-        this.initialComplexity = benchmark.options["complexity"];
+        Controller.call(this, testInterval, benchmark, options);
+        this.initialComplexity = options["complexity"];
     }
 );
 
 AdaptiveController = Utilities.createSubclass(Controller,
-    function(testInterval, benchmark)
+    function(testInterval, benchmark, options)
     {
         // Data series: timestamp, complexity, estimatedIntervalFrameLength
-        Controller.call(this, testInterval, benchmark);
+        Controller.call(this, testInterval, benchmark, options);
 
         // All tests start at 0, so we expect to see 60 fps quickly.
         this._samplingTimestamp = testInterval / 2;
         this._startedSampling = false;
-        this._targetFrameRate = benchmark.options["frame-rate"];
+        this._targetFrameRate = options["frame-rate"];
         this._pid = new PIDController(this._targetFrameRate);
 
         this._intervalFrameCount = 0;
@@ -311,29 +310,23 @@ Rotater = Utilities.createClass(
 Benchmark = Utilities.createClass(
     function(stage, options)
     {
-        this._options = options;
         this._animateLoop = this._animateLoop.bind(this);
 
         this._stage = stage;
-        this._stage.initialize(this);
+        this._stage.initialize(this, options);
 
         var testIntervalMilliseconds = options["test-interval"] * 1000;
         switch (options["adjustment"])
         {
         case "fixed":
-            this._controller = new FixedComplexityController(testIntervalMilliseconds, this);
+            this._controller = new FixedComplexityController(testIntervalMilliseconds, this, options);
             break;
         case "adaptive":
         default:
-            this._controller = new AdaptiveController(testIntervalMilliseconds, this);
+            this._controller = new AdaptiveController(testIntervalMilliseconds, this, options);
             break;
         }
     }, {
-
-    get options()
-    {
-        return this._options;
-    },
 
     get stage()
     {
