@@ -28,12 +28,6 @@
 
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
-#include "SharedBuffer.h"
-#if ENABLE(SVG_FONTS)
-#include "SVGFontElement.h"
-#include "SVGFontFaceElement.h"
-#endif
-#include "Timer.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -41,45 +35,51 @@ namespace WebCore {
 class CSSFontFace;
 class CSSFontSelector;
 class Font;
+struct FontCustomPlatformData;
 class FontDescription;
 class FontFeatureSettings;
 struct FontVariantSettings;
+class SVGFontFaceElement;
+class SharedBuffer;
 
 class CSSFontFaceSource final : public CachedFontClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSFontFaceSource(const String&, CachedFont* = nullptr);
+
+    //                      => Succeeded
+    //                    //
+    // Pending => Loading
+    //                    \\.
+    //                      => Failed
+    enum class Status {
+        Pending,
+        Loading,
+        Success,
+        Failure
+    };
+
+    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CachedFont* = nullptr, SVGFontFaceElement* = nullptr);
     virtual ~CSSFontFaceSource();
 
-    bool isValid() const;
+    Status status() const { return m_status; }
 
-    const AtomicString& string() const { return m_string; }
+    const AtomicString& familyNameOrURI() const { return m_familyNameOrURI; }
 
-    void setFontFace(CSSFontFace* face) { m_face = face; }
-
-    virtual void fontLoaded(CachedFont*) override;
-
-    RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, CSSFontSelector*, const FontFeatureSettings&, const FontVariantSettings&);
-
-    void pruneTable();
+    void load(CSSFontSelector&);
+    RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&);
 
 #if ENABLE(SVG_FONTS)
-    SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement.get(); }
-    void setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement> element) { m_svgFontFaceElement = element; }
     bool isSVGFontFaceSource() const;
 #endif
 
-#if ENABLE(FONT_LOAD_EVENTS)
-    bool isDecodeError() const;
-    bool ensureFontData();
-#endif
-
 private:
-    void startLoadingTimerFired();
+    virtual void fontLoaded(CachedFont&) override;
 
-    AtomicString m_string; // URI for remote, built-in font name for local.
+    void setStatus(Status);
+
+    AtomicString m_familyNameOrURI; // URI for remote, built-in font name for local.
     CachedResourceHandle<CachedFont> m_font; // For remote fonts, a pointer to our cached resource.
-    CSSFontFace* m_face; // Our owning font face.
+    CSSFontFace& m_face; // Our owning font face.
 
 #if ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
@@ -87,7 +87,10 @@ private:
 
 #if ENABLE(SVG_FONTS) || ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SVGFontFaceElement> m_svgFontFaceElement;
+    std::unique_ptr<FontCustomPlatformData> m_inDocumentCustomPlatformData;
 #endif
+
+    Status m_status { Status::Pending };
 };
 
 }

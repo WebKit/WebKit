@@ -69,11 +69,11 @@ void CachedFont::load(CachedResourceLoader&, const ResourceLoaderOptions& option
     m_options = options;
 }
 
-void CachedFont::didAddClient(CachedResourceClient* c)
+void CachedFont::didAddClient(CachedResourceClient* client)
 {
-    ASSERT(c->resourceClientType() == CachedFontClient::expectedType());
+    ASSERT(client->resourceClientType() == CachedFontClient::expectedType());
     if (!isLoading())
-        static_cast<CachedFontClient*>(c)->fontLoaded(this);
+        static_cast<CachedFontClient*>(client)->fontLoaded(*this);
 }
 
 void CachedFont::finishLoading(SharedBuffer* data)
@@ -148,9 +148,9 @@ void CachedFont::checkNotify()
     if (isLoading())
         return;
     
-    CachedResourceClientWalker<CachedFontClient> w(m_clients);
-    while (CachedFontClient* c = w.next())
-         c->fontLoaded(this);
+    CachedResourceClientWalker<CachedFontClient> walker(m_clients);
+    while (CachedFontClient* client = walker.next())
+        client->fontLoaded(*this);
 }
 
 bool CachedFont::mayTryReplaceEncodedData() const

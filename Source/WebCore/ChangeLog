@@ -1,3 +1,80 @@
+2016-02-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Decouple font creation from font loading
+        https://bugs.webkit.org/show_bug.cgi?id=153414
+
+        Reviewed by Darin Adler.
+
+        Previously, CSSFontFaceSource never triggered a font download until that font was actually used. This means
+        that the function which triggers the download also has the goal of returning a font to use. However,
+        the CSS Font Loading JavaScript API requires being able to trigger a font download without this extra font
+        creation overhead.
+
+        In addition, this patch adds an explicit (and enforced) state transition diagram. The diagram looks like
+        this:
+                            => Success
+                          //
+        Pending => Loading
+                          \\
+                            => Failure
+
+        Therefore, the API for CSSFontFaceSource has changed to expose the concept of these new states. This means
+        that its user (CSSSegmentedFontFaceSource) has been updated to handle each possible state that its constituent
+        CSSFontFaceSources may be in.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::allSourcesFailed): Renamed to make the name clearer.
+        (WebCore::CSSFontFace::addedToSegmentedFontFace): Use references instead of pointers.
+        (WebCore::CSSFontFace::removedFromSegmentedFontFace): Ditto.
+        (WebCore::CSSFontFace::adoptSource): Renamed to make the name clearer.
+        (WebCore::CSSFontFace::fontLoaded): Use references instead of pointers. Also, remove old dead code.
+        (WebCore::CSSFontFace::font): Adapt to the new API of CSSFontFaceSource.
+        (WebCore::CSSFontFace::isValid): Deleted.
+        (WebCore::CSSFontFace::addSource): Deleted.
+        (WebCore::CSSFontFace::notifyFontLoader): Deleted. Old dead code.
+        (WebCore::CSSFontFace::notifyLoadingDone): Deleted. Old dead code.
+        * css/CSSFontFace.h:
+        (WebCore::CSSFontFace::create): Remove old dead code.
+        (WebCore::CSSFontFace::CSSFontFace): Use references instead of pointers.
+        (WebCore::CSSFontFace::loadState): Deleted. Remove old dead code.
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::setStatus): Enforce state transitions.
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource): Explicitly handle new state transitions.
+        (WebCore::CSSFontFaceSource::fontLoaded): Update for new states.
+        (WebCore::CSSFontFaceSource::load): Pulled out code from font().
+        (WebCore::CSSFontFaceSource::font): Moved code into load().
+        (WebCore::CSSFontFaceSource::isValid): Deleted.
+        (WebCore::CSSFontFaceSource::isDecodeError): Deleted.
+        (WebCore::CSSFontFaceSource::ensureFontData): Deleted.
+        * css/CSSFontFaceSource.h: Much cleaner API.
+        * css/CSSFontSelector.cpp:
+        (WebCore::createFontFace): Migrate to references instead of pointers. This requires a little
+        reorganization.
+        (WebCore::registerLocalFontFacesForFamily): Update to new CSSFontFaceSource API.
+        (WebCore::CSSFontSelector::addFontFaceRule): Ditto.
+        (WebCore::CSSFontSelector::getFontFace): Ditto.
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::CSSSegmentedFontFace): Migrate to references instead of pointers.
+        (WebCore::CSSSegmentedFontFace::~CSSSegmentedFontFace): Ditto.
+        (WebCore::CSSSegmentedFontFace::fontLoaded): Remove old dead code.
+        (WebCore::CSSSegmentedFontFace::appendFontFace): Cleanup.
+        (WebCore::CSSSegmentedFontFace::fontRanges): Adopt to new API.
+        (WebCore::CSSSegmentedFontFace::pruneTable): Deleted.
+        (WebCore::CSSSegmentedFontFace::isLoading): Deleted. Old dead code.
+        (WebCore::CSSSegmentedFontFace::checkFont): Deleted. Ditto.
+        (WebCore::CSSSegmentedFontFace::loadFont): Deleted. Ditto.
+        * css/CSSSegmentedFontFace.h:
+        (WebCore::CSSSegmentedFontFace::create): Migrate to references instead of pointers.
+        (WebCore::CSSSegmentedFontFace::fontSelector): Ditto.
+        (WebCore::CSSSegmentedFontFace::LoadFontCallback::~LoadFontCallback): Deleted.
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::didAddClient): Migrate to references instead of pointers.
+        (WebCore::CachedFont::checkNotify): Ditto.
+        * loader/cache/CachedFontClient.h:
+        (WebCore::CachedFontClient::fontLoaded): Ditto.
+
 2016-02-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBOpenDBRequests leak.

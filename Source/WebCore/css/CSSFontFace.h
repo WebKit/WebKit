@@ -45,7 +45,7 @@ class Font;
 
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
-    static Ref<CSSFontFace> create(FontTraitsMask traitsMask, RefPtr<CSSFontFaceRule>&& rule, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(traitsMask, WTFMove(rule), isLocalFallback)); }
+    static Ref<CSSFontFace> create(FontTraitsMask traitsMask, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(traitsMask, isLocalFallback)); }
 
     FontTraitsMask traitsMask() const { return m_traitsMask; }
 
@@ -72,16 +72,16 @@ public:
     void setVariantEastAsianWidth(FontVariantEastAsianWidth width) { m_variantSettings.eastAsianWidth = width; }
     void setVariantEastAsianRuby(FontVariantEastAsianRuby ruby) { m_variantSettings.eastAsianRuby = ruby; }
 
-    void addedToSegmentedFontFace(CSSSegmentedFontFace*);
-    void removedFromSegmentedFontFace(CSSSegmentedFontFace*);
+    void addedToSegmentedFontFace(CSSSegmentedFontFace&);
+    void removedFromSegmentedFontFace(CSSSegmentedFontFace&);
 
-    bool isValid() const;
+    bool allSourcesFailed() const;
 
     bool isLocalFallback() const { return m_isLocalFallback; }
 
-    void addSource(std::unique_ptr<CSSFontFaceSource>);
+    void adoptSource(std::unique_ptr<CSSFontFaceSource>&&);
 
-    void fontLoaded(CSSFontFaceSource*);
+    void fontLoaded(CSSFontFaceSource&);
 
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
@@ -104,22 +104,11 @@ public:
     bool hasSVGFontFaceSource() const;
 #endif
 
-#if ENABLE(FONT_LOAD_EVENTS)
-    enum LoadState { NotLoaded, Loading, Loaded, Error };
-    LoadState loadState() const { return m_loadState; }
-#endif
-
 private:
-    CSSFontFace(FontTraitsMask traitsMask, RefPtr<CSSFontFaceRule>&& rule, bool isLocalFallback)
+    CSSFontFace(FontTraitsMask traitsMask, bool isLocalFallback)
         : m_traitsMask(traitsMask)
-        , m_activeSource(0)
         , m_isLocalFallback(isLocalFallback)
-#if ENABLE(FONT_LOAD_EVENTS)
-        , m_loadState(isLocalFallback ? Loaded : NotLoaded)
-        , m_rule(rule)
-#endif
     {
-        UNUSED_PARAM(rule);
     }
 
     FontTraitsMask m_traitsMask;
@@ -128,14 +117,7 @@ private:
     FontFeatureSettings m_featureSettings;
     FontVariantSettings m_variantSettings;
     Vector<std::unique_ptr<CSSFontFaceSource>> m_sources;
-    CSSFontFaceSource* m_activeSource;
     bool m_isLocalFallback;
-#if ENABLE(FONT_LOAD_EVENTS)
-    LoadState m_loadState;
-    RefPtr<CSSFontFaceRule> m_rule;
-    void notifyFontLoader(LoadState);
-    void notifyLoadingDone();
-#endif
 };
 
 }

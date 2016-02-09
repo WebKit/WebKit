@@ -37,45 +37,26 @@
 
 namespace WebCore {
 
-CSSSegmentedFontFace::CSSSegmentedFontFace(CSSFontSelector* fontSelector)
+CSSSegmentedFontFace::CSSSegmentedFontFace(CSSFontSelector& fontSelector)
     : m_fontSelector(fontSelector)
 {
 }
 
 CSSSegmentedFontFace::~CSSSegmentedFontFace()
 {
-    pruneTable();
     for (auto& face : m_fontFaces)
-        face->removedFromSegmentedFontFace(this);
+        face->removedFromSegmentedFontFace(*this);
 }
 
-void CSSSegmentedFontFace::pruneTable()
+void CSSSegmentedFontFace::fontLoaded(CSSFontFace&)
 {
-    m_descriptionToRangesMap.clear();
-}
-
-void CSSSegmentedFontFace::fontLoaded(CSSFontFace*)
-{
-    pruneTable();
-
-#if ENABLE(FONT_LOAD_EVENTS)
-    if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled() && !isLoading()) {
-        Vector<RefPtr<LoadFontCallback>> callbacks;
-        m_callbacks.swap(callbacks);
-        for (size_t index = 0; index < callbacks.size(); ++index) {
-            if (checkFont())
-                callbacks[index]->notifyLoaded();
-            else
-                callbacks[index]->notifyError();
-        }
-    }
-#endif
+    m_cache.clear();
 }
 
 void CSSSegmentedFontFace::appendFontFace(Ref<CSSFontFace>&& fontFace)
 {
-    pruneTable();
-    fontFace->addedToSegmentedFontFace(this);
+    m_cache.clear();
+    fontFace->addedToSegmentedFontFace(*this);
     m_fontFaces.append(WTFMove(fontFace));
 }
 
@@ -100,12 +81,12 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
 {
     FontTraitsMask desiredTraitsMask = fontDescription.traitsMask();
 
-    auto addResult = m_descriptionToRangesMap.add(FontDescriptionKey(fontDescription), FontRanges());
+    auto addResult = m_cache.add(FontDescriptionKey(fontDescription), FontRanges());
     auto& fontRanges = addResult.iterator->value;
 
     if (addResult.isNewEntry) {
         for (auto& face : m_fontFaces) {
-            if (!face->isValid())
+            if (face->allSourcesFailed())
                 continue;
 
             FontTraitsMask traitsMask = face->traitsMask();
@@ -118,39 +99,5 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
     }
     return fontRanges;
 }
-
-#if ENABLE(FONT_LOAD_EVENTS)
-bool CSSSegmentedFontFace::isLoading() const
-{
-    for (auto& face : m_fontFaces) {
-        if (face->loadState() == CSSFontFace::Loading)
-            return true;
-    }
-    return false;
-}
-
-bool CSSSegmentedFontFace::checkFont() const
-{
-    for (auto& face : m_fontFaces) {
-        if (face->loadState() != CSSFontFace::Loaded)
-            return false;
-    }
-    return true;
-}
-
-void CSSSegmentedFontFace::loadFont(const FontDescription& fontDescription, PassRefPtr<LoadFontCallback> callback)
-{
-    fontRanges(fontDescription); // Kick off the load.
-
-    if (callback) {
-        if (isLoading())
-            m_callbacks.append(callback);
-        else if (checkFont())
-            callback->notifyLoaded();
-        else
-            callback->notifyError();
-    }
-}
-#endif
 
 }

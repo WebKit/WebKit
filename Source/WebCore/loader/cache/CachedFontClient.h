@@ -37,7 +37,7 @@ public:
     virtual ~CachedFontClient() { }
     static CachedResourceClientType expectedType() { return FontType; }
     virtual CachedResourceClientType resourceClientType() const override { return expectedType(); }
-    virtual void fontLoaded(CachedFont*) { }
+    virtual void fontLoaded(CachedFont&) { }
 };
 
 } // namespace WebCore
