@@ -411,9 +411,13 @@ label.tree-label {
     fill: #999;
 }
 
-.left-mean {
-    stroke: #7ADD49;
-    opacity: .8;
+.mean.complexity line {
+    stroke: hsla(100, 69%, 58%, .8);
+    stroke-width: 2px;
+}
+
+.mean.complexity polygon {
+    fill: hsla(100, 69%, 58%, .1);
 }
 
 .target-fps {
@@ -422,17 +426,22 @@ label.tree-label {
     stroke-dasharray: 10, 10;
 }
 
-.right-mean {
-    stroke: #FA4925;
-    opacity: .8;
+.mean.fps line {
+    stroke: hsla(10, 96%, 56%, .8);
+    stroke-width: 2px;
 }
 
-#cursor line {
+.mean.fps polygon {
+    fill: hsla(10, 96%, 56%, .1);
+}
+
+.cursor line {
     stroke: rgb(250, 250, 250);
     stroke-width: 1px;
 }
 
-#cursor circle {
+.cursor circle,
+.cursor text {
     fill: rgb(250, 250, 250);
 }
 

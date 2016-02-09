@@ -95,9 +95,9 @@ BenchmarkRunner = Utilities.createClass(
 
         var benchmark = new contentWindow.benchmarkClass(options);
         benchmark.run().then(function(results) {
-            var samplers = self._suitesSamplers[suite.name] || {};
-            samplers[test.name] = results;
-            self._suitesSamplers[suite.name] = samplers;
+            var suiteResults = self._suitesResults[suite.name] || {};
+            suiteResults[test.name] = results;
+            self._suitesResults[suite.name] = suiteResults;
 
             if (self._client && self._client.didRunTest)
                 self._client.didRunTest(suite, test);
@@ -115,7 +115,7 @@ BenchmarkRunner = Utilities.createClass(
     {
         if (!state) {
             state = new BenchmarkRunnerState(this._suites);
-            this._suitesSamplers = {};
+            this._suitesResults = {};
         }
 
         var suite = state.currentSuite();
@@ -168,7 +168,7 @@ BenchmarkRunner = Utilities.createClass(
         this._removeFrame();
 
         if (this._client && this._client.didRunSuites)
-            this._client.didRunSuites(this._suitesSamplers);
+            this._client.didRunSuites(this._suitesResults);
 
         if (this._runNextIteration)
             this._runNextIteration();

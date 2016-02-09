@@ -1,3 +1,26 @@
+2016-02-08  Jon Lee  <jonlee@apple.com>
+
+        Address Said's comments on the benchmark, and do some clean up.
+
+        * Animometer/developer.html:
+        * Animometer/resources/debug-runner/animometer.css: Add styles for averages.
+        * Animometer/resources/debug-runner/animometer.js: Use the right
+        Strings constants.
+        * Animometer/resources/debug-runner/graph.js:
+        (_addRegressionLine): Add missing code to draw the line and standard
+        deviation highlight.
+        (onGraphTypeChanged): Remove unneeded variables
+        (onTimeGraphOptionsChanged):
+        * Animometer/resources/runner/benchmark-runner.js:
+        (_runBenchmarkAndRecordResults): Rename samplers to suiteResults and
+        _suitesSamplers to _suitesResults.
+        * Animometer/tests/resources/main.js:
+        (results): Call processSamples().
+        (update): Change sampling timestamp comparison.
+        (_animateLoop): Move shouldStop call to before the update.
+        * Animometer/tests/resources/sampler.js:
+        (process): Rename to processSamples().
+
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
         Teach Controller to measure intervals, and turn off the frame length estimator.

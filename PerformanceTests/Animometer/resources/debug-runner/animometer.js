@@ -35,7 +35,7 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
 
         button.addEventListener("click", function() {
             var graphData = {
-                axes: [Strings.text.complexity, Strings.text.frameRate],
+                axes: [Strings.text.experiments.complexity, Strings.text.experiments.frameRate],
                 samples: data,
                 complexityAverageSamples: testResults[Strings.json.complexityAverageSamples],
                 averages: {},
@@ -48,9 +48,6 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
 
             [
                 Strings.json.score,
-                Strings.json.regressions.timeRegressions,
-                Strings.json.regressions.complexityRegression,
-                Strings.json.regressions.complexityAverageRegression,
                 Strings.json.targetFrameLength
             ].forEach(function(key) {
                 if (testResults[key])
@@ -60,7 +57,7 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
             benchmarkController.showTestGraph(testName, graphData);
         });
 
-        button.textContent = Strings.text.graph + "...";
+        button.textContent = Strings.text.results.graph + "...";
     },
 
     _isNoisyMeasurement: function(jsonExperiment, data, measurement, options)
@@ -108,7 +105,7 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
             }
 
             var td = Utilities.createElement("td", { class: className }, row);
-            if (header.title == Strings.text.graph) {
+            if (header.title == Strings.text.results.graph) {
                 this._addGraphButton(td, testName, testResults);
             } else if (!("text" in header)) {
                 td.textContent = testResults[header.title];

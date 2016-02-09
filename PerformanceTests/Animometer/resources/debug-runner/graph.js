@@ -17,6 +17,30 @@ Utilities.extendObject(window.benchmarkController, {
         this.onGraphTypeChanged();
     },
 
+    _addRegressionLine: function(parent, xScale, yScale, points, stdev, isAlongYAxis)
+    {
+        var polygon = [];
+        var line = []
+        var xStdev = isAlongYAxis ? stdev : 0;
+        var yStdev = isAlongYAxis ? 0 : stdev;
+        for (var i = 0; i < points.length; ++i) {
+            var point = points[i];
+            polygon.push(xScale(point[0] + xStdev), yScale(point[1] + yStdev));
+            line.push(xScale(point[0]), yScale(point[1]));
+        }
+        for (var i = points.length - 1; i >= 0; --i) {
+            var point = points[i];
+            polygon.push(xScale(point[0] - xStdev), yScale(point[1] - yStdev));
+        }
+        parent.append("polygon")
+            .attr("points", polygon.join(","));
+        parent.append("line")
+            .attr("x1", line[0])
+            .attr("y1", line[1])
+            .attr("x2", line[2])
+            .attr("y2", line[3]);
+    },
+
     createTimeGraph: function(graphData, margins, size)
     {
         var svg = d3.select("#test-graph-data").append("svg")
@@ -130,13 +154,9 @@ Utilities.extendObject(window.benchmarkController, {
         }
         if (Strings.json.experiments.frameRate in graphData.averages) {
             var frameRate = graphData.averages[Strings.json.experiments.frameRate];
-            var average = yRight(1000/frameRate.average);
-            svg.append("line")
-                .attr("x1", x(0))
-                .attr("x2", size.width)
-                .attr("y1", average)
-                .attr("y2", average)
+            var regression = svg.append("g")
                 .attr("class", "fps mean");
+            this._addRegressionLine(regression, x, yRight, [[graphData.samples[0].time, 1000/frameRate.average], [graphData.samples[graphData.samples.length - 1].time, 1000/frameRate.average]], frameRate.stdev);
         }
 
         // right-target
@@ -278,13 +298,11 @@ Utilities.extendObject(window.benchmarkController, {
         benchmarkController._showOrHideNodes(form["complexity"].checked, "#complexity");
         benchmarkController._showOrHideNodes(form["rawFPS"].checked, "#rawFPS");
         benchmarkController._showOrHideNodes(form["filteredFPS"].checked, "#filteredFPS");
-        benchmarkController._showOrHideNodes(form["regressions"].checked, "#regressions");
     },
 
     onGraphTypeChanged: function() {
-        var form = document.forms["graph-type"].elements;
         var graphData = document.getElementById("test-graph-data").graphData;
-        var isTimeSelected = true; 
+        var isTimeSelected = true;
 
         benchmarkController._showOrHideNodes(isTimeSelected, "#time-graph");
         benchmarkController._showOrHideNodes(isTimeSelected, "form[name=time-graph-options]");

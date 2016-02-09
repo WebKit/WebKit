@@ -102,7 +102,7 @@ Controller = Utilities.createClass(
 
     results: function()
     {
-        return this._sampler.process();
+        return this._sampler.processSamples();
     },
 
     processSamples: function(results)
@@ -223,7 +223,7 @@ AdaptiveController = Utilities.createSubclass(Controller,
 
     update: function(timestamp, stage)
     {
-        if (!this._startedSampling && timestamp > this._samplingTimestamp) {
+        if (!this._startedSampling && timestamp >= this._samplingTimestamp) {
             this._startedSampling = true;
             this.mark(Strings.json.samplingStartTimeOffset, this._samplingTimestamp);
         }
@@ -470,6 +470,11 @@ Benchmark = Utilities.createClass(
     {
         this._currentTimestamp = this._getTimestamp();
 
+        if (this._controller.shouldStop(this._currentTimestamp)) {
+            this._finishPromise.resolve(this._controller.results());
+            return;
+        }
+
         if (!this._didWarmUp) {
             if (this._currentTimestamp - this._previousTimestamp >= 100) {
                 this._didWarmUp = true;
@@ -483,11 +488,6 @@ Benchmark = Utilities.createClass(
         }
 
         this._controller.update(this._currentTimestamp, this._stage);
-        if (this._controller.shouldStop(this._currentTimestamp)) {
-            this._finishPromise.resolve(this._controller.results());
-            return;
-        }
-
         this._stage.animate(this._currentTimestamp - this._previousTimestamp);
         this._previousTimestamp = this._currentTimestamp;
         requestAnimationFrame(this._animateLoop);

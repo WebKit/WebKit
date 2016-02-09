@@ -72,7 +72,7 @@ Sampler = Utilities.createClass(
         ++this.sampleCount;
     },
 
-    process: function()
+    processSamples: function()
     {
         var results = {};
 
