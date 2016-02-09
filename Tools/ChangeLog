@@ -1,5 +1,14 @@
 2016-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Remove eail related cruft after r195725
+        https://bugs.webkit.org/show_bug.cgi?id=154030
+
+        Reviewed by Alex Christensen.
+
+        * efl/jhbuildrc:
+
+2016-02-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Remove LLVM related cruft after r196077
         https://bugs.webkit.org/show_bug.cgi?id=154031
 

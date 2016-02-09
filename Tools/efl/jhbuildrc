@@ -27,9 +27,4 @@ jhbuildrc_common.init(globals(), "efl")
 addpath('XDG_DATA_DIRS', '/usr/share')
 addpath('XDG_CONFIG_DIRS', '/etc/xdg')
 
-if not 'ACCESSIBILITY_EAIL_LIBRARY_PATH' in os.environ:
-    _libeail_path = os.path.join(os.environ['CMAKE_LIBRARY_PATH'], 'libeail.so')
-    if os.path.isfile(_libeail_path):
-        os.environ['ACCESSIBILITY_EAIL_LIBRARY_PATH'] = _libeail_path
-
 partial_build = False
