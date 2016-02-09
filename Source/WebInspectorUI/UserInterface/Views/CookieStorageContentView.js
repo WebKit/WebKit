@@ -185,12 +185,12 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
         function expiresCompare(nodeA, nodeB)
         {
             if (nodeA.cookie.session !== nodeB.cookie.session)
-                return nodeA.cookie.session ? 1 : -1;
+                return nodeA.cookie.session ? -1 : 1;
 
             if (nodeA.cookie.session)
                 return 0;
 
-            return nodeA.data["expires"] - nodeB.data["expires"];
+            return nodeA.cookie.expires - nodeB.cookie.expires;
         }
 
         var comparator;

@@ -1,5 +1,18 @@
 2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Expiration column in Storage tab can't be sorted
+        https://bugs.webkit.org/show_bug.cgi?id=154043
+        <rdar://problem/24572272>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._sortDataGrid.expiresCompare):
+        Sort Session as the shortest time, not the longest time. Use the
+        cookie.expires date when sorting, not the locale string.
+
+2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Limit max and min zoom factor of Inspector
         https://bugs.webkit.org/show_bug.cgi?id=154041
         <rdar://problem/24571326>
