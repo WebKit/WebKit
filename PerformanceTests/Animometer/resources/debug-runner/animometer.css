@@ -403,8 +403,12 @@ label.tree-label {
     shape-rendering: crispEdges;
 }
 
-.sample-time {
+.marker line {
     stroke: #5493D6;
+}
+
+.marker text {
+    fill: #999;
 }
 
 .left-mean {

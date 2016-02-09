@@ -8,6 +8,7 @@ Controller = Utilities.createClass(
         // Default data series: timestamp, complexity, estimatedFrameLength
         this._sampler = new Sampler(options["series-count"] || 3, 60 * testLength, this);
         this._estimator = new SimpleKalmanEstimator(options["kalman-process-error"], options["kalman-measurement-error"]);
+        this._marks = {};
 
         this.initialComplexity = 0;
     }, {
@@ -22,7 +23,18 @@ Controller = Utilities.createClass(
     recordFirstSample: function(stage, startTimestamp)
     {
         this._sampler.record(startTimestamp, stage.complexity(), -1);
-        this._sampler.mark(Strings.json.samplingTimeOffset, { time: 0 });
+        this.mark(Strings.json.samplingTimeOffset, startTimestamp);
+    },
+
+    mark: function(comment, timestamp, data) {
+        data = data || {};
+        data.time = timestamp;
+        data.index = this._sampler.sampleCount;
+        this._marks[comment] = data;
+    },
+
+    containsMark: function(comment) {
+        return comment in this._marks;
     },
 
     update: function(stage, timestamp)
@@ -49,11 +61,15 @@ Controller = Utilities.createClass(
         var samples = this._sampler.samples;
 
         var samplingIndex = 0;
-        var samplingMark = this._sampler.marks[Strings.json.samplingTimeOffset];
+        var samplingMark = this._marks[Strings.json.samplingTimeOffset];
         if (samplingMark) {
             samplingIndex = samplingMark.index;
             results[Strings.json.samplingTimeOffset] = samplingMark.time;
         }
+
+        for (var markName in this._marks)
+            this._marks[markName].time -= this._startTimestamp;
+        results[Strings.json.marks] = this._marks;
 
         results[Strings.json.samples] = samples[0].map(function(timestamp, i) {
             var result = {
@@ -140,9 +156,7 @@ AdaptiveController = Utilities.createSubclass(Controller,
     {
         if (!this._startedSampling && timestamp > this._samplingTimestamp) {
             this._startedSampling = true;
-            this._sampler.mark(Strings.json.samplingTimeOffset, {
-                time: this._samplingTimestamp - this._startTimestamp
-            });
+            this.mark(Strings.json.samplingTimeOffset, this._samplingTimestamp);
         }
 
         // Start the work for the next frame.

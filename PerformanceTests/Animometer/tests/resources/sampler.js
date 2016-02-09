@@ -62,7 +62,6 @@ Sampler = Utilities.createClass(
             this.samples[i] = array;
         }
         this.sampleCount = 0;
-        this.marks = {};
     }, {
 
     record: function() {
@@ -71,14 +70,6 @@ Sampler = Utilities.createClass(
             this.samples[i][this.sampleCount] = arguments[i];
         }
         ++this.sampleCount;
-    },
-
-    mark: function(comment, data) {
-        data = data || {};
-        // The mark exists after the last recorded sample
-        data.index = this.sampleCount;
-
-        this.marks[comment] = data;
     },
 
     process: function()

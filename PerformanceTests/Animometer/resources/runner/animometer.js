@@ -126,7 +126,7 @@ ResultsTable = Utilities.createClass(
                     testResults[Strings.json.experiments.frameRate][Strings.json.measurements.average]
                 ],
                 samples: data,
-                samplingTimeOffset: testResults[Strings.json.samplingTimeOffset]
+                marks: testResults[Strings.json.marks]
             }
             if (testResults[Strings.json.targetFPS])
                 graphData.targetFPS = testResults[Strings.json.targetFPS];

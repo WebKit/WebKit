@@ -85,13 +85,26 @@ Utilities.extendObject(window.benchmarkController, {
                 .style("text-anchor", "end")
                 .text(axes[1]);
 
-        // samplingTimeOffset
-        svg.append("line")
-            .attr("x1", x(graphData.samplingTimeOffset))
-            .attr("x2", x(graphData.samplingTimeOffset))
-            .attr("y1", yLeft(0))
-            .attr("y2", yLeft(yAxisLeft.scale().domain()[1]))
-            .attr("class", "sample-time marker");
+        // marks
+        var yMin = yLeft(0);
+        var yMax = yLeft(yAxisLeft.scale().domain()[1]);
+        for (var markName in graphData.marks) {
+            var mark = graphData.marks[markName];
+            var xLocation = x(mark.time);
+
+            var markerGroup = svg.append("g")
+                .attr("class", "marker")
+                .attr("transform", "translate(" + xLocation + ", 0)");
+            markerGroup.append("text")
+                    .attr("transform", "translate(10, " + (yMin - 10) + ") rotate(-90)")
+                    .style("text-anchor", "start")
+                    .text(markName)
+            markerGroup.append("line")
+                    .attr("x1", 0)
+                    .attr("x2", 0)
+                    .attr("y1", yMin)
+                    .attr("y2", yMax);
+        }
 
         // left-mean
         svg.append("line")
@@ -124,8 +137,8 @@ Utilities.extendObject(window.benchmarkController, {
         cursorGroup.append("line")
             .attr("x1", 0)
             .attr("x2", 0)
-            .attr("y1", yLeft(0))
-            .attr("y2", yLeft(0));
+            .attr("y1", yMin)
+            .attr("y2", yMin);
 
         // Data
         var allData = graphData.samples;

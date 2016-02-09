@@ -25,6 +25,7 @@ var Strings = {
     json: {
         score: "score",
         samples: "samples",
+        marks: "marks",
 
         targetFPS: "targetFPS",
         samplingTimeOffset: "samplingTimeOffset",

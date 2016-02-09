@@ -1,5 +1,28 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Allow adding any number of markers to the graph. The markers can be labeled
+        and contain timestamp and sample index data. Make it a part of the controller
+        rather than keeping it in the sampler.
+
+        * Animometer/resources/debug-runner/animometer.css: Add styles for markers
+        * Animometer/resources/debug-runner/graph.js: Create the markers and add
+        text labels.
+        * Animometer/resources/runner/animometer.js: Assume the samplingTimeOffset
+        is just one of the marks provided.
+        * Animometer/resources/strings.js: Add Strings.json.marks.
+        * Animometer/tests/resources/main.js:
+        (Controller): Keep marks here. They are keyed by the marker name, so no two
+        markers should have the same name.
+        (recordFirstSample): Refactor to use mark.
+        (mark): Allows for arbitrary data if needed later. The timestamp maintained
+        is relative to the absolute start timestamp.
+        (containsMark): Checks whether a mark with a specific comment exists.
+        (processSamples): Removes the _startTimestamp offset from the marks before
+        setting it in results.
+        * Animometer/tests/resources/sampler.js: Remove marks.
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Get rid of options member variable in Benchmark.
 
         Options are only needed when initializing the stage or benchmark, so there's no
