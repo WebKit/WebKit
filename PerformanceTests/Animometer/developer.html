@@ -44,8 +44,7 @@
                     <li>
                         <h3>Adjusting the test complexity:</h3>
                         <ul>
-                            <li><label><input name="adjustment" type="radio" value="fixed"> Keep constant</label></li>
-                            <li><label><input name="adjustment" type="radio" value="fixed-after-warmup"> Keep constant after warmup to target FPS</label></li>
+                            <li><label><input name="adjustment" type="radio" value="fixed"> Keep at a fixed complexity</label></li>
                             <li><label><input name="adjustment" type="radio" value="adaptive" checked> Maintain target FPS</label></li>
                         </ul>
                     </li>
@@ -53,7 +52,11 @@
                         <label>Target frame rate: <input type="number" id="frame-rate" value="50"> FPS</label>
                     </li>
                     <li>
-                        <label><input type="checkbox" id="estimated-frame-rate" checked> Filter frame rate calculation</label>
+                        <h3>Kalman filter estimated error:</h3>
+                        <ul>
+                            <li><label>Process error (Q): <input type="number" id="kalman-process-error" value="1"></label></li>
+                            <li><label>Measurement error (R): <input type="number" id="kalman-measurement-error" value="4"></label></li>
+                        </ul>
                     </li>
                     </ul>
                     </form>
@@ -100,12 +103,10 @@
                         <li><label><input type="checkbox" name="averages" checked> Averages</label></li>
                         <li><label><input type="checkbox" name="complexity" checked> Complexity</label>
                             <span class="complexity"></span></li>
-                        <li><label><input type="checkbox" name="rawFPS"> Raw FPS</label>
+                        <li><label><input type="checkbox" name="rawFPS" checked> Raw FPS</label>
                             <span class="rawFPS"></span></li>
                         <li><label><input type="checkbox" name="filteredFPS" checked> Filtered FPS</label>
                             <span class="filteredFPS"></span></li>
-                        <li><label><input type="checkbox" name="intervalFPS"> Average FPS per sample interval</label>
-                            <span class="intervalFPS"></span></li>
                     </ul>
                 </form>
             </nav>

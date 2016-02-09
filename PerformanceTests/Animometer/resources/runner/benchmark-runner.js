@@ -94,9 +94,9 @@ BenchmarkRunner = Utilities.createClass(
         Utilities.extendObject(options, contentWindow.Utilities.parseParameters());
 
         var benchmark = new contentWindow.benchmarkClass(options);
-        benchmark.run().then(function(sampler) {
+        benchmark.run().then(function(results) {
             var samplers = self._suitesSamplers[suite.name] || {};
-            samplers[test.name] = sampler.process(options);
+            samplers[test.name] = results;
             self._suitesSamplers[suite.name] = samplers;
 
             if (self._client && self._client.didRunTest)

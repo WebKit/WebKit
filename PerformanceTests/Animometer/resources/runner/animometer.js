@@ -307,7 +307,8 @@ window.benchmarkController = {
             "display": "minimal",
             "adjustment": "adaptive",
             "frame-rate": 50,
-            "estimated-frame-rate": true
+            "kalman-process-error": 1,
+            "kalman-measurement-error": 4
         };
         this._startBenchmark(Suites, options, "test-container");
     },

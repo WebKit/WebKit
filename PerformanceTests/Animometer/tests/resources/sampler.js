@@ -81,12 +81,9 @@ Sampler = Utilities.createClass(
         this.marks[comment] = data;
     },
 
-    process: function(options)
+    process: function()
     {
         var results = {};
-
-        if (options["adjustment"] == "adaptive")
-            results[Strings.json.targetFPS] = +options["frame-rate"];
 
         // Remove unused capacity
         this.samples = this.samples.map(function(array) {

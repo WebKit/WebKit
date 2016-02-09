@@ -173,7 +173,7 @@ Point = Utilities.createClass(
     {
         return "x = " + this.x + ", y = " + this.y;
     },
-    
+
     add: function(other)
     {
         if(isNaN(other.x))

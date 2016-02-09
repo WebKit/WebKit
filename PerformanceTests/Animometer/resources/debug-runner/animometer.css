@@ -349,6 +349,7 @@ label.tree-label {
 #test-graph-data {
     flex: 1 1 auto;
     align-self: stretch;
+    z-index: 1;
 }
 
 #test-graph nav {
@@ -441,12 +442,12 @@ label.tree-label {
 }
 
 #filteredFPS path {
-    stroke: rgba(250, 73, 37, .7);
-    stroke-width: 2px;
+    stroke: hsla(30, 96%, 56%, .7);
+    stroke-width: 1px;
 }
 
 #filteredFPS circle {
-    fill: rgb(250, 73, 37);
+    fill: hsl(30, 96%, 56%);
 }
 
 #rawFPS path {
@@ -456,13 +457,4 @@ label.tree-label {
 
 #rawFPS circle {
     fill: rgb(250, 73, 37);
-}
-
-#intervalFPS path {
-    stroke: hsla(30, 96%, 56%, .7);
-    stroke-width: 1px;
-}
-
-#intervalFPS circle {
-    fill: hsl(30, 96%, 56%);
 }

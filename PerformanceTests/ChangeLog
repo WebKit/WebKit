@@ -1,3 +1,105 @@
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
+        Update how the benchmark is run
+        https://bugs.webkit.org/show_bug.cgi?id=153960
+
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        Introduce the notion of a Controller. It is responsible for recording, updating,
+        and processing the statistics and complexity of the benchmark. This allows
+        plugging in different Controllers.
+
+        This strips most of the functionality from Animator and BenchmarkState, so fold
+        what's left into Benchmark. Now, Benchmarks only own a stage and a controller, but
+        are responsible for driving the animation loop.
+
+        Rewrite Animator._shouldRequestAnotherFrame into two different Controllers. One
+        maintains a fixed complexity, and the other adapts the complexity to meet a
+        fixed FPS.
+
+        Fix the Kalman estimator to be modeled on a scalar variable with no model.
+
+        * Animometer/tests/resources/main.js: Remove BenchmarkState and Animator, and
+        replace it with a Controller. Add a FixedController and refactor the previous controller
+        to an AdaptiveController.
+
+        (Controller): Controllers own the estimator and the sampler. When a new frame is
+        displayed, the animation loop calls update(). The estimator and sampler record
+        stats, then tune. Samplers can track multiple series of data. The basic controller
+        tracks timestamp, complexity, and estimated frame rate.
+                The Kalman estimation is based on the frame length rather than the frame
+        rate. Because FPS is inverse proportional to frame length, in the case where the measured
+        frame length is very small, the FPS ends up being a wildly large number (in the order of
+        600-1000 "FPS"), and it pulls the estimator up drastically enough that it takes a while
+        for it to settle back down. Using frame length reduces the impact of these spikes.
+                Converging the estimation takes enough time to avoid initializing it immediately
+        when the benchmark starts. Instead, the benchmark runs for a brief period of time (100ms)
+        before running it in earnest. Allow controllers an opportunity to set the complexity
+        before starting recording.
+                When the benchmark is complete, the controller has an opportunity to process
+        the samples. The default implementation calculates the raw FPS based on the time
+        difference of the samples, and calculates the complexity score. This is moved from
+        Benchmark.processSamples.
+
+        (Controller): Initialize timestamps. These are at first relative to the start of the
+        benchmark, but are offset by the absolute start time during start(). By default maintain
+        3 data series, but subclasses can override.
+        (start): Calls recordFirstSample() for subclasses to override if needed.
+        (recordFirstSample): For basic controller, start sampling at the beginning.
+        (update): Update the frame length estimator and sample.
+        (shouldStop): Checks that the time is before _endTimestamp.
+        (results): Returns the processed samples.
+        (processSamples): Iterate through the sample data and collate them. Include scores.
+
+        (FixedComplexityController): Controller that tunes the stage to the desired complexity
+        prior to starting, and keeps it at that complexity.
+
+        (AdaptiveController): Have the estimator estimate the interval frame rate instead of the
+        raw frame rate.
+                The previous version of this controller ignored the frame that came after the
+        adjustment. The raw FPS show that whatever noise the scene change adds is negligible
+        compared to the noise of the system overall. Stop ignoring that frame and include all
+        frames in the measurements.
+
+        (Benchmark): Remove dependency on animator, and instantiate a runner based on what is
+        selected. Most of the loop's functionality is in Controller, so remove here.
+        (Benchmark.run): Remove start() since it is only called from run(), and fold it in here.
+        (Benchmark._animateLoop): Fold in from Animator.animateLoop. Let the benchmark run for
+        a brief period before calling Controller.start().
+
+        * Animometer/tests/resources/math.js: Fix the Kalman estimator. The filter estimates
+        a scalar variable, and makes basic assumptions regarding the model. As a result
+        none of the linear algebra classes are needed, so remove Matrix, Vector3, and Matrix3.
+        (SimpleKalmanEstimator): Calculate the gain based on the provided process and
+        measurement errors.
+        (KalmanEstimator): Deleted.
+        (IdentityEstimator): Deleted.
+        (PIDController): Refactor to use the Utilities.createClass() helper.
+
+        The Kalman filter algorithm is explained here http://greg.czerniak.info/guides/kalman1/.
+        The state, represented by a scalar, is the estimated frame length. There is no user
+        transition of the state, and the state is the same as the measurement. With this model,
+        the estimation error converges, so calculate the gain ahead of time.
+
+        * Animometer/developer.html: Remove fixed-after-warmup since it is not useful.
+        Replace the option to toggle the estimator, and make it possible to customize the
+        estimator's error parameters. Show raw FPS by default, and remove interval FPS,
+        which will be shown instead of the filtered raw FPS.
+        * Animometer/resources/debug-runner/animometer.css: Put the header behind the graph.
+        Remove #intervalFPS rules; move the color to #filteredFPS.
+        * Animometer/resources/debug-runner/graph.js:
+        (updateGraphData): Update the hr style to force the layout to be calculated
+        correctly. Change the tick format to be in terms of seconds, since the timestamps
+        are in milliseconds. Remove interval data.
+        * Animometer/resources/runner/animometer.js:
+        (window.benchmarkController.startBenchmark): Set Kalman parameters.
+        * Animometer/resources/runner/benchmark-runner.js:
+        (_runBenchmarkAndRecordResults): When a benchmark completes, expect it to return
+        the final data, rather than passing a sampler from the controller. This avoids
+        needing to expose the sampler variable in the benchmark.
+        * Animometer/tests/resources/sampler.js:
+        (process): Move the setting of the target frame rate to AdaptiveController.
+
 2016-02-06  Jon Lee  <jonlee@apple.com>
 
         Code clean up: Move Rotater function closer to Stage static methods.

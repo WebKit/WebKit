@@ -1,9 +1,13 @@
 Utilities.extendObject(window.benchmarkController, {
+    layoutCounter: 0,
+
     updateGraphData: function(graphData)
     {
         var element = document.getElementById("test-graph-data");
         element.innerHTML = "";
-        var margins = new Insets(10, 30, 30, 40);
+        document.querySelector("hr").style.width = this.layoutCounter++ + "px";
+
+        var margins = new Insets(30, 30, 30, 40);
         var size = Point.elementClientSize(element).subtract(margins.size);
 
         var svg = d3.select("#test-graph-data").append("svg")
@@ -29,7 +33,8 @@ Utilities.extendObject(window.benchmarkController, {
         // Axes
         var xAxis = d3.svg.axis()
                 .scale(x)
-                .orient("bottom");
+                .orient("bottom")
+                .tickFormat(function(d) { return (d/1000).toFixed(0); });
         var yAxisLeft = d3.svg.axis()
                 .scale(yLeft)
                 .orient("left");
@@ -127,9 +132,6 @@ Utilities.extendObject(window.benchmarkController, {
         var filteredData = graphData.samples.filter(function (sample) {
             return "smoothedFPS" in sample;
         });
-        var intervalData = graphData.samples.filter(function (sample) {
-            return "intervalFPS" in sample;
-        });
 
         function addData(name, data, yCoordinateCallback, pointRadius, omitLine) {
             var svgGroup = svg.append("g").attr("id", name);
@@ -156,7 +158,6 @@ Utilities.extendObject(window.benchmarkController, {
         addData("complexity", allData, function(d) { return yLeft(d.complexity); }, 2);
         addData("rawFPS", allData, function(d) { return yRight(d.fps); }, 1);
         addData("filteredFPS", filteredData, function(d) { return yRight(d.smoothedFPS); }, 2);
-        addData("intervalFPS", intervalData, function(d) { return yRight(d.intervalFPS); }, 2);
 
         // Area to handle mouse events
         var area = svg.append("rect")
@@ -167,7 +168,7 @@ Utilities.extendObject(window.benchmarkController, {
             .attr("height", size.y);
 
         var timeBisect = d3.bisector(function(d) { return d.time; }).right;
-        var statsToHighlight = ["complexity", "rawFPS", "filteredFPS", "intervalFPS"];
+        var statsToHighlight = ["complexity", "rawFPS", "filteredFPS"];
         area.on("mouseover", function() {
             document.getElementById("cursor").classList.remove("hidden");
             document.querySelector("#test-graph nav").classList.remove("hide-data");
@@ -189,7 +190,7 @@ Utilities.extendObject(window.benchmarkController, {
                 .attr("x2", cursor_x)
                 .attr("y2", yRight(cursor_y));
 
-            document.querySelector("#test-graph nav .time").textContent = data.time.toFixed(4) + "s (" + index + ")";
+            document.querySelector("#test-graph nav .time").textContent = (data.time / 1000).toFixed(4) + "s (" + index + ")";
             statsToHighlight.forEach(function(name) {
                 var element = document.querySelector("#test-graph nav ." + name);
                 var content = "";
@@ -207,12 +208,6 @@ Utilities.extendObject(window.benchmarkController, {
                     if ("smoothedFPS" in data) {
                         content = data.smoothedFPS.toFixed(2);
                         data_y = yRight(data.smoothedFPS);
-                    }
-                    break;
-                case "intervalFPS":
-                    if ("intervalFPS" in data) {
-                        content = data.intervalFPS.toFixed(2);
-                        data_y = yRight(data.intervalFPS);
                     }
                     break;
                 }
@@ -250,6 +245,5 @@ Utilities.extendObject(window.benchmarkController, {
         showOrHideNodes(form["complexity"].checked, "#complexity");
         showOrHideNodes(form["rawFPS"].checked, "#rawFPS");
         showOrHideNodes(form["filteredFPS"].checked, "#filteredFPS");
-        showOrHideNodes(form["intervalFPS"].checked, "#intervalFPS");
     }
 });
