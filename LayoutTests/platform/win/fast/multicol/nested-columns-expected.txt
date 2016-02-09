@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
 layer at (8,8) size 750x500
   RenderBody {BODY} at (8,8) size 750x500
     RenderMultiColumnSet at (0,0) size 750x500
-layer at (8,8) size 367x984 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+layer at (8,8) size 367x984 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderMultiColumnFlowThread at (0,0) size 367x984
     RenderBlock {H1} at (0,21) size 367x38
       RenderText {#text} at (0,0) size 166x37

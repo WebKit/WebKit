@@ -113,7 +113,7 @@ layer at (8,866) size 760x409
       RenderText {#text} at (0,0) size 634x28
         text run at (0,0) width 634: "This is a spanning element in the middle of the columns block."
     RenderMultiColumnSet at (5,198) size 750x207
-layer at (13,871) size 367x654 backgroundClip at (0,0) size 785x1291 clip at (0,0) size 785x1291 outlineClip at (0,0) size 785x1291
+layer at (13,871) size 367x654 backgroundClip at (0,0) size 785x1291 clip at (0,0) size 785x1291
   RenderMultiColumnFlowThread at (5,5) size 367x654
     RenderBlock (anonymous) at (0,0) size 367x198
       RenderText {#text} at (0,0) size 362x198

@@ -12,7 +12,7 @@ layer at (0,0) size 785x672
 layer at (8,26) size 769x310
   RenderBlock {DIV} at (0,18) size 769x310 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 759x300
-layer at (13,31) size 242x1380 backgroundClip at (0,0) size 1289x672 clip at (0,0) size 1289x672 outlineClip at (0,0) size 1289x672
+layer at (13,31) size 242x1380 backgroundClip at (0,0) size 1289x672 clip at (0,0) size 1289x672
   RenderMultiColumnFlowThread at (5,5) size 243x1380
     RenderBlock (anonymous) at (0,0) size 243x234
       RenderText {#text} at (0,0) size 106x18
@@ -185,7 +185,7 @@ layer at (13,31) size 242x1380 backgroundClip at (0,0) size 1289x672 clip at (0,
 layer at (8,354) size 769x310
   RenderBlock {DIV} at (0,346) size 769x310 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 759x300
-layer at (530,359) size 242x1380 backgroundClip at (0,0) size 1289x672 clip at (0,0) size 1289x672 outlineClip at (0,0) size 1289x672
+layer at (530,359) size 242x1380 backgroundClip at (0,0) size 1289x672 clip at (0,0) size 1289x672
   RenderMultiColumnFlowThread at (521,5) size 243x1380
     RenderBlock (anonymous) at (0,0) size 243x234
       RenderText {#text} at (136,0) size 107x18
@@ -357,5 +357,5 @@ layer at (530,359) size 242x1380 backgroundClip at (0,0) size 1289x672 clip at (
       RenderBR {BR} at (136,260) size 1x0
 layer at (13,331) size 100x270
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x270 [bgcolor=#008000]
-layer at (672,659) size 100x270 backgroundClip at (0,0) size 1289x672 clip at (0,0) size 1289x672 outlineClip at (0,0) size 1289x672
+layer at (672,659) size 100x270 backgroundClip at (0,0) size 1289x672 clip at (0,0) size 1289x672
   RenderBlock (relative positioned) {DIV} at (142,0) size 101x270 [bgcolor=#008000]

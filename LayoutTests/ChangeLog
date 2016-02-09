@@ -1,5 +1,107 @@
 2016-02-09  Zalan Bujtas  <zalan@apple.com>
 
+        [Win] Rebaseline after r196244.
+
+        Unreviewed test gardening.
+
+        * platform/win/css3/unicode-bidi-isolate-basic-expected.txt:
+        * platform/win/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/win/fast/block/positioning/auto/vertical-rl/007-expected.txt:
+        * platform/win/fast/borders/border-antialiasing-expected.txt:
+        * platform/win/fast/clip/001-expected.txt:
+        * platform/win/fast/clip/013-expected.txt:
+        * platform/win/fast/clip/014-expected.txt:
+        * platform/win/fast/clip/outline-overflowClip-expected.txt:
+        * platform/win/fast/css/clip-zooming-expected.txt:
+        * platform/win/fast/frames/flattening/iframe-flattening-offscreen-expected.txt: Added.
+        * platform/win/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+        * platform/win/fast/line-grid/line-grid-inside-columns-expected.txt:
+        * platform/win/fast/line-grid/line-grid-into-columns-expected.txt:
+        * platform/win/fast/lists/scrolled-marker-paint-expected.txt:
+        * platform/win/fast/multicol/client-rects-expected.txt:
+        * platform/win/fast/multicol/column-break-with-balancing-expected.txt:
+        * platform/win/fast/multicol/column-rules-expected.txt:
+        * platform/win/fast/multicol/column-rules-stacking-expected.txt:
+        * platform/win/fast/multicol/columns-shorthand-parsing-expected.txt:
+        * platform/win/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/win/fast/multicol/float-paginate-empty-lines-expected.txt:
+        * platform/win/fast/multicol/float-paginate-expected.txt:
+        * platform/win/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/win/fast/multicol/layers-split-across-columns-expected.txt:
+        * platform/win/fast/multicol/max-height-columns-block-expected.txt:
+        * platform/win/fast/multicol/nested-columns-expected.txt:
+        * platform/win/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/win/fast/multicol/overflow-across-columns-expected.txt:
+        * platform/win/fast/multicol/overflow-across-columns-percent-height-expected.txt:
+        * platform/win/fast/multicol/overflow-unsplittable-expected.txt:
+        * platform/win/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/win/fast/multicol/pagination/BottomToTop-bt-expected.txt:
+        * platform/win/fast/multicol/pagination/BottomToTop-lr-expected.txt:
+        * platform/win/fast/multicol/pagination/BottomToTop-rl-expected.txt:
+        * platform/win/fast/multicol/pagination/BottomToTop-tb-expected.txt:
+        * platform/win/fast/multicol/pagination/LeftToRight-bt-expected.txt:
+        * platform/win/fast/multicol/pagination/LeftToRight-rl-expected.txt:
+        * platform/win/fast/multicol/pagination/LeftToRight-tb-expected.txt:
+        * platform/win/fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt:
+        * platform/win/fast/multicol/pagination/RightToLeft-bt-expected.txt:
+        * platform/win/fast/multicol/pagination/RightToLeft-lr-expected.txt:
+        * platform/win/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt:
+        * platform/win/fast/multicol/pagination/RightToLeft-rl-expected.txt:
+        * platform/win/fast/multicol/pagination/RightToLeft-rl-hittest-expected.txt:
+        * platform/win/fast/multicol/pagination/RightToLeft-tb-expected.txt:
+        * platform/win/fast/multicol/pagination/TopToBottom-bt-expected.txt:
+        * platform/win/fast/multicol/pagination/TopToBottom-lr-expected.txt:
+        * platform/win/fast/multicol/pagination/TopToBottom-rl-expected.txt:
+        * platform/win/fast/multicol/positive-leading-expected.txt:
+        * platform/win/fast/multicol/scrolling-column-rules-expected.txt:
+        * platform/win/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/win/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/win/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/win/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/win/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/win/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/win/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/win/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/win/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/win/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/win/fast/multicol/table-vertical-align-expected.txt:
+        * platform/win/fast/multicol/tall-image-behavior-expected.txt:
+        * platform/win/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt:
+        * platform/win/fast/multicol/vertical-lr/column-rules-expected.txt:
+        * platform/win/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/win/fast/multicol/vertical-lr/float-paginate-complex-expected.txt:
+        * platform/win/fast/multicol/vertical-lr/float-paginate-expected.txt:
+        * platform/win/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/column-rules-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/float-paginate-expected.txt:
+        * platform/win/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/win/fast/overflow/clip-rects-fixed-ancestor-expected.txt:
+        * platform/win/fast/overflow/float-in-relpositioned-expected.txt:
+        * platform/win/fast/overflow/overflow-auto-position-absolute-expected.txt:
+        * platform/win/fast/overflow/overflow-rtl-expected.txt:
+        * platform/win/fast/overflow/paged-x-div-expected.txt:
+        * platform/win/fast/overflow/paged-x-div-with-column-gap-expected.txt:
+        * platform/win/fast/overflow/paged-x-on-root-expected.txt:
+        * platform/win/fast/overflow/paged-x-with-column-gap-expected.txt:
+        * platform/win/fast/overflow/paged-y-div-expected.txt:
+        * platform/win/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/win/fast/repaint/box-shadow-h-expected.txt:
+        * platform/win/fast/repaint/box-shadow-v-expected.txt:
+        * platform/win/fast/repaint/layer-outline-expected.txt:
+        * platform/win/fast/repaint/layer-outline-horizontal-expected.txt:
+        * platform/win/fast/table/edge-offsets-expected.txt:
+        * platform/win/fast/transforms/overflow-with-transform-expected.txt:
+        * platform/win/printing/single-line-must-not-be-split-into-two-pages-expected.txt:
+        * platform/win/scrollbars/scrollbars-on-positioned-content-expected.txt:
+        * platform/win/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt:
+        * platform/win/svg/custom/image-rescale-clip-expected.txt:
+
+2016-02-09  Zalan Bujtas  <zalan@apple.com>
+
         [iOS] Rebaseline after r196244.
 
         Unreviewed test gardening.

@@ -42,9 +42,9 @@ layer at (8,344) size 102x102 clip at (9,345) size 85x100 scrollHeight 133
       RenderTableSection {TBODY} at (0,0) size 6x6
         RenderTableRow {TR} at (0,2) size 6x2
           RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
-layer at (82,108) size 60x60 backgroundClip at (9,105) size 100x85 clip at (9,105) size 100x85 outlineClip at (9,105) size 100x85
+layer at (82,108) size 60x60 backgroundClip at (9,105) size 100x85 clip at (9,105) size 100x85
   RenderBlock (positioned) {DIV} at (70,0) size 60x60 [bgcolor=#C0C0C0]
-layer at (-24,228) size 60x60 backgroundClip at (9,225) size 100x85 clip at (9,225) size 100x85 outlineClip at (9,225) size 100x85
+layer at (-24,228) size 60x60 backgroundClip at (9,225) size 100x85 clip at (9,225) size 100x85
   RenderBlock (positioned) {DIV} at (-130,0) size 60x60 [bgcolor=#C0C0C0]
-layer at (12,418) size 60x60 backgroundClip at (9,345) size 85x100 clip at (9,345) size 85x100 outlineClip at (9,345) size 85x100
+layer at (12,418) size 60x60 backgroundClip at (9,345) size 85x100 clip at (9,345) size 85x100
   RenderBlock (positioned) {DIV} at (0,70) size 60x60 [bgcolor=#C0C0C0]
