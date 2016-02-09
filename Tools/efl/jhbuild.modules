@@ -24,9 +24,6 @@
       <dep package="libseccomp"/>
       <dep package="atk"/>
       <dep package="openwebrtc"/>
-      <if condition-set="x86_64">
-        <dep package="llvm-3.6-for-X86_64"/>
-      </if>
     </dependencies>
   </metamodule>
 
@@ -54,10 +51,6 @@
       href="http://download.enlightenment.org"/>
   <repository type="tarball" name="gstreamer"
       href="http://gstreamer.freedesktop.org/src/"/>
-  <repository type="svn" name="llvm.org"
-      href="http://llvm.org/svn/llvm-project/"/>
-  <repository type="tarball" name="llvm-tar"
-      href="http://llvm.org"/>
 
   <autotools id="cairo" autogen-sh="configure"
              makeargs="CFLAGS='-fno-lto' CXXFLAGS='-fno-lto' LDFLAGS='-fno-lto'">
@@ -153,37 +146,7 @@
     </branch>
   </autotools>
 
-  <autotools id="llvm-3.5-for-AArch64"
-             autogen-sh="configure"
-             autogenargs="--enable-optimized=yes --enable-backtraces=no --enable-targets=host --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no --disable-expensive-checks --disable-debug-runtime --disable-assertions">
-    <branch repo="llvm-tar"
-            module="/releases/3.5.0/llvm-3.5.0.src.tar.xz" version="3.5.0" checkoutdir="llvm-3.5.0"
-            hash="sha256:28e199f368ef0a4666708f31c7991ad3bcc3a578342b0306526dd35f07595c03">
-      <patch file="llvm-elf-allow-fde-references-outside-the-2gb-range-arm64.patch" strip="1"/>
-      <patch file="llvm-elf-add-stackmaps-arm64.patch" strip="1"/>
-      <patch file="llvm-version-arm64.patch" strip="1"/>
-    </branch>
-  </autotools>
-
-  <autotools id="llvm-3.6-for-X86_64"
-             autogen-sh="configure"
-             autogenargs="--enable-optimized=yes --enable-backtraces=no --enable-targets=host --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no --disable-expensive-checks --disable-debug-runtime --disable-assertions">
-    <branch repo="llvm-tar"
-            module="/releases/3.6.0/llvm-3.6.0.src.tar.xz" version="3.6.0" checkoutdir="llvm-3.6.0"
-            hash="sha256:b39a69e501b49e8f73ff75c9ad72313681ee58d6f430bfad4d81846fe92eb9ce">
-    </branch>
-  </autotools>
-
-  <autotools id="clang"
-             skip-autogen="true">
-    <dependencies>
-      <dep package="llvm"/>
-    </dependencies>
-    <branch repo="llvm.org" module="/cfe/tags/RELEASE_350/final" version="3.5.0" checkoutdir="llvm/tools/clang">
-    </branch>
-  </autotools>
-
-  <autotools id="fontconfig" 
+  <autotools id="fontconfig"
              autogen-sh="configure"
              autogenargs="--enable-libxml2">
     <dependencies>
