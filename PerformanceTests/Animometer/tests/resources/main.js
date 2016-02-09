@@ -7,20 +7,21 @@ Controller = Utilities.createClass(
         this._endTimestamp = options["test-interval"];
         // Default data series: timestamp, complexity, estimatedFrameLength
         this._sampler = new Sampler(options["series-count"] || 3, (60 * options["test-interval"] / 1000), this);
-        this._estimator = new SimpleKalmanEstimator(options["kalman-process-error"], options["kalman-measurement-error"]);
         this._marks = {};
+
+        this._frameLengthEstimator = new SimpleKalmanEstimator(options["kalman-process-error"], options["kalman-measurement-error"]);
 
         this.initialComplexity = 0;
     }, {
 
-    start: function(stage, startTimestamp)
+    start: function(startTimestamp, stage)
     {
         this._startTimestamp = startTimestamp;
         this._endTimestamp += startTimestamp;
-        this.recordFirstSample(stage, startTimestamp);
+        this.recordFirstSample(startTimestamp, stage);
     },
 
-    recordFirstSample: function(stage, startTimestamp)
+    recordFirstSample: function(startTimestamp, stage)
     {
         this._sampler.record(startTimestamp, stage.complexity(), -1);
         this.mark(Strings.json.samplingStartTimeOffset, startTimestamp);
@@ -37,15 +38,15 @@ Controller = Utilities.createClass(
         return comment in this._marks;
     },
 
-    update: function(stage, timestamp)
+    update: function(timestamp, stage)
     {
-        this._estimator.sample(timestamp - this._sampler.samples[0][this._sampler.sampleCount - 1]);
-        this._sampler.record(timestamp, stage.complexity(), this._estimator.estimate);
+        this._frameLengthEstimator.sample(timestamp - this._sampler.samples[0][this._sampler.sampleCount - 1]);
+        this._sampler.record(timestamp, stage.complexity(), this._frameLengthEstimator.estimate);
 
-        this.tune(stage, timestamp);
+        this.tune(timestamp, stage);
     },
 
-    tune: function(stage, timestamp)
+    tune: function(timestamp, stage)
     {
     },
 
@@ -128,13 +129,13 @@ StepController = Utilities.createSubclass(Controller,
         this._stepTime = options["test-interval"] / 2;
     }, {
 
-    start: function(stage, startTimestamp)
+    start: function(startTimestamp, stage)
     {
-        Controller.prototype.start.call(this, stage, startTimestamp);
+        Controller.prototype.start.call(this, startTimestamp, stage);
         this._stepTime += startTimestamp;
     },
 
-    tune: function(stage, timestamp)
+    tune: function(timestamp, stage)
     {
         if (this._stepped || timestamp < this._stepTime)
             return;
@@ -161,20 +162,20 @@ AdaptiveController = Utilities.createSubclass(Controller,
         this._numberOfFramesToMeasurePerInterval = 4;
     }, {
 
-    start: function(stage, startTimestamp)
+    start: function(startTimestamp, stage)
     {
-        Controller.prototype.start.call(this, stage, startTimestamp);
+        Controller.prototype.start.call(this, startTimestamp, stage);
 
         this._samplingTimestamp += startTimestamp;
         this._intervalTimestamp = startTimestamp;
     },
 
-    recordFirstSample: function(stage, startTimestamp)
+    recordFirstSample: function(startTimestamp, stage)
     {
         this._sampler.record(startTimestamp, stage.complexity(), -1);
     },
 
-    update: function(stage, timestamp)
+    update: function(timestamp, stage)
     {
         if (!this._startedSampling && timestamp > this._samplingTimestamp) {
             this._startedSampling = true;
@@ -191,13 +192,13 @@ AdaptiveController = Utilities.createSubclass(Controller,
 
         // Adjust the test to reach the desired FPS.
         var intervalLength = timestamp - this._intervalTimestamp;
-        this._estimator.sample(intervalLength / this._numberOfFramesToMeasurePerInterval);
-        var intervalEstimatedFrameRate = 1000 / this._estimator.estimate;
+        this._frameLengthEstimator.sample(intervalLength / this._numberOfFramesToMeasurePerInterval);
+        var intervalEstimatedFrameRate = 1000 / this._frameLengthEstimator.estimate;
         var tuneValue = -this._pid.tune(timestamp - this._startTimestamp, intervalLength, intervalEstimatedFrameRate);
         tuneValue = tuneValue > 0 ? Math.floor(tuneValue) : Math.ceil(tuneValue);
         stage.tune(tuneValue);
 
-        this._sampler.record(timestamp, stage.complexity(), this._estimator.estimate);
+        this._sampler.record(timestamp, stage.complexity(), this._frameLengthEstimator.estimate);
 
         // Start the next interval.
         this._intervalFrameCount = 0;
@@ -426,7 +427,7 @@ Benchmark = Utilities.createClass(
         if (!this._didWarmUp) {
             if (this._currentTimestamp - this._previousTimestamp >= 100) {
                 this._didWarmUp = true;
-                this._controller.start(this._stage, this._currentTimestamp);
+                this._controller.start(this._currentTimestamp, this._stage);
                 this._previousTimestamp = this._currentTimestamp;
             }
 
@@ -435,7 +436,7 @@ Benchmark = Utilities.createClass(
             return;
         }
 
-        this._controller.update(this._stage, this._currentTimestamp);
+        this._controller.update(this._currentTimestamp, this._stage);
         if (this._controller.shouldStop(this._currentTimestamp)) {
             this._finishPromise.resolve(this._controller.results());
             return;

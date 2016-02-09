@@ -1,5 +1,13 @@
 2016-02-07  Jon Lee  <jonlee@apple.com>
 
+        Minor refactoring. Rename Controller._estimator to Controller._frameLengthEstimator
+        and switch the parameters for start(), update(), and tune(), so that the timestamp
+        is first and stage is second.
+
+        * Animometer/tests/resources/main.js:
+
+2016-02-07  Jon Lee  <jonlee@apple.com>
+
         Move ResultsTable functionality not needed for release tests out.
         Move reporting of score and mean to selection of the time-based graph.
 
