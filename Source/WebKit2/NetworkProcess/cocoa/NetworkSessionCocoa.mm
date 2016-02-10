@@ -210,17 +210,17 @@ static NSURLSessionConfiguration *configurationForType(NetworkSession::Type type
 NetworkSession& NetworkSession::defaultSession()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<NetworkSession> session(NetworkSession::Type::Normal, WebCore::SessionID::defaultSessionID());
+    static NeverDestroyed<NetworkSession> session(NetworkSession::Type::Normal, WebCore::SessionID::defaultSessionID(), NetworkProcess::singleton().supplement<CustomProtocolManager>());
     return session;
 }
 
-NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID)
+NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID, CustomProtocolManager* customProtocolManager)
 {
     m_sessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this]);
 
     NSURLSessionConfiguration *configuration = configurationForType(type);
 
-    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>())
+    if (customProtocolManager)
         customProtocolManager->registerProtocolClass(configuration);
     
 #if HAVE(TIMINGDATAOPTIONS)

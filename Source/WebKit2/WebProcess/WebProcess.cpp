@@ -468,16 +468,12 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
 void WebProcess::ensurePrivateBrowsingSession(SessionID sessionID)
 {
-#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     WebFrameNetworkingContext::ensurePrivateBrowsingSession(sessionID);
-#endif
 }
 
 void WebProcess::destroyPrivateBrowsingSession(SessionID sessionID)
 {
-#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     SessionTracker::destroySession(sessionID);
-#endif
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

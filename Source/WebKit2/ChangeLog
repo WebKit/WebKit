@@ -1,3 +1,38 @@
+2016-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertions when loading from WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=154079
+
+        Reviewed by Anders Carlsson.
+
+        Assertions were failing, mostly when using NetworkProcess, and mostly involving Top Sites.
+        When we do loading from the WebProcess (which we should eventually not allow), we were sometimes
+        using a private browsing session that did not exist because the UIProcess had told the NetworkProcess
+        to create a private browsing session with the given SessionID, but the WebProcess was not told about
+        the private browsing session.
+        Also, sometimes we were calling NetworkProcess::singleton() from the WebProcess, which caused problems
+        with the PlatformStrategies object being reset.  This prevents that, too.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        Added an assertion that we have a network session when we have just made a NetworkingContext with the given SessionID.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::defaultSession):
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        Call NetworkProcess::singleton only when we know we are in the network process.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        Tell the WebProcesses about the new private session, too.  Sometimes they use the new private session.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensurePrivateBrowsingSession):
+        (WebKit::WebProcess::destroyPrivateBrowsingSession):
+        Removed useless macros that were always true for all WK2 clients.
+
 2016-02-10  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Stop installing the legacy processes

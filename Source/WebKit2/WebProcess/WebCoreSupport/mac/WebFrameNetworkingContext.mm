@@ -60,7 +60,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
 
     SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(base + '.' + String::number(sessionID.sessionID()))
 #if USE(NETWORK_SESSION)
-        , std::make_unique<NetworkSession>(NetworkSession::Type::Ephemeral, sessionID)
+        , std::make_unique<NetworkSession>(NetworkSession::Type::Ephemeral, sessionID, nullptr)
 #endif
     );
 }

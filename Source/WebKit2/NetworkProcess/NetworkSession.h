@@ -41,6 +41,8 @@ OBJC_CLASS WKNetworkSessionDelegate;
 
 namespace WebKit {
 
+class CustomProtocolManager;
+
 class NetworkSession {
     friend class NetworkDataTask;
 public:
@@ -48,7 +50,7 @@ public:
         Normal,
         Ephemeral
     };
-    NetworkSession(Type, WebCore::SessionID);
+    NetworkSession(Type, WebCore::SessionID, CustomProtocolManager*);
     ~NetworkSession();
 
     static NetworkSession& defaultSession();

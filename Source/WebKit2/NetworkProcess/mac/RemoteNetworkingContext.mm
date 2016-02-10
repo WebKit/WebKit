@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteNetworkingContext.h"
 
+#import "CustomProtocolManager.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
 #import "SessionTracker.h"
@@ -101,7 +102,7 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
 
     SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(base + '.' + String::number(sessionID.sessionID()))
 #if USE(NETWORK_SESSION)
-        , std::make_unique<NetworkSession>(NetworkSession::Type::Ephemeral, sessionID)
+        , std::make_unique<NetworkSession>(NetworkSession::Type::Ephemeral, sessionID, NetworkProcess::singleton().supplement<CustomProtocolManager>())
 #endif
     );
 }
