@@ -1,3 +1,9 @@
+2016-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Removed the duplicated definition of ChartPaneBase.
+
+        * public/v3/components/chart-pane-base.js:
+
 2016-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Analysis task page on v3 UI should show charts
