@@ -71,12 +71,6 @@ static void redispatchOnMainQueue(void* context)
     self->displayCallback(retainedContext->layer.get(), retainedContext->context.get());
 }
 
-static bool shouldInvertBeforeDrawingContent(PlatformCALayer::LayerType layerType, GraphicsLayer::CompositingCoordinatesOrientation coordinateOrientation)
-{
-    return (layerType != PlatformCALayer::LayerTypeTiledBackingTileLayer)
-        && (coordinateOrientation == GraphicsLayer::CompositingCoordinatesTopDown);
-}
-
 static bool repaintCountersAreDrawnByGridController(PlatformCALayer::LayerType layerType)
 {
     return layerType == PlatformCALayer::LayerTypeTiledBackingTileLayer;
@@ -100,8 +94,7 @@ void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContext
     PlatformCALayerClient* client = owner()->owner();
     GraphicsLayer::CompositingCoordinatesOrientation orientation = client->platformCALayerContentsOrientation();
 
-    if (shouldInvertBeforeDrawingContent(layerType, orientation))
-        PlatformCALayer::flipContext(context, layerBounds.size.height);
+    PlatformCALayer::flipContext(context, layerBounds.size.height);
 
     GraphicsContext graphicsContext(context);
 
