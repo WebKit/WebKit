@@ -1,11 +1,9 @@
 
 class ChartPaneStatusView extends ChartStatusView {
     
-    constructor(metric, chart, router, revisionCallback)
+    constructor(metric, chart, revisionCallback)
     {
         super(metric, chart);
-
-        this._router = router;
 
         this._buildLabel = null;
         this._buildUrl = null;
@@ -13,7 +11,7 @@ class ChartPaneStatusView extends ChartStatusView {
         this._revisionList = [];
         this._currentRepository = null;
         this._revisionCallback = revisionCallback;
-        this._analyzeData = null;
+        this._pointsRangeForAnalysis = null;
 
         this._renderedRevisionList = null;
         this._renderedRepository = null;
@@ -21,7 +19,7 @@ class ChartPaneStatusView extends ChartStatusView {
         this._usedRevisionRange = null;
     }
 
-    analyzeData() { return this._analyzeData; }
+    pointsRangeForAnalysis() { return this._pointsRangeForAnalysis; }
 
     render()
     {
@@ -101,6 +99,7 @@ class ChartPaneStatusView extends ChartStatusView {
 
         var info = this._revisionList[newIndex];
         this.setCurrentRepository(info.repository);
+        this.updateRevisionListWithNotification();
     }
 
     updateRevisionListWithNotification()
@@ -126,7 +125,7 @@ class ChartPaneStatusView extends ChartStatusView {
 
         this._buildInfo = null;
         this._revisionList = [];
-        this._analyzeData = null;
+        this._pointsRangeForAnalysis = null;
 
         if (!currentPoint)
             return;
@@ -139,7 +138,7 @@ class ChartPaneStatusView extends ChartStatusView {
             this._buildInfo = currentMeasurement;
 
         if (currentPoint && previousPoint && this._chart.currentSelection()) {
-            this._analyzeData = {
+            this._pointsRangeForAnalysis = {
                 startPointId: previousPoint.id,
                 endPointId: currentPoint.id,
             };

@@ -1,11 +1,5 @@
 
-class PageWithCharts extends PageWithHeading {
-    constructor(name, toolbar)
-    {
-        super(name, toolbar);
-        this._charts = [];
-    }
-
+class ChartStyles {
     static createChartSourceList(platformId, metricId)
     {
         var platform = Platform.findById(platformId);

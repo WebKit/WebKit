@@ -1,5 +1,5 @@
 
-class ChartsPage extends PageWithCharts {
+class ChartsPage extends PageWithHeading {
     constructor(toolbar)
     {
         console.assert(toolbar instanceof ChartsToolbar);
@@ -19,13 +19,19 @@ class ChartsPage extends PageWithCharts {
         return state;
     }
 
-    static createStateForAnalysisTask(task)
+    static createDomainForAnalysisTask(task)
     {
         var diff = (task.endTime() - task.startTime()) * 0.1;
+        return [task.startTime() - diff, task.endTime() + diff];
+    }
+
+    static createStateForAnalysisTask(task)
+    {
+        var domain = this.createDomainForAnalysisTask(task);
         var state = {
             paneList: [[task.platform().id(), task.metric().id()]],
             since: Math.round(task.startTime() - (Date.now() - task.startTime()) * 0.1),
-            zoom: [task.startTime() - diff, task.endTime() + diff],
+            zoom: domain,
         };
         return state;
     }

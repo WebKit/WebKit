@@ -1,10 +1,11 @@
 
-class DashboardPage extends PageWithCharts {
+class DashboardPage extends PageWithHeading {
     constructor(name, table, toolbar)
     {
         console.assert(toolbar instanceof DashboardToolbar);
         super(name, toolbar);
         this._table = table;
+        this._charts = [];
         this._needsTableConstruction = true;
         this._needsStatusUpdate = true;
         this._statusViews = [];
@@ -124,11 +125,11 @@ class DashboardPage extends PageWithCharts {
         if (!platformId || !metricId)
             return '';
 
-        var result = DashboardPage.createChartSourceList(platformId, metricId);
+        var result = ChartStyles.createChartSourceList(platformId, metricId);
         if (result.error)
             return result.error;
 
-        var options = DashboardPage.dashboardOptions(result.metric.makeFormatter(3));
+        var options = ChartStyles.dashboardOptions(result.metric.makeFormatter(3));
         options.ondata = this._fetchedData.bind(this);
         var chart = new TimeSeriesChart(result.sourceList, options);
         this._charts.push(chart);

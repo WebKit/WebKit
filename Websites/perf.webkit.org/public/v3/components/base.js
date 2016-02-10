@@ -39,14 +39,14 @@ class ComponentBase {
 
         if (htmlTemplate) {
             var template = document.createElement('template');
-            template.innerHTML = htmlTemplate();
+            template.innerHTML = newTarget.htmlTemplate();
             shadow.appendChild(template.content.cloneNode(true));
             this._recursivelyReplaceUnknownElementsByComponents(shadow);
         }
 
         if (cssTemplate) {
             var style = document.createElement('style');
-            style.textContent = cssTemplate();
+            style.textContent = newTarget.cssTemplate();
             shadow.appendChild(style);
         }
 

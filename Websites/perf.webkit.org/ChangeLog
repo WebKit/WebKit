@@ -1,3 +1,96 @@
+2016-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Analysis task page on v3 UI should show charts
+        https://bugs.webkit.org/show_bug.cgi?id=154057
+
+        Reviewed by Chris Dumez.
+
+        Extracted ChartPaneBase out of ChartPane and added an instance of its new subclass, AnalysisTaskChartPane,
+        to the analysis task page. The main difference is that ChartPaneBase doesn't depend on the presence of
+        this._chartsPage unlike ChartPane. It also doesn't have the header with toolbar (to show breakdown, etc...).
+
+        * public/v3/components/base.js:
+        (ComponentBase.prototype._constructShadowTree): Call htmlTemplate() and cssTemplate() with the right "this".
+
+        * public/v3/components/chart-pane-base.js: Added.
+        (ChartPaneBase): Extracted from ChartPane.
+        (ChartPaneBase.prototype.configure): Extracted from the constructor. Separating this function allows the
+        component to be instantiated inside a HTML template.
+        (ChartPaneBase.prototype._fetchAnalysisTasks): Moved from ChartPane._fetchAnalysisTasks.
+        (ChartPaneBase.prototype.platformId): Ditto.
+        (ChartPaneBase.prototype.metricId): Ditto.
+        (ChartPaneBase.prototype.setOverviewDomain): Ditto.
+        (ChartPaneBase.prototype.setMainDomain): Ditto.
+        (ChartPaneBase.prototype._overviewSelectionDidChange): Extracted from the constructor. This is overridden in
+        ChartPane and unused in AnalysisTaskChartPane.
+        (ChartPaneBase.prototype._mainSelectionDidChange): Extracted from ChartPane._mainSelectionDidChange.
+        (ChartPaneBase.prototype._mainSelectionDidZoom): Extracted from ChartPane._mainSelectionDidZoom.
+        (ChartPaneBase.prototype._indicatorDidChange): Extracted from ChartPane._indicatorDidChange.
+        (ChartPaneBase.prototype._didFetchData): Moved from ChartPane._fetchAnalysisTasks.
+        (ChartPaneBase.prototype._openAnalysisTask): Ditto.
+        (ChartPaneBase.prototype._openCommitViewer): Ditto. Also fixed a bug that we don't show the spinner while
+        waiting for the data to be fetched by calling this.render() here.
+        (ChartPaneBase.prototype._keyup): Moved from ChartPane._keyup. Also fixed the bug that the revisions list
+        doesn't update by calling this.render() here.
+        (ChartPaneBase.prototype.render): Extracted from ChartPane.render.
+        (ChartPaneBase.htmlTemplate): Extracted from ChartPane.htmlTemplate.
+        (ChartPaneBase.paneHeaderTemplate): Added. This is overridden in ChartPane and unused in AnalysisTaskChartPane.
+        (ChartPaneBase.cssTemplate): Extracted from ChartPane.htmlTemplate.
+
+        * public/v3/components/chart-styles.js: Renamed from public/v3/pages/page-with-charts.js.
+        (PageWithCharts): Renamed from PageWithCharts since it no longer extends PageWithHeading.
+        (ChartStyles.createChartSourceList):
+
+        * public/v3/components/commit-log-viewer.js:
+        (CommitLogViewer.prototype.view): Set this._repository right away instead of waiting for the fetched data
+        so that spinner will be shown while the data is being fetched.
+
+        * public/v3/index.html:
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane): Added extends ChartPaneBase.
+        (AnalysisTaskPage): Added. this._chartPane.
+        (AnalysisTaskPage.prototype._didFetchTask): Initialize this._chartPane with a domain.
+        (AnalysisTaskPage.prototype.render): Render this._chartPane.
+        (AnalysisTaskPage.htmlTemplate):
+
+        * public/v3/pages/chart-pane-status-view.js:
+        (ChartPaneStatusView): Removed the unused router from the argument list.
+        (ChartPaneStatusView.prototype.pointsRangeForAnalysis): Renamed from analyzeData() since it was ambiguous.
+        (ChartPaneStatusView.prototype.moveRepositoryWithNotification): Fixed the bug that we don't update the list
+        of the revisions here.
+        (ChartPaneStatusView.prototype.computeChartStatusLabels):
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane): Now extends ChartPaneBase. 
+        (ChartPane.prototype._overviewSelectionDidChange): Extracted from the constructor.
+        (ChartPane.prototype._mainSelectionDidChange): 
+        (ChartPane.prototype._mainSelectionDidZoom):
+        (ChartPane.prototype._indicatorDidChange):
+        (ChartPane.prototype.render):
+        (ChartPane.prototype._renderActionToolbar):
+        (ChartPane.paneHeaderTemplate): Extracted from htmlTemplate.
+        (ChartPane.cssTemplate):
+        (ChartPane.overviewOptions.selection.onchange): Deleted.
+        (ChartPane.prototype._fetchAnalysisTasks): Deleted.
+        (ChartPane.prototype.platformId): Deleted.
+        (ChartPane.prototype.metricId): Deleted.
+        (ChartPane.prototype.setOverviewDomain): Deleted.
+        (ChartPane.prototype.setMainDomain): Deleted.
+        (ChartPane.prototype._openCommitViewer): Deleted.
+        (ChartPane.prototype._didFetchData): Deleted.
+        (ChartPane.prototype._keyup): Deleted.
+
+        * public/v3/pages/charts-page.js:
+        (ChartsPage):
+        (ChartsPage.createDomainForAnalysisTask): Extracted by createDomainForAnalysisTask; used to set the domain
+        of the charts in the analysis task page.
+        (ChartsPage.createStateForAnalysisTask):
+
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage):
+        (DashboardPage.prototype._createChartForCell):
+
 2016-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the support for maintenance mode

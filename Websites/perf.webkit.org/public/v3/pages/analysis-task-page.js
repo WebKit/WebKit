@@ -1,4 +1,10 @@
 
+class AnalysisTaskChartPane extends ChartPaneBase {
+    constructor() { super('analysis-task-chart-pane'); }
+}
+
+ComponentBase.defineElement('analysis-task-chart-pane', AnalysisTaskChartPane);
+
 class AnalysisTaskPage extends PageWithHeading {
     constructor()
     {
@@ -14,6 +20,7 @@ class AnalysisTaskPage extends PageWithHeading {
         this._endPoint = null;
         this._errorMessage = null;
         this._currentTestGroup = null;
+        this._chartPane = this.content().querySelector('analysis-task-chart-pane').component();
         this._analysisResultsViewer = this.content().querySelector('analysis-results-viewer').component();
         this._analysisResultsViewer.setTestGroupCallback(this._showTestGroup.bind(this));
         this._testGroupResultsTable = this.content().querySelector('test-group-results-table').component();
@@ -61,6 +68,12 @@ class AnalysisTaskPage extends PageWithHeading {
         this._analysisResultsViewer.setValueFormatter(formatter);
         this._analysisResultsViewer.setSmallerIsBetter(metric.isSmallerBetter());
         this._testGroupResultsTable.setValueFormatter(formatter);
+
+        this._chartPane.configure(platform.id(), metric.id());
+
+        var domain = ChartsPage.createDomainForAnalysisTask(task);
+        this._chartPane.setOverviewDomain(domain[0], domain[1]);
+        this._chartPane.setMainDomain(domain[0], domain[1]);
 
         this.render();
     }
@@ -128,6 +141,8 @@ class AnalysisTaskPage extends PageWithHeading {
         this.content().querySelector('.error-message').innerHTML +=
             `<p>This page is read only for now. To schedule a new A/B testing job, use <a href="${v2URL}">v2 page</a>.</p>`;
 
+         this._chartPane.render();
+
         if (this._task) {
             this.renderReplace(this.content().querySelector('.analysis-task-name'), this._task.name());
             var platform = this._task.platform();
@@ -187,7 +202,7 @@ class AnalysisTaskPage extends PageWithHeading {
                 <h2 class="analysis-task-name"></h2>
                 <h3 class="platform-metric-names"><a href=""></a></h3>
                 <p class="error-message"></p>
-                <div class="overview-chart"></div>
+                <div class="overview-chart"><analysis-task-chart-pane></analysis-task-chart-pane></div>
                 <section class="analysis-results-view">
                     <analysis-results-viewer></analysis-results-viewer>
                 </section>

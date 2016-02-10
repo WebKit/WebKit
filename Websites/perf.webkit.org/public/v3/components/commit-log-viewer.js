@@ -28,6 +28,7 @@ class CommitLogViewer extends ComponentBase {
 
         var promise = CommitLog.fetchBetweenRevisions(repository, from || to, to);
 
+        this._repository = repository;
         this._fetchingPromise = promise;
 
         var self = this;
@@ -39,7 +40,6 @@ class CommitLogViewer extends ComponentBase {
             clearTimeout(spinnerTimer);
             if (self._fetchingPromise != promise)
                 return;
-            self._repository = repository;
             self._fetchingPromise = null;
             self._commits = commits;
         });
