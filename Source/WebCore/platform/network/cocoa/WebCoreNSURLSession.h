@@ -32,6 +32,7 @@
 #import "CachedResourceHandle.h"
 #import <Foundation/NSURLSession.h>
 #import <wtf/HashSet.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -58,6 +59,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks;
     BOOL _invalidated;
     NSUInteger _nextTaskIdentifier;
+    OSObjectPtr<dispatch_queue_t> _internalQueue;
 }
 - (id)initWithResourceLoader:(WebCore::CachedResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
 @property (readonly, retain) NSOperationQueue *delegateQueue;

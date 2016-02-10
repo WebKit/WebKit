@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) CachedResourceLoader& loader;
 @property (readwrite, retain) id<NSURLSessionTaskDelegate> delegate;
 - (void)taskCompleted:(WebCoreNSURLSessionDataTask *)task;
+- (void)addDelegateOperation:(void (^)(void))operation;
 @end
 
 @interface WebCoreNSURLSessionDataTask ()
@@ -76,6 +77,8 @@ NS_ASSUME_NONNULL_END
     self.delegate = inDelegate;
     _queue = inQueue ? inQueue : [NSOperationQueue mainQueue];
     _invalidated = NO;
+    _internalQueue = adoptOSObject(dispatch_queue_create("WebCoreNSURLSession _internalQueue", DISPATCH_QUEUE_SERIAL));
+
     return self;
 }
 
@@ -102,10 +105,20 @@ NS_ASSUME_NONNULL_END
         return;
 
     RetainPtr<WebCoreNSURLSession> strongSelf { self };
-    [self.delegateQueue addOperationWithBlock:[strongSelf] {
+    [self addDelegateOperation:[strongSelf] {
         if ([strongSelf.get().delegate respondsToSelector:@selector(URLSession:didBecomeInvalidWithError:)])
             [strongSelf.get().delegate URLSession:(NSURLSession *)strongSelf.get() didBecomeInvalidWithError:nil];
     }];
+}
+
+- (void)addDelegateOperation:(void (^)(void))block
+{
+    RetainPtr<WebCoreNSURLSession> strongSelf { self };
+    RetainPtr<NSBlockOperation> operation = [NSBlockOperation blockOperationWithBlock:block];
+    dispatch_async(_internalQueue.get(), [strongSelf, operation] {
+        [strongSelf.get().delegateQueue addOperation:operation.get()];
+        [operation waitUntilFinished];
+    });
 }
 
 #pragma mark - NSURLSession API
@@ -146,7 +159,7 @@ NS_ASSUME_NONNULL_END
         return;
 
     RetainPtr<WebCoreNSURLSession> strongSelf { self };
-    [self.delegateQueue addOperationWithBlock:[strongSelf] {
+    [self addDelegateOperation:[strongSelf] {
         if ([strongSelf.get().delegate respondsToSelector:@selector(URLSession:didBecomeInvalidWithError:)])
             [strongSelf.get().delegate URLSession:(NSURLSession *)strongSelf.get() didBecomeInvalidWithError:nil];
     }];
@@ -163,13 +176,13 @@ NS_ASSUME_NONNULL_END
 - (void)resetWithCompletionHandler:(void (^)(void))completionHandler
 {
     // FIXME: This cannot currently be implemented. We cannot guarantee that the next connection will happen on a new socket.
-    [self.delegateQueue addOperationWithBlock:completionHandler];
+    [self addDelegateOperation:completionHandler];
 }
 
 - (void)flushWithCompletionHandler:(void (^)(void))completionHandler
 {
     // FIXME: This cannot currently be implemented. We cannot guarantee that the next connection will happen on a new socket.
-    [self.delegateQueue addOperationWithBlock:completionHandler];
+    [self addDelegateOperation:completionHandler];
 }
 
 - (void)getTasksWithCompletionHandler:(void (^)(NSArray<NSURLSessionDataTask *> *dataTasks, NSArray<NSURLSessionUploadTask *> *uploadTasks, NSArray<NSURLSessionDownloadTask *> *downloadTasks))completionHandler
@@ -177,7 +190,7 @@ NS_ASSUME_NONNULL_END
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:_dataTasks.size()];
     for (auto& task : _dataTasks)
         [array addObject:task.get()];
-    [self.delegateQueue addOperationWithBlock:^{
+    [self addDelegateOperation:^{
         completionHandler(array, nil, nil);
     }];
 }
@@ -187,7 +200,7 @@ NS_ASSUME_NONNULL_END
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:_dataTasks.size()];
     for (auto& task : _dataTasks)
         [array addObject:task.get()];
-    [self.delegateQueue addOperationWithBlock:^{
+    [self addDelegateOperation:^{
         completionHandler(array);
     }];
 }
@@ -469,7 +482,7 @@ void WebCoreNSURLSessionDataTaskClient::notifyFinished(CachedResource* resource)
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     [self _setDefersLoading:YES];
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    [self.session.delegateQueue addOperationWithBlock:[strongSelf] {
+    [self.session addDelegateOperation:[strongSelf] {
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if (![dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveResponse:completionHandler:)]) {
             callOnMainThread([strongSelf] {
@@ -500,10 +513,11 @@ void WebCoreNSURLSessionDataTaskClient::notifyFinished(CachedResource* resource)
     // FIXME: try to avoid a copy, if possible.
     // e.g., RetainPtr<CFDataRef> cfData = resource->resourceBuffer()->createCFData();
 
+    self.countOfBytesReceived += length;
+
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    [self.session.delegateQueue addOperationWithBlock:[strongSelf, length, nsData] {
-        strongSelf.get().countOfBytesReceived += length;
+    [self.session addDelegateOperation:[strongSelf, length, nsData] {
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveData:)])
             [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveData:nsData.get()];
@@ -529,7 +543,7 @@ void WebCoreNSURLSessionDataTaskClient::notifyFinished(CachedResource* resource)
     self.state = NSURLSessionTaskStateCompleted;
 
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    [self.session.delegateQueue addOperationWithBlock:[strongSelf] {
+    [self.session addDelegateOperation:[strongSelf] {
         id<NSURLSessionTaskDelegate> delegate = (id<NSURLSessionTaskDelegate>)strongSelf.get().session.delegate;
         if ([delegate respondsToSelector:@selector(URLSession:task:didCompleteWithError:)])
             [delegate URLSession:(NSURLSession *)strongSelf.get().session task:(NSURLSessionDataTask *)strongSelf.get() didCompleteWithError:nil];

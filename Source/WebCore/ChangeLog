@@ -1,3 +1,38 @@
+2016-02-09  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Graphical corruption in videos when enabling custom loading path
+        https://bugs.webkit.org/show_bug.cgi?id=154044
+
+        Reviewed by Alex Christensen.
+
+        The NSOperationQueue provided by AVFoundation from the AVAssetResourceLoader queue is not
+        set to be a serial queue. So when adding dataReceived operations to that queue, there exists
+        the possibility that some operations are handled before others, and the client will receieve
+        data out of order.
+
+        A real NSURLSession object will only issue another operation when the first operation
+        completes, so emulate this behavior in WebCoreNSURLSession by using a serial dispatch queue.
+        The internal queue will enqueue an operation to the resource loader's queue, and block until
+        that operation completes, thus ensuring ordering of the data (and other) operations.
+
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession initWithResourceLoader:delegate:delegateQueue:]): Initialize _internalQueue
+        (-[WebCoreNSURLSession addDelegateOperation:]): Added utility method.
+        (-[WebCoreNSURLSession taskCompleted:]): Call -addDelegateOperation:
+        (-[WebCoreNSURLSession finishTasksAndInvalidate]): Ditto.
+        (-[WebCoreNSURLSession resetWithCompletionHandler:]): Ditto.
+        (-[WebCoreNSURLSession flushWithCompletionHandler:]): Ditto.
+        (-[WebCoreNSURLSession getTasksWithCompletionHandler:]): Ditto.
+        (-[WebCoreNSURLSession getAllTasksWithCompletionHandler:]): Ditto.
+        (-[WebCoreNSURLSessionDataTask resource:receivedResponse:]): Ditto.
+        (-[WebCoreNSURLSessionDataTask resource:receivedData:length:]): Ditto.
+        (-[WebCoreNSURLSessionDataTask resourceFinished:]): Ditto.
+
+        Drive-by fix:
+        (-[WebCoreNSURLSessionDataTask resource:receivedData:length:]): Set countOfBytesReceived outside the operation,
+            queue, matching NSURLSessionDataTask's behavior.
+
 2016-02-09  Nan Wang  <n_wang@apple.com>
 
         [iOS Simulator] accessibility/text-marker/text-marker-range-stale-node-crash.html crashing
