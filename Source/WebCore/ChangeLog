@@ -1,3 +1,24 @@
+2016-02-10  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Consolidate CMake code related to image decoders.
+        https://bugs.webkit.org/show_bug.cgi?id=154074
+
+        Reviewed by Alex Christensen.
+
+        Common image decoder sources, includes and libs are moved to
+        platform/ImageDecoders.cmake.
+
+        Also, added include directories of libjpeg and libpng to
+        WebCore_SYSTEM_INCLUDE_DIRECTORIES.
+
+        No new tests needed.
+
+        * CMakeLists.txt: Moved common include paths to ImageDecoders.cmake.
+        * PlatformEfl.cmake: Moved common sources and libs to ImageDecoders.cmake.
+        * PlatformGTK.cmake: Ditto.
+        * PlatformWinCairo.cmake: Moved common sources to ImageDecoders.cmake.
+        * platform/ImageDecoders.cmake: Added.
+
 2016-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSSegmentedFontFace does not need to be reference counted

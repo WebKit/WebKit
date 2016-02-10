@@ -1,3 +1,5 @@
+include(platform/ImageDecoders.cmake)
+
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
     "${DirectX_INCLUDE_DIRS}"
@@ -88,23 +90,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/TransformationMatrixWin.cpp
     platform/graphics/win/UniscribeController.cpp
 
-    platform/image-decoders/ImageDecoder.cpp
-
-    platform/image-decoders/bmp/BMPImageDecoder.cpp
-    platform/image-decoders/bmp/BMPImageReader.cpp
-
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
-
-    platform/image-decoders/gif/GIFImageDecoder.cpp
-    platform/image-decoders/gif/GIFImageReader.cpp
-
-    platform/image-decoders/ico/ICOImageDecoder.cpp
-
-    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
-
-    platform/image-decoders/png/PNGImageDecoder.cpp
-
-    platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/network/CredentialStorage.cpp
     platform/network/NetworkStorageSessionStub.cpp

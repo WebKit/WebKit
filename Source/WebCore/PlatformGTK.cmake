@@ -1,3 +1,5 @@
+include(platform/ImageDecoders.cmake)
+
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
@@ -168,23 +170,7 @@ list(APPEND WebCore_SOURCES
     platform/gtk/TemporaryLinkStubs.cpp
     platform/gtk/UserAgentGtk.cpp
 
-    platform/image-decoders/ImageDecoder.cpp
-
-    platform/image-decoders/bmp/BMPImageDecoder.cpp
-    platform/image-decoders/bmp/BMPImageReader.cpp
-
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
-
-    platform/image-decoders/gif/GIFImageDecoder.cpp
-    platform/image-decoders/gif/GIFImageReader.cpp
-
-    platform/image-decoders/ico/ICOImageDecoder.cpp
-
-    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
-
-    platform/image-decoders/png/PNGImageDecoder.cpp
-
-    platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/linux/GamepadDeviceLinux.cpp
     platform/linux/MemoryPressureHandlerLinux.cpp
@@ -299,15 +285,12 @@ list(APPEND WebCore_LIBRARIES
     ${GLIB_LIBRARIES}
     ${GUDEV_LIBRARIES}
     ${HARFBUZZ_LIBRARIES}
-    ${JPEG_LIBRARIES}
     ${LIBSECRET_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
     ${LIBXML2_LIBRARIES}
     ${LIBXSLT_LIBRARIES}
     ${HYPHEN_LIBRARIES}
-    ${PNG_LIBRARIES}
     ${SQLITE_LIBRARIES}
-    ${WEBP_LIBRARIES}
     ${X11_X11_LIB}
     ${X11_Xcomposite_LIB}
     ${X11_Xdamage_LIB}
@@ -331,7 +314,6 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
-    ${WEBP_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
 )
 
