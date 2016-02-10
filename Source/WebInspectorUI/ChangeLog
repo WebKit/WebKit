@@ -1,3 +1,17 @@
+2016-02-10  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/24267980.
+
+    2016-02-09  Timothy Hatcher  <timothy@apple.com>
+
+            <rdar://problem/24267980> Names of watch expressions all the same
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+            (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateCallFramesSection): Bind the expression var since
+            lexical scoping is not available on the branch, and this was converted to a var from a let.
+
 2016-01-26  Timothy Hatcher  <timothy@apple.com>
 
         Merge r195323. rdar://problem/24302730

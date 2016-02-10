@@ -261,13 +261,13 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
         var promises = [];
         for (var expression of watchExpressions) {
-            promises.push(new Promise(function(resolve, reject) {
+            promises.push(new Promise(function(expression, resolve, reject) {
                 WebInspector.runtimeManager.evaluateInInspectedWindow(expression, WebInspector.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName, false, true, false, true, false, function(object, wasThrown) {
                     var propertyDescriptor = new WebInspector.PropertyDescriptor({name: expression, value: object}, undefined, undefined, wasThrown);
                     objectTree.appendExtraPropertyDescriptor(propertyDescriptor);
                     resolve(propertyDescriptor);
                 });
-            }));
+            }.bind(null, expression)));
         }
 
         return Promise.all(promises).then(function() {
