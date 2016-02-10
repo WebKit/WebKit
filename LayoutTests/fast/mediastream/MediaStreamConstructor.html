@@ -47,7 +47,7 @@
                 shouldBe('localStream.getAudioTracks().length', '1');
                 shouldBe('localStream.getVideoTracks().length', '1');
 
-                shouldBeTrue("typeof MediaStream === 'object'");
+                shouldBeTrue("typeof MediaStream === 'function'");
                 shouldBeTrue('checkIdAttribute(localStream.id)');
                 testConstructor(localStream);
             }
@@ -84,7 +84,7 @@
                 testPassed('Stream constructed');
                 shouldBeNonNull(newStream);
                 shouldBeDefined(newStream);
-                shouldBe("newStream.constructor.toString()", "'[object MediaStreamConstructor]'");
+                shouldBeEqualToString("newStream.constructor.toString()", "function MediaStream() {\n    [native code]\n}");
                 shouldBe('newStream.getAudioTracks().length', 'nAudio');
                 shouldBe('newStream.getVideoTracks().length', 'nVideo');
 

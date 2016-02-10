@@ -39,6 +39,11 @@ template<> void JSImageConstructor::initializeProperties(VM& vm, JSDOMGlobalObje
     putDirect(vm, vm.propertyNames->prototype, JSHTMLImageElement::getPrototype(vm, &globalObject), None);
 }
 
+template<> JSValue JSImageConstructor::prototypeForStructure(VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    return JSHTMLElement::getConstructor(vm, &globalObject);
+}
+
 template<> EncodedJSValue JSImageConstructor::construct(ExecState* state)
 {
     JSImageConstructor* jsConstructor = jsCast<JSImageConstructor*>(state->callee());

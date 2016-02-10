@@ -78,6 +78,12 @@ static const HashTableValue JSTestExceptionTableValues[] =
 };
 
 static const HashTable JSTestExceptionTable = { 1, 1, true, JSTestExceptionTableValues, JSTestExceptionTableIndex };
+template<> JSValue JSTestExceptionConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestExceptionConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestException::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -85,7 +91,7 @@ template<> void JSTestExceptionConstructor::initializeProperties(VM& vm, JSDOMGl
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestExceptionConstructor::s_info = { "TestExceptionConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestExceptionConstructor) };
+template<> const ClassInfo JSTestExceptionConstructor::s_info = { "TestException", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestExceptionConstructor) };
 
 /* Hash table for prototype */
 
@@ -169,9 +175,9 @@ void setJSTestExceptionConstructor(ExecState* state, EncodedJSValue thisValue, E
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSTestException::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestException::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestExceptionConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestExceptionConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

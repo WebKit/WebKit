@@ -61,6 +61,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSreadonly> JSreadonlyConstructor;
 
+template<> JSValue JSreadonlyConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSreadonlyConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSreadonly::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -68,7 +74,7 @@ template<> void JSreadonlyConstructor::initializeProperties(VM& vm, JSDOMGlobalO
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSreadonlyConstructor::s_info = { "readonlyConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonlyConstructor) };
+template<> const ClassInfo JSreadonlyConstructor::s_info = { "readonly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonlyConstructor) };
 
 /* Hash table for prototype */
 
@@ -128,9 +134,9 @@ void setJSreadonlyConstructor(ExecState* state, EncodedJSValue thisValue, Encode
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSreadonly::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSreadonly::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSreadonlyConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSreadonlyConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSreadonlyOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

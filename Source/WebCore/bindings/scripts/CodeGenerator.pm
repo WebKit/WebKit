@@ -657,6 +657,37 @@ sub IsWrapperType
     return 1;
 }
 
+sub getInterfaceExtendedAttributesFromName
+{
+    my $object = shift;
+    my $interfaceName = shift;
+
+    my $idlFile = $object->IDLFileForInterface($interfaceName)
+      or die("Could NOT find IDL file for interface \"$interfaceName\"!\n");
+
+    open FILE, "<", $idlFile;
+    my @lines = <FILE>;
+    close FILE;
+
+    my $fileContents = join('', @lines);
+
+    my $extendedAttributes = {};
+
+    if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface|exception)\s+(\w+)/gs) {
+        my @parts = split(',', $1);
+        foreach my $part (@parts) {
+            my @keyValue = split('=', $part);
+            my $key = trim($keyValue[0]);
+            next unless length($key);
+            my $value = "VALUE_IS_MISSING";
+            $value = trim($keyValue[1]) if @keyValue > 1;
+            $extendedAttributes->{$key} = $value;
+        }
+    }
+
+    return $extendedAttributes;
+}
+
 sub IsCallbackInterface
 {
   my $object = shift;

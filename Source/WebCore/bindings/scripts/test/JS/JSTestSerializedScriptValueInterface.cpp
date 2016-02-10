@@ -75,6 +75,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSTestSerializedScriptValueInterface> JSTestSerializedScriptValueInterfaceConstructor;
 
+template<> JSValue JSTestSerializedScriptValueInterfaceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestSerializedScriptValueInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestSerializedScriptValueInterface::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -82,7 +88,7 @@ template<> void JSTestSerializedScriptValueInterfaceConstructor::initializePrope
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_info = { "TestSerializedScriptValueInterfaceConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfaceConstructor) };
+template<> const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfaceConstructor) };
 
 /* Hash table for prototype */
 
@@ -262,9 +268,9 @@ void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, Encode
 }
 
 
-JSValue JSTestSerializedScriptValueInterface::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestSerializedScriptValueInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestSerializedScriptValueInterfaceConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestSerializedScriptValueInterfaceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestSerializedScriptValueInterface::visitChildren(JSCell* cell, SlotVisitor& visitor)

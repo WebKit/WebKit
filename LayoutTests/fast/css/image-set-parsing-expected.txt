@@ -7,7 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Single value for background-image : url('#a') 1x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 2
 PASS subRule is 'a'
 PASS subRule.cssText is '1'
@@ -15,7 +15,7 @@ PASS subRule.cssText is '1'
 Multiple values for background-image : url('#a') 1x, url('#b') 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 4
 PASS subRule is 'a'
 PASS subRule.cssText is '1'
@@ -25,7 +25,7 @@ PASS subRule.cssText is '2'
 Multiple values for background-image, out of order : url('#c') 3x, url('#b') 2x, url('#a') 1x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 6
 PASS subRule is 'c'
 PASS subRule.cssText is '3'
@@ -37,7 +37,7 @@ PASS subRule.cssText is '1'
 Single value for content : url('#a') 1x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 2
 PASS subRule is 'a'
 PASS subRule.cssText is '1'
@@ -45,7 +45,7 @@ PASS subRule.cssText is '1'
 Multiple values for content : url('#a') 1x, url('#b') 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 4
 PASS subRule is 'a'
 PASS subRule.cssText is '1'
@@ -55,7 +55,7 @@ PASS subRule.cssText is '2'
 Single value for border-image : url('#a') 1x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 2
 PASS subRule is 'a'
 PASS subRule.cssText is '1'
@@ -63,7 +63,7 @@ PASS subRule.cssText is '1'
 Multiple values for border-image : url('#a') 1x, url('#b') 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 4
 PASS subRule is 'a'
 PASS subRule.cssText is '1'
@@ -73,7 +73,7 @@ PASS subRule.cssText is '2'
 Single value for -webkit-mask-box-image : url('#a') 1x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 2
 PASS subRule is 'a'
 PASS subRule.cssText is '1'
@@ -81,7 +81,7 @@ PASS subRule.cssText is '1'
 Multiple values for -webkit-mask-box-image : url('#a') 1x, url('#b') 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(imageSetRule.constructor) is 'CSSValueListConstructor'
+PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 4
 PASS subRule is 'a'
 PASS subRule.cssText is '1'

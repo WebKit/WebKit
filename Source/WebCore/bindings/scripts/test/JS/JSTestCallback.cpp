@@ -74,6 +74,12 @@ static const HashTableValue JSTestCallbackConstructorTableValues[] =
 COMPILE_ASSERT(1 == TestCallback::CONSTANT1, TestCallbackEnumCONSTANT1IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(2 == TestCallback::CONSTANT2, TestCallbackEnumCONSTANT2IsWrongUseDoNotCheckConstants);
 
+template<> JSValue JSTestCallbackConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestCallbackConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(globalObject);
@@ -82,11 +88,11 @@ template<> void JSTestCallbackConstructor::initializeProperties(VM& vm, JSDOMGlo
     reifyStaticProperties(vm, JSTestCallbackConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestCallbackConstructor::s_info = { "TestCallbackConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCallbackConstructor) };
+template<> const ClassInfo JSTestCallbackConstructor::s_info = { "TestCallback", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCallbackConstructor) };
 
-JSValue JSTestCallback::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestCallback::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCallbackConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCallbackConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 

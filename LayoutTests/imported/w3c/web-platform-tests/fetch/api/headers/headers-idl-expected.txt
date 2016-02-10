@@ -1,5 +1,5 @@
 
-FAIL Headers interface: existence and properties of interface object assert_equals: class string of Headers expected "[object Function]" but got "[object HeadersConstructor]"
+PASS Headers interface: existence and properties of interface object 
 PASS Headers interface object length 
 PASS Headers interface object name 
 PASS Headers interface: existence and properties of interface prototype object 

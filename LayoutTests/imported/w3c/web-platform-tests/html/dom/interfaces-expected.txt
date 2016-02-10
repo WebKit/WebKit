@@ -751,7 +751,11 @@ PASS EventTarget interface: document.implementation.createDocument(null, "", nul
 PASS EventTarget interface: calling dispatchEvent(Event) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 FAIL MouseEvent interface: attribute region assert_true: The prototype object must have a property "region" expected true got false
 FAIL Touch interface: attribute region assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL HTMLAllCollection interface: existence and properties of interface object assert_equals: class string of HTMLAllCollection expected "[object Function]" but got "[object HTMLAllCollectionConstructor]"
+FAIL HTMLAllCollection interface: existence and properties of interface object assert_equals: prototype of HTMLAllCollection is not HTMLCollection expected function "function HTMLCollection() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS HTMLAllCollection interface object length 
 PASS HTMLAllCollection interface object name 
 FAIL HTMLAllCollection interface: existence and properties of interface prototype object assert_equals: prototype of HTMLAllCollection.prototype is not HTMLCollection.prototype expected object "[object HTMLCollectionPrototype]" but got object "[object Object]"
@@ -772,7 +776,7 @@ FAIL HTMLCollection interface: document.all must inherit property "item" with th
 FAIL HTMLCollection interface: calling item(unsigned long) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL HTMLCollection interface: document.all must inherit property "namedItem" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL HTMLCollection interface: calling namedItem(DOMString) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLFormControlsCollection interface: existence and properties of interface object assert_equals: class string of HTMLFormControlsCollection expected "[object Function]" but got "[object HTMLFormControlsCollectionConstructor]"
+PASS HTMLFormControlsCollection interface: existence and properties of interface object 
 PASS HTMLFormControlsCollection interface object length 
 PASS HTMLFormControlsCollection interface object name 
 PASS HTMLFormControlsCollection interface: existence and properties of interface prototype object 
@@ -787,13 +791,13 @@ FAIL HTMLCollection interface: document.createElement("form").elements must inhe
 FAIL HTMLCollection interface: calling item(unsigned long) on document.createElement("form").elements with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLCollection interface: document.createElement("form").elements must inherit property "namedItem" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLCollection interface: calling namedItem(DOMString) on document.createElement("form").elements with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "object"
-FAIL RadioNodeList interface: existence and properties of interface object assert_equals: class string of RadioNodeList expected "[object Function]" but got "[object RadioNodeListConstructor]"
+PASS RadioNodeList interface: existence and properties of interface object 
 PASS RadioNodeList interface object length 
 PASS RadioNodeList interface object name 
 PASS RadioNodeList interface: existence and properties of interface prototype object 
 PASS RadioNodeList interface: existence and properties of interface prototype object's "constructor" property 
 PASS RadioNodeList interface: attribute value 
-FAIL HTMLOptionsCollection interface: existence and properties of interface object assert_equals: class string of HTMLOptionsCollection expected "[object Function]" but got "[object HTMLOptionsCollectionConstructor]"
+PASS HTMLOptionsCollection interface: existence and properties of interface object 
 PASS HTMLOptionsCollection interface object length 
 PASS HTMLOptionsCollection interface object name 
 PASS HTMLOptionsCollection interface: existence and properties of interface prototype object 
@@ -838,7 +842,7 @@ FAIL PropertyNodeList interface object name assert_own_property: self does not h
 FAIL PropertyNodeList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PropertyNodeList" expected property "PropertyNodeList" missing
 FAIL PropertyNodeList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PropertyNodeList" expected property "PropertyNodeList" missing
 FAIL PropertyNodeList interface: operation getValues() assert_own_property: self does not have own property "PropertyNodeList" expected property "PropertyNodeList" missing
-FAIL DOMStringMap interface: existence and properties of interface object assert_equals: class string of DOMStringMap expected "[object Function]" but got "[object DOMStringMapConstructor]"
+PASS DOMStringMap interface: existence and properties of interface object 
 PASS DOMStringMap interface object length 
 PASS DOMStringMap interface object name 
 PASS DOMStringMap interface: existence and properties of interface prototype object 
@@ -852,7 +856,7 @@ FAIL DOMElementMap interface: existence and properties of interface prototype ob
 FAIL DOMElementMap interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DOMElementMap" expected property "DOMElementMap" missing
 FAIL DOMElementMap must be primary interface of document.cssElementMap assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL Stringification of document.cssElementMap assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL HTMLElement interface: existence and properties of interface object assert_equals: class string of HTMLElement expected "[object Function]" but got "[object HTMLElementConstructor]"
+PASS HTMLElement interface: existence and properties of interface object 
 PASS HTMLElement interface object length 
 PASS HTMLElement interface object name 
 PASS HTMLElement interface: existence and properties of interface prototype object 
@@ -1300,7 +1304,7 @@ PASS HTMLElement must be primary interface of document.createElement("summary")
 PASS Stringification of document.createElement("summary") 
 PASS HTMLElement must be primary interface of document.createElement("acronym") 
 PASS Stringification of document.createElement("acronym") 
-FAIL HTMLUnknownElement interface: existence and properties of interface object assert_equals: class string of HTMLUnknownElement expected "[object Function]" but got "[object HTMLUnknownElementConstructor]"
+PASS HTMLUnknownElement interface: existence and properties of interface object 
 PASS HTMLUnknownElement interface object length 
 PASS HTMLUnknownElement interface object name 
 PASS HTMLUnknownElement interface: existence and properties of interface prototype object 
@@ -1327,7 +1331,7 @@ PASS HTMLUnknownElement must be primary interface of document.createElement("dir
 PASS Stringification of document.createElement("directory") 
 PASS HTMLUnknownElement must be primary interface of document.createElement("mod") 
 PASS Stringification of document.createElement("mod") 
-FAIL HTMLHtmlElement interface: existence and properties of interface object assert_equals: class string of HTMLHtmlElement expected "[object Function]" but got "[object HTMLHtmlElementConstructor]"
+PASS HTMLHtmlElement interface: existence and properties of interface object 
 PASS HTMLHtmlElement interface object length 
 PASS HTMLHtmlElement interface object name 
 PASS HTMLHtmlElement interface: existence and properties of interface prototype object 
@@ -1336,14 +1340,14 @@ PASS HTMLHtmlElement interface: attribute version
 PASS HTMLHtmlElement must be primary interface of document.createElement("html") 
 PASS Stringification of document.createElement("html") 
 PASS HTMLHtmlElement interface: document.createElement("html") must inherit property "version" with the proper type (0) 
-FAIL HTMLHeadElement interface: existence and properties of interface object assert_equals: class string of HTMLHeadElement expected "[object Function]" but got "[object HTMLHeadElementConstructor]"
+PASS HTMLHeadElement interface: existence and properties of interface object 
 PASS HTMLHeadElement interface object length 
 PASS HTMLHeadElement interface object name 
 PASS HTMLHeadElement interface: existence and properties of interface prototype object 
 PASS HTMLHeadElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLHeadElement must be primary interface of document.createElement("head") 
 PASS Stringification of document.createElement("head") 
-FAIL HTMLTitleElement interface: existence and properties of interface object assert_equals: class string of HTMLTitleElement expected "[object Function]" but got "[object HTMLTitleElementConstructor]"
+PASS HTMLTitleElement interface: existence and properties of interface object 
 PASS HTMLTitleElement interface object length 
 PASS HTMLTitleElement interface object name 
 PASS HTMLTitleElement interface: existence and properties of interface prototype object 
@@ -1352,7 +1356,7 @@ PASS HTMLTitleElement interface: attribute text
 PASS HTMLTitleElement must be primary interface of document.createElement("title") 
 PASS Stringification of document.createElement("title") 
 PASS HTMLTitleElement interface: document.createElement("title") must inherit property "text" with the proper type (0) 
-FAIL HTMLBaseElement interface: existence and properties of interface object assert_equals: class string of HTMLBaseElement expected "[object Function]" but got "[object HTMLBaseElementConstructor]"
+PASS HTMLBaseElement interface: existence and properties of interface object 
 PASS HTMLBaseElement interface object length 
 PASS HTMLBaseElement interface object name 
 PASS HTMLBaseElement interface: existence and properties of interface prototype object 
@@ -1363,7 +1367,7 @@ PASS HTMLBaseElement must be primary interface of document.createElement("base")
 PASS Stringification of document.createElement("base") 
 PASS HTMLBaseElement interface: document.createElement("base") must inherit property "href" with the proper type (0) 
 PASS HTMLBaseElement interface: document.createElement("base") must inherit property "target" with the proper type (1) 
-FAIL HTMLLinkElement interface: existence and properties of interface object assert_equals: class string of HTMLLinkElement expected "[object Function]" but got "[object HTMLLinkElementConstructor]"
+PASS HTMLLinkElement interface: existence and properties of interface object 
 PASS HTMLLinkElement interface object length 
 PASS HTMLLinkElement interface object name 
 PASS HTMLLinkElement interface: existence and properties of interface prototype object 
@@ -1393,7 +1397,7 @@ PASS HTMLLinkElement interface: document.createElement("link") must inherit prop
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "rev" with the proper type (9) 
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "target" with the proper type (10) 
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "sheet" with the proper type (11) 
-FAIL HTMLMetaElement interface: existence and properties of interface object assert_equals: class string of HTMLMetaElement expected "[object Function]" but got "[object HTMLMetaElementConstructor]"
+PASS HTMLMetaElement interface: existence and properties of interface object 
 PASS HTMLMetaElement interface object length 
 PASS HTMLMetaElement interface object name 
 PASS HTMLMetaElement interface: existence and properties of interface prototype object 
@@ -1408,7 +1412,7 @@ PASS HTMLMetaElement interface: document.createElement("meta") must inherit prop
 PASS HTMLMetaElement interface: document.createElement("meta") must inherit property "httpEquiv" with the proper type (1) 
 PASS HTMLMetaElement interface: document.createElement("meta") must inherit property "content" with the proper type (2) 
 PASS HTMLMetaElement interface: document.createElement("meta") must inherit property "scheme" with the proper type (3) 
-FAIL HTMLStyleElement interface: existence and properties of interface object assert_equals: class string of HTMLStyleElement expected "[object Function]" but got "[object HTMLStyleElementConstructor]"
+PASS HTMLStyleElement interface: existence and properties of interface object 
 PASS HTMLStyleElement interface object length 
 PASS HTMLStyleElement interface object name 
 PASS HTMLStyleElement interface: existence and properties of interface prototype object 
@@ -1422,7 +1426,7 @@ PASS HTMLStyleElement interface: document.createElement("style") must inherit pr
 PASS HTMLStyleElement interface: document.createElement("style") must inherit property "type" with the proper type (1) 
 FAIL HTMLStyleElement interface: document.createElement("style") must inherit property "scoped" with the proper type (2) assert_inherits: property "scoped" not found in prototype chain
 PASS HTMLStyleElement interface: document.createElement("style") must inherit property "sheet" with the proper type (3) 
-FAIL HTMLBodyElement interface: existence and properties of interface object assert_equals: class string of HTMLBodyElement expected "[object Function]" but got "[object HTMLBodyElementConstructor]"
+PASS HTMLBodyElement interface: existence and properties of interface object 
 PASS HTMLBodyElement interface object length 
 PASS HTMLBodyElement interface object name 
 PASS HTMLBodyElement interface: existence and properties of interface prototype object 
@@ -1467,7 +1471,7 @@ PASS HTMLBodyElement interface: document.createElement("body") must inherit prop
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onpopstate" with the proper type (16) 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onstorage" with the proper type (17) 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onunload" with the proper type (18) 
-FAIL HTMLHeadingElement interface: existence and properties of interface object assert_equals: class string of HTMLHeadingElement expected "[object Function]" but got "[object HTMLHeadingElementConstructor]"
+PASS HTMLHeadingElement interface: existence and properties of interface object 
 PASS HTMLHeadingElement interface object length 
 PASS HTMLHeadingElement interface object name 
 PASS HTMLHeadingElement interface: existence and properties of interface prototype object 
@@ -1491,7 +1495,7 @@ PASS HTMLHeadingElement interface: document.createElement("h5") must inherit pro
 PASS HTMLHeadingElement must be primary interface of document.createElement("h6") 
 PASS Stringification of document.createElement("h6") 
 PASS HTMLHeadingElement interface: document.createElement("h6") must inherit property "align" with the proper type (0) 
-FAIL HTMLParagraphElement interface: existence and properties of interface object assert_equals: class string of HTMLParagraphElement expected "[object Function]" but got "[object HTMLParagraphElementConstructor]"
+PASS HTMLParagraphElement interface: existence and properties of interface object 
 PASS HTMLParagraphElement interface object length 
 PASS HTMLParagraphElement interface object name 
 PASS HTMLParagraphElement interface: existence and properties of interface prototype object 
@@ -1500,7 +1504,7 @@ PASS HTMLParagraphElement interface: attribute align
 PASS HTMLParagraphElement must be primary interface of document.createElement("p") 
 PASS Stringification of document.createElement("p") 
 PASS HTMLParagraphElement interface: document.createElement("p") must inherit property "align" with the proper type (0) 
-FAIL HTMLHRElement interface: existence and properties of interface object assert_equals: class string of HTMLHRElement expected "[object Function]" but got "[object HTMLHRElementConstructor]"
+PASS HTMLHRElement interface: existence and properties of interface object 
 PASS HTMLHRElement interface object length 
 PASS HTMLHRElement interface object name 
 PASS HTMLHRElement interface: existence and properties of interface prototype object 
@@ -1517,7 +1521,7 @@ FAIL HTMLHRElement interface: document.createElement("hr") must inherit property
 PASS HTMLHRElement interface: document.createElement("hr") must inherit property "noShade" with the proper type (2) 
 PASS HTMLHRElement interface: document.createElement("hr") must inherit property "size" with the proper type (3) 
 PASS HTMLHRElement interface: document.createElement("hr") must inherit property "width" with the proper type (4) 
-FAIL HTMLPreElement interface: existence and properties of interface object assert_equals: class string of HTMLPreElement expected "[object Function]" but got "[object HTMLPreElementConstructor]"
+PASS HTMLPreElement interface: existence and properties of interface object 
 PASS HTMLPreElement interface object length 
 PASS HTMLPreElement interface object name 
 PASS HTMLPreElement interface: existence and properties of interface prototype object 
@@ -1535,7 +1539,7 @@ FAIL HTMLPreElement interface: document.createElement("plaintext") must inherit 
 PASS HTMLPreElement must be primary interface of document.createElement("xmp") 
 PASS Stringification of document.createElement("xmp") 
 PASS HTMLPreElement interface: document.createElement("xmp") must inherit property "width" with the proper type (0) 
-FAIL HTMLQuoteElement interface: existence and properties of interface object assert_equals: class string of HTMLQuoteElement expected "[object Function]" but got "[object HTMLQuoteElementConstructor]"
+PASS HTMLQuoteElement interface: existence and properties of interface object 
 PASS HTMLQuoteElement interface object length 
 PASS HTMLQuoteElement interface object name 
 PASS HTMLQuoteElement interface: existence and properties of interface prototype object 
@@ -1547,7 +1551,7 @@ PASS HTMLQuoteElement interface: document.createElement("blockquote") must inher
 PASS HTMLQuoteElement must be primary interface of document.createElement("q") 
 PASS Stringification of document.createElement("q") 
 PASS HTMLQuoteElement interface: document.createElement("q") must inherit property "cite" with the proper type (0) 
-FAIL HTMLOListElement interface: existence and properties of interface object assert_equals: class string of HTMLOListElement expected "[object Function]" but got "[object HTMLOListElementConstructor]"
+PASS HTMLOListElement interface: existence and properties of interface object 
 PASS HTMLOListElement interface object length 
 PASS HTMLOListElement interface object name 
 PASS HTMLOListElement interface: existence and properties of interface prototype object 
@@ -1556,14 +1560,14 @@ PASS HTMLOListElement interface: attribute reversed
 PASS HTMLOListElement interface: attribute start 
 PASS HTMLOListElement interface: attribute type 
 PASS HTMLOListElement interface: attribute compact 
-FAIL HTMLUListElement interface: existence and properties of interface object assert_equals: class string of HTMLUListElement expected "[object Function]" but got "[object HTMLUListElementConstructor]"
+PASS HTMLUListElement interface: existence and properties of interface object 
 PASS HTMLUListElement interface object length 
 PASS HTMLUListElement interface object name 
 PASS HTMLUListElement interface: existence and properties of interface prototype object 
 PASS HTMLUListElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLUListElement interface: attribute compact 
 PASS HTMLUListElement interface: attribute type 
-FAIL HTMLLIElement interface: existence and properties of interface object assert_equals: class string of HTMLLIElement expected "[object Function]" but got "[object HTMLLIElementConstructor]"
+PASS HTMLLIElement interface: existence and properties of interface object 
 PASS HTMLLIElement interface object length 
 PASS HTMLLIElement interface object name 
 PASS HTMLLIElement interface: existence and properties of interface prototype object 
@@ -1574,13 +1578,13 @@ PASS HTMLLIElement must be primary interface of document.createElement("li")
 PASS Stringification of document.createElement("li") 
 PASS HTMLLIElement interface: document.createElement("li") must inherit property "value" with the proper type (0) 
 PASS HTMLLIElement interface: document.createElement("li") must inherit property "type" with the proper type (1) 
-FAIL HTMLDListElement interface: existence and properties of interface object assert_equals: class string of HTMLDListElement expected "[object Function]" but got "[object HTMLDListElementConstructor]"
+PASS HTMLDListElement interface: existence and properties of interface object 
 PASS HTMLDListElement interface object length 
 PASS HTMLDListElement interface object name 
 PASS HTMLDListElement interface: existence and properties of interface prototype object 
 PASS HTMLDListElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLDListElement interface: attribute compact 
-FAIL HTMLDivElement interface: existence and properties of interface object assert_equals: class string of HTMLDivElement expected "[object Function]" but got "[object HTMLDivElementConstructor]"
+PASS HTMLDivElement interface: existence and properties of interface object 
 PASS HTMLDivElement interface object length 
 PASS HTMLDivElement interface object name 
 PASS HTMLDivElement interface: existence and properties of interface prototype object 
@@ -1589,7 +1593,7 @@ PASS HTMLDivElement interface: attribute align
 PASS HTMLDivElement must be primary interface of document.createElement("div") 
 PASS Stringification of document.createElement("div") 
 PASS HTMLDivElement interface: document.createElement("div") must inherit property "align" with the proper type (0) 
-FAIL HTMLAnchorElement interface: existence and properties of interface object assert_equals: class string of HTMLAnchorElement expected "[object Function]" but got "[object HTMLAnchorElementConstructor]"
+PASS HTMLAnchorElement interface: existence and properties of interface object 
 PASS HTMLAnchorElement interface object length 
 PASS HTMLAnchorElement interface object name 
 PASS HTMLAnchorElement interface: existence and properties of interface prototype object 
@@ -1644,7 +1648,7 @@ PASS HTMLAnchorElement interface: document.createElement("a") must inherit prope
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "pathname" with the proper type (21) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "search" with the proper type (22) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "hash" with the proper type (23) 
-FAIL HTMLDataElement interface: existence and properties of interface object assert_equals: class string of HTMLDataElement expected "[object Function]" but got "[object HTMLDataElementConstructor]"
+PASS HTMLDataElement interface: existence and properties of interface object 
 PASS HTMLDataElement interface object length 
 PASS HTMLDataElement interface object name 
 PASS HTMLDataElement interface: existence and properties of interface prototype object 
@@ -1653,7 +1657,7 @@ PASS HTMLDataElement interface: attribute value
 PASS HTMLDataElement must be primary interface of document.createElement("data") 
 PASS Stringification of document.createElement("data") 
 PASS HTMLDataElement interface: document.createElement("data") must inherit property "value" with the proper type (0) 
-FAIL HTMLTimeElement interface: existence and properties of interface object assert_equals: class string of HTMLTimeElement expected "[object Function]" but got "[object HTMLTimeElementConstructor]"
+PASS HTMLTimeElement interface: existence and properties of interface object 
 PASS HTMLTimeElement interface object length 
 PASS HTMLTimeElement interface object name 
 PASS HTMLTimeElement interface: existence and properties of interface prototype object 
@@ -1662,14 +1666,14 @@ PASS HTMLTimeElement interface: attribute dateTime
 PASS HTMLTimeElement must be primary interface of document.createElement("time") 
 PASS Stringification of document.createElement("time") 
 PASS HTMLTimeElement interface: document.createElement("time") must inherit property "dateTime" with the proper type (0) 
-FAIL HTMLSpanElement interface: existence and properties of interface object assert_equals: class string of HTMLSpanElement expected "[object Function]" but got "[object HTMLSpanElementConstructor]"
+PASS HTMLSpanElement interface: existence and properties of interface object 
 PASS HTMLSpanElement interface object length 
 PASS HTMLSpanElement interface object name 
 PASS HTMLSpanElement interface: existence and properties of interface prototype object 
 PASS HTMLSpanElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLSpanElement must be primary interface of document.createElement("span") 
 PASS Stringification of document.createElement("span") 
-FAIL HTMLBRElement interface: existence and properties of interface object assert_equals: class string of HTMLBRElement expected "[object Function]" but got "[object HTMLBRElementConstructor]"
+PASS HTMLBRElement interface: existence and properties of interface object 
 PASS HTMLBRElement interface object length 
 PASS HTMLBRElement interface object name 
 PASS HTMLBRElement interface: existence and properties of interface prototype object 
@@ -1678,7 +1682,7 @@ PASS HTMLBRElement interface: attribute clear
 PASS HTMLBRElement must be primary interface of document.createElement("br") 
 PASS Stringification of document.createElement("br") 
 PASS HTMLBRElement interface: document.createElement("br") must inherit property "clear" with the proper type (0) 
-FAIL HTMLModElement interface: existence and properties of interface object assert_equals: class string of HTMLModElement expected "[object Function]" but got "[object HTMLModElementConstructor]"
+PASS HTMLModElement interface: existence and properties of interface object 
 PASS HTMLModElement interface object length 
 PASS HTMLModElement interface object name 
 PASS HTMLModElement interface: existence and properties of interface prototype object 
@@ -1693,14 +1697,14 @@ PASS HTMLModElement must be primary interface of document.createElement("del")
 PASS Stringification of document.createElement("del") 
 PASS HTMLModElement interface: document.createElement("del") must inherit property "cite" with the proper type (0) 
 PASS HTMLModElement interface: document.createElement("del") must inherit property "dateTime" with the proper type (1) 
-FAIL HTMLPictureElement interface: existence and properties of interface object assert_equals: class string of HTMLPictureElement expected "[object Function]" but got "[object HTMLPictureElementConstructor]"
+PASS HTMLPictureElement interface: existence and properties of interface object 
 PASS HTMLPictureElement interface object length 
 PASS HTMLPictureElement interface object name 
 PASS HTMLPictureElement interface: existence and properties of interface prototype object 
 PASS HTMLPictureElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLPictureElement must be primary interface of document.createElement("picture") 
 PASS Stringification of document.createElement("picture") 
-FAIL HTMLImageElement interface: existence and properties of interface object assert_equals: class string of HTMLImageElement expected "[object Function]" but got "[object HTMLImageElementConstructor]"
+PASS HTMLImageElement interface: existence and properties of interface object 
 PASS HTMLImageElement interface object length 
 PASS HTMLImageElement interface object name 
 PASS HTMLImageElement interface: existence and properties of interface prototype object 
@@ -1769,7 +1773,7 @@ PASS HTMLImageElement interface: new Image() must inherit property "hspace" with
 PASS HTMLImageElement interface: new Image() must inherit property "vspace" with the proper type (17) 
 PASS HTMLImageElement interface: new Image() must inherit property "longDesc" with the proper type (18) 
 PASS HTMLImageElement interface: new Image() must inherit property "border" with the proper type (19) 
-FAIL HTMLIFrameElement interface: existence and properties of interface object assert_equals: class string of HTMLIFrameElement expected "[object Function]" but got "[object HTMLIFrameElementConstructor]"
+PASS HTMLIFrameElement interface: existence and properties of interface object 
 PASS HTMLIFrameElement interface object length 
 PASS HTMLIFrameElement interface object name 
 PASS HTMLIFrameElement interface: existence and properties of interface prototype object 
@@ -1790,7 +1794,7 @@ PASS HTMLIFrameElement interface: attribute frameBorder
 PASS HTMLIFrameElement interface: attribute longDesc 
 PASS HTMLIFrameElement interface: attribute marginHeight 
 PASS HTMLIFrameElement interface: attribute marginWidth 
-FAIL HTMLEmbedElement interface: existence and properties of interface object assert_equals: class string of HTMLEmbedElement expected "[object Function]" but got "[object HTMLEmbedElementConstructor]"
+PASS HTMLEmbedElement interface: existence and properties of interface object 
 PASS HTMLEmbedElement interface object length 
 PASS HTMLEmbedElement interface object name 
 PASS HTMLEmbedElement interface: existence and properties of interface prototype object 
@@ -1811,7 +1815,7 @@ FAIL HTMLEmbedElement interface: document.createElement("embed") must inherit pr
 FAIL HTMLEmbedElement interface: document.createElement("embed") must inherit property "getSVGDocument" with the proper type (4) assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLEmbedElement interface: document.createElement("embed") must inherit property "align" with the proper type (6) assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLEmbedElement interface: document.createElement("embed") must inherit property "name" with the proper type (7) assert_equals: wrong typeof object expected "function" but got "object"
-FAIL HTMLObjectElement interface: existence and properties of interface object assert_equals: class string of HTMLObjectElement expected "[object Function]" but got "[object HTMLObjectElementConstructor]"
+PASS HTMLObjectElement interface: existence and properties of interface object 
 PASS HTMLObjectElement interface object length 
 PASS HTMLObjectElement interface object name 
 PASS HTMLObjectElement interface: existence and properties of interface prototype object 
@@ -1871,7 +1875,7 @@ FAIL HTMLObjectElement interface: document.createElement("object") must inherit 
 FAIL HTMLObjectElement interface: document.createElement("object") must inherit property "codeBase" with the proper type (24) assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLObjectElement interface: document.createElement("object") must inherit property "codeType" with the proper type (25) assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLObjectElement interface: document.createElement("object") must inherit property "border" with the proper type (26) assert_equals: wrong typeof object expected "function" but got "object"
-FAIL HTMLParamElement interface: existence and properties of interface object assert_equals: class string of HTMLParamElement expected "[object Function]" but got "[object HTMLParamElementConstructor]"
+PASS HTMLParamElement interface: existence and properties of interface object 
 PASS HTMLParamElement interface object length 
 PASS HTMLParamElement interface object name 
 PASS HTMLParamElement interface: existence and properties of interface prototype object 
@@ -1886,7 +1890,7 @@ PASS HTMLParamElement interface: document.createElement("param") must inherit pr
 PASS HTMLParamElement interface: document.createElement("param") must inherit property "value" with the proper type (1) 
 PASS HTMLParamElement interface: document.createElement("param") must inherit property "type" with the proper type (2) 
 PASS HTMLParamElement interface: document.createElement("param") must inherit property "valueType" with the proper type (3) 
-FAIL HTMLVideoElement interface: existence and properties of interface object assert_equals: class string of HTMLVideoElement expected "[object Function]" but got "[object HTMLVideoElementConstructor]"
+PASS HTMLVideoElement interface: existence and properties of interface object 
 PASS HTMLVideoElement interface object length 
 PASS HTMLVideoElement interface object name 
 PASS HTMLVideoElement interface: existence and properties of interface prototype object 
@@ -1952,7 +1956,7 @@ PASS HTMLMediaElement interface: document.createElement("video") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "textTracks" with the proper type (42) 
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "addTextTrack" with the proper type (43) 
 PASS HTMLMediaElement interface: calling addTextTrack(TextTrackKind,DOMString,DOMString) on document.createElement("video") with too few arguments must throw TypeError 
-FAIL HTMLAudioElement interface: existence and properties of interface object assert_equals: class string of HTMLAudioElement expected "[object Function]" but got "[object HTMLAudioElementConstructor]"
+PASS HTMLAudioElement interface: existence and properties of interface object 
 PASS HTMLAudioElement interface object length 
 PASS HTMLAudioElement interface object name 
 PASS HTMLAudioElement interface: existence and properties of interface prototype object 
@@ -2059,7 +2063,7 @@ PASS HTMLMediaElement interface: new Audio() must inherit property "videoTracks"
 PASS HTMLMediaElement interface: new Audio() must inherit property "textTracks" with the proper type (42) 
 PASS HTMLMediaElement interface: new Audio() must inherit property "addTextTrack" with the proper type (43) 
 PASS HTMLMediaElement interface: calling addTextTrack(TextTrackKind,DOMString,DOMString) on new Audio() with too few arguments must throw TypeError 
-FAIL HTMLSourceElement interface: existence and properties of interface object assert_equals: class string of HTMLSourceElement expected "[object Function]" but got "[object HTMLSourceElementConstructor]"
+PASS HTMLSourceElement interface: existence and properties of interface object 
 PASS HTMLSourceElement interface object length 
 PASS HTMLSourceElement interface object name 
 PASS HTMLSourceElement interface: existence and properties of interface prototype object 
@@ -2076,7 +2080,7 @@ PASS HTMLSourceElement interface: document.createElement("source") must inherit 
 FAIL HTMLSourceElement interface: document.createElement("source") must inherit property "srcset" with the proper type (2) assert_inherits: property "srcset" not found in prototype chain
 FAIL HTMLSourceElement interface: document.createElement("source") must inherit property "sizes" with the proper type (3) assert_inherits: property "sizes" not found in prototype chain
 PASS HTMLSourceElement interface: document.createElement("source") must inherit property "media" with the proper type (4) 
-FAIL HTMLTrackElement interface: existence and properties of interface object assert_equals: class string of HTMLTrackElement expected "[object Function]" but got "[object HTMLTrackElementConstructor]"
+PASS HTMLTrackElement interface: existence and properties of interface object 
 PASS HTMLTrackElement interface object length 
 PASS HTMLTrackElement interface object name 
 PASS HTMLTrackElement interface: existence and properties of interface prototype object 
@@ -2109,7 +2113,7 @@ PASS HTMLTrackElement interface: document.createElement("track") must inherit pr
 PASS HTMLTrackElement interface: document.createElement("track") must inherit property "ERROR" with the proper type (8) 
 PASS HTMLTrackElement interface: document.createElement("track") must inherit property "readyState" with the proper type (9) 
 PASS HTMLTrackElement interface: document.createElement("track") must inherit property "track" with the proper type (10) 
-FAIL HTMLMediaElement interface: existence and properties of interface object assert_equals: class string of HTMLMediaElement expected "[object Function]" but got "[object HTMLMediaElementConstructor]"
+PASS HTMLMediaElement interface: existence and properties of interface object 
 PASS HTMLMediaElement interface object length 
 PASS HTMLMediaElement interface object name 
 PASS HTMLMediaElement interface: existence and properties of interface prototype object 
@@ -2167,7 +2171,7 @@ PASS HTMLMediaElement interface: attribute audioTracks
 PASS HTMLMediaElement interface: attribute videoTracks 
 PASS HTMLMediaElement interface: attribute textTracks 
 PASS HTMLMediaElement interface: operation addTextTrack(TextTrackKind,DOMString,DOMString) 
-FAIL MediaError interface: existence and properties of interface object assert_equals: class string of MediaError expected "[object Function]" but got "[object MediaErrorConstructor]"
+PASS MediaError interface: existence and properties of interface object 
 PASS MediaError interface object length 
 PASS MediaError interface object name 
 PASS MediaError interface: existence and properties of interface prototype object 
@@ -2229,7 +2233,11 @@ FAIL VideoTrack interface: attribute kind assert_own_property: self does not hav
 FAIL VideoTrack interface: attribute label assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
 FAIL VideoTrack interface: attribute language assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
 FAIL VideoTrack interface: attribute selected assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL MediaController interface: existence and properties of interface object assert_equals: class string of MediaController expected "[object Function]" but got "[object MediaControllerConstructor]"
+FAIL MediaController interface: existence and properties of interface object assert_equals: prototype of MediaController is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS MediaController interface object length 
 PASS MediaController interface object name 
 FAIL MediaController interface: existence and properties of interface prototype object assert_equals: prototype of MediaController.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
@@ -2304,7 +2312,11 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: new MediaController() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new MediaController() with too few arguments must throw TypeError 
-FAIL TextTrackList interface: existence and properties of interface object assert_equals: class string of TextTrackList expected "[object Function]" but got "[object TextTrackListConstructor]"
+FAIL TextTrackList interface: existence and properties of interface object assert_equals: prototype of TextTrackList is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS TextTrackList interface object length 
 PASS TextTrackList interface object name 
 FAIL TextTrackList interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackList.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
@@ -2332,7 +2344,11 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: document.createElement("video").textTracks must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createElement("video").textTracks with too few arguments must throw TypeError 
-FAIL TextTrack interface: existence and properties of interface object assert_equals: class string of TextTrack expected "[object Function]" but got "[object TextTrackConstructor]"
+FAIL TextTrack interface: existence and properties of interface object assert_equals: prototype of TextTrack is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS TextTrack interface object length 
 PASS TextTrack interface object name 
 FAIL TextTrack interface: existence and properties of interface prototype object assert_equals: prototype of TextTrack.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
@@ -2377,7 +2393,7 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: document.createElement("track").track must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createElement("track").track with too few arguments must throw TypeError 
-FAIL TextTrackCueList interface: existence and properties of interface object assert_equals: class string of TextTrackCueList expected "[object Function]" but got "[object TextTrackCueListConstructor]"
+PASS TextTrackCueList interface: existence and properties of interface object 
 PASS TextTrackCueList interface object length 
 PASS TextTrackCueList interface object name 
 PASS TextTrackCueList interface: existence and properties of interface prototype object 
@@ -2389,7 +2405,11 @@ PASS Stringification of document.createElement("video").addTextTrack("subtitles"
 FAIL TextTrackCueList interface: document.createElement("video").addTextTrack("subtitles").cues must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
 PASS TextTrackCueList interface: document.createElement("video").addTextTrack("subtitles").cues must inherit property "getCueById" with the proper type (2) 
 PASS TextTrackCueList interface: calling getCueById(DOMString) on document.createElement("video").addTextTrack("subtitles").cues with too few arguments must throw TypeError 
-FAIL TextTrackCue interface: existence and properties of interface object assert_equals: class string of TextTrackCue expected "[object Function]" but got "[object TextTrackCueConstructor]"
+FAIL TextTrackCue interface: existence and properties of interface object assert_equals: prototype of TextTrackCue is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 FAIL TextTrackCue interface object length assert_equals: wrong value for TextTrackCue.length expected 0 but got 3
 PASS TextTrackCue interface object name 
 FAIL TextTrackCue interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackCue.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
@@ -2401,7 +2421,7 @@ PASS TextTrackCue interface: attribute endTime
 PASS TextTrackCue interface: attribute pauseOnExit 
 PASS TextTrackCue interface: attribute onenter 
 PASS TextTrackCue interface: attribute onexit 
-FAIL TimeRanges interface: existence and properties of interface object assert_equals: class string of TimeRanges expected "[object Function]" but got "[object TimeRangesConstructor]"
+PASS TimeRanges interface: existence and properties of interface object 
 PASS TimeRanges interface object length 
 PASS TimeRanges interface object name 
 PASS TimeRanges interface: existence and properties of interface prototype object 
@@ -2416,7 +2436,7 @@ PASS TimeRanges interface: document.createElement("video").buffered must inherit
 PASS TimeRanges interface: calling start(unsigned long) on document.createElement("video").buffered with too few arguments must throw TypeError 
 PASS TimeRanges interface: document.createElement("video").buffered must inherit property "end" with the proper type (2) 
 PASS TimeRanges interface: calling end(unsigned long) on document.createElement("video").buffered with too few arguments must throw TypeError 
-FAIL TrackEvent interface: existence and properties of interface object assert_equals: class string of TrackEvent expected "[object Function]" but got "[object TrackEventConstructor]"
+PASS TrackEvent interface: existence and properties of interface object 
 PASS TrackEvent interface object length 
 PASS TrackEvent interface object name 
 PASS TrackEvent interface: existence and properties of interface prototype object 
@@ -2443,7 +2463,7 @@ FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("
 FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "timeStamp" with the proper type (15) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
 FAIL Event interface: new TrackEvent("addtrack"; {track:document.createElement("track").track}) must inherit property "initEvent" with the proper type (16) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new TrackEvent("addtrack"; {track:document.createElement("track").track}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
-FAIL HTMLMapElement interface: existence and properties of interface object assert_equals: class string of HTMLMapElement expected "[object Function]" but got "[object HTMLMapElementConstructor]"
+PASS HTMLMapElement interface: existence and properties of interface object 
 PASS HTMLMapElement interface object length 
 PASS HTMLMapElement interface object name 
 PASS HTMLMapElement interface: existence and properties of interface prototype object 
@@ -2456,7 +2476,7 @@ PASS Stringification of document.createElement("map")
 PASS HTMLMapElement interface: document.createElement("map") must inherit property "name" with the proper type (0) 
 PASS HTMLMapElement interface: document.createElement("map") must inherit property "areas" with the proper type (1) 
 FAIL HTMLMapElement interface: document.createElement("map") must inherit property "images" with the proper type (2) assert_inherits: property "images" not found in prototype chain
-FAIL HTMLAreaElement interface: existence and properties of interface object assert_equals: class string of HTMLAreaElement expected "[object Function]" but got "[object HTMLAreaElementConstructor]"
+PASS HTMLAreaElement interface: existence and properties of interface object 
 PASS HTMLAreaElement interface object length 
 PASS HTMLAreaElement interface object name 
 PASS HTMLAreaElement interface: existence and properties of interface prototype object 
@@ -2503,7 +2523,7 @@ PASS HTMLAreaElement interface: document.createElement("area") must inherit prop
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "pathname" with the proper type (17) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "search" with the proper type (18) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "hash" with the proper type (19) 
-FAIL HTMLTableElement interface: existence and properties of interface object assert_equals: class string of HTMLTableElement expected "[object Function]" but got "[object HTMLTableElementConstructor]"
+PASS HTMLTableElement interface: existence and properties of interface object 
 PASS HTMLTableElement interface object length 
 PASS HTMLTableElement interface object name 
 PASS HTMLTableElement interface: existence and properties of interface prototype object 
@@ -2564,7 +2584,7 @@ PASS HTMLTableElement interface: document.createElement("table") must inherit pr
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "bgColor" with the proper type (22) 
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "cellPadding" with the proper type (23) 
 PASS HTMLTableElement interface: document.createElement("table") must inherit property "cellSpacing" with the proper type (24) 
-FAIL HTMLTableCaptionElement interface: existence and properties of interface object assert_equals: class string of HTMLTableCaptionElement expected "[object Function]" but got "[object HTMLTableCaptionElementConstructor]"
+PASS HTMLTableCaptionElement interface: existence and properties of interface object 
 PASS HTMLTableCaptionElement interface object length 
 PASS HTMLTableCaptionElement interface object name 
 PASS HTMLTableCaptionElement interface: existence and properties of interface prototype object 
@@ -2573,7 +2593,7 @@ PASS HTMLTableCaptionElement interface: attribute align
 PASS HTMLTableCaptionElement must be primary interface of document.createElement("caption") 
 PASS Stringification of document.createElement("caption") 
 PASS HTMLTableCaptionElement interface: document.createElement("caption") must inherit property "align" with the proper type (0) 
-FAIL HTMLTableColElement interface: existence and properties of interface object assert_equals: class string of HTMLTableColElement expected "[object Function]" but got "[object HTMLTableColElementConstructor]"
+PASS HTMLTableColElement interface: existence and properties of interface object 
 PASS HTMLTableColElement interface object length 
 PASS HTMLTableColElement interface object name 
 PASS HTMLTableColElement interface: existence and properties of interface prototype object 
@@ -2600,7 +2620,7 @@ PASS HTMLTableColElement interface: document.createElement("col") must inherit p
 PASS HTMLTableColElement interface: document.createElement("col") must inherit property "chOff" with the proper type (3) 
 PASS HTMLTableColElement interface: document.createElement("col") must inherit property "vAlign" with the proper type (4) 
 PASS HTMLTableColElement interface: document.createElement("col") must inherit property "width" with the proper type (5) 
-FAIL HTMLTableSectionElement interface: existence and properties of interface object assert_equals: class string of HTMLTableSectionElement expected "[object Function]" but got "[object HTMLTableSectionElementConstructor]"
+PASS HTMLTableSectionElement interface: existence and properties of interface object 
 PASS HTMLTableSectionElement interface object length 
 PASS HTMLTableSectionElement interface object name 
 PASS HTMLTableSectionElement interface: existence and properties of interface prototype object 
@@ -2651,7 +2671,7 @@ PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inh
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "ch" with the proper type (4) 
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "chOff" with the proper type (5) 
 PASS HTMLTableSectionElement interface: document.createElement("tfoot") must inherit property "vAlign" with the proper type (6) 
-FAIL HTMLTableRowElement interface: existence and properties of interface object assert_equals: class string of HTMLTableRowElement expected "[object Function]" but got "[object HTMLTableRowElementConstructor]"
+PASS HTMLTableRowElement interface: existence and properties of interface object 
 PASS HTMLTableRowElement interface object length 
 PASS HTMLTableRowElement interface object name 
 PASS HTMLTableRowElement interface: existence and properties of interface prototype object 
@@ -2682,7 +2702,7 @@ PASS HTMLTableRowElement interface: document.createElement("tr") must inherit pr
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "chOff" with the proper type (7) 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "vAlign" with the proper type (8) 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "bgColor" with the proper type (9) 
-FAIL HTMLTableDataCellElement interface: existence and properties of interface object assert_equals: class string of HTMLTableDataCellElement expected "[object Function]" but got "[object HTMLTableDataCellElementConstructor]"
+PASS HTMLTableDataCellElement interface: existence and properties of interface object 
 PASS HTMLTableDataCellElement interface object length 
 PASS HTMLTableDataCellElement interface object name 
 PASS HTMLTableDataCellElement interface: existence and properties of interface prototype object 
@@ -2704,7 +2724,7 @@ PASS HTMLTableCellElement interface: document.createElement("td") must inherit p
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "noWrap" with the proper type (10) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "vAlign" with the proper type (11) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "bgColor" with the proper type (12) 
-FAIL HTMLTableHeaderCellElement interface: existence and properties of interface object assert_equals: class string of HTMLTableHeaderCellElement expected "[object Function]" but got "[object HTMLTableHeaderCellElementConstructor]"
+PASS HTMLTableHeaderCellElement interface: existence and properties of interface object 
 PASS HTMLTableHeaderCellElement interface object length 
 PASS HTMLTableHeaderCellElement interface object name 
 PASS HTMLTableHeaderCellElement interface: existence and properties of interface prototype object 
@@ -2732,7 +2752,7 @@ PASS HTMLTableCellElement interface: document.createElement("th") must inherit p
 PASS HTMLTableCellElement interface: document.createElement("th") must inherit property "noWrap" with the proper type (10) 
 PASS HTMLTableCellElement interface: document.createElement("th") must inherit property "vAlign" with the proper type (11) 
 PASS HTMLTableCellElement interface: document.createElement("th") must inherit property "bgColor" with the proper type (12) 
-FAIL HTMLTableCellElement interface: existence and properties of interface object assert_equals: class string of HTMLTableCellElement expected "[object Function]" but got "[object HTMLTableCellElementConstructor]"
+PASS HTMLTableCellElement interface: existence and properties of interface object 
 PASS HTMLTableCellElement interface object length 
 PASS HTMLTableCellElement interface object name 
 PASS HTMLTableCellElement interface: existence and properties of interface prototype object 
@@ -2750,7 +2770,7 @@ PASS HTMLTableCellElement interface: attribute chOff
 PASS HTMLTableCellElement interface: attribute noWrap 
 PASS HTMLTableCellElement interface: attribute vAlign 
 PASS HTMLTableCellElement interface: attribute bgColor 
-FAIL HTMLFormElement interface: existence and properties of interface object assert_equals: class string of HTMLFormElement expected "[object Function]" but got "[object HTMLFormElementConstructor]"
+PASS HTMLFormElement interface: existence and properties of interface object 
 PASS HTMLFormElement interface object length 
 PASS HTMLFormElement interface object name 
 PASS HTMLFormElement interface: existence and properties of interface prototype object 
@@ -2789,7 +2809,7 @@ PASS HTMLFormElement interface: document.createElement("form") must inherit prop
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "checkValidity" with the proper type (15) 
 FAIL HTMLFormElement interface: document.createElement("form") must inherit property "reportValidity" with the proper type (16) assert_inherits: property "reportValidity" not found in prototype chain
 FAIL HTMLFormElement interface: document.createElement("form") must inherit property "requestAutocomplete" with the proper type (17) assert_inherits: property "requestAutocomplete" not found in prototype chain
-FAIL HTMLLabelElement interface: existence and properties of interface object assert_equals: class string of HTMLLabelElement expected "[object Function]" but got "[object HTMLLabelElementConstructor]"
+PASS HTMLLabelElement interface: existence and properties of interface object 
 PASS HTMLLabelElement interface object length 
 PASS HTMLLabelElement interface object name 
 PASS HTMLLabelElement interface: existence and properties of interface prototype object 
@@ -2802,7 +2822,7 @@ PASS Stringification of document.createElement("label")
 PASS HTMLLabelElement interface: document.createElement("label") must inherit property "form" with the proper type (0) 
 PASS HTMLLabelElement interface: document.createElement("label") must inherit property "htmlFor" with the proper type (1) 
 PASS HTMLLabelElement interface: document.createElement("label") must inherit property "control" with the proper type (2) 
-FAIL HTMLInputElement interface: existence and properties of interface object assert_equals: class string of HTMLInputElement expected "[object Function]" but got "[object HTMLInputElementConstructor]"
+PASS HTMLInputElement interface: existence and properties of interface object 
 PASS HTMLInputElement interface object length 
 PASS HTMLInputElement interface object name 
 PASS HTMLInputElement interface: existence and properties of interface prototype object 
@@ -2935,7 +2955,7 @@ FAIL HTMLInputElement interface: calling setSelectionRange(unsigned long,unsigne
 }" did not throw
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "align" with the proper type (56) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "useMap" with the proper type (57) 
-FAIL HTMLButtonElement interface: existence and properties of interface object assert_equals: class string of HTMLButtonElement expected "[object Function]" but got "[object HTMLButtonElementConstructor]"
+PASS HTMLButtonElement interface: existence and properties of interface object 
 PASS HTMLButtonElement interface object length 
 PASS HTMLButtonElement interface object name 
 PASS HTMLButtonElement interface: existence and properties of interface prototype object 
@@ -2981,7 +3001,7 @@ FAIL HTMLButtonElement interface: document.createElement("button") must inherit 
 PASS HTMLButtonElement interface: document.createElement("button") must inherit property "setCustomValidity" with the proper type (17) 
 PASS HTMLButtonElement interface: calling setCustomValidity(DOMString) on document.createElement("button") with too few arguments must throw TypeError 
 PASS HTMLButtonElement interface: document.createElement("button") must inherit property "labels" with the proper type (18) 
-FAIL HTMLSelectElement interface: existence and properties of interface object assert_equals: class string of HTMLSelectElement expected "[object Function]" but got "[object HTMLSelectElementConstructor]"
+PASS HTMLSelectElement interface: existence and properties of interface object 
 PASS HTMLSelectElement interface object length 
 PASS HTMLSelectElement interface object name 
 PASS HTMLSelectElement interface: existence and properties of interface prototype object 
@@ -3056,7 +3076,7 @@ FAIL HTMLDataListElement interface: attribute options assert_own_property: self 
 FAIL HTMLDataListElement must be primary interface of document.createElement("datalist") assert_own_property: self does not have own property "HTMLDataListElement" expected property "HTMLDataListElement" missing
 FAIL Stringification of document.createElement("datalist") assert_equals: class string of document.createElement("datalist") expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
 FAIL HTMLDataListElement interface: document.createElement("datalist") must inherit property "options" with the proper type (0) assert_inherits: property "options" not found in prototype chain
-FAIL HTMLOptGroupElement interface: existence and properties of interface object assert_equals: class string of HTMLOptGroupElement expected "[object Function]" but got "[object HTMLOptGroupElementConstructor]"
+PASS HTMLOptGroupElement interface: existence and properties of interface object 
 PASS HTMLOptGroupElement interface object length 
 PASS HTMLOptGroupElement interface object name 
 PASS HTMLOptGroupElement interface: existence and properties of interface prototype object 
@@ -3067,7 +3087,7 @@ PASS HTMLOptGroupElement must be primary interface of document.createElement("op
 PASS Stringification of document.createElement("optgroup") 
 PASS HTMLOptGroupElement interface: document.createElement("optgroup") must inherit property "disabled" with the proper type (0) 
 PASS HTMLOptGroupElement interface: document.createElement("optgroup") must inherit property "label" with the proper type (1) 
-FAIL HTMLOptionElement interface: existence and properties of interface object assert_equals: class string of HTMLOptionElement expected "[object Function]" but got "[object HTMLOptionElementConstructor]"
+PASS HTMLOptionElement interface: existence and properties of interface object 
 PASS HTMLOptionElement interface object length 
 PASS HTMLOptionElement interface object name 
 PASS HTMLOptionElement interface: existence and properties of interface prototype object 
@@ -3100,7 +3120,7 @@ PASS HTMLOptionElement interface: new Option() must inherit property "selected" 
 PASS HTMLOptionElement interface: new Option() must inherit property "value" with the proper type (5) 
 PASS HTMLOptionElement interface: new Option() must inherit property "text" with the proper type (6) 
 PASS HTMLOptionElement interface: new Option() must inherit property "index" with the proper type (7) 
-FAIL HTMLTextAreaElement interface: existence and properties of interface object assert_equals: class string of HTMLTextAreaElement expected "[object Function]" but got "[object HTMLTextAreaElementConstructor]"
+PASS HTMLTextAreaElement interface: existence and properties of interface object 
 PASS HTMLTextAreaElement interface object length 
 PASS HTMLTextAreaElement interface object name 
 PASS HTMLTextAreaElement interface: existence and properties of interface prototype object 
@@ -3179,7 +3199,7 @@ PASS HTMLTextAreaElement interface: document.createElement("textarea") must inhe
 FAIL HTMLTextAreaElement interface: calling setSelectionRange(unsigned long,unsigned long,DOMString) on document.createElement("textarea") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL HTMLKeygenElement interface: existence and properties of interface object assert_equals: class string of HTMLKeygenElement expected "[object Function]" but got "[object HTMLKeygenElementConstructor]"
+PASS HTMLKeygenElement interface: existence and properties of interface object 
 PASS HTMLKeygenElement interface object length 
 PASS HTMLKeygenElement interface object name 
 PASS HTMLKeygenElement interface: existence and properties of interface prototype object 
@@ -3215,7 +3235,7 @@ FAIL HTMLKeygenElement interface: document.createElement("keygen") must inherit 
 PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit property "setCustomValidity" with the proper type (12) 
 PASS HTMLKeygenElement interface: calling setCustomValidity(DOMString) on document.createElement("keygen") with too few arguments must throw TypeError 
 PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit property "labels" with the proper type (13) 
-FAIL HTMLOutputElement interface: existence and properties of interface object assert_equals: class string of HTMLOutputElement expected "[object Function]" but got "[object HTMLOutputElementConstructor]"
+PASS HTMLOutputElement interface: existence and properties of interface object 
 PASS HTMLOutputElement interface object length 
 PASS HTMLOutputElement interface object name 
 PASS HTMLOutputElement interface: existence and properties of interface prototype object 
@@ -3249,7 +3269,7 @@ FAIL HTMLOutputElement interface: document.createElement("output") must inherit 
 PASS HTMLOutputElement interface: document.createElement("output") must inherit property "setCustomValidity" with the proper type (11) 
 PASS HTMLOutputElement interface: calling setCustomValidity(DOMString) on document.createElement("output") with too few arguments must throw TypeError 
 PASS HTMLOutputElement interface: document.createElement("output") must inherit property "labels" with the proper type (12) 
-FAIL HTMLProgressElement interface: existence and properties of interface object assert_equals: class string of HTMLProgressElement expected "[object Function]" but got "[object HTMLProgressElementConstructor]"
+PASS HTMLProgressElement interface: existence and properties of interface object 
 PASS HTMLProgressElement interface object length 
 PASS HTMLProgressElement interface object name 
 PASS HTMLProgressElement interface: existence and properties of interface prototype object 
@@ -3264,7 +3284,7 @@ PASS HTMLProgressElement interface: document.createElement("progress") must inhe
 PASS HTMLProgressElement interface: document.createElement("progress") must inherit property "max" with the proper type (1) 
 PASS HTMLProgressElement interface: document.createElement("progress") must inherit property "position" with the proper type (2) 
 PASS HTMLProgressElement interface: document.createElement("progress") must inherit property "labels" with the proper type (3) 
-FAIL HTMLMeterElement interface: existence and properties of interface object assert_equals: class string of HTMLMeterElement expected "[object Function]" but got "[object HTMLMeterElementConstructor]"
+PASS HTMLMeterElement interface: existence and properties of interface object 
 PASS HTMLMeterElement interface object length 
 PASS HTMLMeterElement interface object name 
 PASS HTMLMeterElement interface: existence and properties of interface prototype object 
@@ -3285,7 +3305,7 @@ PASS HTMLMeterElement interface: document.createElement("meter") must inherit pr
 PASS HTMLMeterElement interface: document.createElement("meter") must inherit property "high" with the proper type (4) 
 PASS HTMLMeterElement interface: document.createElement("meter") must inherit property "optimum" with the proper type (5) 
 PASS HTMLMeterElement interface: document.createElement("meter") must inherit property "labels" with the proper type (6) 
-FAIL HTMLFieldSetElement interface: existence and properties of interface object assert_equals: class string of HTMLFieldSetElement expected "[object Function]" but got "[object HTMLFieldSetElementConstructor]"
+PASS HTMLFieldSetElement interface: existence and properties of interface object 
 PASS HTMLFieldSetElement interface object length 
 PASS HTMLFieldSetElement interface object name 
 PASS HTMLFieldSetElement interface: existence and properties of interface prototype object 
@@ -3301,7 +3321,7 @@ PASS HTMLFieldSetElement interface: attribute validationMessage
 PASS HTMLFieldSetElement interface: operation checkValidity() 
 FAIL HTMLFieldSetElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
 PASS HTMLFieldSetElement interface: operation setCustomValidity(DOMString) 
-FAIL HTMLLegendElement interface: existence and properties of interface object assert_equals: class string of HTMLLegendElement expected "[object Function]" but got "[object HTMLLegendElementConstructor]"
+PASS HTMLLegendElement interface: existence and properties of interface object 
 PASS HTMLLegendElement interface object length 
 PASS HTMLLegendElement interface object name 
 PASS HTMLLegendElement interface: existence and properties of interface prototype object 
@@ -3318,7 +3338,7 @@ FAIL AutocompleteErrorEvent interface object name assert_own_property: self does
 FAIL AutocompleteErrorEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AutocompleteErrorEvent" expected property "AutocompleteErrorEvent" missing
 FAIL AutocompleteErrorEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AutocompleteErrorEvent" expected property "AutocompleteErrorEvent" missing
 FAIL AutocompleteErrorEvent interface: attribute reason assert_own_property: self does not have own property "AutocompleteErrorEvent" expected property "AutocompleteErrorEvent" missing
-FAIL ValidityState interface: existence and properties of interface object assert_equals: class string of ValidityState expected "[object Function]" but got "[object ValidityStateConstructor]"
+PASS ValidityState interface: existence and properties of interface object 
 PASS ValidityState interface object length 
 PASS ValidityState interface object name 
 PASS ValidityState interface: existence and properties of interface prototype object 
@@ -3347,7 +3367,7 @@ PASS ValidityState interface: document.createElement("input").validity must inhe
 PASS ValidityState interface: document.createElement("input").validity must inherit property "badInput" with the proper type (8) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "customError" with the proper type (9) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "valid" with the proper type (10) 
-FAIL HTMLDetailsElement interface: existence and properties of interface object assert_equals: class string of HTMLDetailsElement expected "[object Function]" but got "[object HTMLDetailsElementConstructor]"
+PASS HTMLDetailsElement interface: existence and properties of interface object 
 PASS HTMLDetailsElement interface object length 
 PASS HTMLDetailsElement interface object name 
 PASS HTMLDetailsElement interface: existence and properties of interface prototype object 
@@ -3356,7 +3376,7 @@ PASS HTMLDetailsElement interface: attribute open
 PASS HTMLDetailsElement must be primary interface of document.createElement("details") 
 PASS Stringification of document.createElement("details") 
 PASS HTMLDetailsElement interface: document.createElement("details") must inherit property "open" with the proper type (0) 
-FAIL HTMLMenuElement interface: existence and properties of interface object assert_equals: class string of HTMLMenuElement expected "[object Function]" but got "[object HTMLMenuElementConstructor]"
+PASS HTMLMenuElement interface: existence and properties of interface object 
 PASS HTMLMenuElement interface object length 
 PASS HTMLMenuElement interface object name 
 PASS HTMLMenuElement interface: existence and properties of interface prototype object 
@@ -3398,7 +3418,7 @@ FAIL HTMLDialogElement interface: attribute returnValue assert_own_property: sel
 FAIL HTMLDialogElement interface: operation show([object Object],[object Object]) assert_own_property: self does not have own property "HTMLDialogElement" expected property "HTMLDialogElement" missing
 FAIL HTMLDialogElement interface: operation showModal([object Object],[object Object]) assert_own_property: self does not have own property "HTMLDialogElement" expected property "HTMLDialogElement" missing
 FAIL HTMLDialogElement interface: operation close(DOMString) assert_own_property: self does not have own property "HTMLDialogElement" expected property "HTMLDialogElement" missing
-FAIL HTMLScriptElement interface: existence and properties of interface object assert_equals: class string of HTMLScriptElement expected "[object Function]" but got "[object HTMLScriptElementConstructor]"
+PASS HTMLScriptElement interface: existence and properties of interface object 
 PASS HTMLScriptElement interface object length 
 PASS HTMLScriptElement interface object name 
 PASS HTMLScriptElement interface: existence and properties of interface prototype object 
@@ -3423,13 +3443,13 @@ PASS HTMLScriptElement interface: document.createElement("script") must inherit 
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "text" with the proper type (6) 
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "event" with the proper type (7) 
 PASS HTMLScriptElement interface: document.createElement("script") must inherit property "htmlFor" with the proper type (8) 
-FAIL HTMLTemplateElement interface: existence and properties of interface object assert_equals: class string of HTMLTemplateElement expected "[object Function]" but got "[object HTMLTemplateElementConstructor]"
+PASS HTMLTemplateElement interface: existence and properties of interface object 
 PASS HTMLTemplateElement interface object length 
 PASS HTMLTemplateElement interface object name 
 PASS HTMLTemplateElement interface: existence and properties of interface prototype object 
 PASS HTMLTemplateElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS HTMLTemplateElement interface: attribute content 
-FAIL HTMLCanvasElement interface: existence and properties of interface object assert_equals: class string of HTMLCanvasElement expected "[object Function]" but got "[object HTMLCanvasElementConstructor]"
+PASS HTMLCanvasElement interface: existence and properties of interface object 
 PASS HTMLCanvasElement interface object length 
 PASS HTMLCanvasElement interface object name 
 PASS HTMLCanvasElement interface: existence and properties of interface prototype object 
@@ -3467,7 +3487,7 @@ FAIL CanvasProxy interface object name assert_own_property: self does not have o
 FAIL CanvasProxy interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
 FAIL CanvasProxy interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
 FAIL CanvasProxy interface: operation setContext(RenderingContext) assert_own_property: self does not have own property "CanvasProxy" expected property "CanvasProxy" missing
-FAIL CanvasRenderingContext2D interface: existence and properties of interface object assert_equals: class string of CanvasRenderingContext2D expected "[object Function]" but got "[object CanvasRenderingContext2DConstructor]"
+PASS CanvasRenderingContext2D interface: existence and properties of interface object 
 FAIL CanvasRenderingContext2D interface object length assert_equals: wrong value for CanvasRenderingContext2D.length expected 1 but got 0
 PASS CanvasRenderingContext2D interface object name 
 FAIL CanvasRenderingContext2D interface: existence and properties of interface prototype object assert_equals: prototype of CanvasRenderingContext2D.prototype is not Object.prototype expected object "[object Object]" but got object "[object CanvasRenderingContextPrototype]"
@@ -3682,19 +3702,19 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: calling arc(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,boolean) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "ellipse" with the proper type (79) 
 PASS CanvasRenderingContext2D interface: calling ellipse(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,boolean) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-FAIL CanvasGradient interface: existence and properties of interface object assert_equals: class string of CanvasGradient expected "[object Function]" but got "[object CanvasGradientConstructor]"
+PASS CanvasGradient interface: existence and properties of interface object 
 PASS CanvasGradient interface object length 
 PASS CanvasGradient interface object name 
 PASS CanvasGradient interface: existence and properties of interface prototype object 
 PASS CanvasGradient interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CanvasGradient interface: operation addColorStop(double,DOMString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL CanvasPattern interface: existence and properties of interface object assert_equals: class string of CanvasPattern expected "[object Function]" but got "[object CanvasPatternConstructor]"
+PASS CanvasPattern interface: existence and properties of interface object 
 PASS CanvasPattern interface object length 
 PASS CanvasPattern interface object name 
 PASS CanvasPattern interface: existence and properties of interface prototype object 
 PASS CanvasPattern interface: existence and properties of interface prototype object's "constructor" property 
 FAIL CanvasPattern interface: operation setTransform(SVGMatrix) assert_own_property: interface prototype object missing non-static operation expected property "setTransform" missing
-FAIL TextMetrics interface: existence and properties of interface object assert_equals: class string of TextMetrics expected "[object Function]" but got "[object TextMetricsConstructor]"
+PASS TextMetrics interface: existence and properties of interface object 
 PASS TextMetrics interface object length 
 PASS TextMetrics interface object name 
 PASS TextMetrics interface: existence and properties of interface prototype object 
@@ -3711,7 +3731,7 @@ FAIL TextMetrics interface: attribute emHeightDescent assert_true: The prototype
 FAIL TextMetrics interface: attribute hangingBaseline assert_true: The prototype object must have a property "hangingBaseline" expected true got false
 FAIL TextMetrics interface: attribute alphabeticBaseline assert_true: The prototype object must have a property "alphabeticBaseline" expected true got false
 FAIL TextMetrics interface: attribute ideographicBaseline assert_true: The prototype object must have a property "ideographicBaseline" expected true got false
-FAIL ImageData interface: existence and properties of interface object assert_equals: class string of ImageData expected "[object Function]" but got "[object ImageDataConstructor]"
+PASS ImageData interface: existence and properties of interface object 
 PASS ImageData interface object length 
 PASS ImageData interface object name 
 PASS ImageData interface: existence and properties of interface prototype object 
@@ -3735,7 +3755,7 @@ FAIL DrawingStyle interface: attribute font assert_own_property: self does not h
 FAIL DrawingStyle interface: attribute textAlign assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
 FAIL DrawingStyle interface: attribute textBaseline assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
 FAIL DrawingStyle interface: attribute direction assert_own_property: self does not have own property "DrawingStyle" expected property "DrawingStyle" missing
-FAIL Path2D interface: existence and properties of interface object assert_equals: class string of Path2D expected "[object Function]" but got "[object Path2DConstructor]"
+PASS Path2D interface: existence and properties of interface object 
 PASS Path2D interface object length 
 PASS Path2D interface object name 
 PASS Path2D interface: existence and properties of interface prototype object 
@@ -3756,7 +3776,7 @@ FAIL Path2D interface: operation arcTo(unrestricted double,unrestricted double,u
 FAIL Path2D interface: operation rect(unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_equals: property has wrong .length expected 4 but got 0
 FAIL Path2D interface: operation arc(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,boolean) assert_equals: property has wrong .length expected 5 but got 0
 PASS Path2D interface: operation ellipse(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,boolean) 
-FAIL DataTransfer interface: existence and properties of interface object assert_equals: class string of DataTransfer expected "[object Function]" but got "[object DataTransferConstructor]"
+PASS DataTransfer interface: existence and properties of interface object 
 PASS DataTransfer interface object length 
 PASS DataTransfer interface object name 
 PASS DataTransfer interface: existence and properties of interface prototype object 
@@ -3795,7 +3815,11 @@ FAIL DragEvent interface object name assert_own_property: self does not have own
 FAIL DragEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "DragEvent" expected property "DragEvent" missing
 FAIL DragEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DragEvent" expected property "DragEvent" missing
 FAIL DragEvent interface: attribute dataTransfer assert_own_property: self does not have own property "DragEvent" expected property "DragEvent" missing
-FAIL Window interface: existence and properties of interface object assert_equals: class string of Window expected "[object Function]" but got "[object WindowConstructor]"
+FAIL Window interface: existence and properties of interface object assert_equals: prototype of Window is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS Window interface object length 
 PASS Window interface object name 
 FAIL Window interface: existence and properties of interface prototype object assert_equals: Class name for prototype of Window.prototype is not "WindowProperties" expected "[object WindowProperties]" but got "[object Object]"
@@ -4078,13 +4102,13 @@ FAIL EventTarget interface: window must inherit property "removeEventListener" w
 FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_inherits: property "removeEventListener" found on object expected in prototype chain
 FAIL EventTarget interface: window must inherit property "dispatchEvent" with the proper type (2) assert_inherits: property "dispatchEvent" found on object expected in prototype chain
 FAIL EventTarget interface: calling dispatchEvent(Event) on window with too few arguments must throw TypeError assert_inherits: property "dispatchEvent" found on object expected in prototype chain
-FAIL BarProp interface: existence and properties of interface object assert_equals: class string of BarProp expected "[object Function]" but got "[object BarPropConstructor]"
+PASS BarProp interface: existence and properties of interface object 
 PASS BarProp interface object length 
 PASS BarProp interface object name 
 PASS BarProp interface: existence and properties of interface prototype object 
 PASS BarProp interface: existence and properties of interface prototype object's "constructor" property 
 FAIL BarProp interface: attribute visible assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL History interface: existence and properties of interface object assert_equals: class string of History expected "[object Function]" but got "[object HistoryConstructor]"
+PASS History interface: existence and properties of interface object 
 PASS History interface object length 
 PASS History interface object name 
 PASS History interface: existence and properties of interface prototype object 
@@ -4114,7 +4138,7 @@ PASS History interface: window.history must inherit property "replaceState" with
 FAIL History interface: calling replaceState(any,DOMString,DOMString) on window.history with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL Location interface: existence and properties of interface object assert_equals: class string of Location expected "[object Function]" but got "[object LocationConstructor]"
+PASS Location interface: existence and properties of interface object 
 PASS Location interface object length 
 PASS Location interface object name 
 PASS Location interface: existence and properties of interface prototype object 
@@ -4136,7 +4160,7 @@ FAIL Location interface: window.location must have own property "replace" assert
 FAIL Location interface: calling replace(USVString) on window.location with too few arguments must throw TypeError assert_own_property: expected property "replace" missing
 FAIL Location interface: window.location must have own property "reload" assert_own_property: Doesn't have the unforgeable operation property expected property "reload" missing
 PASS Location interface: window.location must have own property "ancestorOrigins" 
-FAIL PopStateEvent interface: existence and properties of interface object assert_equals: class string of PopStateEvent expected "[object Function]" but got "[object PopStateEventConstructor]"
+PASS PopStateEvent interface: existence and properties of interface object 
 PASS PopStateEvent interface object length 
 PASS PopStateEvent interface object name 
 PASS PopStateEvent interface: existence and properties of interface prototype object 
@@ -4165,26 +4189,30 @@ PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit p
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new PopStateEvent("popstate", { data: {} }) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL HashChangeEvent interface: existence and properties of interface object assert_equals: class string of HashChangeEvent expected "[object Function]" but got "[object HashChangeEventConstructor]"
+PASS HashChangeEvent interface: existence and properties of interface object 
 PASS HashChangeEvent interface object length 
 PASS HashChangeEvent interface object name 
 PASS HashChangeEvent interface: existence and properties of interface prototype object 
 PASS HashChangeEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS HashChangeEvent interface: attribute oldURL 
 PASS HashChangeEvent interface: attribute newURL 
-FAIL PageTransitionEvent interface: existence and properties of interface object assert_equals: class string of PageTransitionEvent expected "[object Function]" but got "[object PageTransitionEventConstructor]"
+PASS PageTransitionEvent interface: existence and properties of interface object 
 PASS PageTransitionEvent interface object length 
 PASS PageTransitionEvent interface object name 
 PASS PageTransitionEvent interface: existence and properties of interface prototype object 
 PASS PageTransitionEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS PageTransitionEvent interface: attribute persisted 
-FAIL BeforeUnloadEvent interface: existence and properties of interface object assert_equals: class string of BeforeUnloadEvent expected "[object Function]" but got "[object BeforeUnloadEventConstructor]"
+PASS BeforeUnloadEvent interface: existence and properties of interface object 
 PASS BeforeUnloadEvent interface object length 
 PASS BeforeUnloadEvent interface object name 
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object 
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS BeforeUnloadEvent interface: attribute returnValue 
-FAIL ApplicationCache interface: existence and properties of interface object assert_equals: class string of ApplicationCache expected "[object Function]" but got "[object ApplicationCacheConstructor]"
+FAIL ApplicationCache interface: existence and properties of interface object assert_equals: prototype of ApplicationCache is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS ApplicationCache interface object length 
 PASS ApplicationCache interface object name 
 FAIL ApplicationCache interface: existence and properties of interface prototype object assert_equals: prototype of ApplicationCache.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
@@ -4243,7 +4271,7 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: window.applicationCache must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on window.applicationCache with too few arguments must throw TypeError 
-FAIL ErrorEvent interface: existence and properties of interface object assert_equals: class string of ErrorEvent expected "[object Function]" but got "[object ErrorEventConstructor]"
+PASS ErrorEvent interface: existence and properties of interface object 
 PASS ErrorEvent interface object length 
 PASS ErrorEvent interface object name 
 PASS ErrorEvent interface: existence and properties of interface prototype object 
@@ -4253,7 +4281,7 @@ FAIL ErrorEvent interface: attribute filename assert_true: The prototype object 
 FAIL ErrorEvent interface: attribute lineno assert_true: The prototype object must have a property "lineno" expected true got false
 FAIL ErrorEvent interface: attribute colno assert_true: The prototype object must have a property "colno" expected true got false
 FAIL ErrorEvent interface: attribute error assert_true: The prototype object must have a property "error" expected true got false
-FAIL Navigator interface: existence and properties of interface object assert_equals: class string of Navigator expected "[object Function]" but got "[object NavigatorConstructor]"
+PASS Navigator interface: existence and properties of interface object 
 PASS Navigator interface object length 
 PASS Navigator interface object name 
 PASS Navigator interface: existence and properties of interface prototype object 
@@ -4310,7 +4338,7 @@ FAIL Navigator interface: window.navigator must inherit property "yieldForStorag
 FAIL Navigator interface: window.navigator must inherit property "plugins" with the proper type (18) assert_inherits: property "plugins" found on object expected in prototype chain
 FAIL Navigator interface: window.navigator must inherit property "mimeTypes" with the proper type (19) assert_inherits: property "mimeTypes" found on object expected in prototype chain
 FAIL Navigator interface: window.navigator must inherit property "javaEnabled" with the proper type (20) assert_equals: expected "boolean" but got "function"
-FAIL PluginArray interface: existence and properties of interface object assert_equals: class string of PluginArray expected "[object Function]" but got "[object PluginArrayConstructor]"
+PASS PluginArray interface: existence and properties of interface object 
 PASS PluginArray interface object length 
 PASS PluginArray interface object name 
 PASS PluginArray interface: existence and properties of interface prototype object 
@@ -4319,7 +4347,7 @@ PASS PluginArray interface: operation refresh(boolean)
 FAIL PluginArray interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL PluginArray interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL PluginArray interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL MimeTypeArray interface: existence and properties of interface object assert_equals: class string of MimeTypeArray expected "[object Function]" but got "[object MimeTypeArrayConstructor]"
+PASS MimeTypeArray interface: existence and properties of interface object 
 PASS MimeTypeArray interface object length 
 PASS MimeTypeArray interface object name 
 PASS MimeTypeArray interface: existence and properties of interface prototype object 
@@ -4327,7 +4355,7 @@ PASS MimeTypeArray interface: existence and properties of interface prototype ob
 FAIL MimeTypeArray interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL MimeTypeArray interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL MimeTypeArray interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Plugin interface: existence and properties of interface object assert_equals: class string of Plugin expected "[object Function]" but got "[object PluginConstructor]"
+PASS Plugin interface: existence and properties of interface object 
 PASS Plugin interface object length 
 PASS Plugin interface object name 
 PASS Plugin interface: existence and properties of interface prototype object 
@@ -4338,7 +4366,7 @@ PASS Plugin interface: attribute filename
 FAIL Plugin interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL Plugin interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Plugin interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL MimeType interface: existence and properties of interface object assert_equals: class string of MimeType expected "[object Function]" but got "[object MimeTypeConstructor]"
+PASS MimeType interface: existence and properties of interface object 
 PASS MimeType interface object length 
 PASS MimeType interface object name 
 PASS MimeType interface: existence and properties of interface prototype object 
@@ -4367,7 +4395,7 @@ FAIL ImageBitmap interface: existence and properties of interface prototype obje
 FAIL ImageBitmap interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
 FAIL ImageBitmap interface: attribute width assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
 FAIL ImageBitmap interface: attribute height assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
-FAIL MessageEvent interface: existence and properties of interface object assert_equals: class string of MessageEvent expected "[object Function]" but got "[object MessageEventConstructor]"
+PASS MessageEvent interface: existence and properties of interface object 
 PASS MessageEvent interface object length 
 PASS MessageEvent interface object name 
 PASS MessageEvent interface: existence and properties of interface prototype object 
@@ -4378,7 +4406,11 @@ PASS MessageEvent interface: attribute lastEventId
 PASS MessageEvent interface: attribute source 
 PASS MessageEvent interface: attribute ports 
 FAIL MessageEvent interface: operation initMessageEvent(DOMString,boolean,boolean,any,DOMString,DOMString,[object Object],[object Object],MessagePort) assert_equals: property has wrong .length expected 8 but got 0
-FAIL EventSource interface: existence and properties of interface object assert_equals: class string of EventSource expected "[object Function]" but got "[object EventSourceConstructor]"
+FAIL EventSource interface: existence and properties of interface object assert_equals: prototype of EventSource is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS EventSource interface object length 
 PASS EventSource interface object name 
 FAIL EventSource interface: existence and properties of interface prototype object assert_equals: prototype of EventSource.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
@@ -4396,7 +4428,11 @@ PASS EventSource interface: attribute onopen
 PASS EventSource interface: attribute onmessage 
 PASS EventSource interface: attribute onerror 
 PASS EventSource interface: operation close() 
-FAIL WebSocket interface: existence and properties of interface object assert_equals: class string of WebSocket expected "[object Function]" but got "[object WebSocketConstructor]"
+FAIL WebSocket interface: existence and properties of interface object assert_equals: prototype of WebSocket is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS WebSocket interface object length 
 PASS WebSocket interface object name 
 FAIL WebSocket interface: existence and properties of interface prototype object assert_equals: prototype of WebSocket.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
@@ -4460,7 +4496,7 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: new WebSocket("ws://foo") must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
-FAIL CloseEvent interface: existence and properties of interface object assert_equals: class string of CloseEvent expected "[object Function]" but got "[object CloseEventConstructor]"
+PASS CloseEvent interface: existence and properties of interface object 
 PASS CloseEvent interface object length 
 PASS CloseEvent interface object name 
 PASS CloseEvent interface: existence and properties of interface prototype object 
@@ -4493,14 +4529,18 @@ PASS Event interface: new CloseEvent("close") must inherit property "initEvent" 
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new CloseEvent("close") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL MessageChannel interface: existence and properties of interface object assert_equals: class string of MessageChannel expected "[object Function]" but got "[object MessageChannelConstructor]"
+PASS MessageChannel interface: existence and properties of interface object 
 PASS MessageChannel interface object length 
 PASS MessageChannel interface object name 
 PASS MessageChannel interface: existence and properties of interface prototype object 
 PASS MessageChannel interface: existence and properties of interface prototype object's "constructor" property 
 PASS MessageChannel interface: attribute port1 
 PASS MessageChannel interface: attribute port2 
-FAIL MessagePort interface: existence and properties of interface object assert_equals: class string of MessagePort expected "[object Function]" but got "[object MessagePortConstructor]"
+FAIL MessagePort interface: existence and properties of interface object assert_equals: prototype of MessagePort is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
 PASS MessagePort interface object length 
 PASS MessagePort interface object name 
 FAIL MessagePort interface: existence and properties of interface prototype object assert_equals: prototype of MessagePort.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
@@ -4565,7 +4605,7 @@ FAIL SharedWorkerGlobalScope interface: existence and properties of interface pr
 FAIL SharedWorkerGlobalScope interface: attribute name assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
 FAIL SharedWorkerGlobalScope interface: attribute applicationCache assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
 FAIL SharedWorkerGlobalScope interface: attribute onconnect assert_own_property: self does not have own property "SharedWorkerGlobalScope" expected property "SharedWorkerGlobalScope" missing
-FAIL Worker interface: existence and properties of interface object assert_equals: class string of Worker expected "[object Function]" but got "[object WorkerConstructor]"
+PASS Worker interface: existence and properties of interface object 
 PASS Worker interface object length 
 PASS Worker interface object name 
 PASS Worker interface: existence and properties of interface prototype object 
@@ -4610,7 +4650,7 @@ FAIL WorkerLocation interface: attribute port assert_own_property: self does not
 FAIL WorkerLocation interface: attribute pathname assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
 FAIL WorkerLocation interface: attribute search assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
 FAIL WorkerLocation interface: attribute hash assert_own_property: self does not have own property "WorkerLocation" expected property "WorkerLocation" missing
-FAIL Storage interface: existence and properties of interface object assert_equals: class string of Storage expected "[object Function]" but got "[object StorageConstructor]"
+PASS Storage interface: existence and properties of interface object 
 PASS Storage interface object length 
 PASS Storage interface object name 
 PASS Storage interface: existence and properties of interface prototype object 
@@ -4621,7 +4661,7 @@ PASS Storage interface: operation getItem(DOMString)
 PASS Storage interface: operation setItem(DOMString,DOMString) 
 PASS Storage interface: operation removeItem(DOMString) 
 PASS Storage interface: operation clear() 
-FAIL StorageEvent interface: existence and properties of interface object assert_equals: class string of StorageEvent expected "[object Function]" but got "[object StorageEventConstructor]"
+PASS StorageEvent interface: existence and properties of interface object 
 PASS StorageEvent interface object length 
 PASS StorageEvent interface object name 
 PASS StorageEvent interface: existence and properties of interface prototype object 
@@ -4631,7 +4671,7 @@ PASS StorageEvent interface: attribute oldValue
 PASS StorageEvent interface: attribute newValue 
 PASS StorageEvent interface: attribute url 
 PASS StorageEvent interface: attribute storageArea 
-FAIL HTMLAppletElement interface: existence and properties of interface object assert_equals: class string of HTMLAppletElement expected "[object Function]" but got "[object HTMLAppletElementConstructor]"
+PASS HTMLAppletElement interface: existence and properties of interface object 
 PASS HTMLAppletElement interface object length 
 PASS HTMLAppletElement interface object name 
 PASS HTMLAppletElement interface: existence and properties of interface prototype object 
@@ -4660,7 +4700,7 @@ PASS HTMLAppletElement interface: document.createElement("applet") must inherit 
 PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "object" with the proper type (8) 
 FAIL HTMLAppletElement interface: document.createElement("applet") must inherit property "vspace" with the proper type (9) assert_equals: expected "number" but got "string"
 PASS HTMLAppletElement interface: document.createElement("applet") must inherit property "width" with the proper type (10) 
-FAIL HTMLMarqueeElement interface: existence and properties of interface object assert_equals: class string of HTMLMarqueeElement expected "[object Function]" but got "[object HTMLMarqueeElementConstructor]"
+PASS HTMLMarqueeElement interface: existence and properties of interface object 
 PASS HTMLMarqueeElement interface object length 
 PASS HTMLMarqueeElement interface object name 
 PASS HTMLMarqueeElement interface: existence and properties of interface prototype object 
@@ -4699,7 +4739,7 @@ FAIL HTMLMarqueeElement interface: document.createElement("marquee") must inheri
 FAIL HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "onstart" with the proper type (13) assert_inherits: property "onstart" not found in prototype chain
 PASS HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "start" with the proper type (14) 
 PASS HTMLMarqueeElement interface: document.createElement("marquee") must inherit property "stop" with the proper type (15) 
-FAIL HTMLFrameSetElement interface: existence and properties of interface object assert_equals: class string of HTMLFrameSetElement expected "[object Function]" but got "[object HTMLFrameSetElementConstructor]"
+PASS HTMLFrameSetElement interface: existence and properties of interface object 
 PASS HTMLFrameSetElement interface object length 
 PASS HTMLFrameSetElement interface object name 
 PASS HTMLFrameSetElement interface: existence and properties of interface prototype object 
@@ -4736,7 +4776,7 @@ PASS HTMLFrameSetElement interface: document.createElement("frameset") must inhe
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onpopstate" with the proper type (12) 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onstorage" with the proper type (13) 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onunload" with the proper type (14) 
-FAIL HTMLFrameElement interface: existence and properties of interface object assert_equals: class string of HTMLFrameElement expected "[object Function]" but got "[object HTMLFrameElementConstructor]"
+PASS HTMLFrameElement interface: existence and properties of interface object 
 PASS HTMLFrameElement interface object length 
 PASS HTMLFrameElement interface object name 
 PASS HTMLFrameElement interface: existence and properties of interface prototype object 
@@ -4763,7 +4803,7 @@ FAIL HTMLFrameElement interface: document.createElement("frame") must inherit pr
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "contentWindow" with the proper type (7) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "marginHeight" with the proper type (8) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "marginWidth" with the proper type (9) 
-FAIL HTMLDirectoryElement interface: existence and properties of interface object assert_equals: class string of HTMLDirectoryElement expected "[object Function]" but got "[object HTMLDirectoryElementConstructor]"
+PASS HTMLDirectoryElement interface: existence and properties of interface object 
 PASS HTMLDirectoryElement interface object length 
 PASS HTMLDirectoryElement interface object name 
 PASS HTMLDirectoryElement interface: existence and properties of interface prototype object 
@@ -4772,7 +4812,7 @@ PASS HTMLDirectoryElement interface: attribute compact
 PASS HTMLDirectoryElement must be primary interface of document.createElement("dir") 
 PASS Stringification of document.createElement("dir") 
 PASS HTMLDirectoryElement interface: document.createElement("dir") must inherit property "compact" with the proper type (0) 
-FAIL HTMLFontElement interface: existence and properties of interface object assert_equals: class string of HTMLFontElement expected "[object Function]" but got "[object HTMLFontElementConstructor]"
+PASS HTMLFontElement interface: existence and properties of interface object 
 PASS HTMLFontElement interface object length 
 PASS HTMLFontElement interface object name 
 PASS HTMLFontElement interface: existence and properties of interface prototype object 

@@ -46,7 +46,7 @@
     shouldBeEqualToString("e.toString()", "Error: NetworkError: DOM Exception 19");
     shouldBeEqualToString("Object.prototype.toString.call(e)", "[object DOMException]");
     shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object DOMException]");
-    shouldBeEqualToString("e.constructor.toString()", "[object DOMExceptionConstructor]");
+    shouldBeEqualToString("e.constructor.toString()", "function DOMException() {\n    [native code]\n}");
     shouldBe("e.constructor", "window.DOMException");
     shouldBe("e.NETWORK_ERR", "e.constructor.NETWORK_ERR");
     shouldBe("e.NETWORK_ERR", "19");

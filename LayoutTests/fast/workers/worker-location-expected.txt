@@ -1,6 +1,6 @@
 Test WorkerLocation properties.
 
-WorkerLocation: [object WorkerLocationConstructor]
+WorkerLocation: function WorkerLocation() { [native code] }
 typeof location: object
 location: file:<...>/fast/workers/resources/worker-common.js
 location.href: file:<...>/fast/workers/resources/worker-common.js

@@ -67,6 +67,12 @@ template<> JSC::JSObject* JSTestClassWithJSBuiltinConstructorConstructor::create
     return JSTestClassWithJSBuiltinConstructor::create(getDOMStructure<JSTestClassWithJSBuiltinConstructor>(globalObject()->vm(), *globalObject()), globalObject(), TestClassWithJSBuiltinConstructor::create());
 }
 
+template<> JSValue JSTestClassWithJSBuiltinConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestClassWithJSBuiltinConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestClassWithJSBuiltinConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -79,7 +85,7 @@ template<> FunctionExecutable* JSTestClassWithJSBuiltinConstructorConstructor::i
     return testClassWithJSBuiltinConstructorInitializeTestClassWithJSBuiltinConstructorCodeGenerator(vm);
 }
 
-template<> const ClassInfo JSTestClassWithJSBuiltinConstructorConstructor::s_info = { "TestClassWithJSBuiltinConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructorConstructor) };
+template<> const ClassInfo JSTestClassWithJSBuiltinConstructorConstructor::s_info = { "TestClassWithJSBuiltinConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructorConstructor) };
 
 /* Hash table for prototype */
 
@@ -139,9 +145,9 @@ void setJSTestClassWithJSBuiltinConstructorConstructor(ExecState* state, Encoded
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSTestClassWithJSBuiltinConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestClassWithJSBuiltinConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestClassWithJSBuiltinConstructorConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestClassWithJSBuiltinConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestClassWithJSBuiltinConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

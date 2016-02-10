@@ -100,7 +100,7 @@ WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, const cha
 class DOMConstructorObject : public JSDOMObject {
 public:
     typedef JSDOMObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance | JSC::TypeOfShouldCallGetCallData;
 
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -112,6 +112,9 @@ protected:
         : JSDOMObject(structure, globalObject)
     {
     }
+
+    static String className(const JSObject*) { return ASCIILiteral("Function"); }
+    static JSC::CallType getCallData(JSCell*, JSC::CallData&);
 };
 
 class DOMConstructorJSBuiltinObject : public DOMConstructorObject {

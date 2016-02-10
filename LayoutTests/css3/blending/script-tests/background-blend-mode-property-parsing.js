@@ -16,7 +16,7 @@ function shouldBeType(expression, className, prototypeName, constructorName)
         constructorName = className + "Constructor";
     shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
     shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + prototypeName + "'");
-    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'" + constructorName + "'");
+    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
 }
 
 // These have to be global for the test helpers to see them.

@@ -52,7 +52,7 @@ public:
     }
 
     static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());
-    static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
+    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 public:
     static const unsigned StructureFlags = JSC::GetOwnPropertySlotIsImpure | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 protected:

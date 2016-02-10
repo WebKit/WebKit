@@ -1,16 +1,16 @@
 
 PASS Audio constructor 
-FAIL No arguments, without new Audio is not a function. (In 'Audio()', 'Audio' is an instance of AudioConstructor)
+FAIL No arguments, without new Constructor requires 'new' operator
 PASS No arguments, with new 
-FAIL Empty string argument, without new Audio is not a function. (In 'Audio("")', 'Audio' is an instance of AudioConstructor)
+FAIL Empty string argument, without new Constructor requires 'new' operator
 PASS Empty string argument, with new 
-FAIL Non-empty string argument, without new Audio is not a function. (In 'Audio("src")', 'Audio' is an instance of AudioConstructor)
+FAIL Non-empty string argument, without new Constructor requires 'new' operator
 PASS Non-empty string argument, with new 
-FAIL Null argument, without new Audio is not a function. (In 'Audio(null)', 'Audio' is an instance of AudioConstructor)
+FAIL Null argument, without new Constructor requires 'new' operator
 PASS Null argument, with new 
-FAIL Undefined argument, without new Audio is not a function. (In 'Audio(undefined)', 'Audio' is an instance of AudioConstructor)
+FAIL Undefined argument, without new Constructor requires 'new' operator
 PASS Undefined argument, with new 
-FAIL Extra argument, without new Audio is not a function. (In 'Audio("", throwingObject)', 'Audio' is an instance of AudioConstructor)
+FAIL Extra argument, without new Constructor requires 'new' operator
 PASS Extra argument, with new 
 PASS Calling HTMLAudioElement should throw 
 PASS Constructing HTMLAudioElement should throw 

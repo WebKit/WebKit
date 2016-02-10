@@ -70,6 +70,12 @@ private:
 
 typedef JSBuiltinConstructor<JSTestJSBuiltinConstructor> JSTestJSBuiltinConstructorConstructor;
 
+template<> JSValue JSTestJSBuiltinConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestJSBuiltinConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestJSBuiltinConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -82,7 +88,7 @@ template<> FunctionExecutable* JSTestJSBuiltinConstructorConstructor::initialize
     return testJSBuiltinConstructorInitializeTestJSBuiltinConstructorCodeGenerator(vm);
 }
 
-template<> const ClassInfo JSTestJSBuiltinConstructorConstructor::s_info = { "TestJSBuiltinConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorConstructor) };
+template<> const ClassInfo JSTestJSBuiltinConstructorConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorConstructor) };
 
 /* Hash table for prototype */
 
@@ -184,9 +190,9 @@ void setJSTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, Encode
 }
 
 
-JSValue JSTestJSBuiltinConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestJSBuiltinConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestJSBuiltinConstructorConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestJSBuiltinConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(ExecState* state)

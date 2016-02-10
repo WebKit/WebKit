@@ -1,3 +1,87 @@
+2016-02-10  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] interface objects should be Function objects
+        https://bugs.webkit.org/show_bug.cgi?id=154038
+        <rdar://problem/24569358>
+
+        Reviewed by Geoffrey Garen.
+
+        interface objects should be Function objects as per Web IDL:
+        - http://heycam.github.io/webidl/#interface-object
+        - http://heycam.github.io/webidl/#es-interfaces
+
+        So window.Event should be a Function object for e.g. but in WebKit it
+        is a regular EventConstructor JSObject.
+        Firefox and Chrome match the specification.
+
+        Test: js/interface-objects.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::callThrowTypeError):
+        (WebCore::DOMConstructorObject::getCallData):
+        When calling the interface object as a function, we throw a TypeError
+        with a message asking to use the 'new' operator to match the behavior
+        of Firefox and Chrome.
+
+        * bindings/js/JSDOMBinding.h:
+        Add JSC::TypeOfShouldCallGetCallData structure flag and implement
+        getCallData() so that typeof returns "function", as per the
+        specification and the behavior of other browsers.
+
+        (WebCore::DOMConstructorObject::className):
+        Implement className() and return "Function" to match the specification and
+        other browsers. Otherwise, it would fall back to using ClassInfo::className
+        which os the function name and interface name (e.g. "Event").
+
+        * bindings/js/JSDOMConstructor.h:
+        (WebCore::JSDOMConstructorNotConstructable::callThrowTypeError):
+        (WebCore::JSDOMConstructorNotConstructable::getCallData):
+        As per the specification, interfaces that do not have a [Constructor]
+        should throw a TypeError when called as a function. Use the "Illegal
+        constructor" error message to match Firefox and Chrome.
+
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor):
+        Instead of using objectPrototype as prototype for all DOM constructors,
+        we now call the prototypeForStructure() static function that is
+        generated for each bindings class. As per the Web IDL specification,
+        The [[Prototype]] internal property of an interface object for a
+        non-callback interface is determined as follows:
+        1. If the interface inherits from some other interface, the value of
+           [[Prototype]] is the interface object for that other interface.
+        2. If the interface doesn't inherit from any other interface, the value
+           of [[Prototype]] is %FunctionPrototype% ([ECMA-262], section 6.1.7.4).
+
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::prototypeForStructure):
+        Have the Image's interface object use HTMLElement's interface object
+        as prototype as HTMLImageElement inherits HTMLElement.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (getInterfaceExtendedAttributesFromName):
+        Add a utility function to cheaply retrieve an interface's IDL extended
+        attributes without actually parsing the IDL. This is used to check if
+        an interface's parent is marked as [NoInterfaceObject] currently.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateCallbackHeader):
+        (GenerateCallbackImplementation):
+        Mark JSGlobalObject* parameter as const as the implementation does not
+        alter the globalObject.
+
+        (GenerateConstructorHelperMethods):
+        - Generate prototypeForStructure() function for each bindings class that
+          is not marked as [NoInterfaceObject] so getDOMConstructor() knows which
+          prototype to use for the interface object / constructor when constructing
+          it.
+        - Use the interface name for the interface object, without the "Constructor"
+          suffix, to match the behavior of Firefox and Chrome.
+
+        * bindings/scripts/test/*:
+        Rebaseline bindings tests.
+
 2016-02-10  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Graphical corruption in videos when enabling custom loading path

@@ -46,7 +46,7 @@ function testTag(tagName, className, prototypeName, constructorName)
         constructorName = className + "Constructor";
     shouldBe("tagJSWrapperClass('" + tagName + "')", "'" + className + "'");
     shouldBe("tagJSWrapperPrototypeClass('" + tagName + "')", "'" + prototypeName + "'");
-    shouldBe("tagJSWrapperConstructorClass('" + tagName + "')", "'" + constructorName + "'");
+    shouldBe("tagJSWrapperConstructorClass('" + tagName + "')", "'Function'");
 }
 
 function test(expression, className, prototypeName, constructorName)
@@ -57,7 +57,7 @@ function test(expression, className, prototypeName, constructorName)
         constructorName = className + "Constructor";
     shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
     shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + prototypeName + "'");
-    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'" + constructorName + "'");
+    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
 }
 
 function runTest()

@@ -64,6 +64,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSattribute> JSattributeConstructor;
 
+template<> JSValue JSattributeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSattributeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSattribute::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -71,7 +77,7 @@ template<> void JSattributeConstructor::initializeProperties(VM& vm, JSDOMGlobal
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSattributeConstructor::s_info = { "attributeConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattributeConstructor) };
+template<> const ClassInfo JSattributeConstructor::s_info = { "attribute", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattributeConstructor) };
 
 /* Hash table for prototype */
 
@@ -147,9 +153,9 @@ void setJSattributeConstructor(ExecState* state, EncodedJSValue thisValue, Encod
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSattribute::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSattribute::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSattributeConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSattributeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSattributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

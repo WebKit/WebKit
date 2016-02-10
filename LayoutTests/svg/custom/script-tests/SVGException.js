@@ -13,7 +13,7 @@ try {
 shouldBeEqualToString("e.toString()", "Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1");
 shouldBeEqualToString("Object.prototype.toString.call(e)", "[object SVGException]");
 shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object SVGExceptionPrototype]");
-shouldBeEqualToString("e.constructor.toString()", "[object SVGExceptionConstructor]");
+shouldBeEqualToString("e.constructor.toString()", "function SVGException() {\n    [native code]\n}");
 shouldBe("e.constructor", "window.SVGException");
 shouldBe("e.SVG_WRONG_TYPE_ERR", "e.constructor.SVG_WRONG_TYPE_ERR");
 shouldBe("e.SVG_WRONG_TYPE_ERR", "0");

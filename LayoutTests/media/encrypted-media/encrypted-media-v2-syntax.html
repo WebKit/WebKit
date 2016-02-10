@@ -25,7 +25,7 @@
                     internals.initializeMockCDM();
 
                 consoleWrite("Test WebKitMediaKeys.");
-                testExpected('typeof window.WebKitMediaKeys', 'object');
+                testExpected('typeof window.WebKitMediaKeys', 'function');
                 testDOMException('new WebKitMediaKeys("")', "DOMException.INVALID_ACCESS_ERR");
                 testDOMException('new WebKitMediaKeys("unsupported")', "DOMException.NOT_SUPPORTED_ERR");
                 run('mediaKeys = new WebKitMediaKeys("com.webcore.mock")');

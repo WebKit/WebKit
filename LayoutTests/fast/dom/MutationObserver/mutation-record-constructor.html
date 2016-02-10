@@ -4,7 +4,7 @@
 description('MutationRecord should be exposed on window but not constructible');
 
 shouldBeNonNull('window.MutationRecord');
-shouldBe('typeof MutationRecord', '"object"');
+shouldBe('typeof MutationRecord', '"function"');
 shouldThrow('new MutationRecord');
 
 var div = document.createElement('div');

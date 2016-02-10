@@ -33,12 +33,27 @@ public:
 
     DECLARE_INFO;
 
+    // Must be defined for each specialization class.
+    static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
+
 private:
     JSDOMConstructorNotConstructable(JSC::Structure* structure, JSDOMGlobalObject& globalObject) : Base(structure, globalObject) { }
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
     // Usually defined for each specialization class.
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }
+
+    static JSC::EncodedJSValue JSC_HOST_CALL callThrowTypeError(JSC::ExecState* exec)
+    {
+        JSC::throwTypeError(exec, ASCIILiteral("Illegal constructor"));
+        return JSC::JSValue::encode(JSC::jsNull());
+    }
+
+    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData& callData)
+    {
+        callData.native.function = callThrowTypeError;
+        return JSC::CallTypeHost;
+    }
 };
 
 template<typename JSClass> class JSDOMConstructor : public DOMConstructorObject {
@@ -49,6 +64,9 @@ public:
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
+
+    // Must be defined for each specialization class.
+    static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
 
 private:
     JSDOMConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject) : Base(structure, globalObject) { }
@@ -70,6 +88,9 @@ public:
 
     DECLARE_INFO;
 
+    // Must be defined for each specialization class.
+    static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
+
 private:
     JSDOMNamedConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject) : Base(structure, globalObject) { }
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
@@ -89,6 +110,9 @@ public:
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
+
+    // Usually defined for each specialization class.
+    static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
 
 private:
     JSBuiltinConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject) : Base(structure, globalObject) { }

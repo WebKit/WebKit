@@ -1,91 +1,91 @@
 CONSOLE MESSAGE: line 151: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
-ALERT: PASS: window.Attr should be '[object AttrConstructor]' and is.
-ALERT: PASS: window.CDATASection should be '[object CDATASectionConstructor]' and is.
-ALERT: PASS: window.CharacterData should be '[object CharacterDataConstructor]' and is.
-ALERT: PASS: window.Comment should be '[object CommentConstructor]' and is.
-ALERT: PASS: window.CSSPrimitiveValue should be '[object CSSPrimitiveValueConstructor]' and is.
-ALERT: PASS: window.CSSRule should be '[object CSSRuleConstructor]' and is.
-ALERT: PASS: window.CSSStyleDeclaration should be '[object CSSStyleDeclarationConstructor]' and is.
-ALERT: PASS: window.CSSValue should be '[object CSSValueConstructor]' and is.
-ALERT: PASS: window.Document should be '[object DocumentConstructor]' and is.
-ALERT: PASS: window.DocumentFragment should be '[object DocumentFragmentConstructor]' and is.
-ALERT: PASS: window.DocumentType should be '[object DocumentTypeConstructor]' and is.
-ALERT: PASS: window.DOMException should be '[object DOMExceptionConstructor]' and is.
-ALERT: PASS: window.DOMImplementation should be '[object DOMImplementationConstructor]' and is.
-ALERT: PASS: window.DOMParser should be '[object DOMParserConstructor]' and is.
-ALERT: PASS: window.Element should be '[object ElementConstructor]' and is.
+ALERT: PASS: window.Attr should be 'function Attr() {    [native code]}' and is.
+ALERT: PASS: window.CDATASection should be 'function CDATASection() {    [native code]}' and is.
+ALERT: PASS: window.CharacterData should be 'function CharacterData() {    [native code]}' and is.
+ALERT: PASS: window.Comment should be 'function Comment() {    [native code]}' and is.
+ALERT: PASS: window.CSSPrimitiveValue should be 'function CSSPrimitiveValue() {    [native code]}' and is.
+ALERT: PASS: window.CSSRule should be 'function CSSRule() {    [native code]}' and is.
+ALERT: PASS: window.CSSStyleDeclaration should be 'function CSSStyleDeclaration() {    [native code]}' and is.
+ALERT: PASS: window.CSSValue should be 'function CSSValue() {    [native code]}' and is.
+ALERT: PASS: window.Document should be 'function Document() {    [native code]}' and is.
+ALERT: PASS: window.DocumentFragment should be 'function DocumentFragment() {    [native code]}' and is.
+ALERT: PASS: window.DocumentType should be 'function DocumentType() {    [native code]}' and is.
+ALERT: PASS: window.DOMException should be 'function DOMException() {    [native code]}' and is.
+ALERT: PASS: window.DOMImplementation should be 'function DOMImplementation() {    [native code]}' and is.
+ALERT: PASS: window.DOMParser should be 'function DOMParser() {    [native code]}' and is.
+ALERT: PASS: window.Element should be 'function Element() {    [native code]}' and is.
 ALERT: PASS: window.EvalError should be 'function EvalError() {    [native code]}' and is.
-ALERT: PASS: window.Event should be '[object EventConstructor]' and is.
-ALERT: PASS: window.HTMLAnchorElement should be '[object HTMLAnchorElementConstructor]' and is.
-ALERT: PASS: window.HTMLAppletElement should be '[object HTMLAppletElementConstructor]' and is.
-ALERT: PASS: window.HTMLAreaElement should be '[object HTMLAreaElementConstructor]' and is.
-ALERT: PASS: window.HTMLBaseElement should be '[object HTMLBaseElementConstructor]' and is.
-ALERT: PASS: window.HTMLBodyElement should be '[object HTMLBodyElementConstructor]' and is.
-ALERT: PASS: window.HTMLBRElement should be '[object HTMLBRElementConstructor]' and is.
-ALERT: PASS: window.HTMLButtonElement should be '[object HTMLButtonElementConstructor]' and is.
-ALERT: PASS: window.HTMLCanvasElement should be '[object HTMLCanvasElementConstructor]' and is.
-ALERT: PASS: window.HTMLDirectoryElement should be '[object HTMLDirectoryElementConstructor]' and is.
-ALERT: PASS: window.HTMLDivElement should be '[object HTMLDivElementConstructor]' and is.
-ALERT: PASS: window.HTMLDListElement should be '[object HTMLDListElementConstructor]' and is.
-ALERT: PASS: window.HTMLDocument should be '[object HTMLDocumentConstructor]' and is.
-ALERT: PASS: window.HTMLElement should be '[object HTMLElementConstructor]' and is.
-ALERT: PASS: window.HTMLFieldSetElement should be '[object HTMLFieldSetElementConstructor]' and is.
-ALERT: PASS: window.HTMLFontElement should be '[object HTMLFontElementConstructor]' and is.
-ALERT: PASS: window.HTMLFormElement should be '[object HTMLFormElementConstructor]' and is.
-ALERT: PASS: window.HTMLFrameElement should be '[object HTMLFrameElementConstructor]' and is.
-ALERT: PASS: window.HTMLFrameSetElement should be '[object HTMLFrameSetElementConstructor]' and is.
-ALERT: PASS: window.HTMLHeadElement should be '[object HTMLHeadElementConstructor]' and is.
-ALERT: PASS: window.HTMLHeadingElement should be '[object HTMLHeadingElementConstructor]' and is.
-ALERT: PASS: window.HTMLHRElement should be '[object HTMLHRElementConstructor]' and is.
-ALERT: PASS: window.HTMLHtmlElement should be '[object HTMLHtmlElementConstructor]' and is.
-ALERT: PASS: window.HTMLIFrameElement should be '[object HTMLIFrameElementConstructor]' and is.
-ALERT: PASS: window.HTMLImageElement should be '[object HTMLImageElementConstructor]' and is.
-ALERT: PASS: window.HTMLInputElement should be '[object HTMLInputElementConstructor]' and is.
+ALERT: PASS: window.Event should be 'function Event() {    [native code]}' and is.
+ALERT: PASS: window.HTMLAnchorElement should be 'function HTMLAnchorElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLAppletElement should be 'function HTMLAppletElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLAreaElement should be 'function HTMLAreaElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLBaseElement should be 'function HTMLBaseElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLBodyElement should be 'function HTMLBodyElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLBRElement should be 'function HTMLBRElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLButtonElement should be 'function HTMLButtonElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLCanvasElement should be 'function HTMLCanvasElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLDirectoryElement should be 'function HTMLDirectoryElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLDivElement should be 'function HTMLDivElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLDListElement should be 'function HTMLDListElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLDocument should be 'function HTMLDocument() {    [native code]}' and is.
+ALERT: PASS: window.HTMLElement should be 'function HTMLElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLFieldSetElement should be 'function HTMLFieldSetElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLFontElement should be 'function HTMLFontElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLFormElement should be 'function HTMLFormElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLFrameElement should be 'function HTMLFrameElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLFrameSetElement should be 'function HTMLFrameSetElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLHeadElement should be 'function HTMLHeadElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLHeadingElement should be 'function HTMLHeadingElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLHRElement should be 'function HTMLHRElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLHtmlElement should be 'function HTMLHtmlElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLIFrameElement should be 'function HTMLIFrameElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLImageElement should be 'function HTMLImageElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLInputElement should be 'function HTMLInputElement() {    [native code]}' and is.
 ALERT: PASS: window.HTMLIsIndexElement should be 'undefined' and is.
-ALERT: PASS: window.HTMLLabelElement should be '[object HTMLLabelElementConstructor]' and is.
-ALERT: PASS: window.HTMLLegendElement should be '[object HTMLLegendElementConstructor]' and is.
-ALERT: PASS: window.HTMLLIElement should be '[object HTMLLIElementConstructor]' and is.
-ALERT: PASS: window.HTMLLinkElement should be '[object HTMLLinkElementConstructor]' and is.
-ALERT: PASS: window.HTMLMapElement should be '[object HTMLMapElementConstructor]' and is.
-ALERT: PASS: window.HTMLMarqueeElement should be '[object HTMLMarqueeElementConstructor]' and is.
-ALERT: PASS: window.HTMLMenuElement should be '[object HTMLMenuElementConstructor]' and is.
-ALERT: PASS: window.HTMLMetaElement should be '[object HTMLMetaElementConstructor]' and is.
-ALERT: PASS: window.HTMLModElement should be '[object HTMLModElementConstructor]' and is.
-ALERT: PASS: window.HTMLOListElement should be '[object HTMLOListElementConstructor]' and is.
-ALERT: PASS: window.HTMLOptGroupElement should be '[object HTMLOptGroupElementConstructor]' and is.
-ALERT: PASS: window.HTMLOptionElement should be '[object HTMLOptionElementConstructor]' and is.
-ALERT: PASS: window.HTMLParagraphElement should be '[object HTMLParagraphElementConstructor]' and is.
-ALERT: PASS: window.HTMLParamElement should be '[object HTMLParamElementConstructor]' and is.
-ALERT: PASS: window.HTMLPreElement should be '[object HTMLPreElementConstructor]' and is.
-ALERT: PASS: window.HTMLQuoteElement should be '[object HTMLQuoteElementConstructor]' and is.
-ALERT: PASS: window.HTMLScriptElement should be '[object HTMLScriptElementConstructor]' and is.
-ALERT: PASS: window.HTMLSelectElement should be '[object HTMLSelectElementConstructor]' and is.
-ALERT: PASS: window.HTMLStyleElement should be '[object HTMLStyleElementConstructor]' and is.
-ALERT: PASS: window.HTMLTableCaptionElement should be '[object HTMLTableCaptionElementConstructor]' and is.
-ALERT: PASS: window.HTMLTableCellElement should be '[object HTMLTableCellElementConstructor]' and is.
-ALERT: PASS: window.HTMLTableColElement should be '[object HTMLTableColElementConstructor]' and is.
-ALERT: PASS: window.HTMLTableElement should be '[object HTMLTableElementConstructor]' and is.
-ALERT: PASS: window.HTMLTableRowElement should be '[object HTMLTableRowElementConstructor]' and is.
-ALERT: PASS: window.HTMLTableSectionElement should be '[object HTMLTableSectionElementConstructor]' and is.
-ALERT: PASS: window.HTMLTextAreaElement should be '[object HTMLTextAreaElementConstructor]' and is.
-ALERT: PASS: window.HTMLTitleElement should be '[object HTMLTitleElementConstructor]' and is.
-ALERT: PASS: window.HTMLUListElement should be '[object HTMLUListElementConstructor]' and is.
-ALERT: PASS: window.MutationEvent should be '[object MutationEventConstructor]' and is.
-ALERT: PASS: window.Node should be '[object NodeConstructor]' and is.
-ALERT: PASS: window.NodeFilter should be '[object NodeFilterConstructor]' and is.
-ALERT: PASS: window.ProcessingInstruction should be '[object ProcessingInstructionConstructor]' and is.
-ALERT: PASS: window.Range should be '[object RangeConstructor]' and is.
+ALERT: PASS: window.HTMLLabelElement should be 'function HTMLLabelElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLLegendElement should be 'function HTMLLegendElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLLIElement should be 'function HTMLLIElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLLinkElement should be 'function HTMLLinkElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLMapElement should be 'function HTMLMapElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLMarqueeElement should be 'function HTMLMarqueeElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLMenuElement should be 'function HTMLMenuElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLMetaElement should be 'function HTMLMetaElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLModElement should be 'function HTMLModElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLOListElement should be 'function HTMLOListElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLOptGroupElement should be 'function HTMLOptGroupElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLOptionElement should be 'function HTMLOptionElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLParagraphElement should be 'function HTMLParagraphElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLParamElement should be 'function HTMLParamElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLPreElement should be 'function HTMLPreElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLQuoteElement should be 'function HTMLQuoteElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLScriptElement should be 'function HTMLScriptElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLSelectElement should be 'function HTMLSelectElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLStyleElement should be 'function HTMLStyleElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLTableCaptionElement should be 'function HTMLTableCaptionElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLTableCellElement should be 'function HTMLTableCellElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLTableColElement should be 'function HTMLTableColElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLTableElement should be 'function HTMLTableElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLTableRowElement should be 'function HTMLTableRowElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLTableSectionElement should be 'function HTMLTableSectionElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLTextAreaElement should be 'function HTMLTextAreaElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLTitleElement should be 'function HTMLTitleElement() {    [native code]}' and is.
+ALERT: PASS: window.HTMLUListElement should be 'function HTMLUListElement() {    [native code]}' and is.
+ALERT: PASS: window.MutationEvent should be 'function MutationEvent() {    [native code]}' and is.
+ALERT: PASS: window.Node should be 'function Node() {    [native code]}' and is.
+ALERT: PASS: window.NodeFilter should be 'function NodeFilter() {    [native code]}' and is.
+ALERT: PASS: window.ProcessingInstruction should be 'function ProcessingInstruction() {    [native code]}' and is.
+ALERT: PASS: window.Range should be 'function Range() {    [native code]}' and is.
 ALERT: PASS: window.RangeError should be 'function RangeError() {    [native code]}' and is.
 ALERT: PASS: window.RangeException should be 'undefined' and is.
 ALERT: PASS: window.ReferenceError should be 'function ReferenceError() {    [native code]}' and is.
 ALERT: PASS: window.SyntaxError should be 'function SyntaxError() {    [native code]}' and is.
-ALERT: PASS: window.Text should be '[object TextConstructor]' and is.
+ALERT: PASS: window.Text should be 'function Text() {    [native code]}' and is.
 ALERT: PASS: window.TypeError should be 'function TypeError() {    [native code]}' and is.
 ALERT: PASS: window.URIError should be 'function URIError() {    [native code]}' and is.
-ALERT: PASS: window.XMLDocument should be '[object XMLDocumentConstructor]' and is.
-ALERT: PASS: window.XMLSerializer should be '[object XMLSerializerConstructor]' and is.
-ALERT: PASS: window.XPathEvaluator should be '[object XPathEvaluatorConstructor]' and is.
-ALERT: PASS: window.XPathResult should be '[object XPathResultConstructor]' and is.
+ALERT: PASS: window.XMLDocument should be 'function XMLDocument() {    [native code]}' and is.
+ALERT: PASS: window.XMLSerializer should be 'function XMLSerializer() {    [native code]}' and is.
+ALERT: PASS: window.XPathEvaluator should be 'function XPathEvaluator() {    [native code]}' and is.
+ALERT: PASS: window.XPathResult should be 'function XPathResult() {    [native code]}' and is.
 ALERT: PASS: window.clientInformation should be '[object Navigator]' and is.
 ALERT: PASS: window.closed should be 'false' and is.
 ALERT: PASS: window.console should be '[object Console]' and is.

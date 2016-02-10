@@ -3,158 +3,188 @@ Test to make sure we expose all the global constructor objects requested by http
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS SVGException.toString() is '[object SVGExceptionConstructor]'
-PASS SVGElement.toString() is '[object SVGElementConstructor]'
-PASS SVGAnimatedBoolean.toString() is '[object SVGAnimatedBooleanConstructor]'
-PASS SVGAnimatedString.toString() is '[object SVGAnimatedStringConstructor]'
-PASS SVGStringList.toString() is '[object SVGStringListConstructor]'
-PASS SVGAnimatedEnumeration.toString() is '[object SVGAnimatedEnumerationConstructor]'
-PASS SVGAnimatedInteger.toString() is '[object SVGAnimatedIntegerConstructor]'
-PASS SVGNumber.toString() is '[object SVGNumberConstructor]'
-PASS SVGAnimatedNumber.toString() is '[object SVGAnimatedNumberConstructor]'
-PASS SVGNumberList.toString() is '[object SVGNumberListConstructor]'
-PASS SVGAnimatedNumberList.toString() is '[object SVGAnimatedNumberListConstructor]'
-PASS SVGLength.toString() is '[object SVGLengthConstructor]'
-PASS SVGAnimatedLength.toString() is '[object SVGAnimatedLengthConstructor]'
-PASS SVGLengthList.toString() is '[object SVGLengthListConstructor]'
-PASS SVGAnimatedLengthList.toString() is '[object SVGAnimatedLengthListConstructor]'
-PASS SVGAngle.toString() is '[object SVGAngleConstructor]'
-PASS SVGAnimatedAngle.toString() is '[object SVGAnimatedAngleConstructor]'
-PASS SVGColor.toString() is '[object SVGColorConstructor]'
-FAIL SVGICCColor.toString() should be [object SVGICCColorConstructor]. Threw exception ReferenceError: Can't find variable: SVGICCColor
-PASS SVGRect.toString() is '[object SVGRectConstructor]'
-PASS SVGAnimatedRect.toString() is '[object SVGAnimatedRectConstructor]'
-FAIL SVGStylable.toString() should be [object SVGStylableConstructor]. Threw exception ReferenceError: Can't find variable: SVGStylable
-FAIL SVGLocatable.toString() should be [object SVGLocatableConstructor]. Threw exception ReferenceError: Can't find variable: SVGLocatable
-FAIL SVGTransformable.toString() should be [object SVGTransformableConstructor]. Threw exception ReferenceError: Can't find variable: SVGTransformable
-FAIL SVGTests.toString() should be [object SVGTestsConstructor]. Threw exception ReferenceError: Can't find variable: SVGTests
-FAIL SVGLangSpace.toString() should be [object SVGLangSpaceConstructor]. Threw exception ReferenceError: Can't find variable: SVGLangSpace
-PASS SVGViewSpec.toString() is '[object SVGViewSpecConstructor]'
-FAIL SVGURIReference.toString() should be [object SVGURIReferenceConstructor]. Threw exception ReferenceError: Can't find variable: SVGURIReference
-FAIL SVGCSSRule.toString() should be [object SVGCSSRuleConstructor]. Threw exception ReferenceError: Can't find variable: SVGCSSRule
-PASS SVGDocument.toString() is '[object SVGDocumentConstructor]'
-PASS SVGSVGElement.toString() is '[object SVGSVGElementConstructor]'
-PASS SVGGElement.toString() is '[object SVGGElementConstructor]'
-PASS SVGDefsElement.toString() is '[object SVGDefsElementConstructor]'
-PASS SVGDescElement.toString() is '[object SVGDescElementConstructor]'
-PASS SVGTitleElement.toString() is '[object SVGTitleElementConstructor]'
-PASS SVGSymbolElement.toString() is '[object SVGSymbolElementConstructor]'
-PASS SVGUseElement.toString() is '[object SVGUseElementConstructor]'
-PASS SVGImageElement.toString() is '[object SVGImageElementConstructor]'
-PASS SVGSwitchElement.toString() is '[object SVGSwitchElementConstructor]'
-PASS SVGStyleElement.toString() is '[object SVGStyleElementConstructor]'
-PASS SVGPoint.toString() is '[object SVGPointConstructor]'
-PASS SVGPointList.toString() is '[object SVGPointListConstructor]'
-PASS SVGMatrix.toString() is '[object SVGMatrixConstructor]'
-PASS SVGTransform.toString() is '[object SVGTransformConstructor]'
-PASS SVGTransformList.toString() is '[object SVGTransformListConstructor]'
-PASS SVGAnimatedTransformList.toString() is '[object SVGAnimatedTransformListConstructor]'
-PASS SVGPreserveAspectRatio.toString() is '[object SVGPreserveAspectRatioConstructor]'
-PASS SVGAnimatedPreserveAspectRatio.toString() is '[object SVGAnimatedPreserveAspectRatioConstructor]'
-PASS SVGPathSeg.toString() is '[object SVGPathSegConstructor]'
-PASS SVGPathSegClosePath.toString() is '[object SVGPathSegClosePathConstructor]'
-PASS SVGPathSegMovetoAbs.toString() is '[object SVGPathSegMovetoAbsConstructor]'
-PASS SVGPathSegMovetoRel.toString() is '[object SVGPathSegMovetoRelConstructor]'
-PASS SVGPathSegLinetoAbs.toString() is '[object SVGPathSegLinetoAbsConstructor]'
-PASS SVGPathSegLinetoRel.toString() is '[object SVGPathSegLinetoRelConstructor]'
-PASS SVGPathSegCurvetoCubicAbs.toString() is '[object SVGPathSegCurvetoCubicAbsConstructor]'
-PASS SVGPathSegCurvetoCubicRel.toString() is '[object SVGPathSegCurvetoCubicRelConstructor]'
-PASS SVGPathSegCurvetoQuadraticAbs.toString() is '[object SVGPathSegCurvetoQuadraticAbsConstructor]'
-PASS SVGPathSegCurvetoQuadraticRel.toString() is '[object SVGPathSegCurvetoQuadraticRelConstructor]'
-PASS SVGPathSegArcAbs.toString() is '[object SVGPathSegArcAbsConstructor]'
-PASS SVGPathSegArcRel.toString() is '[object SVGPathSegArcRelConstructor]'
-PASS SVGPathSegLinetoHorizontalAbs.toString() is '[object SVGPathSegLinetoHorizontalAbsConstructor]'
-PASS SVGPathSegLinetoHorizontalRel.toString() is '[object SVGPathSegLinetoHorizontalRelConstructor]'
-PASS SVGPathSegLinetoVerticalAbs.toString() is '[object SVGPathSegLinetoVerticalAbsConstructor]'
-PASS SVGPathSegLinetoVerticalRel.toString() is '[object SVGPathSegLinetoVerticalRelConstructor]'
-PASS SVGPathSegCurvetoCubicSmoothAbs.toString() is '[object SVGPathSegCurvetoCubicSmoothAbsConstructor]'
-PASS SVGPathSegCurvetoCubicSmoothRel.toString() is '[object SVGPathSegCurvetoCubicSmoothRelConstructor]'
-PASS SVGPathSegCurvetoQuadraticSmoothAbs.toString() is '[object SVGPathSegCurvetoQuadraticSmoothAbsConstructor]'
-PASS SVGPathSegCurvetoQuadraticSmoothRel.toString() is '[object SVGPathSegCurvetoQuadraticSmoothRelConstructor]'
-PASS SVGPathSegList.toString() is '[object SVGPathSegListConstructor]'
-FAIL SVGAnimatedPathData.toString() should be [object SVGAnimatedPathDataConstructor]. Threw exception ReferenceError: Can't find variable: SVGAnimatedPathData
-PASS SVGPathElement.toString() is '[object SVGPathElementConstructor]'
-PASS SVGRectElement.toString() is '[object SVGRectElementConstructor]'
-PASS SVGCircleElement.toString() is '[object SVGCircleElementConstructor]'
-PASS SVGEllipseElement.toString() is '[object SVGEllipseElementConstructor]'
-PASS SVGLineElement.toString() is '[object SVGLineElementConstructor]'
-FAIL SVGAnimatedPoints.toString() should be [object SVGAnimatedPointsConstructor]. Threw exception ReferenceError: Can't find variable: SVGAnimatedPoints
-PASS SVGPolylineElement.toString() is '[object SVGPolylineElementConstructor]'
-PASS SVGPolygonElement.toString() is '[object SVGPolygonElementConstructor]'
-PASS SVGTextContentElement.toString() is '[object SVGTextContentElementConstructor]'
-PASS SVGTextPositioningElement.toString() is '[object SVGTextPositioningElementConstructor]'
-PASS SVGTextElement.toString() is '[object SVGTextElementConstructor]'
-PASS SVGTSpanElement.toString() is '[object SVGTSpanElementConstructor]'
-PASS SVGTRefElement.toString() is '[object SVGTRefElementConstructor]'
-PASS SVGTextPathElement.toString() is '[object SVGTextPathElementConstructor]'
-PASS SVGAltGlyphElement.toString() is '[object SVGAltGlyphElementConstructor]'
-PASS SVGAltGlyphDefElement.toString() is '[object SVGAltGlyphDefElementConstructor]'
-PASS SVGAltGlyphItemElement.toString() is '[object SVGAltGlyphItemElementConstructor]'
-PASS SVGGlyphRefElement.toString() is '[object SVGGlyphRefElementConstructor]'
-PASS SVGPaint.toString() is '[object SVGPaintConstructor]'
-PASS SVGMarkerElement.toString() is '[object SVGMarkerElementConstructor]'
-FAIL SVGColorProfileElement.toString() should be [object SVGColorProfileElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGColorProfileElement
-FAIL SVGColorProfileRule.toString() should be [object SVGColorProfileRuleConstructor]. Threw exception ReferenceError: Can't find variable: SVGColorProfileRule
-PASS SVGGradientElement.toString() is '[object SVGGradientElementConstructor]'
-PASS SVGLinearGradientElement.toString() is '[object SVGLinearGradientElementConstructor]'
-PASS SVGRadialGradientElement.toString() is '[object SVGRadialGradientElementConstructor]'
-PASS SVGStopElement.toString() is '[object SVGStopElementConstructor]'
-PASS SVGPatternElement.toString() is '[object SVGPatternElementConstructor]'
-PASS SVGClipPathElement.toString() is '[object SVGClipPathElementConstructor]'
-PASS SVGMaskElement.toString() is '[object SVGMaskElementConstructor]'
-PASS SVGFilterElement.toString() is '[object SVGFilterElementConstructor]'
-FAIL SVGFilterPrimitiveStandardAttributes.toString() should be [object SVGFilterPrimitiveStandardAttributesConstructor]. Threw exception ReferenceError: Can't find variable: SVGFilterPrimitiveStandardAttributes
-PASS SVGFEBlendElement.toString() is '[object SVGFEBlendElementConstructor]'
-PASS SVGFEColorMatrixElement.toString() is '[object SVGFEColorMatrixElementConstructor]'
-PASS SVGFEComponentTransferElement.toString() is '[object SVGFEComponentTransferElementConstructor]'
-PASS SVGComponentTransferFunctionElement.toString() is '[object SVGComponentTransferFunctionElementConstructor]'
-PASS SVGFEFuncRElement.toString() is '[object SVGFEFuncRElementConstructor]'
-PASS SVGFEFuncGElement.toString() is '[object SVGFEFuncGElementConstructor]'
-PASS SVGFEFuncBElement.toString() is '[object SVGFEFuncBElementConstructor]'
-PASS SVGFEFuncAElement.toString() is '[object SVGFEFuncAElementConstructor]'
-PASS SVGFECompositeElement.toString() is '[object SVGFECompositeElementConstructor]'
-PASS SVGFEConvolveMatrixElement.toString() is '[object SVGFEConvolveMatrixElementConstructor]'
-PASS SVGFEDiffuseLightingElement.toString() is '[object SVGFEDiffuseLightingElementConstructor]'
-PASS SVGFEDistantLightElement.toString() is '[object SVGFEDistantLightElementConstructor]'
-PASS SVGFEPointLightElement.toString() is '[object SVGFEPointLightElementConstructor]'
-PASS SVGFESpotLightElement.toString() is '[object SVGFESpotLightElementConstructor]'
-PASS SVGFEDisplacementMapElement.toString() is '[object SVGFEDisplacementMapElementConstructor]'
-PASS SVGFEFloodElement.toString() is '[object SVGFEFloodElementConstructor]'
-PASS SVGFEGaussianBlurElement.toString() is '[object SVGFEGaussianBlurElementConstructor]'
-PASS SVGFEImageElement.toString() is '[object SVGFEImageElementConstructor]'
-PASS SVGFEMergeElement.toString() is '[object SVGFEMergeElementConstructor]'
-PASS SVGFEMergeNodeElement.toString() is '[object SVGFEMergeNodeElementConstructor]'
-PASS SVGFEMorphologyElement.toString() is '[object SVGFEMorphologyElementConstructor]'
-PASS SVGFEOffsetElement.toString() is '[object SVGFEOffsetElementConstructor]'
-PASS SVGFESpecularLightingElement.toString() is '[object SVGFESpecularLightingElementConstructor]'
-PASS SVGFETileElement.toString() is '[object SVGFETileElementConstructor]'
-PASS SVGFETurbulenceElement.toString() is '[object SVGFETurbulenceElementConstructor]'
-PASS SVGCursorElement.toString() is '[object SVGCursorElementConstructor]'
-PASS SVGAElement.toString() is '[object SVGAElementConstructor]'
-PASS SVGViewElement.toString() is '[object SVGViewElementConstructor]'
-PASS SVGScriptElement.toString() is '[object SVGScriptElementConstructor]'
-FAIL SVGEvent.toString() should be [object SVGEventConstructor]. Threw exception ReferenceError: Can't find variable: SVGEvent
-PASS SVGZoomEvent.toString() is '[object SVGZoomEventConstructor]'
-PASS SVGAnimationElement.toString() is '[object SVGAnimationElementConstructor]'
-PASS SVGAnimateElement.toString() is '[object SVGAnimateElementConstructor]'
-PASS SVGSetElement.toString() is '[object SVGSetElementConstructor]'
-PASS SVGAnimateMotionElement.toString() is '[object SVGAnimateMotionElementConstructor]'
-PASS SVGMPathElement.toString() is '[object SVGMPathElementConstructor]'
-PASS SVGAnimateColorElement.toString() is '[object SVGAnimateColorElementConstructor]'
-PASS SVGAnimateTransformElement.toString() is '[object SVGAnimateTransformElementConstructor]'
-PASS SVGFontElement.toString() is '[object SVGFontElementConstructor]'
-PASS SVGGlyphElement.toString() is '[object SVGGlyphElementConstructor]'
-PASS SVGMissingGlyphElement.toString() is '[object SVGMissingGlyphElementConstructor]'
-PASS SVGHKernElement.toString() is '[object SVGHKernElementConstructor]'
-PASS SVGVKernElement.toString() is '[object SVGVKernElementConstructor]'
-PASS SVGFontFaceElement.toString() is '[object SVGFontFaceElementConstructor]'
-PASS SVGFontFaceSrcElement.toString() is '[object SVGFontFaceSrcElementConstructor]'
-PASS SVGFontFaceUriElement.toString() is '[object SVGFontFaceUriElementConstructor]'
-PASS SVGFontFaceFormatElement.toString() is '[object SVGFontFaceFormatElementConstructor]'
-PASS SVGFontFaceNameElement.toString() is '[object SVGFontFaceNameElementConstructor]'
-FAIL SVGDefinitionSrcElement.toString() should be [object SVGDefinitionSrcElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGDefinitionSrcElement
-PASS SVGMetadataElement.toString() is '[object SVGMetadataElementConstructor]'
-PASS SVGForeignObjectElement.toString() is '[object SVGForeignObjectElementConstructor]'
+PASS SVGException.toString() is "function SVGException() {\n    [native code]\n}"
+PASS SVGElement.toString() is "function SVGElement() {\n    [native code]\n}"
+PASS SVGAnimatedBoolean.toString() is "function SVGAnimatedBoolean() {\n    [native code]\n}"
+PASS SVGAnimatedString.toString() is "function SVGAnimatedString() {\n    [native code]\n}"
+PASS SVGStringList.toString() is "function SVGStringList() {\n    [native code]\n}"
+PASS SVGAnimatedEnumeration.toString() is "function SVGAnimatedEnumeration() {\n    [native code]\n}"
+PASS SVGAnimatedInteger.toString() is "function SVGAnimatedInteger() {\n    [native code]\n}"
+PASS SVGNumber.toString() is "function SVGNumber() {\n    [native code]\n}"
+PASS SVGAnimatedNumber.toString() is "function SVGAnimatedNumber() {\n    [native code]\n}"
+PASS SVGNumberList.toString() is "function SVGNumberList() {\n    [native code]\n}"
+PASS SVGAnimatedNumberList.toString() is "function SVGAnimatedNumberList() {\n    [native code]\n}"
+PASS SVGLength.toString() is "function SVGLength() {\n    [native code]\n}"
+PASS SVGAnimatedLength.toString() is "function SVGAnimatedLength() {\n    [native code]\n}"
+PASS SVGLengthList.toString() is "function SVGLengthList() {\n    [native code]\n}"
+PASS SVGAnimatedLengthList.toString() is "function SVGAnimatedLengthList() {\n    [native code]\n}"
+PASS SVGAngle.toString() is "function SVGAngle() {\n    [native code]\n}"
+PASS SVGAnimatedAngle.toString() is "function SVGAnimatedAngle() {\n    [native code]\n}"
+PASS SVGColor.toString() is "function SVGColor() {\n    [native code]\n}"
+FAIL SVGICCColor.toString() should be function SVGICCColor() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGICCColor
+PASS SVGRect.toString() is "function SVGRect() {\n    [native code]\n}"
+PASS SVGAnimatedRect.toString() is "function SVGAnimatedRect() {\n    [native code]\n}"
+FAIL SVGStylable.toString() should be function SVGStylable() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGStylable
+FAIL SVGLocatable.toString() should be function SVGLocatable() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGLocatable
+FAIL SVGTransformable.toString() should be function SVGTransformable() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGTransformable
+FAIL SVGTests.toString() should be function SVGTests() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGTests
+FAIL SVGLangSpace.toString() should be function SVGLangSpace() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGLangSpace
+PASS SVGViewSpec.toString() is "function SVGViewSpec() {\n    [native code]\n}"
+FAIL SVGURIReference.toString() should be function SVGURIReference() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGURIReference
+FAIL SVGCSSRule.toString() should be function SVGCSSRule() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGCSSRule
+PASS SVGDocument.toString() is "function SVGDocument() {\n    [native code]\n}"
+PASS SVGSVGElement.toString() is "function SVGSVGElement() {\n    [native code]\n}"
+PASS SVGGElement.toString() is "function SVGGElement() {\n    [native code]\n}"
+PASS SVGDefsElement.toString() is "function SVGDefsElement() {\n    [native code]\n}"
+PASS SVGDescElement.toString() is "function SVGDescElement() {\n    [native code]\n}"
+PASS SVGTitleElement.toString() is "function SVGTitleElement() {\n    [native code]\n}"
+PASS SVGSymbolElement.toString() is "function SVGSymbolElement() {\n    [native code]\n}"
+PASS SVGUseElement.toString() is "function SVGUseElement() {\n    [native code]\n}"
+PASS SVGImageElement.toString() is "function SVGImageElement() {\n    [native code]\n}"
+PASS SVGSwitchElement.toString() is "function SVGSwitchElement() {\n    [native code]\n}"
+PASS SVGStyleElement.toString() is "function SVGStyleElement() {\n    [native code]\n}"
+PASS SVGPoint.toString() is "function SVGPoint() {\n    [native code]\n}"
+PASS SVGPointList.toString() is "function SVGPointList() {\n    [native code]\n}"
+PASS SVGMatrix.toString() is "function SVGMatrix() {\n    [native code]\n}"
+PASS SVGTransform.toString() is "function SVGTransform() {\n    [native code]\n}"
+PASS SVGTransformList.toString() is "function SVGTransformList() {\n    [native code]\n}"
+PASS SVGAnimatedTransformList.toString() is "function SVGAnimatedTransformList() {\n    [native code]\n}"
+PASS SVGPreserveAspectRatio.toString() is "function SVGPreserveAspectRatio() {\n    [native code]\n}"
+PASS SVGAnimatedPreserveAspectRatio.toString() is "function SVGAnimatedPreserveAspectRatio() {\n    [native code]\n}"
+PASS SVGPathSeg.toString() is "function SVGPathSeg() {\n    [native code]\n}"
+PASS SVGPathSegClosePath.toString() is "function SVGPathSegClosePath() {\n    [native code]\n}"
+PASS SVGPathSegMovetoAbs.toString() is "function SVGPathSegMovetoAbs() {\n    [native code]\n}"
+PASS SVGPathSegMovetoRel.toString() is "function SVGPathSegMovetoRel() {\n    [native code]\n}"
+PASS SVGPathSegLinetoAbs.toString() is "function SVGPathSegLinetoAbs() {\n    [native code]\n}"
+PASS SVGPathSegLinetoRel.toString() is "function SVGPathSegLinetoRel() {\n    [native code]\n}"
+PASS SVGPathSegCurvetoCubicAbs.toString() is "function SVGPathSegCurvetoCubicAbs() {\n    [native code]\n}"
+PASS SVGPathSegCurvetoCubicRel.toString() is "function SVGPathSegCurvetoCubicRel() {\n    [native code]\n}"
+PASS SVGPathSegCurvetoQuadraticAbs.toString() is "function SVGPathSegCurvetoQuadraticAbs() {\n    [native code]\n}"
+PASS SVGPathSegCurvetoQuadraticRel.toString() is "function SVGPathSegCurvetoQuadraticRel() {\n    [native code]\n}"
+PASS SVGPathSegArcAbs.toString() is "function SVGPathSegArcAbs() {\n    [native code]\n}"
+PASS SVGPathSegArcRel.toString() is "function SVGPathSegArcRel() {\n    [native code]\n}"
+PASS SVGPathSegLinetoHorizontalAbs.toString() is "function SVGPathSegLinetoHorizontalAbs() {\n    [native code]\n}"
+PASS SVGPathSegLinetoHorizontalRel.toString() is "function SVGPathSegLinetoHorizontalRel() {\n    [native code]\n}"
+PASS SVGPathSegLinetoVerticalAbs.toString() is "function SVGPathSegLinetoVerticalAbs() {\n    [native code]\n}"
+PASS SVGPathSegLinetoVerticalRel.toString() is "function SVGPathSegLinetoVerticalRel() {\n    [native code]\n}"
+PASS SVGPathSegCurvetoCubicSmoothAbs.toString() is "function SVGPathSegCurvetoCubicSmoothAbs() {\n    [native code]\n}"
+PASS SVGPathSegCurvetoCubicSmoothRel.toString() is "function SVGPathSegCurvetoCubicSmoothRel() {\n    [native code]\n}"
+PASS SVGPathSegCurvetoQuadraticSmoothAbs.toString() is "function SVGPathSegCurvetoQuadraticSmoothAbs() {\n    [native code]\n}"
+PASS SVGPathSegCurvetoQuadraticSmoothRel.toString() is "function SVGPathSegCurvetoQuadraticSmoothRel() {\n    [native code]\n}"
+PASS SVGPathSegList.toString() is "function SVGPathSegList() {\n    [native code]\n}"
+FAIL SVGAnimatedPathData.toString() should be function SVGAnimatedPathData() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGAnimatedPathData
+PASS SVGPathElement.toString() is "function SVGPathElement() {\n    [native code]\n}"
+PASS SVGRectElement.toString() is "function SVGRectElement() {\n    [native code]\n}"
+PASS SVGCircleElement.toString() is "function SVGCircleElement() {\n    [native code]\n}"
+PASS SVGEllipseElement.toString() is "function SVGEllipseElement() {\n    [native code]\n}"
+PASS SVGLineElement.toString() is "function SVGLineElement() {\n    [native code]\n}"
+FAIL SVGAnimatedPoints.toString() should be function SVGAnimatedPoints() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGAnimatedPoints
+PASS SVGPolylineElement.toString() is "function SVGPolylineElement() {\n    [native code]\n}"
+PASS SVGPolygonElement.toString() is "function SVGPolygonElement() {\n    [native code]\n}"
+PASS SVGTextContentElement.toString() is "function SVGTextContentElement() {\n    [native code]\n}"
+PASS SVGTextPositioningElement.toString() is "function SVGTextPositioningElement() {\n    [native code]\n}"
+PASS SVGTextElement.toString() is "function SVGTextElement() {\n    [native code]\n}"
+PASS SVGTSpanElement.toString() is "function SVGTSpanElement() {\n    [native code]\n}"
+PASS SVGTRefElement.toString() is "function SVGTRefElement() {\n    [native code]\n}"
+PASS SVGTextPathElement.toString() is "function SVGTextPathElement() {\n    [native code]\n}"
+PASS SVGAltGlyphElement.toString() is "function SVGAltGlyphElement() {\n    [native code]\n}"
+PASS SVGAltGlyphDefElement.toString() is "function SVGAltGlyphDefElement() {\n    [native code]\n}"
+PASS SVGAltGlyphItemElement.toString() is "function SVGAltGlyphItemElement() {\n    [native code]\n}"
+PASS SVGGlyphRefElement.toString() is "function SVGGlyphRefElement() {\n    [native code]\n}"
+PASS SVGPaint.toString() is "function SVGPaint() {\n    [native code]\n}"
+PASS SVGMarkerElement.toString() is "function SVGMarkerElement() {\n    [native code]\n}"
+FAIL SVGColorProfileElement.toString() should be function SVGColorProfileElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGColorProfileElement
+FAIL SVGColorProfileRule.toString() should be function SVGColorProfileRule() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGColorProfileRule
+PASS SVGGradientElement.toString() is "function SVGGradientElement() {\n    [native code]\n}"
+PASS SVGLinearGradientElement.toString() is "function SVGLinearGradientElement() {\n    [native code]\n}"
+PASS SVGRadialGradientElement.toString() is "function SVGRadialGradientElement() {\n    [native code]\n}"
+PASS SVGStopElement.toString() is "function SVGStopElement() {\n    [native code]\n}"
+PASS SVGPatternElement.toString() is "function SVGPatternElement() {\n    [native code]\n}"
+PASS SVGClipPathElement.toString() is "function SVGClipPathElement() {\n    [native code]\n}"
+PASS SVGMaskElement.toString() is "function SVGMaskElement() {\n    [native code]\n}"
+PASS SVGFilterElement.toString() is "function SVGFilterElement() {\n    [native code]\n}"
+FAIL SVGFilterPrimitiveStandardAttributes.toString() should be function SVGFilterPrimitiveStandardAttributes() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGFilterPrimitiveStandardAttributes
+PASS SVGFEBlendElement.toString() is "function SVGFEBlendElement() {\n    [native code]\n}"
+PASS SVGFEColorMatrixElement.toString() is "function SVGFEColorMatrixElement() {\n    [native code]\n}"
+PASS SVGFEComponentTransferElement.toString() is "function SVGFEComponentTransferElement() {\n    [native code]\n}"
+PASS SVGComponentTransferFunctionElement.toString() is "function SVGComponentTransferFunctionElement() {\n    [native code]\n}"
+PASS SVGFEFuncRElement.toString() is "function SVGFEFuncRElement() {\n    [native code]\n}"
+PASS SVGFEFuncGElement.toString() is "function SVGFEFuncGElement() {\n    [native code]\n}"
+PASS SVGFEFuncBElement.toString() is "function SVGFEFuncBElement() {\n    [native code]\n}"
+PASS SVGFEFuncAElement.toString() is "function SVGFEFuncAElement() {\n    [native code]\n}"
+PASS SVGFECompositeElement.toString() is "function SVGFECompositeElement() {\n    [native code]\n}"
+PASS SVGFEConvolveMatrixElement.toString() is "function SVGFEConvolveMatrixElement() {\n    [native code]\n}"
+PASS SVGFEDiffuseLightingElement.toString() is "function SVGFEDiffuseLightingElement() {\n    [native code]\n}"
+PASS SVGFEDistantLightElement.toString() is "function SVGFEDistantLightElement() {\n    [native code]\n}"
+PASS SVGFEPointLightElement.toString() is "function SVGFEPointLightElement() {\n    [native code]\n}"
+PASS SVGFESpotLightElement.toString() is "function SVGFESpotLightElement() {\n    [native code]\n}"
+PASS SVGFEDisplacementMapElement.toString() is "function SVGFEDisplacementMapElement() {\n    [native code]\n}"
+PASS SVGFEFloodElement.toString() is "function SVGFEFloodElement() {\n    [native code]\n}"
+PASS SVGFEGaussianBlurElement.toString() is "function SVGFEGaussianBlurElement() {\n    [native code]\n}"
+PASS SVGFEImageElement.toString() is "function SVGFEImageElement() {\n    [native code]\n}"
+PASS SVGFEMergeElement.toString() is "function SVGFEMergeElement() {\n    [native code]\n}"
+PASS SVGFEMergeNodeElement.toString() is "function SVGFEMergeNodeElement() {\n    [native code]\n}"
+PASS SVGFEMorphologyElement.toString() is "function SVGFEMorphologyElement() {\n    [native code]\n}"
+PASS SVGFEOffsetElement.toString() is "function SVGFEOffsetElement() {\n    [native code]\n}"
+PASS SVGFESpecularLightingElement.toString() is "function SVGFESpecularLightingElement() {\n    [native code]\n}"
+PASS SVGFETileElement.toString() is "function SVGFETileElement() {\n    [native code]\n}"
+PASS SVGFETurbulenceElement.toString() is "function SVGFETurbulenceElement() {\n    [native code]\n}"
+PASS SVGCursorElement.toString() is "function SVGCursorElement() {\n    [native code]\n}"
+PASS SVGAElement.toString() is "function SVGAElement() {\n    [native code]\n}"
+PASS SVGViewElement.toString() is "function SVGViewElement() {\n    [native code]\n}"
+PASS SVGScriptElement.toString() is "function SVGScriptElement() {\n    [native code]\n}"
+FAIL SVGEvent.toString() should be function SVGEvent() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGEvent
+PASS SVGZoomEvent.toString() is "function SVGZoomEvent() {\n    [native code]\n}"
+PASS SVGAnimationElement.toString() is "function SVGAnimationElement() {\n    [native code]\n}"
+PASS SVGAnimateElement.toString() is "function SVGAnimateElement() {\n    [native code]\n}"
+PASS SVGSetElement.toString() is "function SVGSetElement() {\n    [native code]\n}"
+PASS SVGAnimateMotionElement.toString() is "function SVGAnimateMotionElement() {\n    [native code]\n}"
+PASS SVGMPathElement.toString() is "function SVGMPathElement() {\n    [native code]\n}"
+PASS SVGAnimateColorElement.toString() is "function SVGAnimateColorElement() {\n    [native code]\n}"
+PASS SVGAnimateTransformElement.toString() is "function SVGAnimateTransformElement() {\n    [native code]\n}"
+PASS SVGFontElement.toString() is "function SVGFontElement() {\n    [native code]\n}"
+PASS SVGGlyphElement.toString() is "function SVGGlyphElement() {\n    [native code]\n}"
+PASS SVGMissingGlyphElement.toString() is "function SVGMissingGlyphElement() {\n    [native code]\n}"
+PASS SVGHKernElement.toString() is "function SVGHKernElement() {\n    [native code]\n}"
+PASS SVGVKernElement.toString() is "function SVGVKernElement() {\n    [native code]\n}"
+PASS SVGFontFaceElement.toString() is "function SVGFontFaceElement() {\n    [native code]\n}"
+PASS SVGFontFaceSrcElement.toString() is "function SVGFontFaceSrcElement() {\n    [native code]\n}"
+PASS SVGFontFaceUriElement.toString() is "function SVGFontFaceUriElement() {\n    [native code]\n}"
+PASS SVGFontFaceFormatElement.toString() is "function SVGFontFaceFormatElement() {\n    [native code]\n}"
+PASS SVGFontFaceNameElement.toString() is "function SVGFontFaceNameElement() {\n    [native code]\n}"
+FAIL SVGDefinitionSrcElement.toString() should be function SVGDefinitionSrcElement() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: SVGDefinitionSrcElement
+PASS SVGMetadataElement.toString() is "function SVGMetadataElement() {\n    [native code]\n}"
+PASS SVGForeignObjectElement.toString() is "function SVGForeignObjectElement() {\n    [native code]\n}"
 PASS successfullyParsed is true
 
 TEST COMPLETE

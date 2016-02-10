@@ -66,6 +66,12 @@ template<> JSC::EncodedJSValue JSC_HOST_CALL JSTestCustomConstructorWithNoInterf
     return constructJSTestCustomConstructorWithNoInterfaceObject(state);
 }
 
+template<> JSValue JSTestCustomConstructorWithNoInterfaceObjectConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestCustomConstructorWithNoInterfaceObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestCustomConstructorWithNoInterfaceObject::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -73,7 +79,7 @@ template<> void JSTestCustomConstructorWithNoInterfaceObjectConstructor::initial
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestCustomConstructorWithNoInterfaceObjectConstructor::s_info = { "TestCustomConstructorWithNoInterfaceObjectConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObjectConstructor) };
+template<> const ClassInfo JSTestCustomConstructorWithNoInterfaceObjectConstructor::s_info = { "TestCustomConstructorWithNoInterfaceObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObjectConstructor) };
 
 /* Hash table for prototype */
 

@@ -244,6 +244,12 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
+template<> JSValue JSTestInterfaceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestInterface::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -263,7 +269,7 @@ template<> ConstructType JSTestInterfaceConstructor::getConstructData(JSCell* ce
 #endif
 }
 
-template<> const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
+template<> const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
 
 /* Hash table for prototype */
 
@@ -749,9 +755,9 @@ void setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisVal
 
 #endif
 
-JSValue JSTestInterface::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)

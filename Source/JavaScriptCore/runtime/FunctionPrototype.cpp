@@ -109,6 +109,17 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
     }
 
+    if (thisValue.isObject()) {
+        JSObject* object = asObject(thisValue);
+        if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
+            CallData callData;
+            if (object->methodTable(exec->vm())->getCallData(object, callData) != CallTypeNone) {
+                if (auto* classInfo = object->classInfo())
+                    return JSValue::encode(jsMakeNontrivialString(exec, "function ", classInfo->className, "() {\n    [native code]\n}"));
+            }
+        }
+    }
+
     return throwVMTypeError(exec);
 }
 

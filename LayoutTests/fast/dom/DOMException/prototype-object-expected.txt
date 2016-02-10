@@ -7,7 +7,7 @@ PASS e.toString() is "Error: HierarchyRequestError: DOM Exception 3"
 PASS Object.prototype.toString.call(e) is "[object DOMException]"
 PASS Object.prototype.toString.call(e.__proto__) is "[object DOMExceptionPrototype]"
 PASS Object.prototype.toString.call(e.__proto__.__proto__) is "[object Error]"
-PASS e.constructor.toString() is "[object DOMExceptionConstructor]"
+PASS e.constructor.toString() is "function DOMException() {\n    [native code]\n}"
 PASS e instanceof DOMException is true
 PASS e instanceof Error is true
 PASS e.constructor is window.DOMException

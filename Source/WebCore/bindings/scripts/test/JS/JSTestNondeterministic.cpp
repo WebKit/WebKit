@@ -84,6 +84,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSTestNondeterministic> JSTestNondeterministicConstructor;
 
+template<> JSValue JSTestNondeterministicConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestNondeterministicConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNondeterministic::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -91,7 +97,7 @@ template<> void JSTestNondeterministicConstructor::initializeProperties(VM& vm, 
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestNondeterministicConstructor::s_info = { "TestNondeterministicConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNondeterministicConstructor) };
+template<> const ClassInfo JSTestNondeterministicConstructor::s_info = { "TestNondeterministic", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNondeterministicConstructor) };
 
 /* Hash table for prototype */
 
@@ -406,9 +412,9 @@ void setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* sta
 }
 
 
-JSValue JSTestNondeterministic::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestNondeterministic::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNondeterministicConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNondeterministicConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunction(ExecState* state)

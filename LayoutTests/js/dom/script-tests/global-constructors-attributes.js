@@ -59,9 +59,10 @@ function constructorPropertiesOnGlobalObject(globalObject)
         if (value == null)
             continue;
         var type = classNameForObject(value);
-        if (!type.match("Constructor$") || propertyNames[i] == "constructor")
-            continue;
-        constructorNames.push(propertyNames[i]);
+        var descriptor = Object.getOwnPropertyDescriptor(global, propertyNames[i]);
+        if (type == "Function" && descriptor.writable && !descriptor.enumerable && descriptor.configurable
+            && (propertyNames[i][0].toUpperCase() === propertyNames[i][0] || propertyNames[i].startsWith("webkit")))
+            constructorNames.push(propertyNames[i]);
     }
     return constructorNames.sort();
 }

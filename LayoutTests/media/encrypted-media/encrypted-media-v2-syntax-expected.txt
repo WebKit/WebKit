@@ -1,7 +1,7 @@
 This tests the basic API of WebKitMediaKeys and WebKitMediaKeySession.
 
 Test WebKitMediaKeys.
-EXPECTED (typeof window.WebKitMediaKeys == 'object') OK
+EXPECTED (typeof window.WebKitMediaKeys == 'function') OK
 TEST(new WebKitMediaKeys("")) THROWS(DOMException.INVALID_ACCESS_ERR) OK
 TEST(new WebKitMediaKeys("unsupported")) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
 RUN(mediaKeys = new WebKitMediaKeys("com.webcore.mock"))

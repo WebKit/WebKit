@@ -1,113 +1,113 @@
 Test that HTML element constructors are accessible as window object properties.
 
-HTMLElement: [object HTMLElementConstructor]
+HTMLElement: function HTMLElement() { [native code] }
 
-HTMLAnchorElement: [object HTMLAnchorElementConstructor]
+HTMLAnchorElement: function HTMLAnchorElement() { [native code] }
 
-HTMLAppletElement: [object HTMLAppletElementConstructor]
+HTMLAppletElement: function HTMLAppletElement() { [native code] }
 
-HTMLAreaElement: [object HTMLAreaElementConstructor]
+HTMLAreaElement: function HTMLAreaElement() { [native code] }
 
-HTMLBaseElement: [object HTMLBaseElementConstructor]
+HTMLBaseElement: function HTMLBaseElement() { [native code] }
 
-HTMLBodyElement: [object HTMLBodyElementConstructor]
+HTMLBodyElement: function HTMLBodyElement() { [native code] }
 
-HTMLBRElement: [object HTMLBRElementConstructor]
+HTMLBRElement: function HTMLBRElement() { [native code] }
 
-HTMLButtonElement: [object HTMLButtonElementConstructor]
+HTMLButtonElement: function HTMLButtonElement() { [native code] }
 
-HTMLDirectoryElement: [object HTMLDirectoryElementConstructor]
+HTMLDirectoryElement: function HTMLDirectoryElement() { [native code] }
 
-HTMLDivElement: [object HTMLDivElementConstructor]
+HTMLDivElement: function HTMLDivElement() { [native code] }
 
-HTMLDListElement: [object HTMLDListElementConstructor]
+HTMLDListElement: function HTMLDListElement() { [native code] }
 
-HTMLFieldSetElement: [object HTMLFieldSetElementConstructor]
+HTMLFieldSetElement: function HTMLFieldSetElement() { [native code] }
 
-HTMLFontElement: [object HTMLFontElementConstructor]
+HTMLFontElement: function HTMLFontElement() { [native code] }
 
-HTMLFormElement: [object HTMLFormElementConstructor]
+HTMLFormElement: function HTMLFormElement() { [native code] }
 
-HTMLFrameElement: [object HTMLFrameElementConstructor]
+HTMLFrameElement: function HTMLFrameElement() { [native code] }
 
-HTMLFrameSetElement: [object HTMLFrameSetElementConstructor]
+HTMLFrameSetElement: function HTMLFrameSetElement() { [native code] }
 
-HTMLHeadElement: [object HTMLHeadElementConstructor]
+HTMLHeadElement: function HTMLHeadElement() { [native code] }
 
-HTMLHeadingElement: [object HTMLHeadingElementConstructor]
+HTMLHeadingElement: function HTMLHeadingElement() { [native code] }
 
-HTMLHRElement: [object HTMLHRElementConstructor]
+HTMLHRElement: function HTMLHRElement() { [native code] }
 
-HTMLHtmlElement: [object HTMLHtmlElementConstructor]
+HTMLHtmlElement: function HTMLHtmlElement() { [native code] }
 
-HTMLIFrameElement: [object HTMLIFrameElementConstructor]
+HTMLIFrameElement: function HTMLIFrameElement() { [native code] }
 
-HTMLImageElement: [object HTMLImageElementConstructor]
+HTMLImageElement: function HTMLImageElement() { [native code] }
 
-HTMLInputElement: [object HTMLInputElementConstructor]
+HTMLInputElement: function HTMLInputElement() { [native code] }
 
-HTMLLabelElement: [object HTMLLabelElementConstructor]
+HTMLLabelElement: function HTMLLabelElement() { [native code] }
 
-HTMLLegendElement: [object HTMLLegendElementConstructor]
+HTMLLegendElement: function HTMLLegendElement() { [native code] }
 
-HTMLLIElement: [object HTMLLIElementConstructor]
+HTMLLIElement: function HTMLLIElement() { [native code] }
 
-HTMLLinkElement: [object HTMLLinkElementConstructor]
+HTMLLinkElement: function HTMLLinkElement() { [native code] }
 
-HTMLMapElement: [object HTMLMapElementConstructor]
+HTMLMapElement: function HTMLMapElement() { [native code] }
 
-HTMLMenuElement: [object HTMLMenuElementConstructor]
+HTMLMenuElement: function HTMLMenuElement() { [native code] }
 
-HTMLMetaElement: [object HTMLMetaElementConstructor]
+HTMLMetaElement: function HTMLMetaElement() { [native code] }
 
-HTMLModElement: [object HTMLModElementConstructor]
+HTMLModElement: function HTMLModElement() { [native code] }
 
-HTMLObjectElement: [object HTMLObjectElementConstructor]
+HTMLObjectElement: function HTMLObjectElement() { [native code] }
 
-HTMLOListElement: [object HTMLOListElementConstructor]
+HTMLOListElement: function HTMLOListElement() { [native code] }
 
-HTMLOptGroupElement: [object HTMLOptGroupElementConstructor]
+HTMLOptGroupElement: function HTMLOptGroupElement() { [native code] }
 
-HTMLOptionElement: [object HTMLOptionElementConstructor]
+HTMLOptionElement: function HTMLOptionElement() { [native code] }
 
-HTMLParagraphElement: [object HTMLParagraphElementConstructor]
+HTMLParagraphElement: function HTMLParagraphElement() { [native code] }
 
-HTMLParamElement: [object HTMLParamElementConstructor]
+HTMLParamElement: function HTMLParamElement() { [native code] }
 
-HTMLPreElement: [object HTMLPreElementConstructor]
+HTMLPreElement: function HTMLPreElement() { [native code] }
 
-HTMLQuoteElement: [object HTMLQuoteElementConstructor]
+HTMLQuoteElement: function HTMLQuoteElement() { [native code] }
 
-HTMLScriptElement: [object HTMLScriptElementConstructor]
+HTMLScriptElement: function HTMLScriptElement() { [native code] }
 
-HTMLSelectElement: [object HTMLSelectElementConstructor]
+HTMLSelectElement: function HTMLSelectElement() { [native code] }
 
-HTMLStyleElement: [object HTMLStyleElementConstructor]
+HTMLStyleElement: function HTMLStyleElement() { [native code] }
 
-HTMLTableCaptionElement: [object HTMLTableCaptionElementConstructor]
+HTMLTableCaptionElement: function HTMLTableCaptionElement() { [native code] }
 
-HTMLTableCellElement: [object HTMLTableCellElementConstructor]
+HTMLTableCellElement: function HTMLTableCellElement() { [native code] }
 
-HTMLTableColElement: [object HTMLTableColElementConstructor]
+HTMLTableColElement: function HTMLTableColElement() { [native code] }
 
-HTMLTableElement: [object HTMLTableElementConstructor]
+HTMLTableElement: function HTMLTableElement() { [native code] }
 
-HTMLTableRowElement: [object HTMLTableRowElementConstructor]
+HTMLTableRowElement: function HTMLTableRowElement() { [native code] }
 
-HTMLTableSectionElement: [object HTMLTableSectionElementConstructor]
+HTMLTableSectionElement: function HTMLTableSectionElement() { [native code] }
 
-HTMLTextAreaElement: [object HTMLTextAreaElementConstructor]
+HTMLTextAreaElement: function HTMLTextAreaElement() { [native code] }
 
-HTMLTitleElement: [object HTMLTitleElementConstructor]
+HTMLTitleElement: function HTMLTitleElement() { [native code] }
 
-HTMLUListElement: [object HTMLUListElementConstructor]
+HTMLUListElement: function HTMLUListElement() { [native code] }
 
-HTMLCanvasElement: [object HTMLCanvasElementConstructor]
+HTMLCanvasElement: function HTMLCanvasElement() { [native code] }
 
 HTMLInsElement: undefined
 
 HTMLDelElement: undefined
 
-HTMLEmbedElement: [object HTMLEmbedElementConstructor]
+HTMLEmbedElement: function HTMLEmbedElement() { [native code] }
 
-HTMLMarqueeElement: [object HTMLMarqueeElementConstructor]
+HTMLMarqueeElement: function HTMLMarqueeElement() { [native code] }

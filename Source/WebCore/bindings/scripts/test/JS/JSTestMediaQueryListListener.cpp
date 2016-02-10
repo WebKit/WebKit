@@ -68,6 +68,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSTestMediaQueryListListener> JSTestMediaQueryListListenerConstructor;
 
+template<> JSValue JSTestMediaQueryListListenerConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestMediaQueryListListenerConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestMediaQueryListListener::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -75,7 +81,7 @@ template<> void JSTestMediaQueryListListenerConstructor::initializeProperties(VM
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListenerConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerConstructor) };
+template<> const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerConstructor) };
 
 /* Hash table for prototype */
 
@@ -136,9 +142,9 @@ void setJSTestMediaQueryListListenerConstructor(ExecState* state, EncodedJSValue
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestMediaQueryListListenerConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestMediaQueryListListenerConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* state)

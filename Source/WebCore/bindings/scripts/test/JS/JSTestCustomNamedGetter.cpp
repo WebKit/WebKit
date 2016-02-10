@@ -68,6 +68,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSTestCustomNamedGetter> JSTestCustomNamedGetterConstructor;
 
+template<> JSValue JSTestCustomNamedGetterConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestCustomNamedGetterConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestCustomNamedGetter::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -75,7 +81,7 @@ template<> void JSTestCustomNamedGetterConstructor::initializeProperties(VM& vm,
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetterConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
+template<> const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
 
 /* Hash table for prototype */
 
@@ -171,9 +177,9 @@ void setJSTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue this
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCustomNamedGetterConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCustomNamedGetterConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(ExecState* state)

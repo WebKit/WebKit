@@ -14,7 +14,7 @@ FAIL XMLHttpRequestEventTarget interface: attribute onerror assert_own_property:
 FAIL XMLHttpRequestEventTarget interface: attribute onload assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequestEventTarget interface: attribute ontimeout assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequestEventTarget interface: attribute onloadend assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestUpload interface: existence and properties of interface object assert_equals: class string of XMLHttpRequestUpload expected "[object Function]" but got "[object XMLHttpRequestUploadConstructor]"
+FAIL XMLHttpRequestUpload interface: existence and properties of interface object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
 PASS XMLHttpRequestUpload interface object length 
 PASS XMLHttpRequestUpload interface object name 
 FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
@@ -38,7 +38,7 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError 
-FAIL XMLHttpRequest interface: existence and properties of interface object assert_equals: class string of XMLHttpRequest expected "[object Function]" but got "[object XMLHttpRequestConstructor]"
+FAIL XMLHttpRequest interface: existence and properties of interface object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
 PASS XMLHttpRequest interface object length 
 PASS XMLHttpRequest interface object name 
 FAIL XMLHttpRequest interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
@@ -123,7 +123,7 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: new XMLHttpRequest() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new XMLHttpRequest() with too few arguments must throw TypeError 
-FAIL FormData interface: existence and properties of interface object assert_equals: class string of FormData expected "[object Function]" but got "[object FormDataConstructor]"
+PASS FormData interface: existence and properties of interface object 
 PASS FormData interface object length 
 PASS FormData interface object name 
 PASS FormData interface: existence and properties of interface prototype object 
@@ -180,7 +180,7 @@ FAIL FormData interface: new FormData(form) must inherit property "set" with the
 FAIL FormData interface: calling set(USVString,Blob,USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "set" not found in prototype chain
 FAIL FormData interface: new FormData(form) must inherit property "set" with the proper type (7) assert_inherits: property "set" not found in prototype chain
 FAIL FormData interface: calling set(USVString,USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "set" not found in prototype chain
-FAIL ProgressEvent interface: existence and properties of interface object assert_equals: class string of ProgressEvent expected "[object Function]" but got "[object ProgressEventConstructor]"
+PASS ProgressEvent interface: existence and properties of interface object 
 PASS ProgressEvent interface object length 
 PASS ProgressEvent interface object name 
 PASS ProgressEvent interface: existence and properties of interface prototype object 

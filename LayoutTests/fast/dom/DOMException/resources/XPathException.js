@@ -14,7 +14,7 @@ try {
 shouldBeEqualToString("e.toString()", "Error: TYPE_ERR: DOM XPath Exception 52");
 shouldBeEqualToString("Object.prototype.toString.call(e)", "[object XPathException]");
 shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object XPathExceptionPrototype]");
-shouldBeEqualToString("e.constructor.toString()", "[object XPathExceptionConstructor]");
+shouldBeEqualToString("e.constructor.toString()", "function XPathException() {\n    [native code]\n}");
 shouldBe("e.constructor", "window.XPathException");
 shouldBe("e.TYPE_ERR", "e.constructor.TYPE_ERR");
 shouldBe("e.INVALID_EXPRESSION_ERR", "51");

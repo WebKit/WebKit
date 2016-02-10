@@ -5,7 +5,7 @@
 description('This tests that setting the proto of a built in constructor is not reset');
 
 // Hotmail depends on the [[Prototype]] of DOM constructors to be Object.prototype.
-shouldBe('Object.getPrototypeOf(HTMLElement)', 'Object.prototype');
+shouldBe('Object.getPrototypeOf(HTMLElement)', 'Element');
 
 var proto = new Number(42);
 HTMLElement.__proto__ = proto;

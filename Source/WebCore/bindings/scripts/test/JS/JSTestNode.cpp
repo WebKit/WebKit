@@ -74,6 +74,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(ExecSta
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
+template<> JSValue JSTestNodeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    return JSNode::getConstructor(vm, &globalObject);
+}
+
 template<> void JSTestNodeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNode::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -81,7 +86,7 @@ template<> void JSTestNodeConstructor::initializeProperties(VM& vm, JSDOMGlobalO
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestNodeConstructor::s_info = { "TestNodeConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodeConstructor) };
+template<> const ClassInfo JSTestNodeConstructor::s_info = { "TestNode", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodeConstructor) };
 
 /* Hash table for prototype */
 
@@ -168,9 +173,9 @@ void setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValu
 }
 
 
-JSValue JSTestNode::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNodeConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNodeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)

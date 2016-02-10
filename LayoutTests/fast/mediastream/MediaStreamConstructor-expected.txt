@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS Got local stream.
 PASS localStream.getAudioTracks().length is 1
 PASS localStream.getVideoTracks().length is 1
-PASS typeof MediaStream === 'object' is true
+PASS typeof MediaStream === 'function' is true
 PASS checkIdAttribute(localStream.id) is true
 PASS new MediaStream(document) threw exception TypeError: Type error.
 PASS new MediaStream([document]) threw exception TypeError: Invalid Array element type.
@@ -20,7 +20,7 @@ PASS new MediaStream(undefined) threw exception TypeError: Type error.
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
 PASS [object MediaStream] is defined.
-PASS newStream.constructor.toString() is '[object MediaStreamConstructor]'
+PASS newStream.constructor.toString() is "function MediaStream() {\n    [native code]\n}"
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
 PASS checkIdAttribute(newStream.id) is true
@@ -29,7 +29,7 @@ PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
 PASS [object MediaStream] is defined.
-PASS newStream.constructor.toString() is '[object MediaStreamConstructor]'
+PASS newStream.constructor.toString() is "function MediaStream() {\n    [native code]\n}"
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
 PASS checkIdAttribute(newStream.id) is true
@@ -38,7 +38,7 @@ PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
 PASS [object MediaStream] is defined.
-PASS newStream.constructor.toString() is '[object MediaStreamConstructor]'
+PASS newStream.constructor.toString() is "function MediaStream() {\n    [native code]\n}"
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
 PASS checkIdAttribute(newStream.id) is true
@@ -47,7 +47,7 @@ PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
 PASS [object MediaStream] is defined.
-PASS newStream.constructor.toString() is '[object MediaStreamConstructor]'
+PASS newStream.constructor.toString() is "function MediaStream() {\n    [native code]\n}"
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
 PASS checkIdAttribute(newStream.id) is true
@@ -56,7 +56,7 @@ PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
 PASS [object MediaStream] is defined.
-PASS newStream.constructor.toString() is '[object MediaStreamConstructor]'
+PASS newStream.constructor.toString() is "function MediaStream() {\n    [native code]\n}"
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
 PASS checkIdAttribute(newStream.id) is true
@@ -65,7 +65,7 @@ PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
 PASS [object MediaStream] is defined.
-PASS newStream.constructor.toString() is '[object MediaStreamConstructor]'
+PASS newStream.constructor.toString() is "function MediaStream() {\n    [native code]\n}"
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
 PASS checkIdAttribute(newStream.id) is true
@@ -74,7 +74,7 @@ PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
 PASS [object MediaStream] is defined.
-PASS newStream.constructor.toString() is '[object MediaStreamConstructor]'
+PASS newStream.constructor.toString() is "function MediaStream() {\n    [native code]\n}"
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
 PASS checkIdAttribute(newStream.id) is true

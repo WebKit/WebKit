@@ -70,6 +70,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSTestOverrideBuiltins> JSTestOverrideBuiltinsConstructor;
 
+template<> JSValue JSTestOverrideBuiltinsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestOverrideBuiltinsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestOverrideBuiltins::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -77,7 +83,7 @@ template<> void JSTestOverrideBuiltinsConstructor::initializeProperties(VM& vm, 
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestOverrideBuiltinsConstructor::s_info = { "TestOverrideBuiltinsConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsConstructor) };
+template<> const ClassInfo JSTestOverrideBuiltinsConstructor::s_info = { "TestOverrideBuiltins", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsConstructor) };
 
 /* Hash table for prototype */
 
@@ -180,9 +186,9 @@ void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* st
     Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
-JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestOverrideBuiltinsConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestOverrideBuiltinsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* state)

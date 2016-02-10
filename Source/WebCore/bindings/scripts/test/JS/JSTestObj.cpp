@@ -475,6 +475,12 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecStat
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
+template<> JSValue JSTestObjConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestObjConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestObj::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -483,7 +489,7 @@ template<> void JSTestObjConstructor::initializeProperties(VM& vm, JSDOMGlobalOb
     reifyStaticProperties(vm, JSTestObjConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestObjConstructor::s_info = { "TestObjectConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
+template<> const ClassInfo JSTestObjConstructor::s_info = { "TestObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
 
 /* Hash table for prototype */
 
@@ -3003,9 +3009,9 @@ void setJSTestObjPutForwardsNullableAttribute(ExecState* state, EncodedJSValue t
 }
 
 
-JSValue JSTestObj::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestObj::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestObjConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestObjConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* state)

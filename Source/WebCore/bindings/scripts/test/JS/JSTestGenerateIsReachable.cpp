@@ -61,6 +61,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSTestGenerateIsReachable> JSTestGenerateIsReachableConstructor;
 
+template<> JSValue JSTestGenerateIsReachableConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestGenerateIsReachableConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -68,7 +74,7 @@ template<> void JSTestGenerateIsReachableConstructor::initializeProperties(VM& v
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestGenerateIsReachableConstructor::s_info = { "TestGenerateIsReachableConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachableConstructor) };
+template<> const ClassInfo JSTestGenerateIsReachableConstructor::s_info = { "TestGenerateIsReachable", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachableConstructor) };
 
 /* Hash table for prototype */
 
@@ -128,9 +134,9 @@ void setJSTestGenerateIsReachableConstructor(ExecState* state, EncodedJSValue th
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestGenerateIsReachableConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestGenerateIsReachableConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

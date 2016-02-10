@@ -77,6 +77,12 @@ private:
 
 typedef JSDOMConstructorNotConstructable<JSTestEventTarget> JSTestEventTargetConstructor;
 
+template<> JSValue JSTestEventTargetConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestEventTargetConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEventTarget::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -84,7 +90,7 @@ template<> void JSTestEventTargetConstructor::initializeProperties(VM& vm, JSDOM
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTargetConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
+template<> const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTarget", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
 
 /* Hash table for prototype */
 
@@ -200,9 +206,9 @@ void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* state, 
     Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
-JSValue JSTestEventTarget::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestEventTarget::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventTargetConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventTargetConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* state)

@@ -715,4 +715,16 @@ void DOMConstructorJSBuiltinObject::visitChildren(JSC::JSCell* cell, JSC::SlotVi
     visitor.append(&thisObject->m_initializeFunction);
 }
 
+static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
+{
+    throwTypeError(exec, ASCIILiteral("Constructor requires 'new' operator"));
+    return JSValue::encode(jsNull());
+}
+
+CallType DOMConstructorObject::getCallData(JSCell*, CallData& callData)
+{
+    callData.native.function = callThrowTypeError;
+    return CallTypeHost;
+}
+
 } // namespace WebCore

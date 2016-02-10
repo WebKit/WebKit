@@ -1,5 +1,5 @@
 
-FAIL Request interface: existence and properties of interface object assert_equals: class string of Request expected "[object Function]" but got "[object RequestConstructor]"
+PASS Request interface: existence and properties of interface object 
 PASS Request interface object length 
 PASS Request interface object name 
 PASS Request interface: existence and properties of interface prototype object 

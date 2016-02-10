@@ -64,6 +64,12 @@ private:
 typedef JSDOMConstructorNotConstructable<JSTestNamedConstructor> JSTestNamedConstructorConstructor;
 typedef JSDOMNamedConstructor<JSTestNamedConstructor> JSTestNamedConstructorNamedConstructor;
 
+template<> JSValue JSTestNamedConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestNamedConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -71,7 +77,7 @@ template<> void JSTestNamedConstructorConstructor::initializeProperties(VM& vm, 
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
+template<> const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
 
 template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::construct(ExecState* state)
 {
@@ -96,6 +102,12 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
+template<> JSValue JSTestNamedConstructorNamedConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestNamedConstructorNamedConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -103,7 +115,7 @@ template<> void JSTestNamedConstructorNamedConstructor::initializeProperties(VM&
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestNamedConstructorNamedConstructor::s_info = { "AudioConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorNamedConstructor) };
+template<> const ClassInfo JSTestNamedConstructorNamedConstructor::s_info = { "Audio", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorNamedConstructor) };
 
 /* Hash table for prototype */
 
@@ -163,9 +175,9 @@ void setJSTestNamedConstructorConstructor(ExecState* state, EncodedJSValue thisV
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSTestNamedConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestNamedConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedConstructorConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 JSValue JSTestNamedConstructor::getNamedConstructor(VM& vm, JSGlobalObject* globalObject)

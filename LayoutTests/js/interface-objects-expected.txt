@@ -1,0 +1,38 @@
+Tests that interfaces objects have the right type
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Interface with constructor
+PASS window.Event instanceof Function is true
+PASS typeof Event is "function"
+PASS Object.getPrototypeOf(Event) is Function.prototype
+PASS Event('click') threw exception TypeError: Constructor requires 'new' operator.
+PASS Event.call('click') threw exception TypeError: Constructor requires 'new' operator.
+PASS new Event('click') did not throw exception.
+PASS Event.toString() is "function Event() {\n    [native code]\n}"
+PASS object.toString.call(Event) is "[object Function]"
+
+* Interface with named constructor
+PASS window.Audio instanceof Function is true
+PASS typeof Audio is "function"
+PASS Object.getPrototypeOf(Audio) is HTMLMediaElement
+PASS Audio() threw exception TypeError: Constructor requires 'new' operator.
+PASS Audio.call() threw exception TypeError: Constructor requires 'new' operator.
+PASS new Audio() did not throw exception.
+PASS Audio.toString() is "function Audio() {\n    [native code]\n}"
+PASS object.toString.call(Audio) is "[object Function]"
+
+* Interface without constructor
+PASS window.Element instanceof Function is true
+PASS typeof Element is "function"
+PASS Object.getPrototypeOf(Element) is Node
+PASS Element() threw exception TypeError: Illegal constructor.
+PASS Element.call() threw exception TypeError: Illegal constructor.
+PASS new Element() threw exception TypeError: function is not a constructor (evaluating 'new Element()').
+PASS Element.toString() is "function Element() {\n    [native code]\n}"
+PASS object.toString.call(Element) is "[object Function]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -45,7 +45,7 @@
           constructorName = className + "Constructor";
       shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
       shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + prototypeName + "'");
-      shouldBe("jsWrapperClass(" + expression + ".constructor)", "'" + constructorName + "'");
+      shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
   }
 
   var transformRule = stylesheet.cssRules.item(0).style.getPropertyCSSValue('-webkit-transform');

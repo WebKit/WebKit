@@ -1,3 +1,68 @@
+2016-02-10  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] interface objects should be Function objects
+        https://bugs.webkit.org/show_bug.cgi?id=154038
+        <rdar://problem/24569358>
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline / update existing layout tests now that interface objects
+        are now Function objects. Also add a layout test to cover various
+        aspects of interface objects.
+
+        * css3/blending/background-blend-mode-property-parsing-expected.txt:
+        * css3/blending/blend-mode-property-parsing-expected.txt:
+        * css3/blending/script-tests/background-blend-mode-property-parsing.js:
+        (shouldBeType):
+        * css3/blending/script-tests/blend-mode-property-parsing.js:
+        (shouldBeType):
+        * css3/filters/backdrop/backdropfilter-property-parsing-expected.txt:
+        * css3/filters/backdrop/script-tests/backdropfilter-property-parsing.js:
+        (shouldBeType):
+        * css3/filters/filter-property-parsing-expected.txt:
+        * css3/filters/script-tests/filter-property-parsing.js:
+        (shouldBeType):
+        * fast/css/image-set-parsing-expected.txt:
+        * fast/css/script-tests/image-set-parsing.js:
+        (shouldBeType):
+        * fast/dom/DOMException/XPathException-expected.txt:
+        * fast/dom/DOMException/prototype-object-expected.txt:
+        * fast/dom/DOMException/prototype-object.html:
+        * fast/dom/DOMException/resources/XPathException.js:
+        * fast/dom/MutationObserver/mutation-record-constructor-expected.txt:
+        * fast/dom/MutationObserver/mutation-record-constructor.html:
+        * fast/dom/Window/element-constructors-on-window-expected.txt:
+        * fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * fast/dom/constructor-proto-expected.txt:
+        * fast/dom/constructor-proto.html:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/dom/wrapper-classes.html:
+        * fast/mediastream/MediaStreamConstructor-expected.txt:
+        * fast/mediastream/MediaStreamConstructor.html:
+        * fast/workers/constructor-proto-expected.txt:
+        * fast/workers/worker-location-expected.txt:
+        * http/tests/xmlhttprequest/XMLHttpRequestException-expected.txt:
+        * http/tests/xmlhttprequest/XMLHttpRequestException.html:
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * js/dom/script-tests/global-constructors-attributes-idb.js:
+        (constructorPropertiesOnGlobalObject):
+        * js/dom/script-tests/global-constructors-attributes.js:
+        (constructorPropertiesOnGlobalObject):
+        * js/interface-objects-expected.txt: Added.
+        * js/interface-objects.html: Added.
+        * media/encrypted-media/encrypted-media-v2-syntax-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-syntax.html:
+        * media/track/track-vttcue-expected.txt:
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * svg/custom/SVGException-expected.txt:
+        * svg/custom/global-constructors-expected.txt:
+        * svg/custom/script-tests/SVGException.js:
+        * svg/custom/script-tests/global-constructors.js:
+        (shouldBeDefined):
+        * transforms/2d/transform-value-types-expected.txt:
+        * transforms/2d/transform-value-types.html:
+
 2016-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/css-generated-content/details-summary-before-after.html as failing on ios-simulator

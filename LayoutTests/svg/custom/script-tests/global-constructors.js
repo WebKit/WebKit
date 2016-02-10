@@ -2,8 +2,8 @@ description("Test to make sure we expose all the global constructor objects requ
 
 function shouldBeDefined(a)
 {
-    var constructorString = "'[object " + a + "Constructor]'";
-    shouldBe("" + a + ".toString()", constructorString);
+    var constructorString = "function " + a + "() {\n    [native code]\n}";
+    shouldBeEqualToString("" + a + ".toString()", constructorString);
 }
 
 shouldBeDefined("SVGException");

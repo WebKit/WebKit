@@ -41,7 +41,7 @@ public:
 
     virtual ~JSTestCallback();
     JSCallbackDataStrong* callbackData() { return m_data; }
-    static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
+    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 
     // Functions
     virtual bool callbackWithNoParam();

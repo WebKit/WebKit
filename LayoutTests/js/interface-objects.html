@@ -1,0 +1,41 @@
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("Tests that interfaces objects have the right type");
+// http://heycam.github.io/webidl/#interface-object
+
+object = {};
+
+debug("* Interface with constructor");
+shouldBeTrue("window.Event instanceof Function");
+shouldBeEqualToString("typeof Event", "function");
+shouldBe("Object.getPrototypeOf(Event)", "Function.prototype");
+shouldThrow("Event('click')");
+shouldThrow("Event.call('click')");
+shouldNotThrow("new Event('click')");
+shouldBeEqualToString("Event.toString()", "function Event() {\n    [native code]\n}");
+shouldBeEqualToString("object.toString.call(Event)", "[object Function]");
+
+debug("");
+debug("* Interface with named constructor");
+shouldBeTrue("window.Audio instanceof Function");
+shouldBeEqualToString("typeof Audio", "function");
+shouldBe("Object.getPrototypeOf(Audio)", "HTMLMediaElement");
+shouldThrow("Audio()");
+shouldThrow("Audio.call()");
+shouldNotThrow("new Audio()");
+shouldBeEqualToString("Audio.toString()", "function Audio() {\n    [native code]\n}");
+shouldBeEqualToString("object.toString.call(Audio)", "[object Function]");
+
+debug("");
+debug("* Interface without constructor");
+shouldBeTrue("window.Element instanceof Function");
+shouldBeEqualToString("typeof Element", "function");
+shouldBe("Object.getPrototypeOf(Element)", "Node");
+shouldThrow("Element()");
+shouldThrow("Element.call()");
+shouldThrow("new Element()");
+shouldBeEqualToString("Element.toString()", "function Element() {\n    [native code]\n}");
+shouldBeEqualToString("object.toString.call(Element)", "[object Function]");
+
+</script>
+<script src="../resources/js-test-post.js"></script>

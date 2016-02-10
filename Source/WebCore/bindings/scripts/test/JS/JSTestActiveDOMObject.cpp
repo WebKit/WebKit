@@ -87,6 +87,12 @@ static const HashTableValue JSTestActiveDOMObjectTableValues[] =
 };
 
 static const HashTable JSTestActiveDOMObjectTable = { 2, 3, true, JSTestActiveDOMObjectTableValues, JSTestActiveDOMObjectTableIndex };
+template<> JSValue JSTestActiveDOMObjectConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestActiveDOMObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestActiveDOMObject::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -94,7 +100,7 @@ template<> void JSTestActiveDOMObjectConstructor::initializeProperties(VM& vm, J
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestActiveDOMObjectConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectConstructor) };
+template<> const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestActiveDOMObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectConstructor) };
 
 /* Hash table for prototype */
 
@@ -185,9 +191,9 @@ void setJSTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisVa
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSTestActiveDOMObject::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestActiveDOMObject::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestActiveDOMObjectConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestActiveDOMObjectConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* state)

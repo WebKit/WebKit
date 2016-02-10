@@ -107,6 +107,12 @@ bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDiction
     return true;
 }
 
+template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    UNUSED_PARAM(vm);
+    return globalObject.functionPrototype();
+}
+
 template<> void JSTestEventConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -114,7 +120,7 @@ template<> void JSTestEventConstructorConstructor::initializeProperties(VM& vm, 
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
 }
 
-template<> const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEventConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructorConstructor) };
+template<> const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEventConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructorConstructor) };
 
 /* Hash table for prototype */
 
@@ -206,9 +212,9 @@ void setJSTestEventConstructorConstructor(ExecState* state, EncodedJSValue thisV
     domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-JSValue JSTestEventConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
+JSValue JSTestEventConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventConstructorConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

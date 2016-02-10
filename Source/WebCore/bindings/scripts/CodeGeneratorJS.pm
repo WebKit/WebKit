@@ -1086,7 +1086,7 @@ sub GenerateHeader
 
     # Constructor object getter
     unless ($interface->extendedAttributes->{"NoInterfaceObject"}) {
-        push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n");
         push(@headerContent, "    static JSC::JSValue getNamedConstructor(JSC::VM&, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{"NamedConstructor"};
     }
 
@@ -2825,8 +2825,8 @@ sub GenerateImplementation
     }
 
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
-        push(@implContent, "JSValue ${className}::getConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
-        push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
+        push(@implContent, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n{\n");
+        push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
         if ($interface->extendedAttributes->{"NamedConstructor"}) {
             push(@implContent, "JSValue ${className}::getNamedConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
@@ -3588,7 +3588,7 @@ sub GenerateCallbackHeader
 
     # Constructor object getter.
     if (@{$interface->constants}) {
-        push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n");
     }
 
     if ($interface->extendedAttributes->{"CallbackNeedsOperatorEqual"}) {
@@ -3733,8 +3733,8 @@ sub GenerateCallbackImplementation
 
        GenerateConstructorDefinitions(\@implContent, $className, "", $interfaceName, $visibleInterfaceName, $interface);
 
-       push(@implContent, "JSValue ${className}::getConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
-       push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
+       push(@implContent, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n{\n");
+       push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
        push(@implContent, "}\n\n");
     }
 
@@ -4939,6 +4939,24 @@ sub GenerateConstructorHelperMethods
         $leastConstructorLength = 0;
     }
 
+    # If the interface has a parent interface which does not have [NoInterfaceObject], then use its interface object as prototype,
+    # otherwise use FunctionPrototype: http://heycam.github.io/webidl/#interface-object
+    push(@$outputArray, "template<> JSValue ${constructorClassName}::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)\n");
+    push(@$outputArray, "{\n");
+    # FIXME: IDL does not allow an interface without [NoInterfaceObject] to inherit one that is marked as [NoInterfaceObject]
+    # so we should be able to use our parent's interface object no matter what. However, some of our IDL files (e.g. CanvasRenderingContext2D)
+    # are not valid so we need this check for now.
+    if ($interface->parent && !$codeGenerator->getInterfaceExtendedAttributesFromName($interface->parent)->{"NoInterfaceObject"}) {
+        my $parentClassName = "JS" . $interface->parent;
+        push(@$outputArray, "    return ${parentClassName}::getConstructor(vm, &globalObject);\n");
+    } else {
+        AddToImplIncludes("<runtime/FunctionPrototype.h>");
+        push(@$outputArray, "    UNUSED_PARAM(vm);\n");
+        push(@$outputArray, "    return globalObject.functionPrototype();\n");
+    }
+    push(@$outputArray, "}\n\n");
+
+
     push(@$outputArray, "template<> void ${constructorClassName}::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)\n");
     push(@$outputArray, "{\n");
 
@@ -4987,7 +5005,7 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "}\n");
         push(@$outputArray, "\n");
     }
-    push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+    push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
  
 }
 
