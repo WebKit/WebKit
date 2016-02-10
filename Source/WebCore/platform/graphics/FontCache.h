@@ -193,8 +193,8 @@ public:
     WEBCORE_EXPORT Ref<Font> fontForPlatformData(const FontPlatformData&);
     RefPtr<Font> similarFont(const FontDescription&, const AtomicString& family);
 
-    void addClient(FontSelector*);
-    void removeClient(FontSelector*);
+    void addClient(FontSelector&);
+    void removeClient(FontSelector&);
 
     unsigned short generation();
     WEBCORE_EXPORT void invalidate();

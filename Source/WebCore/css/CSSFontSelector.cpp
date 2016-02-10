@@ -73,13 +73,13 @@ CSSFontSelector::CSSFontSelector(Document& document)
     // seem to be any such guarantee.
 
     ASSERT(m_document);
-    FontCache::singleton().addClient(this);
+    FontCache::singleton().addClient(*this);
 }
 
 CSSFontSelector::~CSSFontSelector()
 {
     clearDocument();
-    FontCache::singleton().removeClient(this);
+    FontCache::singleton().removeClient(*this);
 }
 
 bool CSSFontSelector::isEmpty() const

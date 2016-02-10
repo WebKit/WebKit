@@ -1,3 +1,39 @@
+2016-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSSegmentedFontFace does not need to be reference counted
+        https://bugs.webkit.org/show_bug.cgi?id=154083
+
+        Reviewed by Antti Koivisto.
+
+        ...There is only ever a single reference to one.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::getFontFace):
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.h:
+        (WebCore::CSSSegmentedFontFace::create): Deleted.
+
+2016-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontCache's clients should use references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=154085
+
+        Reviewed by Antti Koivisto.
+
+        They are never null.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::addClient):
+        (WebCore::FontCache::removeClient):
+        * platform/graphics/FontCache.h:
+
 2016-02-10  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] interface objects should be Function objects

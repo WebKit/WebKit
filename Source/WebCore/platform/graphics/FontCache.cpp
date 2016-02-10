@@ -485,21 +485,21 @@ size_t FontCache::inactiveFontCount()
 
 static HashSet<FontSelector*>* gClients;
 
-void FontCache::addClient(FontSelector* client)
+void FontCache::addClient(FontSelector& client)
 {
     if (!gClients)
         gClients = new HashSet<FontSelector*>;
 
-    ASSERT(!gClients->contains(client));
-    gClients->add(client);
+    ASSERT(!gClients->contains(&client));
+    gClients->add(&client);
 }
 
-void FontCache::removeClient(FontSelector* client)
+void FontCache::removeClient(FontSelector& client)
 {
     ASSERT(gClients);
-    ASSERT(gClients->contains(client));
+    ASSERT(gClients->contains(&client));
 
-    gClients->remove(client);
+    gClients->remove(&client);
 }
 
 static unsigned short gGeneration = 0;
