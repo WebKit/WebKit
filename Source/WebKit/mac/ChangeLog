@@ -1,3 +1,17 @@
+2016-02-10  Mark Lam  <mark.lam@apple.com>
+
+        WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture: should assert that it is being called from the "main" thread.
+        https://bugs.webkit.org/show_bug.cgi?id=154059
+
+        Reviewed by Geoffrey Garen.
+
+        This makes it so that misbehaving clients which call it (indirectly) from another
+        thread (not the main thread) will fail faster.  Otherwise, we get potential
+        memory corruption that results in strange crashes elsewhere later.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+
 2016-02-04  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Adopt NSURLSession properties in AVAssetResourceLoader
