@@ -1,3 +1,11 @@
+2016-02-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after 196392
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-02-10  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] interface objects should be Function objects
