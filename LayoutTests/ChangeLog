@@ -1,5 +1,13 @@
 2016-02-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline compositing/overflow/scrollbar-painting.html for ios-simulator after r196244
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/compositing/overflow/scrollbar-painting-expected.txt:
+
+2016-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196303
 
         Unreviewed test gardening.
