@@ -27,6 +27,7 @@
 #define Color_h
 
 #include "ColorSpace.h"
+#include "PlatformExportMacros.h"
 #include <algorithm>
 #include <cmath>
 #include <unicode/uchar.h>

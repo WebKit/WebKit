@@ -26,6 +26,7 @@
 #ifndef CertificateInfo_h
 #define CertificateInfo_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

@@ -28,6 +28,7 @@
 #define DeviceOrientationClient_h
 
 #include "DeviceClient.h"
+#include "PlatformExportMacros.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

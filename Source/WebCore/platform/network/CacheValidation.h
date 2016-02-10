@@ -26,6 +26,7 @@
 #ifndef CacheValidation_h
 #define CacheValidation_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/Optional.h>
 
 namespace WebCore {

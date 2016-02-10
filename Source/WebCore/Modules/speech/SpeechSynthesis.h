@@ -28,6 +28,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "PlatformExportMacros.h"
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "PlatformSpeechSynthesizer.h"
 #include "SpeechSynthesisUtterance.h"

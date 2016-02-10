@@ -1,3 +1,18 @@
+2016-02-09  Aakash Jain  <aakash_jain@apple.com>
+
+        Headers that use WEBCORE_EXPORT should include PlatformExportMacros.h
+        https://bugs.webkit.org/show_bug.cgi?id=146984
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/speech/SpeechSynthesis.h:
+        * contentextensions/ContentExtensionError.h:
+        * dom/DeviceOrientationClient.h:
+        * platform/graphics/Color.h:
+        * platform/ios/wak/WebCoreThread.h:
+        * platform/network/CacheValidation.h:
+        * platform/network/cf/CertificateInfo.h:
+
 2016-02-09  Nan Wang  <n_wang@apple.com>
 
         AX: Implement word related text marker functions using TextIterator
