@@ -45,6 +45,8 @@ public:
 private:
     ScrollingTreeFrameScrollingNodeMac(ScrollingTree&, ScrollingNodeID);
 
+    void releaseReferencesToScrollbarPaintersOnTheMainThread();
+
     // ScrollingTreeNode member functions.
     virtual void updateBeforeChildren(const ScrollingStateNode&) override;
     virtual void updateAfterChildren(const ScrollingStateNode&) override;
