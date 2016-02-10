@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -183,6 +183,12 @@ protected:
 };
 
 } // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream&, JSC::TypedArrayMode);
+
+} // namespace WTF
 
 #endif // JSArrayBufferView_h
 

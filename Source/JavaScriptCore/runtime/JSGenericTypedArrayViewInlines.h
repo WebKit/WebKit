@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -448,6 +448,7 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     }
         
     case WastefulTypedArray:
+        RELEASE_ASSERT(thisObject->existingBufferInButterfly());
         break;
         
     case DataViewMode:
@@ -508,6 +509,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
         thisObject->m_butterfly.setWithoutWriteBarrier(
             static_cast<IndexingHeader*>(thisObject->m_vector)->butterfly());
     } else {
+        RELEASE_ASSERT(!thisObject->hasIndexingHeader());
         VM& vm = *heap->vm();
         thisObject->m_butterfly.set(vm, thisObject, Butterfly::createOrGrowArrayRight(
             thisObject->butterfly(), vm, thisObject, thisObject->structure(),
