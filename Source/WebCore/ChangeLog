@@ -1,3 +1,15 @@
+2016-02-10  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Graphical corruption in videos when enabling custom loading path
+        https://bugs.webkit.org/show_bug.cgi?id=154044
+
+        Reviewed by Alex Christensen.
+
+        Revert the "Drive-by fix" in r196345 as it breaks the WebCoreNSURLSessionTests.BasicOperation API test.
+
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSessionDataTask resource:receivedData:length:]):
+
 2016-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSSegmentedFontFace does not need to be reference counted

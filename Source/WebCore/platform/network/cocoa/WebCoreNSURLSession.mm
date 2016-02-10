@@ -513,11 +513,10 @@ void WebCoreNSURLSessionDataTaskClient::notifyFinished(CachedResource* resource)
     // FIXME: try to avoid a copy, if possible.
     // e.g., RetainPtr<CFDataRef> cfData = resource->resourceBuffer()->createCFData();
 
-    self.countOfBytesReceived += length;
-
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     [self.session addDelegateOperation:[strongSelf, length, nsData] {
+        strongSelf.get().countOfBytesReceived += length;
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveData:)])
             [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveData:nsData.get()];
