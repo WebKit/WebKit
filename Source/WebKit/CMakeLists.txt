@@ -38,6 +38,9 @@ endif ()
 
 add_library(WebKit ${WebKit_LIBRARY_TYPE} ${WebKit_SOURCES})
 add_dependencies(WebKit WebCore)
+if (WIN32)
+    add_dependencies(WebKit WebKitGUID)
+endif ()
 target_link_libraries(WebKit ${WebKit_LIBRARIES})
 set_target_properties(WebKit PROPERTIES FOLDER "WebKit")
 

@@ -1,3 +1,15 @@
+2016-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=154080
+        rdar://problem/24584417
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        Explicitly make WebKit dependent on WebKitGUID so that WebKit will not start building
+        before WebKitGUID is finished generating and copying all headers, including WebKit/WebKit.h.
+
 2016-01-27  Anders Carlsson  <andersca@apple.com>
 
         Add WebKitAdditions extension points to WebCore, WebKit and WebKitLegacy
