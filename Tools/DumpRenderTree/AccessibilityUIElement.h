@@ -260,6 +260,10 @@ public:
     AccessibilityUIElement accessibilityElementForTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarker startTextMarker();
     AccessibilityTextMarker endTextMarker();
+    AccessibilityTextMarkerRange leftWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    AccessibilityTextMarkerRange rightWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    AccessibilityTextMarker previousWordStartTextMarkerForTextMarker(AccessibilityTextMarker*);
+    AccessibilityTextMarker nextWordEndTextMarkerForTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarkerRange selectedTextMarkerRange();
     void resetSelectedTextMarkerRange();
     bool setSelectedVisibleTextRange(AccessibilityTextMarkerRange*);

@@ -34,6 +34,8 @@ namespace WebCore {
 
 class Node;
 class VisiblePosition;
+class SimplifiedBackwardsTextIterator;
+class TextIterator;
 
 enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };
 
@@ -106,6 +108,14 @@ WEBCORE_EXPORT PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& po
 WEBCORE_EXPORT VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position);
 WEBCORE_EXPORT void charactersAroundPosition(const VisiblePosition&, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore);
 WEBCORE_EXPORT PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
+
+// helper function
+enum BoundarySearchContextAvailability { DontHaveMoreContext, MayHaveMoreContext };
+typedef unsigned (*BoundarySearchFunction)(StringView, unsigned offset, BoundarySearchContextAvailability, bool& needMoreContext);
+unsigned suffixLengthForRange(RefPtr<Range>, Vector<UChar, 1024>&);
+unsigned prefixLengthForRange(RefPtr<Range>, Vector<UChar, 1024>&);
+unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
+unsigned forwardSearchForBoundaryWithTextIterator(TextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
 
 } // namespace WebCore
 

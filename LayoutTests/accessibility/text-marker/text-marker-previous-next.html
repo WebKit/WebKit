@@ -50,7 +50,8 @@ c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px;
             currentMarker = text.nextTextMarker(currentMarker);
         }
         markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
-        shouldBe("text.stringForTextMarkerRange(markerRange)", "''");
+        var newline = '\n';
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "newline");
         
         // Advance one more character, it will lande at "t" in "text1".
         previousMarker = currentMarker;
@@ -62,7 +63,7 @@ c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px;
         previousMarker = text.previousTextMarker(previousMarker);
         currentMarker = text.previousTextMarker(currentMarker);
         markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
-        shouldBe("text.stringForTextMarkerRange(markerRange)", "''");
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "newline");
         
         // Traverse backwards one more character, it will land at the last character of "text".
         previousMarker = text.previousTextMarker(previousMarker);

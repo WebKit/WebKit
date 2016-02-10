@@ -1,3 +1,61 @@
+2016-02-09  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement word related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=153939
+        <rdar://problem/24269605>
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (endTextMarkerCallback):
+        (leftWordTextMarkerRangeForTextMarkerCallback):
+        (rightWordTextMarkerRangeForTextMarkerCallback):
+        (previousWordStartTextMarkerForTextMarkerCallback):
+        (nextWordEndTextMarkerForTextMarkerCallback):
+        (setSelectedVisibleTextRangeCallback):
+        (AccessibilityUIElement::setSelectedVisibleTextRange):
+        (AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousWordStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::setSelectedVisibleTextRange):
+        (AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousWordStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::setSelectedVisibleTextRange):
+        (AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousWordStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::supportedActions):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::setBoolAttributeValue):
+        (WTR::AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousWordStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::endTextMarker):
+        (WTR::AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousWordStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::endTextMarker):
+        (WTR::AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousWordStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (WTR::_convertMathMultiscriptPairsToString):
+
 2016-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Remove eail related cruft after r195725

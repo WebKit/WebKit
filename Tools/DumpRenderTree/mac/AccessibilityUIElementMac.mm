@@ -1846,6 +1846,46 @@ bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarker
     return true;
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXLeftWordTextMarkerRangeForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+AccessibilityTextMarkerRange AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXRightWordTextMarkerRangeForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::previousWordStartTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id previousTextMarker = [m_element accessibilityAttributeValue:@"AXPreviousWordStartTextMarkerForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker(previousTextMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::nextWordEndTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id nextTextMarker = [m_element accessibilityAttributeValue:@"AXNextWordEndTextMarkerForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker(nextTextMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
 #endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
 
 JSStringRef AccessibilityUIElement::supportedActions()

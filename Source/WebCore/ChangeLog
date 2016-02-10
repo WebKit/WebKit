@@ -1,3 +1,71 @@
+2016-02-09  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement word related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=153939
+        <rdar://problem/24269605>
+
+        Reviewed by Chris Fleizach.
+
+        Using CharacterOffset to implement word related text marker calls. Reused
+        logic from previousBoundary and nextBoundary in VisibleUnits class.
+
+        Test: accessibility/mac/text-marker-word-nav.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::rangeForNodeContents):
+        (WebCore::isReplacedNodeOrBR):
+        (WebCore::characterOffsetsInOrder):
+        (WebCore::resetNodeAndOffsetForReplacedNode):
+        (WebCore::setRangeStartOrEndWithCharacterOffset):
+        (WebCore::AXObjectCache::rangeForUnorderedCharacterOffsets):
+        (WebCore::AXObjectCache::setTextMarkerDataWithCharacterOffset):
+        (WebCore::AXObjectCache::startOrEndCharacterOffsetForRange):
+        (WebCore::AXObjectCache::startOrEndTextMarkerDataForRange):
+        (WebCore::AXObjectCache::characterOffsetForNodeAndOffset):
+        (WebCore::AXObjectCache::textMarkerDataForCharacterOffset):
+        (WebCore::AXObjectCache::previousNode):
+        (WebCore::AXObjectCache::visiblePositionFromCharacterOffset):
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        (WebCore::AXObjectCache::nextCharacterOffset):
+        (WebCore::AXObjectCache::previousCharacterOffset):
+        (WebCore::startWordBoundary):
+        (WebCore::endWordBoundary):
+        (WebCore::AXObjectCache::startCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::endCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::previousWordStartCharacterOffset):
+        (WebCore::AXObjectCache::nextWordEndCharacterOffset):
+        (WebCore::AXObjectCache::leftWordRange):
+        (WebCore::AXObjectCache::rightWordRange):
+        (WebCore::characterForCharacterOffset):
+        (WebCore::AXObjectCache::characterAfter):
+        (WebCore::AXObjectCache::characterBefore):
+        (WebCore::parentEditingBoundary):
+        (WebCore::AXObjectCache::nextWordBoundary):
+        (WebCore::AXObjectCache::previousWordBoundary):
+        (WebCore::AXObjectCache::rootAXEditableElement):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::removeNodeForUse):
+        (WebCore::AXObjectCache::isNodeInUse):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper previousTextMarkerForNode:offset:]):
+        (-[WebAccessibilityObjectWrapper textMarkerForNode:offset:ignoreStart:]):
+        (-[WebAccessibilityObjectWrapper textMarkerForNode:offset:]):
+        (textMarkerForCharacterOffset):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * editing/VisibleUnits.cpp:
+        (WebCore::rightWordPosition):
+        (WebCore::prepend):
+        (WebCore::appendRepeatedCharacter):
+        (WebCore::suffixLengthForRange):
+        (WebCore::prefixLengthForRange):
+        (WebCore::backwardSearchForBoundaryWithTextIterator):
+        (WebCore::forwardSearchForBoundaryWithTextIterator):
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        * editing/VisibleUnits.h:
+
 2016-02-09  Daniel Bates  <dabates@apple.com>
 
         CSP: Extract helper classes into their own files

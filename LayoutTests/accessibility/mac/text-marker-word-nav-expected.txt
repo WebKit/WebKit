@@ -1,0 +1,125 @@
+word1 test
+Thisislongword I'll try. Test Contenteditable is working.
+c d
+can't select
+巧克力是食物吗？
+كيف حالك؟
+both   spaces
+line breaks
+some
+text
+test audio file
+This tests that word navigation is working correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Current character is: w
+Left word is: word1
+Right word is: word1
+Pre word start to next word end: word1
+
+Current character is: T
+Left word is: Thisislongword
+Right word is: Thisislongword
+Pre word start to next word end: Thisislongword
+
+Current character is:  
+Left word is:  
+Right word is: I'll
+Pre word start to next word end:  I'll
+
+Current character is:  
+Left word is:  
+Right word is: try
+Pre word start to next word end:  try
+
+Current character is: e
+Left word is: editable
+Right word is: editable
+Pre word start to next word end: editable
+
+Current character is:  
+Left word is:  
+Right word is: [ATTACHMENT]
+Pre word start to next word end:  [ATTACHMENT]
+
+Current character is: [ATTACHMENT]
+Left word is: [ATTACHMENT]
+Right word is: d
+Pre word start to next word end: [ATTACHMENT]d
+
+Current character is: c
+Left word is: can't
+Right word is: can't
+Pre word start to next word end: can't
+
+Current character is: 克
+Left word is: 巧克力
+Right word is: 巧克力
+Pre word start to next word end: 巧克力
+
+Current character is: 力
+Left word is: 巧克力
+Right word is: 是
+Pre word start to next word end: 巧克力是
+
+Current character is: 是
+Left word is: 是
+Right word is: 食物
+Pre word start to next word end: 是食物
+
+Current character is: ف
+Left word is: كيف
+Right word is:  
+Pre word start to next word end: كيف 
+
+Current character is:  
+Left word is:  
+Right word is: حالك
+Pre word start to next word end:  حالك
+
+Current character is: h
+Left word is: both
+Right word is:    
+Pre word start to next word end: both   
+
+Current character is: s
+Left word is: spaces
+Right word is: 'line break'
+Pre word start to next word end: spaces'line break'
+
+Current character is: e
+Left word is: some
+Right word is: 'line break'
+Pre word start to next word end: some'line break'
+
+Current character is: 'line break'
+Left word is: 'line break'
+Right word is: text
+Pre word start to next word end: 'line break'text
+
+Current character is:  
+Left word is:  
+Right word is: [ATTACHMENT]
+Pre word start to next word end:  [ATTACHMENT]
+
+Current character is: [ATTACHMENT]
+Left word is: [ATTACHMENT]
+Right word is: file
+Pre word start to next word end: [ATTACHMENT]file
+
+Current character is: f
+Left word is: file
+Right word is: file
+Pre word start to next word end: file
+
+Test going forward.
+End word: file
+
+Test going backwards.
+Start word: word1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

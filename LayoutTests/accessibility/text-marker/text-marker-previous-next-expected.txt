@@ -12,9 +12,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS text.textMarkerRangeLength(textMarkerRange) is 4
 PASS text.accessibilityElementForTextMarker(startMarker).isEqual(text) is true
 PASS text.accessibilityElementForTextMarker(endMarker).isEqual(text) is true
-PASS text.stringForTextMarkerRange(markerRange) is ''
+PASS text.stringForTextMarkerRange(markerRange) is newline
 PASS text.stringForTextMarkerRange(markerRange) is 't'
-PASS text.stringForTextMarkerRange(markerRange) is ''
+PASS text.stringForTextMarkerRange(markerRange) is newline
 PASS text.stringForTextMarkerRange(markerRange) is 't'
 PASS text2.textMarkerRangeLength(textMarkerRange2) is 5
 Object string for range: c [ATTACHMENT] d

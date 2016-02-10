@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8"> 
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<style>
+.userselect { user-select: none; -webkit-user-select: none; }
+</style>
+<body id="body">
+
+<div id="text" tabindex="0">word1 test</div>
+<span id="span">Thisis</span>longword I<span>'ll try.</span>
+Test Content<span id="target" contenteditable="true">editable is working.</span>
+
+<div id="text2">
+c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px; height: 100px;">d
+</div>
+
+<div class="userselect" id="text3">can't select</div>
+
+<div id="text4">
+巧克力是食物吗？
+</div>
+<div id="text4a">
+كيف حالك؟
+</div>
+
+<pre id="text5">
+both   spaces
+line breaks
+</pre>
+
+<div id="text6">
+some<br>text
+</div>
+
+<div id="text7">
+test audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that word navigation is working correctly.");
+    
+    if (window.accessibilityController) {
+        
+        var text = accessibilityController.accessibleElementById("text");
+        // Get the actual text node.
+        text = text.childAtIndex(0);
+        
+        // Check that we can get the word range. Land at "w" in "word1 test".
+        var textMarkerRange = text.textMarkerRangeForElement(text);
+        var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        var currentMarker = advanceAndVerify(startMarker, 1, text);
+        
+        // Check the case with span
+        // At "T" in "Thisis", should return the word as "Thisislongword".
+        currentMarker = advanceAndVerify(currentMarker, 10, text);
+        // At " " before "I", the word should be "I'll".
+        currentMarker = advanceAndVerify(currentMarker, 14, text);
+        // At " " before "try", the word should excludes "."
+        currentMarker = advanceAndVerify(currentMarker, 5, text);
+        
+        // Check the case with contenteditable
+        // At "e" in "editable", the word should NOT include "Content" before it.
+        currentMarker = advanceAndVerify(currentMarker, 17, text);
+        
+        // Check the case with replaced node, the replaced node should be considered a word.
+        var text2 = accessibilityController.accessibleElementById("text2");
+        textMarkerRange = text2.textMarkerRangeForElement(text2);
+        currentMarker = text2.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(currentMarker, 2, text2);
+        currentMarker = advanceAndVerify(currentMarker, 1, text2);
+        
+        // Check user-select:none is also working.
+        var text3 = accessibilityController.accessibleElementById("text3");
+        textMarkerRange = text3.textMarkerRangeForElement(text3);
+        currentMarker = text3.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(currentMarker, 1, text3);
+        
+        // Check multi-language, Chinese here.
+        var text4 = accessibilityController.accessibleElementById("text4");
+        textMarkerRange = text4.textMarkerRangeForElement(text4);
+        currentMarker = text4.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(currentMarker, 2, text4);
+        currentMarker = advanceAndVerify(currentMarker, 1, text4);
+        currentMarker = advanceAndVerify(currentMarker, 1, text4);
+        // And Arabic
+        var text4a = accessibilityController.accessibleElementById("text4a");
+        textMarkerRange = text4a.textMarkerRangeForElement(text4a);
+        currentMarker = text4a.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(currentMarker, 3, text4a);
+        currentMarker = advanceAndVerify(currentMarker, 1, text4a);
+        
+        // Check text in pre tag with line breaks.
+        var text5 = accessibilityController.accessibleElementById("text5");
+        textMarkerRange = text5.textMarkerRangeForElement(text5);
+        currentMarker = text5.startTextMarkerForTextMarkerRange(textMarkerRange);
+        // At "h" in "both", right word should be "   ".
+        currentMarker = advanceAndVerify(currentMarker, 4, text5);
+        // At the end of first line, right word should be new line.
+        currentMarker = advanceAndVerify(currentMarker, 9, text5);
+        
+        // Check text with br tag in it.
+        var text6 = accessibilityController.accessibleElementById("text6");
+        textMarkerRange = text6.textMarkerRangeForElement(text6);
+        currentMarker = text6.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(currentMarker, 4, text6);
+        currentMarker = advanceAndVerify(currentMarker, 1, text6);
+        
+        // Check <audio> element.
+        var text7 = accessibilityController.accessibleElementById("text7");
+        textMarkerRange = text7.textMarkerRangeForElement(text7);
+        currentMarker = text7.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(currentMarker, 11, text7);
+        currentMarker = advanceAndVerify(currentMarker, 1, text7);
+        currentMarker = advanceAndVerify(currentMarker, 1, text7);
+        
+        // Check the word marker runs from start to end, and backwards.
+        // Make sure it won't hang.
+        verifyDocument(text);
+        
+        function advanceAndVerify(currentMarker, offset, obj) {
+            var previousMarker;
+            for (var i = 0; i < offset; i++) {
+                previousMarker = currentMarker;
+                currentMarker = obj.nextTextMarker(previousMarker);
+            }
+            verifyWordRangeForTextMarker(previousMarker, currentMarker, obj);
+            return currentMarker;
+        }
+        
+        function replaceAttachmentInString(str) {
+            var newline = '\n';
+            str =  str.replace(String.fromCharCode(65532), "[ATTACHMENT]");
+            str = str.replace(newline, "'line break'");
+            return str;
+        }
+        
+        function verifyWordRangeForTextMarker(preMarker, textMarker, obj) {
+            var markerRange = obj.textMarkerRangeForMarkers(preMarker, textMarker);
+            var currentCharacter = replaceAttachmentInString(obj.stringForTextMarkerRange(markerRange));
+            debug("Current character is: " + currentCharacter);
+            
+            var previousWordRange = obj.leftWordTextMarkerRangeForTextMarker(textMarker);
+            var nextWordRange = obj.rightWordTextMarkerRangeForTextMarker(textMarker);
+            var preWord = replaceAttachmentInString(obj.stringForTextMarkerRange(previousWordRange));
+            var nextWord = replaceAttachmentInString(obj.stringForTextMarkerRange(nextWordRange));
+            debug("Left word is: " + preWord);
+            debug("Right word is: " + nextWord);
+            
+            var preWordStart = obj.previousWordStartTextMarkerForTextMarker(textMarker);
+            var nextWordEnd = obj.nextWordEndTextMarkerForTextMarker(textMarker);
+            var preAndNextWordRange = obj.textMarkerRangeForMarkers(preWordStart, nextWordEnd);
+            var preAndNextWord = replaceAttachmentInString(obj.stringForTextMarkerRange(preAndNextWordRange));
+            debug("Pre word start to next word end: " + preAndNextWord + "\n");
+        }
+        
+        function verifyDocument(obj) {
+            var start = obj.startTextMarker;
+            
+            // Going forward.
+            debug("Test going forward.");
+            var current = start;
+            var endWord = "file";
+            var currWord = "";
+            while(currWord != endWord) {
+                var nextWordRange = obj.rightWordTextMarkerRangeForTextMarker(current);
+                currWord = obj.stringForTextMarkerRange(nextWordRange);
+                current = obj.nextWordEndTextMarkerForTextMarker(current);
+            }
+            debug("End word: " + replaceAttachmentInString(currWord));
+            
+            // Going backwards.
+            debug("\nTest going backwards.");
+            var startWord = "word1";
+            currWord = ""; 
+            while(currWord != startWord) {
+                var previousWordRange = obj.leftWordTextMarkerRangeForTextMarker(current);
+                currWord = obj.stringForTextMarkerRange(previousWordRange);
+                current = obj.previousWordStartTextMarkerForTextMarker(current);
+            }
+            debug("Start word: " + replaceAttachmentInString(currWord));
+        }
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

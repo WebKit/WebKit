@@ -30,6 +30,7 @@
 #include "AccessibilityObject.h"
 #include "Range.h"
 #include "Timer.h"
+#include "VisibleUnits.h"
 #include <limits.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -186,12 +187,20 @@ public:
     void textMarkerDataForVisiblePosition(TextMarkerData&, const VisiblePosition&);
     VisiblePosition visiblePositionForTextMarkerData(TextMarkerData&);
     CharacterOffset characterOffsetForTextMarkerData(TextMarkerData&);
-    void textMarkerDataForCharacterOffset(TextMarkerData&, Node&, int, bool toNodeEnd = false);
+    void textMarkerDataForCharacterOffset(TextMarkerData&, Node&, int, bool toNodeEnd = false, bool ignoreStart = true);
     void startOrEndTextMarkerDataForRange(TextMarkerData&, RefPtr<Range>, bool);
     AccessibilityObject* accessibilityObjectForTextMarkerData(TextMarkerData&);
     RefPtr<Range> rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&);
     static RefPtr<Range> rangeForNodeContents(Node*);
     static int lengthForRange(Range*);
+    
+    // Word boundary
+    CharacterOffset startCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);
+    CharacterOffset endCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);
+    CharacterOffset nextWordEndCharacterOffset(const CharacterOffset&);
+    CharacterOffset previousWordStartCharacterOffset(const CharacterOffset&);
+    RefPtr<Range> leftWordRange(const CharacterOffset&);
+    RefPtr<Range> rightWordRange(const CharacterOffset&);
 
     enum AXNotification {
         AXActiveDescendantChanged,
@@ -283,12 +292,21 @@ protected:
     void removeNodeForUse(Node* n) { m_textMarkerNodes.remove(n); }
     bool isNodeInUse(Node* n) { return m_textMarkerNodes.contains(n); }
     
+    // CharacterOffset functions.
     Node* nextNode(Node*) const;
     Node* previousNode(Node*) const;
     CharacterOffset traverseToOffsetInRange(RefPtr<Range>, int, bool, bool stayWithinRange = false);
-    VisiblePosition visiblePositionFromCharacterOffset(AccessibilityObject*, const CharacterOffset&);
-    CharacterOffset characterOffsetFromVisiblePosition(AccessibilityObject*, const VisiblePosition&);
+    VisiblePosition visiblePositionFromCharacterOffset(const CharacterOffset&);
+    CharacterOffset characterOffsetFromVisiblePosition(const VisiblePosition&);
     void setTextMarkerDataWithCharacterOffset(TextMarkerData&, const CharacterOffset&);
+    UChar32 characterAfter(const CharacterOffset&);
+    UChar32 characterBefore(const CharacterOffset&);
+    CharacterOffset startOrEndCharacterOffsetForRange(RefPtr<Range>, bool);
+    CharacterOffset characterOffsetForNodeAndOffset(Node&, int, bool toNodeEnd = false, bool ignoreStart = true);
+    CharacterOffset nextCharacterOffset(const CharacterOffset&);
+    CharacterOffset previousCharacterOffset(const CharacterOffset&);
+    CharacterOffset previousWordBoundary(CharacterOffset&, BoundarySearchFunction);
+    CharacterOffset nextWordBoundary(CharacterOffset&, BoundarySearchFunction);
 
 private:
     AccessibilityObject* rootWebArea();
