@@ -1,3 +1,22 @@
+2016-02-09  Keith Miller  <keith_miller@apple.com>
+
+        calling methods off super in a class constructor should check for TDZ
+        https://bugs.webkit.org/show_bug.cgi?id=154060
+
+        Reviewed by Ryosuke Niwa.
+
+        In a class constructor we need to check for TDZ when calling a method
+        off the super class. This is because, for super method calls, we use
+        the derived class's newly constructed object as the super method's
+        this value.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallDotNode::emitBytecode):
+        * tests/stress/super-method-calls-check-tdz.js: Added.
+        (Base):
+        (Derived):
+        (test):
+
 2016-02-09  Filip Pizlo  <fpizlo@apple.com>
 
         Don't crash if we fail to parse a builtin
