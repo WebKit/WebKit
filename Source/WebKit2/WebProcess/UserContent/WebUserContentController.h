@@ -53,11 +53,9 @@ private:
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void addUserScripts(const Vector<WebCore::UserScript>&);
-    void removeUserScript(const String& urlString);
     void removeAllUserScripts();
 
     void addUserStyleSheets(const Vector<WebCore::UserStyleSheet>&);
-    void removeUserStyleSheet(const String& urlString);
     void removeAllUserStyleSheets();
 
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>&);

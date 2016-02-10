@@ -1,3 +1,18 @@
+2016-02-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r196341.
+        https://bugs.webkit.org/show_bug.cgi?id=154056
+
+        This change broke existing API tests on Mac and iOS (Requested
+        by ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "Add SPI to remove individual user scripts or user style
+        sheets"
+        https://bugs.webkit.org/show_bug.cgi?id=154046
+        http://trac.webkit.org/changeset/196341
+
 2016-02-09  Anders Carlsson  <andersca@apple.com>
 
         Add SPI to remove individual user scripts or user style sheets

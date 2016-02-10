@@ -28,7 +28,6 @@
 
 #include "APIArray.h"
 #include "APIUserScript.h"
-#include "APIUserStyleSheet.h"
 #include "DataReference.h"
 #include "WebProcessProxy.h"
 #include "WebScriptMessageHandler.h"
@@ -53,7 +52,6 @@ static uint64_t generateIdentifier()
 WebUserContentControllerProxy::WebUserContentControllerProxy()
     : m_identifier(generateIdentifier())
     , m_userScripts(API::Array::create())
-    , m_userStyleSheets(API::Array::create())
 {
 }
 
@@ -79,10 +77,7 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
         userScripts.append(userScript->userScript());
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScripts(userScripts), m_identifier);
 
-    Vector<WebCore::UserStyleSheet> userStyleSheets;
-    for (const auto& userStyleSheet : m_userScripts->elementsOfType<API::UserStyleSheet>())
-        userStyleSheets.append(userStyleSheet->userStyleSheet());
-    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserStyleSheets(userStyleSheets), m_identifier);
+    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserStyleSheets(m_userStyleSheets), m_identifier);
 
     Vector<WebScriptMessageHandlerHandle> messageHandlerHandles;
     for (auto& handler : m_scriptMessageHandlers.values())
@@ -113,14 +108,6 @@ void WebUserContentControllerProxy::addUserScript(API::UserScript& userScript)
         process->connection()->send(Messages::WebUserContentController::AddUserScripts({ userScript.userScript() }), m_identifier);
 }
 
-void WebUserContentControllerProxy::removeUserScript(const API::UserScript& userScript)
-{
-    for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::RemoveUserScript({ userScript.userScript().url().string() }), m_identifier);
-
-    m_userScripts->elements().removeAll(&userScript);
-}
-
 void WebUserContentControllerProxy::removeAllUserScripts()
 {
     m_userScripts->elements().clear();
@@ -129,25 +116,17 @@ void WebUserContentControllerProxy::removeAllUserScripts()
         process->connection()->send(Messages::WebUserContentController::RemoveAllUserScripts(), m_identifier);
 }
 
-void WebUserContentControllerProxy::addUserStyleSheet(API::UserStyleSheet& userStyleSheet)
+void WebUserContentControllerProxy::addUserStyleSheet(WebCore::UserStyleSheet userStyleSheet)
 {
-    m_userStyleSheets->elements().append(&userStyleSheet);
+    m_userStyleSheets.append(WTFMove(userStyleSheet));
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::AddUserStyleSheets({ userStyleSheet.userStyleSheet() }), m_identifier);
-}
-
-void WebUserContentControllerProxy::removeUserStyleSheet(const API::UserStyleSheet& userStyleSheet)
-{
-    for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::RemoveUserStyleSheet({ userStyleSheet.userStyleSheet().url().string() }), m_identifier);
-
-    m_userStyleSheets->elements().removeAll(&userStyleSheet);
+        process->connection()->send(Messages::WebUserContentController::AddUserStyleSheets({ m_userStyleSheets.last() }), m_identifier);
 }
 
 void WebUserContentControllerProxy::removeAllUserStyleSheets()
 {
-    m_userStyleSheets->elements().clear();
+    m_userStyleSheets.clear();
 
     for (WebProcessProxy* process : m_processes)
         process->connection()->send(Messages::WebUserContentController::RemoveAllUserStyleSheets(), m_identifier);
