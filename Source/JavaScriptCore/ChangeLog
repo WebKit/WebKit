@@ -1,3 +1,17 @@
+2016-02-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r196331): It made ~180 JSC tests crash on ARMv7 Linux
+        https://bugs.webkit.org/show_bug.cgi?id=154064
+
+        Reviewed by Mark Lam.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate): Added EABI_32BIT_DUMMY_ARG where it is necessary.
+        * dfg/DFGSpeculativeJIT.h: Fixed the comment.
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState): Added.
+        * wasm/WASMFunctionCompiler.h: Fixed the comment.
+
 2016-02-09  Keith Miller  <keith_miller@apple.com>
 
         calling methods off super in a class constructor should check for TDZ

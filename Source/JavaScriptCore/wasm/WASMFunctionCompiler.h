@@ -1287,8 +1287,8 @@ private:
         appendCallSetResult(operation, dst, FloatingPointPrecision::Double);
     }
 #else
-    // EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned even-numbered register (r0, r2 or [sp]).
-    // To avoid assemblies from using wrong registers, let's occupy r1 or r3 with a dummy argument when necessary.
+// EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned on an even-numbered register (r0, r2 or [sp]).
+// To prevent the assembler from using wrong registers, let's occupy r1 or r3 with a dummy argument when necessary.
 #if (COMPILER_SUPPORTS(EABI) && CPU(ARM)) || CPU(MIPS)
 #define EABI_32BIT_DUMMY_ARG      TrustedImm32(0),
 #else
