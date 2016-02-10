@@ -487,17 +487,21 @@ void CachedResource::removeClient(CachedResourceClient* client)
         return;
     }
 
-    if (!allowsCaching() || hasClients())
+    if (hasClients())
         return;
 
     auto& memoryCache = MemoryCache::singleton();
-    if (inCache()) {
+    if (allowsCaching() && inCache()) {
         memoryCache.removeFromLiveResourcesSize(*this);
         memoryCache.removeFromLiveDecodedResourcesList(*this);
     }
     if (!m_switchingClientsToRevalidatedResource)
         allClientsRemoved();
     destroyDecodedDataIfNeeded();
+
+    if (!allowsCaching())
+        return;
+
     if (response().cacheControlContainsNoStore() && url().protocolIs("https")) {
         // RFC2616 14.9.2:
         // "no-store: ... MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
