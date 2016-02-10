@@ -319,8 +319,15 @@ void WebInspectorProxy::platformDetach()
             gtk_container_remove(GTK_CONTAINER(parent), m_inspectorView);
     }
 
-    if (!m_isVisible)
+    // Return early if we are not visible. This means the inspector was closed while attached
+    // and we should not create and show the inspector window.
+    if (!m_isVisible) {
+        // The inspector view will be destroyed, but we don't need to notify the web process to close the
+        // inspector in this case, since it's already closed.
+        g_signal_handlers_disconnect_by_func(m_inspectorView, reinterpret_cast<void*>(inspectorViewDestroyed), this);
+        m_inspectorView = nullptr;
         return;
+    }
 
     createInspectorWindow();
 }
