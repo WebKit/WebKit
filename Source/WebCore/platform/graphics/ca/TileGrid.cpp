@@ -673,13 +673,8 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
     }
 
     int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
-    if (m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(0)) {
-#if OS(WINDOWS)
-        // Tiled layers in Windows have flipped coordinates
-        PlatformCALayer::flipContext(context.platformContext(), platformCALayer->bounds().size().height());
-#endif
+    if (m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(0))
         PlatformCALayer::drawRepaintIndicator(context.platformContext(), platformCALayer, repaintCount, cachedCGColor(m_controller.tileDebugBorderColor(), ColorSpaceDeviceRGB));
-    }
 
     if (m_controller.scrollingPerformanceLoggingEnabled()) {
         FloatRect visiblePart(platformCALayer->position().x(), platformCALayer->position().y(), platformCALayer->bounds().size().width(), platformCALayer->bounds().size().height());

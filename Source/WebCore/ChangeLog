@@ -1,5 +1,35 @@
 2016-02-09  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r190616.
+
+    2015-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Correct positioning error introduced in r190235
+            https://bugs.webkit.org/show_bug.cgi?id=149631
+            <rdar://problem/22635080>
+
+            Reviewed by Simon Fraser.
+
+            Covered by existing compositing tests:
+              css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html
+              fast/layers/no-clipping-overflow-hidden-added-after-transform.html
+              fast/layers/no-clipping-overflow-hidden-added-after-transition.html
+              fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html
+              transforms/2d/preserve3d-not-fixed-container.html
+
+            * platform/graphics/ca/TileGrid.cpp:
+            (TileGrid::platformCALayerPaintContents): No need to do this extra flipping step
+            on Windows.
+            * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+            (PlatformCALayerWinInternal::displayCallback): We should always flip the
+            coordinate system when drawing these layers on Windows.
+            (shouldInvertBeforeDrawingContent): Deleted.
+            * platform/graphics/ca/win/WebTiledBackingLayerWin.cpp:
+            (WebTiledBackingLayerWin::displayCallback): We do not need to flip coordinates
+            for these tiled layers; that's already accounted for in common tile drawing code.
+
+2016-02-09  Babak Shafiei  <bshafiei@apple.com>
+
         Merge patch for rdar://problem/24563410.
 
     2016-02-09  Brent Fulgham  <bfulgham@apple.com>
