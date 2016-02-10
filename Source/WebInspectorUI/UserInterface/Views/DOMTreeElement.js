@@ -332,11 +332,17 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     moveChild(child, targetIndex)
     {
-        var wasSelected = child.selected;
+        // No move needed if the child is already in the right place.
+        if (this.children[targetIndex] === child)
+            return;
+
+        var originalSelectedChild = this.treeOutline.selectedTreeElement;
+
         this.removeChild(child);
         this.insertChild(child, targetIndex);
-        if (wasSelected)
-            child.select();
+
+        if (originalSelectedChild !== this.treeOutline.selectedTreeElement)
+            originalSelectedChild.select();
     }
 
     _updateChildren(fullRefresh)

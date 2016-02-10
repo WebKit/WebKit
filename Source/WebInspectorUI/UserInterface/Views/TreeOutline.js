@@ -362,8 +362,10 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
     _forgetTreeElement(element)
     {
-        if (this.selectedTreeElement === element)
+        if (this.selectedTreeElement === element) {
+            element.deselect(true)
             this.selectedTreeElement = null;
+        }
         if (this._knownTreeElements[element.identifier])
             this._knownTreeElements[element.identifier].remove(element, true);
     }
