@@ -1,3 +1,31 @@
+2016-02-09  Mark Lam  <mark.lam@apple.com>
+
+        Changed WTFCrash to not trash the crash site register state.
+        https://bugs.webkit.org/show_bug.cgi?id=153996
+
+        Reviewed by Geoffrey Garen.
+
+        When doing post-mortem crash site analysis using data from crash reports, it is
+        immensely valuable to be able to infer the crashing program's state from the
+        register values at crash time.  However, for RELEASE_ASSERT failures, we crash
+        using WTFCrash(), and WTFCrash() is currently implemented as a function call
+        that, in turn, calls a lot of other functions to do crash handling before
+        actually crashing.  As a result, the register values captured in the crash
+        reports are not likely to still contain the values used by the caller function
+        that failed the RELEASE_ASSERT.
+
+        This patch aims to remedy this issue for non-debug builds on OS(DARWIN) ports.
+        It does so by changing WTFCrash() into an inlined function that has an inlined
+        asm statement to issues the CPU specific breakpoint trap instruction.  As a
+        result, for non-debug OS(DARWIN) builds, crashes due to failed RELEASE_ASSERTs
+        will now show up in crash reports as crashing due to EXC_BREAKPOINT (SIGTRAP)
+        instead of a EXC_BAD_ACCESS (SIGSEGV) on address 0xbbadbeef.
+
+        For debug and non-DARWIN builds, WTFCrash() behavior currently remains unchanged.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2016-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK][EFL] Fix several build configuration related to SamplingProfiler after r196245

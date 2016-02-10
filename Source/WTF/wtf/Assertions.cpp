@@ -312,6 +312,7 @@ void WTFSetCrashHook(WTFCrashHookFunction function)
     globalHook = function;
 }
 
+#if !defined(NDEBUG) || !OS(DARWIN)
 void WTFCrash()
 {
     if (globalHook)
@@ -326,6 +327,7 @@ void WTFCrash()
     ((void(*)())0)();
 #endif
 }
+#endif // !defined(NDEBUG) || !OS(DARWIN)
     
 void WTFCrashWithSecurityImplication()
 {

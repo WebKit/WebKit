@@ -162,7 +162,27 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached();
 #ifdef __cplusplus
 extern "C" {
 #endif
-    WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrash();
+#if defined(NDEBUG) && OS(DARWIN)
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void WTFCrash()
+{
+    // Crash with a SIGTRAP i.e EXC_BREAKPOINT.
+    // We are not using __builtin_trap because it is only guaranteed to abort, but not necessarily
+    // trigger a SIGTRAP. Instead, we use inline asm to ensure that we trigger the SIGTRAP.
+#if CPU(X86_64) || CPU(X86)
+    asm volatile ("int3");
+#elif CPU(ARM_THUMB2)
+    asm volatile ("bkpt #0");
+#elif CPU(ARM64)
+    asm volatile ("brk #0");
+#else
+#error "Unsupported CPU".
+#endif
+    __builtin_unreachable();
+}
+#else
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrash();
+#endif
+
 #ifdef __cplusplus
 }
 #endif
