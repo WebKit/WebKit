@@ -1,3 +1,17 @@
+2016-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Toggle buttons are blurry with GTK+ 3.19
+        https://bugs.webkit.org/show_bug.cgi?id=154007
+
+        Reviewed by Michael Catanzaro.
+
+        Use min-width/min-height style properties when GTK+ >= 3.19.7 to
+        get the size of toggle buttons.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::setToggleSize):
+        (WebCore::paintToggle):
+
 2016-02-09  Aakash Jain  <aakash_jain@apple.com>
 
         Headers that use WEBCORE_EXPORT should include PlatformExportMacros.h

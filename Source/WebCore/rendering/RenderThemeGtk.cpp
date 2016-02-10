@@ -543,12 +543,23 @@ static void setToggleSize(RenderThemePart themePart, RenderStyle& style)
     // Other ports hard-code this to 13. GTK+ users tend to demand the native look.
     gint indicatorSize;
     gtk_style_context_get_style(context.get(), "indicator-size", &indicatorSize, nullptr);
+    IntSize minSize(indicatorSize, indicatorSize);
+
+#if GTK_CHECK_VERSION(3, 19, 7)
+    GRefPtr<GtkStyleContext> childContext = createStyleContext(themePart == CheckButton ? CheckButtonCheck : RadioButtonRadio, context.get());
+    gint minWidth, minHeight;
+    gtk_style_context_get(childContext.get(), gtk_style_context_get_state(childContext.get()), "min-width", &minWidth, "min-height", &minHeight, nullptr);
+    if (minWidth)
+        minSize.setWidth(minWidth);
+    if (minHeight)
+        minSize.setHeight(minHeight);
+#endif
 
     if (style.width().isIntrinsicOrAuto())
-        style.setWidth(Length(indicatorSize, Fixed));
+        style.setWidth(Length(minSize.width(), Fixed));
 
     if (style.height().isAuto())
-        style.setHeight(Length(indicatorSize, Fixed));
+        style.setHeight(Length(minSize.height(), Fixed));
 }
 
 static void paintToggle(const RenderThemeGtk* theme, RenderThemePart themePart, const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& fullRect)
@@ -580,15 +591,26 @@ static void paintToggle(const RenderThemeGtk* theme, RenderThemePart themePart, 
     // buttons to be a smaller size is that we don't want to break site layouts.
     gint indicatorSize;
     gtk_style_context_get_style(context.get(), "indicator-size", &indicatorSize, nullptr);
+    IntSize minSize(indicatorSize, indicatorSize);
+
+#if GTK_CHECK_VERSION(3, 19, 7)
+    gint minWidth, minHeight;
+    gtk_style_context_get(context.get(), gtk_style_context_get_state(context.get()), "min-width", &minWidth, "min-height", &minHeight, nullptr);
+    if (minWidth)
+        minSize.setWidth(minWidth);
+    if (minHeight)
+        minSize.setHeight(minHeight);
+#endif
+
     IntRect rect(fullRect);
-    if (rect.width() > indicatorSize) {
-        rect.inflateX(-(rect.width() - indicatorSize) / 2);
-        rect.setWidth(indicatorSize); // In case rect.width() was equal to indicatorSize + 1.
+    if (rect.width() > minSize.width()) {
+        rect.inflateX(-(rect.width() - minSize.width()) / 2);
+        rect.setWidth(minSize.width()); // In case rect.width() was equal to minSize.width() + 1.
     }
 
-    if (rect.height() > indicatorSize) {
-        rect.inflateY(-(rect.height() - indicatorSize) / 2);
-        rect.setHeight(indicatorSize); // In case rect.height() was equal to indicatorSize + 1.
+    if (rect.height() > minSize.height()) {
+        rect.inflateY(-(rect.height() - minSize.height()) / 2);
+        rect.setHeight(minSize.height()); // In case rect.height() was equal to minSize.height() + 1.
     }
 
     gtk_render_background(context.get(), paintInfo.context().platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
