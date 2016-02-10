@@ -1,3 +1,17 @@
+2016-02-10  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Stop installing the legacy processes
+        https://bugs.webkit.org/show_bug.cgi?id=154062
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/All.xcconfig: Removed the legacy processes from EXCLUDED_SOURCE_FILE_NAMES
+          for iOS, now that they are no longer included in a Copy Files build phase.
+        * Configurations/BaseLegacyProcess.xcconfig: Set SKIP_INSTALL to YES for OS X as well.
+        * WebKit2.xcodeproj/project.pbxproj: Removed the Copy Files build phase that copied the
+          processes into the framework in engineering builds. Renamed the “Add current version
+          symlinks” script build phase to “Add XPCServices symlink”, and changed it to do just that.
+
 2016-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r196183): [GTK] Broke TestInspector

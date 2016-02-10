@@ -25,6 +25,4 @@
 
 #include "BaseTarget.xcconfig"
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = DatabaseProcess.app NetworkProcess.app PluginProcess.app WebProcess.app;
-
 SKIP_INSTALL = YES;
