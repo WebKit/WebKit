@@ -126,6 +126,11 @@ private:
 
 @implementation WKUserContentController (WKPrivate)
 
+- (void)_removeUserScript:(WKUserScript *)userScript
+{
+    _userContentControllerProxy->removeUserScript(*userScript->_userScript);
+}
+
 - (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter
 {
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -147,9 +152,19 @@ private:
 #endif
 }
 
+- (NSArray *)_userStyleSheets
+{
+    return wrapper(_userContentControllerProxy->userStyleSheets());
+}
+
 - (void)_addUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet
 {
-    _userContentControllerProxy->addUserStyleSheet(userStyleSheet->_userStyleSheet->userStyleSheet());
+    _userContentControllerProxy->addUserStyleSheet(*userStyleSheet->_userStyleSheet);
+}
+
+- (void)_removeUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet
+{
+    _userContentControllerProxy->removeUserStyleSheet(*userStyleSheet->_userStyleSheet);
 }
 
 - (void)_removeAllUserStyleSheets

@@ -90,6 +90,11 @@ void WebUserContentController::addUserScripts(const Vector<WebCore::UserScript>&
         m_userContentController->addUserScript(mainThreadNormalWorld(), std::make_unique<WebCore::UserScript>(userScript));
 }
 
+void WebUserContentController::removeUserScript(const String& urlString)
+{
+    m_userContentController->removeUserScript(mainThreadNormalWorld(), URL(URL(), urlString));
+}
+
 void WebUserContentController::removeAllUserScripts()
 {
     m_userContentController->removeUserScripts(mainThreadNormalWorld());
@@ -101,6 +106,11 @@ void WebUserContentController::addUserStyleSheets(const Vector<WebCore::UserStyl
         m_userContentController->addUserStyleSheet(mainThreadNormalWorld(),
             std::make_unique<WebCore::UserStyleSheet>(userStyleSheet), InjectInExistingDocuments);
     }
+}
+
+void WebUserContentController::removeUserStyleSheet(const String& urlString)
+{
+    m_userContentController->removeUserStyleSheet(mainThreadNormalWorld(), URL(URL(), urlString));
 }
 
 void WebUserContentController::removeAllUserStyleSheets()

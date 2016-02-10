@@ -25,9 +25,11 @@
 
 messages -> WebUserContentController {
     AddUserScripts(Vector<WebCore::UserScript> userScripts);
+    RemoveUserScript(String url);
     RemoveAllUserScripts();
 
     AddUserStyleSheets(Vector<WebCore::UserStyleSheet> userStyleSheets);
+    RemoveUserStyleSheet(String url);
     RemoveAllUserStyleSheets();
 
     AddUserScriptMessageHandlers(Vector<WebKit::WebScriptMessageHandlerHandle> scriptMessageHandlers);
