@@ -1,3 +1,19 @@
+2016-02-10  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Ref cycle between IDBObjectStore and IDBTransaction.
+        https://bugs.webkit.org/show_bug.cgi?id=154061
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Currently untestable).
+
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::transitionedToFinishing): Make sure the new state makes sense,
+          set the new state, and then clear the set of referenced object stores which is no longer needed.
+        (WebCore::IDBClient::IDBTransaction::abort):
+        (WebCore::IDBClient::IDBTransaction::commit):
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+
 2016-02-10  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r195770): Use-after-free in ResourceLoaderOptions::cachingPolicy

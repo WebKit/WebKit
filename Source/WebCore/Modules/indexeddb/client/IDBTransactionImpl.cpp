@@ -177,6 +177,13 @@ void IDBTransaction::abortDueToFailedRequest(DOMError& error)
     abort(ec);
 }
 
+void IDBTransaction::transitionedToFinishing(IndexedDB::TransactionState state)
+{
+    ASSERT(!isFinishedOrFinishing());
+    m_state = state;
+    m_referencedObjectStores.clear();
+}
+
 void IDBTransaction::abort(ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBTransaction::abort");
@@ -187,13 +194,14 @@ void IDBTransaction::abort(ExceptionCodeWithMessage& ec)
         return;
     }
 
-    m_state = IndexedDB::TransactionState::Aborting;
     m_database->willAbortTransaction(*this);
 
     if (isVersionChange()) {
         for (auto& objectStore : m_referencedObjectStores.values())
             objectStore->rollbackInfoForVersionChangeAbort();
     }
+
+    transitionedToFinishing(IndexedDB::TransactionState::Aborting);
     
     m_abortQueue.swap(m_transactionOperationQueue);
 
@@ -319,7 +327,7 @@ void IDBTransaction::commit()
 
     ASSERT(!isFinishedOrFinishing());
 
-    m_state = IndexedDB::TransactionState::Committing;
+    transitionedToFinishing(IndexedDB::TransactionState::Committing);
     m_database->willCommitTransaction(*this);
 
     auto operation = createTransactionOperation(*this, nullptr, &IDBTransaction::commitOnServer);

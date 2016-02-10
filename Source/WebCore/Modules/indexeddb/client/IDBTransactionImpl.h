@@ -183,6 +183,8 @@ private:
     void iterateCursorOnServer(TransactionOperation&, const IDBKeyData&, const unsigned long& count);
     void didIterateCursorOnServer(IDBRequest&, const IDBResultData&);
 
+    void transitionedToFinishing(IndexedDB::TransactionState);
+
     void establishOnServer();
 
     void scheduleOperationTimer();
