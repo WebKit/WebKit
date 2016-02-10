@@ -201,13 +201,16 @@ void IDBTransaction::abort(ExceptionCodeWithMessage& ec)
     scheduleOperation(WTFMove(operation));
 }
 
-void IDBTransaction::abortOnServerAndCancelRequests(TransactionOperation&)
+void IDBTransaction::abortOnServerAndCancelRequests(TransactionOperation& operation)
 {
     LOG(IndexedDB, "IDBTransaction::abortOnServerAndCancelRequests");
 
     ASSERT(m_transactionOperationQueue.isEmpty());
 
     serverConnection().abortTransaction(*this);
+
+    ASSERT(m_transactionOperationMap.contains(operation.identifier()));
+    m_transactionOperationMap.remove(operation.identifier());
 
     IDBError error(IDBDatabaseException::AbortError);
     for (auto& operation : m_abortQueue)
@@ -323,10 +326,13 @@ void IDBTransaction::commit()
     scheduleOperation(WTFMove(operation));
 }
 
-void IDBTransaction::commitOnServer(TransactionOperation&)
+void IDBTransaction::commitOnServer(TransactionOperation& operation)
 {
     LOG(IndexedDB, "IDBTransaction::commitOnServer");
     serverConnection().commitTransaction(*this);
+
+    ASSERT(m_transactionOperationMap.contains(operation.identifier()));
+    m_transactionOperationMap.remove(operation.identifier());
 }
 
 void IDBTransaction::finishAbortOrCommit()

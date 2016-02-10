@@ -1,3 +1,22 @@
+2016-02-09  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: TransactionOperation objects leak.
+        https://bugs.webkit.org/show_bug.cgi?id=154054
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Currently untestable).
+
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::abortOnServerAndCancelRequests): Remove the TransactionOperation from
+          the map, as this operation doesn't complete "normally" like most others.
+        (WebCore::IDBClient::IDBTransaction::commitOnServer): Ditto.
+        
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::perform): Clear the m_performFunction after use,
+          as it holds a lambda that holds a RefPtr to the IDBTransaction, as well as a self-ref.
+        (WebCore::IDBClient::TransactionOperation::completed): Clear m_completeFunction for the same reasons.
+
 2016-02-09  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Graphical corruption in videos when enabling custom loading path

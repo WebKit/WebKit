@@ -46,13 +46,17 @@ class TransactionOperation : public RefCounted<TransactionOperation> {
 public:
     void perform()
     {
+        ASSERT(m_performFunction);
         m_performFunction();
+        m_performFunction = { };
     }
 
     void completed(const IDBResultData& data)
     {
+        ASSERT(m_completeFunction);
         m_completeFunction(data);
         m_transaction->operationDidComplete(*this);
+        m_completeFunction = { };
     }
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
@@ -90,31 +94,38 @@ public:
     {
         relaxAdoptionRequirement();
         RefPtr<TransactionOperation> self(this);
+
+        ASSERT(performMethod);
         m_performFunction = [self, this, performMethod, arguments...] {
             (&m_transaction.get()->*performMethod)(*this, arguments...);
         };
 
-        m_completeFunction = [self, this, completeMethod](const IDBResultData& resultData) {
-            if (completeMethod)
-                (&m_transaction.get()->*completeMethod)(resultData);
-        };
+        if (completeMethod) {
+            m_completeFunction = [self, this, completeMethod](const IDBResultData& resultData) {
+                if (completeMethod)
+                    (&m_transaction.get()->*completeMethod)(resultData);
+            };
+        }
     }
 
     TransactionOperationImpl(IDBTransaction& transaction, IDBRequest& request, void (IDBTransaction::*completeMethod)(IDBRequest&, const IDBResultData&), void (IDBTransaction::*performMethod)(TransactionOperation&, Arguments...), Arguments&&... arguments)
         : TransactionOperation(transaction, request)
     {
         relaxAdoptionRequirement();
-
         RefPtr<TransactionOperation> self(this);
+
+        ASSERT(performMethod);
         m_performFunction = [self, this, performMethod, arguments...] {
             (&m_transaction.get()->*performMethod)(*this, arguments...);
         };
 
-        RefPtr<IDBRequest> refRequest(&request);
-        m_completeFunction = [self, this, refRequest, completeMethod](const IDBResultData& resultData) {
-            if (completeMethod)
-                (&m_transaction.get()->*completeMethod)(*refRequest, resultData);
-        };
+        if (completeMethod) {
+            RefPtr<IDBRequest> refRequest(&request);
+            m_completeFunction = [self, this, refRequest, completeMethod](const IDBResultData& resultData) {
+                if (completeMethod)
+                    (&m_transaction.get()->*completeMethod)(*refRequest, resultData);
+            };
+        }
     }
 };
 
