@@ -1,5 +1,45 @@
 2016-02-08  Jon Lee  <jonlee@apple.com>
 
+        Add a ramp controller
+        https://bugs.webkit.org/show_bug.cgi?id=154028
+
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        Enhance the graph to include a complexity-fps graph, in addition
+        to the time graph.
+
+        * Animometer/developer.html: Add a ramp option.
+        * Animometer/resources/debug-runner/animometer.css: Update the style.
+        * Animometer/resources/strings.js: Flatten the Strings.text constants.
+        * Animometer/resources/debug-runner/animometer.js:
+        (ResultsTable.call._addGraphButton): Refactor.
+        (ResultsTable.call._addTest): Add regression data.
+        (benchmarkController): Add a form that allows the user to switch between the two forms,
+        Add a form that allows the user to toggle different data. Hide certain header columns
+        depending on the selected controller.
+        * Animometer/resources/debug-runner/graph.js: Add the complexity regressions.
+        * Animometer/resources/debug-runner/tests.js: Add headers for the ramp results.
+        * Animometer/resources/runner/animometer.js:
+        (ResultsTable): If a header is disabled don't include them in _flattenedHeaders.
+        * Animometer/tests/resources/main.js:
+        (Controller): Allow options to specify the capacity for sample arrays.
+        (Regression): A piecewise regression that tries to fit a slope and a flat profile.
+        (_calculateRegression): Options can fix the slope and bias when calculating the minimal
+        error. Sweep across the samples in time (which could be backward depending on the controller)
+        and calculate the intersection point.
+        (RampController): This controller assumes that the target frame rate is below
+        58 FPS. It runs in two stages. The first stage quickly determines the order of
+        magnitude of objects needed to stress the system by the setting the complexity
+        to increasingly difficult tiers. Perform a series of ramps descending from a
+        high-water mark of complexity. The complexity needed to reach the target frame
+        length is done by performing a piecewise regression on each ramp, and track a
+        running average of these values. For the next ramp, make that running average
+        the center of the ramp. With a minimum complexity of 0, the high-water mark is
+        twice that average. The score is based on the highest complexity that can
+        reach 60 fps.
+
+2016-02-08  Jon Lee  <jonlee@apple.com>
+
         Address Said's comments on the benchmark, and do some clean up.
 
         * Animometer/developer.html:

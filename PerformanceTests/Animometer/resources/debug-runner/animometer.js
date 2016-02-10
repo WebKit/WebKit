@@ -35,7 +35,7 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
 
         button.addEventListener("click", function() {
             var graphData = {
-                axes: [Strings.text.experiments.complexity, Strings.text.experiments.frameRate],
+                axes: [Strings.text.complexity, Strings.text.frameRate],
                 samples: data,
                 complexityAverageSamples: testResults[Strings.json.complexityAverageSamples],
                 averages: {},
@@ -48,6 +48,9 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
 
             [
                 Strings.json.score,
+                Strings.json.regressions.timeRegressions,
+                Strings.json.regressions.complexityRegression,
+                Strings.json.regressions.complexityAverageRegression,
                 Strings.json.targetFrameLength
             ].forEach(function(key) {
                 if (testResults[key])
@@ -57,7 +60,7 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
             benchmarkController.showTestGraph(testName, graphData);
         });
 
-        button.textContent = Strings.text.results.graph + "...";
+        button.textContent = Strings.text.graph + "...";
     },
 
     _isNoisyMeasurement: function(jsonExperiment, data, measurement, options)
@@ -105,7 +108,7 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
             }
 
             var td = Utilities.createElement("td", { class: className }, row);
-            if (header.title == Strings.text.results.graph) {
+            if (header.title == Strings.text.graph) {
                 this._addGraphButton(td, testName, testResults);
             } else if (!("text" in header)) {
                 td.textContent = testResults[header.title];
@@ -451,7 +454,9 @@ Utilities.extendObject(window.benchmarkController, {
     initialize: function()
     {
         document.forms["benchmark-options"].addEventListener("change", benchmarkController.onBenchmarkOptionsChanged, true);
+        document.forms["graph-type"].addEventListener("change", benchmarkController.onGraphTypeChanged, true);
         document.forms["time-graph-options"].addEventListener("change", benchmarkController.onTimeGraphOptionsChanged, true);
+        document.forms["complexity-graph-options"].addEventListener("change", benchmarkController.onComplexityGraphOptionsChanged, true);
         optionsManager.updateUIFromLocalStorage();
         suitesManager.createElements();
         suitesManager.updateUIFromLocalStorage();
@@ -474,6 +479,12 @@ Utilities.extendObject(window.benchmarkController, {
     {
         var options = optionsManager.updateLocalStorageFromUI();
         var suites = suitesManager.updateLocalStorageFromUI();
+        if (options["adjustment"] == "ramp") {
+            Headers.details[2].disabled = true;
+        } else {
+            Headers.details[3].disabled = true;
+            Headers.details[4].disabled = true;
+        }
         this._startBenchmark(suites, options, "running-test");
     },
 

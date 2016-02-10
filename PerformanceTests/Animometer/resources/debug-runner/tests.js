@@ -1,10 +1,10 @@
 Utilities.extendObject(Headers, {
     details: [
         {
-            title: Strings.text.results.graph
+            title: Strings.text.graph
         },
         {
-            title: Strings.text.experiments.complexity,
+            title: Strings.text.complexity,
             children:
             [
                 {
@@ -32,7 +32,7 @@ Utilities.extendObject(Headers, {
             ]
         },
         {
-            title: Strings.text.experiments.frameRate,
+            title: Strings.text.frameRate,
             children:
             [
                 {
@@ -62,6 +62,50 @@ Utilities.extendObject(Headers, {
                             className += " noisy-results";
                         return className;
                     }
+                }
+            ]
+        },
+        {
+            title: Strings.text.mergedRawComplexity,
+            children:
+            [
+                {
+                    text: function(data) {
+                        return data[Strings.json.regressions.complexityRegression][Strings.json.regressions.complexity].toFixed(2);
+                    },
+                    className: "average"
+                },
+                {
+                    text: function(data) {
+                        return [
+                            "± ",
+                            data[Strings.json.regressions.complexityRegression][Strings.json.measurements.stdev].toFixed(2),
+                            "ms"
+                        ].join("");
+                    },
+                    className: "stdev"
+                }
+            ]
+        },
+        {
+            title: Strings.text.mergedAverageComplexity,
+            children:
+            [
+                {
+                    text: function(data) {
+                        return data[Strings.json.regressions.complexityAverageRegression][Strings.json.regressions.complexity].toFixed(2);
+                    },
+                    className: "average"
+                },
+                {
+                    text: function(data) {
+                        return [
+                            "± ",
+                            data[Strings.json.regressions.complexityAverageRegression][Strings.json.measurements.stdev].toFixed(2),
+                            "ms"
+                        ].join("");
+                    },
+                    className: "stdev"
                 }
             ]
         },

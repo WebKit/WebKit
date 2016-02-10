@@ -46,6 +46,7 @@
                         <ul>
                             <li><label><input name="adjustment" type="radio" value="step"> Keep at a fixed complexity, then make a big step</label></li>
                             <li><label><input name="adjustment" type="radio" value="adaptive" checked> Maintain target FPS</label></li>
+                            <li><label><input name="adjustment" type="radio" value="ramp"> Ramp</label></li>
                         </ul>
                     </li>
                     <li>
@@ -103,6 +104,12 @@
                 <h1>Graph:</h1>
             </header>
             <nav>
+                <form name="graph-type">
+                    <ul>
+                        <li><label><input type="radio" name="graph-type" value="time" checked> Time graph</label></li>
+                        <li><label><input type="radio" name="graph-type" value="complexity"> Complexity graph</label></li>
+                    </ul>
+                </form>
                 <form name="time-graph-options">
                     <ul>
                         <li><label><input type="checkbox" name="markers" checked> Markers</label>
@@ -114,6 +121,18 @@
                             <span class="rawFPS"></span></li>
                         <li><label><input type="checkbox" name="filteredFPS" checked> Filtered FPS</label>
                             <span class="filteredFPS"></span></li>
+                        <li><label><input type="checkbox" name="regressions" checked> Regressions</label>
+                    </ul>
+                </form>
+                <form name="complexity-graph-options">
+                    <ul class="series">
+                        <li><label><input type="checkbox" name="series-raw" checked> Series raw</label></li>
+                        <li><label><input type="checkbox" name="series-average" checked> Series average</label></li>
+                    </ul>
+                    <ul>
+                        <li><label><input type="checkbox" name="regression-time-score" checked> Ramp regression score</label>
+                        <li><label><input type="checkbox" name="complexity-regression-aggregate-raw" checked> Regression, series raw</label>
+                        <li><label><input type="checkbox" name="complexity-regression-aggregate-average" checked> Regression, series average</label>
                     </ul>
                 </form>
             </nav>

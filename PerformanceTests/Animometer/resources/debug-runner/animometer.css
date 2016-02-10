@@ -356,18 +356,14 @@ label.tree-label {
     position: absolute;
     top: 1.5em;
     right: 0;
-    font-size: .8em;
-    width: 25%;
+    font-size: .7em;
+    width: 23em;
 }
 
 #test-graph nav ul {
-    margin: 0 30px 0 0;
+    margin: 0 30px 1em 0;
     padding: 0;
     list-style: none;
-}
-
-#test-graph nav ul ul {
-    padding-left: 2em;
 }
 
 #test-graph nav li {
@@ -403,6 +399,36 @@ label.tree-label {
     shape-rendering: crispEdges;
 }
 
+.axis text {
+    fill: #999;
+}
+
+.yLeft.axis text {
+    fill: #7add49;
+}
+.yLeft.axis path,
+.yLeft.axis line {
+    stroke: #7add49;
+}
+.yRight.axis text {
+    fill: #fa4925;
+}
+.yRight.axis path,
+.yRight.axis line {
+    stroke: #fa4925;
+}
+
+.axis.complexity .tick line {
+    stroke: rgba(200, 200, 200, .6);
+    stroke-width: 2px;
+}
+
+.axis.complexity .domain,
+.axis.complexity text {
+    stroke: transparent;
+    fill: transparent;
+}
+
 .marker line {
     stroke: #5493D6;
 }
@@ -417,7 +443,7 @@ label.tree-label {
 }
 
 .mean.complexity polygon {
-    fill: hsla(100, 69%, 58%, .1);
+    fill: hsla(100, 69%, 58%, .05);
 }
 
 .target-fps {
@@ -433,6 +459,15 @@ label.tree-label {
 
 .mean.fps polygon {
     fill: hsla(10, 96%, 56%, .1);
+}
+
+#regressions line {
+    stroke: rgba(200, 200, 200, .8);
+    stroke-width: 2px;
+}
+
+#regressions circle {
+    fill: rgba(200, 200, 200, .8);
 }
 
 .cursor line {
@@ -470,4 +505,26 @@ label.tree-label {
 
 #rawFPS circle {
     fill: rgb(250, 73, 37);
+}
+
+#complexity-graph .regression line {
+    stroke: rgba(253, 253, 253, .8);
+    stroke-width: 2px;
+}
+
+#complexity-graph .regression circle {
+    fill: rgba(253, 253, 253, .8);
+}
+
+#complexity-graph .regression polygon {
+    fill: rgba(253, 253, 253, .05);
+}
+
+#complexity-graph .series.average circle {
+    fill: hsl(170, 96%, 56%);
+}
+
+#complexity-graph .series.average line {
+    stroke: hsla(170, 96%, 56%, .2);
+    stroke-width: 2px;
 }

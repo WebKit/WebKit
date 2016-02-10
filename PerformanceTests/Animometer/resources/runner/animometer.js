@@ -70,11 +70,18 @@ ResultsTable = Utilities.createClass(
 
         this._flattenedHeaders = [];
         this._headers.forEach(function(header) {
+            if (header.disabled)
+                return;
+
             if (header.children)
                 this._flattenedHeaders = this._flattenedHeaders.concat(header.children);
             else
                 this._flattenedHeaders.push(header);
         }, this);
+
+        this._flattenedHeaders = this._flattenedHeaders.filter(function (header) {
+            return !header.disabled;
+        });
 
         this.clear();
     }, {
@@ -90,8 +97,11 @@ ResultsTable = Utilities.createClass(
         var row = Utilities.createElement("tr", {}, thead);
 
         this._headers.forEach(function (header) {
+            if (header.disabled)
+                return;
+
             var th = Utilities.createElement("th", {}, row);
-            if (header.title != Strings.text.results.graph)
+            if (header.title != Strings.text.graph)
                 th.textContent = header.title;
             if (header.children)
                 th.colSpan = header.children.length;

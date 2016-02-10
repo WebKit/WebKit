@@ -14,6 +14,14 @@ Utilities.extendObject(window.benchmarkController, {
         this.createTimeGraph(graphData, margins, size);
         this.onTimeGraphOptionsChanged();
 
+        var hasComplexityRegression = !!graphData.complexityRegression;
+        this._showOrHideNodes(hasComplexityRegression, "form[name=graph-type]");
+        if (hasComplexityRegression) {
+            document.forms["graph-type"].elements["type"] = "complexity";
+            this.createComplexityGraph(graphData, margins, size);
+            this.onComplexityGraphOptionsChanged();
+        }
+
         this.onGraphTypeChanged();
     },
 
@@ -41,6 +49,165 @@ Utilities.extendObject(window.benchmarkController, {
             .attr("y2", line[3]);
     },
 
+    _addRegression: function(data, svg, xScale, yScale)
+    {
+        svg.append("circle")
+            .attr("cx", xScale(data.segment2[1][0]))
+            .attr("cy", yScale(data.segment2[1][1]))
+            .attr("r", 5);
+        this._addRegressionLine(svg, xScale, yScale, data.segment1, data.stdev);
+        this._addRegressionLine(svg, xScale, yScale, data.segment2, data.stdev);
+    },
+
+    createComplexityGraph: function(graphData, margins, size)
+    {
+        var svg = d3.select("#test-graph-data").append("svg")
+            .attr("id", "complexity-graph")
+            .attr("class", "hidden")
+            .attr("width", size.width + margins.left + margins.right)
+            .attr("height", size.height + margins.top + margins.bottom)
+            .append("g")
+                .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
+
+        var xMin = 100000, xMax = 0;
+        if (graphData.timeRegressions) {
+            graphData.timeRegressions.forEach(function(regression) {
+                for (var i = regression.startIndex; i <= regression.endIndex; ++i) {
+                    xMin = Math.min(xMin, graphData.samples[i].complexity);
+                    xMax = Math.max(xMax, graphData.samples[i].complexity);
+                }
+            });
+        } else {
+            xMin = d3.min(graphData.samples, function(s) { return s.complexity; });
+            xMax = d3.max(graphData.samples, function(s) { return s.complexity; });
+        }
+
+        var xScale = d3.scale.linear()
+            .range([0, size.width])
+            .domain([xMin, xMax]);
+        var yScale = d3.scale.linear()
+                .range([size.height, 0])
+                .domain([1000/20, 1000/60]);
+
+        var xAxis = d3.svg.axis()
+                .scale(xScale)
+                .orient("bottom");
+        var yAxis = d3.svg.axis()
+                .scale(yScale)
+                .tickValues([1000/20, 1000/25, 1000/30, 1000/35, 1000/40, 1000/45, 1000/50, 1000/55, 1000/60])
+                .tickFormat(function(d) { return (1000 / d).toFixed(0); })
+                .orient("left");
+
+        // x-axis
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + size.height + ")")
+            .call(xAxis);
+
+        // y-axis
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+        // time-based regression
+        var mean = svg.append("g")
+            .attr("class", "mean complexity");
+        var complexity = graphData.averages[Strings.json.experiments.complexity];
+        this._addRegressionLine(mean, xScale, yScale, [[complexity.average, yScale.domain()[0]], [complexity.average, yScale.domain()[1]]], complexity.stdev, true);
+
+        // regression
+        this._addRegression(graphData.complexityRegression, svg.append("g").attr("class", "regression raw"), xScale, yScale);
+        this._addRegression(graphData.complexityAverageRegression, svg.append("g").attr("class", "regression average"), xScale, yScale);
+
+        var svgGroup = svg.append("g")
+            .attr("class", "series raw");
+        var seriesCounter = 0;
+        graphData.timeRegressions.forEach(function(regression, i) {
+            seriesCounter++;
+            var group = svgGroup.append("g")
+                .attr("class", "series-" + seriesCounter)
+                .attr("fill", "hsl(" + (i / graphData.timeRegressions.length * 360).toFixed(0) + ", 96%, 56%)");
+            group.selectAll("circle")
+                .data(graphData.samples)
+                .enter()
+                .append("circle")
+                .filter(function(d, i) { return i >= regression.startIndex && i <= regression.endIndex; })
+                .attr("cx", function(d) { return xScale(d.complexity); })
+                .attr("cy", function(d) { return yScale(d.frameLength); })
+                .attr("r", 2);
+        });
+
+        group = svg.append("g")
+            .attr("class", "series average")
+            .selectAll("circle")
+                .data(graphData.complexityAverageSamples)
+                .enter();
+        group.append("circle")
+            .attr("cx", function(d) { return xScale(d.complexity); })
+            .attr("cy", function(d) { return yScale(d.frameLength); })
+            .attr("r", 3)
+        group.append("line")
+            .attr("x1", function(d) { return xScale(d.complexity); })
+            .attr("x2", function(d) { return xScale(d.complexity); })
+            .attr("y1", function(d) { return yScale(d.frameLength - d.stdev); })
+            .attr("y2", function(d) { return yScale(d.frameLength + d.stdev); });
+
+        // Cursor
+        var cursorGroup = svg.append("g").attr("class", "cursor hidden");
+        cursorGroup.append("line")
+            .attr("class", "x")
+            .attr("x1", 0)
+            .attr("x2", 0)
+            .attr("y1", yScale(yAxis.scale().domain()[0]) + 10)
+            .attr("y2", yScale(yAxis.scale().domain()[1]));
+        cursorGroup.append("line")
+            .attr("class", "y")
+            .attr("x1", xScale(0) - 10)
+            .attr("x2", xScale(xAxis.scale().domain()[1]))
+            .attr("y1", 0)
+            .attr("y2", 0)
+        cursorGroup.append("text")
+            .attr("class", "label x")
+            .attr("x", 0)
+            .attr("y", yScale(yAxis.scale().domain()[0]) + 15)
+            .attr("baseline-shift", "-100%")
+            .attr("text-anchor", "middle");
+        cursorGroup.append("text")
+            .attr("class", "label y")
+            .attr("x", xScale(0) - 15)
+            .attr("y", 0)
+            .attr("baseline-shift", "-30%")
+            .attr("text-anchor", "end");
+        // Area to handle mouse events
+        var area = svg.append("rect")
+            .attr("fill", "transparent")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", size.width)
+            .attr("height", size.height);
+
+        area.on("mouseover", function() {
+            document.querySelector("#complexity-graph .cursor").classList.remove("hidden");
+        }).on("mouseout", function() {
+            document.querySelector("#complexity-graph .cursor").classList.add("hidden");
+        }).on("mousemove", function() {
+            var location = d3.mouse(this);
+            var location_domain = [xScale.invert(location[0]), yScale.invert(location[1])];
+            cursorGroup.select("line.x")
+                .attr("x1", location[0])
+                .attr("x2", location[0]);
+            cursorGroup.select("text.x")
+                .attr("x", location[0])
+                .text(location_domain[0].toFixed(1));
+            cursorGroup.select("line.y")
+                .attr("y1", location[1])
+                .attr("y2", location[1]);
+            cursorGroup.select("text.y")
+                .attr("y", location[1])
+                .text((1000 / location_domain[1]).toFixed(1));
+        });
+    },
+
     createTimeGraph: function(graphData, margins, size)
     {
         var svg = d3.select("#test-graph-data").append("svg")
@@ -60,6 +227,11 @@ Utilities.extendObject(window.benchmarkController, {
                     Math.min(d3.min(graphData.samples, function(s) { return s.time; }), 0),
                     d3.max(graphData.samples, function(s) { return s.time; })]);
         var complexityMax = d3.max(graphData.samples, function(s) { return s.complexity; });
+        if (graphData.timeRegressions) {
+            complexityMax = Math.max.apply(Math, graphData.timeRegressions.map(function(regression) {
+                return regression.maxComplexity || 0;
+            }));
+        }
 
         var yLeft = d3.scale.linear()
                 .range([size.height, 0])
@@ -98,7 +270,7 @@ Utilities.extendObject(window.benchmarkController, {
 
         // yLeft-axis
         svg.append("g")
-            .attr("class", "y axis")
+            .attr("class", "yLeft axis")
             .attr("fill", "#7ADD49")
             .call(yAxisLeft)
             .append("text")
@@ -112,17 +284,17 @@ Utilities.extendObject(window.benchmarkController, {
 
         // yRight-axis
         svg.append("g")
-            .attr("class", "y axis")
+            .attr("class", "yRight axis")
             .attr("fill", "#FA4925")
             .attr("transform", "translate(" + size.width + ", 0)")
             .call(yAxisRight)
             .append("text")
                 .attr("class", "label")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
+                .attr("x", 9)
+                .attr("y", -20)
                 .attr("fill", "#FA4925")
                 .attr("dy", ".71em")
-                .style("text-anchor", "end")
+                .style("text-anchor", "start")
                 .text(axes[1]);
 
         // marks
@@ -209,6 +381,41 @@ Utilities.extendObject(window.benchmarkController, {
         addData("rawFPS", allData, function(d) { return yRight(d.frameLength); }, 1);
         addData("filteredFPS", filteredData, function(d) { return yRight(d.smoothedFrameLength); }, 2);
 
+        // regressions
+        var regressionGroup = svg.append("g")
+            .attr("id", "regressions");
+        if (graphData.timeRegressions) {
+            var complexities = [];
+            graphData.timeRegressions.forEach(function (regression) {
+                regressionGroup.append("line")
+                    .attr("x1", x(regression.segment1[0][0]))
+                    .attr("x2", x(regression.segment1[1][0]))
+                    .attr("y1", yRight(regression.segment1[0][1]))
+                    .attr("y2", yRight(regression.segment1[1][1]));
+                regressionGroup.append("line")
+                    .attr("x1", x(regression.segment2[0][0]))
+                    .attr("x2", x(regression.segment2[1][0]))
+                    .attr("y1", yRight(regression.segment2[0][1]))
+                    .attr("y2", yRight(regression.segment2[1][1]));
+                // inflection point
+                regressionGroup.append("circle")
+                    .attr("cx", x(regression.segment1[1][0]))
+                    .attr("cy", yLeft(regression.complexity))
+                    .attr("r", 5);
+                complexities.push(regression.complexity);
+            });
+            if (complexities.length) {
+                var yLeftComplexities = d3.svg.axis()
+                    .scale(yLeft)
+                    .tickValues(complexities)
+                    .tickSize(10)
+                    .orient("left");
+                svg.append("g")
+                    .attr("class", "complexity yLeft axis")
+                    .call(yLeftComplexities);
+            }
+        }
+
         // Area to handle mouse events
         var area = svg.append("rect")
             .attr("fill", "transparent")
@@ -291,6 +498,15 @@ Utilities.extendObject(window.benchmarkController, {
         }
     },
 
+    onComplexityGraphOptionsChanged: function() {
+        var form = document.forms["complexity-graph-options"].elements;
+        benchmarkController._showOrHideNodes(form["series-raw"].checked, "#complexity-graph .series.raw");
+        benchmarkController._showOrHideNodes(form["series-average"].checked, "#complexity-graph .series.average");
+        benchmarkController._showOrHideNodes(form["regression-time-score"].checked, "#complexity-graph .mean.complexity");
+        benchmarkController._showOrHideNodes(form["complexity-regression-aggregate-raw"].checked, "#complexity-graph .regression.raw");
+        benchmarkController._showOrHideNodes(form["complexity-regression-aggregate-average"].checked, "#complexity-graph .regression.average");
+    },
+
     onTimeGraphOptionsChanged: function() {
         var form = document.forms["time-graph-options"].elements;
         benchmarkController._showOrHideNodes(form["markers"].checked, ".marker");
@@ -301,11 +517,14 @@ Utilities.extendObject(window.benchmarkController, {
     },
 
     onGraphTypeChanged: function() {
+        var form = document.forms["graph-type"].elements;
         var graphData = document.getElementById("test-graph-data").graphData;
-        var isTimeSelected = true;
+        var isTimeSelected = form["graph-type"].value == "time";
 
         benchmarkController._showOrHideNodes(isTimeSelected, "#time-graph");
         benchmarkController._showOrHideNodes(isTimeSelected, "form[name=time-graph-options]");
+        benchmarkController._showOrHideNodes(!isTimeSelected, "#complexity-graph");
+        benchmarkController._showOrHideNodes(!isTimeSelected, "form[name=complexity-graph-options]");
 
         var score, mean;
         if (isTimeSelected) {
@@ -326,6 +545,19 @@ Utilities.extendObject(window.benchmarkController, {
                     regression.concern.toFixed(2)]);
             }
             mean = mean.join("");
+        } else {
+            score = [
+                "raw: ",
+                graphData.complexityRegression.complexity.toFixed(2),
+                ", average: ",
+                graphData.complexityAverageRegression.complexity.toFixed(2)].join("");
+
+            mean = [
+                "raw: ±",
+                graphData.complexityRegression.stdev.toFixed(2),
+                "ms, average: ±",
+                graphData.complexityAverageRegression.stdev.toFixed(2),
+                "ms"].join("");
         }
 
         sectionsManager.setSectionScore("test-graph", score, mean);
