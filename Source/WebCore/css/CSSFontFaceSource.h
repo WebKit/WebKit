@@ -46,11 +46,11 @@ class CSSFontFaceSource final : public CachedFontClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    //                      => Succeeded
+    //                      => Success
     //                    //
     // Pending => Loading
     //                    \\.
-    //                      => Failed
+    //                      => Failure
     enum class Status {
         Pending,
         Loading,

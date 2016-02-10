@@ -147,7 +147,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
 #if ENABLE(SVG_FONTS)
 #if ENABLE(SVG_OTF_CONVERTER)
-    if (!m_svgFontFaceElement->parentNode() || !is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
+    if (!is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
         return nullptr;
     SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
     // FIXME: Re-run this when script modifies the element or any of its descendents

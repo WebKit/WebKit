@@ -1,3 +1,13 @@
+2016-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing post-review comments after r196322
+
+        Unreviwed.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * css/CSSFontFaceSource.h:
+
 2016-02-10  Chris Dumez  <cdumez@apple.com>
 
         Attributes on the Window instance should be configurable unless [Unforgeable]
