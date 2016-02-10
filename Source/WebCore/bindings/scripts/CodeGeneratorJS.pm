@@ -685,6 +685,8 @@ sub ConstructorShouldBeOnInstance
 {
     my $interface = shift;
 
+    # FIXME: constructor should always be on the prototype:
+    # http://www.w3.org/TR/WebIDL/#interface-prototype-object
     return 1 if $interface->extendedAttributes->{"CheckSecurity"};
     return 0;
 }
@@ -1357,13 +1359,7 @@ sub GenerateAttributesHashTable
 
             my $setter = "setJS" . $interfaceName . "Constructor";
             push(@$hashValue2, $setter);
-
-            # FIXME: Do we really need to special-case DOMWindow?
-            if ($interfaceName eq "DOMWindow") {
-                push(@$hashSpecials, "DontEnum | DontDelete");
-            } else {
-                push(@$hashSpecials, "DontEnum");
-            }
+            push(@$hashSpecials, "DontEnum");
         }
     }
 
@@ -1376,13 +1372,11 @@ sub GenerateAttributesHashTable
         push(@$hashKeys, $name);
 
         my @specials = ();
-        # As per Web IDL specification, constructor properties on the ECMAScript global object should be
-        # configurable and should not be enumerable.
-        my $is_global_constructor = $attribute->signature->type =~ /Constructor$/;
-
-        push(@specials, "DontDelete") if ($isInstance && !$is_global_constructor) || $attribute->signature->extendedAttributes->{"Unforgeable"}
+        push(@specials, "DontDelete") if $attribute->signature->extendedAttributes->{"Unforgeable"}
             || $interface->extendedAttributes->{"Unforgeable"};
 
+        # As per Web IDL specification, constructor properties on the ECMAScript global object should not be enumerable.
+        my $is_global_constructor = $attribute->signature->type =~ /Constructor$/;
         push(@specials, "DontEnum") if ($attribute->signature->extendedAttributes->{"NotEnumerable"} || $is_global_constructor);
         push(@specials, "ReadOnly") if IsReadonly($attribute);
         push(@specials, "CustomAccessor") unless $is_global_constructor or IsJSBuiltin($interface, $attribute);

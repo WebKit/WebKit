@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2010, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -199,10 +199,14 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     }
 #endif
 
-    const HashTableValue* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName);
-    if (entry) {
-        slot.setCacheableCustom(thisObject, allowsAccess ? entry->attributes() : ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
-        return true;
+    // When accessing cross-origin known Window properties, we always use the original property getter,
+    // even if the property was removed / redefined. As of early 2016, this matches Firefox and Chrome's
+    // behavior.
+    if (!thisObject->staticFunctionsReified() || !allowsAccess) {
+        if (auto* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName)) {
+            slot.setCacheableCustom(thisObject, allowsAccess ? entry->attributes() : ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
+            return true;
+        }
     }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -363,8 +367,10 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
         return;
     }
 
-    if (lookupPut(exec, propertyName, thisObject, value, *s_info.staticPropHashTable, slot))
-        return;
+    if (!thisObject->staticFunctionsReified()) {
+        if (lookupPut(exec, propertyName, thisObject, value, *s_info.staticPropHashTable, slot))
+            return;
+    }
 
     if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
         Base::put(thisObject, exec, propertyName, value, slot);

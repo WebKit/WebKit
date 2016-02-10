@@ -1,3 +1,58 @@
+2016-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Attributes on the Window instance should be configurable unless [Unforgeable]
+        https://bugs.webkit.org/show_bug.cgi?id=153920
+        <rdar://problem/24563211>
+
+        Reviewed by Darin Adler.
+
+        Marking the Window instance attributes as configurable but cause
+        getOwnPropertyDescriptor() to report them as configurable, as
+        expected. However, trying to delete them would actually lead to
+        unexpected behavior because:
+        - We did not reify custom accessor properties (most of the Window
+          properties are custom accessors) upon deletion.
+        - For non-reified static properties marked as configurable,
+          JSObject::deleteProperty() would attempt to call the property
+          setter with undefined. As a result, calling delete window.name
+          would cause window.name to become the string "undefined" instead
+          of the undefined value.
+
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+        Now that we reify ALL properties, we only need to check the property table
+        if we have not reified. As a result, I dropped the 'didReify' parameter for
+        this function and instead only call this function if we have not yet reified.
+
+        (JSC::JSObject::putInlineSlow):
+        Only call putEntry() if we have not reified: Drop the
+        '|| !(entry->attributes() & BuiltinOrFunctionOrAccessor)'
+        check as such properties now get reified as well.
+
+        (JSC::JSObject::deleteProperty):
+        - Call reifyAllStaticProperties() instead of reifyStaticFunctionsForDelete()
+          so that we now reify all properties upon deletion, including the custom
+          accessors. reifyStaticFunctionsForDelete() is now removed and the same
+          reification function is now used by: deletion, getOwnPropertyDescriptor()
+          and eager reification of the prototype objects in the bindings.
+        - Drop code that falls back to calling the static property setter with
+          undefined if we cannot find the property in the property storage. As
+          we now reify ALL properties, the code removing the property from the
+          property storage should succeed, provided that the property actually
+          exists.
+
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        Only call getClassPropertyNames() if we have not reified. We should no longer
+        check the static property table after reifying now that we reify all
+        properties.
+
+        (JSC::JSObject::reifyAllStaticProperties):
+        Merge with reifyStaticFunctionsForDelete(). The only behavior change is the
+        flattening to an uncacheable dictionary, like reifyStaticFunctionsForDelete()
+        used to do.
+
+        * runtime/JSObject.h:
+
 2016-02-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196251.

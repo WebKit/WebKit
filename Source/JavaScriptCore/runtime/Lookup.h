@@ -130,22 +130,24 @@ struct HashTable {
             skipInvalidKeys();
         }
 
-        const HashTableValue* value()
+        const HashTableValue* value() const
         {
             return &m_table->values[m_position];
         }
 
-        const char* key()
+        const HashTableValue& operator*() const { return *value(); }
+
+        const char* key() const
         {
             return m_table->values[m_position].m_key;
         }
 
-        const HashTableValue* operator->()
+        const HashTableValue* operator->() const
         {
             return value();
         }
 
-        bool operator!=(const ConstIterator& other)
+        bool operator!=(const ConstIterator& other) const
         {
             ASSERT(m_table == other.m_table);
             return m_position != other.m_position;

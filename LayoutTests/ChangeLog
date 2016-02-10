@@ -1,3 +1,47 @@
+2016-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Attributes on the Window instance should be configurable unless [Unforgeable]
+        https://bugs.webkit.org/show_bug.cgi?id=153920
+        <rdar://problem/24563211>
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Window/window-properties-configurable-expected.txt: Added.
+        * fast/dom/Window/window-properties-configurable.html: Added.
+        Add a test to check that Window properties are reported as configurable
+        unless the [Unforgeable] ones and that deleting them actually works.
+
+        * fast/dom/global-constructors.html:
+        Update test so it no longer expects window.Node to be shadowable. As per
+        the specification, the "Node" property is on the window instance, not its
+        prototype. Therefore, it should cannot be shadowed and setting it to
+        something actually overwites the previous value, given that the property
+        is writable as per:
+        - http://heycam.github.io/webidl/#es-interfaces
+        I have verified that the new behavior is consistent with Firefox.
+
+        * http/tests/security/cross-origin-reified-window-property-access-expected.txt: Added.
+        * http/tests/security/cross-origin-reified-window-property-access.html: Added.
+        * http/tests/security/resources/reify-window.html: Added.
+        Add a test case to cover cross-origin access of Window properties after
+        reification.
+
+        * js/getOwnPropertyDescriptor-unforgeable-attributes-expected.txt:
+        * js/getOwnPropertyDescriptor-unforgeable-attributes.html:
+        Drop window.self from the list of unforgeable attributes. This attribute
+        is not unforgeable in our implementation or in the specification:
+        - https://html.spec.whatwg.org/multipage/browsers.html#the-window-object
+
+        * js/getOwnPropertyDescriptor-window-attributes-expected.txt:
+        * js/getOwnPropertyDescriptor-window-attributes.html:
+        - Add coverage for window.self which is a regular Window property.
+        - Add coverage for window.Node which is a constructor property
+        - Add coverage for window.constructor. It should really be on the prototype
+          as per the specification but this at least checks that the property is
+          configurable, as per the specification.
+        - Rebaseline the test as more checks are passing now that Window properties
+          are marked as configurable.
+
 2016-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skop fast/regions/text-break-properties.html on ios-simulator

@@ -33,6 +33,13 @@ shouldBeTrue("descriptor.get.call(window) === window.navigator");
 shouldBeTrue("descriptor.get.call() === window.navigator");
 
 debug("");
+debug("* Window.self");
+descriptor = Object.getOwnPropertyDescriptor(window, "self");
+checkWindowPropertyDescriptor(descriptor);
+shouldBeTrue("descriptor.get.call(window) === window.self");
+shouldBeTrue("descriptor.get.call() === window.self");
+
+debug("");
 debug("* Window.frameElement");
 descriptor = Object.getOwnPropertyDescriptor(window, "frameElement");
 checkWindowPropertyDescriptor(descriptor, true);
@@ -46,5 +53,23 @@ checkWindowPropertyDescriptor(descriptor, false);
 shouldBeTrue("descriptor.get.call(window) === window.name");
 shouldBeTrue("descriptor.get.call() === window.name");
 
+debug("");
+debug("* window.Node");
+descriptor = Object.getOwnPropertyDescriptor(window, "Node");
+shouldBeFalse("descriptor.enumerable");
+shouldBeTrue("descriptor.writable");
+shouldBeTrue("descriptor.configurable");
+shouldBe("descriptor.value", "window.Node");
+
+debug("");
+// FIXME: 'constructor' should be on the prototype.
+debug("* window.constructor");
+descriptor = Object.getOwnPropertyDescriptor(window, "constructor");
+shouldBeFalse("descriptor.enumerable");
+shouldBeTrue("descriptor.writable");
+shouldBeTrue("descriptor.configurable");
+shouldBe("descriptor.value", "window.Window");
+
+debug("");
 </script>
 <script src="../resources/js-test-post.js"></script>

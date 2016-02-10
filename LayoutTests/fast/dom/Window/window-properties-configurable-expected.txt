@@ -1,0 +1,37 @@
+Tests that Window properties are indeed configurable unless [Unforgeable]
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Regular IDL attribute.
+PASS Object.getOwnPropertyDescriptor(window, 'name').configurable is true
+PASS window.name is ""
+PASS delete window.name is true
+PASS window.name is undefined.
+window.name = 3
+PASS window.name is 3
+PASS delete window.name is true
+PASS window.name is undefined.
+
+* Constructor attributes.
+PASS Object.getOwnPropertyDescriptor(window, 'Node').configurable is true
+PASS window.Node is not undefined
+PASS delete window.Node is true
+PASS window.Node is undefined.
+window.Node = 3
+PASS window.Node is 3
+PASS delete window.Node is true
+PASS window.Node is undefined.
+
+* [Unforgeable] IDL attribute.
+PASS Object.getOwnPropertyDescriptor(window, 'window').configurable is false
+PASS window.window is not undefined
+PASS delete window.window is false
+PASS window.window is not undefined
+window.window = 3
+PASS window.window is not 3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

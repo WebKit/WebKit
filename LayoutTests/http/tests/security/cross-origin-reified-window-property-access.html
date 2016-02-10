@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<iframe id="crossOriginFrame" src="http://localhost:8000/security/resources/reify-window.html"></iframe>
+<iframe id="sameOriginFrame" src="resources/reify-window.html"></iframe>
+<script>
+description("Tests that reification does not bypass cross-origin checks.");
+jsTestIsAsync = true;
+
+function shouldThrowOrReturnUndefined(expression)
+{
+    try {
+        result = eval(expression);
+    } catch (e) {
+        testPassed(expression + " threw exception " + e + ".");
+        return;
+    }
+    if (result === undefined)
+        testPassed(expression + " returned undefined.");
+    else
+        testFailed(expression + " returned " + result);
+}
+
+function runTest()
+{
+    crossOriginWindow = crossOriginFrame.window;
+    sameOriginWindow = sameOriginFrame.window;
+
+    shouldThrowOrReturnUndefined('crossOriginWindow.document');
+    shouldThrowOrReturnUndefined('crossOriginWindow.name');
+    shouldThrowOrReturnUndefined('crossOriginWindow.menubar');
+    shouldThrowOrReturnUndefined('crossOriginWindow.scrollbars")');
+    shouldThrowOrReturnUndefined('crossOriginWindow.navigator")');
+    shouldThrowOrReturnUndefined('crossOriginWindow.screenX")');
+    shouldNotBe('crossOriginWindow.location', 'undefined');
+
+    // Even though window.self was deleted, we still use the original static property getter, to match
+    // Firefox and Chrome.
+    shouldBe('crossOriginWindow.self', 'crossOriginWindow.window');
+    shouldBeEqualToString("sameOriginWindow.self", "secret");
+
+    // Test the case where a deleted window attribute was shadowing a named property.
+    shouldBe('crossOriginWindow.parent', 'window');
+    shouldBe('sameOriginWindow.parent', 'sameOriginWindow.document.getElementById("parent")');
+
+    finishJSTest();
+}
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

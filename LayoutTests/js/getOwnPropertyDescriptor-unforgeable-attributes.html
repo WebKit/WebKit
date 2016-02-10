@@ -43,12 +43,6 @@ checkUnforgeablePropertyDescriptor(descriptor);
 shouldBeTrue("descriptor.get.call(window) === window.location");
 
 debug("");
-debug("* Window.self");
-descriptor = Object.getOwnPropertyDescriptor(window, "self");
-checkUnforgeablePropertyDescriptor(descriptor);
-shouldBeTrue("descriptor.get.call(window) === window.self");
-
-debug("");
 debug("* Window.window");
 descriptor = Object.getOwnPropertyDescriptor(window, "window");
 checkUnforgeablePropertyDescriptor(descriptor, true);

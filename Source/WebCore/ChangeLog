@@ -1,3 +1,63 @@
+2016-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Attributes on the Window instance should be configurable unless [Unforgeable]
+        https://bugs.webkit.org/show_bug.cgi?id=153920
+        <rdar://problem/24563211>
+
+        Reviewed by Darin Adler.
+
+        Attributes on the Window instance should be configurable unless [Unforgeable]:
+        1. 'constructor' property:
+           - http://www.w3.org/TR/WebIDL/#interface-prototype-object
+        2. Constructor properties (e.g. window.Node):
+           - http://www.w3.org/TR/WebIDL/#es-interfaces
+        3. IDL attributes:
+           - http://heycam.github.io/webidl/#es-attributes (configurable unless
+             [Unforgeable], e.g. window.location)
+
+        Firefox complies with the WebIDL specification but WebKit does not for 1. and 3.
+
+        Test: fast/dom/Window/window-properties-configurable.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        For known Window properties (i.e. properties in the static property table),
+        if we have reified and this is same-origin access, then call
+        Base::getOwnPropertySlot() to get the property from the local property
+        storage. If we have not reified yet, or this is cross-origin access, query
+        the static property table. This is to match the behavior of Firefox and
+        Chrome which seem to keep returning the original properties upon cross
+        origin access, even if those were deleted or redefined.
+
+        (WebCore::JSDOMWindow::put):
+        The previous code used to call the static property setter for properties in
+        the static table. However, this does not do the right thing if properties
+        were reified. For example, deleting window.name and then trying to set it
+        again would not work. Therefore, update this code to only do this if the
+        properties have not been reified, similarly to what is done in
+        JSObject::putInlineSlow().
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ConstructorShouldBeOnInstance):
+        Add a FIXME comment indicating that window.constructor should be on
+        the prototype as per the Web IDL specification.
+
+        (GenerateAttributesHashTable):
+        - Mark 'constructor' property as configurable for Window, as per the
+          specification and consistently with other 'constructor' properties:
+          http://www.w3.org/TR/WebIDL/#interface-prototype-object
+        - Mark properties as configurable even though they are on the instance.
+          Window has its properties on the instance as per the specification:
+          1. http://heycam.github.io/webidl/#es-attributes
+          2. http://heycam.github.io/webidl/#PrimaryGlobal (window is [PrimaryGlobal]
+          However, these properties should be configurable as long as they are
+          not marked as [Unforgeable], as per 1.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        Rebaseline bindings tests.
+
 2016-02-10  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Ref cycle between IDBObjectStore and IDBTransaction.

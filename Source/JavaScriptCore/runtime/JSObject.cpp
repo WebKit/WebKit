@@ -68,7 +68,7 @@ const ClassInfo JSObject::s_info = { "Object", 0, 0, CREATE_METHOD_TABLE(JSObjec
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(JSFinalObject) };
 
-static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode, bool didReify)
+static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     VM& vm = exec->vm();
 
@@ -79,7 +79,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
             continue;
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if ((!(iter->attributes() & DontEnum) || mode.includeDontEnumProperties()) && !((iter->attributes() & BuiltinOrFunctionOrAccessor) && didReify))
+            if (!(iter->attributes() & DontEnum) || mode.includeDontEnumProperties())
                 propertyNames.add(Identifier::fromString(&vm, iter.key()));
         }
     }
@@ -413,10 +413,9 @@ void JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
             // prototypes it should be replaced, so break here.
             break;
         }
-        const ClassInfo* info = obj->classInfo();
-        if (info->hasStaticSetterOrReadonlyProperties()) {
-            if (const HashTableValue* entry = obj->findPropertyHashEntry(propertyName)) {
-                if (!obj->staticFunctionsReified() || !(entry->attributes() & BuiltinOrFunctionOrAccessor)) {
+        if (!obj->staticFunctionsReified()) {
+            if (obj->classInfo()->hasStaticSetterOrReadonlyProperties()) {
+                if (auto* entry = obj->findPropertyHashEntry(propertyName)) {
                     putEntry(exec, entry, obj, propertyName, value, slot);
                     return;
                 }
@@ -1287,33 +1286,19 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
+    VM& vm = exec->vm();
     
     if (Optional<uint32_t> index = parseIndex(propertyName))
-        return thisObject->methodTable(exec->vm())->deletePropertyByIndex(thisObject, exec, index.value());
+        return thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, index.value());
 
     if (!thisObject->staticFunctionsReified())
-        thisObject->reifyStaticFunctionsForDelete(exec);
+        thisObject->reifyAllStaticProperties(exec);
 
     unsigned attributes;
-    VM& vm = exec->vm();
     if (isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes))) {
         if (attributes & DontDelete && !vm.isInDefineOwnProperty())
             return false;
         thisObject->removeDirect(vm, propertyName);
-        return true;
-    }
-
-    // Look in the static hashtable of properties
-    const HashTableValue* entry = thisObject->findPropertyHashEntry(propertyName);
-    if (entry) {
-        if (entry->attributes() & DontDelete && !vm.isInDefineOwnProperty())
-            return false; // this builtin property can't be deleted
-
-        PutPropertySlot slot(thisObject);
-        if (!(entry->attributes() & BuiltinOrFunctionOrAccessor)) {
-            ASSERT(thisObject->staticFunctionsReified());
-            putEntry(exec, entry, thisObject, propertyName, jsUndefined(), slot);
-        }
     }
 
     return true;
@@ -1616,7 +1601,8 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
 
 void JSObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    getClassPropertyNames(exec, object->classInfo(), propertyNames, mode, object->staticFunctionsReified());
+    if (!object->staticFunctionsReified())
+        getClassPropertyNames(exec, object->classInfo(), propertyNames, mode);
 
     if (!mode.includeJSObjectProperties())
         return;
@@ -1670,9 +1656,7 @@ void JSObject::preventExtensions(VM& vm)
     setStructure(vm, Structure::preventExtensionsTransition(vm, structure(vm)));
 }
 
-// This presently will flatten to an uncachable dictionary; this is suitable
-// for use in delete, we may want to do something different elsewhere.
-void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
+void JSObject::reifyAllStaticProperties(ExecState* exec)
 {
     ASSERT(!staticFunctionsReified());
     VM& vm = exec->vm();
@@ -1691,30 +1675,12 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
         const HashTable* hashTable = info->staticPropHashTable;
         if (!hashTable)
             continue;
-        PropertySlot slot(this);
-        for (auto iter = hashTable->begin(); iter != hashTable->end(); ++iter) {
-            if (iter->attributes() & BuiltinOrFunctionOrAccessor)
-                setUpStaticFunctionSlot(globalObject()->globalExec(), iter.value(), this, Identifier::fromString(&vm, iter.key()), slot);
-        }
-    }
 
-    structure(vm)->setStaticFunctionsReified(true);
-}
-
-void JSObject::reifyAllStaticProperties(ExecState* exec)
-{
-    VM& vm = exec->vm();
-
-    for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
-        const HashTable* hashTable = info->staticPropHashTable;
-        if (!hashTable)
-            continue;
-
-        for (auto iter = hashTable->begin(); iter != hashTable->end(); ++iter) {
+        for (auto& value : *hashTable) {
             unsigned attributes;
-            PropertyOffset offset = getDirectOffset(vm, Identifier::fromString(&vm, iter.key()), attributes);
+            PropertyOffset offset = getDirectOffset(vm, Identifier::fromString(&vm, value.m_key), attributes);
             if (!isValidOffset(offset))
-                reifyStaticProperty(vm, *iter.value(), *this);
+                reifyStaticProperty(vm, value, *this);
         }
     }
 
