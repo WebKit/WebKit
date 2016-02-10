@@ -1,3 +1,19 @@
+2016-02-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/24563410.
+
+    2016-02-09  Brent Fulgham  <bfulgham@apple.com>
+
+            Remove unused code in r187245
+
+            When merging r187245, we accidentally revived three functions that had been
+            removed in a prior commit. This broke the Windows build on this branch.
+
+            * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+            (PlatformCALayerWinInternal::drawTile): Deleted.
+            (PlatformCALayerWinInternal::createTileController): Deleted.
+            (PlatformCALayerWinInternal::tiledBacking): Deleted.
+
 2016-02-08  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r187245.

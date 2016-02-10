@@ -325,38 +325,3 @@ void PlatformCALayerWinInternal::setBorderColor(const Color& value)
 
     CACFLayerSetBorderColor(owner()->platformLayer(), color.get());
 }
-
-void PlatformCALayerWinInternal::drawTile(CACFLayerRef tile, CGContextRef context)
-{
-    CGPoint tilePosition = CACFLayerGetPosition(tile);
-    CGRect tileBounds = CACFLayerGetBounds(tile);
-
-    CGContextSaveGState(context);
-
-    // Set the context clipping rectangle to the current tile
-    CGContextClipToRect(context, CGRectMake(tilePosition.x, tilePosition.y, tileBounds.size.width, tileBounds.size.height));
-
-    if (owner()->owner()->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown) {
-        // If the layer is rendering top-down, it will flip the coordinates in y. Tiled layers are
-        // already flipping, so we need to undo that here.
-        CGContextTranslateCTM(context, 0, owner()->bounds().height());
-        CGContextScaleCTM(context, 1, -1);
-    }
-
-    // Draw the tile
-    displayCallback(owner()->platformLayer(), context);
-
-    CGContextRestoreGState(context);
-}
-
-TileController* PlatformCALayerWinInternal::createTileController(PlatformCALayer* rootLayer)
-{
-    ASSERT(!m_tileController);
-    m_tileController = std::make_unique<TileController>(rootLayer);
-    return m_tileController.get();
-}
-
-TiledBacking* PlatformCALayerWinInternal::tiledBacking()
-{
-    return m_tileController.get();
-}
