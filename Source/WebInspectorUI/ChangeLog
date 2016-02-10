@@ -1,5 +1,31 @@
 2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Allow copying all headers in the request/response header tables
+        https://bugs.webkit.org/show_bug.cgi?id=154048
+        <rdar://problem/24576302>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New "Copy Table" string.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype._contextMenuInHeader):
+        Add context menu support for table header cells, and give them a
+        "Copy Table" context menu if there is copyable data.
+
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+        Add "Copy Table" context menu for copyable rows.
+
+        (WebInspector.DataGrid.prototype._copyTextForDataGridNode):
+        (WebInspector.DataGrid.prototype._copyTextForDataGridHeaders):
+        (WebInspector.DataGrid.prototype._copyTable):
+        (WebInspector.DataGrid.prototype._hasCopyableData):
+        Helpers for determining copyability and copying tab separated data.
+
+2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: localStorage inspector very slow on big values
         https://bugs.webkit.org/show_bug.cgi?id=123750
         <rdar://problem/15384930>

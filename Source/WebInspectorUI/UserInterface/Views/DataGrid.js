@@ -60,6 +60,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._headerTableColumnGroupElement = this._headerTableElement.createChild("colgroup");
         this._headerTableBodyElement = this._headerTableElement.createChild("tbody");
         this._headerTableRowElement = this._headerTableBodyElement.createChild("tr");
+        this._headerTableRowElement.addEventListener("contextmenu", this._contextMenuInHeader.bind(this), true);
         this._headerTableCellElements = new Map;
 
         this._scrollContainerElement = document.createElement("div");
@@ -1170,6 +1171,16 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             gridNode.select();
     }
 
+    _contextMenuInHeader(event)
+    {
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+
+        if (this._hasCopyableData())
+            contextMenu.appendItem(WebInspector.UIString("Copy Table"), this._copyTable.bind(this));
+
+        // FIXME: <https://webkit.org/b/154050> Web Inspector: DataGrid Header Cells should have Context Menu for Sorting
+    }
+
     _contextMenuInDataTable(event)
     {
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
@@ -1180,6 +1191,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         if (gridNode && gridNode.selectable && gridNode.copyable && !gridNode.isEventWithinDisclosureTriangle(event)) {
             contextMenu.appendItem(WebInspector.UIString("Copy Row"), this._copyRow.bind(this, event.target));
+            contextMenu.appendItem(WebInspector.UIString("Copy Table"), this._copyTable.bind(this));
 
             if (this.dataGrid._editCallback) {
                 if (gridNode === this.placeholderNode)
@@ -1226,12 +1238,14 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     _copyTextForDataGridNode(node)
     {
-        var fields = [];
-        for (var identifier of node.dataGrid.orderedColumns)
-            fields.push(this.textForDataGridNodeColumn(node, identifier));
+        let fields = node.dataGrid.orderedColumns.map((identifier) => this.textForDataGridNodeColumn(node, identifier));
+        return fields.join("\t");
+    }
 
-        var tabSeparatedValues = fields.join("\t");
-        return tabSeparatedValues;
+    _copyTextForDataGridHeaders()
+    {
+        let fields = this.orderedColumns.map((identifier) => this.headerTableHeader(identifier).textContent);
+        return fields.join("\t");
     }
 
     handleBeforeCopyEvent(event)
@@ -1259,6 +1273,25 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         var copyText = this._copyTextForDataGridNode(gridNode);
         InspectorFrontendHost.copyText(copyText);
+    }
+
+    _copyTable()
+    {
+        let copyData = [];
+        copyData.push(this._copyTextForDataGridHeaders());
+        for (let gridNode of this.children) {
+            if (!gridNode.copyable)
+                continue;
+            copyData.push(this._copyTextForDataGridNode(gridNode));
+        }
+
+        InspectorFrontendHost.copyText(copyData.join("\n"));
+    }
+
+    _hasCopyableData()
+    {
+        let gridNode = this.children[0];
+        return gridNode && gridNode.selectable && gridNode.copyable;
     }
 
     get resizeMethod()
