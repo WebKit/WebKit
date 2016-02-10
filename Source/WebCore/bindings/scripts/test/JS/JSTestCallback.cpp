@@ -32,6 +32,7 @@
 #include "SerializedScriptValue.h"
 #include "TestNode.h"
 #include "URL.h"
+#include <runtime/FunctionPrototype.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSString.h>
 

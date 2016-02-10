@@ -24,6 +24,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "TestClassWithJSBuiltinConstructorBuiltins.h"
+#include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

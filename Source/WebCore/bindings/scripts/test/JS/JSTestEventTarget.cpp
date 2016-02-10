@@ -31,6 +31,7 @@
 #include "Node.h"
 #include "wtf/text/AtomicString.h"
 #include <runtime/Error.h>
+#include <runtime/FunctionPrototype.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/GetPtr.h>
 

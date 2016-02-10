@@ -26,6 +26,7 @@
 #include "JSDOMConstructor.h"
 #include "JSMediaQueryListListener.h"
 #include <runtime/Error.h>
+#include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

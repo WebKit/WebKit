@@ -30,6 +30,7 @@
 #include "TestObj.h"
 #include "TestSupplemental.h"
 #include <runtime/Error.h>
+#include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
