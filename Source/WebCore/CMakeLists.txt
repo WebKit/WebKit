@@ -2073,7 +2073,12 @@ set(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     page/csp/ContentSecurityPolicy.cpp
+    page/csp/ContentSecurityPolicyDirectiveList.cpp
+    page/csp/ContentSecurityPolicyMediaListDirective.cpp
     page/csp/ContentSecurityPolicyResponseHeaders.cpp
+    page/csp/ContentSecurityPolicySource.cpp
+    page/csp/ContentSecurityPolicySourceList.cpp
+    page/csp/ContentSecurityPolicySourceListDirective.cpp
 
     page/scrolling/AxisScrollSnapOffsets.cpp
     page/scrolling/ScrollLatchingState.cpp

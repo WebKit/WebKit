@@ -6181,6 +6181,17 @@
 		CE12525B1A1C018200864480 /* CFNetworkSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12525A1A1C018200864480 /* CFNetworkSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE6DADF91C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6DADF71C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp */; };
 		CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6DADF81C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h */; };
+		CE799F971C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE799F951C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp */; };
+		CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799F961C6A46BC0097B518 /* ContentSecurityPolicySourceList.h */; };
+		CE799F9B1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE799F991C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.cpp */; };
+		CE799F9C1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799F9A1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h */; };
+		CE799F9F1C6A4C160097B518 /* ContentSecurityPolicySource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE799F9D1C6A4C160097B518 /* ContentSecurityPolicySource.cpp */; };
+		CE799FA01C6A4C160097B518 /* ContentSecurityPolicySource.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799F9E1C6A4C160097B518 /* ContentSecurityPolicySource.h */; };
+		CE799FA41C6A503A0097B518 /* ContentSecurityPolicyDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799FA21C6A503A0097B518 /* ContentSecurityPolicyDirective.h */; };
+		CE799FA71C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE799FA51C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.cpp */; };
+		CE799FA81C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799FA61C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h */; };
+		CE799FAB1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE799FA91C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp */; };
+		CE799FAC1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799FAA1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h */; };
 		CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14132,6 +14143,17 @@
 		CE6D89294C7AACE0AD89B3DD /* MathMLMencloseElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLMencloseElement.h; sourceTree = "<group>"; };
 		CE6DADF71C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicyResponseHeaders.cpp; path = csp/ContentSecurityPolicyResponseHeaders.cpp; sourceTree = "<group>"; };
 		CE6DADF81C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyResponseHeaders.h; path = csp/ContentSecurityPolicyResponseHeaders.h; sourceTree = "<group>"; };
+		CE799F951C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicySourceList.cpp; path = csp/ContentSecurityPolicySourceList.cpp; sourceTree = "<group>"; };
+		CE799F961C6A46BC0097B518 /* ContentSecurityPolicySourceList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicySourceList.h; path = csp/ContentSecurityPolicySourceList.h; sourceTree = "<group>"; };
+		CE799F991C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicyDirectiveList.cpp; path = csp/ContentSecurityPolicyDirectiveList.cpp; sourceTree = "<group>"; };
+		CE799F9A1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyDirectiveList.h; path = csp/ContentSecurityPolicyDirectiveList.h; sourceTree = "<group>"; };
+		CE799F9D1C6A4C160097B518 /* ContentSecurityPolicySource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicySource.cpp; path = csp/ContentSecurityPolicySource.cpp; sourceTree = "<group>"; };
+		CE799F9E1C6A4C160097B518 /* ContentSecurityPolicySource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicySource.h; path = csp/ContentSecurityPolicySource.h; sourceTree = "<group>"; };
+		CE799FA21C6A503A0097B518 /* ContentSecurityPolicyDirective.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyDirective.h; path = csp/ContentSecurityPolicyDirective.h; sourceTree = "<group>"; };
+		CE799FA51C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicyMediaListDirective.cpp; path = csp/ContentSecurityPolicyMediaListDirective.cpp; sourceTree = "<group>"; };
+		CE799FA61C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyMediaListDirective.h; path = csp/ContentSecurityPolicyMediaListDirective.h; sourceTree = "<group>"; };
+		CE799FA91C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicySourceListDirective.cpp; path = csp/ContentSecurityPolicySourceListDirective.cpp; sourceTree = "<group>"; };
+		CE799FAA1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicySourceListDirective.h; path = csp/ContentSecurityPolicySourceListDirective.h; sourceTree = "<group>"; };
 		CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextUIController.h; sourceTree = "<group>"; };
 		CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AlternativeTextUIController.mm; sourceTree = "<group>"; };
 		CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAlternativeWithRange.h; sourceTree = "<group>"; };
@@ -23023,6 +23045,17 @@
 				97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */,
 				CE6DADF71C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp */,
 				CE6DADF81C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h */,
+				CE799FA21C6A503A0097B518 /* ContentSecurityPolicyDirective.h */,
+				CE799F991C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.cpp */,
+				CE799F9A1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h */,
+				CE799FA51C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.cpp */,
+				CE799FA61C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h */,
+				CE799F9D1C6A4C160097B518 /* ContentSecurityPolicySource.cpp */,
+				CE799F9E1C6A4C160097B518 /* ContentSecurityPolicySource.h */,
+				CE799F951C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp */,
+				CE799F961C6A46BC0097B518 /* ContentSecurityPolicySourceList.h */,
+				CE799FA91C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp */,
+				CE799FAA1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h */,
 			);
 			name = csp;
 			sourceTree = "<group>";
@@ -25064,7 +25097,6 @@
 				5CDFA6C81AA4F2DA00EA8746 /* ContentExtensionActions.h in Headers */,
 				7C93F34E1AA6BF0700A98BAB /* ContentExtensionCompiler.h in Headers */,
 				7CFDC57D1AC1D80500E24A57 /* ContentExtensionError.h in Headers */,
-				CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */,
 				26F0C8981A2E724B002794F8 /* ContentExtensionParser.h in Headers */,
 				26F0C89C1A2EC110002794F8 /* ContentExtensionRule.h in Headers */,
 				26F0C8A01A2EC3BE002794F8 /* ContentExtensionsBackend.h in Headers */,
@@ -25073,6 +25105,13 @@
 				A149786F1ABAF33800CEF7E4 /* ContentFilter.h in Headers */,
 				A14090FD1AA51E480091191A /* ContentFilterUnblockHandler.h in Headers */,
 				97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */,
+				CE799FA41C6A503A0097B518 /* ContentSecurityPolicyDirective.h in Headers */,
+				CE799F9C1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h in Headers */,
+				CE799FA81C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h in Headers */,
+				CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */,
+				CE799FA01C6A4C160097B518 /* ContentSecurityPolicySource.h in Headers */,
+				CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */,
+				CE799FAC1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h in Headers */,
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
 				97627B8E14FB3CEE002CDCA1 /* ContextDestructionObserver.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
@@ -28984,6 +29023,12 @@
 				A149786E1ABAF33800CEF7E4 /* ContentFilter.cpp in Sources */,
 				A14090FB1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm in Sources */,
 				97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */,
+				CE799F9B1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.cpp in Sources */,
+				CE799FA71C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.cpp in Sources */,
+				CE6DADF91C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp in Sources */,
+				CE799F9F1C6A4C160097B518 /* ContentSecurityPolicySource.cpp in Sources */,
+				CE799F971C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp in Sources */,
+				CE799FAB1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp in Sources */,
 				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,
 				97627B8D14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp in Sources */,
 				1AB40EE21BF427DB00BA81BE /* ContextMenu.cpp in Sources */,
@@ -31777,7 +31822,6 @@
 				7C48A6D0191C9D6500026674 /* WebKitNamespace.cpp in Sources */,
 				A5DEBDA316FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.cpp in Sources */,
 				31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */,
-				CE6DADF91C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp in Sources */,
 				0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */,
 				0709D78E1AE55554004E42F8 /* WebMediaSessionManager.cpp in Sources */,
 				0709D7921AE5557E004E42F8 /* WebMediaSessionManagerMac.cpp in Sources */,

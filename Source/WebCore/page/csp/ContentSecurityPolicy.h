@@ -38,14 +38,14 @@ class OrdinalNumber;
 
 namespace WebCore {
 
-class CSPDirectiveList;
-class CSPSource;
+class ContentSecurityPolicyDirectiveList;
+class ContentSecurityPolicySource;
 class DOMStringList;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class URL;
 
-typedef Vector<std::unique_ptr<CSPDirectiveList>> CSPDirectiveListVector;
+typedef Vector<std::unique_ptr<ContentSecurityPolicyDirectiveList>> CSPDirectiveListVector;
 typedef int SandboxFlags;
 
 class ContentSecurityPolicy {
@@ -107,16 +107,16 @@ public:
     // FIXME: We should make the various directives serve only as state stores for the parsed policy and remove these functions.
     // This class should traverse the directives, validating the policy, and applying it to the script execution context.
 
-    // Used by MediaListDirective
+    // Used by ContentSecurityPolicyMediaListDirective
     void reportInvalidPluginTypes(const String&) const;
 
-    // Used by CSPSourceList
+    // Used by ContentSecurityPolicySourceList
     void reportDirectiveAsSourceExpression(const String& directiveName, const String& sourceExpression) const;
     void reportInvalidPathCharacter(const String& directiveName, const String& value, const char) const;
     void reportInvalidSourceExpression(const String& directiveName, const String& source) const;
     bool urlMatchesSelf(const URL&) const;
 
-    // Used by CSPDirectiveList
+    // Used by ContentSecurityPolicyDirectiveList
     void reportDuplicateDirective(const String&) const;
     void reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const;
     void reportInvalidSandboxFlags(const String&) const;
@@ -127,7 +127,7 @@ public:
     void reportBlockedScriptExecutionToInspector(const String& directiveText) const;
     void enforceSandboxFlags(SandboxFlags sandboxFlags) { m_sandboxFlags |= sandboxFlags; }
 
-    // Used by CSPSource
+    // Used by ContentSecurityPolicySource
     bool protocolMatchesSelf(const URL&) const;
 
 private:
@@ -135,7 +135,7 @@ private:
     void applyPolicyToScriptExecutionContext();
 
     ScriptExecutionContext* m_scriptExecutionContext { nullptr };
-    std::unique_ptr<CSPSource> m_selfSource;
+    std::unique_ptr<ContentSecurityPolicySource> m_selfSource;
     String m_selfSourceProtocol;
     CSPDirectiveListVector m_policies;
     String m_lastPolicyEvalDisabledErrorMessage;

@@ -1,3 +1,54 @@
+2016-02-09  Daniel Bates  <dabates@apple.com>
+
+        CSP: Extract helper classes into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=154040
+        <rdar://problem/24571189>
+
+        Reviewed by Brent Fulgham.
+
+        No functionality was changed. So, no new tests.
+
+        * CMakeLists.txt: Add files ContentSecurityPolicy{DirectiveList, MediaListDirective, Source, SourceList, SourceListDirective}.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * page/csp/ContentSecurityPolicy.cpp: Clean up #includes. Include header ParsingUtilities.h so that we can remove our own
+        variants of skip{Exactly, Until, While}(). Update code as necessary for class renames.
+        (WebCore::skipExactly): Deleted; instead use the analogous function in ParsingUtilities.h.
+        (WebCore::skipUntil): Deleted; instead use the analogous function in ParsingUtilities.h.
+        (WebCore::skipWhile): Deleted; instead use the analogous function in ParsingUtilities.h.
+        (WebCore::isSourceListNone): Moved to file ContentSecurityPolicySourceList.cpp.
+        (WebCore::CSPSource): Deleted; moved implementation to files ContentSecurityPolicySource.{cpp, h}.
+        (WebCore::CSPSourceList): Deleted; moved implementation to files ContentSecurityPolicySourceList.{cpp, h}.
+        (WebCore::CSPDirective): Deleted; moved implementation to file ContentSecurityPolicyDirective.h.
+        (WebCore::MediaListDirective): Deleted; moved implementation to files ContentSecurityPolicyMediaListDirective.{cpp, h}.
+        (WebCore::SourceListDirective): Deleted; moved implementation to files ContentSecurityPolicySourceListDirective.{cpp, h}.
+        (WebCore::CSPDirectiveList): Deleted; moved implementation to files ContentSecurityPolicyDirectiveList.{cpp, h}.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirective.h: Added.
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp: Added; removed use of ternary operator where it made the code less readable.
+        Updated code to make use of the functions defined in ParsingUtilities.h.
+        (WebCore::isExperimentalDirectiveName): Moved from file ContentSecurityPolicy.cpp.
+        (WebCore::isCSPDirectiveName): Ditto.
+        (WebCore::isDirectiveNameCharacter): Ditto.
+        (WebCore::isDirectiveValueCharacter): Ditto.
+        (WebCore::isNotASCIISpace): Ditto.
+        * page/csp/ContentSecurityPolicyDirectiveList.h: Added.
+        * page/csp/ContentSecurityPolicyMediaListDirective.cpp: Added. Updated code to make use of the functions defined in ParsingUtilities.h.
+        (WebCore::isMediaTypeCharacter): Moved from file ContentSecurityPolicy.cpp.
+        (WebCore::isNotASCIISpace): Ditto.
+        * page/csp/ContentSecurityPolicyMediaListDirective.h: Added.
+        * page/csp/ContentSecurityPolicySource.cpp: Added.
+        * page/csp/ContentSecurityPolicySource.h: Added.
+        * page/csp/ContentSecurityPolicySourceList.cpp: Added. Updated code to make use of the functions defined in ParsingUtilities.h.
+        (WebCore::isSourceCharacter): Moved from file ContentSecurityPolicy.cpp.
+        (WebCore::isHostCharacter): Ditto.
+        (WebCore::isPathComponentCharacter): Ditto.
+        (WebCore::isSchemeContinuationCharacter): Ditto.
+        (WebCore::isNotColonOrSlash): Ditto.
+        (WebCore::isSourceListNone): Ditto.
+        * page/csp/ContentSecurityPolicySourceList.h: Added.
+        * page/csp/ContentSecurityPolicySourceListDirective.cpp: Added.
+        * page/csp/ContentSecurityPolicySourceListDirective.h: Added.
+
 2016-02-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: TransactionOperation objects leak.
