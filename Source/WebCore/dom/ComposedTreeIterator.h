@@ -71,8 +71,14 @@ private:
         { }
         Context(ContainerNode& root, Node& node, size_t slotNodeIndex = notFound)
             : iterator(root, &node)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
             , slotNodeIndex(slotNodeIndex)
         { }
+#else
+        {
+            UNUSED_PARAM(slotNodeIndex);
+        }
+#endif
 
         ElementAndTextDescendantIterator iterator;
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)

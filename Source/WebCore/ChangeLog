@@ -1,3 +1,13 @@
+2016-02-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !(ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)) after r196281
+        https://bugs.webkit.org/show_bug.cgi?id=154035
+
+        Reviewed by Antti Koivisto.
+
+        * dom/ComposedTreeIterator.h:
+        (WebCore::ComposedTreeIterator::Context::Context):
+
 2016-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Toggle buttons are blurry with GTK+ 3.19
