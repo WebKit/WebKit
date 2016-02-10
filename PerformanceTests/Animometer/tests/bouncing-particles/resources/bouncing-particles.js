@@ -84,6 +84,8 @@ BouncingParticlesStage = Utilities.createSubclass(Stage,
         this.shape = options["shape"] || "circle";
         this.fill = options["fill"] || "solid";
         this.clip = options["clip"] || "";
+        this.blend = options["blend"] || false;
+        this.filter = options["filter"] || false;
     },
 
     animate: function(timeDelta)

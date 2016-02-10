@@ -82,6 +82,40 @@ Utilities =
 
         parentElement.appendChild(element);
         return element;
+    },
+    
+    browserPrefix: function()
+    {
+        // Get the HTML element's CSSStyleDeclaration
+        var styles = window.getComputedStyle(document.documentElement, '');
+        
+        // Convert the styles list to an array
+        var stylesArray = Array.prototype.slice.call(styles);
+        
+        // Concatenate all the styles in one big string
+        var stylesString = stylesArray.join('');
+
+        // Search the styles string for a known prefix type, settle on Opera if none is found.
+        var prefixes = stylesString.match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o']);
+        
+        // prefixes has two elements; e.g. for webkit it has ['-webkit-', 'webkit'];
+        var prefix = prefixes[1];
+
+        // Have 'O' before 'Moz' in the string so it is matched first.
+        var dom = ('WebKit|O|Moz|MS').match(new RegExp(prefix, 'i'))[0];
+
+        // Return all the required prefixes.
+        return {
+            dom: dom,
+            lowercase: prefix,
+            css: '-' + prefix + '-',
+            js: prefix[0].toUpperCase() + prefix.substr(1)
+        };
+    },
+    
+    setElementPrefixedProperty: function(element, property, value)
+    {
+        element.style[property] = element.style[this.browserPrefix().js + property[0].toUpperCase() + property.substr(1)] = value;
     }
 };
 

@@ -1,3 +1,30 @@
+2016-02-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add internal benchmark tests for CSS mix-blend-modes and filters
+        https://bugs.webkit.org/show_bug.cgi?id=154058
+
+        Provisionally reviewed by Jon Lee.
+
+        * Animometer/resources/debug-runner/tests.js: Include the new tests in the
+        "HTML suite" of the debug runner.
+        
+        * Animometer/resources/extensions.js:
+        (Utilities.browserPrefix):
+        (Utilities.setElementPrefixedProperty): Utility functions to allow setting
+        prefixed style properties.
+        
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        Set the mix-blend-mode and the filter to some random values if the options
+        of the test requested that.
+        
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        (parseShapeParameters): Parse the url options "blend" and "filter" and set
+        the corresponding flags.
+        
+        * Animometer/tests/resources/main.js:
+        (randomStyleMixBlendMode):
+        (randomStyleFilter): Return random mix-blend-mode and filter.
+
 2016-02-08  Jon Lee  <jonlee@apple.com>
 
         Add a ramp controller

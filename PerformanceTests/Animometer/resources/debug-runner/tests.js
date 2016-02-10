@@ -130,6 +130,14 @@ Suites.push(new Suite("HTML suite",
             name: "CSS bouncing gradient circles"
         },
         {
+            url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=80&particleHeight=80&shape=circle&blend",
+            name: "CSS bouncing blend circles"
+        },
+        {
+            url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=80&particleHeight=80&shape=circle&filter",
+            name: "CSS bouncing filter circles"
+        },
+        {
             url: "bouncing-particles/bouncing-css-images.html?particleWidth=80&particleHeight=80&imageSrc=../resources/yin-yang.svg",
             name: "CSS bouncing SVG images"
         },

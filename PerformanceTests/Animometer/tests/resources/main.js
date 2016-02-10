@@ -766,6 +766,48 @@ Utilities.extendObject(Stage, {
             + this.randomInt(min, max).toString(16);
     },
 
+    randomStyleMixBlendMode: function()
+    {
+        var mixBlendModeList = [
+          'normal',
+          'multiply',
+          'screen',
+          'overlay',
+          'darken',
+          'lighten',
+          'color-dodge',
+          'color-burn',
+          'hard-light',
+          'soft-light',
+          'difference',
+          'exclusion',
+          'hue',
+          'saturation',
+          'color',
+          'luminosity'
+        ];
+        
+        return mixBlendModeList[this.randomInt(0, mixBlendModeList.length)];
+    },
+
+    randomStyleFilter: function()
+    {
+        var filterList = [
+            'grayscale(50%)',
+            'sepia(50%)',
+            'saturate(50%)',
+            'hue-rotate(180)',
+            'invert(50%)',
+            'opacity(50%)',
+            'brightness(50%)',
+            'contrast(50%)',
+            'blur(10px)',
+            'drop-shadow(10px 10px 10px gray)'
+        ];
+        
+        return filterList[this.randomInt(0, filterList.length)];
+    },
+
     rotatingColor: function(cycleLengthMs, saturation, lightness)
     {
         return "hsl("
