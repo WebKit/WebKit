@@ -115,4 +115,14 @@ void DocumentRuleSets::collectFeatures()
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 }
 
+RuleSet* DocumentRuleSets::ancestorClassRules(AtomicStringImpl* className) const
+{
+    auto addResult = m_ancestorClassRuleSet.add(className, nullptr);
+    if (addResult.isNewEntry) {
+        if (auto* rules = m_features.ancestorClassRules.get(className))
+            addResult.iterator->value = makeRuleSet(*rules);
+    }
+    return addResult.iterator->value.get();
+}
+
 } // namespace WebCore

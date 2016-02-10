@@ -76,6 +76,7 @@
 #include "ScrollLatchingState.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
+#include "StyleInvalidationAnalysis.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
@@ -1299,25 +1300,39 @@ static inline bool classStringHasClassName(const AtomicString& newClassString)
     return classStringHasClassName(newClassString.characters16(), length);
 }
 
-static bool checkSelectorForClassChange(const SpaceSplitString& changedClasses, const StyleResolver& styleResolver)
+static Vector<AtomicStringImpl*, 4> collectClasses(const SpaceSplitString& classes)
 {
-    unsigned changedSize = changedClasses.size();
-    for (unsigned i = 0; i < changedSize; ++i) {
-        if (styleResolver.hasSelectorForClass(changedClasses[i]))
-            return true;
-    }
-    return false;
+    Vector<AtomicStringImpl*, 4> result;
+    result.reserveCapacity(classes.size());
+    for (unsigned i = 0; i < classes.size(); ++i)
+        result.uncheckedAppend(classes[i].impl());
+    return result;
 }
 
-static bool checkSelectorForClassChange(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses, const StyleResolver& styleResolver)
+struct ClassChange {
+    Vector<AtomicStringImpl*, 4> added;
+    Vector<AtomicStringImpl*, 4> removed;
+};
+
+static ClassChange computeClassChange(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
+    ClassChange classChange;
+
     unsigned oldSize = oldClasses.size();
-    if (!oldSize)
-        return checkSelectorForClassChange(newClasses, styleResolver);
+    unsigned newSize = newClasses.size();
+
+    if (!oldSize) {
+        classChange.added = collectClasses(newClasses);
+        return classChange;
+    }
+    if (!newSize) {
+        classChange.removed = collectClasses(oldClasses);
+        return classChange;
+    }
+
     BitVector remainingClassBits;
     remainingClassBits.ensureSize(oldSize);
     // Class vectors tend to be very short. This is faster than using a hash table.
-    unsigned newSize = newClasses.size();
     for (unsigned i = 0; i < newSize; ++i) {
         bool foundFromBoth = false;
         for (unsigned j = 0; j < oldSize; ++j) {
@@ -1328,47 +1343,81 @@ static bool checkSelectorForClassChange(const SpaceSplitString& oldClasses, cons
         }
         if (foundFromBoth)
             continue;
-        if (styleResolver.hasSelectorForClass(newClasses[i]))
-            return true;
+        classChange.added.append(newClasses[i].impl());
     }
     for (unsigned i = 0; i < oldSize; ++i) {
         // If the bit is not set the the corresponding class has been removed.
         if (remainingClassBits.quickGet(i))
             continue;
-        if (styleResolver.hasSelectorForClass(oldClasses[i]))
-            return true;
+        classChange.removed.append(oldClasses[i].impl());
     }
-    return false;
+
+    return classChange;
+}
+
+static void invalidateStyleForClassChange(Element& element, const Vector<AtomicStringImpl*, 4>& changedClasses, const DocumentRuleSets& ruleSets)
+{
+    Vector<AtomicStringImpl*, 4> changedClassesAffectingStyle;
+    for (auto* changedClass : changedClasses) {
+        if (ruleSets.features().classesInRules.contains(changedClass))
+            changedClassesAffectingStyle.append(changedClass);
+    };
+
+    if (changedClassesAffectingStyle.isEmpty())
+        return;
+
+    if (element.shadowRoot() && ruleSets.authorStyle()->hasShadowPseudoElementRules()) {
+        element.setNeedsStyleRecalc(FullStyleChange);
+        return;
+    }
+
+    element.setNeedsStyleRecalc(InlineStyleChange);
+
+    if (!element.firstElementChild())
+        return;
+
+    for (auto* changedClass : changedClassesAffectingStyle) {
+        auto* ancestorClassRules = ruleSets.ancestorClassRules(changedClass);
+        if (!ancestorClassRules)
+            continue;
+        StyleInvalidationAnalysis invalidationAnalysis(*ancestorClassRules);
+        invalidationAnalysis.invalidateStyle(element);
+    }
 }
 
 void Element::classAttributeChanged(const AtomicString& newClassString)
 {
-    StyleResolver* styleResolver = document().styleResolverIfExists();
-    bool testShouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
-    bool shouldInvalidateStyle = false;
+    // Note: We'll need ElementData, but it doesn't have to be UniqueElementData.
+    if (!elementData())
+        ensureUniqueElementData();
 
-    if (classStringHasClassName(newClassString)) {
-        const bool shouldFoldCase = document().inQuirksMode();
-        // Note: We'll need ElementData, but it doesn't have to be UniqueElementData.
-        if (!elementData())
-            ensureUniqueElementData();
-        const SpaceSplitString oldClasses = elementData()->classNames();
-        elementData()->setClass(newClassString, shouldFoldCase);
-        const SpaceSplitString& newClasses = elementData()->classNames();
-        shouldInvalidateStyle = testShouldInvalidateStyle && checkSelectorForClassChange(oldClasses, newClasses, *styleResolver);
-    } else if (elementData()) {
-        const SpaceSplitString& oldClasses = elementData()->classNames();
-        shouldInvalidateStyle = testShouldInvalidateStyle && checkSelectorForClassChange(oldClasses, *styleResolver);
-        elementData()->clearClass();
+    bool shouldFoldCase = document().inQuirksMode();
+    bool newStringHasClasses = classStringHasClassName(newClassString);
+
+    auto oldClassNames = elementData()->classNames();
+    auto newClassNames = newStringHasClasses ? SpaceSplitString(newClassString, shouldFoldCase) : SpaceSplitString();
+
+    StyleResolver* styleResolver = document().styleResolverIfExists();
+    bool shouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
+
+    ClassChange classChange;
+    if (shouldInvalidateStyle) {
+        classChange = computeClassChange(oldClassNames, newClassNames);
+        if (!classChange.removed.isEmpty())
+            invalidateStyleForClassChange(*this, classChange.removed, styleResolver->ruleSets());
+    }
+
+    elementData()->setClassNames(newClassNames);
+
+    if (shouldInvalidateStyle) {
+        if (!classChange.added.isEmpty())
+            invalidateStyleForClassChange(*this, classChange.added, styleResolver->ruleSets());
     }
 
     if (hasRareData()) {
         if (auto* classList = elementRareData()->classList())
             classList->attributeValueChanged(newClassString);
     }
-
-    if (shouldInvalidateStyle)
-        setNeedsStyleRecalc();
 }
 
 URL Element::absoluteLinkURL() const

@@ -29,8 +29,9 @@
 
 namespace WebCore {
 
-class StyleRule;
 class CSSSelector;
+class RuleData;
+class StyleRule;
 
 struct RuleFeature {
     RuleFeature(StyleRule* rule, unsigned selectorIndex, bool hasDocumentSecurityOrigin)
@@ -45,15 +46,10 @@ struct RuleFeature {
 };
 
 struct RuleFeatureSet {
-    RuleFeatureSet()
-        : usesFirstLineRules(false)
-        , usesFirstLetterRules(false)
-    { }
-
     void add(const RuleFeatureSet&);
     void clear();
     void shrinkToFit();
-    void collectFeaturesFromSelector(const CSSSelector&, bool& hasSiblingSelector);
+    void collectFeatures(const RuleData&);
 
     HashSet<AtomicStringImpl*> idsInRules;
     HashSet<AtomicStringImpl*> classesInRules;
@@ -61,8 +57,16 @@ struct RuleFeatureSet {
     HashSet<AtomicStringImpl*> attributeLocalNamesInRules;
     Vector<RuleFeature> siblingRules;
     Vector<RuleFeature> uncommonAttributeRules;
-    bool usesFirstLineRules;
-    bool usesFirstLetterRules;
+    HashMap<AtomicStringImpl*, std::unique_ptr<Vector<RuleFeature>>> ancestorClassRules;
+    bool usesFirstLineRules { false };
+    bool usesFirstLetterRules { false };
+
+private:
+    struct SelectorFeatures {
+        bool hasSiblingSelector { false };
+        Vector<AtomicStringImpl*> classesMatchingAncestors;
+    };
+    void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, bool matchesAncestor = false);
 };
 
 } // namespace WebCore

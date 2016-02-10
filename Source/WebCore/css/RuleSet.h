@@ -157,6 +157,7 @@ public:
     };
 
     RuleSet();
+    ~RuleSet();
 
     typedef Vector<RuleData, 1> RuleDataVector;
     typedef HashMap<AtomicStringImpl*, std::unique_ptr<RuleDataVector>> AtomRuleMap;
@@ -213,17 +214,11 @@ private:
     RuleDataVector m_focusPseudoClassRules;
     RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
-    unsigned m_ruleCount;
-    bool m_autoShrinkToFitEnabled;
+    unsigned m_ruleCount { 0 };
+    bool m_autoShrinkToFitEnabled { false };
     RuleFeatureSet m_features;
     Vector<RuleSetSelectorPair> m_regionSelectorsAndRuleSets;
 };
-
-inline RuleSet::RuleSet()
-    : m_ruleCount(0)
-    , m_autoShrinkToFitEnabled(true)
-{
-}
 
 inline const RuleSet::RuleDataVector* RuleSet::tagRules(AtomicStringImpl* key, bool isHTMLName) const
 {

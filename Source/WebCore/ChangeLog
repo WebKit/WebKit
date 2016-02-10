@@ -1,3 +1,117 @@
+2016-02-10  Antti Koivisto  <antti@apple.com>
+
+        Optimize style invalidation after class attribute change
+        https://bugs.webkit.org/show_bug.cgi?id=154075
+        rdar://problem/12526450
+
+        Reviewed by Andreas Kling.
+
+        Currently a class attribute change invalidates style for the entire element subtree for any class found in the
+        active stylesheet set.
+
+        This patch optimizes class changes by building a new optimization structure called ancestorClassRules. It contains
+        rules that have class selectors in the portion of the complex selector that matches ancestor elements. The sets
+        of rules are hashes by the class name.
+
+        On class attribute change the existing StyleInvalidationAnalysis mechanism is used with ancestorClassRules to invalidate
+        exactly those descendants that are affected by the addition or removal of the class name. This is fast because the CSS JIT
+        makes selector matching cheap and the number of relevant rules is typically small.
+
+        This optimization is very effective on many dynamic pages. For example when focusing and unfocusing the web inspector it
+        cuts down the number of resolved elements from ~1000 to ~50. Even in PLT it reduces the number of resolved elements by ~11%.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::collectFeatures):
+        (WebCore::DocumentRuleSets::ancestorClassRules):
+
+            Create optimization RuleSets on-demand when there is an actual dynamic class change.
+
+        * css/DocumentRuleSets.h:
+        (WebCore::DocumentRuleSets::features):
+        (WebCore::DocumentRuleSets::sibling):
+        (WebCore::DocumentRuleSets::uncommonAttribute):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+
+            Add a new constructor that doesn't requires DocumentRuleSets. Only the user and author style is required.
+
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchUserRules):
+        * css/ElementRuleCollector.h:
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::recursivelyCollectFeaturesFromSelector):
+
+            Collect class names that show up in the ancestor portion of the selector.
+            Make this a member.
+
+        (WebCore::RuleFeatureSet::collectFeatures):
+
+            Move this code from RuleData.
+            Add the rule to ancestorClassRules if needed.
+
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::clear):
+        (WebCore::RuleFeatureSet::shrinkToFit):
+        (WebCore::recursivelyCollectFeaturesFromSelector): Deleted.
+        (WebCore::RuleFeatureSet::collectFeaturesFromSelector): Deleted.
+        * css/RuleFeature.h:
+        (WebCore::RuleFeature::RuleFeature):
+        (WebCore::RuleFeatureSet::RuleFeatureSet): Deleted.
+        * css/RuleSet.cpp:
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::RuleSet):
+        (WebCore::RuleSet::~RuleSet):
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        (WebCore::collectFeaturesFromRuleData): Deleted.
+        * css/RuleSet.h:
+        (WebCore::RuleSet::tagRules):
+        (WebCore::RuleSet::RuleSet): Deleted.
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::shouldDirtyAllStyle):
+        (WebCore::StyleInvalidationAnalysis::StyleInvalidationAnalysis):
+
+            Add a new constructor that takes a ready made RuleSet instead of a stylesheet.
+
+        (WebCore::StyleInvalidationAnalysis::invalidateIfNeeded):
+        (WebCore::StyleInvalidationAnalysis::invalidateStyleForTree):
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+
+            New function for invalidating a subtree instead of the whole document.
+
+        * css/StyleInvalidationAnalysis.h:
+        (WebCore::StyleInvalidationAnalysis::dirtiesAllStyle):
+        (WebCore::StyleInvalidationAnalysis::hasShadowPseudoElementRulesInAuthorSheet):
+        * dom/Element.cpp:
+        (WebCore::classStringHasClassName):
+        (WebCore::collectClasses):
+        (WebCore::computeClassChange):
+
+            Factor to return the changed classes.
+
+        (WebCore::invalidateStyleForClassChange):
+
+            First filter out classes that don't show up in stylesheets. If something remains invalidate the current
+            element for inline style change (that is a style change that doesn't affect descendants).
+
+            Next check if there are any ancestorClassRules for the changed class. If so use the StyleInvalidationAnalysis
+            to find any affected descendants and invalidate them with inline style change as well.
+
+        (WebCore::Element::classAttributeChanged):
+
+            Invalidate for removed classes before setting new attribute value, invalidate for added classes afterwards.
+
+        (WebCore::Element::absoluteLinkURL):
+        (WebCore::checkSelectorForClassChange): Deleted.
+        * dom/ElementData.h:
+        (WebCore::ElementData::setClassNames):
+        (WebCore::ElementData::classNames):
+        (WebCore::ElementData::classNamesMemoryOffset):
+        (WebCore::ElementData::clearClass): Deleted.
+        (WebCore::ElementData::setClass): Deleted.
+
 2016-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing post-review comments after r196322

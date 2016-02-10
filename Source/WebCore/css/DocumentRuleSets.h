@@ -26,6 +26,7 @@
 #include "RuleFeature.h"
 #include "RuleSet.h"
 #include <memory>
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -48,6 +49,7 @@ public:
     const RuleFeatureSet& features() const { return m_features; }
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
+    RuleSet* ancestorClassRules(AtomicStringImpl* className) const;
 
     void initUserStyle(ExtensionStyleSheets&, const MediaQueryEvaluator&, StyleResolver&);
     void resetAuthorStyle();
@@ -62,6 +64,7 @@ private:
     RuleFeatureSet m_features;
     std::unique_ptr<RuleSet> m_siblingRuleSet;
     std::unique_ptr<RuleSet> m_uncommonAttributeRuleSet;
+    mutable HashMap<AtomicStringImpl*, std::unique_ptr<RuleSet>> m_ancestorClassRuleSet;
 };
 
 } // namespace WebCore

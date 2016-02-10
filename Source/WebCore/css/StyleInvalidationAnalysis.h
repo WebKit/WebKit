@@ -26,32 +26,37 @@
 #ifndef StyleInvalidationAnalysis_h
 #define StyleInvalidationAnalysis_h
 
-#include "DocumentRuleSets.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicStringImpl.h>
 
 namespace WebCore {
 
 class Document;
+class Element;
+class MediaQueryEvaluator;
+class RuleSet;
 class SelectorFilter;
 class StyleSheetContents;
 
 class StyleInvalidationAnalysis {
 public:
     StyleInvalidationAnalysis(const Vector<StyleSheetContents*>&, const MediaQueryEvaluator&);
+    StyleInvalidationAnalysis(const RuleSet&);
 
     bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
     bool hasShadowPseudoElementRulesInAuthorSheet() const { return m_hasShadowPseudoElementRulesInAuthorSheet; }
     void invalidateStyle(Document&);
+    void invalidateStyle(Element&);
 
 private:
     enum class CheckDescendants { Yes, No };
-    CheckDescendants invalidateIfNeeded(Element&, SelectorFilter&);
-    void invalidateStyleForTree(Element&, SelectorFilter&);
+    CheckDescendants invalidateIfNeeded(Element&, const SelectorFilter*);
+    void invalidateStyleForTree(Element&, SelectorFilter*);
 
+    std::unique_ptr<RuleSet> m_ownedRuleSet;
+    const RuleSet& m_ruleSet;
     bool m_dirtiesAllStyle { false };
     bool m_hasShadowPseudoElementRulesInAuthorSheet { false };
-    DocumentRuleSets m_ruleSets;
 };
 
 }

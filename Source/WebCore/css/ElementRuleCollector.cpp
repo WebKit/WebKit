@@ -80,7 +80,16 @@ public:
 ElementRuleCollector::ElementRuleCollector(Element& element, RenderStyle* style, const DocumentRuleSets& ruleSets, const SelectorFilter* selectorFilter)
     : m_element(element)
     , m_style(style)
-    , m_ruleSets(ruleSets)
+    , m_authorStyle(*ruleSets.authorStyle())
+    , m_userStyle(ruleSets.userStyle())
+    , m_selectorFilter(selectorFilter)
+{
+    ASSERT(!m_selectorFilter || m_selectorFilter->parentStackIsConsistent(element.parentNode()));
+}
+
+ElementRuleCollector::ElementRuleCollector(Element& element, const RuleSet& authorStyle, const SelectorFilter* selectorFilter)
+    : m_element(element)
+    , m_authorStyle(authorStyle)
     , m_selectorFilter(selectorFilter)
 {
     ASSERT(!m_selectorFilter || m_selectorFilter->parentStackIsConsistent(element.parentNode()));
@@ -203,7 +212,7 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
     m_result.ranges.lastAuthorRule = m_result.matchedProperties().size() - 1;
 
     // Match global author rules.
-    MatchRequest matchRequest(m_ruleSets.authorStyle(), includeEmptyRules);
+    MatchRequest matchRequest(&m_authorStyle, includeEmptyRules);
     StyleResolver::RuleRange ruleRange = m_result.ranges.authorRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
     collectMatchingRulesForRegion(matchRequest, ruleRange);
@@ -236,13 +245,13 @@ void ElementRuleCollector::matchHostPseudoClassRules(bool includeEmptyRules)
 
 void ElementRuleCollector::matchUserRules(bool includeEmptyRules)
 {
-    if (!m_ruleSets.userStyle())
+    if (!m_userStyle)
         return;
     
     clearMatchedRules();
 
     m_result.ranges.lastUserRule = m_result.matchedProperties().size() - 1;
-    MatchRequest matchRequest(m_ruleSets.userStyle(), includeEmptyRules);
+    MatchRequest matchRequest(m_userStyle, includeEmptyRules);
     StyleResolver::RuleRange ruleRange = m_result.ranges.userRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
     collectMatchingRulesForRegion(matchRequest, ruleRange);

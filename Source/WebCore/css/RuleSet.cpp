@@ -172,15 +172,12 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     SelectorFilter::collectIdentifierHashes(selector(), m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
 
-static void collectFeaturesFromRuleData(RuleFeatureSet& features, const RuleData& ruleData)
+RuleSet::RuleSet()
 {
-    bool hasSiblingSelector;
-    features.collectFeaturesFromSelector(*ruleData.selector(), hasSiblingSelector);
+}
 
-    if (hasSiblingSelector)
-        features.siblingRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
-    if (ruleData.containsUncommonAttributeSelector())
-        features.uncommonAttributeRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
+RuleSet::~RuleSet()
+{
 }
 
 void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleData& ruleData)
@@ -203,7 +200,7 @@ static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, AtomicStringI
 void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addRuleFlags)
 {
     RuleData ruleData(rule, selectorIndex, m_ruleCount++, addRuleFlags);
-    collectFeaturesFromRuleData(m_features, ruleData);
+    m_features.collectFeatures(ruleData);
 
     unsigned classBucketSize = 0;
     const CSSSelector* tagSelector = nullptr;

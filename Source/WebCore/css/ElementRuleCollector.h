@@ -46,6 +46,7 @@ struct MatchedRule {
 class ElementRuleCollector {
 public:
     ElementRuleCollector(Element&, RenderStyle*, const DocumentRuleSets&, const SelectorFilter*);
+    ElementRuleCollector(Element&, const RuleSet& authorStyle, const SelectorFilter*);
 
     void matchAllRules(bool matchAuthorAndUserStyles, bool includeSMILProperties);
     void matchUARules();
@@ -87,9 +88,10 @@ private:
     void commitStyleRelations(const SelectorChecker::StyleRelations&);
 
     Element& m_element;
-    RenderStyle* m_style;
-    const DocumentRuleSets& m_ruleSets;
-    const SelectorFilter* m_selectorFilter;
+    RenderStyle* m_style { nullptr };
+    const RuleSet& m_authorStyle;
+    const RuleSet* m_userStyle { nullptr };
+    const SelectorFilter* m_selectorFilter { nullptr };
 
     bool m_isPrintStyle { false };
     const RenderRegion* m_regionForStyling { nullptr };

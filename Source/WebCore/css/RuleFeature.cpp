@@ -31,52 +31,67 @@
 
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
+#include "RuleSet.h"
 
 namespace WebCore {
 
-static void recursivelyCollectFeaturesFromSelector(RuleFeatureSet& features, const CSSSelector& firstSelector, bool& hasSiblingSelector)
+void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, bool matchesAncestor)
 {
     const CSSSelector* selector = &firstSelector;
     do {
         if (selector->match() == CSSSelector::Id)
-            features.idsInRules.add(selector->value().impl());
-        else if (selector->match() == CSSSelector::Class)
-            features.classesInRules.add(selector->value().impl());
-        else if (selector->isAttributeSelector()) {
-            features.attributeCanonicalLocalNamesInRules.add(selector->attributeCanonicalLocalName().impl());
-            features.attributeLocalNamesInRules.add(selector->attribute().localName().impl());
+            idsInRules.add(selector->value().impl());
+        else if (selector->match() == CSSSelector::Class) {
+            classesInRules.add(selector->value().impl());
+            if (matchesAncestor)
+                selectorFeatures.classesMatchingAncestors.append(selector->value().impl());
+        } else if (selector->isAttributeSelector()) {
+            attributeCanonicalLocalNamesInRules.add(selector->attributeCanonicalLocalName().impl());
+            attributeLocalNamesInRules.add(selector->attribute().localName().impl());
         } else if (selector->match() == CSSSelector::PseudoElement) {
             switch (selector->pseudoElementType()) {
             case CSSSelector::PseudoElementFirstLine:
-                features.usesFirstLineRules = true;
+                usesFirstLineRules = true;
                 break;
             case CSSSelector::PseudoElementFirstLetter:
-                features.usesFirstLetterRules = true;
+                usesFirstLetterRules = true;
                 break;
             default:
                 break;
             }
         }
 
-        if (!hasSiblingSelector && selector->isSiblingSelector())
-            hasSiblingSelector = true;
+        if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
+            selectorFeatures.hasSiblingSelector = true;
 
         if (const CSSSelectorList* selectorList = selector->selectorList()) {
             for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                if (!hasSiblingSelector && selector->isSiblingSelector())
-                    hasSiblingSelector = true;
-                recursivelyCollectFeaturesFromSelector(features, *subSelector, hasSiblingSelector);
+                if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
+                    selectorFeatures.hasSiblingSelector = true;
+                recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, matchesAncestor);
             }
         }
+        if (selector->relation() == CSSSelector::Child || selector->relation() == CSSSelector::Descendant)
+            matchesAncestor = true;
 
         selector = selector->tagHistory();
     } while (selector);
 }
 
-void RuleFeatureSet::collectFeaturesFromSelector(const CSSSelector& firstSelector, bool& hasSiblingSelector)
+void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 {
-    hasSiblingSelector = false;
-    recursivelyCollectFeaturesFromSelector(*this, firstSelector, hasSiblingSelector);
+    SelectorFeatures selectorFeatures;
+    recursivelyCollectFeaturesFromSelector(selectorFeatures, *ruleData.selector());
+    if (selectorFeatures.hasSiblingSelector)
+        siblingRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
+    if (ruleData.containsUncommonAttributeSelector())
+        uncommonAttributeRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
+    for (auto* className : selectorFeatures.classesMatchingAncestors) {
+        auto addResult = ancestorClassRules.add(className, nullptr);
+        if (addResult.isNewEntry)
+            addResult.iterator->value = std::make_unique<Vector<RuleFeature>>();
+        addResult.iterator->value->append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
+    }
 }
 
 void RuleFeatureSet::add(const RuleFeatureSet& other)
@@ -87,6 +102,13 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     attributeLocalNamesInRules.add(other.attributeLocalNamesInRules.begin(), other.attributeLocalNamesInRules.end());
     siblingRules.appendVector(other.siblingRules);
     uncommonAttributeRules.appendVector(other.uncommonAttributeRules);
+    for (auto& keyValuePair : other.ancestorClassRules) {
+        auto addResult = ancestorClassRules.add(keyValuePair.key, nullptr);
+        if (addResult.isNewEntry)
+            addResult.iterator->value = std::make_unique<Vector<RuleFeature>>(*keyValuePair.value);
+        else
+            addResult.iterator->value->appendVector(*keyValuePair.value);
+    }
     usesFirstLineRules = usesFirstLineRules || other.usesFirstLineRules;
     usesFirstLetterRules = usesFirstLetterRules || other.usesFirstLetterRules;
 }
@@ -99,6 +121,7 @@ void RuleFeatureSet::clear()
     attributeLocalNamesInRules.clear();
     siblingRules.clear();
     uncommonAttributeRules.clear();
+    ancestorClassRules.clear();
     usesFirstLineRules = false;
     usesFirstLetterRules = false;
 }
@@ -107,6 +130,8 @@ void RuleFeatureSet::shrinkToFit()
 {
     siblingRules.shrinkToFit();
     uncommonAttributeRules.shrinkToFit();
+    for (auto& rules : ancestorClassRules.values())
+        rules->shrinkToFit();
 }
 
 } // namespace WebCore
