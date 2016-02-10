@@ -88,7 +88,7 @@ private:
     Document* m_document;
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_fontFaces;
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFontFaces;
-    HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>, ASCIICaseInsensitiveHash> m_fonts;
+    HashMap<String, HashMap<unsigned, std::unique_ptr<CSSSegmentedFontFace>>, ASCIICaseInsensitiveHash> m_fonts;
     HashSet<FontSelectorClient*> m_clients;
 
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;

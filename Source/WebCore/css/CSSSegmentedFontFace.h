@@ -39,9 +39,10 @@ class CSSFontFace;
 class CSSFontSelector;
 class FontDescription;
 
-class CSSSegmentedFontFace : public RefCounted<CSSSegmentedFontFace> {
+class CSSSegmentedFontFace {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CSSSegmentedFontFace> create(CSSFontSelector& selector) { return adoptRef(*new CSSSegmentedFontFace(selector)); }
+    CSSSegmentedFontFace(CSSFontSelector&);
     ~CSSSegmentedFontFace();
 
     CSSFontSelector& fontSelector() const { return m_fontSelector; }
@@ -53,7 +54,6 @@ public:
     FontRanges fontRanges(const FontDescription&);
 
 private:
-    CSSSegmentedFontFace(CSSFontSelector&);
 
     CSSFontSelector& m_fontSelector;
     HashMap<FontDescriptionKey, FontRanges, FontDescriptionKeyHash, WTF::SimpleClassHashTraits<FontDescriptionKey>> m_cache;

@@ -1,3 +1,20 @@
+2016-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSSegmentedFontFace does not need to be reference counted
+        https://bugs.webkit.org/show_bug.cgi?id=154083
+
+        Reviewed by Antti Koivisto.
+
+        ...There is only ever a single reference to one.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::getFontFace):
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.h:
+        (WebCore::CSSSegmentedFontFace::create): Deleted.
+
 2016-02-10  Antti Koivisto  <antti@apple.com>
 
         Optimize style invalidation after class attribute change

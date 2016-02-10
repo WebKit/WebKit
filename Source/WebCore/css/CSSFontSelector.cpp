@@ -465,15 +465,15 @@ CSSSegmentedFontFace* CSSFontSelector::getFontFace(const FontDescription& fontDe
         return nullptr;
     auto& familyFontFaces = iterator->value;
 
-    auto& segmentedFontFaceCache = m_fonts.add(family, HashMap<unsigned, RefPtr<CSSSegmentedFontFace>>()).iterator->value;
+    auto& segmentedFontFaceCache = m_fonts.add(family, HashMap<unsigned, std::unique_ptr<CSSSegmentedFontFace>>()).iterator->value;
 
     FontTraitsMask traitsMask = fontDescription.traitsMask();
 
-    RefPtr<CSSSegmentedFontFace>& face = segmentedFontFaceCache.add(traitsMask, nullptr).iterator->value;
+    std::unique_ptr<CSSSegmentedFontFace>& face = segmentedFontFaceCache.add(traitsMask, nullptr).iterator->value;
     if (face)
         return face.get();
 
-    face = CSSSegmentedFontFace::create(*this);
+    face = std::make_unique<CSSSegmentedFontFace>(*this);
 
     Vector<std::reference_wrapper<CSSFontFace>, 32> candidateFontFaces;
     for (int i = familyFontFaces.size() - 1; i >= 0; --i) {
