@@ -7,8 +7,12 @@ require_once('../include/report-processor.php');
 function main($post_data) {
     set_exit_detail('failureStored', false);
 
+    $maintenance_mode = config('maintenanceMode');
+    if ($maintenance_mode && !config('maintenanceDirectory'))
+        exit_with_error('MaintenanceDirectoryNotSet');
+
     $db = new Database;
-    if (!$db->connect())
+    if (!$maintenance_mode && !$db->connect())
         exit_with_error('DatabaseConnectionFailure');
 
     // Convert all floating points to strings to avoid parsing them in PHP.
@@ -19,16 +23,29 @@ function main($post_data) {
 
     set_exit_detail('processedRuns', 0);
     foreach ($parsed_json as $i => $report) {
-        $processor = new ReportProcessor($db);
-        $processor->process($report);
+        if (!$maintenance_mode) {
+            $processor = new ReportProcessor($db);
+            $processor->process($report);
+        }
         set_exit_detail('processedRuns', $i + 1);
     }
 
-    $generator = new ManifestGenerator($db);
-    if (!$generator->generate())
-        exit_with_error('FailedToGenerateManifest');
-    else if (!$generator->store())
-        exit_with_error('FailedToStoreManifest');
+    if ($maintenance_mode) {
+        $files = scandir(config_path('maintenanceDirectory', ''));
+        $i = 0;
+        $filename = '';
+        do {
+            $i++;
+            $filename = "$i.json";
+        } while (in_array($filename, $files));
+        file_put_contents(config_path('maintenanceDirectory', $filename), $post_data, LOCK_EX);
+    } else {
+        $generator = new ManifestGenerator($db);
+        if (!$generator->generate())
+            exit_with_error('FailedToGenerateManifest');
+        else if (!$generator->store())
+            exit_with_error('FailedToStoreManifest');
+    }
 
     exit_with_success();
 }

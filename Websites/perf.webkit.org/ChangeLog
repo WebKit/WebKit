@@ -1,3 +1,21 @@
+2016-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for maintenance mode
+        https://bugs.webkit.org/show_bug.cgi?id=154072
+
+        Reviewed by Chris Dumez.
+
+        Added the crude support for maintenance mode whereby which the reports are stored in the filesystem
+        instead of the database.
+
+        * config.json: Added maintenanceMode and maintenanceDirectory as well as forgotten siteTitle and
+        remoteServer.httpdMutexDir.
+        * public/api/report.php:
+        (main): Don't connect to the database or modify database when maintenanceMode is set.
+        * public/include/json-header.php:
+        (ensure_privileged_api_data): Exit with InMaintenanceMode when maintenanceMode is set. This prevents
+        privileged API such as creating analysis tasks and new A/B testing groups from modifying the database.
+
 2016-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Analysis task page on v3 show progression as regressions

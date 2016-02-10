@@ -92,6 +92,9 @@ function require_existence_of($array, $list_of_arguments, $prefix = '') {
 function ensure_privileged_api_data() {
     global $HTTP_RAW_POST_DATA;
 
+    if (config('maintenanceMode'))
+        exit_with_error('InMaintenanceMode');
+
     if ($_SERVER['REQUEST_METHOD'] != 'POST')
         exit_with_error('InvalidRequestMethod');
 

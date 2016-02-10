@@ -1,4 +1,5 @@
 {
+    "siteTitle": "WebKit Performance Dashboard",
     "debug": true,
     "jsonCacheMaxAge": 600,
     "dataDirectory": "public/data/",
@@ -9,6 +10,8 @@
         "password": "password",
         "name": "webkit-perf-db"
     },
+    "maintenanceMode": false,
+    "maintenanceDirectory": "reported/",
     "testServer": {
         "hostname": "localhost",
         "port": 80
@@ -20,7 +23,8 @@
         "httpdConfig": "tools/remote-server-relay.conf",
         "httpdPID": "tools/remote-server-relay.pid",
         "httpdErrorLog": "tools/remote-server-relay.log",
-        "url": "http://perf.webkit.org",
+        "httpdMutexDir": "/tmp/org.webkit.perf.remote/",
+        "url": "https://perf-safari.apple.com",
         "basicAuth": {
             "username": "username",
             "password": "password"
