@@ -1,5 +1,18 @@
 2016-02-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline tests for ios-simulator after r196222
+        https://bugs.webkit.org/show_bug.cgi?id=154053
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/ios-simulator-wk2/compositing/geometry/composited-in-columns-expected.txt:
+        * platform/ios-simulator-wk2/compositing/layer-creation/overlap-animation-container-expected.txt: Added.
+        * platform/ios-simulator-wk2/compositing/visibility/visibility-image-layers-dynamic-expected.txt:
+        * platform/ios-simulator-wk2/fast/inline/continuation-outlines-with-layers-expected.txt: Added.
+        * platform/ios-simulator-wk2/fast/layers/scroll-rect-to-visible-expected.txt:
+
+2016-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline compositing/overflow/scrollbar-painting.html for ios-simulator after r196244
 
         Unreviewed test gardening.
