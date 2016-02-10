@@ -2940,3 +2940,5 @@ webkit.org/b/153898 pageoverlay/overlay-small-frame-paints.html [ Pass Failure ]
 webkit.org/b/153933 css3/filters/multiple-filters-invalidation.html [ Pass Crash ]
 
 webkit.org/b/154055 perf/adding-radio-buttons.html [ Pass Failure ]
+
+webkit.org/b/153762 fast/regions/text-break-properties.html [ Skip ]
