@@ -105,7 +105,6 @@ public:
     void copyLater(JSCell*, CopyToken, void*, size_t);
     
     void reportExtraMemoryVisited(size_t);
-    void reportMemoryVisited(size_t bytes) { m_bytesVisited += bytes; }
     
     void addWeakReferenceHarvester(WeakReferenceHarvester*);
     void addUnconditionalFinalizer(UnconditionalFinalizer*);
