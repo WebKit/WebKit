@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2011, 2013, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007-2009, 2011, 2013, 2015-2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -905,19 +905,28 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         result = asArray(thisObj)->fastSlice(*exec, begin, deleteCount);
 
     if (!result) {
-        if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+        if (speciesResult.first == SpeciesConstructResult::CreatedObject) {
             result = speciesResult.second;
-        else {
+            
+            for (unsigned k = 0; k < deleteCount; ++k) {
+                JSValue v = getProperty(exec, thisObj, k + begin);
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
+                result->putByIndexInline(exec, k, v, true);
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
+            }
+        } else {
             result = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
             if (!result)
                 return JSValue::encode(throwOutOfMemoryError(exec));
-        }
-
-        for (unsigned k = 0; k < deleteCount; ++k) {
-            JSValue v = getProperty(exec, thisObj, k + begin);
-            if (exec->hadException())
-                return JSValue::encode(jsUndefined());
-            result->initializeIndex(vm, k, v);
+            
+            for (unsigned k = 0; k < deleteCount; ++k) {
+                JSValue v = getProperty(exec, thisObj, k + begin);
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
+                result->initializeIndex(vm, k, v);
+            }
         }
     }
 

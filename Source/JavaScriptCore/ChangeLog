@@ -1,3 +1,13 @@
+2016-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Cannot call initializeIndex() if we didn't create the array using tryCreateUninitialized()
+        https://bugs.webkit.org/show_bug.cgi?id=154126
+
+        Reviewed by Saam Barati.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+
 2016-02-11  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         [INTL] Implement Intl.NumberFormat.prototype.resolvedOptions ()
