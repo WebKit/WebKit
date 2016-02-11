@@ -1,3 +1,37 @@
+2016-02-11  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [INTL] Implement Intl.NumberFormat.prototype.resolvedOptions ()
+        https://bugs.webkit.org/show_bug.cgi?id=147602
+
+        Reviewed by Darin Adler.
+
+        This patch implements Intl.NumberFormat.prototype.resolvedOptions() according
+        to the ECMAScript 2015 Internationalization API spec (ECMA-402 2nd edition.)
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::localeData):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::localeData):
+        (JSC::computeCurrencySortKey):
+        (JSC::extractCurrencySortKey):
+        (JSC::computeCurrencyDigits):
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::styleString):
+        (JSC::IntlNumberFormat::currencyDisplayString):
+        (JSC::IntlNumberFormat::resolvedOptions):
+        (JSC::IntlNumberFormat::setBoundFormat):
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        (JSC::callIntlNumberFormat):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::intlNumberOption):
+        (JSC::numberingSystemsForLocale):
+        (JSC::getNumberingSystemsForLocale): Deleted.
+        * runtime/IntlObject.h:
+
 2016-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         MacroAssemblerX86 should be happy with shift(cx, cx)

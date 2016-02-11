@@ -210,7 +210,7 @@ static Vector<String> localeData(const String& locale, size_t keyIndex)
         break;
     }
     case indexOfExtensionKeyNu:
-        keyLocaleData = getNumberingSystemsForLocale(locale);
+        keyLocaleData = numberingSystemsForLocale(locale);
         break;
     default:
         ASSERT_NOT_REACHED();

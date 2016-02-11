@@ -34,12 +34,9 @@
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSObject.h"
-#include "ObjectConstructor.h"
 #include "StructureInlines.h"
 
 namespace JSC {
-
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlNumberFormatPrototype);
 
 static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState*);
 static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecState*);
@@ -118,17 +115,11 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecState* state)
 {
     // 11.3.5 Intl.NumberFormat.prototype.resolvedOptions() (ECMA-402 2.0)
-    IntlNumberFormat* nf = jsDynamicCast<IntlNumberFormat*>(state->thisValue());
-    if (!nf)
+    IntlNumberFormat* numberFormat = jsDynamicCast<IntlNumberFormat*>(state->thisValue());
+    if (!numberFormat)
         return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat")));
 
-    // The function returns a new object whose properties and attributes are set as if constructed by an object literal assigning to each of the following properties the value of the corresponding internal slot of this NumberFormat object (see 11.4): locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, and useGrouping. Properties whose corresponding internal slots are not present are not assigned.
-
-    JSObject* options = constructEmptyObject(state);
-
-    // FIXME: Populate object from internal slots.
-
-    return JSValue::encode(options);
+    return JSValue::encode(numberFormat->resolvedOptions(*state));
 }
 
 } // namespace JSC

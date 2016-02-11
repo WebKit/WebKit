@@ -213,6 +213,44 @@ String intlStringOption(ExecState& state, JSValue options, PropertyName property
     return fallback;
 }
 
+unsigned intlNumberOption(ExecState& state, JSValue options, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
+{
+    // 9.2.9 GetNumberOption (options, property, minimum, maximum, fallback) (ECMA-402 2.0)
+    // 1. Let opts be ToObject(options).
+    JSObject* opts = options.toObject(&state);
+
+    // 2. ReturnIfAbrupt(opts).
+    if (state.hadException())
+        return 0;
+
+    // 3. Let value be Get(opts, property).
+    JSValue value = opts->get(&state, property);
+
+    // 4. ReturnIfAbrupt(value).
+    if (state.hadException())
+        return 0;
+
+    // 5. If value is not undefined, then
+    if (!value.isUndefined()) {
+        // a. Let value be ToNumber(value).
+        double doubleValue = value.toNumber(&state);
+        // b. ReturnIfAbrupt(value).
+        if (state.hadException())
+            return 0;
+        // 1. If value is NaN or less than minimum or greater than maximum, throw a RangeError exception.
+        if (!(doubleValue >= minimum && doubleValue <= maximum)) {
+            state.vm().throwException(&state, createRangeError(&state, *property.publicName() + " is out of range"));
+            return 0;
+        }
+
+        // c. Return floor(value).
+        return static_cast<unsigned>(doubleValue);
+    }
+
+    // 6. Else return fallback.
+    return fallback;
+}
+
 static String privateUseLangTag(const Vector<String>& parts, size_t startIndex)
 {
     size_t numParts = parts.size();
@@ -924,7 +962,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
     return supportedLocales;
 }
 
-Vector<String> getNumberingSystemsForLocale(const String& locale)
+Vector<String> numberingSystemsForLocale(const String& locale)
 {
     static NeverDestroyed<Vector<String>> cachedNumberingSystems;
     Vector<String>& availableNumberingSystems = cachedNumberingSystems.get();

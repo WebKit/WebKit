@@ -18,6 +18,121 @@ shouldBeTrue(classPrefix + "new DerivedNumberFormat().format(1) === '1'");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedNumberFormat) === DerivedNumberFormat.prototype");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) === Intl.NumberFormat.prototype");
 
+function testNumberFormat(numberFormat, possibleDifferences) {
+    var possibleOptions = possibleDifferences.map(function(difference) {
+        var defaultOptions = {
+            locale: undefined,
+            numberingSystem: "latn",
+            style: "decimal",
+            currency: undefined,
+            currencyDisplay: undefined,
+            minimumIntegerDigits: 1,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 3,
+            minimumSignificantDigits: undefined,
+            maximumSignificantDigits: undefined,
+            useGrouping: true
+        }
+        Object.assign(defaultOptions, difference);
+        return JSON.stringify(defaultOptions);
+    });
+    var actualOptions = JSON.stringify(numberFormat.resolvedOptions())
+    return possibleOptions.includes(actualOptions);
+}
+
+// Locale is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en'), [{locale: 'en'}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('eN-uS'), [{locale: 'en-US'}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat(['en', 'de']), [{locale: 'en'}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('de'), [{locale: 'de'}])");
+
+// The "nu" key is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('ZH-hans-cn-U-Nu-Hanidec'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en-u-nu-abcd'), [{locale: 'en'}])");
+
+// Ignores irrelevant extension keys.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('zh-Hans-CN-u-aa-aaaa-co-pinyin-nu-hanidec-bb-bbbb'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}])");
+
+// The option localeMatcher is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {localeMatcher: 'lookup'}), [{locale: 'en'}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {localeMatcher: 'best fit'}), [{locale: 'en'}])");
+shouldThrow("Intl.NumberFormat('en', {localeMatcher: 'LookUp'})", '\'RangeError: localeMatcher must be either "lookup" or "best fit"\'');
+shouldThrow("Intl.NumberFormat('en', { get localeMatcher() { throw 42; } })", "'42'");
+shouldThrow("Intl.NumberFormat('en', {localeMatcher: {toString() { throw 42; }}})", "'42'");
+
+// The option style is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'decimal'}), [{locale: 'en', style: 'decimal'}])");
+shouldThrow("Intl.NumberFormat('en', {style: 'currency'})", "'TypeError: currency must be a string'");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'percent'}), [{locale: 'en', style: 'percent', maximumFractionDigits: 0}])");
+shouldThrow("Intl.NumberFormat('en', {style: 'Decimal'})", '\'RangeError: style must be either "decimal", "percent", or "currency"\'');
+shouldThrow("Intl.NumberFormat('en', { get style() { throw 42; } })", "'42'");
+
+// The option currency is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'UsD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'CLF'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', minimumFractionDigits: 4, maximumFractionDigits: 4}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'cLf'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', minimumFractionDigits: 4, maximumFractionDigits: 4}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'XXX'}), [{locale: 'en', style: 'currency', currency: 'XXX', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}])");
+shouldThrow("Intl.NumberFormat('en', {style: 'currency', currency: 'US$'})", "'RangeError: currency is not a well-formed currency code'");
+shouldThrow("Intl.NumberFormat('en', {style: 'currency', currency: 'US'})", "'RangeError: currency is not a well-formed currency code'");
+shouldThrow("Intl.NumberFormat('en', {style: 'currency', currency: 'US Dollar'})", "'RangeError: currency is not a well-formed currency code'");
+shouldThrow("Intl.NumberFormat('en', {style: 'currency', get currency() { throw 42; }})", "'42'");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'decimal', currency: 'USD'}), [{locale: 'en', style: 'decimal'}])");
+
+// The option currencyDisplay is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'code', minimumFractionDigits: 2, maximumFractionDigits: 2}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'symbol'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'name', minimumFractionDigits: 2, maximumFractionDigits: 2}])");
+shouldThrow("Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'Code'})", '\'RangeError: currencyDisplay must be either "code", "symbol", or "name"\'');
+shouldThrow("Intl.NumberFormat('en', {style: 'currency', currency: 'USD', get currencyDisplay() { throw 42; }})", "'42'");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'decimal', currencyDisplay: 'code'}), [{locale: 'en', style: 'decimal'}])");
+
+// The option minimumIntegerDigits is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 1}), [{locale: 'en', minimumIntegerDigits: 1}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: '2'}), [{locale: 'en', minimumIntegerDigits: 2}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: {valueOf() { return 3; }}}), [{locale: 'en', minimumIntegerDigits: 3}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 4.9}), [{locale: 'en', minimumIntegerDigits: 4}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 21}), [{locale: 'en', minimumIntegerDigits: 21}])");
+shouldThrow("Intl.NumberFormat('en', {minimumIntegerDigits: 0})", "'RangeError: minimumIntegerDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {minimumIntegerDigits: 22})", "'RangeError: minimumIntegerDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {minimumIntegerDigits: 0.9})", "'RangeError: minimumIntegerDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {minimumIntegerDigits: 21.1})", "'RangeError: minimumIntegerDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {minimumIntegerDigits: NaN})", "'RangeError: minimumIntegerDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {minimumIntegerDigits: Infinity})", "'RangeError: minimumIntegerDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', { get minimumIntegerDigits() { throw 42; } })", "'42'");
+shouldThrow("Intl.NumberFormat('en', {minimumIntegerDigits: {valueOf() { throw 42; }}})", "'42'");
+
+// The option minimumFractionDigits is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {minimumFractionDigits: 0}), [{locale: 'en', minimumFractionDigits: 0, maximumFractionDigits: 3}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {style: 'percent', minimumFractionDigits: 0}), [{locale: 'en', style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {minimumFractionDigits: 6}), [{locale: 'en', minimumFractionDigits: 6, maximumFractionDigits: 6}])");
+shouldThrow("Intl.NumberFormat('en', {minimumFractionDigits: -1})", "'RangeError: minimumFractionDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {minimumFractionDigits: 21})", "'RangeError: minimumFractionDigits is out of range'");
+
+// The option maximumFractionDigits is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {maximumFractionDigits: 6}), [{locale: 'en', maximumFractionDigits: 6}])");
+shouldThrow("Intl.NumberFormat('en', {minimumFractionDigits: 7, maximumFractionDigits: 6})", "'RangeError: maximumFractionDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {maximumFractionDigits: -1})", "'RangeError: maximumFractionDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {maximumFractionDigits: 21})", "'RangeError: maximumFractionDigits is out of range'");
+
+// The option minimumSignificantDigits is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {minimumSignificantDigits: 6}), [{locale: 'en', minimumSignificantDigits: 6, maximumSignificantDigits: 21}])");
+shouldThrow("Intl.NumberFormat('en', {minimumSignificantDigits: 0})", "'RangeError: minimumSignificantDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {minimumSignificantDigits: 22})", "'RangeError: minimumSignificantDigits is out of range'");
+
+// The option maximumSignificantDigits is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {maximumSignificantDigits: 6}), [{locale: 'en', minimumSignificantDigits: 1, maximumSignificantDigits: 6}])");
+shouldThrow("Intl.NumberFormat('en', {minimumSignificantDigits: 7, maximumSignificantDigits: 6})", "'RangeError: maximumSignificantDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {maximumSignificantDigits: 0})", "'RangeError: maximumSignificantDigits is out of range'");
+shouldThrow("Intl.NumberFormat('en', {maximumSignificantDigits: 22})", "'RangeError: maximumSignificantDigits is out of range'");
+
+// The option useGrouping is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {useGrouping: true}), [{locale: 'en', useGrouping: true}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {useGrouping: false}), [{locale: 'en', useGrouping: false}])");
+shouldBeTrue("testNumberFormat(Intl.NumberFormat('en', {useGrouping: 'false'}), [{locale: 'en', useGrouping: true}])");
+shouldThrow("Intl.NumberFormat('en', { get useGrouping() { throw 42; } })", "'42'");
+
 // 11.2 Properties of the Intl.NumberFormat Constructor
 
 // length property (whose value is 0)
@@ -135,3 +250,5 @@ shouldBeFalse("Intl.NumberFormat.prototype.resolvedOptions() === Intl.NumberForm
 // Throws on non-NumberFormat this.
 shouldThrow("Intl.NumberFormat.prototype.resolvedOptions.call(5)", "'TypeError: Intl.NumberFormat.prototype.resolvedOptions called on value that\\'s not an object initialized as a NumberFormat'");
 
+// Returns the default options.
+shouldBe("var options = Intl.NumberFormat.prototype.resolvedOptions(); delete options['locale']; JSON.stringify(options)", '\'{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":true}\'');

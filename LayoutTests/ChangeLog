@@ -1,3 +1,14 @@
+2016-02-11  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [INTL] Implement Intl.NumberFormat.prototype.resolvedOptions ()
+        https://bugs.webkit.org/show_bug.cgi?id=147602
+
+        Reviewed by Darin Adler.
+
+        * js/intl-numberformat-expected.txt:
+        * js/script-tests/intl-numberformat.js:
+        (testNumberFormat):
+
 2016-02-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196423

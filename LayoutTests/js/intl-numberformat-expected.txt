@@ -12,6 +12,73 @@ PASS class DerivedNumberFormat extends Intl.NumberFormat {};(new DerivedNumberFo
 PASS class DerivedNumberFormat extends Intl.NumberFormat {};new DerivedNumberFormat().format(1) === '1' is true
 PASS class DerivedNumberFormat extends Intl.NumberFormat {};Object.getPrototypeOf(new DerivedNumberFormat) === DerivedNumberFormat.prototype is true
 PASS class DerivedNumberFormat extends Intl.NumberFormat {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) === Intl.NumberFormat.prototype is true
+PASS testNumberFormat(Intl.NumberFormat('en'), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('eN-uS'), [{locale: 'en-US'}]) is true
+PASS testNumberFormat(Intl.NumberFormat(['en', 'de']), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('de'), [{locale: 'de'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('ZH-hans-cn-U-Nu-Hanidec'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-abcd'), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('zh-Hans-CN-u-aa-aaaa-co-pinyin-nu-hanidec-bb-bbbb'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {localeMatcher: 'lookup'}), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {localeMatcher: 'best fit'}), [{locale: 'en'}]) is true
+PASS Intl.NumberFormat('en', {localeMatcher: 'LookUp'}) threw exception RangeError: localeMatcher must be either "lookup" or "best fit".
+PASS Intl.NumberFormat('en', { get localeMatcher() { throw 42; } }) threw exception 42.
+PASS Intl.NumberFormat('en', {localeMatcher: {toString() { throw 42; }}}) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'decimal'}), [{locale: 'en', style: 'decimal'}]) is true
+PASS Intl.NumberFormat('en', {style: 'currency'}) threw exception TypeError: currency must be a string.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'percent'}), [{locale: 'en', style: 'percent', maximumFractionDigits: 0}]) is true
+PASS Intl.NumberFormat('en', {style: 'Decimal'}) threw exception RangeError: style must be either "decimal", "percent", or "currency".
+PASS Intl.NumberFormat('en', { get style() { throw 42; } }) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'UsD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'CLF'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', minimumFractionDigits: 4, maximumFractionDigits: 4}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'cLf'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', minimumFractionDigits: 4, maximumFractionDigits: 4}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'XXX'}), [{locale: 'en', style: 'currency', currency: 'XXX', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'US$'}) threw exception RangeError: currency is not a well-formed currency code.
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'US'}) threw exception RangeError: currency is not a well-formed currency code.
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'US Dollar'}) threw exception RangeError: currency is not a well-formed currency code.
+PASS Intl.NumberFormat('en', {style: 'currency', get currency() { throw 42; }}) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'decimal', currency: 'USD'}), [{locale: 'en', style: 'decimal'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'code', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'symbol'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'name', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'Code'}) threw exception RangeError: currencyDisplay must be either "code", "symbol", or "name".
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', get currencyDisplay() { throw 42; }}) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'decimal', currencyDisplay: 'code'}), [{locale: 'en', style: 'decimal'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 1}), [{locale: 'en', minimumIntegerDigits: 1}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: '2'}), [{locale: 'en', minimumIntegerDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: {valueOf() { return 3; }}}), [{locale: 'en', minimumIntegerDigits: 3}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 4.9}), [{locale: 'en', minimumIntegerDigits: 4}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 21}), [{locale: 'en', minimumIntegerDigits: 21}]) is true
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 0}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 22}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 0.9}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 21.1}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: NaN}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: Infinity}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', { get minimumIntegerDigits() { throw 42; } }) threw exception 42.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: {valueOf() { throw 42; }}}) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumFractionDigits: 0}), [{locale: 'en', minimumFractionDigits: 0, maximumFractionDigits: 3}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'percent', minimumFractionDigits: 0}), [{locale: 'en', style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumFractionDigits: 6}), [{locale: 'en', minimumFractionDigits: 6, maximumFractionDigits: 6}]) is true
+PASS Intl.NumberFormat('en', {minimumFractionDigits: -1}) threw exception RangeError: minimumFractionDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 21}) threw exception RangeError: minimumFractionDigits is out of range.
+PASS testNumberFormat(Intl.NumberFormat('en', {maximumFractionDigits: 6}), [{locale: 'en', maximumFractionDigits: 6}]) is true
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 7, maximumFractionDigits: 6}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS Intl.NumberFormat('en', {maximumFractionDigits: -1}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS Intl.NumberFormat('en', {maximumFractionDigits: 21}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumSignificantDigits: 6}), [{locale: 'en', minimumSignificantDigits: 6, maximumSignificantDigits: 21}]) is true
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 0}) threw exception RangeError: minimumSignificantDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 22}) threw exception RangeError: minimumSignificantDigits is out of range.
+PASS testNumberFormat(Intl.NumberFormat('en', {maximumSignificantDigits: 6}), [{locale: 'en', minimumSignificantDigits: 1, maximumSignificantDigits: 6}]) is true
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 7, maximumSignificantDigits: 6}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS Intl.NumberFormat('en', {maximumSignificantDigits: 0}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS Intl.NumberFormat('en', {maximumSignificantDigits: 22}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS testNumberFormat(Intl.NumberFormat('en', {useGrouping: true}), [{locale: 'en', useGrouping: true}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {useGrouping: false}), [{locale: 'en', useGrouping: false}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {useGrouping: 'false'}), [{locale: 'en', useGrouping: true}]) is true
+PASS Intl.NumberFormat('en', { get useGrouping() { throw 42; } }) threw exception 42.
 PASS Intl.NumberFormat.length is 0
 PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').writable is false
 PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').enumerable is false
@@ -64,6 +131,7 @@ PASS Intl.NumberFormat.prototype.resolvedOptions.length is 0
 PASS Intl.NumberFormat.prototype.resolvedOptions() is an instance of Object
 PASS Intl.NumberFormat.prototype.resolvedOptions() === Intl.NumberFormat.prototype.resolvedOptions() is false
 PASS Intl.NumberFormat.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat.
+PASS var options = Intl.NumberFormat.prototype.resolvedOptions(); delete options['locale']; JSON.stringify(options) is '{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":true}'
 PASS successfullyParsed is true
 
 TEST COMPLETE
