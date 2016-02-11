@@ -36,12 +36,12 @@ MockTrac.prototype = {
 
     get oldestRecordedRevisionNumber()
     {
-        return 33018;
+        return "33018";
     },
 
     get latestRecordedRevisionNumber()
     {
-        return 33022;
+        return "33022";
     },
 
     loadMoreHistoricalData: function()
@@ -51,7 +51,7 @@ MockTrac.prototype = {
 
 MockTrac.EXAMPLE_TRAC_COMMITS = [
     {
-        "revisionNumber": 33018,
+        "revisionNumber": "33018",
         "link": "https://trac.webkit.org/changeset/33018",
         "title": { innerHTML: "commit message" },
         "author": "john@webkit.org",
@@ -61,7 +61,7 @@ MockTrac.EXAMPLE_TRAC_COMMITS = [
         "branches": ["trunk"]
     },
     {
-        "revisionNumber": 33019,
+        "revisionNumber": "33019",
         "link": "https://trac.webkit.org/changeset/33019",
         "title": { innerHTML: "commit message" },
         "author": "paul@webkit.org",
@@ -71,7 +71,7 @@ MockTrac.EXAMPLE_TRAC_COMMITS = [
         "branches": ["someOtherBranch"]
     },
     {
-        "revisionNumber": 33020,
+        "revisionNumber": "33020",
         "link": "https://trac.webkit.org/changeset/33020",
         "title": { innerHTML: "commit message" },
         "author": "george@webkit.org",
@@ -81,7 +81,7 @@ MockTrac.EXAMPLE_TRAC_COMMITS = [
         "branches": ["trunk"]
     },
     {
-        "revisionNumber": 33021,
+        "revisionNumber": "33021",
         "link": "https://trac.webkit.org/changeset/33021",
         "title": { innerHTML: "commit message" },
         "author": "ringo@webkit.org",
@@ -91,7 +91,7 @@ MockTrac.EXAMPLE_TRAC_COMMITS = [
         "branches": ["someOtherBranch"]
     },
     {
-        "revisionNumber": 33022,
+        "revisionNumber": "33022",
         "link": "https://trac.webkit.org/changeset/33022",
         "title": { innerHTML: "commit message" },
         "author": "bob@webkit.org",

@@ -1,5 +1,25 @@
 2016-02-10  Jason Marcell  <jmarcell@apple.com>
 
+        Remove calls to parseInt in order to work with non-integer revisions
+        https://bugs.webkit.org/show_bug.cgi?id=153820
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.sourceStampChanges): Remove calls to parseInt in order to work with non-integer
+        revisions.
+        (BuildbotIteration.prototype._parseData): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.update): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockBuildbotQueueView.js:
+        (MockBuildbotQueueView.prototype._latestProductiveIteration): Change integers to strings in test code.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockTrac.js:
+        (MockTrac.prototype.get oldestRecordedRevisionNumber): Ditto.
+        (MockTrac.prototype.get latestRecordedRevisionNumber): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/tests.js: Ditto.
+
+2016-02-10  Jason Marcell  <jmarcell@apple.com>
+
         Teach dashboard code to compare non-integer revisions
         https://bugs.webkit.org/show_bug.cgi?id=152345
 

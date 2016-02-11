@@ -44,7 +44,7 @@ MockBuildbotQueueView.prototype = {
     {
         return {
             revision: {
-                "openSource": 33020
+                "openSource": "33020"
             }
         };
     }

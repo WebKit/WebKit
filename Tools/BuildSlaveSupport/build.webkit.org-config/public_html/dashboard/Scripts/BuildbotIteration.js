@@ -214,17 +214,14 @@ BuildbotIteration.prototype = {
                 fallbackKey = null;
             }
             var revision = parseRevisionProperty(revisionProperty, key, fallbackKey);
-            if (repository.isSVN)
-                this.revision[repositoryName] = parseInt(revision);
-            else
-                this.revision[repositoryName] = revision;
+            this.revision[repositoryName] = revision;
         }
 
         function sourceStampChanges(sourceStamp) {
             var result = [];
             var changes = sourceStamp.changes;
             for (var i = 0; i < changes.length; ++i) {
-                var change = { revisionNumber: parseInt(changes[i].revision, 10) }
+                var change = { revisionNumber: changes[i].revision }
                 if (changes[i].repository)
                     change.repository = changes[i].repository;
                 if (changes[i].branch)
