@@ -1,3 +1,15 @@
+2016-02-11  Dana Burkart  <dburkart@apple.com>
+
+        Large logs can bring down the webkit master
+        https://bugs.webkit.org/show_bug.cgi?id=122112
+
+        Reviewed by Lucas Forschler.
+
+        Implement the suggested fix of throwing away stdout / stderr.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKit1LeakTests):
+
 2016-02-10  Jason Marcell  <jmarcell@apple.com>
 
         Remove calls to parseInt in order to work with non-integer revisions
