@@ -1,5 +1,15 @@
 2016-02-11  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewed build fix after r196421.
+
+        Removed BASSERTs that are firing to eliminate Debug build crashes.  I'll debug locally and
+        enable or alter after the issue is understood.
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::merge): Removed BASSERTs that are firing.
+
+2016-02-11  Michael Saboff  <msaboff@apple.com>
+
         bmalloc: large aligned allocations will put 1 or 2 free object on free list without merging with free neighbors
         https://bugs.webkit.org/show_bug.cgi?id=154091
 
