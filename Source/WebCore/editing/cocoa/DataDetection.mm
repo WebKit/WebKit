@@ -240,14 +240,16 @@ static void removeResultLinksFromAnchor(Node* node, Node* nodeParent)
     }
 }
 
-static bool searchForLinkRemovingExistingDDLinks(Node* startNode, Node* endNode)
+static bool searchForLinkRemovingExistingDDLinks(Node* startNode, Node* endNode, bool &didModifyDOM)
 {
+    didModifyDOM = false;
     Node *node = startNode;
     while (node) {
         if (is<HTMLAnchorElement>(*node)) {
             if (downcast<Element>(*node).getAttribute(dataDetectorsURLScheme) != "true")
                 return true;
             removeResultLinksFromAnchor(node, node->parentElement());
+            didModifyDOM = true;
         }
         
         if (node == endNode) {
@@ -259,6 +261,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node* startNode, Node* endNode)
                     if (downcast<Element>(*node).getAttribute(dataDetectorsURLScheme) != "true")
                         return true;
                     removeResultLinksFromAnchor(node, node->parentElement());
+                    didModifyDOM = true;
                 }
                 node = node->parentNode();
             }
@@ -520,9 +523,24 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
 
         NSString *identifier = dataDetectorStringForPath(indexPaths[resultIndex].get());
         NSString *correspondingURL = constructURLStringForResult(coreResult, identifier, referenceDate, (NSTimeZone *)tz, types);
+        bool didModifyDOM = false;
         
-        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(&resultRanges.first()->startContainer(), &resultRanges.last()->endContainer()))
+        // Store the range boundaries as Position, because the DOM could change if we find
+        // old data detector link.
+        Vector<std::pair<Position, Position>> rangeBoundaries;
+        for (auto& range : resultRanges)
+            rangeBoundaries.append(std::make_pair(range->startPosition(), range->endPosition()));
+
+        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(&resultRanges.first()->startContainer(), &resultRanges.last()->endContainer(), didModifyDOM))
             continue;
+        
+        if (didModifyDOM) {
+            // If the DOM was modified because some old links were removed,
+            // we need to recreate the ranges because they could no longer be valid.
+            resultRanges.clear();
+            for (auto& rangeBoundary : rangeBoundaries)
+                resultRanges.append(Range::create(*rangeBoundary.first.document(), rangeBoundary.first, rangeBoundary.second));
+        }
         
         lastModifiedQueryOffset = queryRange.end;
 
