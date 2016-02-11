@@ -1,3 +1,11 @@
+2016-02-11  Antti Koivisto  <antti@apple.com>
+
+        Try to fix windows build.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::style):
+        (DOMElement::offsetLeft):
+
 2016-02-06  Darin Adler  <darin@apple.com>
 
         Finish auditing call sites of upper() and lower(), eliminate many, and rename the functions

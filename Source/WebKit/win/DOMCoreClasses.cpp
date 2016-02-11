@@ -1335,7 +1335,7 @@ HRESULT DOMElement::style(_COM_Outptr_opt_ IDOMCSSStyleDeclaration** result)
     if (!m_element)
         return E_FAIL;
 
-    WebCore::CSSStyleDeclaration* style = m_element->style();
+    WebCore::CSSStyleDeclaration* style = m_element->cssomStyle();
     if (!style)
         return E_FAIL;
 
