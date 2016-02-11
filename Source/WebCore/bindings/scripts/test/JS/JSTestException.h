@@ -38,6 +38,8 @@ public:
         return ptr;
     }
 
+    static const bool hasStaticPropertyTable = true;
+
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static TestException* toWrapped(JSC::JSValue);

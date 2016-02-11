@@ -58,11 +58,9 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
     PropertySlot slot(thisObject);
-    if (getStaticValueSlot<JSStorage, Base>(exec, *s_info.staticPropHashTable, thisObject, propertyName, slot)) {
-        if (Optional<uint32_t> index = parseIndex(propertyName))
-            return Base::deletePropertyByIndex(thisObject, exec, index.value());
-        return Base::deleteProperty(thisObject, exec, propertyName);
-    }
+
+    static_assert(!hasStaticPropertyTable, "This function does not handle static instance properties");
+
     JSValue prototype = thisObject->prototype();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))
         return Base::deleteProperty(thisObject, exec, propertyName);
@@ -80,8 +78,7 @@ bool JSStorage::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned pr
 {
     JSStorage* thisObject = jsCast<JSStorage*>(cell);
     PropertySlot slot(thisObject);
-    if (getStaticValueSlot<JSStorage, Base>(exec, *s_info.staticPropHashTable, thisObject, Identifier::from(exec, propertyName), slot))
-        return Base::deletePropertyByIndex(thisObject, exec, propertyName);
+    static_assert(!hasStaticPropertyTable, "This function does not handle static instance properties");
     return deleteProperty(cell, exec, Identifier::from(exec, propertyName));
 }
 
@@ -109,8 +106,7 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
     PropertySlot slot(this);
-    if (getStaticValueSlot<JSStorage, Base>(exec, *s_info.staticPropHashTable, this, propertyName, slot))
-        return false;
+    static_assert(!hasStaticPropertyTable, "This function does not handle static instance properties");
 
     JSValue prototype = this->prototype();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))

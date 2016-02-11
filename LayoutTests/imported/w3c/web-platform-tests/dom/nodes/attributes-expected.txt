@@ -47,11 +47,11 @@ PASS setAttributeNode, if it fires mutation events, should fire one with the new
 PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute (outer shell) 
 PASS setAttributeNode called with an Attr that has the same name as an existing one should not change attribute order 
 FAIL getAttributeNames tests el.getAttributeNames is not a function. (In 'el.getAttributeNames()', 'el.getAttributeNames' is undefined)
-FAIL Own property correctness with basic attributes assert_array_equals: lengths differ, expected 2 got 3
-FAIL Own property correctness with non-namespaced attribute before same-name namespaced one assert_array_equals: lengths differ, expected 3 got 4
-FAIL Own property correctness with namespaced attribute before same-name non-namespaced one assert_array_equals: lengths differ, expected 3 got 4
-FAIL Own property correctness with two namespaced attributes with the same name-with-prefix assert_array_equals: lengths differ, expected 3 got 4
-FAIL Own property names should only include all-lowercase qualified names for an HTML element in an HTML document assert_array_equals: lengths differ, expected 8 got 7
-FAIL Own property names should include all qualified names for a non-HTML element in an HTML document assert_array_equals: lengths differ, expected 12 got 7
-FAIL Own property names should include all qualified names for an HTML element in a non-HTML document assert_array_equals: lengths differ, expected 12 got 7
+FAIL Own property correctness with basic attributes assert_array_equals: lengths differ, expected 4 got 2
+FAIL Own property correctness with non-namespaced attribute before same-name namespaced one assert_array_equals: lengths differ, expected 5 got 3
+FAIL Own property correctness with namespaced attribute before same-name non-namespaced one assert_array_equals: lengths differ, expected 5 got 3
+FAIL Own property correctness with two namespaced attributes with the same name-with-prefix assert_array_equals: lengths differ, expected 5 got 3
+FAIL Own property names should only include all-lowercase qualified names for an HTML element in an HTML document assert_array_equals: lengths differ, expected 8 got 6
+FAIL Own property names should include all qualified names for a non-HTML element in an HTML document assert_array_equals: lengths differ, expected 12 got 6
+FAIL Own property names should include all qualified names for an HTML element in a non-HTML document assert_array_equals: lengths differ, expected 12 got 6
 

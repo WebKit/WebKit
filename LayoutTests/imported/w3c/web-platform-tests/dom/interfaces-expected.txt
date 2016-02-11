@@ -123,23 +123,23 @@ PASS NodeList interface object name
 PASS NodeList interface: existence and properties of interface prototype object 
 PASS NodeList interface: existence and properties of interface prototype object's "constructor" property 
 PASS NodeList interface: operation item(unsigned long) 
-FAIL NodeList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS NodeList interface: attribute length 
 PASS NodeList must be primary interface of document.querySelectorAll("script") 
 PASS Stringification of document.querySelectorAll("script") 
 PASS NodeList interface: document.querySelectorAll("script") must inherit property "item" with the proper type (0) 
 PASS NodeList interface: calling item(unsigned long) on document.querySelectorAll("script") with too few arguments must throw TypeError 
-FAIL NodeList interface: document.querySelectorAll("script") must inherit property "length" with the proper type (1) assert_inherits: property "length" found on object expected in prototype chain
+PASS NodeList interface: document.querySelectorAll("script") must inherit property "length" with the proper type (1) 
 PASS HTMLCollection interface: existence and properties of interface object 
 PASS HTMLCollection interface object length 
 PASS HTMLCollection interface object name 
 PASS HTMLCollection interface: existence and properties of interface prototype object 
 PASS HTMLCollection interface: existence and properties of interface prototype object's "constructor" property 
-FAIL HTMLCollection interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS HTMLCollection interface: attribute length 
 FAIL HTMLCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLCollection interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS HTMLCollection must be primary interface of document.body.children 
 PASS Stringification of document.body.children 
-FAIL HTMLCollection interface: document.body.children must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
+PASS HTMLCollection interface: document.body.children must inherit property "length" with the proper type (0) 
 PASS HTMLCollection interface: document.body.children must inherit property "item" with the proper type (1) 
 FAIL HTMLCollection interface: calling item(unsigned long) on document.body.children with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -932,7 +932,7 @@ PASS NamedNodeMap interface object length
 PASS NamedNodeMap interface object name 
 PASS NamedNodeMap interface: existence and properties of interface prototype object 
 PASS NamedNodeMap interface: existence and properties of interface prototype object's "constructor" property 
-FAIL NamedNodeMap interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS NamedNodeMap interface: attribute length 
 FAIL NamedNodeMap interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL NamedNodeMap interface: operation getNamedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL NamedNodeMap interface: operation getNamedItemNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
@@ -1561,7 +1561,7 @@ PASS DOMTokenList interface object length
 PASS DOMTokenList interface object name 
 PASS DOMTokenList interface: existence and properties of interface prototype object 
 PASS DOMTokenList interface: existence and properties of interface prototype object's "constructor" property 
-FAIL DOMTokenList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS DOMTokenList interface: attribute length 
 PASS DOMTokenList interface: operation item(unsigned long) 
 PASS DOMTokenList interface: operation contains(DOMString) 
 PASS DOMTokenList interface: operation add(DOMString) 
@@ -1573,7 +1573,7 @@ PASS DOMTokenList interface: attribute value
 FAIL DOMTokenList interface: stringifier assert_true: property is not enumerable expected true got false
 PASS DOMTokenList must be primary interface of document.body.classList 
 PASS Stringification of document.body.classList 
-FAIL DOMTokenList interface: document.body.classList must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
+PASS DOMTokenList interface: document.body.classList must inherit property "length" with the proper type (0) 
 PASS DOMTokenList interface: document.body.classList must inherit property "item" with the proper type (1) 
 PASS DOMTokenList interface: calling item(unsigned long) on document.body.classList with too few arguments must throw TypeError 
 PASS DOMTokenList interface: document.body.classList must inherit property "contains" with the proper type (2) 

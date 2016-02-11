@@ -1,7 +1,7 @@
 Simple
 
 
-FAIL Object.getOwnPropertyNames on NamedNodeMap assert_array_equals: lengths differ, expected 4 got 3
-FAIL Object.getOwnPropertyNames on NamedNodeMap of input assert_array_equals: lengths differ, expected 8 got 5
-FAIL Object.getOwnPropertyNames on NamedNodeMap after attribute removal assert_array_equals: lengths differ, expected 6 got 4
+FAIL Object.getOwnPropertyNames on NamedNodeMap assert_array_equals: lengths differ, expected 4 got 2
+FAIL Object.getOwnPropertyNames on NamedNodeMap of input assert_array_equals: lengths differ, expected 8 got 4
+FAIL Object.getOwnPropertyNames on NamedNodeMap after attribute removal assert_array_equals: lengths differ, expected 6 got 3
 

@@ -1,3 +1,17 @@
+2016-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Move 'length' property to the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=154051
+        <rdar://problem/24577385>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a couple of existing layout tests now that 'length' is
+        on the prototype.
+
+        * fast/dom/htmlcollection-getownpropertynames-expected.txt:
+        * storage/domstorage/localstorage/delete-defineproperty-removal-expected.txt:
+
 2016-02-11  Frederic Wang  <fred.wang@free.fr>
 
         Use Testharness.js for the MathML script tests

@@ -671,13 +671,11 @@ inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
 
 template<typename DOMClass> inline const JSC::HashTableValue* getStaticValueSlotEntryWithoutCaching(JSC::ExecState* exec, JSC::PropertyName propertyName)
 {
-    const JSC::HashTable* table = DOMClass::info()->staticPropHashTable;
-    if (!table)
-        return getStaticValueSlotEntryWithoutCaching<typename DOMClass::Base>(exec, propertyName);
-    const JSC::HashTableValue* entry = table->entry(propertyName);
-    if (!entry) // not found, forward to parent
-        return getStaticValueSlotEntryWithoutCaching<typename DOMClass::Base>(exec, propertyName);
-    return entry;
+    if (DOMClass::hasStaticPropertyTable) {
+        if (auto* entry = DOMClass::info()->staticPropHashTable->entry(propertyName))
+            return entry;
+    }
+    return getStaticValueSlotEntryWithoutCaching<typename DOMClass::Base>(exec, propertyName);
 }
 
 template<> inline const JSC::HashTableValue* getStaticValueSlotEntryWithoutCaching<JSDOMObject>(JSC::ExecState*, JSC::PropertyName)

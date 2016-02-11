@@ -1,3 +1,76 @@
+2016-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Move 'length' property to the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=154051
+        <rdar://problem/24577385>
+
+        Reviewed by Darin Adler.
+
+        Move 'length' property to the prototype, where it should be. We used to
+        keep it on the instance because our implementation of
+        getOwnPropertySlot() was wrong for interfaces with a named property
+        getter. However, our implementation of getOwnPropertySlot() is now
+        spec-compliant so this should be OK.
+
+        Moving 'length' to the prototype is also a little bit risky in terms of
+        performance, especially for HTMLCollection / NodeList. However, I did
+        not see an impact on realistic benchmarks like Speedometer and only saw
+        a small impact (< 5%) on micro-benchmarks. I propose we make our behavior
+        correct and monitor performance. If we see any benchmark we care about
+        regress then we should try and optimize while keeping the attribute on
+        the prototype.
+
+        No new tests, already covered by existing tests.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getStaticValueSlotEntryWithoutCaching):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot):
+        (WebCore::JSHTMLDocument::nameGetter): Deleted.
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::putDelegate):
+        * bindings/js/JSPluginElementFunctions.h:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::deleteProperty):
+        (WebCore::JSStorage::deletePropertyByIndex):
+        (WebCore::JSStorage::putDelegate):
+        Leverage the new hasStaticPropertyTable static property in the
+        generated bindings for performance.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        Generate a "hasStaticPropertyTable" static const boolean property
+        for each bindings class so we can check at build time if
+        ClassInfo::staticPropHashTable is null.
+
+        (AttributeShouldBeOnInstance):
+        Move "length" to the prototype.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.h:
+        Rebaseline bindings tests.
+
+
 2016-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !(ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)) after r196281

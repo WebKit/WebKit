@@ -711,12 +711,6 @@ sub AttributeShouldBeOnInstance
     # https://heycam.github.io/webidl/#Unforgeable
     return 1 if $attribute->signature->extendedAttributes->{"Unforgeable"} || $interface->extendedAttributes->{"Unforgeable"};
 
-    # FIXME: Length is a tricky attribute to handle correctly as it is frequently tied to
-    # objects which also have magic named attributes that can end up being named "length"
-    # and so interfere with lookup ordering.  I'm not sure what the correct solution is
-    # here.
-    return 1 if ($attribute->signature->name eq "length") && $interface->name ne "CharacterData";
-    
     # It becomes hard to reason about attributes that require security checks if we push
     # them down the prototype chain, so before we do these we'll need to carefully consider
     # the possible pitfalls.
@@ -948,6 +942,9 @@ sub GenerateHeader
     if (IsDOMGlobalObject($interface)) {
         push(@headerContent, "    static const bool needsDestruction = false;\n\n");
     }
+
+    my $hasStaticPropertyTable = InstanceAttributeCount($interface) > 0 ? "true" : "false";
+    push(@headerContent, "    static const bool hasStaticPropertyTable = $hasStaticPropertyTable;\n\n");
 
     # Prototype
     unless (IsDOMGlobalObject($interface)) {
