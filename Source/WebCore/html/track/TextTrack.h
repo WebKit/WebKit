@@ -82,8 +82,7 @@ public:
     static const AtomicString& hiddenKeyword();
     static const AtomicString& showingKeyword();
 
-    void setKind(const AtomicString&) override;
-    AtomicString kind() const override;
+    virtual void setKind(const AtomicString&) override;
 
     virtual AtomicString inBandMetadataTrackDispatchType() const { return emptyString(); }
 
@@ -117,7 +116,7 @@ public:
 
     virtual bool isClosedCaptions() const { return false; }
     virtual bool isSDH() const { return false; }
-    virtual bool containsOnlyForcedSubtitles() const { return false; }
+    virtual bool containsOnlyForcedSubtitles() const;
     virtual bool isMainProgramContent() const;
     virtual bool isEasyToRead() const { return false; }
 
@@ -142,8 +141,6 @@ public:
     virtual bool isInband() const { return false; }
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
-
-    void setManualSelectionMode(bool mode) { m_manualSelectionMode = mode; }
 
     using RefCounted<TrackBase>::ref;
     using RefCounted<TrackBase>::deref;
@@ -174,7 +171,6 @@ private:
     int m_trackIndex;
     int m_renderedTrackIndex;
     bool m_hasBeenConfigured;
-    bool m_manualSelectionMode { false };
 };
 
 inline TextTrack* toTextTrack(TrackBase* track)

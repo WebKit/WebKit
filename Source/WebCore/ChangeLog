@@ -1,3 +1,36 @@
+2016-02-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Update "manual" caption track logic
+        https://bugs.webkit.org/show_bug.cgi?id=154084
+        <rdar://problem/24530516>
+
+        Reviewed by Dean Jackson.
+
+        No new tests, media/track/track-manual-mode.html was updated.
+
+        * English.lproj/Localizable.strings: Add new string.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTextTrack): track.setManualSelectionMode is no more.
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): Never enable a track automatically when
+          in manual selection mode.
+        (WebCore::HTMLMediaElement::captionPreferencesChanged):  track.setManualSelectionMode is no more.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::containsOnlyForcedSubtitles): Return true for forced tracks.
+        (WebCore::TextTrack::kind): Deleted.
+        * html/track/TextTrack.h:
+
+        * html/track/TrackBase.h:
+        (WebCore::TrackBase::kind): De-virtualize, nobody overrides it.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::trackDisplayName): Include "forced" in the name of forced tracks.
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::forcedTrackMenuItemText): New.
+        * platform/LocalizedStrings.h:
+
 2016-02-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         Rename *Event::create* which creates events for bindings to *Event::createForBindings* and cleanup corresponding paths

@@ -1,3 +1,14 @@
+2016-02-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Update "manual" caption track logic
+        https://bugs.webkit.org/show_bug.cgi?id=154084
+        <rdar://problem/24530516>
+
+        Reviewed by Dean Jackson.
+
+        * media/track/track-manual-mode-expected.txt:
+        * media/track/track-manual-mode.html:
+
 2016-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after 196392

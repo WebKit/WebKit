@@ -3550,7 +3550,6 @@ void HTMLMediaElement::addTextTrack(PassRefPtr<TextTrack> track)
             m_captionDisplayMode = page->group().captionPreferences().captionDisplayMode();
     }
 
-    track->setManualSelectionMode(m_captionDisplayMode == CaptionUserPreferences::Manual);
     textTracks()->append(track);
 
     closeCaptionTracksChanged();
@@ -3813,30 +3812,32 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
         }
     }
 
-    if (!trackToEnable && defaultTrack)
-        trackToEnable = defaultTrack;
-    
-    // If no track matches the user's preferred language, none was marked as 'default', and there is a forced subtitle track
-    // in the same language as the language of the primary audio track, enable it.
-    if (!trackToEnable && forcedSubitleTrack)
-        trackToEnable = forcedSubitleTrack;
+    if (displayMode != CaptionUserPreferences::Manual) {
+        if (!trackToEnable && defaultTrack)
+            trackToEnable = defaultTrack;
 
-    // If no track matches, don't disable an already visible track unless preferences say they all should be off.
-    if (group.kind != TrackGroup::CaptionsAndSubtitles || displayMode != CaptionUserPreferences::ForcedOnly) {
-        if (!trackToEnable && !defaultTrack && group.visibleTrack)
-            trackToEnable = group.visibleTrack;
+        // If no track matches the user's preferred language, none was marked as 'default', and there is a forced subtitle track
+        // in the same language as the language of the primary audio track, enable it.
+        if (!trackToEnable && forcedSubitleTrack)
+            trackToEnable = forcedSubitleTrack;
+
+        // If no track matches, don't disable an already visible track unless preferences say they all should be off.
+        if (group.kind != TrackGroup::CaptionsAndSubtitles || displayMode != CaptionUserPreferences::ForcedOnly) {
+            if (!trackToEnable && !defaultTrack && group.visibleTrack)
+                trackToEnable = group.visibleTrack;
+        }
+
+        // If no track matches the user's preferred language and non was marked 'default', enable the first track
+        // because the user has explicitly stated a preference for this kind of track.
+        if (!trackToEnable && fallbackTrack)
+            trackToEnable = fallbackTrack;
+
+        if (trackToEnable)
+            m_subtitleTrackLanguage = trackToEnable->language();
+        else
+            m_subtitleTrackLanguage = emptyString();
     }
-    
-    // If no track matches the user's preferred language and non was marked 'default', enable the first track
-    // because the user has explicitly stated a preference for this kind of track.
-    if (!trackToEnable && fallbackTrack)
-        trackToEnable = fallbackTrack;
 
-    if (trackToEnable)
-        m_subtitleTrackLanguage = trackToEnable->language();
-    else
-        m_subtitleTrackLanguage = emptyString();
-    
     if (currentlyEnabledTracks.size()) {
         for (size_t i = 0; i < currentlyEnabledTracks.size(); ++i) {
             RefPtr<TextTrack> textTrack = currentlyEnabledTracks[i];
@@ -5694,11 +5695,6 @@ void HTMLMediaElement::captionPreferencesChanged()
     CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences().captionDisplayMode();
     if (m_captionDisplayMode == displayMode)
         return;
-
-    if (m_captionDisplayMode == CaptionUserPreferences::Manual || displayMode == CaptionUserPreferences::Manual) {
-        for (unsigned i = 0; i < m_textTracks->length(); ++i)
-            m_textTracks->item(i)->setManualSelectionMode(displayMode == CaptionUserPreferences::Manual);
-    }
 
     m_captionDisplayMode = displayMode;
     setWebkitClosedCaptionsVisible(m_captionDisplayMode == CaptionUserPreferences::AlwaysOn);

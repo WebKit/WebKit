@@ -667,22 +667,32 @@ static String trackDisplayName(TextTrack* track)
     if (track == TextTrack::captionMenuAutomaticItem())
         return textTrackAutomaticMenuItemText();
 
-    StringBuilder displayName;
-    buildDisplayStringForTrackBase(displayName, *track);
+    StringBuilder displayNameBuilder;
+    buildDisplayStringForTrackBase(displayNameBuilder, *track);
 
-    if (displayName.isEmpty())
-        displayName.append(textTrackNoLabelText());
-    
-    if (track->isEasyToRead())
-        return easyReaderTrackMenuItemText(displayName.toString());
-    
-    if (track->isClosedCaptions())
-        return closedCaptionTrackMenuItemText(displayName.toString());
+    if (displayNameBuilder.isEmpty())
+        displayNameBuilder.append(textTrackNoLabelText());
+
+    String displayName = displayNameBuilder.toString();
+
+    if (track->isClosedCaptions()) {
+        displayName = closedCaptionTrackMenuItemText(displayName);
+        if (track->isEasyToRead())
+            displayName = easyReaderTrackMenuItemText(displayName);
+
+        return displayName;
+    }
 
     if (track->isSDH())
-        return sdhTrackMenuItemText(displayName.toString());
+        displayName = sdhTrackMenuItemText(displayName);
 
-    return displayName.toString();
+    if (track->containsOnlyForcedSubtitles())
+        displayName = forcedTrackMenuItemText(displayName);
+
+    if (track->isEasyToRead())
+        displayName = easyReaderTrackMenuItemText(displayName);
+
+    return displayName;
 }
 
 String CaptionUserPreferencesMediaAF::displayNameForTrack(TextTrack* track) const

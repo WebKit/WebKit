@@ -1111,6 +1111,11 @@ String easyReaderTrackMenuItemText(const String& title)
 {
     return formatLocalizedString(WEB_UI_STRING("%@ Easy Reader", "Text track contains simplified (3rd grade level) subtitles"), title.createCFString().get());
 }
+
+String forcedTrackMenuItemText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_STRING("%@ Forced", "Text track contains forced subtitles"), title.createCFString().get());
+}
 #endif
 
 #endif

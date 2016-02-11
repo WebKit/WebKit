@@ -173,15 +173,6 @@ bool TextTrack::isValidKindKeyword(const AtomicString& value)
     return false;
 }
 
-AtomicString TextTrack::kind() const
-{
-    AtomicString kind = TrackBase::kind();
-    if (!m_manualSelectionMode || kind != forcedKeyword())
-        return kind;
-
-    return subtitlesKeyword();
-}
-
 void TextTrack::setKind(const AtomicString& newKind)
 {
     String oldKind = kind();
@@ -552,6 +543,11 @@ bool TextTrack::isMainProgramContent() const
     // a way to express this in a machine-reable form, it is typically done with the track label, so we assume that caption
     // tracks are main content and all other track types are not.
     return kind() == captionsKeyword();
+}
+
+bool TextTrack::containsOnlyForcedSubtitles() const
+{
+    return kind() == forcedKeyword();
 }
 
 #if ENABLE(MEDIA_SOURCE)
