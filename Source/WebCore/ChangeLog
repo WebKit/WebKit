@@ -1,3 +1,14 @@
+2016-02-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Updating bindings test reference file for JSTestEventConstructor.cpp after r196400
+
+        Unreviewed test gardening.
+
+        No new tests needed.
+
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+
 2016-02-10  Eric Carlson  <eric.carlson@apple.com>
 
         Update "manual" caption track logic

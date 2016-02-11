@@ -97,7 +97,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
             return JSValue::encode(jsUndefined());
     }
 
-    RefPtr<TestEventConstructor> event = TestEventConstructor::create(eventType, eventInit);
+    RefPtr<TestEventConstructor> event = TestEventConstructor::createForBindings(eventType, eventInit);
     return JSValue::encode(toJS(state, jsConstructor->globalObject(), event.get()));
 }
 
