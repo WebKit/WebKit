@@ -62,22 +62,22 @@ class StreamingClient {
         GstElement* m_src;
 };
 
-class CachedResourceStreamingClient final : public PlatformMediaResourceLoaderClient, public StreamingClient {
+class CachedResourceStreamingClient final : public PlatformMediaResourceClient, public StreamingClient {
     WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient);
     public:
         CachedResourceStreamingClient(WebKitWebSrc*);
         virtual ~CachedResourceStreamingClient();
 
     private:
-        // PlatformMediaResourceLoaderClient virtual methods.
+        // PlatformMediaResourceClient virtual methods.
 #if USE(SOUP)
-        virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
+        virtual char* getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize) override;
 #endif
-        virtual void responseReceived(const ResourceResponse&) override;
-        virtual void dataReceived(const char*, int) override;
-        virtual void accessControlCheckFailed(const ResourceError&) override;
-        virtual void loadFailed(const ResourceError&) override;
-        virtual void loadFinished() override;
+        virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
+        virtual void dataReceived(PlatformMediaResource&, const char*, int) override;
+        virtual void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
+        virtual void loadFailed(PlatformMediaResource&, const ResourceError&) override;
+        virtual void loadFinished(PlatformMediaResource&) override;
 };
 
 class ResourceHandleStreamingClient : public ResourceHandleClient, public StreamingClient {
@@ -126,6 +126,7 @@ struct _WebKitWebSrcPrivate {
     WebCore::MediaPlayer* player;
 
     RefPtr<PlatformMediaResourceLoader> loader;
+    RefPtr<PlatformMediaResource> resource;
     ResourceHandleStreamingClient* client;
 
     bool didPassAccessControlCheck;
@@ -577,13 +578,17 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     bool loadFailed = true;
     if (priv->player && !priv->loader)
-        priv->loader = priv->player->createResourceLoader(std::make_unique<CachedResourceStreamingClient>(src));
+        priv->loader = priv->player->createResourceLoader();
 
     if (priv->loader) {
         PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
         if (request.url().protocolIs("blob"))
             loadOptions |= PlatformMediaResourceLoader::LoadOption::BufferData;
-        loadFailed = !priv->loader->start(request, loadOptions);
+        priv->resource = priv->loader->requestResource(request, loadOptions);
+        loadFailed = !priv->resource;
+
+        if (priv->resource)
+            priv->resource->setClient(std::make_unique<CachedResourceStreamingClient>(src));
     } else {
         priv->client = new ResourceHandleStreamingClient(src, request);
         loadFailed = priv->client->loadFailed();
@@ -596,6 +601,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
             priv->client = nullptr;
         }
         priv->loader = nullptr;
+        priv->resource = nullptr;
         locker.unlock();
         webKitWebSrcStop(src);
         return;
@@ -783,8 +789,8 @@ static void webKitWebSrcNeedData(WebKitWebSrc* src)
 
     if (priv->client)
         priv->client->setDefersLoading(false);
-    if (priv->loader)
-        priv->loader->setDefersLoading(false);
+    if (priv->resource)
+        priv->resource->setDefersLoading(false);
 }
 
 static void webKitWebSrcEnoughData(WebKitWebSrc* src)
@@ -802,8 +808,8 @@ static void webKitWebSrcEnoughData(WebKitWebSrc* src)
 
     if (priv->client)
         priv->client->setDefersLoading(true);
-    if (priv->loader)
-        priv->loader->setDefersLoading(true);
+    if (priv->resource)
+        priv->resource->setDefersLoading(true);
 }
 
 static void webKitWebSrcSeek(WebKitWebSrc* src)
@@ -1002,25 +1008,25 @@ CachedResourceStreamingClient::~CachedResourceStreamingClient()
 }
 
 #if USE(SOUP)
-char* CachedResourceStreamingClient::getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize)
+char* CachedResourceStreamingClient::getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize)
 {
     return createReadBuffer(requestedSize, actualSize);
 }
 #endif
 
-void CachedResourceStreamingClient::responseReceived(const ResourceResponse& response)
+void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response)
 {
     WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC(m_src)->priv;
-    priv->didPassAccessControlCheck = priv->loader->didPassAccessControlCheck();
+    priv->didPassAccessControlCheck = priv->resource->didPassAccessControlCheck();
     handleResponseReceived(response);
 }
 
-void CachedResourceStreamingClient::dataReceived(const char* data, int length)
+void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const char* data, int length)
 {
     handleDataReceived(data, length);
 }
 
-void CachedResourceStreamingClient::accessControlCheckFailed(const ResourceError& error)
+void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     GST_ELEMENT_ERROR(src, RESOURCE, READ, ("%s", error.localizedDescription().utf8().data()), (nullptr));
@@ -1028,7 +1034,7 @@ void CachedResourceStreamingClient::accessControlCheckFailed(const ResourceError
     webKitWebSrcStop(src);
 }
 
-void CachedResourceStreamingClient::loadFailed(const ResourceError& error)
+void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const ResourceError& error)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
 
@@ -1040,7 +1046,7 @@ void CachedResourceStreamingClient::loadFailed(const ResourceError& error)
     gst_app_src_end_of_stream(src->priv->appsrc);
 }
 
-void CachedResourceStreamingClient::loadFinished()
+void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&)
 {
     handleNotifyFinished();
 }

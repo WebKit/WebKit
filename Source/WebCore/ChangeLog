@@ -1,3 +1,69 @@
+2016-02-11  Jer Noble  <jer.noble@apple.com>
+
+        Make MediaResourceLoader behave more like a CachedResourceLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=154117
+
+        Reviewed by Alex Christensen.
+
+        MediaResourceLoader currently can only handle a single request at a time. Split the class
+        into two, MediaResourceLoader and MediaResource, effectively wrapping CachedResourceLoader
+        and CachedRawResource respectively. With this devision, the same loader can be used to issue
+        multiple simultaneous resource requests.
+
+        This necessecitates splitting PlatformMediaResource into two classes as well.  To simplify
+        the HTMLMediaElement, MediaPlayer, and MediaPlayerClient APIs, do not require a client
+        object when creating the loader; instead, the client is required to create the resource.
+        This also matches the CachedRawResource API.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCreateResourceLoader): Remove the client parameter.
+        * html/HTMLMediaElement.h:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::MediaResourceLoader):
+        (WebCore::MediaResourceLoader::~MediaResourceLoader):
+        (WebCore::MediaResourceLoader::requestResource): Renamed from start().
+        (WebCore::MediaResourceLoader::removeResource): Remove resource from live resource list.
+        (WebCore::MediaResource::create): Utility factory.
+        (WebCore::MediaResource::MediaResource):
+        (WebCore::MediaResource::~MediaResource):
+        (WebCore::MediaResource::stop): Moved from MediaResourceLoader.
+        (WebCore::MediaResource::setDefersLoading): Ditto.
+        (WebCore::MediaResource::responseReceived): Ditto.
+        (WebCore::MediaResource::redirectReceived): Ditto.
+        (WebCore::MediaResource::dataSent): Ditto.
+        (WebCore::MediaResource::dataReceived): Ditto.
+        (WebCore::MediaResource::notifyFinished): Ditto.
+        (WebCore::MediaResource::getOrCreateReadBuffer): Ditto.
+        * loader/MediaResourceLoader.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::createResourceLoader):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerCreateResourceLoader):
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        (WebCore::PlatformMediaResourceClient::~PlatformMediaResourceClient): Renamed from PlatformMediaResourceLoaderClient.
+        (WebCore::PlatformMediaResourceClient::responseReceived): Client methods now take a reference to the resource.
+        (WebCore::PlatformMediaResourceClient::redirectReceived): Ditto.
+        (WebCore::PlatformMediaResourceClient::dataSent): Ditto. 
+        (WebCore::PlatformMediaResourceClient::dataReceived): Ditto.
+        (WebCore::PlatformMediaResourceClient::accessControlCheckFailed): Ditto.
+        (WebCore::PlatformMediaResourceClient::loadFailed): Ditto.
+        (WebCore::PlatformMediaResourceClient::loadFinished): Ditto.
+        (WebCore::PlatformMediaResourceClient::getOrCreateReadBuffer): Ditto.
+        (WebCore::PlatformMediaResourceLoader::PlatformMediaResourceLoader): Ditto.
+        (WebCore::PlatformMediaResource::PlatformMediaResource): 
+        (WebCore::PlatformMediaResource::~PlatformMediaResource): 
+        (WebCore::PlatformMediaResource::setClient):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+        (webKitWebSrcNeedData):
+        (webKitWebSrcEnoughData):
+        (CachedResourceStreamingClient::getOrCreateReadBuffer):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::dataReceived):
+        (CachedResourceStreamingClient::accessControlCheckFailed):
+        (CachedResourceStreamingClient::loadFailed):
+        (CachedResourceStreamingClient::loadFinished):
+
 2016-02-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make focusring painting subpixel aware.

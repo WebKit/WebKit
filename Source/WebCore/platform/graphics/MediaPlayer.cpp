@@ -1237,9 +1237,9 @@ CachedResourceLoader* MediaPlayer::cachedResourceLoader()
     return m_client.mediaPlayerCachedResourceLoader();
 }
 
-PassRefPtr<PlatformMediaResourceLoader> MediaPlayer::createResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient> client)
+PassRefPtr<PlatformMediaResourceLoader> MediaPlayer::createResourceLoader()
 {
-    return m_client.mediaPlayerCreateResourceLoader(WTFMove(client));
+    return m_client.mediaPlayerCreateResourceLoader();
 }
 
 #if ENABLE(VIDEO_TRACK)

@@ -38,24 +38,19 @@
 
 namespace WebCore {
 
-MediaResourceLoader::MediaResourceLoader(Document& document, const String& crossOriginMode, std::unique_ptr<PlatformMediaResourceLoaderClient> client)
-    : PlatformMediaResourceLoader(WTFMove(client))
-    , m_document(document)
+MediaResourceLoader::MediaResourceLoader(Document& document, const String& crossOriginMode)
+    : m_document(document)
     , m_crossOriginMode(crossOriginMode)
-    , m_didPassAccessControlCheck(false)
 {
 }
 
 MediaResourceLoader::~MediaResourceLoader()
 {
-    stop();
+    ASSERT(m_resources.isEmpty());
 }
 
-bool MediaResourceLoader::start(const ResourceRequest& request, LoadOptions options)
+RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(const ResourceRequest& request, LoadOptions options)
 {
-    if (m_resource)
-        return false;
-
     DataBufferingPolicy bufferingPolicy = options & LoadOption::BufferData ? WebCore::BufferData : WebCore::DoNotBufferData;
     RequestOriginPolicy corsPolicy = !m_crossOriginMode.isNull() ? PotentiallyCrossOriginEnabled : UseDefaultOriginRestrictionsForType;
     StoredCredentials allowCredentials = m_crossOriginMode.isNull() || equalLettersIgnoringASCIICase(m_crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
@@ -66,17 +61,42 @@ bool MediaResourceLoader::start(const ResourceRequest& request, LoadOptions opti
     if (!m_crossOriginMode.isNull())
         updateRequestForAccessControl(cacheRequest.mutableResourceRequest(), m_document.securityOrigin(), allowCredentials);
 
-    m_didPassAccessControlCheck = false;
+    CachedResourceHandle<CachedRawResource> resource = m_document.cachedResourceLoader().requestRawResource(cacheRequest);
+    if (!resource)
+        return nullptr;
 
-    m_resource = m_document.cachedResourceLoader().requestRawResource(cacheRequest);
-    if (!m_resource)
-        return false;
+    Ref<MediaResource> mediaResource = MediaResource::create(*this, resource);
+    m_resources.add(mediaResource.ptr());
 
-    m_resource->addClient(this);
-    return true;
+    return WTFMove(mediaResource);
 }
 
-void MediaResourceLoader::stop()
+void MediaResourceLoader::removeResource(MediaResource& mediaResource)
+{
+    ASSERT(m_resources.contains(&mediaResource));
+    m_resources.remove(&mediaResource);
+}
+
+Ref<MediaResource> MediaResource::create(MediaResourceLoader& loader, CachedResourceHandle<CachedRawResource> resource)
+{
+    return adoptRef(*new MediaResource(loader, resource));
+}
+
+MediaResource::MediaResource(MediaResourceLoader& loader, CachedResourceHandle<CachedRawResource> resource)
+    : m_loader(loader)
+    , m_resource(resource)
+{
+    ASSERT(resource);
+    resource->addClient(this);
+}
+
+MediaResource::~MediaResource()
+{
+    stop();
+    m_loader->removeResource(*this);
+}
+
+void MediaResource::stop()
 {
     if (!m_resource)
         return;
@@ -85,55 +105,78 @@ void MediaResourceLoader::stop()
     m_resource = nullptr;
 }
 
-void MediaResourceLoader::setDefersLoading(bool defersLoading)
+void MediaResource::setDefersLoading(bool defersLoading)
 {
     if (m_resource)
         m_resource->setDefersLoading(defersLoading);
 }
 
-void MediaResourceLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
+void MediaResource::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
     ASSERT_UNUSED(resource, resource == m_resource);
 
-    RefPtr<MediaResourceLoader> protect(this);
-    if (!m_crossOriginMode.isNull() && !resource->passesSameOriginPolicyCheck(*m_document.securityOrigin())) {
+    RefPtr<MediaResource> protect(this);
+    if (!m_loader->crossOriginMode().isNull() && !resource->passesSameOriginPolicyCheck(*m_loader->document().securityOrigin())) {
         static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy.");
-        m_document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
+        m_loader->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         m_didPassAccessControlCheck = false;
-        m_client->accessControlCheckFailed(ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
+        if (m_client)
+            m_client->accessControlCheckFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
         stop();
         return;
     }
 
-    m_didPassAccessControlCheck = !m_crossOriginMode.isNull();
-    m_client->responseReceived(response);
+    m_didPassAccessControlCheck = !m_loader->crossOriginMode().isNull();
+    if (m_client)
+        m_client->responseReceived(*this, response);
 }
 
-void MediaResourceLoader::dataReceived(CachedResource* resource, const char* data, int dataLength)
+void MediaResource::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& response)
 {
     ASSERT_UNUSED(resource, resource == m_resource);
 
-    RefPtr<MediaResourceLoader> protect(this);
-    m_client->dataReceived(data, dataLength);
+    RefPtr<MediaResource> protect(this);
+    if (m_client)
+        m_client->redirectReceived(*this, request, response);
 }
 
-void MediaResourceLoader::notifyFinished(CachedResource* resource)
+void MediaResource::dataSent(CachedResource* resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    ASSERT_UNUSED(resource, resource == m_resource);
+
+    RefPtr<MediaResource> protect(this);
+    if (m_client)
+        m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
+}
+
+void MediaResource::dataReceived(CachedResource* resource, const char* data, int dataLength)
+{
+    ASSERT_UNUSED(resource, resource == m_resource);
+
+    RefPtr<MediaResource> protect(this);
+    if (m_client)
+        m_client->dataReceived(*this, data, dataLength);
+}
+
+void MediaResource::notifyFinished(CachedResource* resource)
 {
     ASSERT(resource == m_resource);
 
-    RefPtr<MediaResourceLoader> protect(this);
-    if (resource->loadFailedOrCanceled())
-        m_client->loadFailed(resource->resourceError());
-    else
-        m_client->loadFinished();
+    RefPtr<MediaResource> protect(this);
+    if (m_client) {
+        if (resource->loadFailedOrCanceled())
+            m_client->loadFailed(*this, resource->resourceError());
+        else
+            m_client->loadFinished(*this);
+    }
     stop();
 }
 
 #if USE(SOUP)
-char* MediaResourceLoader::getOrCreateReadBuffer(CachedResource* resource, size_t requestedSize, size_t& actualSize)
+char* MediaResource::getOrCreateReadBuffer(CachedResource* resource, size_t requestedSize, size_t& actualSize)
 {
     ASSERT_UNUSED(resource, resource == m_resource);
-    return m_client->getOrCreateReadBuffer(requestedSize, actualSize);
+    return m_client ? m_client->getOrCreateReadBuffer(*this, requestedSize, actualSize) : nullptr;
 }
 #endif
 

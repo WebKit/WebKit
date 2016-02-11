@@ -33,21 +33,24 @@
 
 namespace WebCore {
 
+class PlatformMediaResource;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 
-class PlatformMediaResourceLoaderClient {
+class PlatformMediaResourceClient {
 public:
-    virtual ~PlatformMediaResourceLoaderClient() { }
+    virtual ~PlatformMediaResourceClient() { }
 
-    virtual void responseReceived(const ResourceResponse&) { }
-    virtual void dataReceived(const char*, int) { }
-    virtual void accessControlCheckFailed(const ResourceError&) { }
-    virtual void loadFailed(const ResourceError&) { }
-    virtual void loadFinished() { }
+    virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&) { }
+    virtual void redirectReceived(PlatformMediaResource&, ResourceRequest&, const ResourceResponse&) { }
+    virtual void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) { }
+    virtual void dataReceived(PlatformMediaResource&, const char*, int) { }
+    virtual void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) { }
+    virtual void loadFailed(PlatformMediaResource&, const ResourceError&) { }
+    virtual void loadFinished(PlatformMediaResource&) { }
 #if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(size_t /*requestedSize*/, size_t& /*actualSize*/) { return nullptr; };
+    virtual char* getOrCreateReadBuffer(PlatformMediaResource&, size_t /*requestedSize*/, size_t& /*actualSize*/) { return nullptr; };
 #endif
 };
 
@@ -61,18 +64,25 @@ public:
 
     virtual ~PlatformMediaResourceLoader() { }
 
-    virtual bool start(const ResourceRequest&, LoadOptions) = 0;
+    virtual RefPtr<PlatformMediaResource> requestResource(const ResourceRequest&, LoadOptions) = 0;
+
+protected:
+    PlatformMediaResourceLoader() { }
+};
+
+class PlatformMediaResource : public RefCounted<PlatformMediaResource> {
+    WTF_MAKE_NONCOPYABLE(PlatformMediaResource); WTF_MAKE_FAST_ALLOCATED;
+public:
+    PlatformMediaResource() { }
+    virtual ~PlatformMediaResource() { }
     virtual void stop() { }
     virtual void setDefersLoading(bool) { }
     virtual bool didPassAccessControlCheck() const { return false; }
 
-protected:
-    explicit PlatformMediaResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient> client)
-        : m_client(WTFMove(client))
-    {
-    }
+    void setClient(std::unique_ptr<PlatformMediaResourceClient>&& client) { m_client = WTFMove(client); }
 
-    std::unique_ptr<PlatformMediaResourceLoaderClient> m_client;
+protected:
+    std::unique_ptr<PlatformMediaResourceClient> m_client;
 };
 
 } // namespace WebCore
