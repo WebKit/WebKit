@@ -1,3 +1,15 @@
+2016-02-11  Frederic Wang  <fred.wang@free.fr>
+
+        Bug 154103 - [GTK] Build error after bug 154046
+        https://bugs.webkit.org/show_bug.cgi?id=154103
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitUserContent.cpp:
+        (_WebKitUserStyleSheet::_WebKitUserStyleSheet):
+        (webkitUserStyleSheetGetUserStyleSheet):
+        * UIProcess/API/gtk/WebKitUserContentPrivate.h:
+
 2016-02-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         Rename *Event::create* which creates events for bindings to *Event::createForBindings* and cleanup corresponding paths

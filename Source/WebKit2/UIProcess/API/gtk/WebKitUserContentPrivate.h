@@ -21,11 +21,12 @@
 #define WebKitUserContentPrivate_h
 
 #include "APIUserScript.h"
+#include "APIUserStyleSheet.h"
 #include "WebKitUserContent.h"
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 
 API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript*);
-const WebCore::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*);
+API::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*);
 
 #endif // WebKitUserContentPrivate_h

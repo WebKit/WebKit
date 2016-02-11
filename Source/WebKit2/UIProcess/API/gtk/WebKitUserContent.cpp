@@ -89,16 +89,16 @@ static inline Vector<String> toStringVector(const char* const* strv)
 
 struct _WebKitUserStyleSheet {
     _WebKitUserStyleSheet(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserStyleLevel level, const char* const* whitelist, const char* const* blacklist)
-        : userStyleSheet(std::make_unique<UserStyleSheet>(
+        : userStyleSheet(adoptRef(new API::UserStyleSheet(UserStyleSheet {
             String::fromUTF8(source), URL { },
             toStringVector(whitelist), toStringVector(blacklist),
             toUserContentInjectedFrames(injectedFrames),
-            toUserStyleLevel(level)))
+            toUserStyleLevel(level) })))
         , referenceCount(1)
     {
     }
 
-    std::unique_ptr<UserStyleSheet> userStyleSheet;
+    RefPtr<API::UserStyleSheet> userStyleSheet;
     int referenceCount;
 };
 
@@ -168,7 +168,7 @@ WebKitUserStyleSheet* webkit_user_style_sheet_new(const gchar* source, WebKitUse
     return userStyleSheet;
 }
 
-const UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet* userStyleSheet)
+API::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet* userStyleSheet)
 {
     return *userStyleSheet->userStyleSheet;
 }
