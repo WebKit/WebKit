@@ -24,7 +24,7 @@ class TestGroup extends LabeledObject {
         this._buildRequests.push(request);
         this._requestsAreInOrder = false;
         this._requestedRootSets = null;
-        this._rootSetToLabel = null;
+        this._rootSetToLabel.clear();
     }
 
     repetitionCount()
