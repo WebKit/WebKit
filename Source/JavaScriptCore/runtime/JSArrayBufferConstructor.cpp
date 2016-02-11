@@ -53,7 +53,7 @@ void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* pr
     Base::finishCreation(vm, ASCIILiteral("ArrayBuffer"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontEnum | DontDelete | ReadOnly);
-    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum);
 
     JSGlobalObject* globalObject = this->globalObject();
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isView, arrayBufferFuncIsView, DontEnum, 1);

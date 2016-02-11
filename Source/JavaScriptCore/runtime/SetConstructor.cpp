@@ -46,7 +46,7 @@ void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype, GetterSe
     Base::finishCreation(vm, setPrototype->classInfo()->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, setPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
-    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL callSet(ExecState* exec)

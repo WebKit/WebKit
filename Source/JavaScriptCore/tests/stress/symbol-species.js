@@ -6,12 +6,9 @@ function testSymbolSpeciesOnConstructor(constructor) {
     constructor[Symbol.species] = true;
     if (constructor[Symbol.species] !== constructor)
         throw "Symbol.species was mutable " + constructor.name;
-    try {
-        Object.defineProperty(constructor, Symbol.species, { value: true });
-    } catch(e) {
-        return;
-    }
-    throw "Symbol.species was configurable " + constructor.name;
+
+    // Symbol.species should be configurable.
+    Object.defineProperty(constructor, Symbol.species, { value: true });
 }
 
 

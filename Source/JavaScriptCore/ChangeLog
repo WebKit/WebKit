@@ -1,3 +1,42 @@
+2016-02-10  Keith Miller  <keith_miller@apple.com>
+
+        Symbol.species accessors on builtin constructors should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=154097
+
+        Reviewed by Benjamin Poulain.
+
+        We did not have the Symbol.species accessors on our builtin constructors
+        marked as configurable. This does not accurately follow the ES6 spec as
+        the ES6 spec states that all default accessors on builtins should be
+        configurable. This means that we need an additional watchpoint on
+        ArrayConstructor to make sure that no users re-configures Symbol.species.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::speciesConstructArray):
+        (JSC::ArrayPrototype::setConstructor):
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::didChangeConstructorOrSpeciesProperties):
+        (JSC::ArrayPrototype::didChangeConstructorProperty): Deleted.
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::finishCreation):
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        * runtime/MapConstructor.cpp:
+        (JSC::MapConstructor::finishCreation):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/SetConstructor.cpp:
+        (JSC::SetConstructor::finishCreation):
+        * tests/stress/array-species-config-array-constructor.js: Added.
+        (A):
+        * tests/stress/symbol-species.js:
+        (testSymbolSpeciesOnConstructor):
+
 2016-02-10  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] The destination of Sqrt should be Def, not UseDef

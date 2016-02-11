@@ -102,7 +102,7 @@ void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype,
     // no. of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 
-    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum);
 }
 
 void RegExpConstructor::destroy(JSCell* cell)
