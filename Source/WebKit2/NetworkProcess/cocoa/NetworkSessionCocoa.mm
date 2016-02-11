@@ -142,7 +142,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         WebCore::ResourceResponse resourceResponse(response);
         copyTimingData([dataTask _timingData], resourceResponse.resourceLoadTiming());
         auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->client().didReceiveResponse(resourceResponse, [completionHandlerCopy](WebCore::PolicyAction policyAction) {
+        networkDataTask->client().didReceiveResponseNetworkSession(resourceResponse, [completionHandlerCopy](WebCore::PolicyAction policyAction) {
             completionHandlerCopy(toNSURLSessionResponseDisposition(policyAction));
             Block_release(completionHandlerCopy);
         });

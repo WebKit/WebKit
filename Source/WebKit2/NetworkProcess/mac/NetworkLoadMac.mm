@@ -45,7 +45,7 @@ void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResp
     m_handle->continueWillCacheResponse(cfResponse);
 }
 
-#elif !USE(NETWORK_SESSION)
+#else
 
 void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
 {

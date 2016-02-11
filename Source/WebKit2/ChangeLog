@@ -1,3 +1,47 @@
+2016-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Use BlobResourceHandle when loading blob urls, even when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154096
+
+        Reviewed by Brady Eidson.
+        
+        This fixes at least http/tests/xmlhttprequest/blob-request-byte-range.html.
+
+        * NetworkProcess/NetworkDataTask.h:
+        Renamed NetworkDataTaskClient::didReceiveResponse to didReceiveResponseNetworkSession
+        to avoid conflicting with ResourceHandleClient::didReceiveResponse.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        Make a BlobResourceHandle instead of a NetworkDataTask if we have a request for a blob url.
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::setDefersLoading):
+        (WebKit::NetworkLoad::cancel):
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        (WebKit::NetworkLoad::continueDidReceiveResponse):
+        (WebKit::NetworkLoad::sharedDidReceiveResponse):
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::setPendingDownloadID):
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        (WebKit::NetworkLoad::cannotShowURL):
+        (WebKit::NetworkLoad::didReceiveResponseAsync):
+        (WebKit::NetworkLoad::willSendRequestAsync):
+        (WebKit::NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync):
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkLoad::supportsDataArray):
+        (WebKit::NetworkLoad::didReceiveDataArray):
+        (WebKit::NetworkLoad::didSendData):
+        (WebKit::NetworkLoad::receivedCancellation):
+        (WebKit::NetworkLoad::didReceiveResponse): Deleted.
+        Compile ResourceHandleClient when using NetworkSession because it is used for blobs now.
+        Also, add null checks because we now have NetworkLoads where either m_task or m_handle is always null.
+        * NetworkProcess/NetworkLoad.h:
+        (WebKit::NetworkLoad::pendingDownloadID):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        * NetworkProcess/mac/NetworkLoadMac.mm:
+        (WebKit::NetworkLoad::willCacheResponseAsync):
+
 2016-02-11  Frederic Wang  <fred.wang@free.fr>
 
         Bug 154103 - [GTK] Build error after bug 154046

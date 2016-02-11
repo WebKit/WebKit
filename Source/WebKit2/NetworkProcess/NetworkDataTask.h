@@ -65,7 +65,7 @@ class NetworkDataTaskClient {
 public:
     virtual void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RedirectCompletionHandler) = 0;
     virtual void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler) = 0;
-    virtual void didReceiveResponse(const WebCore::ResourceResponse&, ResponseCompletionHandler) = 0;
+    virtual void didReceiveResponseNetworkSession(const WebCore::ResourceResponse&, ResponseCompletionHandler) = 0;
     virtual void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) = 0;
     virtual void didCompleteWithError(const WebCore::ResourceError&) = 0;
     virtual void didBecomeDownload() = 0;
