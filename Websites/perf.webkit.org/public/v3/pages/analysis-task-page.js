@@ -13,7 +13,7 @@ class AnalysisTaskPage extends PageWithHeading {
         this._task = null;
         this._testGroups = null;
         this._renderedTestGroups = null;
-        this._renderedCurrentTestGroup = null;
+        this._renderedCurrentTestGroup = undefined;
         this._analysisResults = null;
         this._measurementSet = null;
         this._startPoint = null;
@@ -24,6 +24,8 @@ class AnalysisTaskPage extends PageWithHeading {
         this._analysisResultsViewer = this.content().querySelector('analysis-results-viewer').component();
         this._analysisResultsViewer.setTestGroupCallback(this._showTestGroup.bind(this));
         this._testGroupResultsTable = this.content().querySelector('test-group-results-table').component();
+
+        this.content().querySelector('.test-group-retry-form').onsubmit = this._retryCurrentTestGroup.bind(this);
     }
 
     title() { return this._task ? this._task.label() : 'Analysis Task'; }
@@ -85,7 +87,7 @@ class AnalysisTaskPage extends PageWithHeading {
         var series = this._measurementSet.fetchedTimeSeries('current', false, false);
         var startPoint = series.findById(this._task.startMeasurementId());
         var endPoint = series.findById(this._task.endMeasurementId());
-        if (!startPoint || !endPoint)
+        if (!startPoint || !endPoint || !this._measurementSet.hasFetchedRange(startPoint.time, endPoint.time))
             return;
 
         this._analysisResultsViewer.setPoints(startPoint, endPoint);
@@ -139,7 +141,7 @@ class AnalysisTaskPage extends PageWithHeading {
 
         var v2URL = `/v2/#/analysis/task/${this._taskId}`;
         this.content().querySelector('.error-message').innerHTML +=
-            `<p>This page is read only for now. To schedule a new A/B testing job, use <a href="${v2URL}">v2 page</a>.</p>`;
+            `<p>To schedule a custom A/B testing, use <a href="${v2URL}">v2 UI</a>.</p>`;
 
          this._chartPane.render();
 
@@ -168,7 +170,8 @@ class AnalysisTaskPage extends PageWithHeading {
                 }));
             this._renderedCurrentTestGroup = null;
         }
-        if (this._renderedCurrentTestGroup != this._currentTestGroup) {
+
+        if (this._renderedCurrentTestGroup !== this._currentTestGroup) {
             if (this._renderedCurrentTestGroup) {
                 var element = this.content().querySelector('.test-group-list-' + this._renderedCurrentTestGroup.id());
                 if (element)
@@ -179,8 +182,17 @@ class AnalysisTaskPage extends PageWithHeading {
                 if (element)
                     element.classList.add('selected');
             }
+
+            this.content().querySelector('.test-group-retry-button').textContent = this._currentTestGroup ? 'Retry' : 'Confirm the change';
+
+            var repetitionCount = this._currentTestGroup ? this._currentTestGroup.repetitionCount() : 4;
+            var repetitionCountController = this.content().querySelector('.test-group-retry-repetition-count');
+            repetitionCountController.value = repetitionCount;
+
             this._renderedCurrentTestGroup = this._currentTestGroup;
         }
+
+        this.content().querySelector('.test-group-retry-button').disabled = !(this._currentTestGroup || this._startPoint);
 
         this._testGroupResultsTable.render();
 
@@ -192,6 +204,86 @@ class AnalysisTaskPage extends PageWithHeading {
         this._currentTestGroup = testGroup;        
         this._testGroupResultsTable.setTestGroup(this._currentTestGroup);
         this.render();
+    }
+
+    _retryCurrentTestGroup(event)
+    {
+        event.preventDefault();
+        console.assert(this._currentTestGroup || this._startPoint);
+
+        var testGroupName;
+        var rootSetList;
+        var rootSetLabels;
+
+        if (this._currentTestGroup) {
+            var testGroup = this._currentTestGroup;
+            testGroupName = this._createRetryNameForTestGroup(testGroup.name());
+            rootSetList = testGroup.requestedRootSets();
+            rootSetLabels = rootSetList.map(function (rootSet) { return testGroup.labelForRootSet(rootSet); });
+        } else {
+            testGroupName = 'Confirming the change';
+            rootSetList = [this._startPoint.rootSet(), this._endPoint.rootSet()];
+            rootSetLabels = ['Point 0', `Point ${this._endPoint.seriesIndex - this._startPoint.seriesIndex}`];
+        }
+
+        var rootSetsByName = {};
+        for (var repository of rootSetList[0].repositories())
+            rootSetsByName[repository.name()] = [];
+
+        var setIndex = 0;
+        for (var rootSet of rootSetList) {
+            for (var repository of rootSet.repositories()) {
+                var list = rootSetsByName[repository.name()];
+                if (!list) {
+                    alert(`Set ${rootSetLabels[setIndex]} specifies ${repository.label()} but set ${rootSetLabels[0]} does not.`);
+                    return null;
+                }
+                list.push(rootSet.commitForRepository(repository).revision());
+            }
+            setIndex++;
+            for (var name in rootSetsByName) {
+                var list = rootSetsByName[name];
+                if (list.length < setIndex) {
+                    alert(`Set ${rootSetLabels[0]} specifies ${repository.label()} but set ${rootSetLabels[setIndex]} does not.`);
+                    return null;
+                }
+            }
+        }
+
+        var repetitionCount = this.content().querySelector('.test-group-retry-repetition-count').value;
+
+        TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, rootSetsByName)
+            .then(this._didFetchTestGroups.bind(this), function (error) {
+            alert('Failed to create a new test group: ' + error);
+        });
+    }
+
+    _createRetryNameForTestGroup(name)
+    {
+        var nameWithNumberMatch = name.match(/(.+?)\s*\(\s*(\d+)\s*\)\s*$/);
+        var number = 1;
+        if (nameWithNumberMatch) {
+            name = nameWithNumberMatch[1];
+            number = parseInt(nameWithNumberMatch[2]);
+        }
+
+        var newName;
+        do {
+            number++;
+            newName = `${name} (${number})`;
+        } while (this._hasDuplicateTestGroupName(newName));
+
+        return newName;
+    }
+
+    _hasDuplicateTestGroupName(name)
+    {
+        console.assert(this._testGroups);
+        for (var group of this._testGroups) {
+            if (group.name() == name)
+                return true;
+        }
+        return false;
     }
 
     static htmlTemplate()
@@ -208,7 +300,26 @@ class AnalysisTaskPage extends PageWithHeading {
                 </section>
                 <section class="test-group-view">
                     <ul class="test-group-list"></ul>
-                    <div class="test-group-details"><test-group-results-table></test-group-results-table></div>
+                    <div class="test-group-details">
+                        <test-group-results-table></test-group-results-table>
+                        <form class="test-group-retry-form">
+                            <button class="test-group-retry-button" type="submit">Retry</button>
+                            with
+                            <select class="test-group-retry-repetition-count">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                                <option>10</option>
+                            </select>
+                            iterations per set
+                        </form>
+                    </div>
                 </section>
             </div>
         </div>
@@ -268,23 +379,34 @@ class AnalysisTaskPage extends PageWithHeading {
             .test-group-view {
                 display: table;
                 margin: 0 1rem;
+                margin-bottom: 2rem;
             }
 
             .test-group-details {
                 display: table-cell;
                 margin-bottom: 1rem;
+                padding: 0;
+                margin: 0;
+            }
+
+            .test-group-retry-form {
+                padding: 0;
+                margin: 0.5rem;
             }
 
             .test-group-list {
                 display: table-cell;
-            }
-
-            .test-group-list:not(:empty) {
                 margin: 0;
                 padding: 0.2rem 0;
                 list-style: none;
                 border-right: solid 1px #ccc;
                 white-space: nowrap;
+            }
+
+            .test-group-list:empty {
+                margin: 0;
+                padding: 0;
+                border-right: none;
             }
 
             .test-group-list li {

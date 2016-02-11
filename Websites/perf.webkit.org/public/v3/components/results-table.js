@@ -226,6 +226,10 @@ class ResultsTable extends ComponentBase {
                 font-size: 0.8rem;
             }
 
+            .results-table-extra-repositories:empty {
+                padding: 0;
+            }
+
             .results-table-extra-repositories li {
                 display: inline;
             }

@@ -11,6 +11,7 @@ class TestGroup extends LabeledObject {
         this._requestsAreInOrder = false;
         this._repositories = null;
         this._requestedRootSets = null;
+        this._rootSetToLabel = new Map;
         this._allRootSets = null;
         console.assert(!object.platform || object.platform instanceof Platform);
         this._platform = object.platform;
@@ -23,6 +24,20 @@ class TestGroup extends LabeledObject {
         this._buildRequests.push(request);
         this._requestsAreInOrder = false;
         this._requestedRootSets = null;
+        this._rootSetToLabel = null;
+    }
+
+    repetitionCount()
+    {
+        if (!this._buildRequests.length)
+            return 0;
+        var rootSet = this._buildRequests[0].rootSet();
+        var count = 0;
+        for (var request of this._buildRequests) {
+            if (request.rootSet() == rootSet)
+                count++;
+        }
+        return count;
     }
 
     requestedRootSets()
@@ -36,6 +51,12 @@ class TestGroup extends LabeledObject {
                     this._requestedRootSets.push(set);
             }
             this._requestedRootSets.sort(function (a, b) { return a.latestCommitTime() - b.latestCommitTime(); });
+            var setIndex = 0;
+            for (var set of this._requestedRootSets) {
+                this._rootSetToLabel.set(set, String.fromCharCode('A'.charCodeAt(0) + setIndex));
+                setIndex++;
+            }
+
         }
         return this._requestedRootSets;
     }
@@ -44,6 +65,12 @@ class TestGroup extends LabeledObject {
     {
         this._orderBuildRequests();
         return this._buildRequests.filter(function (request) { return request.rootSet() == rootSet; });
+    }
+
+    labelForRootSet(rootSet)
+    {
+        console.assert(this._requestedRootSets);
+        return this._rootSetToLabel.get(rootSet);
     }
 
     _orderBuildRequests()
@@ -62,6 +89,11 @@ class TestGroup extends LabeledObject {
     hasCompleted()
     {
         return this._buildRequests.every(function (request) { return request.hasCompleted(); });
+    }
+
+    hasStarted()
+    {
+        return this._buildRequests.some(function (request) { return request.hasStarted(); });
     }
 
     compareTestResults(rootSetA, rootSetB)
@@ -85,9 +117,15 @@ class TestGroup extends LabeledObject {
         }
 
         if (!this.hasCompleted()) {
-            result.status = 'incomplete';
-            result.label = 'Running';
-            result.fullLabel = 'Running';
+            if (this.hasStarted()) {
+                result.status = 'running';
+                result.label = 'Running';
+                result.fullLabel = 'Running';
+            } else {
+                result.status = 'pending';
+                result.label = 'Pending';
+                result.fullLabel = 'Pending';
+            }
         } else if (result.changeType) {
             var significance = result.isStatisticallySignificant ? 'significant' : 'insignificant';
             result.fullLabel = `${result.label} (statistically ${significance})`;
@@ -107,32 +145,47 @@ class TestGroup extends LabeledObject {
         return values;
     }
 
-    static fetchByTask(taskId)
+    static createAndRefetchTestGroups(task, name, repetitionCount, rootSets)
     {
-        return this.cachedFetch('../api/test-groups', {task: taskId}).then(function (data) {
-            var testGroups = data['testGroups'].map(function (row) {
-                row.platform = Platform.findById(row.platform);
-                return new TestGroup(row.id, row);
-            });
-
-            var rootIdMap = {};
-            for (var root of data['roots'])
-                rootIdMap[root.id] = root;
-
-            var rootSets = data['rootSets'].map(function (row) {
-                row.roots = row.roots.map(function (rootId) { return rootIdMap[rootId]; });
-                row.testGroup = RootSet.findById(row.testGroup);
-                return new RootSet(row.id, row);
-            });
-
-            var buildRequests = data['buildRequests'].map(function (rawData) {
-                rawData.testGroup = TestGroup.findById(rawData.testGroup);
-                rawData.rootSet = RootSet.findById(rawData.rootSet);
-                return new BuildRequest(rawData.id, rawData);
-            });
-
-            return testGroups;
+        var self = this;
+        return PrivilegedAPI.sendRequest('create-test-group', {
+            task: task.id(),
+            name: name,
+            repetitionCount: repetitionCount,
+            rootSets: rootSets,
+        }).then(function (data) {
+            return self.cachedFetch('../api/test-groups', {task: task.id()}, true).then(self._createModelsFromFetchedTestGroups.bind(self));
         });
     }
 
+    static fetchByTask(taskId)
+    {
+        return this.cachedFetch('../api/test-groups', {task: taskId}).then(this._createModelsFromFetchedTestGroups.bind(this));
+    }
+
+    static _createModelsFromFetchedTestGroups(data)
+    {
+        var testGroups = data['testGroups'].map(function (row) {
+            row.platform = Platform.findById(row.platform);
+            return TestGroup.ensureSingleton(row.id, row);
+        });
+
+        var rootIdMap = {};
+        for (var root of data['roots'])
+            rootIdMap[root.id] = root;
+
+        var rootSets = data['rootSets'].map(function (row) {
+            row.roots = row.roots.map(function (rootId) { return rootIdMap[rootId]; });
+            row.testGroup = RootSet.findById(row.testGroup);
+            return RootSet.ensureSingleton(row.id, row);
+        });
+
+        var buildRequests = data['buildRequests'].map(function (rawData) {
+            rawData.testGroup = TestGroup.findById(rawData.testGroup);
+            rawData.rootSet = RootSet.findById(rawData.rootSet);
+            return BuildRequest.ensureSingleton(rawData.id, rawData);
+        });
+
+        return testGroups;
+    }
 }

@@ -7,6 +7,7 @@ class MeasurementCluster {
     }
 
     startTime() { return this._response['startTime']; }
+    endTime() { return this._response['endTime']; }
 
     addToSeries(series, configType, includeOutliers, idMap)
     {

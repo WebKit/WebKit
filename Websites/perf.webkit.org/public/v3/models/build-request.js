@@ -21,6 +21,7 @@ class BuildRequest extends DataModelObject {
     rootSet() { return this._rootSet; }
 
     hasCompleted() { return this._status == 'failed' || this._status == 'completed'; }
+    hasStarted() { return this._status != 'pending'; }
     statusLabel()
     {
         switch (this._status) {

@@ -1,5 +1,69 @@
 2016-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard should have UI to retry A/B testing
+        https://bugs.webkit.org/show_bug.cgi?id=154090
+
+        Reviewed by Chris Dumez.
+
+        Added a button to re-try an existing A/B testing group with a custom repetition count. The same button functions
+        as a way of confirming the progression/regression when there have been no A/B testing scheduled in the task.
+
+        Also fixed the bug that A/B testing groups that have been waiting for other test groups will be shown as "running".
+
+        * public/v3/components/results-table.js:
+        (ResultsTable.cssTemplate): Don't pad the list of extra repositories when it's empty.
+
+        * public/v3/components/test-group-results-table.js:
+        (TestGroupResultsTable.prototype.buildRowGroups): Use TestGroup.labelForRootSet instead of manually
+        computing the letter for each configuration set.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.hasStarted): Added.
+
+        * public/v3/models/data-model.js:
+        (DataModelObject.ensureSingleton): Added.
+        (DataModelObject.cachedFetch): Added noCache option. This is used when re-fetching the test groups after
+        creating one.
+
+        * public/v3/models/measurement-cluster.js:
+        (MeasurementCluster.prototype.startTime): Added.
+
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet.prototype.hasFetchedRange): Added. Returns true only if there are no "holes" (cluster
+        yet to be fetched) between the specified time range. This was added to fix a bug in AnalysisTaskPage's
+        _didFetchMeasurement.
+
+        * public/v3/models/test-group.js:
+        (TestGroup): Added this._rootSetToLabel.
+        (TestGroup.prototype.addBuildRequest): Reset this._rootSetToLabel along with this._requestedRootSets. 
+        (TestGroup.prototype.repetitionCount): Added. Returns the number of iterations executed per set. We assume that
+        every root set in the test group shares a single repetition count.
+        (TestGroup.prototype.requestedRootSets): Now populates this._rootSetToLabel for labelForRootSet.
+        (TestGroup.prototype.labelForRootSet): Added.
+        (TestGroup.prototype.hasStarted): Added.
+        (TestGroup.prototype.compareTestResults): Use 'running' and 'pending' to differentiate test groups that are waiting
+        for other groups to finish running from the ones that are actually running ('incomplete' before this patch).
+        (TestGroup.fetchByTask):
+        (TestGroup.createAndRefetchTestGroups): Added. Creates a new test group using the privileged-api/create-test-group
+        and fetches the list of test groups for the specified analysis task.
+        (TestGroup._createModelsFromFetchedTestGroups): Extracted from TestGroup.fetchByTask.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage): Initialize _renderedCurrentTestGroup to undefined so that we'd always can differentiate
+        the initial call to AnalysisTaskPage.render and subsequent calls in which it's identical to _currentTestGroup.
+        (AnalysisTaskPage.prototype._didFetchMeasurement): Fixed a bug that we don't exit early even when some
+        clusters in between startPoint and endPoint are still being fetched via newly added hasFetchedRange.
+        (AnalysisTaskPage.prototype.render): Update the default repetition count based on the current test group.
+        Also update the label of the button to "Confirm the change" if there is no A/B testing in this task.
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup): Added. Re-triggers an existing A/B testing group or creates
+        the A/B testing for the entire range of the analysis task.
+        (AnalysisTaskPage.prototype._hasDuplicateTestGroupName): Added.
+        (AnalysisTaskPage.prototype._createRetryNameForTestGroup): Added.
+        (AnalysisTaskPage.htmlTemplate): Added form controls to re-trigger A/B testing.
+        (AnalysisTaskPage.cssTemplate): Updated the style.
+
+2016-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Removed the duplicated definition of ChartPaneBase.
 
         * public/v3/components/chart-pane-base.js:

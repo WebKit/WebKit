@@ -30,7 +30,7 @@ class TestGroupResultsTable extends ResultsTable {
             return [];
 
         var rootSets = this._testGroup.requestedRootSets();
-        var groups = rootSets.map(function (rootSet, setIndex) {
+        var groups = rootSets.map(function (rootSet) {
             var rows = [new ResultsTableRow('Mean', rootSet)];
             var results = [];
 
@@ -51,17 +51,17 @@ class TestGroupResultsTable extends ResultsTable {
             if (!isNaN(aggregatedResult.value))
                 rows[0].setResult(aggregatedResult);
 
-            return {heading: String.fromCharCode('A'.charCodeAt(0) + setIndex), rows:rows};
+            return {heading: testGroup.labelForRootSet(rootSet), rows:rows};
         });
 
         var comparisonRows = [];
         for (var i = 0; i < rootSets.length; i++) {
             for (var j = i + 1; j < rootSets.length; j++) {
-                var startConfig = String.fromCharCode('A'.charCodeAt(0) + i);
-                var endConfig = String.fromCharCode('A'.charCodeAt(0) + j);
+                var startConfig = testGroup.labelForRootSet(rootSets[i]);
+                var endConfig = testGroup.labelForRootSet(rootSets[j]);
 
                 var result = this._testGroup.compareTestResults(rootSets[i], rootSets[j]);
-                if (result.status == 'incomplete' || result.status == 'failed')
+                if (result.status == 'pending' || result.status == 'running' || result.status == 'failed')
                     continue;
 
                 var row = new ResultsTableRow(`${startConfig} to ${endConfig}`, null);
@@ -70,7 +70,7 @@ class TestGroupResultsTable extends ResultsTable {
             }
         }
 
-        groups.push({heading: '', rows: comparisonRows});
+        groups.unshift({heading: '', rows: comparisonRows});
 
         return groups;
     }

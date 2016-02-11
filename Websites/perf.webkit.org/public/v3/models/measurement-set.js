@@ -191,6 +191,23 @@ class MeasurementSet {
         });
     }
 
+    hasFetchedRange(startTime, endTime)
+    {
+        console.assert(startTime < endTime);
+        var hasHole = false;
+        var previousEndTime = null;
+        for (var cluster of this._sortedClusters) {
+            if (cluster.startTime() < startTime && startTime < cluster.endTime())
+                hasHole = false;
+            if (previousEndTime !== null && previousEndTime != cluster.startTime())
+                hasHole = true;
+            if (cluster.startTime() < endTime && endTime < cluster.endTime())
+                break;
+            previousEndTime = cluster.endTime();
+        }
+        return !hasHole;
+    }
+
     fetchedTimeSeries(configType, includeOutliers, extendToFuture)
     {
         Instrumentation.startMeasuringTime('MeasurementSet', 'fetchedTimeSeries');
