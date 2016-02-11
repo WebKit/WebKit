@@ -386,11 +386,11 @@ CeilFloat U:F:32, D:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 
-SqrtDouble U:F:64, UD:F:64
+SqrtDouble U:F:64, D:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
-SqrtFloat U:F:32, UD:F:32
+SqrtFloat U:F:32, D:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 
