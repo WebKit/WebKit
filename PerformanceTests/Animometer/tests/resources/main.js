@@ -727,7 +727,12 @@ Utilities.extendObject(Stage, {
 
     randomBool: function()
     {
-        return !!Math.round(this.random(0, 1));
+        return !!Math.round(Math.random());
+    },
+
+    randomSign: function()
+    {
+        return Math.random() >= .5 ? 1 : -1;
     },
 
     randomInt: function(min, max)
@@ -906,6 +911,17 @@ Benchmark = Utilities.createClass(
         return this._stage;
     },
 
+    get timestamp()
+    {
+        return this._currentTimestamp - this._startTimestamp;
+    },
+
+    backgroundColor: function()
+    {
+        var stage = window.getComputedStyle(document.getElementById("stage"));
+        return stage["background-color"];
+    },
+
     run: function()
     {
         return this.waitUntilReady().then(function() {
@@ -938,6 +954,7 @@ Benchmark = Utilities.createClass(
         if (!this._didWarmUp) {
             if (this._currentTimestamp - this._previousTimestamp >= 100) {
                 this._didWarmUp = true;
+                this._startTimestamp = this._currentTimestamp;
                 this._controller.start(this._currentTimestamp, this._stage);
                 this._previousTimestamp = this._currentTimestamp;
             }

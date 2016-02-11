@@ -13,6 +13,10 @@ var Suites = [];
 Suites.push(new Suite("Animometer",
     [
         {
+            url: "master/multiply.html",
+            name: "Multiply"
+        },
+        {
             url: "master/canvas-stage.html?pathType=arcs",
             name: "Canvas arcs"
         },
@@ -23,6 +27,14 @@ Suites.push(new Suite("Animometer",
         {
             url: "master/canvas-stage.html?pathType=line&lineCap=square",
             name: "Canvas line segments"
+        },
+        {
+            url: "master/focus.html",
+            name: "Focus"
+        },
+        {
+            url: "master/image-data.html",
+            name: "Images"
         },
         {
             url: "master/particles.html",

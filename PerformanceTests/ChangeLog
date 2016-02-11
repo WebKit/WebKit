@@ -1,3 +1,29 @@
+2016-02-10  Jon Lee  <jonlee@apple.com>
+
+        Add new benchmark tests.
+        https://bugs.webkit.org/show_bug.cgi?id=154063
+
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        Add tests for get/put image data, filters, opacity, and css transforms.
+
+        * Animometer/resources/runner/benchmark-runner.js:
+        (_runBenchmarkAndRecordResults): Update the body background color to match that of
+        the stage.
+        (this._runNextIteration): Clear the background color style for the results page.
+        * Animometer/resources/runner/tests.js:
+        * Animometer/tests/master/focus.html: Added.
+        * Animometer/tests/master/image-data.html: Added.
+        * Animometer/tests/master/multiply.html: Added.
+        * Animometer/tests/master/resources/focus.js: Added.
+        * Animometer/tests/master/resources/image-data.js: Added.
+        * Animometer/tests/master/resources/multiply.js: Added.
+        * Animometer/tests/master/resources/stage.css: Move common styles out.
+        * Animometer/tests/resources/main.js: Update Stage.randomBool to use Math.random.
+        Add Stage.randomSign for randomly setting a direction. Add the notion of the
+        current timestamp of the test to Benchmark, since some animations cycle through
+        colors and rely on an incremental counter like the time.
+
 2016-02-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add internal benchmark tests for CSS mix-blend-modes and filters
@@ -7,20 +33,20 @@
 
         * Animometer/resources/debug-runner/tests.js: Include the new tests in the
         "HTML suite" of the debug runner.
-        
+
         * Animometer/resources/extensions.js:
         (Utilities.browserPrefix):
         (Utilities.setElementPrefixedProperty): Utility functions to allow setting
         prefixed style properties.
-        
+
         * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
         Set the mix-blend-mode and the filter to some random values if the options
         of the test requested that.
-        
+
         * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
         (parseShapeParameters): Parse the url options "blend" and "filter" and set
         the corresponding flags.
-        
+
         * Animometer/tests/resources/main.js:
         (randomStyleMixBlendMode):
         (randomStyleFilter): Return random mix-blend-mode and filter.
