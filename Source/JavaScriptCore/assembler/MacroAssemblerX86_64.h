@@ -376,11 +376,11 @@ public:
     
     void lshift64(RegisterID src, RegisterID dest)
     {
-        ASSERT(src != dest);
-        
         if (src == X86Registers::ecx)
             m_assembler.shlq_CLr(dest);
         else {
+            ASSERT(src != dest);
+            
             // Can only shift by ecx, so we do some swapping if we see anything else.
             swap(src, X86Registers::ecx);
             m_assembler.shlq_CLr(dest);
@@ -395,11 +395,11 @@ public:
 
     void rshift64(RegisterID src, RegisterID dest)
     {
-        ASSERT(src != dest);
-
         if (src == X86Registers::ecx)
             m_assembler.sarq_CLr(dest);
         else {
+            ASSERT(src != dest);
+            
             // Can only shift by ecx, so we do some swapping if we see anything else.
             swap(src, X86Registers::ecx);
             m_assembler.sarq_CLr(dest);
@@ -414,11 +414,11 @@ public:
 
     void urshift64(RegisterID src, RegisterID dest)
     {
-        ASSERT(src != dest);
-
         if (src == X86Registers::ecx)
             m_assembler.shrq_CLr(dest);
         else {
+            ASSERT(src != dest);
+            
             // Can only shift by ecx, so we do some swapping if we see anything else.
             swap(src, X86Registers::ecx);
             m_assembler.shrq_CLr(dest);

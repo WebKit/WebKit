@@ -1,3 +1,32 @@
+2016-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        MacroAssemblerX86 should be happy with shift(cx, cx)
+        https://bugs.webkit.org/show_bug.cgi?id=154124
+
+        Reviewed by Saam Barati.
+
+        Prior to this change the assembler asserted that shift_amount and dest cannot be the same.
+        That's a good assertion for when shift_amount is not in cx. But if it's in cx already then
+        it's OK for them to be the same. Air will sometimes do shift(cx, cx) if you do "x << x" and
+        the coalescing got particularly clever.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::lshift32):
+        (JSC::MacroAssemblerX86Common::rshift32):
+        (JSC::MacroAssemblerX86Common::urshift32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::lshift64):
+        (JSC::MacroAssemblerX86_64::rshift64):
+        (JSC::MacroAssemblerX86_64::urshift64):
+        * b3/testb3.cpp:
+        (JSC::B3::testLShiftSelf32):
+        (JSC::B3::testRShiftSelf32):
+        (JSC::B3::testURShiftSelf32):
+        (JSC::B3::testLShiftSelf64):
+        (JSC::B3::testRShiftSelf64):
+        (JSC::B3::testURShiftSelf64):
+        (JSC::B3::run):
+
 2016-02-11  Saam barati  <sbarati@apple.com>
 
         The sampling profiler's stack walker methods should be marked with SUPPRESS_ASAN

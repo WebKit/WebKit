@@ -10065,6 +10065,147 @@ void testFoldPathEqual()
     CHECK(invoke<intptr_t>(*code, 42) == 0);
 }
 
+void testLShiftSelf32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Shl, Origin(), arg, arg));
+
+    auto code = compile(proc);
+
+    auto check = [&] (int32_t value) {
+        CHECK(invoke<int32_t>(*code, value) == value << (value & 31));
+    };
+
+    check(0);
+    check(1);
+    check(31);
+    check(32);
+}
+
+void testRShiftSelf32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, SShr, Origin(), arg, arg));
+
+    auto code = compile(proc);
+
+    auto check = [&] (int32_t value) {
+        CHECK(invoke<int32_t>(*code, value) == value >> (value & 31));
+    };
+
+    check(0);
+    check(1);
+    check(31);
+    check(32);
+}
+
+void testURShiftSelf32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, ZShr, Origin(), arg, arg));
+
+    auto code = compile(proc);
+
+    auto check = [&] (uint32_t value) {
+        CHECK(invoke<uint32_t>(*code, value) == value >> (value & 31));
+    };
+
+    check(0);
+    check(1);
+    check(31);
+    check(32);
+}
+
+void testLShiftSelf64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Shl, Origin(), arg, root->appendNew<Value>(proc, Trunc, Origin(), arg)));
+
+    auto code = compile(proc);
+
+    auto check = [&] (int64_t value) {
+        CHECK(invoke<int64_t>(*code, value) == value << (value & 63));
+    };
+
+    check(0);
+    check(1);
+    check(31);
+    check(32);
+    check(63);
+    check(64);
+}
+
+void testRShiftSelf64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, SShr, Origin(), arg, root->appendNew<Value>(proc, Trunc, Origin(), arg)));
+
+    auto code = compile(proc);
+
+    auto check = [&] (int64_t value) {
+        CHECK(invoke<int64_t>(*code, value) == value >> (value & 63));
+    };
+
+    check(0);
+    check(1);
+    check(31);
+    check(32);
+    check(63);
+    check(64);
+}
+
+void testURShiftSelf64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, ZShr, Origin(), arg, root->appendNew<Value>(proc, Trunc, Origin(), arg)));
+
+    auto code = compile(proc);
+
+    auto check = [&] (uint64_t value) {
+        CHECK(invoke<uint64_t>(*code, value) == value >> (value & 63));
+    };
+
+    check(0);
+    check(1);
+    check(31);
+    check(32);
+    check(63);
+    check(64);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -11466,6 +11607,13 @@ void run(const char* filter)
     RUN(testComputeDivisionMagic<int32_t>(2, -2147483647, 0));
     RUN(testTrivialInfiniteLoop());
     RUN(testFoldPathEqual());
+    
+    RUN(testRShiftSelf32());
+    RUN(testURShiftSelf32());
+    RUN(testLShiftSelf32());
+    RUN(testRShiftSelf64());
+    RUN(testURShiftSelf64());
+    RUN(testLShiftSelf64());
 
     if (tasks.isEmpty())
         usage();

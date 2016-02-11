@@ -295,11 +295,10 @@ public:
 
     void lshift32(RegisterID shift_amount, RegisterID dest)
     {
-        ASSERT(shift_amount != dest);
-
         if (shift_amount == X86Registers::ecx)
             m_assembler.shll_CLr(dest);
         else {
+            ASSERT(shift_amount != dest);
             // On x86 we can only shift by ecx; if asked to shift by another register we'll
             // need rejig the shift amount into ecx first, and restore the registers afterwards.
             // If we dest is ecx, then shift the swapped register!
@@ -424,11 +423,11 @@ public:
 
     void rshift32(RegisterID shift_amount, RegisterID dest)
     {
-        ASSERT(shift_amount != dest);
-
         if (shift_amount == X86Registers::ecx)
             m_assembler.sarl_CLr(dest);
         else {
+            ASSERT(shift_amount != dest);
+            
             // On x86 we can only shift by ecx; if asked to shift by another register we'll
             // need rejig the shift amount into ecx first, and restore the registers afterwards.
             // If we dest is ecx, then shift the swapped register!
@@ -461,11 +460,11 @@ public:
     
     void urshift32(RegisterID shift_amount, RegisterID dest)
     {
-        ASSERT(shift_amount != dest);
-
         if (shift_amount == X86Registers::ecx)
             m_assembler.shrl_CLr(dest);
         else {
+            ASSERT(shift_amount != dest);
+        
             // On x86 we can only shift by ecx; if asked to shift by another register we'll
             // need rejig the shift amount into ecx first, and restore the registers afterwards.
             // If we dest is ecx, then shift the swapped register!
