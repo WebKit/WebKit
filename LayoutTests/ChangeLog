@@ -1,3 +1,21 @@
+2016-02-11  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make focusring painting subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=154111
+
+        Reviewed by David Hyatt.
+
+        Do not integral snap focusring rects while collecting them (use device pixel snapping instead
+        right before passing them to GraphicsContext::drawFocusRing).
+
+        * platform/mac/accessibility/image-link-expected.txt:
+        * platform/mac/accessibility/mac/aria-columnrowheaders-expected.txt: Copied from LayoutTests/platform/mac/accessibility/table-cells-expected.txt.
+        * platform/mac/accessibility/mac/document-links-expected.txt: Added.
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-cells-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+        * platform/mac/accessibility/table-with-rules-expected.txt:
+
 2016-02-11  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         [INTL] Implement Intl.NumberFormat.prototype.resolvedOptions ()

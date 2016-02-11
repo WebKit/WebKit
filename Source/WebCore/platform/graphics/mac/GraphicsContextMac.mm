@@ -85,7 +85,7 @@ void GraphicsContext::drawFocusRing(const Path& path, float /* width */, float /
 }
 
 #if PLATFORM(MAC)
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float, float offset, double timeOffset, bool& needsRedraw)
+void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float offset, double timeOffset, bool& needsRedraw)
 {
     if (paintingDisabled())
         return;
@@ -98,7 +98,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float, float o
 }
 #endif
 
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float, float offset, const Color&)
+void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float, float offset, const Color&)
 {
 #if !PLATFORM(IOS)
     if (paintingDisabled())

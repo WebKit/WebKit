@@ -137,7 +137,7 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
 
 // FIXME: This is nearly identical to the GraphicsContext::drawFocusRing function in GraphicsContextMac.mm.
 // The code could move to GraphicsContextCG.cpp and be shared.
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float width, float offset, const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
     if (paintingDisabled())
         return;

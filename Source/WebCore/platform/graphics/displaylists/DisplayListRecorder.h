@@ -98,7 +98,7 @@ public:
     void drawPath(const Path&);
 
     void drawFocusRing(const Path&, int width, int offset, const Color&);
-    void drawFocusRing(const Vector<IntRect>&, int width, int offset, const Color&);
+    void drawFocusRing(const Vector<FloatRect>&, int width, int offset, const Color&);
 
     void save();
     void restore();

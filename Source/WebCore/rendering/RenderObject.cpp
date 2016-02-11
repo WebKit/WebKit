@@ -720,9 +720,9 @@ RenderBlock* RenderObject::containingBlock() const
 
 void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    Vector<IntRect> focusRingRects;
+    Vector<LayoutRect> focusRingRects;
     addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
-    IntRect urlRect = unionRect(focusRingRects);
+    LayoutRect urlRect = unionRect(focusRingRects);
 
     if (urlRect.isEmpty())
         return;
@@ -798,18 +798,17 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms, bool* wasFixed
 
 void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
 {
-    Vector<IntRect> rects;
+    Vector<LayoutRect> rects;
     // FIXME: addFocusRingRects() needs to be passed this transform-unaware
     // localToAbsolute() offset here because RenderInline::addFocusRingRects()
     // implicitly assumes that. This doesn't work correctly with transformed
     // descendants.
     FloatPoint absolutePoint = localToAbsolute();
     addFocusRingRects(rects, flooredLayoutPoint(absolutePoint));
-    size_t count = rects.size();
-    for (size_t i = 0; i < count; ++i) {
-        IntRect rect = rects[i];
-        rect.move(-absolutePoint.x(), -absolutePoint.y());
-        quads.append(localToAbsoluteQuad(FloatQuad(rect)));
+    float deviceScaleFactor = document().deviceScaleFactor();
+    for (auto rect : rects) {
+        rect.moveBy(LayoutPoint(-absolutePoint));
+        quads.append(localToAbsoluteQuad(FloatQuad(snapRectToDevicePixels(rect, deviceScaleFactor))));
     }
 }
 

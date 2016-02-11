@@ -743,18 +743,18 @@ namespace {
 
 class AbsoluteRectsGeneratorContext {
 public:
-    AbsoluteRectsGeneratorContext(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset)
+    AbsoluteRectsGeneratorContext(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
         : m_rects(rects)
         , m_accumulatedOffset(accumulatedOffset) { }
 
     void addRect(const FloatRect& rect)
     {
-        IntRect intRect = enclosingIntRect(rect);
-        intRect.move(m_accumulatedOffset.x(), m_accumulatedOffset.y());
-        m_rects.append(intRect);
+        LayoutRect adjustedRect = LayoutRect(rect);
+        adjustedRect.moveBy(m_accumulatedOffset);
+        m_rects.append(adjustedRect);
     }
 private:
-    Vector<IntRect>& m_rects;
+    Vector<LayoutRect>& m_rects;
     const LayoutPoint& m_accumulatedOffset;
 };
 
@@ -762,8 +762,11 @@ private:
 
 void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    AbsoluteRectsGeneratorContext context(rects, accumulatedOffset);
+    Vector<LayoutRect> lineboxRects;
+    AbsoluteRectsGeneratorContext context(lineboxRects, accumulatedOffset);
     generateLineBoxRects(context);
+    for (const auto& rect : lineboxRects)
+        rects.append(snappedIntRect(rect));
 
     if (RenderBoxModelObject* continuation = this->continuation()) {
         if (is<RenderBox>(*continuation)) {
@@ -1567,7 +1570,7 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
+void RenderInline::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
 {
     AbsoluteRectsGeneratorContext context(rects, additionalOffset);
     generateLineBoxRects(context);

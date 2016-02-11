@@ -247,7 +247,7 @@ void Recorder::drawFocusRing(const Path& path, int width, int offset, const Colo
     updateItemExtent(newItem);
 }
 
-void Recorder::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
+void Recorder::drawFocusRing(const Vector<FloatRect>& rects, int width, int offset, const Color& color)
 {
     DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawFocusRingRects::create(rects, width, offset, color)));
     updateItemExtent(newItem);

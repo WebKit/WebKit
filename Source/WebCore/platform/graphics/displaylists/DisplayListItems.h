@@ -933,18 +933,18 @@ private:
 
 class DrawFocusRingRects : public DrawingItem {
 public:
-    static Ref<DrawFocusRingRects> create(const Vector<IntRect>& rects, int width, int offset, const Color& color)
+    static Ref<DrawFocusRingRects> create(const Vector<FloatRect>& rects, int width, int offset, const Color& color)
     {
         return adoptRef(*new DrawFocusRingRects(rects, width, offset, color));
     }
 
-    const Vector<IntRect> rects() const { return m_rects; }
+    const Vector<FloatRect> rects() const { return m_rects; }
     int width() const { return m_width; }
     int offset() const { return m_offset; }
     Color color() const { return m_color; }
 
 private:
-    DrawFocusRingRects(const Vector<IntRect>& rects, int width, int offset, const Color& color)
+    DrawFocusRingRects(const Vector<FloatRect>& rects, int width, int offset, const Color& color)
         : DrawingItem(ItemType::DrawFocusRingRects)
         , m_rects(rects)
         , m_width(width)
@@ -957,7 +957,7 @@ private:
 
     virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
-    Vector<IntRect> m_rects;
+    Vector<FloatRect> m_rects;
     int m_width;
     int m_offset;
     Color m_color;

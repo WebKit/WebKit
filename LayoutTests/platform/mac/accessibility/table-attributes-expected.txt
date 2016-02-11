@@ -14,7 +14,7 @@ AXRoleDescription: cell
 AXChildren: <array of size 3>
 AXHelp: 
 AXParent: <AXCell>
-AXSize: NSSize: {144, 66}
+AXSize: NSSize: {145, 66}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -48,7 +48,7 @@ AXRoleDescription: cell
 AXChildren: <array of size 3>
 AXHelp: 
 AXParent: <AXCell>
-AXSize: NSSize: {144, 66}
+AXSize: NSSize: {145, 66}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -487,7 +487,7 @@ AXRoleDescription: row
 AXChildren: <array of size 3>
 AXHelp: 
 AXParent: <AXRow>
-AXSize: NSSize: {336, 30}
+AXSize: NSSize: {335, 30}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -515,7 +515,7 @@ AXRoleDescription: row
 AXChildren: <array of size 2>
 AXHelp: 
 AXParent: <AXRow>
-AXSize: NSSize: {336, 36}
+AXSize: NSSize: {335, 36}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -543,7 +543,7 @@ AXRoleDescription: row
 AXChildren: <array of size 5>
 AXHelp: 
 AXParent: <AXRow>
-AXSize: NSSize: {336, 30}
+AXSize: NSSize: {335, 30}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -571,7 +571,7 @@ AXRoleDescription: row
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXRow>
-AXSize: NSSize: {336, 30}
+AXSize: NSSize: {335, 30}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -1083,7 +1083,7 @@ AXRoleDescription: group
 AXChildren: <array of size 5>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {336, 66}
+AXSize: NSSize: {335, 66}
 AXTitle: 
 AXDescription: 
 AXValue: 

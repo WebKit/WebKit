@@ -436,10 +436,10 @@ public:
     bool mustUseShadowBlur() const;
 #endif
 
-    void drawFocusRing(const Vector<IntRect>&, float width, float offset, const Color&);
+    void drawFocusRing(const Vector<FloatRect>&, float width, float offset, const Color&);
     void drawFocusRing(const Path&, float width, float offset, const Color&);
 #if PLATFORM(MAC)
-    void drawFocusRing(const Vector<IntRect>&, float width, float offset, double timeOffset, bool& needsRedraw);
+    void drawFocusRing(const Vector<FloatRect>&, float offset, double timeOffset, bool& needsRedraw);
 #endif
 
     void setLineCap(LineCap);

@@ -80,7 +80,7 @@ private:
     virtual bool avoidsFloats() const override { return true; }
     virtual bool canHaveGeneratedChildren() const override { return false; }
     
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
 
     virtual bool canBeProgramaticallyScrolled() const override { return true; }
 

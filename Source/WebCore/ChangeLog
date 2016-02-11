@@ -1,3 +1,63 @@
+2016-02-11  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make focusring painting subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=154111
+
+        Reviewed by David Hyatt.
+
+        Do not integral snap focusring rects while collecting them (use device pixel snapping instead
+        right before passing them to GraphicsContext::drawFocusRing).
+
+        Unable to test.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawFocusRingRects::create):
+        (WebCore::DisplayList::DrawFocusRingRects::rects):
+        (WebCore::DisplayList::DrawFocusRingRects::DrawFocusRingRects):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawFocusRing):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addFocusRingRectsForInlineChildren):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addFocusRingRects):
+        * rendering/RenderBox.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing):
+        (WebCore::RenderElement::issueRepaintForOutlineAuto):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::addFocusRingRects):
+        * rendering/RenderInline.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::addFocusRingRects):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addPDFURLRect):
+        (WebCore::RenderObject::absoluteFocusRingQuads):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::addFocusRingRects):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::addFocusRingRects):
+        * rendering/RenderTextControl.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::addFocusRingRects):
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::addFocusRingRects):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::addFocusRingRects):
+        * rendering/svg/RenderSVGShape.h:
+
 2016-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing post-review comments after r196393

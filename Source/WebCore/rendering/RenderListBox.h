@@ -89,7 +89,7 @@ private:
 
     virtual void layout() override;
 
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) override;
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) override;
 
     virtual bool canBeProgramaticallyScrolled() const override { return true; }
     virtual void autoscroll(const IntPoint&) override;

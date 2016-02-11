@@ -2085,15 +2085,19 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const LayoutPoint& pain
 {
     ASSERT(style.outlineStyleIsAuto());
 
-    Vector<IntRect> focusRingRects;
+    Vector<LayoutRect> focusRingRects;
     addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
+    Vector<FloatRect> pixelSnappedFocusRingRects;
+    float deviceScaleFactor = document().deviceScaleFactor();
+    for (const auto& rect : focusRingRects)
+        pixelSnappedFocusRingRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
 #if PLATFORM(MAC)
     bool needsRepaint;
-    paintInfo.context().drawFocusRing(focusRingRects, style.outlineWidth(), style.outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
+    paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, style.outlineOffset(), document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
     if (needsRepaint)
         document().page()->focusController().setFocusedElementNeedsRepaint();
 #else
-    paintInfo.context().drawFocusRing(focusRingRects, style.outlineWidth(), style.outlineOffset(), style.visitedDependentColor(CSSPropertyOutlineColor));
+    paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, style.outlineWidth(), style.outlineOffset(), style.visitedDependentColor(CSSPropertyOutlineColor));
 #endif
 }
 
@@ -2168,7 +2172,7 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
 void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
 {
     LayoutRect repaintRect;
-    Vector<IntRect> focusRingRects;
+    Vector<LayoutRect> focusRingRects;
     addFocusRingRects(focusRingRects, LayoutPoint(), containerForRepaint());
     for (auto rect : focusRingRects) {
         rect.inflate(outlineSize);

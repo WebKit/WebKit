@@ -609,7 +609,7 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float /* offs
     cairo_restore(cr);
 }
 
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float width, float /* offset */, const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float /* offset */, const Color& color)
 {
     if (paintingDisabled())
         return;
