@@ -39,7 +39,7 @@ class CSSFontFace;
 class CSSFontSelector;
 class FontDescription;
 
-class CSSSegmentedFontFace {
+class CSSSegmentedFontFace final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSSegmentedFontFace(CSSFontSelector&);

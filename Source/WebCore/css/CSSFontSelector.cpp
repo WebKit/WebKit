@@ -469,7 +469,7 @@ CSSSegmentedFontFace* CSSFontSelector::getFontFace(const FontDescription& fontDe
 
     FontTraitsMask traitsMask = fontDescription.traitsMask();
 
-    std::unique_ptr<CSSSegmentedFontFace>& face = segmentedFontFaceCache.add(traitsMask, nullptr).iterator->value;
+    auto& face = segmentedFontFaceCache.add(traitsMask, nullptr).iterator->value;
     if (face)
         return face.get();
 
