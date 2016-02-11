@@ -51,7 +51,9 @@ bool hasPartialXmmRegUpdate(const Inst& inst)
     case ConvertInt32ToDouble:
     case ConvertInt64ToDouble:
     case SqrtDouble:
+    case SqrtFloat:
     case CeilDouble:
+    case CeilFloat:
         return true;
     default:
         break;

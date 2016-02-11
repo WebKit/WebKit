@@ -1,3 +1,15 @@
+2016-02-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] SqrtFloat and CeilFloat also suffer from partial register stalls
+        https://bugs.webkit.org/show_bug.cgi?id=154131
+
+        Reviewed by Filip Pizlo.
+
+        Looks like I forgot to update this when adding Float support.
+        Credit to Filip for finding this issue.
+
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+
 2016-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         Cannot call initializeIndex() if we didn't create the array using tryCreateUninitialized()
