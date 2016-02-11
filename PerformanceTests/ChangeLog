@@ -1,3 +1,11 @@
+2016-02-11  Jon Lee  <jonlee@apple.com>
+
+        Fix a missing refactoring.
+
+        * Animometer/tests/master/resources/multiply.js:
+        (animate): Move to Utilities.lerp.
+        (_lerp): Deleted.
+
 2016-02-10  Jon Lee  <jonlee@apple.com>
 
         Add new benchmark tests.

@@ -87,8 +87,8 @@ var MultiplyStage = Utilities.createSubclass(Stage,
 
         var progress = this._benchmark.timestamp % 10000 / 10000;
         var bounceProgress = Math.sin(2 * Math.abs( 0.5 - progress));
-        var l = this._lerp(bounceProgress, 20, 50);
-        var hslPrefix = "hsla(" + this._lerp(progress, 0, 360) + ",100%,";
+        var l = Utilities.lerp(bounceProgress, 20, 50);
+        var hslPrefix = "hsla(" + Utilities.lerp(progress, 0, 360) + ",100%,";
 
         for (var i = 0; i < this._offsetIndex; ++i) {
             var tile = this.tiles[i];
@@ -104,11 +104,6 @@ var MultiplyStage = Utilities.createSubclass(Stage,
             this.tiles[i].active = false;
             this.tiles[i].element.style.backgroundColor = "";
         }
-    },
-
-    _lerp: function(value, min, max)
-    {
-        return min + ( max - min ) * value;
     }
 });
 
