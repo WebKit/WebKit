@@ -1,3 +1,23 @@
+2016-02-11  Michael Saboff  <msaboff@apple.com>
+
+        bmalloc: large aligned allocations will put 1 or 2 free object on free list without merging with free neighbors
+        https://bugs.webkit.org/show_bug.cgi?id=154091
+
+        Reviewed by Geoffrey Garen.
+
+        If we split off any unused free object in the aligned version of Heap::allocateLarge(), we merge them with
+        free neighbors before putting them back on the free list.  Added helpers to verify that when we
+        add LargeObjects to the free list their neighbors are allocated.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateLarge): Deleted private helper version and rolled it into the two the
+        two public versions of allocateLarge().
+        * bmalloc/Heap.h:
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::prevIsAllocated): New helper.
+        (bmalloc::LargeObject::nextIsAllocated): New helper.
+        (bmalloc::LargeObject::merge): Check that the merge object has allocated neighbors.
+
 2016-02-05  Saam barati  <sbarati@apple.com>
 
         bmalloc: largeMax calculation is wrong on iOS

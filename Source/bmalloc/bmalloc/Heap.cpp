@@ -346,21 +346,7 @@ void Heap::deallocateXLarge(std::unique_lock<StaticMutex>& lock, void* object)
     lock.lock();
 }
 
-void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, LargeObject& largeObject, size_t size)
-{
-    BASSERT(largeObject.isFree());
-
-    if (largeObject.size() - size > largeMin) {
-        std::pair<LargeObject, LargeObject> split = largeObject.split(size);
-        largeObject = split.first;
-        m_largeObjects.insert(split.second);
-    }
-
-    largeObject.setFree(false);
-    return largeObject.begin();
-}
-
-void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t size)
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)
 {
     BASSERT(size <= largeMax);
     BASSERT(size >= largeMin);
@@ -372,10 +358,27 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t size)
         largeObject = m_vmHeap.allocateLargeObject(size);
     }
 
-    return allocateLarge(lock, largeObject, size);
+    BASSERT(largeObject.isFree());
+
+    LargeObject nextLargeObject;
+
+    if (largeObject.size() - size > largeMin) {
+        std::pair<LargeObject, LargeObject> split = largeObject.split(size);
+        largeObject = split.first;
+        nextLargeObject = split.second;
+    }
+    
+    largeObject.setFree(false);
+    
+    if (nextLargeObject) {
+        BASSERT(nextLargeObject.nextIsAllocated());
+        m_largeObjects.insert(nextLargeObject);
+    }
+    
+    return largeObject.begin();
 }
 
-void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size, size_t unalignedSize)
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size, size_t unalignedSize)
 {
     BASSERT(size <= largeMax);
     BASSERT(size >= largeMin);
@@ -393,15 +396,38 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, 
         largeObject = m_vmHeap.allocateLargeObject(alignment, size, unalignedSize);
     }
 
+    LargeObject prevLargeObject;
+    LargeObject nextLargeObject;
+
     size_t alignmentMask = alignment - 1;
     if (test(largeObject.begin(), alignmentMask)) {
         size_t prefixSize = roundUpToMultipleOf(alignment, largeObject.begin() + largeMin) - largeObject.begin();
         std::pair<LargeObject, LargeObject> pair = largeObject.split(prefixSize);
-        m_largeObjects.insert(pair.first);
+        prevLargeObject = pair.first;
         largeObject = pair.second;
     }
 
-    return allocateLarge(lock, largeObject, size);
+    BASSERT(largeObject.isFree());
+    
+    if (largeObject.size() - size > largeMin) {
+        std::pair<LargeObject, LargeObject> split = largeObject.split(size);
+        largeObject = split.first;
+        nextLargeObject = split.second;
+    }
+    
+    largeObject.setFree(false);
+
+    if (prevLargeObject) {
+        LargeObject merged = prevLargeObject.merge();
+        m_largeObjects.insert(merged);
+    }
+
+    if (nextLargeObject) {
+        LargeObject merged = nextLargeObject.merge();
+        m_largeObjects.insert(merged);
+    }
+
+    return largeObject.begin();
 }
 
 void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, const LargeObject& largeObject)
