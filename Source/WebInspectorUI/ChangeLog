@@ -1,3 +1,16 @@
+2016-02-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Switching actions in Edit Breakpoint popover causes a jerk
+        https://bugs.webkit.org/show_bug.cgi?id=154093
+        <rdar://problem/24597869>
+
+        Reviewed by Timothy Hatcher.
+
+        Adjusted CodeMirror eval editor styles to match vanilla input field.
+
+        * UserInterface/Views/BreakpointActionView.css:
+        (.breakpoint-action-eval-editor):
+
 2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Regression: Web Inspector: Sometimes in Elements panel two elements showed as selected at the same time
