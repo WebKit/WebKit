@@ -1,5 +1,22 @@
 2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        AnalysisResultsViewer never uses this._smallerIsBetter
+        https://bugs.webkit.org/show_bug.cgi?id=154134
+
+        Reviewed by Chris Dumez.
+
+        Removed the unused instance variable _smallerIsBetter from AnalysisResultsViewer and TestGroupStackingBlock.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer): Removed the unused _smallerIsBetter.
+        (AnalysisResultsViewer.prototype.setSmallerIsBetter): Deleted.
+        (AnalysisResultsViewer.prototype.buildRowGroups):
+        (AnalysisResultsViewer.TestGroupStackingBlock): Removed the unused _smallerIsBetter.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype._didFetchTask):
+
+2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r196440.
 
         * public/v3/models/test-group.js:

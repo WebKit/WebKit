@@ -68,7 +68,6 @@ class AnalysisTaskPage extends PageWithHeading {
 
         var formatter = metric.makeFormatter(4);
         this._analysisResultsViewer.setValueFormatter(formatter);
-        this._analysisResultsViewer.setSmallerIsBetter(metric.isSmallerBetter());
         this._testGroupResultsTable.setValueFormatter(formatter);
 
         this._chartPane.configure(platform.id(), metric.id());

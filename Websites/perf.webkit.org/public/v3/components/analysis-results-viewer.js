@@ -3,7 +3,6 @@ class AnalysisResultsViewer extends ResultsTable {
     constructor()
     {
         super('analysis-results-viewer');
-        this._smallerIsBetter = false;
         this._startPoint = null;
         this._endPoint = null;
         this._testGroups = null;
@@ -15,12 +14,6 @@ class AnalysisResultsViewer extends ResultsTable {
     }
 
     setTestGroupCallback(callback) { this._testGroupCallback = callback; }
-
-    setSmallerIsBetter(smallerIsBetter)
-    {
-        this._smallerIsBetter = smallerIsBetter;
-        this._shouldRenderTable = true;
-    }
 
     setCurrentTestGroup(testGroup)
     {
@@ -104,7 +97,7 @@ class AnalysisResultsViewer extends ResultsTable {
                 var block = testGroupLayoutMap.get(testGroup);
                 if (!block) {
                     block = new AnalysisResultsViewer.TestGroupStackingBlock(
-                        testGroup, self._smallerIsBetter, self._classForTestGroup(testGroup), self._openStackingBlock.bind(self, testGroup));
+                        testGroup, self._classForTestGroup(testGroup), self._openStackingBlock.bind(self, testGroup));
                     testGroupLayoutMap.set(testGroup, block);
                 }
                 block.addRowIndex(entry, rowIndex);
@@ -308,10 +301,9 @@ AnalysisResultsViewer.RootSetInTestGroup = class {
 }
 
 AnalysisResultsViewer.TestGroupStackingBlock = class {
-    constructor(testGroup, smallerIsBetter, className, callback)
+    constructor(testGroup, className, callback)
     {
         this._testGroup = testGroup;
-        this._smallerIsBetter = smallerIsBetter;
         this._rootSetIndexRowIndexMap = [];
         this._className = className;
         this._label = null;
