@@ -82,6 +82,7 @@ public:
     {
     }
 
+    SUPPRESS_ASAN
     size_t walk(Vector<UnprocessedStackFrame>& stackTrace, bool& didRunOutOfSpace)
     {
         if (sReportStats)
@@ -113,6 +114,7 @@ public:
 
 private:
 
+    SUPPRESS_ASAN
     void advanceToParentFrame()
     {
         m_callFrame = m_callFrame->callerFrame(m_vmEntryFrame);
@@ -123,6 +125,7 @@ private:
         return !m_callFrame;
     }
 
+    SUPPRESS_ASAN
     void resetAtMachineFrame()
     {
         if (isAtTop())

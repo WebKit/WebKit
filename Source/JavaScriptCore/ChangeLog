@@ -1,3 +1,21 @@
+2016-02-11  Saam barati  <sbarati@apple.com>
+
+        The sampling profiler's stack walker methods should be marked with SUPPRESS_ASAN
+        https://bugs.webkit.org/show_bug.cgi?id=154123
+
+        Reviewed by Mark Lam.
+
+        The entire premise of the sampling profiler is to load from
+        another thread's memory. We should SUPPRESS_ASAN on the
+        methods that do this.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::FrameWalker::walk):
+        (JSC::FrameWalker::advanceToParentFrame):
+        (JSC::FrameWalker::isAtTop):
+        (JSC::FrameWalker::resetAtMachineFrame):
+
 2016-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix after r190063.
