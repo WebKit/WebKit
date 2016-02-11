@@ -1,3 +1,13 @@
+2016-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix after r190063.
+
+        * dfg/DFGSpeculativeJIT.cpp: Removed property svn:executable.
+        * dfg/DFGSpeculativeJIT.h: Removed property svn:executable.
+        * jit/JIT.h: Removed property svn:executable.
+        * jit/JITInlines.h: Removed property svn:executable.
+        * jit/JITOpcodes.cpp: Removed property svn:executable.
+
 2016-02-10  Keith Miller  <keith_miller@apple.com>
 
         Symbol.species accessors on builtin constructors should be configurable
