@@ -2525,6 +2525,9 @@ Node* ByteCodeParser::handlePutByOffset(
 
 bool ByteCodeParser::check(const ObjectPropertyCondition& condition)
 {
+    if (!condition)
+        return false;
+    
     if (m_graph.watchCondition(condition))
         return true;
     
@@ -2772,14 +2775,15 @@ Node* ByteCodeParser::load(
 
                 ObjectPropertyCondition presenceCondition =
                     presenceLike(knownBase, uid, variant.offset(), variant.structureSet());
-
-                ObjectPropertyCondition equivalenceCondition =
-                    presenceCondition.attemptToMakeEquivalenceWithoutBarrier();
-                if (m_graph.watchCondition(equivalenceCondition))
-                    return weakJSConstant(equivalenceCondition.requiredValue());
-
-                if (check(presenceCondition))
-                    needStructureCheck = false;
+                if (presenceCondition) {
+                    ObjectPropertyCondition equivalenceCondition =
+                        presenceCondition.attemptToMakeEquivalenceWithoutBarrier();
+                    if (m_graph.watchCondition(equivalenceCondition))
+                        return weakJSConstant(equivalenceCondition.requiredValue());
+                    
+                    if (check(presenceCondition))
+                        needStructureCheck = false;
+                }
             }
         }
     }

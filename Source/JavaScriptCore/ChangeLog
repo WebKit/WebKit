@@ -1,3 +1,31 @@
+2016-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::ByteCodeParser needs to null check the result of presenceLike()
+        https://bugs.webkit.org/show_bug.cgi?id=154135
+        rdar://problem/24291586
+
+        Reviewed by Geoffrey Garen.
+
+        ByteCodeParser::presenceLike() could return a null object property condition if it detects a
+        contradiction. That could happen due to bogus profiling. It's totally OK - we just need to
+        bail from using a property condition when that happens.
+
+        * bytecode/ObjectPropertyCondition.h:
+        (JSC::ObjectPropertyCondition::equivalence):
+        (JSC::ObjectPropertyCondition::operator bool):
+        (JSC::ObjectPropertyCondition::object):
+        (JSC::ObjectPropertyCondition::condition):
+        (JSC::ObjectPropertyCondition::operator!): Deleted.
+        * bytecode/PropertyCondition.h:
+        (JSC::PropertyCondition::equivalence):
+        (JSC::PropertyCondition::operator bool):
+        (JSC::PropertyCondition::kind):
+        (JSC::PropertyCondition::uid):
+        (JSC::PropertyCondition::operator!): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::check):
+        (JSC::DFG::ByteCodeParser::load):
+
 2016-02-11  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] SqrtFloat and CeilFloat also suffer from partial register stalls
