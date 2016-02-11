@@ -1,3 +1,15 @@
+2016-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !(ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)) after r196281
+        https://bugs.webkit.org/show_bug.cgi?id=154035
+
+        Reviewed by Antti Koivisto.
+
+        Follow-up fix after r196365. Removed guards around slotNodeIndex.
+
+        * dom/ComposedTreeIterator.h:
+        (WebCore::ComposedTreeIterator::Context::Context):
+
 2016-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Updating bindings test reference file for JSTestEventConstructor.cpp after r196400
