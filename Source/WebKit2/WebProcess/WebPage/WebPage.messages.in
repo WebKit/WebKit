@@ -357,7 +357,7 @@ messages -> WebPage LegacyReceiver {
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)
     AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
 
-    InsertTextAsync(String text, struct WebKit::EditingRange replacementRange, bool registerUndoGroup)
+    InsertTextAsync(String text, struct WebKit::EditingRange replacementRange, bool registerUndoGroup, uint32_t editingRangeIsRelativeTo)
     GetMarkedRangeAsync(uint64_t callbackID)
     GetSelectedRangeAsync(uint64_t callbackID)
     CharacterIndexForPointAsync(WebCore::IntPoint point, uint64_t callbackID);

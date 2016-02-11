@@ -1747,6 +1747,8 @@ void WebViewImpl::centerSelectionInVisibleArea()
 void WebViewImpl::selectionDidChange()
 {
     updateFontPanelIfNeeded();
+    if (!m_isHandlingAcceptedCandidate)
+        m_softSpaceRange = NSMakeRange(NSNotFound, 0);
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     updateWebViewImplAdditions();
     if (!m_page->editorState().isMissingPostLayoutData)
@@ -2210,6 +2212,7 @@ void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidat
     if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
         return;
 
+    m_isHandlingAcceptedCandidate = true;
     NSRange range = [acceptedCandidate range];
     if (acceptedCandidate.replacementString && [acceptedCandidate.replacementString length] > 0) {
         NSRange replacedRange = NSMakeRange(range.location, [acceptedCandidate.replacementString length]);
@@ -2361,6 +2364,11 @@ void WebViewImpl::completeImmediateActionAnimation()
 void WebViewImpl::didChangeContentSize(CGSize newSize)
 {
     [m_view _web_didChangeContentSize:NSSizeFromCGSize(newSize)];
+}
+
+void WebViewImpl::didHandleAcceptedCandidate()
+{
+    m_isHandlingAcceptedCandidate = false;
 }
 
 void WebViewImpl::setIgnoresNonWheelEvents(bool ignoresNonWheelEvents)
@@ -3548,7 +3556,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     if (!dictationAlternatives.isEmpty())
         m_page->insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives, registerUndoGroup);
     else
-        m_page->insertTextAsync(eventText, replacementRange, registerUndoGroup);
+        m_page->insertTextAsync(eventText, replacementRange, registerUndoGroup, needToRemoveSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::Document);
 }
 
 void WebViewImpl::selectedRangeWithCompletionHandler(void(^completionHandlerPtr)(NSRange selectedRange))

@@ -31,6 +31,11 @@
 
 namespace WebKit {
 
+enum class EditingRangeIsRelativeTo : uint8_t {
+    Document,
+    Paragraph,
+};
+
 struct EditingRange {
     EditingRange()
         : location(notFound)

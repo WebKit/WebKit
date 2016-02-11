@@ -209,6 +209,8 @@ private:
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) override;
     virtual void* immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>) override;
 
+    virtual void didHandleAcceptedCandidate() override;
+
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) override;
 
     virtual void didChangeBackgroundColor() override;

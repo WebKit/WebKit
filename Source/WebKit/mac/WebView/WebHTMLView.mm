@@ -6097,6 +6097,10 @@ static BOOL writingDirectionKeyBindingsEnabled()
     [self _updateSelectionForInputManager];
 #if !PLATFORM(IOS)
     [self _updateFontPanel];
+    if (Frame* coreFrame = core([self _frame])) {
+        if (!coreFrame->editor().isHandlingAcceptedCandidate())
+            _private->softSpaceRange = NSMakeRange(NSNotFound, 0);
+    }
 #endif
 }
 
@@ -7098,16 +7102,23 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (!coreFrame || !coreFrame->editor().canEdit())
         return;
 
+    BOOL needToRemoveSoftSpace = NO;
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    if (_private->softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(_private->softSpaceRange) || replacementRange.location == NSNotFound) && replacementRange.length == 0 && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text language:nil])
+    if (_private->softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(_private->softSpaceRange) || replacementRange.location == NSNotFound) && !replacementRange.length && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text language:nil]) {
         replacementRange = _private->softSpaceRange;
+        needToRemoveSoftSpace = YES;
+    }
 #endif
 #if !PLATFORM(IOS)
     _private->softSpaceRange = NSMakeRange(NSNotFound, 0);
 #endif
 
-    if (replacementRange.location != NSNotFound)
-        [[self _frame] _selectNSRange:replacementRange];
+    if (replacementRange.location != NSNotFound) {
+        NSRangeIsRelativeTo rangeIsRelativeTo = needToRemoveSoftSpace ? NSRangeIsRelativeTo::Paragraph : NSRangeIsRelativeTo::Document;
+        RefPtr<Range> domRange = [[self _frame] _convertToDOMRange:replacementRange rangeIsRelativeTo:rangeIsRelativeTo];
+        if (domRange)
+            coreFrame->selection().setSelection(VisibleSelection(*domRange, SEL_DEFAULT_AFFINITY));
+    }
 
     bool eventHandled = false;
     String eventText = text;

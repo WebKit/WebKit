@@ -63,6 +63,11 @@ namespace WebCore {
 
 typedef WebCore::HistoryItem WebCoreHistoryItem;
 
+enum class NSRangeIsRelativeTo : uint8_t {
+    Document,
+    Paragraph,
+};
+
 WebCore::Frame* core(WebFrame *);
 WebFrame *kit(WebCore::Frame *);
 
@@ -160,6 +165,7 @@ WebView *getWebView(WebFrame *webFrame);
 #endif
 - (NSRange)_convertToNSRange:(WebCore::Range*)range;
 - (PassRefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)nsrange;
+- (PassRefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)nsrange rangeIsRelativeTo:(NSRangeIsRelativeTo)rangeIsRelativeTo;
 
 - (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes;

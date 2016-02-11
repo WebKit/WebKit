@@ -780,6 +780,11 @@ void* PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<
     return m_impl->immediateActionAnimationControllerForHitTestResult(hitTestResult.get(), type, userData.get());
 }
 
+void PageClientImpl::didHandleAcceptedCandidate()
+{
+    m_impl->didHandleAcceptedCandidate();
+}
+
 void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)
 {
     [menu popUpMenuPositioningItem:nil atLocation:location inView:m_view];

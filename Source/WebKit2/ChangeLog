@@ -1,3 +1,81 @@
+2016-02-11  Beth Dakin  <bdakin@apple.com>
+
+        Soft spaces are often tracked in the wrong spot
+        https://bugs.webkit.org/show_bug.cgi?id=154127
+        -and corresponding-
+        rdar://problem/24493140
+
+        Reviewed by Sam Weinig.
+
+        Soft spaces are in the wrong space now for two reasons. First of all, the 
+        NSRange we get from the accepted candidate is relative to the paragraph 
+        start, so without this patch, soft spaces are only ever right for the first 
+        paragraph. Secondly, if focus changes for any reason other than text 
+        insertion, soft spaces are also wrong because they need to be re-set.
+
+        New enum can be used to indicate what an EditingRange is relative to.
+        * Shared/EditingRange.h:
+        (WebKit::EditingRange::EditingRange):
+
+        didHandleAcceptedCandidate is a new message that gets sent from the 
+        WebProcess. This lets us track a bool m_isHandlingAcceptedCandidate.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::didHandleAcceptedCandidate):
+
+        Re-set the m_softSpaceRange on selection changes so long as 
+        m_isHandlingAcceptedCandidate is false.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::selectionDidChange):
+
+        Set m_isHandlingAcceptedCandidate to true.
+        (WebKit::WebViewImpl::handleAcceptedCandidate):
+
+        Set m_isHandlingAcceptedCandidate to false.
+        (WebKit::WebViewImpl::didHandleAcceptedCandidate):
+
+        insertTextAsync takes a new parameter indicating what the replacementRange is 
+        relative to. If needToRemoveSoftSpace is true, then the replacementRange is 
+        relative to the paragraph.
+        (WebKit::WebViewImpl::insertText):
+
+        Pipe didHandleAcceptedCandidate through to WebViewImpl.
+        * UIProcess/PageClient.h:
+
+        insertTextAsync takes an EditingRangeIsRelativeTo.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::insertTextAsync):
+
+        Pipe didHandleAcceptedCandidate through to WebViewImpl.
+        (WebKit::WebPageProxy::didHandleAcceptedCandidate):
+        * UIProcess/WebPageProxy.h:
+
+        New message lets the WebProcess tell the UIProcess when the candidate has 
+        been accepted.
+        * UIProcess/WebPageProxy.messages.in:
+
+        Pipe didHandleAcceptedCandidate through to WebViewImpl.
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didHandleAcceptedCandidate):
+
+        insertTextAsync takes an EditingRangeIsRelativeTo. Pass that through to 
+        rangeFromEditingRange to get the correct range.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertTextAsync):
+
+        Use the EditingRangeIsRelativeTo to find the right WebCore::Range.
+        (WebKit::WebPage::rangeFromEditingRange):
+
+        Take EditingRangeIsRelativeTo in a few places. 
+        * WebProcess/WebPage/WebPage.h:
+
+        InsertTextAsync takes a EditingRangeIsRelativeTo.
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Send didHandleAccpetedCandidate to the UIProcess
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleAcceptedCandidate):
+
 2016-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Use BlobResourceHandle when loading blob urls, even when using NetworkSession

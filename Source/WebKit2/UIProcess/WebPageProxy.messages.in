@@ -451,4 +451,8 @@ messages -> WebPageProxy {
 #endif
 
     DidRestoreScrollPosition()
+
+#if PLATFORM(MAC)
+    DidHandleAcceptedCandidate()
+#endif
 }

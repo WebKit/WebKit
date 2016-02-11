@@ -793,21 +793,43 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (PassRefPtr<Range>)_convertToDOMRange:(NSRange)nsrange
 {
+    return [self _convertToDOMRange:nsrange rangeIsRelativeTo:NSRangeIsRelativeTo::Document];
+}
+
+- (PassRefPtr<Range>)_convertToDOMRange:(NSRange)nsrange rangeIsRelativeTo:(NSRangeIsRelativeTo)rangeIsRelativeTo
+{
     if (nsrange.location > INT_MAX)
         return 0;
     if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
         nsrange.length = INT_MAX - nsrange.location;
 
-    // our critical assumption is that we are only called by input methods that
-    // concentrate on a given area containing the selection
-    // We have to do this because of text fields and textareas. The DOM for those is not
-    // directly in the document DOM, so serialization is problematic. Our solution is
-    // to use the root editable element of the selection start as the positional base.
-    // That fits with AppKit's idea of an input context.
-    Element* element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
-    if (!element)
-        return nil;
-    return TextIterator::rangeFromLocationAndLength(element, nsrange.location, nsrange.length);
+    if (rangeIsRelativeTo == NSRangeIsRelativeTo::Document) {
+        // Our critical assumption is that this code path is only called by input methods that
+        // concentrate on a given area containing the selection
+        // We have to do this because of text fields and textareas. The DOM for those is not
+        // directly in the document DOM, so serialization is problematic. Our solution is
+        // to use the root editable element of the selection start as the positional base.
+        // That fits with AppKit's idea of an input context.
+        Element* element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
+        if (!element)
+            return nil;
+        return TextIterator::rangeFromLocationAndLength(element, nsrange.location, nsrange.length);
+    }
+
+    ASSERT(rangeIsRelativeTo == NSRangeIsRelativeTo::Paragraph);
+
+    const VisibleSelection& selection = _private->coreFrame->selection().selection();
+    RefPtr<Range> selectedRange = selection.toNormalizedRange();
+    if (!selectedRange)
+        return 0;
+
+    RefPtr<Range> paragraphRange = makeRange(startOfParagraph(selection.visibleStart()), selection.visibleEnd());
+    if (!paragraphRange)
+        return 0;
+
+    ContainerNode& rootNode = paragraphRange.get()->startContainer().treeScope().rootNode();
+    int paragraphStartIndex = TextIterator::rangeLength(Range::create(rootNode.document(), &rootNode, 0, &paragraphRange->startContainer(), paragraphRange->startOffset()).ptr());
+    return TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + static_cast<int>(nsrange.location), nsrange.length);
 }
 
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
