@@ -33,8 +33,6 @@
 namespace WebCore {
 
 struct CustomEventInit : public EventInit {
-    CustomEventInit();
-
     Deprecated::ScriptValue detail;
 };
 
@@ -42,12 +40,12 @@ class CustomEvent final : public Event {
 public:
     virtual ~CustomEvent();
 
-    static Ref<CustomEvent> create()
+    static Ref<CustomEvent> createForBindings()
     {
         return adoptRef(*new CustomEvent);
     }
 
-    static Ref<CustomEvent> create(const AtomicString& type, const CustomEventInit& initializer)
+    static Ref<CustomEvent> createForBindings(const AtomicString& type, const CustomEventInit& initializer)
     {
         return adoptRef(*new CustomEvent(type, initializer));
     }

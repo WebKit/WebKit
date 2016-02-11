@@ -4766,7 +4766,7 @@ template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecS
             return JSValue::encode(jsUndefined());
     }
 
-    RefPtr<${interfaceName}> event = ${interfaceName}::create(eventType, eventInit);
+    RefPtr<${interfaceName}> event = ${interfaceName}::createForBindings(eventType, eventInit);
     return JSValue::encode(toJS(state, jsConstructor->globalObject(), event.get()));
 }
 

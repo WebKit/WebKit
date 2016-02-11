@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-Ref<TextEvent> TextEvent::create()
+Ref<TextEvent> TextEvent::createForBindings()
 {
     return adoptRef(*new TextEvent);
 }

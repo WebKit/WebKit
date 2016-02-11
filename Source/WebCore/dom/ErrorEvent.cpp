@@ -35,18 +35,6 @@
 
 namespace WebCore {
 
-ErrorEventInit::ErrorEventInit()
-    : message()
-    , filename()
-    , lineno(0)
-    , colno(0)
-{
-}
-
-ErrorEvent::ErrorEvent()
-{
-}
-
 ErrorEvent::ErrorEvent(const AtomicString& type, const ErrorEventInit& initializer)
     : Event(type, initializer)
     , m_message(initializer.message)

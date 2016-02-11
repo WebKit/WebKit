@@ -34,8 +34,6 @@
 namespace WebCore {
 
 struct TrackEventInit : public EventInit {
-    TrackEventInit();
-
     RefPtr<TrackBase> track;
 };
 
@@ -43,12 +41,12 @@ class TrackEvent final : public Event {
 public:
     virtual ~TrackEvent();
 
-    static Ref<TrackEvent> create()
+    static Ref<TrackEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<TrackBase>&& track)
     {
-        return adoptRef(*new TrackEvent);
+        return adoptRef(*new TrackEvent(type, canBubble, cancelable, WTFMove(track)));
     }
 
-    static Ref<TrackEvent> create(const AtomicString& type, const TrackEventInit& initializer)
+    static Ref<TrackEvent> createForBindings(const AtomicString& type, const TrackEventInit& initializer)
     {
         return adoptRef(*new TrackEvent(type, initializer));
     }
@@ -58,7 +56,7 @@ public:
     TrackBase* track() const { return m_track.get(); }
 
 private:
-    TrackEvent();
+    TrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<TrackBase>&&);
     TrackEvent(const AtomicString& type, const TrackEventInit& initializer);
 
     RefPtr<TrackBase> m_track;

@@ -31,10 +31,6 @@
 
 namespace WebCore {
 
-CompositionEventInit::CompositionEventInit()
-{
-}
-
 CompositionEvent::CompositionEvent()
 {
 }

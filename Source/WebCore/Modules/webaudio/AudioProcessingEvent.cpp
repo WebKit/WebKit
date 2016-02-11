@@ -33,16 +33,6 @@
 
 namespace WebCore {
 
-Ref<AudioProcessingEvent> AudioProcessingEvent::create()
-{
-    return adoptRef(*new AudioProcessingEvent);
-}
-
-Ref<AudioProcessingEvent> AudioProcessingEvent::create(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer, double playbackTime)
-{
-    return adoptRef(*new AudioProcessingEvent(inputBuffer, outputBuffer, playbackTime));
-}
-
 AudioProcessingEvent::AudioProcessingEvent()
 {
 }

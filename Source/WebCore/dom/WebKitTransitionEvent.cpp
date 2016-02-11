@@ -30,16 +30,6 @@
 
 namespace WebCore {
 
-WebKitTransitionEventInit::WebKitTransitionEventInit()
-    : elapsedTime(0)
-{
-}
-
-WebKitTransitionEvent::WebKitTransitionEvent()
-    : m_elapsedTime(0)
-{
-}
-
 WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement)
     : Event(type, true, true)
     , m_propertyName(propertyName)

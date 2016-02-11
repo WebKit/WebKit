@@ -31,11 +31,7 @@
 
 namespace WebCore {
 
-StorageEventInit::StorageEventInit()
-{
-}
-
-Ref<StorageEvent> StorageEvent::create()
+Ref<StorageEvent> StorageEvent::createForBindings()
 {
     return adoptRef(*new StorageEvent);
 }
@@ -53,7 +49,7 @@ Ref<StorageEvent> StorageEvent::create(const AtomicString& type, const String& k
     return adoptRef(*new StorageEvent(type, key, oldValue, newValue, url, storageArea));
 }
 
-Ref<StorageEvent> StorageEvent::create(const AtomicString& type, const StorageEventInit& initializer)
+Ref<StorageEvent> StorageEvent::createForBindings(const AtomicString& type, const StorageEventInit& initializer)
 {
     return adoptRef(*new StorageEvent(type, initializer));
 }

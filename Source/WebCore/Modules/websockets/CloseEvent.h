@@ -37,30 +37,19 @@
 namespace WebCore {
 
 struct CloseEventInit : public EventInit {
-    CloseEventInit()
-        : wasClean(false)
-        , code(0)
-    {
-    };
-
-    bool wasClean;
-    unsigned short code;
+    bool wasClean { false };
+    unsigned short code { 0 };
     String reason;
 };
 
 class CloseEvent : public Event {
 public:
-    static Ref<CloseEvent> create()
-    {
-        return adoptRef(*new CloseEvent());
-    }
-
     static Ref<CloseEvent> create(bool wasClean, unsigned short code, const String& reason)
     {
         return adoptRef(*new CloseEvent(wasClean, code, reason));
     }
 
-    static Ref<CloseEvent> create(const AtomicString& type, const CloseEventInit& initializer)
+    static Ref<CloseEvent> createForBindings(const AtomicString& type, const CloseEventInit& initializer)
     {
         return adoptRef(*new CloseEvent(type, initializer));
     }
@@ -73,13 +62,6 @@ public:
     virtual EventInterface eventInterface() const override { return CloseEventInterfaceType; }
 
 private:
-    CloseEvent()
-        : Event(eventNames().closeEvent, false, false)
-        , m_wasClean(false)
-        , m_code(0)
-    {
-    }
-
     CloseEvent(bool wasClean, int code, const String& reason)
         : Event(eventNames().closeEvent, false, false)
         , m_wasClean(wasClean)

@@ -2348,7 +2348,7 @@ static inline Element* nextAssistableElement(Node* startNode, Page& page, bool i
     if (!is<Element>(startNode))
         return nullptr;
 
-    RefPtr<KeyboardEvent> key = KeyboardEvent::create();
+    RefPtr<KeyboardEvent> key = KeyboardEvent::createForBindings();
 
     Element* nextElement = downcast<Element>(startNode);
     do {

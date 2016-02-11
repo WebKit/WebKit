@@ -54,19 +54,19 @@ public:
         DOM_DELTA_PAGE
     };
 
-    static Ref<WheelEvent> create()
+    static Ref<WheelEvent> create(const PlatformWheelEvent& event, AbstractView* view)
+    {
+        return adoptRef(*new WheelEvent(event, view));
+    }
+
+    static Ref<WheelEvent> createForBindings()
     {
         return adoptRef(*new WheelEvent);
     }
 
-    static Ref<WheelEvent> create(const AtomicString& type, const WheelEventInit& initializer)
+    static Ref<WheelEvent> createForBindings(const AtomicString& type, const WheelEventInit& initializer)
     {
         return adoptRef(*new WheelEvent(type, initializer));
-    }
-
-    static Ref<WheelEvent> create(const PlatformWheelEvent& event, AbstractView* view)
-    {
-        return adoptRef(*new WheelEvent(event, view));
     }
 
     void initWheelEvent(int rawDeltaX, int rawDeltaY, AbstractView*,

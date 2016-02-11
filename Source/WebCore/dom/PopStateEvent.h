@@ -34,8 +34,6 @@
 namespace WebCore {
 
 struct PopStateEventInit : public EventInit {
-    PopStateEventInit();
-
     Deprecated::ScriptValue state;
 };
 
@@ -45,9 +43,8 @@ class SerializedScriptValue;
 class PopStateEvent final : public Event {
 public:
     virtual ~PopStateEvent();
-    static Ref<PopStateEvent> create();
     static Ref<PopStateEvent> create(RefPtr<SerializedScriptValue>&&, PassRefPtr<History>);
-    static Ref<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
+    static Ref<PopStateEvent> createForBindings(const AtomicString&, const PopStateEventInit&);
 
     PassRefPtr<SerializedScriptValue> serializedState() const { ASSERT(m_serializedState); return m_serializedState; }
     
@@ -59,7 +56,6 @@ public:
     virtual EventInterface eventInterface() const override;
 
 private:
-    PopStateEvent();
     PopStateEvent(const AtomicString&, const PopStateEventInit&);
     explicit PopStateEvent(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
 

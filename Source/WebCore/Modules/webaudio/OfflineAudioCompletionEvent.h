@@ -36,7 +36,6 @@ class AudioBuffer;
     
 class OfflineAudioCompletionEvent : public Event {
 public:
-    static Ref<OfflineAudioCompletionEvent> create();
     static Ref<OfflineAudioCompletionEvent> create(PassRefPtr<AudioBuffer> renderedBuffer);
     
     virtual ~OfflineAudioCompletionEvent();
@@ -46,7 +45,6 @@ public:
     virtual EventInterface eventInterface() const override;
 
 private:
-    OfflineAudioCompletionEvent();
     explicit OfflineAudioCompletionEvent(PassRefPtr<AudioBuffer> renderedBuffer);
 
     RefPtr<AudioBuffer> m_renderedBuffer;

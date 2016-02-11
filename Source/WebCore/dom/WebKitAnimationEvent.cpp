@@ -30,17 +30,6 @@
 
 namespace WebCore {
 
-WebKitAnimationEventInit::WebKitAnimationEventInit()
-    : animationName()
-    , elapsedTime(0.0)
-{
-}
-
-WebKitAnimationEvent::WebKitAnimationEvent()
-    : m_elapsedTime(0.0)
-{
-}
-
 WebKitAnimationEvent::WebKitAnimationEvent(const AtomicString& type, const WebKitAnimationEventInit& initializer)
     : Event(type, initializer)
     , m_animationName(initializer.animationName)

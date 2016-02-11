@@ -81,12 +81,7 @@ bool TrackListBase::contains(TrackBase* track) const
 
 void TrackListBase::scheduleTrackEvent(const AtomicString& eventName, PassRefPtr<TrackBase> track)
 {
-    TrackEventInit initializer;
-    initializer.track = track;
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    m_asyncEventQueue.enqueueEvent(TrackEvent::create(eventName, initializer));
+    m_asyncEventQueue.enqueueEvent(TrackEvent::create(eventName, false, false, track));
 }
 
 void TrackListBase::scheduleAddTrackEvent(PassRefPtr<TrackBase> track)
@@ -149,12 +144,7 @@ void TrackListBase::scheduleChangeEvent()
     // Whenever a track in a VideoTrackList that was previously not selected is
     // selected, the user agent must queue a task to fire a simple event named
     // change at the VideoTrackList object.
-
-    EventInit initializer;
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    m_asyncEventQueue.enqueueEvent(Event::create(eventNames().changeEvent, initializer));
+    m_asyncEventQueue.enqueueEvent(Event::create(eventNames().changeEvent, false, false));
 }
 
 bool TrackListBase::isAnyTrackEnabled() const

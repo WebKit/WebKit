@@ -413,9 +413,7 @@ bool EventSource::canSuspendForDocumentSuspension() const
 
 Ref<MessageEvent> EventSource::createMessageEvent()
 {
-    Ref<MessageEvent> event = MessageEvent::create();
-    event->initMessageEvent(m_eventName.isEmpty() ? eventNames().messageEvent : AtomicString(m_eventName), false, false, SerializedScriptValue::create(String::adopt(m_data)), m_eventStreamOrigin, m_lastEventId, 0, 0);
-    return event;
+    return MessageEvent::create(m_eventName.isEmpty() ? eventNames().messageEvent : AtomicString(m_eventName), false, false, SerializedScriptValue::create(String::adopt(m_data)), m_eventStreamOrigin, m_lastEventId);
 }
 
 } // namespace WebCore

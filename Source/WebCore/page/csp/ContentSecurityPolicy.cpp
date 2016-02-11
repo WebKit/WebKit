@@ -325,28 +325,6 @@ static String stripURLForUseInReport(Document& document, const URL& url)
     return document.securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url).get().toString();
 }
 
-#if ENABLE(CSP_NEXT)
-static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventInit& init, Document& document, const String& directiveText, const String& effectiveDirective, const URL& blockedURL, const String& header)
-{
-    init.documentURI = document.url().string();
-    init.referrer = document.referrer();
-    init.blockedURI = stripURLForUseInReport(document, blockedURL);
-    init.violatedDirective = directiveText;
-    init.effectiveDirective = effectiveDirective;
-    init.originalPolicy = header;
-    init.sourceFile = String();
-    init.lineNumber = 0;
-
-    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
-    const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
-    if (callFrame && callFrame->lineNumber()) {
-        URL source = URL(URL(), callFrame->sourceURL());
-        init.sourceFile = stripURLForUseInReport(document, source);
-        init.lineNumber = callFrame->lineNumber();
-    }
-}
-#endif
-
 void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const URL& blockedURL, const Vector<String>& reportURIs, const String& header, const String& contextURL, const WTF::OrdinalNumber& contextLine, JSC::ExecState* state) const
 {
     logToConsole(consoleMessage, contextURL, contextLine, state);
@@ -363,9 +341,23 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
 #if ENABLE(CSP_NEXT)
     if (experimentalFeaturesEnabled()) {
         // FIXME: This code means that we're gathering information like line numbers twice. Once we can bring this out from behind the flag, we should reuse the data gathered here when generating the JSON report below.
-        SecurityPolicyViolationEventInit init;
-        gatherSecurityPolicyViolationEventData(init, document, directiveText, effectiveDirective, blockedURL, header);
-        document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, init));
+        String documentURI = document.url().string();
+        String referrer = document.referrer();
+        String blockedURI = stripURLForUseInReport(document, blockedURL);
+        String violatedDirective = directiveText;
+        String originalPolicy = header;
+        String sourceFile = String();
+        int lineNumber = 0;
+        
+        Ref<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
+        const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
+        if (callFrame && callFrame->lineNumber()) {
+            URL source = URL(URL(), callFrame->sourceURL());
+            sourceFile = stripURLForUseInReport(document, source);
+            lineNumber = callFrame->lineNumber();
+        }
+
+        document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, false, false, documentURI, referrer, blockedURI, violatedDirective, effectiveDirective, originalPolicy, sourceFile, lineNumber));
     }
 #endif
 

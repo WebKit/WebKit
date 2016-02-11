@@ -268,8 +268,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
         // Special case: If it's a double click event, we also send the dblclick event. This is not part
         // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
         // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
-        Ref<MouseEvent> doubleClickEvent = MouseEvent::create();
-        doubleClickEvent->initMouseEvent(eventNames().dblclickEvent,
+        Ref<MouseEvent> doubleClickEvent = MouseEvent::create(eventNames().dblclickEvent,
             mouseEvent->bubbles(), mouseEvent->cancelable(), mouseEvent->view(), mouseEvent->detail(),
             mouseEvent->screenX(), mouseEvent->screenY(), mouseEvent->clientX(), mouseEvent->clientY(),
             mouseEvent->ctrlKey(), mouseEvent->altKey(), mouseEvent->shiftKey(), mouseEvent->metaKey(),

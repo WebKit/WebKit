@@ -30,18 +30,7 @@
 
 namespace WebCore {
 
-UIRequestEventInit::UIRequestEventInit()
-    : UIEventInit(true, true)
-    , receiver(nullptr)
-{
-}
-    
-Ref<UIRequestEvent> UIRequestEvent::create()
-{
-    return adoptRef(*new UIRequestEvent);
-}
-    
-Ref<UIRequestEvent> UIRequestEvent::create(const AtomicString& type, const UIRequestEventInit& initializer)
+Ref<UIRequestEvent> UIRequestEvent::createForBindings(const AtomicString& type, const UIRequestEventInit& initializer)
 {
     return adoptRef(*new UIRequestEvent(type, initializer));
 }
@@ -52,7 +41,7 @@ Ref<UIRequestEvent> UIRequestEvent::create(const AtomicString& type, bool bubble
 }
 
 UIRequestEvent::UIRequestEvent(const AtomicString& type, const UIRequestEventInit& initializer)
-    : UIEvent(type, initializer.bubbles, initializer.cancelable, initializer.view.get(), initializer.detail)
+    : UIEvent(type, initializer)
     , m_receiver(initializer.receiver)
 {
 }
@@ -60,11 +49,6 @@ UIRequestEvent::UIRequestEvent(const AtomicString& type, const UIRequestEventIni
 UIRequestEvent::UIRequestEvent(const AtomicString& type, bool bubbles, bool cancelable, AbstractView* view, int detail, PassRefPtr<EventTarget> receiver)
     : UIEvent(type, bubbles, cancelable, view, detail)
     , m_receiver(receiver)
-{
-}
-
-UIRequestEvent::UIRequestEvent()
-    : m_receiver(nullptr)
 {
 }
 

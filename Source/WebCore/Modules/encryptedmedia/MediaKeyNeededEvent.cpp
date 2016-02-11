@@ -34,11 +34,9 @@
 
 namespace WebCore {
 
-MediaKeyNeededEventInit::MediaKeyNeededEventInit()
-{
-}
-
-MediaKeyNeededEvent::MediaKeyNeededEvent()
+MediaKeyNeededEvent::MediaKeyNeededEvent(const AtomicString& type, Uint8Array* initData)
+    : Event(type, false, false)
+    , m_initData(initData)
 {
 }
 

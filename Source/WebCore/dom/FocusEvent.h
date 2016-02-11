@@ -34,24 +34,17 @@ namespace WebCore {
 class Node;
 
 struct FocusEventInit : public UIEventInit {
-    FocusEventInit();
-
     RefPtr<EventTarget> relatedTarget;
 };
 
 class FocusEvent final : public UIEvent {
 public:
-    static Ref<FocusEvent> create()
-    {
-        return adoptRef(*new FocusEvent);
-    }
-
     static Ref<FocusEvent> create(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, int detail, RefPtr<EventTarget>&& relatedTarget)
     {
         return adoptRef(*new FocusEvent(type, canBubble, cancelable, view, detail, WTFMove(relatedTarget)));
     }
 
-    static Ref<FocusEvent> create(const AtomicString& type, const FocusEventInit& initializer)
+    static Ref<FocusEvent> createForBindings(const AtomicString& type, const FocusEventInit& initializer)
     {
         return adoptRef(*new FocusEvent(type, initializer));
     }
@@ -62,7 +55,6 @@ public:
     virtual EventInterface eventInterface() const override;
 
 private:
-    FocusEvent();
     FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, int, RefPtr<EventTarget>&&);
     FocusEvent(const AtomicString& type, const FocusEventInit&);
 

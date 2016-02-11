@@ -31,24 +31,18 @@
 namespace WebCore {
 
 struct WebKitTransitionEventInit : public EventInit {
-    WebKitTransitionEventInit();
-
     String propertyName;
-    double elapsedTime;
+    double elapsedTime { 0 };
     String pseudoElement;
 };
 
 class WebKitTransitionEvent final : public Event {
 public:
-    static Ref<WebKitTransitionEvent> create()
-    {
-        return adoptRef(*new WebKitTransitionEvent);
-    }
     static Ref<WebKitTransitionEvent> create(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement)
     {
         return adoptRef(*new WebKitTransitionEvent(type, propertyName, elapsedTime, pseudoElement));
     }
-    static Ref<WebKitTransitionEvent> create(const AtomicString& type, const WebKitTransitionEventInit& initializer)
+    static Ref<WebKitTransitionEvent> createForBindings(const AtomicString& type, const WebKitTransitionEventInit& initializer)
     {
         return adoptRef(*new WebKitTransitionEvent(type, initializer));
     }
@@ -62,7 +56,6 @@ public:
     virtual EventInterface eventInterface() const override;
 
 private:
-    WebKitTransitionEvent();
     WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement);
     WebKitTransitionEvent(const AtomicString& type, const WebKitTransitionEventInit& initializer);
 

@@ -31,16 +31,6 @@
 
 namespace WebCore {
 
-TransitionEventInit::TransitionEventInit()
-    : elapsedTime(0)
-{
-}
-
-TransitionEvent::TransitionEvent()
-    : m_elapsedTime(0)
-{
-}
-
 TransitionEvent::TransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement)
     : Event(type, true, true)
     , m_propertyName(propertyName)

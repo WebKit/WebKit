@@ -42,17 +42,14 @@ class MediaStreamTrack;
 class RTCRtpReceiver;
 
 struct RTCTrackEventInit : public EventInit {
-    RTCTrackEventInit();
-
     RefPtr<RTCRtpReceiver> receiver;
     RefPtr<MediaStreamTrack> track;
 };
 
 class RTCTrackEvent : public Event {
 public:
-    static Ref<RTCTrackEvent> create();
     static Ref<RTCTrackEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&&, RefPtr<MediaStreamTrack>&&);
-    static Ref<RTCTrackEvent> create(const AtomicString& type, const RTCTrackEventInit&);
+    static Ref<RTCTrackEvent> createForBindings(const AtomicString& type, const RTCTrackEventInit&);
 
     RTCRtpReceiver* receiver() const { return m_receiver.get(); }
     MediaStreamTrack* track() const  { return m_track.get(); }
@@ -60,7 +57,6 @@ public:
     virtual EventInterface eventInterface() const { return RTCTrackEventInterfaceType; }
 
 private:
-    RTCTrackEvent();
     RTCTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&&, RefPtr<MediaStreamTrack>&&);
     RTCTrackEvent(const AtomicString& type, const RTCTrackEventInit&);
 

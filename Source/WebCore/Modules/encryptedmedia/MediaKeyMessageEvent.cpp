@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-MediaKeyMessageEventInit::MediaKeyMessageEventInit()
+MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomicString& type, Uint8Array* message, const String& destinationURL)
+    : Event(type, false, false)
+    , m_message(message)
+    , m_destinationURL(destinationURL)
 {
 }
 
-MediaKeyMessageEvent::MediaKeyMessageEvent()
-{
-}
 
 MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomicString& type, const MediaKeyMessageEventInit& initializer)
     : Event(type, initializer)

@@ -39,29 +39,14 @@
 
 namespace WebCore {
 
-RTCTrackEventInit::RTCTrackEventInit()
-    : receiver(nullptr)
-    , track(nullptr)
-{
-}
-
-Ref<RTCTrackEvent> RTCTrackEvent::create()
-{
-    return adoptRef(*new RTCTrackEvent);
-}
-
 Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track)
 {
     return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTFMove(receiver), WTFMove(track)));
 }
 
-Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomicString& type, const RTCTrackEventInit& initializer)
+Ref<RTCTrackEvent> RTCTrackEvent::createForBindings(const AtomicString& type, const RTCTrackEventInit& initializer)
 {
     return adoptRef(*new RTCTrackEvent(type, initializer));
-}
-
-RTCTrackEvent::RTCTrackEvent()
-{
 }
 
 RTCTrackEvent::RTCTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track)

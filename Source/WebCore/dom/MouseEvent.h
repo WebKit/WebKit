@@ -31,28 +31,15 @@ namespace WebCore {
 class DataTransfer;
 class PlatformMouseEvent;
 
-struct MouseEventInit : public UIEventInit {
-    MouseEventInit();
-
-    int screenX;
-    int screenY;
-    int clientX;
-    int clientY;
-    bool ctrlKey;
-    bool altKey;
-    bool shiftKey;
-    bool metaKey;
-    unsigned short button;
+struct MouseEventInit : public MouseRelatedEventInit {
+    int clientX {0};
+    int clientY {0};
+    unsigned short button {0};
     RefPtr<EventTarget> relatedTarget;
 };
 
 class MouseEvent : public MouseRelatedEvent {
 public:
-    static Ref<MouseEvent> create()
-    {
-        return adoptRef(*new MouseEvent);
-    }
-
     static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*,
         int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
@@ -71,7 +58,17 @@ public:
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, AbstractView*, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
 
-    static Ref<MouseEvent> create(const AtomicString& eventType, const MouseEventInit&);
+    static Ref<MouseEvent> create(const AtomicString& eventType, bool canBubble, bool cancelable, AbstractView*,
+        int detail, int screenX, int screenY, int clientX, int clientY,
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+        unsigned short button, PassRefPtr<EventTarget> relatedTarget);
+
+    static Ref<MouseEvent> createForBindings()
+    {
+        return adoptRef(*new MouseEvent);
+    }
+
+    static Ref<MouseEvent> createForBindings(const AtomicString& eventType, const MouseEventInit&);
 
     virtual ~MouseEvent();
 
@@ -114,6 +111,11 @@ protected:
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
         PassRefPtr<EventTarget> relatedTarget, double force, PassRefPtr<DataTransfer>, bool isSimulated);
+
+    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
+        int detail, int screenX, int screenY, int clientX, int clientY,
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+        unsigned short button, PassRefPtr<EventTarget> relatedTarget);
 
     MouseEvent(const AtomicString& type, const MouseEventInit&);
 

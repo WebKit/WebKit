@@ -29,18 +29,6 @@
 
 namespace WebCore {
 
-EventInit::EventInit()
-    : bubbles(false)
-    , cancelable(false)
-{
-}
-
-EventInit::EventInit(bool b, bool c)
-    : bubbles(b)
-    , cancelable(c)
-{
-}
-
 Event::Event()
     : m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {

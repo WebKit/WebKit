@@ -31,23 +31,18 @@
 namespace WebCore {
 
 struct AnimationEventInit : public EventInit {
-    AnimationEventInit();
-
     String animationName;
-    double elapsedTime;
+    double elapsedTime { 0 };
 };
 
 class AnimationEvent final : public Event {
 public:
-    static Ref<AnimationEvent> create()
-    {
-        return adoptRef(*new AnimationEvent);
-    }
     static Ref<AnimationEvent> create(const AtomicString& type, const String& animationName, double elapsedTime)
     {
         return adoptRef(*new AnimationEvent(type, animationName, elapsedTime));
     }
-    static Ref<AnimationEvent> create(const AtomicString& type, const AnimationEventInit& initializer)
+
+    static Ref<AnimationEvent> createForBindings(const AtomicString& type, const AnimationEventInit& initializer)
     {
         return adoptRef(*new AnimationEvent(type, initializer));
     }
@@ -60,7 +55,6 @@ public:
     virtual EventInterface eventInterface() const override;
 
 private:
-    AnimationEvent();
     AnimationEvent(const AtomicString& type, const String& animationName, double elapsedTime);
     AnimationEvent(const AtomicString&, const AnimationEventInit&);
 

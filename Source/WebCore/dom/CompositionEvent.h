@@ -32,24 +32,22 @@
 namespace WebCore {
 
 struct CompositionEventInit : UIEventInit {
-    CompositionEventInit();
-
     String data;
 };
 
 class CompositionEvent final : public UIEvent {
 public:
-    static Ref<CompositionEvent> create()
-    {
-        return adoptRef(*new CompositionEvent);
-    }
-
     static Ref<CompositionEvent> create(const AtomicString& type, AbstractView* view, const String& data)
     {
         return adoptRef(*new CompositionEvent(type, view, data));
     }
 
-    static Ref<CompositionEvent> create(const AtomicString& type, const CompositionEventInit& initializer)
+    static Ref<CompositionEvent> createForBindings()
+    {
+        return adoptRef(*new CompositionEvent);
+    }
+
+    static Ref<CompositionEvent> createForBindings(const AtomicString& type, const CompositionEventInit& initializer)
     {
         return adoptRef(*new CompositionEvent(type, initializer));
     }

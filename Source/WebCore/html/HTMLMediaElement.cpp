@@ -2231,15 +2231,9 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 #if ENABLE(ENCRYPTED_MEDIA)
 void HTMLMediaElement::mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem, const String& sessionId)
 {
-    MediaKeyEventInit initializer;
-    initializer.keySystem = keySystem;
-    initializer.sessionId = sessionId;
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeyaddedEvent, initializer);
+    Ref<Event> event = MediaKeyEvent::create(eventNames().webkitkeyaddedEvent, keySystem, sessionId, nullptr, nullptr, emptyString(), nullptr, 0);
     event->setTarget(this);
-    m_asyncEventQueue.enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(WTFMove(event));
 }
 
 void HTMLMediaElement::mediaPlayerKeyError(MediaPlayer*, const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode errorCode, unsigned short systemCode)
@@ -2266,32 +2260,16 @@ void HTMLMediaElement::mediaPlayerKeyError(MediaPlayer*, const String& keySystem
         break;
     }
 
-    MediaKeyEventInit initializer;
-    initializer.keySystem = keySystem;
-    initializer.sessionId = sessionId;
-    initializer.errorCode = MediaKeyError::create(mediaKeyErrorCode);
-    initializer.systemCode = systemCode;
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeyerrorEvent, initializer);
+    Ref<Event> event = MediaKeyEvent::create(eventNames().webkitkeyerrorEvent, keySystem, sessionId, nullptr, nullptr, emptyString(), MediaKeyError::create(mediaKeyErrorCode), systemCode);
     event->setTarget(this);
-    m_asyncEventQueue.enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(WTFMove(event));
 }
 
 void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength, const URL& defaultURL)
 {
-    MediaKeyEventInit initializer;
-    initializer.keySystem = keySystem;
-    initializer.sessionId = sessionId;
-    initializer.message = Uint8Array::create(message, messageLength);
-    initializer.defaultURL = defaultURL; 
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeymessageEvent, initializer);
+    Ref<Event> event = MediaKeyEvent::create(eventNames().webkitkeymessageEvent, keySystem, sessionId, nullptr, Uint8Array::create(message, messageLength), defaultURL, nullptr, 0);
     event->setTarget(this);
-    m_asyncEventQueue.enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(WTFMove(event));
 }
 
 bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength)
@@ -2302,16 +2280,9 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySyste
         return false;
     }
 
-    MediaKeyEventInit initializer;
-    initializer.keySystem = keySystem;
-    initializer.sessionId = sessionId;
-    initializer.initData = Uint8Array::create(initData, initDataLength);
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitneedkeyEvent, initializer);
+    Ref<Event> event = MediaKeyEvent::create(eventNames().webkitneedkeyEvent, keySystem, sessionId, Uint8Array::create(initData, initDataLength), nullptr, emptyString(), nullptr, 0);
     event->setTarget(this);
-    m_asyncEventQueue.enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(WTFMove(event));
     return true;
 }
 #endif
@@ -2330,12 +2301,7 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
         return false;
     }
 
-    MediaKeyNeededEventInit initializer;
-    initializer.initData = initData;
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    RefPtr<Event> event = MediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, initializer);
+    RefPtr<Event> event = MediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, initData);
     event->setTarget(this);
     m_asyncEventQueue.enqueueEvent(event.release());
 

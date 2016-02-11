@@ -1,3 +1,249 @@
+2016-02-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Rename *Event::create* which creates events for bindings to *Event::createForBindings* and cleanup corresponding paths
+        https://bugs.webkit.org/show_bug.cgi?id=153903
+        <rdar://problem/24518146>
+
+        Reviewed by Darin Adler.
+
+        Rename Event::create(const AtomicString&, const EventInit&) to Event::createForBindings
+        (const AtomicString&, const EventInit&) and for all the subclasses as well in order to
+        support Event.isTrusted. Besides, some of the subclasses use the create method for bindings
+        to create events not for bindings and vice versa. Therefore, this patch also cleanup
+        corresponding paths to ensure no misuse of the create mehtod. The same for Event::create()
+        as it is combined with Event::initEvent to create an event for bindings for legacy content.
+
+        After this patch, all call sites of *Event::create* are supposed to use *Event::create
+        to create events for user agent and *Event::createForBindings for bindings.
+
+        No change in behavior.
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.h:
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::create):
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::createForBindings):
+        (WebCore::WebKitPlaybackTargetAvailabilityEventInit::WebKitPlaybackTargetAvailabilityEventInit): Deleted.
+        * Modules/encryptedmedia/MediaKeyMessageEvent.cpp:
+        (WebCore::MediaKeyMessageEvent::MediaKeyMessageEvent):
+        (WebCore::MediaKeyMessageEventInit::MediaKeyMessageEventInit): Deleted.
+        * Modules/encryptedmedia/MediaKeyMessageEvent.h:
+        (WebCore::MediaKeyMessageEvent::create):
+        (WebCore::MediaKeyMessageEvent::createForBindings):
+        * Modules/encryptedmedia/MediaKeyNeededEvent.cpp:
+        (WebCore::MediaKeyNeededEvent::MediaKeyNeededEvent):
+        (WebCore::MediaKeyNeededEventInit::MediaKeyNeededEventInit): Deleted.
+        * Modules/encryptedmedia/MediaKeyNeededEvent.h:
+        (WebCore::MediaKeyNeededEvent::create):
+        (WebCore::MediaKeyNeededEvent::createForBindings):
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::sendMessage):
+        * Modules/gamepad/GamepadEvent.h:
+        (WebCore::GamepadEvent::create):
+        (WebCore::GamepadEvent::createForBindings):
+        (WebCore::GamepadEventInit::GamepadEventInit): Deleted.
+        * Modules/indieui/UIRequestEvent.cpp:
+        (WebCore::UIRequestEvent::createForBindings):
+        (WebCore::UIRequestEvent::UIRequestEvent):
+        (WebCore::UIRequestEventInit::UIRequestEventInit): Deleted.
+        (WebCore::UIRequestEvent::create): Deleted.
+        * Modules/indieui/UIRequestEvent.h:
+        * Modules/mediastream/MediaStreamEvent.cpp:
+        (WebCore::MediaStreamEvent::createForBindings):
+        (WebCore::MediaStreamEventInit::MediaStreamEventInit): Deleted.
+        (WebCore::MediaStreamEvent::create): Deleted.
+        * Modules/mediastream/MediaStreamEvent.h:
+        * Modules/mediastream/MediaStreamTrackEvent.cpp:
+        (WebCore::MediaStreamTrackEvent::createForBindings):
+        (WebCore::MediaStreamTrackEventInit::MediaStreamTrackEventInit): Deleted.
+        (WebCore::MediaStreamTrackEvent::create): Deleted.
+        * Modules/mediastream/MediaStreamTrackEvent.h:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        (WebCore::RTCDTMFToneChangeEvent::createForBindings):
+        (WebCore::RTCDTMFToneChangeEvent::create): Deleted.
+        * Modules/mediastream/RTCDTMFToneChangeEvent.h:
+        * Modules/mediastream/RTCDataChannelEvent.cpp:
+        (WebCore::RTCDataChannelEvent::createForBindings):
+        (WebCore::RTCDataChannelEvent::create): Deleted.
+        * Modules/mediastream/RTCDataChannelEvent.h:
+        * Modules/mediastream/RTCIceCandidateEvent.cpp:
+        (WebCore::RTCIceCandidateEvent::createForBindings):
+        (WebCore::RTCIceCandidateEvent::create): Deleted.
+        * Modules/mediastream/RTCIceCandidateEvent.h:
+        * Modules/mediastream/RTCTrackEvent.cpp:
+        (WebCore::RTCTrackEvent::createForBindings):
+        (WebCore::RTCTrackEventInit::RTCTrackEventInit): Deleted.
+        (WebCore::RTCTrackEvent::create): Deleted.
+        * Modules/mediastream/RTCTrackEvent.h:
+        * Modules/speech/SpeechSynthesisEvent.cpp:
+        (WebCore::SpeechSynthesisEvent::createForBindings):
+        (WebCore::SpeechSynthesisEvent::create):
+        (WebCore::SpeechSynthesisEvent::SpeechSynthesisEvent):
+        * Modules/speech/SpeechSynthesisEvent.h:
+        * Modules/webaudio/AudioProcessingEvent.cpp:
+        (WebCore::AudioProcessingEvent::create): Deleted.
+        * Modules/webaudio/AudioProcessingEvent.h:
+        (WebCore::AudioProcessingEvent::create):
+        (WebCore::AudioProcessingEvent::createForBindings):
+        * Modules/webaudio/OfflineAudioCompletionEvent.cpp:
+        (WebCore::OfflineAudioCompletionEvent::createForBindings):
+        (WebCore::OfflineAudioCompletionEvent::create): Deleted.
+        * Modules/webaudio/OfflineAudioCompletionEvent.h:
+        * Modules/websockets/CloseEvent.h:
+        (WebCore::CloseEvent::create):
+        (WebCore::CloseEvent::createForBindings):
+        (WebCore::CloseEvent::CloseEvent):
+        (WebCore::CloseEventInit::CloseEventInit): Deleted.
+        * bindings/objc/DOM.mm:
+        (-[DOMNode nextFocusNode]):
+        (-[DOMNode previousFocusNode]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * dom/AnimationEvent.cpp:
+        (WebCore::AnimationEventInit::AnimationEventInit): Deleted.
+        * dom/AnimationEvent.h:
+        * dom/BeforeLoadEvent.h:
+        (WebCore::BeforeLoadEventInit::BeforeLoadEventInit): Deleted.
+        * dom/ClipboardEvent.h:
+        * dom/CompositionEvent.cpp:
+        (WebCore::CompositionEventInit::CompositionEventInit): Deleted.
+        * dom/CompositionEvent.h:
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEventInit::CustomEventInit): Deleted.
+        * dom/CustomEvent.h:
+        * dom/DeviceMotionEvent.h:
+        * dom/DeviceOrientationEvent.h:
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent):
+        * dom/ErrorEvent.cpp:
+        (WebCore::ErrorEventInit::ErrorEventInit): Deleted.
+        * dom/ErrorEvent.h:
+        * dom/Event.cpp:
+        (WebCore::EventInit::EventInit): Deleted.
+        * dom/Event.h:
+        (WebCore::Event::createForBindings):
+        (WebCore::Event::create): Deleted.
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEventInit::FocusEventInit): Deleted.
+        * dom/FocusEvent.h:
+        * dom/HashChangeEvent.h:
+        (WebCore::HashChangeEventInit::HashChangeEventInit): Deleted.
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEventInit::KeyboardEventInit): Deleted.
+        * dom/KeyboardEvent.h:
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEventInit::MessageEventInit): Deleted.
+        * dom/MessageEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::createForBindings):
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::cloneFor):
+        (WebCore::MouseEventInit::MouseEventInit): Deleted.
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::createForBindings):
+        (WebCore::MouseEvent::create): Deleted.
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::MouseRelatedEvent::init):
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::screenX):
+        (WebCore::MouseRelatedEvent::screenY):
+        (WebCore::MouseRelatedEvent::screenLocation):
+        (WebCore::MouseRelatedEvent::clientX):
+        (WebCore::MouseRelatedEvent::clientY):
+        (WebCore::MouseRelatedEvent::movementX):
+        (WebCore::MouseRelatedEvent::movementY):
+        (WebCore::MouseRelatedEvent::clientLocation):
+        (WebCore::MouseRelatedEvent::isSimulated):
+        (WebCore::MouseRelatedEvent::absoluteLocation):
+        (WebCore::MouseRelatedEvent::setAbsoluteLocation):
+        * dom/MutationEvent.h:
+        * dom/OverflowEvent.cpp:
+        (WebCore::OverflowEvent::OverflowEvent):
+        (WebCore::OverflowEvent::initOverflowEvent):
+        (WebCore::OverflowEventInit::OverflowEventInit): Deleted.
+        * dom/OverflowEvent.h:
+        * dom/PageTransitionEvent.cpp:
+        (WebCore::PageTransitionEventInit::PageTransitionEventInit): Deleted.
+        * dom/PageTransitionEvent.h:
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::createForBindings):
+        (WebCore::PopStateEventInit::PopStateEventInit): Deleted.
+        (WebCore::PopStateEvent::PopStateEvent): Deleted.
+        (WebCore::PopStateEvent::create): Deleted.
+        * dom/PopStateEvent.h:
+        * dom/ProgressEvent.cpp:
+        (WebCore::ProgressEventInit::ProgressEventInit): Deleted.
+        * dom/ProgressEvent.h:
+        (WebCore::ProgressEvent::createForBindings):
+        (WebCore::ProgressEvent::create): Deleted.
+        * dom/SecurityPolicyViolationEvent.h:
+        (WebCore::SecurityPolicyViolationEventInit::SecurityPolicyViolationEventInit): Deleted.
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::createForBindings):
+        (WebCore::TextEvent::create): Deleted.
+        * dom/TextEvent.h:
+        * dom/TouchEvent.h:
+        * dom/TransitionEvent.cpp:
+        (WebCore::TransitionEventInit::TransitionEventInit): Deleted.
+        * dom/TransitionEvent.h:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEventInit::UIEventInit): Deleted.
+        * dom/UIEvent.h:
+        (WebCore::UIEvent::createForBindings):
+        (WebCore::UIEvent::create): Deleted.
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::ctrlKey):
+        (WebCore::UIEventWithKeyState::shiftKey):
+        (WebCore::UIEventWithKeyState::altKey):
+        (WebCore::UIEventWithKeyState::metaKey):
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+        * dom/WebKitAnimationEvent.cpp:
+        (WebCore::WebKitAnimationEventInit::WebKitAnimationEventInit): Deleted.
+        * dom/WebKitAnimationEvent.h:
+        * dom/WebKitTransitionEvent.cpp:
+        (WebCore::WebKitTransitionEventInit::WebKitTransitionEventInit): Deleted.
+        * dom/WebKitTransitionEvent.h:
+        * dom/WheelEvent.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerKeyAdded):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyError):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyMessage):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        * html/MediaKeyEvent.cpp:
+        (WebCore::MediaKeyEvent::MediaKeyEvent):
+        (WebCore::MediaKeyEventInit::MediaKeyEventInit): Deleted.
+        * html/MediaKeyEvent.h:
+        * html/canvas/WebGLContextEvent.cpp:
+        (WebCore::WebGLContextEventInit::WebGLContextEventInit): Deleted.
+        * html/canvas/WebGLContextEvent.h:
+        * html/track/TrackEvent.cpp:
+        (WebCore::TrackEvent::TrackEvent):
+        (WebCore::TrackEventInit::TrackEventInit): Deleted.
+        * html/track/TrackEvent.h:
+        * html/track/TrackListBase.cpp:
+        (TrackListBase::scheduleTrackEvent):
+        (TrackListBase::scheduleChangeEvent):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::createMessageEvent):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        (WebCore::gatherSecurityPolicyViolationEventData): Deleted.
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::createForBindings):
+        (WebCore::StorageEventInit::StorageEventInit): Deleted.
+        (WebCore::StorageEvent::create): Deleted.
+        * storage/StorageEvent.h:
+        * svg/SVGZoomEvent.h:
+        (WebCore::SVGZoomEvent::createForBindings):
+        (WebCore::SVGZoomEvent::create): Deleted.
+        * xml/XMLHttpRequestProgressEvent.h:
+        (WebCore::XMLHttpRequestProgressEvent::createForBindings):
+        (WebCore::XMLHttpRequestProgressEvent::create): Deleted.
+
 2016-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaselining bindings tests

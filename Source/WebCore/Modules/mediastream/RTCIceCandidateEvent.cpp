@@ -33,18 +33,9 @@
 
 namespace WebCore {
 
-Ref<RTCIceCandidateEvent> RTCIceCandidateEvent::create()
-{
-    return adoptRef(*new RTCIceCandidateEvent);
-}
-
 Ref<RTCIceCandidateEvent> RTCIceCandidateEvent::create(bool canBubble, bool cancelable, RefPtr<RTCIceCandidate>&& candidate)
 {
     return adoptRef(*new RTCIceCandidateEvent(canBubble, cancelable, WTFMove(candidate)));
-}
-
-RTCIceCandidateEvent::RTCIceCandidateEvent()
-{
 }
 
 RTCIceCandidateEvent::RTCIceCandidateEvent(bool canBubble, bool cancelable, RefPtr<RTCIceCandidate>&& candidate)

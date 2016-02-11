@@ -34,10 +34,6 @@
 namespace WebCore {
 
 struct GamepadEventInit : public EventInit {
-    GamepadEventInit()
-    {
-    }
-
     RefPtr<Gamepad> gamepad;
 };
 
@@ -45,17 +41,12 @@ class GamepadEvent : public Event {
 public:
     ~GamepadEvent() { }
 
-    static Ref<GamepadEvent> create()
-    {
-        return adoptRef(*new GamepadEvent);
-    }
-
     static Ref<GamepadEvent> create(const AtomicString& eventType, Gamepad& gamepad)
     {
         return adoptRef(*new GamepadEvent(eventType, gamepad));
     }
 
-    static Ref<GamepadEvent> create(const AtomicString& eventType, const GamepadEventInit& initializer)
+    static Ref<GamepadEvent> createForBindings(const AtomicString& eventType, const GamepadEventInit& initializer)
     {
         return adoptRef(*new GamepadEvent(eventType, initializer));
     }
@@ -65,7 +56,6 @@ public:
     virtual EventInterface eventInterface() const override { return GamepadEventInterfaceType; }
 
 private:
-    GamepadEvent();
     explicit GamepadEvent(const AtomicString& eventType, Gamepad&);
     GamepadEvent(const AtomicString& eventType, const GamepadEventInit&);
 

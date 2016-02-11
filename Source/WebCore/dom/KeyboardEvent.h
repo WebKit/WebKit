@@ -34,15 +34,9 @@ namespace WebCore {
 class Node;
 class PlatformKeyboardEvent;
 
-struct KeyboardEventInit : public UIEventInit {
-    KeyboardEventInit();
-
+struct KeyboardEventInit : public UIEventWithKeyStateInit {
     String keyIdentifier;
-    unsigned location;
-    bool ctrlKey;
-    bool altKey;
-    bool shiftKey;
-    bool metaKey;
+    unsigned location { 0 };
 };
 
 class KeyboardEvent final : public UIEventWithKeyState {
@@ -56,20 +50,27 @@ public:
         // DOM_KEY_LOCATION_MOBILE     = 0x04,
         // DOM_KEY_LOCATION_JOYSTICK   = 0x05
     };
-        
-    static Ref<KeyboardEvent> create()
-    {
-        return adoptRef(*new KeyboardEvent);
-    }
 
     static Ref<KeyboardEvent> create(const PlatformKeyboardEvent& platformEvent, AbstractView* view)
     {
         return adoptRef(*new KeyboardEvent(platformEvent, view));
     }
 
-    static Ref<KeyboardEvent> create(const AtomicString& type, const KeyboardEventInit& initializer)
+    static Ref<KeyboardEvent> createForBindings()
+    {
+        return adoptRef(*new KeyboardEvent);
+    }
+
+    static Ref<KeyboardEvent> createForBindings(const AtomicString& type, const KeyboardEventInit& initializer)
     {
         return adoptRef(*new KeyboardEvent(type, initializer));
+    }
+
+    // FIXME: This method should be get ride of in the future.
+    // DO NOT USE IT!
+    static Ref<KeyboardEvent> createForDummy()
+    {
+        return adoptRef(*new KeyboardEvent(WTF::HashTableDeletedValue));
     }
 
     virtual ~KeyboardEvent();
@@ -106,6 +107,9 @@ private:
     WEBCORE_EXPORT KeyboardEvent();
     WEBCORE_EXPORT KeyboardEvent(const PlatformKeyboardEvent&, AbstractView*);
     KeyboardEvent(const AtomicString&, const KeyboardEventInit&);
+    // FIXME: This method should be get ride of in the future.
+    // DO NOT USE IT!
+    KeyboardEvent(WTF::HashTableDeletedValueType);
 
     std::unique_ptr<PlatformKeyboardEvent> m_keyEvent;
     String m_keyIdentifier;

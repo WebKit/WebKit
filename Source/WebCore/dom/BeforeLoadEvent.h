@@ -33,26 +33,17 @@
 namespace WebCore {
 
 struct BeforeLoadEventInit : public EventInit {
-    BeforeLoadEventInit()
-    {
-    }
-
     String url;
 };
 
 class BeforeLoadEvent final : public Event {
 public:
-    static Ref<BeforeLoadEvent> create()
-    {
-        return adoptRef(*new BeforeLoadEvent);
-    }
-
     static Ref<BeforeLoadEvent> create(const String& url)
     {
         return adoptRef(*new BeforeLoadEvent(url));
     }
 
-    static Ref<BeforeLoadEvent> create(const AtomicString& type, const BeforeLoadEventInit& initializer)
+    static Ref<BeforeLoadEvent> createForBindings(const AtomicString& type, const BeforeLoadEventInit& initializer)
     {
         return adoptRef(*new BeforeLoadEvent(type, initializer));
     }
@@ -62,10 +53,6 @@ public:
     virtual EventInterface eventInterface() const override { return BeforeLoadEventInterfaceType; }
 
 private:
-    BeforeLoadEvent()
-    {
-    }
-
     explicit BeforeLoadEvent(const String& url)
         : Event(eventNames().beforeloadEvent, false, true)
         , m_url(url)

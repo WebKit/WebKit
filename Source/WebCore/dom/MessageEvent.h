@@ -42,8 +42,6 @@ namespace WebCore {
 class EventTarget;
 
 struct MessageEventInit : public EventInit {
-    MessageEventInit();
-
     Deprecated::ScriptValue data;
     String origin;
     String lastEventId;
@@ -53,10 +51,6 @@ struct MessageEventInit : public EventInit {
 
 class MessageEvent final : public Event {
 public:
-    static Ref<MessageEvent> create()
-    {
-        return adoptRef(*new MessageEvent);
-    }
     static Ref<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, const Deprecated::ScriptValue& data = Deprecated::ScriptValue(), const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = nullptr)
     {
         return adoptRef(*new MessageEvent(data, origin, lastEventId, source, WTFMove(ports)));
@@ -64,6 +58,10 @@ public:
     static Ref<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data, const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = nullptr)
     {
         return adoptRef(*new MessageEvent(data, origin, lastEventId, source, WTFMove(ports)));
+    }
+    static Ref<MessageEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId)
+    {
+        return adoptRef(*new MessageEvent(type, canBubble, cancelable, data, origin, lastEventId));
     }
     static Ref<MessageEvent> create(const String& data, const String& origin = String())
     {
@@ -77,7 +75,11 @@ public:
     {
         return adoptRef(*new MessageEvent(data, origin));
     }
-    static Ref<MessageEvent> create(const AtomicString& type, const MessageEventInit& initializer)
+    static Ref<MessageEvent> createForBindings()
+    {
+        return adoptRef(*new MessageEvent);
+    }
+    static Ref<MessageEvent> createForBindings(const AtomicString& type, const MessageEventInit& initializer)
     {
         return adoptRef(*new MessageEvent(type, initializer));
     }
@@ -121,6 +123,7 @@ private:
     MessageEvent(const AtomicString&, const MessageEventInit&);
     MessageEvent(const Deprecated::ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<EventTarget> source, std::unique_ptr<MessagePortArray>);
     MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<EventTarget> source, std::unique_ptr<MessagePortArray>);
+    MessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId);
 
     explicit MessageEvent(const String& data, const String& origin);
     explicit MessageEvent(PassRefPtr<Blob> data, const String& origin);

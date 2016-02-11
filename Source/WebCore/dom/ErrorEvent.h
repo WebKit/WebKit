@@ -37,28 +37,24 @@
 namespace WebCore {
 
 struct ErrorEventInit : public EventInit {
-    ErrorEventInit();
-
     String message;
     String filename;
-    unsigned lineno;
-    unsigned colno;
+    unsigned lineno { 0 };
+    unsigned colno { 0 };
 };
 
 class ErrorEvent final : public Event {
 public:
-    static Ref<ErrorEvent> create()
-    {
-        return adoptRef(*new ErrorEvent);
-    }
     static Ref<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
     {
         return adoptRef(*new ErrorEvent(message, fileName, lineNumber, columnNumber));
     }
-    static Ref<ErrorEvent> create(const AtomicString& type, const ErrorEventInit& initializer)
+
+    static Ref<ErrorEvent> createForBindings(const AtomicString& type, const ErrorEventInit& initializer)
     {
         return adoptRef(*new ErrorEvent(type, initializer));
     }
+
     virtual ~ErrorEvent();
 
     const String& message() const { return m_message; }
@@ -69,7 +65,6 @@ public:
     virtual EventInterface eventInterface() const override;
 
 private:
-    ErrorEvent();
     ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber);
     ErrorEvent(const AtomicString&, const ErrorEventInit&);
 

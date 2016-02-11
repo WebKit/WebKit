@@ -34,27 +34,25 @@
 namespace WebCore {
 
 struct MediaKeyEventInit : public EventInit {
-    MediaKeyEventInit();
-
     String keySystem;
     String sessionId;
     RefPtr<Uint8Array> initData;
     RefPtr<Uint8Array> message;
     String defaultURL;
     RefPtr<MediaKeyError> errorCode;
-    uint32_t systemCode;
+    uint32_t systemCode { 0 };
 };
 
 class MediaKeyEvent final : public Event {
 public:
     virtual ~MediaKeyEvent();
 
-    static Ref<MediaKeyEvent> create()
+    static Ref<MediaKeyEvent> create(const AtomicString& type, const String& keySystem, const String& sessionId, RefPtr<Uint8Array>&& initData, RefPtr<Uint8Array>&& message, const String& defaultURL, RefPtr<MediaKeyError>&& errorCode, uint32_t systemCode)
     {
-        return adoptRef(*new MediaKeyEvent);
+        return adoptRef(*new MediaKeyEvent(type, keySystem, sessionId, WTFMove(initData), WTFMove(message), defaultURL, WTFMove(errorCode), systemCode));
     }
 
-    static Ref<MediaKeyEvent> create(const AtomicString& type, const MediaKeyEventInit& initializer)
+    static Ref<MediaKeyEvent> createForBindings(const AtomicString& type, const MediaKeyEventInit& initializer)
     {
         return adoptRef(*new MediaKeyEvent(type, initializer));
     }
@@ -70,7 +68,8 @@ public:
     unsigned short systemCode() const { return m_systemCode; }
 
 private:
-    MediaKeyEvent();
+    MediaKeyEvent(const AtomicString& type, const String& keySystem, const String& sessionId, RefPtr<Uint8Array>&& initData, RefPtr<Uint8Array>&& message, const String& defaultURL, RefPtr<MediaKeyError>&& errorCode, uint32_t systemCode);
+
     MediaKeyEvent(const AtomicString& type, const MediaKeyEventInit& initializer);
 
     String m_keySystem;

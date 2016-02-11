@@ -31,10 +31,6 @@
 
 namespace WebCore {
 
-CustomEventInit::CustomEventInit()
-{
-}
-
 CustomEvent::CustomEvent()
 {
 }

@@ -40,10 +40,6 @@ class TouchEvent final : public MouseRelatedEvent {
 public:
     virtual ~TouchEvent();
 
-    static Ref<TouchEvent> create()
-    {
-        return adoptRef(*new TouchEvent);
-    }
     static Ref<TouchEvent> create(TouchList* touches, 
             TouchList* targetTouches, TouchList* changedTouches, 
             const AtomicString& type, AbstractView* view,
@@ -53,6 +49,10 @@ public:
         return adoptRef(*new TouchEvent(touches, targetTouches, changedTouches,
                 type, view, screenX, screenY, pageX, pageY,
                 ctrlKey, altKey, shiftKey, metaKey));
+    }
+    static Ref<TouchEvent> createForBindings()
+    {
+        return adoptRef(*new TouchEvent);
     }
 
     void initTouchEvent(TouchList* touches, TouchList* targetTouches,

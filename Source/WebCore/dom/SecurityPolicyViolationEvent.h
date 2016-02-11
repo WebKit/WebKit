@@ -32,10 +32,6 @@
 namespace WebCore {
 
 struct SecurityPolicyViolationEventInit : public EventInit {
-    SecurityPolicyViolationEventInit()
-    {
-    }
-
     String documentURI;
     String referrer;
     String blockedURI;
@@ -43,17 +39,22 @@ struct SecurityPolicyViolationEventInit : public EventInit {
     String effectiveDirective;
     String originalPolicy;
     String sourceFile;
-    int lineNumber;
+    int lineNumber { 0 };
 };
 
 class SecurityPolicyViolationEvent final : public Event {
 public:
-    static Ref<SecurityPolicyViolationEvent> create()
+    static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, bool canBubble, bool cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, int lineNumber)
+    {
+        return adoptRef(*new SecurityPolicyViolationEvent(type, canBubble, cancelable, documentURI, referrer, blockedURI, violatedDirective, effectiveDirective, originalPolicy, sourceFile, lineNumber));
+    }
+
+    static Ref<SecurityPolicyViolationEvent> createForBindings()
     {
         return adoptRef(*new SecurityPolicyViolationEvent());
     }
 
-    static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, const SecurityPolicyViolationEventInit& initializer)
+    static Ref<SecurityPolicyViolationEvent> createForBindings(const AtomicString& type, const SecurityPolicyViolationEventInit& initializer)
     {
         return adoptRef(*new SecurityPolicyViolationEvent(type, initializer));
     }
@@ -71,6 +72,19 @@ public:
 
 private:
     SecurityPolicyViolationEvent()
+    {
+    }
+
+    SecurityPolicyViolationEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, int lineNumber)
+        : Event(type, canBubble, cancelable)
+        , m_documentURI(documentURI)
+        , m_referrer(referrer)
+        , m_blockedURI(blockedURI)
+        , m_violatedDirective(violatedDirective)
+        , m_effectiveDirective(effectiveDirective)
+        , m_originalPolicy(originalPolicy)
+        , m_sourceFile(sourceFile)
+        , m_lineNumber(lineNumber)
     {
     }
 

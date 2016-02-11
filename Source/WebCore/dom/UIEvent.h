@@ -32,24 +32,21 @@ namespace WebCore {
 typedef DOMWindow AbstractView;
 
 struct UIEventInit : public EventInit {
-    UIEventInit();
-    UIEventInit(bool bubbles, bool cancelable);
-
     RefPtr<AbstractView> view;
-    int detail;
+    int detail { 0 };
 };
 
 class UIEvent : public Event {
 public:
-    static Ref<UIEvent> create()
-    {
-        return adoptRef(*new UIEvent);
-    }
     static Ref<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, int detail)
     {
         return adoptRef(*new UIEvent(type, canBubble, cancelable, view, detail));
     }
-    static Ref<UIEvent> create(const AtomicString& type, const UIEventInit& initializer)
+    static Ref<UIEvent> createForBindings()
+    {
+        return adoptRef(*new UIEvent);
+    }
+    static Ref<UIEvent> createForBindings(const AtomicString& type, const UIEventInit& initializer)
     {
         return adoptRef(*new UIEvent(type, initializer));
     }

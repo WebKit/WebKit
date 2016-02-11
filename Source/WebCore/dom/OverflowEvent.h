@@ -31,11 +31,9 @@
 namespace WebCore {
 
 struct OverflowEventInit : public EventInit {
-    OverflowEventInit();
-
-    unsigned short orient;
-    bool horizontalOverflow;
-    bool verticalOverflow;
+    unsigned short orient { 0 };
+    bool horizontalOverflow { false };
+    bool verticalOverflow { false };
 };
 
 class OverflowEvent final : public Event {
@@ -46,15 +44,15 @@ public:
         BOTH       = 2
     };
 
-    static Ref<OverflowEvent> create()
-    {
-        return adoptRef(*new OverflowEvent);
-    }
     static Ref<OverflowEvent> create(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow)
     {
         return adoptRef(*new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow));
     }
-    static Ref<OverflowEvent> create(const AtomicString& type, const OverflowEventInit& initializer)
+    static Ref<OverflowEvent> createForBindings()
+    {
+        return adoptRef(*new OverflowEvent);
+    }
+    static Ref<OverflowEvent> createForBindings(const AtomicString& type, const OverflowEventInit& initializer)
     {
         return adoptRef(*new OverflowEvent(type, initializer));
     }

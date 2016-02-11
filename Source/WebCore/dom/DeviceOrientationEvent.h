@@ -35,13 +35,14 @@ class DeviceOrientationData;
 class DeviceOrientationEvent final : public Event {
 public:
     virtual ~DeviceOrientationEvent();
-    static Ref<DeviceOrientationEvent> create()
-    {
-        return adoptRef(*new DeviceOrientationEvent);
-    }
     static Ref<DeviceOrientationEvent> create(const AtomicString& eventType, DeviceOrientationData* orientation)
     {
         return adoptRef(*new DeviceOrientationEvent(eventType, orientation));
+    }
+
+    static Ref<DeviceOrientationEvent> createForBindings()
+    {
+        return adoptRef(*new DeviceOrientationEvent);
     }
 
     void initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceOrientationData*);

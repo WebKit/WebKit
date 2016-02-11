@@ -30,16 +30,6 @@
 
 namespace WebCore {
 
-PageTransitionEventInit::PageTransitionEventInit()
-    : persisted(false)
-{
-}
-
-PageTransitionEvent::PageTransitionEvent()
-    : m_persisted(false)
-{
-}
-
 PageTransitionEvent::PageTransitionEvent(const AtomicString& type, bool persisted)
     : Event(type, true, true)
     , m_persisted(persisted)

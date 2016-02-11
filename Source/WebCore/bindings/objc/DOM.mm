@@ -518,7 +518,9 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!page)
         return nil;
 
-    RefPtr<KeyboardEvent> key = KeyboardEvent::create();
+    // FIXME: using KeyboardEvent::createForDummy() here should be deprecated,
+    // should use one that is not for bindings.
+    RefPtr<KeyboardEvent> key = KeyboardEvent::createForDummy();
     return kit(page->focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&core(self)->document()), core(self), key.get()));
 }
 
@@ -528,7 +530,9 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!page)
         return nil;
 
-    RefPtr<KeyboardEvent> key = KeyboardEvent::create();
+    // FIXME: using KeyboardEvent::createForDummy() here should be deprecated,
+    // should use one that is not for bindings.
+    RefPtr<KeyboardEvent> key = KeyboardEvent::createForDummy();
     return kit(page->focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&core(self)->document()), core(self), key.get()));
 }
 

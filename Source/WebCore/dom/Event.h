@@ -40,11 +40,8 @@ class EventTarget;
 class HTMLIFrameElement;
 
 struct EventInit {
-    EventInit();
-    EventInit(bool bubbles, bool cancelable);
-
-    bool bubbles;
-    bool cancelable;
+    bool bubbles { false };
+    bool cancelable { false };
 };
 
 enum EventInterface {
@@ -83,16 +80,17 @@ public:
         CHANGE              = 32768
     };
 
-    static Ref<Event> create()
-    {
-        return adoptRef(*new Event);
-    }
     static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
     {
         return adoptRef(*new Event(type, canBubble, cancelable));
     }
 
-    static Ref<Event> create(const AtomicString& type, const EventInit& initializer)
+    static Ref<Event> createForBindings()
+    {
+        return adoptRef(*new Event);
+    }
+
+    static Ref<Event> createForBindings(const AtomicString& type, const EventInit& initializer)
     {
         return adoptRef(*new Event(type, initializer));
     }

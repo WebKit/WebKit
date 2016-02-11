@@ -33,12 +33,15 @@
 
 namespace WebCore {
 
-MediaKeyEventInit::MediaKeyEventInit()
-    : systemCode(0)
-{
-}
-
-MediaKeyEvent::MediaKeyEvent()
+MediaKeyEvent::MediaKeyEvent(const AtomicString& type, const String& keySystem, const String& sessionId, RefPtr<Uint8Array>&& initData, RefPtr<Uint8Array>&& message, const String& defaultURL, RefPtr<MediaKeyError>&& errorCode, uint32_t systemCode)
+    : Event(type, false, false)
+    , m_keySystem(keySystem)
+    , m_sessionId(sessionId)
+    , m_initData(initData)
+    , m_message(message)
+    , m_defaultURL(defaultURL)
+    , m_errorCode(errorCode)
+    , m_systemCode(systemCode)
 {
 }
 

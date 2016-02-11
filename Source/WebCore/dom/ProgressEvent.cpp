@@ -30,20 +30,6 @@
 
 namespace WebCore {
 
-ProgressEventInit::ProgressEventInit()
-    : lengthComputable(false)
-    , loaded(0)
-    , total(0)
-{
-}
-
-ProgressEvent::ProgressEvent()
-    : m_lengthComputable(false)
-    , m_loaded(0)
-    , m_total(0)
-{
-}
-
 ProgressEvent::ProgressEvent(const AtomicString& type, const ProgressEventInit& initializer)
     : Event(type, initializer)
     , m_lengthComputable(initializer.lengthComputable)

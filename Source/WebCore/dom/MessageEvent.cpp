@@ -37,10 +37,6 @@ static inline bool isValidSource(EventTarget* source)
     return !source || source->toDOMWindow() || source->isMessagePort();
 }
 
-MessageEventInit::MessageEventInit()
-{
-}
-
 MessageEvent::MessageEvent()
     : m_dataType(DataTypeScriptValue)
 {
@@ -79,6 +75,15 @@ MessageEvent::MessageEvent(PassRefPtr<SerializedScriptValue> data, const String&
     , m_ports(WTFMove(ports))
 {
     ASSERT(isValidSource(m_source.get()));
+}
+
+MessageEvent::MessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId)
+    : Event(type, canBubble, cancelable)
+    , m_dataType(DataTypeSerializedScriptValue)
+    , m_dataAsSerializedScriptValue(data)
+    , m_origin(origin)
+    , m_lastEventId(lastEventId)
+{
 }
 
 MessageEvent::MessageEvent(const String& data, const String& origin)

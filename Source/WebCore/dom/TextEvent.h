@@ -39,9 +39,8 @@ namespace WebCore {
 
     class TextEvent final : public UIEvent {
     public:
-
-        static Ref<TextEvent> create();
         static Ref<TextEvent> create(AbstractView*, const String& data, TextEventInputType = TextEventInputKeyboard);
+        static Ref<TextEvent> createForBindings();
         static Ref<TextEvent> createForPlainTextPaste(AbstractView*, const String& data, bool shouldSmartReplace);
         static Ref<TextEvent> createForFragmentPaste(AbstractView*, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
         static Ref<TextEvent> createForDrop(AbstractView*, const String& data);

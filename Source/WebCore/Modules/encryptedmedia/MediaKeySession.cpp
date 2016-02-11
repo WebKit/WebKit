@@ -209,12 +209,7 @@ void MediaKeySession::addKeyTimerFired()
 
 void MediaKeySession::sendMessage(Uint8Array* message, String destinationURL)
 {
-    MediaKeyMessageEventInit init;
-    init.bubbles = false;
-    init.cancelable = false;
-    init.message = message;
-    init.destinationURL = destinationURL;
-    RefPtr<MediaKeyMessageEvent> event = MediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, init);
+    RefPtr<MediaKeyMessageEvent> event = MediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
     event->setTarget(this);
     m_asyncEventQueue.enqueueEvent(event.release());
 }

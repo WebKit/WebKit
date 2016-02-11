@@ -35,8 +35,6 @@
 namespace WebCore {
 
 struct MediaKeyMessageEventInit : public EventInit {
-    MediaKeyMessageEventInit();
-
     RefPtr<Uint8Array> message;
     String destinationURL;
 };
@@ -45,12 +43,12 @@ class MediaKeyMessageEvent : public Event {
 public:
     virtual ~MediaKeyMessageEvent();
 
-    static Ref<MediaKeyMessageEvent> create()
+    static Ref<MediaKeyMessageEvent> create(const AtomicString& type, Uint8Array* message, const String& destinationURL)
     {
-        return adoptRef(*new MediaKeyMessageEvent);
+        return adoptRef(*new MediaKeyMessageEvent(type, message, destinationURL));
     }
 
-    static Ref<MediaKeyMessageEvent> create(const AtomicString& type, const MediaKeyMessageEventInit& initializer)
+    static Ref<MediaKeyMessageEvent> createForBindings(const AtomicString& type, const MediaKeyMessageEventInit& initializer)
     {
         return adoptRef(*new MediaKeyMessageEvent(type, initializer));
     }
@@ -61,7 +59,7 @@ public:
     String destinationURL() const { return m_destinationURL; }
 
 private:
-    MediaKeyMessageEvent();
+    MediaKeyMessageEvent(const AtomicString& type, Uint8Array* message, const String& destinationURL);
     MediaKeyMessageEvent(const AtomicString& type, const MediaKeyMessageEventInit& initializer);
 
     RefPtr<Uint8Array> m_message;

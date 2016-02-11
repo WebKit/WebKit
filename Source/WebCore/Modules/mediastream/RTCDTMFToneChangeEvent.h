@@ -41,16 +41,14 @@ class RTCDTMFToneChangeEvent : public Event {
 public:
     virtual ~RTCDTMFToneChangeEvent();
 
-    static Ref<RTCDTMFToneChangeEvent> create();
     static Ref<RTCDTMFToneChangeEvent> create(const String& tone);
-    static Ref<RTCDTMFToneChangeEvent> create(const AtomicString& type, const RTCDTMFToneChangeEventInit& initializer);
+    static Ref<RTCDTMFToneChangeEvent> createForBindings(const AtomicString& type, const RTCDTMFToneChangeEventInit& initializer);
 
     const String& tone() const;
 
     virtual EventInterface eventInterface() const;
 
 private:
-    RTCDTMFToneChangeEvent();
     explicit RTCDTMFToneChangeEvent(const String& tone);
     explicit RTCDTMFToneChangeEvent(const RTCDTMFToneChangeEventInit&);
 

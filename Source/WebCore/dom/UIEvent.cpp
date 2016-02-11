@@ -26,18 +26,6 @@
 #include "Node.h"
 
 namespace WebCore {
-
-UIEventInit::UIEventInit()
-    : detail(0)
-{
-}
-
-UIEventInit::UIEventInit(bool bubbles, bool cancelable)
-    : EventInit(bubbles, cancelable)
-    , detail(0)
-{
-}
-
     
 UIEvent::UIEvent()
     : m_detail(0)

@@ -40,10 +40,6 @@ static const AtomicString& stringForPlaybackTargetAvailability(bool available)
     return available ? availableString : notAvailableString;
 }
 
-WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent()
-{
-}
-
 WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(const AtomicString& eventType, bool available)
     : Event(eventType, false, false)
     , m_availability(stringForPlaybackTargetAvailability(available))
