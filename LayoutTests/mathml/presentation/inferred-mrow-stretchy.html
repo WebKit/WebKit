@@ -2,24 +2,25 @@
   <head>
     <title>inferred mrows</title>
     <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
     <script type="text/javascript">
-      function test()
+      setup({ "explicit_done": true });
+      function run()
       {
         var tags = ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose"];
-        var result = "";
         for (var i in tags) {
           var tag = tags[i];
           var mo = document.getElementById("mo" + tag);
-          result += tag + ": " + (mo.getBoundingClientRect().height >= 60 ? "PASS" : "FAIL") + "\n";
+          test(function() {
+            assert_greater_than_equal(mo.getBoundingClientRect().height, 60);
+          }, "operator stretching inside " + tag);
         }
-        document.getElementById("result").innerText = result;
-  
-        if (window.testRunner)
-          testRunner.dumpAsText();
+        done();
       }
     </script>
   </head>
-  <body onload="test()">
+  <body onload="run()">
 
     <p>This test passes if all the vertical bars stretch.</p>
 
@@ -32,8 +33,6 @@
       <math><mo id="moMath">|</mo><mspace width="1px" height="30px" depth="30px" mathbackground="red"></mspace></math>
       <math><menclose notation="box"><mo id="moMenclose">|</mo><mspace width="1px" height="30px" depth="30px" mathbackground="red"></mspace></menclose></math>
     </p>
-
-    <div id="result"></div>
 
   </body>
 </html>

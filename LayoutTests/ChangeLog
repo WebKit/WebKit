@@ -1,3 +1,21 @@
+2016-02-11  Frederic Wang  <fred.wang@free.fr>
+
+        Use Testharness.js for the MathML script tests
+        https://bugs.webkit.org/show_bug.cgi?id=154065
+
+        Reviewed by Darin Adler.
+
+        * mathml/opentype/large-operators-munderover-expected.txt:
+        * mathml/opentype/large-operators-munderover.html:
+        * mathml/presentation/inferred-mrow-baseline-expected.txt:
+        * mathml/presentation/inferred-mrow-baseline.html:
+        * mathml/presentation/inferred-mrow-stretchy-expected.txt:
+        * mathml/presentation/inferred-mrow-stretchy.html:
+        * mathml/presentation/stretchy-depth-height-expected.txt:
+        * mathml/presentation/stretchy-depth-height-symmetric-expected.txt:
+        * mathml/presentation/stretchy-depth-height-symmetric.html:
+        * mathml/presentation/stretchy-depth-height.html:
+
 2016-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Removing deleted tests from ios-simulator TestExpectations

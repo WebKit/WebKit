@@ -2,65 +2,76 @@
   <head>
     <title>stretch depth/height</title>
     <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
     <script type="text/javascript">
-      var result;
+      setup({ "explicit_done": true });
       var epsilon = 1;
 
-      function almostEqual(x, y) {
-          return Math.abs(x - y) < epsilon;
-      }
-
-      function assert(text, condition) {
-          result += text + ": " + (condition ? "PASS" : "FAIL") + "\n";
-      }
-
-      function test() {
-          result = "";
-
+      function run() {
+        test(function() {
           var s1 = document.getElementById("s1").getBoundingClientRect();
           var c1 = document.getElementById("c1").getBoundingClientRect();
-          assert("symmetric stretching", almostEqual(s1.top, c1.top) && almostEqual(s1.bottom, c1.bottom));
+          assert_approx_equals(s1.top, c1.top, epsilon);
+          assert_approx_equals(s1.bottom, c1.bottom, epsilon);
+        }, "symmetric stretching");
 
+        test(function() {
           var s2 = document.getElementById("s2").getBoundingClientRect();
           var c2 = document.getElementById("c2").getBoundingClientRect();
-          assert("large depth", almostEqual(s2.top, c2.top) && almostEqual(s2.bottom, c2.bottom));
+          assert_approx_equals(s2.top, c2.top, epsilon);
+          assert_approx_equals(s2.bottom, c2.bottom, epsilon);
+        }, "large depth");
 
+        test(function() {
           var s3 = document.getElementById("s3").getBoundingClientRect();
           var c3 = document.getElementById("c3").getBoundingClientRect();
-          assert("large height", almostEqual(s3.top, c3.top) && almostEqual(s3.bottom, c3.bottom));
+          assert_approx_equals(s3.top, c3.top, epsilon);
+          assert_approx_equals(s3.bottom, c3.bottom, epsilon);
+        }, "large height");
 
+        test(function() {
           var s4 = document.getElementById("s4").getBoundingClientRect();
           var c4 = document.getElementById("c4").getBoundingClientRect();
-          assert("mtable", almostEqual(s4.top, c4.top) && almostEqual(s4.bottom, c4.bottom));
+          assert_approx_equals(s4.top, c4.top, epsilon);
+          assert_approx_equals(s4.bottom, c4.bottom, epsilon);
+        }, "mtable");
 
+        test(function() {
           var s5 = document.getElementById("s5").getBoundingClientRect();
           var c5maxheight = document.getElementById("c5maxheight").getBoundingClientRect();
           var c5maxdepth = document.getElementById("c5maxdepth").getBoundingClientRect();
-          assert("several siblings with different heights/depths", almostEqual(s5.top, c5maxheight.top) && almostEqual(s5.bottom, c5maxdepth.bottom));
+          assert_approx_equals(s5.top, c5maxheight.top, epsilon);
+          assert_approx_equals(s5.bottom, c5maxdepth.bottom, epsilon);
+        }, "several siblings with different heights/depths");
 
-
+        test(function() {
           var c6maxheight = document.getElementById("c6maxheight").getBoundingClientRect();
           var c6maxdepth = document.getElementById("c6maxdepth").getBoundingClientRect();
           for (var i = 1; i <= 3; i++) {
-              var s6 = document.getElementById("s6_" + i).getBoundingClientRect();
-              assert("testing several operators in one mrow (operator " + i + ")", almostEqual(s6.top, c6maxheight.top) && almostEqual(s6.bottom, c6maxdepth.bottom));
+            var s6 = document.getElementById("s6_" + i).getBoundingClientRect();
+            assert_approx_equals(s6.top, c6maxheight.top, epsilon, "top of operator" + i);
+            assert_approx_equals(s6.bottom, c6maxdepth.bottom, c6maxheight.top, epsilon, "bottom of operator" + i);
           }
+        }, "testing several operators in one mrow");
 
+        test(function() {
           var s71 = document.getElementById("s71").getBoundingClientRect();
           var c71 = document.getElementById("c71").getBoundingClientRect();
           var s72 = document.getElementById("s72").getBoundingClientRect();
           var c72 = document.getElementById("c72").getBoundingClientRect();
 
-          assert("testing with non-stretchy mo", almostEqual(s71.top, c71.top) && almostEqual(s71.bottom, c71.bottom) && almostEqual(s72.top, c72.top) && almostEqual(s72.bottom, c72.bottom));
+            assert_approx_equals(s71.top, c71.top, epsilon);
+            assert_approx_equals(s71.bottom, c71.bottom, epsilon);
+            assert_approx_equals(s72.top, c72.top, epsilon);
+            assert_approx_equals(s72.bottom, c72.bottom, epsilon);
+        }, "testing with non-stretchy mo");
 
-          document.getElementById("result").innerText = result;
-  
-          if (window.testRunner)
-              testRunner.dumpAsText();
+        done();
       }
     </script>
   </head>
-  <body onload="test()">
+  <body onload="run()">
 
     <p>This test passes if the depth and height of braces match the maximum depth and height of its siblings.</p>
 
@@ -217,8 +228,6 @@
         </mrow>
       </math>
     </p>
-
-    <div id="result"></div>
 
   </body>
 </html>

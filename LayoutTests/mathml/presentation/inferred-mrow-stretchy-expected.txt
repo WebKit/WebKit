@@ -7,11 +7,12 @@ This test passes if all the vertical bars stretch.
  
  
 
-Mrow: PASS
-Sqrt: PASS
-Style: PASS
-Error: PASS
-Phantom: PASS
-Math: PASS
-Menclose: PASS
+
+PASS operator stretching inside Mrow 
+PASS operator stretching inside Sqrt 
+PASS operator stretching inside Style 
+PASS operator stretching inside Error 
+PASS operator stretching inside Phantom 
+PASS operator stretching inside Math 
+PASS operator stretching inside Menclose 
 

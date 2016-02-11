@@ -4,8 +4,9 @@ This test passes if the brace stretches symmetrically and is large enough to cov
  
  
 
-large depth: PASS
-large depth (explicit symmetric attribute): PASS
-large height: PASS
-large height (explicit symmetric attribute): PASS
+
+PASS large depth 
+PASS large depth (explicit symmetric attribute) 
+PASS large height 
+PASS large height (explicit symmetric attribute) 
 

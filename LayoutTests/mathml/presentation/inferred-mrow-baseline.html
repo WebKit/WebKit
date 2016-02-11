@@ -2,25 +2,26 @@
   <head>
     <title>inferred mrows</title>
     <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
     <script type="text/javascript">
-      function test()
+      setup({ "explicit_done": true });
+      function run()
       {
         var tags = ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose"];
-        var result = "";
         for (var i in tags) {
           var tag = tags[i];
           var x = document.getElementById("above" + tag).getBoundingClientRect();
           var y = document.getElementById("below" + tag).getBoundingClientRect();
-          result += tag + ": " + (x.bottom == y.top ? "PASS" : "FAIL") + "\n";
+          test(function() {
+            assert_equals(x.bottom, y.top);
+          }, "baseline alignment inside " + tag);
         }
-        document.getElementById("result").innerText = result;
-  
-        if (window.testRunner)
-          testRunner.dumpAsText();
+        done();
       }
     </script>
   </head>
-  <body onload="test()">
+  <body onload="run()">
 
     <p>This test passes if rectangles are correctly aligned with respect to the baseline.</p>
 
@@ -39,8 +40,6 @@
 	  
       <math><menclose notation="box"><mspace id="aboveMenclose" width="10px" height="30px" mathbackground="red"></mspace><mspace id="belowMenclose" width="10px" depth="30px" mathbackground="blue"></mspace></menclose></math>
     </p>
-
-    <div id="result"></div>
 
   </body>
 </html>
