@@ -72,6 +72,40 @@ test("_parseRevisionFromURL", function()
     strictEqual(this.trac._parseRevisionFromURL("https://git.foobar.com/trac/Whatever.git/changeset/0e498db5d8e5b5a342631"), "0e498db5d8e5b5a342631", "Git");
 });
 
+test("nextRevision", function()
+{
+    this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
+    strictEqual(this.trac.nextRevision("trunk", 33020), 33022, "nextRevision same branch");
+    strictEqual(this.trac.nextRevision("trunk", 33019), 33020, "nextRevision different branch");
+});
+
+test("indexOfRevision", function()
+{
+    this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
+    strictEqual(this.trac.indexOfRevision(33020), 2, "indexOfRevision");
+});
+
+test("commitsOnBranchLaterThanRevision", function()
+{
+    this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
+    var commits = this.trac.commitsOnBranchLaterThanRevision("trunk", 33020);
+    equal(commits.length, 1, "greater than 33020");
+});
+
+test("commitsOnBranchLaterThanRevision no commits", function()
+{
+    this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
+    var commits = this.trac.commitsOnBranchLaterThanRevision("someOtherBranch", 33021);
+    equal(commits.length, 0, "greater than 33021");
+});
+
+test("commitsOnBranchInRevisionRange", function()
+{
+    this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
+    var commits = this.trac.commitsOnBranchInRevisionRange("trunk", 33020, 33022);
+    equal(commits.length, 2, "in range 33020, 33022");
+});
+
 module("BuildBotQueueView", {
     setup: function() {
         this.trac = new MockTrac();
@@ -111,6 +145,31 @@ test("_presentPopoverForPendingCommits", function()
     this.view._presentPopoverForPendingCommits(element, popover, this.queue);
     var nodeList = popover._element.getElementsByClassName("pending-commit");
     strictEqual(nodeList.length, 1, "has 1 pending commit");
+});
+
+test("_presentPopoverForPendingCommits no pending commits", function()
+{
+    this.someOtherBranch = {
+        name: "someOtherBranch",
+        repository: {
+            name: "openSource",
+            trac: this.trac,
+            isSVN: true,
+        }
+    };
+    this.queue.branches = [this.someOtherBranch];
+    this.view._latestProductiveIteration = function(queue)
+    {
+        var iteration = {
+            revision: { "openSource": 33021 },
+        };
+        return iteration;
+    }
+    var element = document.createElement("div");
+    var popover = new Dashboard.Popover();
+    this.view._presentPopoverForPendingCommits(element, popover, this.queue);
+    var nodeList = popover._element.getElementsByClassName("pending-commit");
+    strictEqual(nodeList.length, 0, "has 0 pending commits");
 });
 
 test("_presentPopoverForRevisionRange", function()
@@ -191,12 +250,13 @@ test("_formatRevisionForDisplay Git", function()
 
 module("BuildBotQueue", {
     setup: function() {
+        Dashboard.Repository.OpenSource.trac = new MockTrac();
+        Dashboard.Repository.OpenSource.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
+        Dashboard.Repository.Internal.trac = new MockTrac();
         this.queue = new MockBuildbotQueue();
         this.queue.branches = [{
             name: "trunk",
-            repository: {
-                name: "openSource",
-            }
+            repository: Dashboard.Repository.Opensource
         }];
     }
 });

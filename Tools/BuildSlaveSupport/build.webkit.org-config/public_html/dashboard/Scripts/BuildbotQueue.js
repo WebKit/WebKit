@@ -285,9 +285,15 @@ BuildbotQueue.prototype = {
         var sortedRepositories = Dashboard.sortedRepositories;
         for (var i = 0; i < sortedRepositories.length; ++i) {
             var repositoryName = sortedRepositories[i].name;
-            var result = b.revision[repositoryName] - a.revision[repositoryName];
-            if (result)
-                return result;
+            var trac = sortedRepositories[i].trac;
+            console.assert(trac);
+            var indexA = trac.indexOfRevision(a.revision[repositoryName]);
+            var indexB = trac.indexOfRevision(b.revision[repositoryName]);
+            if (indexA !== -1 && indexB !== -1) {
+                var result = indexB - indexA;
+                if (result)
+                    return result;
+            }
         }
 
         return 0;

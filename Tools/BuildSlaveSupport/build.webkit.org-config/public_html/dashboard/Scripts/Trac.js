@@ -37,6 +37,8 @@ Trac = function(baseURL, options)
 
 BaseObject.addConstructorFunctions(Trac);
 
+Trac.NO_MORE_REVISIONS = null;
+
 Trac.NeedsAuthentication = "needsAuthentication";
 Trac.UpdateInterval = 45000; // 45 seconds
 
@@ -63,11 +65,40 @@ Trac.prototype = {
         return this.recordedCommits[this.recordedCommits.length - 1].revisionNumber;
     },
 
-    commitsOnBranch: function(branchName, filter)
+    _commitsOnBranch: function(branchName, beginPosition, endPosition)
     {
-        return this.recordedCommits.filter(function(commit, index, array) {
-            return (!commit.containsBranchLocation || commit.branches.includes(branchName)) && filter(commit, index, array);
-        });
+        beginPosition = beginPosition || 0;
+        if (endPosition === undefined)
+            endPosition = this.recordedCommits.length - 1;
+        var commits = [];
+        for (var i = beginPosition; i <= endPosition; ++i) {
+            var commit = this.recordedCommits[i];
+            if (!commit.containsBranchLocation || commit.branches.includes(branchName))
+                commits.push(commit);
+        }
+        return commits;
+    },
+
+    commitsOnBranchLaterThanRevision: function(branchName, revision)
+    {
+        var indexToBeLaterThan = this.indexOfRevision(revision);
+        console.assert(indexToBeLaterThan !== -1, revision + " is not in the list of recorded commits");
+        if (indexToBeLaterThan === -1)
+            return [];
+        return this._commitsOnBranch(branchName, indexToBeLaterThan + 1);
+    },
+
+    commitsOnBranchInRevisionRange: function(branchName, firstRevision, lastRevision)
+    {
+        var indexOfFirstRevision = this.indexOfRevision(firstRevision);
+        console.assert(indexOfFirstRevision !== -1, firstRevision + " is not in the list of recorded commits");
+        if (indexOfFirstRevision === -1)
+            return [];
+        var indexOfLastRevision = this.indexOfRevision(lastRevision);
+        console.assert(indexOfLastRevision !== -1, lastRevision + " is not in the list of recorded commits");
+        if (indexOfLastRevision === -1)
+            return [];
+        return this._commitsOnBranch(branchName, indexOfFirstRevision, indexOfLastRevision);
     },
 
     revisionURL: function(revision)
@@ -265,5 +296,23 @@ Trac.prototype = {
             this._loadingHistoricalData = false;
             this._loaded(dataDocument);
         }.bind(this), this._needsAuthentication ? { withCredentials: true } : {});
+    },
+
+    nextRevision: function(branchName, revision)
+    {
+        var commits = this.commitsOnBranchLaterThanRevision(branchName, revision);
+        if (commits.length > 0)
+            return commits[0].revisionNumber;
+        return Trac.NO_MORE_REVISIONS;
+    },
+
+    indexOfRevision: function(revision)
+    {
+        var commits = this.recordedCommits;
+        for (var i = 0; i < commits.length; ++i) {
+            if (commits[i].revisionNumber === revision)
+                return i;
+        }
+        return -1;
     },
 };

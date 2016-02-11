@@ -94,12 +94,12 @@ BuildbotQueueView.prototype = {
                 continue;
             if (!trac)
                 continue;
-            if (!trac.latestRecordedRevisionNumber || trac.oldestRecordedRevisionNumber > latestProductiveRevisionNumber) {
+            if (!trac.latestRecordedRevisionNumber || trac.indexOfRevision(trac.oldestRecordedRevisionNumber) > trac.indexOfRevision(latestProductiveRevisionNumber)) {
                 trac.loadMoreHistoricalData();
                 return;
             }
 
-            totalRevisionsBehind += trac.commitsOnBranch(branch.name, function(commit) { return commit.revisionNumber > latestProductiveRevisionNumber; }).length;
+            totalRevisionsBehind += trac.commitsOnBranchLaterThanRevision(branch.name, latestProductiveRevisionNumber).length;
         }
 
         if (!totalRevisionsBehind)
@@ -140,11 +140,11 @@ BuildbotQueueView.prototype = {
             return result;
         }
 
-        console.assert(trac.oldestRecordedRevisionNumber <= firstRevisionNumber);
+        console.assert(trac.indexOfRevision(trac.oldestRecordedRevisionNumber) <= trac.indexOfRevision(firstRevisionNumber));
 
         // FIXME: To be 100% correct, we should also filter out changes that are ignored by
         // the queue, see _should_file_trigger_build in wkbuild.py.
-        var commits = trac.commitsOnBranch(branch.name, function(commit) { return commit.revisionNumber >= firstRevisionNumber && commit.revisionNumber <= lastRevisionNumber; });
+        var commits = trac.commitsOnBranchInRevisionRange(branch.name, firstRevisionNumber, lastRevisionNumber);
         return commits.map(function(commit) {
             return lineForCommit.call(this, trac, commit);
         }, this).reverse();
@@ -169,7 +169,10 @@ BuildbotQueueView.prototype = {
             var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
             if (!latestProductiveRevisionNumber || !trac.latestRecordedRevisionNumber)
                 continue;
-            var lines = this._popoverLinesForCommitRange(trac, branch, latestProductiveRevisionNumber + 1, trac.latestRecordedRevisionNumber);
+            var nextRevision = trac.nextRevision(branch.name, latestProductiveRevisionNumber);
+            if (nextRevision === Trac.NO_MORE_REVISIONS)
+                continue;
+            var lines = this._popoverLinesForCommitRange(trac, branch, nextRevision, trac.latestRecordedRevisionNumber);
             var length = lines.length;
             if (length && shouldAddDivider)
                 this._addDividerToPopover(content);
@@ -220,21 +223,41 @@ BuildbotQueueView.prototype = {
         var repository = branch.repository;
         var repositoryName = repository.name;
         console.assert(iteration.revision[repositoryName]);
+        var trac = repository.trac;
         var content = document.createElement("span");
         content.textContent = this._formatRevisionForDisplay(iteration.revision[repositoryName], repository);
         content.classList.add("revision-number");
 
-        if (previousIteration) {
-            console.assert(previousIteration.revision[repositoryName]);
-            var context = {
-                trac: repository.trac,
-                branch: branch,
-                firstRevision: previousIteration.revision[repositoryName] + 1,
-                lastRevision: iteration.revision[repositoryName]
-            };
-            if (context.firstRevision <= context.lastRevision)
-                new PopoverTracker(content, this._presentPopoverForRevisionRange.bind(this), context);
-        }
+        if (!previousIteration)
+            return content;
+
+        var previousIterationRevision = previousIteration.revision[repositoryName];
+        console.assert(previousIterationRevision);
+        var previousIterationRevisionIndex = trac.indexOfRevision(previousIterationRevision);
+        if (previousIterationRevisionIndex === -1)
+            return content;
+
+        var firstRevision = trac.nextRevision(branch.name, previousIterationRevision);
+        if (firstRevision === Trac.NO_MORE_REVISIONS)
+            return content;
+        var firstRevisionIndex = trac.indexOfRevision(firstRevision);
+        console.assert(firstRevisionIndex !== -1);
+
+        var lastRevision = iteration.revision[repositoryName];
+        var lastRevisionIndex = trac.indexOfRevision(lastRevision);
+        if (lastRevisionIndex === -1)
+            return content;
+
+        if (firstRevisionIndex > lastRevisionIndex)
+            return content;
+
+        var context = {
+            trac: trac,
+            branch: branch,
+            firstRevision: firstRevision,
+            lastRevision: lastRevision,
+        };
+        new PopoverTracker(content, this._presentPopoverForRevisionRange.bind(this), context);
 
         return content;
     },
