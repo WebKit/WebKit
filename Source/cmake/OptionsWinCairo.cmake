@@ -5,6 +5,7 @@ include(OptionsWin)
 set(USE_CF 1)
 set(USE_CURL 1)
 set(USE_ICU_UNICODE 1)
+set(USE_TEXTURE_MAPPER_GL 1)
 
 set(ENABLE_GRAPHICS_CONTEXT_3D 1)
 

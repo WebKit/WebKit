@@ -1,3 +1,14 @@
+2016-02-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Consolidate TextureMapper file and include dir lists.
+        https://bugs.webkit.org/show_bug.cgi?id=154106
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsEfl.cmake: Expose USE_TEXTURE_MAPPER_GL to
+        CMake code.
+        * Source/cmake/OptionsWinCairo.cmake: Ditto.
+
 2016-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK][EFL] Fix several build configuration related to SamplingProfiler after r196245

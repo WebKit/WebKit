@@ -1,4 +1,5 @@
 include(platform/ImageDecoders.cmake)
+include(platform/TextureMapper.cmake)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
@@ -24,7 +25,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/efl"
-    "${WEBCORE_DIR}/page/scrolling/coordinatedgraphics"
     "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/geoclue"
@@ -38,8 +38,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/surfaces"
     "${WEBCORE_DIR}/platform/graphics/surfaces/efl"
     "${WEBCORE_DIR}/platform/graphics/surfaces/glx"
-    "${WEBCORE_DIR}/platform/graphics/texmap"
-    "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     "${WEBCORE_DIR}/platform/graphics/x11"
     "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mediastream/openwebrtc"
@@ -85,9 +83,6 @@ list(APPEND WebCore_SOURCES
     page/efl/EventHandlerEfl.cpp
 
     page/scrolling/AxisScrollSnapOffsets.cpp
-
-    page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
 
     platform/KillRingNone.cpp
 
@@ -205,23 +200,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp
 
     platform/graphics/surfaces/glx/X11Helper.cpp
-
-    platform/graphics/texmap/BitmapTexture.cpp
-    platform/graphics/texmap/BitmapTextureGL.cpp
-    platform/graphics/texmap/BitmapTexturePool.cpp
-    platform/graphics/texmap/ClipStack.cpp
-    platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
-    platform/graphics/texmap/TextureMapperGL.cpp
-    platform/graphics/texmap/TextureMapperShaderProgram.cpp
-
-    platform/graphics/texmap/coordinated/AreaAllocator.cpp
-    platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
-    platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
-    platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp
-    platform/graphics/texmap/coordinated/CoordinatedSurface.cpp
-    platform/graphics/texmap/coordinated/Tile.cpp
-    platform/graphics/texmap/coordinated/TiledBackingStore.cpp
-    platform/graphics/texmap/coordinated/UpdateAtlas.cpp
 
     platform/graphics/x11/PlatformDisplayX11.cpp
     platform/graphics/x11/XUniqueResource.cpp

@@ -1,3 +1,21 @@
+2016-02-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Consolidate TextureMapper file and include dir lists.
+        https://bugs.webkit.org/show_bug.cgi?id=154106
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * CMakeLists.txt: Moved texmap include dir and source list to
+        TextureMapper.cmake, removed non-existent include dir "filters/texmap".
+        * PlatformEfl.cmake: Moved texmap and coordinatedgraphics include
+        dirs and source list to TextureMapper.cmake.
+        * PlatformGTK.cmake: Ditto, also removed non-existent include dir
+        "texmap/threadedcompositor"
+        * PlatformWinCairo.cmake: Moved texmap files to TextureMapper.cmake.
+        * platform/TextureMapper.cmake: Added.
+
 2016-02-11  Chris Dumez  <cdumez@apple.com>
 
         Move 'length' property to the prototype

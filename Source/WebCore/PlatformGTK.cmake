@@ -1,4 +1,5 @@
 include(platform/ImageDecoders.cmake)
+include(platform/TextureMapper.cmake)
 
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 
@@ -391,54 +392,6 @@ if (ENABLE_MEDIA_STREAM)
     )
     list(APPEND WebCore_SOURCES
         platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp
-    )
-endif ()
-
-if (USE_TEXTURE_MAPPER)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/texmap"
-    )
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/BitmapTexture.cpp
-        platform/graphics/texmap/BitmapTexturePool.cpp
-        platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
-    )
-
-    if (USE_TEXTURE_MAPPER_GL)
-        list(APPEND WebCore_SOURCES
-            platform/graphics/texmap/BitmapTextureGL.cpp
-            platform/graphics/texmap/ClipStack.cpp
-            platform/graphics/texmap/TextureMapperGL.cpp
-            platform/graphics/texmap/TextureMapperShaderProgram.cpp
-        )
-    endif ()
-endif ()
-
-if (ENABLE_THREADED_COMPOSITOR)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/page/scrolling/coordinatedgraphics"
-        "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
-        "${WEBCORE_DIR}/platform/graphics/texmap/threadedcompositor"
-    )
-    list(APPEND WebCore_SOURCES
-        page/scrolling/ScrollingStateStickyNode.cpp
-        page/scrolling/ScrollingThread.cpp
-        page/scrolling/ScrollingTreeNode.cpp
-        page/scrolling/ScrollingTreeScrollingNode.cpp
-
-        page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
-        page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
-
-        platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
-        platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
-        platform/graphics/texmap/coordinated/AreaAllocator.cpp
-        platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
-        platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
-        platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp
-        platform/graphics/texmap/coordinated/CoordinatedSurface.cpp
-        platform/graphics/texmap/coordinated/Tile.cpp
-        platform/graphics/texmap/coordinated/TiledBackingStore.cpp
-        platform/graphics/texmap/coordinated/UpdateAtlas.cpp
     )
 endif ()
 

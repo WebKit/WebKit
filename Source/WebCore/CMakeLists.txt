@@ -74,11 +74,9 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cpu/arm/filters"
     "${WEBCORE_DIR}/platform/graphics/displaylists"
     "${WEBCORE_DIR}/platform/graphics/filters"
-    "${WEBCORE_DIR}/platform/graphics/filters/texmap"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
     "${WEBCORE_DIR}/platform/graphics/opentype"
-    "${WEBCORE_DIR}/platform/graphics/texmap"
     "${WEBCORE_DIR}/platform/graphics/transforms"
     "${WEBCORE_DIR}/platform/mediastream"
     "${WEBCORE_DIR}/platform/mock"
@@ -2273,15 +2271,6 @@ set(WebCore_SOURCES
     platform/graphics/filters/SpotLightSource.cpp
 
     platform/graphics/opentype/OpenTypeMathData.cpp
-
-    platform/graphics/texmap/TextureMapper.cpp
-    platform/graphics/texmap/TextureMapperAnimation.cpp
-    platform/graphics/texmap/TextureMapperBackingStore.cpp
-    platform/graphics/texmap/TextureMapperFPSCounter.cpp
-    platform/graphics/texmap/TextureMapperLayer.cpp
-    platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp
-    platform/graphics/texmap/TextureMapperTile.cpp
-    platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
 
     platform/graphics/transforms/AffineTransform.cpp
     platform/graphics/transforms/Matrix3DTransformOperation.cpp
