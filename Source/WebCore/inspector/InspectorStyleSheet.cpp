@@ -1277,7 +1277,7 @@ InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(InspectorPa
 void InspectorStyleSheetForInlineStyle::didModifyElementAttribute()
 {
     m_isStyleTextValid = false;
-    if (m_element->isStyledElement() && m_element->style() != m_inspectorStyle->cssStyle())
+    if (m_element->isStyledElement() && m_element->cssomStyle() != m_inspectorStyle->cssStyle())
         m_inspectorStyle = InspectorStyle::create(InspectorCSSId(id(), 0), inlineStyle(), this);
     m_ruleSourceData = nullptr;
 }
@@ -1346,7 +1346,7 @@ RefPtr<InspectorStyle> InspectorStyleSheetForInlineStyle::inspectorStyleForId(co
 
 CSSStyleDeclaration* InspectorStyleSheetForInlineStyle::inlineStyle() const
 {
-    return m_element->style();
+    return m_element->cssomStyle();
 }
 
 const String& InspectorStyleSheetForInlineStyle::elementStyleText() const

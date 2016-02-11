@@ -33,7 +33,7 @@
     attribute DOMString xmlspace;
 
     readonly attribute SVGAnimatedString className;
-    readonly attribute CSSStyleDeclaration style;
+    [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style;
 
     attribute long tabIndex;
 

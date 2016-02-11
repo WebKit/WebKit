@@ -1,3 +1,40 @@
+2016-02-11  Antti Koivisto  <antti@apple.com>
+
+        Rename Element::style() to Element::cssomStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=154107
+
+        Reviewed by Alex Christensen.
+
+        It implements the IDL "style" attribute that returns a CSSOM object.
+        Inside WebCore "style" generally refers to a RenderStyle.
+
+        * dom/Element.cpp:
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::cssomStyle):
+        (WebCore::Element::focus):
+        (WebCore::Element::style): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::tagQName):
+        * dom/Element.idl:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::~StyledElement):
+        (WebCore::StyledElement::cssomStyle):
+        (WebCore::StyledElement::style): Deleted.
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::synchronizeStyleAttributeInternal):
+        (WebCore::StyledElement::collectStyleForPresentationAttribute):
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyEditingStyleToElement):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::getInlineStylesForNode):
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheetForInlineStyle::didModifyElementAttribute):
+        (WebCore::InspectorStyleSheetForInlineStyle::inlineStyle):
+        (WebCore::InspectorStyleSheetForInlineStyle::elementStyleText):
+        * svg/SVGElement.idl:
+
 2016-02-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Consolidate TextureMapper file and include dir lists.

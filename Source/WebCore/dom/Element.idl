@@ -69,7 +69,7 @@
     [ObjCLegacyUnnamedParameters] boolean hasAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
                                           [Default=Undefined] optional DOMString localName);
 
-    readonly attribute CSSStyleDeclaration style;
+    [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style;
 
     // DOM 4
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C

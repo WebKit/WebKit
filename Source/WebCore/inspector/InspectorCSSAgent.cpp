@@ -606,7 +606,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
                 auto entry = Inspector::Protocol::CSS::InheritedStyleEntry::create()
                     .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, parentElement, NOPSEUDO))
                     .release();
-                if (parentElement->style() && parentElement->style()->length()) {
+                if (parentElement->cssomStyle() && parentElement->cssomStyle()->length()) {
                     if (InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(parentElement))
                         entry->setInlineStyle(styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId(styleSheet->id(), 0))));
                 }
@@ -630,7 +630,7 @@ void InspectorCSSAgent::getInlineStylesForNode(ErrorString& errorString, int nod
     if (!styleSheet)
         return;
 
-    inlineStyle = styleSheet->buildObjectForStyle(element->style());
+    inlineStyle = styleSheet->buildObjectForStyle(element->cssomStyle());
     RefPtr<Inspector::Protocol::CSS::CSSStyle> attributes = buildObjectForAttributesStyle(element);
     attributesStyle = attributes ? attributes.release() : nullptr;
 }
@@ -911,7 +911,7 @@ InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Elem
 {
     NodeToInspectorStyleSheet::iterator it = m_nodeToInspectorStyleSheet.find(element);
     if (it == m_nodeToInspectorStyleSheet.end()) {
-        CSSStyleDeclaration* style = element->isStyledElement() ? element->style() : nullptr;
+        CSSStyleDeclaration* style = element->cssomStyle();
         if (!style)
             return nullptr;
 

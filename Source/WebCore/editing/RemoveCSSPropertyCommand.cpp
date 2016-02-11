@@ -55,12 +55,12 @@ void RemoveCSSPropertyCommand::doApply()
 
     // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
     // Setting to null string removes the property. We don't have internal version of removeProperty.
-    m_element->style()->setPropertyInternal(m_property, String(), false, IGNORE_EXCEPTION);
+    m_element->cssomStyle()->setPropertyInternal(m_property, String(), false, IGNORE_EXCEPTION);
 }
 
 void RemoveCSSPropertyCommand::doUnapply()
 {
-    m_element->style()->setPropertyInternal(m_property, m_oldValue, m_important, IGNORE_EXCEPTION);
+    m_element->cssomStyle()->setPropertyInternal(m_property, m_oldValue, m_important, IGNORE_EXCEPTION);
 }
 
 #ifndef NDEBUG

@@ -2227,9 +2227,9 @@ bool Element::hasAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
     return elementData()->findAttributeByName(qName);
 }
 
-CSSStyleDeclaration *Element::style()
+CSSStyleDeclaration* Element::cssomStyle()
 {
-    return 0;
+    return nullptr;
 }
 
 void Element::focus(bool restorePreviousSelection, FocusDirection direction)
