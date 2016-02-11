@@ -73,6 +73,11 @@ body:not(.mac-platform, .windows-platform) .rendering-frame-icon .icon {
 }
 
 .stopwatch-icon .icon {
+    content: url(../Images/Stopwatch.svg);
+}
+
+/* FIXME: <https://webkit.org/b/154088> [GTK] Web Inspector: Add new GTK+ icon for timeline recording stopwatch */
+body:not(.mac-platform, .windows-platform) .stopwatch-icon .icon {
     content: -webkit-image-set(url(../Images/Stopwatch.png) 1x, url(../Images/Stopwatch@2x.png) 2x);
 }
 
