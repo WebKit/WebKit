@@ -12,7 +12,7 @@ PASS NodeList must be primary interface of document.getElementsByName("name")
 PASS Stringification of document.getElementsByName("name") 
 PASS NodeList interface: document.getElementsByName("name") must inherit property "item" with the proper type (0) 
 PASS NodeList interface: calling item(unsigned long) on document.getElementsByName("name") with too few arguments must throw TypeError 
-FAIL NodeList interface: document.getElementsByName("name") must inherit property "length" with the proper type (1) assert_inherits: property "length" found on object expected in prototype chain
+PASS NodeList interface: document.getElementsByName("name") must inherit property "length" with the proper type (1) 
 PASS Document interface: attribute domain 
 PASS Document interface: attribute referrer 
 PASS Document interface: attribute cookie 
@@ -802,7 +802,7 @@ PASS HTMLOptionsCollection interface object length
 PASS HTMLOptionsCollection interface object name 
 PASS HTMLOptionsCollection interface: existence and properties of interface prototype object 
 PASS HTMLOptionsCollection interface: existence and properties of interface prototype object's "constructor" property 
-FAIL HTMLOptionsCollection interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS HTMLOptionsCollection interface: attribute length 
 PASS HTMLOptionsCollection interface: operation add([object Object],[object Object],[object Object],[object Object]) 
 FAIL HTMLOptionsCollection interface: operation remove(long) assert_equals: property has wrong .length expected 1 but got 0
 PASS HTMLOptionsCollection interface: attribute selectedIndex 
@@ -2321,14 +2321,14 @@ PASS TextTrackList interface object length
 PASS TextTrackList interface object name 
 FAIL TextTrackList interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackList.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
 PASS TextTrackList interface: existence and properties of interface prototype object's "constructor" property 
-FAIL TextTrackList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS TextTrackList interface: attribute length 
 PASS TextTrackList interface: operation getTrackById(DOMString) 
 PASS TextTrackList interface: attribute onchange 
 PASS TextTrackList interface: attribute onaddtrack 
 PASS TextTrackList interface: attribute onremovetrack 
 PASS TextTrackList must be primary interface of document.createElement("video").textTracks 
 PASS Stringification of document.createElement("video").textTracks 
-FAIL TextTrackList interface: document.createElement("video").textTracks must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
+PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "length" with the proper type (0) 
 PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "getTrackById" with the proper type (2) 
 PASS TextTrackList interface: calling getTrackById(DOMString) on document.createElement("video").textTracks with too few arguments must throw TypeError 
 PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "onchange" with the proper type (3) 
@@ -2398,11 +2398,11 @@ PASS TextTrackCueList interface object length
 PASS TextTrackCueList interface object name 
 PASS TextTrackCueList interface: existence and properties of interface prototype object 
 PASS TextTrackCueList interface: existence and properties of interface prototype object's "constructor" property 
-FAIL TextTrackCueList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS TextTrackCueList interface: attribute length 
 PASS TextTrackCueList interface: operation getCueById(DOMString) 
 PASS TextTrackCueList must be primary interface of document.createElement("video").addTextTrack("subtitles").cues 
 PASS Stringification of document.createElement("video").addTextTrack("subtitles").cues 
-FAIL TextTrackCueList interface: document.createElement("video").addTextTrack("subtitles").cues must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
+PASS TextTrackCueList interface: document.createElement("video").addTextTrack("subtitles").cues must inherit property "length" with the proper type (0) 
 PASS TextTrackCueList interface: document.createElement("video").addTextTrack("subtitles").cues must inherit property "getCueById" with the proper type (2) 
 PASS TextTrackCueList interface: calling getCueById(DOMString) on document.createElement("video").addTextTrack("subtitles").cues with too few arguments must throw TypeError 
 FAIL TextTrackCue interface: existence and properties of interface object assert_equals: prototype of TextTrackCue is not EventTarget expected function "function EventTarget() {
@@ -2426,12 +2426,12 @@ PASS TimeRanges interface object length
 PASS TimeRanges interface object name 
 PASS TimeRanges interface: existence and properties of interface prototype object 
 PASS TimeRanges interface: existence and properties of interface prototype object's "constructor" property 
-FAIL TimeRanges interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS TimeRanges interface: attribute length 
 PASS TimeRanges interface: operation start(unsigned long) 
 PASS TimeRanges interface: operation end(unsigned long) 
 PASS TimeRanges must be primary interface of document.createElement("video").buffered 
 PASS Stringification of document.createElement("video").buffered 
-FAIL TimeRanges interface: document.createElement("video").buffered must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
+PASS TimeRanges interface: document.createElement("video").buffered must inherit property "length" with the proper type (0) 
 PASS TimeRanges interface: document.createElement("video").buffered must inherit property "start" with the proper type (1) 
 PASS TimeRanges interface: calling start(unsigned long) on document.createElement("video").buffered with too few arguments must throw TypeError 
 PASS TimeRanges interface: document.createElement("video").buffered must inherit property "end" with the proper type (2) 
@@ -2785,7 +2785,7 @@ PASS HTMLFormElement interface: attribute name
 PASS HTMLFormElement interface: attribute noValidate 
 PASS HTMLFormElement interface: attribute target 
 PASS HTMLFormElement interface: attribute elements 
-FAIL HTMLFormElement interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS HTMLFormElement interface: attribute length 
 PASS HTMLFormElement interface: operation submit() 
 PASS HTMLFormElement interface: operation reset() 
 PASS HTMLFormElement interface: operation checkValidity() 
@@ -2803,7 +2803,7 @@ PASS HTMLFormElement interface: document.createElement("form") must inherit prop
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "noValidate" with the proper type (7) 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "target" with the proper type (8) 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "elements" with the proper type (9) 
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "length" with the proper type (10) assert_inherits: property "length" found on object expected in prototype chain
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "length" with the proper type (10) 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "submit" with the proper type (13) 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "reset" with the proper type (14) 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "checkValidity" with the proper type (15) 
@@ -3016,7 +3016,7 @@ PASS HTMLSelectElement interface: attribute required
 PASS HTMLSelectElement interface: attribute size 
 PASS HTMLSelectElement interface: attribute type 
 PASS HTMLSelectElement interface: attribute options 
-FAIL HTMLSelectElement interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS HTMLSelectElement interface: attribute length 
 PASS HTMLSelectElement interface: operation item(unsigned long) 
 FAIL HTMLSelectElement interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS HTMLSelectElement interface: operation add([object Object],[object Object],[object Object],[object Object]) 
@@ -3044,7 +3044,7 @@ PASS HTMLSelectElement interface: document.createElement("select") must inherit 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "size" with the proper type (7) 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "type" with the proper type (8) 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "options" with the proper type (9) 
-FAIL HTMLSelectElement interface: document.createElement("select") must inherit property "length" with the proper type (10) assert_inherits: property "length" found on object expected in prototype chain
+PASS HTMLSelectElement interface: document.createElement("select") must inherit property "length" with the proper type (10) 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "item" with the proper type (11) 
 PASS HTMLSelectElement interface: calling item(unsigned long) on document.createElement("select") with too few arguments must throw TypeError 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "namedItem" with the proper type (12) 
@@ -4113,7 +4113,7 @@ PASS History interface object length
 PASS History interface object name 
 PASS History interface: existence and properties of interface prototype object 
 PASS History interface: existence and properties of interface prototype object's "constructor" property 
-FAIL History interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS History interface: attribute length 
 FAIL History interface: attribute scrollRestoration assert_true: The prototype object must have a property "scrollRestoration" expected true got false
 PASS History interface: attribute state 
 PASS History interface: operation go(long) 
@@ -4123,7 +4123,7 @@ PASS History interface: operation pushState(any,DOMString,DOMString)
 PASS History interface: operation replaceState(any,DOMString,DOMString) 
 PASS History must be primary interface of window.history 
 PASS Stringification of window.history 
-FAIL History interface: window.history must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
+PASS History interface: window.history must inherit property "length" with the proper type (0) 
 FAIL History interface: window.history must inherit property "scrollRestoration" with the proper type (1) assert_inherits: property "scrollRestoration" not found in prototype chain
 PASS History interface: window.history must inherit property "state" with the proper type (2) 
 PASS History interface: window.history must inherit property "go" with the proper type (3) 
@@ -4344,7 +4344,7 @@ PASS PluginArray interface object name
 PASS PluginArray interface: existence and properties of interface prototype object 
 PASS PluginArray interface: existence and properties of interface prototype object's "constructor" property 
 PASS PluginArray interface: operation refresh(boolean) 
-FAIL PluginArray interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS PluginArray interface: attribute length 
 FAIL PluginArray interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL PluginArray interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS MimeTypeArray interface: existence and properties of interface object 
@@ -4352,7 +4352,7 @@ PASS MimeTypeArray interface object length
 PASS MimeTypeArray interface object name 
 PASS MimeTypeArray interface: existence and properties of interface prototype object 
 PASS MimeTypeArray interface: existence and properties of interface prototype object's "constructor" property 
-FAIL MimeTypeArray interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS MimeTypeArray interface: attribute length 
 FAIL MimeTypeArray interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL MimeTypeArray interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS Plugin interface: existence and properties of interface object 
@@ -4363,7 +4363,7 @@ PASS Plugin interface: existence and properties of interface prototype object's 
 PASS Plugin interface: attribute name 
 PASS Plugin interface: attribute description 
 PASS Plugin interface: attribute filename 
-FAIL Plugin interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS Plugin interface: attribute length 
 FAIL Plugin interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Plugin interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS MimeType interface: existence and properties of interface object 
@@ -4655,7 +4655,7 @@ PASS Storage interface object length
 PASS Storage interface object name 
 PASS Storage interface: existence and properties of interface prototype object 
 PASS Storage interface: existence and properties of interface prototype object's "constructor" property 
-FAIL Storage interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS Storage interface: attribute length 
 PASS Storage interface: operation key(unsigned long) 
 PASS Storage interface: operation getItem(DOMString) 
 PASS Storage interface: operation setItem(DOMString,DOMString) 
