@@ -1,5 +1,21 @@
 2016-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Avoid including ESLint until it is used
+        https://bugs.webkit.org/show_bug.cgi?id=154196
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/copy-user-interface-resources.pl:
+        Do not include ESLint in optimized output yet.
+
+        * UserInterface/Controllers/AnalyzerManager.js:
+        Do not reference `eslint` until we use it.
+
+        * UserInterface/Main.html:
+        Remove include to ESLint until we need it.
+
+2016-02-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Tabs: Conflicts with multiple Formatters per SourceCode
         https://bugs.webkit.org/show_bug.cgi?id=144717
         <rdar://problem/20845163>
