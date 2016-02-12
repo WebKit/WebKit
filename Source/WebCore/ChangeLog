@@ -1,3 +1,25 @@
+2016-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Optimize texture-complete checks
+        https://bugs.webkit.org/show_bug.cgi?id=98308
+
+        Reviewed by Dean Jackson.
+
+        No new tests: No change in behavior.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::initializeNewContext): Initially consider all
+        textures as suspect.
+        (WebCore::WebGLRenderingContextBase::extensions): New helper function.
+        (WebCore::WebGLRenderingContextBase::reshape): Mark textures as invalid when appropriate.
+        (WebCore::WebGLRenderingContextBase::bindTexture): Identify invalid textures and mark
+        them for later fix-up. Likewise, remove 'known good' textures from the fix-up pass.
+        (WebCore::WebGLRenderingContextBase::deleteTexture): Remove instances of the deleted texture
+        from our set of invalid textures.
+        (WebCore::WebGLRenderingContextBase::checkTextureCompleteness): Only iterate through
+        the 'bad' textures, rather than checking every single texture.
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2016-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Assert that IDBTransaction::transitionedToFinishing transitions to finishing.

@@ -520,6 +520,8 @@ void WebGLRenderingContextBase::initializeNewContext()
     m_context->getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &numCombinedTextureImageUnits);
     m_textureUnits.clear();
     m_textureUnits.resize(numCombinedTextureImageUnits);
+    for (GC3Dint i = 0; i < numCombinedTextureImageUnits; ++i)
+        m_unrenderableTextureUnits.add(i);
 
     GC3Dint numVertexAttribs = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &numVertexAttribs);
@@ -749,6 +751,11 @@ PassRefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageDat
     return m_context->paintRenderingResultsToImageData();
 }
 
+WebGLTexture::TextureExtensionFlag WebGLRenderingContextBase::textureExtensionFlags() const
+{
+    return static_cast<WebGLTexture::TextureExtensionFlag>((m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0) | (m_oesTextureHalfFloatLinear ? WebGLTexture::TextureExtensionHalfFloatLinearEnabled : 0));
+}
+
 void WebGLRenderingContextBase::reshape(int width, int height)
 {
     if (isContextLostOrPending())
@@ -776,7 +783,10 @@ void WebGLRenderingContextBase::reshape(int width, int height)
     // clear (and this matches what reshape will do).
     m_context->reshape(width, height);
 
-    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, objectOrZero(m_textureUnits[m_activeTextureUnit].texture2DBinding.get()));
+    auto& textureUnit = m_textureUnits[m_activeTextureUnit];
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, objectOrZero(textureUnit.texture2DBinding.get()));
+    if (textureUnit.texture2DBinding && textureUnit.texture2DBinding->needToUseBlackTexture(textureExtensionFlags()))
+        m_unrenderableTextureUnits.add(m_activeTextureUnit);
     m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, objectOrZero(m_renderbufferBinding.get()));
     if (m_framebufferBinding)
       m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
@@ -944,18 +954,27 @@ void WebGLRenderingContextBase::bindTexture(GC3Denum target, WebGLTexture* textu
     if (!checkObjectToBeBound("bindTexture", texture, deleted))
         return;
     if (deleted)
-        texture = 0;
+        texture = nullptr;
     if (texture && texture->getTarget() && texture->getTarget() != target) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "bindTexture", "textures can not be used with multiple targets");
         return;
     }
     GC3Dint maxLevel = 0;
+    auto& textureUnit = m_textureUnits[m_activeTextureUnit];
     if (target == GraphicsContext3D::TEXTURE_2D) {
-        m_textureUnits[m_activeTextureUnit].texture2DBinding = texture;
+        textureUnit.texture2DBinding = texture;
         maxLevel = m_maxTextureLevel;
+        if (texture && texture->needToUseBlackTexture(textureExtensionFlags()))
+            m_unrenderableTextureUnits.add(m_activeTextureUnit);
+        else
+            m_unrenderableTextureUnits.remove(m_activeTextureUnit);
     } else if (target == GraphicsContext3D::TEXTURE_CUBE_MAP) {
-        m_textureUnits[m_activeTextureUnit].textureCubeMapBinding = texture;
+        textureUnit.textureCubeMapBinding = texture;
         maxLevel = m_maxCubeMapTextureLevel;
+        if (texture && texture->needToUseBlackTexture(textureExtensionFlags()))
+            m_unrenderableTextureUnits.add(m_activeTextureUnit);
+        else
+            m_unrenderableTextureUnits.remove(m_activeTextureUnit);
     } else {
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "bindTexture", "invalid target");
         return;
@@ -1500,11 +1519,18 @@ void WebGLRenderingContextBase::deleteTexture(WebGLTexture* texture)
 {
     if (!deleteObject(texture))
         return;
+
+    unsigned current = 0;
     for (auto& textureUnit : m_textureUnits) {
-        if (texture == textureUnit.texture2DBinding)
+        if (texture == textureUnit.texture2DBinding) {
             textureUnit.texture2DBinding = nullptr;
-        if (texture == textureUnit.textureCubeMapBinding)
+            m_unrenderableTextureUnits.remove(current);
+        }
+        if (texture == textureUnit.textureCubeMapBinding) {
             textureUnit.textureCubeMapBinding = nullptr;
+            m_unrenderableTextureUnits.remove(current);
+        }
+        ++current;
     }
     if (m_framebufferBinding)
         m_framebufferBinding->removeAttachmentFromBoundFramebuffer(texture);
@@ -3955,39 +3981,50 @@ WebGLGetInfo WebGLRenderingContextBase::getWebGLIntArrayParameter(GC3Denum pname
 void WebGLRenderingContextBase::checkTextureCompleteness(const char* functionName, bool prepareToDraw)
 {
     bool resetActiveUnit = false;
-    WebGLTexture::TextureExtensionFlag extensions = static_cast<WebGLTexture::TextureExtensionFlag>((m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0) | (m_oesTextureHalfFloatLinear ? WebGLTexture::TextureExtensionHalfFloatLinearEnabled : 0));
+    WebGLTexture::TextureExtensionFlag extensions = textureExtensionFlags();
 
-    for (unsigned ii = 0; ii < m_textureUnits.size(); ++ii) {
-        if ((m_textureUnits[ii].texture2DBinding && m_textureUnits[ii].texture2DBinding->needToUseBlackTexture(extensions))
-            || (m_textureUnits[ii].textureCubeMapBinding && m_textureUnits[ii].textureCubeMapBinding->needToUseBlackTexture(extensions))) {
-            if (ii != m_activeTextureUnit) {
-                m_context->activeTexture(ii + GraphicsContext3D::TEXTURE0);
-                resetActiveUnit = true;
-            } else if (resetActiveUnit) {
-                m_context->activeTexture(ii + GraphicsContext3D::TEXTURE0);
-                resetActiveUnit = false;
-            }
-            WebGLTexture* tex2D;
-            WebGLTexture* texCubeMap;
-            if (prepareToDraw) {
-                String msg(String("texture bound to texture unit ") + String::number(ii)
-                    + " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete',"
-                    + " or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.");
-                printGLWarningToConsole(functionName, msg.utf8().data());
-                tex2D = m_blackTexture2D.get();
-                texCubeMap = m_blackTextureCubeMap.get();
-            } else {
-                tex2D = m_textureUnits[ii].texture2DBinding.get();
-                texCubeMap = m_textureUnits[ii].textureCubeMapBinding.get();
-            }
-            if (m_textureUnits[ii].texture2DBinding && m_textureUnits[ii].texture2DBinding->needToUseBlackTexture(extensions))
-                m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, objectOrZero(tex2D));
-            if (m_textureUnits[ii].textureCubeMapBinding && m_textureUnits[ii].textureCubeMapBinding->needToUseBlackTexture(extensions))
-                m_context->bindTexture(GraphicsContext3D::TEXTURE_CUBE_MAP, objectOrZero(texCubeMap));
+    Vector<unsigned> noLongerUnrenderable;
+    for (unsigned badTexture : m_unrenderableTextureUnits) {
+        ASSERT(badTexture < m_textureUnits.size());
+        auto& textureUnit = m_textureUnits[badTexture];
+        bool needsToUseBlack2DTexture = textureUnit.texture2DBinding && textureUnit.texture2DBinding->needToUseBlackTexture(extensions);
+        bool needsToUseBlack3DTexture = textureUnit.textureCubeMapBinding && textureUnit.textureCubeMapBinding->needToUseBlackTexture(extensions);
+
+        if (!needsToUseBlack2DTexture && !needsToUseBlack3DTexture) {
+            noLongerUnrenderable.append(badTexture);
+            continue;
         }
+
+        if (badTexture != m_activeTextureUnit) {
+            m_context->activeTexture(badTexture + GraphicsContext3D::TEXTURE0);
+            resetActiveUnit = true;
+        } else if (resetActiveUnit) {
+            m_context->activeTexture(badTexture + GraphicsContext3D::TEXTURE0);
+            resetActiveUnit = false;
+        }
+        WebGLTexture* tex2D;
+        WebGLTexture* texCubeMap;
+        if (prepareToDraw) {
+            String msg(String("texture bound to texture unit ") + String::number(badTexture)
+                + " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete',"
+                + " or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.");
+            printGLWarningToConsole(functionName, msg.utf8().data());
+            tex2D = m_blackTexture2D.get();
+            texCubeMap = m_blackTextureCubeMap.get();
+        } else {
+            tex2D = textureUnit.texture2DBinding.get();
+            texCubeMap = textureUnit.textureCubeMapBinding.get();
+        }
+        if (needsToUseBlack2DTexture)
+            m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, objectOrZero(tex2D));
+        if (needsToUseBlack3DTexture)
+            m_context->bindTexture(GraphicsContext3D::TEXTURE_CUBE_MAP, objectOrZero(texCubeMap));
     }
     if (resetActiveUnit)
         m_context->activeTexture(m_activeTextureUnit + GraphicsContext3D::TEXTURE0);
+
+    for (unsigned renderable : noLongerUnrenderable)
+        m_unrenderableTextureUnits.remove(renderable);
 }
 
 void WebGLRenderingContextBase::createFallbackBlackTextures1x1()
@@ -4076,6 +4113,10 @@ WebGLTexture* WebGLRenderingContextBase::validateTextureBinding(const char* func
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture target");
         return nullptr;
     }
+
+    if (texture && texture->needToUseBlackTexture(textureExtensionFlags()))
+        m_unrenderableTextureUnits.add(m_activeTextureUnit);
+
     if (!texture)
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "no texture");
     return texture;
@@ -4929,7 +4970,10 @@ void WebGLRenderingContextBase::restoreCurrentFramebuffer()
 void WebGLRenderingContextBase::restoreCurrentTexture2D()
 {
     ExceptionCode ec;
-    bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureUnits[m_activeTextureUnit].texture2DBinding.get(), ec);
+    auto texture = m_textureUnits[m_activeTextureUnit].texture2DBinding.get();
+    bindTexture(GraphicsContext3D::TEXTURE_2D, texture, ec);
+    if (texture && texture->needToUseBlackTexture(textureExtensionFlags()))
+        m_unrenderableTextureUnits.add(m_activeTextureUnit);
 }
 
 bool WebGLRenderingContextBase::supportsDrawBuffers()

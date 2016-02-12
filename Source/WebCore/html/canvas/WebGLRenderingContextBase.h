@@ -33,6 +33,7 @@
 #include "Timer.h"
 #include "WebGLGetInfo.h"
 #include "WebGLObject.h"
+#include "WebGLTexture.h"
 #include <memory>
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
@@ -79,7 +80,6 @@ class WebGLRenderbuffer;
 class WebGLShader;
 class WebGLSharedObject;
 class WebGLShaderPrecisionFormat;
-class WebGLTexture;
 class WebGLUniformLocation;
 class WebGLVertexArrayObjectOES;
 
@@ -432,6 +432,8 @@ protected:
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, BackingStoreCopy, ExceptionCode&);
 #endif
 
+    WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;
+
     RefPtr<GraphicsContext3D> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
 
@@ -494,6 +496,8 @@ protected:
         RefPtr<WebGLTexture> textureCubeMapBinding;
     };
     Vector<TextureUnitState> m_textureUnits;
+    HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_unrenderableTextureUnits;
+
     unsigned long m_activeTextureUnit;
 
     RefPtr<WebGLTexture> m_blackTexture2D;
