@@ -27,6 +27,8 @@
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
     SkipVTableValidation,
+    JSCustomMarkFunction,
+    GenerateIsReachable=Impl,
 ] interface IDBIndex {
     readonly attribute DOMString name;
     readonly attribute IDBObjectStore objectStore;

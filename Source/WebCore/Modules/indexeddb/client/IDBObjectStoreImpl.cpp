@@ -41,6 +41,7 @@
 #include "IndexedDB.h"
 #include "Logging.h"
 #include "SerializedScriptValue.h"
+#include <wtf/Locker.h>
 
 namespace WebCore {
 namespace IDBClient {
@@ -486,10 +487,13 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* co
     m_transaction->database().didCreateIndexInfo(info);
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.
-    Ref<IDBIndex> index = m_transaction->createIndex(*this, info);
-    m_referencedIndexes.set(name, &index.get());
+    auto index = m_transaction->createIndex(*this, info);
+    RefPtr<IDBIndex> refIndex = index.get();
 
-    return WTFMove(index);
+    Locker<Lock> locker(m_referencedIndexLock);
+    m_referencedIndexes.set(name, WTFMove(index));
+
+    return WTFMove(refIndex);
 }
 
 RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, ExceptionCodeWithMessage& ec)
@@ -508,9 +512,10 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
         return nullptr;
     }
 
+    Locker<Lock> locker(m_referencedIndexLock);
     auto iterator = m_referencedIndexes.find(indexName);
     if (iterator != m_referencedIndexes.end())
-        return iterator->value;
+        return iterator->value.get();
 
     auto* info = m_info.infoForExistingIndex(indexName);
     if (!info) {
@@ -519,10 +524,11 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
         return nullptr;
     }
 
-    auto index = IDBIndex::create(*info, *this);
-    m_referencedIndexes.set(indexName, &index.get());
+    auto index = std::make_unique<IDBIndex>(*info, *this);
+    RefPtr<IDBIndex> refIndex = index.get();
+    m_referencedIndexes.set(indexName, WTFMove(index));
 
-    return WTFMove(index);
+    return refIndex;
 }
 
 void IDBObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& ec)
@@ -559,8 +565,11 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& e
 
     m_info.deleteIndex(name);
 
-    if (auto index = m_referencedIndexes.take(name))
-        index->markAsDeleted();
+    {
+        Locker<Lock> locker(m_referencedIndexLock);
+        if (auto index = m_referencedIndexes.take(name))
+            index->markAsDeleted(WTFMove(index));
+    }
 
     m_transaction->deleteIndex(m_info.identifier(), name);
 }
@@ -644,6 +653,13 @@ void IDBObjectStore::markAsDeleted()
 void IDBObjectStore::rollbackInfoForVersionChangeAbort()
 {
     m_info = m_originalInfo;
+}
+
+void IDBObjectStore::visitReferencedIndexes(JSC::SlotVisitor& visitor) const
+{
+    Locker<Lock> locker(m_referencedIndexLock);
+    for (auto& index : m_referencedIndexes.values())
+        visitor.addOpaqueRoot(index.get());
 }
 
 } // namespace IDBClient

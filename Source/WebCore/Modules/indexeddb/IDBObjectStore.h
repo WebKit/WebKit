@@ -92,6 +92,8 @@ public:
     virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
     virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
 
+    virtual bool isModern() const { return false; }
+
 protected:
     IDBObjectStore();
 };

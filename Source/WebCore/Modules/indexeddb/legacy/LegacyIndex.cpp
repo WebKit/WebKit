@@ -54,6 +54,19 @@ LegacyIndex::~LegacyIndex()
 {
 }
 
+void LegacyIndex::ref()
+{
+    ++m_refCount;
+}
+
+void LegacyIndex::deref()
+{
+    if (--m_refCount)
+        return;
+
+    delete this;
+}
+
 RefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openCursor");

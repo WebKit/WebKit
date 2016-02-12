@@ -43,7 +43,7 @@ namespace WebCore {
 
 class IDBObjectStore;
 
-class IDBIndex : public RefCounted<IDBIndex> {
+class IDBIndex {
 public:
     virtual ~IDBIndex() { }
 
@@ -76,6 +76,14 @@ public:
 
     virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
     virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
+
+    virtual bool isModern() const { return false; }
+
+    // We use our own ref/deref function because Legacy IDB and Modern IDB have very different
+    // lifetime management of their indexes.
+    // This will go away once Legacy IDB is dropped.
+    virtual void ref() = 0;
+    virtual void deref() = 0;
 
 protected:
     IDBIndex();

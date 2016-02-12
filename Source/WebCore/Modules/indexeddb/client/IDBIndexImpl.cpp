@@ -41,11 +41,6 @@
 namespace WebCore {
 namespace IDBClient {
 
-Ref<IDBIndex> IDBIndex::create(const IDBIndexInfo& info, IDBObjectStore& objectStore)
-{
-    return adoptRef(*new IDBIndex(info, objectStore));
-}
-
 IDBIndex::IDBIndex(const IDBIndexInfo& info, IDBObjectStore& objectStore)
     : m_info(info)
     , m_objectStore(objectStore)
@@ -63,7 +58,7 @@ const String& IDBIndex::name() const
 
 RefPtr<WebCore::IDBObjectStore> IDBIndex::objectStore()
 {
-    return &m_objectStore.get();
+    return &m_objectStore;
 }
 
 RefPtr<WebCore::IDBAny> IDBIndex::keyPathAny() const
@@ -90,13 +85,13 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
 
-    if (m_deleted || m_objectStore->isDeleted()) {
+    if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'openCursor' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
     }
 
-    if (!m_objectStore->modernTransaction().isActive()) {
+    if (!m_objectStore.modernTransaction().isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'openCursor' on 'IDBIndex': The transaction is inactive or finished.");
         return nullptr;
@@ -114,9 +109,8 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context
     if (rangeData.upperKey.isNull())
         rangeData.upperKey = IDBKeyData::maximum();
 
-    auto info = IDBCursorInfo::indexCursor(m_objectStore->modernTransaction(), m_objectStore->info().identifier(), m_info.identifier(), rangeData, direction, IndexedDB::CursorType::KeyAndValue);
-    Ref<IDBRequest> request = m_objectStore->modernTransaction().requestOpenCursor(*context, *this, info);
-    return WTFMove(request);
+    auto info = IDBCursorInfo::indexCursor(m_objectStore.modernTransaction(), m_objectStore.info().identifier(), m_info.identifier(), rangeData, direction, IndexedDB::CursorType::KeyAndValue);
+    return m_objectStore.modernTransaction().requestOpenCursor(*context, *this, info);
 }
 
 RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
@@ -177,7 +171,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, con
 
 RefPtr<WebCore::IDBRequest> IDBIndex::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
 {
-    if (m_deleted || m_objectStore->isDeleted()) {
+    if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
@@ -188,7 +182,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doCount(ScriptExecutionContext& context, c
         return nullptr;
     }
 
-    auto& transaction = m_objectStore->modernTransaction();
+    auto& transaction = m_objectStore.modernTransaction();
     if (!transaction.isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBIndex': The transaction is inactive or finished.");
@@ -202,13 +196,13 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* cont
 {
     LOG(IndexedDB, "IDBIndex::openKeyCursor");
 
-    if (m_deleted || m_objectStore->isDeleted()) {
+    if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'openKeyCursor' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
     }
 
-    if (!m_objectStore->modernTransaction().isActive()) {
+    if (!m_objectStore.modernTransaction().isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'openKeyCursor' on 'IDBIndex': The transaction is inactive or finished.");
         return nullptr;
@@ -220,9 +214,8 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* cont
         return nullptr;
     }
 
-    auto info = IDBCursorInfo::indexCursor(m_objectStore->modernTransaction(), m_objectStore->info().identifier(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
-    Ref<IDBRequest> request = m_objectStore->modernTransaction().requestOpenCursor(*context, *this, info);
-    return WTFMove(request);
+    auto info = IDBCursorInfo::indexCursor(m_objectStore.modernTransaction(), m_objectStore.info().identifier(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
+    return m_objectStore.modernTransaction().requestOpenCursor(*context, *this, info);
 }
 
 RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
@@ -270,7 +263,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const
 
 RefPtr<WebCore::IDBRequest> IDBIndex::doGet(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
 {
-    if (m_deleted || m_objectStore->isDeleted()) {
+    if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
@@ -281,7 +274,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGet(ScriptExecutionContext& context, con
         return nullptr;
     }
 
-    auto& transaction = m_objectStore->modernTransaction();
+    auto& transaction = m_objectStore.modernTransaction();
     if (!transaction.isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBIndex': The transaction is inactive or finished.");
@@ -325,7 +318,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, co
 
 RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
 {
-    if (m_deleted || m_objectStore->isDeleted()) {
+    if (m_deleted || m_objectStore.isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'getKey' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
@@ -336,7 +329,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, 
         return nullptr;
     }
 
-    auto& transaction = m_objectStore->modernTransaction();
+    auto& transaction = m_objectStore.modernTransaction();
     if (!transaction.isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
         ec.message = ASCIILiteral("Failed to execute 'getKey' on 'IDBIndex': The transaction is inactive or finished.");
@@ -346,9 +339,49 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, 
     return transaction.requestGetKey(context, *this, range);
 }
 
-void IDBIndex::markAsDeleted()
+void IDBIndex::markAsDeleted(std::unique_ptr<IDBIndex>&& indexOwner)
 {
+    ASSERT(!m_deleted);
+    ASSERT(!m_selfOwner);
+    ASSERT(indexOwner.get() == this);
+
+    // If nobody was keeping a ref to this IDBIndex while under IDBObjectStore ownership,
+    // it can be deleted now by letting indexOwner go out of scope.
+    if (!m_refCount)
+        return;
+
+    m_selfOwner = WTFMove(indexOwner);
+
+    // Now that the IDBIndex is managing its own lifetime, it must ref() its IDBObjectStore to keep it alive.
+    m_objectStoreRef = &m_objectStore;
+
+    // It must undo all of the refs it had previously given its IDBObjectStore when the lifetimes were intertwined.
+    for (unsigned i = m_refCount; i > 0; --i)
+        m_objectStore.deref();
+
     m_deleted = true;
+}
+
+void IDBIndex::ref()
+{
+    ++m_refCount;
+
+    if (!m_deleted)
+        m_objectStore.ref();
+}
+
+void IDBIndex::deref()
+{
+    --m_refCount;
+
+    if (!m_deleted)
+        m_objectStore.deref();
+    else {
+        // This IDBIndex has been detached from its IDBObjectStore so if its RefCount
+        // just went to 0 it should be destroyed.
+        if (!m_refCount)
+            m_selfOwner = nullptr;
+    }
 }
 
 } // namespace IDBClient

@@ -1,3 +1,73 @@
+2016-02-12  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Ref cycle between IDBObjectStore and IDBIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=154110
+
+        Reviewed by Darin Adler.
+
+        No new tests (Currently untestable).
+
+        The lifetime of IDBObjectStore and IDBIndex are closely intertwined, but we have to break the ref cycle.
+        
+        This patch does a few semi-gnarly things:
+        1 - Makes both IDBIndex and IDBObjectStore have a custom marking function so they can add each other as 
+            opaque roots.
+        2 - Adds a lock to protect IDBObjectStore's collection of referenced indexes to support #1, as GC marking
+            can happen on any thread.
+        3 - Makes IDBIndex not be traditionally RefCounted; Instead, IDBIndex::ref()/deref() simply ref()/deref()
+            the owning IDBObjectStore.
+        4 - ...Except when somebody deletes an IDBIndex from its IDBObjectStore. Once that happens, the object
+            store no longer has a reference back to the index, but the index still needs a reference back to the
+            object store. To support this, the IDBIndex becomes "traditionally RefCounted" while holding a ref to
+            its IDBObjectStore.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBIndex.h:
+        (WebCore::IDBIndex::isModern):
+        * Modules/indexeddb/IDBIndex.idl:
+        
+        * Modules/indexeddb/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::isModern):
+        * Modules/indexeddb/IDBObjectStore.idl:
+        
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::objectStore):
+        (WebCore::IDBClient::IDBIndex::openCursor):
+        (WebCore::IDBClient::IDBIndex::doCount):
+        (WebCore::IDBClient::IDBIndex::openKeyCursor):
+        (WebCore::IDBClient::IDBIndex::doGet):
+        (WebCore::IDBClient::IDBIndex::doGetKey):
+        (WebCore::IDBClient::IDBIndex::markAsDeleted):
+        (WebCore::IDBClient::IDBIndex::ref):
+        (WebCore::IDBClient::IDBIndex::deref):
+        (WebCore::IDBClient::IDBIndex::create): Deleted.
+        * Modules/indexeddb/client/IDBIndexImpl.h:
+        (WebCore::IDBClient::IDBIndex::modernObjectStore):
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::createIndex):
+        (WebCore::IDBClient::IDBObjectStore::index):
+        (WebCore::IDBClient::IDBObjectStore::deleteIndex):
+        (WebCore::IDBClient::IDBObjectStore::visitReferencedIndexes):
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::createIndex):
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+        
+        * Modules/indexeddb/legacy/LegacyIndex.cpp:
+        (WebCore::LegacyIndex::ref):
+        (WebCore::LegacyIndex::deref):
+        * Modules/indexeddb/legacy/LegacyIndex.h:
+        
+        * bindings/js/JSIDBIndexCustom.cpp: Added.
+        (WebCore::JSIDBIndex::visitAdditionalChildren):
+        
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::JSIDBObjectStore::visitAdditionalChildren):
+
 2016-02-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][GTK] Fix ENABLE(SVG_OTF_CONVERTER) build

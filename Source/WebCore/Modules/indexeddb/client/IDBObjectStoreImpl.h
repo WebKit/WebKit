@@ -93,6 +93,10 @@ public:
 
     void rollbackInfoForVersionChangeAbort();
 
+    virtual bool isModern() const override { return true; }
+
+    void visitReferencedIndexes(JSC::SlotVisitor&) const;
+
 private:
     IDBObjectStore(const IDBObjectStoreInfo&, IDBTransaction&);
 
@@ -111,7 +115,8 @@ private:
 
     bool m_deleted { false };
 
-    HashMap<String, RefPtr<IDBIndex>> m_referencedIndexes;
+    mutable Lock m_referencedIndexLock;
+    HashMap<String, std::unique_ptr<IDBIndex>> m_referencedIndexes;
 };
 
 } // namespace IDBClient

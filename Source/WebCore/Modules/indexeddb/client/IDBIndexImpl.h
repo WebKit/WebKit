@@ -42,7 +42,7 @@ class IDBObjectStore;
 
 class IDBIndex : public WebCore::IDBIndex {
 public:
-    static Ref<IDBIndex> create(const IDBIndexInfo&, IDBObjectStore&);
+    IDBIndex(const IDBIndexInfo&, IDBObjectStore&);
 
     virtual ~IDBIndex();
 
@@ -77,22 +77,38 @@ public:
 
     const IDBIndexInfo& info() const { return m_info; }
 
-    IDBObjectStore& modernObjectStore() { return m_objectStore.get(); }
+    IDBObjectStore& modernObjectStore() { return m_objectStore; }
 
-    void markAsDeleted();
+    void markAsDeleted(std::unique_ptr<IDBIndex>&&);
     bool isDeleted() const { return m_deleted; }
 
-private:
-    IDBIndex(const IDBIndexInfo&, IDBObjectStore&);
+    virtual bool isModern() const override { return true; }
 
+    void ref() override;
+    void deref() override;
+
+private:
     RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
     RefPtr<WebCore::IDBRequest> doGet(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
     RefPtr<WebCore::IDBRequest> doGetKey(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
 
     IDBIndexInfo m_info;
-    Ref<IDBObjectStore> m_objectStore;
 
     bool m_deleted { false };
+
+    // Most of the time, an IDBObjectStore owns an IDBIndex through a std::unique_ptr.
+    // In that scenario, attempts to ref() the IDBIndex directly ref the IDBObjectStore, so it is okay to
+    // keep a raw reference to the IDBObjectStore because it will always outlive the IDBIndex.
+    IDBObjectStore& m_objectStore;
+
+    // But when an IDBIndex is deleted from its IDBObjectStore that lifetime is no longer guaranteed.
+    // The IDBObjectStore no longer owns the IDBIndex, so the following needs to change:
+    // 1 - The IDBIndex must directly ref its IDBObjectStore to keep it alive.
+    // 2 - The IDBIndex becomes traditionally RefCounted.
+    // 2 - The IDBIndex holds its own std::unique_ptr, which it will clear out when its RefCount reaches 0.
+    RefPtr<IDBObjectStore> m_objectStoreRef;
+    unsigned m_refCount { 0 };
+    std::unique_ptr<IDBIndex> m_selfOwner;
 };
 
 } // namespace IDBClient

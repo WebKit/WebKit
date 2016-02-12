@@ -89,6 +89,9 @@ public:
 
     IDBDatabaseBackend* backendDB() const;
 
+    virtual void ref() override;
+    virtual void deref() override;
+
 private:
     LegacyIndex(const IDBIndexMetadata&, LegacyObjectStore*, LegacyTransaction*);
 
@@ -96,6 +99,8 @@ private:
     RefPtr<LegacyObjectStore> m_objectStore;
     RefPtr<LegacyTransaction> m_transaction;
     bool m_deleted;
+
+    unsigned m_refCount { 1 };
 };
 
 } // namespace WebCore

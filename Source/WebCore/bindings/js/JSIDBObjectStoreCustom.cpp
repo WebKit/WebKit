@@ -34,7 +34,7 @@
 #include "IDBBindingUtilities.h"
 #include "IDBDatabaseException.h"
 #include "IDBKeyPath.h"
-#include "IDBObjectStore.h"
+#include "IDBObjectStoreImpl.h"
 #include "JSDOMBinding.h"
 #include "JSIDBIndex.h"
 #include "JSIDBRequest.h"
@@ -44,6 +44,14 @@
 using namespace JSC;
 
 namespace WebCore {
+
+void JSIDBObjectStore::visitAdditionalChildren(SlotVisitor& visitor)
+{
+    if (!wrapped().isModern())
+        return;
+
+    static_cast<IDBClient::IDBObjectStore&>(wrapped()).visitReferencedIndexes(visitor);
+}
 
 static JSValue putOrAdd(JSC::ExecState& state, bool overwrite)
 {

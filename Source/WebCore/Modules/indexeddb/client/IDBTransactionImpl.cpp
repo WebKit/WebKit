@@ -494,17 +494,15 @@ void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultDat
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateObjectStoreSuccess || resultData.type() == IDBResultType::Error);
 }
 
-Ref<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStore, const IDBIndexInfo& info)
+std::unique_ptr<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStore, const IDBIndexInfo& info)
 {
     LOG(IndexedDB, "IDBTransaction::createIndex");
     ASSERT(isVersionChange());
 
-    Ref<IDBIndex> index = IDBIndex::create(info, objectStore);
-
     auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateIndexOnServer, &IDBTransaction::createIndexOnServer, info);
     scheduleOperation(WTFMove(operation));
 
-    return index;
+    return std::make_unique<IDBIndex>(info, objectStore);
 }
 
 void IDBTransaction::createIndexOnServer(TransactionOperation& operation, const IDBIndexInfo& info)
