@@ -16,6 +16,16 @@ class BuildRequest extends DataModelObject {
         this._result = null;
     }
 
+    updateSingleton(object)
+    {
+        console.assert(this._testGroup == object.testGroup);
+        console.assert(this._order == object.order);
+        console.assert(this._rootSet == object.rootSet);
+        this._status = object.status;
+        this._statusUrl = object.url;
+        this._buildId = object.build;
+    }
+
     testGroup() { return this._testGroup; }
     order() { return this._order; }
     rootSet() { return this._rootSet; }

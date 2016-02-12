@@ -16,10 +16,10 @@ class AnalysisTaskPage extends PageWithHeading {
     constructor()
     {
         super('Analysis Task');
-        this._taskId = null;
         this._task = null;
         this._testGroups = null;
         this._renderedTestGroups = null;
+        this._testGroupLabelMap = new Map;
         this._renderedCurrentTestGroup = undefined;
         this._analysisResults = null;
         this._measurementSet = null;
@@ -32,6 +32,9 @@ class AnalysisTaskPage extends PageWithHeading {
         this._analysisResultsViewer = this.content().querySelector('analysis-results-viewer').component();
         this._analysisResultsViewer.setTestGroupCallback(this._showTestGroup.bind(this));
         this._testGroupResultsTable = this.content().querySelector('test-group-results-table').component();
+        this._taskNameLabel = this.content().querySelector('.analysis-task-name editable-text').component();
+        this._taskNameLabel.setStartedEditingCallback(this._didStartEditingTaskName.bind(this));
+        this._taskNameLabel.setUpdateCallback(this._updateTaskName.bind(this));
 
         this.content().querySelector('.test-group-retry-form').onsubmit = this._retryCurrentTestGroup.bind(this);
     }
@@ -43,20 +46,18 @@ class AnalysisTaskPage extends PageWithHeading {
     {
         var self = this;
         if (state.remainingRoute) {
-            this._taskId = parseInt(state.remainingRoute);
-            AnalysisTask.fetchById(this._taskId).then(this._didFetchTask.bind(this), function (error) {
+            var taskId = parseInt(state.remainingRoute);
+            AnalysisTask.fetchById(taskId).then(this._didFetchTask.bind(this), function (error) {
                 self._errorMessage = `Failed to fetch the analysis task ${state.remainingRoute}: ${error}`;
                 self.render();
             });
-            TestGroup.fetchByTask(this._taskId).then(this._didFetchTestGroups.bind(this));
-            AnalysisResults.fetch(this._taskId).then(this._didFetchAnalysisResults.bind(this));
+            TestGroup.fetchByTask(taskId).then(this._didFetchTestGroups.bind(this));
+            AnalysisResults.fetch(taskId).then(this._didFetchAnalysisResults.bind(this));
         } else if (state.buildRequest) {
             var buildRequestId = parseInt(state.buildRequest);
-            AnalysisTask.fetchByBuildRequestId(buildRequestId).then(this._didFetchTask.bind(this)).then(function () {
-                if (self._task) {
-                    TestGroup.fetchByTask(self._task.id()).then(self._didFetchTestGroups.bind(self));
-                    AnalysisResults.fetch(self._task.id()).then(this._didFetchAnalysisResults.bind(this));
-                }
+            AnalysisTask.fetchByBuildRequestId(buildRequestId).then(this._didFetchTask.bind(this)).then(function (task) {
+                TestGroup.fetchByTask(task.id()).then(self._didFetchTestGroups.bind(self));
+                AnalysisResults.fetch(task.id()).then(self._didFetchAnalysisResults.bind(self));
             }, function (error) {
                 self._errorMessage = `Failed to fetch the analysis task for the build request ${buildRequestId}: ${error}`;
                 self.render();
@@ -66,6 +67,8 @@ class AnalysisTaskPage extends PageWithHeading {
 
     _didFetchTask(task)
     {
+        console.assert(!this._task);
+
         this._task = task;
         var platform = task.platform();
         var metric = task.metric();
@@ -85,6 +88,8 @@ class AnalysisTaskPage extends PageWithHeading {
         this._chartPane.setMainDomain(domain[0], domain[1]);
 
         this.render();
+
+        return task;
     }
 
     _didFetchMeasurement()
@@ -146,20 +151,25 @@ class AnalysisTaskPage extends PageWithHeading {
 
         this.content().querySelector('.error-message').textContent = this._errorMessage || '';
 
-        var v2URL = `/v2/#/analysis/task/${this._taskId}`;
-        this.content().querySelector('.error-message').innerHTML +=
-            `<p>To schedule a custom A/B testing, use <a href="${v2URL}">v2 UI</a>.</p>`;
+        if (this._task) {
+            var v2URL = `/v2/#/analysis/task/${this._task.id()}`;
+            this.content().querySelector('.error-message').innerHTML =
+                `<p>To schedule a custom A/B testing, use <a href="${v2URL}">v2 UI</a>.</p>`;
+        }
 
-         this._chartPane.render();
+        this._chartPane.render();
 
         if (this._task) {
-            this.renderReplace(this.content().querySelector('.analysis-task-name'), this._task.name());
+            this._taskNameLabel.setText(this._task.name());
             var platform = this._task.platform();
             var metric = this._task.metric();
             var anchor = this.content().querySelector('.platform-metric-names a');
             this.renderReplace(anchor, metric.fullName() + ' on ' + platform.label());
             anchor.href = this.router().url('charts', ChartsPage.createStateForAnalysisTask(this._task));
         }
+        this.content().querySelector('.overview-chart').style.display = this._task ? null : 'none';
+        this.content().querySelector('.test-group-view').style.display = this._task ? null : 'none';
+        this._taskNameLabel.render();
 
         this._analysisResultsViewer.setCurrentTestGroup(this._currentTestGroup);
         this._analysisResultsViewer.render();
@@ -168,14 +178,32 @@ class AnalysisTaskPage extends PageWithHeading {
         var link = ComponentBase.createLink;
         if (this._testGroups != this._renderedTestGroups) {
             this._renderedTestGroups = this._testGroups;
+            this._testGroupLabelMap.clear();
+
             var self = this;
+            var updateTestGroupName = this._updateTestGroupName.bind(this);
+            var showTestGroup = this._showTestGroup.bind(this);
+
             this.renderReplace(this.content().querySelector('.test-group-list'),
                 this._testGroups.map(function (group) {
-                    return element('li', {class: 'test-group-list-' + group.id()}, link(group.label(), function () {
-                        self._showTestGroup(group);
-                    }));
+                    var text = new EditableText(group.label());
+                    text.setStartedEditingCallback(function () { return text.render(); });
+                    text.setUpdateCallback(function () { return updateTestGroupName(group); });
+
+                    self._testGroupLabelMap.set(group, text);
+                    return element('li', {class: 'test-group-list-' + group.id()},
+                        link(text, group.label(), function () { showTestGroup(group); }));
                 }).reverse());
+
             this._renderedCurrentTestGroup = null;
+        }
+
+        if (this._testGroups) {
+            for (var testGroup of this._testGroups) {
+                var label = this._testGroupLabelMap.get(testGroup);
+                label.setText(testGroup.label());
+                label.render();
+            }
         }
 
         if (this._renderedCurrentTestGroup !== this._currentTestGroup) {
@@ -220,6 +248,39 @@ class AnalysisTaskPage extends PageWithHeading {
         this._currentTestGroup = testGroup;        
         this._testGroupResultsTable.setTestGroup(this._currentTestGroup);
         this.render();
+    }
+
+    _didStartEditingTaskName()
+    {
+        this._taskNameLabel.render();
+    }
+
+    _updateTaskName()
+    {
+        console.assert(this._task);
+        this._taskNameLabel.render();
+
+        var self = this;
+        return self._task.updateName(self._taskNameLabel.editedText()).then(function () {
+            self.render();
+        }, function (error) {
+            self.render();
+            alert('Failed to update the name: ' + error);
+        });
+    }
+
+    _updateTestGroupName(testGroup)
+    {
+        var label = this._testGroupLabelMap.get(testGroup);
+        label.render();
+
+        var self = this;
+        return testGroup.updateName(label.editedText()).then(function () {
+            self.render();
+        }, function (error) {
+            self.render();
+            alert('Failed to update the name: ' + error);
+        });
     }
 
     _retryCurrentTestGroup(event)
@@ -307,7 +368,7 @@ class AnalysisTaskPage extends PageWithHeading {
         return `
         <div class="analysis-tasl-page-container">
             <div class="analysis-tasl-page">
-                <h2 class="analysis-task-name"></h2>
+                <h2 class="analysis-task-name"><editable-text></editable-text></h2>
                 <h3 class="platform-metric-names"><a href=""></a></h3>
                 <p class="error-message"></p>
                 <div class="overview-chart"><analysis-task-chart-pane></analysis-task-chart-pane></div>
@@ -425,11 +486,11 @@ class AnalysisTaskPage extends PageWithHeading {
                 border-right: none;
             }
 
-            .test-group-list li {
+            .test-group-list > li {
                 display: block;
             }
 
-            .test-group-list a {
+            .test-group-list > li > a {
                 display: block;
                 color: inherit;
                 text-decoration: none;
@@ -438,11 +499,11 @@ class AnalysisTaskPage extends PageWithHeading {
                 padding: 0.2rem;
             }
 
-            .test-group-list li.selected a {
+            .test-group-list > li.selected > a {
                 background: rgba(204, 153, 51, 0.1);
             }
 
-            .test-group-list li:not(.selected) a:hover {
+            .test-group-list > li:not(.selected) > a:hover {
                 background: #eee;
             }
 

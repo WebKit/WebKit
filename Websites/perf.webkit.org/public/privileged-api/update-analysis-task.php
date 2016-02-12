@@ -11,6 +11,9 @@ function main() {
 
     $values = array();
 
+    if (array_key_exists('name', $data))
+        $values['name'] = $data['name'];
+
     if (array_key_exists('result', $data)) {
         require_match_one_of_values('Result', $data['result'], array(null, 'progression', 'regression', 'unchanged', 'inconclusive'));
         $values['result'] = $data['result'];

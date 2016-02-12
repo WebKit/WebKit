@@ -29,6 +29,27 @@ class AnalysisTask extends LabeledObject {
         return this.all().filter(function (task) { return task._platform.id() == platformId && task._metric.id() == metricId; });
     }
 
+    updateSingleton(object)
+    {
+        super.updateSingleton(object);
+
+        console.assert(this._author == object.author);
+        console.assert(+this._createdAt == +object.createdAt);
+        console.assert(this._platform == object.platform);
+        console.assert(this._metric == object.metric);
+        console.assert(this._startMeasurementId == object.startRun);
+        console.assert(this._startTime == object.startRunTime);
+        console.assert(this._endMeasurementId == object.endRun);
+        console.assert(this._endTime == object.endRunTime);
+
+        this._category = object.category;
+        this._changeType = object.result;
+        this._needed = object.needed;
+        this._bugs = object.bugs || [];
+        this._buildRequestCount = object.buildRequestCount;
+        this._finishedBuildRequestCount = object.finishedBuildRequestCount;
+    }
+
     hasResults() { return this._finishedBuildRequestCount; }
     hasPendingRequests() { return this._finishedBuildRequestCount < this._buildRequestCount; }
     requestLabel() { return `${this._finishedBuildRequestCount} of ${this._buildRequestCount}`; }
@@ -45,6 +66,19 @@ class AnalysisTask extends LabeledObject {
     metric() { return this._metric; }
     category() { return this._category; }
     changeType() { return this._changeType; }
+
+    updateName(newName)
+    {
+        var self = this;
+        var id = this.id();
+        return PrivilegedAPI.sendRequest('update-analysis-task', {
+            task: id,
+            name: newName,
+        }).then(function (data) {
+            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
+                .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
+        });
+    }
 
     static categories()
     {
@@ -94,12 +128,11 @@ class AnalysisTask extends LabeledObject {
         // FIXME: The backend shouldn't create a separate bug row per task for the same bug number.
         var taskToBug = {};
         for (var rawData of data.bugs) {
-            var id = rawData.bugTracker + '-' + rawData.number;
             rawData.bugTracker = BugTracker.findById(rawData.bugTracker);
             if (!rawData.bugTracker)
                 continue;
 
-            var bug = Bug.findById(id) || new Bug(id, rawData);
+            var bug = Bug.ensureSingleton(rawData);
             if (!taskToBug[rawData.task])
                 taskToBug[rawData.task] = [];
             taskToBug[rawData.task].push(bug);
@@ -113,8 +146,7 @@ class AnalysisTask extends LabeledObject {
                 continue;
 
             rawData.bugs = taskToBug[rawData.id];
-            var task = AnalysisTask.findById(rawData.id) || new AnalysisTask(rawData.id, rawData);
-            results.push(task);
+            results.push(AnalysisTask.ensureSingleton(rawData.id, rawData));
         }
 
         Instrumentation.endMeasuringTime('AnalysisTask', 'construction');

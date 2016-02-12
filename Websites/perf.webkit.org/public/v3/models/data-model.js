@@ -10,10 +10,14 @@ class DataModelObject {
     static ensureSingleton(id, object)
     {
         var singleton = this.findById(id);
-        if (singleton)
+        if (singleton) {
+            singleton.updateSingleton(object)
             return singleton;
+        }
         return new (this)(id, object);
     }
+
+    updateSingleton(object) { }
 
     static namedStaticMap(name)
     {
@@ -80,14 +84,9 @@ class LabeledObject extends DataModelObject {
     {
         super(id);
         this._name = object.name;
-        this.ensureNamedStaticMap('name')[this._name] = this;
     }
 
-    static findByName(name)
-    {
-        var nameMap = this.namedStaticMap('id');
-        return nameMap ? nameMap[name] : null;
-    }
+    updateSingleton(object) { this._name = object.name; }
 
     static sortByName(list)
     {

@@ -1,3 +1,100 @@
+2016-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should allow renaming analysis tasks and test groups
+        https://bugs.webkit.org/show_bug.cgi?id=154200
+
+        Reviewed by Chris Dumez.
+
+        Allow editing names of analysis tasks and A/B testing groups in the v3 UI.
+
+        Added the support for updating the name to the privileged API at /privileged-api/update-analysis-task
+        and added a new prevailed API to update A/B testing groups at /privileged-api/update-test-group.
+
+        * public/privileged-api/update-analysis-task.php: Added the support for renaming the analysis task.
+        (main):
+
+        * public/privileged-api/update-test-group.php: Added. Supports updating the test group's name.
+        (main):
+
+        * public/v3/components/editable-text.js: Added.
+        (EditableText): Added. A new editable text label control. It looks like a text node with "(Edit)" link
+        at the end which allow users to go into the "editing mode", which reveals an input element.
+        The user can exit the editing mode by either moving the focus away from the control or clicking on
+        "(Save)" at the end. It calls _updateCallback in the latter case.
+        (EditableText.prototype.editedText): Returns the current value of the input element user.
+        (EditableText.prototype.setText): Sets the label. This does not live-update the input element until
+        the user exists the current editing mode and re-enters it.
+        (EditableText.prototype.setStartedEditingCallback): Sets a callback which gets called when the user
+        requested to enter the editing mode. Since EditableText relies on AnalysisTaskPage to render, this
+        callback only exits to call EditableText.render() in AnalysisTask._didStartEditingTaskName.
+        (EditableText.prototype.setUpdateCallback): Sets a callback which gets called when the user exits
+        the editing mode by activating the "(Save)" link. This callback MUST return a promise upon resolution
+        of which the control gets out of the editing mode. While the promise is in flight, the input element
+        becomes readonly.
+        (EditableText.prototype.render): Updates various states of the elements. When _updatingPromise is not
+        falsy, we make the input element readonly and show '(...)' on the link. Don't show the action link
+        if the label is empty (e.g. analysis task or test group is still being fetched).
+        (EditableText.prototype._didClick): Called when the user clicked on the action link. Enter the editing
+        mode or save the edited label via _updateCallback.
+        (EditableText.prototype._didBlur): Exit the editing mode without saving if the input element is not
+        focused, there is no inflight promise returned by _updateCallback, and the action link "(Save)" does
+        not have the focus.
+        (EditableText.prototype._didUpdate): Called when exiting the editing mode.
+        (EditableText.htmlTemplate):
+        (EditableText.cssTemplate):
+
+        * public/v3/index.html: Include newly added editable-text.js.
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.prototype.updateSingleton): Added.
+        (AnalysisTask.prototype.updateName): Added. Uses PrivilegedAPI to update the name and re-fetches
+        the analysis task from the sever.
+        (AnalysisTask._constructAnalysisTasksFromRawData): Use ensureSingleton instead of manually calling
+        findById since we need to update the name of the singleton object we found (via updateSingleton).
+
+        * public/v3/models/bug.js:
+        (Bug.ensureSingleton): Moved the code to compute the synthetic id from AnalysisTask's
+        _constructAnalysisTasksFromRawData.
+        (Bug.prototype.updateSingleton): Added. Just assert that nothing changes.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.updateSingleton): Added. Assert that the intrinsic values of a build request
+        doesn't change and update status text, status url, and build id as they could change.
+
+        * public/v3/models/commit-log.js:
+        (CommitLog): Made the constructor argument conform to the convention of id, object pair so that we can
+        use DataModelObject.ensureSingleton.
+        (CommitLog.ensureSingleton): 
+        (CommitLog.prototype.updateSingleton): Extracted from CommitLog.ensureSingleton.
+
+        * public/v3/models/data-model.js:
+        (DataModelObject.ensureSingleton): Call newly added updateSingleton.
+        (DataModelObject.prototype.updateSingleton):
+        (LabeledObject): Removed the name map since it's never used (findByName is never called anywhere).
+        (LabeledObject.prototype.updateSingleton): Added. Updates _name.
+        (LabeledObject.findByName): Deleted.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.updateName): Added. Uses PrivilegedAPI to update the name and re-fetches
+        the test group from the sever.
+        (TestGroup._createModelsFromFetchedTestGroups): Removed bogus code. A root set doesn't have a test
+        group associated with it since multiple test groups can share a single root set (this property doesn't
+        even exist).
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage): Removed useless _taskId and added this._testGroupLabelMap and this._taskNameLabel.
+        (AnalysisTaskPage.prototype.updateFromSerializedState): Cleanup.
+        (AnalysisTaskPage.prototype._didFetchTask): Assert that this function is called exactly once.
+        (AnalysisTaskPage.prototype.render): Use this._task.id() to show the v2 link. Use EditableText to show
+        the names of the analysis task and the associated test groups. Hide the overview chart and the list of
+        test groups (along with the retry/confirm button) when the analysis task failed to fetch. We always
+        update the names of the analysis task and the associated test groups since they could be updated by
+        the server.
+        (AnalysisTaskPage.prototype._didStartEditingTaskName): Added.
+        (AnalysisTaskPage.prototype._updateTaskName): Added.
+        (AnalysisTaskPage.prototype._updateTestGroupName): Added.
+        (AnalysisTaskPage.htmlTemplate): Updated the style.
+
 2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Land the change that was supposed to be the part of r196463.

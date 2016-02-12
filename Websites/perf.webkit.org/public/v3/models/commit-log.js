@@ -1,24 +1,30 @@
 
 class CommitLog extends DataModelObject {
-    constructor(id, repository, rawData)
+    constructor(id, rawData)
     {
         super(id);
-        this._repository = repository;
+        this._repository = rawData.repository;
         this._rawData = rawData;
     }
 
     static ensureSingleton(repository, rawData)
     {
         var id = repository.id() + '-' + rawData['revision'];
-        var singleton = this.findById(id);
-        if (singleton) {
-            if (rawData.authorName)
-                singleton._rawData.authorName = rawData.authorName;
-            if (rawData.message)
-                singleton._rawData.message = rawData.message;
-            return singleton;
-        }
-        return new CommitLog(id, repository, rawData);
+        rawData.repository = repository;
+        return super.ensureSingleton(id, rawData);
+    }
+
+    updateSingleton(rawData)
+    {
+        super.updateSingleton(rawData);
+
+        console.assert(+this._rawData['time'] == +rawData['time']);
+        console.assert(this._rawData['revision'] == rawData['revision']);
+
+        if (rawData.authorName)
+            this._rawData.authorName = rawData.authorName;
+        if (rawData.message)
+            this._rawData.message = rawData.message;
     }
 
     repository() { return this._repository; }

@@ -152,6 +152,19 @@ class TestGroup extends LabeledObject {
         return values;
     }
 
+    updateName(newName)
+    {
+        var self = this;
+        var id = this.id();
+        return PrivilegedAPI.sendRequest('update-test-group', {
+            group: id,
+            name: newName,
+        }).then(function (data) {
+            return TestGroup.cachedFetch(`../api/test-groups/${id}`, {}, true)
+                .then(TestGroup._createModelsFromFetchedTestGroups.bind(TestGroup));
+        });
+    }
+
     static createAndRefetchTestGroups(task, name, repetitionCount, rootSets)
     {
         var self = this;
@@ -183,7 +196,6 @@ class TestGroup extends LabeledObject {
 
         var rootSets = data['rootSets'].map(function (row) {
             row.roots = row.roots.map(function (rootId) { return rootIdMap[rootId]; });
-            row.testGroup = RootSet.findById(row.testGroup);
             return RootSet.ensureSingleton(row.id, row);
         });
 
