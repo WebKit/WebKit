@@ -273,13 +273,13 @@
     macro(isConcatSpreadable) \
     macro(match) \
     macro(replace) \
-    macro(search) \
     macro(split) \
     macro(toPrimitive)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
     macro(hasInstance) \
     macro(iterator) \
+    macro(search) \
     macro(species) \
     macro(toStringTag) \
     macro(unscopables)
@@ -305,6 +305,7 @@
     macro(Number) \
     macro(Array) \
     macro(String) \
+    macro(RegExp) \
     macro(Map) \
     macro(Promise) \
     macro(InternalPromise) \

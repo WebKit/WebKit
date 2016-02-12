@@ -827,6 +827,7 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/SetPrototype.cpp
     runtime/StringConstructor.cpp
     runtime/StringIteratorPrototype.cpp
+    runtime/StringPrototype.cpp
     runtime/SymbolConstructor.cpp
     runtime/SymbolPrototype.cpp
 )

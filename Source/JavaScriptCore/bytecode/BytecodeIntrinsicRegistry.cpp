@@ -51,6 +51,7 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_promiseStateFulfilled.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Fulfilled)));
     m_promiseStateRejected.set(m_vm, jsNumber(static_cast<unsigned>(JSPromise::Status::Rejected)));
     m_symbolIterator.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->iteratorSymbol.impl())));
+    m_symbolSearch.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->searchSymbol.impl())));
 }
 
 BytecodeIntrinsicNode::EmitterType BytecodeIntrinsicRegistry::lookup(const Identifier& ident) const

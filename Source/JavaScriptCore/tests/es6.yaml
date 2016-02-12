@@ -1083,7 +1083,7 @@
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.replace].js
   cmd: runES6 :fail
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.search].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.split].js
   cmd: runES6 :fail
 - path: es6/RegExp.prototype_properties_RegExp[Symbol.species].js
@@ -1193,7 +1193,7 @@
 - path: es6/well-known_symbols_Symbol.replace.js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.search.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.species_Array.prototype.concat.js
   cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.species_Array.prototype.filter.js

@@ -1,3 +1,50 @@
+2016-02-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement @@search
+        https://bugs.webkit.org/show_bug.cgi?id=143889
+
+        Reviewed by Darin Adler.
+
+        Implement RegExp.prototype[@@search].
+        In ES6, String.prototype.search delegates the actual matching to it
+        instead of executing RegExp matching inside String.prototype.search method itself.
+        By customizing @@search method, we can change the behavior of String.prototype.search for
+        derived / customized RegExp object.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::BuiltinNames): Deleted.
+        * builtins/BuiltinUtils.h:
+        * builtins/StringPrototype.js:
+        (search):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::regExpProtoFuncSearch):
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::create):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::getOwnPropertySlot):
+        (JSC::StringPrototype::finishCreation): Deleted.
+        (JSC::stringProtoFuncSearch): Deleted.
+        * runtime/StringPrototype.h:
+        * tests/es6.yaml:
+        * tests/stress/regexp-search.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (errorKey.toString):
+        (primitive.of.primitives.shouldThrow):
+        (testRegExpSearch):
+        (testSearch):
+        (testBoth):
+        (alwaysUnmatch):
+
 2016-02-12  Keith Miller  <keith_miller@apple.com>
 
         AdaptiveInferredPropertyValueWatchpoint can trigger a GC that frees its CodeBlock and thus itself

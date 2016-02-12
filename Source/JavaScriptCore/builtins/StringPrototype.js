@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner <thetalecrafter@gmail.com>.
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,4 +58,25 @@ function localeCompare(that/*, locales, options */)
 
     // 8. Return CompareStrings(collator, S, That).
     return collator.compare(thisString, thatString);
+}
+
+function search(regexp)
+{
+    "use strict";
+
+    if (this == null) {
+        if (this === null)
+            throw new @TypeError("String.prototype.search requires that |this| not be null");
+        throw new @TypeError("String.prototype.search requires that |this| not be undefined");
+    }
+
+    if (regexp != null) {
+         var searcher = regexp[@symbolSearch];
+         if (searcher !== @undefined)
+            return searcher.@call(regexp, this);
+    }
+
+    var thisString = @toString(this);
+    var createdRegExp = new @RegExp(regexp, @undefined);
+    return createdRegExp[@symbolSearch](thisString);
 }

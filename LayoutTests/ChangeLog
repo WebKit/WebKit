@@ -1,3 +1,23 @@
+2016-02-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement @@search
+        https://bugs.webkit.org/show_bug.cgi?id=143889
+
+        Reviewed by Darin Adler.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/dom/string-prototype-properties-expected.txt:
+        * js/regress/script-tests/v8-regexp-search.js: Added.
+        (runRegExpBenchmark.runBlock0):
+        (runRegExpBenchmark.runBlock1):
+        (runRegExpBenchmark):
+        (runRegExpBenchmark.runBlock3):
+        (runRegExpBenchmark.runBlock4):
+        * js/regress/v8-regexp-search-expected.txt: Added.
+        * js/regress/v8-regexp-search.html: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.12_String.prototype.search/S15.5.4.12_A1_T3-expected.txt:
+
 2016-02-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196466

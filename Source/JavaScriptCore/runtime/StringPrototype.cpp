@@ -100,7 +100,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState*);
 
-const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, CREATE_METHOD_TABLE(StringPrototype) };
+}
+
+#include "StringPrototype.lut.h"
+
+namespace JSC {
+
+const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &stringPrototypeTable, CREATE_METHOD_TABLE(StringPrototype) };
+
+/* Source for StringConstructor.lut.h
+@begin stringPrototypeTable
+    search    JSBuiltin    DontEnum|Function 1
+@end
+*/
 
 // ECMA 15.5.4
 StringPrototype::StringPrototype(VM& vm, Structure* structure)
@@ -124,7 +136,6 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("match", stringProtoFuncMatch, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("repeat", stringProtoFuncRepeat, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("replace", stringProtoFuncReplace, DontEnum, 2);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("search", stringProtoFuncSearch, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("slice", stringProtoFuncSlice, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("split", stringProtoFuncSplit, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr", stringProtoFuncSubstr, DontEnum, 2);
@@ -174,6 +185,11 @@ StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, S
     StringPrototype* prototype = new (NotNull, allocateCell<StringPrototype>(vm.heap)) StringPrototype(vm, structure);
     prototype->finishCreation(vm, globalObject, empty);
     return prototype;
+}
+
+bool StringPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
+{
+    return getStaticFunctionSlot<Base>(exec, stringPrototypeTable, jsCast<StringPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions --------------------------
@@ -1018,36 +1034,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     }
 
     return JSValue::encode(constructArray(exec, static_cast<ArrayAllocationProfile*>(0), list));
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
-{
-    JSValue thisValue = exec->thisValue();
-    if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec);
-    JSString* string = thisValue.toString(exec);
-    String s = string->value(exec);
-    VM* vm = &exec->vm();
-
-    JSValue a0 = exec->argument(0);
-
-    RegExp* reg;
-    if (a0.inherits(RegExpObject::info()))
-        reg = asRegExpObject(a0)->regExp();
-    else { 
-        /*
-         *  ECMA 15.5.4.12 String.prototype.search (regexp)
-         *  If regexp is not an object whose [[Class]] property is "RegExp", it is
-         *  replaced with the result of the expression new RegExp(regexp).
-         *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
-         */
-        reg = RegExp::create(exec->vm(), a0.isUndefined() ? emptyString() : a0.toString(exec)->value(exec), NoFlags);
-        if (!reg->isValid())
-            return throwVMError(exec, createSyntaxError(exec, reg->errorMessage()));
-    }
-    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    MatchResult result = regExpConstructor->performMatch(*vm, reg, string, s, 0);
-    return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)

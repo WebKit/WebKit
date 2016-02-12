@@ -31,10 +31,10 @@ public:
     typedef RegExpObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static RegExpPrototype* create(VM& vm, Structure* structure, RegExp* regExp)
+    static RegExpPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
     {
         RegExpPrototype* prototype = new (NotNull, allocateCell<RegExpPrototype>(vm.heap)) RegExpPrototype(vm, structure, regExp);
-        prototype->finishCreation(vm);
+        prototype->finishCreation(vm, globalObject);
         return prototype;
     }
 
@@ -49,6 +49,7 @@ protected:
     RegExpPrototype(VM&, Structure*, RegExp*);
 
 private:
+    void finishCreation(VM&, JSGlobalObject*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 

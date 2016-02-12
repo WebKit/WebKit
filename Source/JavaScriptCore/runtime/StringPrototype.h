@@ -33,7 +33,7 @@ private:
 
 public:
     typedef StringObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
     static StringPrototype* create(VM&, JSGlobalObject*, Structure*);
 
@@ -46,6 +46,9 @@ public:
 
 protected:
     void finishCreation(VM&, JSGlobalObject*, JSString*);
+
+private:
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
 } // namespace JSC

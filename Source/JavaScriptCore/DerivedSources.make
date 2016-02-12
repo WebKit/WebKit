@@ -150,6 +150,7 @@ OBJECT_LUT_HEADERS = \
     SetPrototype.lut.h \
     StringConstructor.lut.h \
     StringIteratorPrototype.lut.h \
+    StringPrototype.lut.h \
     SymbolConstructor.lut.h \
     SymbolPrototype.lut.h \
 #

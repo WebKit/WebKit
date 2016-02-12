@@ -12,7 +12,7 @@ PASS String.prototype.indexOf.call(undefined, '2') threw exception TypeError: Ty
 PASS String.prototype.lastIndexOf.call(undefined, '2') threw exception TypeError: Type error.
 PASS String.prototype.match.call(undefined, /2+/) threw exception TypeError: Type error.
 PASS String.prototype.replace.call(undefined, /2+/, '-') threw exception TypeError: Type error.
-PASS String.prototype.search.call(undefined, '4') threw exception TypeError: Type error.
+PASS String.prototype.search.call(undefined, '4') threw exception TypeError: String.prototype.search requires that |this| not be undefined.
 PASS String.prototype.slice.call(undefined, 1, 3) threw exception TypeError: Type error.
 PASS String.prototype.split.call(undefined, '2') threw exception TypeError: Type error.
 PASS String.prototype.slice.call(undefined, 1, 3) threw exception TypeError: Type error.

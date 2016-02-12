@@ -1,6 +1,6 @@
 S15.5.4.12_A1_T3
 
-FAIL TypeError: Type error
+FAIL TypeError: String.prototype.search requires that |this| not be undefined
 
 TEST COMPLETE
 
