@@ -1,3 +1,16 @@
+2016-02-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r196470.
+        https://bugs.webkit.org/show_bug.cgi?id=154167
+
+        Broke some tests (Requested by anttik on #webkit).
+
+        Reverted changeset:
+
+        "Factor class change style invalidation code into a class"
+        https://bugs.webkit.org/show_bug.cgi?id=154163
+        http://trac.webkit.org/changeset/196470
+
 2016-02-12  Antti Koivisto  <antti@apple.com>
 
         Factor class change style invalidation code into a class
