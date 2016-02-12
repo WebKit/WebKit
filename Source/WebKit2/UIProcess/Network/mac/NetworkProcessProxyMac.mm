@@ -40,20 +40,10 @@ void NetworkProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEn
     connection()->send(Messages::NetworkProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 }
 
-static bool shouldUseXPC()
-{
-    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
-        return [value boolValue];
-
-    return true;
-}
-
 void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
     launchOptions.executableHeap = false;
-
-    launchOptions.useXPC = shouldUseXPC();
 }
 
 } // namespace WebKit

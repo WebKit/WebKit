@@ -123,8 +123,6 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
         else
             WTFLogAlways("Main process is sandboxed, ignoring plug-in sandbox policy");
     }
-
-    launchOptions.useXPC = true;
 }
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)

@@ -37,19 +37,11 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
     return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
 }
 
-static bool shouldUseXPC()
-{
-    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
-        return [value boolValue];
-    return true;
-}
-
 void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     // We want the web process to match the architecture of the UI process.
     launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
     launchOptions.executableHeap = false;
-    launchOptions.useXPC = shouldUseXPC();
 }
 
 } // namespace WebKit

@@ -46,9 +46,6 @@ public:
 
     char** environmentPointer() const { return m_environmentPointer; }
 
-    static const char* preexistingProcessServiceNameKey();
-    static const char* preexistingProcessTypeKey();
-
     static void dump();
 
 private:

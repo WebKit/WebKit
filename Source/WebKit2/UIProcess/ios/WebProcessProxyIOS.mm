@@ -45,8 +45,6 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     // We want the web process to match the architecture of the UI process.
     launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
     launchOptions.executableHeap = false;
-
-    launchOptions.useXPC = true;
 }
 
 } // namespace WebKit

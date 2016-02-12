@@ -63,7 +63,6 @@ public:
         static const cpu_type_t MatchCurrentArchitecture = 0;
         cpu_type_t architecture;
         bool executableHeap;
-        bool useXPC;
 #endif
 #if PLATFORM(EFL) || PLATFORM(GTK)
 #ifndef NDEBUG

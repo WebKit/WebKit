@@ -136,16 +136,6 @@ void EnvironmentVariables::copyEnvironmentVariables()
     m_environmentPointer = m_environmentVariables.data();
 }
 
-const char* EnvironmentVariables::preexistingProcessServiceNameKey()
-{
-    return "WEBKIT_PREEXISTING_PROCESS_SERVICE_NAME";
-}
-
-const char* EnvironmentVariables::preexistingProcessTypeKey()
-{
-    return "WEBKIT_PREEXISTING_PROCESS_TYPE";
-}
-
 void EnvironmentVariables::dump()
 {
     for (size_t i = 0; (*_NSGetEnviron())[i]; i++)

@@ -1,3 +1,35 @@
+2016-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove more unused process launching code
+        https://bugs.webkit.org/show_bug.cgi?id=154178
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Databases/mac/DatabaseProcessProxyMac.mm:
+        (WebKit::shouldUseXPC): Deleted.
+        (WebKit::DatabaseProcessProxy::platformGetLaunchOptions): Deleted.
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/EnvironmentVariables.cpp:
+        (WebKit::EnvironmentVariables::preexistingProcessServiceNameKey): Deleted.
+        (WebKit::EnvironmentVariables::preexistingProcessTypeKey): Deleted.
+        * UIProcess/Launcher/mac/EnvironmentVariables.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::setUpTerminationNotificationHandler): Deleted.
+        (WebKit::addDYLDEnvironmentAdditions): Deleted.
+        (WebKit::tryPreexistingProcess): Deleted.
+        (WebKit::createProcess): Deleted.
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::shouldUseXPC): Deleted.
+        (WebKit::NetworkProcessProxy::platformGetLaunchOptions): Deleted.
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions): Deleted.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions): Deleted.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::shouldUseXPC): Deleted.
+        (WebKit::WebProcessProxy::platformGetLaunchOptions): Deleted.
+
 2016-02-12  Brian Burg  <bburg@apple.com>
 
         Add a WebKit SPI for creating an automation session and advertise the active session via RemoteInspector
