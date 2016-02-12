@@ -567,8 +567,11 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& e
 
     {
         Locker<Lock> locker(m_referencedIndexLock);
-        if (auto index = m_referencedIndexes.take(name))
-            index->markAsDeleted(WTFMove(index));
+        if (auto index = m_referencedIndexes.take(name)) {
+            index->markAsDeleted();
+            m_deletedIndexes.add(WTFMove(index));
+        }
+
     }
 
     m_transaction->deleteIndex(m_info.identifier(), name);

@@ -1,3 +1,29 @@
+2016-02-12  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Simplify the relationship between IDBObjectStore and IDBIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=154187
+
+        Reviewed by Alex Christensen.
+
+        Tests: storage/indexeddb/modern/deleteindex-3-private.html
+               storage/indexeddb/modern/deleteindex-3.html
+
+        Instead of allowing IDBIndex to have two different lifecycle modes, it is now always
+        owned by an IDBObjectStore.
+        
+        To support the case where an IDBIndex is deleted from its IDBObjectStore, the object
+        store simply hangs on to deleted indexes until it is destroyed itself.
+        
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::markAsDeleted):
+        (WebCore::IDBClient::IDBIndex::ref):
+        (WebCore::IDBClient::IDBIndex::deref):
+        * Modules/indexeddb/client/IDBIndexImpl.h:
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::deleteIndex):
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+
 2016-02-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [CSS Font Loading] Implement CSSFontFace Boilerplate

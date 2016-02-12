@@ -1,3 +1,16 @@
+2016-02-12  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Simplify the relationship between IDBObjectStore and IDBIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=154187
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/deleteindex-3-expected.txt: Added.
+        * storage/indexeddb/modern/deleteindex-3-private-expected.txt: Added.
+        * storage/indexeddb/modern/deleteindex-3-private.html: Added.
+        * storage/indexeddb/modern/deleteindex-3.html: Added.
+        * storage/indexeddb/modern/resources/deleteindex-3.js: Added.
+
 2016-02-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement @@search

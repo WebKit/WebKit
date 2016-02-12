@@ -117,6 +117,7 @@ private:
 
     mutable Lock m_referencedIndexLock;
     HashMap<String, std::unique_ptr<IDBIndex>> m_referencedIndexes;
+    HashSet<std::unique_ptr<IDBIndex>> m_deletedIndexes;
 };
 
 } // namespace IDBClient

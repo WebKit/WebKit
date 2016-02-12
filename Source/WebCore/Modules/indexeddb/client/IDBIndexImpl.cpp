@@ -339,49 +339,20 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, 
     return transaction.requestGetKey(context, *this, range);
 }
 
-void IDBIndex::markAsDeleted(std::unique_ptr<IDBIndex>&& indexOwner)
+void IDBIndex::markAsDeleted()
 {
     ASSERT(!m_deleted);
-    ASSERT(!m_selfOwner);
-    ASSERT(indexOwner.get() == this);
-
-    // If nobody was keeping a ref to this IDBIndex while under IDBObjectStore ownership,
-    // it can be deleted now by letting indexOwner go out of scope.
-    if (!m_refCount)
-        return;
-
-    m_selfOwner = WTFMove(indexOwner);
-
-    // Now that the IDBIndex is managing its own lifetime, it must ref() its IDBObjectStore to keep it alive.
-    m_objectStoreRef = &m_objectStore;
-
-    // It must undo all of the refs it had previously given its IDBObjectStore when the lifetimes were intertwined.
-    for (unsigned i = m_refCount; i > 0; --i)
-        m_objectStore.deref();
-
     m_deleted = true;
 }
 
 void IDBIndex::ref()
 {
-    ++m_refCount;
-
-    if (!m_deleted)
-        m_objectStore.ref();
+    m_objectStore.ref();
 }
 
 void IDBIndex::deref()
 {
-    --m_refCount;
-
-    if (!m_deleted)
-        m_objectStore.deref();
-    else {
-        // This IDBIndex has been detached from its IDBObjectStore so if its RefCount
-        // just went to 0 it should be destroyed.
-        if (!m_refCount)
-            m_selfOwner = nullptr;
-    }
+    m_objectStore.deref();
 }
 
 } // namespace IDBClient

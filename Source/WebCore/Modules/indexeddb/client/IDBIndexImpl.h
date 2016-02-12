@@ -79,7 +79,7 @@ public:
 
     IDBObjectStore& modernObjectStore() { return m_objectStore; }
 
-    void markAsDeleted(std::unique_ptr<IDBIndex>&&);
+    void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 
     virtual bool isModern() const override { return true; }
@@ -96,19 +96,9 @@ private:
 
     bool m_deleted { false };
 
-    // Most of the time, an IDBObjectStore owns an IDBIndex through a std::unique_ptr.
-    // In that scenario, attempts to ref() the IDBIndex directly ref the IDBObjectStore, so it is okay to
-    // keep a raw reference to the IDBObjectStore because it will always outlive the IDBIndex.
+    // IDBIndex objects are always owned by their referencing IDBObjectStore.
+    // Indexes will never outlive ObjectStores so its okay to keep a raw C++ reference here.
     IDBObjectStore& m_objectStore;
-
-    // But when an IDBIndex is deleted from its IDBObjectStore that lifetime is no longer guaranteed.
-    // The IDBObjectStore no longer owns the IDBIndex, so the following needs to change:
-    // 1 - The IDBIndex must directly ref its IDBObjectStore to keep it alive.
-    // 2 - The IDBIndex becomes traditionally RefCounted.
-    // 2 - The IDBIndex holds its own std::unique_ptr, which it will clear out when its RefCount reaches 0.
-    RefPtr<IDBObjectStore> m_objectStoreRef;
-    unsigned m_refCount { 0 };
-    std::unique_ptr<IDBIndex> m_selfOwner;
 };
 
 } // namespace IDBClient
