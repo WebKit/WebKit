@@ -50,6 +50,10 @@ void AdaptiveInferredPropertyValueWatchpointBase::install()
 
 void AdaptiveInferredPropertyValueWatchpointBase::fire(const FireDetail& detail)
 {
+    // We need to defer GC here otherwise we might trigger a GC that could destroy the owner
+    // CodeBlock. In particular, this can happen when we add rare data to a structure when
+    // we EnsureWatchability.
+    DeferGCForAWhile defer(*Heap::heap(m_key.object()));
     // One of the watchpoints fired, but the other one didn't. Make sure that neither of them are
     // in any set anymore. This simplifies things by allowing us to reinstall the watchpoints
     // wherever from scratch.

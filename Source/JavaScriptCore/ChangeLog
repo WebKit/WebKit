@@ -1,3 +1,22 @@
+2016-02-12  Keith Miller  <keith_miller@apple.com>
+
+        AdaptiveInferredPropertyValueWatchpoint can trigger a GC that frees its CodeBlock and thus itself
+        https://bugs.webkit.org/show_bug.cgi?id=154146
+
+        Reviewed by Filip Pizlo.
+
+        Consider the following: there is some CodeBlock, C, that is watching some object, O, with a
+        structure, S, for replacements. Also, suppose that C has no references anymore and is due to
+        be GCed. Now, when some new property is added to O, S will create a new structure S' and
+        fire its transition watchpoints. Since C is watching S for replacements it will attempt to
+        have its AdaptiveInferredPropertyValueWatchpoint relocate itself to S'. To do so, it needs
+        it allocate RareData on S'. This allocation may cause a GC, which frees C while still
+        executing its watchpoint handler. The solution to this is to defer GC while running
+        AdaptiveInferredPropertyValueWatchpointBase handlers.
+
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::fire):
+
 2016-02-12  Gavin Barraclough  <barraclough@apple.com>
 
         Separate out !allowsAccess path in JSDOMWindowCustom getOwnPropertySlot
