@@ -1,3 +1,29 @@
+2016-02-12  Antti Koivisto  <antti@apple.com>
+
+        Factor class change style invalidation code into a class
+        https://bugs.webkit.org/show_bug.cgi?id=154163
+
+        Reviewed by Andreas Kling.
+
+        Factor this piece of functionality out of Element and into ClassChangeInvalidation class.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::classStringHasClassName):
+        (WebCore::Element::classAttributeChanged):
+        (WebCore::collectClasses): Deleted.
+        (WebCore::computeClassChange): Deleted.
+        (WebCore::invalidateStyleForClassChange): Deleted.
+        * style/ClassChangeInvalidation.cpp: Added.
+        (WebCore::Style::ClassChangeInvalidation::computeClassChange):
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyle):
+        * style/ClassChangeInvalidation.h: Added.
+        (WebCore::Style::ClassChangeInvalidation::needsInvalidation):
+        (WebCore::Style::ClassChangeInvalidation::ClassChangeInvalidation):
+        (WebCore::Style::ClassChangeInvalidation::~ClassChangeInvalidation):
+
 2016-02-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         GCC buildfix in Source/WebCore/svg/SVGToOTFFontConversion.cpp
