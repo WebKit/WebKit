@@ -66,19 +66,6 @@ struct UUIDHolder : public RefCounted<UUIDHolder> {
 
 }
 
-#if ASAN_ENABLED
-static const char* copyASanDynamicLibraryPath()
-{
-    uint32_t imageCount = _dyld_image_count();
-    for (uint32_t i = 0; i < imageCount; ++i) {
-        if (strstr(_dyld_get_image_name(i), "/libclang_rt.asan_"))
-            return fastStrDup(_dyld_get_image_name(i));
-    }
-
-    return 0;
-}
-#endif
-
 typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, IPC::Connection::Identifier);
 
 static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions)

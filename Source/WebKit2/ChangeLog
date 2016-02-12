@@ -1,5 +1,12 @@
 2016-02-12  Anders Carlsson  <andersca@apple.com>
 
+        Fix ASan build.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::copyASanDynamicLibraryPath): Deleted.
+
+2016-02-12  Anders Carlsson  <andersca@apple.com>
+
         Remove NPAPI for showing preference panes
         https://bugs.webkit.org/show_bug.cgi?id=154193
 
