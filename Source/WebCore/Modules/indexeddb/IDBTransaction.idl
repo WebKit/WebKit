@@ -28,8 +28,6 @@
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
     EventTarget,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
     EnabledAtRuntime=IndexedDB,
     SkipVTableValidation,
 ] interface IDBTransaction : EventTarget {

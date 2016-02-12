@@ -32,7 +32,7 @@ enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "me
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction,
     SkipVTableValidation,
-] interface TextTrack {
+] interface TextTrack : EventTarget {
     readonly attribute DOMString id;
     [CustomSetter] attribute TextTrackKind kind;
     readonly attribute DOMString label;
@@ -54,9 +54,4 @@ enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "me
     void addRegion(VTTRegion region);
     [RaisesException] void removeRegion(VTTRegion region);
 #endif
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };

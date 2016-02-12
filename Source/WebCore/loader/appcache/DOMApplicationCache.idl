@@ -28,7 +28,7 @@
     DoNotCheckConstants,
     GenerateIsReachable=ImplFrame,
     InterfaceName=ApplicationCache,
-] interface DOMApplicationCache {
+] interface DOMApplicationCache : EventTarget {
     // update status
     const unsigned short UNCACHED = 0;
     const unsigned short IDLE = 1;
@@ -50,10 +50,5 @@
     attribute EventHandler onupdateready;
     attribute EventHandler oncached;
     attribute EventHandler onobsolete;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };
 

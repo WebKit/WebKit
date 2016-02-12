@@ -32,15 +32,11 @@
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMTestEventTargetInternal.h"
-#import "Event.h"
-#import "EventListener.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
 #import "Node.h"
-#import "ObjCEventListener.h"
 #import "TestEventTarget.h"
 #import "ThreadCheck.h"
-#import "URL.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
@@ -63,29 +59,6 @@
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->item(index)));
-}
-
-- (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
-{
-    WebCore::JSMainThreadNullState state;
-    RefPtr<WebCore::EventListener> nativeEventListener = WebCore::ObjCEventListener::wrap(listener);
-    IMPL->addEventListener(type, WTF::getPtr(nativeEventListener), useCapture);
-}
-
-- (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
-{
-    WebCore::JSMainThreadNullState state;
-    RefPtr<WebCore::EventListener> nativeEventListener = WebCore::ObjCEventListener::wrap(listener);
-    IMPL->removeEventListener(type, WTF::getPtr(nativeEventListener), useCapture);
-}
-
-- (BOOL)dispatchEvent:(DOMEvent *)evt
-{
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    BOOL result = IMPL->dispatchEvent(core(evt), ec);
-    WebCore::raiseOnDOMError(ec);
-    return result;
 }
 
 @end

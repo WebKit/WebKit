@@ -35,7 +35,7 @@
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
-] interface FileReader {
+] interface FileReader : EventTarget {
     // ready states
     const unsigned short EMPTY = 0;
     const unsigned short LOADING = 1;
@@ -54,11 +54,6 @@
     [Custom] readonly attribute any result;
 
     readonly attribute FileError error;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 
     attribute EventHandler onloadstart;
     attribute EventHandler onprogress;

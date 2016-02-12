@@ -38,8 +38,6 @@
     NoInterfaceObject,
     ActiveDOMObject,
     EventTarget,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
 ] interface SourceBuffer : EventTarget {
 
     [SetterRaisesException] attribute AppendMode mode;

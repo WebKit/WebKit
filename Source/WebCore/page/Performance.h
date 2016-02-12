@@ -52,7 +52,7 @@ class ResourceRequest;
 class ResourceResponse;
 class UserTiming;
 
-class Performance final : public ScriptWrappable, public RefCounted<Performance>, public DOMWindowProperty, public EventTargetWithInlineData {
+class Performance final : public RefCounted<Performance>, public DOMWindowProperty, public EventTargetWithInlineData {
 public:
     static Ref<Performance> create(Frame& frame) { return adoptRef(*new Performance(frame)); }
     ~Performance();

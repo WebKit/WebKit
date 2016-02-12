@@ -48,7 +48,7 @@ class MediaConstraintsImpl;
 class MediaSourceSettings;
 class MediaTrackConstraints;
 
-class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamTrackPrivate::Observer {
+class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamTrackPrivate::Observer {
 public:
     class Observer {
     public:

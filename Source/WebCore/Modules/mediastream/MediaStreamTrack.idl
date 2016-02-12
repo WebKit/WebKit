@@ -30,7 +30,7 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     EventTarget,
     ActiveDOMObject,
     SkipVTableValidation,
-] interface MediaStreamTrack {
+] interface MediaStreamTrack : EventTarget {
     readonly attribute DOMString kind;
     readonly attribute DOMString id;
     readonly attribute DOMString label;
@@ -52,10 +52,5 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     void applyConstraints(Dictionary constraints);
 
     attribute EventHandler onoverconstrained;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };
 

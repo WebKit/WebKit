@@ -27,8 +27,6 @@
 
 [
     CustomConstructor(DOMString scriptUrl),
-    JSGenerateToNativeObject,
-    JSGenerateToJSObject,
     ActiveDOMObject,
 ] interface Worker : EventTarget {
 

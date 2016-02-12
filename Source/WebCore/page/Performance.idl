@@ -33,7 +33,7 @@
 [
     Conditional=WEB_TIMING,
     EventTarget,
-] interface Performance {
+] interface Performance : EventTarget {
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;
 

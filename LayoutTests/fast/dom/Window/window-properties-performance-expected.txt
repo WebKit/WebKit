@@ -1,6 +1,8 @@
 This test dumps all of the properties that are reachable from the window.performance object, along with their types.
 
 window.performance [object Performance]
+window.performance.addEventListener [function]
+window.performance.dispatchEvent [function]
 window.performance.navigation [object PerformanceNavigation]
 window.performance.navigation.TYPE_BACK_FORWARD [number]
 window.performance.navigation.TYPE_NAVIGATE [number]
@@ -9,6 +11,7 @@ window.performance.navigation.TYPE_RESERVED [number]
 window.performance.navigation.redirectCount [number]
 window.performance.navigation.type [number]
 window.performance.now [function]
+window.performance.removeEventListener [function]
 window.performance.timing [object PerformanceTiming]
 window.performance.timing.connectEnd [number]
 window.performance.timing.connectStart [number]

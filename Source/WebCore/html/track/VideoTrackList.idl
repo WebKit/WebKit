@@ -29,7 +29,7 @@
     GenerateIsReachable=ImplElementRoot,
     EventTarget,
     JSCustomMarkFunction,
-] interface VideoTrackList {
+] interface VideoTrackList : EventTarget {
     readonly attribute unsigned long length;
     getter VideoTrack item(unsigned long index);
     VideoTrack getTrackById(DOMString id);
@@ -38,9 +38,5 @@
     attribute EventHandler onchange;
     attribute EventHandler onaddtrack;
     attribute EventHandler onremovetrack;
-
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };
 

@@ -28,7 +28,7 @@
     EventTarget,
     InterfaceName=WebKitMediaKeySession,
     ActiveDOMObject,
-] interface MediaKeySession {
+] interface MediaKeySession : EventTarget {
     // error state
     readonly attribute MediaKeyError error;
 
@@ -43,9 +43,4 @@
     attribute EventHandler onwebkitkeyadded;
     attribute EventHandler onwebkitkeyerror;
     attribute EventHandler onwebkitkeymessage;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };

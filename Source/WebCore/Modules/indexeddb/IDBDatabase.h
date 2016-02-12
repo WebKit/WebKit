@@ -46,7 +46,7 @@ class ScriptExecutionContext;
 
 struct ExceptionCodeWithMessage;
 
-class IDBDatabase : public RefCounted<IDBDatabase>, public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
+class IDBDatabase : public RefCounted<IDBDatabase>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     virtual ~IDBDatabase() { }
 

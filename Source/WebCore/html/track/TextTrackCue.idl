@@ -25,7 +25,6 @@
 
 [
     Conditional=VIDEO_TRACK,
-    JSGenerateToNativeObject,
     Constructor(unrestricted double startTime, unrestricted double endTime, DOMString text),
     ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
@@ -33,7 +32,7 @@
     CustomIsReachable,
     CustomToJSObject,
     SkipVTableValidation,
-] interface TextTrackCue {
+] interface TextTrackCue : EventTarget {
     readonly attribute TextTrack track;
 
     attribute DOMString id;
@@ -43,10 +42,5 @@
 
     attribute EventHandler onenter;
     attribute EventHandler onexit;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };
 

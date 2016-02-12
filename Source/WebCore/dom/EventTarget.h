@@ -34,6 +34,7 @@
 #include "EventListenerMap.h"
 #include "EventNames.h"
 #include "EventTargetInterfaces.h"
+#include "ScriptWrappable.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -108,7 +109,7 @@ DOM_EVENT_TARGET_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
 
 };
 
-class EventTarget {
+class EventTarget : public ScriptWrappable {
 public:
     void ref() { refEventTarget(); }
     void deref() { derefEventTarget(); }

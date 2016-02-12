@@ -28,7 +28,7 @@
     GenerateIsReachable=ImplElementRoot,
     EventTarget,
     JSCustomMarkFunction,
-] interface TextTrackList {
+] interface TextTrackList : EventTarget {
     readonly attribute unsigned long length;
     getter TextTrack item(unsigned long index);
     TextTrack getTrackById(DOMString id);
@@ -36,9 +36,5 @@
     attribute EventHandler onaddtrack;
     attribute EventHandler onchange;
     attribute EventHandler onremovetrack;
-
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };
 

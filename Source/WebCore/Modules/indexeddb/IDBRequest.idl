@@ -32,8 +32,6 @@
     EnabledAtRuntime=IndexedDB,
     ActiveDOMObject,
     EventTarget,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
     SkipVTableValidation,
     GenerateIsReachable=Impl,
 ] interface IDBRequest : EventTarget {

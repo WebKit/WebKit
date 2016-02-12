@@ -1,3 +1,17 @@
+2016-02-11  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] interfaces should inherit EventTarget instead of duplicating the EventTarget API
+        https://bugs.webkit.org/show_bug.cgi?id=154121
+        <rdar://problem/24613234>
+
+        Reviewed by Gavin Barraclough.
+
+        Rebaseline a couple of layout tests now that interfaces inherit EventTarget
+        instead of duplicating the EventTarget API in their IDL.
+
+        * fast/dom/Window/window-properties-performance-expected.txt:
+        * fast/dom/prototype-chain-expected.txt:
+
 2016-02-11  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make focusring painting subpixel aware.

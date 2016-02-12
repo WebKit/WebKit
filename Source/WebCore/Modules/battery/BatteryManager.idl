@@ -23,7 +23,7 @@
     Conditional=BATTERY_STATUS,
     ActiveDOMObject,
     EventTarget,
-] interface BatteryManager {
+] interface BatteryManager : EventTarget {
     readonly attribute boolean charging;
     readonly attribute unrestricted double chargingTime;
     readonly attribute unrestricted double dischargingTime;
@@ -33,9 +33,4 @@
     attribute EventHandler onchargingtimechange;
     attribute EventHandler ondischargingtimechange;
     attribute EventHandler onlevelchange;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };

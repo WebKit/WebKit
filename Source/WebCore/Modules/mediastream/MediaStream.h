@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-class MediaStream final : public URLRegistrable, public ScriptWrappable, public EventTargetWithInlineData, public ContextDestructionObserver, public MediaStreamTrack::Observer, public MediaStreamPrivate::Observer, public RefCounted<MediaStream> {
+class MediaStream final : public URLRegistrable, public EventTargetWithInlineData, public ContextDestructionObserver, public MediaStreamTrack::Observer, public MediaStreamPrivate::Observer, public RefCounted<MediaStream> {
 public:
     class Observer {
     public:

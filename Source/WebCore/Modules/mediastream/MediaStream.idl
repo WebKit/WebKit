@@ -29,7 +29,7 @@
     Constructor(MediaStream stream),
     Constructor(MediaStreamTrack[] tracks),
     ConstructorCallWith=ScriptExecutionContext,
-] interface MediaStream {
+] interface MediaStream : EventTarget {
 
     readonly attribute DOMString id;
 
@@ -49,10 +49,5 @@
     attribute EventHandler oninactive;
     attribute EventHandler onaddtrack;
     attribute EventHandler onremovetrack;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };
 

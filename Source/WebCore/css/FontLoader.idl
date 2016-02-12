@@ -34,7 +34,7 @@
     ActiveDOMObject,
     EventTarget,
     GenerateIsReachable=ImplDocument,
-] interface FontLoader {
+] interface FontLoader : EventTarget {
 
     attribute EventHandler onloading;
     attribute EventHandler onloadingdone;
@@ -46,8 +46,4 @@
     void loadFont(Dictionary params);
     void notifyWhenFontsReady(VoidCallback callback);
     readonly attribute boolean loading;
-
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };

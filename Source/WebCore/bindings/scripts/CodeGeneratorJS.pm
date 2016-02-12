@@ -531,9 +531,8 @@ sub ShouldGenerateToWrapped
     my ($hasParent, $interface) = @_;
 
     return 0 if not NeedsImplementationClass($interface);
-    if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
-        return 1;
-    }
+    return 1 if !$hasParent or $interface->extendedAttributes->{"JSGenerateToNativeObject"};
+    return 1 if $interface->parent && $interface->parent eq "EventTarget";
     return 0;
 }
 
@@ -560,6 +559,7 @@ sub ShouldGenerateToJSDeclaration
     return 0 if not NeedsImplementationClass($interface);
     return 0 if $interface->name eq "AbstractView";
     return 1 if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"} or $interface->extendedAttributes->{"CustomToJSObject"});
+    return 1 if $interface->parent && $interface->parent eq "EventTarget";
     return 0;
 }
 
@@ -1241,6 +1241,11 @@ sub GenerateHeader
         push(@headerContent, "{\n");
         push(@headerContent, "    static NeverDestroyed<JS${interfaceName}Owner> owner;\n");
         push(@headerContent, "    return &owner.get();\n");
+        push(@headerContent, "}\n");
+        push(@headerContent, "\n");
+        push(@headerContent, "inline void* wrapperKey($implType* domObject)\n");
+        push(@headerContent, "{\n");
+        push(@headerContent, "    return domObject;\n");
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
     }

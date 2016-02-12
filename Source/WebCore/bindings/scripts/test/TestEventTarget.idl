@@ -29,17 +29,9 @@
 [
     EventTarget,
     MasqueradesAsUndefined
-] interface TestEventTarget {
+] interface TestEventTarget : EventTarget {
 
     getter Node item(unsigned long index);
     getter Node (DOMString name);
-
-    void addEventListener(DOMString type, 
-                          EventListener listener, 
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type, 
-                             EventListener listener, 
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
 };
 

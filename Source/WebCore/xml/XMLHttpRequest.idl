@@ -42,7 +42,7 @@ enum XMLHttpRequestResponseType {
     ConstructorCallWith=ScriptExecutionContext,
     JSCustomMarkFunction,
     EventTarget,
-] interface XMLHttpRequest {
+] interface XMLHttpRequest : EventTarget {
     // From XMLHttpRequestEventTarget
     attribute EventHandler onabort;
     attribute EventHandler onerror;
@@ -91,9 +91,4 @@ enum XMLHttpRequestResponseType {
 
     // Extension
     [RaisesException] void overrideMimeType(DOMString override);
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };

@@ -53,7 +53,7 @@ enum class IDBRequestReadyState {
     DeprecatedEarlyDeath = 3, // FIXME: https://bugs.webkit.org/show_bug.cgi?id=149117 - Remove this when removing LegacyIDB
 };
 
-class IDBRequest : public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
+class IDBRequest : public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     virtual ~IDBRequest() { }
 

@@ -360,6 +360,10 @@ sub GenerateInterface
     $fatalError = 0;
 
     my $name = $interface->name;
+
+    # ObjC bindings only support EventTarget as base class for Node.
+    $interface->parents([grep(!/EventTarget/, @{$interface->parents})]) if $name ne "Node";
+
     my $className = GetClassName($name);
     my $parentClassName = "DOM" . GetParentImplClassName($interface);
     $isProtocol = $interface->extendedAttributes->{ObjCProtocol};

@@ -29,7 +29,7 @@
 [
     GenerateIsReachable=Impl,
     EventTarget,
-] interface XMLHttpRequestUpload {
+] interface XMLHttpRequestUpload : EventTarget {
     // From XMLHttpRequestEventTarget
     attribute EventHandler onabort;
     attribute EventHandler onerror;
@@ -38,10 +38,5 @@
     attribute EventHandler onloadstart;
     attribute EventHandler onprogress;
     attribute EventHandler ontimeout;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };
 

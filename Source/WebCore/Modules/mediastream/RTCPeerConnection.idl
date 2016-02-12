@@ -38,7 +38,7 @@
     ConstructorRaisesException,
     EventTarget,
     InterfaceName=webkitRTCPeerConnection,
-] interface RTCPeerConnection {
+] interface RTCPeerConnection : EventTarget {
 
     // Private functions called by runQueuedOperation() (RTCPeerConnectionInternals.js)
     [Private] Promise queuedCreateOffer(optional Dictionary offerOptions);
@@ -112,9 +112,4 @@
     attribute EventHandler oniceconnectionstatechange;
     attribute EventHandler onicegatheringstatechange;
     attribute EventHandler ondatachannel;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };

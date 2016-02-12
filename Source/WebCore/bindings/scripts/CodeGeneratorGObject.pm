@@ -1921,6 +1921,9 @@ sub ReadStableSymbols {
 sub GenerateInterface {
     my ($object, $interface, $defines) = @_;
 
+    # FIXME: GObject bindings do not support EventTarget as base class.
+    $interface->parent(undef) if $interface->parent && $interface->parent eq "EventTarget";
+
     # Set up some global variables
     $className = GetClassName($interface->name);
 

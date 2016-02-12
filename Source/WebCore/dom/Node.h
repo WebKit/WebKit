@@ -30,7 +30,6 @@
 #include "LayoutRect.h"
 #include "MutationObserver.h"
 #include "RenderStyleConstants.h"
-#include "ScriptWrappable.h"
 #include "TreeScope.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -113,7 +112,7 @@ private:
     RenderObject* m_renderer;
 };
 
-class Node : public EventTarget, public ScriptWrappable {
+class Node : public EventTarget {
     WTF_MAKE_FAST_ALLOCATED;
 
     friend class Document;

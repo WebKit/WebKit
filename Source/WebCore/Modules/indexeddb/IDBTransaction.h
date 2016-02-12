@@ -48,7 +48,7 @@ class IDBOpenDBRequest;
 struct ExceptionCodeWithMessage;
 struct IDBObjectStoreMetadata;
 
-class IDBTransaction : public ScriptWrappable, public RefCounted<IDBTransaction>, public EventTargetWithInlineData, public ActiveDOMObject {
+class IDBTransaction : public RefCounted<IDBTransaction>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     virtual ~IDBTransaction() { }
 

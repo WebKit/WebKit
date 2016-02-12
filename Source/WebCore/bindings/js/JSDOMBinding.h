@@ -177,6 +177,11 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld& world, JSC::ArrayBuff
     return static_cast<WebCoreTypedArrayController*>(world.vm().m_typedArrayController.get())->wrapperOwner();
 }
 
+inline void* wrapperKey(JSC::ArrayBuffer* domObject)
+{
+    return domObject;
+}
+
 inline JSDOMObject* getInlineCachedWrapper(DOMWrapperWorld&, void*) { return nullptr; }
 inline bool setInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMObject*, JSC::WeakHandleOwner*) { return false; }
 inline bool clearInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMObject*) { return false; }
@@ -231,7 +236,7 @@ template<typename DOMClass> inline JSC::JSObject* getCachedWrapper(DOMWrapperWor
 {
     if (JSC::JSObject* wrapper = getInlineCachedWrapper(world, domObject))
         return wrapper;
-    return world.m_wrappers.get(domObject);
+    return world.m_wrappers.get(wrapperKey(domObject));
 }
 
 template<typename DOMClass, typename WrapperClass> inline void cacheWrapper(DOMWrapperWorld& world, DOMClass* domObject, WrapperClass* wrapper)
@@ -239,14 +244,14 @@ template<typename DOMClass, typename WrapperClass> inline void cacheWrapper(DOMW
     JSC::WeakHandleOwner* owner = wrapperOwner(world, domObject);
     if (setInlineCachedWrapper(world, domObject, wrapper, owner))
         return;
-    weakAdd(world.m_wrappers, (void*)domObject, JSC::Weak<JSC::JSObject>(wrapper, owner, &world));
+    weakAdd(world.m_wrappers, wrapperKey(domObject), JSC::Weak<JSC::JSObject>(wrapper, owner, &world));
 }
 
 template<typename DOMClass, typename WrapperClass> inline void uncacheWrapper(DOMWrapperWorld& world, DOMClass* domObject, WrapperClass* wrapper)
 {
     if (clearInlineCachedWrapper(world, domObject, wrapper))
         return;
-    weakRemove(world.m_wrappers, (void*)domObject, wrapper);
+    weakRemove(world.m_wrappers, wrapperKey(domObject), wrapper);
 }
 
 #define CREATE_DOM_WRAPPER(globalObject, className, object) createWrapper<JS##className>(globalObject, static_cast<className*>(object))

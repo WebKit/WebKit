@@ -43,7 +43,7 @@ namespace WebCore {
 
 class SourceBuffer;
 
-class SourceBufferList final : public RefCounted<SourceBufferList>, public ScriptWrappable, public EventTargetWithInlineData {
+class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTargetWithInlineData {
 public:
     static Ref<SourceBufferList> create(ScriptExecutionContext* context)
     {

@@ -25,12 +25,13 @@
     CustomIsReachable,
     CustomToJSObject,
     EventTarget,
-    JSGenerateToNativeObject,
     ObjCPolymorphic,
 ] interface Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     : Object, EventTarget
-#endif /* defined(LANGUAGE_OBJECTIVE_C) */
+#else
+    : EventTarget
+#endif
  {
     // NodeType
     const unsigned short      ELEMENT_NODE                   = 1;
@@ -125,12 +126,5 @@
 
     void inspect();
 #endif
-
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
-#endif
-
 };
 

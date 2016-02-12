@@ -2233,14 +2233,10 @@ FAIL VideoTrack interface: attribute kind assert_own_property: self does not hav
 FAIL VideoTrack interface: attribute label assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
 FAIL VideoTrack interface: attribute language assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
 FAIL VideoTrack interface: attribute selected assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL MediaController interface: existence and properties of interface object assert_equals: prototype of MediaController is not EventTarget expected function "function EventTarget() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS MediaController interface: existence and properties of interface object 
 PASS MediaController interface object length 
 PASS MediaController interface object name 
-FAIL MediaController interface: existence and properties of interface prototype object assert_equals: prototype of MediaController.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS MediaController interface: existence and properties of interface prototype object 
 PASS MediaController interface: existence and properties of interface prototype object's "constructor" property 
 FAIL MediaController interface: attribute readyState assert_true: The prototype object must have a property "readyState" expected true got false
 PASS MediaController interface: attribute buffered 
@@ -2312,14 +2308,10 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: new MediaController() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new MediaController() with too few arguments must throw TypeError 
-FAIL TextTrackList interface: existence and properties of interface object assert_equals: prototype of TextTrackList is not EventTarget expected function "function EventTarget() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS TextTrackList interface: existence and properties of interface object 
 PASS TextTrackList interface object length 
 PASS TextTrackList interface object name 
-FAIL TextTrackList interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackList.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS TextTrackList interface: existence and properties of interface prototype object 
 PASS TextTrackList interface: existence and properties of interface prototype object's "constructor" property 
 PASS TextTrackList interface: attribute length 
 PASS TextTrackList interface: operation getTrackById(DOMString) 
@@ -2344,14 +2336,10 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: document.createElement("video").textTracks must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on document.createElement("video").textTracks with too few arguments must throw TypeError 
-FAIL TextTrack interface: existence and properties of interface object assert_equals: prototype of TextTrack is not EventTarget expected function "function EventTarget() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS TextTrack interface: existence and properties of interface object 
 PASS TextTrack interface object length 
 PASS TextTrack interface object name 
-FAIL TextTrack interface: existence and properties of interface prototype object assert_equals: prototype of TextTrack.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS TextTrack interface: existence and properties of interface prototype object 
 PASS TextTrack interface: existence and properties of interface prototype object's "constructor" property 
 FAIL TextTrack interface: attribute kind assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function kind() {
     [native code]
@@ -2405,14 +2393,10 @@ PASS Stringification of document.createElement("video").addTextTrack("subtitles"
 PASS TextTrackCueList interface: document.createElement("video").addTextTrack("subtitles").cues must inherit property "length" with the proper type (0) 
 PASS TextTrackCueList interface: document.createElement("video").addTextTrack("subtitles").cues must inherit property "getCueById" with the proper type (2) 
 PASS TextTrackCueList interface: calling getCueById(DOMString) on document.createElement("video").addTextTrack("subtitles").cues with too few arguments must throw TypeError 
-FAIL TextTrackCue interface: existence and properties of interface object assert_equals: prototype of TextTrackCue is not EventTarget expected function "function EventTarget() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS TextTrackCue interface: existence and properties of interface object 
 FAIL TextTrackCue interface object length assert_equals: wrong value for TextTrackCue.length expected 0 but got 3
 PASS TextTrackCue interface object name 
-FAIL TextTrackCue interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackCue.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS TextTrackCue interface: existence and properties of interface prototype object 
 PASS TextTrackCue interface: existence and properties of interface prototype object's "constructor" property 
 PASS TextTrackCue interface: attribute track 
 PASS TextTrackCue interface: attribute id 
@@ -4208,14 +4192,10 @@ PASS BeforeUnloadEvent interface object name
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object 
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS BeforeUnloadEvent interface: attribute returnValue 
-FAIL ApplicationCache interface: existence and properties of interface object assert_equals: prototype of ApplicationCache is not EventTarget expected function "function EventTarget() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS ApplicationCache interface: existence and properties of interface object 
 PASS ApplicationCache interface object length 
 PASS ApplicationCache interface object name 
-FAIL ApplicationCache interface: existence and properties of interface prototype object assert_equals: prototype of ApplicationCache.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS ApplicationCache interface: existence and properties of interface prototype object 
 PASS ApplicationCache interface: existence and properties of interface prototype object's "constructor" property 
 PASS ApplicationCache interface: constant UNCACHED on interface object 
 PASS ApplicationCache interface: constant UNCACHED on interface prototype object 
@@ -4406,14 +4386,10 @@ PASS MessageEvent interface: attribute lastEventId
 PASS MessageEvent interface: attribute source 
 PASS MessageEvent interface: attribute ports 
 FAIL MessageEvent interface: operation initMessageEvent(DOMString,boolean,boolean,any,DOMString,DOMString,[object Object],[object Object],MessagePort) assert_equals: property has wrong .length expected 8 but got 0
-FAIL EventSource interface: existence and properties of interface object assert_equals: prototype of EventSource is not EventTarget expected function "function EventTarget() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS EventSource interface: existence and properties of interface object 
 PASS EventSource interface object length 
 PASS EventSource interface object name 
-FAIL EventSource interface: existence and properties of interface prototype object assert_equals: prototype of EventSource.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS EventSource interface: existence and properties of interface prototype object 
 PASS EventSource interface: existence and properties of interface prototype object's "constructor" property 
 PASS EventSource interface: attribute url 
 PASS EventSource interface: attribute withCredentials 
@@ -4428,14 +4404,10 @@ PASS EventSource interface: attribute onopen
 PASS EventSource interface: attribute onmessage 
 PASS EventSource interface: attribute onerror 
 PASS EventSource interface: operation close() 
-FAIL WebSocket interface: existence and properties of interface object assert_equals: prototype of WebSocket is not EventTarget expected function "function EventTarget() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS WebSocket interface: existence and properties of interface object 
 PASS WebSocket interface object length 
 PASS WebSocket interface object name 
-FAIL WebSocket interface: existence and properties of interface prototype object assert_equals: prototype of WebSocket.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS WebSocket interface: existence and properties of interface prototype object 
 PASS WebSocket interface: existence and properties of interface prototype object's "constructor" property 
 PASS WebSocket interface: attribute url 
 PASS WebSocket interface: constant CONNECTING on interface object 
@@ -4536,14 +4508,10 @@ PASS MessageChannel interface: existence and properties of interface prototype o
 PASS MessageChannel interface: existence and properties of interface prototype object's "constructor" property 
 PASS MessageChannel interface: attribute port1 
 PASS MessageChannel interface: attribute port2 
-FAIL MessagePort interface: existence and properties of interface object assert_equals: prototype of MessagePort is not EventTarget expected function "function EventTarget() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS MessagePort interface: existence and properties of interface object 
 PASS MessagePort interface object length 
 PASS MessagePort interface object name 
-FAIL MessagePort interface: existence and properties of interface prototype object assert_equals: prototype of MessagePort.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS MessagePort interface: existence and properties of interface prototype object 
 PASS MessagePort interface: existence and properties of interface prototype object's "constructor" property 
 PASS MessagePort interface: operation postMessage(any,[object Object]) 
 PASS MessagePort interface: operation start() 

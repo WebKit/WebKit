@@ -1,3 +1,130 @@
+2016-02-11  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] interfaces should inherit EventTarget instead of duplicating the EventTarget API
+        https://bugs.webkit.org/show_bug.cgi?id=154121
+        <rdar://problem/24613234>
+
+        Reviewed by Gavin Barraclough.
+
+        Interfaces should inherit EventTarget instead of duplicating the
+        EventTarget API in their IDL. Not only the duplication is ugly and
+        error-prone, but this also does not match the specifications and
+        have subtle web-exposed differences.
+
+        This patch takes care of all interfaces except for DOMWindow and
+        WorkerGlobalScope. Those will be updated in the follow-up patch
+        as they will require a little bit more work and testing.
+
+        We should also be able to get rid of the [EventTarget] WebKit IDL
+        attribute in a follow-up.
+
+        No new tests, already covered by existing tests.
+
+        * Modules/battery/BatteryManager.idl:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/mediasession/MediaRemoteControls.idl:
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/speech/SpeechSynthesisUtterance.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/websockets/WebSocket.idl:
+        * css/FontLoader.idl:
+        * dom/EventTarget.h:
+        * dom/MessagePort.idl:
+        * dom/Node.h:
+        * dom/Node.idl:
+        * dom/WebKitNamedFlow.idl:
+        * fileapi/FileReader.idl:
+        * html/MediaController.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.idl:
+        * html/track/TextTrackList.idl:
+        * html/track/VideoTrackList.idl:
+        * loader/appcache/DOMApplicationCache.h:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/EventSource.idl:
+        * page/Performance.h:
+        * page/Performance.idl:
+        * workers/Worker.idl:
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.idl:
+        - Drop hardcoded EventTarget operations and inherit EventTarget instead.
+        - Drop JSGenerateToNativeObject / JSGenerateToJSObject IDL extended
+          attributes for interfaces inheriting the EventTarget interface as
+          the bindings generator now does this automatically for us.
+        - On native side, have EventTarget subclass ScriptWrappable instead of
+          each of its subclasses doing so. The issue was that
+          EventTargetOwner::finalize() was calling uncacheWrapper() with an
+          EventTarget*, which would not clear inlined cached wrapped (see
+          clearInlineCachedWrapper()) because EventTarget did not subclass
+          ScriptWrappable. However, cacheWrapper() is called is a specific
+          subtype pointer (e.g. Node*) and we would decide to create an
+          inline cached wrapper because Node subclassed ScriptWrappable
+          (as well as EventTarget).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Export JSEventTarget.h as private header to fix the build.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::wrapperKey):
+        (WebCore::getCachedWrapper):
+        (WebCore::cacheWrapper):
+        (WebCore::uncacheWrapper):
+        Use new wrapperKey() function that is generated for each bindings
+        class that also has wrapperOwner(). This is used instead of the
+        C cast to void* in order to cast to the base wrapped type to fix
+        issues with multiple inheritance. The issue was that cacheWrapper()
+        was getting called with a DOM object subtype pointer (e.g.
+        AudioContext*) but uncacheWrapper() was getting called with a base
+        wrapped type pointer (e.g. EventTarget*). Most of our DOM classes
+        use multiple inheritance and thus the pointer values (used as keys
+        in the weak map) may differ.
+
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toJS):
+        Call CREATE_DOM_WRAPPER() with an actual wrapped type (e.g. AudioTrack)
+        instead of TrackBase type. TrackBase does not have corresponding
+        generated bindings and therefore does not have a wrapperKey()
+        function.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldGenerateToWrapped):
+        (ShouldGenerateToJSDeclaration):
+        (GenerateHeader):
+        - Generate a wrapperKey() utility function along-side wrapperOwner()
+          to help cast to the base wrapped type.
+        - Generate toWrapped() / toJS() utility functions for interfaces
+          that inherit EventTarget as those are required by our
+          implementation and this avoids having to explicitly have them in
+          the IDL.
+
+        * bindings/scripts/test/*:
+        Rebaseline bindings tests.
+
 2016-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         Optimize texture-complete checks

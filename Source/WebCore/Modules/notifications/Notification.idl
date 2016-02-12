@@ -37,7 +37,7 @@
     Constructor(DOMString title, [Default=Undefined] optional Dictionary options),
     ConstructorCallWith=Document,
 #endif
-] interface Notification {
+] interface Notification : EventTarget {
     void show();
     [Conditional=LEGACY_NOTIFICATIONS] void cancel();
     [Conditional=NOTIFICATIONS] void close();
@@ -54,10 +54,5 @@
     [Conditional=LEGACY_NOTIFICATIONS] attribute DOMString dir;
     [Conditional=LEGACY_NOTIFICATIONS] attribute DOMString replaceId;
     [Conditional=NOTIFICATIONS] attribute DOMString tag;
-
-    // EventTarget interface
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
 };
 
