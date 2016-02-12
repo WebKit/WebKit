@@ -46,20 +46,37 @@
 namespace WebCore {
 namespace IDBClient {
 
-Ref<IDBObjectStore> IDBObjectStore::create(const IDBObjectStoreInfo& info, IDBTransaction& transaction)
+Ref<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext* context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
 {
-    return adoptRef(*new IDBObjectStore(info, transaction));
+    return adoptRef(*new IDBObjectStore(context, info, transaction));
 }
 
-IDBObjectStore::IDBObjectStore(const IDBObjectStoreInfo& info, IDBTransaction& transaction)
-    : m_info(info)
+IDBObjectStore::IDBObjectStore(ScriptExecutionContext* context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
+    : ActiveDOMObject(context)
+    , m_info(info)
     , m_originalInfo(info)
     , m_transaction(transaction)
 {
+    suspendIfNeeded();
 }
 
 IDBObjectStore::~IDBObjectStore()
 {
+}
+
+const char* IDBObjectStore::activeDOMObjectName() const
+{
+    return "IDBObjectStore";
+}
+
+bool IDBObjectStore::canSuspendForDocumentSuspension() const
+{
+    return false;
+}
+
+bool IDBObjectStore::hasPendingActivity() const
+{
+    return !m_transaction->isFinished();
 }
 
 const String IDBObjectStore::name() const
@@ -500,6 +517,9 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
 {
     LOG(IndexedDB, "IDBObjectStore::index");
 
+    if (!scriptExecutionContext())
+        return nullptr;
+
     if (m_deleted) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'index' on 'IDBObjectStore': The object store has been deleted.");
@@ -524,7 +544,7 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
         return nullptr;
     }
 
-    auto index = std::make_unique<IDBIndex>(*info, *this);
+    auto index = std::make_unique<IDBIndex>(scriptExecutionContext(), *info, *this);
     RefPtr<IDBIndex> refIndex = index.get();
     m_referencedIndexes.set(indexName, WTFMove(index));
 

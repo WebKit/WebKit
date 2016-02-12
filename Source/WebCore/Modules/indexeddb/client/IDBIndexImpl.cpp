@@ -41,14 +41,31 @@
 namespace WebCore {
 namespace IDBClient {
 
-IDBIndex::IDBIndex(const IDBIndexInfo& info, IDBObjectStore& objectStore)
-    : m_info(info)
+IDBIndex::IDBIndex(ScriptExecutionContext* context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
+    : ActiveDOMObject(context)
+    , m_info(info)
     , m_objectStore(objectStore)
 {
+    suspendIfNeeded();
 }
 
 IDBIndex::~IDBIndex()
 {
+}
+
+const char* IDBIndex::activeDOMObjectName() const
+{
+    return "IDBIndex";
+}
+
+bool IDBIndex::canSuspendForDocumentSuspension() const
+{
+    return false;
+}
+
+bool IDBIndex::hasPendingActivity() const
+{
+    return !m_objectStore.modernTransaction().isFinished();
 }
 
 const String& IDBIndex::name() const

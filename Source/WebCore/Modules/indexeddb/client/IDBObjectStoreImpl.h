@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ActiveDOMObject.h"
 #include "IDBIndexImpl.h"
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreInfo.h"
@@ -44,9 +45,9 @@ namespace IDBClient {
 class IDBRequest;
 class IDBTransaction;
 
-class IDBObjectStore : public WebCore::IDBObjectStore {
+class IDBObjectStore : public WebCore::IDBObjectStore, public ActiveDOMObject {
 public:
-    static Ref<IDBObjectStore> create(const IDBObjectStoreInfo&, IDBTransaction&);
+    static Ref<IDBObjectStore> create(ScriptExecutionContext*, const IDBObjectStoreInfo&, IDBTransaction&);
 
     virtual ~IDBObjectStore() override final;
 
@@ -98,7 +99,7 @@ public:
     void visitReferencedIndexes(JSC::SlotVisitor&) const;
 
 private:
-    IDBObjectStore(const IDBObjectStoreInfo&, IDBTransaction&);
+    IDBObjectStore(ScriptExecutionContext*, const IDBObjectStoreInfo&, IDBTransaction&);
 
     enum class InlineKeyCheck {
         Perform,
@@ -108,6 +109,11 @@ private:
     RefPtr<IDBRequest> putOrAdd(JSC::ExecState&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, InlineKeyCheck, ExceptionCodeWithMessage&);
     RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> doDelete(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec);
+
+    // ActiveDOMObject
+    virtual const char* activeDOMObjectName() const override final;
+    virtual bool canSuspendForDocumentSuspension() const override final;
+    virtual bool hasPendingActivity() const override final;
 
     IDBObjectStoreInfo m_info;
     IDBObjectStoreInfo m_originalInfo;

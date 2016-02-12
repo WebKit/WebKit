@@ -127,6 +127,9 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
 {
     LOG(IndexedDB, "IDBTransaction::objectStore");
 
+    if (!scriptExecutionContext())
+        return nullptr;
+
     if (isFinishedOrFinishing()) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished.");
@@ -159,7 +162,7 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
         return nullptr;
     }
 
-    auto objectStore = IDBObjectStore::create(*info, *this);
+    auto objectStore = IDBObjectStore::create(scriptExecutionContext(), *info, *this);
     m_referencedObjectStores.set(objectStoreName, &objectStore.get());
 
     return adoptRef(&objectStore.leakRef());
@@ -468,8 +471,9 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
 {
     LOG(IndexedDB, "IDBTransaction::createObjectStore");
     ASSERT(isVersionChange());
+    ASSERT(scriptExecutionContext());
 
-    Ref<IDBObjectStore> objectStore = IDBObjectStore::create(info, *this);
+    Ref<IDBObjectStore> objectStore = IDBObjectStore::create(scriptExecutionContext(), info, *this);
     m_referencedObjectStores.set(info.name(), &objectStore.get());
 
     auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateObjectStoreOnServer, &IDBTransaction::createObjectStoreOnServer, info);
@@ -499,10 +503,13 @@ std::unique_ptr<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStor
     LOG(IndexedDB, "IDBTransaction::createIndex");
     ASSERT(isVersionChange());
 
+    if (!scriptExecutionContext())
+        return nullptr;
+
     auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateIndexOnServer, &IDBTransaction::createIndexOnServer, info);
     scheduleOperation(WTFMove(operation));
 
-    return std::make_unique<IDBIndex>(info, objectStore);
+    return std::make_unique<IDBIndex>(scriptExecutionContext(), info, objectStore);
 }
 
 void IDBTransaction::createIndexOnServer(TransactionOperation& operation, const IDBIndexInfo& info)

@@ -1,5 +1,38 @@
 2016-02-12  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: IDBObjectStore and IDBIndex need to be ActiveDOMObjects.
+        https://bugs.webkit.org/show_bug.cgi?id=154153
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No testable change in behavior).
+
+        This is needed so that IDBObjectStore and IDBIndex JS wrappers are not garbage collected
+        while their IDBTransaction is still in progress.
+
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::IDBIndex):
+        (WebCore::IDBClient::IDBIndex::activeDOMObjectName):
+        (WebCore::IDBClient::IDBIndex::canSuspendForDocumentSuspension):
+        (WebCore::IDBClient::IDBIndex::hasPendingActivity):
+        * Modules/indexeddb/client/IDBIndexImpl.h:
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::create):
+        (WebCore::IDBClient::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBClient::IDBObjectStore::activeDOMObjectName):
+        (WebCore::IDBClient::IDBObjectStore::canSuspendForDocumentSuspension):
+        (WebCore::IDBClient::IDBObjectStore::hasPendingActivity):
+        (WebCore::IDBClient::IDBObjectStore::index):
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::objectStore):
+        (WebCore::IDBClient::IDBTransaction::createObjectStore):
+        (WebCore::IDBClient::IDBTransaction::createIndex):
+
+2016-02-12  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Simplify the relationship between IDBObjectStore and IDBIndex.
         https://bugs.webkit.org/show_bug.cgi?id=154187
 

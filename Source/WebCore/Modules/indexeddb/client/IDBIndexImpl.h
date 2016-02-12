@@ -30,6 +30,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ActiveDOMObject.h"
 #include "IDBIndexInfo.h"
 
 namespace WebCore {
@@ -40,9 +41,9 @@ namespace IDBClient {
 
 class IDBObjectStore;
 
-class IDBIndex : public WebCore::IDBIndex {
+class IDBIndex : public WebCore::IDBIndex, public ActiveDOMObject {
 public:
-    IDBIndex(const IDBIndexInfo&, IDBObjectStore&);
+    IDBIndex(ScriptExecutionContext*, const IDBIndexInfo&, IDBObjectStore&);
 
     virtual ~IDBIndex();
 
@@ -91,6 +92,11 @@ private:
     RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
     RefPtr<WebCore::IDBRequest> doGet(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
     RefPtr<WebCore::IDBRequest> doGetKey(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
+
+    // ActiveDOMObject
+    virtual const char* activeDOMObjectName() const override final;
+    virtual bool canSuspendForDocumentSuspension() const override final;
+    virtual bool hasPendingActivity() const override final;
 
     IDBIndexInfo m_info;
 
