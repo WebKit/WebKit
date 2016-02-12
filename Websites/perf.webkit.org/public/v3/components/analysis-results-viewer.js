@@ -272,7 +272,10 @@ class AnalysisResultsViewer extends ResultsTable {
             .analysis-view .stacking-block.unchanged {
                 background: rgba(128, 128, 128, 0.5);
             }
-            .analysis-view .stacking-block.incomplete {
+            .analysis-view .stacking-block.pending {
+                background: rgba(204, 204, 51, 0.2);
+            }
+            .analysis-view .stacking-block.running {
                 background: rgba(204, 204, 51, 0.5);
             }
             .analysis-view .stacking-block.worse {

@@ -61,7 +61,7 @@ class TestGroupResultsTable extends ResultsTable {
                 var endConfig = testGroup.labelForRootSet(rootSets[j]);
 
                 var result = this._testGroup.compareTestResults(rootSets[i], rootSets[j]);
-                if (result.status == 'pending' || result.status == 'running' || result.status == 'failed')
+                if (result.changeType == null)
                     continue;
 
                 var row = new ResultsTableRow(`${startConfig} to ${endConfig}`, null);

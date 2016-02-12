@@ -107,28 +107,35 @@ class TestGroup extends LabeledObject {
         console.assert(metric);
 
         var result = {changeType: null, status: 'failed', label: 'Failed', fullLabel: 'Failed', isStatisticallySignificant: false};
-        if (beforeValues.length && afterValues.length) {
-            var diff = afterMean - beforeMean;
-            var smallerIsBetter = metric.isSmallerBetter();
-            result.changeType = diff < 0 == smallerIsBetter ? 'better' : 'worse';
-            result.label = Math.abs(diff / beforeMean * 100).toFixed(2) + '% ' + result.changeType;
-            result.isStatisticallySignificant = Statistics.testWelchsT(beforeValues, afterValues);
-            result.status = result.isStatisticallySignificant ? result.changeType : 'unchanged';
-        }
 
-        if (!this.hasCompleted()) {
+        var hasCompleted = this.hasCompleted();
+        if (!hasCompleted) {
             if (this.hasStarted()) {
                 result.status = 'running';
                 result.label = 'Running';
                 result.fullLabel = 'Running';
             } else {
+                console.assert(result.changeType === null);
                 result.status = 'pending';
                 result.label = 'Pending';
                 result.fullLabel = 'Pending';
             }
-        } else if (result.changeType) {
-            var significance = result.isStatisticallySignificant ? 'significant' : 'insignificant';
-            result.fullLabel = `${result.label} (statistically ${significance})`;
+        }
+
+        if (beforeValues.length && afterValues.length) {
+            var diff = afterMean - beforeMean;
+            var smallerIsBetter = metric.isSmallerBetter();
+            var changeType = diff < 0 == smallerIsBetter ? 'better' : 'worse';
+            var changeLabel = Math.abs(diff / beforeMean * 100).toFixed(2) + '% ' + changeType;
+            var isSignificant = Statistics.testWelchsT(beforeValues, afterValues);
+            var significanceLabel = isSignificant ? 'significant' : 'insignificant';
+
+            result.changeType = changeType;
+            result.label = changeLabel;
+            if (hasCompleted)
+                result.status = isSignificant ? result.changeType : 'unchanged';
+            result.fullLabel = `${result.label} (statistically ${significanceLabel})`;
+            result.isStatisticallySignificant = isSignificant;
         }
 
         return result;

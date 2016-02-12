@@ -1,6 +1,13 @@
 
 class AnalysisTaskChartPane extends ChartPaneBase {
-    constructor() { super('analysis-task-chart-pane'); }
+    constructor()
+    {
+        super('analysis-task-chart-pane');
+        this._page = null;
+    }
+
+    setPage(page) { this._page = page; }
+    router() { return this._page.router(); }
 }
 
 ComponentBase.defineElement('analysis-task-chart-pane', AnalysisTaskChartPane);
@@ -21,6 +28,7 @@ class AnalysisTaskPage extends PageWithHeading {
         this._errorMessage = null;
         this._currentTestGroup = null;
         this._chartPane = this.content().querySelector('analysis-task-chart-pane').component();
+        this._chartPane.setPage(this);
         this._analysisResultsViewer = this.content().querySelector('analysis-results-viewer').component();
         this._analysisResultsViewer.setTestGroupCallback(this._showTestGroup.bind(this));
         this._testGroupResultsTable = this.content().querySelector('test-group-results-table').component();
@@ -166,7 +174,7 @@ class AnalysisTaskPage extends PageWithHeading {
                     return element('li', {class: 'test-group-list-' + group.id()}, link(group.label(), function () {
                         self._showTestGroup(group);
                     }));
-                }));
+                }).reverse());
             this._renderedCurrentTestGroup = null;
         }
 
@@ -180,6 +188,15 @@ class AnalysisTaskPage extends PageWithHeading {
                 var element = this.content().querySelector('.test-group-list-' + this._currentTestGroup.id());
                 if (element)
                     element.classList.add('selected');
+            }
+
+            this._chartPane.setMainSelection(null);
+            if (this._currentTestGroup) {
+                var rootSetsInTestGroup = this._currentTestGroup.requestedRootSets();
+                var startTime = rootSetsInTestGroup[0].latestCommitTime();
+                var endTime = rootSetsInTestGroup[rootSetsInTestGroup.length - 1].latestCommitTime();
+                if (startTime != endTime)
+                    this._chartPane.setMainSelection([startTime, endTime]);
             }
 
             this.content().querySelector('.test-group-retry-button').textContent = this._currentTestGroup ? 'Retry' : 'Confirm the change';

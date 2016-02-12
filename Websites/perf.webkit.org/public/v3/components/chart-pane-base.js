@@ -107,6 +107,12 @@ class ChartPaneBase extends ComponentBase {
             this._mainChart.setDomain(startTime, endTime);
     }
 
+    setMainSelection(selection)
+    {
+        if (this._mainChart)
+            this._mainChart.setSelection(selection);
+    }
+
     _overviewSelectionDidChange(domain, didEndDrag) { }
 
     _mainSelectionDidChange(selection, didEndDrag)
@@ -133,8 +139,14 @@ class ChartPaneBase extends ComponentBase {
         this.render();
     }
 
-    _openAnalysisTask()
-    { }
+    _openAnalysisTask(annotation)
+    {
+        var router = this.router();
+        console.assert(router);
+        window.open(router.url(`analysis/task/${annotation.task.id()}`), '_blank');
+    }
+
+    router() { return null; }
 
     _openCommitViewer(repository, from, to)
     {

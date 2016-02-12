@@ -63,10 +63,7 @@ class ChartPane extends ChartPaneBase {
         this._chartsPage.setMainDomainFromZoom(selection, this);
     }
 
-    _openAnalysisTask(annotation)
-    {
-        window.open(this._chartsPage.router().url(`analysis/task/${annotation.task.id()}`), '_blank');
-    }
+    router() { return this._chartsPage.router(); }
 
     _indicatorDidChange(indicatorID, isLocked)
     {

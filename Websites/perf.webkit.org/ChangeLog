@@ -1,5 +1,49 @@
 2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Refine v3 UI's analysis task page
+        https://bugs.webkit.org/show_bug.cgi?id=154152
+
+        Reviewed by Chris Dumez.
+
+        This patch makes the following refinements to the analysis task page:
+         - Always show the relative different of in-progress A/B testing.
+         - Make the annotations (colored bars) in the chart open other analysis tasks.
+         - Order the A/B testing groups in the reverse chronological order.
+         - Select the time range corresponding to the current test group.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.cssTemplate): Fixed the bug that pending and running testing groups are no longer
+        colored after r196440. Use a slightly more opaque color for currently running groups compared to pending ones.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.setMainSelection): Added.
+        (ChartPaneBase.prototype._openAnalysisTask): Moved the code from ChartPane._openAnalysisTask so that it can be
+        reused in both AnalysisTaskChartPane and ChartPane (in charts page).
+        (ChartPaneBase.prototype.router): Added. Overridden by each subclass.
+
+        * public/v3/components/test-group-results-table.js:
+        (TestGroupResultsTable.prototype.buildRowGroups): Always show the summary (relative difference of A to B) as
+        long as there are some results in each set.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.compareTestResults): Always set .label and .fullLabel with the relative change as long as
+        there are some values. Keep using "pending" and "running" in .status since that would determine the color of
+        stacking blocks representing those A/B testing groups. 
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane):
+        (AnalysisTaskChartPane.prototype.setPage): Added.
+        (AnalysisTaskChartPane.prototype.router): Added.
+        (AnalysisTaskPage):
+        (AnalysisTaskPage.prototype.render): Show the list of A/B testing groups in the reverse chronological order.
+        Also set the main chart's selection to the time range of the current test group.
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype.router): Added.
+        (ChartPane.prototype._openAnalysisTask): Moved to ChartPaneBase.prototype._openAnalysisTask.
+
+2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a script to process backlogs created while perf dashboard was in the maintenance mode
         https://bugs.webkit.org/show_bug.cgi?id=154140
 
