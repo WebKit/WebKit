@@ -1,3 +1,13 @@
+2016-02-12  Jason Marcell  <jmarcell@apple.com>
+
+        Open source bot watcher's dashboard fails assertion in BuildbotQueue.prototype.compareIterationsByRevisions
+        https://bugs.webkit.org/show_bug.cgi?id=154180
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js: Remove reference to Internal
+        repository.
+
 2016-02-12  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Adopt MediaResourceLoader (instead of CachedResourceLoader) in WebCoreNSURLSession.
