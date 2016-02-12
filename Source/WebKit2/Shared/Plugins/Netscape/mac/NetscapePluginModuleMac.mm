@@ -72,20 +72,6 @@ static bool getPluginArchitecture(CFBundleRef bundle, PluginModuleInfo& plugin)
         plugin.pluginArchitecture = CPU_TYPE_X86;
         return true;
     }
-#elif defined(__ppc64__)
-    // We only support 64-bit PPC plug-ins on 64-bit PPC.
-    if (architectures.contains(kCFBundleExecutableArchitecturePPC64)) {
-        plugin.pluginArchitecture = CPU_TYPE_POWERPC64;
-        return true;
-    }
-#elif defined(__ppc__)
-    // We only support 32-bit PPC plug-ins on 32-bit PPC.
-    if (architectures.contains(kCFBundleExecutableArchitecturePPC)) {
-        plugin.pluginArchitecture = CPU_TYPE_POWERPC;
-        return true;
-    }
-#else
-#error "Unhandled architecture"
 #endif
 
     return false;
