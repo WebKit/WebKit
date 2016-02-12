@@ -125,7 +125,7 @@ public:
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
     virtual void removeAllEventListeners();
     virtual bool dispatchEvent(Event&);
-    bool dispatchEvent(Event*, ExceptionCode&); // DOM API
+    bool dispatchEventForBindings(Event*, ExceptionCode&); // DOM API
     virtual void uncaughtExceptionInEventHandler();
 
     // Used for legacy "onEvent" attribute APIs.

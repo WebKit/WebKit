@@ -69,6 +69,8 @@
     readonly attribute boolean defaultPrevented;
     void stopImmediatePropagation();
 
+    [Unforgeable] readonly attribute boolean isTrusted;
+
     // IE Extensions
     readonly attribute EventTarget      srcElement;
     [ImplementedAs=legacyReturnValue] attribute boolean returnValue;

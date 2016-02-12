@@ -118,6 +118,9 @@ public:
 
     void stopPropagation() { m_propagationStopped = true; }
     void stopImmediatePropagation() { m_immediatePropagationStopped = true; }
+
+    bool isTrusted() const { return m_isTrusted; }
+    void setUntrusted() { m_isTrusted = false; }
     
     // IE Extensions
     EventTarget* srcElement() const { return target(); } // MSIE extension - "the object that fired the event"
@@ -201,6 +204,7 @@ private:
     bool m_defaultPrevented { false };
     bool m_defaultHandled { false };
     bool m_cancelBubble { false };
+    bool m_isTrusted { false };
 
     unsigned short m_eventPhase { 0 };
     EventTarget* m_currentTarget { nullptr };

@@ -189,7 +189,7 @@
     // EventTarget interface
     [Custom] void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [Custom] void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
+    [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event event);
 
     void captureEvents(/*in long eventFlags*/);
     void releaseEvents(/*in long eventFlags*/);

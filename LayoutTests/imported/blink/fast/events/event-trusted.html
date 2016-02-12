@@ -1,0 +1,41 @@
+<input id="test-checkbox" type="checkbox"/>
+<script src="../../../../resources/js-test.js"></script>
+<script>
+description("This tests that isTrusted returns the correct value under certain situations.")
+
+var redispatched = false;
+
+function createAndInitEvent() {
+    var e = document.createEvent('Event');
+    e.initEvent(false, false, false);
+    return e;
+}
+
+shouldBeFalse("document.createEvent('Event').isTrusted");
+shouldBeFalse("createAndInitEvent().isTrusted");
+
+function originalDispatch(e) {
+    originalEvent = e;
+}
+
+function redispatch(e) {
+    redispatched = true;
+}
+
+var element = document.getElementById("test-checkbox");
+if (window.eventSender) {
+    element.addEventListener('click', originalDispatch);
+    eventSender.mouseMoveTo(element.offsetLeft, element.offsetTop);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    shouldBeTrue("originalEvent.isTrusted");
+    element.removeEventListener('click', originalDispatch);
+    element.addEventListener('click', redispatch);
+
+    element.dispatchEvent(originalEvent);
+    shouldBeTrue("redispatched");
+    shouldBeFalse("originalEvent.isTrusted");
+}
+
+</script>

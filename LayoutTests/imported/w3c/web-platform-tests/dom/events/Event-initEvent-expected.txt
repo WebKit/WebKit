@@ -1,8 +1,8 @@
 
-FAIL Properties of initEvent(type, true, true) assert_equals: isTrusted expected (boolean) false but got (undefined) undefined
-FAIL Properties of initEvent(type, true, false) assert_equals: isTrusted expected (boolean) false but got (undefined) undefined
-FAIL Properties of initEvent(type, false, true) assert_equals: isTrusted expected (boolean) false but got (undefined) undefined
-FAIL Properties of initEvent(type, false, false) assert_equals: isTrusted expected (boolean) false but got (undefined) undefined
+PASS Properties of initEvent(type, true, true) 
+PASS Properties of initEvent(type, true, false) 
+PASS Properties of initEvent(type, false, true) 
+PASS Properties of initEvent(type, false, false) 
 PASS Calling initEvent multiple times (getting type). 
 PASS Calling initEvent multiple times (not getting type). 
 PASS Calling initEvent must not have an effect during dispatching. 

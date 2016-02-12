@@ -2105,7 +2105,7 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Element& dra
         return false;
 
     view->disableLayerFlushThrottlingTemporarilyForInteraction();
-    RefPtr<MouseEvent> me = MouseEvent::create(eventType,
+    Ref<MouseEvent> me = MouseEvent::create(eventType,
         true, true, event.timestamp(), m_frame.document()->defaultView(),
         0, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(),
 #if ENABLE(POINTER_LOCK)
@@ -2114,7 +2114,7 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Element& dra
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
         0, 0, event.force(), dataTransfer);
 
-    dragTarget.dispatchEvent(me.get(), IGNORE_EXCEPTION);
+    dragTarget.dispatchEvent(me);
     return me->defaultPrevented();
 }
 

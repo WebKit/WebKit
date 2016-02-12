@@ -53,6 +53,7 @@ eventPhase : '2'
 initEvent : 'function initEvent() {
     [native code]
 }'
+isTrusted : 'true'
 lengthComputable : 'true'
 loaded : '174'
 position : '174'

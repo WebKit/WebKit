@@ -4,7 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Event.isTrusted
-FAIL Unsupported property.
+PASS testObject.hasOwnProperty(testPropertyName) is true
+PASS testObject.__proto__.hasOwnProperty(testPropertyName) is false
+PASS Object.defineProperty(testObject, testPropertyName, { value: 'test' }) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS Object.getOwnPropertyDescriptor(testObject, testPropertyName).configurable is false
 
 Document.location
 PASS testObject.hasOwnProperty(testPropertyName) is true

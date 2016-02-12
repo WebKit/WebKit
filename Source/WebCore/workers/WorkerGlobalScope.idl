@@ -52,7 +52,7 @@
 
     void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event event);
+    [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event event);
 
     // Additional constructors
 

@@ -1,3 +1,53 @@
+2016-02-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should expose the DOM 4 Event.isTrusted property
+        https://bugs.webkit.org/show_bug.cgi?id=76121
+        <rdar://problem/22558494>
+
+        Reviewed by Darin Adler.
+
+        Implements Event.isTrusted. The implementation here is slitely different from and better than
+        the DOM specification. Here Event.isTrusted will be initialized differently depending on the
+        callers of the constructors/create methods. If the caller is from user agent, the isTrusted
+        will be true. Otherwise, it will be false. Since a user agent dispatched event can be catched
+        and re-initialized/redispatched by the bindings, the flag will be unset at *Event::init*Event
+        and EventTarget::dispatchEventForBindings. As currently there is no way to let user agent to
+        dispatch a bindings created event, therefore we ensure that the Event.isTrusted is set for
+        events dispatched by user agent, and unset for those by bindings.
+
+        EventTarget::dispatchEvent(Event*, ExceptionCode&) is renamed to EventTarget::dispatchEventForBindings
+        in this patch as well. So that, together with the improved design of the API, developers in
+        the future will be less likely using a wrong dispatchEvent method and setting Event.isTrusted
+        incorrectly comparing to the DOM design.
+
+        After this patch, all events that are created by user agent should be dispatched by
+        EventTarget::dispatchEvent, and those are created by bindings should be dispatched by
+        EventTarget::dispatchEventForBindings.
+
+        Some of the changes in this patch referred Blink r198996:
+        https://codereview.chromium.org/1241613004
+
+        Test: imported/blink/fast/events/event-trusted.html
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateEventTargetIface):
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        (WebCore::Event::initEvent):
+        * dom/Event.h:
+        (WebCore::Event::isTrusted):
+        (WebCore::Event::setUntrusted):
+        * dom/Event.idl:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::dispatchEventForBindings):
+        (WebCore::EventTarget::dispatchEvent): Deleted.
+        * dom/EventTarget.h:
+        * dom/EventTarget.idl:
+        * page/DOMWindow.idl:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        * workers/WorkerGlobalScope.idl:
+
 2016-02-12  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBObjectStore and IDBIndex need to be ActiveDOMObjects.

@@ -1,3 +1,18 @@
+2016-02-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should expose the DOM 4 Event.isTrusted property
+        https://bugs.webkit.org/show_bug.cgi?id=76121
+        <rdar://problem/22558494>
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/unforgeable-attributes-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-get-expected.txt:
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+        * imported/blink/fast/events/event-trusted-expected.txt: Added.
+        * imported/blink/fast/events/event-trusted.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-02-12  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Simplify the relationship between IDBObjectStore and IDBIndex.

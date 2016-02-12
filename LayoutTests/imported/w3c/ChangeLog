@@ -1,3 +1,20 @@
+2016-02-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit should expose the DOM 4 Event.isTrusted property
+        https://bugs.webkit.org/show_bug.cgi?id=76121
+        <rdar://problem/22558494>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/dom/events/Event-constructors-expected.txt:
+        * web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt:
+        * web-platform-tests/dom/events/Event-initEvent-expected.txt:
+        * web-platform-tests/dom/events/ProgressEvent-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-button-element/button-events-expected.txt:
+
 2016-02-11  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] interfaces should inherit EventTarget instead of duplicating the EventTarget API

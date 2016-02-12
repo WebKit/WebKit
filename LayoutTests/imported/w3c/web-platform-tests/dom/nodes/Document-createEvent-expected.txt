@@ -1,34 +1,34 @@
 
 PASS CustomEvent should be an alias for CustomEvent. 
-FAIL createEvent('CustomEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('CustomEvent') should be initialized correctly. 
 PASS customevent should be an alias for CustomEvent. 
-FAIL createEvent('customevent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('customevent') should be initialized correctly. 
 PASS CUSTOMEVENT should be an alias for CustomEvent. 
-FAIL createEvent('CUSTOMEVENT') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('CUSTOMEVENT') should be initialized correctly. 
 PASS Event should be an alias for Event. 
-FAIL createEvent('Event') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('Event') should be initialized correctly. 
 PASS event should be an alias for Event. 
-FAIL createEvent('event') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('event') should be initialized correctly. 
 PASS EVENT should be an alias for Event. 
-FAIL createEvent('EVENT') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('EVENT') should be initialized correctly. 
 PASS Events should be an alias for Event. 
-FAIL createEvent('Events') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('Events') should be initialized correctly. 
 PASS events should be an alias for Event. 
-FAIL createEvent('events') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('events') should be initialized correctly. 
 PASS EVENTS should be an alias for Event. 
-FAIL createEvent('EVENTS') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('EVENTS') should be initialized correctly. 
 PASS HTMLEvents should be an alias for Event. 
-FAIL createEvent('HTMLEvents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('HTMLEvents') should be initialized correctly. 
 PASS htmlevents should be an alias for Event. 
-FAIL createEvent('htmlevents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('htmlevents') should be initialized correctly. 
 PASS HTMLEVENTS should be an alias for Event. 
-FAIL createEvent('HTMLEVENTS') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('HTMLEVENTS') should be initialized correctly. 
 PASS KeyboardEvent should be an alias for KeyboardEvent. 
-FAIL createEvent('KeyboardEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('KeyboardEvent') should be initialized correctly. 
 PASS keyboardevent should be an alias for KeyboardEvent. 
-FAIL createEvent('keyboardevent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('keyboardevent') should be initialized correctly. 
 PASS KEYBOARDEVENT should be an alias for KeyboardEvent. 
-FAIL createEvent('KEYBOARDEVENT') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('KEYBOARDEVENT') should be initialized correctly. 
 FAIL KeyEvents should be an alias for KeyboardEvent. NotSupportedError: DOM Exception 9
 FAIL createEvent('KeyEvents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 FAIL keyevents should be an alias for KeyboardEvent. NotSupportedError: DOM Exception 9
@@ -36,23 +36,23 @@ FAIL createEvent('keyevents') should be initialized correctly. undefined is not 
 FAIL KEYEVENTS should be an alias for KeyboardEvent. NotSupportedError: DOM Exception 9
 FAIL createEvent('KEYEVENTS') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS MessageEvent should be an alias for MessageEvent. 
-FAIL createEvent('MessageEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('MessageEvent') should be initialized correctly. 
 PASS messageevent should be an alias for MessageEvent. 
-FAIL createEvent('messageevent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('messageevent') should be initialized correctly. 
 PASS MESSAGEEVENT should be an alias for MessageEvent. 
-FAIL createEvent('MESSAGEEVENT') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('MESSAGEEVENT') should be initialized correctly. 
 PASS MouseEvent should be an alias for MouseEvent. 
-FAIL createEvent('MouseEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('MouseEvent') should be initialized correctly. 
 PASS mouseevent should be an alias for MouseEvent. 
-FAIL createEvent('mouseevent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('mouseevent') should be initialized correctly. 
 PASS MOUSEEVENT should be an alias for MouseEvent. 
-FAIL createEvent('MOUSEEVENT') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('MOUSEEVENT') should be initialized correctly. 
 PASS MouseEvents should be an alias for MouseEvent. 
-FAIL createEvent('MouseEvents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('MouseEvents') should be initialized correctly. 
 PASS mouseevents should be an alias for MouseEvent. 
-FAIL createEvent('mouseevents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('mouseevents') should be initialized correctly. 
 PASS MOUSEEVENTS should be an alias for MouseEvent. 
-FAIL createEvent('MOUSEEVENTS') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('MOUSEEVENTS') should be initialized correctly. 
 FAIL TouchEvent should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
 FAIL createEvent('TouchEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 FAIL touchevent should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
@@ -60,16 +60,16 @@ FAIL createEvent('touchevent') should be initialized correctly. undefined is not
 FAIL TOUCHEVENT should be an alias for TouchEvent. NotSupportedError: DOM Exception 9
 FAIL createEvent('TOUCHEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 PASS UIEvent should be an alias for UIEvent. 
-FAIL createEvent('UIEvent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('UIEvent') should be initialized correctly. 
 PASS uievent should be an alias for UIEvent. 
-FAIL createEvent('uievent') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('uievent') should be initialized correctly. 
 PASS UIEVENT should be an alias for UIEvent. 
-FAIL createEvent('UIEVENT') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('UIEVENT') should be initialized correctly. 
 PASS UIEvents should be an alias for UIEvent. 
-FAIL createEvent('UIEvents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('UIEvents') should be initialized correctly. 
 PASS uievents should be an alias for UIEvent. 
-FAIL createEvent('uievents') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('uievents') should be initialized correctly. 
 PASS UIEVENTS should be an alias for UIEvent. 
-FAIL createEvent('UIEVENTS') should be initialized correctly. assert_equals: isTrusted should be initialized to false expected (boolean) false but got (undefined) undefined
+PASS createEvent('UIEVENTS') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for unrecognized arguments 
 

@@ -39,6 +39,7 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
     , m_type(eventType)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
+    , m_isTrusted(true)
     , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }
@@ -48,6 +49,7 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
     , m_type(eventType)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
+    , m_isTrusted(true)
     , m_createTime(convertSecondsToDOMTimeStamp(timestamp))
 {
 }
@@ -74,6 +76,7 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_propagationStopped = false;
     m_immediatePropagationStopped = false;
     m_defaultPrevented = false;
+    m_isTrusted = false;
 
     m_type = eventTypeArg;
     m_canBubble = canBubbleArg;

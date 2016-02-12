@@ -43,7 +43,7 @@ PASS Event interface: document.createEvent("Event") must inherit property "bubbl
 PASS Event interface: document.createEvent("Event") must inherit property "cancelable" with the proper type (11) 
 PASS Event interface: document.createEvent("Event") must inherit property "preventDefault" with the proper type (12) 
 PASS Event interface: document.createEvent("Event") must inherit property "defaultPrevented" with the proper type (13) 
-FAIL Event interface: document.createEvent("Event") must have own property "isTrusted" assert_own_property: expected property "isTrusted" missing
+PASS Event interface: document.createEvent("Event") must have own property "isTrusted" 
 PASS Event interface: document.createEvent("Event") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: document.createEvent("Event") must inherit property "initEvent" with the proper type (16) 
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on document.createEvent("Event") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
@@ -65,7 +65,7 @@ PASS Event interface: new Event("foo") must inherit property "bubbles" with the 
 PASS Event interface: new Event("foo") must inherit property "cancelable" with the proper type (11) 
 PASS Event interface: new Event("foo") must inherit property "preventDefault" with the proper type (12) 
 PASS Event interface: new Event("foo") must inherit property "defaultPrevented" with the proper type (13) 
-FAIL Event interface: new Event("foo") must have own property "isTrusted" assert_own_property: expected property "isTrusted" missing
+PASS Event interface: new Event("foo") must have own property "isTrusted" 
 PASS Event interface: new Event("foo") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new Event("foo") must inherit property "initEvent" with the proper type (16) 
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new Event("foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
@@ -99,7 +99,7 @@ PASS Event interface: new CustomEvent("foo") must inherit property "bubbles" wit
 PASS Event interface: new CustomEvent("foo") must inherit property "cancelable" with the proper type (11) 
 PASS Event interface: new CustomEvent("foo") must inherit property "preventDefault" with the proper type (12) 
 PASS Event interface: new CustomEvent("foo") must inherit property "defaultPrevented" with the proper type (13) 
-FAIL Event interface: new CustomEvent("foo") must have own property "isTrusted" assert_own_property: expected property "isTrusted" missing
+PASS Event interface: new CustomEvent("foo") must have own property "isTrusted" 
 PASS Event interface: new CustomEvent("foo") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new CustomEvent("foo") must inherit property "initEvent" with the proper type (16) 
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new CustomEvent("foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
