@@ -1,3 +1,18 @@
+2016-02-12  Beth Dakin  <bdakin@apple.com>
+
+        NSRangeIsRelativeTo should not have NS prefix
+        https://bugs.webkit.org/show_bug.cgi?id=154174
+
+        Reviewed by Tim Horton.
+
+        NSRangeIsRelativeTo -> WebRangeIsRelativeTo
+        * WebView/WebFrame.mm:
+        (-[WebFrame _convertToDOMRange:]):
+        (-[WebFrame _convertToDOMRange:rangeIsRelativeTo:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView insertText:]):
+
 2016-02-11  Beth Dakin  <bdakin@apple.com>
 
         EditingRangeIsRelativeTo::Document and NSRangeIsRelativeTo::Document should 
