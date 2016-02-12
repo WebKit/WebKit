@@ -65,10 +65,6 @@ public:
 
     Module* module() const { return m_module.get(); }
 
-#if PLUGIN_ARCHITECTURE(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    static bool createPluginMIMETypesPreferences(const String& pluginPath);
-#endif
-
 #if PLUGIN_ARCHITECTURE(X11)
     static bool scanPlugin(const String& pluginPath);
     static void parseMIMEDescription(const String& mimeDescription, Vector<WebCore::MimeClassInfo>& result);

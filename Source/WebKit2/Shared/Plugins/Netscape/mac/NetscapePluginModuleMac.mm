@@ -276,27 +276,6 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
     return true;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-bool NetscapePluginModule::createPluginMIMETypesPreferences(const String& pluginPath)
-{
-    RetainPtr<CFURLRef> bundleURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
-    
-    RetainPtr<CFBundleRef> bundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
-    if (!bundle)
-        return false;
-
-    if (!CFBundleLoadExecutable(bundle.get()))
-        return false;
-
-    void (*createPluginMIMETypesPreferences)(void) = reinterpret_cast<void (*)(void)>(CFBundleGetFunctionPointerForName(bundle.get(), CFSTR("BP_CreatePluginMIMETypesPreferences")));
-    if (!createPluginMIMETypesPreferences)
-        return false;
-
-    createPluginMIMETypesPreferences();
-    return true;
-}
-#endif
-
 // FIXME: This doesn't need to be platform-specific.
 class PluginVersion {
 public:
