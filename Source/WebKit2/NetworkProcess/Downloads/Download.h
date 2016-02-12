@@ -113,6 +113,19 @@ public:
     DownloadAuthenticationClient* authenticationClient();
 #endif
 
+#if !USE(NETWORK_SESSION)
+    // Authentication
+    static void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
+    static void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
+    static void receivedCancellation(const WebCore::AuthenticationChallenge&);
+    static void receivedRequestToPerformDefaultHandling(const WebCore::AuthenticationChallenge&);
+    static void receivedChallengeRejection(const WebCore::AuthenticationChallenge&);
+
+    void useCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
+    void continueWithoutCredential(const WebCore::AuthenticationChallenge&);
+    void cancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
+#endif
+
 private:
     // IPC::MessageSender
     virtual IPC::Connection* messageSenderConnection() override;

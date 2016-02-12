@@ -57,8 +57,6 @@ list(APPEND WebKit2_SOURCES
 
     Shared/API/c/cairo/WKImageCairo.cpp
 
-    Shared/Authentication/soup/AuthenticationManagerSoup.cpp
-
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
     Shared/Plugins/unix/PluginSearchPath.cpp

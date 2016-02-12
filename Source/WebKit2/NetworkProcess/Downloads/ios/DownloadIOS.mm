@@ -157,6 +157,31 @@ void Download::platformDidFinish()
     notImplemented();
 }
 
+void Download::receivedCredential(const AuthenticationChallenge&, const Credential&)
+{
+    notImplemented();
+}
+
+void Download::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void Download::receivedCancellation(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void Download::receivedRequestToPerformDefaultHandling(const WebCore::AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void Download::receivedChallengeRejection(const WebCore::AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
 } // namespace WebKit
 
 #endif // USE(CFNETWORK) && !USE(NETWORK_SESSION)

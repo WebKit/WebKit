@@ -29,8 +29,6 @@ list(APPEND WebKit2_SOURCES
 
     Shared/API/c/efl/WKArrayEfl.cpp
 
-    Shared/Authentication/soup/AuthenticationManagerSoup.cpp
-
     Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
     Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp

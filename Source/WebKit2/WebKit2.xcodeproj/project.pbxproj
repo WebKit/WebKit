@@ -1039,7 +1039,6 @@
 		52D5A1B01C57495A00DE34A3 /* WebVideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.h */; };
 		52D5A1B11C57496200DE34A3 /* WebVideoFullscreenManagerProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1AC1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.mm */; };
 		52D5A1B71C574A0200DE34A3 /* WebVideoFullscreenManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */; };
-		5C052F261C6D3BD30076E919 /* AuthenticationManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */; };
 		5C1426EC1C23F80900D41183 /* NetworkProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */; };
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
 		5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */; };
@@ -3131,7 +3130,6 @@
 		52D5A1B21C5749F200DE34A3 /* WebVideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenManager.h; sourceTree = "<group>"; };
 		52D5A1B31C5749F200DE34A3 /* WebVideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebVideoFullscreenManager.messages.in; sourceTree = "<group>"; };
 		52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenManager.mm; sourceTree = "<group>"; };
-		5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManagerCocoa.mm; path = Authentication/cocoa/AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
 		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessCreationParameters.cpp; path = NetworkProcess/NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessCreationParameters.h; path = NetworkProcess/NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
 		5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessSupplement.h; path = NetworkProcess/NetworkProcessSupplement.h; sourceTree = "<group>"; };
@@ -5533,7 +5531,6 @@
 		518E8EF116B208F000E91429 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				5C052F231C6D3AA10076E919 /* cocoa */,
 				518E8EF616B2091C00E91429 /* mac */,
 				518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */,
 				518E8EF416B2091C00E91429 /* AuthenticationManager.h */,
@@ -5650,14 +5647,6 @@
 				51D02F65132EC6D300BEAA96 /* WebIconDatabaseProxy.messages.in */,
 			);
 			name = IconDatabase;
-			sourceTree = "<group>";
-		};
-		5C052F231C6D3AA10076E919 /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */,
-			);
-			name = cocoa;
 			sourceTree = "<group>";
 		};
 		5C1426F11C23F81700D41183 /* Downloads */ = {
@@ -9251,7 +9240,6 @@
 				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,
 				BCCF673312C7F15C008F9C35 /* OriginAndDatabases.cpp in Sources */,
 				7C387434172F5615001BD88A /* PageBanner.cpp in Sources */,
-				5C052F261C6D3BD30076E919 /* AuthenticationManagerCocoa.mm in Sources */,
 				7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */,
 				0FCB4E6318BBE3D9000FCFC9 /* PageClientImpl.mm in Sources */,
 				0FCB4E4718BBE044000FCFC9 /* PageClientImplIOS.mm in Sources */,
