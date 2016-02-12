@@ -528,15 +528,14 @@ static void webkitWebViewBaseConstructed(GObject* object)
     priv->authenticationDialog = 0;
 }
 
-#if USE(TEXTURE_MAPPER)
 static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* webViewBase, DrawingAreaProxyImpl* drawingArea, cairo_t* cr, GdkRectangle* clipRect)
 {
+#if USE(TEXTURE_MAPPER) && USE(REDIRECTED_XCOMPOSITE_WINDOW)
     ASSERT(drawingArea);
 
     if (!drawingArea->isInAcceleratedCompositingMode())
         return false;
 
-#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     // To avoid flashes when initializing accelerated compositing for the first
     // time, we wait until we know there's a frame ready before rendering.
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -547,10 +546,12 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     priv->redirectedWindow->resize(drawingArea->size());
 
     if (cairo_surface_t* surface = priv->redirectedWindow->surface()) {
+        cairo_save(cr);
         cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
         cairo_set_source_surface(cr, surface, 0, 0);
         cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
         cairo_fill(cr);
+        cairo_restore(cr);
     }
 
     return true;
@@ -561,7 +562,6 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     return false;
 #endif
 }
-#endif
 
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
 {
@@ -574,13 +574,10 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-#if USE(TEXTURE_MAPPER)
-    if (webkitWebViewRenderAcceleratedCompositingResults(webViewBase, drawingArea, cr, &clipRect))
-        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->draw(widget, cr);
-#endif
-
-    WebCore::Region unpaintedRegion; // This is simply unused.
-    drawingArea->paint(cr, clipRect, unpaintedRegion);
+    if (!webkitWebViewRenderAcceleratedCompositingResults(webViewBase, drawingArea, cr, &clipRect)) {
+        WebCore::Region unpaintedRegion; // This is simply unused.
+        drawingArea->paint(cr, clipRect, unpaintedRegion);
+    }
 
     if (webViewBase->priv->authenticationDialog) {
         cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
