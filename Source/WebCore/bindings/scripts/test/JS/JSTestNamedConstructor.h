@@ -76,9 +76,9 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedConstructor
     return &owner.get();
 }
 
-inline void* wrapperKey(TestNamedConstructor* domObject)
+inline void* wrapperKey(TestNamedConstructor* wrappableObject)
 {
-    return domObject;
+    return wrappableObject;
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestNamedConstructor*);

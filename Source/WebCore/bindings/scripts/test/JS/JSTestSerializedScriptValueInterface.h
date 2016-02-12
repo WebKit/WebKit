@@ -81,9 +81,9 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestSerializedScript
     return &owner.get();
 }
 
-inline void* wrapperKey(TestSerializedScriptValueInterface* domObject)
+inline void* wrapperKey(TestSerializedScriptValueInterface* wrappableObject)
 {
-    return domObject;
+    return wrappableObject;
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValueInterface*);

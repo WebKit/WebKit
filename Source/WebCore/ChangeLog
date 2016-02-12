@@ -1,3 +1,14 @@
+2016-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed nit fixes after r196466.
+
+        * Modules/speech/SpeechSynthesisUtterance.idl: Fix curly bracket
+          placement.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Use wrappableObject instead of domObject.
+        * bindings/scripts/test/*: Rebaseline.
+        * dom/WebKitNamedFlow.idl: Drop unnecessary #if case.
+
 2016-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Properly handle classes inheriting from EventTarget

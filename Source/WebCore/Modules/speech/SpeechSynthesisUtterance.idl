@@ -28,8 +28,7 @@
     EventTarget,
     ConstructorCallWith=ScriptExecutionContext,
     Constructor([Default=NullString] optional DOMString text)
-] interface SpeechSynthesisUtterance : EventTarget
-{
+] interface SpeechSynthesisUtterance : EventTarget {
     attribute DOMString text;
     attribute DOMString lang;
     attribute SpeechSynthesisVoice voice;

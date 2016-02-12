@@ -75,9 +75,9 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNondeterministic
     return &owner.get();
 }
 
-inline void* wrapperKey(TestNondeterministic* domObject)
+inline void* wrapperKey(TestNondeterministic* wrappableObject)
 {
-    return domObject;
+    return wrappableObject;
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestNondeterministic*);

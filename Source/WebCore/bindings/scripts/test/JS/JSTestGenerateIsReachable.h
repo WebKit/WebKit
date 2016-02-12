@@ -75,9 +75,9 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestGenerateIsReacha
     return &owner.get();
 }
 
-inline void* wrapperKey(TestGenerateIsReachable* domObject)
+inline void* wrapperKey(TestGenerateIsReachable* wrappableObject)
 {
-    return domObject;
+    return wrappableObject;
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestGenerateIsReachable*);

@@ -75,9 +75,9 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestMediaQueryListLi
     return &owner.get();
 }
 
-inline void* wrapperKey(TestMediaQueryListListener* domObject)
+inline void* wrapperKey(TestMediaQueryListListener* wrappableObject)
 {
-    return domObject;
+    return wrappableObject;
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListener*);

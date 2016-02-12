@@ -102,9 +102,9 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestInterface*)
     return &owner.get();
 }
 
-inline void* wrapperKey(TestInterface* domObject)
+inline void* wrapperKey(TestInterface* wrappableObject)
 {
-    return domObject;
+    return wrappableObject;
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterface*);

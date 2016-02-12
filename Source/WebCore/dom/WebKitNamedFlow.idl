@@ -31,10 +31,7 @@
     NoInterfaceObject,
     EventTarget,
     GenerateIsReachable=ImplOwnerNodeRoot,
-] interface WebKitNamedFlow
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-: EventTarget
-#endif
+] interface WebKitNamedFlow : EventTarget
 {
     readonly attribute DOMString name;
     readonly attribute boolean overset;

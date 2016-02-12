@@ -1243,9 +1243,9 @@ sub GenerateHeader
         push(@headerContent, "    return &owner.get();\n");
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
-        push(@headerContent, "inline void* wrapperKey($implType* domObject)\n");
+        push(@headerContent, "inline void* wrapperKey($implType* wrappableObject)\n");
         push(@headerContent, "{\n");
-        push(@headerContent, "    return domObject;\n");
+        push(@headerContent, "    return wrappableObject;\n");
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
     }
