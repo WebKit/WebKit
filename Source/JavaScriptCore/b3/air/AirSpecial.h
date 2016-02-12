@@ -56,6 +56,7 @@ public:
     virtual void forEachArg(Inst&, const ScopedLambda<Inst::EachArgCallback>&) = 0;
     virtual bool isValid(Inst&) = 0;
     virtual bool admitsStack(Inst&, unsigned argIndex) = 0;
+    virtual bool shouldTryAliasingDef(Inst&, unsigned& defIndex);
 
     // This gets called on for each Inst that uses this Special. Note that there is no way to
     // guarantee that a Special gets used from just one Inst, because Air might taildup late. So,

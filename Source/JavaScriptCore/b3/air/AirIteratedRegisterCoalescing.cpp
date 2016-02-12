@@ -169,7 +169,9 @@ protected:
 
             if (traceDebug)
                 dataLog("    Coalesced\n");
-        } else if (isPrecolored(v) || m_interferenceEdges.contains(InterferenceEdge(u, v))) {
+        } else if (isPrecolored(v)
+            || m_interferenceEdges.contains(InterferenceEdge(u, v))
+            || (u == m_framePointerIndex && m_interferesWithFramePointer.quickGet(v))) {
             addWorkList(u);
             addWorkList(v);
 
@@ -399,6 +401,9 @@ private:
             }
         });
 
+        if (m_framePointerIndex && m_interferesWithFramePointer.quickGet(v))
+            m_interferesWithFramePointer.quickSet(u);
+
         if (m_degrees[u] >= m_regsInPriorityOrder.size() && m_freezeWorklist.remove(u))
             addToSpill(u);
     }
@@ -574,18 +579,45 @@ protected:
     BitVector m_isOnSelectStack;
     Vector<IndexType> m_selectStack;
 
+    IndexType m_framePointerIndex { 0 };
+    BitVector m_interferesWithFramePointer;
+
     struct OrderedMoveSet {
         unsigned addMove()
         {
-            unsigned nextIndex = m_moveList.size();
+            ASSERT(m_lowPriorityMoveList.isEmpty());
+            ASSERT(!m_firstLowPriorityMoveIndex);
+
+            unsigned nextIndex = m_positionInMoveList.size();
+            unsigned position = m_moveList.size();
             m_moveList.append(nextIndex);
-            m_positionInMoveList.append(nextIndex);
+            m_positionInMoveList.append(position);
+            return nextIndex;
+        }
+
+        void startAddingLowPriorityMoves()
+        {
+            ASSERT(m_lowPriorityMoveList.isEmpty());
+            m_firstLowPriorityMoveIndex = m_moveList.size();
+        }
+
+        unsigned addLowPriorityMove()
+        {
+            ASSERT(m_firstLowPriorityMoveIndex == m_moveList.size());
+
+            unsigned nextIndex = m_positionInMoveList.size();
+            unsigned position = m_lowPriorityMoveList.size();
+            m_lowPriorityMoveList.append(nextIndex);
+            m_positionInMoveList.append(position);
+
+            ASSERT(nextIndex >= m_firstLowPriorityMoveIndex);
+
             return nextIndex;
         }
 
         bool isEmpty() const
         {
-            return m_moveList.isEmpty();
+            return m_moveList.isEmpty() && m_lowPriorityMoveList.isEmpty();
         }
 
         bool contains(unsigned index)
@@ -599,11 +631,19 @@ protected:
             if (positionInMoveList == std::numeric_limits<unsigned>::max())
                 return;
 
-            ASSERT(m_moveList[positionInMoveList] == moveIndex);
-            unsigned lastIndex = m_moveList.last();
-            m_positionInMoveList[lastIndex] = positionInMoveList;
-            m_moveList[positionInMoveList] = lastIndex;
-            m_moveList.removeLast();
+            if (moveIndex < m_firstLowPriorityMoveIndex) {
+                ASSERT(m_moveList[positionInMoveList] == moveIndex);
+                unsigned lastIndex = m_moveList.last();
+                m_positionInMoveList[lastIndex] = positionInMoveList;
+                m_moveList[positionInMoveList] = lastIndex;
+                m_moveList.removeLast();
+            } else {
+                ASSERT(m_lowPriorityMoveList[positionInMoveList] == moveIndex);
+                unsigned lastIndex = m_lowPriorityMoveList.last();
+                m_positionInMoveList[lastIndex] = positionInMoveList;
+                m_lowPriorityMoveList[positionInMoveList] = lastIndex;
+                m_lowPriorityMoveList.removeLast();
+            }
 
             m_positionInMoveList[moveIndex] = std::numeric_limits<unsigned>::max();
 
@@ -614,8 +654,14 @@ protected:
         {
             ASSERT(!isEmpty());
 
-            unsigned lastIndex = m_moveList.takeLast();
-            ASSERT(m_positionInMoveList[lastIndex] == m_moveList.size());
+            unsigned lastIndex;
+            if (!m_moveList.isEmpty()) {
+                lastIndex = m_moveList.takeLast();
+                ASSERT(m_positionInMoveList[lastIndex] == m_moveList.size());
+            } else {
+                lastIndex = m_lowPriorityMoveList.takeLast();
+                ASSERT(m_positionInMoveList[lastIndex] == m_lowPriorityMoveList.size());
+            }
             m_positionInMoveList[lastIndex] = std::numeric_limits<unsigned>::max();
 
             ASSERT(!contains(lastIndex));
@@ -629,9 +675,15 @@ protected:
             // Values should not be added back if they were never taken out when attempting coalescing.
             ASSERT(!contains(index));
 
-            unsigned position = m_moveList.size();
-            m_moveList.append(index);
-            m_positionInMoveList[index] = position;
+            if (index < m_firstLowPriorityMoveIndex) {
+                unsigned position = m_moveList.size();
+                m_moveList.append(index);
+                m_positionInMoveList[index] = position;
+            } else {
+                unsigned position = m_lowPriorityMoveList.size();
+                m_lowPriorityMoveList.append(index);
+                m_positionInMoveList[index] = position;
+            }
 
             ASSERT(contains(index));
         }
@@ -640,11 +692,14 @@ protected:
         {
             m_positionInMoveList.clear();
             m_moveList.clear();
+            m_lowPriorityMoveList.clear();
         }
 
     private:
         Vector<unsigned, 0, UnsafeVectorOverflow> m_positionInMoveList;
         Vector<unsigned, 0, UnsafeVectorOverflow> m_moveList;
+        Vector<unsigned, 0, UnsafeVectorOverflow> m_lowPriorityMoveList;
+        unsigned m_firstLowPriorityMoveIndex { 0 };
     };
 
     // Work lists.
@@ -678,6 +733,11 @@ public:
         , m_tmpWidth(tmpWidth)
         , m_useCounts(useCounts)
     {
+        if (type == Arg::GP) {
+            m_framePointerIndex = AbsoluteTmpMapper<type>::absoluteIndex(Tmp(MacroAssembler::framePointerRegister));
+            m_interferesWithFramePointer.ensureSize(tmpArraySize(code));
+        }
+
         initializePrecoloredTmp();
         build();
         allocate();
@@ -802,6 +862,48 @@ private:
         }
     }
 
+    bool mayBeCoalesced(Arg left, Arg right)
+    {
+        if (!left.isTmp() || !right.isTmp())
+            return false;
+
+        Tmp leftTmp = left.tmp();
+        Tmp rightTmp = right.tmp();
+
+        if (leftTmp == rightTmp)
+            return false;
+
+        if (leftTmp.isGP() != (type == Arg::GP) || rightTmp.isGP() != (type == Arg::GP))
+            return false;
+
+        unsigned leftIndex = AbsoluteTmpMapper<type>::absoluteIndex(leftTmp);
+        unsigned rightIndex = AbsoluteTmpMapper<type>::absoluteIndex(rightTmp);
+
+        return !m_interferenceEdges.contains(InterferenceEdge(leftIndex, rightIndex));
+    }
+
+    void addToLowPriorityCoalescingCandidates(Arg left, Arg right)
+    {
+        ASSERT(mayBeCoalesced(left, right));
+        Tmp leftTmp = left.tmp();
+        Tmp rightTmp = right.tmp();
+
+        unsigned leftIndex = AbsoluteTmpMapper<type>::absoluteIndex(leftTmp);
+        unsigned rightIndex = AbsoluteTmpMapper<type>::absoluteIndex(rightTmp);
+
+        unsigned nextMoveIndex = m_coalescingCandidates.size();
+        m_coalescingCandidates.append({ leftIndex, rightIndex });
+
+        unsigned newIndexInWorklist = m_worklistMoves.addLowPriorityMove();
+        ASSERT_UNUSED(newIndexInWorklist, newIndexInWorklist == nextMoveIndex);
+
+        ASSERT(nextMoveIndex <= m_activeMoves.size());
+        m_activeMoves.ensureSize(nextMoveIndex + 1);
+
+        m_moveList[leftIndex].add(nextMoveIndex);
+        m_moveList[rightIndex].add(nextMoveIndex);
+    }
+
     void build()
     {
         TmpLiveness<type> liveness(m_code);
@@ -815,6 +917,7 @@ private:
             }
             build(nullptr, &block->at(0), localCalc);
         }
+        buildLowPriorityMoveList();
     }
 
     void build(Inst* prevInst, Inst* nextInst, const typename TmpLiveness<type>::LocalCalc& localCalc)
@@ -881,6 +984,32 @@ private:
             addEdges(prevInst, nextInst, localCalc.live());
     }
 
+    void buildLowPriorityMoveList()
+    {
+        if (!isX86())
+            return;
+
+        m_worklistMoves.startAddingLowPriorityMoves();
+        for (BasicBlock* block : m_code) {
+            for (Inst& inst : *block) {
+                unsigned defArgIndex = 0;
+                if (inst.shouldTryAliasingDef(defArgIndex)) {
+                    Arg op1 = inst.args[defArgIndex - 2];
+                    Arg op2 = inst.args[defArgIndex - 1];
+                    Arg dest = inst.args[defArgIndex];
+
+                    if (op1 == dest || op2 == dest)
+                        continue;
+
+                    if (mayBeCoalesced(op1, dest))
+                        addToLowPriorityCoalescingCandidates(op1, dest);
+                    if (op1 != op2 && mayBeCoalesced(op2, dest))
+                        addToLowPriorityCoalescingCandidates(op2, dest);
+                }
+            }
+        }
+    }
+
     void addEdges(Inst* prevInst, Inst* nextInst, typename TmpLiveness<type>::LocalCalc::Iterable liveTmps)
     {
         // All the Def()s interfere with everthing live.
@@ -895,11 +1024,8 @@ private:
                     addEdge(arg, liveTmp);
                 }
 
-                if (type == Arg::GP && !arg.isGPR()) {
-                    m_interferenceEdges.add(InterferenceEdge(
-                        AbsoluteTmpMapper<type>::absoluteIndex(Tmp(MacroAssembler::framePointerRegister)),
-                        AbsoluteTmpMapper<type>::absoluteIndex(arg)));
-                }
+                if (type == Arg::GP && !arg.isGPR())
+                    m_interferesWithFramePointer.quickSet(AbsoluteTmpMapper<type>::absoluteIndex(arg));
             });
     }
 
@@ -1032,6 +1158,11 @@ private:
         if (debug) {
             dataLog("Interference: ", listDump(m_interferenceEdges), "\n");
             dumpInterferenceGraphInDot(WTF::dataFile());
+            dataLog("Coalescing candidates:\n");
+            for (MoveOperands& moveOp : m_coalescingCandidates) {
+                dataLog("    ", AbsoluteTmpMapper<type>::tmpFromAbsoluteIndex(moveOp.srcIndex),
+                    " -> ", AbsoluteTmpMapper<type>::tmpFromAbsoluteIndex(moveOp.dstIndex), "\n");
+            }
             dataLog("Initial work list\n");
             dumpWorkLists(WTF::dataFile());
         }
@@ -1131,7 +1262,7 @@ private:
     template<Arg::Type type>
     void iteratedRegisterCoalescingOnType()
     {
-        HashSet<unsigned> unspillableTmps;
+        HashSet<unsigned> unspillableTmps = computeUnspillableTmps<type>();
 
         // FIXME: If a Tmp is used only from a Scratch role and that argument is !admitsStack, then
         // we should add the Tmp to unspillableTmps. That will help avoid relooping only to turn the
@@ -1169,6 +1300,72 @@ private:
             }
             addSpillAndFill<type>(allocator, unspillableTmps);
         }
+    }
+
+    template<Arg::Type type>
+    HashSet<unsigned> computeUnspillableTmps()
+    {
+        HashSet<unsigned> unspillableTmps;
+
+        struct Range {
+            unsigned first { std::numeric_limits<unsigned>::max() };
+            unsigned last { 0 };
+            unsigned count { 0 };
+            unsigned admitStackCount { 0 };
+        };
+
+        unsigned numTmps = m_code.numTmps(type);
+        unsigned arraySize = AbsoluteTmpMapper<type>::absoluteIndex(numTmps);
+
+        Vector<Range, 0, UnsafeVectorOverflow> ranges;
+        ranges.fill(Range(), arraySize);
+
+        unsigned globalIndex = 0;
+        for (BasicBlock* block : m_code) {
+            for (Inst& inst : *block) {
+                inst.forEachArg([&] (Arg& arg, Arg::Role, Arg::Type argType, Arg::Width) {
+                    if (arg.isTmp() && inst.admitsStack(arg)) {
+                        if (argType != type)
+                            return;
+
+                        Tmp tmp = arg.tmp();
+                        Range& range = ranges[AbsoluteTmpMapper<type>::absoluteIndex(tmp)];
+                        range.count++;
+                        range.admitStackCount++;
+                        if (globalIndex < range.first) {
+                            range.first = globalIndex;
+                            range.last = globalIndex;
+                        } else
+                            range.last = globalIndex;
+
+                        return;
+                    }
+
+                    arg.forEachTmpFast([&] (Tmp& tmp) {
+                        if (tmp.isGP() != (type == Arg::GP))
+                            return;
+
+                        Range& range = ranges[AbsoluteTmpMapper<type>::absoluteIndex(tmp)];
+                        range.count++;
+                        if (globalIndex < range.first) {
+                            range.first = globalIndex;
+                            range.last = globalIndex;
+                        } else
+                            range.last = globalIndex;
+                    });
+                });
+
+                ++globalIndex;
+            }
+            ++globalIndex;
+        }
+        for (unsigned i = AbsoluteTmpMapper<type>::lastMachineRegisterIndex() + 1; i < ranges.size(); ++i) {
+            Range& range = ranges[i];
+            if (range.last - range.first <= 1 && range.count > range.admitStackCount)
+                unspillableTmps.add(i);
+        }
+
+        return unspillableTmps;
     }
 
     template<Arg::Type type>

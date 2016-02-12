@@ -263,6 +263,8 @@ private:
         OP2_MOVSD_WsdVsd    = 0x11,
         OP2_MOVSS_VsdWsd    = 0x10,
         OP2_MOVSS_WsdVsd    = 0x11,
+        OP2_MOVAPD_VpdWpd   = 0x28,
+        OP2_MOVAPS_VpdWpd   = 0x28,
         OP2_CVTSI2SD_VsdEd  = 0x2A,
         OP2_CVTTSD2SI_GdWsd = 0x2C,
         OP2_UCOMISD_VsdWsd  = 0x2E,
@@ -2208,6 +2210,17 @@ public:
         m_formatter.twoByteOp64(OP2_MOVD_VdEd, (RegisterID)dst, src);
     }
 #endif
+
+    void movapd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVAPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void movaps_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVAPS_VpdWpd, (RegisterID)dst, (RegisterID)src);
+    }
 
     void movsd_rr(XMMRegisterID src, XMMRegisterID dst)
     {

@@ -213,7 +213,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         jit.emitSaveOrCopyCalleeSavesFor(
             baselineCodeBlock,
             static_cast<VirtualRegister>(inlineCallFrame->stackOffset),
-            trueCaller ? AssemblyHelpers::UseExistingTagRegisterContents : AssemblyHelpers::CopySavedTagRegistersFromBaseFrame,
+            trueCaller ? AssemblyHelpers::UseExistingTagRegisterContents : AssemblyHelpers::CopyBaselineCalleeSavedRegistersFromBaseFrame,
             GPRInfo::regT2);
 
         if (!inlineCallFrame->isVarargs())

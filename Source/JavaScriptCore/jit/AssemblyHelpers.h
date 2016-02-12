@@ -213,7 +213,7 @@ public:
         }
     }
     
-    enum RestoreTagRegisterMode { UseExistingTagRegisterContents, CopySavedTagRegistersFromBaseFrame };
+    enum RestoreTagRegisterMode { UseExistingTagRegisterContents, CopyBaselineCalleeSavedRegistersFromBaseFrame };
 
     void emitSaveOrCopyCalleeSavesFor(CodeBlock* codeBlock, VirtualRegister offsetVirtualRegister, RestoreTagRegisterMode tagRegisterMode, GPRReg temp)
     {
@@ -222,6 +222,10 @@ public:
         RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
         RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
         unsigned registerCount = calleeSaves->size();
+
+#if USE(JSVALUE64)
+        RegisterSet baselineCalleeSaves = RegisterSet::llintBaselineCalleeSaveRegisters();
+#endif
         
         for (unsigned i = 0; i < registerCount; i++) {
             RegisterAtOffset entry = calleeSaves->at(i);
@@ -234,8 +238,7 @@ public:
             UNUSED_PARAM(tagRegisterMode);
             UNUSED_PARAM(temp);
 #else
-            if (tagRegisterMode == CopySavedTagRegistersFromBaseFrame
-                && (entry.reg() == GPRInfo::tagTypeNumberRegister || entry.reg() == GPRInfo::tagMaskRegister)) {
+            if (tagRegisterMode == CopyBaselineCalleeSavedRegistersFromBaseFrame && baselineCalleeSaves.get(entry.reg())) {
                 registerToWrite = temp;
                 loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, entry.offset()), registerToWrite);
             } else

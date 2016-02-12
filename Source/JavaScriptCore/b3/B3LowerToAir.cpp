@@ -2146,7 +2146,10 @@ private:
             } else if (imm(right) && isValidForm(opcode, Arg::ResCond, Arg::Imm, Arg::Tmp)) {
                 sources.append(imm(right));
                 append(Move, tmp(left), result);
-            } else if (isValidForm(opcode, Arg::ResCond, Arg::Tmp, Arg::Tmp)) {
+            } else if (isValidForm(opcode, Arg::ResCond, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                sources.append(tmp(left));
+                sources.append(tmp(right));
+            }  else if (isValidForm(opcode, Arg::ResCond, Arg::Tmp, Arg::Tmp)) {
                 if (commutativity == Commutative && preferRightForResult(left, right)) {
                     sources.append(tmp(left));
                     append(Move, tmp(right), result);

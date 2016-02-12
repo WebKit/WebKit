@@ -126,6 +126,7 @@ protected:
     void forEachArg(Air::Inst&, const ScopedLambda<Air::Inst::EachArgCallback>&) override;
     bool isValid(Air::Inst&) override;
     bool admitsStack(Air::Inst&, unsigned argIndex) override;
+    bool shouldTryAliasingDef(Air::Inst&, unsigned& defIndex) override;
 
     // NOTE: the generate method will generate the hidden branch and then register a LatePath that
     // generates the stackmap. Super crazy dude!

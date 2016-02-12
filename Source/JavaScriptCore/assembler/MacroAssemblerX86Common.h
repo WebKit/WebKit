@@ -267,6 +267,18 @@ public:
         }
     }
 
+    void and32(Address op1, RegisterID op2, RegisterID dest)
+    {
+        move(op2, dest);
+        and32(op1, dest);
+    }
+
+    void and32(RegisterID op1, Address op2, RegisterID dest)
+    {
+        move(op1, dest);
+        and32(op2, dest);
+    }
+
     void and32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(src, dest);
@@ -334,9 +346,31 @@ public:
         m_assembler.imull_rr(src, dest);
     }
 
+    void mul32(RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        if (src2 == dest) {
+            m_assembler.imull_rr(src1, dest);
+            return;
+        }
+        move(src1, dest);
+        m_assembler.imull_rr(src2, dest);
+    }
+
     void mul32(Address src, RegisterID dest)
     {
         m_assembler.imull_mr(src.offset, src.base, dest);
+    }
+
+    void mul32(Address src1, RegisterID src2, RegisterID dest)
+    {
+        move(src2, dest);
+        mul32(src1, dest);
+    }
+
+    void mul32(RegisterID src1, Address src2, RegisterID dest)
+    {
+        move(src1, dest);
+        mul32(src2, dest);
     }
     
     void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
@@ -413,6 +447,18 @@ public:
             move(op2, dest);
             or32(op1, dest);
         }
+    }
+
+    void or32(Address op1, RegisterID op2, RegisterID dest)
+    {
+        move(op2, dest);
+        or32(op1, dest);
+    }
+
+    void or32(RegisterID op1, Address op2, RegisterID dest)
+    {
+        move(op1, dest);
+        or32(op2, dest);
     }
 
     void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
@@ -564,6 +610,18 @@ public:
             move(op2, dest);
             xor32(op1, dest);
         }
+    }
+
+    void xor32(Address op1, RegisterID op2, RegisterID dest)
+    {
+        move(op2, dest);
+        xor32(op1, dest);
+    }
+
+    void xor32(RegisterID op1, Address op2, RegisterID dest)
+    {
+        move(op1, dest);
+        xor32(op2, dest);
     }
 
     void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
@@ -905,7 +963,7 @@ public:
     {
         ASSERT(isSSE2Present());
         if (src != dest)
-            m_assembler.movsd_rr(src, dest);
+            m_assembler.movaps_rr(src, dest);
     }
 
     void loadDouble(TrustedImmPtr address, FPRegisterID dest)
@@ -1014,6 +1072,30 @@ public:
         m_assembler.addsd_mr(src.offset, src.base, dest);
     }
 
+    void addDouble(Address op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op2 == dest) {
+            addDouble(op1, dest);
+            return;
+        }
+
+        loadDouble(op1, dest);
+        addDouble(op2, dest);
+    }
+
+    void addDouble(FPRegisterID op1, Address op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op1 == dest) {
+            addDouble(op2, dest);
+            return;
+        }
+
+        loadDouble(op2, dest);
+        addDouble(op1, dest);
+    }
+
     void addFloat(FPRegisterID src, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());
@@ -1024,6 +1106,41 @@ public:
     {
         ASSERT(isSSE2Present());
         m_assembler.addss_mr(src.offset, src.base, dest);
+    }
+
+    void addFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op1 == dest)
+            addFloat(op2, dest);
+        else {
+            moveDouble(op2, dest);
+            addFloat(op1, dest);
+        }
+    }
+
+    void addFloat(Address op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op2 == dest) {
+            addFloat(op1, dest);
+            return;
+        }
+
+        loadFloat(op1, dest);
+        addFloat(op2, dest);
+    }
+
+    void addFloat(FPRegisterID op1, Address op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op1 == dest) {
+            addFloat(op2, dest);
+            return;
+        }
+
+        loadFloat(op2, dest);
+        addFloat(op1, dest);
     }
 
     void divDouble(FPRegisterID src, FPRegisterID dest)
@@ -1115,6 +1232,28 @@ public:
         m_assembler.mulsd_mr(src.offset, src.base, dest);
     }
 
+    void mulDouble(Address op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op2 == dest) {
+            mulDouble(op1, dest);
+            return;
+        }
+        loadDouble(op1, dest);
+        mulDouble(op2, dest);
+    }
+
+    void mulDouble(FPRegisterID op1, Address op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op1 == dest) {
+            mulDouble(op2, dest);
+            return;
+        }
+        loadDouble(op2, dest);
+        mulDouble(op1, dest);
+    }
+
     void mulFloat(FPRegisterID src, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());
@@ -1127,10 +1266,53 @@ public:
         m_assembler.mulss_mr(src.offset, src.base, dest);
     }
 
+    void mulFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op1 == dest)
+            mulFloat(op2, dest);
+        else {
+            moveDouble(op2, dest);
+            mulFloat(op1, dest);
+        }
+    }
+
+    void mulFloat(Address op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op2 == dest) {
+            mulFloat(op1, dest);
+            return;
+        }
+        loadFloat(op1, dest);
+        mulFloat(op2, dest);
+    }
+
+    void mulFloat(FPRegisterID op1, Address op2, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        if (op1 == dest) {
+            mulFloat(op2, dest);
+            return;
+        }
+        loadFloat(op2, dest);
+        mulFloat(op1, dest);
+    }
+
     void andDouble(FPRegisterID src, FPRegisterID dst)
     {
         // ANDPS is defined on 128bits and is shorter than ANDPD.
         m_assembler.andps_rr(src, dst);
+    }
+
+    void andDouble(FPRegisterID src1, FPRegisterID src2, FPRegisterID dst)
+    {
+        if (src1 == dst)
+            andDouble(src2, dst);
+        else {
+            moveDouble(src2, dst);
+            andDouble(src1, dst);
+        }
     }
 
     void andFloat(FPRegisterID src, FPRegisterID dst)
@@ -1138,14 +1320,44 @@ public:
         m_assembler.andps_rr(src, dst);
     }
 
+    void andFloat(FPRegisterID src1, FPRegisterID src2, FPRegisterID dst)
+    {
+        if (src1 == dst)
+            andFloat(src2, dst);
+        else {
+            moveDouble(src2, dst);
+            andFloat(src1, dst);
+        }
+    }
+
     void xorDouble(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.xorps_rr(src, dst);
     }
 
+    void xorDouble(FPRegisterID src1, FPRegisterID src2, FPRegisterID dst)
+    {
+        if (src1 == dst)
+            xorDouble(src2, dst);
+        else {
+            moveDouble(src2, dst);
+            xorDouble(src1, dst);
+        }
+    }
+
     void xorFloat(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.xorps_rr(src, dst);
+    }
+
+    void xorFloat(FPRegisterID src1, FPRegisterID src2, FPRegisterID dst)
+    {
+        if (src1 == dst)
+            xorFloat(src2, dst);
+        else {
+            moveDouble(src2, dst);
+            xorFloat(src1, dst);
+        }
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
@@ -1708,6 +1920,18 @@ public:
             return branchAdd32(cond, src2, dest);
         move(src2, dest);
         return branchAdd32(cond, src1, dest);
+    }
+
+    Jump branchAdd32(ResultCondition cond, Address src1, RegisterID src2, RegisterID dest)
+    {
+        move(src2, dest);
+        return branchAdd32(cond, src1, dest);
+    }
+
+    Jump branchAdd32(ResultCondition cond, RegisterID src1, Address src2, RegisterID dest)
+    {
+        move(src1, dest);
+        return branchAdd32(cond, src2, dest);
     }
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)

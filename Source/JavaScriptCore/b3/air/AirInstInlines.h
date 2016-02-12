@@ -164,6 +164,50 @@ inline bool Inst::admitsStack(Arg& arg)
     return admitsStack(&arg - &args[0]);
 }
 
+inline bool Inst::shouldTryAliasingDef(unsigned& defIndex)
+{
+    if (!isX86())
+        return false;
+
+    switch (opcode) {
+    case Add32:
+    case Add64:
+    case And32:
+    case And64:
+    case Mul32:
+    case Mul64:
+    case Or32:
+    case Or64:
+    case Xor32:
+    case Xor64:
+    case AddDouble:
+    case AddFloat:
+    case AndFloat:
+    case AndDouble:
+    case MulDouble:
+    case MulFloat:
+    case XorDouble:
+    case XorFloat:
+        if (args.size() == 3) {
+            defIndex = 2;
+            return true;
+        }
+        break;
+    case BranchAdd32:
+    case BranchAdd64:
+        if (args.size() == 4) {
+            defIndex = 3;
+            return true;
+        }
+        break;
+    case Patch:
+        return PatchCustom::shouldTryAliasingDef(*this, defIndex);
+    default:
+        break;
+    }
+    return false;
+}
+
 inline bool isShiftValid(const Inst& inst)
 {
 #if CPU(X86) || CPU(X86_64)

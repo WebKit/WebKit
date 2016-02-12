@@ -107,6 +107,10 @@
 
 Nop
 
+Add32 U:G:32, U:G:32, ZD:G:32
+    Imm, Tmp, Tmp
+    Tmp, Tmp, Tmp
+
 Add32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Imm, Addr
@@ -128,10 +132,6 @@ x86: Add16 U:G:16, UD:G:16
     Tmp, Addr
     Tmp, Index
 
-Add32 U:G:32, U:G:32, ZD:G:32
-    Imm, Tmp, Tmp
-    Tmp, Tmp, Tmp
-
 64: Add64 U:G:64, UD:G:64
     Tmp, Tmp
     x86: Imm, Addr
@@ -143,15 +143,19 @@ Add32 U:G:32, U:G:32, ZD:G:32
     Imm, Tmp, Tmp
     Tmp, Tmp, Tmp
 
-arm64: AddDouble U:F:64, U:F:64, D:F:64
+AddDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
+    x86: Addr, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
 
 x86: AddDouble U:F:64, UD:F:64
     Tmp, Tmp
     Addr, Tmp
 
-arm64: AddFloat U:F:32, U:F:32, D:F:32
+AddFloat U:F:32, U:F:32, D:F:32
     Tmp, Tmp, Tmp
+    x86: Addr, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
 
 x86: AddFloat U:F:32, UD:F:32
     Tmp, Tmp
@@ -200,13 +204,15 @@ Mul32 U:G:32, UZD:G:32
     x86: Addr, Tmp
 
 Mul32 U:G:32, U:G:32, ZD:G:32
-    arm64: Tmp, Tmp, Tmp
+    Tmp, Tmp, Tmp
+    x86: Addr, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
     x86: Imm, Tmp, Tmp
 
 64: Mul64 U:G:64, UD:G:64
     Tmp, Tmp
 
-arm64: Mul64 U:G:64, U:G:64, D:G:64
+Mul64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
 
 arm64: Div32 U:G:32, U:G:32, ZD:G:32
@@ -215,15 +221,19 @@ arm64: Div32 U:G:32, U:G:32, ZD:G:32
 arm64: Div64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
 
-arm64: MulDouble U:F:64, U:F:64, D:F:64
+MulDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
+    x86: Addr, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
 
 x86: MulDouble U:F:64, UD:F:64
     Tmp, Tmp
     Addr, Tmp
 
-arm64: MulFloat U:F:32, U:F:32, D:F:32
+MulFloat U:F:32, U:F:32, D:F:32
     Tmp, Tmp, Tmp
+    x86: Addr, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
 
 x86: MulFloat U:F:32, UD:F:32
     Tmp, Tmp
@@ -258,6 +268,11 @@ x86_64: X86Div64 UZD:G:64, UZD:G:64, U:G:64
 Lea UA:G:Ptr, D:G:Ptr
     Addr, Tmp
 
+And32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
+    x86: Addr, Tmp, Tmp
+
 And32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Imm, Tmp
@@ -265,24 +280,33 @@ And32 U:G:32, UZD:G:32
     x86: Addr, Tmp
     x86: Imm, Addr
 
-64: And64 U:G:64, UD:G:64
+64: And64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
+
+x86_64: And64 U:G:64, UD:G:64
     Tmp, Tmp
     x86: Imm, Tmp
 
-arm64: AndDouble U:F:64, U:F:64, D:F:64
+AndDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
 
 x86: AndDouble U:F:64, UD:F:64
     Tmp, Tmp
 
-arm64: AndFloat U:F:32, U:F:32, D:F:32
+AndFloat U:F:32, U:F:32, D:F:32
     Tmp, Tmp, Tmp
 
 x86: AndFloat U:F:32, UD:F:32
     Tmp, Tmp
 
+x86: XorDouble U:F:64, U:F:64, D:F:64
+    Tmp, Tmp, Tmp
+
 x86: XorDouble U:F:64, UD:F:64
     Tmp, Tmp
+
+x86: XorFloat U:F:32, U:F:32, D:F:32
+    Tmp, Tmp, Tmp
 
 x86: XorFloat U:F:32, UD:F:32
     Tmp, Tmp
@@ -335,6 +359,11 @@ x86_64: Urshift64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
 
+Or32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
+    x86: Addr, Tmp, Tmp
+
 Or32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Imm, Tmp
@@ -342,9 +371,17 @@ Or32 U:G:32, UZD:G:32
     x86: Addr, Tmp
     x86: Imm, Addr
 
+64: Or64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
+
 64: Or64 U:G:64, UD:G:64
     Tmp, Tmp
     x86: Imm, Tmp
+
+Xor32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+    x86: Tmp, Addr, Tmp
+    x86: Addr, Tmp, Tmp
 
 Xor32 U:G:32, UZD:G:32
     Tmp, Tmp
@@ -352,6 +389,9 @@ Xor32 U:G:32, UZD:G:32
     x86: Tmp, Addr
     x86: Addr, Tmp
     x86: Imm, Addr
+
+64: Xor64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
 
 64: Xor64 U:G:64, UD:G:64
     Tmp, Tmp
@@ -609,6 +649,11 @@ BranchDouble U:G:32, U:F:64, U:F:64 /branch
 BranchFloat U:G:32, U:F:32, U:F:32 /branch
     DoubleCond, Tmp, Tmp
 
+BranchAdd32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
+    ResCond, Tmp, Tmp, Tmp
+    x86:ResCond, Tmp, Addr, Tmp
+    x86:ResCond, Addr, Tmp, Tmp
+
 BranchAdd32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp
     ResCond, Imm, Tmp
@@ -616,9 +661,15 @@ BranchAdd32 U:G:32, U:G:32, UZD:G:32 /branch
     x86: ResCond, Tmp, Addr
     x86: ResCond, Addr, Tmp
 
+BranchAdd64 U:G:32, U:G:64, U:G:64, ZD:G:64 /branch
+    ResCond, Tmp, Tmp, Tmp
+    x86:ResCond, Tmp, Addr, Tmp
+    x86:ResCond, Addr, Tmp, Tmp
+
 64: BranchAdd64 U:G:32, U:G:64, UD:G:64 /branch
     ResCond, Imm, Tmp
     ResCond, Tmp, Tmp
+    x86:ResCond, Addr, Tmp
 
 x86: BranchMul32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp

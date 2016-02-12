@@ -7492,6 +7492,146 @@ void testCheckAddFoldFail(int a, int b)
     CHECK(invoke<int>(*code) == 42);
 }
 
+void testCheckAddArgumentAliasing64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* arg3 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+    // Pretend to use all the args.
+    PatchpointValue* useArgs = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    useArgs->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+    useArgs->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    useArgs->append(ConstrainedValue(arg3, ValueRep::SomeRegister));
+    useArgs->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    // Last use of first arg (here, arg1).
+    CheckValue* checkAdd1 = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg1, arg2);
+    checkAdd1->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    // Last use of second arg (here, arg2).
+    CheckValue* checkAdd2 = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg3, arg2);
+    checkAdd2->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    // Keep arg3 live.
+    PatchpointValue* keepArg2Live = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    keepArg2Live->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    keepArg2Live->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    // Only use of checkAdd1 and checkAdd2.
+    CheckValue* checkAdd3 = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), checkAdd1, checkAdd2);
+    checkAdd3->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), checkAdd3);
+
+    CHECK(compileAndRun<int64_t>(proc, 1, 2, 3) == 8);
+}
+
+void testCheckAddArgumentAliasing32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg2 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* arg3 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+
+    // Pretend to use all the args.
+    PatchpointValue* useArgs = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    useArgs->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+    useArgs->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    useArgs->append(ConstrainedValue(arg3, ValueRep::SomeRegister));
+    useArgs->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    // Last use of first arg (here, arg1).
+    CheckValue* checkAdd1 = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg1, arg2);
+    checkAdd1->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    // Last use of second arg (here, arg3).
+    CheckValue* checkAdd2 = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg2, arg3);
+    checkAdd2->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    // Keep arg3 live.
+    PatchpointValue* keepArg2Live = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    keepArg2Live->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    keepArg2Live->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    // Only use of checkAdd1 and checkAdd2.
+    CheckValue* checkAdd3 = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), checkAdd1, checkAdd2);
+    checkAdd3->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), checkAdd3);
+
+    CHECK(compileAndRun<int32_t>(proc, 1, 2, 3) == 8);
+}
+
+void testCheckAddSelfOverflow64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
+    checkAdd->append(arg);
+    checkAdd->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(params[0].gpr(), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+    // Make sure the arg is not the destination of the operation.
+    PatchpointValue* opaqueUse = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    opaqueUse->append(ConstrainedValue(arg, ValueRep::SomeRegister));
+    opaqueUse->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), checkAdd);
+
+    auto code = compile(proc);
+
+    CHECK(invoke<int64_t>(*code, 0ll) == 0);
+    CHECK(invoke<int64_t>(*code, 1ll) == 2);
+    CHECK(invoke<int64_t>(*code, std::numeric_limits<int64_t>::max()) == std::numeric_limits<int64_t>::max());
+}
+
+void testCheckAddSelfOverflow32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
+    checkAdd->append(arg);
+    checkAdd->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(params[0].gpr(), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+    // Make sure the arg is not the destination of the operation.
+    PatchpointValue* opaqueUse = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    opaqueUse->append(ConstrainedValue(arg, ValueRep::SomeRegister));
+    opaqueUse->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), checkAdd);
+
+    auto code = compile(proc);
+
+    CHECK(invoke<int32_t>(*code, 0ll) == 0);
+    CHECK(invoke<int32_t>(*code, 1ll) == 2);
+    CHECK(invoke<int32_t>(*code, std::numeric_limits<int32_t>::max()) == std::numeric_limits<int32_t>::max());
+}
+
 void testCheckSubImm()
 {
     Procedure proc;
@@ -7941,6 +8081,86 @@ void testCheckMulFoldFail(int a, int b)
     auto code = compile(proc);
 
     CHECK(invoke<int>(*code) == 42);
+}
+
+void testCheckMulArgumentAliasing64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* arg3 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+    // Pretend to use all the args.
+    PatchpointValue* useArgs = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    useArgs->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+    useArgs->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    useArgs->append(ConstrainedValue(arg3, ValueRep::SomeRegister));
+    useArgs->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    // Last use of first arg (here, arg1).
+    CheckValue* checkMul1 = root->appendNew<CheckValue>(proc, CheckMul, Origin(), arg1, arg2);
+    checkMul1->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    // Last use of second arg (here, arg2).
+    CheckValue* checkMul2 = root->appendNew<CheckValue>(proc, CheckMul, Origin(), arg3, arg2);
+    checkMul2->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    // Keep arg3 live.
+    PatchpointValue* keepArg2Live = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    keepArg2Live->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    keepArg2Live->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    // Only use of checkMul1 and checkMul2.
+    CheckValue* checkMul3 = root->appendNew<CheckValue>(proc, CheckMul, Origin(), checkMul1, checkMul2);
+    checkMul3->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), checkMul3);
+
+    CHECK(compileAndRun<int64_t>(proc, 2, 3, 4) == 72);
+}
+
+void testCheckMulArgumentAliasing32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg2 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* arg3 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+
+    // Pretend to use all the args.
+    PatchpointValue* useArgs = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    useArgs->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+    useArgs->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    useArgs->append(ConstrainedValue(arg3, ValueRep::SomeRegister));
+    useArgs->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    // Last use of first arg (here, arg1).
+    CheckValue* checkMul1 = root->appendNew<CheckValue>(proc, CheckMul, Origin(), arg1, arg2);
+    checkMul1->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    // Last use of second arg (here, arg3).
+    CheckValue* checkMul2 = root->appendNew<CheckValue>(proc, CheckMul, Origin(), arg2, arg3);
+    checkMul2->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    // Keep arg3 live.
+    PatchpointValue* keepArg2Live = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    keepArg2Live->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    keepArg2Live->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    // Only use of checkMul1 and checkMul2.
+    CheckValue* checkMul3 = root->appendNew<CheckValue>(proc, CheckMul, Origin(), checkMul1, checkMul2);
+    checkMul3->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), checkMul3);
+
+    CHECK(compileAndRun<int32_t>(proc, 2, 3, 4) == 72);
 }
 
 void testCheckMul64SShr()
@@ -11061,6 +11281,10 @@ void run(const char* filter)
     RUN(testCheckAdd64());
     RUN(testCheckAddFold(100, 200));
     RUN(testCheckAddFoldFail(2147483647, 100));
+    RUN(testCheckAddArgumentAliasing64());
+    RUN(testCheckAddArgumentAliasing32());
+    RUN(testCheckAddSelfOverflow64());
+    RUN(testCheckAddSelfOverflow32());
     RUN(testCheckSubImm());
     RUN(testCheckSubBadImm());
     RUN(testCheckSub());
@@ -11075,6 +11299,8 @@ void run(const char* filter)
     RUN(testCheckMul64());
     RUN(testCheckMulFold(100, 200));
     RUN(testCheckMulFoldFail(2147483647, 100));
+    RUN(testCheckMulArgumentAliasing64());
+    RUN(testCheckMulArgumentAliasing32());
 
     RUN(testCompare(Equal, 42, 42));
     RUN(testCompare(NotEqual, 42, 42));
@@ -11604,6 +11830,7 @@ void run(const char* filter)
     RUN(testSShrShl64(-42000000000, 8, 8));
 
     RUN(testCheckMul64SShr());
+
     RUN(testComputeDivisionMagic<int32_t>(2, -2147483647, 0));
     RUN(testTrivialInfiniteLoop());
     RUN(testFoldPathEqual());

@@ -1,3 +1,187 @@
+2016-02-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] On x86, improve the selection of which value are selected for the UseDef part of commutative operations
+        https://bugs.webkit.org/show_bug.cgi?id=154151
+
+        Reviewed by Filip Pizlo.
+
+        Previously, when an instruction destroy an argument with
+        a UseDef use, we would try to pick a good target for the UseDef
+        while doing instruction selection.
+
+        For example:
+            @x = Add(@1, @2)
+
+        can be lowered to:
+            Move @1 Tmp3
+            Add @2 Tmp3
+        or
+            Move @2 Tmp3
+            Add @1 Tmp3
+
+        The choice of which value ends up copied is done by preferRightForResult()
+        at lowering time.
+
+        There are two common problems with the code we generate:
+        1) It is based on UseCount. If a value is at its last use,
+           it is a good target for coalescing even with a use-count > 1.
+        2) When both values are at their last use, the best choice
+           depends on the register pressure of each. We don't have that information
+           until we do register allocation.
+
+        This patch implements a simple idea to minimize how many of those Moves are needed.
+        Each commutative operation gets a 3 op variant. The register allocator then attempts
+        to alias *both* of them to the destination.
+        Since our aliasing is conservative, it removes as many copy as possible without causing
+        spilling.
+
+        There was an unexpected cool impovement too. If you have:
+            Move Tmp1, Tmp2
+            BranchAdd32 Tmp3, Tmp2
+        we would previously restore Tmp2 by substracting Tmp3 from the result.
+        We can now just use Tmp1. That removes quite a few Sub from the slow paths.
+
+        The problem is that simple idea uncoverred a bunch of issues that had to be fixed too.
+        I detail them inline below.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::and64):
+        * assembler/MacroAssemblerX86Common.h:
+        Most addition are adding an Address version of the 3 operands opcodes.
+        The reason for this is allow the complex addressing forms of instructions
+        when spilling.
+
+        (JSC::MacroAssemblerX86Common::and32):
+        (JSC::MacroAssemblerX86Common::mul32):
+        (JSC::MacroAssemblerX86Common::or32):
+        (JSC::MacroAssemblerX86Common::xor32):
+        (JSC::MacroAssemblerX86Common::moveDouble):
+        This was an unexpected discovery: removing tons of Move32 made floating-point heavy
+        code much slower.
+
+        It turns out the MoveDouble we were using has partial register dependencies.
+
+        The x86 optimization manual, Chapter 3, section 3.4.1.13 lists the move instructions executed
+        directly on the frontend. That's what we use now.
+
+        (JSC::MacroAssemblerX86Common::addDouble):
+        (JSC::MacroAssemblerX86Common::addFloat):
+        (JSC::MacroAssemblerX86Common::mulDouble):
+        (JSC::MacroAssemblerX86Common::mulFloat):
+        (JSC::MacroAssemblerX86Common::andDouble):
+        (JSC::MacroAssemblerX86Common::andFloat):
+        (JSC::MacroAssemblerX86Common::xorDouble):
+        (JSC::MacroAssemblerX86Common::xorFloat):
+        If the destination is not aliased, the version taking an address
+        use LoadFloat/LoadDouble instead of direct addressing.
+
+        That is because this:
+            Move Tmp1, Tmp2
+            Op [Tmp3], Tmp2
+        is slower than
+            Move [Tmp3] Tmp2
+            Op Tmp1, Tmp2
+        (sometimes significantly).
+
+        I am not exactly sure why.
+
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::and64):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::and64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::and32):
+        (JSC::MacroAssemblerX86Common::mul32):
+        (JSC::MacroAssemblerX86Common::or32):
+        (JSC::MacroAssemblerX86Common::xor32):
+        (JSC::MacroAssemblerX86Common::moveDouble):
+        (JSC::MacroAssemblerX86Common::addDouble):
+        (JSC::MacroAssemblerX86Common::addFloat):
+        (JSC::MacroAssemblerX86Common::mulDouble):
+        (JSC::MacroAssemblerX86Common::mulFloat):
+        (JSC::MacroAssemblerX86Common::andDouble):
+        (JSC::MacroAssemblerX86Common::andFloat):
+        (JSC::MacroAssemblerX86Common::xorDouble):
+        (JSC::MacroAssemblerX86Common::xorFloat):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::and64):
+        (JSC::MacroAssemblerX86_64::mul64):
+        (JSC::MacroAssemblerX86_64::xor64):
+        (JSC::MacroAssemblerX86_64::branchAdd64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movapd_rr):
+        (JSC::X86Assembler::movaps_rr):
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::shouldTryAliasingDef):
+        (JSC::B3::CheckSpecial::generate):
+        * b3/B3CheckSpecial.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::shouldTryAliasingDef):
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::shouldTryAliasingDef):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        Aliasing the operands is done the same way as any coalescing.
+
+        There were problem with considering all those coalescing
+        as equivalent for the result.
+
+        Moves are mostly generated for Upsilon-Phis. Getting rid of
+        those tends to give better loops.
+
+        Sometimes, blocks have only Phis and a Jump. Coalescing
+        those moves gets rids of the block entirely.
+
+        Where it go interesting was that something like:
+            Move Tmp1, Tmp2
+            Op Tmp3, Tmp2
+        was significantly better than:
+            Op Tmp1, Tmp3
+            Move Tmp1, Tmp4
+        even in the same basic block.
+
+        To get back to the same performance when, I had to prioritize
+        regular Moves operations over argument coalescing.
+
+        Another argument for doing this is that the alias has a shorter
+        life in the hardware because the operation itself gets a new
+        virtual register from the bank.
+
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirSpecial.cpp:
+        (JSC::B3::Air::Special::shouldTryAliasingDef):
+        * b3/air/AirSpecial.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testCheckAddArgumentAliasing64):
+        (JSC::B3::testCheckAddArgumentAliasing32):
+        (JSC::B3::testCheckAddSelfOverflow64):
+        (JSC::B3::testCheckAddSelfOverflow32):
+        (JSC::B3::testCheckMulArgumentAliasing64):
+        (JSC::B3::testCheckMulArgumentAliasing32):
+        (JSC::B3::run):
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveOrCopyCalleeSavesFor):
+        This ruined my week.
+
+        When regenerating the frame of an inlined function that
+        was called through a tail call, we were ignoring r13 for some reason.
+
+        Since this patch makes it more likely to increase the degree
+        of each Tmp, the number of register used increased and r13 was more
+        commonly used.
+
+        When getting out of OSRExit, we would have that value trashed :(
+
+        The fix is simply to restore it like the other two Baseline callee saved
+        register.
+
 2016-02-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement @@search

@@ -80,6 +80,11 @@ struct PatchCustom {
         return inst.args[0].special()->admitsStack(inst, argIndex);
     }
 
+    static bool shouldTryAliasingDef(Inst& inst, unsigned& defIndex)
+    {
+        return inst.args[0].special()->shouldTryAliasingDef(inst, defIndex);
+    }
+
     static bool hasNonArgNonControlEffects(Inst& inst)
     {
         return inst.args[0].special()->hasNonArgNonControlEffects();
