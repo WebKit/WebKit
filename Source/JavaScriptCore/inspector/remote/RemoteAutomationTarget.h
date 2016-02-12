@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,15 +39,15 @@ class JS_EXPORT_PRIVATE RemoteAutomationTarget : public RemoteControllableTarget
 public:
     virtual ~RemoteAutomationTarget() { }
 
-    bool automationAllowed() const { return m_allowed; }
-    void setAutomationAllowed(bool);
+    bool isPaired() const { return m_paired; }
+    void setIsPaired(bool);
 
     virtual String name() const = 0;
     virtual RemoteControllableTarget::Type type() const override { return RemoteControllableTarget::Type::Automation; }
-    virtual bool remoteControlAllowed() const override { return automationAllowed(); };
+    virtual bool remoteControlAllowed() const override { return !m_paired; };
 
 private:
-    bool m_allowed { false };
+    bool m_paired { false };
 };
 
 } // namespace Inspector

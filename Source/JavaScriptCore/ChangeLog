@@ -1,3 +1,27 @@
+2016-02-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RemoteInspector's listings should include whether an AutomationTarget is paired
+        https://bugs.webkit.org/show_bug.cgi?id=154077
+        <rdar://problem/24589133>
+
+        Reviewed by Joseph Pecoraro.
+
+        Instead of not generating a listing for the target when it is occupied,
+        generate the listing with a 'paired' flag. The old flag was redundant
+        because a _WKAutomationDelegate will not create a session if it doesn't
+        support automation or it already has an active session.
+
+        * inspector/remote/RemoteAutomationTarget.cpp:
+        (Inspector::RemoteAutomationTarget::setIsPaired):
+        (Inspector::RemoteAutomationTarget::setAutomationAllowed): Deleted.
+        * inspector/remote/RemoteAutomationTarget.h:
+        Return false for remoteControlAllowed() if the target is already paired.
+        This function is used by RemoteInspector to deny incoming connections.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::listingForAutomationTarget):
+        * inspector/remote/RemoteInspectorConstants.h:
+
 2016-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::ByteCodeParser needs to null check the result of presenceLike()

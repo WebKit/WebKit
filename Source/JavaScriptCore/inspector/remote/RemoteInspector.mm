@@ -525,13 +525,11 @@ RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const Remote
     // implemented by non-threadsafe JSC / WebCore classes such as JSGlobalObject or WebCore::Page.
     ASSERT(isMainThread());
 
-    if (!target.automationAllowed())
-        return nil;
-
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
     [listing setObject:@(target.identifier()) forKey:WIRPageIdentifierKey];
     [listing setObject:target.name() forKey:WIRTitleKey];
     [listing setObject:WIRTypeAutomation forKey:WIRTypeKey];
+    [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
 
     if (auto connection = m_connectionMap.get(target.identifier()))
         [listing setObject:connection->connectionIdentifier() forKey:WIRConnectionIdentifierKey];

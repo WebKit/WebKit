@@ -82,6 +82,8 @@
 #define WIRAutomaticInspectionRejectMessage        @"WIRAutomaticInspectionRejectMessage"
 #define WIRAutomaticInspectionCandidateMessage     @"WIRAutomaticInspectionCandidateMessage"
 
+#define WIRAutomationTargetIsPairedKey             @"WIRAutomationTargetIsPairedKey"
+
 // These definitions are shared with a Simulator webinspectord and
 // OS X process communicating with it.
 
