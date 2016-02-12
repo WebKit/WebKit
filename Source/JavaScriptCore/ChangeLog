@@ -1,3 +1,43 @@
+2016-02-12  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Update ICU header files to version 52
+        https://bugs.webkit.org/show_bug.cgi?id=154160
+
+        Reviewed by Alex Christensen.
+
+        Update ICU header files to version 52 to allow the use of newer APIs.
+
+        * icu/unicode/localpointer.h:
+        * icu/unicode/platform.h:
+        * icu/unicode/ptypes.h:
+        * icu/unicode/putil.h:
+        * icu/unicode/ucal.h:
+        * icu/unicode/uchar.h:
+        * icu/unicode/ucnv.h:
+        * icu/unicode/ucol.h:
+        * icu/unicode/uconfig.h:
+        * icu/unicode/udat.h:
+        * icu/unicode/udatpg.h:
+        * icu/unicode/udisplaycontext.h: Added.
+        * icu/unicode/uenum.h:
+        * icu/unicode/uformattable.h: Added.
+        * icu/unicode/uiter.h:
+        * icu/unicode/uloc.h:
+        * icu/unicode/umachine.h:
+        * icu/unicode/unorm2.h:
+        * icu/unicode/unum.h:
+        * icu/unicode/urename.h:
+        * icu/unicode/uscript.h:
+        * icu/unicode/uset.h:
+        * icu/unicode/ustring.h:
+        * icu/unicode/utf.h:
+        * icu/unicode/utf16.h:
+        * icu/unicode/utf8.h:
+        * icu/unicode/utf_old.h:
+        * icu/unicode/utypes.h:
+        * icu/unicode/uvernum.h:
+        * icu/unicode/uversion.h:
+
 2016-02-12  Filip Pizlo  <fpizlo@apple.com>
 
         Fast path in JSObject::defineOwnIndexedProperty() forgets to check for the posibility of a descriptor that doesn't have a value

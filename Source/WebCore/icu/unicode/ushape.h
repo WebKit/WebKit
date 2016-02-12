@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 2000-2010, International Business Machines
+*   Copyright (C) 2000-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -461,14 +461,14 @@ u_shapeArabic(const UChar *source, int32_t sourceLength,
  * Shaping Mode: Only shaping.
  * De-shaping Mode: N/A.
  * Affects: All Seen options
- * @draft ICU 4.2
+ * @stable ICU 4.8
  */
-#define SHAPE_TAIL_NEW_UNICODE        0x8000000
+#define U_SHAPE_TAIL_NEW_UNICODE        0x8000000
 
 /**
  * Bit mask for new Unicode Tail option 
- * @draft ICU 4.2
+ * @stable ICU 4.8
  */
-#define SHAPE_TAIL_TYPE_MASK          0x8000000
+#define U_SHAPE_TAIL_TYPE_MASK          0x8000000
 
 #endif

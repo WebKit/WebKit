@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2002-2010, International Business Machines
+*   Copyright (C) 2002-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -89,13 +89,7 @@ enum {
      * of each existing element in the set.
      * @stable ICU 3.2
      */
-    USET_ADD_CASE_MAPPINGS = 4,
-    
-    /**
-     * Enough for any single-code point set
-     * @internal
-     */
-    USET_SERIALIZED_STATIC_ARRAY_CAPACITY=8
+    USET_ADD_CASE_MAPPINGS = 4
 };
 
 /**
@@ -207,6 +201,16 @@ typedef enum USetSpanCondition {
     USET_SPAN_CONDITION_COUNT
 } USetSpanCondition;
 
+enum {
+    /**
+     * Capacity of USerializedSet::staticArray.
+     * Enough for any single-code point set.
+     * Also provides padding for nice sizeof(USerializedSet).
+     * @stable ICU 2.4
+     */
+    USET_SERIALIZED_STATIC_ARRAY_CAPACITY=8
+};
+
 /**
  * A serialized form of a Unicode set.  Limited manipulations are
  * possible directly on a serialized set.  See below.
@@ -247,7 +251,7 @@ typedef struct USerializedSet {
  * @stable ICU 4.2
  */
 U_STABLE USet* U_EXPORT2
-uset_openEmpty();
+uset_openEmpty(void);
 
 /**
  * Creates a USet object that contains the range of characters

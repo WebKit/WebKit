@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 2001-2009, International Business Machines
+*   Copyright (C) 2001-2011, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *
@@ -27,13 +27,15 @@
  */
 #define UCOL_NULLORDER        ((int32_t)0xFFFFFFFF)
 
-/**  
+#ifndef U_HIDE_INTERNAL_API
+/**
  * This indicates an error has occured during processing or there are no more CEs 
  * to be returned.
  *
  * @internal
  */
 #define UCOL_PROCESSED_NULLORDER        ((int64_t)U_INT64_MAX)
+#endif  /* U_HIDE_INTERNAL_API */
 
 #include "unicode/ucol.h"
 
@@ -153,6 +155,7 @@ ucol_closeElements(UCollationElements *elems);
 U_STABLE void U_EXPORT2 
 ucol_reset(UCollationElements *elems);
 
+#ifndef U_HIDE_INTERNAL_API
 /**
  * Set the collation elements to use implicit ordering for Han
  * even if they've been tailored. This will also force Hangul
@@ -166,6 +169,7 @@ ucol_reset(UCollationElements *elems);
  */
 U_INTERNAL void U_EXPORT2
 ucol_forceHanImplicit(UCollationElements *elems, UErrorCode *status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 /**
  * Get the ordering priority of the next collation element in the text.
@@ -198,6 +202,7 @@ ucol_next(UCollationElements *elems, UErrorCode *status);
 U_STABLE int32_t U_EXPORT2 
 ucol_previous(UCollationElements *elems, UErrorCode *status);
 
+#ifndef U_HIDE_INTERNAL_API
 /**
  * Get the processed ordering priority of the next collation element in the text.
  * A single character may contain more than one collation element.
@@ -236,6 +241,7 @@ ucol_nextProcessed(UCollationElements *elems, int32_t *ixLow, int32_t *ixHigh, U
  */
 U_INTERNAL int64_t U_EXPORT2
 ucol_previousProcessed(UCollationElements *elems, int32_t *ixLow, int32_t *ixHigh, UErrorCode *status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 /**
  * Get the maximum length of any expansion sequences that end with the 

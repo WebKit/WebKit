@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1999-2010, International Business Machines
+*   Copyright (C) 1999-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -41,35 +41,13 @@
 /* which are contained in the platform-specific file platform.h             */
 /*==========================================================================*/
 
-#if defined(U_PALMOS)
-#   include "unicode/ppalmos.h"
-#elif !defined(__MINGW32__) && (defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64))
-#ifdef CYGWINMSVC
-#   include "unicode/platform.h"
-#endif
-#   include "unicode/pwin32.h"
-#else
-#   include "unicode/ptypes.h" /* platform.h is included in ptypes.h */
-#endif
+#include "unicode/ptypes.h" /* platform.h is included in ptypes.h */
 
 /*
  * ANSI C headers:
  * stddef.h defines wchar_t
  */
 #include <stddef.h>
-
-/*==========================================================================*/
-/* XP_CPLUSPLUS is a cross-platform symbol which should be defined when     */
-/* using C++.  It should not be defined when compiling under C.             */
-/*==========================================================================*/
-
-#ifdef __cplusplus
-#   ifndef XP_CPLUSPLUS
-#       define XP_CPLUSPLUS
-#   endif
-#else
-#   undef XP_CPLUSPLUS
-#endif
 
 /*==========================================================================*/
 /* For C wrappers, we use the symbol U_STABLE.                                */
@@ -95,7 +73,7 @@
  * @stable ICU 2.4
  */
 
-#ifdef XP_CPLUSPLUS
+#ifdef __cplusplus
 #   define U_CFUNC extern "C"
 #   define U_CDECL_BEGIN extern "C" {
 #   define U_CDECL_END   }
@@ -105,23 +83,26 @@
 #   define U_CDECL_END
 #endif
 
+#ifndef U_ATTRIBUTE_DEPRECATED
 /**
  * \def U_ATTRIBUTE_DEPRECATED
  *  This is used for GCC specific attributes
  * @internal
  */
-#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 2))
+#if U_GCC_MAJOR_MINOR >= 302
 #    define U_ATTRIBUTE_DEPRECATED __attribute__ ((deprecated))
 /**
  * \def U_ATTRIBUTE_DEPRECATED
  * This is used for Visual C++ specific attributes 
  * @internal
  */
-#elif defined(U_WINDOWS) && defined(_MSC_VER) && (_MSC_VER >= 1400)
+#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
 #    define U_ATTRIBUTE_DEPRECATED __declspec(deprecated)
 #else
 #    define U_ATTRIBUTE_DEPRECATED
 #endif
+#endif
+
 /** This is used to declare a function as a public ICU C API @stable ICU 2.0*/
 #define U_CAPI U_CFUNC U_EXPORT
 /** This is used to declare a function as a stable public ICU C API*/
@@ -234,27 +215,6 @@ typedef int8_t UBool;
 
 /* wchar_t-related definitions -------------------------------------------- */
 
-/**
- * \def U_HAVE_WCHAR_H
- * Indicates whether <wchar.h> is available (1) or not (0). Set to 1 by default.
- *
- * @stable ICU 2.0
- */
-#ifndef U_HAVE_WCHAR_H
-#   define U_HAVE_WCHAR_H 1
-#endif
-
-/**
- * \def U_SIZEOF_WCHAR_T
- * U_SIZEOF_WCHAR_T==sizeof(wchar_t) (0 means it is not defined or autoconf could not set it)
- *
- * @stable ICU 2.0
- */
-#if U_SIZEOF_WCHAR_T==0
-#   undef U_SIZEOF_WCHAR_T
-#   define U_SIZEOF_WCHAR_T 4
-#endif
-
 /*
  * \def U_WCHAR_IS_UTF16
  * Defined if wchar_t uses UTF-16.
@@ -275,14 +235,16 @@ typedef int8_t UBool;
 #           define  U_WCHAR_IS_UTF32
 #       endif
 #   elif defined __UCS2__
-#       if (__OS390__ || __OS400__) && (U_SIZEOF_WCHAR_T==2)
+#       if (U_PF_OS390 <= U_PLATFORM && U_PLATFORM <= U_PF_OS400) && (U_SIZEOF_WCHAR_T==2)
 #           define U_WCHAR_IS_UTF16
 #       endif
-#   elif defined __UCS4__
+#   elif defined(__UCS4__) || (U_PLATFORM == U_PF_OS400 && defined(__UTF32__))
 #       if (U_SIZEOF_WCHAR_T==4)
 #           define U_WCHAR_IS_UTF32
 #       endif
-#   elif defined(U_WINDOWS)
+#   elif U_PLATFORM_IS_DARWIN_BASED || (U_SIZEOF_WCHAR_T==4 && U_PLATFORM_IS_LINUX_BASED)
+#       define U_WCHAR_IS_UTF32
+#   elif U_PLATFORM_HAS_WIN32_API
 #       define U_WCHAR_IS_UTF16
 #   endif
 #endif
@@ -294,24 +256,24 @@ typedef int8_t UBool;
 
 /**
  * \var UChar
- * Define UChar to be wchar_t if that is 16 bits wide; always assumed to be unsigned.
- * If wchar_t is not 16 bits wide, then define UChar to be uint16_t or char16_t because GCC >=4.4
- * can handle UTF16 string literals.
+ * Define UChar to be UCHAR_TYPE, if that is #defined (for example, to char16_t),
+ * or wchar_t if that is 16 bits wide; always assumed to be unsigned.
+ * If neither is available, then define UChar to be uint16_t.
+ *
  * This makes the definition of UChar platform-dependent
  * but allows direct string type compatibility with platforms with
  * 16-bit wchar_t types.
  *
- * @draft ICU 4.4
+ * @stable ICU 4.4
  */
-
-/* Define UChar to be compatible with wchar_t if possible. */
-#if U_SIZEOF_WCHAR_T==2
+#if defined(UCHAR_TYPE)
+    typedef UCHAR_TYPE UChar;
+/* Not #elif U_HAVE_CHAR16_T -- because that is type-incompatible with pre-C++11 callers
+    typedef char16_t UChar;  */
+#elif U_SIZEOF_WCHAR_T==2
     typedef wchar_t UChar;
-#elif U_GNUC_UTF16_STRING
-#if defined _GCC_
-    typedef __CHAR16_TYPE__ char16_t;
-#endif
-    typedef char16_t UChar;
+#elif defined(__CHAR16_TYPE__)
+    typedef __CHAR16_TYPE__ UChar;
 #else
     typedef uint16_t UChar;
 #endif
@@ -335,39 +297,25 @@ typedef int8_t UBool;
  */
 typedef int32_t UChar32;
 
-/*==========================================================================*/
-/* U_INLINE and U_ALIGN_CODE   Set default values if these are not already  */
-/*                             defined.  Definitions normally are in        */
-/*                             platform.h or the corresponding file for     */
-/*                             the OS in use.                               */
-/*==========================================================================*/
-
-#ifndef U_HIDE_INTERNAL_API
-
 /**
- * \def U_ALIGN_CODE
- * This is used to align code fragments to a specific byte boundary.
- * This is useful for getting consistent performance test results.
- * @internal
+ * This value is intended for sentinel values for APIs that
+ * (take or) return single code points (UChar32).
+ * It is outside of the Unicode code point range 0..0x10ffff.
+ * 
+ * For example, a "done" or "error" value in a new API
+ * could be indicated with U_SENTINEL.
+ *
+ * ICU APIs designed before ICU 2.4 usually define service-specific "done"
+ * values, mostly 0xffff.
+ * Those may need to be distinguished from
+ * actual U+ffff text contents by calling functions like
+ * CharacterIterator::hasNext() or UnicodeString::length().
+ *
+ * @return -1
+ * @see UChar32
+ * @stable ICU 2.4
  */
-#ifndef U_ALIGN_CODE
-#   define U_ALIGN_CODE(n)
-#endif
-
-#endif /* U_HIDE_INTERNAL_API */
-
-/**
- * \def U_INLINE
- * This is used to request inlining of a function, on platforms and languages which support it.
- */
- 
-#ifndef U_INLINE
-#   ifdef XP_CPLUSPLUS
-#       define U_INLINE inline
-#   else
-#       define U_INLINE
-#   endif
-#endif
+#define U_SENTINEL (-1)
 
 #include "unicode/urename.h"
 

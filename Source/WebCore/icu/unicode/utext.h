@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2004-2010, International Business Machines
+*   Copyright (C) 2004-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -257,7 +257,7 @@ utext_openUChars(UText *ut, const UChar *s, int64_t length, UErrorCode *status);
  * @stable ICU 3.4
  */
 U_STABLE UText * U_EXPORT2
-utext_openUnicodeString(UText *ut, U_NAMESPACE_QUALIFIER UnicodeString *s, UErrorCode *status);
+utext_openUnicodeString(UText *ut, icu::UnicodeString *s, UErrorCode *status);
 
 
 /**
@@ -273,7 +273,7 @@ utext_openUnicodeString(UText *ut, U_NAMESPACE_QUALIFIER UnicodeString *s, UErro
  * @stable ICU 3.4
  */
 U_STABLE UText * U_EXPORT2
-utext_openConstUnicodeString(UText *ut, const U_NAMESPACE_QUALIFIER UnicodeString *s, UErrorCode *status);
+utext_openConstUnicodeString(UText *ut, const icu::UnicodeString *s, UErrorCode *status);
 
 
 /**
@@ -289,7 +289,7 @@ utext_openConstUnicodeString(UText *ut, const U_NAMESPACE_QUALIFIER UnicodeStrin
  * @stable ICU 3.4
  */
 U_STABLE UText * U_EXPORT2
-utext_openReplaceable(UText *ut, U_NAMESPACE_QUALIFIER Replaceable *rep, UErrorCode *status);
+utext_openReplaceable(UText *ut, icu::Replaceable *rep, UErrorCode *status);
 
 /**
  * Open a  UText implementation over an ICU CharacterIterator.
@@ -304,7 +304,7 @@ utext_openReplaceable(UText *ut, U_NAMESPACE_QUALIFIER Replaceable *rep, UErrorC
  * @stable ICU 3.4
  */
 U_STABLE UText * U_EXPORT2
-utext_openCharacterIterator(UText *ut, U_NAMESPACE_QUALIFIER CharacterIterator *ic, UErrorCode *status);
+utext_openCharacterIterator(UText *ut, icu::CharacterIterator *ci, UErrorCode *status);
 
 #endif
 
@@ -675,147 +675,6 @@ utext_extract(UText *ut,
              UErrorCode *status);
 
 
-/**
- * Compare two UTexts (binary order). The comparison begins at each source text's
- * iteration position. The iteration position of each UText will be left following
- * the last character compared.
- *
- * The comparison is done in code point order; unlike u_strCompare, you
- * cannot choose to use code unit order. This is because the characters
- * in a UText are accessed one code point at a time, and may not be from a UTF-16
- * context.
- *
- * This functions works with strings of different explicitly specified lengths
- * unlike the ANSI C-like u_strcmp() and u_memcmp() etc.
- * A length argument of -1 signifies that as much of the string should be used as
- * is necessary to compare with the other string. If both length arguments are -1,
- * the entire remaining portionss of both strings are used.
- *
- * @param s1 First source string.
- * @param length1 Length of first source string in UTF-32 code points.
- *
- * @param s2 Second source string.
- * @param length2 Length of second source string in UTF-32 code points.
- *
- * @return <0 or 0 or >0 as usual for string comparisons
- *
- * @internal ICU 4.4 technology preview
- */
-U_INTERNAL int32_t U_EXPORT2
-utext_compare(UText *s1, int32_t length1,
-              UText *s2, int32_t length2);    
-
-/**
- * Compare two UTexts (binary order). The comparison begins at each source text's
- * iteration position. The iteration position of each UText will be left following
- * the last character compared. This method differs from utext_compare in that
- * it accepts native limits rather than lengths for each string.
- *
- * The comparison is done in code point order; unlike u_strCompare, you
- * cannot choose to use code unit order. This is because the characters
- * in a UText are accessed one code point at a time, and may not be from a UTF-16
- * context.
- *
- * This functions works with strings of different explicitly specified lengths
- * unlike the ANSI C-like u_strcmp() and u_memcmp() etc.
- * A limit argument of -1 signifies that as much of the string should be used as
- * is necessary to compare with the other string. If both limit arguments are -1,
- * the entire remaining portionss of both strings are used.
- *
- * @param s1 First source string.
- * @param limit1 Native index of the last character in the first source string to be considered.
- *
- * @param s2 Second source string.
- * @param limit2 Native index of the last character in the second source string to be considered.
- *
- * @return <0 or 0 or >0 as usual for string comparisons
- *
- * @internal ICU 4.4 technology preview
- */
-U_INTERNAL int32_t U_EXPORT2
-utext_compareNativeLimit(UText *s1, int64_t limit1,
-                         UText *s2, int64_t limit2);    
-
-/**
- * Compare two UTexts case-insensitively using full case folding. The comparison
- * begins at each source text's iteration position. The iteration position of each
- * UText will be left following the last character compared.
- *
- * The comparison is done in code point order; this is because the characters
- * in a UText are accessed one code point at a time, and may not be from a UTF-16
- * context.
- *
- * This functions works with strings of different explicitly specified lengths
- * unlike the ANSI C-like u_strcmp() and u_memcmp() etc.
- * A length argument of -1 signifies that as much of the string should be used as
- * is necessary to compare with the other string. If both length arguments are -1,
- * the entire remaining portionss of both strings are used.
- *
- * @param s1 First source string.
- * @param length1 Length of first source string in UTF-32 code points.
- *
- * @param s2 Second source string.
- * @param length2 Length of second source string in UTF-32 code points.
- *
- * @param options A bit set of options:
- *   - U_FOLD_CASE_DEFAULT or 0 is used for default options:
- *     Comparison in code point order with default case folding.
- *
- *   - U_FOLD_CASE_EXCLUDE_SPECIAL_I
- *
- * @param pErrorCode Must be a valid pointer to an error code value,
- *                  which must not indicate a failure before the function call.
- *
- * @return <0 or 0 or >0 as usual for string comparisons
- *
- * @internal ICU 4.4 technology preview
- */
-U_INTERNAL int32_t U_EXPORT2
-utext_caseCompare(UText *s1, int32_t length1,
-                  UText *s2, int32_t length2,
-                  uint32_t options, UErrorCode *pErrorCode);    
-
-/**
- * Compare two UTexts case-insensitively using full case folding. The comparison
- * begins at each source text's iteration position. The iteration position of each
- * UText will be left following the last character compared. This method differs from
- * utext_caseCompare in that it accepts native limits rather than lengths for each
- * string.
- *
- * The comparison is done in code point order; this is because the characters
- * in a UText are accessed one code point at a time, and may not be from a UTF-16
- * context.
- *
- * This functions works with strings of different explicitly specified lengths
- * unlike the ANSI C-like u_strcmp() and u_memcmp() etc.
- * A limit argument of -1 signifies that as much of the string should be used as
- * is necessary to compare with the other string. If both length arguments are -1,
- * the entire remaining portionss of both strings are used.
- *
- * @param s1 First source string.
- * @param limit1 Native index of the last character in the first source string to be considered.
- *
- * @param s2 Second source string.
- * @param limit2 Native index of the last character in the second source string to be considered.
- *
- * @param options A bit set of options:
- *   - U_FOLD_CASE_DEFAULT or 0 is used for default options:
- *     Comparison in code point order with default case folding.
- *
- *   - U_FOLD_CASE_EXCLUDE_SPECIAL_I
- *
- * @param pErrorCode Must be a valid pointer to an error code value,
- *                  which must not indicate a failure before the function call.
- *
- * @return <0 or 0 or >0 as usual for string comparisons
- *
- * @internal ICU 4.4 technology preview
- */
-U_INTERNAL int32_t U_EXPORT2
-utext_caseCompareNativeLimit(UText *s1, int64_t limit1,
-                             UText *s2, int64_t limit2,
-                             uint32_t options, UErrorCode *pErrorCode);    
-
 
 /************************************************************************************
  *
@@ -832,6 +691,7 @@ utext_caseCompareNativeLimit(UText *s1, int64_t limit1,
  *
  ************************************************************************************/
 
+#ifndef U_HIDE_INTERNAL_API
 /**
  * inline version of utext_current32(), for performance-critical situations.
  *
@@ -844,6 +704,7 @@ utext_caseCompareNativeLimit(UText *s1, int64_t limit1,
 #define UTEXT_CURRENT32(ut)  \
     ((ut)->chunkOffset < (ut)->chunkLength && ((ut)->chunkContents)[(ut)->chunkOffset]<0xd800 ? \
     ((ut)->chunkContents)[((ut)->chunkOffset)] : utext_current32(ut))
+#endif  /* U_HIDE_INTERNAL_API */
 
 /**
  * inline version of utext_next32(), for performance-critical situations.
@@ -1692,6 +1553,7 @@ struct UText {
 U_STABLE UText * U_EXPORT2
 utext_setup(UText *ut, int32_t extraSpace, UErrorCode *status);
 
+#ifndef U_HIDE_INTERNAL_API
 /**
   * @internal
   *  Value used to help identify correctly initialized UText structs.
@@ -1700,6 +1562,7 @@ utext_setup(UText *ut, int32_t extraSpace, UErrorCode *status);
 enum {
     UTEXT_MAGIC = 0x345ad82c
 };
+#endif  /* U_HIDE_INTERNAL_API */
 
 /**
  * initializer to be used with local (stack) instances of a UText

@@ -1,3 +1,58 @@
+2016-02-12  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Update ICU header files to version 52
+        https://bugs.webkit.org/show_bug.cgi?id=154160
+
+        Reviewed by Alex Christensen.
+
+        Update ICU header files to version 52 to allow the use of newer APIs.
+
+        * icu/unicode/bytestream.h:
+        * icu/unicode/localpointer.h:
+        * icu/unicode/platform.h:
+        * icu/unicode/ptypes.h:
+        * icu/unicode/putil.h:
+        * icu/unicode/rep.h:
+        (Replaceable::Replaceable):
+        * icu/unicode/std_string.h:
+        * icu/unicode/strenum.h:
+        * icu/unicode/stringpiece.h:
+        * icu/unicode/uchar.h:
+        * icu/unicode/ucnv.h:
+        * icu/unicode/ucol.h:
+        * icu/unicode/uconfig.h:
+        * icu/unicode/uenum.h:
+        * icu/unicode/uiter.h:
+        * icu/unicode/uloc.h:
+        * icu/unicode/umachine.h:
+        * icu/unicode/unistr.h:
+        (UnicodeString::UnicodeString):
+        (UnicodeString::operator== ):
+        (UnicodeString::startsWith):
+        (UnicodeString::setTo):
+        (UnicodeString::remove):
+        (UnicodeString::replace): Deleted.
+        (UnicodeString::extract): Deleted.
+        (UnicodeString::char32At): Deleted.
+        (UnicodeString::getChar32Start): Deleted.
+        (UnicodeString::getChar32Limit): Deleted.
+        (UnicodeString::getTerminatedBuffer): Deleted.
+        (UnicodeString::append): Deleted.
+        (UnicodeString::truncate): Deleted.
+        * icu/unicode/unorm2.h:
+        * icu/unicode/uobject.h:
+        * icu/unicode/urename.h:
+        * icu/unicode/uscript.h:
+        * icu/unicode/uset.h:
+        * icu/unicode/ustring.h:
+        * icu/unicode/utf.h:
+        * icu/unicode/utf16.h:
+        * icu/unicode/utf8.h:
+        * icu/unicode/utf_old.h:
+        * icu/unicode/utypes.h:
+        * icu/unicode/uvernum.h:
+        * icu/unicode/uversion.h:
+
 2016-02-11  Mark Lam  <mark.lam@apple.com>
 
         Need WTFCrash workaround for shipping SafariForWebKitDevelopment binaries.

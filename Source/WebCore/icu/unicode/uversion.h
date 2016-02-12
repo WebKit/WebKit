@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 2000-2010, International Business Machines
+*   Copyright (C) 2000-2011, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *
@@ -67,7 +67,8 @@ typedef uint8_t UVersionInfo[U_MAX_VERSION_LENGTH];
  * When compiling for C++, it begins an extern "C++" linkage block (to protect
  * against cases in which an external client includes ICU header files inside
  * an extern "C" linkage block).
- * If the C++ compiler supports namespaces, it also begins a namespace block.
+ *
+ * It also begins a versioned-ICU-namespace block.
  * @stable ICU 2.4
  */
 
@@ -77,8 +78,8 @@ typedef uint8_t UVersionInfo[U_MAX_VERSION_LENGTH];
  * When not compiling for C++, it does nothing.
  * When compiling for C++, it ends the extern "C++" block begun by
  * U_NAMESPACE_BEGIN.
- * If the C++ compiler supports namespaces, it also ends the namespace block
- * begun by U_NAMESPACE_BEGIN.
+ *
+ * It also ends the versioned-ICU-namespace block begun by U_NAMESPACE_BEGIN.
  * @stable ICU 2.4
  */
 
@@ -86,7 +87,9 @@ typedef uint8_t UVersionInfo[U_MAX_VERSION_LENGTH];
  * \def U_NAMESPACE_USE
  * This is used to specify that the rest of the code uses the
  * public ICU C++ API namespace.
- * If the compiler doesn't support namespaces, this does nothing.
+ * This is invoked by default; we recommend that you turn it off:
+ * See the "Recommended Build Options" section of the ICU4C readme
+ * (http://source.icu-project.org/repos/icu/icu/trunk/readme.html#RecBuild)
  * @stable ICU 2.4
  */
 
@@ -94,13 +97,14 @@ typedef uint8_t UVersionInfo[U_MAX_VERSION_LENGTH];
  * \def U_NAMESPACE_QUALIFIER
  * This is used to qualify that a function or class is part of
  * the public ICU C++ API namespace.
- * If the compiler doesn't support namespaces, this does nothing.
+ *
+ * This macro is unnecessary since ICU 49 requires namespace support.
+ * You can just use "icu::" instead.
  * @stable ICU 2.4
  */
 
 /* Define namespace symbols if the compiler supports it. */
-#ifdef XP_CPLUSPLUS
-#if U_HAVE_NAMESPACE
+#ifdef __cplusplus
 #   if U_DISABLE_RENAMING
 #       define U_ICU_NAMESPACE icu
         namespace U_ICU_NAMESPACE { }
@@ -121,12 +125,6 @@ typedef uint8_t UVersionInfo[U_MAX_VERSION_LENGTH];
 #   if U_USING_ICU_NAMESPACE
         U_NAMESPACE_USE
 #   endif
-#else
-#   define U_NAMESPACE_BEGIN extern "C++" {
-#   define U_NAMESPACE_END }
-#   define U_NAMESPACE_USE
-#   define U_NAMESPACE_QUALIFIER
-#endif
 #else
 #   define U_NAMESPACE_BEGIN
 #   define U_NAMESPACE_END
@@ -180,7 +178,7 @@ u_versionFromUString(UVersionInfo versionArray, const UChar *versionString);
  * @stable ICU 2.4
  */
 U_STABLE void U_EXPORT2
-u_versionToString(UVersionInfo versionArray, char *versionString);
+u_versionToString(const UVersionInfo versionArray, char *versionString);
 
 /**
  * Gets the ICU release version.  The version array stores the version information

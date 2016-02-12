@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2007-2010, International Business Machines
+*   Copyright (C) 2007-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -23,7 +23,7 @@
 
 /**
  * \file
- * \brief C API: Wrapper for DateTimePatternGenerator (unicode/dtptngen.h).
+ * \brief C API: Wrapper for icu::DateTimePatternGenerator (unicode/dtptngen.h).
  *
  * UDateTimePatternGenerator provides flexible generation of date format patterns, 
  * like "yy-MM-dd". The user can build up the generator by adding successive 
@@ -99,10 +99,12 @@ typedef enum UDateTimePatternMatchOptions {
     UDATPG_MATCH_NO_OPTIONS = 0,
     /** @stable ICU 4.4 */
     UDATPG_MATCH_HOUR_FIELD_LENGTH = 1 << UDATPG_HOUR_FIELD,
+#ifndef U_HIDE_INTERNAL_API
     /** @internal ICU 4.4 */
     UDATPG_MATCH_MINUTE_FIELD_LENGTH = 1 << UDATPG_MINUTE_FIELD,
     /** @internal ICU 4.4 */
     UDATPG_MATCH_SECOND_FIELD_LENGTH = 1 << UDATPG_SECOND_FIELD,
+#endif  /* U_HIDE_INTERNAL_API */
     /** @stable ICU 4.4 */
     UDATPG_MATCH_ALL_FIELDS_LENGTH = (1 << UDATPG_FIELD_COUNT) - 1
 } UDateTimePatternMatchOptions;

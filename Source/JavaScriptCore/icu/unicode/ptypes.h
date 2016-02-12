@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2010, International Business Machines
+*   Copyright (C) 1997-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -17,40 +17,69 @@
 ******************************************************************************
 */
 
+/**
+ * \file
+ * \brief C API: Definitions of integer types of various widths
+ */
+
 #ifndef _PTYPES_H
 #define _PTYPES_H
 
-#include <sys/types.h>
+/**
+ * \def __STDC_LIMIT_MACROS
+ * According to the Linux stdint.h, the ISO C99 standard specifies that in C++ implementations
+ * macros like INT32_MIN and UINTPTR_MAX should only be defined if explicitly requested.
+ * We need to define __STDC_LIMIT_MACROS before including stdint.h in C++ code
+ * that uses such limit macros.
+ * @internal
+ */
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#endif
 
+/* NULL, size_t, wchar_t */
+#include <stddef.h>
+
+/*
+ * If all compilers provided all of the C99 headers and types,
+ * we would just unconditionally #include <stdint.h> here
+ * and not need any of the stuff after including platform.h.
+ */
+
+/* Find out if we have stdint.h etc. */
 #include "unicode/platform.h"
 
 /*===========================================================================*/
 /* Generic data types                                                        */
 /*===========================================================================*/
 
-/* If your platform does not have the <inttypes.h> header, you may
-   need to edit the typedefs below. */
-#if U_HAVE_INTTYPES_H
+/* If your platform does not have the <stdint.h> header, you may
+   need to edit the typedefs in the #else section below.
+   Use #if...#else...#endif with predefined compiler macros if possible. */
+#if U_HAVE_STDINT_H
 
-/* autoconf 2.13 sometimes can't properly find the data types in <inttypes.h> */
-/* os/390 needs <inttypes.h>, but it doesn't have int8_t, and it sometimes */
-/* doesn't have uint8_t depending on the OS version. */
-/* So we have this work around. */
-#ifdef OS390
+/*
+ * We mostly need <stdint.h> (which defines the standard integer types) but not <inttypes.h>.
+ * <inttypes.h> includes <stdint.h> and adds the printf/scanf helpers PRId32, SCNx16 etc.
+ * which we almost never use, plus stuff like imaxabs() which we never use.
+ */
+#include <stdint.h>
+
+#if U_PLATFORM == U_PF_OS390
 /* The features header is needed to get (u)int64_t sometimes. */
 #include <features.h>
-#if ! U_HAVE_INT8_T
-typedef signed char int8_t;
-#endif
+/* z/OS has <stdint.h>, but some versions are missing uint8_t (APAR PK62248). */
 #if !defined(__uint8_t)
 #define __uint8_t 1
 typedef unsigned char uint8_t;
 #endif
-#endif /* OS390 */
+#endif /* U_PLATFORM == U_PF_OS390 */
 
-#include <inttypes.h>
+#elif U_HAVE_INTTYPES_H
 
-#else /* U_HAVE_INTTYPES_H */
+#   include <inttypes.h>
+
+#else /* neither U_HAVE_STDINT_H nor U_HAVE_INTTYPES_H */
 
 #if ! U_HAVE_INT8_T
 typedef signed char int8_t;
@@ -77,16 +106,21 @@ typedef unsigned int uint32_t;
 #endif
 
 #if ! U_HAVE_INT64_T
+#ifdef _MSC_VER
+    typedef signed __int64 int64_t;
+#else
     typedef signed long long int64_t;
-/* else we may not have a 64-bit type */
+#endif
 #endif
 
 #if ! U_HAVE_UINT64_T
+#ifdef _MSC_VER
+    typedef unsigned __int64 uint64_t;
+#else
     typedef unsigned long long uint64_t;
-/* else we may not have a 64-bit type */
+#endif
 #endif
 
-#endif /* U_HAVE_INTTYPES_H */
+#endif /* U_HAVE_STDINT_H / U_HAVE_INTTYPES_H */
 
 #endif /* _PTYPES_H */
-

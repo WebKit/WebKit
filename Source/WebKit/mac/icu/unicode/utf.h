@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2010, International Business Machines
+*   Copyright (C) 1999-2011, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -22,15 +22,20 @@
  * a surrogate or a non-character etc.
  *
  * The UChar and UChar32 data types for Unicode code units and code points
- * are defined in umachines.h because they can be machine-dependent.
+ * are defined in umachine.h because they can be machine-dependent.
  *
- * utf.h is included by utypes.h and itself includes utf8.h and utf16.h after some
- * common definitions. Those files define macros for efficiently getting code points
+ * If U_NO_DEFAULT_INCLUDE_UTF_HEADERS is 0 then utf.h is included by utypes.h
+ * and itself includes utf8.h and utf16.h after some
+ * common definitions.
+ * If U_NO_DEFAULT_INCLUDE_UTF_HEADERS is 1 then each of these headers must be
+ * included explicitly if their definitions are used.
+ *
+ * utf8.h and utf16.h define macros for efficiently getting code points
  * in and out of UTF-8/16 strings.
  * utf16.h macros have "U16_" prefixes.
  * utf8.h defines similar macros with "U8_" prefixes for UTF-8 string handling.
  *
- * ICU processes 16-bit Unicode strings.
+ * ICU mostly processes 16-bit Unicode strings.
  * Most of the time, such strings are well-formed UTF-16.
  * Single, unpaired surrogates must be handled as well, and are treated in ICU
  * like regular code points where possible.
@@ -42,15 +47,16 @@
  * ICU functions handle supplementary code points (U+10000..U+10ffff)
  * but are optimized for the much more frequently occurring BMP code points.
  *
- * utf.h defines UChar to be an unsigned 16-bit integer. If this matches wchar_t, then
- * UChar is defined to be exactly wchar_t, otherwise uint16_t.
+ * umachine.h defines UChar to be an unsigned 16-bit integer.
+ * Where available, UChar is defined to be a char16_t
+ * or a wchar_t (if that is an unsigned 16-bit type), otherwise uint16_t.
  *
  * UChar32 is defined to be a signed 32-bit integer (int32_t), large enough for a 21-bit
  * Unicode code point (Unicode scalar value, 0..0x10ffff).
  * Before ICU 2.4, the definition of UChar32 was similarly platform-dependent as
  * the definition of UChar. For details see the documentation for UChar32 itself.
  *
- * utf.h also defines a small number of C macros for single Unicode code points.
+ * utf.h defines a small number of C macros for single Unicode code points.
  * These are simple checks for surrogates and non-characters.
  * For actual Unicode character properties see uchar.h.
  *
@@ -59,9 +65,6 @@
  * The macros will detect if a surrogate code unit is unpaired
  * (lead unit without trail unit or vice versa) and just return the unit itself
  * as the code point.
- * (It is an accidental property of Unicode and UTF-16 that all
- * malformed sequences can be expressed unambiguously with a distinct subrange
- * of Unicode code points.)
  *
  * The regular "safe" macros require that the initial, passed-in string index
  * is within bounds. They only check the index when they read more than one
@@ -95,7 +98,7 @@
  * code point values (0..U+10ffff). They are indicated with negative values instead.
  *
  * For more information see the ICU User Guide Strings chapter
- * (http://icu-project.org/userguide/strings.html).
+ * (http://userguide.icu-project.org/strings).
  *
  * <em>Usage:</em>
  * ICU coding guidelines for if() statements should be followed when using these macros.
@@ -108,30 +111,10 @@
 #ifndef __UTF_H__
 #define __UTF_H__
 
-#include "unicode/utypes.h"
+#include "unicode/umachine.h"
 /* include the utfXX.h after the following definitions */
 
 /* single-code point definitions -------------------------------------------- */
-
-/**
- * This value is intended for sentinel values for APIs that
- * (take or) return single code points (UChar32).
- * It is outside of the Unicode code point range 0..0x10ffff.
- * 
- * For example, a "done" or "error" value in a new API
- * could be indicated with U_SENTINEL.
- *
- * ICU APIs designed before ICU 2.4 usually define service-specific "done"
- * values, mostly 0xffff.
- * Those may need to be distinguished from
- * actual U+ffff text contents by calling functions like
- * CharacterIterator::hasNext() or UnicodeString::length().
- *
- * @return -1
- * @see UChar32
- * @stable ICU 2.4
- */
-#define U_SENTINEL (-1)
 
 /**
  * Is this code point a Unicode noncharacter?
@@ -227,10 +210,14 @@
 
 /* include the utfXX.h ------------------------------------------------------ */
 
+#if !U_NO_DEFAULT_INCLUDE_UTF_HEADERS
+
 #include "unicode/utf8.h"
 #include "unicode/utf16.h"
 
 /* utf_old.h contains deprecated, pre-ICU 2.4 definitions */
 #include "unicode/utf_old.h"
 
-#endif
+#endif  /* !U_NO_DEFAULT_INCLUDE_UTF_HEADERS */
+
+#endif  /* __UTF_H__ */
