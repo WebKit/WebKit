@@ -28,8 +28,6 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#import "DynamicLinkerEnvironmentExtractor.h"
-#import "EnvironmentVariables.h"
 #import "PluginProcessCreationParameters.h"
 #import "PluginProcessMessages.h"
 #import "SandboxUtilities.h"
@@ -80,13 +78,6 @@ bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginModuleInfo& plugi
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
 bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
 {
-    NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
-    NSString *frameworksPath = [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent];
-    const char* frameworkExecutablePath = [[webKit2Bundle executablePath] fileSystemRepresentation];
-    
-    NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
-    NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
-
     CString pluginPathString = fileSystemRepresentation(plugin.path);
 
     posix_spawnattr_t attr;
@@ -96,21 +87,12 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
     size_t outCount = 0;
     posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
 
-    EnvironmentVariables environmentVariables;
+    posix_spawnattr_setflags(&attr, POSIX_SPAWN_CLOEXEC_DEFAULT);
 
-    DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], _NSGetMachExecuteHeader()->cputype);
-    environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
-    
-    // To make engineering builds work, if the path is outside of /System set up
-    // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the
-    // production configuration because it involves extra file system access.
-    if (![frameworksPath hasPrefix:@"/System/"])
-        environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
-
-    const char* args[] = { [processAppExecutablePath fileSystemRepresentation], frameworkExecutablePath, "-type", "pluginprocess", "-createPluginMIMETypesPreferences", pluginPathString.data(), 0 };
+    const char* args[] = { "/System/Library/Frameworks/WebKit.framework/PluginProcess.app/Contents/MacOS/PluginProcess", "/System/Library/Frameworks/WebKit.framework/WebKit", "-type", "pluginprocess", "-createPluginMIMETypesPreferences", pluginPathString.data(), 0 };
 
     pid_t pid;
-    int result = posix_spawn(&pid, args[0], 0, &attr, const_cast<char* const*>(args), environmentVariables.environmentPointer());
+    int result = posix_spawn(&pid, args[0], 0, &attr, const_cast<char* const*>(args), nullptr);
     posix_spawnattr_destroy(&attr);
 
     if (result)

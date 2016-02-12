@@ -1,3 +1,13 @@
+2016-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Use the system PluginProcess.app for generating plug-in MIME type preferences
+        https://bugs.webkit.org/show_bug.cgi?id=154139
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::createPropertyListFile):
+
 2016-02-11  Beth Dakin  <bdakin@apple.com>
 
         EditingRangeIsRelativeTo::Document and NSRangeIsRelativeTo::Document should 
