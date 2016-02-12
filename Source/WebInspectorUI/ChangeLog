@@ -1,3 +1,16 @@
+2016-02-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: SourceCodeTextEditor close() generates removeEventListener warnings
+        https://bugs.webkit.org/show_bug.cgi?id=154150
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.close):
+        Remove the event listeners in the cases that we would have added them.
+        If we have SourceMap information we should remove the key listener,
+        and if we don't we should remove the SourceMapAdded listener.
+
 2016-02-10  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add new icon for the Timeline Recording navigation bar item
