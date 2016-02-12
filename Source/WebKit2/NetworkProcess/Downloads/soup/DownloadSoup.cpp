@@ -269,44 +269,4 @@ void Download::platformDidFinish()
     m_resourceHandle = nullptr;
 }
 
-void Download::receivedCredential(const AuthenticationChallenge&, const Credential&)
-{
-    notImplemented();
-}
-
-void Download::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void Download::receivedCancellation(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void Download::continueWithoutCredential(const AuthenticationChallenge &)
-{
-    notImplemented();
-}
-
-void Download::useCredential(const AuthenticationChallenge&, const Credential&)
-{
-    notImplemented();
-}
-
-void Download::cancelAuthenticationChallenge(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void Download::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void Download::receivedChallengeRejection(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
 } // namespace WebKit

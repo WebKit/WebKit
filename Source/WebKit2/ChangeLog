@@ -1,3 +1,78 @@
+2016-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Move Download authentication code to AuthenticationManager
+        https://bugs.webkit.org/show_bug.cgi?id=154132
+
+        Reviewed by Sam Weinig.
+
+        When a video element makes a request that receives an authentication challenge, the
+        AuthenticationManager receives an AuthenticationChallenge without an AuthenticationClient.
+        As a result, Download::receivedCredential and other functions were being called, which
+        sent a message to the challenge's sender.  This functionality is not specific to downloads,
+        so I moved it from Download to AuthenticationManager.
+
+        This fixes http/tests/media/video-auth.html when using NetworkSession 
+        because I use AuthenticationManager::receivedCredential if there is no AuthenticationClient
+        instead of improperly asserting that there is always an AuthenticationClient if there is no
+        completionHandler.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::platformDidFinish):
+        (WebKit::Download::receivedCredential): Deleted.
+        (WebKit::Download::receivedRequestToContinueWithoutCredential): Deleted.
+        (WebKit::Download::receivedCancellation): Deleted.
+        (WebKit::Download::receivedRequestToPerformDefaultHandling): Deleted.
+        (WebKit::Download::receivedChallengeRejection): Deleted.
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::platformDidFinish):
+        (WebKit::Download::receivedCredential): Deleted.
+        (WebKit::Download::receivedRequestToContinueWithoutCredential): Deleted.
+        (WebKit::Download::receivedCancellation): Deleted.
+        (WebKit::Download::receivedRequestToPerformDefaultHandling): Deleted.
+        (WebKit::Download::receivedChallengeRejection): Deleted.
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::platformDidFinish):
+        (WebKit::Download::receivedCredential): Deleted.
+        (WebKit::Download::receivedRequestToContinueWithoutCredential): Deleted.
+        (WebKit::Download::receivedCancellation): Deleted.
+        (WebKit::Download::continueWithoutCredential): Deleted.
+        (WebKit::Download::useCredential): Deleted.
+        (WebKit::Download::cancelAuthenticationChallenge): Deleted.
+        (WebKit::Download::receivedRequestToPerformDefaultHandling): Deleted.
+        (WebKit::Download::receivedChallengeRejection): Deleted.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::cancelChallenge):
+        (WebKit::AuthenticationManager::cancelSingleChallenge):
+        (WebKit::AuthenticationManager::performDefaultHandling):
+        (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinue):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        (WebKit::AuthenticationManager::outstandingAuthenticationChallengeCount):
+        * Shared/Authentication/cocoa: Added.
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm: Added.
+        (WebKit::AuthenticationManager::receivedCredential):
+        (WebKit::AuthenticationManager::receivedRequestToContinueWithoutCredential):
+        (WebKit::AuthenticationManager::receivedCancellation):
+        (WebKit::AuthenticationManager::receivedRequestToPerformDefaultHandling):
+        (WebKit::AuthenticationManager::receivedChallengeRejection):
+        * Shared/Authentication/soup: Added.
+        * Shared/Authentication/soup/AuthenticationManagerSoup.cpp: Added.
+        (WebKit::AuthenticationManager::receivedCredential):
+        (WebKit::AuthenticationManager::receivedRequestToContinueWithoutCredential):
+        (WebKit::AuthenticationManager::receivedCancellation):
+        (WebKit::AuthenticationManager::receivedRequestToPerformDefaultHandling):
+        (WebKit::AuthenticationManager::receivedChallengeRejection):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-02-11  Beth Dakin  <bdakin@apple.com>
 
         Soft spaces are often tracked in the wrong spot
