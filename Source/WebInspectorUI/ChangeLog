@@ -1,3 +1,26 @@
+2016-02-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r196362. rdar://problem/24611811
+
+    2016-02-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Regression: Web Inspector: Sometimes in Elements panel two elements showed as selected at the same time
+            https://bugs.webkit.org/show_bug.cgi?id=149742
+            <rdar://problem/24492481>
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/DOMTreeElement.js:
+            (WebInspector.DOMTreeElement.prototype.moveChild):
+            Since removing and re-adding this tree element may forgot its
+            entire child tree, re-select the selected child that may have
+            just been lost in the shuffle.
+
+            * UserInterface/Views/TreeOutline.js:
+            (WebInspector.TreeOutline.prototype._forgetTreeElement):
+            When forgetting the selected tree element, also deselect the
+            forgotten tree element so it clears its selected state.
+
 2016-02-10  Babak Shafiei  <bshafiei@apple.com>
 
         Merge patch for rdar://problem/24267980.
