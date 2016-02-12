@@ -151,19 +151,12 @@ WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached();
 
-#ifdef __cplusplus
-}
-#endif
-
 #ifndef CRASH
-#define CRASH() WTFCrash()
+#define CRASH() WTFCrashImpl()
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #if defined(NDEBUG) && OS(DARWIN)
-ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void WTFCrash()
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void WTFCrashImpl()
 {
     // Crash with a SIGTRAP i.e EXC_BREAKPOINT.
     // We are not using __builtin_trap because it is only guaranteed to abort, but not necessarily
@@ -180,21 +173,17 @@ ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void WTFCrash()
     __builtin_unreachable();
 }
 #else
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrash();
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashImpl();
 #endif
 
-#ifdef __cplusplus
-}
-#endif
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrash();
 
 #ifndef CRASH_WITH_SECURITY_IMPLICATION
 #define CRASH_WITH_SECURITY_IMPLICATION() WTFCrashWithSecurityImplication()
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication();
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication();
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,31 @@
+2016-02-11  Mark Lam  <mark.lam@apple.com>
+
+        Need WTFCrash workaround for shipping SafariForWebKitDevelopment binaries.
+        https://bugs.webkit.org/show_bug.cgi?id=154125
+
+        Reviewed by Joseph Pecoraro.
+
+        Presently shipping SafariForWebKitDevelopment binaries still expect to link to a
+        WTFCrash function.  We need to provide this function as a workaround until we can
+        update SafariForWebKitDevelopment to use the new inlined version.
+
+        We do this by doing:
+        1. Make WTFCrashImpl() the sole function for implementing a crash.
+           The CRASH() macro is now defined to be WTFCrashImpl() instead of WTFCrash().
+        2. Renamed the legacy WTFCrash() to WTFCrashImpl() for debug or non-Darwin builds.
+           For (non-debug && OS(DARWIN)) builds, WTFCrashImpl() will be an inlined
+           function with an asm statement that issues a breakpoint trap.
+        3. Implement WTFCrash() as a function that calls CRASH().
+           This satisfies the need of shipping SafariForWebKitDevelopment binaries.
+        4. Change WTFCrashWithSecurityImplication() to call CRASH().
+           This ensures that we have a consistent implementation of how we crash.
+        5. Changed WTFLogAlwaysAndCrash() to call CRASH() instead of WTFCrash().
+           This is just to have consistency in that all code in the WebKit project
+           now crashes by calling CRASH(), not WTFCrash().
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2016-02-09  Mark Lam  <mark.lam@apple.com>
 
         Changed WTFCrash to not trash the crash site register state.
