@@ -1,3 +1,18 @@
+2016-02-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Fast path in JSObject::defineOwnIndexedProperty() forgets to check for the posibility of a descriptor that doesn't have a value
+        https://bugs.webkit.org/show_bug.cgi?id=154175
+        rdar://problem/24291497
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnIndexedProperty): Fix the bug.
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::putEntry): Catch the bug sooner in debug.
+        (JSC::SparseArrayValueMap::putDirect):
+        * tests/stress/sparse-define-empty-descriptor.js: Added. This used to crash in release.
+
 2016-02-11  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RemoteInspector's listings should include whether an AutomationTarget is paired
