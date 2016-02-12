@@ -63,47 +63,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
 
     contentViewForRepresentedObject(representedObject, onlyExisting, extraArguments)
     {
-        console.assert(representedObject);
-        if (!representedObject)
-            return null;
-
-        // Iterate over all the known content views for the representedObject (if any) and find one that doesn't
-        // have a parent container or has this container as its parent.
-        var contentView = null;
-        for (var i = 0; representedObject.__contentViews && i < representedObject.__contentViews.length; ++i) {
-            var currentContentView = representedObject.__contentViews[i];
-            if (!currentContentView._parentContainer || currentContentView._parentContainer === this) {
-                contentView = currentContentView;
-                break;
-            }
-        }
-
-        console.assert(!contentView || contentView instanceof WebInspector.ContentView);
-        if (contentView instanceof WebInspector.ContentView)
-            return contentView;
-
-        // Return early to avoid creating a new content view when onlyExisting is true.
-        if (onlyExisting)
-            return null;
-
-        // No existing content view found, make a new one.
-        contentView = WebInspector.ContentView.createFromRepresentedObject(representedObject, extraArguments);
-
-        console.assert(contentView, "Unknown representedObject", representedObject);
-        if (!contentView)
-            return null;
-
-        // The representedObject can change in the constructor for ContentView. Remember the
-        // contentViews on the real representedObject and not the one originally supplied.
-        // The main case for this is a Frame being passed in and the main Resource being used.
-        representedObject = contentView.representedObject;
-
-        // Remember this content view for future calls.
-        if (!representedObject.__contentViews)
-            representedObject.__contentViews = [];
-        representedObject.__contentViews.push(contentView);
-
-        return contentView;
+        return WebInspector.ContentView.contentViewForRepresentedObject(representedObject, onlyExisting, extraArguments);
     }
 
     showContentViewForRepresentedObject(representedObject, extraArguments)
@@ -123,11 +83,10 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         if (!(contentView instanceof WebInspector.ContentView))
             return null;
 
-        // Don't allow showing a content view that is already associated with another container.
-        // Showing a content view that is already associated with this container is allowed.
-        console.assert(!contentView.parentContainer || contentView.parentContainer === this);
-        if (contentView.parentContainer && contentView.parentContainer !== this)
-            return null;
+        // ContentViews can be shared between containers. If this content view is
+        // not owned by us, it may need to be transferred to this container.
+        if (contentView.parentContainer !== this)
+            this._takeOwnershipOfContentView(contentView);
 
         var currentEntry = this.currentBackForwardEntry;
         var provisionalEntry = new WebInspector.BackForwardEntry(contentView, cookie);
@@ -158,7 +117,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
             });
 
             if (shouldDissociateContentView)
-                this._disassociateFromContentView(removedEntries[i].contentView);
+                this._disassociateFromContentView(removedEntries[i].contentView, removedEntries[i].tombstone);
         }
 
         // Associate with the new content view.
@@ -218,7 +177,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
             this._hideEntry(this.currentBackForwardEntry);
 
         // Disassociate with the old content view.
-        this._disassociateFromContentView(oldContentView);
+        this._disassociateFromContentView(oldContentView, false);
 
         // Associate with the new content view.
         newContentView._parentContainer = this;
@@ -226,6 +185,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         // Replace all occurrences of oldContentView with newContentView in the back/forward list.
         for (var i = 0; i < this._backForwardList.length; ++i) {
             if (this._backForwardList[i].contentView === oldContentView) {
+                console.assert(!this._backForwardList[i].tombstone);
                 let currentCookie = this._backForwardList[i].cookie;
                 this._backForwardList[i] = new WebInspector.BackForwardEntry(newContentView, currentCookie);
             }
@@ -278,7 +238,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
                 --this._currentIndex;
             }
 
-            this._disassociateFromContentView(entry.contentView);
+            this._disassociateFromContentView(entry.contentView, entry.tombstone);
 
             // Remove the item from the back/forward list.
             this._backForwardList.splice(i, 1);
@@ -334,7 +294,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
                 --this._currentIndex;
             }
 
-            this._disassociateFromContentView(entry.contentView);
+            this._disassociateFromContentView(entry.contentView, entry.tombstone);
 
             // Remove the item from the back/forward list.
             this._backForwardList.splice(i, 1);
@@ -364,7 +324,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
             var entry = this._backForwardList[i];
             if (entry.contentView === visibleContentView)
                 this._hideEntry(entry);
-            this._disassociateFromContentView(entry.contentView);
+            this._disassociateFromContentView(entry.contentView, entry.tombstone);
         }
 
         this._backForwardList = [];
@@ -417,8 +377,74 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
 
     // Private
 
-    _disassociateFromContentView(contentView)
+    _takeOwnershipOfContentView(contentView)
     {
+        console.assert(contentView.parentContainer !== this, "We already have ownership of the ContentView");
+        if (contentView.parentContainer === this)
+            return;
+
+        if (contentView.parentContainer)
+            contentView.parentContainer._placeTombstonesForContentView(contentView);
+
+        contentView._parentContainer = this;
+
+        this._clearTombstonesForContentView(contentView);
+    }
+
+    _placeTombstonesForContentView(contentView)
+    {
+        console.assert(contentView.parentContainer === this);
+
+        // Ensure another ContentViewContainer doesn't close this ContentView while we still have it.
+        let tombstoneContentViewContainers = this._tombstoneContentViewContainersForContentView(contentView);
+        console.assert(!tombstoneContentViewContainers.includes(this));
+
+        let visibleContentView = this.currentContentView;
+
+        for (let entry of this._backForwardList) {
+            if (entry.contentView !== contentView)
+                continue;
+
+            if (entry.contentView === visibleContentView) {
+                this._hideEntry(entry);
+                visibleContentView = null;
+            }
+
+            console.assert(!entry.tombstone);
+            entry.tombstone = true;
+
+            tombstoneContentViewContainers.push(this);
+        }
+    }
+
+    _clearTombstonesForContentView(contentView)
+    {
+        console.assert(contentView.parentContainer === this);
+
+        let tombstoneContentViewContainers = this._tombstoneContentViewContainersForContentView(contentView);
+        const onlyFirst = false;
+        tombstoneContentViewContainers.remove(this, onlyFirst);
+
+        for (let entry of this._backForwardList) {
+            if (entry.contentView !== contentView)
+                continue;
+
+            console.assert(entry.tombstone);
+            entry.tombstone = false;
+        }
+    }
+
+    _disassociateFromContentView(contentView, isTombstone)
+    {
+        // Just remove one of our tombstone back references.
+        // There may be other back/forward entries that need a reference.
+        if (isTombstone) {
+            let tombstoneContentViewContainers = this._tombstoneContentViewContainersForContentView(contentView);
+            const onlyFirst = true;
+            tombstoneContentViewContainers.remove(this, onlyFirst);
+            return;
+        }
+
         console.assert(!contentView.visible);
 
         if (!contentView._parentContainer)
@@ -426,16 +452,32 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
 
         contentView._parentContainer = null;
 
-        var representedObject = contentView.representedObject;
-        if (representedObject && representedObject.__contentViews)
-            representedObject.__contentViews.remove(contentView);
+        // If another ContentViewContainer has tombstones for this, just transfer
+        // ownership to that ContentViewContainer and avoid closing the ContentView.
+        // We don't care who we transfer this to, so just use the first.
+        let tombstoneContentViewContainers = this._tombstoneContentViewContainersForContentView(contentView);
+        if (tombstoneContentViewContainers && tombstoneContentViewContainers.length) {
+            tombstoneContentViewContainers[0]._takeOwnershipOfContentView(contentView);
+            return;
+        }
 
         contentView.closed();
+
+        if (contentView.representedObject)
+            WebInspector.ContentView.closedContentViewForRepresentedObject(contentView.representedObject);
     }
 
     _showEntry(entry, shouldCallShown)
     {
         console.assert(entry instanceof WebInspector.BackForwardEntry);
+
+        // We may be showing a tombstone from a BackForward list or when re-showing a container
+        // that had previously had the content view transferred away from it.
+        // Take over the ContentView.
+        if (entry.tombstone) {
+            this._takeOwnershipOfContentView(entry.contentView);
+            console.assert(!entry.tombstone);
+        }
 
         if (!this.subviews.includes(entry.contentView))
             this.addSubview(entry.contentView)
@@ -447,12 +489,27 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
     {
         console.assert(entry instanceof WebInspector.BackForwardEntry);
 
+        // If this was a tombstone, the content view should already have been
+        // hidden when we placed the tombstone.
+        if (entry.tombstone)
+            return;
+
         entry.prepareToHide();
         if (this.subviews.includes(entry.contentView))
             this.removeSubview(entry.contentView)
+    }
+
+    _tombstoneContentViewContainersForContentView(contentView)
+    {
+        let tombstoneContentViewContainers = contentView[WebInspector.ContentViewContainer.TombstoneContentViewContainersSymbol];
+        if (!tombstoneContentViewContainers)
+            tombstoneContentViewContainers = contentView[WebInspector.ContentViewContainer.TombstoneContentViewContainersSymbol] = [];
+        return tombstoneContentViewContainers;
     }
 };
 
 WebInspector.ContentViewContainer.Event = {
     CurrentContentViewDidChange: "content-view-container-current-content-view-did-change"
 };
+
+WebInspector.ContentViewContainer.TombstoneContentViewContainersSymbol = Symbol("content-view-container-tombstone-content-view-containers");

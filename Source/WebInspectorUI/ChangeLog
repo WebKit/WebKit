@@ -1,3 +1,114 @@
+2016-02-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Tabs: Conflicts with multiple Formatters per SourceCode
+        https://bugs.webkit.org/show_bug.cgi?id=144717
+        <rdar://problem/20845163>
+
+        Reviewed by Timothy Hatcher.
+
+        The underlying issue here is that each tab may create its own ContentView,
+        and therefore SourceCodeTextEditor, per-SourceCode. Each SourceCodeTextEditor
+        was mutating the SourceCode's state without listening for or expecting
+        updates from the other. This causes a bunch of different issues:
+
+            - editing in one tab does not get reflected in another tab for
+              the same resource. This is common when using the Search tab
+              to find and make an edit, then debug in another tab.
+
+            - one tab may auto format (pretty print) a resource and set
+              the formatter on the SourceCode to make SourceCodeLocations
+              know about formatted locations. However, a jump to location
+              that opens a new ContentView for the same Resource will
+              start out un-formatted, and misunderstand the location.
+              This often results in an unexpected jump to 0:0.
+
+        The solution taken by this change is to have a single ContentView
+        per represented object. When that ContentView gets shown in a new
+        ContentViewContainer it gets transferred, leaving a tombstone in the
+        previous ContentViewContainer that can be revived later. This keeps
+        back foward lists with expected values. It also means there is a
+        single ContentView that doesn't need to worry about having the
+        state of its represented object getting overrun.
+
+        Currently this makes the assumption that we won't ever show multiple
+        ContentViews for the same represented object at the same time. This
+        may need to change if we were to support split pane editor or
+        something like that.
+
+        This also makes the assumption that ContentViewContainer's showEntry
+        and hideEntry do not modify the back forward list. That has not been
+        the case, and I think it is safe to assume it will never be the case.
+
+        The contracts this patch maintains:
+
+            - a ContentView is always owned by one ViewContainer.
+              This ViewContainer is the one showing the ContentView.
+
+            - when another ViewContainer wants to share the ContentView
+              ownership is transferred. Creating tombstones in the old
+              ViewContainer and Reviving tombstones in the new ViewContainer.
+
+            - ViewContainer's have a tombstone per-BackForwardEntry that
+              references the ContentView.
+
+            - In order to ensure a ContentView always gets closed, when
+              the owning ViewContainer would close the ContentView it
+              checks if it should instead transfer ownership of the
+              ContentView to another interested ViewContainer.
+
+        This also maintains the contract that a ContentView should only be
+        closed once. When the ContentView is transferred between two
+        ContentViewContainers it should hide/show from the old to the new.
+        The last ContentViewContainer to reference a ContentView should
+        be the one to close the ContentView.
+
+        * UserInterface/Models/BackForwardEntry.js:
+        (WebInspector.BackForwardEntry):
+        (WebInspector.BackForwardEntry.prototype.get tombstone):
+        (WebInspector.BackForwardEntry.prototype.set tombstone):
+        (WebInspector.BackForwardEntry.prototype.prepareToShow):
+        (WebInspector.BackForwardEntry.prototype.prepareToHide):
+        Tombstone state and assertions that we don't show/hide tombstones,
+        that should all be done before a back forward entry has become a tombstone.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.contentViewForRepresentedObject):
+        (WebInspector.ContentView.closedContentViewForRepresentedObject):
+        (WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject):
+        Helpers for getting / creating / clearing the single ContentView that
+        is associated with a represented object.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.contentViewForRepresentedObject):
+        (WebInspector.ContentViewContainer.prototype.showContentView):
+        Eliminate code that dealt with multiple content views per represented object.
+        That is replaced by multiple ContentViewContainers per ContentView.
+
+        (WebInspector.ContentViewContainer.prototype.replaceContentView):
+        This is called in special places where we don't need to worry about a tombstone.
+        It is an in replace of a content view.
+
+        (WebInspector.ContentViewContainer.closeAllContentViewsOfPrototype):
+        (WebInspector.ContentViewContainer.prototype.closeContentView):
+        (WebInspector.ContentViewContainer.prototype.closeAllContentViews):
+        (WebInspector.ContentViewContainer.prototype._disassociateFromContentView):
+        Deal with closing BackForwardEntrys that are tombstones.
+
+        (WebInspector.ContentViewContainer.prototype._takeOwnershipOfContentView):
+        (WebInspector.ContentViewContainer.prototype._placeTombstonesForContentView):
+        (WebInspector.ContentViewContainer.prototype._clearTombstonesForContentView):
+        Helpers for transfering ownership of a ContentView to a ContentViewContainer.
+        There is always one owner of the ContentView. Non-owners have tombstone
+        BackForward entries.
+
+        (WebInspector.ContentViewContainer.prototype._showEntry):
+        If we are showing a tombstone, gain ownership.
+
+        (WebInspector.ContentViewContainer.prototype._hideEntry):
+        This may happen in closing, for simplicity we bail here instead of include
+        messy logic at the call site. We would have already hidden this entry
+        when making it a tombstone.
+
 2016-02-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: SourceCodeTextEditor close() generates removeEventListener warnings

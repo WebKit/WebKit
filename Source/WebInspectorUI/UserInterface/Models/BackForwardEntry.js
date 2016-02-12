@@ -32,6 +32,11 @@ WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Obje
 
         this._contentView = contentView;
 
+        // ContentViews may be shared across multiple ContentViewContainers.
+        // A BackForwardEntry containing a tombstone doesn't actually have
+        // the real ContentView, and so should not close it.
+        this._tombstone = false;
+
         // Cookies are compared with Object.shallowEqual, so should not store objects or arrays.
         this._cookie = cookie || {};
         this._scrollPositions = [];
@@ -52,8 +57,20 @@ WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Obje
         return Object.shallowCopy(this._cookie);
     }
 
+    get tombstone()
+    {
+        return this._tombstone;
+    }
+
+    set tombstone(tombstone)
+    {
+        this._tombstone = tombstone;
+    }
+
     prepareToShow(shouldCallShown)
     {
+        console.assert(!this._tombstone, "Should not be calling shown on a tombstone");
+
         this._restoreFromCookie();
 
         this.contentView.visible = true;
@@ -64,6 +81,8 @@ WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Obje
 
     prepareToHide()
     {
+        console.assert(!this._tombstone, "Should not be calling hidden on a tombstone");
+
         this.contentView.visible = false;
         this.contentView.hidden();
 
@@ -111,7 +130,7 @@ WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Obje
             if (!element)
                 continue;
 
-            var position = { scrollTop: element.scrollTop, scrollLeft: element.scrollLeft };
+            let position = {scrollTop: element.scrollTop, scrollLeft: element.scrollLeft};
             if (this.contentView.shouldKeepElementsScrolledToBottom)
                 position.isScrolledToBottom = element.isScrolledToBottom();
 

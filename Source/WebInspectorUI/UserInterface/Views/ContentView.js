@@ -39,7 +39,7 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         this._parentContainer = null;
     }
 
-    // Public
+    // Static
 
     static createFromRepresentedObject(representedObject, extraArguments)
     {
@@ -138,6 +138,54 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         console.assert(!WebInspector.ContentView.isViewable(representedObject));
 
         throw new Error("Can't make a ContentView for an unknown representedObject.");
+    }
+
+    static contentViewForRepresentedObject(representedObject, onlyExisting, extraArguments)
+    {
+        console.assert(representedObject);
+
+        let resolvedRepresentedObject = WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject);
+        let existingContentView = resolvedRepresentedObject[WebInspector.ContentView.ContentViewForRepresentedObjectSymbol];
+        console.assert(!existingContentView || existingContentView instanceof WebInspector.ContentView);
+        if (existingContentView)
+            return existingContentView;
+
+        if (onlyExisting)
+            return null;
+
+        let newContentView = WebInspector.ContentView.createFromRepresentedObject(representedObject, extraArguments);
+        console.assert(newContentView instanceof WebInspector.ContentView);
+        if (!newContentView)
+            return null;
+
+        console.assert(newContentView.representedObject === resolvedRepresentedObject, "createFromRepresentedObject and resolvedRepresentedObjectForRepresentedObject are out of sync for type", representedObject.constructor.name);
+        newContentView.representedObject[WebInspector.ContentView.ContentViewForRepresentedObjectSymbol] = newContentView;
+        return newContentView;
+    }
+
+    static closedContentViewForRepresentedObject(representedObject)
+    {
+        let resolvedRepresentedObject = WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject);
+        resolvedRepresentedObject[WebInspector.ContentView.ContentViewForRepresentedObjectSymbol] = null;
+    }
+
+    static resolvedRepresentedObjectForRepresentedObject(representedObject)
+    {
+        if (representedObject instanceof WebInspector.Frame)
+            return representedObject.mainResource;
+
+        if (representedObject instanceof WebInspector.Breakpoint) {
+            if (representedObject.sourceCodeLocation)
+                return representedObject.sourceCodeLocation.displaySourceCode;
+        }
+
+        if (representedObject instanceof WebInspector.DOMSearchMatchObject)
+            return WebInspector.frameResourceManager.mainFrame.domTree;
+
+        if (representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
+            return representedObject.sourceCode;
+
+        return representedObject;
     }
 
     static isViewable(representedObject)
@@ -345,3 +393,5 @@ WebInspector.ContentView.Event = {
     NumberOfSearchResultsDidChange: "content-view-number-of-search-results-did-change",
     NavigationItemsDidChange: "content-view-navigation-items-did-change"
 };
+
+WebInspector.ContentView.ContentViewForRepresentedObjectSymbol = Symbol("content-view-for-represented-object");
