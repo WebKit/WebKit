@@ -48,24 +48,6 @@
 
 namespace WebKit {
 
-namespace {
-
-struct UUIDHolder : public RefCounted<UUIDHolder> {
-    static Ref<UUIDHolder> create()
-    {
-        return adoptRef(*new UUIDHolder);
-    }
-
-    UUIDHolder()
-    {
-        uuid_generate(uuid);
-    }
-
-    uuid_t uuid;
-};
-
-}
-
 typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, IPC::Connection::Identifier);
 
 static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions)
@@ -100,11 +82,14 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 #endif
 }
     
-static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
+static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
     // Create a connection to the WebKit XPC service.
     auto connection = adoptOSObject(xpc_connection_create(serviceName(launchOptions), 0));
-    xpc_connection_set_oneshot_instance(connection.get(), instanceUUID->uuid);
+
+    uuid_t uuid;
+    uuid_generate(uuid);
+    xpc_connection_set_oneshot_instance(connection.get(), uuid);
 
     // Inherit UI process localization. It can be different from child process default localization:
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
@@ -213,10 +198,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
 
 static void createService(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
-    // Generate the uuid for the service instance we are about to create.
-    // FIXME: This UUID should be stored on the ChildProcessProxy.
-    RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
-    connectToService(launchOptions, forDevelopment, that, didFinishLaunchingProcessFunction, instanceUUID.get());
+    connectToService(launchOptions, forDevelopment, that, didFinishLaunchingProcessFunction);
 }
 
 static NSString *systemDirectoryPath()
