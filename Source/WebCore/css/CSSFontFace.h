@@ -40,44 +40,42 @@
 namespace WebCore {
 
 class CSSSegmentedFontFace;
+class CSSValue;
+class CSSValueList;
 class FontDescription;
 class Font;
 
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
-    static Ref<CSSFontFace> create(FontTraitsMask traitsMask, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(traitsMask, isLocalFallback)); }
+    static Ref<CSSFontFace> create(bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(isLocalFallback)); }
+    virtual ~CSSFontFace();
 
-    FontTraitsMask traitsMask() const { return m_traitsMask; }
+    bool setFamilies(CSSValue&);
+    bool setStyle(CSSValue&);
+    bool setWeight(CSSValue&);
+    bool setUnicodeRange(CSSValue&);
+    bool setVariantLigatures(CSSValue&);
+    bool setVariantPosition(CSSValue&);
+    bool setVariantCaps(CSSValue&);
+    bool setVariantNumeric(CSSValue&);
+    bool setVariantAlternates(CSSValue&);
+    bool setVariantEastAsian(CSSValue&);
+    bool setFeatureSettings(CSSValue&);
 
     struct UnicodeRange;
-
-    void addRange(UChar32 from, UChar32 to) { m_ranges.append(UnicodeRange(from, to)); }
+    const CSSValueList* families() const { return m_families.get(); }
+    FontTraitsMask traitsMask() const { return m_traitsMask; }
     const Vector<UnicodeRange>& ranges() const { return m_ranges; }
-
-    void insertFeature(FontFeature&& feature) { m_featureSettings.insert(WTFMove(feature)); }
-
-    void setVariantCommonLigatures(FontVariantLigatures ligatures) { m_variantSettings.commonLigatures = ligatures; }
-    void setVariantDiscretionaryLigatures(FontVariantLigatures ligatures) { m_variantSettings.discretionaryLigatures = ligatures; }
-    void setVariantHistoricalLigatures(FontVariantLigatures ligatures) { m_variantSettings.historicalLigatures = ligatures; }
-    void setVariantContextualAlternates(FontVariantLigatures ligatures) { m_variantSettings.contextualAlternates = ligatures; }
-    void setVariantPosition(FontVariantPosition position) { m_variantSettings.position = position; }
-    void setVariantCaps(FontVariantCaps caps) { m_variantSettings.caps = caps; }
-    void setVariantNumericFigure(FontVariantNumericFigure figure) { m_variantSettings.numericFigure = figure; }
-    void setVariantNumericSpacing(FontVariantNumericSpacing spacing) { m_variantSettings.numericSpacing = spacing; }
-    void setVariantNumericFraction(FontVariantNumericFraction fraction) { m_variantSettings.numericFraction = fraction; }
-    void setVariantNumericOrdinal(FontVariantNumericOrdinal ordinal) { m_variantSettings.numericOrdinal = ordinal; }
-    void setVariantNumericSlashedZero(FontVariantNumericSlashedZero slashedZero) { m_variantSettings.numericSlashedZero = slashedZero; }
-    void setVariantAlternates(FontVariantAlternates alternates) { m_variantSettings.alternates = alternates; }
-    void setVariantEastAsianVariant(FontVariantEastAsianVariant variant) { m_variantSettings.eastAsianVariant = variant; }
-    void setVariantEastAsianWidth(FontVariantEastAsianWidth width) { m_variantSettings.eastAsianWidth = width; }
-    void setVariantEastAsianRuby(FontVariantEastAsianRuby ruby) { m_variantSettings.eastAsianRuby = ruby; }
+    const FontFeatureSettings& featureSettings() const { return m_featureSettings; }
+    const FontVariantSettings& variantSettings() const { return m_variantSettings; }
+    void setVariantSettings(const FontVariantSettings& variantSettings) { m_variantSettings = variantSettings; }
+    void setTraitsMask(FontTraitsMask traitsMask) { m_traitsMask = traitsMask; }
+    bool isLocalFallback() const { return m_isLocalFallback; }
 
     void addedToSegmentedFontFace(CSSSegmentedFontFace&);
     void removedFromSegmentedFontFace(CSSSegmentedFontFace&);
 
     bool allSourcesFailed() const;
-
-    bool isLocalFallback() const { return m_isLocalFallback; }
 
     void adoptSource(std::unique_ptr<CSSFontFaceSource>&&);
 
@@ -105,12 +103,9 @@ public:
 #endif
 
 private:
-    CSSFontFace(FontTraitsMask traitsMask, bool isLocalFallback)
-        : m_traitsMask(traitsMask)
-        , m_isLocalFallback(isLocalFallback)
-    {
-    }
+    CSSFontFace(bool isLocalFallback);
 
+    RefPtr<CSSValueList> m_families;
     FontTraitsMask m_traitsMask;
     Vector<UnicodeRange> m_ranges;
     HashSet<CSSSegmentedFontFace*> m_segmentedFontFaces;

@@ -27,15 +27,193 @@
 #include "CSSFontFace.h"
 
 #include "CSSFontFaceSource.h"
+#include "CSSFontFamily.h"
+#include "CSSFontFeatureValue.h"
 #include "CSSFontSelector.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSSegmentedFontFace.h"
+#include "CSSUnicodeRangeValue.h"
+#include "CSSValue.h"
+#include "CSSValueList.h"
 #include "Document.h"
 #include "Font.h"
 #include "FontDescription.h"
 #include "FontLoader.h"
+#include "FontVariantBuilder.h"
 #include "RuntimeEnabledFeatures.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
+
+CSSFontFace::CSSFontFace(bool isLocalFallback)
+    : m_isLocalFallback(isLocalFallback)
+{
+}
+
+CSSFontFace::~CSSFontFace()
+{
+}
+
+bool CSSFontFace::setFamilies(CSSValue& family)
+{
+    if (!is<CSSValueList>(family))
+        return false;
+
+    CSSValueList& familyList = downcast<CSSValueList>(family);
+    if (!familyList.length())
+        return false;
+
+    m_families = &familyList;
+    return true;
+}
+
+bool CSSFontFace::setStyle(CSSValue& style)
+{
+    if (!is<CSSPrimitiveValue>(style))
+        return false;
+
+    unsigned styleMask = 0;
+    switch (downcast<CSSPrimitiveValue>(style).getValueID()) {
+    case CSSValueNormal:
+        styleMask = FontStyleNormalMask;
+        break;
+    case CSSValueItalic:
+    case CSSValueOblique:
+        styleMask = FontStyleItalicMask;
+        break;
+    default:
+        return false;
+    }
+
+    m_traitsMask = static_cast<FontTraitsMask>((static_cast<unsigned>(m_traitsMask) & (~FontStyleMask)) | styleMask);
+    return true;
+}
+
+bool CSSFontFace::setWeight(CSSValue& weight)
+{
+    if (!is<CSSPrimitiveValue>(weight))
+        return false;
+
+    unsigned weightMask = 0;
+    switch (downcast<CSSPrimitiveValue>(weight).getValueID()) {
+    case CSSValueBold:
+    case CSSValue700:
+        weightMask = FontWeight700Mask;
+        break;
+    case CSSValueNormal:
+    case CSSValue400:
+        weightMask = FontWeight400Mask;
+        break;
+    case CSSValue900:
+        weightMask = FontWeight900Mask;
+        break;
+    case CSSValue800:
+        weightMask = FontWeight800Mask;
+        break;
+    case CSSValue600:
+        weightMask = FontWeight600Mask;
+        break;
+    case CSSValue500:
+        weightMask = FontWeight500Mask;
+        break;
+    case CSSValue300:
+        weightMask = FontWeight300Mask;
+        break;
+    case CSSValue200:
+        weightMask = FontWeight200Mask;
+        break;
+    case CSSValue100:
+        weightMask = FontWeight100Mask;
+        break;
+    default:
+        break;
+    }
+
+    m_traitsMask = static_cast<FontTraitsMask>((static_cast<unsigned>(m_traitsMask) & (~FontWeightMask)) | weightMask);
+    return true;
+}
+
+bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
+{
+    if (!is<CSSValueList>(unicodeRange))
+        return false;
+
+    m_ranges.clear();
+    auto& list = downcast<CSSValueList>(unicodeRange);
+    for (auto& rangeValue : list) {
+        CSSUnicodeRangeValue& range = downcast<CSSUnicodeRangeValue>(rangeValue.get());
+        m_ranges.append(UnicodeRange(range.from(), range.to()));
+    }
+    return true;
+}
+
+bool CSSFontFace::setVariantLigatures(CSSValue& variantLigatures)
+{
+    auto ligatures = extractFontVariantLigatures(variantLigatures);
+    m_variantSettings.commonLigatures = ligatures.commonLigatures;
+    m_variantSettings.discretionaryLigatures = ligatures.discretionaryLigatures;
+    m_variantSettings.historicalLigatures = ligatures.historicalLigatures;
+    m_variantSettings.contextualAlternates = ligatures.contextualAlternates;
+    return true;
+}
+
+bool CSSFontFace::setVariantPosition(CSSValue& variantPosition)
+{
+    if (!is<CSSPrimitiveValue>(variantPosition))
+        return false;
+    m_variantSettings.position = downcast<CSSPrimitiveValue>(variantPosition);
+    return true;
+}
+
+bool CSSFontFace::setVariantCaps(CSSValue& variantCaps)
+{
+    if (!is<CSSPrimitiveValue>(variantCaps))
+        return false;
+    m_variantSettings.caps = downcast<CSSPrimitiveValue>(variantCaps);
+    return true;
+}
+
+bool CSSFontFace::setVariantNumeric(CSSValue& variantNumeric)
+{
+    auto numeric = extractFontVariantNumeric(variantNumeric);
+    m_variantSettings.numericFigure = numeric.figure;
+    m_variantSettings.numericSpacing = numeric.spacing;
+    m_variantSettings.numericFraction = numeric.fraction;
+    m_variantSettings.numericOrdinal = numeric.ordinal;
+    m_variantSettings.numericSlashedZero = numeric.slashedZero;
+    return true;
+}
+
+bool CSSFontFace::setVariantAlternates(CSSValue& variantAlternates)
+{
+    if (!is<CSSPrimitiveValue>(variantAlternates))
+        return false;
+    m_variantSettings.alternates = downcast<CSSPrimitiveValue>(variantAlternates);
+    return true;
+}
+
+bool CSSFontFace::setVariantEastAsian(CSSValue& variantEastAsian)
+{
+    auto eastAsian = extractFontVariantEastAsian(variantEastAsian);
+    m_variantSettings.eastAsianVariant = eastAsian.variant;
+    m_variantSettings.eastAsianWidth = eastAsian.width;
+    m_variantSettings.eastAsianRuby = eastAsian.ruby;
+    return true;
+}
+
+bool CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
+{
+    if (!is<CSSValueList>(featureSettings))
+        return false;
+
+    m_featureSettings = FontFeatureSettings();
+    auto& list = downcast<CSSValueList>(featureSettings);
+    for (auto& rangeValue : list) {
+        CSSFontFeatureValue& feature = downcast<CSSFontFeatureValue>(rangeValue.get());
+        m_featureSettings.insert(FontFeature(feature.tag(), feature.value()));
+    }
+    return true;
+}
 
 bool CSSFontFace::allSourcesFailed() const
 {

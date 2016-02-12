@@ -1299,6 +1299,7 @@ set(WebCore_SOURCES
     css/CSSCursorImageValue.cpp
     css/CSSDefaultStyleSheets.cpp
     css/CSSFilterImageValue.cpp
+    css/FontFace.cpp
     css/CSSFontFace.cpp
     css/CSSFontFaceLoadEvent.cpp
     css/CSSFontFaceRule.cpp
@@ -1355,6 +1356,7 @@ set(WebCore_SOURCES
     css/DocumentRuleSets.cpp
     css/ElementRuleCollector.cpp
     css/FontLoader.cpp
+    css/FontVariantBuilder.cpp
     css/InspectorCSSOMWrappers.cpp
     css/LengthFunctions.cpp
     css/MediaFeatureNames.cpp

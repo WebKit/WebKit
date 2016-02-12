@@ -26,170 +26,21 @@
 #ifndef FontVariantBuilder_h
 #define FontVariantBuilder_h
 
+#include <wtf/Ref.h>
+
 namespace WebCore {
 
-template <typename T>
-inline void applyValueFontVariantLigatures(T& receiver, CSSValue& value)
-{
-    FontVariantLigatures common = FontVariantLigatures::Normal;
-    FontVariantLigatures discretionary = FontVariantLigatures::Normal;
-    FontVariantLigatures historical = FontVariantLigatures::Normal;
-    FontVariantLigatures contextualAlternates = FontVariantLigatures::Normal;
+class CSSValue;
+struct FontVariantSettings;
+struct FontVariantLigaturesValues;
+struct FontVariantNumericValues;
+struct FontVariantEastAsianValues;
 
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value)) {
-            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
-            case CSSValueNoCommonLigatures:
-                common = FontVariantLigatures::No;
-                break;
-            case CSSValueCommonLigatures:
-                common = FontVariantLigatures::Yes;
-                break;
-            case CSSValueNoDiscretionaryLigatures:
-                discretionary = FontVariantLigatures::No;
-                break;
-            case CSSValueDiscretionaryLigatures:
-                discretionary = FontVariantLigatures::Yes;
-                break;
-            case CSSValueNoHistoricalLigatures:
-                historical = FontVariantLigatures::No;
-                break;
-            case CSSValueHistoricalLigatures:
-                historical = FontVariantLigatures::Yes;
-                break;
-            case CSSValueContextual:
-                contextualAlternates = FontVariantLigatures::Yes;
-                break;
-            case CSSValueNoContextual:
-                contextualAlternates = FontVariantLigatures::No;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-    } else if (is<CSSPrimitiveValue>(value)) {
-        switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
-        case CSSValueNormal:
-            break;
-        case CSSValueNone:
-            common = FontVariantLigatures::No;
-            discretionary = FontVariantLigatures::No;
-            historical = FontVariantLigatures::No;
-            contextualAlternates = FontVariantLigatures::No;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
+FontVariantLigaturesValues extractFontVariantLigatures(CSSValue&);
+FontVariantNumericValues extractFontVariantNumeric(CSSValue&);
+FontVariantEastAsianValues extractFontVariantEastAsian(CSSValue&);
 
-    receiver.setVariantCommonLigatures(common);
-    receiver.setVariantDiscretionaryLigatures(discretionary);
-    receiver.setVariantHistoricalLigatures(historical);
-    receiver.setVariantContextualAlternates(contextualAlternates);
-}
-
-template <typename T>
-inline void applyValueFontVariantNumeric(T& receiver, CSSValue& value)
-{
-    FontVariantNumericFigure figure = FontVariantNumericFigure::Normal;
-    FontVariantNumericSpacing spacing = FontVariantNumericSpacing::Normal;
-    FontVariantNumericFraction fraction = FontVariantNumericFraction::Normal;
-    FontVariantNumericOrdinal ordinal = FontVariantNumericOrdinal::Normal;
-    FontVariantNumericSlashedZero slashedZero = FontVariantNumericSlashedZero::Normal;
-
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value)) {
-            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
-            case CSSValueLiningNums:
-                figure = FontVariantNumericFigure::LiningNumbers;
-                break;
-            case CSSValueOldstyleNums:
-                figure = FontVariantNumericFigure::OldStyleNumbers;
-                break;
-            case CSSValueProportionalNums:
-                spacing = FontVariantNumericSpacing::ProportionalNumbers;
-                break;
-            case CSSValueTabularNums:
-                spacing = FontVariantNumericSpacing::TabularNumbers;
-                break;
-            case CSSValueDiagonalFractions:
-                fraction = FontVariantNumericFraction::DiagonalFractions;
-                break;
-            case CSSValueStackedFractions:
-                fraction = FontVariantNumericFraction::StackedFractions;
-                break;
-            case CSSValueOrdinal:
-                ordinal = FontVariantNumericOrdinal::Yes;
-                break;
-            case CSSValueSlashedZero:
-                slashedZero = FontVariantNumericSlashedZero::Yes;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-    } else if (is<CSSPrimitiveValue>(value))
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
-
-    receiver.setVariantNumericFigure(figure);
-    receiver.setVariantNumericSpacing(spacing);
-    receiver.setVariantNumericFraction(fraction);
-    receiver.setVariantNumericOrdinal(ordinal);
-    receiver.setVariantNumericSlashedZero(slashedZero);
-}
-
-template <typename T>
-inline void applyValueFontVariantEastAsian(T& receiver, CSSValue& value)
-{
-    FontVariantEastAsianVariant variant = FontVariantEastAsianVariant::Normal;
-    FontVariantEastAsianWidth width = FontVariantEastAsianWidth::Normal;
-    FontVariantEastAsianRuby ruby = FontVariantEastAsianRuby::Normal;
-
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value)) {
-            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
-            case CSSValueJis78:
-                variant = FontVariantEastAsianVariant::Jis78;
-                break;
-            case CSSValueJis83:
-                variant = FontVariantEastAsianVariant::Jis83;
-                break;
-            case CSSValueJis90:
-                variant = FontVariantEastAsianVariant::Jis90;
-                break;
-            case CSSValueJis04:
-                variant = FontVariantEastAsianVariant::Jis04;
-                break;
-            case CSSValueSimplified:
-                variant = FontVariantEastAsianVariant::Simplified;
-                break;
-            case CSSValueTraditional:
-                variant = FontVariantEastAsianVariant::Traditional;
-                break;
-            case CSSValueFullWidth:
-                width = FontVariantEastAsianWidth::Full;
-                break;
-            case CSSValueProportionalWidth:
-                width = FontVariantEastAsianWidth::Proportional;
-                break;
-            case CSSValueRuby:
-                ruby = FontVariantEastAsianRuby::Yes;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-    } else if (is<CSSPrimitiveValue>(value))
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
-
-    receiver.setVariantEastAsianVariant(variant);
-    receiver.setVariantEastAsianWidth(width);
-    receiver.setVariantEastAsianRuby(ruby);
-}
+Ref<CSSValue> computeFontVariant(const FontVariantSettings&);
 
 }
 

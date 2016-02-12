@@ -1,3 +1,121 @@
+2016-02-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [CSS Font Loading] Implement CSSFontFace Boilerplate
+        https://bugs.webkit.org/show_bug.cgi?id=154145
+
+        Reviewed by Dean Jackson.
+
+        The CSS Font Loading spec[1] dictates that the FontFace object needs to have string
+        accessors and mutators for a bunch of properties. Our CSSFontFace object currently
+        contains this parsed information, but it isn't accessible via string-based methods.
+        This patch adds the necessary accessors and mutators, and migrates CSSFontSelector
+        to use these mutators where necessary.
+
+        There is more work to come on CSSFontFace; the next step is to create an .idl file
+        and hook it up to our CSSFontFace object. In this patch I have left some
+        unimplemented pieces (for example: where the spec dictates that some operation should
+        throw a JavaScript exception) which will be implemented in a follow-up patch. This
+        patch does not have any visible behavior change; I'm separating out the boilerplate
+        into this patch in order to ease reviewing burden.
+
+        This patch separates the externally-facing JavaScript API into a new class, FontFace.
+        This class owns a CSSFontFace, which provides the backing implementation. There will
+        be a system of shared ownership of these objects once FontFaceSet is implemented.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt: Add new files to CMake builds.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto for Windows.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto for Cocoa.
+        * css/CSSAllInOne.cpp: Ditto for All-In-One builds.
+        * css/CSSFontFace.cpp: Move shared code from CSSFontSelector into CSSFontFace.
+        (WebCore::CSSFontFace::CSSFontFace):
+        (WebCore::CSSFontFace::~CSSFontFace):
+        (WebCore::CSSFontFace::setFamilies):
+        (WebCore::CSSFontFace::setStyle):
+        (WebCore::CSSFontFace::setWeight):
+        (WebCore::CSSFontFace::setUnicodeRange):
+        (WebCore::CSSFontFace::setVariantLigatures):
+        (WebCore::CSSFontFace::setVariantPosition):
+        (WebCore::CSSFontFace::setVariantCaps):
+        (WebCore::CSSFontFace::setVariantNumeric):
+        (WebCore::CSSFontFace::setVariantAlternates):
+        (WebCore::CSSFontFace::setVariantEastAsian):
+        (WebCore::CSSFontFace::setFeatureSettings):
+        * css/CSSFontFace.h: Clean up.
+        (WebCore::CSSFontFace::create):
+        (WebCore::CSSFontFace::families):
+        (WebCore::CSSFontFace::traitsMask):
+        (WebCore::CSSFontFace::featureSettings):
+        (WebCore::CSSFontFace::variantSettings):
+        (WebCore::CSSFontFace::setVariantSettings):
+        (WebCore::CSSFontFace::setTraitsMask):
+        (WebCore::CSSFontFace::isLocalFallback):
+        (WebCore::CSSFontFace::addRange): Deleted.
+        (WebCore::CSSFontFace::insertFeature): Deleted.
+        (WebCore::CSSFontFace::setVariantCommonLigatures): Deleted.
+        (WebCore::CSSFontFace::setVariantDiscretionaryLigatures): Deleted.
+        (WebCore::CSSFontFace::setVariantHistoricalLigatures): Deleted.
+        (WebCore::CSSFontFace::setVariantContextualAlternates): Deleted.
+        (WebCore::CSSFontFace::setVariantPosition): Deleted.
+        (WebCore::CSSFontFace::setVariantCaps): Deleted.
+        (WebCore::CSSFontFace::setVariantNumericFigure): Deleted.
+        (WebCore::CSSFontFace::setVariantNumericSpacing): Deleted.
+        (WebCore::CSSFontFace::setVariantNumericFraction): Deleted.
+        (WebCore::CSSFontFace::setVariantNumericOrdinal): Deleted.
+        (WebCore::CSSFontFace::setVariantNumericSlashedZero): Deleted.
+        (WebCore::CSSFontFace::setVariantAlternates): Deleted.
+        (WebCore::CSSFontFace::setVariantEastAsianVariant): Deleted.
+        (WebCore::CSSFontFace::setVariantEastAsianWidth): Deleted.
+        (WebCore::CSSFontFace::setVariantEastAsianRuby): Deleted.
+        (WebCore::CSSFontFace::CSSFontFace): Deleted.
+        * css/CSSFontSelector.cpp: Migrate shared code into CSSFontFace, and udpate
+        to use the new API.
+        (WebCore::appendSources):
+        (WebCore::registerLocalFontFacesForFamily):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::computeTraitsMask): Deleted.
+        (WebCore::createFontFace): Deleted.
+        * css/FontFace.cpp: Added. External JavaScript API. Owns a CSSFontFace.
+        (WebCore::FontFace::FontFace):
+        (WebCore::FontFace::~FontFace):
+        (WebCore::parseString):
+        (WebCore::FontFace::setFamily):
+        (WebCore::FontFace::setStyle):
+        (WebCore::FontFace::setWeight):
+        (WebCore::FontFace::setStretch):
+        (WebCore::FontFace::setUnicodeRange):
+        (WebCore::FontFace::setVariant):
+        (WebCore::FontFace::setFeatureSettings):
+        (WebCore::FontFace::family):
+        (WebCore::FontFace::style):
+        (WebCore::FontFace::weight):
+        (WebCore::FontFace::stretch):
+        (WebCore::FontFace::unicodeRange):
+        (WebCore::FontFace::variant):
+        (WebCore::FontFace::featureSettings):
+        * css/FontFace.h: Added. Ditto.
+        (WebCore::FontFace::create):
+        * css/FontVariantBuilder.cpp: Added. Moved code here from FontVariantBuilder.h.
+        Refactored to support a new client (CSSFontFace).
+        (WebCore::extractFontVariantLigatures):
+        (WebCore::extractFontVariantNumeric):
+        (WebCore::extractFontVariantEastAsian):
+        (WebCore::computeFontVariant):
+        * css/FontVariantBuilder.h: Moved code from here into FontVariantBuilder.cpp.
+        (WebCore::applyValueFontVariantLigatures): Deleted.
+        (WebCore::applyValueFontVariantNumeric): Deleted.
+        (WebCore::applyValueFontVariantEastAsian): Deleted.
+        * css/StyleBuilderCustom.h: Update for new FontVariantBuilder API.
+        (WebCore::StyleBuilderCustom::applyValueFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantNumeric):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantEastAsian):
+        * platform/text/TextFlags.h: Provide convenience classes.
+        (WebCore::FontVariantLigaturesValues::FontVariantLigaturesValues):
+        (WebCore::FontVariantNumericValues::FontVariantNumericValues):
+        (WebCore::FontVariantEastAsianValues::FontVariantEastAsianValues):
+
 2016-02-12  Jer Noble  <jer.noble@apple.com>
 
         Build fix after r196506; publish MediaResourceLoader.h as a private header so it can be used by

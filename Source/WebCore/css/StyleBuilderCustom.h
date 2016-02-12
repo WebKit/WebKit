@@ -1407,7 +1407,11 @@ inline void StyleBuilderCustom::applyInitialFontVariantLigatures(StyleResolver& 
 inline void StyleBuilderCustom::applyValueFontVariantLigatures(StyleResolver& styleResolver, CSSValue& value)
 {
     auto fontDescription = styleResolver.fontDescription();
-    WebCore::applyValueFontVariantLigatures(fontDescription, value);
+    auto variantLigatures = extractFontVariantLigatures(value);
+    fontDescription.setVariantCommonLigatures(variantLigatures.commonLigatures);
+    fontDescription.setVariantDiscretionaryLigatures(variantLigatures.discretionaryLigatures);
+    fontDescription.setVariantHistoricalLigatures(variantLigatures.historicalLigatures);
+    fontDescription.setVariantContextualAlternates(variantLigatures.contextualAlternates);
     styleResolver.setFontDescription(fontDescription);
 }
 
@@ -1436,7 +1440,12 @@ inline void StyleBuilderCustom::applyInitialFontVariantNumeric(StyleResolver& st
 inline void StyleBuilderCustom::applyValueFontVariantNumeric(StyleResolver& styleResolver, CSSValue& value)
 {
     auto fontDescription = styleResolver.fontDescription();
-    WebCore::applyValueFontVariantNumeric(fontDescription, value);
+    auto variantNumeric = extractFontVariantNumeric(value);
+    fontDescription.setVariantNumericFigure(variantNumeric.figure);
+    fontDescription.setVariantNumericSpacing(variantNumeric.spacing);
+    fontDescription.setVariantNumericFraction(variantNumeric.fraction);
+    fontDescription.setVariantNumericOrdinal(variantNumeric.ordinal);
+    fontDescription.setVariantNumericSlashedZero(variantNumeric.slashedZero);
     styleResolver.setFontDescription(fontDescription);
 }
 
@@ -1461,7 +1470,10 @@ inline void StyleBuilderCustom::applyInitialFontVariantEastAsian(StyleResolver& 
 inline void StyleBuilderCustom::applyValueFontVariantEastAsian(StyleResolver& styleResolver, CSSValue& value)
 {
     auto fontDescription = styleResolver.fontDescription();
-    WebCore::applyValueFontVariantEastAsian(fontDescription, value);
+    auto variantEastAsian = extractFontVariantEastAsian(value);
+    fontDescription.setVariantEastAsianVariant(variantEastAsian.variant);
+    fontDescription.setVariantEastAsianWidth(variantEastAsian.width);
+    fontDescription.setVariantEastAsianRuby(variantEastAsian.ruby);
     styleResolver.setFontDescription(fontDescription);
 }
 

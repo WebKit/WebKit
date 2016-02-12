@@ -951,9 +951,12 @@
 		1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C21E57B183ED1FF001C289D /* IOSurfacePool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C2417BA1992C04100EF9938 /* SpellingDot@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C2417B91992C04100EF9938 /* SpellingDot@3x.png */; };
 		1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */; };
+		1C3249111C6D6A3B007EDB32 /* FontVariantBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C3249101C6D6A3B007EDB32 /* FontVariantBuilder.cpp */; };
 		1C3969D01B74211E002BCFA7 /* FontCacheCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */; };
 		1C6466251A12C38E0094603C /* CoreTextSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5E980F1A02CEFA002DB55F /* CoreTextSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C6466281A12C4200094603C /* NSFontSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C6466271A12C3F90094603C /* NSFontSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C6626101C6E7CA600AB527C /* FontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C66260E1C6E7CA600AB527C /* FontFace.cpp */; };
+		1C6626111C6E7CA600AB527C /* FontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66260F1C6E7CA600AB527C /* FontFace.h */; };
 		1C81B95A0E97330800266E07 /* InspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9560E97330800266E07 /* InspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C81B9570E97330800266E07 /* InspectorController.cpp */; };
 		1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9580E97330800266E07 /* InspectorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8352,9 +8355,12 @@
 		1C21E57B183ED1FF001C289D /* IOSurfacePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfacePool.h; sourceTree = "<group>"; };
 		1C2417B91992C04100EF9938 /* SpellingDot@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SpellingDot@3x.png"; sourceTree = "<group>"; };
 		1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoaderMac.cpp; sourceTree = "<group>"; };
+		1C3249101C6D6A3B007EDB32 /* FontVariantBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontVariantBuilder.cpp; sourceTree = "<group>"; };
 		1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCacheCoreText.cpp; sourceTree = "<group>"; };
 		1C5E980F1A02CEFA002DB55F /* CoreTextSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextSPI.h; sourceTree = "<group>"; };
 		1C6466271A12C3F90094603C /* NSFontSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSFontSPI.h; sourceTree = "<group>"; };
+		1C66260E1C6E7CA600AB527C /* FontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFace.cpp; sourceTree = "<group>"; };
+		1C66260F1C6E7CA600AB527C /* FontFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFace.h; sourceTree = "<group>"; };
 		1C81B9560E97330800266E07 /* InspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorController.h; sourceTree = "<group>"; };
 		1C81B9570E97330800266E07 /* InspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorController.cpp; sourceTree = "<group>"; };
 		1C81B9580E97330800266E07 /* InspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorClient.h; sourceTree = "<group>"; };
@@ -23703,6 +23709,9 @@
 				3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */,
 				3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */,
 				3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */,
+				1C3249101C6D6A3B007EDB32 /* FontVariantBuilder.cpp */,
+				1C66260E1C6E7CA600AB527C /* FontFace.cpp */,
+				1C66260F1C6E7CA600AB527C /* FontFace.h */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -24996,6 +25005,7 @@
 				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
 				319FBD5F15D2F464009640A6 /* CachedImageClient.h in Headers */,
 				510184690B08602A004A825F /* CachedPage.h in Headers */,
+				1C6626111C6E7CA600AB527C /* FontFace.h in Headers */,
 				D0EDA775143E303C0028E383 /* CachedRawResource.h in Headers */,
 				E1B533491717DEE300F205F9 /* CachedRawResourceClient.h in Headers */,
 				BCB16C200979C3BD00467741 /* CachedResource.h in Headers */,
@@ -29911,6 +29921,7 @@
 				B275357D0B053814002CE64F /* IntRectMac.mm in Sources */,
 				2D46F05017B96FD2005647F0 /* IntSize.cpp in Sources */,
 				B27535620B053814002CE64F /* IntSizeCG.cpp in Sources */,
+				1C3249111C6D6A3B007EDB32 /* FontVariantBuilder.cpp in Sources */,
 				B275357E0B053814002CE64F /* IntSizeMac.mm in Sources */,
 				2D0B4AAC18DA1CCD00434DE1 /* IOSurface.mm in Sources */,
 				1C21E57C183ED1FF001C289D /* IOSurfacePool.cpp in Sources */,
@@ -30112,6 +30123,7 @@
 				BCCBAD400C18C14200CE890F /* JSHTMLCollection.cpp in Sources */,
 				BCCBAD3B0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp in Sources */,
 				F5C041E60FFCA96D00839D4A /* JSHTMLDataListElement.cpp in Sources */,
+				1C6626101C6E7CA600AB527C /* FontFace.cpp in Sources */,
 				D359D8BE129CA55C0006E5D2 /* JSHTMLDetailsElement.cpp in Sources */,
 				1A85B1E60A1B240500D8C87C /* JSHTMLDirectoryElement.cpp in Sources */,
 				1A85B2B60A1B2AC700D8C87C /* JSHTMLDivElement.cpp in Sources */,

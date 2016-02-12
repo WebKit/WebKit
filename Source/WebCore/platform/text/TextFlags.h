@@ -248,6 +248,63 @@ struct FontVariantSettings {
     FontVariantEastAsianRuby eastAsianRuby;
 };
 
+struct FontVariantLigaturesValues {
+    FontVariantLigaturesValues(
+        FontVariantLigatures commonLigatures,
+        FontVariantLigatures discretionaryLigatures,
+        FontVariantLigatures historicalLigatures,
+        FontVariantLigatures contextualAlternates)
+            : commonLigatures(commonLigatures)
+            , discretionaryLigatures(discretionaryLigatures)
+            , historicalLigatures(historicalLigatures)
+            , contextualAlternates(contextualAlternates)
+    {
+    }
+
+    FontVariantLigatures commonLigatures;
+    FontVariantLigatures discretionaryLigatures;
+    FontVariantLigatures historicalLigatures;
+    FontVariantLigatures contextualAlternates;
+};
+
+struct FontVariantNumericValues {
+    FontVariantNumericValues(
+        FontVariantNumericFigure figure,
+        FontVariantNumericSpacing spacing,
+        FontVariantNumericFraction fraction,
+        FontVariantNumericOrdinal ordinal,
+        FontVariantNumericSlashedZero slashedZero)
+            : figure(figure)
+            , spacing(spacing)
+            , fraction(fraction)
+            , ordinal(ordinal)
+            , slashedZero(slashedZero)
+    {
+    }
+
+    FontVariantNumericFigure figure;
+    FontVariantNumericSpacing spacing;
+    FontVariantNumericFraction fraction;
+    FontVariantNumericOrdinal ordinal;
+    FontVariantNumericSlashedZero slashedZero;
+};
+
+struct FontVariantEastAsianValues {
+    FontVariantEastAsianValues(
+        FontVariantEastAsianVariant variant,
+        FontVariantEastAsianWidth width,
+        FontVariantEastAsianRuby ruby)
+            : variant(variant)
+            , width(width)
+            , ruby(ruby)
+    {
+    }
+
+    FontVariantEastAsianVariant variant;
+    FontVariantEastAsianWidth width;
+    FontVariantEastAsianRuby ruby;
+};
+
 enum FontWidthVariant {
     RegularWidth,
     HalfWidth,

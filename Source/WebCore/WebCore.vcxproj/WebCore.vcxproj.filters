@@ -2084,6 +2084,9 @@
     <ClCompile Include="..\css\CSSCursorImageValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\FontFace.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\CSSFontFace.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -2220,6 +2223,9 @@
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\CSSVariableValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\FontVariantBuilder.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\FontLoader.cpp">
@@ -9050,6 +9056,9 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSCursorImageValue.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\FontFace.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSFontFace.h">
