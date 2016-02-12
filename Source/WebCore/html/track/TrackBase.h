@@ -51,7 +51,7 @@ public:
     virtual AtomicString id() const { return m_id; }
     virtual void setId(const AtomicString& id) { m_id = id; }
 
-    virtual AtomicString kind() const { return m_kind; }
+    AtomicString kind() const { return m_kind; }
     virtual void setKind(const AtomicString&);
 
     AtomicString label() const { return m_label; }
