@@ -1097,10 +1097,10 @@ size_t SVGToOTFFontConverter::finishAppendingKERNSubtable(Vector<KerningData> ke
     append16((kerningData.size() - roundedNumKerningPairs) * 6); // rangeShift: "The value of nPairs minus the largest power of two less than or equal to nPairs,
                                                                         // and then multiplied by the size in bytes of an entry in the table."
 
-    for (auto& kerningData : kerningData) {
-        append16(kerningData.glyph1);
-        append16(kerningData.glyph2);
-        append16(kerningData.adjustment);
+    for (auto& kerningDataElement : kerningData) {
+        append16(kerningDataElement.glyph1);
+        append16(kerningDataElement.glyph2);
+        append16(kerningDataElement.adjustment);
     }
 
     return sizeOfKerningDataTable;
