@@ -96,6 +96,13 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @interface NSURLSessionTask (TimingData)
 - (NSDictionary *)_timingData;
 @end
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+@interface NSURLSessionConfiguration ()
+@property (assign) _TimingDataOptions _timingDataOptions;
+@end
+#endif
+
 #endif
 
 #endif // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
