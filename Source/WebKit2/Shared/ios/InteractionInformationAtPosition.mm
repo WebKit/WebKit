@@ -49,7 +49,7 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
     encoder << isLink;
     encoder << isImage;
     encoder << isAnimatedImage;
-    encoder << isClickableElement;
+    encoder << isElement;
     encoder << url;
     encoder << imageURL;
     encoder << title;
@@ -101,7 +101,7 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
     if (!decoder.decode(result.isAnimatedImage))
         return false;
     
-    if (!decoder.decode(result.isClickableElement))
+    if (!decoder.decode(result.isElement))
         return false;
 
     if (!decoder.decode(result.url))

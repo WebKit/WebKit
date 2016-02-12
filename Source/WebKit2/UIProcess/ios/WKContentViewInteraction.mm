@@ -1131,7 +1131,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             // This is a different node than the assisted one.
             // Prevent the gesture if there is no node.
             // Allow the gesture if it is a node that wants highlight or if there is an action for it.
-            if (!_positionInformation.isClickableElement)
+            if (!_positionInformation.isElement)
                 return NO;
             return [self _actionForLongPress] != nil;
         } else {
@@ -1245,7 +1245,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         _isTapHighlightIDValid = YES;
         break;
     case UIGestureRecognizerStateEnded:
-        if (_highlightLongPressCanClick && _positionInformation.isClickableElement) {
+        if (_highlightLongPressCanClick && _positionInformation.isElement) {
             [self _attemptClickAtLocation:[gestureRecognizer startPoint]];
             [self _finishInteraction];
         } else

@@ -1,3 +1,22 @@
+2016-02-12  Beth Dakin  <bdakin@apple.com>
+
+        Re-name isClickableElement in InteractionInformationAtPosition to isElement
+        https://bugs.webkit.org/show_bug.cgi?id=154179
+
+        Reviewed by Enrica Casucci.
+
+        The bool is set for all elements, so it’s just confusing to call it a 
+        clickableElement instead of just element.
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2016-02-12  Anders Carlsson  <andersca@apple.com>
 
         Remove more unused process launcher code

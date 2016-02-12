@@ -46,7 +46,7 @@ struct InteractionInformationAtPosition {
     bool isLink { false };
     bool isImage { false };
     bool isAnimatedImage { false };
-    bool isClickableElement { false };
+    bool isElement { false };
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink { false };
 #endif
