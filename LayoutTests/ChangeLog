@@ -1,3 +1,11 @@
+2016-02-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196466
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-02-11  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] interfaces should inherit EventTarget instead of duplicating the EventTarget API
