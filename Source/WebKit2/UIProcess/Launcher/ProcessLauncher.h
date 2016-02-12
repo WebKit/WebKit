@@ -45,14 +45,15 @@ public:
         virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) = 0;
     };
     
-    enum ProcessType {
-        WebProcess,
+    enum class ProcessType {
+        Web,
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        PluginProcess,
+        Plugin32,
+        Plugin64,
 #endif
-        NetworkProcess,
+        Network,
 #if ENABLE(DATABASE_PROCESS)
-        DatabaseProcess,
+        Database,
 #endif
     };
 

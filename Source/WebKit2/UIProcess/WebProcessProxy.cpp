@@ -129,7 +129,7 @@ WebProcessProxy::~WebProcessProxy()
 
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    launchOptions.processType = ProcessLauncher::WebProcess;
+    launchOptions.processType = ProcessLauncher::ProcessType::Web;
 
     ChildProcessProxy::getLaunchOptions(launchOptions);
 

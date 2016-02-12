@@ -113,6 +113,11 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
 
 void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
+    if (pluginProcessAttributes.moduleInfo.pluginArchitecture == CPU_TYPE_X86)
+        launchOptions.processType = ProcessLauncher::ProcessType::Plugin32;
+    else
+        launchOptions.processType = ProcessLauncher::ProcessType::Plugin64;
+
     launchOptions.architecture = pluginProcessAttributes.moduleInfo.pluginArchitecture;
     launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginProcessAttributes.moduleInfo);
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);

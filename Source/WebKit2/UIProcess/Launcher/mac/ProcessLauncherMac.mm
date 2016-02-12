@@ -84,24 +84,19 @@ typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProce
 static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions)
 {
     switch (launchOptions.processType) {
-    case ProcessLauncher::WebProcess:
+    case ProcessLauncher::ProcessType::Web:
         return "com.apple.WebKit.WebContent" WK_XPC_SERVICE_SUFFIX;
-    case ProcessLauncher::NetworkProcess:
+    case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking" WK_XPC_SERVICE_SUFFIX;
 #if ENABLE(DATABASE_PROCESS)
-    case ProcessLauncher::DatabaseProcess:
+    case ProcessLauncher::ProcessType::Database:
         return "com.apple.WebKit.Databases" WK_XPC_SERVICE_SUFFIX;
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    case ProcessLauncher::PluginProcess:
-        // FIXME: Support plugins that require an executable heap.
-        if (launchOptions.architecture == CPU_TYPE_X86)
-            return "com.apple.WebKit.Plugin.32" WK_XPC_SERVICE_SUFFIX;
-        if (launchOptions.architecture == CPU_TYPE_X86_64)
-            return "com.apple.WebKit.Plugin.64" WK_XPC_SERVICE_SUFFIX;
-
-        ASSERT_NOT_REACHED();
-        return 0;
+    case ProcessLauncher::ProcessType::Plugin32:
+        return "com.apple.WebKit.Plugin.32" WK_XPC_SERVICE_SUFFIX;
+    case ProcessLauncher::ProcessType::Plugin64:
+        return "com.apple.WebKit.Plugin.64" WK_XPC_SERVICE_SUFFIX;
 #endif
     }
 }
@@ -114,7 +109,7 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
     return true;
 #else
     // On Mac, leak a boost onto the NetworkProcess.
-    return launchOptions.processType == ProcessLauncher::NetworkProcess;
+    return launchOptions.processType == ProcessLauncher::ProcessType::Network;
 #endif
 }
     

@@ -1,3 +1,25 @@
+2016-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Use different process types for 32-bit and 64-bit plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=154186
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::getLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        (WebKit::shouldLeakBoost):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getLaunchOptions): Deleted.
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+
 2016-02-12  Beth Dakin  <bdakin@apple.com>
 
         Re-name isClickableElement in InteractionInformationAtPosition to isElement

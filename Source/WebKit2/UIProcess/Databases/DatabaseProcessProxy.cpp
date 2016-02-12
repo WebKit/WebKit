@@ -66,7 +66,7 @@ DatabaseProcessProxy::~DatabaseProcessProxy()
 
 void DatabaseProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    launchOptions.processType = ProcessLauncher::DatabaseProcess;
+    launchOptions.processType = ProcessLauncher::ProcessType::Database;
     ChildProcessProxy::getLaunchOptions(launchOptions);
     platformGetLaunchOptions(launchOptions);
 }
