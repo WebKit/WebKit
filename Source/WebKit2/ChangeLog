@@ -1,3 +1,21 @@
+2016-02-11  Beth Dakin  <bdakin@apple.com>
+
+        EditingRangeIsRelativeTo::Document and NSRangeIsRelativeTo::Document should 
+        be called EditableRoot instead
+        https://bugs.webkit.org/show_bug.cgi?id=154138
+
+        Reviewed by Alexey Proskuryakov.
+
+        EditableRoot is much more accurate than Document.
+        * Shared/EditingRange.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::insertText):
+        (WebKit::WebViewImpl::selectedRangeWithCompletionHandler):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::rangeFromEditingRange):
+        * WebProcess/WebPage/WebPage.h:
+
 2016-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Move Download authentication code to AuthenticationManager

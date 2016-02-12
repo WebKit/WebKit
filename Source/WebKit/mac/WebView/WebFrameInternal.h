@@ -64,7 +64,7 @@ namespace WebCore {
 typedef WebCore::HistoryItem WebCoreHistoryItem;
 
 enum class NSRangeIsRelativeTo : uint8_t {
-    Document,
+    EditableRoot,
     Paragraph,
 };
 

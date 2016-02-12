@@ -561,7 +561,7 @@ public:
     void setAcceleratedCompositingRootLayer(LayerOrView*);
     LayerOrView* acceleratedCompositingRootLayer() const;
 
-    void insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup = false, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::Document);
+    void insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup = false, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);
     void getMarkedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)>);
     void getSelectedRangeAsync(std::function<void (EditingRange, CallbackBase::Error)>);
     void characterIndexForPointAsync(const WebCore::IntPoint&, std::function<void (uint64_t, CallbackBase::Error)>);

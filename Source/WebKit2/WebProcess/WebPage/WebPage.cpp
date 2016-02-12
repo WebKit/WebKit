@@ -5038,7 +5038,7 @@ PassRefPtr<WebCore::Range> WebPage::rangeFromEditingRange(WebCore::Frame& frame,
     else
         length = INT_MAX - range.location;
 
-    if (editingRangeIsRelativeTo == EditingRangeIsRelativeTo::Document) {
+    if (editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot) {
         // Our critical assumption is that this code path is called by input methods that
         // concentrate on a given area containing the selection.
         // We have to do this because of text fields and textareas. The DOM for those is not

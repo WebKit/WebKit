@@ -7114,7 +7114,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 #endif
 
     if (replacementRange.location != NSNotFound) {
-        NSRangeIsRelativeTo rangeIsRelativeTo = needToRemoveSoftSpace ? NSRangeIsRelativeTo::Paragraph : NSRangeIsRelativeTo::Document;
+        NSRangeIsRelativeTo rangeIsRelativeTo = needToRemoveSoftSpace ? NSRangeIsRelativeTo::Paragraph : NSRangeIsRelativeTo::EditableRoot;
         RefPtr<Range> domRange = [[self _frame] _convertToDOMRange:replacementRange rangeIsRelativeTo:rangeIsRelativeTo];
         if (domRange)
             coreFrame->selection().setSelection(VisibleSelection(*domRange, SEL_DEFAULT_AFFINITY));

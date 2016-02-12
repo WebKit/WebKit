@@ -793,7 +793,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (PassRefPtr<Range>)_convertToDOMRange:(NSRange)nsrange
 {
-    return [self _convertToDOMRange:nsrange rangeIsRelativeTo:NSRangeIsRelativeTo::Document];
+    return [self _convertToDOMRange:nsrange rangeIsRelativeTo:NSRangeIsRelativeTo::EditableRoot];
 }
 
 - (PassRefPtr<Range>)_convertToDOMRange:(NSRange)nsrange rangeIsRelativeTo:(NSRangeIsRelativeTo)rangeIsRelativeTo
@@ -803,7 +803,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
         nsrange.length = INT_MAX - nsrange.location;
 
-    if (rangeIsRelativeTo == NSRangeIsRelativeTo::Document) {
+    if (rangeIsRelativeTo == NSRangeIsRelativeTo::EditableRoot) {
         // Our critical assumption is that this code path is only called by input methods that
         // concentrate on a given area containing the selection
         // We have to do this because of text fields and textareas. The DOM for those is not

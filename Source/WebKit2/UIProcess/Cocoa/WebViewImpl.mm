@@ -3556,7 +3556,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     if (!dictationAlternatives.isEmpty())
         m_page->insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives, registerUndoGroup);
     else
-        m_page->insertTextAsync(eventText, replacementRange, registerUndoGroup, needToRemoveSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::Document);
+        m_page->insertTextAsync(eventText, replacementRange, registerUndoGroup, needToRemoveSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::EditableRoot);
 }
 
 void WebViewImpl::selectedRangeWithCompletionHandler(void(^completionHandlerPtr)(NSRange selectedRange))

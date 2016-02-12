@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class EditingRangeIsRelativeTo : uint8_t {
-    Document,
+    EditableRoot,
     Paragraph,
 };
 
