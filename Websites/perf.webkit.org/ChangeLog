@@ -1,5 +1,12 @@
 2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Land the change that was supposed to be the part of r196463.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.prototype._didFetchTestGroups): Select the latest test group by default.
+
+2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Refine v3 UI's analysis task page
         https://bugs.webkit.org/show_bug.cgi?id=154152
 

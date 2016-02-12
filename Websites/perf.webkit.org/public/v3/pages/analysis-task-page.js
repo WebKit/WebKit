@@ -107,7 +107,7 @@ class AnalysisTaskPage extends PageWithHeading {
     _didFetchTestGroups(testGroups)
     {
         this._testGroups = testGroups.sort(function (a, b) { return +a.createdAt() - b.createdAt(); });
-        this._currentTestGroup = testGroups.length ? testGroups[0] : null;
+        this._currentTestGroup = testGroups.length ? testGroups[testGroups.length - 1] : null;
 
         this._analysisResultsViewer.setTestGroups(testGroups);
         this._testGroupResultsTable.setTestGroup(this._currentTestGroup);
