@@ -335,7 +335,7 @@ class TestRunsGenerator {
             if (count($values) != count($group_sizes)) {
                 // FIXME: We should support bootstrapping or just computing the mean in this case.
                 $this->exit_with_error('IterationGroupCountIsInconsistent', array('parent' => $test_metric['test_id'],
-                    'metric' => $test_metric['metric_name'], 'childTest' => $name_and_values['name'],
+                    'metric' => $test_metric['metric_name'], 'childTest' => $test_name,
                     'valuesByIterations' => $values_by_iterations, 'values' => $values));
             }
 
@@ -345,7 +345,7 @@ class TestRunsGenerator {
                     $run_iteration_value = $values[$group][$i];
                     if (!is_numeric($run_iteration_value)) {
                         $this->exit_with_error('NonNumeralIterationValueForAggregation', array('parent' => $test_metric['test_id'],
-                            'metric' => $test_metric['metric_name'], 'childTest' => $name_and_values['name'],
+                            'metric' => $test_metric['metric_name'], 'childTest' => $test_name,
                             'valuesByIterations' => $values_by_iterations, 'values' => $values, 'index' => $i));
                     }
                     array_push($values_by_iterations[$flattened_iteration_index], $run_iteration_value);

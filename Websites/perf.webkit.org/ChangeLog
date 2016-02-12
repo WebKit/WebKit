@@ -1,5 +1,20 @@
 2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a script to process backlogs created while perf dashboard was in the maintenance mode
+        https://bugs.webkit.org/show_bug.cgi?id=154140
+
+        Reviewed by Chris Dumez.
+
+        Added a script to process the backlog JSONs created while the perf dashboard was put in the maintenance mode.
+        It re-submits each JSON file to the perf dashboard using the same server config file used by syncing scripts.
+
+        * public/include/report-processor.php:
+        (TestRunsGenerator::test_value_list_to_values_by_iterations): Fixed a bug in the error message code. It was
+        referencing an undeclared variable.
+        * tools/process-maintenance-backlog.py: Added.
+
+2016-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         AnalysisResultsViewer never uses this._smallerIsBetter
         https://bugs.webkit.org/show_bug.cgi?id=154134
 
