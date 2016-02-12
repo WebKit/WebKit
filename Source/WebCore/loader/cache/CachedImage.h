@@ -116,8 +116,6 @@ private:
 
     virtual bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
-    virtual bool decodedDataIsPurgeable() const override { return m_image && m_image->decodedDataIsPurgeable(); }
-
     // ImageObserver
     virtual void decodedSizeChanged(const Image*, int delta) override;
     virtual void didDraw(const Image*) override;

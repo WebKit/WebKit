@@ -368,13 +368,6 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsam
     if (!imageUTI)
         return image.leakRef();
 
-#if PLATFORM(MAC)
-    if (CFEqual(imageUTI, kUTTypeGIF)) {
-        CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
-        return image.leakRef();
-    }
-#endif
-
     if (!CFEqual(imageUTI, xbmUTI))
         return image.leakRef();
     

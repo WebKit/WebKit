@@ -1,3 +1,36 @@
+2016-02-12  Andreas Kling  <akling@apple.com>
+
+        [Mac] BitmapImage::decodedDataIsPurgeable() is telling lies and causing massive memory usage.
+        <https://webkit.org/b/154172>
+
+        Reviewed by Antti Koivisto.
+
+        The underlying mechanism in CoreAnimation that made this work is no longer in place.
+
+        Instead of keeping purgeable frames and juggling volatility bits, we were simply caching
+        every single frame of large GIF animations, sometimes leading to monstrous memory usage.
+
+        Remove the code from WebCore since it's not doing at all what it means to.
+
+        Now iOS and Mac will behave the same again, and frame caching decisions will be
+        made by WebKit, based on total pixel byte size.
+
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::decodedDataIsPurgeable): Deleted.
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize): Deleted.
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::decodedDataIsPurgeable): Deleted.
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary): Deleted.
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::decodedDataIsPurgeable): Deleted.
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::decodedDataIsPurgeable): Deleted.
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex): Deleted.
+
 2016-02-12  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Ref cycle between IDBObjectStore and IDBIndex.

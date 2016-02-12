@@ -288,7 +288,6 @@ protected:
 #endif
 
 private:
-    virtual bool decodedDataIsPurgeable() const override;
     void clearTimer();
     void startTimer(double delay);
 

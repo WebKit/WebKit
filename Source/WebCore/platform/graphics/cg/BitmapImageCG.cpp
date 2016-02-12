@@ -265,13 +265,6 @@ PassNativeImagePtr BitmapImage::copyUnscaledFrameAtIndex(size_t index)
     return m_source.createFrameAtIndex(index);
 }
 
-bool BitmapImage::decodedDataIsPurgeable() const
-{
-    return m_frames.size() >= 1
-        && m_frames[0].m_frame
-        && CGImageGetCachingFlags(m_frames[0].m_frame) & kCGImageCachingTransient;
-}
-
 }
 
 #endif // USE(CG)
