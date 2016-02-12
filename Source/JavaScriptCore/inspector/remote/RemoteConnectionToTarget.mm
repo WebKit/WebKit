@@ -32,6 +32,7 @@
 #import "RemoteAutomationTarget.h"
 #import "RemoteInspectionTarget.h"
 #import <dispatch/dispatch.h>
+#import <wtf/Optional.h>
 #import <wtf/Vector.h>
 
 #if PLATFORM(IOS)
@@ -92,13 +93,13 @@ static void RemoteTargetInitializeGlobalQueue()
 
 static void RemoteTargetHandleRunSourceWithInfo(void* info)
 {
-    RemoteConnectionToTarget *connection = static_cast<RemoteConnectionToTarget*>(info);
+    RemoteConnectionToTarget *connectionToTarget = static_cast<RemoteConnectionToTarget*>(info);
 
     RemoteTargetQueue queueCopy;
     {
-        std::lock_guard<Lock> lock(connection->queueMutex());
-        queueCopy = connection->queue();
-        connection->clearQueue();
+        std::lock_guard<Lock> lock(connectionToTarget->queueMutex());
+        queueCopy = connectionToTarget->queue();
+        connectionToTarget->clearQueue();
     }
 
     for (const auto& block : queueCopy)
@@ -108,7 +109,6 @@ static void RemoteTargetHandleRunSourceWithInfo(void* info)
 
 RemoteConnectionToTarget::RemoteConnectionToTarget(RemoteControllableTarget* target, NSString *connectionIdentifier, NSString *destination)
     : m_target(target)
-    , m_identifier(target->identifier())
     , m_connectionIdentifier(connectionIdentifier)
     , m_destination(destination)
 {
@@ -120,14 +120,19 @@ RemoteConnectionToTarget::~RemoteConnectionToTarget()
     teardownRunLoop();
 }
 
-NSString *RemoteConnectionToTarget::destination() const
+Optional<unsigned> RemoteConnectionToTarget::targetIdentifier() const
 {
-    return [[m_destination copy] autorelease];
+    return m_target ? Optional<unsigned>(m_target->targetIdentifier()) : Nullopt;
 }
 
 NSString *RemoteConnectionToTarget::connectionIdentifier() const
 {
     return [[m_connectionIdentifier copy] autorelease];
+}
+
+NSString *RemoteConnectionToTarget::destination() const
+{
+    return [[m_destination copy] autorelease];
 }
 
 void RemoteConnectionToTarget::dispatchAsyncOnTarget(void (^block)())
@@ -159,7 +164,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
         {
             std::lock_guard<Lock> lock(m_targetMutex);
             if (!m_target || !m_target->remoteControlAllowed()) {
-                RemoteInspector::singleton().setupFailed(m_identifier);
+                RemoteInspector::singleton().setupFailed(targetIdentifier().valueOr(0));
                 m_target = nullptr;
             } else if (is<RemoteInspectionTarget>(m_target)) {
                 auto castedTarget = downcast<RemoteInspectionTarget>(m_target);
@@ -226,8 +231,10 @@ void RemoteConnectionToTarget::sendMessageToTarget(NSString *message)
 
 bool RemoteConnectionToTarget::sendMessageToFrontend(const String& message)
 {
-    RemoteInspector::singleton().sendMessageToRemote(identifier(), message);
+    if (!m_target)
+        return false;
 
+    RemoteInspector::singleton().sendMessageToRemote(targetIdentifier().value(), message);
     return true;
 }
 

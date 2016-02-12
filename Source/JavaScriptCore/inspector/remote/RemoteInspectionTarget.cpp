@@ -53,18 +53,18 @@ void RemoteInspectionTarget::setRemoteDebuggingAllowed(bool allowed)
 
 void RemoteInspectionTarget::pauseWaitingForAutomaticInspection()
 {
-    ASSERT(identifier());
+    ASSERT(targetIdentifier());
     ASSERT(m_allowed);
     ASSERT(automaticInspectionAllowed());
 
     EventLoop loop;
-    while (RemoteInspector::singleton().waitingForAutomaticInspection(identifier()) && !loop.ended())
+    while (RemoteInspector::singleton().waitingForAutomaticInspection(targetIdentifier()) && !loop.ended())
         loop.cycle();
 }
 
 void RemoteInspectionTarget::unpauseForInitializedInspector()
 {
-    RemoteInspector::singleton().setupCompleted(identifier());
+    RemoteInspector::singleton().setupCompleted(targetIdentifier());
 }
 
 } // namespace Inspector

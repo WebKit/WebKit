@@ -46,8 +46,8 @@ public:
     virtual void connect(FrontendChannel*, bool isAutomaticConnection = false) = 0;
     virtual void disconnect(FrontendChannel*) = 0;
 
-    unsigned identifier() const { return m_identifier; }
-    void setIdentifier(unsigned identifier) { m_identifier = identifier; }
+    unsigned targetIdentifier() const { return m_identifier; }
+    void setTargetIdentifier(unsigned identifier) { m_identifier = identifier; }
 
     enum class Type { JavaScript, Web, Automation };
     virtual Type type() const = 0;

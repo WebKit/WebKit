@@ -1,3 +1,69 @@
+2016-02-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: disambiguate the various identifier and connection types in RemoteInspector
+        https://bugs.webkit.org/show_bug.cgi?id=154130
+
+        Reviewed by Joseph Pecoraro.
+
+        There are multiple identifier types:
+            - connection identifier, a string UUID for a remote debugger process.
+            - session identifier, a string UUID for a remote driver/debugger instance.
+            - page/target identifier, a number unique within a single process.
+
+        There are multiple connection types:
+            - RemoteInspectorXPCConnection, a connection from RemoteInspectorXPCConnectionor to a relay.
+            - RemoteConnectionToTarget, a class that bridges to targets' dispatch queues.
+
+        Use consistent variable and getter names so that these don't get confused and
+        so that the code is easier to read. This is especially an improvement when working
+        with multiple target types or connection types within the same function.
+
+        * inspector/remote/RemoteConnectionToTarget.h:
+        * inspector/remote/RemoteConnectionToTarget.mm:
+        Remove the member for m_identifier since we can ask the target for its target identifier
+        or use a default value via WTF::Optional. There's no reason to cache the value.
+
+        (Inspector::RemoteTargetHandleRunSourceWithInfo):
+        (Inspector::RemoteConnectionToTarget::targetIdentifier):
+        (Inspector::RemoteConnectionToTarget::destination):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::sendMessageToFrontend):
+        Bail out if the target pointer was somehow cleared and we can't get a useful target identifier.
+
+        (Inspector::RemoteConnectionToTarget::RemoteConnectionToTarget): Deleted.
+        * inspector/remote/RemoteControllableTarget.h:
+        * inspector/remote/RemoteInspectionTarget.cpp:
+        (Inspector::RemoteInspectionTarget::pauseWaitingForAutomaticInspection):
+        (Inspector::RemoteInspectionTarget::unpauseForInitializedInspector):
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::nextAvailableTargetIdentifier):
+        (Inspector::RemoteInspector::registerTarget):
+        (Inspector::RemoteInspector::unregisterTarget):
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::sendAutomaticInspectionCandidateMessage):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::setupCompleted):
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::listingForInspectionTarget):
+        (Inspector::RemoteInspector::listingForAutomationTarget):
+        (Inspector::RemoteInspector::pushListingsNow):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::updateHasActiveDebugSession):
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedDidCloseMessage):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        (Inspector::RemoteInspector::receivedProxyApplicationSetupMessage):
+        (Inspector::RemoteInspector::receivedConnectionDiedMessage):
+        (Inspector::RemoteInspector::receivedAutomaticInspectionRejectMessage):
+        (Inspector::RemoteInspector::nextAvailableIdentifier): Deleted.
+        * inspector/remote/RemoteInspectorConstants.h:
+
 2016-02-12  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] On x86, improve the selection of which value are selected for the UseDef part of commutative operations
