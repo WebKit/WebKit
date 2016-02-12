@@ -5,7 +5,7 @@
   <PropertyGroup Condition="'$(CONFIGURATION)'=='Release'">
 	<CONFIG>Release</CONFIG>
     <DebugSuffix></DebugSuffix>
-    <DebugSuffixDefinition>-DDEBUG_SUFFIX=_debug</DebugSuffixDefinition>
+    <DebugSuffixDefinition></DebugSuffixDefinition>
   </PropertyGroup>
   <PropertyGroup Condition="'$(CONFIGURATION)'=='Debug'">
 	<CONFIG>Debug</CONFIG>
