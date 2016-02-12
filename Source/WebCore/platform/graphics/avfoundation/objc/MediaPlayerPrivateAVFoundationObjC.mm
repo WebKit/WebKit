@@ -921,8 +921,11 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     if (Settings::isAVFoundationNSURLSessionEnabled()
         && [resourceLoader respondsToSelector:@selector(setURLSession:)]
         && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegate)]
-        && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegateQueue)])
-        resourceLoader.URLSession = (NSURLSession *)[[[WebCoreNSURLSession alloc] initWithResourceLoader:*player()->cachedResourceLoader() delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue] autorelease];
+        && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegateQueue)]) {
+        RefPtr<PlatformMediaResourceLoader> mediaResourceLoader = player()->createResourceLoader();
+        if (mediaResourceLoader)
+            resourceLoader.URLSession = (NSURLSession *)[[[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue] autorelease];
+    }
 #endif
 
 #endif

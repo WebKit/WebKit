@@ -1,3 +1,42 @@
+2016-02-11  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Adopt MediaResourceLoader (instead of CachedResourceLoader) in WebCoreNSURLSession.
+        https://bugs.webkit.org/show_bug.cgi?id=154136
+
+        Reviewed by Alex Christensen.
+
+        MediaResourceLoader already supports using CORS attribute to verify CORS access requirements
+        when loading media resources, so use it, rather than CachedResourceLoader, as the backing for
+        WebCoreNSURLSession.
+
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession delegateQueue]):
+        (-[WebCoreNSURLSession streamTaskWithNetService:]):
+        (-[WebCoreNSURLSession isKindOfClass:]):
+        (-[WebCoreNSURLSessionDataTask initWithSession:identifier:request:]):
+        (-[WebCoreNSURLSessionDataTask _restart]):
+        (-[WebCoreNSURLSessionDataTask _cancel]):
+        (-[WebCoreNSURLSessionDataTask resume]):
+        (-[WebCoreNSURLSessionDataTask _timingData]):
+        (-[WebCoreNSURLSessionDataTask resource:receivedResponse:]):
+        (-[WebCoreNSURLSessionDataTask resource:receivedData:length:]):
+        (-[WebCoreNSURLSession initWithResourceLoader:delegate:delegateQueue:]): Deleted.
+        (-[WebCoreNSURLSession loader]): Deleted.
+        (WebCore::WebCoreNSURLSessionDataTaskClient::dataSent): Deleted.
+        (WebCore::WebCoreNSURLSessionDataTaskClient::responseReceived): Deleted.
+        (WebCore::WebCoreNSURLSessionDataTaskClient::dataReceived): Deleted.
+        (WebCore::WebCoreNSURLSessionDataTaskClient::redirectReceived): Deleted.
+        (WebCore::WebCoreNSURLSessionDataTaskClient::notifyFinished): Deleted.
+        (-[WebCoreNSURLSessionDataTask initWithSession:identifier:URL:]): Deleted.
+        (-[WebCoreNSURLSessionDataTask _finish]): Deleted.
+        (-[WebCoreNSURLSessionDataTask _setDefersLoading:]): Deleted.
+        (-[WebCoreNSURLSessionDataTask resource:sentBytes:totalBytesToBeSent:]): Deleted.
+        (-[WebCoreNSURLSessionDataTask resource:receivedRedirect:request:]): Deleted.
+        (-[WebCoreNSURLSessionDataTask resourceFinished:]): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+
 2016-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Fix non-internal builds when using NetworkSession

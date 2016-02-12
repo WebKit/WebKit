@@ -1,3 +1,21 @@
+2016-02-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Adopt MediaResourceLoader (instead of CachedResourceLoader) in WebCoreNSURLSession.
+        https://bugs.webkit.org/show_bug.cgi?id=154136
+
+        Reviewed by Alex Christensen.
+
+        Use a MediaResourceLoader instead of a CachedResourceLoader for WebCoreNSURLSession.
+
+        Drive-by fix: generate USE and ENABLE macros for TestWebKitAPI by adding FEATURE_DEFINES
+        to GCC_PREPROCESSOR_DEFINES.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Tests/WebCore/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        (TestWebKitAPI::WebCoreNSURLSessionTest::TearDown):
+        (TestWebKitAPI::TEST_F):
+
 2016-02-11  Dana Burkart  <dburkart@apple.com>
 
         Large logs can bring down the webkit master

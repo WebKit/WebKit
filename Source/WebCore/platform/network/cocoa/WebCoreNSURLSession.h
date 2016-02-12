@@ -28,8 +28,6 @@
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
-#import "CachedRawResource.h"
-#import "CachedResourceHandle.h"
 #import <Foundation/NSURLSession.h>
 #import <wtf/HashSet.h>
 #import <wtf/OSObjectPtr.h>
@@ -44,15 +42,16 @@
 @class WebCoreNSURLSessionDataTask;
 
 namespace WebCore {
-class CachedResourceLoader;
 class CachedResourceRequest;
+class PlatformMediaResource;
+class PlatformMediaResourceLoader;
 class WebCoreNSURLSessionDataTaskClient;
 }
 
 NS_ASSUME_NONNULL_BEGIN
 
 WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
-    RefPtr<WebCore::CachedResourceLoader> _loader;
+    RefPtr<WebCore::PlatformMediaResourceLoader> _loader;
     RetainPtr<id<NSURLSessionDelegate>> _delegate;
     RetainPtr<NSOperationQueue> _queue;
     NSString *_sessionDescription;
@@ -61,7 +60,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     NSUInteger _nextTaskIdentifier;
     OSObjectPtr<dispatch_queue_t> _internalQueue;
 }
-- (id)initWithResourceLoader:(WebCore::CachedResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
+- (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
 @property (readonly, retain) NSOperationQueue *delegateQueue;
 @property (nullable, readonly, retain) id <NSURLSessionDelegate> delegate;
 @property (readonly, copy) NSURLSessionConfiguration *configuration;
@@ -98,9 +97,8 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 
 @interface WebCoreNSURLSessionDataTask : NSObject {
     WebCoreNSURLSession *_session;
-    std::unique_ptr<WebCore::CachedResourceRequest> _request;
     std::unique_ptr<WebCore::WebCoreNSURLSessionDataTaskClient> _client;
-    WebCore::CachedResourceHandle<WebCore::CachedRawResource> _resource;
+    RefPtr<WebCore::PlatformMediaResource> _resource;
     RetainPtr<NSURLResponse> _response;
     NSUInteger _taskIdentifier;
     NSURLRequest *_originalRequest;
