@@ -46,6 +46,8 @@ void WebPreferences::platformInitializeStore()
 #else
     if (getenv("WEBKIT_FORCE_COMPOSITING_MODE"))
         setForceCompositingMode(true);
+    if (getenv("WEBKIT_DISABLE_COMPOSITING_MODE"))
+        setAcceleratedCompositingEnabled(false);
 #endif
 }
 
