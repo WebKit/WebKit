@@ -661,7 +661,6 @@ bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, String& message);
 bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, String& message);
 
 void printErrorMessageForFrame(Frame*, const String& message);
-JSC::EncodedJSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 
 inline String propertyNameToString(JSC::PropertyName propertyName)
 {

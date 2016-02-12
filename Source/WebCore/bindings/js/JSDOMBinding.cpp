@@ -334,11 +334,6 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
     frame->document()->domWindow()->printErrorMessage(message);
 }
 
-EncodedJSValue objectToStringFunctionGetter(ExecState* exec, EncodedJSValue, PropertyName propertyName)
-{
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), objectProtoFuncToString));
-}
-
 Structure* getCachedDOMStructure(JSDOMGlobalObject& globalObject, const ClassInfo* classInfo)
 {
     JSDOMStructureMap& structures = globalObject.structures();

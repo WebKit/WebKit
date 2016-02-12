@@ -66,11 +66,6 @@ void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(frame);
 }
 
-static EncodedJSValue childFrameGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
-{
-    return JSValue::encode(toJS(exec, jsCast<JSDOMWindow*>(JSValue::decode(thisValue))->wrapped().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))->document()->domWindow()));
-}
-
 static EncodedJSValue namedItemGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
     JSDOMWindowBase* thisObj = jsCast<JSDOMWindow*>(JSValue::decode(thisValue));
@@ -117,6 +112,107 @@ static EncodedJSValue jsDOMWindowIndexedDB(ExecState* exec, EncodedJSValue thisV
 }
 #endif
 
+static bool jsDOMWindowGetOwnPropertySlotCrossOrigin(JSDOMWindow* thisObject, ExecState* exec, PropertyName propertyName, PropertySlot& slot, String& errorMessage)
+{
+    // These are the functions we allow access to cross-origin (DoNotCheckSecurity in IDL).
+    // Always provide the original function, on a fresh uncached function object.
+    if (propertyName == exec->propertyNames().blur) {
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
+        return true;
+    }
+    if (propertyName == exec->propertyNames().close) {
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+        return true;
+    }
+    if (propertyName == exec->propertyNames().focus) {
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
+        return true;
+    }
+    if (propertyName == exec->propertyNames().postMessage) {
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
+        return true;
+    }
+
+    // Allow access to toString() cross-domain, but always Object.prototype.toString.
+    if (propertyName == exec->propertyNames().toString) {
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<objectProtoFuncToString, 0>);
+        return true;
+    }
+
+    // When accessing cross-origin known Window properties, we always use the original property getter,
+    // even if the property was removed / redefined. As of early 2016, this matches Firefox and Chrome's
+    // behavior.
+    if (auto* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName)) {
+        // Only allow access to these specific properties.
+        if (propertyName == exec->propertyNames().location
+            || propertyName == exec->propertyNames().closed
+            || propertyName == exec->propertyNames().length
+            || propertyName == exec->propertyNames().self
+            || propertyName == exec->propertyNames().window
+            || propertyName == exec->propertyNames().frames
+            || propertyName == exec->propertyNames().opener
+            || propertyName == exec->propertyNames().parent
+            || propertyName == exec->propertyNames().top) {
+            slot.setCacheableCustom(thisObject, ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
+            return true;
+        }
+
+        // For any other entries in the static property table, deny access. (Early return also prevents
+        // named getter from returning frames with matching names - this seems a little questionable, see
+        // FIXME comment on prototype search below.)
+        thisObject->printErrorMessage(errorMessage);
+        slot.setUndefined();
+        return true;
+    }
+
+    // Do prototype lookup early so that functions and attributes in the prototype can have
+    // precedence over the index and name getters.
+    // FIXME: This seems like a silly idea. It only serves to suppress named property access
+    // to frames that happen to have names corresponding to properties on the prototype.
+    // This seems to only serve to leak some information cross-origin.
+    JSValue proto = thisObject->prototype();
+    if (proto.isObject() && asObject(proto)->getPropertySlot(exec, propertyName, slot)) {
+        thisObject->printErrorMessage(errorMessage);
+        slot.setUndefined();
+        return true;
+    }
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    if (propertyName == exec->propertyNames().webkit && thisObject->wrapped().shouldHaveWebKitNamespaceForWorld(thisObject->world())) {
+        slot.setCacheableCustom(thisObject, ReadOnly | DontDelete | DontEnum, jsDOMWindowWebKit);
+        return true;
+    }
+#endif
+
+    // After this point it is no longer valid to cache any results because of
+    // the impure nature of the property accesses which follow. We can move this 
+    // statement further down when we add ways to mitigate these impurities with, 
+    // for example, watchpoints.
+    slot.disableCaching();
+
+    // Check for child frames by name before built-in properties to
+    // match Mozilla. This does not match IE, but some sites end up
+    // naming frames things that conflict with window properties that
+    // are in Moz but not IE. Since we have some of these, we have to do
+    // it the Moz way.
+    if (auto* scopedChild = thisObject->wrapped().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
+        slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, toJS(exec, scopedChild->document()->domWindow()));
+        return true;
+    }
+
+    // allow window[1] or parent[1] etc. (#56983)
+    Optional<uint32_t> index = parseIndex(propertyName);
+    if (index && index.value() < thisObject->wrapped().frame()->tree().scopedChildCount()) {
+        slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum,
+            toJS(exec, thisObject->wrapped().frame()->tree().scopedChild(index.value())->document()->domWindow()));
+        return true;
+    }
+
+    thisObject->printErrorMessage(errorMessage);
+    slot.setUndefined();
+    return true;
+}
+
 bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
@@ -151,11 +247,12 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // because we always allow access to some function, just different ones depending whether access
     // is allowed.
     String errorMessage;
-    bool allowsAccess = shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), errorMessage);
+    if (!shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), errorMessage))
+        return jsDOMWindowGetOwnPropertySlotCrossOrigin(thisObject, exec, propertyName, slot, errorMessage);
     
     // Look for overrides before looking at any of our own properties, but ignore overrides completely
     // if this is cross-domain access.
-    if (allowsAccess && JSGlobalObject::getOwnPropertySlot(thisObject, exec, propertyName, slot))
+    if (JSGlobalObject::getOwnPropertySlot(thisObject, exec, propertyName, slot))
         return true;
     
     // We need this code here because otherwise JSDOMWindowBase will stop the search before we even get to the
@@ -179,12 +276,6 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
             slot.setUndefined();
             return true;
         }
-    } else if (propertyName == exec->propertyNames().toString) {
-        // Allow access to toString() cross-domain, but always Object.prototype.toString.
-        if (!allowsAccess) {
-            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, objectToStringFunctionGetter);
-            return true;
-        }
     }
 
 #if ENABLE(INDEXED_DATABASE)
@@ -194,7 +285,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // and have to handle them specially here.
     // Once https://webkit.org/b/145669 is resolved, they can once again be auto generated.
     if (RuntimeEnabledFeatures::sharedFeatures().indexedDBEnabled() && (propertyName == exec->propertyNames().indexedDB || propertyName == exec->propertyNames().webkitIndexedDB)) {
-        slot.setCustom(thisObject, allowsAccess ? DontDelete | ReadOnly | CustomAccessor : ReadOnly | DontDelete | DontEnum, jsDOMWindowIndexedDB);
+        slot.setCustom(thisObject, DontDelete | ReadOnly | CustomAccessor, jsDOMWindowIndexedDB);
         return true;
     }
 #endif
@@ -202,16 +293,16 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // When accessing cross-origin known Window properties, we always use the original property getter,
     // even if the property was removed / redefined. As of early 2016, this matches Firefox and Chrome's
     // behavior.
-    if (!thisObject->staticFunctionsReified() || !allowsAccess) {
+    if (!thisObject->staticFunctionsReified()) {
         if (auto* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName)) {
-            slot.setCacheableCustom(thisObject, allowsAccess ? entry->attributes() : ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
+            slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());
             return true;
         }
     }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
     if (propertyName == exec->propertyNames().webkit && thisObject->wrapped().shouldHaveWebKitNamespaceForWorld(thisObject->world())) {
-        slot.setCacheableCustom(thisObject, allowsAccess ? DontDelete | ReadOnly : ReadOnly | DontDelete | DontEnum, jsDOMWindowWebKit);
+        slot.setCacheableCustom(thisObject, DontDelete | ReadOnly, jsDOMWindowWebKit);
         return true;
     }
 #endif
@@ -219,15 +310,8 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // Do prototype lookup early so that functions and attributes in the prototype can have
     // precedence over the index and name getters.  
     JSValue proto = thisObject->prototype();
-    if (proto.isObject()) {
-        if (asObject(proto)->getPropertySlot(exec, propertyName, slot)) {
-            if (!allowsAccess) {
-                thisObject->printErrorMessage(errorMessage);
-                slot.setUndefined();
-            }
-            return true;
-        }
-    }
+    if (proto.isObject() && asObject(proto)->getPropertySlot(exec, propertyName, slot))
+        return true;
 
     // After this point it is no longer valid to cache any results because of
     // the impure nature of the property accesses which follow. We can move this 
@@ -240,8 +324,8 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // naming frames things that conflict with window properties that
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
-    if (thisObject->wrapped().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, childFrameGetter);
+    if (auto* scopedChild = thisObject->wrapped().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
+        slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, toJS(exec, scopedChild->document()->domWindow()));
         return true;
     }
 
@@ -253,12 +337,6 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     if (index && index.value() < thisObject->wrapped().frame()->tree().scopedChildCount()) {
         slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum,
             toJS(exec, thisObject->wrapped().frame()->tree().scopedChild(index.value())->document()->domWindow()));
-        return true;
-    }
-
-    if (!allowsAccess) {
-        thisObject->printErrorMessage(errorMessage);
-        slot.setUndefined();
         return true;
     }
 
@@ -286,26 +364,27 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
         return true;
     }
 
+    Identifier propertyName = Identifier::from(exec, index);
+    
     // We need to check for cross-domain access here without printing the generic warning message
     // because we always allow access to some function, just different ones depending whether access
     // is allowed.
     String errorMessage;
-    bool allowsAccess = shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), errorMessage);
+    if (!shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), errorMessage))
+        return jsDOMWindowGetOwnPropertySlotCrossOrigin(thisObject, exec, propertyName, slot, errorMessage);
 
     // Look for overrides before looking at any of our own properties, but ignore overrides completely
     // if this is cross-domain access.
-    if (allowsAccess && JSGlobalObject::getOwnPropertySlotByIndex(thisObject, exec, index, slot))
+    if (JSGlobalObject::getOwnPropertySlotByIndex(thisObject, exec, index, slot))
         return true;
-    
-    Identifier propertyName = Identifier::from(exec, index);
     
     // Check for child frames by name before built-in properties to
     // match Mozilla. This does not match IE, but some sites end up
     // naming frames things that conflict with window properties that
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
-    if (thisObject->wrapped().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, childFrameGetter);
+    if (auto* scopedChild = thisObject->wrapped().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
+        slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, toJS(exec, scopedChild->document()->domWindow()));
         return true;
     }
     
@@ -313,13 +392,8 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     // precedence over the index and name getters.  
     JSValue proto = thisObject->prototype();
     if (proto.isObject()) {
-        if (asObject(proto)->getPropertySlot(exec, index, slot)) {
-            if (!allowsAccess) {
-                thisObject->printErrorMessage(errorMessage);
-                slot.setUndefined();
-            }
+        if (asObject(proto)->getPropertySlot(exec, index, slot))
             return true;
-        }
     }
 
     // FIXME: Search the whole frame hierarchy somewhere around here.
@@ -329,12 +403,6 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     if (index < thisObject->wrapped().frame()->tree().scopedChildCount()) {
         slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum,
             toJS(exec, thisObject->wrapped().frame()->tree().scopedChild(index)->document()->domWindow()));
-        return true;
-    }
-
-    if (!allowsAccess) {
-        thisObject->printErrorMessage(errorMessage);
-        slot.setUndefined();
         return true;
     }
 

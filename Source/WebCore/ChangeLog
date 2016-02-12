@@ -1,3 +1,40 @@
+2016-02-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Separate out !allowsAccess path in JSDOMWindowCustom getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=154156
+
+        Reviewed by Chris Dumez.
+
+        JSDOMWindowCustom getOwnPropertySlot currently allows cross-origin access to all
+        static properties, relying on the property to perform the access check. This is
+        a little insecure, since it is error prone - someone could easily add a property
+        to the static table without realizing it would be automatcially exposed.
+
+        Instead, add a hard-coded filter to restrict access. As a future implementation
+        we might consider autogenerating this (the properties are already tagged in IDL,
+        we might be able to track this in a flag on the static table).
+
+        By separating out the handling of the same- and cross-origin access we can
+        simplify & make the policy being enforced much clearer.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::objectToStringFunctionGetter): Deleted.
+            - removed objectToStringFunctionGetter - this duplicated functionality of
+              nonCachingStaticFunctionGetter.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::objectToStringFunctionGetter): Deleted.
+            - removed objectToStringFunctionGetter - this duplicated functionality of
+              nonCachingStaticFunctionGetter.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotDisallowAccess):
+            - explicitly handle providing access to only the things we do want to allow cross-origin.
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+            - push all !allowsAccess handling to jsDOMWindowGetOwnPropertySlotDisallowAccess
+        (WebCore::childFrameGetter): Deleted.
+            - this was just a deoptimiztion - moving access into a callback saved very
+              little & caused more work to be duplicated.
+
 2016-02-12  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Update ICU header files to version 52

@@ -1,3 +1,13 @@
+2016-02-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Separate out !allowsAccess path in JSDOMWindowCustom getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=154156
+
+        Reviewed by Chris Dumez.
+
+        * runtime/CommonIdentifiers.h:
+            - added new property names, needed by jsDOMWindowGetOwnPropertySlotDisallowAccess.
+
 2016-02-12  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Update ICU header files to version 52
