@@ -37,13 +37,6 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
     return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
 }
 
-void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-    // We want the web process to match the architecture of the UI process.
-    launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
-    launchOptions.executableHeap = false;
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

@@ -949,7 +949,6 @@
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
 		517DD5BE180DA7D30081660B /* DatabaseProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517DD5BC180DA7D30081660B /* DatabaseProcessProxy.cpp */; };
 		517DD5BF180DA7D30081660B /* DatabaseProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 517DD5BD180DA7D30081660B /* DatabaseProcessProxy.h */; };
-		517DD5C5180DC3E10081660B /* DatabaseProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517DD5C4180DC3E10081660B /* DatabaseProcessProxyMac.mm */; };
 		51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51834590134532E80092B696 /* WebIconDatabaseClient.cpp */; };
 		51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51834591134532E80092B696 /* WebIconDatabaseClient.h */; };
 		518353DA1885BF8C00D9FE44 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */; };
@@ -2955,7 +2954,6 @@
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessConnectionMessages.h; sourceTree = "<group>"; };
 		517DD5BC180DA7D30081660B /* DatabaseProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseProcessProxy.cpp; path = Databases/DatabaseProcessProxy.cpp; sourceTree = "<group>"; };
 		517DD5BD180DA7D30081660B /* DatabaseProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseProcessProxy.h; path = Databases/DatabaseProcessProxy.h; sourceTree = "<group>"; };
-		517DD5C4180DC3E10081660B /* DatabaseProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DatabaseProcessProxyMac.mm; path = Databases/mac/DatabaseProcessProxyMac.mm; sourceTree = "<group>"; };
 		51834590134532E80092B696 /* WebIconDatabaseClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseClient.cpp; sourceTree = "<group>"; };
 		51834591134532E80092B696 /* WebIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseClient.h; sourceTree = "<group>"; };
 		518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
@@ -3275,8 +3273,8 @@
 		93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageLoadTypesPrivate.h; sourceTree = "<group>"; };
 		93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResult.h; sourceTree = "<group>"; };
 		990D28A71C6404B000986977 /* _WKAutomationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationSession.h; sourceTree = "<group>"; };
-		990D28AD1C65190400986977 /* _WKAutomationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAutomationSession.mm; sourceTree = "<group>"; };
 		990D28A81C6404B000986977 /* _WKAutomationSessionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationSessionDelegate.h; sourceTree = "<group>"; };
+		990D28AD1C65190400986977 /* _WKAutomationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAutomationSession.mm; sourceTree = "<group>"; };
 		990D28AF1C65203900986977 /* _WKAutomationSessionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationSessionInternal.h; sourceTree = "<group>"; };
 		990D28B31C6526D400986977 /* APIAutomationSessionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationSessionClient.h; sourceTree = "<group>"; };
 		990D28B51C6526F500986977 /* WebAutomationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSession.h; sourceTree = "<group>"; };
@@ -5385,7 +5383,6 @@
 		517DD5BB180DA7C40081660B /* Databases */ = {
 			isa = PBXGroup;
 			children = (
-				517DD5C3180DC3D60081660B /* mac */,
 				517DD5BC180DA7D30081660B /* DatabaseProcessProxy.cpp */,
 				517DD5BD180DA7D30081660B /* DatabaseProcessProxy.h */,
 				512A9766180E05D20039A149 /* DatabaseProcessProxy.messages.in */,
@@ -5401,14 +5398,6 @@
 				51E35201180F5D1E00E53BE9 /* DatabaseProcessMac.mm */,
 			);
 			path = mac;
-			sourceTree = "<group>";
-		};
-		517DD5C3180DC3D60081660B /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				517DD5C4180DC3E10081660B /* DatabaseProcessProxyMac.mm */,
-			);
-			name = mac;
 			sourceTree = "<group>";
 		};
 		518E8EF116B208F000E91429 /* Authentication */ = {
@@ -8802,7 +8791,6 @@
 				51E35202180F5D1E00E53BE9 /* DatabaseProcessMac.mm in Sources */,
 				512A9760180E031D0039A149 /* DatabaseProcessMessageReceiver.cpp in Sources */,
 				517DD5BE180DA7D30081660B /* DatabaseProcessProxy.cpp in Sources */,
-				517DD5C5180DC3E10081660B /* DatabaseProcessProxyMac.mm in Sources */,
 				512A9769180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp in Sources */,
 				51E35209180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm in Sources */,
 				51E35200180F5D0F00E53BE9 /* DatabaseToWebProcessConnection.cpp in Sources */,

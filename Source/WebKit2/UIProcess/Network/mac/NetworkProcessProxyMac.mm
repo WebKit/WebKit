@@ -40,10 +40,4 @@ void NetworkProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEn
     connection()->send(Messages::NetworkProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 }
 
-void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-    launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
-    launchOptions.executableHeap = false;
-}
-
 } // namespace WebKit

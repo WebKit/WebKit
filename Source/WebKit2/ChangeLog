@@ -1,5 +1,31 @@
 2016-02-12  Anders Carlsson  <andersca@apple.com>
 
+        Remove more unneeded process launching code
+        https://bugs.webkit.org/show_bug.cgi?id=154190
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::getLaunchOptions): Deleted.
+        * UIProcess/Databases/mac/DatabaseProcessProxyMac.mm: Removed.
+        (WebKit::DatabaseProcessProxy::platformGetLaunchOptions): Deleted.
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getLaunchOptions): Deleted.
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::NetworkProcessProxy::platformGetLaunchOptions): Deleted.
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::pluginNeedsExecutableHeap): Deleted.
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions): Deleted.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2016-02-12  Anders Carlsson  <andersca@apple.com>
+
         Use different process types for 32-bit and 64-bit plug-ins
         https://bugs.webkit.org/show_bug.cgi?id=154186
 

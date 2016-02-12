@@ -68,7 +68,6 @@ void DatabaseProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& laun
 {
     launchOptions.processType = ProcessLauncher::ProcessType::Database;
     ChildProcessProxy::getLaunchOptions(launchOptions);
-    platformGetLaunchOptions(launchOptions);
 }
 
 void DatabaseProcessProxy::processWillShutDown(IPC::Connection& connection)

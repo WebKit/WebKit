@@ -60,15 +60,9 @@ public:
     struct LaunchOptions {
         ProcessType processType;
         HashMap<String, String> extraInitializationData;
-#if OS(DARWIN) && !PLATFORM(GTK)
-        static const cpu_type_t MatchCurrentArchitecture = 0;
-        cpu_type_t architecture;
-        bool executableHeap;
-#endif
-#if PLATFORM(EFL) || PLATFORM(GTK)
-#ifndef NDEBUG
+
+#if (PLATFORM(EFL) || PLATFORM(GTK)) && !defined(NDEBUG)
         String processCmdPrefix;
-#endif
 #endif
     };
 

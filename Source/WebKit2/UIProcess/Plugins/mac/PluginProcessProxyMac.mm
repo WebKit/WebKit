@@ -59,22 +59,6 @@ using namespace WebCore;
 
 namespace WebKit {
     
-bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginModuleInfo& pluginInfo)
-{
-    static const bool forceNonexecutableHeapForPlugins = [[NSUserDefaults standardUserDefaults] boolForKey:@"ForceNonexecutableHeapForPlugins"];
-    if (forceNonexecutableHeapForPlugins)
-        return false;
-    
-    if (pluginInfo.bundleIdentifier == "com.apple.QuickTime Plugin.plugin")
-        return false;
-
-    // We only allow 32-bit plug-ins to have the heap marked executable.
-    if (pluginInfo.pluginArchitecture == CPU_TYPE_X86)
-        return true;
-
-    return false;
-}
-
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
 bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
 {
@@ -118,8 +102,6 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
     else
         launchOptions.processType = ProcessLauncher::ProcessType::Plugin64;
 
-    launchOptions.architecture = pluginProcessAttributes.moduleInfo.pluginArchitecture;
-    launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginProcessAttributes.moduleInfo);
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
 
     if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed) {
