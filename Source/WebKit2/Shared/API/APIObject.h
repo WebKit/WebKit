@@ -98,6 +98,7 @@ public:
         
         // UIProcess types
         ApplicationCacheManager,
+        AutomationSession,
         BackForwardList,
         BackForwardListItem,
         BatteryManager,

@@ -43,6 +43,7 @@
 #include "StatisticsData.h"
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
+#include "WebAutomationSession.h"
 #include "WebCertificateInfo.h"
 #include "WebContextSupplement.h"
 #include "WebCookieManagerProxy.h"
@@ -1088,6 +1089,16 @@ void WebProcessPool::updateAutomationCapabilities() const
 {
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::RemoteInspector::singleton().clientCapabilitiesDidChange();
+#endif
+}
+
+void WebProcessPool::setAutomationSession(RefPtr<WebAutomationSession>&& automationSession)
+{
+    m_automationSession = WTFMove(automationSession);
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (m_automationSession)
+        m_automationSession->init();
 #endif
 }
 

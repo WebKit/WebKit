@@ -39,6 +39,7 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import "_WKAutomationDelegate.h"
+#import "_WKAutomationSessionInternal.h"
 #import "_WKDownloadDelegate.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import <WebCore/CFNetworkSPI.h>
@@ -54,6 +55,7 @@
     WebKit::WeakObjCPtr<id <_WKAutomationDelegate>> _automationDelegate;
     WebKit::WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
 
+    RetainPtr<_WKAutomationSession> _automationSession;
 #if PLATFORM(IOS)
     RetainPtr<WKGeolocationProviderIOS> _geolocationProvider;
 #endif // PLATFORM(IOS)
@@ -241,6 +243,12 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 - (void)_automationCapabilitiesDidChange
 {
     _processPool->updateAutomationCapabilities();
+}
+
+- (void)_setAutomationSession:(_WKAutomationSession *)automationSession
+{
+    _automationSession = automationSession;
+    _processPool->setAutomationSession(automationSession ? automationSession->_session.get() : nullptr);
 }
 
 @end

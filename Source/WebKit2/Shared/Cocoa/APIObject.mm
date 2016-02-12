@@ -61,6 +61,7 @@
 #import "WKWebsiteDataRecordInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WKWindowFeaturesInternal.h"
+#import "_WKAutomationSessionInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
@@ -97,6 +98,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::AuthenticationChallenge:
         wrapper = NSAllocateObject([WKNSURLAuthenticationChallenge self], size, nullptr);
+        break;
+
+    case Type::AutomationSession:
+        wrapper = [_WKAutomationSession alloc];
         break;
 
     case Type::BackForwardList:

@@ -1,3 +1,83 @@
+2016-02-12  Brian Burg  <bburg@apple.com>
+
+        Add a WebKit SPI for creating an automation session and advertise the active session via RemoteInspector
+        https://bugs.webkit.org/show_bug.cgi?id=153934
+
+        Reviewed by Dan Bernstein and Joseph Pecoraro.
+
+        An automation session is the main place where WebKit support for user agent automation is implemented.
+        A session encapsulates the state (default timeouts, page identifier mappings), objects (active automation
+        WebPages) and logic (how to open a window, run JS, send user input, etc.) used to implement automation
+        commands.
+
+        A process pool can only have one session at a time. The session is created by the WebKit client in
+        response to a request that comes through _WKAutomationDelegate. When a session is set on the process pool,
+        it is advertised to remote drivers and debuggers as a RemoteControllableTarget. A remote driver can use
+        the existing RemoteInspector API to connect to the session and send it automation commands.
+
+        The session has a delegate so that WebKit clients can perform actions that are outside the scope of WebKit,
+        such as creating new tabs, enumerating windows, or sending native user inputs.
+
+        This patch adds AutomationSession classes at the API and implementation level in WebKit2. The
+        implementation class contains RemoteInspector support, which cannot be used directly by WebKit clients.
+        AutomationSessionDelegate classes exist at both the API and implementation level to bridge between
+        Objective-C delegates and C++ clients. All code related to RemoteInspector and RemoteAutomationTarget
+        must be guarded by ENABLE(REMOTE_INSPECTOR).
+
+        * Shared/API/APIObject.h: Add new API type 'AutomationSession'.
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Allocate in the wrapper.
+        * UIProcess/API/APIAutomationSessionClient.h: Added.
+        (API::AutomationSessionClient::~AutomationSessionClient):
+        (API::AutomationSessionClient::didRequestNewWindow): Delegate window creation to the client.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setAutomationSession:]): Keep at most one WebAutomationSession at a time.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.h: Added.
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm: Added.
+        (-[_WKAutomationSession init]): Construct the API object in the implementation wrapper.
+        (-[_WKAutomationSession dealloc]): Clear the client before calling the implementation destructor.
+
+        (-[_WKAutomationSession sessionIdentifier]):
+        (-[_WKAutomationSession setSessionIdentifier:]):
+        Store the session identifier string in the implementation.
+
+        (-[_WKAutomationSession delegate]):
+        (-[_WKAutomationSession setDelegate:]):
+        Create an Objective-C adapter for the delegate if not nil and set it as the implementation's client.
+
+        (-[_WKAutomationSession _apiObject]):
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h: Added.
+        * UIProcess/API/Cocoa/_WKAutomationSessionInternal.h: Added.
+        (wrapper):
+        * UIProcess/Cocoa/AutomationSessionClient.h: Added.
+        Set up the boilerplate for caching delegate method availability. It will include more methods later.
+
+        * UIProcess/Cocoa/AutomationSessionClient.mm: Added. Forward requests to the SPI delegate.
+        (WebKit::AutomationSessionClient::AutomationSessionClient):
+        (WebKit::AutomationSessionClient::didRequestNewWindow): Delegate window creation to the client.
+
+        * UIProcess/WebAutomationSession.cpp: Added.
+        (WebKit::WebAutomationSession::WebAutomationSession):
+        By default, a session should be available and not paired to any particular remote driver.
+
+        (WebKit::WebAutomationSession::~WebAutomationSession): Require callers to clear the client first.
+        (WebKit::WebAutomationSession::setClient):
+        (WebKit::WebAutomationSession::dispatchMessageFromRemote): Stub this out for now.
+
+        (WebKit::WebAutomationSession::connect):
+        (WebKit::WebAutomationSession::disconnect):
+        To prevent multiple connection attempts, mark the target as paired when a remote client has connected.
+
+        * UIProcess/WebAutomationSession.h: Added.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setAutomationSession):
+        Store the session object and tell it to register itself. Unregistering happens automatically
+        in RemoteControllableTarget::~RemoteControllableTarget.
+
+        * UIProcess/WebProcessPool.h:
+        * WebKit2.xcodeproj/project.pbxproj: Add files and headers.
+
 2016-02-12  Anders Carlsson  <andersca@apple.com>
 
         Get rid of NetscapePluginModule::createPluginMIMETypesPreferences

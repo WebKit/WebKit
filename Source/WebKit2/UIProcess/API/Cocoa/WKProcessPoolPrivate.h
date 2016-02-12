@@ -27,6 +27,7 @@
 
 #if WK_API_ENABLED
 
+@class _WKAutomationSession;
 @class _WKProcessPoolConfiguration;
 @protocol _WKAutomationDelegate;
 @protocol _WKDownloadDelegate;
@@ -56,6 +57,7 @@
 
 - (void)_warmInitialProcess WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 - (void)_automationCapabilitiesDidChange WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)_setAutomationSession:(_WKAutomationSession *)automationSession WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end
 

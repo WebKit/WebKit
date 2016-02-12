@@ -79,6 +79,7 @@ class PageConfiguration;
 namespace WebKit {
 
 class DownloadProxy;
+class WebAutomationSession;
 class WebContextSupplement;
 class WebIconDatabase;
 class WebPageGroup;
@@ -254,6 +255,7 @@ public:
     void enableProcessTermination();
 
     void updateAutomationCapabilities() const;
+    void setAutomationSession(RefPtr<WebAutomationSession>&&);
 
     // Defaults to false.
     void setHTTPPipeliningEnabled(bool);
@@ -425,6 +427,8 @@ private:
     std::unique_ptr<API::AutomationClient> m_automationClient;
     std::unique_ptr<API::DownloadClient> m_downloadClient;
     std::unique_ptr<API::LegacyContextHistoryClient> m_historyClient;
+
+    RefPtr<WebAutomationSession> m_automationSession;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginInfoStore m_pluginInfoStore;
