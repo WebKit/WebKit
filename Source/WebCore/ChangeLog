@@ -1,3 +1,29 @@
+2016-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Properly handle classes inheriting from EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=154158
+
+        Reviewed by Michael Catanzaro.
+
+        Instead of removing its parent we now handle the case of classes
+        having EventTarget as parent to make them implement the interface
+        instead.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (ShouldBeExposedAsInterface): Whether the parent given class
+        should be exposed as an interface instead of a parent class.
+        (GetParentClassName): Return Object as parent for classes having
+        a parent that should be exposed as an interface.
+        (GetParentImplClassName): Ditto.
+        (GetBaseClass): Ditto.
+        (GetParentGObjType): Ditto.
+        (SkipFunction): Add FIXME comment.
+        (ImplementsInterface): Helper function to check if a class
+        implements the given interface.
+        (GenerateCFile): Check whether the class implements EventTarget to
+        generate the interface implementation.
+        (GenerateInterface): Do not remove the parent class when it's EventTarget.
+
 2016-02-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196470.

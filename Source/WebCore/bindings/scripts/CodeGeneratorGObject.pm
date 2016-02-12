@@ -119,18 +119,26 @@ my $licenceTemplate = << "EOF";
  */
 EOF
 
-sub GetParentClassName {
+sub ShouldBeExposedAsInterface {
     my $interface = shift;
 
-    return "WebKitDOMObject" unless $interface->parent;
-    return "WebKitDOM" . $interface->parent;
+    return $interface eq "EventTarget";
+}
+
+sub GetParentClassName {
+    my $interface = shift;
+    my $parent = $interface->parent;
+
+    return "WebKitDOMObject" unless $parent and !ShouldBeExposedAsInterface($parent);
+    return "WebKitDOM" . $parent;
 }
 
 sub GetParentImplClassName {
     my $interface = shift;
+    my $parent = $interface->parent;
 
-    return "Object" unless $interface->parent;
-    return $interface->parent;
+    return "Object" unless $parent and !ShouldBeExposedAsInterface($parent);
+    return $parent;
 }
 
 sub IsBaseType
@@ -147,6 +155,7 @@ sub GetBaseClass
     $interface = shift;
 
     return $parent if $parent eq "Object" or IsBaseType($parent);
+    return "Object" if ShouldBeExposedAsInterface($parent);
     return "Event" if $codeGenerator->InheritsInterface($interface, "Event");
     return "CSSValue" if $parent eq "SVGColor" or $parent eq "CSSValueList";
     return "Node";
@@ -208,9 +217,10 @@ sub HumanReadableConditional {
 
 sub GetParentGObjType {
     my $interface = shift;
+    my $parent = $interface->parent;
 
-    return "WEBKIT_DOM_TYPE_OBJECT" unless $interface->parent;
-    return "WEBKIT_DOM_TYPE_" . uc(decamelize(($interface->parent)));
+    return "WEBKIT_DOM_TYPE_OBJECT" unless $parent and !ShouldBeExposedAsInterface($parent);
+    return "WEBKIT_DOM_TYPE_" . uc(decamelize(($parent)));
 }
 
 sub GetClassName {
@@ -326,6 +336,7 @@ sub SkipFunction {
     }
 
     # Skip dispatch_event methods.
+    # FIXME: This can be removed once all classes implementing EventTarget inherit from it instead.
     if ($parentNode->extendedAttributes->{"EventTarget"} && $function->signature->name eq "dispatchEvent") {
         return 1;
     }
@@ -1490,10 +1501,20 @@ sub GenerateFunctions {
     }
 }
 
+sub ImplementsInterface {
+    my $interface = shift;
+    my $implementInterface = shift;
+
+    # FIXME: Check only the parent class once all classes implementing EventTarget inherit from it instead.
+    return 1 if $interface->parent and $interface->parent eq implementInterface and ShouldBeExposedAsInterface($interface->parent);
+    return 1 if $interface->extendedAttributes->{$implementInterface};
+    return 0;
+}
+
 sub GenerateCFile {
     my ($object, $interfaceName, $parentClassName, $parentGObjType, $interface) = @_;
 
-    if ($interface->extendedAttributes->{"EventTarget"}) {
+    if (ImplementsInterface($interface, "EventTarget")) {
         $object->GenerateEventTargetIface($interface);
     }
 
@@ -1920,9 +1941,6 @@ sub ReadStableSymbols {
 
 sub GenerateInterface {
     my ($object, $interface, $defines) = @_;
-
-    # FIXME: GObject bindings do not support EventTarget as base class.
-    $interface->parent(undef) if $interface->parent && $interface->parent eq "EventTarget";
 
     # Set up some global variables
     $className = GetClassName($interface->name);
