@@ -10,8 +10,7 @@
 
             function testTracks()
             {
-                consoleWrite(`<br><i>** Forced tracks should be in .textTracks as well as in the menu,`);
-                consoleWrite(`<i>** but should be labeled as 'subtitles'</i><br>`);
+                consoleWrite(`<br><i>** Forced tracks should be in .textTracks as well as in the menu`);
                 testExpected("video.textTracks.length", 9);
 
                 // Click the CC button to show the menu because it isn't created until it becomes visible.
@@ -24,6 +23,9 @@
                 }
                 testExpected("trackMenuItems.length", 11);
 
+                consoleWrite(`<br><i>** 'forced' should be in the title of a forced track menu item<i>`);
+                listTrackMenu();
+
                 consoleWrite("<br><i>** No track should be enabled by default<" + "/i>");
                 testExpected("video.textTracks[0].language", "en");
                 testExpected("video.textTracks[0].kind", "subtitles");
@@ -31,7 +33,7 @@
                 consoleWrite("");
 
                 testExpected("video.textTracks[1].language", "en");
-                testExpected("video.textTracks[1].kind", "subtitles");
+                testExpected("video.textTracks[1].kind", "forced");
                 testExpected("video.textTracks[1].mode", "disabled");
                 consoleWrite("");
 
@@ -41,7 +43,7 @@
                 consoleWrite("");
 
                 testExpected("video.textTracks[3].language", "fr");
-                testExpected("video.textTracks[3].kind", "subtitles");
+                testExpected("video.textTracks[3].kind", "forced");
                 testExpected("video.textTracks[3].mode", "disabled");
                 consoleWrite("");
 
@@ -51,7 +53,7 @@
                 consoleWrite("");
 
                 testExpected("video.textTracks[5].language", "es");
-                testExpected("video.textTracks[5].kind", "subtitles");
+                testExpected("video.textTracks[5].kind", "forced");
                 testExpected("video.textTracks[5].mode", "disabled");
                 consoleWrite("");
 
@@ -61,7 +63,7 @@
                 consoleWrite("");
 
                 testExpected("video.textTracks[7].language", "de");
-                testExpected("video.textTracks[7].kind", "subtitles");
+                testExpected("video.textTracks[7].kind", "forced");
                 testExpected("video.textTracks[7].mode", "disabled");
                 consoleWrite("");
 
