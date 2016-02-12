@@ -33,9 +33,6 @@ messages -> PluginProcessProxy {
     SetModalWindowIsShowing(bool modalWindowIsShowing)
     SetFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     
-    # Open the plug-ins preference pane (as specified in the plug-in's Info.plist file).
-    OpenPluginPreferencePane()
-
     # Returns true if the UI process launched the process.
     LaunchProcess(String launchPath, Vector<String> arguments) -> (bool result)
 

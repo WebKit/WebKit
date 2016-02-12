@@ -448,8 +448,6 @@
 		1AD01BC91905D37E00C9C45F /* _WKErrorRecoveryAttempting.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD01BC71905D37E00C9C45F /* _WKErrorRecoveryAttempting.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AD01BCC1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */; };
 		1AD01BCD1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */; };
-		1AD09F2B1743F8E600A95E50 /* WKNPAPIPlugInContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD09F291743F8E600A95E50 /* WKNPAPIPlugInContainer.mm */; };
-		1AD09F2C1743F8E600A95E50 /* WKNPAPIPlugInContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD09F2A1743F8E600A95E50 /* WKNPAPIPlugInContainer.h */; };
 		1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */; };
 		1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */; };
 		1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */; };
@@ -2416,9 +2414,6 @@
 		1AD01BC71905D37E00C9C45F /* _WKErrorRecoveryAttempting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKErrorRecoveryAttempting.h; sourceTree = "<group>"; };
 		1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKReloadFrameErrorRecoveryAttempter.mm; sourceTree = "<group>"; };
 		1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKReloadFrameErrorRecoveryAttempter.h; sourceTree = "<group>"; };
-		1AD09F291743F8E600A95E50 /* WKNPAPIPlugInContainer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNPAPIPlugInContainer.mm; sourceTree = "<group>"; };
-		1AD09F2A1743F8E600A95E50 /* WKNPAPIPlugInContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNPAPIPlugInContainer.h; sourceTree = "<group>"; };
-		1AD09F2D1743FB0300A95E50 /* WKNPAPIPlugInContainerInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKNPAPIPlugInContainerInternal.h; sourceTree = "<group>"; };
 		1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxyMap.cpp; sourceTree = "<group>"; };
 		1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxyMap.h; sourceTree = "<group>"; };
 		1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaImpl.cpp; sourceTree = "<group>"; };
@@ -4349,9 +4344,6 @@
 			children = (
 				1AE5B7F911E7AED200BA6767 /* NetscapePluginMac.mm */,
 				1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */,
-				1AD09F2A1743F8E600A95E50 /* WKNPAPIPlugInContainer.h */,
-				1AD09F291743F8E600A95E50 /* WKNPAPIPlugInContainer.mm */,
-				1AD09F2D1743FB0300A95E50 /* WKNPAPIPlugInContainerInternal.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -7954,7 +7946,6 @@
 				318BE17114743DB100A8FBB2 /* WKNotificationManager.h in Headers */,
 				31A2EC74148D59CA00810D71 /* WKNotificationPermissionRequest.h in Headers */,
 				312C0C4A146DDC8A0016C911 /* WKNotificationProvider.h in Headers */,
-				1AD09F2C1743F8E600A95E50 /* WKNPAPIPlugInContainer.h in Headers */,
 				37C4C0941814B3AF003688B9 /* WKNSArray.h in Headers */,
 				373CEAD6185417AE008C363D /* WKNSData.h in Headers */,
 				371A19421824D29300F32A5E /* WKNSDictionary.h in Headers */,
@@ -9402,7 +9393,6 @@
 				318BE17714743E6000A8FBB2 /* WKNotification.cpp in Sources */,
 				318BE17514743DD700A8FBB2 /* WKNotificationManager.cpp in Sources */,
 				31A2EC77148D662E00810D71 /* WKNotificationPermissionRequest.cpp in Sources */,
-				1AD09F2B1743F8E600A95E50 /* WKNPAPIPlugInContainer.mm in Sources */,
 				37C4C0931814B3AF003688B9 /* WKNSArray.mm in Sources */,
 				373CEAD5185417AE008C363D /* WKNSData.mm in Sources */,
 				371A19411824D29300F32A5E /* WKNSDictionary.mm in Sources */,

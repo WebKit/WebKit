@@ -1575,11 +1575,6 @@ const MachSendRight& PluginView::compositingRenderServerPort()
     return WebProcess::singleton().compositingRenderServerPort();
 }
 
-void PluginView::openPluginPreferencePane()
-{
-    ASSERT_NOT_REACHED();
-}
-
 #endif
 
 float PluginView::contentsScaleFactor()

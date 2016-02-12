@@ -108,9 +108,6 @@ public:
 
     // Returns the mach port of the compositing render server.
     virtual const WebCore::MachSendRight& compositingRenderServerPort() = 0;
-
-    // Open the preference pane for this plug-in (as stated in the plug-in's Info.plist).
-    virtual void openPluginPreferencePane() = 0;
 #endif
 
     // Returns the contents scale factor.

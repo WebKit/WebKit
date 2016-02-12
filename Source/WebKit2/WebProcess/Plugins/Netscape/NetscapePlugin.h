@@ -45,8 +45,6 @@ class ProtectionSpace;
 class SharedBuffer;
 }
 
-OBJC_CLASS WKNPAPIPlugInContainer;
-
 namespace WebKit {
 
 class NetscapePluginStream;
@@ -74,12 +72,9 @@ public:
     bool hasHandledAKeyDownEvent() const { return m_hasHandledAKeyDownEvent; }
 
     const WebCore::MachSendRight& compositingRenderServerPort();
-    void openPluginPreferencePane();
 
     // Computes an affine transform from the given coordinate space to the screen coordinate space.
     bool getScreenTransform(NPCoordinateSpace sourceSpace, WebCore::AffineTransform&);
-
-    WKNPAPIPlugInContainer* plugInContainer();
 
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
@@ -377,13 +372,11 @@ private:
     // if we can tell the plug-in that we support the updated Cocoa text input specification.
     bool m_hasHandledAKeyDownEvent;
 
-    // The number of NPCocoaEventKeyUp events that  should be ignored.
+    // The number of NPCocoaEventKeyUp events that should be ignored.
     unsigned m_ignoreNextKeyUpEventCounter;
 
     WebCore::IntRect m_windowFrameInScreenCoordinates;
     WebCore::IntRect m_viewFrameInWindowCoordinates;
-
-    RetainPtr<WKNPAPIPlugInContainer> m_plugInContainer;
 
 #ifndef NP_NO_CARBON
     void nullEventTimerFired();

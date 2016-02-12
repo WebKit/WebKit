@@ -103,7 +103,6 @@ private:
     virtual void pluginFocusOrWindowFocusChanged(bool) override;
     virtual void setComplexTextInputState(PluginComplexTextInputState) override;
     virtual const WebCore::MachSendRight& compositingRenderServerPort() override;
-    virtual void openPluginPreferencePane() override;
 #endif
 
     virtual float contentsScaleFactor() override;

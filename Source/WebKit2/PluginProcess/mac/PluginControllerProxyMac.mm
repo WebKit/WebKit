@@ -56,11 +56,6 @@ const MachSendRight& PluginControllerProxy::compositingRenderServerPort()
     return PluginProcess::singleton().compositingRenderServerPort();
 }
 
-void PluginControllerProxy::openPluginPreferencePane()
-{
-    PluginProcess::singleton().parentProcessConnection()->send(Messages::PluginProcessProxy::OpenPluginPreferencePane(), 0);
-}
-
 void PluginControllerProxy::platformInitialize(const PluginCreationParameters& creationParameters)
 {
     ASSERT(!m_layerHostingContext);

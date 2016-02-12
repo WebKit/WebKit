@@ -1,5 +1,43 @@
 2016-02-12  Anders Carlsson  <andersca@apple.com>
 
+        Remove NPAPI for showing preference panes
+        https://bugs.webkit.org/show_bug.cgi?id=154193
+
+        Reviewed by Dan Bernstein.
+
+        No plug-ins ended up adopting this API, so there's no point in keeping it around.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::openPluginPreferencePane): Deleted.
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::getPluginInfo): Deleted.
+        * Shared/Plugins/PluginModuleInfo.h:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::openPluginPreferencePane): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue): Deleted.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::openPluginPreferencePane): Deleted.
+        (WebKit::NetscapePlugin::plugInContainer): Deleted.
+        (WebKit::NetscapePlugin::platformDestroy): Deleted.
+        * WebProcess/Plugins/Netscape/mac/WKNPAPIPlugInContainer.h: Removed.
+        * WebProcess/Plugins/Netscape/mac/WKNPAPIPlugInContainer.mm: Removed.
+        (-[WKNPAPIPlugInContainer dealloc]): Deleted.
+        (-[WKNPAPIPlugInContainer _invalidate]): Deleted.
+        (-[WKNPAPIPlugInContainer openPlugInPreferencePane]): Deleted.
+        * WebProcess/Plugins/Netscape/mac/WKNPAPIPlugInContainerInternal.h: Removed.
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::openPluginPreferencePane): Deleted.
+        * WebProcess/Plugins/PluginView.h:
+
+2016-02-12  Anders Carlsson  <andersca@apple.com>
+
         Remove PowerPC cruft
         https://bugs.webkit.org/show_bug.cgi?id=154191
 
