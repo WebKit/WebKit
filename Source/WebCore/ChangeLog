@@ -1,3 +1,10 @@
+2016-02-12  Jer Noble  <jer.noble@apple.com>
+
+        Build fix after r196506; publish MediaResourceLoader.h as a private header so it can be used by
+        TestWebKitAPI.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-02-11  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Adopt MediaResourceLoader (instead of CachedResourceLoader) in WebCoreNSURLSession.
