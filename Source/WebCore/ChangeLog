@@ -1,3 +1,29 @@
+2016-02-12  Andreas Kling  <akling@apple.com>
+
+        Don't invalidate the FontCache on memory pressure.
+        <https://webkit.org/b/154161>
+
+        Reviewed by Antti Koivisto.
+
+        Invalidating the FontCache does more harm than good:
+
+            - Anything that's still in the cache at this point is also
+              referenced outside the cache, thus will not actually get deleted.
+
+            - Future deduplication will fail, leading to more objects.
+
+            - The global FontCache generation gets bumped, causing future style
+              recalcs to be less efficient and breaking style sharing.
+
+            - All FontSelector invalidation callbacks will fire, potentially
+              causing forced full-document style recalcs.
+
+        In fact, the only win from invalidating the FontCache comes from some
+        minor shrinkage in the containers that make up the cache itself.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory): Deleted.
+
 2016-02-11  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] interfaces should inherit EventTarget instead of duplicating the EventTarget API

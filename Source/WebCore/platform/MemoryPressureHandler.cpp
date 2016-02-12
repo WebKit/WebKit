@@ -140,11 +140,6 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
         GCController::singleton().deleteAllCode();
     }
 
-    {
-        ReliefLogger log("Invalidate font cache");
-        FontCache::singleton().invalidate();
-    }
-
 #if ENABLE(VIDEO)
     {
         ReliefLogger log("Dropping buffered data from paused media elements");
