@@ -1,3 +1,12 @@
+2016-02-12  Jonathan Davis  <jond@apple.com>
+
+        Add WebAssembly to the status page
+        https://bugs.webkit.org/show_bug.cgi?id=154199
+
+        Reviewed by Timothy Hatcher.
+
+        * features.json:
+
 2016-02-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: disambiguate the various identifier and connection types in RemoteInspector
