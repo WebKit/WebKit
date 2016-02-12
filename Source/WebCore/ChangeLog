@@ -1,3 +1,16 @@
+2016-02-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] Fix ENABLE(SVG_OTF_CONVERTER) build
+        https://bugs.webkit.org/show_bug.cgi?id=154165
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * svg/SVGToOTFFontConversion.cpp:
+        * svg/SVGToOTFFontConversion.h:
+
 2016-02-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed nit fixes after r196466.

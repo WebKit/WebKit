@@ -1,3 +1,13 @@
+2016-02-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] Fix ENABLE(SVG_OTF_CONVERTER) build
+        https://bugs.webkit.org/show_bug.cgi?id=154165
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-02-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Consolidate TextureMapper file and include dir lists.

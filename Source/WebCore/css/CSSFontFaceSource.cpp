@@ -159,7 +159,11 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
+#if PLATFORM(COCOA)
     return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings), true, false);
+#else
+    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic), true, false);
+#endif
 #else
     return Font::create(std::make_unique<SVGFontData>(m_svgFontFaceElement.get()), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
 #endif
