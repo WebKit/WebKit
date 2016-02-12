@@ -181,6 +181,7 @@ void IDBTransaction::transitionedToFinishing(IndexedDB::TransactionState state)
 {
     ASSERT(!isFinishedOrFinishing());
     m_state = state;
+    ASSERT(isFinishedOrFinishing());
     m_referencedObjectStores.clear();
 }
 

@@ -1,3 +1,12 @@
+2016-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Assert that IDBTransaction::transitionedToFinishing transitions to finishing.
+        https://bugs.webkit.org/show_bug.cgi?id=154061
+
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::transitionedToFinishing):
+        Added assertion that we are transitioning to a finished or finishing state, based on Darin's feedback.
+
 2016-02-11  Enrica Casucci  <enrica@apple.com>
 
         WebContent process crashes when performing data detection on content with existing data detector links.
