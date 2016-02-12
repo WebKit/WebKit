@@ -1,3 +1,28 @@
+2016-02-12  Andreas Kling  <akling@apple.com>
+
+        Throw out all live resource decoded data on memory pressure / suspension.
+        <https://webkit.org/b/154176>
+
+        Reviewed by Antti Koivisto.
+
+        When pruning live resource decoded data from the memory cache,
+        we normally avoid pruning anything that's been painted in the last second.
+        This is an optimization to avoid getting into image decoding loops.
+
+        For memory pressure / process suspension scenarios this doesn't really
+        make sense though:
+
+            - In the pressure case, if we have to render again soon it'll likely
+              be a new GIF frame which we have to decode anyway.
+
+            - In the process suspension case, we might *never* render again,
+              so we should be good citizens and drop all the decoded data we can.
+
+        This patch makes us drop all the decoded data, recently painted or not.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory):
+
 2016-02-12  Gavin Barraclough  <barraclough@apple.com>
 
         Separate out !allowsAccess path in JSDOMWindowCustom getOwnPropertySlot
