@@ -1,3 +1,44 @@
+2016-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Remove legacy processes from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=154119
+
+        Reviewed by Darin Adler.
+
+        * Configurations/BaseLegacyProcess.xcconfig: Removed.
+        * DatabaseProcess/EntryPoint/mac/LegacyProcess/DatabaseProcessMain.mm: Removed.
+        (DatabaseProcessMain): Deleted.
+        * DatabaseProcess/EntryPoint/mac/LegacyProcess/Info.plist: Removed.
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/Info.plist: Removed.
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/NetworkProcessMain.mm: Removed.
+        (NetworkProcessMain): Deleted.
+        * PluginProcess/EntryPoint/mac/LegacyProcess/Info.plist: Removed.
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm: Removed.
+        (WebKit::PluginProcessMainDelegate::PluginProcessMainDelegate): Deleted.
+        (PluginProcessMain): Deleted.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.h: Removed.
+        (WebKit::ChildProcessMainDelegate::ChildProcessMainDelegate): Deleted.
+        (WebKit::ChildProcessMain): Deleted.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.mm: Removed.
+        (WebKit::ChildProcessMainDelegate::~ChildProcessMainDelegate): Deleted.
+        (WebKit::ChildProcessMainDelegate::installSignalHandlers): Deleted.
+        (WebKit::ChildProcessMainDelegate::doPreInitializationWork): Deleted.
+        (WebKit::ChildProcessMainDelegate::getConnectionIdentifier): Deleted.
+        (WebKit::ChildProcessMainDelegate::getClientIdentifier): Deleted.
+        (WebKit::ChildProcessMainDelegate::getClientProcessName): Deleted.
+        (WebKit::ChildProcessMainDelegate::getExtraInitializationData): Deleted.
+        (WebKit::ChildProcessMainDelegate::startRunLoop): Deleted.
+        (WebKit::ChildProcessMainDelegate::doPostRunWork): Deleted.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.mm: Removed.
+        (WebKit::closeUnusedFileDescriptors): Deleted.
+        (WebKit::BootstrapMain): Deleted.
+        (main): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint/mac/LegacyProcess/Info.plist: Removed.
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm: Removed.
+        (WebKit::WebContentProcessMainDelegate::WebContentProcessMainDelegate): Deleted.
+        (WebContentProcessMain): Deleted.
+
 2016-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] HTTP auth dialog incorrectly rendered with Accelerated Compositing enabled

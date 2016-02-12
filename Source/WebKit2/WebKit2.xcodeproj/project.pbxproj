@@ -15,10 +15,6 @@
 				BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */,
 			);
 			dependencies = (
-				1A50DB3C110A3C19000D3FE5 /* PBXTargetDependency */,
-				51A60B2C180CCF1200F3BF50 /* PBXTargetDependency */,
-				510CC8481613C85300D03ED3 /* PBXTargetDependency */,
-				BCDE0AC113272712001259FB /* PBXTargetDependency */,
 				BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */,
 				51A60B2E180CCF1700F3BF50 /* PBXTargetDependency */,
 				BC77F95616D0459100F8F78A /* PBXTargetDependency */,
@@ -1014,7 +1010,6 @@
 		51E351FF180F5D0F00E53BE9 /* DatabaseProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E351FA180F5D0B00E53BE9 /* DatabaseProcess.cpp */; };
 		51E35200180F5D0F00E53BE9 /* DatabaseToWebProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E351FD180F5D0B00E53BE9 /* DatabaseToWebProcessConnection.cpp */; };
 		51E35202180F5D1E00E53BE9 /* DatabaseProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E35201180F5D1E00E53BE9 /* DatabaseProcessMac.mm */; };
-		51E35205180F5D4F00E53BE9 /* DatabaseProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E35203180F5D4B00E53BE9 /* DatabaseProcessMain.mm */; };
 		51E35209180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E35208180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm */; };
 		51E3B67F16F266B3009968DC /* NetworkResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */; };
 		51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1023,9 +1018,6 @@
 		51F7DC41180CC93600212CA3 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		51F7DC43180CC93600212CA3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		51F7DC44180CC93600212CA3 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
-		51FA1E1D180CCADE00C44BE9 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
-		51FA1E1F180CCADE00C44BE9 /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
-		51FA1E23180CCADE00C44BE9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		51FA2D7415212DF100C1BA0B /* InjectedBundleDOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FA2D5C15211A5000C1BA0B /* InjectedBundleDOMWindowExtension.cpp */; };
 		51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FA2D7515212E1E00C1BA0B /* WKBundleDOMWindowExtension.cpp */; };
 		51FAEC3A1B0657630009C4E7 /* ChildProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAEC371B0657310009C4E7 /* ChildProcessMessages.h */; };
@@ -1458,16 +1450,10 @@
 		BC5750981268F3C6006F0F12 /* WebPopupMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */; };
 		BC575613126E0138006F0F12 /* APIError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575612126E0138006F0F12 /* APIError.cpp */; };
 		BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */; };
-		BC5D24A116CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
-		BC5D24A216CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
-		BC5D24A316CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
 		BC5D24AB16CC3D62007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		BC5D24AC16CC3D63007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		BC5D24AE16CC3D65007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		BC5D24AF16CC3D66007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
-		BC5D24B116CC3F36007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BC5D24B316CC3F3F007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BC5D24B516CC3F46007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC5D24C216CD706D007D5461 /* WKDOMNodePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C116CD706D007D5461 /* WKDOMNodePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5D24C516CD7088007D5461 /* WKDOMRangePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C416CD7088007D5461 /* WKDOMRangePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C616CD73C5007D5461 /* WKBundleRangeHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1500,11 +1486,6 @@
 		BC8147AA12F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8147A812F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp */; };
 		BC8147D512F66D31007B2C32 /* InjectedBundleNavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */; };
 		BC8147D612F66D31007B2C32 /* InjectedBundleNavigationAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8147D412F66D31007B2C32 /* InjectedBundleNavigationAction.cpp */; };
-		BC82836516B354F600A278FE /* WebContentProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82836416B354F600A278FE /* WebContentProcessMain.mm */; };
-		BC82837A16B36A4F00A278FE /* ChildProcessEntryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC82837816B36A4F00A278FE /* ChildProcessEntryPoint.h */; };
-		BC82837B16B36A4F00A278FE /* ChildProcessEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82837916B36A4F00A278FE /* ChildProcessEntryPoint.mm */; };
-		BC82838416B45DA500A278FE /* NetworkProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82838116B45DA500A278FE /* NetworkProcessMain.mm */; };
-		BC82838C16B45F0700A278FE /* PluginProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82838A16B45EF200A278FE /* PluginProcessMain.mm */; };
 		BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */; };
 		BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283A816B4BD9100A278FE /* NetworkServiceEntryPoint.mm */; };
 		BC8283DA16B4DB9300A278FE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
@@ -1743,7 +1724,6 @@
 		E115C714190F89E400ECC516 /* DatabaseProcessIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1FEF39C190F791C00731658 /* DatabaseProcessIOS.mm */; };
 		E115C716190F8A2500ECC516 /* com.apple.WebKit.Databases.sb in Resources */ = {isa = PBXBuildFile; fileRef = E115C715190F8A2500ECC516 /* com.apple.WebKit.Databases.sb */; };
 		E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
-		E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
 		E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */; };
 		E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */; };
 		E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */; };
@@ -1774,14 +1754,12 @@
 		E19BDA8B19368D4600B97F57 /* SandboxUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = E19BDA87193686A400B97F57 /* SandboxUtilities.mm */; };
 		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
 		E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A31734134CEA80007C9A4F /* AttributedString.mm */; };
-		E1A9A852169E2025002D7176 /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
 		E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AEA22D14687BDB00804569 /* WKFullKeyboardAccessWatcher.h */; };
 		E1AEA23014687BDB00804569 /* WKFullKeyboardAccessWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1AEA22E14687BDB00804569 /* WKFullKeyboardAccessWatcher.mm */; };
 		E1B78471163F24690007B692 /* RemoteNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B78470163F24690007B692 /* RemoteNetworkingContext.h */; };
 		E1B78473163F253E0007B692 /* RemoteNetworkingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B78472163F253E0007B692 /* RemoteNetworkingContext.mm */; };
 		E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CC1B8E12D7EADF00625838 /* PrintInfo.h */; };
 		E1CC1B9112D7EADF00625838 /* PrintInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */; };
-		E1D26A51175964D70095BFD1 /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
 		E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
 		E1E552C416AE065F004ED653 /* SandboxInitialiationParametersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1E552C216AE065E004ED653 /* SandboxInitialiationParametersMac.mm */; };
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
@@ -1826,20 +1804,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1A50DB26110A3BEF000D3FE5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WebKit2;
-		};
-		1A50DB3B110A3C19000D3FE5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1A50DB1D110A3BDC000D3FE5;
-			remoteInfo = WebProcess;
-		};
 		375E0626191EA8CC004E3CAF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1903,40 +1867,12 @@
 			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
 			remoteInfo = "Derived Sources";
 		};
-		510CC8471613C85300D03ED3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 510CC80D1613C79900D03ED3;
-			remoteInfo = NetworkProcess;
-		};
-		510CC8501613C98D00D03ED3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WebKit2;
-		};
-		51A60B2B180CCF1200F3BF50 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 51FA1E17180CCADE00C44BE9;
-			remoteInfo = DatabaseProcess;
-		};
 		51A60B2D180CCF1700F3BF50 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 51F7DC3F180CC93600212CA3;
 			remoteInfo = Databases;
-		};
-		51FA1E1B180CCADE00C44BE9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WebKit2;
 		};
 		BC77F95516D0459100F8F78A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1965,20 +1901,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC3DE46515A91763008D26FC;
 			remoteInfo = WebKit2Service;
-		};
-		BCDE093713272496001259FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WebKit2;
-		};
-		BCDE0AC013272712001259FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BCDE093313272496001259FB;
-			remoteInfo = "Plugin Process";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2263,7 +2185,6 @@
 		1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1A4F976E100E7B6600637A18 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
-		1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A52C0F51A38CDC70016160A /* WebStorageNamespaceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebStorageNamespaceProvider.cpp; sourceTree = "<group>"; };
 		1A52C0F61A38CDC70016160A /* WebStorageNamespaceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebStorageNamespaceProvider.h; sourceTree = "<group>"; };
 		1A53C2A41A32569F004E8C70 /* WebsiteDataStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsiteDataStore.cpp; sourceTree = "<group>"; };
@@ -2941,7 +2862,6 @@
 		510CC7E016138E2900D03ED3 /* NetworkProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcess.h; path = NetworkProcess/NetworkProcess.h; sourceTree = "<group>"; };
 		510CC7EA16138E7200D03ED3 /* NetworkProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessProxy.cpp; sourceTree = "<group>"; };
 		510CC7EB16138E7200D03ED3 /* NetworkProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessProxy.h; sourceTree = "<group>"; };
-		510CC80E1613C79900D03ED3 /* NetworkProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetworkProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		510CC8461613C7C600D03ED3 /* NetworkProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkProcess.xcconfig; sourceTree = "<group>"; };
 		510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenuItemData.cpp; sourceTree = "<group>"; };
 		510FBB991288C95E00AFFDF4 /* WebContextMenuItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuItemData.h; sourceTree = "<group>"; };
@@ -3104,15 +3024,12 @@
 		51E351FD180F5D0B00E53BE9 /* DatabaseToWebProcessConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseToWebProcessConnection.cpp; sourceTree = "<group>"; };
 		51E351FE180F5D0B00E53BE9 /* DatabaseToWebProcessConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseToWebProcessConnection.h; sourceTree = "<group>"; };
 		51E35201180F5D1E00E53BE9 /* DatabaseProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseProcessMac.mm; sourceTree = "<group>"; };
-		51E35203180F5D4B00E53BE9 /* DatabaseProcessMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseProcessMain.mm; sourceTree = "<group>"; };
-		51E35204180F5D4B00E53BE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		51E35207180F5D6100E53BE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		51E35208180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseServiceEntryPoint.mm; sourceTree = "<group>"; };
 		51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkResourceLoaderMac.mm; sourceTree = "<group>"; };
 		51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoaderMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
 		51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Databases.Development.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Databases.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		51FA1E28180CCADE00C44BE9 /* DatabaseProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DatabaseProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleDOMWindowExtension.h; sourceTree = "<group>"; };
 		51FA2D5A15211A1E00C1BA0B /* InjectedBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleDOMWindowExtension.h; sourceTree = "<group>"; };
 		51FA2D5C15211A5000C1BA0B /* InjectedBundleDOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleDOMWindowExtension.cpp; sourceTree = "<group>"; };
@@ -3588,8 +3505,6 @@
 		BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPopupMenuProxyMac.mm; sourceTree = "<group>"; };
 		BC575612126E0138006F0F12 /* APIError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIError.cpp; sourceTree = "<group>"; };
 		BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKConnectionInternal.h; sourceTree = "<group>"; };
-		BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessMain.mm; sourceTree = "<group>"; };
-		BC5D24B816CC40BB007D5461 /* BaseLegacyProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseLegacyProcess.xcconfig; sourceTree = "<group>"; };
 		BC5D24C116CD706D007D5461 /* WKDOMNodePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMNodePrivate.h; sourceTree = "<group>"; };
 		BC5D24C416CD7088007D5461 /* WKDOMRangePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMRangePrivate.h; sourceTree = "<group>"; };
 		BC5D24C616CD73C5007D5461 /* WKBundleRangeHandlePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRangeHandlePrivate.h; sourceTree = "<group>"; };
@@ -3622,14 +3537,6 @@
 		BC8147A812F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePagePolicyClient.cpp; sourceTree = "<group>"; wrapsLines = 0; };
 		BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleNavigationAction.h; sourceTree = "<group>"; };
 		BC8147D412F66D31007B2C32 /* InjectedBundleNavigationAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleNavigationAction.cpp; sourceTree = "<group>"; };
-		BC82836416B354F600A278FE /* WebContentProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentProcessMain.mm; sourceTree = "<group>"; };
-		BC82837316B35AF900A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC82837816B36A4F00A278FE /* ChildProcessEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessEntryPoint.h; sourceTree = "<group>"; };
-		BC82837916B36A4F00A278FE /* ChildProcessEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessEntryPoint.mm; sourceTree = "<group>"; };
-		BC82837F16B45DA500A278FE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC82838116B45DA500A278FE /* NetworkProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessMain.mm; sourceTree = "<group>"; };
-		BC82838A16B45EF200A278FE /* PluginProcessMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessMain.mm; sourceTree = "<group>"; };
-		BC82838D16B45FA600A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC82839616B47EC400A278FE /* XPCServiceMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceMain.mm; sourceTree = "<group>"; };
 		BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283A316B4BD9100A278FE /* Info-OSX.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-OSX.plist"; sourceTree = "<group>"; };
@@ -3745,7 +3652,6 @@
 		BCDDB32C124EC2E10048D13C /* WKAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAPICast.h; sourceTree = "<group>"; };
 		BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextInjectedBundleClient.h; sourceTree = "<group>"; };
 		BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextInjectedBundleClient.cpp; sourceTree = "<group>"; };
-		BCDE094213272496001259FB /* PluginProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PluginProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCE0937514FB128B001138D9 /* LayerHostingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerHostingContext.mm; sourceTree = "<group>"; };
 		BCE0937614FB128B001138D9 /* LayerHostingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerHostingContext.h; sourceTree = "<group>"; };
 		BCE0E424168B7A280057E66A /* WebProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessSupplement.h; sourceTree = "<group>"; };
@@ -4003,14 +3909,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		51FA1E22180CCADE00C44BE9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				51FA1E23180CCADE00C44BE9 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4020,30 +3918,6 @@
 				3766F9EF189A1244003CF19B /* QuartzCore.framework in Frameworks */,
 				37694525184FC6B600CDE21F /* Security.framework in Frameworks */,
 				37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BC5D24B016CC3F28007D5461 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24B116CC3F36007D5461 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BC5D24B216CC3F3B007D5461 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24B316CC3F3F007D5461 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BC5D24B416CC3F43007D5461 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24B516CC3F46007D5461 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4101,13 +3975,9 @@
 				BC8283F916B4FDDE00A278FE /* com.apple.WebKit.Plugin.32.Development.xpc */,
 				BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.Development.xpc */,
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.Development.xpc */,
-				51FA1E28180CCADE00C44BE9 /* DatabaseProcess.app */,
-				510CC80E1613C79900D03ED3 /* NetworkProcess.app */,
-				BCDE094213272496001259FB /* PluginProcess.app */,
 				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
 				510031F61379CACB00C8DFE4 /* SecItemShim.dylib */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
-				1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */,
 				CDC3830617211799008A2FC3 /* WebProcessShim.dylib */,
 			);
 			name = Products;
@@ -4359,7 +4229,6 @@
 			children = (
 				A1EDD2D91884ACE000BBFE98 /* All.xcconfig */,
 				1A4F976A100E7B6600637A18 /* Base.xcconfig */,
-				BC5D24B816CC40BB007D5461 /* BaseLegacyProcess.xcconfig */,
 				5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */,
 				BCACC40D16B0B7BE00B6E092 /* BaseXPCService.xcconfig */,
 				51A60B27180CCD9000F3BF50 /* DatabaseProcess.xcconfig */,
@@ -5468,16 +5337,6 @@
 			path = Authentication;
 			sourceTree = "<group>";
 		};
-		5130F0E2180CCB3B00602C18 /* LegacyProcess */ = {
-			isa = PBXGroup;
-			children = (
-				51E35203180F5D4B00E53BE9 /* DatabaseProcessMain.mm */,
-				51E35204180F5D4B00E53BE9 /* Info.plist */,
-			);
-			name = LegacyProcess;
-			path = mac/LegacyProcess;
-			sourceTree = "<group>";
-		};
 		516319931628980E00E22F00 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -5615,7 +5474,6 @@
 		51F7DC0B180CC42200212CA3 /* EntryPoint */ = {
 			isa = PBXGroup;
 			children = (
-				5130F0E2180CCB3B00602C18 /* LegacyProcess */,
 				51F7DC0C180CC43100212CA3 /* XPCService */,
 			);
 			path = EntryPoint;
@@ -6611,21 +6469,9 @@
 		BC82836816B3587900A278FE /* EntryPointUtilities */ = {
 			isa = PBXGroup;
 			children = (
-				BC82836A16B3587900A278FE /* LegacyProcess */,
 				BC82836B16B3587900A278FE /* XPCService */,
 			);
 			path = EntryPointUtilities;
-			sourceTree = "<group>";
-		};
-		BC82836A16B3587900A278FE /* LegacyProcess */ = {
-			isa = PBXGroup;
-			children = (
-				BC82837816B36A4F00A278FE /* ChildProcessEntryPoint.h */,
-				BC82837916B36A4F00A278FE /* ChildProcessEntryPoint.mm */,
-				BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */,
-			);
-			name = LegacyProcess;
-			path = mac/LegacyProcess;
 			sourceTree = "<group>";
 		};
 		BC82836B16B3587900A278FE /* XPCService */ = {
@@ -6642,40 +6488,18 @@
 		BC82837C16B45DA500A278FE /* EntryPoint */ = {
 			isa = PBXGroup;
 			children = (
-				BC82837E16B45DA500A278FE /* LegacyProcess */,
 				BC8283A116B4BD9100A278FE /* XPCService */,
 			);
 			name = EntryPoint;
 			path = NetworkProcess/EntryPoint;
 			sourceTree = "<group>";
 		};
-		BC82837E16B45DA500A278FE /* LegacyProcess */ = {
-			isa = PBXGroup;
-			children = (
-				BC82837F16B45DA500A278FE /* Info.plist */,
-				BC82838116B45DA500A278FE /* NetworkProcessMain.mm */,
-			);
-			name = LegacyProcess;
-			path = mac/LegacyProcess;
-			sourceTree = "<group>";
-		};
 		BC82838616B45EF200A278FE /* EntryPoint */ = {
 			isa = PBXGroup;
 			children = (
-				BC82838816B45EF200A278FE /* LegacyProcess */,
 				BC8283E216B4F8E200A278FE /* XPCService */,
 			);
 			path = EntryPoint;
-			sourceTree = "<group>";
-		};
-		BC82838816B45EF200A278FE /* LegacyProcess */ = {
-			isa = PBXGroup;
-			children = (
-				BC82838D16B45FA600A278FE /* Info.plist */,
-				BC82838A16B45EF200A278FE /* PluginProcessMain.mm */,
-			);
-			name = LegacyProcess;
-			path = mac/LegacyProcess;
 			sourceTree = "<group>";
 		};
 		BC8283A116B4BD9100A278FE /* XPCService */ = {
@@ -6775,20 +6599,9 @@
 		BCACC43B16B24C5D00B6E092 /* EntryPoint */ = {
 			isa = PBXGroup;
 			children = (
-				BCACC43D16B24C7D00B6E092 /* LegacyProcess */,
 				BCACC43E16B24C8B00B6E092 /* XPCService */,
 			);
 			path = EntryPoint;
-			sourceTree = "<group>";
-		};
-		BCACC43D16B24C7D00B6E092 /* LegacyProcess */ = {
-			isa = PBXGroup;
-			children = (
-				BC82837316B35AF900A278FE /* Info.plist */,
-				BC82836416B354F600A278FE /* WebContentProcessMain.mm */,
-			);
-			name = LegacyProcess;
-			path = mac/LegacyProcess;
 			sourceTree = "<group>";
 		};
 		BCACC43E16B24C8B00B6E092 /* XPCService */ = {
@@ -7490,7 +7303,6 @@
 				BC3065FA1259344E00E71278 /* CacheModel.h in Headers */,
 				1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */,
 				1A2D956F12848564001EB962 /* ChildProcess.h in Headers */,
-				BC82837A16B36A4F00A278FE /* ChildProcessEntryPoint.h in Headers */,
 				51FAEC3A1B0657630009C4E7 /* ChildProcessMessages.h in Headers */,
 				E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */,
 				290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */,
@@ -8283,24 +8095,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		1A50DB1D110A3BDC000D3FE5 /* WebProcess */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1A50DB23110A3BDE000D3FE5 /* Build configuration list for PBXNativeTarget "WebProcess" */;
-			buildPhases = (
-				1A50DB1A110A3BDC000D3FE5 /* Resources */,
-				1A50DB1B110A3BDC000D3FE5 /* Sources */,
-				BC5D24B016CC3F28007D5461 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1A50DB27110A3BEF000D3FE5 /* PBXTargetDependency */,
-			);
-			name = WebProcess;
-			productName = WebProcess;
-			productReference = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */;
-			productType = "com.apple.product-type.application";
-		};
 		1AC25FAF12A48EA700BD2671 /* PluginProcessShim */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AC25FBA12A48EB600BD2671 /* Build configuration list for PBXNativeTarget "PluginProcessShim" */;
@@ -8335,24 +8129,6 @@
 			productReference = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		510CC80D1613C79900D03ED3 /* NetworkProcess */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 510CC8431613C79900D03ED3 /* Build configuration list for PBXNativeTarget "NetworkProcess" */;
-			buildPhases = (
-				510CC80A1613C79900D03ED3 /* Sources */,
-				510CC80C1613C79900D03ED3 /* Resources */,
-				BC5D24B416CC3F43007D5461 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				510CC8511613C98D00D03ED3 /* PBXTargetDependency */,
-			);
-			name = NetworkProcess;
-			productName = NetworkProcess;
-			productReference = 510CC80E1613C79900D03ED3 /* NetworkProcess.app */;
-			productType = "com.apple.product-type.application";
-		};
 		51F7DC3F180CC93600212CA3 /* Databases */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 51F7DC46180CC93600212CA3 /* Build configuration list for PBXNativeTarget "Databases" */;
@@ -8370,24 +8146,6 @@
 			productName = Networking;
 			productReference = 51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Databases.Development.xpc */;
 			productType = "com.apple.product-type.xpc-service";
-		};
-		51FA1E17180CCADE00C44BE9 /* DatabaseProcess */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 51FA1E24180CCADE00C44BE9 /* Build configuration list for PBXNativeTarget "DatabaseProcess" */;
-			buildPhases = (
-				51FA1E1C180CCADE00C44BE9 /* Sources */,
-				51FA1E1E180CCADE00C44BE9 /* Resources */,
-				51FA1E22180CCADE00C44BE9 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				51FA1E1A180CCADE00C44BE9 /* PBXTargetDependency */,
-			);
-			name = DatabaseProcess;
-			productName = NetworkProcess;
-			productReference = 51FA1E28180CCADE00C44BE9 /* DatabaseProcess.app */;
-			productType = "com.apple.product-type.application";
 		};
 		8DC2EF4F0486A6940098B216 /* WebKit */ = {
 			isa = PBXNativeTarget;
@@ -8500,24 +8258,6 @@
 			productReference = BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.Development.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
-		BCDE093313272496001259FB /* PluginProcess */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "PluginProcess" */;
-			buildPhases = (
-				BCDE093813272496001259FB /* Resources */,
-				BCDE093A13272496001259FB /* Sources */,
-				BC5D24B216CC3F3B007D5461 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				BCDE093613272496001259FB /* PBXTargetDependency */,
-			);
-			name = PluginProcess;
-			productName = WebProcess;
-			productReference = BCDE094213272496001259FB /* PluginProcess.app */;
-			productType = "com.apple.product-type.application";
-		};
 		CDC382FB17211799008A2FC3 /* WebProcessShim */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CDC3830217211799008A2FC3 /* Build configuration list for PBXNativeTarget "WebProcessShim" */;
@@ -8562,10 +8302,6 @@
 			targets = (
 				1A50DB38110A3C13000D3FE5 /* All */,
 				8DC2EF4F0486A6940098B216 /* WebKit */,
-				1A50DB1D110A3BDC000D3FE5 /* WebProcess */,
-				BCDE093313272496001259FB /* PluginProcess */,
-				51FA1E17180CCADE00C44BE9 /* DatabaseProcess */,
-				510CC80D1613C79900D03ED3 /* NetworkProcess */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
 				510031EA1379CACB00C8DFE4 /* SecItemShim */,
@@ -8581,35 +8317,10 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1A50DB1A110A3BDC000D3FE5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E1D26A51175964D70095BFD1 /* WebContentProcess.xib in Resources */,
-				E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		510CC80C1613C79900D03ED3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E1A9A852169E2025002D7176 /* WebKit.icns in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		51F7DC45180CC93600212CA3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		51FA1E1E180CCADE00C44BE9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				51FA1E1F180CCADE00C44BE9 /* WebKit.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8647,13 +8358,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BC82841D16B4FDF600A278FE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCDE093813272496001259FB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -8936,14 +8640,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1A50DB1B110A3BDC000D3FE5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24A116CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1AC25FAD12A48EA700BD2671 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -8960,27 +8656,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		510CC80A1613C79900D03ED3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24A316CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		51F7DC40180CC93600212CA3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				51F7DC41180CC93600212CA3 /* XPCServiceMain.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		51FA1E1C180CCADE00C44BE9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				51FA1E1D180CCADE00C44BE9 /* ChildProcessMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9065,7 +8745,6 @@
 				BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */,
 				1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */,
 				1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */,
-				BC82837B16B36A4F00A278FE /* ChildProcessEntryPoint.mm in Sources */,
 				A7E93CED1925331100A1DC48 /* ChildProcessIOS.mm in Sources */,
 				9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */,
 				51FAEC3B1B0657680009C4E7 /* ChildProcessMessageReceiver.cpp in Sources */,
@@ -9088,7 +8767,6 @@
 				51D0D436183B353D0097041D /* DatabaseProcessIDBConnectionMessageReceiver.cpp in Sources */,
 				E115C714190F89E400ECC516 /* DatabaseProcessIOS.mm in Sources */,
 				51E35202180F5D1E00E53BE9 /* DatabaseProcessMac.mm in Sources */,
-				51E35205180F5D4F00E53BE9 /* DatabaseProcessMain.mm in Sources */,
 				512A9760180E031D0039A149 /* DatabaseProcessMessageReceiver.cpp in Sources */,
 				517DD5BE180DA7D30081660B /* DatabaseProcessProxy.cpp in Sources */,
 				517DD5C5180DC3E10081660B /* DatabaseProcessProxyMac.mm in Sources */,
@@ -9212,7 +8890,6 @@
 				517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */,
 				2DA944BD188511E700ED86DB /* NetworkProcessIOS.mm in Sources */,
 				51795567162876CB00FA43B6 /* NetworkProcessMac.mm in Sources */,
-				BC82838416B45DA500A278FE /* NetworkProcessMain.mm in Sources */,
 				5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */,
 				E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */,
 				5179556D162877B100FA43B6 /* NetworkProcessProxy.cpp in Sources */,
@@ -9274,7 +8951,6 @@
 				5CBC9B8D1C65279C00A8FDCF /* NetworkDataTaskCocoa.mm in Sources */,
 				1A2D90D31281C966001EB962 /* PluginProcessCreationParameters.cpp in Sources */,
 				1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */,
-				BC82838C16B45F0700A278FE /* PluginProcessMain.mm in Sources */,
 				1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */,
 				9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */,
 				1A043CEB124FE38F00FFBFB5 /* PluginProcessMessageReceiver.cpp in Sources */,
@@ -9401,7 +9077,6 @@
 				1A1FEC1C1627B45700700F6D /* WebConnectionMessageReceiver.cpp in Sources */,
 				BCD3675C148C26C000447E87 /* WebConnectionToUIProcess.cpp in Sources */,
 				BC4A62A714744EC7006C681A /* WebConnectionToWebProcess.cpp in Sources */,
-				BC82836516B354F600A278FE /* WebContentProcessMain.mm in Sources */,
 				BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */,
 				31A505F91680025500A930EB /* WebContextClient.cpp in Sources */,
 				BC09B8F8147460F7005F5625 /* WebContextConnectionClient.cpp in Sources */,
@@ -9823,14 +9498,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BCDE093A13272496001259FB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24A216CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CDC382FD17211799008A2FC3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -9843,16 +9510,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1A50DB27110A3BEF000D3FE5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
-			targetProxy = 1A50DB26110A3BEF000D3FE5 /* PBXContainerItemProxy */;
-		};
-		1A50DB3C110A3C19000D3FE5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1A50DB1D110A3BDC000D3FE5 /* WebProcess */;
-			targetProxy = 1A50DB3B110A3C19000D3FE5 /* PBXContainerItemProxy */;
-		};
 		375E0627191EA8CC004E3CAF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
@@ -9898,30 +9555,10 @@
 			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
 			targetProxy = 37F7407812721F740093869B /* PBXContainerItemProxy */;
 		};
-		510CC8481613C85300D03ED3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 510CC80D1613C79900D03ED3 /* NetworkProcess */;
-			targetProxy = 510CC8471613C85300D03ED3 /* PBXContainerItemProxy */;
-		};
-		510CC8511613C98D00D03ED3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
-			targetProxy = 510CC8501613C98D00D03ED3 /* PBXContainerItemProxy */;
-		};
-		51A60B2C180CCF1200F3BF50 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 51FA1E17180CCADE00C44BE9 /* DatabaseProcess */;
-			targetProxy = 51A60B2B180CCF1200F3BF50 /* PBXContainerItemProxy */;
-		};
 		51A60B2E180CCF1700F3BF50 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 51F7DC3F180CC93600212CA3 /* Databases */;
 			targetProxy = 51A60B2D180CCF1700F3BF50 /* PBXContainerItemProxy */;
-		};
-		51FA1E1A180CCADE00C44BE9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
-			targetProxy = 51FA1E1B180CCADE00C44BE9 /* PBXContainerItemProxy */;
 		};
 		BC77F95616D0459100F8F78A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -9943,16 +9580,6 @@
 			target = BC3DE46515A91763008D26FC /* WebContent */;
 			targetProxy = BCA8D46715BCE0D6009DC1F1 /* PBXContainerItemProxy */;
 		};
-		BCDE093613272496001259FB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
-			targetProxy = BCDE093713272496001259FB /* PBXContainerItemProxy */;
-		};
-		BCDE0AC113272712001259FB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BCDE093313272496001259FB /* PluginProcess */;
-			targetProxy = BCDE0AC013272712001259FB /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -9967,20 +9594,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1A50DB21110A3BDD000D3FE5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		1A50DB22110A3BDD000D3FE5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
 		1A50DB39110A3C13000D3FE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1EDD2D91884ACE000BBFE98 /* All.xcconfig */;
@@ -10095,27 +9708,6 @@
 			};
 			name = Production;
 		};
-		510CC83D1613C79900D03ED3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 510CC8461613C7C600D03ED3 /* NetworkProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		510CC83E1613C79900D03ED3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 510CC8461613C7C600D03ED3 /* NetworkProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		510CC83F1613C79900D03ED3 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 510CC8461613C7C600D03ED3 /* NetworkProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
 		51F7DC47180CC93600212CA3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51A60B29180CCD9000F3BF50 /* DatabaseService.xcconfig */;
@@ -10133,27 +9725,6 @@
 		51F7DC49180CC93600212CA3 /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51A60B29180CCD9000F3BF50 /* DatabaseService.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
-		51FA1E25180CCADE00C44BE9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51A60B27180CCD9000F3BF50 /* DatabaseProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		51FA1E26180CCADE00C44BE9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51A60B27180CCD9000F3BF50 /* DatabaseProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		51FA1E27180CCADE00C44BE9 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51A60B27180CCD9000F3BF50 /* DatabaseProcess.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -10181,13 +9752,6 @@
 					"$(OTHER_LDFLAGS)",
 					"-lWebKitSystemInterface",
 				);
-			};
-			name = Production;
-		};
-		5D22D69E11A7534600BF30E5 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */;
-			buildSettings = {
 			};
 			name = Production;
 		};
@@ -10299,27 +9863,6 @@
 			};
 			name = Production;
 		};
-		BCDE093F13272496001259FB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		BCDE094013272496001259FB /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		BCDE094113272496001259FB /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
 		C0CE72861247E66800BC0EC4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */;
@@ -10376,16 +9919,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A50DB23110A3BDE000D3FE5 /* Build configuration list for PBXNativeTarget "WebProcess" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1A50DB21110A3BDD000D3FE5 /* Debug */,
-				1A50DB22110A3BDD000D3FE5 /* Release */,
-				5D22D69E11A7534600BF30E5 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
 		1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -10436,32 +9969,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		510CC8431613C79900D03ED3 /* Build configuration list for PBXNativeTarget "NetworkProcess" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				510CC83D1613C79900D03ED3 /* Debug */,
-				510CC83E1613C79900D03ED3 /* Release */,
-				510CC83F1613C79900D03ED3 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
 		51F7DC46180CC93600212CA3 /* Build configuration list for PBXNativeTarget "Databases" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				51F7DC47180CC93600212CA3 /* Debug */,
 				51F7DC48180CC93600212CA3 /* Release */,
 				51F7DC49180CC93600212CA3 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		51FA1E24180CCADE00C44BE9 /* Build configuration list for PBXNativeTarget "DatabaseProcess" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				51FA1E25180CCADE00C44BE9 /* Debug */,
-				51FA1E26180CCADE00C44BE9 /* Release */,
-				51FA1E27180CCADE00C44BE9 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
@@ -10512,16 +10025,6 @@
 				BC82842B16B4FDF700A278FE /* Debug */,
 				BC82842C16B4FDF700A278FE /* Release */,
 				BC82842D16B4FDF700A278FE /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "PluginProcess" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BCDE093F13272496001259FB /* Debug */,
-				BCDE094013272496001259FB /* Release */,
-				BCDE094113272496001259FB /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
