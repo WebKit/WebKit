@@ -1,3 +1,16 @@
+2016-02-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Consolidate building of GStreamer and OpenWebRTC code.
+        https://bugs.webkit.org/show_bug.cgi?id=154116
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * PlatformEfl.cmake: Migrated shared code to GStreamer.cmake.
+        * PlatformGTK.cmake: Ditto.
+        * platform/GStreamer.cmake: Added.
+
 2016-02-13  Mark Lam  <mark.lam@apple.com>
 
         Add thread violation checks to WebView public APIs.
