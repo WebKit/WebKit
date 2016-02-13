@@ -1,3 +1,22 @@
+2016-02-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, upload some blog files.
+
+        * blog-files/compile-times.png: Added.
+        * blog-files/fast-isel.png: Added.
+        * blog-files/jetstream-latency.png: Added.
+        * blog-files/jetstream-throughput.png: Added.
+        * blog-files/jetstream.png: Added.
+        * blog-files/kraken.png: Added.
+        * blog-files/low-compile-times.png: Added.
+        * blog-files/low-fast-isel.png: Added.
+        * blog-files/low-jetstream-latency.png: Added.
+        * blog-files/low-jetstream-throughput.png: Added.
+        * blog-files/low-jetstream.png: Added.
+        * blog-files/low-kraken.png: Added.
+        * blog-files/low-octane.png: Added.
+        * blog-files/octane.png: Added.
+
 2016-02-04  Jonathan Davis  <jond@apple.com>
 
         Fix bad link on the Feature Status page.
