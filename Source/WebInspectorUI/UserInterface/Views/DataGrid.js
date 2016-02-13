@@ -182,7 +182,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     set sortOrder(order)
     {
-        if (order === this._sortOrder)
+        if (!order || order === this._sortOrder)
             return;
 
         this._sortOrder = order;
@@ -941,6 +941,17 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         tbody.appendChild(fillerRowElement); // We expect to find a filler row when attaching nodes.
     }
 
+    _toggledSortOrder()
+    {
+        return this._sortOrder !== WebInspector.DataGrid.SortOrder.Descending ? WebInspector.DataGrid.SortOrder.Descending : WebInspector.DataGrid.SortOrder.Ascending;
+    }
+
+    _selectSortColumnAndSetOrder(columnIdentifier, sortOrder)
+    {
+        this.sortColumnIdentifier = columnIdentifier;
+        this.sortOrder = sortOrder;
+    }
+
     _keyDown(event)
     {
         if (!this.selectedNode || event.shiftKey || event.metaKey || event.ctrlKey || this._editing)
@@ -1047,18 +1058,12 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     _headerCellClicked(event)
     {
-        var cell = event.target.enclosingNodeOrSelfWithNodeName("th");
+        let cell = event.target.enclosingNodeOrSelfWithNodeName("th");
         if (!cell || !cell.columnIdentifier || !cell.classList.contains(WebInspector.DataGrid.SortableColumnStyleClassName))
             return;
 
-        var clickedColumnIdentifier = cell.columnIdentifier;
-        if (this.sortColumnIdentifier === clickedColumnIdentifier) {
-            if (this.sortOrder !== WebInspector.DataGrid.SortOrder.Descending)
-                this.sortOrder = WebInspector.DataGrid.SortOrder.Descending;
-            else
-                this.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
-        } else
-            this.sortColumnIdentifier = clickedColumnIdentifier;
+        let sortOrder = this._sortColumnIdentifier === cell.columnIdentifier ? this._toggledSortOrder() : this.sortOrder;
+        this._selectSortColumnAndSetOrder(cell.columnIdentifier, sortOrder);
     }
 
     _mouseoverColumnCollapser(event)
@@ -1178,7 +1183,22 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (this._hasCopyableData())
             contextMenu.appendItem(WebInspector.UIString("Copy Table"), this._copyTable.bind(this));
 
-        // FIXME: <https://webkit.org/b/154050> Web Inspector: DataGrid Header Cells should have Context Menu for Sorting
+        let cell = event.target.enclosingNodeOrSelfWithNodeName("th");
+        if (cell && cell.columnIdentifier && cell.classList.contains(WebInspector.DataGrid.SortableColumnStyleClassName)) {
+            contextMenu.appendSeparator();
+
+            if (this.sortColumnIdentifier !== cell.columnIdentifier || this.sortOrder !== WebInspector.DataGrid.SortOrder.Ascending) {
+                contextMenu.appendItem(WebInspector.UIString("Sort Ascending"), () => {
+                    this._selectSortColumnAndSetOrder(cell.columnIdentifier, WebInspector.DataGrid.SortOrder.Ascending);
+                });
+            }
+
+            if (this.sortColumnIdentifier !== cell.columnIdentifier || this.sortOrder !== WebInspector.DataGrid.SortOrder.Descending) {
+                contextMenu.appendItem(WebInspector.UIString("Sort Descending"), () => {
+                    this._selectSortColumnAndSetOrder(cell.columnIdentifier, WebInspector.DataGrid.SortOrder.Descending);
+                });
+            }
+        }
     }
 
     _contextMenuInDataTable(event)

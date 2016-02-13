@@ -1,3 +1,29 @@
+2016-02-13  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: DataGrid Header Cells should have Context Menu for Sorting
+        https://bugs.webkit.org/show_bug.cgi?id=154050
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.set sortOrder):
+        (WebInspector.DataGrid.prototype._toggledSortOrder):
+        Returns the opposite sort order from the current order.
+
+        (WebInspector.DataGrid.prototype._selectSortColumnAndSetOrder):
+        Changes the selected column to the one with the specified identifier and
+        then switches the sort order to the given order.
+
+        (WebInspector.DataGrid.prototype._headerCellClicked):
+        Moved logic for switching cells/sort-order to a separate function for
+        better reusability.
+
+        (WebInspector.DataGrid.prototype._contextMenuInHeader):
+        Adds context menu items on DataGrid header items to change the current
+        sort order to the specified order. If the context menu is on the selected
+        header item, only show the sort order that is not currently applied.
+
 2016-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename domAgent to domTreeManager in DOMNode
