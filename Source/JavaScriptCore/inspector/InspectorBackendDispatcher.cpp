@@ -285,6 +285,14 @@ T BackendDispatcher::getPropertyValue(InspectorObject* object, const String& nam
 static bool castToInteger(InspectorValue& value, int& result) { return value.asInteger(result); }
 static bool castToNumber(InspectorValue& value, double& result) { return value.asDouble(result); }
 
+#if defined(_MSC_VER) && _MSC_VER <= 1800
+static bool asString(InspectorValue& value, String& output) { return value.asString(output); }
+static bool asBoolean(InspectorValue& value, bool& output) { return value.asBoolean(output); }
+static bool asObject(InspectorValue& value, RefPtr<InspectorObject>& output) { return value.asObject(output); }
+static bool asArray(InspectorValue& value, RefPtr<InspectorArray>& output) { return value.asArray(output); }
+static bool asValue(InspectorValue& value, RefPtr<InspectorValue>& output) { return value.asValue(output); }
+#endif
+
 int BackendDispatcher::getInteger(InspectorObject* object, const String& name, bool* valueFound)
 {
     return getPropertyValue<int>(object, name, valueFound, 0, &castToInteger, "Integer");
@@ -297,27 +305,47 @@ double BackendDispatcher::getDouble(InspectorObject* object, const String& name,
 
 String BackendDispatcher::getString(InspectorObject* object, const String& name, bool* valueFound)
 {
+#if !defined(_MSC_VER) || _MSC_VER > 1800
     return getPropertyValue<String>(object, name, valueFound, "", &InspectorValue::asString, "String");
+#else
+    return getPropertyValue<String>(object, name, valueFound, "", &asString, "String");
+#endif
 }
 
 bool BackendDispatcher::getBoolean(InspectorObject* object, const String& name, bool* valueFound)
 {
+#if !defined(_MSC_VER) || _MSC_VER > 1800
     return getPropertyValue<bool>(object, name, valueFound, false, &InspectorValue::asBoolean, "Boolean");
+#else
+    return getPropertyValue<bool>(object, name, valueFound, false, &asBoolean, "Boolean");
+#endif
 }
 
 RefPtr<InspectorObject> BackendDispatcher::getObject(InspectorObject* object, const String& name, bool* valueFound)
 {
+#if !defined(_MSC_VER) || _MSC_VER > 1800
     return getPropertyValue<RefPtr<InspectorObject>>(object, name, valueFound, nullptr, &InspectorValue::asObject, "Object");
+#else
+    return getPropertyValue<RefPtr<InspectorObject>>(object, name, valueFound, nullptr, &asObject, "Object");
+#endif
 }
 
 RefPtr<InspectorArray> BackendDispatcher::getArray(InspectorObject* object, const String& name, bool* valueFound)
 {
+#if !defined(_MSC_VER) || _MSC_VER > 1800
     return getPropertyValue<RefPtr<InspectorArray>>(object, name, valueFound, nullptr, &InspectorValue::asArray, "Array");
+#else
+    return getPropertyValue<RefPtr<InspectorArray>>(object, name, valueFound, nullptr, &asArray, "Array");
+#endif
 }
 
 RefPtr<InspectorValue> BackendDispatcher::getValue(InspectorObject* object, const String& name, bool* valueFound)
 {
+#if !defined(_MSC_VER) || _MSC_VER > 1800
     return getPropertyValue<RefPtr<InspectorValue>>(object, name, valueFound, nullptr, &InspectorValue::asValue, "Value");
+#else
+    return getPropertyValue<RefPtr<InspectorValue>>(object, name, valueFound, nullptr, &asValue, "Value");
+#endif
 }
 
 } // namespace Inspector

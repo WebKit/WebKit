@@ -224,6 +224,7 @@
 #include "JSHTMLOutputElement.cpp"
 #include "JSHTMLParagraphElement.cpp"
 #include "JSHTMLParamElement.cpp"
+#include "JSHTMLPictureElement.cpp"
 #include "JSHTMLPreElement.cpp"
 #include "JSHTMLProgressElement.cpp"
 #include "JSHTMLQuoteElement.cpp"

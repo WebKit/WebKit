@@ -39,7 +39,7 @@ class MediaPlayerPrivateAVFoundationCF;
 
 class CDMSessionAVFoundationCF : public CDMSession {
 public:
-    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF* parent);
+    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF* parent, CDMSessionClient*);
     virtual ~CDMSessionAVFoundationCF() { }
 
     virtual void setClient(CDMSessionClient* client) override { m_client = client; }

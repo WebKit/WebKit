@@ -7255,25 +7255,25 @@
     <ClCompile Include="..\platform\win\MemoryPressureHandlerWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\NodeOrString.cpp" />
-    <ClCompile Include="..\bindings\js\JSCharacterDataCustom.cpp" />
-    <ClCompile Include="..\bindings\js\JSDocumentFragmentCustom.cpp" />
-    <ClCompile Include="..\bindings\js\JSDocumentTypeCustom.cpp" />
-    <ClCompile Include="..\bindings\js\JSNodeOrString.cpp" />
     <ClCompile Include="..\html\canvas\DOMPath.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\PathUtilities.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\network\DataURLDecoder.cpp" />
-    <ClCompile Include="..\dom\ClassCollection.cpp" />
-    <ClCompile Include="..\html\GenericCachedHTMLCollection.cpp" />
     <ClCompile Include="..\platform\graphics\ca\win\WebTiledBackingLayerWin.cpp">
       <Filter>platform\graphics\ca\win</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\win\GDIUtilities.cpp">
       <Filter>platform\graphics\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dom\ClassNodeList.cpp" />
+    <ClCompile Include="..\dom\NodeFilter.cpp" />
+    <ClCompile Include="..\html\HTMLPictureElement.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLPictureElement.cpp">
+      <Filter>DerivedSources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -15259,22 +15259,21 @@
     <ClInclude Include="..\platform\VNodeTracker.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\NodeOrString.h" />
-    <ClInclude Include="..\bindings\js\JSNodeOrString.h" />
     <ClInclude Include="..\html\canvas\DOMPath.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\PathUtilities.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendRouter.h" />
-    <ClInclude Include="..\platform\network\DataURLDecoder.h" />
-    <ClInclude Include="..\dom\ClassCollection.h" />
     <ClInclude Include="..\platform\graphics\ca\win\WebTiledBackingLayerWin.h">
       <Filter>platform\graphics\ca\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\win\GDIUtilities.h">
       <Filter>platform\graphics\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\ClassNodeList.h" />
+    <ClInclude Include="..\html\HTMLPictureElement.h">
+      <Filter>html</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

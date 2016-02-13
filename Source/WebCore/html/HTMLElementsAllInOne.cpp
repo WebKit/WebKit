@@ -86,6 +86,7 @@
 #include "HTMLOptionElement.cpp"
 #include "HTMLParagraphElement.cpp"
 #include "HTMLParamElement.cpp"
+#include "HTMLPictureElement.cpp"
 #include "HTMLPlugInImageElement.cpp"
 #include "HTMLPreElement.cpp"
 #include "HTMLProgressElement.cpp"

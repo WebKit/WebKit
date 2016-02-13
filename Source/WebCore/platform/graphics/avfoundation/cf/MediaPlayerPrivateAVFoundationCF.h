@@ -117,7 +117,7 @@ private:
     virtual void contentsNeedsDisplay();
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    virtual std::unique_ptr<CDMSession> createSession(const String&) override;
+    virtual std::unique_ptr<CDMSession> createSession(const String&, CDMSessionClient*) override;
 #endif
 
     virtual String languageOfPrimaryAudioTrack() const override;

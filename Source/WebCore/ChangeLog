@@ -1,3 +1,35 @@
+2016-02-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/24626412.
+
+    2016-02-12  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Correct internal branch build failure.
+            <rdar://problem/24626412>
+
+            Work around some C++11 compiler limitations in VS2013. Fix the
+            Windows build for the new <picture> element code. Correct some
+            AVFoundationCF changes that were not properly updated in this
+            branch.
+
+            * DerivedSources.cpp: Add missing files.
+            * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+            * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+            * css/CSSAllInOne.cpp: Ditto.
+            * html/HTMLElementsAllInOne.cpp: Ditto.
+            * platform/graphics/FontCache.h: Work around VS2013 bugs.
+            (WebCore::FontDescriptionFontDataCacheKey::FontDescriptionFontDataCacheKey):
+            * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+            (WebCore::CDMSessionAVFoundationCF::CDMSessionAVFoundationCF): Correct
+            signature that was not fixed for Windows in this branch.
+            * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h:
+            (WebCore::CDMSessionAVFoundationCF::~CDMSessionAVFoundationCF):
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundationCF::takeRequestForKeyURI):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::createSession):
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+            * platform/graphics/win/FontCustomPlatformData.cpp:
+
 2016-02-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r196401. rdar://problem/24611749

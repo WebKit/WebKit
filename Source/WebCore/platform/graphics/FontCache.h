@@ -69,7 +69,15 @@ typedef IMLangFontLink IMLangFontLinkType;
 
 // This key contains the FontDescription fields other than family that matter when fetching FontDatas (platform fonts).
 struct FontDescriptionFontDataCacheKey {
+#if !defined(_MSC_VER) || _MSC_VER > 1800
     FontDescriptionFontDataCacheKey() = default;
+#else
+    FontDescriptionFontDataCacheKey()
+    {
+        m_flags[0] = 0;
+        m_flags[1] = 0;
+    }
+#endif
 
     FontDescriptionFontDataCacheKey(const FontDescription& description)
         : m_size(description.computedPixelSize())
@@ -134,7 +142,11 @@ private:
 
     unsigned m_size { 0 };
     unsigned m_weight { 0 };
-    std::array<unsigned, 2> m_flags {{ 0, 0 }};
+#if !defined(_MSC_VER) || _MSC_VER > 1800
+    std::array<unsigned, 2> m_flags{ { 0, 0 } };
+#else
+    std::array<unsigned, 2> m_flags;
+#endif
     FontFeatureSettings m_featureSettings;
 };
 

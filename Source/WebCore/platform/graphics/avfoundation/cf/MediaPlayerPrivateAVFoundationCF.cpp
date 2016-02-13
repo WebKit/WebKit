@@ -911,7 +911,7 @@ static const HashSet<String>& avfMIMETypes()
 {
     static NeverDestroyed<HashSet<String>> cache = []() {
         HashSet<String> types;
-        RetainPtr<CFArrayRef> avTypes = AVCFURLAssetCopyAudiovisualMIMETypes();
+        RetainPtr<CFArrayRef> avTypes = adoptCF(AVCFURLAssetCopyAudiovisualMIMETypes());
 
         CFIndex typeCount = CFArrayGetCount(avTypes.get());
         for (CFIndex i = 0; i < typeCount; ++i) {
@@ -1145,15 +1145,15 @@ RetainPtr<AVCFAssetResourceLoadingRequestRef> MediaPlayerPrivateAVFoundationCF::
     return m_avfWrapper->takeRequestForKeyURI(keyURI);
 }
 
-std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem)
+std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, CDMSessionClient* client)
 {
     if (!keySystemIsSupported(keySystem))
         return nullptr;
 
-    return std::make_unique<CDMSessionAVFoundationCF>(this);
+    return std::make_unique<CDMSessionAVFoundationCF>(this, client);
 }
 #elif ENABLE(ENCRYPTED_MEDIA_V2)
-std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem)
+std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, CDMSessionClient*)
 {
     return nullptr;
 }
