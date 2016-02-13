@@ -1074,6 +1074,10 @@ article .mattewhite {
     padding-bottom: 3rem;
 }
 
+article .mattewhite.tightwad {
+    padding: 0;
+}
+
 /** Article Figures **/
 
 article figure {

@@ -1,3 +1,18 @@
+2016-02-12  Jonathan Davis  <jond@apple.com>
+
+        Add a CSS class to remove padding when using mattewhite class for figures
+        https://bugs.webkit.org/show_bug.cgi?id=154206
+
+        Reviewed by Filip Pizlo.
+
+        * wp-content/themes/webkit/style.css:
+        (article .two-columns):
+        (article .two-columns h6):
+        (article .two-columns p):
+        (article .mattewhite):
+        (article .mattewhite.tightwad):
+        (article figure):
+
 2016-02-12  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, upload some blog files.
