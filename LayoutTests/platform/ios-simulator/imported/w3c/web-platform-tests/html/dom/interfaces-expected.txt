@@ -4167,7 +4167,7 @@ PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit p
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "cancelable" with the proper type (11) 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "preventDefault" with the proper type (12) 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "defaultPrevented" with the proper type (13) 
-FAIL Event interface: new PopStateEvent("popstate", { data: {} }) must have own property "isTrusted" assert_own_property: expected property "isTrusted" missing
+PASS Event interface: new PopStateEvent("popstate", { data: {} }) must have own property "isTrusted" 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new PopStateEvent("popstate", { data: {} }) must inherit property "initEvent" with the proper type (16) 
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new PopStateEvent("popstate", { data: {} }) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
@@ -4495,7 +4495,7 @@ PASS Event interface: new CloseEvent("close") must inherit property "bubbles" wi
 PASS Event interface: new CloseEvent("close") must inherit property "cancelable" with the proper type (11) 
 PASS Event interface: new CloseEvent("close") must inherit property "preventDefault" with the proper type (12) 
 PASS Event interface: new CloseEvent("close") must inherit property "defaultPrevented" with the proper type (13) 
-FAIL Event interface: new CloseEvent("close") must have own property "isTrusted" assert_own_property: expected property "isTrusted" missing
+PASS Event interface: new CloseEvent("close") must have own property "isTrusted" 
 PASS Event interface: new CloseEvent("close") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new CloseEvent("close") must inherit property "initEvent" with the proper type (16) 
 FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new CloseEvent("close") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
