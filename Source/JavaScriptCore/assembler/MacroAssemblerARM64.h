@@ -1049,10 +1049,10 @@ public:
     
     void load8(const void* address, RegisterID dest)
     {
-        moveToCachedReg(TrustedImmPtr(address), m_cachedMemoryTempRegister);
+        moveToCachedReg(TrustedImmPtr(address), cachedMemoryTempRegister());
         m_assembler.ldrb(dest, memoryTempRegister, ARM64Registers::zr);
         if (dest == memoryTempRegister)
-            m_cachedMemoryTempRegister.invalidate();
+            cachedMemoryTempRegister().invalidate();
     }
 
     void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
@@ -1124,7 +1124,7 @@ public:
             return;
         }
 
-        moveToCachedReg(imm, m_dataMemoryTempRegister);
+        moveToCachedReg(imm, dataMemoryTempRegister());
         store64(dataTempRegister, address);
     }
 
@@ -1135,7 +1135,7 @@ public:
             return;
         }
 
-        moveToCachedReg(imm, m_dataMemoryTempRegister);
+        moveToCachedReg(imm, dataMemoryTempRegister());
         store64(dataTempRegister, address);
     }
     
@@ -1180,7 +1180,7 @@ public:
             return;
         }
 
-        moveToCachedReg(imm, m_dataMemoryTempRegister);
+        moveToCachedReg(imm, dataMemoryTempRegister());
         store32(dataTempRegister, address);
     }
 
@@ -1191,7 +1191,7 @@ public:
             return;
         }
 
-        moveToCachedReg(imm, m_dataMemoryTempRegister);
+        moveToCachedReg(imm, dataMemoryTempRegister());
         store32(dataTempRegister, address);
     }
 
@@ -1202,7 +1202,7 @@ public:
             return;
         }
 
-        moveToCachedReg(imm, m_dataMemoryTempRegister);
+        moveToCachedReg(imm, dataMemoryTempRegister());
         store32(dataTempRegister, address);
     }
 
@@ -1497,7 +1497,7 @@ public:
     
     void loadDouble(TrustedImmPtr address, FPRegisterID dest)
     {
-        moveToCachedReg(address, m_cachedMemoryTempRegister);
+        moveToCachedReg(address, cachedMemoryTempRegister());
         m_assembler.ldr<64>(dest, memoryTempRegister, ARM64Registers::zr);
     }
 
@@ -1642,7 +1642,7 @@ public:
 
     void storeDouble(FPRegisterID src, TrustedImmPtr address)
     {
-        moveToCachedReg(address, m_cachedMemoryTempRegister);
+        moveToCachedReg(address, cachedMemoryTempRegister());
         m_assembler.str<64>(src, memoryTempRegister, ARM64Registers::zr);
     }
 
@@ -1900,7 +1900,7 @@ public:
         else if (isUInt12(-right.m_value))
             m_assembler.cmn<32>(left, UInt12(-right.m_value));
         else {
-            moveToCachedReg(right, m_dataMemoryTempRegister);
+            moveToCachedReg(right, dataMemoryTempRegister());
             m_assembler.cmp<32>(left, dataTempRegister);
         }
         return Jump(makeBranch(cond));
@@ -1966,7 +1966,7 @@ public:
         else if (isUInt12(-immediate))
             m_assembler.cmn<64>(left, UInt12(static_cast<int32_t>(-immediate)));
         else {
-            moveToCachedReg(right, m_dataMemoryTempRegister);
+            moveToCachedReg(right, dataMemoryTempRegister());
             m_assembler.cmp<64>(left, dataTempRegister);
         }
         return Jump(makeBranch(cond));
@@ -2877,12 +2877,22 @@ private:
     ALWAYS_INLINE RegisterID getCachedDataTempRegisterIDAndInvalidate()
     {
         RELEASE_ASSERT(m_allowScratchRegister);
-        return m_dataMemoryTempRegister.registerIDInvalidate();
+        return dataMemoryTempRegister().registerIDInvalidate();
     }
     ALWAYS_INLINE RegisterID getCachedMemoryTempRegisterIDAndInvalidate()
     {
         RELEASE_ASSERT(m_allowScratchRegister);
-        return m_cachedMemoryTempRegister.registerIDInvalidate();
+        return cachedMemoryTempRegister().registerIDInvalidate();
+    }
+    ALWAYS_INLINE CachedTempRegister& dataMemoryTempRegister()
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return m_dataMemoryTempRegister;
+    }
+    ALWAYS_INLINE CachedTempRegister& cachedMemoryTempRegister()
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return m_cachedMemoryTempRegister;
     }
 
     ALWAYS_INLINE bool isInIntRange(intptr_t value)
@@ -3015,12 +3025,12 @@ private:
     ALWAYS_INLINE void load(const void* address, RegisterID dest)
     {
         intptr_t currentRegisterContents;
-        if (m_cachedMemoryTempRegister.value(currentRegisterContents)) {
+        if (cachedMemoryTempRegister().value(currentRegisterContents)) {
             intptr_t addressAsInt = reinterpret_cast<intptr_t>(address);
             intptr_t addressDelta = addressAsInt - currentRegisterContents;
 
             if (dest == memoryTempRegister)
-                m_cachedMemoryTempRegister.invalidate();
+                cachedMemoryTempRegister().invalidate();
 
             if (isInIntRange(addressDelta)) {
                 if (ARM64Assembler::canEncodeSImmOffset(addressDelta)) {
@@ -3036,7 +3046,7 @@ private:
 
             if ((addressAsInt & (~maskHalfWord0)) == (currentRegisterContents & (~maskHalfWord0))) {
                 m_assembler.movk<64>(memoryTempRegister, addressAsInt & maskHalfWord0, 0);
-                m_cachedMemoryTempRegister.setValue(reinterpret_cast<intptr_t>(address));
+                cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
                 m_assembler.ldr<datasize>(dest, memoryTempRegister, ARM64Registers::zr);
                 return;
             }
@@ -3044,9 +3054,9 @@ private:
 
         move(TrustedImmPtr(address), memoryTempRegister);
         if (dest == memoryTempRegister)
-            m_cachedMemoryTempRegister.invalidate();
+            cachedMemoryTempRegister().invalidate();
         else
-            m_cachedMemoryTempRegister.setValue(reinterpret_cast<intptr_t>(address));
+            cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
         m_assembler.ldr<datasize>(dest, memoryTempRegister, ARM64Registers::zr);
     }
 
@@ -3055,7 +3065,7 @@ private:
     {
         ASSERT(src != memoryTempRegister);
         intptr_t currentRegisterContents;
-        if (m_cachedMemoryTempRegister.value(currentRegisterContents)) {
+        if (cachedMemoryTempRegister().value(currentRegisterContents)) {
             intptr_t addressAsInt = reinterpret_cast<intptr_t>(address);
             intptr_t addressDelta = addressAsInt - currentRegisterContents;
 
@@ -3073,14 +3083,14 @@ private:
 
             if ((addressAsInt & (~maskHalfWord0)) == (currentRegisterContents & (~maskHalfWord0))) {
                 m_assembler.movk<64>(memoryTempRegister, addressAsInt & maskHalfWord0, 0);
-                m_cachedMemoryTempRegister.setValue(reinterpret_cast<intptr_t>(address));
+                cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
                 m_assembler.str<datasize>(src, memoryTempRegister, ARM64Registers::zr);
                 return;
             }
         }
 
         move(TrustedImmPtr(address), memoryTempRegister);
-        m_cachedMemoryTempRegister.setValue(reinterpret_cast<intptr_t>(address));
+        cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
         m_assembler.str<datasize>(src, memoryTempRegister, ARM64Registers::zr);
     }
 

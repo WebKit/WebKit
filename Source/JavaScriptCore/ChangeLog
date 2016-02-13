@@ -1,3 +1,50 @@
+2016-02-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] ZeroExtend and SignExtend use incorrect addressing on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=154208
+
+        Reviewed by Filip Pizlo.
+
+        When lowering:
+            @1 = Load32(@x)
+            @2 = SExt8(@1)
+
+        LowerToAir would see there is a form of SignExtend8To32 (an alias for Load8S)
+        and use that.
+
+        There are two problems with that:
+        1) If we have an Addr, it went through legalizeMemoryOffsets() for a 32bits
+           load. If used on an other kind of load, there is no guarantee the addressing
+           is still valid.
+        2) If we have an Index, it is computed for the 32bits MemoryValue.
+           The computed index is not valid for the 8bits load.
+
+        (2) could be fixed by changing LowerToAir to use the current instruction width
+        instead of the B3ValueWidth but that's a bit tricky. We should just embrace
+        that one of our target is a Load-Store architecture.
+
+        In this patch, I just disabled the faulty forms on ARM64. We still need those operations
+        to be fast, this will be addressed in: https://bugs.webkit.org/show_bug.cgi?id=154207
+
+        I also strengthened the m_allowScratchRegister assertion. The instructions that do not
+        invalidate the temporary did not run the assertion, making this harder to debug.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store32):
+        (JSC::MacroAssemblerARM64::loadDouble):
+        (JSC::MacroAssemblerARM64::storeDouble):
+        (JSC::MacroAssemblerARM64::branch32):
+        (JSC::MacroAssemblerARM64::branch64):
+        (JSC::MacroAssemblerARM64::getCachedDataTempRegisterIDAndInvalidate):
+        (JSC::MacroAssemblerARM64::getCachedMemoryTempRegisterIDAndInvalidate):
+        (JSC::MacroAssemblerARM64::dataMemoryTempRegister):
+        (JSC::MacroAssemblerARM64::cachedMemoryTempRegister):
+        (JSC::MacroAssemblerARM64::load):
+        (JSC::MacroAssemblerARM64::store):
+        * b3/air/AirOpcode.opcodes:
+
 2016-02-12  Michael Saboff  <msaboff@apple.com>
 
         offlineasm: Emit Dwarf2 file and location directives to allow for debugging .asm files
