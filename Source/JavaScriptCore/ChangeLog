@@ -1,3 +1,9 @@
+2016-02-13  Timothy Hatcher  <timothy@apple.com>
+
+        Fix WebAssembly bug URL in the feature list.
+
+        * features.json:
+
 2016-02-12  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Change the last RefPtr::get() to release() in String.prototype.normalize

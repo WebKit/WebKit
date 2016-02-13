@@ -37,7 +37,7 @@
             "status": "In Development"
         },
         "url": "http://webassembly.github.io",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=90906",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=146064",
         "description": "WebAssembly is a new format for native programs on the web. It aims to support everything that asm.js supports, but allows the VM to sidestep the JS parsing and profiling pipeline entirely.",
         "keywords": ["webassembly", "wasm", "webassy"],
         "contact": {
