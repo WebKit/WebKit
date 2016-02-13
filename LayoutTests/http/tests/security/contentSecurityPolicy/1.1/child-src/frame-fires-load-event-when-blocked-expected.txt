@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Refused to load frame 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html' because it violates the following Content Security Policy directive: "child-src 'none'".
+
+Frames should be governed by 'child-src'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+IFrame load event fired: the IFrame is cross-origin (or was blocked).
+PASS The IFrame should have been blocked (or cross-origin). It was.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

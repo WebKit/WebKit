@@ -3,12 +3,12 @@
 <head>
     <script src="/js-test-resources/js-test-pre.js"></script>
     <script src="/security/contentSecurityPolicy/resources/child-src-test.js"></script>
-    <meta http-equiv="Content-Security-Policy" content="child-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="child-src 'self';">
 </head>
 <body>
     <script>
-        description("'about:blank' should not be blocked by CSP.");
-        injectFrame("about:blank", EXPECT_LOAD);
+        description("Frames should be governed by 'child-src'. Redirects should be covered.");
+        injectFrameRedirectingTo("http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.html", EXPECT_BLOCK);
     </script>
     <script src="/js-test-resources/js-test-post.js"></script>
 </body>

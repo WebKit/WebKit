@@ -792,6 +792,11 @@ webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]
 webkit.org/b/52185 fast/css/vertical-align-baseline-rowspan-010.html [ ImageOnlyFailure ]
 
 # Content Security Policy failures
+webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
+http/tests/security/contentSecurityPolicy/1.1/child-src [ Pass ]
+webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html
+webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src.html
+webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/stylehash-default-src.html
 webkit.org/b/111869 http/tests/security/contentSecurityPolicy/eval-blocked-and-sends-report.html
 webkit.org/b/115700 http/tests/security/contentSecurityPolicy/inline-event-handler-blocked-after-injecting-meta.html [ Failure ]
 webkit.org/b/115702 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.html [ Failure ]
@@ -799,6 +804,8 @@ webkit.org/b/115702 http/tests/security/contentSecurityPolicy/report-same-origin
 webkit.org/b/115707 http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.html [ Failure ]
 webkit.org/b/153148 http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.html
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html
+webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html
+webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked.html
 webkit.org/b/153151 http/tests/security/contentSecurityPolicy/icon-allowed.html [ Failure ]
 webkit.org/b/153151 http/tests/security/contentSecurityPolicy/icon-blocked.html [ Failure ]
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html # Needs testRunner.getManifestThen()
@@ -830,11 +837,7 @@ webkit.org/b/153166 webkit.org/b/153242 http/tests/security/contentSecurityPolic
 webkit.org/b/153167 http/tests/security/contentSecurityPolicy/sandbox-report-only.html [ Failure ]
 webkit.org/b/153168 http/tests/security/contentSecurityPolicy/source-list-parsing-07.html [ Failure ]
 webkit.org/b/153170 http/tests/security/contentSecurityPolicy/source-list-parsing-paths-03.html [ Failure ]
-webkit.org/b/153562 http/tests/security/contentSecurityPolicy/worker-script-src.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html [ Pass Failure ]
-http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html # Needs expected file.
-http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src.html # Needs expected file.
-http/tests/security/contentSecurityPolicy/1.1/stylehash-default-src.html # Needs expected file.
 
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.
 loader/stateobjects/pushstate-size-iframe.html [ Slow ]

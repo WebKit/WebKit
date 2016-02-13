@@ -7,8 +7,8 @@
 </head>
 <body>
     <script>
-        description("'about:blank' should not be blocked by CSP.");
-        injectFrame("about:blank", EXPECT_LOAD);
+        description("Frames should be governed by 'child-src'.");
+        injectFrame("/security/contentSecurityPolicy/resources/alert-fail.html", EXPECT_BLOCK);
     </script>
     <script src="/js-test-resources/js-test-post.js"></script>
 </body>

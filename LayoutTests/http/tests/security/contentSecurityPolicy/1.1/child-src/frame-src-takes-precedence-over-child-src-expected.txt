@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to load frame 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html' because it violates the following Content Security Policy directive: "frame-src 'none'".
+
+This tests that an <iframe> load is blocked when using Content Security Policy frame-src 'none'; child-src 'self' because the deprecated directive frame-src takes precedence over the directive child-src. This test PASSED if there is no JavaScript alert.
+
+

@@ -1,3 +1,45 @@
+2016-02-12  Daniel Bates  <dabates@apple.com>
+
+        CSP: Implement child-src directive
+        https://bugs.webkit.org/show_bug.cgi?id=153562
+        <rdar://problem/24610087>
+
+        Reviewed by Brent Fulgham.
+
+        Add support for the child-src directive, <https://w3c.github.io/webappsec-csp/2/#child_src> (29 August 2015),
+        which formally replaces the deprecated frame-src directive as of the Content Security Policy 2.0 spec. The
+        child-src directive was first introduced in the Content Security Policy 1.1 spec, <https://www.w3.org/TR/2014/WD-CSP11-20140211/>.
+
+        As a side effect of this change, the script URL for a Web Worker is checked against the child-src directive
+        as opposed to the script-src directive. This is a backward incompatible change from the CSP 1.0 spec.
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html
+               http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/1.1/child-src/frame-src-takes-precedence-over-child-src.html
+               http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked.html
+               http/tests/security/isolatedWorld/bypass-main-world-csp-worker-redirect.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::isAllowedByContentSecurityPolicy): Check child-src directive (if applicable).
+        * loader/ThreadableLoader.h: Add enum value EnforceChildSrcDirective to enum class ContentSecurityPolicyEnforcement to
+        enforce the child-src directive on redirect.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowChildContextFromSource): Added.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::checkSourceAndReportViolation): Add message prefix for a child-src violation.
+        We use the same message prefix as used by Blink.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowChildContextFromSource): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::allowChildFrameFromSource): Modified to check the frame-src
+        directive (if specified) before checking the child-src directive by <https://w3c.github.io/webappsec-csp/2/#directive-child-src-nested>.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Parse the child-src directive.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::resolveURL): Check if the script URL for the worker is allowed by the child-src directive
+        as opposed to the script-src directive. This is a backwards incompatible change from the CSP 1.0 spec.
+        * workers/Worker.cpp:
+        (WebCore::Worker::create): Enforce the child-src directive on redirects (if applicable).
+
 2016-02-12  Saam barati  <sbarati@apple.com>
 
         The parser doesn't properly protect against global variable references in builtins

@@ -48,6 +48,7 @@ static const char styleSrc[] = "style-src";
 
 // CSP 1.1 Directives
 static const char baseURI[] = "base-uri";
+static const char childSrc[] = "child-src";
 static const char formAction[] = "form-action";
 static const char pluginTypes[] = "plugin-types";
 #if ENABLE(CSP_NEXT)
@@ -222,6 +223,8 @@ bool ContentSecurityPolicyDirectiveList::checkSourceAndReportViolation(ContentSe
     const char* prefix;
     if (baseURI == effectiveDirective)
         prefix = "Refused to set the document's base URI to '";
+    else if (childSrc == effectiveDirective)
+        prefix = "Refused to create a child context containing '";
     else if (connectSrc == effectiveDirective)
         prefix = "Refused to connect to '";
     else if (fontSrc == effectiveDirective)
@@ -314,13 +317,24 @@ bool ContentSecurityPolicyDirectiveList::allowObjectFromSource(const URL& url, C
     return m_reportOnly || checkSource(operativeDirective(m_objectSrc.get()), url);
 }
 
+bool ContentSecurityPolicyDirectiveList::allowChildContextFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+{
+    if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
+        return checkSourceAndReportViolation(operativeDirective(m_childSrc.get()), url, childSrc);
+    return m_reportOnly || checkSource(operativeDirective(m_childSrc.get()), url);
+}
+
 bool ContentSecurityPolicyDirectiveList::allowChildFrameFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     if (url.isBlankURL())
         return true;
+
+    // We must enforce the frame-src directive (if specified) before enforcing the child-src directive for a nested browsing
+    // context by <https://w3c.github.io/webappsec-csp/2/#directive-child-src-nested> (29 August 2015).
+    ContentSecurityPolicySourceListDirective* directiveToEnforce = operativeDirective(m_frameSrc ? m_frameSrc.get() : m_childSrc.get());
     if (reportingStatus == ContentSecurityPolicy::ReportingStatus::SendReport)
-        return checkSourceAndReportViolation(operativeDirective(m_frameSrc.get()), url, frameSrc);
-    return m_reportOnly || checkSource(operativeDirective(m_frameSrc.get()), url);
+        return checkSourceAndReportViolation(directiveToEnforce, url, frameSrc);
+    return m_reportOnly || checkSource(directiveToEnforce, url);
 }
 
 bool ContentSecurityPolicyDirectiveList::allowImageFromSource(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
@@ -569,6 +583,8 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_mediaSrc);
     else if (equalLettersIgnoringASCIICase(name, connectSrc))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_connectSrc);
+    else if (equalLettersIgnoringASCIICase(name, childSrc))
+        setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_childSrc);
     else if (equalLettersIgnoringASCIICase(name, sandbox))
         applySandboxPolicy(name, value);
     else if (equalLettersIgnoringASCIICase(name, reportURI))

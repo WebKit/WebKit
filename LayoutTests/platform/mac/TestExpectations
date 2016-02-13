@@ -188,9 +188,6 @@ fast/forms/file/input-file-directory-upload.html
 # webkit.org/b/61138, webkit.org/b/84893, webkit.org/b/133321
 http/tests/w3c/webperf [ Skip ]
 
-# Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
-webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
-
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 

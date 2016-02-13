@@ -443,6 +443,8 @@ bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url)
     switch (m_options.contentSecurityPolicyEnforcement) {
     case ContentSecurityPolicyEnforcement::DoNotEnforce:
         return true;
+    case ContentSecurityPolicyEnforcement::EnforceChildSrcDirective:
+        return contentSecurityPolicy().allowChildContextFromSource(url, false); // Do not override policy
     case ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective:
         return contentSecurityPolicy().allowConnectToSource(url, false); // Do not override policy
     case ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective:

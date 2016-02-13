@@ -374,9 +374,6 @@ webkit.org/b/42435 http/tests/misc/webtiming-ssl.php [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-two-redirects.php [ Skip ]
 webkit.org/b/42435 http/tests/w3c/webperf [ Skip ]
 
-# Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
-webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1 [ Skip ]
-
 # TODO Application Cache Quotas
 webkit.org/b/43458 http/tests/appcache/origin-quota.html [ Skip ]
 webkit.org/b/43458 http/tests/appcache/origin-quota-continued-download.html [ Skip ]

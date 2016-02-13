@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/js-test-resources/js-test.js"></script>
-    <script src="/security/contentSecurityPolicy/resources/child-src-test.js"></script>
-    <meta http-equiv="Content-Security-Policy" content="child-src 'self';">
+<meta http-equiv="Content-Security-Policy" content="child-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
 </head>
 <body>
-    <script>
-        description("Frames should be governed by 'child-src'. Redirects should be covered.");
-        injectFrameRedirectingTo("http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.html", EXPECT_BLOCK);
-    </script>
+<p>This tests that the Content Security Policy of the page blocks an &lt;iframe&gt; from loading a document of a different origin through a redirect. This test PASSED if there is no JavaScript alert.</p>
+<iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.html"></iframe>
 </body>
 </html>

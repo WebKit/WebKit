@@ -61,6 +61,7 @@ namespace WebCore {
 
     enum class ContentSecurityPolicyEnforcement {
         DoNotEnforce,
+        EnforceChildSrcDirective,
         EnforceConnectSrcDirective,
         EnforceScriptSrcDirective,
     };

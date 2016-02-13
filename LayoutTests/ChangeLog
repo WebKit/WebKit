@@ -1,3 +1,76 @@
+2016-02-12  Daniel Bates  <dabates@apple.com>
+
+        CSP: Implement child-src directive
+        https://bugs.webkit.org/show_bug.cgi?id=153562
+        <rdar://problem/24610087>
+
+        Reviewed by Brent Fulgham.
+
+        Add new tests, un-skip now passing tests and update incorrect expected result for test http/tests/security/contentSecurityPolicy/1.1/child-src/worker-blocked.html. 
+
+        * TestExpectations: Remove entry for test http/tests/security/contentSecurityPolicy/worker-script-src.html as it now passes.
+        Mark all tests in http/tests/security/contentSecurityPolicy/1.1/child-src as PASS so that we run them except for tests
+        frame-fires-load-event-when-blocked.html and frame-fires-load-event-when-redirect-blocked.html (formerly named frame-blocked.html
+        and frame-redirect-blocked.html, respectively) as they depend on the fix for <https://bugs.webkit.org/show_bug.cgi?id=153150>.
+        Skip all other CSP 1.1 tests until we fix <https://bugs.webkit.org/show_bug.cgi?id=85558>. Group some CSP 1.1 entries together.
+        * fast/workers/worker-inherits-csp-blocks-eval-expected.txt: Update expected result based on change to worker-inherits-csp-blocks-eval.html.
+        * fast/workers/worker-inherits-csp-blocks-eval.html: Remove source 'self' from script-src directive. This was needed as
+        a workaround for <https://bugs.webkit.org/show_bug.cgi?id=153158> when the script URL for a worker was checked against the
+        script-src directive. Now that the script URL is checked against the child-src directive we do not need this workaround.
+        * fast/workers/worker-inherits-csp-blocks-xhr.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-about-blank-allowed.html: Use js-test-{pre, post}.js as opposed to
+        js-test.js to avoid duplicate "TEST COMPLETE" output.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-allowed.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked-expected.txt: Update expected result based on changes to frame-blocked.html.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked.html: Update test to work without the fix for <https://bugs.webkit.org/show_bug.cgi?id=153150>.
+
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked-expected.txt: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked-expected.txt.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked.html.
+        Keep a copy of the original test for when we fix <https://bugs.webkit.org/show_bug.cgi?id=153150>.
+
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked-expected.txt: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked-expected.txt.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked.html: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked.html.
+        Keep a copy of the original test for when we fix <https://bugs.webkit.org/show_bug.cgi?id=153150>.
+
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked-expected.txt: Update expected result based on changes to frame-redirect-blocked.html.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked.html: Update test to work without the fix for <https://bugs.webkit.org/show_bug.cgi?id=153150>.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-src-takes-precedence-over-child-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-src-takes-precedence-over-child-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-allowed.html: Use js-test-{pre, post}.js as opposed to
+        js-test.js to avoid duplicate "TEST COMPLETE" output.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-blocked-expected.txt: Update incorrect expected result to
+        reflect WebKit error message. The current result reflects the error message used by Blink.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-blocked.html: Use js-test-{pre, post}.js as opposed to
+        js-test.js to avoid duplicate "TEST COMPLETE" output.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-shared-allowed-expected.txt: Removed; WebKit does not support shared Web Workers.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-shared-allowed.html: Removed; WebKit does not support shared Web Workers.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-shared-blocked-expected.txt: Removed; WebKit does not support shared Web Workers.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-shared-blocked.html: Removed; WebKit does not support shared Web Workers.
+        * http/tests/security/contentSecurityPolicy/resources/child-src-test.js: Remove logic for testing shared Web Workers as WebKit does not support such workers.
+        (window.onload): Deleted.
+        (injectSharedWorker): Deleted.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-blocks-eval-expected.txt: Update expected result based on change to worker-blob-inherits-csp-blocks-eval.html.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-blocks-eval.html: Remove source 'self' from script-src directive.
+        This was needed as a workaround for <https://bugs.webkit.org/show_bug.cgi?id=153158> when the script URL for a worker was checked
+        against the script-src directive. Now that the script URL is checked against the child-src directive we do not need this workaround.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-block-aborts-all-subsequent-imports-expected.txt: Update
+        expected result based on change to worker-blob-inherits-csp-importScripts-block-aborts-all-subsequent-imports.html.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-block-aborts-all-subsequent-imports.html:
+        Remove source 'self' from script-src directive. This was needed as a workaround for <https://bugs.webkit.org/show_bug.cgi?id=153158> when
+        the script URL for a worker was checked against the script-src directive. Now that the script URL is checked against the child-src directive
+        we do not need this workaround.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked.html: Ditto.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker.html: Add child-src 'none' and remove FIXME comment.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-redirect-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-redirect.html: Added.
+        * platform/ios-simulator/TestExpectations: Remove skip entry for tests in http/tests/security/contentSecurityPolicy/1.1 from this file.
+        Instead we will skip these tests from LayoutTests/TestExpectations since they fail for all ports.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wk2/TestExpectations: Ditto.
+
 2016-02-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Re-enable skipped animations tests on ios-simulator

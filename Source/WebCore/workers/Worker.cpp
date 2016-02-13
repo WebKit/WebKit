@@ -94,8 +94,8 @@ RefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String& url
     worker->setPendingActivity(worker.ptr());
 
     worker->m_scriptLoader = WorkerScriptLoader::create();
-    // FIXME: Enforce Content Security Policy child-src directive when shouldBypassMainWorldContentSecurityPolicy is false. See <https://bugs.webkit.org/show_bug.cgi?id=153562>.
-    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, ContentSecurityPolicyEnforcement::DoNotEnforce, worker.ptr());
+    auto contentSecurityPolicyEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceChildSrcDirective;
+    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, contentSecurityPolicyEnforcement, worker.ptr());
     return WTFMove(worker);
 }
 

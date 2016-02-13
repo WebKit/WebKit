@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Refused to create a child context containing 'http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js' because it violates the following Content Security Policy directive: "child-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php".
+
+This tests that the Content Security Policy of the page blocks loading a Web Worker's script from a different origin through a redirect.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js") did not throw exception.
+PASS error event dispatched
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -57,6 +57,7 @@ public:
     bool allowScriptFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowObjectFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowChildFrameFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowChildContextFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowImageFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowStyleFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowFontFromSource(const URL&, ContentSecurityPolicy::ReportingStatus) const;
@@ -114,6 +115,7 @@ private:
     std::unique_ptr<ContentSecurityPolicyMediaListDirective> m_pluginTypes;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_baseURI;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_connectSrc;
+    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_childSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_defaultSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_fontSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_formAction;

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load the script 'http://localhost:8000/workers/resources/worker-importScripts-source1.js' because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+CONSOLE MESSAGE: Refused to load the script 'http://localhost:8000/workers/resources/worker-importScripts-source1.js' because it violates the following Content Security Policy directive: "script-src 'unsafe-inline'".
 
 This tests that when calling WorkerGlobalScope.importScripts() will two script URLs that the second script is not loaded if the first script URL was blocked by the Content Security Policy of the worker (inherited from this page).
 

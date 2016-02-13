@@ -53,13 +53,3 @@ function injectWorker(url, expectBlock) {
         finishJSTest();
     };
 }
-
-function injectSharedWorker(url, expectBlock) {
-    window.onload = function() {
-        if (expectBlock == EXPECT_BLOCK)
-            shouldThrow("var w = new SharedWorker('" + url + "');");
-        else
-            shouldNotThrow("var w = new SharedWorker('" + url + "');");
-        finishJSTest();
-    };
-}

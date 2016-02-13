@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="/js-test-resources/js-test.js"></script>
-    <script src="/security/contentSecurityPolicy/resources/child-src-test.js"></script>
-    <meta http-equiv="Content-Security-Policy" content="child-src 'none';">
+<meta http-equiv="Content-Security-Policy" content="child-src 'none'">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
 </head>
 <body>
-    <script>
-        description("Frames should be governed by 'child-src'.");
-        injectFrame("/security/contentSecurityPolicy/resources/alert-fail.html", EXPECT_BLOCK);
-    </script>
+<p>This tests that an &lt;iframe&gt; load is blocked when using Content Security Policy <code>child-src 'none'</code>. This test PASSED if there is no JavaScript alert.</p>
+<iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html"></iframe>
 </body>
 </html>
