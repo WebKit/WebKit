@@ -1,3 +1,30 @@
+2016-02-12  Michael Saboff  <msaboff@apple.com>
+
+        BASSERTs added in r196421 are causing debug test failures
+        https://bugs.webkit.org/show_bug.cgi?id=154113
+
+        Reviewed by Geoffrey Garen.
+
+        In VMHeap::deallocateLargeObject(), we drop the lock to deallocate the physical pages.
+        If the scavenger thread is running at the same time a synchronous call to scavenge()
+        comes in, we could call VMHeap::deallocateLargeObject() for an adjacent object while the
+        lock in the other thread is dropped.  We fix this by checking for adjacent objects we
+        can merge with and loop if we have one.
+
+        * bmalloc/FreeList.h:
+        (bmalloc::FreeList::push): Added BASSERT to catch adding unmerged free objects
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateLarge): Changed to use nextCanMerge().
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::prevCanMerge): Repurposed prevIsAllocated.
+        (bmalloc::LargeObject::nextCanMerge): Repurposed nextIsAllocated.
+        (bmalloc::LargeObject::prevIsAllocated): Deleted.
+        (bmalloc::LargeObject::nextIsAllocated): Deleted.
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateLargeObject): Moved adding the extra object back to the free list
+        to after we set the object we'll return as being allocated.
+        (bmalloc::VMHeap::deallocateLargeObject):
+
 2016-02-12  Mark Lam  <mark.lam@apple.com>
 
         Make BCRASH() use breakpoint traps too for non-debug OS(DARWIN).

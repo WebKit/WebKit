@@ -371,7 +371,7 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)
     largeObject.setFree(false);
     
     if (nextLargeObject) {
-        BASSERT(nextLargeObject.nextIsAllocated());
+        BASSERT(!nextLargeObject.nextCanMerge());
         m_largeObjects.insert(nextLargeObject);
     }
     

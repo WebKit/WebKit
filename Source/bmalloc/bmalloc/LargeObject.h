@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,9 +54,9 @@ public:
     void setFree(bool) const;
     bool isFree() const;
 
-    bool prevIsAllocated() const;
-    bool nextIsAllocated() const;
-    
+    bool prevCanMerge() const;
+    bool nextCanMerge() const;
+
     Owner owner() const;
     void setOwner(Owner) const;
     
@@ -121,20 +121,19 @@ inline bool LargeObject::isFree() const
     return m_beginTag->isFree();
 }
 
-inline bool LargeObject::prevIsAllocated() const
+inline bool LargeObject::prevCanMerge() const
 {
     EndTag* prev = m_beginTag->prev();
 
-    return !prev->isFree() || prev->owner() != this->owner();
+    return prev->isFree() && prev->owner() == this->owner();
 }
 
-inline bool LargeObject::nextIsAllocated() const
+inline bool LargeObject::nextCanMerge() const
 {
     BeginTag* next = m_endTag->next();
 
-    return !next->isFree() || next->owner() != this->owner();
+    return next->isFree() && next->owner() == this->owner();
 }
-
 
 inline Owner LargeObject::owner() const
 {
