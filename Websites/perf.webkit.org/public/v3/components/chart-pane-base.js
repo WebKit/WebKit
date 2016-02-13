@@ -15,6 +15,7 @@ class ChartPaneBase extends ComponentBase {
         this._mainChart = null;
         this._mainChartStatus = null;
         this._commitLogViewer = null;
+        this._tasksForAnnotations = null;
     }
 
     configure(platformId, metricId)
@@ -63,32 +64,11 @@ class ChartPaneBase extends ComponentBase {
 
     _fetchAnalysisTasks(platformId, metricId)
     {
+        // FIXME: we need to update the annotation bars when the change type of tasks change.
         var self = this;
         AnalysisTask.fetchByPlatformAndMetric(platformId, metricId).then(function (tasks) {
-            self._mainChart.setAnnotations(tasks.map(function (task) {
-                var fillStyle = '#fc6';
-                switch (task.changeType()) {
-                case 'inconclusive':
-                    fillStyle = '#fcc';
-                case 'progression':
-                    fillStyle = '#39f';
-                    break;
-                case 'regression':
-                    fillStyle = '#c60';
-                    break;
-                case 'unchanged':
-                    fillStyle = '#ccc';
-                    break;
-                }
-
-                return {
-                    task: task,
-                    startTime: task.startTime(),
-                    endTime: task.endTime(),
-                    label: task.label(),
-                    fillStyle: fillStyle,
-                };
-            }));
+            self._tasksForAnnotations = tasks;
+            self.render();
         });
     }
 
@@ -193,6 +173,8 @@ class ChartPaneBase extends ComponentBase {
             return;
         }
 
+        this._renderAnnotations();
+
         if (this._mainChartStatus)
             this._mainChartStatus.render();
 
@@ -204,6 +186,38 @@ class ChartPaneBase extends ComponentBase {
             body.classList.remove('has-second-sidebar');
 
         Instrumentation.endMeasuringTime('ChartPane', 'render');
+    }
+
+    _renderAnnotations()
+    {
+        if (!this._tasksForAnnotations)
+            return;
+
+        var annotations = this._tasksForAnnotations.map(function (task) {
+            var fillStyle = '#fc6';
+            switch (task.changeType()) {
+            case 'inconclusive':
+                fillStyle = '#fcc';
+            case 'progression':
+                fillStyle = '#39f';
+                break;
+            case 'regression':
+                fillStyle = '#c60';
+                break;
+            case 'unchanged':
+                fillStyle = '#ccc';
+                break;
+            }
+
+            return {
+                task: task,
+                startTime: task.startTime(),
+                endTime: task.endTime(),
+                label: task.label(),
+                fillStyle: fillStyle,
+            };
+        });
+        this._mainChart.setAnnotations(annotations);
     }
 
     static htmlTemplate()
@@ -231,8 +245,6 @@ class ChartPaneBase extends ComponentBase {
     {
         return Toolbar.cssTemplate() + `
             .chart-pane {
-                margin: 1rem;
-                margin-bottom: 2rem;
                 padding: 0rem;
                 height: 18rem;
                 outline: none;

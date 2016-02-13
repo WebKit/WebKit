@@ -1,3 +1,65 @@
+2016-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        v3 UI should show status and associated bugs on analysis task pages
+        https://bugs.webkit.org/show_bug.cgi?id=154212
+
+        Reviewed by Chris Dumez.
+
+        Added the capability to see and modify the status and the list of associated of bugs on analysis task pages.
+
+        Also added the list of related tasks, which are analysis tasks associated with the same bug or have
+        overlapping time ranges with the same test metric but on a potentially different platform.
+
+        In addition, categorize analysis tasks with the status of "no change" or "inconclusive" as "closed" as no
+        further action can be taken (users can bring them back to non-closed state without any restrictions).
+
+        * public/api/analysis-tasks.php:
+        (format_task): Categorize 'unchanged' and 'inconclusive' analysis tasks as closed.
+
+        * public/privileged-api/associate-bug.php:
+        (main): Added shouldDelete as a new mechanism to disassociate a bug since v3 UI shares a single Bug object
+        between multiple analysis tasks (as it should have been in the first place).
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase):
+        (ChartPaneBase.prototype._fetchAnalysisTasks): Since each analysis task's change type (status/result) could
+        change, we need to create annotation objects during each render() call.
+        (ChartPaneBase.prototype.render):
+        (ChartPaneBase.prototype._renderAnnotations): Extracted from ChartPaneBase.prototype._fetchAnalysisTasks to
+        do that. I was afraid of the perf impact of this but it doesn't seem to be an issue in my testing.
+        (ChartPaneBase.cssTemplate): Removed superfluous margins (moved to ChartPane.cssTemplate) around the charts
+        since they are only useful in the charts page.
+
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask):
+        (AnalysisTask.prototype.updateSingleton): Added a comment as to why object.result cannot be renamed to
+        object.changeType in the JSON API.
+        (AnalysisTask.prototype.updateName): Added.
+        (AnalysisTask.prototype.updateChangeType): Added.
+        (AnalysisTask.prototype._updateRemoteState): Added.
+        (AnalysisTask.prototype.associateBug): Added.
+        (AnalysisTask.prototype.disassociateBug): Added.
+        (AnalysisTask.fetchRelatedTasks): Added. See above for the criteria of related-ness.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage):
+        (AnalysisTaskPage.prototype.updateFromSerializedState):
+        (AnalysisTaskPage.prototype._fetchRelatedInfoForTaskId): Extracted from updateFromSerializedState.
+        (AnalysisTaskPage.prototype._didFetchRelatedAnalysisTasks): Added.
+        (AnalysisTaskPage.prototype.render): Render the list of associated bugs, the list of bug trackers (so that
+        users can use it to associate with a new bug), and the list of related analysis tasks.
+        (AnalysisTaskPage.prototype._renderTestGroupList): Extracted from render since it was getting too long.
+        (AnalysisTaskPage.prototype._renderTestGroupDetails): Ditto.
+        (AnalysisTaskPage.prototype._updateChangeType): Added.
+        (AnalysisTaskPage.prototype._associateBug): Added.
+        (AnalysisTaskPage.prototype._disassociateBug): Added.
+        (AnalysisTaskPage.htmlTemplate): Added various elements to show and modify the status, associate bugs,
+        and a list of related analysis tasks.
+        (AnalysisTaskPage.cssTemplate): Added various styles for those form controls.
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.cssTemplate): Moved the margins from ChartPaneBase.cssTemplate.
+
 2016-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should allow renaming analysis tasks and test groups

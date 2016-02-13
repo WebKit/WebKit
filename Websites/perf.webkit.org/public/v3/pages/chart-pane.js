@@ -239,6 +239,8 @@ class ChartPane extends ChartPaneBase {
             .chart-pane {
                 border: solid 1px #ccc;
                 border-radius: 0.5rem;
+                margin: 1rem;
+                margin-bottom: 2rem;
             }
 
             .chart-pane-body {

@@ -85,6 +85,13 @@ function fetch_and_push_bugs_to_tasks($db, &$tasks) {
 }
 
 function format_task($task_row) {
+    $category = 'unconfirmed';
+    $result = $task_row['task_result'];
+    if ($result == 'unchanged' || $result == 'inconclusive')
+        $category = 'closed';
+    else if ($result)
+        $category = 'bisecting';
+
     return array(
         'id' => $task_row['task_id'],
         'name' => $task_row['task_name'],
@@ -98,8 +105,8 @@ function format_task($task_row) {
         'startRunTime' => Database::to_js_time($task_row['task_start_run_time']),
         'endRun' => $task_row['task_end_run'],
         'endRunTime' => Database::to_js_time($task_row['task_end_run_time']),
-        'category' => $task_row['task_result'] ? 'bisecting' : 'unconfirmed',
-        'result' => $task_row['task_result'],
+        'category' => $category,
+        'result' => $result,
         'needed' => $task_row['task_needed'] ? Database::is_true($task_row['task_needed']) : null,
         'bugs' => array(),
     );

@@ -17,7 +17,7 @@ class AnalysisTask extends LabeledObject {
         this._endMeasurementId = object.endRun;
         this._endTime = object.endRunTime;
         this._category = object.category;
-        this._changeType = object.result;
+        this._changeType = object.result; // Can't change due to v2 compatibility.
         this._needed = object.needed;
         this._bugs = object.bugs || [];
         this._buildRequestCount = object.buildRequestCount;
@@ -43,7 +43,7 @@ class AnalysisTask extends LabeledObject {
         console.assert(this._endTime == object.endRunTime);
 
         this._category = object.category;
-        this._changeType = object.result;
+        this._changeType = object.result; // Can't change due to v2 compatibility.
         this._needed = object.needed;
         this._bugs = object.bugs || [];
         this._buildRequestCount = object.buildRequestCount;
@@ -67,13 +67,43 @@ class AnalysisTask extends LabeledObject {
     category() { return this._category; }
     changeType() { return this._changeType; }
 
-    updateName(newName)
+    updateName(newName) { return this._updateRemoteState({name: newName}); }
+    updateChangeType(changeType) { return this._updateRemoteState({result: changeType}); }
+
+    _updateRemoteState(param)
     {
-        var self = this;
+        param.task = this.id();
+        return PrivilegedAPI.sendRequest('update-analysis-task', param).then(function (data) {
+            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: param.task}, true)
+                .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
+        });
+    }
+
+    associateBug(tracker, bugNumber)
+    {
+        console.assert(tracker instanceof BugTracker);
+        console.assert(typeof(bugNumber) == 'number');
         var id = this.id();
-        return PrivilegedAPI.sendRequest('update-analysis-task', {
+        return PrivilegedAPI.sendRequest('associate-bug', {
             task: id,
-            name: newName,
+            bugTracker: tracker.id(),
+            number: bugNumber,
+        }).then(function (data) {
+            return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
+                .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
+        });
+    }
+
+    disassociateBug(bug)
+    {
+        console.assert(bug instanceof Bug);
+        console.assert(this.bugs().includes(bug));
+        var id = this.id();
+        return PrivilegedAPI.sendRequest('associate-bug', {
+            task: id,
+            bugTracker: bug.bugTracker().id(),
+            number: bug.bugNumber(),
+            shouldDelete: true,
         }).then(function (data) {
             return AnalysisTask.cachedFetch('../api/analysis-tasks', {id: id}, true)
                 .then(AnalysisTask._constructAnalysisTasksFromRawData.bind(AnalysisTask));
@@ -104,6 +134,31 @@ class AnalysisTask extends LabeledObject {
     {
         return this._fetchSubset({platform: platformId, metric: metricId}).then(function (data) {
             return AnalysisTask.findByPlatformAndMetric(platformId, metricId);
+        });
+    }
+
+    static fetchRelatedTasks(taskId)
+    {
+        // FIXME: We should add new sever-side API to just fetch the related tasks.
+        return this.fetchAll().then(function () {
+            var task = AnalysisTask.findById(taskId);
+            if (!task)
+                return undefined;
+            var relatedTasks = new Set;
+            for (var bug of task.bugs()) {
+                for (var otherTask of AnalysisTask.all()) {
+                    if (otherTask.bugs().includes(bug))
+                        relatedTasks.add(otherTask);
+                }
+            }
+            for (var otherTask of AnalysisTask.all()) {
+                if (task.endTime() < otherTask.startTime()
+                    || otherTask.endTime() < task.startTime()
+                    || task.metric() != otherTask.metric())
+                    continue;
+                relatedTasks.add(otherTask);
+            }
+            return Array.from(relatedTasks);
         });
     }
 

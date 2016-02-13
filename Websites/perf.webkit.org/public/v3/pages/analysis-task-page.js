@@ -17,6 +17,7 @@ class AnalysisTaskPage extends PageWithHeading {
     {
         super('Analysis Task');
         this._task = null;
+        this._relatedTasks = null;
         this._testGroups = null;
         this._renderedTestGroups = null;
         this._testGroupLabelMap = new Map;
@@ -27,6 +28,7 @@ class AnalysisTaskPage extends PageWithHeading {
         this._endPoint = null;
         this._errorMessage = null;
         this._currentTestGroup = null;
+
         this._chartPane = this.content().querySelector('analysis-task-chart-pane').component();
         this._chartPane.setPage(this);
         this._analysisResultsViewer = this.content().querySelector('analysis-results-viewer').component();
@@ -35,6 +37,13 @@ class AnalysisTaskPage extends PageWithHeading {
         this._taskNameLabel = this.content().querySelector('.analysis-task-name editable-text').component();
         this._taskNameLabel.setStartedEditingCallback(this._didStartEditingTaskName.bind(this));
         this._taskNameLabel.setUpdateCallback(this._updateTaskName.bind(this));
+
+        this.content().querySelector('.change-type-form').onsubmit = this._updateChangeType.bind(this);
+        this._taskStatusControl = this.content().querySelector('.change-type-form select');
+
+        this.content().querySelector('.associate-bug-form').onsubmit = this._associateBug.bind(this);
+        this._bugTrackerControl = this.content().querySelector('.bug-tracker-control');
+        this._bugNumberControl = this.content().querySelector('.bug-number-control');
 
         this.content().querySelector('.test-group-retry-form').onsubmit = this._retryCurrentTestGroup.bind(this);
     }
@@ -51,18 +60,23 @@ class AnalysisTaskPage extends PageWithHeading {
                 self._errorMessage = `Failed to fetch the analysis task ${state.remainingRoute}: ${error}`;
                 self.render();
             });
-            TestGroup.fetchByTask(taskId).then(this._didFetchTestGroups.bind(this));
-            AnalysisResults.fetch(taskId).then(this._didFetchAnalysisResults.bind(this));
+            this._fetchRelatedInfoForTaskId(taskId);
         } else if (state.buildRequest) {
             var buildRequestId = parseInt(state.buildRequest);
             AnalysisTask.fetchByBuildRequestId(buildRequestId).then(this._didFetchTask.bind(this)).then(function (task) {
-                TestGroup.fetchByTask(task.id()).then(self._didFetchTestGroups.bind(self));
-                AnalysisResults.fetch(task.id()).then(self._didFetchAnalysisResults.bind(self));
+                self._fetchRelatedInfoForTaskId(task.id());
             }, function (error) {
                 self._errorMessage = `Failed to fetch the analysis task for the build request ${buildRequestId}: ${error}`;
                 self.render();
             });
         }
+    }
+
+    _fetchRelatedInfoForTaskId(taskId)
+    {
+        TestGroup.fetchByTask(taskId).then(this._didFetchTestGroups.bind(this));
+        AnalysisResults.fetch(taskId).then(this._didFetchAnalysisResults.bind(this));
+        AnalysisTask.fetchRelatedTasks(taskId).then(this._didFetchRelatedAnalysisTasks.bind(this));
     }
 
     _didFetchTask(task)
@@ -90,6 +104,12 @@ class AnalysisTaskPage extends PageWithHeading {
         this.render();
 
         return task;
+    }
+
+    _didFetchRelatedAnalysisTasks(relatedTasks)
+    {
+        this._relatedTasks = relatedTasks;
+        this.render();
     }
 
     _didFetchMeasurement()
@@ -159,6 +179,8 @@ class AnalysisTaskPage extends PageWithHeading {
 
         this._chartPane.render();
 
+        var element = ComponentBase.createElement;
+        var link = ComponentBase.createLink;
         if (this._task) {
             this._taskNameLabel.setText(this._task.name());
             var platform = this._task.platform();
@@ -166,14 +188,59 @@ class AnalysisTaskPage extends PageWithHeading {
             var anchor = this.content().querySelector('.platform-metric-names a');
             this.renderReplace(anchor, metric.fullName() + ' on ' + platform.label());
             anchor.href = this.router().url('charts', ChartsPage.createStateForAnalysisTask(this._task));
+
+            var bugs = [];
+            for (var bug of this._task.bugs()) {
+                bugs.push(element('li', [
+                    bug.bugTracker().label() + ' ',
+                    link(bug.label(), bug.title(), bug.url()),
+                    ' ',
+                    link(new CloseButton, 'Disassociate this bug', this._disassociateBug.bind(this, bug))]));
+            }
+            this.renderReplace(this.content().querySelector('.associated-bugs'), bugs);
+
+            this._taskStatusControl.value = this._task.changeType() || 'unconfirmed';
         }
+
+        var element = ComponentBase.createElement;
+        this.renderReplace(this._bugTrackerControl,
+            BugTracker.all().map(function (tracker) {
+                return element('option', {value: tracker.id()}, tracker.label());
+            }));
+
+        this.content().querySelector('.analysis-task-status').style.display = this._task ? null : 'none';
         this.content().querySelector('.overview-chart').style.display = this._task ? null : 'none';
         this.content().querySelector('.test-group-view').style.display = this._task ? null : 'none';
         this._taskNameLabel.render();
 
+        if (this._relatedTasks && this._task) {
+            var router = this.router();
+            var link = ComponentBase.createLink;
+            var thisTask = this._task;
+            this.renderReplace(this.content().querySelector('.related-tasks-list'),
+                this._relatedTasks.map(function (otherTask) {
+                    console.assert(otherTask.metric() == thisTask.metric());
+                    var suffix = '';
+                    var taskLabel = otherTask.label();
+                    if (otherTask.platform() != thisTask.platform() && taskLabel.indexOf(otherTask.platform().label()) < 0)
+                        suffix = ` on ${otherTask.platform().label()}`;
+                    return element('li', [link(taskLabel, router.url(`analysis/task/${otherTask.id()}`)), suffix]);
+                }));
+        }
+
         this._analysisResultsViewer.setCurrentTestGroup(this._currentTestGroup);
         this._analysisResultsViewer.render();
 
+        this._renderTestGroupList();
+        this._renderTestGroupDetails();
+
+        this._testGroupResultsTable.render();
+
+        Instrumentation.endMeasuringTime('AnalysisTaskPage', 'render');
+    }
+
+    _renderTestGroupList()
+    {
         var element = ComponentBase.createElement;
         var link = ComponentBase.createLink;
         if (this._testGroups != this._renderedTestGroups) {
@@ -205,7 +272,10 @@ class AnalysisTaskPage extends PageWithHeading {
                 label.render();
             }
         }
+    }
 
+    _renderTestGroupDetails()
+    {
         if (this._renderedCurrentTestGroup !== this._currentTestGroup) {
             if (this._renderedCurrentTestGroup) {
                 var element = this.content().querySelector('.test-group-list-' + this._renderedCurrentTestGroup.id());
@@ -237,10 +307,6 @@ class AnalysisTaskPage extends PageWithHeading {
         }
 
         this.content().querySelector('.test-group-retry-button').disabled = !(this._currentTestGroup || this._startPoint);
-
-        this._testGroupResultsTable.render();
-
-        Instrumentation.endMeasuringTime('AnalysisTaskPage', 'render');
     }
 
     _showTestGroup(testGroup)
@@ -280,6 +346,47 @@ class AnalysisTaskPage extends PageWithHeading {
         }, function (error) {
             self.render();
             alert('Failed to update the name: ' + error);
+        });
+    }
+
+    _updateChangeType(event)
+    {
+        event.preventDefault();
+        console.assert(this._task);
+
+        var newChangeType = this._taskStatusControl.value;
+        if (newChangeType == 'unconfirmed')
+            newChangeType = null;
+
+        var render = this.render.bind(this);
+        return this._task.updateChangeType(newChangeType).then(render, function (error) {
+            render();
+            alert('Failed to update the status: ' + error);
+        });
+    }
+
+    _associateBug(event)
+    {
+        event.preventDefault();
+        console.assert(this._task);
+
+        var tracker = BugTracker.findById(this._bugTrackerControl.value);
+        console.assert(tracker);
+        var bugNumber = parseInt(this._bugNumberControl.value);
+
+        var render = this.render.bind(this);
+        return this._task.associateBug(tracker, bugNumber).then(render, function (error) {
+            render();
+            alert('Failed to associate the bug: ' + error);
+        });
+    }
+
+    _disassociateBug(bug)
+    {
+        var render = this.render.bind(this);
+        return this._task.disassociateBug(bug).then(render, function (error) {
+            render();
+            alert('Failed to disassociate the bug: ' + error);
         });
     }
 
@@ -366,12 +473,41 @@ class AnalysisTaskPage extends PageWithHeading {
     static htmlTemplate()
     {
         return `
-        <div class="analysis-tasl-page-container">
-            <div class="analysis-tasl-page">
+            <div class="analysis-task-page">
                 <h2 class="analysis-task-name"><editable-text></editable-text></h2>
                 <h3 class="platform-metric-names"><a href=""></a></h3>
                 <p class="error-message"></p>
-                <div class="overview-chart"><analysis-task-chart-pane></analysis-task-chart-pane></div>
+                <div class="analysis-task-status">
+                    <section>
+                        <h3>Status</h3>
+                        <form class="change-type-form">
+                            <select>
+                                <option value="unconfirmed">Unconfirmed</option>
+                                <option value="regression">Definite regression</option>
+                                <option value="progression">Definite progression</option>
+                                <option value="inconclusive">Inconclusive (Closed)</option>
+                                <option value="unchanged">No change (Closed)</option>
+                            </select>
+                            <button type="submit">Save</button>
+                        </form>
+                    </section>
+                    <section>
+                        <h3>Associated Bugs</h3>
+                        <ul class="associated-bugs"></ul>
+                        <form class="associate-bug-form">
+                            <select class="bug-tracker-control"></select>
+                            <input type="number" class="bug-number-control">
+                            <button type="submit">Add</button>
+                        </form>
+                    </section>
+                    <section class="related-tasks">
+                        <h3>Related Tasks</h3>
+                        <ul class="related-tasks-list"></ul>
+                    </section>
+                </div>
+                <section class="overview-chart">
+                    <analysis-task-chart-pane></analysis-task-chart-pane>
+                </section>
                 <section class="analysis-results-view">
                     <analysis-results-viewer></analysis-results-viewer>
                 </section>
@@ -399,16 +535,13 @@ class AnalysisTaskPage extends PageWithHeading {
                     </div>
                 </section>
             </div>
-        </div>
 `;
     }
 
     static cssTemplate()
     {
         return `
-            .analysis-tasl-page-container {
-            }
-            .analysis-tasl-page {
+            .analysis-task-page {
             }
 
             .analysis-task-name {
@@ -439,6 +572,48 @@ class AnalysisTaskPage extends PageWithHeading {
             .error-message:not(:empty) {
                 margin: 1rem;
                 padding: 0;
+            }
+
+            .overview-chart {
+                margin: 0 1rem;
+            }
+
+            .analysis-task-status {
+                margin: 0;
+                display: flex;
+                margin-bottom: 1.5rem;
+            }
+
+            .analysis-task-status > section {
+                flex-grow: 1;
+                border-left: solid 1px #eee;
+                padding-left: 1rem;
+            }
+
+            .analysis-task-status > section:first-child {
+                border-left: none;
+            }
+
+            .associated-bugs:not(:empty) {
+                margin-bottom: 1rem;
+            }
+
+            .analysis-task-status h3 {
+                font-size: 1rem;
+                font-weight: inherit;
+                color: #c93;
+            }
+
+            .analysis-task-status ul,
+            .analysis-task-status li {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .related-tasks-list {
+                max-height: 10rem;
+                overflow-y: scroll;
             }
 
             .analysis-results-view {
@@ -505,13 +680,6 @@ class AnalysisTaskPage extends PageWithHeading {
 
             .test-group-list > li:not(.selected) > a:hover {
                 background: #eee;
-            }
-
-            .x-overview-chart {
-                width: auto;
-                height: 10rem;
-                margin: 1rem;
-                border: solid 0px red;
             }
 `;
     }
