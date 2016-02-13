@@ -1,3 +1,10 @@
+2016-02-12  Saam barati  <sbarati@apple.com>
+
+        Attempting build fix from https://bugs.webkit.org/show_bug.cgi?id=154144.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+
 2016-02-12  Daniel Bates  <dabates@apple.com>
 
         CSP: 'blob:' URLs should not match 'self' in CSP source expression lists.
