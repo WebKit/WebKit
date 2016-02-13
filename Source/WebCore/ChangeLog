@@ -1,3 +1,16 @@
+2016-02-13  Mark Lam  <mark.lam@apple.com>
+
+        Add thread violation checks to WebView public APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=154183
+
+        Reviewed by Timothy Hatcher.
+
+        No new tests.  Just adding a new thread violation round.
+
+        * platform/ThreadCheck.h:
+        * platform/mac/ThreadCheck.mm:
+        - Adding WebCoreThreadViolationCheckRoundThree().
+
 2016-02-12  Nan Wang  <n_wang@apple.com>
 
         AX: Implement paragraph related text marker functions using TextIterator

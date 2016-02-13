@@ -35,7 +35,7 @@ namespace WebCore {
 
 static bool didReadThreadViolationBehaviorFromUserDefaults = false;
 static bool threadViolationBehaviorIsDefault = true;
-static ThreadViolationBehavior threadViolationBehavior[MaximumThreadViolationRound] = { RaiseExceptionOnThreadViolation, RaiseExceptionOnThreadViolation };
+static ThreadViolationBehavior threadViolationBehavior[MaximumThreadViolationRound] = { RaiseExceptionOnThreadViolation, RaiseExceptionOnThreadViolation, RaiseExceptionOnThreadViolation };
 
 static void readThreadViolationBehaviorFromUserDefaults()
 {

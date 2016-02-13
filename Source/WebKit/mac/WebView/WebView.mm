@@ -5843,6 +5843,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)setCustomTextEncodingName:(NSString *)encoding
 {
+    WebCoreThreadViolationCheckRoundThree();
+
     NSString *oldEncoding = [self customTextEncodingName];
     if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding])
         return;
@@ -5867,6 +5869,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script
 {
+    WebCoreThreadViolationCheckRoundThree();
+
 #if !PLATFORM(IOS)
     // Return statements are only valid in a function but some applications pass in scripts
     // prefixed with return (<rdar://problems/5103720&4616860>) since older WebKit versions
@@ -5889,6 +5893,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (WebScriptObject *)windowScriptObject
 {
+    WebCoreThreadViolationCheckRoundThree();
+
     Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return nil;
@@ -6154,6 +6160,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)setGroupName:(NSString *)groupName
 {
+    WebCoreThreadViolationCheckRoundThree();
+
     if (_private->group)
         _private->group->removeWebView(self);
 
@@ -6244,6 +6252,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)setMainFrameURL:(NSString *)URLString
 {
+    WebCoreThreadViolationCheckRoundThree();
+
     NSURL *url;
     if ([URLString hasPrefix:@"/"])
         url = [NSURL fileURLWithPath:URLString];
@@ -6270,6 +6280,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (NSString *)mainFrameTitle
 {
+    WebCoreThreadViolationCheckRoundThree();
+
     NSString *mainFrameTitle = [[[self mainFrame] _dataSource] pageTitle];
     return (mainFrameTitle != nil) ? mainFrameTitle : (NSString *)@"";
 }
@@ -6277,6 +6289,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 #if !PLATFORM(IOS)
 - (NSImage *)mainFrameIcon
 {
+    WebCoreThreadViolationCheckRoundThree();
+
     return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] _dataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
 }
 #else
@@ -6303,6 +6317,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
 {
+    WebCoreThreadViolationCheckRoundThree();
+
     if (_private->drawsBackground == drawsBackground)
         return;
     _private->drawsBackground = drawsBackground;
@@ -6318,6 +6334,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)setShouldUpdateWhileOffscreen:(BOOL)updateWhileOffscreen
 {
+    WebCoreThreadViolationCheckRoundThree();
+
     if (_private->shouldUpdateWhileOffscreen == updateWhileOffscreen)
         return;
     _private->shouldUpdateWhileOffscreen = updateWhileOffscreen;

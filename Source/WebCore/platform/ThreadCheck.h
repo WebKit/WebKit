@@ -37,6 +37,7 @@ namespace WebCore {
     enum ThreadViolationRound {
         ThreadViolationRoundOne = 0,
         ThreadViolationRoundTwo,
+        ThreadViolationRoundThree,
         MaximumThreadViolationRound
     };
     WEBCORE_EXPORT void setDefaultThreadViolationBehavior(ThreadViolationBehavior, ThreadViolationRound);
@@ -47,9 +48,11 @@ extern "C" void WebCoreReportThreadViolation(const char* function, WebCore::Thre
 
 #define WebCoreThreadViolationCheckRoundOne() ::WebCore::reportThreadViolation(WTF_PRETTY_FUNCTION, WebCore::ThreadViolationRoundOne)
 #define WebCoreThreadViolationCheckRoundTwo() ::WebCore::reportThreadViolation(WTF_PRETTY_FUNCTION, WebCore::ThreadViolationRoundTwo)
+#define WebCoreThreadViolationCheckRoundThree() ::WebCore::reportThreadViolation(WTF_PRETTY_FUNCTION, WebCore::ThreadViolationRoundThree)
 #else
 #define WebCoreThreadViolationCheckRoundOne() do { } while (0)
 #define WebCoreThreadViolationCheckRoundTwo() do { } while (0)
+#define WebCoreThreadViolationCheckRoundThree() do { } while (0)
 #endif // PLATFORM(IOS)
 
 #endif
