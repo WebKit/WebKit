@@ -1,3 +1,16 @@
+2016-02-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Reset results for bindings tests after r196520
+
+        Unreviewed test gardening.
+
+        No new tests needed.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (webkit_dom_test_event_target_dispatch_event):
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        (webkit_dom_test_node_dispatch_event):
+
 2016-02-12  Saam barati  <sbarati@apple.com>
 
         Attempting build fix from https://bugs.webkit.org/show_bug.cgi?id=154144.

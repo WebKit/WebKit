@@ -75,7 +75,7 @@ static gboolean webkit_dom_test_event_target_dispatch_event(WebKitDOMEventTarget
     WebCore::TestEventTarget* coreTarget = static_cast<WebCore::TestEventTarget*>(WEBKIT_DOM_OBJECT(target)->coreObject);
 
     WebCore::ExceptionCode ec = 0;
-    gboolean result = coreTarget->dispatchEvent(coreEvent, ec);
+    gboolean result = coreTarget->dispatchEventForBindings(coreEvent, ec);
     if (ec) {
         WebCore::ExceptionCodeDescription description(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.code, description.name);
