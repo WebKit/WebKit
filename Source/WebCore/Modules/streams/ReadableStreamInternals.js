@@ -87,11 +87,11 @@ function teeReadableStream(stream, shouldClone)
 
     const pullFunction = @teeReadableStreamPullFunction(teeState, reader, shouldClone);
 
-    const branch1 = new ReadableStream({
+    const branch1 = new @ReadableStream({
         "pull": pullFunction,
         "cancel": @teeReadableStreamBranch1CancelFunction(teeState, stream)
     });
-    const branch2 = new ReadableStream({
+    const branch2 = new @ReadableStream({
         "pull": pullFunction,
         "cancel": @teeReadableStreamBranch2CancelFunction(teeState, stream)
     });

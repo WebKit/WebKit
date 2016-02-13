@@ -28,7 +28,7 @@ function all(iterable)
     "use strict";
 
     if (!@isObject(this))
-        throw new TypeError("|this| is not a object");
+        throw new @TypeError("|this| is not a object");
 
     // FIXME: Fix this code when @@species well-known symbol is landed.
     // https://bugs.webkit.org/show_bug.cgi?id=146624
@@ -84,7 +84,7 @@ function race(iterable)
     "use strict";
 
     if (!@isObject(this))
-        throw new TypeError("|this| is not a object");
+        throw new @TypeError("|this| is not a object");
 
     // FIXME: Fix this code when @@species well-known symbol is landed.
     // https://bugs.webkit.org/show_bug.cgi?id=146624
@@ -109,7 +109,7 @@ function reject(reason)
     "use strict";
 
     if (!@isObject(this))
-        throw new TypeError("|this| is not a object");
+        throw new @TypeError("|this| is not a object");
 
     var promiseCapability = @newPromiseCapability(this);
 
@@ -123,7 +123,7 @@ function resolve(value)
     "use strict";
 
     if (!@isObject(this))
-        throw new TypeError("|this| is not a object");
+        throw new @TypeError("|this| is not a object");
 
     if (@isPromise(value)) {
         var valueConstructor = value.constructor;

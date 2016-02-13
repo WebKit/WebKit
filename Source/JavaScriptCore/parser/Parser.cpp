@@ -300,6 +300,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     bool modifiedParameter = false;
     bool modifiedArguments = false;
     scope->getCapturedVars(capturedVariables, modifiedParameter, modifiedArguments);
+
     VariableEnvironment& varDeclarations = scope->declaredVariables();
     for (auto& entry : capturedVariables)
         varDeclarations.markVariableAsCaptured(entry);
@@ -321,48 +322,32 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     if (modifiedArguments)
         features |= ModifiedArgumentsFeature;
 
-    Vector<RefPtr<UniquedStringImpl>> closedVariables;
-    if (m_parsingBuiltin) {
-        // FIXME: This needs to be changed if we want to allow builtins to use lexical declarations.
-        for (const auto& variable : usedVariables) {
-            Identifier identifier = Identifier::fromUid(m_vm, variable.get());
-            if (scope->hasDeclaredVariable(identifier))
-                continue;
-            
-            if (scope->hasDeclaredParameter(identifier))
-                continue;
-
-            if (variable == m_vm->propertyNames->arguments.impl())
-                continue;
-
-            closedVariables.append(variable);
-        }
-
-        if (!capturedVariables.isEmpty()) {
-            for (const auto& capturedVariable : capturedVariables) {
-                if (scope->hasDeclaredVariable(capturedVariable))
-                    continue;
-
-                if (scope->hasDeclaredParameter(capturedVariable))
-                    continue;
-
-                RELEASE_ASSERT_NOT_REACHED();
+#ifndef NDEBUG
+    if (m_parsingBuiltin && isProgramParseMode(parseMode)) {
+        VariableEnvironment& lexicalVariables = scope->lexicalVariables();
+        const IdentifierSet& closedVariableCandidates = scope->closedVariableCandidates();
+        const BuiltinNames& builtinNames = m_vm->propertyNames->builtinNames();
+        for (const RefPtr<UniquedStringImpl>& candidate : closedVariableCandidates) {
+            if (!lexicalVariables.contains(candidate) && !varDeclarations.contains(candidate) && !builtinNames.isPrivateName(*candidate.get())) {
+                dataLog("Bad global capture in builtin: '", candidate, "'\n");
+                dataLog(m_source->view());
+                CRASH();
             }
         }
     }
-    didFinishParsing(sourceElements, context.funcDeclarations(), varDeclarations, features, context.numConstants(), WTFMove(closedVariables));
+#endif // NDEBUG
+    didFinishParsing(sourceElements, context.funcDeclarations(), varDeclarations, features, context.numConstants());
 
     return parseError;
 }
 
 template <typename LexerType>
 void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, DeclarationStacks::FunctionStack& funcStack, 
-    VariableEnvironment& varDeclarations, CodeFeatures features, int numConstants, const Vector<RefPtr<UniquedStringImpl>>&& closedVariables)
+    VariableEnvironment& varDeclarations, CodeFeatures features, int numConstants)
 {
     m_sourceElements = sourceElements;
     m_funcDeclarations.swap(funcStack);
     m_varDeclarations.swap(varDeclarations);
-    m_closedVariables = closedVariables;
     m_features = features;
     m_numConstants = numConstants;
 }

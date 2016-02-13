@@ -35,7 +35,7 @@ function toLocaleString(/* locales, options */)
     // 1. Let x be thisNumberValue(this value).
     // 2. ReturnIfAbrupt(x).
     var number = this;
-    if (!(typeof number === "number" || number instanceof Number))
+    if (!(typeof number === "number" || number instanceof @Number))
         throw new @TypeError("Number.prototype.toLocaleString called on incompatible " + typeof number);
 
     // 3. Let numberFormat be Construct(%NumberFormat%, «locales, options»).

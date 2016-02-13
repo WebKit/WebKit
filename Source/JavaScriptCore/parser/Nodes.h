@@ -1596,8 +1596,6 @@ namespace JSC {
 
         void emitStatementsBytecode(BytecodeGenerator&, RegisterID* destination);
         
-        void setClosedVariables(Vector<RefPtr<UniquedStringImpl>>&&) { }
-
         void analyzeModule(ModuleAnalyzer&);
 
     protected:
@@ -1623,12 +1621,8 @@ namespace JSC {
 
         static const bool scopeIsFunction = false;
 
-        void setClosedVariables(Vector<RefPtr<UniquedStringImpl>>&&);
-        const Vector<RefPtr<UniquedStringImpl>>& closedVariables() const { return m_closedVariables; }
-
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-        Vector<RefPtr<UniquedStringImpl>> m_closedVariables;
         unsigned m_startColumn;
         unsigned m_endColumn;
     };

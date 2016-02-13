@@ -68,8 +68,12 @@ namespace WebCore {
     macro(underlyingSink) \
     macro(underlyingSource) \
     macro(writing) \
+    macro(MediaStreamTrack) \
+    macro(ReadableStream) \
     macro(ReadableStreamReader) \
     macro(ReadableStreamController) \
+    macro(RTCIceCandidate) \
+    macro(RTCSessionDescription) \
 
 class WebCoreBuiltinNames {
 public:

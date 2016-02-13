@@ -36,7 +36,7 @@ function webkitGetUserMedia(options, successCallback, errorCallback)
     if (arguments.length < 3)
         throw new @TypeError("Not enough arguments");
 
-    if (options !== Object(options))
+    if (options !== @Object(options))
         throw new @TypeError("Argument 1 (options) to Navigator.webkitGetUserMedia must be an object");
 
     if (typeof successCallback !== "function")

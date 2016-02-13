@@ -157,7 +157,7 @@ Replacement.prototype = {
             if (!eventData)
                 return;
 
-            if (this[eventData] && this[eventData] instanceof Function)
+            if (this[eventData] && typeof this[eventData] === "function")
                 this[eventData].call(this, event);
             else
                 this.postEvent(eventData);

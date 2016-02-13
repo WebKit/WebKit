@@ -36,7 +36,7 @@ function initializeCountQueuingStrategy(parameters)
 {
     "use strict";
 
-    Object.defineProperty(this, "highWaterMark", {
+    @Object.defineProperty(this, "highWaterMark", {
         value: parameters.highWaterMark,
         configurable: true,
         enumerable: true,

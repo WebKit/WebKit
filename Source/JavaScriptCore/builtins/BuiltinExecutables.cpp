@@ -106,13 +106,6 @@ UnlinkedFunctionExecutable* createExecutableInternal(VM& vm, const SourceCode& s
     // This function assumes an input string that would result in a single anonymous function expression.
     metadata->setEndPosition(positionBeforeLastNewline);
     RELEASE_ASSERT(metadata);
-    for (const auto& closedVariable : program->closedVariables()) {
-        if (closedVariable == vm.propertyNames->arguments.impl())
-            continue;
-        
-        if (closedVariable == vm.propertyNames->undefinedKeyword.impl())
-            continue;
-    }
     metadata->overrideName(name);
     VariableEnvironment dummyTDZVariables;
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, kind, constructAbility, dummyTDZVariables, DerivedContextType::None, WTFMove(sourceOverride));

@@ -1,3 +1,46 @@
+2016-02-12  Saam barati  <sbarati@apple.com>
+
+        The parser doesn't properly protect against global variable references in builtins
+        https://bugs.webkit.org/show_bug.cgi?id=154144
+
+        Reviewed by Geoffrey Garen.
+
+        This patch fixes our global variable reference detection
+        algorithm that was broken. After fixing the algorithm, I
+        detected many places where we were incorrectly using global
+        variables. I've fixed all those.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::createExecutableInternal):
+        * builtins/NumberPrototype.js:
+        (toLocaleString):
+        * builtins/PromiseConstructor.js:
+        (race):
+        (reject):
+        (resolve):
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        (JSC::ProgramNode::setClosedVariables): Deleted.
+        * parser/Nodes.h:
+        (JSC::ScopeNode::setClosedVariables): Deleted.
+        (JSC::ProgramNode::closedVariables): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::didFinishParsing):
+        * parser/Parser.h:
+        (JSC::Scope::setIsLexicalScope):
+        (JSC::Scope::isLexicalScope):
+        (JSC::Scope::closedVariableCandidates):
+        (JSC::Scope::declaredVariables):
+        (JSC::Scope::lexicalVariables):
+        (JSC::Scope::finalizeLexicalEnvironment):
+        (JSC::Parser::positionBeforeLastNewline):
+        (JSC::Parser::locationBeforeLastToken):
+        (JSC::Parser::isFunctionMetadataNode):
+        (JSC::parse):
+        (JSC::Parser::closedVariables): Deleted.
+
 2016-02-12  Filip Pizlo  <fpizlo@apple.com>
 
         JSObject::putByIndexBeyondVectorLengthWithoutAttributes needs to go to the sparse map based on MAX_STORAGE_VECTOR_INDEX

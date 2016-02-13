@@ -68,7 +68,7 @@ function addIceCandidate()
         throw new @TypeError("Not enough arguments");
 
     var candidate = arguments[0];
-    if (!(candidate instanceof RTCIceCandidate))
+    if (!(candidate instanceof @RTCIceCandidate))
         throw new @TypeError("Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate");
 
     if (arguments.length == 1) {
@@ -99,7 +99,7 @@ function getStats()
 
     if (arguments.length) {
         selector = arguments[0];
-        if (selector != null && !(selector instanceof MediaStreamTrack))
+        if (selector != null && !(selector instanceof @MediaStreamTrack))
             throw new @TypeError("Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack");
     }
 
