@@ -26,9 +26,35 @@
 #ifndef BAssert_h
 #define BAssert_h
 
+#include "BPlatform.h"
+
+#if defined(NDEBUG) && BOS(DARWIN)
+
+#if BCPU(X86_64) || BCPU(X86)
+#define BBreakpointTrap()  asm volatile ("int3")
+#elif BCPU(ARM_THUMB2)
+#define BBreakpointTrap()  asm volatile ("bkpt #0")
+#elif BCPU(ARM64)
+#define BBreakpointTrap()  asm volatile ("brk #0")
+#else
+#error "Unsupported CPU".
+#endif
+
+// Crash with a SIGTRAP i.e EXC_BREAKPOINT.
+// We are not using __builtin_trap because it is only guaranteed to abort, but not necessarily
+// trigger a SIGTRAP. Instead, we use inline asm to ensure that we trigger the SIGTRAP.
+#define BCRASH() do { \
+        BBreakpointTrap(); \
+        __builtin_unreachable(); \
+    } while (false)
+
+#else // not defined(NDEBUG) && BOS(DARWIN)
+
 #define BCRASH() do { \
     *(int*)0xbbadbeef = 0; \
 } while (0);
+
+#endif // defined(NDEBUG) && BOS(DARWIN)
 
 #define BASSERT_IMPL(x) do { \
     if (!(x)) \

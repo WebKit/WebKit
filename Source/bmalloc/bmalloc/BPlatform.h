@@ -47,4 +47,138 @@
 #define BOS_UNIX 1
 #endif
 
+/* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
+
+/* BCPU() - the target CPU architecture */
+#define BCPU(_FEATURE) (defined BCPU_##_FEATURE  && BCPU_##_FEATURE)
+
+/* BCPU(X86) - i386 / x86 32-bit */
+#if defined(__i386__) \
+|| defined(i386)     \
+|| defined(_M_IX86)  \
+|| defined(_X86_)    \
+|| defined(__THW_INTEL)
+#define BCPU_X86 1
+#endif
+
+/* BCPU(X86_64) - AMD64 / Intel64 / x86_64 64-bit */
+#if defined(__x86_64__) \
+|| defined(_M_X64)
+#define BCPU_X86_64 1
+#endif
+
+/* BCPU(ARM64) - Apple */
+#if (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
+#define BCPU_ARM64 1
+#endif
+
+/* BCPU(ARM) - ARM, any version*/
+#define BARM_ARCH_AT_LEAST(N) (BCPU(ARM) && BARM_ARCH_VERSION >= N)
+
+#if   defined(arm) \
+|| defined(__arm__) \
+|| defined(ARM) \
+|| defined(_ARM_)
+#define BCPU_ARM 1
+
+/* Set BARM_ARCH_VERSION */
+#if   defined(__ARM_ARCH_4__) \
+|| defined(__ARM_ARCH_4T__) \
+|| defined(__MARM_ARMV4__)
+#define BARM_ARCH_VERSION 4
+
+#elif defined(__ARM_ARCH_5__) \
+|| defined(__ARM_ARCH_5T__) \
+|| defined(__MARM_ARMV5__)
+#define BARM_ARCH_VERSION 5
+
+#elif defined(__ARM_ARCH_5E__) \
+|| defined(__ARM_ARCH_5TE__) \
+|| defined(__ARM_ARCH_5TEJ__)
+#define BARM_ARCH_VERSION 5
+
+#elif defined(__ARM_ARCH_6__) \
+|| defined(__ARM_ARCH_6J__) \
+|| defined(__ARM_ARCH_6K__) \
+|| defined(__ARM_ARCH_6Z__) \
+|| defined(__ARM_ARCH_6ZK__) \
+|| defined(__ARM_ARCH_6T2__) \
+|| defined(__ARMV6__)
+#define BARM_ARCH_VERSION 6
+
+#elif defined(__ARM_ARCH_7A__) \
+|| defined(__ARM_ARCH_7K__) \
+|| defined(__ARM_ARCH_7R__) \
+|| defined(__ARM_ARCH_7S__)
+#define BARM_ARCH_VERSION 7
+
+#elif defined(__ARM_ARCH_8__)
+#define BARM_ARCH_VERSION 8
+
+/* MSVC sets _M_ARM */
+#elif defined(_M_ARM)
+#define BARM_ARCH_VERSION _M_ARM
+
+/* RVCT sets _TARGET_ARCH_ARM */
+#elif defined(__TARGET_ARCH_ARM)
+#define BARM_ARCH_VERSION __TARGET_ARCH_ARM
+
+#else
+#define WTF_ARM_ARCH_VERSION 0
+
+#endif
+
+/* Set BTHUMB_ARCH_VERSION */
+#if   defined(__ARM_ARCH_4T__)
+#define BTHUMB_ARCH_VERSION 1
+
+#elif defined(__ARM_ARCH_5T__) \
+|| defined(__ARM_ARCH_5TE__) \
+|| defined(__ARM_ARCH_5TEJ__)
+#define BTHUMB_ARCH_VERSION 2
+
+#elif defined(__ARM_ARCH_6J__) \
+|| defined(__ARM_ARCH_6K__) \
+|| defined(__ARM_ARCH_6Z__) \
+|| defined(__ARM_ARCH_6ZK__) \
+|| defined(__ARM_ARCH_6M__)
+#define BTHUMB_ARCH_VERSION 3
+
+#elif defined(__ARM_ARCH_6T2__) \
+|| defined(__ARM_ARCH_7__) \
+|| defined(__ARM_ARCH_7A__) \
+|| defined(__ARM_ARCH_7K__) \
+|| defined(__ARM_ARCH_7M__) \
+|| defined(__ARM_ARCH_7R__) \
+|| defined(__ARM_ARCH_7S__)
+#define BTHUMB_ARCH_VERSION 4
+
+/* RVCT sets __TARGET_ARCH_THUMB */
+#elif defined(__TARGET_ARCH_THUMB)
+#define BTHUMB_ARCH_VERSION __TARGET_ARCH_THUMB
+
+#else
+#define BTHUMB_ARCH_VERSION 0
+#endif
+
+/* BCPU(ARM_TRADITIONAL) - Thumb2 is not available, only traditional ARM (v4 or greater) */
+/* BCPU(ARM_THUMB2) - Thumb2 instruction set is available */
+/* Only one of these will be defined. */
+#if !defined(BCPU_ARM_TRADITIONAL) && !defined(BCPU_ARM_THUMB2)
+#  if defined(thumb2) || defined(__thumb2__) \
+|| ((defined(__thumb) || defined(__thumb__)) && BTHUMB_ARCH_VERSION == 4)
+#    define BCPU_ARM_TRADITIONAL 0
+#    define BCPU_ARM_THUMB2 1
+#  elif BARM_ARCH_AT_LEAST(4)
+#    define BCPU_ARM_TRADITIONAL 1
+#    define BCPU_ARM_THUMB2 0
+#  else
+#    error "Not supported ARM architecture"
+#  endif
+#elif BCPU(ARM_TRADITIONAL) && BCPU(ARM_THUMB2) /* Sanity Check */
+#  error "Cannot use both of BCPU_ARM_TRADITIONAL and BCPU_ARM_THUMB2 platforms"
+#endif /* !defined(BCPU_ARM_TRADITIONAL) && !defined(BCPU_ARM_THUMB2) */
+
+#endif /* ARM */
+
 #endif // BPlatform_h
