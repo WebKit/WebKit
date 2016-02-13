@@ -1,3 +1,51 @@
+2016-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Add thread violation checks to WebView public APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=154183
+
+        Reviewed by Geoffrey Garen.
+
+        This will help clients of the API detect the violations sooner rather than
+        having to debug mysterious crashes / failures later.
+
+        To that end, I've added thread violation checks to the following functions
+        because ...
+
+        * WebView/WebView.mm:
+        (-[WebView setCustomTextEncodingName:]):
+        - Uses the FrameLoader (which is for the main thread only).
+
+        (-[WebView stringByEvaluatingJavaScriptFromString:]):
+        - Invokes JavaScript (which is for the main thread only).
+
+        (-[WebView windowScriptObject]):
+        - Invokes ScriptController::windowScriptObject() which requires the JSLock.
+
+        (-[WebView setGroupName:]):
+        - Manipulates the PageGroup and Page (which is for the main thread only).
+
+        (-[WebView setMainFrameURL:]):
+        - Uses the FrameLoader (which is for the main thread only).
+
+        (-[WebView mainFrameTitle]):
+        - Uses the FrameLoader::documentLoader() (via [WebFrame _dataSource]) which
+          is RefPtr, and therefore not safe for other threads to access.
+
+        (-[WebView mainFrameIcon]):
+        - Uses the FrameLoader::documentLoader() (via [WebFrame _dataSource]) which
+          is RefPtr, and therefore not safe for other threads to access.
+        - Uses [WebIconDatabase sharedIconDatabase] which does a singleton
+          instantiation but is not protected by a lock.
+
+        (-[WebView setDrawsBackground:]):
+        - Potentially manipulates a RenderView (via FrameView::setBaseBackgroundColor,
+          via [WebFrame _updateBackgroundAndUpdatesWhileOffscreen]), and RenderView
+          is for main thread only use.
+
+        (-[WebView setShouldUpdateWhileOffscreen:]):
+        - Uses [WebFrame _updateBackgroundAndUpdatesWhileOffscreen].  Hence, for the
+          main thread only.
+
 2016-02-12  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Update ICU header files to version 52
