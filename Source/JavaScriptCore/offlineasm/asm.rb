@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -60,6 +60,7 @@ class Assembler
             putsProcEndIfNeeded
         end
         @state = :asm
+        SourceFile.outputDotFileList(@outp) if $enableDebugAnnotations
     end
     
     def leaveAsm
@@ -284,8 +285,13 @@ class Assembler
     def comment(text)
         @comment = text
     end
+
     def annotation(text)
         @annotation = text
+    end
+
+    def debugAnnotation(text)
+        @outp.puts text
     end
 end
 
@@ -300,6 +306,11 @@ begin
 rescue MissingMagicValuesException
     $stderr.puts "offlineasm: No magic values found. Skipping assembly file generation."
     exit 0
+end
+
+# The MS compiler doesn't accept DWARF2 debug annotations.
+if isMSVC
+    $enableDebugAnnotations = false
 end
 
 $emitWinAsm = isMSVC ? outputFlnm.index(".asm") != nil : false

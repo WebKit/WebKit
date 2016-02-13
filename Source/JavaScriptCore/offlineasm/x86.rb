@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2012, 2014-2016 Apple Inc. All rights reserved.
 # Copyright (C) 2013 Digia Plc. and/or its subsidiary(-ies)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -866,6 +866,7 @@ class Instruction
     def lowerX86Common
         $asm.codeOrigin codeOriginString if $enableCodeOriginComments
         $asm.annotation annotation if $enableInstrAnnotations
+        $asm.debugAnnotation codeOrigin.debugDirective if $enableDebugAnnotations
 
         case opcode
         when "addi"

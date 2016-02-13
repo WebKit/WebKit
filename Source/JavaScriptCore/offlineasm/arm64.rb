@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2012, 2014-2016 Apple Inc. All rights reserved.
 # Copyright (C) 2014 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -480,6 +480,7 @@ class Instruction
     def lowerARM64
         $asm.comment codeOriginString
         $asm.annotation annotation if $enableInstrAnnotations
+        $asm.debugAnnotation codeOrigin.debugDirective if $enableDebugAnnotations
 
         case opcode
         when 'addi'

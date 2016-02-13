@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,14 +28,48 @@ require "pathname"
 require "registers"
 require "self_hash"
 
-class CodeOrigin
-    attr_reader :fileName, :lineNumber
+class SourceFile
+    @@fileNames = []
     
-    def initialize(fileName, lineNumber)
-        @fileName = fileName
+    attr_reader :name, :fileNumber
+
+    def SourceFile.outputDotFileList(outp)
+        @@fileNames.each_index {
+            | index |
+            outp.puts "\".file #{index+1} \\\"#{@@fileNames[index]}\\\"\\n\""
+        }
+    end
+
+    def initialize(fileName)
+        @name = Pathname.new(fileName)
+        pathName = "#{@name.realpath}"
+        fileNumber = @@fileNames.index(pathName)
+        if not fileNumber
+            @@fileNames << pathName
+            fileNumber = @@fileNames.length
+        else
+            fileNumber += 1 # File numbers are 1 based
+        end
+        @fileNumber = fileNumber
+    end
+end
+
+class CodeOrigin
+    attr_reader :lineNumber
+    
+    def initialize(sourceFile, lineNumber)
+        @sourceFile = sourceFile
         @lineNumber = lineNumber
     end
-    
+
+    def fileName
+        @sourceFile.name
+    end
+
+    def debugDirective
+        $emitWinAsm ? nil : "\".loc #{@sourceFile.fileNumber} #{lineNumber}\\n\""
+    end
+
     def to_s
         "#{fileName}:#{lineNumber}"
     end
@@ -117,8 +151,7 @@ end
 # The lexer. Takes a string and returns an array of tokens.
 #
 
-def lex(str, fileName)
-    fileName = Pathname.new(fileName)
+def lex(str, file)
     result = []
     lineNumber = 1
     annotation = nil
@@ -138,37 +171,37 @@ def lex(str, fileName)
             # use of this for its cloopDo debugging utility even if
             # enableInstrAnnotations is not enabled.
             if annotation
-                result << Annotation.new(CodeOrigin.new(fileName, lineNumber),
+                result << Annotation.new(CodeOrigin.new(file, lineNumber),
                                          annotationType, annotation)
                 annotation = nil
             end
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
             lineNumber += 1
         when /\A[a-zA-Z]([a-zA-Z0-9_.]*)/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A\.([a-zA-Z0-9_]*)/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A_([a-zA-Z0-9_]*)/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A([ \t]+)/
             # whitespace, ignore
             whitespaceFound = true
             str = $~.post_match
             next
         when /\A0x([0-9a-fA-F]+)/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&.hex.to_s)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&.hex.to_s)
         when /\A0([0-7]+)/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&.oct.to_s)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&.oct.to_s)
         when /\A([0-9]+)/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A::/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A[:,\(\)\[\]=\+\-~\|&^*]/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A".*"/
-            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         else
-            raise "Lexer error at #{CodeOrigin.new(fileName, lineNumber).to_s}, unexpected sequence #{str[0..20].inspect}"
+            raise "Lexer error at #{CodeOrigin.new(file, lineNumber).to_s}, unexpected sequence #{str[0..20].inspect}"
         end
         whitespaceFound = false
         str = $~.post_match
@@ -777,7 +810,7 @@ class Parser
 end
 
 def parseData(data, fileName)
-    parser = Parser.new(data, fileName)
+    parser = Parser.new(data, SourceFile.new(fileName))
     parser.parseSequence(nil, "")
 end
 
@@ -786,7 +819,7 @@ def parse(fileName)
 end
 
 def parseHash(fileName)
-    parser = Parser.new(IO::read(fileName), fileName)
+    parser = Parser.new(IO::read(fileName), SourceFile.new(fileName))
     fileList = parser.parseIncludes(nil, "")
     fileListHash(fileList)
 end
