@@ -1,3 +1,14 @@
+2016-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ and hopefully EFL build after r196499.
+
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+
 2016-02-12  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: Link preview is slow and unreliable

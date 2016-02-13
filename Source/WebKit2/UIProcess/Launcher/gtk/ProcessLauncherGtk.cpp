@@ -62,11 +62,12 @@ void ProcessLauncher::launchProcess()
     String executablePath, pluginPath;
     CString realExecutablePath, realPluginPath;
     switch (m_launchOptions.processType) {
-    case WebProcess:
+    case ProcessLauncher::ProcessType::Web:
         executablePath = executablePathOfWebProcess();
         break;
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    case PluginProcess:
+    case ProcessLauncher::ProcessType::Plugin64:
+    case ProcessLauncher::ProcessType::Plugin32:
         executablePath = executablePathOfPluginProcess();
 #if ENABLE(PLUGIN_PROCESS_GTK2)
         if (m_launchOptions.extraInitializationData.contains("requires-gtk2"))
@@ -76,11 +77,11 @@ void ProcessLauncher::launchProcess()
         realPluginPath = fileSystemRepresentation(pluginPath);
         break;
 #endif
-    case NetworkProcess:
+    case ProcessLauncher::ProcessType::Network:
         executablePath = executablePathOfNetworkProcess();
         break;
 #if ENABLE(DATABASE_PROCESS)
-    case DatabaseProcess:
+    case ProcessLauncher::ProcessType::Database:
         executablePath = executablePathOfDatabaseProcess();
         break;
 #endif

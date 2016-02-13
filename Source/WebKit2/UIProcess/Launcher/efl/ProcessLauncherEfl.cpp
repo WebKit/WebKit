@@ -105,20 +105,21 @@ void ProcessLauncher::launchProcess()
 
     String processCmdPrefix, executablePath, pluginPath;
     switch (m_launchOptions.processType) {
-    case WebProcess:
+    case ProcessLauncher::ProcessType::Web:
         executablePath = executablePathOfWebProcess();
         break;
 #if ENABLE(PLUGIN_PROCESS)
-    case PluginProcess:
+    case ProcessLauncher::ProcessType::Plugin64:
+    case ProcessLauncher::ProcessType::Plugin32:
         executablePath = executablePathOfPluginProcess();
         pluginPath = m_launchOptions.extraInitializationData.get("plugin-path");
         break;
 #endif
-    case NetworkProcess:
+    case ProcessLauncher::ProcessType::Network:
         executablePath = executablePathOfNetworkProcess();
         break;
 #if ENABLE(DATABASE_PROCESS)
-    case DatabaseProcess:
+    case ProcessLauncher::ProcessType::Database:
         executablePath = executablePathOfDatabaseProcess();
         break;
 #endif
