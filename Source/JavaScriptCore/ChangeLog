@@ -1,3 +1,15 @@
+2016-02-12  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Change the last RefPtr::get() to release() in String.prototype.normalize
+        https://bugs.webkit.org/show_bug.cgi?id=154211
+
+        Reviewed by Ryosuke Niwa.
+
+        Change the last RefPtr::get() to release() in String.prototype.normalize.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::normalize):
+
 2016-02-12  Saam barati  <sbarati@apple.com>
 
         [ES6] we have an incorrect syntax error when a callee of a function expression has the same name as a top-level lexical declaration
