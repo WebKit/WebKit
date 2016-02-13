@@ -51,6 +51,7 @@ using namespace HTMLNames;
 RuleSet* CSSDefaultStyleSheets::defaultStyle;
 RuleSet* CSSDefaultStyleSheets::defaultQuirksStyle;
 RuleSet* CSSDefaultStyleSheets::defaultPrintStyle;
+unsigned CSSDefaultStyleSheets::defaultStyleVersion;
 
 StyleSheetContents* CSSDefaultStyleSheets::simpleDefaultStyleSheet;
 StyleSheetContents* CSSDefaultStyleSheets::defaultStyleSheet;
@@ -148,15 +149,15 @@ void CSSDefaultStyleSheets::loadSimpleDefaultStyle()
 
     simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
     defaultStyle->addRulesFromSheet(*simpleDefaultStyleSheet, screenEval());
-
+    ++defaultStyleVersion;
     // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.
 }
 
-void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element, bool& changedDefaultStyle)
+void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element)
 {
     if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(element)) {
         loadFullDefaultStyle();
-        changedDefaultStyle = true;
+        ++defaultStyleVersion;
     }
 
     if (is<HTMLElement>(element)) {
@@ -167,7 +168,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
                     plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet));
                 plugInsStyleSheet = parseUASheet(plugInsRules);
                 defaultStyle->addRulesFromSheet(*plugInsStyleSheet, screenEval());
-                changedDefaultStyle = true;
+                ++defaultStyleVersion;
             }
         }
 #if ENABLE(VIDEO)
@@ -179,7 +180,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
                 mediaControlsStyleSheet = parseUASheet(mediaRules);
                 defaultStyle->addRulesFromSheet(*mediaControlsStyleSheet, screenEval());
                 defaultPrintStyle->addRulesFromSheet(*mediaControlsStyleSheet, printEval());
-                changedDefaultStyle = true;
+                ++defaultStyleVersion;
             }
         }
 #endif // ENABLE(VIDEO)
@@ -190,7 +191,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
                 imageControlsStyleSheet = parseUASheet(imageControlsRules);
                 defaultStyle->addRulesFromSheet(*imageControlsStyleSheet, screenEval());
                 defaultPrintStyle->addRulesFromSheet(*imageControlsStyleSheet, printEval());
-                changedDefaultStyle = true;
+                ++defaultStyleVersion;
             }
         }
 #endif // ENABLE(SERVICE_CONTROLS)
@@ -200,7 +201,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
             svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
             defaultStyle->addRulesFromSheet(*svgStyleSheet, screenEval());
             defaultPrintStyle->addRulesFromSheet(*svgStyleSheet, printEval());
-            changedDefaultStyle = true;
+            ++defaultStyleVersion;
         }
     }
 #if ENABLE(MATHML)
@@ -210,7 +211,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
             mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
             defaultStyle->addRulesFromSheet(*mathMLStyleSheet, screenEval());
             defaultPrintStyle->addRulesFromSheet(*mathMLStyleSheet, printEval());
-            changedDefaultStyle = true;
+            ++defaultStyleVersion;
         }
     }
 #endif // ENABLE(MATHML)
@@ -221,7 +222,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
         fullscreenStyleSheet = parseUASheet(fullscreenRules);
         defaultStyle->addRulesFromSheet(*fullscreenStyleSheet, screenEval());
         defaultQuirksStyle->addRulesFromSheet(*fullscreenStyleSheet, screenEval());
-        changedDefaultStyle = true;
+        ++defaultStyleVersion;
     }
 #endif // ENABLE(FULLSCREEN_API)
 

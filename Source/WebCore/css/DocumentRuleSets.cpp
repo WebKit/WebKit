@@ -29,7 +29,6 @@
 #include "config.h"
 #include "DocumentRuleSets.h"
 
-#include "CSSDefaultStyleSheets.h"
 #include "CSSStyleSheet.h"
 #include "ExtensionStyleSheets.h"
 #include "MediaQueryEvaluator.h"
@@ -98,7 +97,7 @@ void DocumentRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet
     collectFeatures();
 }
 
-void DocumentRuleSets::collectFeatures()
+void DocumentRuleSets::collectFeatures() const
 {
     m_features.clear();
     // Collect all ids and rules using sibling selectors (:first-child and similar)
@@ -106,6 +105,8 @@ void DocumentRuleSets::collectFeatures()
     // sharing candidates.
     if (CSSDefaultStyleSheets::defaultStyle)
         m_features.add(CSSDefaultStyleSheets::defaultStyle->features());
+    m_defaultStyleVersionOnFeatureCollection = CSSDefaultStyleSheets::defaultStyleVersion;
+
     if (m_authorStyle)
         m_features.add(m_authorStyle->features());
     if (m_userStyle)

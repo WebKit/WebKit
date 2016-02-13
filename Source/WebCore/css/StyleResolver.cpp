@@ -392,10 +392,7 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element& element, RenderStyle* p
         state.style()->setInsideLink(linkState);
     }
 
-    bool needsCollection = false;
-    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element, needsCollection);
-    if (needsCollection)
-        m_ruleSets.collectFeatures();
+    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element);
 
     ElementRuleCollector collector(element, state.style(), m_ruleSets, m_state.selectorFilter());
     collector.setRegionForStyling(regionForStyling);

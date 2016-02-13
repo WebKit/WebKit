@@ -1,3 +1,37 @@
+2016-02-13  Antti Koivisto  <antti@apple.com>
+
+        Add version number for default stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=154220
+
+        Reviewed by Ryosuke Niwa.
+
+        We currently fail to update RuleFeatureSets for shadow trees when the default stylesheet grows
+        (for example when media controls stylesheet is initialized).
+
+        No test since this is not causing known bugs. It is blocking optimizations in shadow trees that
+        rely on rule features being up-to-date.
+
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::loadSimpleDefaultStyle):
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+
+            Increment version number when the default stylesheet changes.
+
+        * css/CSSDefaultStyleSheets.h:
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::appendAuthorStyleSheets):
+        (WebCore::DocumentRuleSets::collectFeatures):
+
+            Store the current default stylesheet version number.
+
+        * css/DocumentRuleSets.h:
+        (WebCore::DocumentRuleSets::features):
+
+            Collect features again if the default stylesheet has changed.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+
 2016-02-13  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Consolidate building of GStreamer and OpenWebRTC code.
