@@ -106,8 +106,6 @@ webkit.org/b/144475 storage/indexeddb
 
 # TODO Animation triggers not supported
 animations/trigger-container-scroll-boundaries.html [ Failure ]
-animations/trigger-container-scroll-empty.html [ Failure ]
-animations/trigger-container-scroll-simple.html [ Failure ]
 
 # Quota API is not supported on iOS
 storage/domstorage/quota.html
@@ -246,25 +244,6 @@ svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 # SVG
 webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
 webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Skip ] # Pass, Crash
-
-# Animation tests that fail:
-animations/cross-fade-background-image.html [ ImageOnlyFailure ]
-animations/cross-fade-webkit-mask-box-image.html [ Failure ]
-animations/play-state-suspend.html [ Pass Failure ]
-animations/suspend-resume-animation.html [ Pass Failure ]
-animations/unprefixed-events-mixed-with-prefixed.html [ Pass Failure ]
-animations/unprefixed-events.html [ Pass Failure ]
-
-# Animation tests that are flaky:
-animations/3d/matrix-transform-type-animation.html [ Skip ] # Pass, Timeout, Missing
-animations/3d/replace-filling-transform.html [ Skip ] # ImageOnlyFailure, Timeout, Pass
-animations/3d/state-at-end-event-transform.html [ Skip ] # Pass, Timeout, Missing 
-animations/animation-delay-changed.html [ Skip ] # Failure, Pass
-animations/cross-fade-border-image-source.html [ Skip ] # Failure, ImageOnlyFailure, Pass
-
-# Animation tests that have stderr:
-animations/3d/transform-origin-vs-functions.html [ Skip ]
-animations/added-while-suspended.html [ Skip ]
 
 # Canvas tests that fail:
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
@@ -2787,7 +2766,6 @@ webkit.org/b/153292 accessibility/text-marker [ Pass ]
 # More flaky tests (Sept 18, 2015)
 
 fast/forms/select-element-focus-ring.html [ Failure Pass ]
-animations/keyframe-multiple-timing-functions-transform.html [ Failure Pass ]
 compositing/visible-rect/coverage-scrolling.html [ Failure Pass ]
 
 # Imported Blink tests.

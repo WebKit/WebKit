@@ -14,50 +14,10 @@ fast/zooming/ios [ Pass ]
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-# Animation tests that fail:
-webkit.org/b/129562 [ Debug ] animations/animation-direction-reverse-fill-mode.html [ Skip ]
-[ Release ] animations/animation-direction-reverse-fill-mode.html [ Timeout Pass ]
-webkit.org/b/129562 [ Debug ] animations/fill-mode-reverse.html [ Skip ]
-animations/additive-transform-animations.html [ Pass Failure ]
-animations/play-state-paused.html [ Pass Failure ]
-
-# Animation tests that time out:
-animations/animation-direction-normal.html
-animations/animation-direction-reverse-hardware-opacity.html
-animations/animation-direction-reverse-hardware.html
-animations/animation-direction-reverse-non-hardware.html
-animations/animation-direction-reverse-timing-functions-hardware.html
-animations/animation-direction-reverse-timing-functions.html
-animations/animation-direction-reverse.html
-animations/animation-direction.html
-animations/animation-end-event-destroy-renderer.html
-animations/animation-end-event-short-iterations.html
-animations/animation-hit-test-transform.html
-animations/animation-hit-test.html
-animations/animation-internals-api-multiple-keyframes.html
-animations/animation-internals-api.html
-animations/animation-iteration-event-destroy-renderer.html
-animations/animation-matrix-negative-scale-unmatrix.html
-animations/animation-offscreen-to-onscreen.html
-animations/animation-start-event-destroy-renderer.html
-animations/animation-welcome-safari.html
-animations/big-rotation.html
-animations/change-keyframes-name.html
-animations/change-keyframes.html
-animations/change-one-anim.html
-animations/combo-transform-rotate+scale.html
-animations/combo-transform-translate+scale.html
-animations/cross-fade-list-style-image.html
-animations/cross-fade-webkit-mask-box-image.html
-animations/cross-fade-webkit-mask-image.html
-animations/duplicated-keyframes-name.html
-animations/fill-mode-forwards.html
-animations/fill-mode-forwards2.html
-animations/fill-mode-iteration-count-non-integer.html
-animations/fill-mode-missing-from-to-keyframes.html
-animations/fill-mode-multiple-keyframes.html
-animations/fill-mode-removed.html
-animations/state-at-end-event.html
+# Animation tests with issues
+animations/animation-direction-normal.html [ Pass Crash ]
+animations/animation-delay-changed.html [ Pass Crash ]
+animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 # Compositing tests that fail:
 compositing/contents-scale/incremental-change.html [ ImageOnlyFailure ]
@@ -1622,11 +1582,6 @@ tables/mozilla_expected_failures/bugs/bug3517.html [ Failure ImageOnlyFailure Pa
 transitions/svg-text-shadow-transition.html [ Failure Pass ]
 
 # Flaky tests that time out:
-animations/animation-direction-alternate-reverse.html
-animations/cross-fade-background-image.html
-animations/fill-mode.html
-animations/generic-from-to.html
-animations/keyframes-dynamic.html
 compositing/transitions/transform-on-large-layer.html
 css3/filters/animation-from-initial-values-with-color-matrix.html
 fast/dom/Geolocation/delayed-permission-denied.html
@@ -1778,7 +1733,6 @@ fast/loader/iframe-meta-refresh-base-blank.html [ Failure Pass ]
 fast/loader/iframe-set-location-base-blank.html [ Failure Pass ]
 fast/loader/refresh-iframe-base-blank.html [ Failure Pass ]
 perf/append-text-nodes-without-renderers.html [ Failure Pass ]
-animations/unprefixed-events.html [ Failure Timeout Pass ]
 compositing/layer-creation/mismatched-rotated-transform-animation-overlap.html [ Timeout Pass ]
 
 # Failures as of 06/08/2015
@@ -1868,7 +1822,6 @@ transitions/transition-hit-test-transform.html
 
 # Flaky as of 06/09/2015
 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure Pass ]
-animations/transition-and-animation-2.html
 css3/filters/backdrop/animation.html
 http/tests/cache/disk-cache/disk-cache-validation.html
 
@@ -1885,19 +1838,6 @@ fast/images/animated-gif-webkit-transform.html
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 # Latest iOS failures as of Sept 1, 2015
-animations/keyframe-timing-functions-transform.html [ Failure Pass ]
-animations/matrix-anim.html [ Failure Pass ]
-animations/missing-from-to-transforms.html [ Failure Pass ]
-animations/missing-keyframe-properties-repeating.html [ Failure Pass ]
-animations/missing-keyframe-properties-timing-function.html [ Failure Pass ]
-animations/missing-keyframe-properties.html [ Failure Pass ]
-animations/missing-values-first-keyframe.html [ Failure ImageOnlyFailure Pass ]
-animations/missing-values-last-keyframe.html [ Failure ImageOnlyFailure Pass ]
-animations/play-state.html [ Failure Pass ]
-animations/remove-syncing-animation.html [ Failure Pass ]
-animations/simultaneous-start-transform.html [ Failure Pass ]
-animations/transform-non-accelerated.html [ Failure Pass ]
-animations/transition-and-animation-3.html [ Failure Pass ]
 compositing/iframes/overlapped-nested-iframes.html [ Failure Pass ]
 compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure Pass ]
 compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure Pass ]
