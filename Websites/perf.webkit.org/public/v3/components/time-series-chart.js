@@ -283,7 +283,7 @@ class TimeSeriesChart extends ComponentBase {
 
     _renderXAxis(context, metrics, startTime, endTime)
     {
-        var typicalWidth = context.measureText('12/31').width;
+        var typicalWidth = context.measureText('12/31 x').width;
         var maxXAxisLabels = Math.floor(metrics.chartWidth / typicalWidth);
         var xAxisGrid = TimeSeriesChart.computeTimeGrid(startTime, endTime, maxXAxisLabels);
 
@@ -578,11 +578,33 @@ class TimeSeriesChart extends ComponentBase {
 
         var result = [];
 
+        var previousDate = null;
+        var previousHour = null;
         while (currentTime <= max) {
-            var label = (currentTime.getUTCMonth() + 1) + '/' + currentTime.getUTCDate();
-            result.push({time: new Date(currentTime), label: label});
+            var time = new Date(currentTime);
+            var month = (time.getUTCMonth() + 1);
+            var date = time.getUTCDate();
+            var hour = time.getUTCHours();
+            var hourLabel = (hour > 12 ? hour - 12 : hour) + (hour >= 12 ? 'PM' : 'AM');
+
             iterator.next(currentTime);
+
+            var label;
+            if (date == previousDate)
+                label = hourLabel;
+            else {
+                label = `${month}/${date}`;
+                if (hour && currentTime.getUTCDate() != date)
+                    label += ' ' + hourLabel;
+            }
+
+            result.push({time: time, label: label});
+
+            previousDate = date;
+            previousHour = hour;
         }
+        
+        console.assert(result.length <= maxLabels);
 
         return result;
     }
@@ -592,6 +614,16 @@ class TimeSeriesChart extends ComponentBase {
         var HOUR = 3600 * 1000;
         var DAY = 24 * HOUR;
         return [
+            {
+                diff: 2 * HOUR,
+                next: function (date) {
+                    if (date.getUTCHours() >= 22) {
+                        date.setUTCHours(0);
+                        date.setUTCDate(date.getUTCDate() + 1);
+                    } else
+                        date.setUTCHours(Math.floor(date.getUTCHours() / 2) * 2 + 2);
+                },
+            },
             {
                 diff: 12 * HOUR,
                 next: function (date) {

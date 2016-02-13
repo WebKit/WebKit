@@ -1,5 +1,23 @@
 2016-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        v3 UI sometimes shows same dates twice on the x-axis of time series charts
+        https://bugs.webkit.org/show_bug.cgi?id=154210
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by the label generation code in TimeSeriesChart.computeTimeGrid never emitting hours.
+
+        Use hours instead of dates as labels when the current time's date is same as the previous label's date.
+        Always include dates before entering this mode to avoid just having hours as labels on the entire x-axis.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype._renderXAxis): Slightly increase the "average" width of x-axis label.
+        (TimeSeriesChart.computeTimeGrid): See above. Also assert that the number of labels we generate never
+        exceeds maxLabels as a sanity check.
+        (TimeSeriesChart._timeIterators): Added an iterator that increments by two hours for zoomed graphs.
+
+2016-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         v3 UI should show status and associated bugs on analysis task pages
         https://bugs.webkit.org/show_bug.cgi?id=154212
 
