@@ -97,16 +97,17 @@ void ContentSecurityPolicySourceList::parse(const String& value)
 
 bool ContentSecurityPolicySourceList::matches(const URL& url)
 {
-    if (m_allowStar)
+    if (m_allowStar) {
+        // FIXME: Should only match for URLs whose scheme is not blob, data or filesystem.
+        // See <https://bugs.webkit.org/show_bug.cgi?id=154122> for more details.
         return true;
+    }
 
-    URL effectiveURL = SecurityOrigin::shouldUseInnerURL(url) ? SecurityOrigin::extractInnerURL(url) : url;
-
-    if (m_allowSelf && m_policy.urlMatchesSelf(effectiveURL))
+    if (m_allowSelf && m_policy.urlMatchesSelf(url))
         return true;
 
     for (auto& entry : m_list) {
-        if (entry.matches(effectiveURL))
+        if (entry.matches(url))
             return true;
     }
 

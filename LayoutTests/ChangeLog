@@ -1,5 +1,32 @@
 2016-02-12  Daniel Bates  <dabates@apple.com>
 
+        CSP: 'blob:' URLs should not match 'self' in CSP source expression lists.
+        https://bugs.webkit.org/show_bug.cgi?id=153158
+        <rdar://problem/24383264>
+
+        Reviewed by Brent Fulgham.
+
+        Add test http/tests/security/contentSecurityPolicy/blob-url-matches-source-blob.html to ensure that a
+        blob URL matches source "blob:".
+
+        Replaced text-only test http/tests/security/contentSecurityPolicy/blob-urls-match-self.html with an
+        analogous reference test http/tests/security/contentSecurityPolicy/blob-url-does-not-match-source-self.html
+        so as ensure that we do not regress the behavior that source 'self' should not match a blob URL
+        without considering the Content Security Policy violation message as part of the expected result.
+        The Content Security Policy violation message will differ between test runs because it references
+        the blob URL that triggered the violation, which is cryptographically random.
+
+        * TestExpectations: Remove entry for test http/tests/security/contentSecurityPolicy/blob-urls-match-self.html as the analogous test
+        blob-url-does-not-match-source-self.htm now passes.
+        * http/tests/security/contentSecurityPolicy/blob-url-does-not-match-source-self-expected.html: Added.
+        * http/tests/security/contentSecurityPolicy/blob-url-does-not-match-source-self.html: Added.
+        * http/tests/security/contentSecurityPolicy/blob-url-matches-source-blob-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/blob-url-matches-source-blob.html: Added.
+        * http/tests/security/contentSecurityPolicy/blob-urls-match-self-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/blob-urls-match-self.html: Removed. See the analogous test blob-url-does-not-match-source-self.html.
+
+2016-02-12  Daniel Bates  <dabates@apple.com>
+
         CSP: Implement child-src directive
         https://bugs.webkit.org/show_bug.cgi?id=153562
         <rdar://problem/24610087>

@@ -1,5 +1,24 @@
 2016-02-12  Daniel Bates  <dabates@apple.com>
 
+        CSP: 'blob:' URLs should not match 'self' in CSP source expression lists.
+        https://bugs.webkit.org/show_bug.cgi?id=153158
+        <rdar://problem/24383264>
+
+        Reviewed by Brent Fulgham.
+
+        A blob URL should not match source 'self' by section Security Considerations for GUID URL schemes
+        of the Content Security Policy 2.0 spec., <https://www.w3.org/TR/CSP2/> (21 July 2015).
+
+        Tests: http/tests/security/contentSecurityPolicy/blob-url-does-not-match-source-self.html
+               http/tests/security/contentSecurityPolicy/blob-url-matches-source-blob.html
+
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::matches): Do not make a distinction between URLs that
+        contain a nested URL (e.g. blob://http://www.example.com/...) and URLs that do not contain a nested
+        URL. The URL of the requested resource should be matched against the source list source expressions.
+
+2016-02-12  Daniel Bates  <dabates@apple.com>
+
         CSP: Implement child-src directive
         https://bugs.webkit.org/show_bug.cgi?id=153562
         <rdar://problem/24610087>

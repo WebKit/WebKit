@@ -816,7 +816,6 @@ webkit.org/b/153153 http/tests/security/contentSecurityPolicy/object-src-param-s
 webkit.org/b/153153 http/tests/security/contentSecurityPolicy/object-src-param-url-blocked.html
 webkit.org/b/153154 http/tests/security/contentSecurityPolicy/redirect-does-not-match-paths.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/style-src-blocked-error-event.html
-webkit.org/b/153158 http/tests/security/contentSecurityPolicy/blob-urls-match-self.html [ Failure ]
 webkit.org/b/153159 http/tests/security/contentSecurityPolicy/image-document-default-src-none.html [ Failure ]
 webkit.org/b/153160 http/tests/security/contentSecurityPolicy/object-src-does-not-affect-child.html [ Failure ]
 webkit.org/b/153160 http/tests/security/contentSecurityPolicy/plugin-in-iframe-with-csp.html [ Failure ]
