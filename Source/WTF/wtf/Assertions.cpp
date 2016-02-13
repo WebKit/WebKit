@@ -313,7 +313,7 @@ void WTFSetCrashHook(WTFCrashHookFunction function)
 }
 
 #if !defined(NDEBUG) || !OS(DARWIN)
-void WTFCrashImpl()
+void WTFCrash()
 {
     if (globalHook)
         globalHook();
@@ -327,8 +327,7 @@ void WTFCrashImpl()
     ((void(*)())0)();
 #endif
 }
-#endif // !defined(NDEBUG) || !OS(DARWIN)
-    
+#else
 // We need to keep WTFCrash() around (even on non-debug OS(DARWIN) builds) as a workaround
 // for presently shipping (circa early 2016) SafariForWebKitDevelopment binaries which still
 // expects to link to it.
@@ -336,6 +335,7 @@ void WTFCrash()
 {
     CRASH();
 }
+#endif // !defined(NDEBUG) || !OS(DARWIN)
 
 void WTFCrashWithSecurityImplication()
 {

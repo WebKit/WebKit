@@ -1,3 +1,13 @@
+2016-02-13  Mark Lam  <mark.lam@apple.com>
+
+        Eliminate the need for WTFCrashImpl().
+        https://bugs.webkit.org/show_bug.cgi?id=154202
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2016-02-12  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Update ICU header files to version 52
