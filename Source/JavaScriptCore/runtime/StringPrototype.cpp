@@ -1190,8 +1190,23 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
 
             // 3. Increment lengthA by 1.
             // 4. If lengthA == lim, return A.
-            if (++resultLength == limit)
+            ++resultLength;
+            if (resultLength == limit)
                 return JSValue::encode(result);
+            if (resultLength >= MAX_STORAGE_VECTOR_INDEX) {
+                // Let's consider what's best for users here. We're about to increase the length of
+                // the split array beyond the maximum length that we can support efficiently. This
+                // will cause us to use a HashMap for the new entries after this point. That's going
+                // to result in a very long running time of this function and very large memory
+                // usage. In my experiments, JSC will sit spinning for minutes after getting here and
+                // it was using >4GB of memory and eventually grew to 8GB. It kept running without
+                // finishing until I killed it. That's probably not what the user wanted. The user,
+                // or the program that the user is running, probably made a mistake by calling this
+                // method in such a way that it resulted in such an obnoxious array. Therefore, to
+                // protect ourselves, we bail at this point.
+                throwOutOfMemoryError(exec);
+                return JSValue::encode(jsUndefined());
+            }
 
             // 5. Let p = e.
             // 8. Let q = p.
