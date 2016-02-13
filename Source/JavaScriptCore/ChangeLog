@@ -1,3 +1,28 @@
+2016-02-12  Saam barati  <sbarati@apple.com>
+
+        [ES6] we have an incorrect syntax error when a callee of a function expression has the same name as a top-level lexical declaration
+        https://bugs.webkit.org/show_bug.cgi?id=154143
+
+        Reviewed by Benjamin Poulain.
+
+        We were raising syntax errors on the following type of programs when
+        we shouldn't have been.
+        ```
+        (function foo() { const foo = 20; });
+        ```
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::computeLexicallyCapturedVariablesAndPurgeCandidates):
+        (JSC::Scope::declareCallee):
+        (JSC::Scope::declareVariable):
+        (JSC::Scope::hasDeclaredVariable):
+        (JSC::Scope::hasLexicallyDeclaredVariable):
+        (JSC::Scope::hasDeclaredParameter):
+        (JSC::Scope::declareWrite):
+        (JSC::Scope::getCapturedVars):
+
 2016-02-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] ZeroExtend and SignExtend use incorrect addressing on ARM64

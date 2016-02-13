@@ -333,12 +333,17 @@ struct Scope {
         }
     }
 
-    void declareCallee(const Identifier* ident)
+    DeclarationResultMask declareCallee(const Identifier* ident)
     {
         auto addResult = m_declaredVariables.add(ident->impl());
         // We want to track if callee is captured, but we don't want to act like it's a 'var'
         // because that would cause the BytecodeGenerator to emit bad code.
         addResult.iterator->value.clearIsVar();
+
+        DeclarationResultMask result = DeclarationResult::Valid;
+        if (isEvalOrArgumentsIdentifier(m_vm, ident))
+            result |= DeclarationResult::InvalidStrictMode;
+        return result;
     }
 
     DeclarationResultMask declareVariable(const Identifier* ident)
@@ -390,7 +395,11 @@ struct Scope {
 
     bool hasDeclaredVariable(const RefPtr<UniquedStringImpl>& ident)
     {
-        return m_declaredVariables.contains(ident.get());
+        auto iter = m_declaredVariables.find(ident.get());
+        if (iter == m_declaredVariables.end())
+            return false;
+        VariableEnvironmentEntry entry = iter->value;
+        return entry.isVar(); // The callee isn't a "var".
     }
 
     bool hasLexicallyDeclaredVariable(const RefPtr<UniquedStringImpl>& ident) const
@@ -405,7 +414,7 @@ struct Scope {
 
     bool hasDeclaredParameter(const RefPtr<UniquedStringImpl>& ident)
     {
-        return m_declaredParameters.contains(ident) || m_declaredVariables.contains(ident.get());
+        return m_declaredParameters.contains(ident) || hasDeclaredVariable(ident);
     }
     
     void declareWrite(const Identifier* ident)
@@ -518,7 +527,8 @@ struct Scope {
             return;
         }
         for (IdentifierSet::iterator ptr = m_closedVariableCandidates.begin(); ptr != m_closedVariableCandidates.end(); ++ptr) {
-            if (!m_declaredVariables.contains(*ptr))
+            // We refer to m_declaredVariables here directly instead of a hasDeclaredVariable because we want to mark the callee as captured.
+            if (!m_declaredVariables.contains(*ptr)) 
                 continue;
             capturedVariables.add(*ptr);
         }

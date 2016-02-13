@@ -30,14 +30,14 @@ PASS testThis.call() is undefined
 PASS testThis.apply() is undefined
 PASS testThis.call(undefined) is undefined
 PASS testThis.apply(undefined) is undefined
-PASS (function eval(){'use strict';}) threw exception SyntaxError: Cannot declare a variable named 'eval' in strict mode..
-PASS (function(){(function eval(){'use strict';})}) threw exception SyntaxError: Cannot declare a variable named 'eval' in strict mode..
-PASS (function (eval){'use strict';}) threw exception SyntaxError: Cannot declare a variable named 'eval' in strict mode..
-PASS (function(){(function (eval){'use strict';})}) threw exception SyntaxError: Cannot declare a variable named 'eval' in strict mode..
-PASS (function arguments(){'use strict';}) threw exception SyntaxError: Cannot declare a variable named 'arguments' in strict mode..
-PASS (function(){(function arguments(){'use strict';})}) threw exception SyntaxError: Cannot declare a variable named 'arguments' in strict mode..
-PASS (function (arguments){'use strict';}) threw exception SyntaxError: Cannot declare a variable named 'arguments' in strict mode..
-PASS (function(){(function (arguments){'use strict';})}) threw exception SyntaxError: Cannot declare a variable named 'arguments' in strict mode..
+PASS (function eval(){'use strict';}) threw exception SyntaxError: 'eval' is not a valid function name in strict mode..
+PASS (function(){(function eval(){'use strict';})}) threw exception SyntaxError: 'eval' is not a valid function name in strict mode..
+PASS (function (eval){'use strict';}) threw exception SyntaxError: Invalid parameters or function name in strict mode..
+PASS (function(){(function (eval){'use strict';})}) threw exception SyntaxError: Invalid parameters or function name in strict mode..
+PASS (function arguments(){'use strict';}) threw exception SyntaxError: 'arguments' is not a valid function name in strict mode..
+PASS (function(){(function arguments(){'use strict';})}) threw exception SyntaxError: 'arguments' is not a valid function name in strict mode..
+PASS (function (arguments){'use strict';}) threw exception SyntaxError: Invalid parameters or function name in strict mode..
+PASS (function(){(function (arguments){'use strict';})}) threw exception SyntaxError: Invalid parameters or function name in strict mode..
 PASS (function (){'use strict'; var eval;}) threw exception SyntaxError: Cannot declare a variable named eval in strict mode..
 PASS (function(){(function (){'use strict'; var eval;})}) threw exception SyntaxError: Cannot declare a variable named eval in strict mode..
 PASS (function (){'use strict'; var arguments;}) threw exception SyntaxError: Cannot declare a variable named arguments in strict mode..
