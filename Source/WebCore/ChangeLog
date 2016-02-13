@@ -1,3 +1,71 @@
+2016-02-12  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement paragraph related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=154098
+        <rdar://problem/24269675>
+
+        Reviewed by Chris Fleizach.
+
+        Using CharacterOffset to implement paragraph related text marker calls. Reused
+        logic from VisibleUnits class. And refactored textMarkerForCharacterOffset method
+        to get better performance. Also fixed an issue where we can't navigate through a text
+        node with line breaks in it using next/previousCharacterOffset call.
+
+        Test: accessibility/mac/text-marker-paragraph-nav.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::startOrEndTextMarkerDataForRange):
+        (WebCore::AXObjectCache::characterOffsetForNodeAndOffset):
+        (WebCore::AXObjectCache::textMarkerDataForCharacterOffset):
+        (WebCore::AXObjectCache::textMarkerDataForNextCharacterOffset):
+        (WebCore::AXObjectCache::textMarkerDataForPreviousCharacterOffset):
+        (WebCore::AXObjectCache::nextNode):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        (WebCore::AXObjectCache::nextCharacterOffset):
+        (WebCore::AXObjectCache::previousCharacterOffset):
+        (WebCore::startWordBoundary):
+        (WebCore::AXObjectCache::startCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::endCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::previousWordStartCharacterOffset):
+        (WebCore::AXObjectCache::previousWordBoundary):
+        (WebCore::AXObjectCache::startCharacterOffsetOfParagraph):
+        (WebCore::AXObjectCache::endCharacterOffsetOfParagraph):
+        (WebCore::AXObjectCache::paragraphForCharacterOffset):
+        (WebCore::AXObjectCache::nextParagraphEndCharacterOffset):
+        (WebCore::AXObjectCache::previousParagraphStartCharacterOffset):
+        (WebCore::AXObjectCache::rootAXEditableElement):
+        * accessibility/AXObjectCache.h:
+        (WebCore::CharacterOffset::remaining):
+        (WebCore::CharacterOffset::isNull):
+        (WebCore::CharacterOffset::isEqual):
+        (WebCore::AXObjectCache::isNodeInUse):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (+[WebAccessibilityTextMarker textMarkerWithCharacterOffset:cache:]):
+        (-[WebAccessibilityObjectWrapper nextMarkerForCharacterOffset:]):
+        (-[WebAccessibilityObjectWrapper previousMarkerForCharacterOffset:]):
+        (-[WebAccessibilityObjectWrapper rangeForTextMarkers:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (startOrEndTextmarkerForRange):
+        (nextTextMarkerForCharacterOffset):
+        (previousTextMarkerForCharacterOffset):
+        (-[WebAccessibilityObjectWrapper nextTextMarkerForCharacterOffset:]):
+        (-[WebAccessibilityObjectWrapper previousTextMarkerForCharacterOffset:]):
+        (-[WebAccessibilityObjectWrapper textMarkerForCharacterOffset:]):
+        (textMarkerForCharacterOffset):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[WebAccessibilityObjectWrapper nextTextMarkerForNode:offset:]): Deleted.
+        (-[WebAccessibilityObjectWrapper previousTextMarkerForNode:offset:]): Deleted.
+        (-[WebAccessibilityObjectWrapper textMarkerForNode:offset:ignoreStart:]): Deleted.
+        (-[WebAccessibilityObjectWrapper textMarkerForNode:offset:]): Deleted.
+        * editing/VisibleUnits.cpp:
+        (WebCore::nextSentencePosition):
+        (WebCore::findStartOfParagraph):
+        (WebCore::findEndOfParagraph):
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * editing/VisibleUnits.h:
+
 2016-02-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Reset results for bindings tests after r196520

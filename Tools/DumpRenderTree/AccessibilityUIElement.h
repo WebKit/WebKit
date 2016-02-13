@@ -264,6 +264,9 @@ public:
     AccessibilityTextMarkerRange rightWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarker previousWordStartTextMarkerForTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarker nextWordEndTextMarkerForTextMarker(AccessibilityTextMarker*);
+    AccessibilityTextMarkerRange paragraphTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    AccessibilityTextMarker previousParagraphStartTextMarkerForTextMarker(AccessibilityTextMarker*);
+    AccessibilityTextMarker nextParagraphEndTextMarkerForTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarkerRange selectedTextMarkerRange();
     void resetSelectedTextMarkerRange();
     bool setSelectedVisibleTextRange(AccessibilityTextMarkerRange*);

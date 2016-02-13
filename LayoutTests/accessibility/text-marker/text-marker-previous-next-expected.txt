@@ -4,6 +4,7 @@ text1
 c  d
 
 can't select
+abc de f
 This tests the next/previous text marker functions are implemented correctly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -25,6 +26,8 @@ PASS text3.stringForTextMarkerRange(markerRange) is 'sel'
 PASS !psw.accessibilityElementForTextMarker(start) is true
 PASS text2.accessibilityElementForTextMarker(currentMarker).isEqual(text3) is true
 PASS text2.accessibilityElementForTextMarker(currentMarker).isEqual(text2.childAtIndex(2)) is true
+PASS text.stringForTextMarkerRange(markerRange) is 'f'
+PASS text.stringForTextMarkerRange(markerRange) is 'a'
 PASS successfullyParsed is true
 
 TEST COMPLETE

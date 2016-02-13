@@ -20,6 +20,12 @@ c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px;
 
 <div class="userselect" id="text3">can't select</div>
 
+<div id="text4">
+abc
+de
+f
+</div>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -134,6 +140,27 @@ c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px;
         // Check previous text marker, it should land on " d" node.
         currentMarker = text2.previousTextMarker(currentMarker);
         shouldBeTrue("text2.accessibilityElementForTextMarker(currentMarker).isEqual(text2.childAtIndex(2))");
+        
+        
+        // Make sure that text node with line breaks, we can go through it with next/previous call.
+        text = accessibilityController.accessibleElementById("text4");
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = startMarker;
+        for (var i = 0; i < 8; i++) {
+            previousMarker = currentMarker;
+            currentMarker = text.nextTextMarker(currentMarker);
+        }
+        markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker)
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "'f'");
+        
+        endMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = endMarker;
+        for (var i = 0; i < 7; i++) {
+            currentMarker = text.previousTextMarker(currentMarker);
+        }
+        markerRange = text.textMarkerRangeForMarkers(startMarker, currentMarker)
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "'a'");
         
     }
 

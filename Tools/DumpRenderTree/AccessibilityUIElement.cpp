@@ -1010,6 +1010,33 @@ static JSValueRef nextWordEndTextMarkerForTextMarkerCallback(JSContextRef contex
     return AccessibilityTextMarker::makeJSAccessibilityTextMarker(context, toAXElement(thisObject)->nextWordEndTextMarkerForTextMarker(marker));
 }
 
+static JSValueRef paragraphTextMarkerRangeForTextMarkerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityTextMarker* marker = nullptr;
+    if (argumentCount == 1)
+        marker = toTextMarker(JSValueToObject(context, arguments[0], exception));
+    
+    return AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange(context, toAXElement(thisObject)->paragraphTextMarkerRangeForTextMarker(marker));
+}
+
+static JSValueRef previousParagraphStartTextMarkerForTextMarkerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityTextMarker* marker = nullptr;
+    if (argumentCount == 1)
+        marker = toTextMarker(JSValueToObject(context, arguments[0], exception));
+    
+    return AccessibilityTextMarker::makeJSAccessibilityTextMarker(context, toAXElement(thisObject)->previousParagraphStartTextMarkerForTextMarker(marker));
+}
+
+static JSValueRef nextParagraphEndTextMarkerForTextMarkerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityTextMarker* marker = nullptr;
+    if (argumentCount == 1)
+        marker = toTextMarker(JSValueToObject(context, arguments[0], exception));
+    
+    return AccessibilityTextMarker::makeJSAccessibilityTextMarker(context, toAXElement(thisObject)->nextParagraphEndTextMarkerForTextMarker(marker));
+}
+
 static JSValueRef setSelectedVisibleTextRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     AccessibilityUIElement* uiElement = toAXElement(thisObject);
@@ -1620,6 +1647,21 @@ AccessibilityTextMarker AccessibilityUIElement::nextWordEndTextMarkerForTextMark
     return nullptr;
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker(AccessibilityTextMarker*)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker(AccessibilityTextMarker*)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker(AccessibilityTextMarker*)
+{
+    return nullptr;
+}
+
 #endif
 
 // Destruction
@@ -1804,6 +1846,9 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "rightWordTextMarkerRangeForTextMarker", rightWordTextMarkerRangeForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "previousWordStartTextMarkerForTextMarker", previousWordStartTextMarkerForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "nextWordEndTextMarkerForTextMarker", nextWordEndTextMarkerForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "paragraphTextMarkerRangeForTextMarker", paragraphTextMarkerRangeForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "previousParagraphStartTextMarkerForTextMarker", previousParagraphStartTextMarkerForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "nextParagraphEndTextMarkerForTextMarker", nextParagraphEndTextMarkerForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSelectedChild", setSelectedChildCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSelectedChildAtIndex", setSelectedChildAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "removeSelectionAtIndex", removeSelectionAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

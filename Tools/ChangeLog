@@ -1,3 +1,56 @@
+2016-02-12  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement paragraph related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=154098
+        <rdar://problem/24269675>
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (nextWordEndTextMarkerForTextMarkerCallback):
+        (paragraphTextMarkerRangeForTextMarkerCallback):
+        (previousParagraphStartTextMarkerForTextMarkerCallback):
+        (nextParagraphEndTextMarkerForTextMarkerCallback):
+        (setSelectedVisibleTextRangeCallback):
+        (AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::supportedActions):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousWordStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (WTR::_convertMathMultiscriptPairsToString):
+
 2016-02-12  Jason Marcell  <jmarcell@apple.com>
 
         Open source bot watcher's dashboard fails assertion in BuildbotQueue.prototype.compareIterationsByRevisions

@@ -840,45 +840,52 @@ static id startOrEndTextmarkerForRange(AXObjectCache* cache, RefPtr<Range> range
     return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
 }
 
-- (id)nextTextMarkerForNode:(Node&)node offset:(int)offset
-{
-    int nextOffset = offset + 1;
-    id textMarker = [self textMarkerForNode:node offset:nextOffset];
-    if (isTextMarkerIgnored(textMarker))
-        textMarker = [self nextTextMarkerForNode:node offset:nextOffset];
-    return textMarker;
-}
-
-- (id)previousTextMarkerForNode:(Node&)node offset:(int)offset
-{
-    int previousOffset = offset - 1;
-    id textMarker = [self textMarkerForNode:node offset:previousOffset];
-    if (isTextMarkerIgnored(textMarker))
-        textMarker = [self previousTextMarkerForNode:node offset:previousOffset];
-    return textMarker;
-}
-
-- (id)textMarkerForNode:(Node&)node offset:(int)offset ignoreStart:(BOOL)ignoreStart
-{
-    return textMarkerForCharacterOffset(m_object->axObjectCache(), node, offset, false, ignoreStart);
-}
-
-- (id)textMarkerForNode:(Node&)node offset:(int)offset
-{
-    return [self textMarkerForNode:node offset:offset ignoreStart:YES];
-}
-
-static id textMarkerForCharacterOffset(AXObjectCache* cache, Node& node, int offset, bool toNodeEnd, bool ignoreStart)
+static id nextTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset& characterOffset)
 {
     if (!cache)
         return nil;
     
-    Node* domNode = &node;
-    if (!domNode)
+    TextMarkerData textMarkerData;
+    cache->textMarkerDataForNextCharacterOffset(textMarkerData, characterOffset);
+    if (!textMarkerData.axID)
+        return nil;
+    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+}
+
+static id previousTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset& characterOffset)
+{
+    if (!cache)
         return nil;
     
     TextMarkerData textMarkerData;
-    cache->textMarkerDataForCharacterOffset(textMarkerData, node, offset, toNodeEnd, ignoreStart);
+    cache->textMarkerDataForPreviousCharacterOffset(textMarkerData, characterOffset);
+    if (!textMarkerData.axID)
+        return nil;
+    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+}
+
+- (id)nextTextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
+{
+    return nextTextMarkerForCharacterOffset(m_object->axObjectCache(), characterOffset);
+}
+
+- (id)previousTextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
+{
+    return previousTextMarkerForCharacterOffset(m_object->axObjectCache(), characterOffset);
+}
+
+- (id)textMarkerForCharacterOffset:(CharacterOffset&)characterOffset
+{
+    return textMarkerForCharacterOffset(m_object->axObjectCache(), characterOffset);
+}
+
+static id textMarkerForCharacterOffset(AXObjectCache* cache, const CharacterOffset& characterOffset)
+{
+    if (!cache)
+        return nil;
+    
+    TextMarkerData textMarkerData;
+    cache->textMarkerDataForCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID && !textMarkerData.ignored)
         return nil;
     
@@ -4066,12 +4073,12 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
     
     if ([attribute isEqualToString:@"AXNextTextMarkerForTextMarker"]) {
         CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        return [self nextTextMarkerForNode:*characterOffset.node offset:characterOffset.offset];
+        return [self nextTextMarkerForCharacterOffset:characterOffset];
     }
     
     if ([attribute isEqualToString:@"AXPreviousTextMarkerForTextMarker"]) {
         CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        return [self previousTextMarkerForNode:*characterOffset.node offset:characterOffset.offset];
+        return [self previousTextMarkerForCharacterOffset:characterOffset];
     }
     
     if ([attribute isEqualToString:@"AXLeftWordTextMarkerRangeForTextMarker"]) {
@@ -4111,9 +4118,12 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
     }
     
     if ([attribute isEqualToString:@"AXParagraphTextMarkerRangeForTextMarker"]) {
-        VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
-        VisiblePositionRange vpRange = m_object->paragraphForPosition(visiblePos);
-        return [self textMarkerRangeFromVisiblePositions:vpRange.start endPosition:vpRange.end];
+        AXObjectCache* cache = m_object->axObjectCache();
+        if (!cache)
+            return nil;
+        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
+        RefPtr<Range> range = cache->paragraphForCharacterOffset(characterOffset);
+        return [self textMarkerRangeFromRange:range];
     }
     
     if ([attribute isEqualToString:@"AXNextWordEndTextMarkerForTextMarker"]) {
@@ -4122,7 +4132,7 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
             return nil;
         CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
         CharacterOffset nextEnd = cache->nextWordEndCharacterOffset(characterOffset);
-        return [self textMarkerForNode:*nextEnd.node offset:nextEnd.offset];
+        return [self textMarkerForCharacterOffset:nextEnd];
     }
     
     if ([attribute isEqualToString:@"AXPreviousWordStartTextMarkerForTextMarker"]) {
@@ -4131,7 +4141,7 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
             return nil;
         CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
         CharacterOffset previousStart = cache->previousWordStartCharacterOffset(characterOffset);
-        return [self textMarkerForNode:*previousStart.node offset:previousStart.offset ignoreStart:NO];
+        return [self textMarkerForCharacterOffset:previousStart];
     }
     
     if ([attribute isEqualToString:@"AXNextLineEndTextMarkerForTextMarker"]) {
@@ -4160,8 +4170,12 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
     }
     
     if ([attribute isEqualToString:@"AXPreviousParagraphStartTextMarkerForTextMarker"]) {
-        VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
-        return [self textMarkerForVisiblePosition:m_object->previousParagraphStartPosition(visiblePos)];
+        AXObjectCache* cache = m_object->axObjectCache();
+        if (!cache)
+            return nil;
+        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
+        CharacterOffset previousStart = cache->previousParagraphStartCharacterOffset(characterOffset);
+        return [self textMarkerForCharacterOffset:previousStart];
     }
     
     if ([attribute isEqualToString:@"AXStyleTextMarkerRangeForTextMarker"]) {

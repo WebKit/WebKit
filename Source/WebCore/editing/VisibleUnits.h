@@ -116,6 +116,8 @@ unsigned suffixLengthForRange(RefPtr<Range>, Vector<UChar, 1024>&);
 unsigned prefixLengthForRange(RefPtr<Range>, Vector<UChar, 1024>&);
 unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
 unsigned forwardSearchForBoundaryWithTextIterator(TextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
+Node* findStartOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
+Node* findEndOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
 
 } // namespace WebCore
 

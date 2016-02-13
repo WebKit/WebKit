@@ -189,7 +189,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
     
     TextMarkerData textMarkerData;
-    cache->textMarkerDataForCharacterOffset(textMarkerData, *characterOffset.node, characterOffset.offset, false);
+    cache->textMarkerDataForCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID && !textMarkerData.ignored)
         return nil;
     return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
@@ -2425,20 +2425,28 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 
 - (WebAccessibilityTextMarker *)nextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
 {
-    characterOffset.offset = characterOffset.offset + 1;
-    WebAccessibilityTextMarker *textMarker = [WebAccessibilityTextMarker textMarkerWithCharacterOffset:characterOffset cache:m_object->axObjectCache()];
-    if (textMarker && textMarker.isIgnored)
-        textMarker = [self nextMarkerForCharacterOffset:characterOffset];
-    return textMarker;
+    AXObjectCache* cache = m_object->axObjectCache();
+    if (!cache)
+        return nil;
+    
+    TextMarkerData textMarkerData;
+    cache->textMarkerDataForNextCharacterOffset(textMarkerData, characterOffset);
+    if (!textMarkerData.axID)
+        return nil;
+    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
 }
 
 - (WebAccessibilityTextMarker *)previousMarkerForCharacterOffset:(CharacterOffset&)characterOffset
 {
-    characterOffset.offset = characterOffset.offset - 1;
-    WebAccessibilityTextMarker *textMarker = [WebAccessibilityTextMarker textMarkerWithCharacterOffset:characterOffset cache:m_object->axObjectCache()];
-    if (textMarker && textMarker.isIgnored)
-        textMarker = [self previousMarkerForCharacterOffset:characterOffset];
-    return textMarker;
+    AXObjectCache* cache = m_object->axObjectCache();
+    if (!cache)
+        return nil;
+    
+    TextMarkerData textMarkerData;
+    cache->textMarkerDataForPreviousCharacterOffset(textMarkerData, characterOffset);
+    if (!textMarkerData.axID)
+        return nil;
+    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
 }
 
 - (RefPtr<Range>)rangeForTextMarkers:(NSArray *)textMarkers

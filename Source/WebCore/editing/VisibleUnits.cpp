@@ -1142,24 +1142,9 @@ VisiblePosition nextSentencePosition(const VisiblePosition& position)
     return position.honorEditingBoundaryAtOrAfter(nextBoundary(position, nextSentencePositionBoundary));
 }
 
-VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
+Node* findStartOfParagraph(Node* startNode, Node* highestRoot, Node* startBlock, int& offset, Position::AnchorType& type, EditingBoundaryCrossingRule boundaryCrossingRule)
 {
-    Position p = c.deepEquivalent();
-    Node* startNode = p.deprecatedNode();
-
-    if (!startNode)
-        return VisiblePosition();
-    
-    if (isRenderedAsNonInlineTableImageOrHR(startNode))
-        return positionBeforeNode(startNode);
-
-    Node* startBlock = enclosingBlock(startNode);
-
     Node* node = startNode;
-    Node* highestRoot = highestEditableRoot(p);
-    int offset = p.deprecatedEditingOffset();
-    Position::AnchorType type = p.anchorType();
-
     Node* n = startNode;
     while (n) {
 #if ENABLE(USERSELECT_ALL)
@@ -1198,8 +1183,10 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
                 if (n == startNode && o < i)
                     i = std::max(0, o);
                 while (--i >= 0) {
-                    if (text[i] == '\n')
-                        return VisiblePosition(Position(downcast<Text>(n), i + 1), DOWNSTREAM);
+                    if (text[i] == '\n') {
+                        offset = i + 1;
+                        return n;
+                    }
                 }
             }
             node = n;
@@ -1213,33 +1200,12 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             n = NodeTraversal::previousPostOrder(*n, startBlock);
     }
 
-    if (type == Position::PositionIsOffsetInAnchor) {
-        ASSERT(type == Position::PositionIsOffsetInAnchor || !offset);
-        return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
-    }
-
-    return VisiblePosition(Position(node, type), DOWNSTREAM);
+    return node;
 }
 
-VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
-{    
-    if (c.isNull())
-        return VisiblePosition();
-
-    Position p = c.deepEquivalent();
-    Node* startNode = p.deprecatedNode();
-
-    if (isRenderedAsNonInlineTableImageOrHR(startNode))
-        return positionAfterNode(startNode);
-    
-    Node* startBlock = enclosingBlock(startNode);
-    Node* stayInsideBlock = startBlock;
-    
+Node* findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayInsideBlock, int& offset, Position::AnchorType& type, EditingBoundaryCrossingRule boundaryCrossingRule)
+{
     Node* node = startNode;
-    Node* highestRoot = highestEditableRoot(p);
-    int offset = p.deprecatedEditingOffset();
-    Position::AnchorType type = p.anchorType();
-
     Node* n = startNode;
     while (n) {
 #if ENABLE(USERSELECT_ALL)
@@ -1279,8 +1245,10 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
                 int o = n == startNode ? offset : 0;
                 int length = text.length();
                 for (int i = o; i < length; ++i) {
-                    if (text[i] == '\n')
-                        return VisiblePosition(Position(downcast<Text>(n), i), DOWNSTREAM);
+                    if (text[i] == '\n') {
+                        offset = i;
+                        return n;
+                    }
                 }
             }
             node = n;
@@ -1293,7 +1261,62 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
         } else
             n = NodeTraversal::next(*n, stayInsideBlock);
     }
+    return node;
+}
 
+VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
+{
+    Position p = c.deepEquivalent();
+    Node* startNode = p.deprecatedNode();
+    
+    if (!startNode)
+        return VisiblePosition();
+    
+    if (isRenderedAsNonInlineTableImageOrHR(startNode))
+        return positionBeforeNode(startNode);
+    
+    Node* startBlock = enclosingBlock(startNode);
+    
+    Node* highestRoot = highestEditableRoot(p);
+    int offset = p.deprecatedEditingOffset();
+    Position::AnchorType type = p.anchorType();
+    
+    Node* node = findStartOfParagraph(startNode, highestRoot, startBlock, offset, type, boundaryCrossingRule);
+    
+    if (is<Text>(node))
+        return VisiblePosition(Position(downcast<Text>(node), offset), DOWNSTREAM);
+    
+    if (type == Position::PositionIsOffsetInAnchor) {
+        ASSERT(type == Position::PositionIsOffsetInAnchor || !offset);
+        return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
+    }
+    
+    return VisiblePosition(Position(node, type), DOWNSTREAM);
+}
+
+VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
+{    
+    if (c.isNull())
+        return VisiblePosition();
+    
+    Position p = c.deepEquivalent();
+    Node* startNode = p.deprecatedNode();
+    
+    if (isRenderedAsNonInlineTableImageOrHR(startNode))
+        return positionAfterNode(startNode);
+    
+    Node* startBlock = enclosingBlock(startNode);
+    Node* stayInsideBlock = startBlock;
+    
+    Node* highestRoot = highestEditableRoot(p);
+    int offset = p.deprecatedEditingOffset();
+    Position::AnchorType type = p.anchorType();
+    
+    Node* node = findEndOfParagraph(startNode, highestRoot, stayInsideBlock, offset, type, boundaryCrossingRule);
+    
+    if (is<Text>(node))
+        return VisiblePosition(Position(downcast<Text>(node), offset), DOWNSTREAM);
+    
     if (type == Position::PositionIsOffsetInAnchor)
         return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
 
