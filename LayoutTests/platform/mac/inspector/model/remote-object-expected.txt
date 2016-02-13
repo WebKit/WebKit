@@ -1596,6 +1596,12 @@ EXPRESSION: window.loadEvent
     "_properties": [
       {
         "_listeners": null,
+        "_name": "isTrusted",
+        "_type": "boolean",
+        "_value": "true"
+      },
+      {
+        "_listeners": null,
         "_name": "type",
         "_type": "string",
         "_value": "load"
@@ -1618,12 +1624,6 @@ EXPRESSION: window.loadEvent
         "_name": "eventPhase",
         "_type": "number",
         "_value": "2"
-      },
-      {
-        "_listeners": null,
-        "_name": "bubbles",
-        "_type": "boolean",
-        "_value": "false"
       }
     ],
     "_entries": null

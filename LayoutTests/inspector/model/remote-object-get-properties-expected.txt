@@ -37,9 +37,11 @@ type: object
 description: Event
 
 OWN PROPERTIES:
+    isTrusted
     __proto__
 
 DISPLAYABLE PROPERTIES:
+    isTrusted
     type
     target
     currentTarget
@@ -55,6 +57,7 @@ DISPLAYABLE PROPERTIES:
     __proto__
 
 ALL PROPERTIES:
+    isTrusted
     constructor
     type
     target

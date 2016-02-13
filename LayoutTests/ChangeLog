@@ -1,3 +1,10 @@
+2016-02-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix after r196520
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+
 2016-02-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196520
