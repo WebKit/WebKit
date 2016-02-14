@@ -1,3 +1,10 @@
+2016-02-13  Timothy Hatcher  <timothy@apple.com>
+
+        Adjust the appearance of mattewhite figures that are not widescreen.
+
+        * wp-content/themes/webkit/style.css:
+        (article .mattewhite:not(.widescreen):
+
 2016-02-12  Jonathan Davis  <jond@apple.com>
 
         Add a CSS class to remove padding when using mattewhite class for figures
