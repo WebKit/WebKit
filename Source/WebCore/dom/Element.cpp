@@ -31,6 +31,7 @@
 #include "CSSParser.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ClassChangeInvalidation.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ComposedTreeAncestorIterator.h"
@@ -76,7 +77,6 @@
 #include "ScrollLatchingState.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
-#include "StyleInvalidationAnalysis.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
@@ -1299,91 +1299,6 @@ static inline bool classStringHasClassName(const AtomicString& newClassString)
     return classStringHasClassName(newClassString.characters16(), length);
 }
 
-static Vector<AtomicStringImpl*, 4> collectClasses(const SpaceSplitString& classes)
-{
-    Vector<AtomicStringImpl*, 4> result;
-    result.reserveCapacity(classes.size());
-    for (unsigned i = 0; i < classes.size(); ++i)
-        result.uncheckedAppend(classes[i].impl());
-    return result;
-}
-
-struct ClassChange {
-    Vector<AtomicStringImpl*, 4> added;
-    Vector<AtomicStringImpl*, 4> removed;
-};
-
-static ClassChange computeClassChange(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
-{
-    ClassChange classChange;
-
-    unsigned oldSize = oldClasses.size();
-    unsigned newSize = newClasses.size();
-
-    if (!oldSize) {
-        classChange.added = collectClasses(newClasses);
-        return classChange;
-    }
-    if (!newSize) {
-        classChange.removed = collectClasses(oldClasses);
-        return classChange;
-    }
-
-    BitVector remainingClassBits;
-    remainingClassBits.ensureSize(oldSize);
-    // Class vectors tend to be very short. This is faster than using a hash table.
-    for (unsigned i = 0; i < newSize; ++i) {
-        bool foundFromBoth = false;
-        for (unsigned j = 0; j < oldSize; ++j) {
-            if (newClasses[i] == oldClasses[j]) {
-                remainingClassBits.quickSet(j);
-                foundFromBoth = true;
-            }
-        }
-        if (foundFromBoth)
-            continue;
-        classChange.added.append(newClasses[i].impl());
-    }
-    for (unsigned i = 0; i < oldSize; ++i) {
-        // If the bit is not set the the corresponding class has been removed.
-        if (remainingClassBits.quickGet(i))
-            continue;
-        classChange.removed.append(oldClasses[i].impl());
-    }
-
-    return classChange;
-}
-
-static void invalidateStyleForClassChange(Element& element, const Vector<AtomicStringImpl*, 4>& changedClasses, const DocumentRuleSets& ruleSets)
-{
-    Vector<AtomicStringImpl*, 4> changedClassesAffectingStyle;
-    for (auto* changedClass : changedClasses) {
-        if (ruleSets.features().classesInRules.contains(changedClass))
-            changedClassesAffectingStyle.append(changedClass);
-    };
-
-    if (changedClassesAffectingStyle.isEmpty())
-        return;
-
-    if (element.shadowRoot() && ruleSets.authorStyle()->hasShadowPseudoElementRules()) {
-        element.setNeedsStyleRecalc(FullStyleChange);
-        return;
-    }
-
-    element.setNeedsStyleRecalc(InlineStyleChange);
-
-    if (!element.firstElementChild())
-        return;
-
-    for (auto* changedClass : changedClassesAffectingStyle) {
-        auto* ancestorClassRules = ruleSets.ancestorClassRules(changedClass);
-        if (!ancestorClassRules)
-            continue;
-        StyleInvalidationAnalysis invalidationAnalysis(*ancestorClassRules);
-        invalidationAnalysis.invalidateStyle(element);
-    }
-}
-
 void Element::classAttributeChanged(const AtomicString& newClassString)
 {
     // Note: We'll need ElementData, but it doesn't have to be UniqueElementData.
@@ -1395,22 +1310,9 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
 
     auto oldClassNames = elementData()->classNames();
     auto newClassNames = newStringHasClasses ? SpaceSplitString(newClassString, shouldFoldCase) : SpaceSplitString();
-
-    StyleResolver* styleResolver = document().styleResolverIfExists();
-    bool shouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
-
-    ClassChange classChange;
-    if (shouldInvalidateStyle) {
-        classChange = computeClassChange(oldClassNames, newClassNames);
-        if (!classChange.removed.isEmpty())
-            invalidateStyleForClassChange(*this, classChange.removed, styleResolver->ruleSets());
-    }
-
-    elementData()->setClassNames(newClassNames);
-
-    if (shouldInvalidateStyle) {
-        if (!classChange.added.isEmpty())
-            invalidateStyleForClassChange(*this, classChange.added, styleResolver->ruleSets());
+    {
+        Style::ClassChangeInvalidation styleInvalidation(*this, oldClassNames, newClassNames);
+        elementData()->setClassNames(newClassNames);
     }
 
     if (hasRareData()) {

@@ -2624,6 +2624,7 @@ set(WebCore_SOURCES
     storage/StorageMap.cpp
     storage/StorageNamespaceProvider.cpp
 
+    style/ClassChangeInvalidation.cpp
     style/InlineTextBoxStyle.cpp
     style/RenderTreePosition.cpp
     style/StyleChange.cpp
