@@ -1,3 +1,11 @@
+2016-02-13  Dan Bernstein  <mitz@apple.com>
+
+        Removed the unused Frameworks group.
+
+        Rubber-stamped by Sam Weinig.
+
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+
 2016-02-13  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: DataGrid Header Cells should have Context Menu for Sorting
