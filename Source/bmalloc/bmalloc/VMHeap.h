@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ public:
 
     void deallocateSmallPage(std::unique_lock<StaticMutex>&, SmallPage*);
     void deallocateMediumPage(std::unique_lock<StaticMutex>&, MediumPage*);
-    void deallocateLargeObject(std::unique_lock<StaticMutex>&, LargeObject&);
+    void deallocateLargeObject(std::unique_lock<StaticMutex>&, LargeObject);
 
 private:
     LargeObject allocateLargeObject(LargeObject&, size_t);
@@ -95,14 +95,23 @@ inline LargeObject VMHeap::allocateLargeObject(LargeObject& largeObject, size_t 
 {
     BASSERT(largeObject.isFree());
 
+    LargeObject nextLargeObject;
+
     if (largeObject.size() - size > largeMin) {
         std::pair<LargeObject, LargeObject> split = largeObject.split(size);
         largeObject = split.first;
-        m_largeObjects.insert(split.second);
+        nextLargeObject = split.second;
     }
 
     vmAllocatePhysicalPagesSloppy(largeObject.begin(), largeObject.size());
     largeObject.setOwner(Owner::Heap);
+
+    // Be sure to set the owner for the object we return before inserting the leftover back
+    // into the free list. The free list asserts that we never insert an object that could
+    // have merged with its neighbor.
+    if (nextLargeObject)
+        m_largeObjects.insert(nextLargeObject);
+
     return largeObject.begin();
 }
 
@@ -151,25 +160,29 @@ inline void VMHeap::deallocateMediumPage(std::unique_lock<StaticMutex>& lock, Me
     m_mediumPages.push(page);
 }
 
-inline void VMHeap::deallocateLargeObject(std::unique_lock<StaticMutex>& lock, LargeObject& largeObject)
+inline void VMHeap::deallocateLargeObject(std::unique_lock<StaticMutex>& lock, LargeObject largeObject)
 {
     largeObject.setOwner(Owner::VMHeap);
-    
-    // If we couldn't merge with our neighbors before because they were in the
-    // VM heap, we can merge with them now.
-    LargeObject merged = largeObject.merge();
 
-    // Temporarily mark this object as allocated to prevent clients from merging
-    // with it or allocating it while we're messing with its physical pages.
-    merged.setFree(false);
+    // Multiple threads might scavenge concurrently, meaning that new merging opportunities
+    // become visible after we reacquire the lock. Therefore we loop.
+    do {
+        // If we couldn't merge with our neighbors before because they were in the
+        // VM heap, we can merge with them now.
+        largeObject = largeObject.merge();
 
-    lock.unlock();
-    vmDeallocatePhysicalPagesSloppy(merged.begin(), merged.size());
-    lock.lock();
+        // Temporarily mark this object as allocated to prevent clients from merging
+        // with it or allocating it while we're messing with its physical pages.
+        largeObject.setFree(false);
 
-    merged.setFree(true);
+        lock.unlock();
+        vmDeallocatePhysicalPagesSloppy(largeObject.begin(), largeObject.size());
+        lock.lock();
 
-    m_largeObjects.insert(merged);
+        largeObject.setFree(true);
+    } while (largeObject.prevCanMerge() || largeObject.nextCanMerge());
+
+    m_largeObjects.insert(largeObject);
 }
 
 } // namespace bmalloc

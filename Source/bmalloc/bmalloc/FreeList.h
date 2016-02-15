@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,8 @@ inline FreeList::FreeList()
 inline void FreeList::push(Owner owner, const LargeObject& largeObject)
 {
     BASSERT(largeObject.isFree());
+    BASSERT(!largeObject.prevCanMerge());
+    BASSERT(!largeObject.nextCanMerge());
     if (m_vector.size() == m_limit) {
         removeInvalidAndDuplicateEntries(owner);
         m_limit = std::max(m_vector.size() * freeListGrowFactor, freeListSearchDepth);
