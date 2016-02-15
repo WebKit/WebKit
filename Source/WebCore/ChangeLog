@@ -1,3 +1,13 @@
+2016-02-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !(ENABLE(SVG_FONTS) || ENABLE(SVG_OTF_CONVERTER)) build after r196322
+        https://bugs.webkit.org/show_bug.cgi?id=154104
+
+        Reviewed by Myles C. Maxfield.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+
 2016-02-14  Antti Koivisto  <antti@apple.com>
 
         Add test for class change style invalidation optimization
