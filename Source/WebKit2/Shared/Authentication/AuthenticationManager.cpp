@@ -116,7 +116,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, c
     auto pageID = frame->page()->pageID();
     uint64_t challengeID = addChallengeToChallengeMap({pageID, authenticationChallenge
 #if USE(NETWORK_SESSION)
-        , ChallengeCompletionHandler()
+        , { }
 #endif
     });
 
@@ -161,7 +161,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
 
     uint64_t challengeID = addChallengeToChallengeMap({pageID, authenticationChallenge
 #if USE(NETWORK_SESSION)
-        , ChallengeCompletionHandler()
+        , { }
 #endif
     });
 
@@ -219,17 +219,12 @@ void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID
         challenge.completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
         return;
     }
-#else
-    if (!coreClient) {
-        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
-        // We should not call Download::receivedCredential in the latter case.
-        Download::receivedCredential(challenge.challenge, credential);
-        return;
-    }
 #endif
 
-    ASSERT(coreClient);
-    coreClient->receivedCredential(challenge.challenge, credential);
+    if (coreClient)
+        coreClient->receivedCredential(challenge.challenge, credential);
+    else
+        receivedCredential(challenge.challenge, credential);
 }
 
 void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t challengeID)
@@ -252,17 +247,12 @@ void AuthenticationManager::continueWithoutCredentialForSingleChallenge(uint64_t
         challenge.completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential());
         return;
     }
-#else
-    if (!coreClient) {
-        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
-        // We should not call Download::receivedCredential in the latter case.
-        Download::receivedRequestToContinueWithoutCredential(challenge.challenge);
-        return;
-    }
 #endif
 
-    ASSERT(coreClient);
-    coreClient->receivedRequestToContinueWithoutCredential(challenge.challenge);
+    if (coreClient)
+        coreClient->receivedRequestToContinueWithoutCredential(challenge.challenge);
+    else
+        receivedRequestToContinueWithoutCredential(challenge.challenge);
 }
 
 void AuthenticationManager::cancelChallenge(uint64_t challengeID)
@@ -285,17 +275,12 @@ void AuthenticationManager::cancelSingleChallenge(uint64_t challengeID)
         challenge.completionHandler(AuthenticationChallengeDisposition::Cancel, Credential());
         return;
     }
-#else
-    if (!coreClient) {
-        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
-        // We should not call Download::receivedCredential in the latter case.
-        Download::receivedCancellation(challenge.challenge);
-        return;
-    }
 #endif
 
-    ASSERT(coreClient);
-    coreClient->receivedCancellation(challenge.challenge);
+    if (coreClient)
+        coreClient->receivedCancellation(challenge.challenge);
+    else
+        receivedCancellation(challenge.challenge);
 }
 
 void AuthenticationManager::performDefaultHandling(uint64_t challengeID)
@@ -318,17 +303,12 @@ void AuthenticationManager::performDefaultHandlingForSingleChallenge(uint64_t ch
         challenge.completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
         return;
     }
-#else
-    if (!coreClient) {
-        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
-        // We should not call Download::receivedCredential in the latter case.
-        Download::receivedRequestToPerformDefaultHandling(challenge.challenge);
-        return;
-    }
 #endif
 
-    ASSERT(coreClient);
-    coreClient->receivedRequestToPerformDefaultHandling(challenge.challenge);
+    if (coreClient)
+        coreClient->receivedRequestToPerformDefaultHandling(challenge.challenge);
+    else
+        receivedRequestToPerformDefaultHandling(challenge.challenge);
 }
 
 void AuthenticationManager::rejectProtectionSpaceAndContinue(uint64_t challengeID)
@@ -351,17 +331,12 @@ void AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge(u
         challenge.completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, Credential());
         return;
     }
-#else
-    if (!coreClient) {
-        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
-        // We should not call Download::receivedCredential in the latter case.
-        Download::receivedChallengeRejection(challenge.challenge);
-        return;
-    }
 #endif
 
-    ASSERT(coreClient);
-    coreClient->receivedChallengeRejection(challenge.challenge);
+    if (coreClient)
+        coreClient->receivedChallengeRejection(challenge.challenge);
+    else
+        receivedChallengeRejection(challenge.challenge);
 }
 
 } // namespace WebKit

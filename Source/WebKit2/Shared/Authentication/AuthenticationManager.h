@@ -76,6 +76,12 @@ public:
 
     uint64_t outstandingAuthenticationChallengeCount() const { return m_challenges.size(); }
 
+    static void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
+    static void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
+    static void receivedCancellation(const WebCore::AuthenticationChallenge&);
+    static void receivedRequestToPerformDefaultHandling(const WebCore::AuthenticationChallenge&);
+    static void receivedChallengeRejection(const WebCore::AuthenticationChallenge&);
+
 private:
     struct Challenge {
         uint64_t pageID;
