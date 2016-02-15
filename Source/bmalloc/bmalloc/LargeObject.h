@@ -219,11 +219,7 @@ inline LargeObject LargeObject::merge() const
     beginTag->setOwner(owner);
     endTag->init(beginTag);
 
-    LargeObject result(beginTag, endTag, range.begin());
-    BASSERT(result.prevIsAllocated());
-    BASSERT(result.nextIsAllocated());
-
-    return result;
+    return LargeObject(beginTag, endTag, range.begin());
 }
 
 inline std::pair<LargeObject, LargeObject> LargeObject::split(size_t size) const
