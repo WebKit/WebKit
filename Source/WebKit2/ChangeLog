@@ -1,3 +1,9 @@
+2016-02-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, land an additional Mac CMake build fix.
+
+        * PlatformMac.cmake:
+
 2016-02-14  Brian Burg  <bburg@apple.com>
 
         WKAutomationDelegate's requestAutomationSession should take a suggested session identifier
