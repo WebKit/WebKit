@@ -5,7 +5,7 @@ var http = require('http');
 var https = require('https');
 var data = require('../public/v2/data.js');
 var RunsData = data.RunsData;
-var Statistics = require('../public/v2/js/statistics.js');
+var Statistics = require('../public/shared/statistics.js');
 
 // FIXME: We shouldn't use a global variable like this.
 var settings;

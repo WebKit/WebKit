@@ -10,8 +10,7 @@
 <script src="js/jquery.flot.selection.js" defer></script>
 <script src="js/jquery.flot.time.js" defer></script>
 <script src="js/helper-classes.js" defer></script>
-<script src="js/shared.js" defer></script>
-<script src="js/statistics.js" defer></script>
+<script src="shared/statistics.js" defer></script>
 <link rel="stylesheet" href="common.css">
 <style type="text/css">
 
@@ -830,6 +829,10 @@ function fetchTest(repositories, builders, filename, platform, metric, callback)
         var data = response.configurations;
         callback(createRunAndResults(data.current), createRunAndResults(data.baseline), createRunAndResults(data.target));
     });
+}
+
+function fileNameFromPlatformAndTest(platformId, testId) {
+    return platformId + '-' + testId + '.json';
 }
 
 function init() {
