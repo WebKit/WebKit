@@ -47,11 +47,11 @@ public:
 private:
     // API::AutomationClient
     virtual bool allowsRemoteAutomation(WebProcessPool*) override { return remoteAutomationAllowed(); }
-    virtual void requestAutomationSession(WebProcessPool*) override { requestAutomationSession(); }
+    virtual void didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier) override;
 
     // RemoteInspector::Client
     virtual bool remoteAutomationAllowed() const override;
-    virtual void requestAutomationSession() override;
+    virtual void requestAutomationSession(const String& sessionIdentifier) override;
 
     WKProcessPool *m_processPool;
     WeakObjCPtr<id <_WKAutomationDelegate>> m_delegate;

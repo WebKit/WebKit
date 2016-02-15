@@ -26,6 +26,8 @@
 #ifndef APIAutomationClient_h
 #define APIAutomationClient_h
 
+#include <wtf/Forward.h>
+
 namespace WebKit {
 class WebProcessPool;
 }
@@ -37,7 +39,7 @@ public:
     virtual ~AutomationClient() { }
 
     virtual bool allowsRemoteAutomation(WebKit::WebProcessPool*) { return false; }
-    virtual void requestAutomationSession(WebKit::WebProcessPool*) { }
+    virtual void didRequestAutomationSession(WebKit::WebProcessPool*, const WTF::String&) { }
 };
 
 } // namespace API

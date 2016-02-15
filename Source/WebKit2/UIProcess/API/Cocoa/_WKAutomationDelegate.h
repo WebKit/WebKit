@@ -32,7 +32,7 @@
 @protocol _WKAutomationDelegate <NSObject>
 @optional
 - (BOOL)_processPoolAllowsRemoteAutomation:(WKProcessPool *)processPool;
-- (void)_processPoolDidRequestAutomationSession:(WKProcessPool *)processPool;
+- (void)_processPool:(WKProcessPool *)processPool didRequestAutomationSessionWithIdentifier:(NSString *)identifier;
 @end
 
 #endif // WK_API_ENABLED

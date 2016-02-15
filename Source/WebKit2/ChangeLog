@@ -1,3 +1,24 @@
+2016-02-14  Brian Burg  <bburg@apple.com>
+
+        WKAutomationDelegate's requestAutomationSession should take a suggested session identifier
+        https://bugs.webkit.org/show_bug.cgi?id=154012
+        <rdar://problem/24557697>
+
+        Reviewed by Darin Adler.
+
+        Add a string parameter to the delegate method for requesting a new session.
+
+        * UIProcess/API/APIAutomationClient.h:
+        (API::AutomationClient::didRequestAutomationSession):
+        (API::AutomationClient::requestAutomationSession): Deleted.
+        Rename the client method to better match the delegate method's name.
+
+        * UIProcess/API/Cocoa/_WKAutomationDelegate.h:
+        * UIProcess/Cocoa/AutomationClient.h:
+        * UIProcess/Cocoa/AutomationClient.mm:
+        (WebKit::AutomationClient::AutomationClient):
+        (WebKit::AutomationClient::requestAutomationSession):
+
 2016-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ and hopefully EFL build after r196499.

@@ -1,3 +1,15 @@
+2016-02-14  Brian Burg  <bburg@apple.com>
+
+        WKAutomationDelegate's requestAutomationSession should take a suggested session identifier
+        https://bugs.webkit.org/show_bug.cgi?id=154012
+        <rdar://problem/24557697>
+
+        Reviewed by Darin Adler.
+
+        Add a string parameter to the client method for requesting a new session.
+
+        * inspector/remote/RemoteInspector.h:
+
 2016-02-13  Timothy Hatcher  <timothy@apple.com>
 
         Fix WebAssembly bug URL in the feature list.

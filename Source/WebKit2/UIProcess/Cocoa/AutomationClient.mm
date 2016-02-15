@@ -33,6 +33,7 @@
 #import "WKProcessPool.h"
 #import "_WKAutomationDelegate.h"
 #import <JavaScriptCore/RemoteInspector.h>
+#import <wtf/text/WTFString.h>
 
 using namespace Inspector;
 
@@ -43,7 +44,7 @@ AutomationClient::AutomationClient(WKProcessPool *processPool, id <_WKAutomation
     , m_delegate(delegate)
 {
     m_delegateMethods.allowsRemoteAutomation = [delegate respondsToSelector:@selector(_processPoolAllowsRemoteAutomation:)];
-    m_delegateMethods.requestAutomationSession = [delegate respondsToSelector:@selector(_processPoolDidRequestAutomationSession:)];
+    m_delegateMethods.requestAutomationSession = [delegate respondsToSelector:@selector(_processPool:didRequestAutomationSessionWithIdentifier:)];
 
     RemoteInspector::singleton().setRemoteInspectorClient(this);
 }
@@ -51,6 +52,11 @@ AutomationClient::AutomationClient(WKProcessPool *processPool, id <_WKAutomation
 AutomationClient::~AutomationClient()
 {
     RemoteInspector::singleton().setRemoteInspectorClient(nullptr);
+}
+
+void AutomationClient::didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier)
+{
+    requestAutomationSession(sessionIdentifier);
 }
 
 bool AutomationClient::remoteAutomationAllowed() const
@@ -61,10 +67,10 @@ bool AutomationClient::remoteAutomationAllowed() const
     return false;
 }
 
-void AutomationClient::requestAutomationSession()
+void AutomationClient::requestAutomationSession(const String& sessionIdentifier)
 {
     if (m_delegateMethods.requestAutomationSession)
-        [m_delegate.get() _processPoolDidRequestAutomationSession:m_processPool];
+        [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:sessionIdentifier];
 }
 
 } // namespace WebKit

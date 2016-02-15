@@ -52,7 +52,7 @@ public:
     public:
         virtual ~Client() { }
         virtual bool remoteAutomationAllowed() const = 0;
-        virtual void requestAutomationSession() = 0;
+        virtual void requestAutomationSession(const String& sessionIdentifier) = 0;
     };
 
     static void startDisabled();
