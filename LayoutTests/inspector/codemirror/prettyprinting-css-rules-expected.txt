@@ -86,3 +86,6 @@ PASS
 -- Running test case: CodeMirror.PrettyPrinting.CSSRules.keep-prefixed-value.css
 PASS
 
+-- Running test case: CodeMirror.PrettyPrinting.CSSRules.css-variables.css
+PASS
+

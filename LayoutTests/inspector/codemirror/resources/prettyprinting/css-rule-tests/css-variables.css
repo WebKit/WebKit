@@ -1,0 +1,3 @@
+color: var(--foo-color);
+--foo-color: red; --foo-index: 1;
+--foo-bar:0;

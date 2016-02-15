@@ -519,6 +519,10 @@ CodeMirror.extendMode("css-rule", {
         if (/\bproperty\b/.test(token))
             return !(/\bmeta\b/.test(lastToken));
 
+        // Add new line before a CSS variable like `--foo`.
+        if (state.state === "maybeprop" && /\bvariable-2\b/.test(token))
+            return true;
+
         return false;
     },
 

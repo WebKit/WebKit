@@ -1,5 +1,16 @@
 2016-02-15  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: CSS variables are not formatted correctly
+        https://bugs.webkit.org/show_bug.cgi?id=154217
+        rdar://problem/24644154
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CodeMirrorFormatters.js:
+        (newlineBeforeToken): Check for `variable-2` token in the `maybeprop` state.
+
+2016-02-15  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: CodeMirror styles needs updated for CSS variables
         https://bugs.webkit.org/show_bug.cgi?id=154216
         rdar://problem/24644146

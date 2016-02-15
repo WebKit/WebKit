@@ -1,3 +1,16 @@
+2016-02-15  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: CSS variables are not formatted correctly
+        https://bugs.webkit.org/show_bug.cgi?id=154217
+        rdar://problem/24644154
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/codemirror/prettyprinting-css-rules-expected.txt:
+        * inspector/codemirror/prettyprinting-css-rules.html:
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/css-variables-expected.css: Added.
+        * inspector/codemirror/resources/prettyprinting/css-rule-tests/css-variables.css: Added.
+
 2016-02-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196563): It is no longer possible to call window.addEventListener without an explicit 'this'
