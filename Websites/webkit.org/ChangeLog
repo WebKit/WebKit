@@ -1,3 +1,10 @@
+2016-02-15  Timothy Hatcher  <timothy@apple.com>
+
+        Fix byline to avoid bumping into content sticks out.
+
+        * wp-content/themes/webkit/style.css:
+        (article .byline): Bump padding to avoid content with negative margins.
+
 2016-02-13  Timothy Hatcher  <timothy@apple.com>
 
         Adjust the appearance of mattewhite figures that are not widescreen.

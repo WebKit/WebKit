@@ -985,7 +985,7 @@ article .byline {
     float: left;
     width: 191px;
     text-align: right;
-    padding-right: 3rem;
+    padding-right: 4rem;
     box-sizing: border-box;
 }
 
@@ -1704,6 +1704,7 @@ header .menu-item { /* add bottom dimension to main menu items */
         float: none;
         text-align: center;
         margin-bottom: 3rem;
+        padding-right: 0;
     }
 
     article .byline p {
@@ -1725,6 +1726,7 @@ header .menu-item { /* add bottom dimension to main menu items */
         float: none;
         text-align: center;
         margin-bottom: 3rem;
+        padding-right: 0;
     }
 
     article .byline p {
