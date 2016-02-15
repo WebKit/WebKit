@@ -35,6 +35,17 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, true);
     }
 
+    // Static
+
+    static isInheritedPropertyName(name)
+    {
+        console.assert(typeof name === "string");
+        if (name in WebInspector.CSSKeywordCompletions.InheritedProperties)
+            return true;
+        // Check if the name is a CSS variable.
+        return name.startsWith("--");
+    }
+
     // Public
 
     get ownerStyle()
@@ -90,7 +101,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         this._enabled = enabled;
         this._implicit = implicit;
         this._anonymous = anonymous;
-        this._inherited = name in WebInspector.CSSKeywordCompletions.InheritedProperties;
+        this._inherited = WebInspector.CSSProperty.isInheritedPropertyName(name);
         this._valid = valid;
         this._styleSheetTextRange = styleSheetTextRange || null;
 

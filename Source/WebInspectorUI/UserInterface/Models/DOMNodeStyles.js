@@ -614,7 +614,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         for (var i = 0; payload.cssProperties && i < payload.cssProperties.length; ++i) {
             var propertyPayload = payload.cssProperties[i];
 
-            if (inherited && propertyPayload.name in WebInspector.CSSKeywordCompletions.InheritedProperties)
+            if (inherited && WebInspector.CSSProperty.isInheritedPropertyName(propertyPayload.name))
                 ++inheritedPropertyCount;
 
             var property = this._parseStylePropertyPayload(propertyPayload, i, styleDeclaration, text);
