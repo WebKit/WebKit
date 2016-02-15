@@ -1,5 +1,6 @@
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
+include(platform/Linux.cmake)
 include(platform/TextureMapper.cmake)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
@@ -40,7 +41,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/surfaces/efl"
     "${WEBCORE_DIR}/platform/graphics/surfaces/glx"
     "${WEBCORE_DIR}/platform/graphics/x11"
-    "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/efl"
@@ -186,9 +186,6 @@ list(APPEND WebCore_SOURCES
     platform/image-encoders/JPEGImageEncoder.cpp
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
-
-    platform/linux/GamepadDeviceLinux.cpp
-    platform/linux/MemoryPressureHandlerLinux.cpp
 
     platform/network/efl/NetworkStateNotifierEfl.cpp
 

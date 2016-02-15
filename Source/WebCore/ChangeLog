@@ -1,3 +1,16 @@
+2016-02-15  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Consolidated Linux-specific file lists.
+        https://bugs.webkit.org/show_bug.cgi?id=154219
+
+        Reviewed by Gyuyoung Kim.
+
+        No new tests needed.
+
+        * PlatformEfl.cmake: Moved Linux files and include dir to Linux.cmake.
+        * PlatformGTK.cmake: Ditto.
+        * platform/Linux.cmake: Added.
+
 2016-02-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !(ENABLE(SVG_FONTS) || ENABLE(SVG_OTF_CONVERTER)) build after r196322

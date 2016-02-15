@@ -1,5 +1,6 @@
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
+include(platform/Linux.cmake)
 include(platform/TextureMapper.cmake)
 
 set(WebCore_OUTPUT_NAME WebCoreGTK)
@@ -43,7 +44,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/wayland"
     "${WEBCORE_DIR}/platform/graphics/x11"
-    "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network/gtk"
     "${WEBCORE_DIR}/platform/network/soup"
@@ -151,9 +151,6 @@ list(APPEND WebCore_SOURCES
     platform/gtk/UserAgentGtk.cpp
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
-
-    platform/linux/GamepadDeviceLinux.cpp
-    platform/linux/MemoryPressureHandlerLinux.cpp
 
     platform/network/gtk/CredentialBackingStore.cpp
 
