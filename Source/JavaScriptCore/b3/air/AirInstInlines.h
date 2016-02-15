@@ -164,10 +164,10 @@ inline bool Inst::admitsStack(Arg& arg)
     return admitsStack(&arg - &args[0]);
 }
 
-inline bool Inst::shouldTryAliasingDef(unsigned& defIndex)
+inline Optional<unsigned> Inst::shouldTryAliasingDef()
 {
     if (!isX86())
-        return false;
+        return Nullopt;
 
     switch (opcode) {
     case Add32:
@@ -188,24 +188,20 @@ inline bool Inst::shouldTryAliasingDef(unsigned& defIndex)
     case MulFloat:
     case XorDouble:
     case XorFloat:
-        if (args.size() == 3) {
-            defIndex = 2;
-            return true;
-        }
+        if (args.size() == 3)
+            return 2;
         break;
     case BranchAdd32:
     case BranchAdd64:
-        if (args.size() == 4) {
-            defIndex = 3;
-            return true;
-        }
+        if (args.size() == 4)
+            return 3;
         break;
     case Patch:
-        return PatchCustom::shouldTryAliasingDef(*this, defIndex);
+        return PatchCustom::shouldTryAliasingDef(*this);
     default:
         break;
     }
-    return false;
+    return Nullopt;
 }
 
 inline bool isShiftValid(const Inst& inst)

@@ -992,11 +992,10 @@ private:
         m_worklistMoves.startAddingLowPriorityMoves();
         for (BasicBlock* block : m_code) {
             for (Inst& inst : *block) {
-                unsigned defArgIndex = 0;
-                if (inst.shouldTryAliasingDef(defArgIndex)) {
-                    Arg op1 = inst.args[defArgIndex - 2];
-                    Arg op2 = inst.args[defArgIndex - 1];
-                    Arg dest = inst.args[defArgIndex];
+                if (Optional<unsigned> defArgIndex = inst.shouldTryAliasingDef()) {
+                    Arg op1 = inst.args[*defArgIndex - 2];
+                    Arg op2 = inst.args[*defArgIndex - 1];
+                    Arg dest = inst.args[*defArgIndex];
 
                     if (op1 == dest || op2 == dest)
                         continue;

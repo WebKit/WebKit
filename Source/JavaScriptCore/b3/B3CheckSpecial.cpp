@@ -130,13 +130,11 @@ bool CheckSpecial::admitsStack(Inst& inst, unsigned argIndex)
     return admitsStackImpl(numB3Args(inst), m_numCheckArgs + 1, inst, argIndex);
 }
 
-bool CheckSpecial::shouldTryAliasingDef(Inst& inst, unsigned& defIndex)
+Optional<unsigned> CheckSpecial::shouldTryAliasingDef(Inst& inst)
 {
-    if (hiddenBranch(inst).shouldTryAliasingDef(defIndex)) {
-        defIndex += 1;
-        return true;
-    }
-    return false;
+    if (Optional<unsigned> branchDef = hiddenBranch(inst).shouldTryAliasingDef())
+        return *branchDef + 1;
+    return Nullopt;
 }
 
 CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext& context)

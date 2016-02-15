@@ -50,9 +50,9 @@ CString Special::name() const
     return out.toCString();
 }
 
-bool Special::shouldTryAliasingDef(Inst&, unsigned&)
+Optional<unsigned> Special::shouldTryAliasingDef(Inst&)
 {
-    return false;
+    return Nullopt;
 }
 
 bool Special::hasNonArgNonControlEffects()

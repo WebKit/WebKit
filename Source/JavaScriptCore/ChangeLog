@@ -1,3 +1,26 @@
+2016-02-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Improve the interface of Inst::shouldTryAliasingDef()
+        https://bugs.webkit.org/show_bug.cgi?id=154227
+
+        Reviewed by Andreas Kling.
+
+        Using Optional<> instead of a bool+reference looks cleaner
+        at the call sites.
+
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::shouldTryAliasingDef):
+        * b3/B3CheckSpecial.h:
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::shouldTryAliasingDef):
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::shouldTryAliasingDef):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirSpecial.cpp:
+        (JSC::B3::Air::Special::shouldTryAliasingDef):
+        * b3/air/AirSpecial.h:
+
 2016-02-14  Brian Burg  <bburg@apple.com>
 
         WKAutomationDelegate's requestAutomationSession should take a suggested session identifier
