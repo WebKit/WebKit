@@ -1,3 +1,24 @@
+2016-02-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Organize, deduplicate & comment JSDOMWindowCustom getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=154224
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::jsDOMWindowGetOwnPropertySlotNamedItemGetter):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+            - organized property access sequence into a more logical order, removed
+              duplicated code & added comments.
+        (WebCore::namedItemGetter): Deleted.
+            - there was no need for a custom callback here; merged functionality into
+              jsDOMWindowGetOwnPropertySlotNamedItemGetter.
+        (WebCore::jsDOMWindowGetOwnPropertySlotCrossOrigin): Deleted.
+            - renamed to jsDOMWindowGetOwnPropertySlotRestrictedAccess
+              (this now also handles frameless access).
+
 2016-02-15  Daniel Bates  <dabates@apple.com>
 
         CSP: 'sandbox' should be ignored in report-only mode
