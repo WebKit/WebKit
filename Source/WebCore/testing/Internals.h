@@ -89,6 +89,7 @@ public:
 
     String address(Node*);
     bool nodeNeedsStyleRecalc(Node*, ExceptionCode&);
+    String styleChangeType(Node*, ExceptionCode&);
     String description(Deprecated::ScriptValue);
 
     bool isPreloaded(const String& url);

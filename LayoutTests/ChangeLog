@@ -1,3 +1,15 @@
+2016-02-14  Antti Koivisto  <antti@apple.com>
+
+        Add test for class change style invalidation optimization
+        https://bugs.webkit.org/show_bug.cgi?id=154226
+
+        Reviewed by Myles Maxfield.
+
+        Test for https://trac.webkit.org/r196383
+
+        * fast/css/style-invalidation-class-change-descendants-expected.txt: Added.
+        * fast/css/style-invalidation-class-change-descendants.html: Added.
+
 2016-02-15  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed. EFL gardening. Mark more video tests to failure.

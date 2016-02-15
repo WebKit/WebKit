@@ -464,6 +464,34 @@ bool Internals::nodeNeedsStyleRecalc(Node* node, ExceptionCode& exception)
     return node->needsStyleRecalc();
 }
 
+static String styleChangeTypeToString(StyleChangeType type)
+{
+    switch (type) {
+    case NoStyleChange:
+        return "NoStyleChange";
+    case InlineStyleChange:
+        return "InlineStyleChange";
+    case FullStyleChange:
+        return "FullStyleChange";
+    case SyntheticStyleChange:
+        return "SyntheticStyleChange";
+    case ReconstructRenderTree:
+        return "ReconstructRenderTree";
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+String Internals::styleChangeType(Node* node, ExceptionCode& exception)
+{
+    if (!node) {
+        exception = INVALID_ACCESS_ERR;
+        return { };
+    }
+
+    return styleChangeTypeToString(node->styleChangeType());
+}
+
 String Internals::description(Deprecated::ScriptValue value)
 {
     return toString(value.jsValue());

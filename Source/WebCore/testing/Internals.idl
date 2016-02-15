@@ -68,6 +68,7 @@ enum AutoFillButtonType {
 ] interface Internals {
     DOMString address(Node node);
     [RaisesException] boolean nodeNeedsStyleRecalc(Node node);
+    [RaisesException] DOMString styleChangeType(Node node);
     DOMString description(any value);
 
     // Animated image pausing testing.
