@@ -4087,7 +4087,7 @@ PASS BarProp interface object length
 PASS BarProp interface object name 
 PASS BarProp interface: existence and properties of interface prototype object 
 PASS BarProp interface: existence and properties of interface prototype object's "constructor" property 
-FAIL BarProp interface: attribute visible assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS BarProp interface: attribute visible 
 PASS History interface: existence and properties of interface object 
 PASS History interface object length 
 PASS History interface object name 
