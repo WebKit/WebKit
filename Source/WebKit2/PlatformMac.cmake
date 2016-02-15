@@ -282,7 +282,6 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm
     WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm
-    WebProcess/Plugins/Netscape/mac/WKNPAPIPlugInContainer.mm
 
     WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm
     WebProcess/Plugins/PDF/PDFPlugin.mm

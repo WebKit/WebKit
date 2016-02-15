@@ -1,3 +1,12 @@
+2016-02-15  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake][Mac] Remove WKNPAPIPlugInContainer.mm in WebKit2/PlatformMac.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=154234
+
+        Reviewed by Csaba Osztrogonác.
+
+        * PlatformMac.cmake: Remove WKNPAPIPlugInContainer.mm.
+
 2016-02-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, land an additional Mac CMake build fix.
