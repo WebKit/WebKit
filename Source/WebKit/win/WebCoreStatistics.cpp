@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <JavaScriptCore/Profile.h>
+#include <WebCore/DOMWindow.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPage.h>

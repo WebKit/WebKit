@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/VM.h>
+#include <WebCore/DOMWindow.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
 #include <runtime/JSLock.h>

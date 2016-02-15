@@ -1,3 +1,10 @@
+2016-02-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Window build fix.
+
+        * WebCoreStatistics.cpp:
+        * WebJavaScriptCollector.cpp:
+
 2016-02-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit should expose the DOM 4 Event.isTrusted property
