@@ -1,3 +1,9 @@
+2016-02-15  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed. EFL gardening. Mark more video tests to failure.
+
+        * platform/efl/TestExpectations: Added more crash tests and moved the tests to upper position.
+
 2016-02-14  Simon Fraser  <simon.fraser@apple.com>
 
         [CSS Filters] When applying an SVG filter on a composited image using CSS the image is rendered without the filter
