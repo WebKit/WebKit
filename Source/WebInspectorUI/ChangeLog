@@ -1,5 +1,16 @@
 2016-02-15  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Sidebars are defaulting to their minimum width, instead of a good width
+        https://bugs.webkit.org/show_bug.cgi?id=154218
+        rdar://problem/24644192
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel): Default the setting value to 300 instead of 0, so the minimum isn't used.
+
+2016-02-15  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: CSS variables are not formatted correctly
         https://bugs.webkit.org/show_bug.cgi?id=154217
         rdar://problem/24644154

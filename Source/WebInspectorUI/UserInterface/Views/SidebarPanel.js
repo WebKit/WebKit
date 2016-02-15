@@ -33,7 +33,7 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
         this._displayName = displayName;
         this._selected = false;
 
-        this._widthSetting = new WebInspector.Setting(identifier + "-sidebar-panel-width", 0);
+        this._widthSetting = new WebInspector.Setting(identifier + "-sidebar-panel-width", 300);
         this._savedScrollPosition = 0;
 
         this.element.classList.add("panel", identifier);
