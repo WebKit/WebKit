@@ -1943,6 +1943,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget').value is XMLHttpRequestEventTarget
+PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestEventTarget').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestException').value is XMLHttpRequestException
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestException').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'XMLHttpRequestException').hasOwnProperty('set') is false

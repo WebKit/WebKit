@@ -2,22 +2,22 @@ CONSOLE MESSAGE: line 198: callback not yet supported
 XMLHttpRequest IDL tests
 
 
-FAIL XMLHttpRequestEventTarget interface: existence and properties of interface object assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface object length assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface object name assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: existence and properties of interface prototype object assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: attribute onloadstart assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: attribute onprogress assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: attribute onabort assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: attribute onerror assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: attribute onload assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: attribute ontimeout assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestEventTarget interface: attribute onloadend assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
-FAIL XMLHttpRequestUpload interface: existence and properties of interface object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
+PASS XMLHttpRequestEventTarget interface: existence and properties of interface object 
+PASS XMLHttpRequestEventTarget interface object length 
+PASS XMLHttpRequestEventTarget interface object name 
+PASS XMLHttpRequestEventTarget interface: existence and properties of interface prototype object 
+PASS XMLHttpRequestEventTarget interface: existence and properties of interface prototype object's "constructor" property 
+PASS XMLHttpRequestEventTarget interface: attribute onloadstart 
+PASS XMLHttpRequestEventTarget interface: attribute onprogress 
+PASS XMLHttpRequestEventTarget interface: attribute onabort 
+PASS XMLHttpRequestEventTarget interface: attribute onerror 
+PASS XMLHttpRequestEventTarget interface: attribute onload 
+PASS XMLHttpRequestEventTarget interface: attribute ontimeout 
+PASS XMLHttpRequestEventTarget interface: attribute onloadend 
+PASS XMLHttpRequestUpload interface: existence and properties of interface object 
 PASS XMLHttpRequestUpload interface object length 
 PASS XMLHttpRequestUpload interface object name 
-FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
+PASS XMLHttpRequestUpload interface: existence and properties of interface prototype object 
 PASS XMLHttpRequestUpload interface: existence and properties of interface prototype object's "constructor" property 
 PASS XMLHttpRequestUpload must be primary interface of (new XMLHttpRequest()).upload 
 PASS Stringification of (new XMLHttpRequest()).upload 
@@ -38,10 +38,10 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
 }" did not throw
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError 
-FAIL XMLHttpRequest interface: existence and properties of interface object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
+PASS XMLHttpRequest interface: existence and properties of interface object 
 PASS XMLHttpRequest interface object length 
 PASS XMLHttpRequest interface object name 
-FAIL XMLHttpRequest interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
+PASS XMLHttpRequest interface: existence and properties of interface prototype object 
 PASS XMLHttpRequest interface: existence and properties of interface prototype object's "constructor" property 
 PASS XMLHttpRequest interface: attribute onreadystatechange 
 PASS XMLHttpRequest interface: constant UNSENT on interface object 

@@ -37,7 +37,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class XMLHttpRequest;
 
-    class XMLHttpRequestUpload final : public EventTargetWithInlineData {
+    class XMLHttpRequestUpload final : public XMLHttpRequestEventTarget {
     public:
         explicit XMLHttpRequestUpload(XMLHttpRequest*);
 
