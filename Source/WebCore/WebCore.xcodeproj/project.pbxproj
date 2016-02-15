@@ -4190,6 +4190,8 @@
 		A5416FE618810EF80009FC5F /* YouTubeEmbedShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */; };
 		A54A82EC15228D2F00C72BA6 /* DOMNodePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A54A82EA15228CA300C72BA6 /* DOMNodePrivate.h */; };
 		A54A82F115228DF600C72BA6 /* DOMNodePrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A54A82EA15228CA300C72BA6 /* DOMNodePrivate.h */; };
+		A55639D11C6F09E300806D8E /* WorkerConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A55639D01C6EFD5900806D8E /* WorkerConsoleClient.h */; };
+		A55639D21C6F09E700806D8E /* WorkerConsoleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55639CF1C6EFD5900806D8E /* WorkerConsoleClient.cpp */; };
 		A56C5B9A189F34570082D13C /* WebConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56C5B98189F34570082D13C /* WebConsoleAgent.cpp */; };
 		A56C5B9B189F34570082D13C /* WebConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A56C5B99189F34570082D13C /* WebConsoleAgent.h */; };
 		A5732B0A136A161D005C8D7C /* DateComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5732B08136A161D005C8D7C /* DateComponents.cpp */; };
@@ -11848,6 +11850,8 @@
 		A5416FE318810EF80009FC5F /* YouTubeEmbedShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YouTubeEmbedShadowElement.cpp; sourceTree = "<group>"; };
 		A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouTubeEmbedShadowElement.h; sourceTree = "<group>"; };
 		A54A82EA15228CA300C72BA6 /* DOMNodePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMNodePrivate.h; sourceTree = "<group>"; };
+		A55639CF1C6EFD5900806D8E /* WorkerConsoleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerConsoleClient.cpp; sourceTree = "<group>"; };
+		A55639D01C6EFD5900806D8E /* WorkerConsoleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerConsoleClient.h; sourceTree = "<group>"; };
 		A56C5B98189F34570082D13C /* WebConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConsoleAgent.cpp; sourceTree = "<group>"; };
 		A56C5B99189F34570082D13C /* WebConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebConsoleAgent.h; sourceTree = "<group>"; };
 		A5732B08136A161D005C8D7C /* DateComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateComponents.cpp; sourceTree = "<group>"; };
@@ -16439,6 +16443,8 @@
 				2E4346330F546A8200B0F1BA /* Worker.cpp */,
 				2E4346340F546A8200B0F1BA /* Worker.h */,
 				2E4346350F546A8200B0F1BA /* Worker.idl */,
+				A55639CF1C6EFD5900806D8E /* WorkerConsoleClient.cpp */,
+				A55639D01C6EFD5900806D8E /* WorkerConsoleClient.h */,
 				A3E2642E14748991005A8588 /* WorkerEventQueue.cpp */,
 				A3E2642F14748991005A8588 /* WorkerEventQueue.h */,
 				2E4346360F546A8200B0F1BA /* WorkerGlobalScope.cpp */,
@@ -26686,6 +26692,7 @@
 				B2FA3D610AB75A6F000E5AC4 /* JSSVGCursorElement.h in Headers */,
 				B2FA3D630AB75A6F000E5AC4 /* JSSVGDefsElement.h in Headers */,
 				B2FA3D650AB75A6F000E5AC4 /* JSSVGDescElement.h in Headers */,
+				A55639D11C6F09E300806D8E /* WorkerConsoleClient.h in Headers */,
 				B2FA3D670AB75A6F000E5AC4 /* JSSVGDocument.h in Headers */,
 				B222F69D0AB771B80022EFAD /* JSSVGElement.h in Headers */,
 				8542A7990AE5C94400DF58DF /* JSSVGElementWrapperFactory.h in Headers */,
@@ -29863,6 +29870,7 @@
 				A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */,
 				97205AB51239291000B17380 /* ImageDocument.cpp in Sources */,
 				F55B3DC11251F12D003EF269 /* ImageInputType.cpp in Sources */,
+				A55639D21C6F09E700806D8E /* WorkerConsoleClient.cpp in Sources */,
 				089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */,
 				B275357B0B053814002CE64F /* ImageMac.mm in Sources */,
 				2D5A592F152525230036EE51 /* ImageOrientation.cpp in Sources */,

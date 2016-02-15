@@ -46,6 +46,7 @@ namespace WebCore {
 
     class JSWorkerGlobalScope;
     class ScriptSourceCode;
+    class WorkerConsoleClient;
     class WorkerGlobalScope;
 
     class WorkerScriptController {
@@ -96,6 +97,7 @@ namespace WebCore {
         RefPtr<JSC::VM> m_vm;
         WorkerGlobalScope* m_workerGlobalScope;
         JSC::Strong<JSWorkerGlobalScope> m_workerGlobalScopeWrapper;
+        std::unique_ptr<WorkerConsoleClient> m_consoleClient;
         bool m_executionForbidden;
         bool m_isTerminatingExecution { false };
         mutable Lock m_scheduledTerminationMutex;

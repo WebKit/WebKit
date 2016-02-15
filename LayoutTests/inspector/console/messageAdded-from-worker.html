@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerWorkerConsoleLog() {
+    let worker = new Worker("resources/worker-console-log.js");
+    worker.postMessage("log");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.messageAdded.worker");
+
+    suite.addTestCase({
+        name: "TriggerConsoleMessagesInWorker",
+        description: "Triggered console messages in a Worker should be received.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("triggerWorkerConsoleLog()");
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                InspectorTest.expectThat(event.data.message.messageText === "WORKER STARTED", "MessageAdded event should fire for started log.");
+                WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                    InspectorTest.expectThat(event.data.message.messageText === "WORKER RECEIVED MESSAGE", "MessageAdded event should fire for received message log.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Console messages should be received from console logs in a Worker.</p>
+</body>
+</html>

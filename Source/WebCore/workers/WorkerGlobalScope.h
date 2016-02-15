@@ -41,6 +41,10 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicStringHash.h>
 
+namespace Inspector {
+class ConsoleMessage;
+}
+
 namespace WebCore {
 
     class Blob;
@@ -124,6 +128,7 @@ namespace WebCore {
 
         virtual SecurityOrigin* topOrigin() const override { return m_topOrigin.get(); }
 
+        void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>);
         virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -136,6 +141,7 @@ namespace WebCore {
         void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
         virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) override;
+        void addMessageToWorkerConsole(std::unique_ptr<Inspector::ConsoleMessage>);
         void addMessageToWorkerConsole(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
 
     private:

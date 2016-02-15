@@ -33,6 +33,7 @@
 #include "JSEventTarget.h"
 #include "ScriptSourceCode.h"
 #include "WebCoreJSClientData.h"
+#include "WorkerConsoleClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
@@ -40,9 +41,9 @@
 #include <heap/StrongInlines.h>
 #include <interpreter/Interpreter.h>
 #include <runtime/Completion.h>
+#include <runtime/Error.h>
 #include <runtime/Exception.h>
 #include <runtime/ExceptionHelpers.h>
-#include <runtime/Error.h>
 #include <runtime/JSLock.h>
 #include <runtime/Watchdog.h>
 
@@ -63,6 +64,10 @@ WorkerScriptController::WorkerScriptController(WorkerGlobalScope* workerGlobalSc
 WorkerScriptController::~WorkerScriptController()
 {
     JSLockHolder lock(vm());
+    if (m_workerGlobalScopeWrapper) {
+        m_workerGlobalScopeWrapper->setConsoleClient(nullptr);
+        m_consoleClient = nullptr;
+    }
     m_workerGlobalScopeWrapper.clear();
     m_vm = nullptr;
 }
@@ -95,6 +100,9 @@ void WorkerScriptController::initScript()
     }
     ASSERT(m_workerGlobalScopeWrapper->globalObject() == m_workerGlobalScopeWrapper);
     ASSERT(asObject(m_workerGlobalScopeWrapper->prototype())->globalObject() == m_workerGlobalScopeWrapper);
+
+    m_consoleClient = std::make_unique<WorkerConsoleClient>(*m_workerGlobalScope);
+    m_workerGlobalScopeWrapper->setConsoleClient(m_consoleClient.get());
 }
 
 void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)

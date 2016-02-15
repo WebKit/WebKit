@@ -1,3 +1,14 @@
+2016-02-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Web Workers have no access to console for debugging
+        https://bugs.webkit.org/show_bug.cgi?id=26237
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/messageAdded-from-worker-expected.txt: Added.
+        * inspector/console/messageAdded-from-worker.html: Added.
+        * inspector/console/resources/worker-console-log.js: Added.
+
 2016-02-15  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: CSS variables are not formatted correctly

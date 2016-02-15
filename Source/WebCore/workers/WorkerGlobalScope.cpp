@@ -220,6 +220,17 @@ void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const 
     thread().workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
 }
 
+void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage> message)
+{
+    if (!isContextThread()) {
+        postTask(AddConsoleMessageTask(message->source(), message->level(), StringCapture(message->message())));
+        return;
+    }
+
+    thread().workerReportingProxy().postConsoleMessageToWorkerObject(message->source(), message->level(), message->message(), message->line(), message->column(), message->url());
+    addMessageToWorkerConsole(WTFMove(message));
+}
+
 void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
@@ -244,8 +255,6 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
 
 void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
-    ASSERT(isContextThread());
-
     std::unique_ptr<Inspector::ConsoleMessage> message;
 
     if (callStack)
@@ -253,6 +262,12 @@ void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageL
     else
         message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
 
+    addMessageToWorkerConsole(WTFMove(message));
+}
+
+void WorkerGlobalScope::addMessageToWorkerConsole(std::unique_ptr<Inspector::ConsoleMessage> message)
+{
+    ASSERT(isContextThread());
     InspectorInstrumentation::addMessageToConsole(this, WTFMove(message));
 }
 

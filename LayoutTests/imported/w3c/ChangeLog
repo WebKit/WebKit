@@ -1,3 +1,13 @@
+2016-02-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Web Workers have no access to console for debugging
+        https://bugs.webkit.org/show_bug.cgi?id=26237
+
+        Reviewed by Timothy Hatcher.
+
+        * web-platform-tests/streams-api/readable-streams/garbage-collection-expected.txt:
+        Update test results for a console.warn message that the test produces from a Worker.
+
 2016-02-14  Chris Dumez  <cdumez@apple.com>
 
         Window and WorkerGlobalScope should inherit EventTarget

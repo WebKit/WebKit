@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: line 37: Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.
+CONSOLE MESSAGE: line 37: Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.
+CONSOLE MESSAGE: line 37: Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.
+CONSOLE MESSAGE: line 37: Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.
 
 PASS ReadableStreamController methods should continue working properly when scripts lose their reference to the readable stream 
 PASS ReadableStream closed promise should fulfill even if the stream and reader JS references are lost 

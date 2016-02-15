@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 1: WORKER STARTED
+CONSOLE MESSAGE: line 7: WORKER RECEIVED MESSAGE
+Console messages should be received from console logs in a Worker.
+
+
+== Running test suite: Console.messageAdded.worker
+-- Running test case: TriggerConsoleMessagesInWorker
+PASS: MessageAdded event should fire for started log.
+PASS: MessageAdded event should fire for received message log.
+

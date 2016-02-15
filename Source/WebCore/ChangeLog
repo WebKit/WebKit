@@ -1,3 +1,52 @@
+2016-02-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Web Workers have no access to console for debugging
+        https://bugs.webkit.org/show_bug.cgi?id=26237
+
+        Reviewed by Timothy Hatcher.
+
+        This adds the most basic console message support to Workers.
+        Messages logged from workers get surfaced through the Page's console.
+        This lacks support for logging and interacting with arguments,
+        which would be addressed when adding more complete Worker
+        debugging tools.
+
+        Test: inspector/console/messageAdded-from-worker.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        (WebCore::WorkerScriptController::initScript):
+        Set the ConsoleClient for the Worker's global object. We route
+        the messages to the Page's console.
+
+        * bindings/js/WorkerScriptController.h:
+        * workers/WorkerConsoleClient.h: Added.
+        * workers/WorkerConsoleClient.cpp: Added.
+        (WebCore::WorkerConsoleClient::WorkerConsoleClient):
+        (WebCore::WorkerConsoleClient::~WorkerConsoleClient):
+        (WebCore::WorkerConsoleClient::profile):
+        (WebCore::WorkerConsoleClient::profileEnd):
+        (WebCore::WorkerConsoleClient::count):
+        (WebCore::WorkerConsoleClient::time):
+        (WebCore::WorkerConsoleClient::timeEnd):
+        (WebCore::WorkerConsoleClient::timeStamp):
+        Stub most console methods in a Worker.
+
+        (WebCore::WorkerConsoleClient::messageWithTypeAndLevel):
+        Send worker log messages to the global scope and on to the main page.
+
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::addConsoleMessage):
+        (WebCore::WorkerGlobalScope::addMessageToWorkerConsole):
+        Ideally we want to converge on simple addConsoleMessage
+        APIs that just take a ConsoleMessage, without a barrage
+        of parameters. Add these versions now.
+
 2016-02-15  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix.
