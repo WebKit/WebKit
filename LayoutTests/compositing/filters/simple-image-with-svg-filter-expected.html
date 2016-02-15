@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    img {
+        margin: 10px;
+        height: 100px;
+        width: 100px;
+    }
+    
+    svg {
+        display: none;
+    }
+    </style>
+</head>
+<body>
+    <!-- These two images should look the same. -->
+    <img style="-webkit-filter: url(#redToGreen);" src="data:image/gif;base64,R0lGODlhAQABAPAAAP8REf///yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==">
+    <img style="-webkit-filter: url(#redToGreen);" src="data:image/gif;base64,R0lGODlhAQABAPAAAP8REf///yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==">
+
+    <svg>
+      	<filter id="redToGreen">
+        <feColorMatrix type="matrix" values="0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0" />
+      </filter>
+    </svg>
+</body>
+</html>

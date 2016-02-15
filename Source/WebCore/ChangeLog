@@ -1,3 +1,18 @@
+2016-02-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [CSS Filters] When applying an SVG filter on a composited image using CSS the image is rendered without the filter
+        https://bugs.webkit.org/show_bug.cgi?id=154108
+
+        Reviewed by Sam Weinig.
+        
+        When checking whether we can directly composite an image, we need to check for software-rendered
+        filters.
+
+        Test: compositing/filters/simple-image-with-svg-filter.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+
 2016-02-14  Chris Dumez  <cdumez@apple.com>
 
         Drop the [EventTarget] WebKit-specific IDL extended attribute
