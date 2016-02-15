@@ -274,7 +274,10 @@ public:
 
     void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.movs(dest, m_assembler.asr(src, imm.m_value & 0x1f));
+        if (!imm.m_value)
+            move(src, dest);
+        else
+            m_assembler.movs(dest, m_assembler.asr(src, imm.m_value & 0x1f));
     }
 
     void urshift32(RegisterID shiftAmount, RegisterID dest)
@@ -297,7 +300,10 @@ public:
     
     void urshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.movs(dest, m_assembler.lsr(src, imm.m_value & 0x1f));
+        if (!imm.m_value)
+            move(src, dest);
+        else
+            m_assembler.movs(dest, m_assembler.lsr(src, imm.m_value & 0x1f));
     }
 
     void sub32(RegisterID src, RegisterID dest)
