@@ -53,6 +53,9 @@ public:
 
     void setFree(bool) const;
     bool isFree() const;
+
+    bool prevIsAllocated() const;
+    bool nextIsAllocated() const;
     
     Owner owner() const;
     void setOwner(Owner) const;
@@ -117,6 +120,21 @@ inline bool LargeObject::isFree() const
     validate();
     return m_beginTag->isFree();
 }
+
+inline bool LargeObject::prevIsAllocated() const
+{
+    EndTag* prev = m_beginTag->prev();
+
+    return !prev->isFree() || prev->owner() != this->owner();
+}
+
+inline bool LargeObject::nextIsAllocated() const
+{
+    BeginTag* next = m_endTag->next();
+
+    return !next->isFree() || next->owner() != this->owner();
+}
+
 
 inline Owner LargeObject::owner() const
 {
@@ -201,7 +219,11 @@ inline LargeObject LargeObject::merge() const
     beginTag->setOwner(owner);
     endTag->init(beginTag);
 
-    return LargeObject(beginTag, endTag, range.begin());
+    LargeObject result(beginTag, endTag, range.begin());
+    BASSERT(result.prevIsAllocated());
+    BASSERT(result.nextIsAllocated());
+
+    return result;
 }
 
 inline std::pair<LargeObject, LargeObject> LargeObject::split(size_t size) const
