@@ -35,7 +35,7 @@ class AudioContext;
     
 class DefaultAudioDestinationNode : public AudioDestinationNode {
 public:
-    static Ref<DefaultAudioDestinationNode> create(AudioContext* context)
+    static Ref<DefaultAudioDestinationNode> create(AudioContext& context)
     {
         return adoptRef(*new DefaultAudioDestinationNode(context));     
     }
@@ -57,7 +57,7 @@ public:
     virtual bool isPlaying() override;
 
 private:
-    explicit DefaultAudioDestinationNode(AudioContext*);
+    explicit DefaultAudioDestinationNode(AudioContext&);
     void createDestination();
 
     std::unique_ptr<AudioDestination> m_destination;

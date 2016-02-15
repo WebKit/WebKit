@@ -64,7 +64,7 @@ public:
         EXPONENTIAL_DISTANCE = 2,
     };
 
-    static Ref<PannerNode> create(AudioContext* context, float sampleRate)
+    static Ref<PannerNode> create(AudioContext& context, float sampleRate)
     {
         return adoptRef(*new PannerNode(context, sampleRate));
     }
@@ -133,7 +133,7 @@ public:
     virtual double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }
 
 private:
-    PannerNode(AudioContext*, float sampleRate);
+    PannerNode(AudioContext&, float sampleRate);
 
     // Returns the combined distance and cone gain attenuation.
     float distanceConeGain();

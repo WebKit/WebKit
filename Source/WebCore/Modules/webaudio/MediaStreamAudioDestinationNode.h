@@ -39,7 +39,7 @@ class MediaStreamAudioSource;
 
 class MediaStreamAudioDestinationNode : public AudioBasicInspectorNode {
 public:
-    static Ref<MediaStreamAudioDestinationNode> create(AudioContext*, size_t numberOfChannels);
+    static Ref<MediaStreamAudioDestinationNode> create(AudioContext&, size_t numberOfChannels);
 
     virtual ~MediaStreamAudioDestinationNode();
 
@@ -52,7 +52,7 @@ public:
     RealtimeMediaSource* mediaStreamSource();
 
 private:
-    MediaStreamAudioDestinationNode(AudioContext*, size_t numberOfChannels);
+    MediaStreamAudioDestinationNode(AudioContext&, size_t numberOfChannels);
 
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override { return 0; }

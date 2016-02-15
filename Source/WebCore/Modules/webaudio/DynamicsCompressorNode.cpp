@@ -38,7 +38,7 @@ static const unsigned defaultNumberOfOutputChannels = 2;
 
 namespace WebCore {
 
-DynamicsCompressorNode::DynamicsCompressorNode(AudioContext* context, float sampleRate)
+DynamicsCompressorNode::DynamicsCompressorNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
     addInput(std::make_unique<AudioNodeInput>(this));

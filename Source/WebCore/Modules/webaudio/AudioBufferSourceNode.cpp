@@ -49,12 +49,12 @@ const double DefaultGrainDuration = 0.020; // 20ms
 // to minimize linear interpolation aliasing.
 const double MaxRate = 1024;
 
-Ref<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* context, float sampleRate)
+Ref<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext& context, float sampleRate)
 {
     return adoptRef(*new AudioBufferSourceNode(context, sampleRate));
 }
 
-AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sampleRate)
+AudioBufferSourceNode::AudioBufferSourceNode(AudioContext& context, float sampleRate)
     : AudioScheduledSourceNode(context, sampleRate)
     , m_buffer(nullptr)
     , m_isLooping(false)
@@ -160,7 +160,7 @@ bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(AudioBus*, unsign
 
 bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destinationFrameOffset, size_t numberOfFrames)
 {
-    ASSERT(context()->isAudioThread());
+    ASSERT(context().isAudioThread());
 
     // Basic sanity checking
     ASSERT(bus);
@@ -413,7 +413,7 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     ASSERT(isMainThread());
     
     // The context must be locked since changing the buffer can re-configure the number of channels that are output.
-    AudioContext::AutoLocker contextLocker(*context());
+    AudioContext::AutoLocker contextLocker(context());
     
     // This synchronizes with process().
     std::lock_guard<Lock> lock(m_processMutex);
@@ -469,7 +469,7 @@ void AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbackMode, double
 {
     ASSERT(isMainThread());
 
-    context()->nodeWillBeginPlayback();
+    context().nodeWillBeginPlayback();
 
     if (m_playbackState != UNSCHEDULED_STATE) {
         ec = INVALID_STATE_ERR;
@@ -561,8 +561,8 @@ double AudioBufferSourceNode::totalPitchRate()
 bool AudioBufferSourceNode::looping()
 {
     static bool firstTime = true;
-    if (firstTime && context() && context()->scriptExecutionContext()) {
-        context()->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("AudioBufferSourceNode 'looping' attribute is deprecated.  Use 'loop' instead."));
+    if (firstTime && context().scriptExecutionContext()) {
+        context().scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("AudioBufferSourceNode 'looping' attribute is deprecated.  Use 'loop' instead."));
         firstTime = false;
     }
 
@@ -572,8 +572,8 @@ bool AudioBufferSourceNode::looping()
 void AudioBufferSourceNode::setLooping(bool looping)
 {
     static bool firstTime = true;
-    if (firstTime && context() && context()->scriptExecutionContext()) {
-        context()->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("AudioBufferSourceNode 'looping' attribute is deprecated.  Use 'loop' instead."));
+    if (firstTime && context().scriptExecutionContext()) {
+        context().scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("AudioBufferSourceNode 'looping' attribute is deprecated.  Use 'loop' instead."));
         firstTime = false;
     }
 

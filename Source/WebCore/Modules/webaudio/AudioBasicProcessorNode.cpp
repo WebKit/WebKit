@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-AudioBasicProcessorNode::AudioBasicProcessorNode(AudioContext* context, float sampleRate)
+AudioBasicProcessorNode::AudioBasicProcessorNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
     addInput(std::make_unique<AudioNodeInput>(this));
@@ -102,7 +102,7 @@ void AudioBasicProcessorNode::reset()
 // uninitialize and then re-initialize with the new channel count.
 void AudioBasicProcessorNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
-    ASSERT(context()->isAudioThread() && context()->isGraphOwner());
+    ASSERT(context().isAudioThread() && context().isGraphOwner());
     
     ASSERT(input == this->input(0));
     if (input != this->input(0))

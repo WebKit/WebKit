@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-GainNode::GainNode(AudioContext* context, float sampleRate)
+GainNode::GainNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_lastGain(1.0)
     , m_sampleAccurateGainValues(AudioNode::ProcessingSizeInFrames) // FIXME: can probably share temp buffer in context
@@ -91,7 +91,7 @@ void GainNode::reset()
 // uninitialize and then re-initialize with the new channel count.
 void GainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
-    ASSERT(context()->isAudioThread() && context()->isGraphOwner());
+    ASSERT(context().isAudioThread() && context().isGraphOwner());
 
     ASSERT(input && input == this->input(0));
     if (input != this->input(0))

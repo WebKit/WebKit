@@ -46,7 +46,7 @@ const size_t MaxFFTSize = 32768;
 
 namespace WebCore {
 
-ConvolverNode::ConvolverNode(AudioContext* context, float sampleRate)
+ConvolverNode::ConvolverNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_normalize(true)
 {
@@ -123,7 +123,7 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer, ExceptionCode& ec)
     if (!buffer)
         return;
 
-    if (buffer->sampleRate() != context()->sampleRate()) {
+    if (buffer->sampleRate() != context().sampleRate()) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -146,7 +146,7 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer, ExceptionCode& ec)
     bufferBus->setSampleRate(buffer->sampleRate());
 
     // Create the reverb with the given impulse response.
-    bool useBackgroundThreads = !context()->isOfflineContext();
+    bool useBackgroundThreads = !context().isOfflineContext();
     auto reverb = std::make_unique<Reverb>(bufferBus.get(), AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, useBackgroundThreads, m_normalize);
 
     {

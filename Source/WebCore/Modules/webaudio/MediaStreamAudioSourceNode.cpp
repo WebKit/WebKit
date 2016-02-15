@@ -41,7 +41,7 @@ Ref<MediaStreamAudioSourceNode> MediaStreamAudioSourceNode::create(AudioContext&
 }
 
 MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(AudioContext& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
-    : AudioNode(&context, context.sampleRate())
+    : AudioNode(context, context.sampleRate())
     , m_mediaStream(mediaStream)
     , m_audioTrack(audioTrack)
 {
@@ -97,7 +97,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
 
     {
         // The context must be locked when changing the number of output channels.
-        AudioContext::AutoLocker contextLocker(*context());
+        AudioContext::AutoLocker contextLocker(context());
 
         // Do any necesssary re-configuration to the output's number of channels.
         output(0)->setNumberOfChannels(numberOfChannels);

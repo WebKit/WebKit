@@ -41,7 +41,7 @@ class AudioContext;
     
 class MediaElementAudioSourceNode : public AudioNode, public AudioSourceProviderClient {
 public:
-    static Ref<MediaElementAudioSourceNode> create(AudioContext*, HTMLMediaElement*);
+    static Ref<MediaElementAudioSourceNode> create(AudioContext&, HTMLMediaElement*);
 
     virtual ~MediaElementAudioSourceNode();
 
@@ -58,7 +58,7 @@ public:
     void unlock();
 
 private:
-    MediaElementAudioSourceNode(AudioContext*, HTMLMediaElement*);
+    MediaElementAudioSourceNode(AudioContext&, HTMLMediaElement*);
 
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override { return 0; }

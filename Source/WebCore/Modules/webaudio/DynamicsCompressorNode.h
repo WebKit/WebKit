@@ -35,7 +35,7 @@ class DynamicsCompressor;
 
 class DynamicsCompressorNode : public AudioNode {
 public:
-    static Ref<DynamicsCompressorNode> create(AudioContext* context, float sampleRate)
+    static Ref<DynamicsCompressorNode> create(AudioContext& context, float sampleRate)
     {
         return adoptRef(*new DynamicsCompressorNode(context, sampleRate));
     }
@@ -62,7 +62,7 @@ private:
     virtual double tailTime() const override;
     virtual double latencyTime() const override;
 
-    DynamicsCompressorNode(AudioContext*, float sampleRate);
+    DynamicsCompressorNode(AudioContext&, float sampleRate);
 
     std::unique_ptr<DynamicsCompressor> m_dynamicsCompressor;
     RefPtr<AudioParam> m_threshold;

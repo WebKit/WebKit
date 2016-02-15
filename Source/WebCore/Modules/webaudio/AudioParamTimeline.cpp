@@ -113,13 +113,11 @@ void AudioParamTimeline::cancelScheduledValues(float startTime)
     }
 }
 
-float AudioParamTimeline::valueForContextTime(AudioContext* context, float defaultValue, bool& hasValue)
+float AudioParamTimeline::valueForContextTime(AudioContext& context, float defaultValue, bool& hasValue)
 {
-    ASSERT(context);
-
     {
         std::unique_lock<Lock> lock(m_eventsMutex, std::try_to_lock);
-        if (!lock.owns_lock() || !context || !m_events.size() || context->currentTime() < m_events[0].time()) {
+        if (!lock.owns_lock() || !m_events.size() || context.currentTime() < m_events[0].time()) {
             hasValue = false;
             return defaultValue;
         }
@@ -127,8 +125,8 @@ float AudioParamTimeline::valueForContextTime(AudioContext* context, float defau
 
     // Ask for just a single value.
     float value;
-    double sampleRate = context->sampleRate();
-    double startTime = context->currentTime();
+    double sampleRate = context.sampleRate();
+    double startTime = context.currentTime();
     double endTime = startTime + 1.1 / sampleRate; // time just beyond one sample-frame
     double controlRate = sampleRate / AudioNode::ProcessingSizeInFrames; // one parameter change per render quantum
     value = valuesForTimeRange(startTime, endTime, defaultValue, &value, 1, sampleRate, controlRate);

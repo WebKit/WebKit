@@ -45,7 +45,7 @@ class AudioContext;
 
 class AudioBufferSourceNode : public AudioScheduledSourceNode {
 public:
-    static Ref<AudioBufferSourceNode> create(AudioContext*, float sampleRate);
+    static Ref<AudioBufferSourceNode> create(AudioContext&, float sampleRate);
 
     virtual ~AudioBufferSourceNode();
 
@@ -102,7 +102,7 @@ public:
     virtual void finish() override;
 
 private:
-    AudioBufferSourceNode(AudioContext*, float sampleRate);
+    AudioBufferSourceNode(AudioContext&, float sampleRate);
 
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override { return 0; }

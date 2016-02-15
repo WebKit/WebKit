@@ -398,6 +398,14 @@ private:
     State m_state { State::Suspended };
 };
 
+inline bool operator==(const AudioContext& lhs, const AudioContext& rhs) {
+    return &lhs == &rhs;
+}
+
+inline bool operator!=(const AudioContext& lhs, const AudioContext& rhs) {
+    return &lhs != &rhs;
+}
+
 } // WebCore
 
 #endif // AudioContext_h

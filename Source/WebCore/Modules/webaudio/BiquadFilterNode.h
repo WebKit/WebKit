@@ -46,7 +46,7 @@ public:
         ALLPASS = 7
     };
 
-    static Ref<BiquadFilterNode> create(AudioContext* context, float sampleRate)
+    static Ref<BiquadFilterNode> create(AudioContext& context, float sampleRate)
     {
         return adoptRef(*new BiquadFilterNode(context, sampleRate));
     }
@@ -67,7 +67,7 @@ public:
                               Float32Array* phaseResponse);
 
 private:
-    BiquadFilterNode(AudioContext*, float sampleRate);
+    BiquadFilterNode(AudioContext&, float sampleRate);
 
     BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }
 };

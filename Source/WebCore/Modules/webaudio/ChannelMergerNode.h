@@ -38,7 +38,7 @@ class AudioContext;
     
 class ChannelMergerNode : public AudioNode {
 public:
-    static RefPtr<ChannelMergerNode> create(AudioContext*, float sampleRate, unsigned numberOfInputs);
+    static RefPtr<ChannelMergerNode> create(AudioContext&, float sampleRate, unsigned numberOfInputs);
 
     // AudioNode
     virtual void process(size_t framesToProcess) override;
@@ -53,7 +53,7 @@ private:
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override { return 0; }
 
-    ChannelMergerNode(AudioContext*, float sampleRate, unsigned numberOfInputs);
+    ChannelMergerNode(AudioContext&, float sampleRate, unsigned numberOfInputs);
 };
 
 } // namespace WebCore

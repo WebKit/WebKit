@@ -53,11 +53,11 @@ class AudioNode : public EventTargetWithInlineData {
 public:
     enum { ProcessingSizeInFrames = 128 };
 
-    AudioNode(AudioContext*, float sampleRate);
+    AudioNode(AudioContext&, float sampleRate);
     virtual ~AudioNode();
 
-    AudioContext* context() { return m_context.get(); }
-    const AudioContext* context() const { return m_context.get(); }
+    AudioContext& context() { return m_context.get(); }
+    const AudioContext& context() const { return m_context.get(); }
 
     enum NodeType {
         NodeTypeUnknown,
@@ -198,7 +198,7 @@ protected:
 private:
     volatile bool m_isInitialized;
     NodeType m_nodeType;
-    RefPtr<AudioContext> m_context;
+    Ref<AudioContext> m_context;
     float m_sampleRate;
     Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
     Vector<std::unique_ptr<AudioNodeOutput>> m_outputs;

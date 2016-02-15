@@ -37,7 +37,7 @@ class Reverb;
     
 class ConvolverNode : public AudioNode {
 public:
-    static Ref<ConvolverNode> create(AudioContext* context, float sampleRate)
+    static Ref<ConvolverNode> create(AudioContext& context, float sampleRate)
     {
         return adoptRef(*new ConvolverNode(context, sampleRate));
     }
@@ -58,7 +58,7 @@ public:
     void setNormalize(bool normalize) { m_normalize = normalize; }
 
 private:
-    ConvolverNode(AudioContext*, float sampleRate);
+    ConvolverNode(AudioContext&, float sampleRate);
 
     virtual double tailTime() const override;
     virtual double latencyTime() const override;

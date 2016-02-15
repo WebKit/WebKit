@@ -33,7 +33,7 @@ namespace WebCore {
 
 class AnalyserNode : public AudioBasicInspectorNode {
 public:
-    static Ref<AnalyserNode> create(AudioContext* context, float sampleRate)
+    static Ref<AnalyserNode> create(AudioContext& context, float sampleRate)
     {
         return adoptRef(*new AnalyserNode(context, sampleRate));
     }
@@ -67,7 +67,7 @@ private:
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override { return 0; }
 
-    AnalyserNode(AudioContext*, float sampleRate);
+    AnalyserNode(AudioContext&, float sampleRate);
 
     RealtimeAnalyser m_analyser;
 };

@@ -5,6 +5,222 @@
 
         Reviewed by Alex Christensen.
 
+        Drive-by fix: AudioContext should be a reference, not a pointer.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::AnalyserNode):
+        * Modules/webaudio/AnalyserNode.h:
+        (WebCore::AnalyserNode::create):
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::AudioBasicInspectorNode):
+        (WebCore::AudioBasicInspectorNode::connect):
+        (WebCore::AudioBasicInspectorNode::disconnect):
+        (WebCore::AudioBasicInspectorNode::checkNumberOfChannelsForInput):
+        (WebCore::AudioBasicInspectorNode::updatePullStatus):
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::AudioBasicProcessorNode):
+        (WebCore::AudioBasicProcessorNode::checkNumberOfChannelsForInput):
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::create):
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        (WebCore::AudioBufferSourceNode::startPlaying):
+        (WebCore::AudioBufferSourceNode::looping):
+        (WebCore::AudioBufferSourceNode::setLooping):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::createBufferSource):
+        (WebCore::AudioContext::createMediaElementSource):
+        (WebCore::AudioContext::createMediaStreamDestination):
+        (WebCore::AudioContext::createScriptProcessor):
+        (WebCore::AudioContext::createBiquadFilter):
+        (WebCore::AudioContext::createWaveShaper):
+        (WebCore::AudioContext::createPanner):
+        (WebCore::AudioContext::createConvolver):
+        (WebCore::AudioContext::createDynamicsCompressor):
+        (WebCore::AudioContext::createAnalyser):
+        (WebCore::AudioContext::createGain):
+        (WebCore::AudioContext::createDelay):
+        (WebCore::AudioContext::createChannelSplitter):
+        (WebCore::AudioContext::createChannelMerger):
+        (WebCore::AudioContext::createOscillator):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        (WebCore::AudioDestinationNode::render):
+        (WebCore::AudioDestinationNode::updateIsEffectivelyPlayingAudio):
+        * Modules/webaudio/AudioDestinationNode.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::disconnect):
+        (WebCore::AudioNode::setChannelCount):
+        (WebCore::AudioNode::setChannelCountMode):
+        (WebCore::AudioNode::setChannelInterpretation):
+        (WebCore::AudioNode::scriptExecutionContext):
+        (WebCore::AudioNode::processIfNecessary):
+        (WebCore::AudioNode::checkNumberOfChannelsForInput):
+        (WebCore::AudioNode::propagatesSilence):
+        (WebCore::AudioNode::pullInputs):
+        (WebCore::AudioNode::enableOutputsIfNecessary):
+        (WebCore::AudioNode::deref):
+        (WebCore::AudioNode::finishDeref):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::context):
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::connect):
+        (WebCore::AudioNodeInput::disconnect):
+        (WebCore::AudioNodeInput::disable):
+        (WebCore::AudioNodeInput::enable):
+        (WebCore::AudioNodeInput::updateInternalBus):
+        (WebCore::AudioNodeInput::bus):
+        (WebCore::AudioNodeInput::internalSummingBus):
+        (WebCore::AudioNodeInput::sumAllConnections):
+        (WebCore::AudioNodeInput::pull):
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::setNumberOfChannels):
+        (WebCore::AudioNodeOutput::updateNumberOfChannels):
+        (WebCore::AudioNodeOutput::propagateChannelCount):
+        (WebCore::AudioNodeOutput::pull):
+        (WebCore::AudioNodeOutput::bus):
+        (WebCore::AudioNodeOutput::fanOutCount):
+        (WebCore::AudioNodeOutput::paramFanOutCount):
+        (WebCore::AudioNodeOutput::addInput):
+        (WebCore::AudioNodeOutput::removeInput):
+        (WebCore::AudioNodeOutput::disconnectAllInputs):
+        (WebCore::AudioNodeOutput::addParam):
+        (WebCore::AudioNodeOutput::removeParam):
+        (WebCore::AudioNodeOutput::disconnectAllParams):
+        (WebCore::AudioNodeOutput::disable):
+        (WebCore::AudioNodeOutput::enable):
+        * Modules/webaudio/AudioNodeOutput.h:
+        (WebCore::AudioNodeOutput::context):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::value):
+        (WebCore::AudioParam::smooth):
+        (WebCore::AudioParam::calculateSampleAccurateValues):
+        (WebCore::AudioParam::calculateFinalValues):
+        (WebCore::AudioParam::calculateTimelineValues):
+        (WebCore::AudioParam::connect):
+        (WebCore::AudioParam::disconnect):
+        * Modules/webaudio/AudioParam.h:
+        (WebCore::AudioParam::create):
+        (WebCore::AudioParam::AudioParam):
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo):
+        (WebCore::AudioScheduledSourceNode::start):
+        (WebCore::AudioScheduledSourceNode::finish):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/AudioSummingJunction.cpp:
+        (WebCore::AudioSummingJunction::AudioSummingJunction):
+        (WebCore::AudioSummingJunction::~AudioSummingJunction):
+        (WebCore::AudioSummingJunction::changedOutputs):
+        (WebCore::AudioSummingJunction::updateRenderingState):
+        * Modules/webaudio/AudioSummingJunction.h:
+        (WebCore::AudioSummingJunction::context):
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        * Modules/webaudio/BiquadFilterNode.h:
+        (WebCore::BiquadFilterNode::create):
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        * Modules/webaudio/BiquadProcessor.h:
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::create):
+        (WebCore::ChannelMergerNode::ChannelMergerNode):
+        (WebCore::ChannelMergerNode::checkNumberOfChannelsForInput):
+        * Modules/webaudio/ChannelMergerNode.h:
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::create):
+        (WebCore::ChannelSplitterNode::ChannelSplitterNode):
+        * Modules/webaudio/ChannelSplitterNode.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode):
+        (WebCore::ConvolverNode::setBuffer):
+        * Modules/webaudio/ConvolverNode.h:
+        (WebCore::ConvolverNode::create):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        (WebCore::DefaultAudioDestinationNode::resume):
+        (WebCore::DefaultAudioDestinationNode::suspend):
+        (WebCore::DefaultAudioDestinationNode::close):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        (WebCore::DefaultAudioDestinationNode::create):
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        * Modules/webaudio/DelayNode.h:
+        (WebCore::DelayNode::create):
+        * Modules/webaudio/DelayProcessor.cpp:
+        (WebCore::DelayProcessor::DelayProcessor):
+        * Modules/webaudio/DelayProcessor.h:
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        (WebCore::DynamicsCompressorNode::create):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::GainNode):
+        (WebCore::GainNode::checkNumberOfChannelsForInput):
+        * Modules/webaudio/GainNode.h:
+        (WebCore::GainNode::create):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::create):
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::create):
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::MediaStreamAudioSourceNode):
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::offlineRender):
+        (WebCore::OfflineAudioDestinationNode::notifyComplete):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        (WebCore::OfflineAudioDestinationNode::create):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::create):
+        (WebCore::OscillatorNode::OscillatorNode):
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::PannerNode):
+        (WebCore::PannerNode::pullInputs):
+        (WebCore::PannerNode::process):
+        (WebCore::PannerNode::listener):
+        (WebCore::PannerNode::setPanningModel):
+        * Modules/webaudio/PannerNode.h:
+        (WebCore::PannerNode::create):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::create):
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        (WebCore::ScriptProcessorNode::initialize):
+        (WebCore::ScriptProcessorNode::fireProcessEvent):
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::WaveShaperNode):
+        (WebCore::WaveShaperNode::setOversample):
+        * Modules/webaudio/WaveShaperNode.h:
+        (WebCore::WaveShaperNode::create):
+
+2016-02-15  Jer Noble  <jer.noble@apple.com>
+
+        Null-deref crash in DefaultAudioDestinationNode::suspend()
+        https://bugs.webkit.org/show_bug.cgi?id=154248
+
+        Reviewed by Alex Christensen.
+
         Null-check scriptExecutionContext() before deref.
 
         * Modules/webaudio/DefaultAudioDestinationNode.cpp:

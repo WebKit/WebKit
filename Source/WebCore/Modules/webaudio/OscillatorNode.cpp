@@ -46,12 +46,12 @@ PeriodicWave* OscillatorNode::s_periodicWaveSquare = nullptr;
 PeriodicWave* OscillatorNode::s_periodicWaveSawtooth = nullptr;
 PeriodicWave* OscillatorNode::s_periodicWaveTriangle = nullptr;
 
-Ref<OscillatorNode> OscillatorNode::create(AudioContext* context, float sampleRate)
+Ref<OscillatorNode> OscillatorNode::create(AudioContext& context, float sampleRate)
 {
     return adoptRef(*new OscillatorNode(context, sampleRate));
 }
 
-OscillatorNode::OscillatorNode(AudioContext* context, float sampleRate)
+OscillatorNode::OscillatorNode(AudioContext& context, float sampleRate)
     : AudioScheduledSourceNode(context, sampleRate)
     , m_type(SINE)
     , m_firstRender(true)

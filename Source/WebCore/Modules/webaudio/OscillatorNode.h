@@ -51,7 +51,7 @@ public:
         CUSTOM = 4
     };
 
-    static Ref<OscillatorNode> create(AudioContext*, float sampleRate);
+    static Ref<OscillatorNode> create(AudioContext&, float sampleRate);
 
     virtual ~OscillatorNode();
     
@@ -70,7 +70,7 @@ public:
     void setPeriodicWave(PeriodicWave*);
 
 private:
-    OscillatorNode(AudioContext*, float sampleRate);
+    OscillatorNode(AudioContext&, float sampleRate);
 
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override { return 0; }

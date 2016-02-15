@@ -38,7 +38,7 @@ class AudioContext;
 
 class AudioDestinationNode : public AudioNode, public AudioIOCallback {
 public:
-    AudioDestinationNode(AudioContext*, float sampleRate);
+    AudioDestinationNode(AudioContext&, float sampleRate);
     virtual ~AudioDestinationNode();
     
     // AudioNode   

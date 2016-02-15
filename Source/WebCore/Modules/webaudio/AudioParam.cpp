@@ -43,7 +43,7 @@ const double AudioParam::SnapThreshold = 0.001;
 float AudioParam::value()
 {
     // Update value for timeline.
-    if (context() && context()->isAudioThread()) {
+    if (context().isAudioThread()) {
         bool hasValue;
         float timelineValue = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), hasValue);
 
@@ -72,9 +72,8 @@ bool AudioParam::smooth()
     // If values have been explicitly scheduled on the timeline, then use the exact value.
     // Smoothing effectively is performed by the timeline.
     bool useTimelineValue = false;
-    if (context())
-        m_value = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), useTimelineValue);
-    
+    m_value = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), useTimelineValue);
+
     if (m_smoothedValue == m_value) {
         // Smoothed value has already approached and snapped to value.
         return true;
@@ -103,7 +102,7 @@ float AudioParam::finalValue()
 
 void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfValues)
 {
-    bool isSafe = context() && context()->isAudioThread() && values && numberOfValues;
+    bool isSafe = context().isAudioThread() && values && numberOfValues;
     ASSERT(isSafe);
     if (!isSafe)
         return;
@@ -113,7 +112,7 @@ void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfV
 
 void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bool sampleAccurate)
 {
-    bool isGood = context() && context()->isAudioThread() && values && numberOfValues;
+    bool isGood = context().isAudioThread() && values && numberOfValues;
     ASSERT(isGood);
     if (!isGood)
         return;
@@ -154,8 +153,8 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
 {
     // Calculate values for this render quantum.
     // Normally numberOfValues will equal AudioNode::ProcessingSizeInFrames (the render quantum size).
-    double sampleRate = context()->sampleRate();
-    double startTime = context()->currentTime();
+    double sampleRate = context().sampleRate();
+    double startTime = context().currentTime();
     double endTime = startTime + numberOfValues / sampleRate;
 
     // Note we're running control rate at the sample-rate.
@@ -165,7 +164,7 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
 
 void AudioParam::connect(AudioNodeOutput* output)
 {
-    ASSERT(context()->isGraphOwner());
+    ASSERT(context().isGraphOwner());
 
     ASSERT(output);
     if (!output)
@@ -180,7 +179,7 @@ void AudioParam::connect(AudioNodeOutput* output)
 
 void AudioParam::disconnect(AudioNodeOutput* output)
 {
-    ASSERT(context()->isGraphOwner());
+    ASSERT(context().isGraphOwner());
 
     ASSERT(output);
     if (!output)

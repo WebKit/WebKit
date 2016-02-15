@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-WaveShaperNode::WaveShaperNode(AudioContext* context)
-    : AudioBasicProcessorNode(context, context->sampleRate())
+WaveShaperNode::WaveShaperNode(AudioContext& context)
+    : AudioBasicProcessorNode(context, context.sampleRate())
 {
-    m_processor = std::make_unique<WaveShaperProcessor>(context->sampleRate(), 1);
+    m_processor = std::make_unique<WaveShaperProcessor>(context.sampleRate(), 1);
     setNodeType(NodeTypeWaveShaper);
 
     initialize();
@@ -58,7 +58,7 @@ void WaveShaperNode::setOversample(const String& type, ExceptionCode& ec)
     ASSERT(isMainThread());
 
     // Synchronize with any graph changes or changes to channel configuration.
-    AudioContext::AutoLocker contextLocker(*context());
+    AudioContext::AutoLocker contextLocker(context());
 
     if (type == "none")
         waveShaperProcessor()->setOversample(WaveShaperProcessor::OverSampleNone);
