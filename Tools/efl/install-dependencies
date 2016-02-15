@@ -80,7 +80,7 @@ function installDependenciesWithApt {
         libmpg123-dev \
         liborc-0.4-dev \
         libp11-kit-dev \
-        libpng-dev \
+        libpng12-dev \
         libpulse-dev \
         libsqlite3-dev \
         libssl-dev \
@@ -92,7 +92,6 @@ function installDependenciesWithApt {
         libxcomposite-dev \
         libxcursor-dev \
         libxinerama-dev \
-        libxp-dev \
         libxrandr-dev \
         libxrender-dev \
         libxslt1-dev \
