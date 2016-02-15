@@ -1,3 +1,23 @@
+2016-02-15  Daniel Bates  <dabates@apple.com>
+
+        CSP: Allow schemeless source expressions to match an HTTP or HTTPS resource
+        https://bugs.webkit.org/show_bug.cgi?id=154177
+        <rdar://problem/22708772>
+
+        Reviewed by Brent Fulgham.
+
+        Allow a schemeless source expression to match an HTTP or HTTPS subresource when the page is
+        delivered over HTTP as per section Matching Source Expressions of the Content Security Policy
+        2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721/> (21 July 2015).
+
+        Currently we have logic that implements this functionality, but it is guarded behind the compile-
+        time macro ENABLE(CSP_NEXT) that is disabled by default. Instead we should always compile such
+        code. In subsequent commits we will move more code out from under the ENABLE(CSP_NEXT)-guard
+        towards removing the ENABLE_CSP_NEXT macro entirely.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::protocolMatchesSelf):
+
 2016-02-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Consolidated Linux-specific file lists.

@@ -1,3 +1,20 @@
+2016-02-15  Daniel Bates  <dabates@apple.com>
+
+        CSP: Allow schemeless source expressions to match an HTTP or HTTPS resource
+        https://bugs.webkit.org/show_bug.cgi?id=154177
+        <rdar://problem/22708772>
+
+        Reviewed by Brent Fulgham.
+
+        Update test case and expected result to test that a schemeless source expression
+        matches an HTTPS subresource (and does not trigger a Content Security Policy violation)
+        when the page is served over HTTP.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-10-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-10.html: Change "no" to "yes"
+        so that we consider it a success (and continue printing "PASS") when we load and execute the
+        script, <https://127.0.0.1:8443/security/contentSecurityPolicy/resources/script.js>.
+
 2016-02-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196563

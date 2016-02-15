@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Refused to load the script 'https://127.0.0.1:8443/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 127.0.0.1:8443".
-
 None of these scripts should execute even though there are parse errors in the policy.
 
 

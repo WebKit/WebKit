@@ -147,10 +147,8 @@ bool ContentSecurityPolicy::urlMatchesSelf(const URL& url) const
 
 bool ContentSecurityPolicy::protocolMatchesSelf(const URL& url) const
 {
-#if ENABLE(CSP_NEXT)
     if (equalLettersIgnoringASCIICase(m_selfSourceProtocol, "http"))
         return url.protocolIsInHTTPFamily();
-#endif
     return equalIgnoringASCIICase(url.protocol(), m_selfSourceProtocol);
 }
 
