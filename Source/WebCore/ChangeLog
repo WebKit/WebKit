@@ -1,3 +1,9 @@
+2016-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        CMake build fix.
+
+        * PlatformMac.cmake:
+
 2016-02-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196563): It is no longer possible to call window.addEventListener without an explicit 'this'
