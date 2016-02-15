@@ -729,14 +729,16 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
                 lastInitializer = rhs;
             }
         }
-        
-        if (!head)
-            head = node;
-        else if (!tail) {
-            head = context.createCommaExpr(location, head);
-            tail = context.appendToCommaExpr(location, head, head, node);
-        } else
-            tail = context.appendToCommaExpr(location, head, tail, node);
+
+        if (node) {
+            if (!head)
+                head = node;
+            else if (!tail) {
+                head = context.createCommaExpr(location, head);
+                tail = context.appendToCommaExpr(location, head, head, node);
+            } else
+                tail = context.appendToCommaExpr(location, head, tail, node);
+        }
     } while (match(COMMA));
     if (lastIdent)
         lastPattern = context.createBindingLocation(lastIdentToken.m_location, *lastIdent, lastIdentToken.m_startPosition, lastIdentToken.m_endPosition, assignmentContext);

@@ -1,3 +1,17 @@
+2016-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Parser::parseVariableDeclarationList should null check the node before attempting to create a new CommaExpr
+        https://bugs.webkit.org/show_bug.cgi?id=154244
+        rdar://problem/24290670
+
+        Reviewed by Michael Saboff.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::appendToCommaExpr): Catch the bug sooner in debug.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList): Fix the bug.
+        * tests/stress/for-let-comma.js: Added. This used to crash in debug and release.
+
 2016-02-15  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve the interface of Inst::shouldTryAliasingDef()

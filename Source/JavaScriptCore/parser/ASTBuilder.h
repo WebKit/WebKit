@@ -729,6 +729,7 @@ public:
     CommaNode* appendToCommaExpr(const JSTokenLocation& location, ExpressionNode*, ExpressionNode* tail, ExpressionNode* next)
     {
         ASSERT(tail->isCommaNode());
+        ASSERT(next);
         CommaNode* newTail = new (m_parserArena) CommaNode(location, next);
         static_cast<CommaNode*>(tail)->setNext(newTail);
         return newTail;
