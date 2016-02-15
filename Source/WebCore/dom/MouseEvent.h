@@ -32,9 +32,9 @@ class DataTransfer;
 class PlatformMouseEvent;
 
 struct MouseEventInit : public MouseRelatedEventInit {
-    int clientX {0};
-    int clientY {0};
-    unsigned short button {0};
+    int clientX { 0 };
+    int clientY { 0 };
+    unsigned short button { 0 };
     RefPtr<EventTarget> relatedTarget;
 };
 
@@ -127,15 +127,6 @@ private:
     RefPtr<EventTarget> m_relatedTarget;
     double m_force { 0 };
     RefPtr<DataTransfer> m_dataTransfer;
-};
-
-class SimulatedMouseEvent final : public MouseEvent {
-public:
-    static Ref<SimulatedMouseEvent> create(const AtomicString& eventType, AbstractView*, PassRefPtr<Event> underlyingEvent, Element* target);
-    virtual ~SimulatedMouseEvent();
-
-private:
-    SimulatedMouseEvent(const AtomicString& eventType, AbstractView*, PassRefPtr<Event> underlyingEvent, Element* target);
 };
 
 } // namespace WebCore

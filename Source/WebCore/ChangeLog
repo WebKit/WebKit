@@ -1,3 +1,47 @@
+2016-02-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Refine SimulatedMouseEvent to support Event.isTrusted
+        https://bugs.webkit.org/show_bug.cgi?id=154133
+        <rdar://problem/24616246>
+
+        Reviewed by Darin Adler.
+
+        This patch extracts everything related to create/dispatch SimulatedMouseEvent from MouseEvent.h/cpp
+        and EventDispatcher.h/cpp, and produces SimulateClick.h/cpp which will handle simulated click solely.
+        After that, we hide the SimulatedMouseEvent and only expose simulateClick to be called. The reason is
+        that we both want to tell whether the call sites are from user agent/bindings and keep the
+        SimulatedMouseEvent intact.
+
+        Also, this patch separate Element::dispatchSimulatedClick into two: one for the user agent, and another
+        for the bindings. Therefore, HTMLElement.click will be treated as untrusted.
+
+        Some of the changes in this patch referred Blink r200401:
+        https://codereview.chromium.org/1285793004
+
+        Modified test:
+        LayoutTests/imported/blink/fast/events/event-trusted.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchSimulatedClick):
+        (WebCore::Element::dispatchSimulatedClickForBindings):
+        * dom/Element.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchSimulatedClick): Deleted.
+        * dom/EventDispatcher.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::SimulatedMouseEvent::create): Deleted.
+        (WebCore::SimulatedMouseEvent::~SimulatedMouseEvent): Deleted.
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent): Deleted.
+        * dom/MouseEvent.h:
+        * dom/SimulatedClick.cpp: Added.
+        (WebCore::simulateMouseEvent):
+        (WebCore::simulateClick):
+        * dom/SimulatedClick.h: Added.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::click):
+
 2016-02-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Web Workers have no access to console for debugging

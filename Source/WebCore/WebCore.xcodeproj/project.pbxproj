@@ -2311,6 +2311,8 @@
 		53EF766C16531994004CBE49 /* SettingsMacros.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 53EF766A16530A61004CBE49 /* SettingsMacros.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A7F201C6E5719009C6149 /* SimulatedClick.h */; };
+		572A7F231C6E5A66009C6149 /* SimulatedClick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */; };
 		580371611A66F00A00BAF519 /* ClipRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5803715F1A66F00A00BAF519 /* ClipRect.cpp */; };
 		580371621A66F00A00BAF519 /* ClipRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 580371601A66F00A00BAF519 /* ClipRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		580371641A66F1D300BAF519 /* LayerFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 580371631A66F1D300BAF519 /* LayerFragment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9849,6 +9851,8 @@
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55D408F71A7C631800C78450 /* SVGImageClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageClients.h; sourceTree = "<group>"; };
+		572A7F201C6E5719009C6149 /* SimulatedClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatedClick.h; sourceTree = "<group>"; };
+		572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulatedClick.cpp; sourceTree = "<group>"; };
 		5803715F1A66F00A00BAF519 /* ClipRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipRect.cpp; sourceTree = "<group>"; };
 		580371601A66F00A00BAF519 /* ClipRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipRect.h; sourceTree = "<group>"; };
 		580371631A66F1D300BAF519 /* LayerFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFragment.h; sourceTree = "<group>"; };
@@ -24355,6 +24359,8 @@
 				A6D169611346B49B000EB770 /* ShadowRoot.cpp */,
 				A6D169631346B4C1000EB770 /* ShadowRoot.h */,
 				9B19B67E1B964E5200348745 /* ShadowRoot.idl */,
+				572A7F201C6E5719009C6149 /* SimulatedClick.h */,
+				572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */,
 				31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */,
 				9B532EA11BA928570038A827 /* SlotAssignment.cpp */,
 				9B532EA21BA928570038A827 /* SlotAssignment.h */,
@@ -28062,6 +28068,7 @@
 				197B180C1506353200E4ADA8 /* SVGRenderingContext.h in Headers */,
 				B2227AA00D00BF220071B782 /* SVGRenderingIntent.h in Headers */,
 				BC2274790E8366E200E7F975 /* SVGRenderStyle.h in Headers */,
+				572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */,
 				BC22747B0E8366E200E7F975 /* SVGRenderStyleDefs.h in Headers */,
 				436708F212D9CA4B00044234 /* SVGRenderSupport.h in Headers */,
 				436708F412D9CA4B00044234 /* SVGRenderTreeAsText.h in Headers */,
@@ -31435,6 +31442,7 @@
 				7E8FADC4199A95B100714968 /* SubresourceLoaderCocoa.mm in Sources */,
 				E1FF8F5F1807442100132674 /* SubtleCrypto.cpp in Sources */,
 				93B2D8180F9920EE006AE6B2 /* SuddenTermination.mm in Sources */,
+				572A7F231C6E5A66009C6149 /* SimulatedClick.cpp in Sources */,
 				087558C513B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp in Sources */,
 				62C1217C11AB9E77003C462C /* SuspendableTimer.cpp in Sources */,
 				B22279730D00BF220071B782 /* SVGAElement.cpp in Sources */,

@@ -36,6 +36,12 @@ if (window.eventSender) {
     element.dispatchEvent(originalEvent);
     shouldBeTrue("redispatched");
     shouldBeFalse("originalEvent.isTrusted");
+
+    originalEvent = null;
+    element.removeEventListener('click', redispatch);
+    element.addEventListener('click', originalDispatch);
+    element.click();
+    shouldBeFalse("originalEvent.isTrusted");
 }
 
 </script>

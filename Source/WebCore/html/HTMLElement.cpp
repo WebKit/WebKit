@@ -809,7 +809,7 @@ void HTMLElement::setSpellcheck(bool enable)
 
 void HTMLElement::click()
 {
-    dispatchSimulatedClick(nullptr, SendNoEvents, DoNotShowPressedLook);
+    dispatchSimulatedClickForBindings(nullptr);
 }
 
 void HTMLElement::accessKeyAction(bool sendMouseEvents)

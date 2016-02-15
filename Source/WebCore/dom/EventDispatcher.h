@@ -39,7 +39,6 @@ namespace EventDispatcher {
 
 bool dispatchEvent(Node*, Event&);
 void dispatchScopedEvent(Node&, Event&);
-void dispatchSimulatedClick(Element*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 
 }
 

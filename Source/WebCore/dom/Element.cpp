@@ -77,6 +77,7 @@
 #include "ScrollLatchingState.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
+#include "SimulatedClick.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
@@ -312,7 +313,12 @@ bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 
 void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
 {
-    EventDispatcher::dispatchSimulatedClick(this, underlyingEvent, eventOptions, visualOptions);
+    simulateClick(*this, underlyingEvent, eventOptions, visualOptions, SimulatedClickCreationOptions::FromUserAgent);
+}
+
+void Element::dispatchSimulatedClickForBindings(Event* underlyingEvent)
+{
+    simulateClick(*this, underlyingEvent, SendNoEvents, DoNotShowPressedLook, SimulatedClickCreationOptions::FromBindings);
 }
 
 Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation type)

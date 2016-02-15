@@ -8,6 +8,7 @@ PASS createAndInitEvent().isTrusted is false
 PASS originalEvent.isTrusted is true
 PASS redispatched is true
 PASS originalEvent.isTrusted is false
+PASS originalEvent.isTrusted is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

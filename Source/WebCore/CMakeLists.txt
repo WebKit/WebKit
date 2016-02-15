@@ -1510,6 +1510,7 @@ set(WebCore_SOURCES
     dom/SecurityOriginPolicy.cpp
     dom/SelectorQuery.cpp
     dom/ShadowRoot.cpp
+    dom/SimulatedClick.cpp
     dom/SlotAssignment.cpp
     dom/SpaceSplitString.cpp
     dom/StaticNodeList.cpp

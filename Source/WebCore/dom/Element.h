@@ -459,6 +459,7 @@ public:
     bool dispatchWheelEvent(const PlatformWheelEvent&);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     void dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
+    void dispatchSimulatedClickForBindings(Event* underlyingEvent);
     void dispatchFocusInEvent(const AtomicString& eventType, RefPtr<Element>&& oldFocusedElement);
     void dispatchFocusOutEvent(const AtomicString& eventType, RefPtr<Element>&& newFocusedElement);
     virtual void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection);

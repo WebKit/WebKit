@@ -1,3 +1,14 @@
+2016-02-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Refine SimulatedMouseEvent to support Event.isTrusted
+        https://bugs.webkit.org/show_bug.cgi?id=154133
+        <rdar://problem/24616246>
+
+        Reviewed by Darin Adler.
+
+        * imported/blink/fast/events/event-trusted-expected.txt:
+        * imported/blink/fast/events/event-trusted.html:
+
 2016-02-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking animations/animation-delay-changed.html as flaky on ios-simulator
