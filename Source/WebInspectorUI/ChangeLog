@@ -1,3 +1,15 @@
+2016-02-15  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: CodeMirror styles needs updated for CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=154216
+        rdar://problem/24644146
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.cm-s-default .cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property)): Added .cm-variable-2.
+        (.cm-s-default .basic-block-has-not-executed.cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property)): Ditto.
+
 2016-02-13  Dan Bernstein  <mitz@apple.com>
 
         Removed the unused Frameworks group.

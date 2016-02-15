@@ -39,7 +39,7 @@
 }
 
 .cm-s-default :matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
-.cm-s-default .cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property),
+.cm-s-default .cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property),
 .syntax-highlighted :matches(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag) {
     color: var(--syntax-highlight-boolean-color);
 }
@@ -105,7 +105,7 @@
 }
 
 .cm-s-default .basic-block-has-not-executed:matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
-.cm-s-default .basic-block-has-not-executed.cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property) {
+.cm-s-default .basic-block-has-not-executed.cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property) {
     color: hsl(309, 21%, 70%);
 }
 
