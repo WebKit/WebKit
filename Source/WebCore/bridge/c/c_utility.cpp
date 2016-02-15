@@ -31,6 +31,7 @@
 #include "c_utility.h"
 
 #include "CRuntimeObject.h"
+#include "DOMWindow.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "NP_jsobject.h"

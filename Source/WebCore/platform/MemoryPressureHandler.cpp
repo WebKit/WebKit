@@ -27,6 +27,7 @@
 #include "MemoryPressureHandler.h"
 
 #include "CSSValuePool.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "FontCache.h"
 #include "FontCascade.h"

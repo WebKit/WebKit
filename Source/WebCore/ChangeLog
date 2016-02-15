@@ -1,5 +1,13 @@
 2016-02-14  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix the Windows build.
+
+        * Modules/webdatabase/Database.cpp:
+        * bridge/c/c_utility.cpp:
+        * platform/MemoryPressureHandler.cpp:
+
+2016-02-14  Chris Dumez  <cdumez@apple.com>
+
         Window and WorkerGlobalScope should inherit EventTarget
         https://bugs.webkit.org/show_bug.cgi?id=154170
         <rdar://problem/24642377>

@@ -31,6 +31,7 @@
 
 #include "ChangeVersionData.h"
 #include "ChangeVersionWrapper.h"
+#include "DOMWindow.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
