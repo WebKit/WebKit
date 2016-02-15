@@ -26,6 +26,7 @@
 #ifndef CSSFontSelector_h
 #define CSSFontSelector_h
 
+#include "CSSFontFace.h"
 #include "CachedResourceHandle.h"
 #include "Font.h"
 #include "FontSelector.h"
@@ -39,14 +40,14 @@
 
 namespace WebCore {
 
-class CSSFontFace;
 class CSSFontFaceRule;
 class CSSSegmentedFontFace;
+class CSSValueList;
 class CachedFont;
 class Document;
 class StyleRuleFontFace;
 
-class CSSFontSelector final : public FontSelector {
+class CSSFontSelector final : public FontSelector, public CSSFontFaceClient {
 public:
     static Ref<CSSFontSelector> create(Document& document)
     {
@@ -64,6 +65,7 @@ public:
 
     void clearDocument();
 
+    static void appendSources(CSSFontFace&, CSSValueList&, Document*, bool isInitiatingElementInUserAgentShadowTree);
     void addFontFaceRule(const StyleRuleFontFace&, bool isInitiatingElementInUserAgentShadowTree);
 
     void fontLoaded();
@@ -84,6 +86,10 @@ private:
     void dispatchInvalidationCallbacks();
 
     void beginLoadTimerFired();
+
+    void registerLocalFontFacesForFamily(const String&);
+
+    void kick(CSSFontFace&) override;
 
     Document* m_document;
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_fontFaces;

@@ -166,6 +166,7 @@
 #if ENABLE(FONT_LOAD_EVENTS)
 #include "JSFontLoader.cpp"
 #endif
+#include "JSFontFace.cpp"
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"
 #include "JSHashChangeEvent.cpp"

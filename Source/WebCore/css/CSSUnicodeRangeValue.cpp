@@ -32,9 +32,7 @@ namespace WebCore {
 
 String CSSUnicodeRangeValue::customCSSText() const
 {
-    String result;
-    // FIXME: Implement.
-    return result;
+    return String::format("U+%x-%x", m_from, m_to);
 }
 
 bool CSSUnicodeRangeValue::equals(const CSSUnicodeRangeValue& other) const

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).family", "family_name");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).style", "normal");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).weight", "normal");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).stretch", "normal");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).unicodeRange", "U+0-10FFFF");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).variant", "normal");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).featureSettings", "normal");
+
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'normal'}).style", "normal");
+shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'inherit'}).style");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'italic'}).style", "italic");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'oblique'}).style", "italic");
+shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'asdf'})");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'normal'}).weight", "normal");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': '200'}).weight", "200");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'bold'}).weight", "bold");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'bolder'}).weight", "bold");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'lighter'}).weight", "200");
+shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'inherit'}).weight");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'stretch': 'stretch_name'}).stretch", "normal");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+26'}).unicodeRange", "U+26-26");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+0-7F'}).unicodeRange", "U+0-7f");
+shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'variant_name'}).variant");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'small-caps'}).variant", "small-caps");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'small-caps common-ligatures'}).variant", "common-ligatures small-caps");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'featureSettings': '\\'titl\\''}).featureSettings", "'titl' 1");
+
+var everything = new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic', 'weight': 'bold', 'stretch': 'stretch_name', 'unicodeRange': 'U+26', 'variant': 'small-caps', 'featureSettings': '\'titl\''});
+shouldBeEqualToString("everything.style", "italic");
+shouldBeEqualToString("everything.weight", "bold");
+shouldBeEqualToString("everything.stretch", "normal");
+shouldBeEqualToString("everything.unicodeRange", "U+26-26");
+shouldBeEqualToString("everything.variant", "small-caps");
+shouldBeEqualToString("everything.featureSettings", "'titl' 1");
+
+everything.family = "other_family_name";
+shouldBeEqualToString("everything.family", "other_family_name");
+everything.style = "normal";
+shouldBeEqualToString("everything.style", "normal");
+everything.weight = "300";
+shouldBeEqualToString("everything.weight", "300");
+everything.stretch = "other_stretch_name";
+shouldBeEqualToString("everything.stretch", "normal");
+everything.unicodeRange = "U+0-7F";
+shouldBeEqualToString("everything.unicodeRange", "U+0-7f");
+everything.variant = "stacked-fractions";
+shouldBeEqualToString("everything.variant", "stacked-fractions");
+everything.featureSettings = "'smcp'";
+shouldBeEqualToString("everything.featureSettings", "'smcp' 1");
+
+/*shouldNotThrow("new FontFace('family_name', 'url(\\'asdf\\')', {})");
+var newArrayBuffer = new ArrayBuffer(100);
+shouldNotThrow("new FontFace('family_name', newArrayBuffer, {})");
+shouldNotThrow("new FontFace('family_name', new DataView(newArrayBuffer), {})");
+shouldNotThrow("new FontFace('family_name', new Uint8Array(newArrayBuffer), {})");
+shouldThrow("new FontFace('family_name', 5, {})");
+shouldThrow("new FontFace('family_name', {}, {})");
+shouldThrow("new FontFace('family_name', new Array(), {})");*/
+
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).status", "unloaded");
+
+var promiseEqualityCheck = new FontFace('family_name', 'url(\'asdf\')', {});
+var promise1 = promiseEqualityCheck.loaded;
+var promise2 = promiseEqualityCheck.loaded;
+var promise3 = promiseEqualityCheck.load();
+var promise4 = promiseEqualityCheck.loaded;
+var promise5 = promiseEqualityCheck.load();
+shouldBe("promise1", "promise2");
+shouldBe("promise1", "promise3");
+shouldBe("promise1", "promise4");
+shouldBe("promise1", "promise5");
+shouldBeEqualToString("promiseEqualityCheck.status", "loading");
+
+var oldFontFace;
+var newFontFace;
+self.jsTestIsAsync = true;
+promiseEqualityCheck.loaded.then(function(x) {
+    testFailed("Bogus URL should not load");
+    finishJSTest();
+}, function(y) {
+    oldFontFace = y;
+    shouldBe("oldFontFace.code", "oldFontFace.NETWORK_ERR");
+    shouldBeEqualToString("promiseEqualityCheck.status", "error");
+    oldFontFace = new FontFace('family_name', 'url(\'../../resources/Ahem.ttf\')', {});
+    return oldFontFace.load();
+}).then(function(x) {
+    newFontFace = x;
+    shouldBe("newFontFace", "oldFontFace");
+    shouldBeEqualToString("newFontFace.status", "loaded");
+    // Test behavior when the font is in the cache.
+    oldFontFace = new FontFace('family_name', 'url(\'../../resources/Ahem.ttf\')', {});
+    return oldFontFace.load();
+}, function(y) {
+    testFailed("Legit URL should load");
+    finishJSTest();
+}).then(function(x) {
+    newFontFace = x;
+    shouldBe("newFontFace", "oldFontFace");
+    shouldBeEqualToString("newFontFace.status", "loaded");
+    finishJSTest();
+}, function(y) {
+    testFailed("Legit URL should load");
+    finishJSTest();
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

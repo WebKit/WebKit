@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,57 +24,27 @@
  */
 
 #include "config.h"
-#include "JSDOMPromise.h"
+#include "JSFontFace.h"
 
+#include "CSSFontSelector.h"
+#include "CSSValue.h"
+#include "CSSValueList.h"
+#include "Dictionary.h"
 #include "ExceptionCode.h"
-#include <runtime/Exception.h>
-
-using namespace JSC;
+#include "JSDOMConstructor.h"
 
 namespace WebCore {
 
-DeferredWrapper::DeferredWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, JSPromiseDeferred* promiseDeferred)
-    : m_globalObject(exec->vm(), globalObject)
-    , m_deferred(exec->vm(), promiseDeferred)
+JSC::JSValue JSFontFace::loaded(JSC::ExecState&) const
 {
+    auto& promise = wrapped().promise();
+    return promise.deferred().promise();
 }
 
-JSDOMGlobalObject& DeferredWrapper::globalObject() const
+JSC::JSValue JSFontFace::load(JSC::ExecState& state)
 {
-    ASSERT(m_globalObject);
-    return *m_globalObject.get();
-}
-
-JSC::JSPromiseDeferred& DeferredWrapper::deferred() const
-{
-    ASSERT(m_deferred);
-    return *m_deferred.get();
-}
-
-void DeferredWrapper::callFunction(ExecState& exec, JSValue function, JSValue resolution)
-{
-    CallData callData;
-    CallType callType = getCallData(function, callData);
-    ASSERT(callType != CallTypeNone);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(resolution);
-
-    call(&exec, function, callType, callData, jsUndefined(), arguments);
-
-    m_globalObject.clear();
-    m_deferred.clear();
-}
-
-void rejectPromiseWithExceptionIfAny(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSPromiseDeferred& promiseDeferred)
-{
-    if (!state.hadException())
-        return;
-
-    JSValue error = state.exception()->value();
-    state.clearException();
-
-    DeferredWrapper(&state, &globalObject, &promiseDeferred).reject(error);
+    wrapped().load();
+    return loaded(state);
 }
 
 }

@@ -88,7 +88,7 @@ bool CSSFontSelector::isEmpty() const
     return m_fonts.isEmpty();
 }
 
-static void appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Document* document, bool isInitiatingElementInUserAgentShadowTree)
+void CSSFontSelector::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Document* document, bool isInitiatingElementInUserAgentShadowTree)
 {
     for (auto& src : srcList) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
@@ -114,6 +114,7 @@ static void appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Document
         if (source)
             fontFace.adoptSource(WTFMove(source));
     }
+    fontFace.sourcesPopulated();
 }
 
 static String familyNameFromPrimitive(const CSSPrimitiveValue& value)
@@ -143,9 +144,9 @@ static String familyNameFromPrimitive(const CSSPrimitiveValue& value)
     }
 }
 
-static void registerLocalFontFacesForFamily(const String& familyName, HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash>& locallyInstalledFontFaces)
+void CSSFontSelector::registerLocalFontFacesForFamily(const String& familyName)
 {
-    ASSERT(!locallyInstalledFontFaces.contains(familyName));
+    ASSERT(!m_locallyInstalledFontFaces.contains(familyName));
 
     Vector<FontTraitsMask> traitsMasks = FontCache::singleton().getTraitsInFamily(familyName);
     if (traitsMasks.isEmpty())
@@ -153,13 +154,17 @@ static void registerLocalFontFacesForFamily(const String& familyName, HashMap<St
 
     Vector<Ref<CSSFontFace>> faces = { };
     for (auto mask : traitsMasks) {
-        Ref<CSSFontFace> face = CSSFontFace::create(true);
+        Ref<CSSFontFace> face = CSSFontFace::create(*this, *this, true);
+        
+        RefPtr<CSSValueList> familyList = CSSValueList::createCommaSeparated();
+        familyList->append(CSSValuePool::singleton().createFontFamilyValue(familyName));
+        face->setFamilies(*familyList);
         face->setTraitsMask(mask);
         face->adoptSource(std::make_unique<CSSFontFaceSource>(face.get(), familyName));
         ASSERT(!face->allSourcesFailed());
         faces.append(WTFMove(face));
     }
-    locallyInstalledFontFaces.add(familyName, WTFMove(faces));
+    m_locallyInstalledFontFaces.add(familyName, WTFMove(faces));
 }
 
 void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace& fontFaceRule, bool isInitiatingElementInUserAgentShadowTree)
@@ -196,7 +201,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace& fontFaceRule, boo
     if (!srcList.length())
         return;
 
-    Ref<CSSFontFace> fontFace = CSSFontFace::create();
+    Ref<CSSFontFace> fontFace = CSSFontFace::create(*this, *this);
 
     if (!fontFace->setFamilies(*fontFamily))
         return;
@@ -233,7 +238,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace& fontFaceRule, boo
         auto addResult = m_fontFaces.add(familyName, Vector<Ref<CSSFontFace>>());
         auto& familyFontFaces = addResult.iterator->value;
         if (addResult.isNewEntry) {
-            registerLocalFontFacesForFamily(familyName, m_locallyInstalledFontFaces);
+            registerLocalFontFacesForFamily(familyName);
             familyFontFaces = { };
         }
 
@@ -447,6 +452,12 @@ void CSSFontSelector::clearDocument()
     m_fontsToBeginLoading.clear();
 
     m_document = nullptr;
+
+    // FIXME: This object should outlive the Document.
+    m_fontFaces.clear();
+    m_locallyInstalledFontFaces.clear();
+    m_fonts.clear();
+    m_clients.clear();
 }
 
 void CSSFontSelector::beginLoadingFontSoon(CachedFont* font)
@@ -482,6 +493,11 @@ void CSSFontSelector::beginLoadTimerFired()
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
     if (m_document && m_document->frame())
         m_document->frame()->loader().checkLoadComplete();
+}
+
+
+void CSSFontSelector::kick(CSSFontFace&)
+{
 }
 
 size_t CSSFontSelector::fallbackFontCount()

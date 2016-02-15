@@ -1,3 +1,85 @@
+2016-02-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Implement FontFace JavaScript object
+        https://bugs.webkit.org/show_bug.cgi?id=153345
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/text/font-face-javascript.html
+
+        This patch implements the FontFace Javascript object. This object mostly consists of
+        style getters / setters, which we implement by parsing input strings and generating
+        output strings similarly to getComputedStyle(). This object also has a load() function
+        which returns a promise which will be fulfilled or rejected depending on the load.
+        There is also a "loaded" attribute which exposes this promise directly. Also, a status
+        field is exposed so script knows what the state of the load is.
+
+        Currently, loading depends on our CachedResourceLoader which is part of the Document,
+        so this API is not available in a non-document context.
+
+        Another caveat is that immediate-mode font loading (where the content provides an
+        ArrayBuffer containing the bytes of the font file) is forthcoming. This requires
+        changing the relationship between CSSFontFaceSource and CachedFont.
+
+        CSSFontFace has been modified to keep a strong reference to the CSSFontSelector. This
+        is because the lifetime of the CSSFontFace can now outlive the CSSFontSelector. When
+        the CSSFontSelector is removed from the Document, it explicitly clears its constituent
+        CSSFontFaces, thereby breaking the reference cycle.
+
+        Test: fast/text/font-face-javascript-expected.html
+
+        * CMakeLists.txt: Add new files.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredWrapper::globalObject): Remove whitespace.
+        (WebCore::DeferredWrapper::deferred): Allow access to the inner JSC object.
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DOMPromise::deferred): Ditto.
+        * bindings/js/JSFontFaceCustom.cpp: Copied from Source/WebCore/bindings/js/JSDOMPromise.cpp.
+        (WebCore::JSFontFace::loaded):
+        (WebCore::JSFontFace::load):
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::CSSFontFace): 
+        (WebCore::CSSFontFace::adoptSource):
+        (WebCore::CSSFontFace::updateStatus): Enforce the state machine's transitions.
+        (WebCore::CSSFontFace::fontLoaded):
+        (WebCore::CSSFontFace::pump):
+        (WebCore::CSSFontFace::load):
+        * css/CSSFontFace.h:
+        (WebCore::CSSFontFaceClient::~CSSFontFaceClient):
+        (WebCore::CSSFontFace::create):
+        (WebCore::CSSFontFace::status):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::appendSources): Update for new CSSFontFace API.
+        (WebCore::CSSFontSelector::registerLocalFontFacesForFamily): Ditto.
+        (WebCore::CSSFontSelector::addFontFaceRule): Ditto.
+        (WebCore::CSSFontSelector::kick): Ditto.
+        (WebCore::appendSources): Deleted.
+        (WebCore::registerLocalFontFacesForFamily): Deleted.
+        * css/CSSFontSelector.h:
+        * css/CSSUnicodeRangeValue.cpp: Use for serializing the "unicodeRange" property.
+        * css/FontFace.cpp:
+        (WebCore::createPromise): Implement the remaining Javascript API functions.
+        (WebCore::valueFromDictionary):
+        (WebCore::FontFace::create):
+        (WebCore::FontFace::FontFace):
+        (WebCore::FontFace::parseString):
+        (WebCore::FontFace::status):
+        (WebCore::FontFace::kick):
+        (WebCore::FontFace::load):
+        (WebCore::FontFace::fulfillPromise):
+        (WebCore::FontFace::rejectPromise):
+        (WebCore::parseString): Deleted.
+        * css/FontFace.h:
+        (WebCore::FontFace::promise):
+        (WebCore::FontFace::backing):
+        (WebCore::FontFace::create): Deleted.
+        * css/FontFace.idl: Copied from Source/WebCore/bindings/js/JSDOMPromise.cpp.
+
 2016-02-15  Jer Noble  <jer.noble@apple.com>
 
         Null-deref crash in DefaultAudioDestinationNode::suspend()

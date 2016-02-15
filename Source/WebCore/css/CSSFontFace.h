@@ -45,9 +45,15 @@ class CSSValueList;
 class FontDescription;
 class Font;
 
+class CSSFontFaceClient {
+public:
+    virtual ~CSSFontFaceClient() { }
+    virtual void kick(CSSFontFace&) = 0;
+};
+
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
-    static Ref<CSSFontFace> create(bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(isLocalFallback)); }
+    static Ref<CSSFontFace> create(CSSFontFaceClient& client, CSSFontSelector& fontSelector, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(client, fontSelector, isLocalFallback)); }
     virtual ~CSSFontFace();
 
     bool setFamilies(CSSValue&);
@@ -62,6 +68,7 @@ public:
     bool setVariantEastAsian(CSSValue&);
     bool setFeatureSettings(CSSValue&);
 
+    enum class Status;
     struct UnicodeRange;
     const CSSValueList* families() const { return m_families.get(); }
     FontTraitsMask traitsMask() const { return m_traitsMask; }
@@ -71,6 +78,7 @@ public:
     void setVariantSettings(const FontVariantSettings& variantSettings) { m_variantSettings = variantSettings; }
     void setTraitsMask(FontTraitsMask traitsMask) { m_traitsMask = traitsMask; }
     bool isLocalFallback() const { return m_isLocalFallback; }
+    Status status() const { return m_status; }
 
     void addedToSegmentedFontFace(CSSSegmentedFontFace&);
     void removedFromSegmentedFontFace(CSSSegmentedFontFace&);
@@ -78,10 +86,29 @@ public:
     bool allSourcesFailed() const;
 
     void adoptSource(std::unique_ptr<CSSFontFaceSource>&&);
+    void sourcesPopulated() { m_sourcesPopulated = true; }
 
     void fontLoaded(CSSFontFaceSource&);
 
+    void load();
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+
+    // Pending => Loading  => TimedOut
+    //              ||  \\    //  ||
+    //              ||   \\  //   ||
+    //              ||    \\//    ||
+    //              ||     //     ||
+    //              ||    //\\    ||
+    //              ||   //  \\   ||
+    //              \/  \/    \/  \/
+    //             Success    Failure
+    enum class Status {
+        Pending,
+        Loading,
+        TimedOut,
+        Success,
+        Failure
+    };
 
     struct UnicodeRange {
         UnicodeRange(UChar32 from, UChar32 to)
@@ -103,16 +130,23 @@ public:
 #endif
 
 private:
-    CSSFontFace(bool isLocalFallback);
+    CSSFontFace(CSSFontFaceClient&, CSSFontSelector&, bool isLocalFallback);
+
+    size_t pump();
+    void setStatus(Status);
 
     RefPtr<CSSValueList> m_families;
-    FontTraitsMask m_traitsMask;
+    FontTraitsMask m_traitsMask { static_cast<FontTraitsMask>(FontStyleNormalMask | FontWeight400Mask) };
     Vector<UnicodeRange> m_ranges;
-    HashSet<CSSSegmentedFontFace*> m_segmentedFontFaces;
+    HashSet<CSSSegmentedFontFace*> m_segmentedFontFaces; // FIXME: Refactor this (in favor of CSSFontFaceClient) when implementing FontFaceSet.
+    Ref<CSSFontSelector> m_fontSelector;
+    CSSFontFaceClient& m_client;
     FontFeatureSettings m_featureSettings;
     FontVariantSettings m_variantSettings;
     Vector<std::unique_ptr<CSSFontFaceSource>> m_sources;
-    bool m_isLocalFallback;
+    Status m_status { Status::Pending };
+    bool m_isLocalFallback { false };
+    bool m_sourcesPopulated { false };
 };
 
 }

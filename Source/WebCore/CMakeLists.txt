@@ -330,6 +330,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSValueList.idl
     css/Counter.idl
     css/DOMWindowCSS.idl
+    css/FontFace.idl
     css/FontLoader.idl
     css/MediaList.idl
     css/MediaQueryList.idl
@@ -1108,6 +1109,7 @@ set(WebCore_SOURCES
     bindings/js/JSCSSRuleCustom.cpp
     bindings/js/JSCSSRuleListCustom.cpp
     bindings/js/JSCSSStyleDeclarationCustom.cpp
+    bindings/js/JSFontFaceCustom.cpp
     bindings/js/JSCSSValueCustom.cpp
     bindings/js/JSCallbackData.cpp
     bindings/js/JSCanvasRenderingContext2DCustom.cpp

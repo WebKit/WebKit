@@ -1,0 +1,54 @@
+PASS new FontFace('family_name', 'url(\'asdf\')', {}).family is "family_name"
+PASS new FontFace('family_name', 'url(\'asdf\')', {}).style is "normal"
+PASS new FontFace('family_name', 'url(\'asdf\')', {}).weight is "normal"
+PASS new FontFace('family_name', 'url(\'asdf\')', {}).stretch is "normal"
+PASS new FontFace('family_name', 'url(\'asdf\')', {}).unicodeRange is "U+0-10FFFF"
+PASS new FontFace('family_name', 'url(\'asdf\')', {}).variant is "normal"
+PASS new FontFace('family_name', 'url(\'asdf\')', {}).featureSettings is "normal"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'normal'}).style is "normal"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'inherit'}).style threw exception Error: SyntaxError: DOM Exception 12.
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic'}).style is "italic"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'oblique'}).style is "italic"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'asdf'}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'normal'}).weight is "normal"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': '200'}).weight is "200"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'bold'}).weight is "bold"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'bolder'}).weight is "bold"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'lighter'}).weight is "200"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'inherit'}).weight threw exception Error: SyntaxError: DOM Exception 12.
+PASS new FontFace('family_name', 'url(\'asdf\')', {'stretch': 'stretch_name'}).stretch is "normal"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+26'}).unicodeRange is "U+26-26"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+0-7F'}).unicodeRange is "U+0-7f"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'variant_name'}).variant threw exception Error: SyntaxError: DOM Exception 12.
+PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'small-caps'}).variant is "small-caps"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'small-caps common-ligatures'}).variant is "common-ligatures small-caps"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'featureSettings': '\'titl\''}).featureSettings is "'titl' 1"
+PASS everything.style is "italic"
+PASS everything.weight is "bold"
+PASS everything.stretch is "normal"
+PASS everything.unicodeRange is "U+26-26"
+PASS everything.variant is "small-caps"
+PASS everything.featureSettings is "'titl' 1"
+PASS everything.family is "other_family_name"
+PASS everything.style is "normal"
+PASS everything.weight is "300"
+PASS everything.stretch is "normal"
+PASS everything.unicodeRange is "U+0-7f"
+PASS everything.variant is "stacked-fractions"
+PASS everything.featureSettings is "'smcp' 1"
+PASS new FontFace('family_name', 'url(\'asdf\')', {}).status is "unloaded"
+PASS promise1 is promise2
+PASS promise1 is promise3
+PASS promise1 is promise4
+PASS promise1 is promise5
+PASS promiseEqualityCheck.status is "loading"
+PASS oldFontFace.code is oldFontFace.NETWORK_ERR
+PASS promiseEqualityCheck.status is "error"
+PASS newFontFace is oldFontFace
+PASS newFontFace.status is "loaded"
+PASS newFontFace is oldFontFace
+PASS newFontFace.status is "loaded"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

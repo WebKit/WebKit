@@ -44,6 +44,7 @@ public:
     void reject(const RejectResultType&);
 
     JSDOMGlobalObject& globalObject() const;
+    JSC::JSPromiseDeferred& deferred() const;
 
 private:
     void callFunction(JSC::ExecState&, JSC::JSValue function, JSC::JSValue resolution);
@@ -73,11 +74,13 @@ public:
     DOMPromise(DeferredWrapper&& wrapper) : m_wrapper(WTFMove(wrapper)) { }
     DOMPromise(DOMPromise&& promise) : m_wrapper(WTFMove(promise.m_wrapper)) { }
 
-    DOMPromise(const DOMPromise&)= delete;
-    DOMPromise& operator=(DOMPromise const&) = delete;
+    DOMPromise(const DOMPromise&) = default;
+    DOMPromise& operator=(DOMPromise const&) = default;
 
     void resolve(const Value& value) { m_wrapper.resolve<Value>(value); }
     void reject(const Error& error) { m_wrapper.reject<Error>(error); }
+
+    JSC::JSPromiseDeferred& deferred() const { return m_wrapper.deferred(); }
 
 private:
     DeferredWrapper m_wrapper;

@@ -45,8 +45,10 @@
 
 namespace WebCore {
 
-CSSFontFace::CSSFontFace(bool isLocalFallback)
-    : m_isLocalFallback(isLocalFallback)
+CSSFontFace::CSSFontFace(CSSFontFaceClient& client, CSSFontSelector& fontSelector, bool isLocalFallback)
+    : m_fontSelector(fontSelector)
+    , m_client(client)
+    , m_isLocalFallback(isLocalFallback)
 {
 }
 
@@ -82,7 +84,8 @@ bool CSSFontFace::setStyle(CSSValue& style)
         styleMask = FontStyleItalicMask;
         break;
     default:
-        return false;
+        styleMask = FontStyleNormalMask;
+        break;
     }
 
     m_traitsMask = static_cast<FontTraitsMask>((static_cast<unsigned>(m_traitsMask) & (~FontStyleMask)) | styleMask);
@@ -97,6 +100,7 @@ bool CSSFontFace::setWeight(CSSValue& weight)
     unsigned weightMask = 0;
     switch (downcast<CSSPrimitiveValue>(weight).getValueID()) {
     case CSSValueBold:
+    case CSSValueBolder:
     case CSSValue700:
         weightMask = FontWeight700Mask;
         break;
@@ -119,6 +123,7 @@ bool CSSFontFace::setWeight(CSSValue& weight)
     case CSSValue300:
         weightMask = FontWeight300Mask;
         break;
+    case CSSValueLighter:
     case CSSValue200:
         weightMask = FontWeight200Mask;
         break;
@@ -126,6 +131,7 @@ bool CSSFontFace::setWeight(CSSValue& weight)
         weightMask = FontWeight100Mask;
         break;
     default:
+        weightMask = FontWeight400Mask;
         break;
     }
 
@@ -237,20 +243,97 @@ void CSSFontFace::removedFromSegmentedFontFace(CSSSegmentedFontFace& segmentedFo
 void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource>&& source)
 {
     m_sources.append(WTFMove(source));
+
+    // We should never add sources in the middle of loading.
+    ASSERT(!m_sourcesPopulated);
+}
+
+void CSSFontFace::setStatus(Status newStatus)
+{
+    switch (newStatus) {
+    case Status::Pending:
+        ASSERT_NOT_REACHED();
+        break;
+    case Status::Loading:
+        ASSERT(m_status == Status::Pending);
+        break;
+    case Status::TimedOut:
+        ASSERT(m_status == Status::Loading);
+        break;
+    case Status::Success:
+        ASSERT(m_status == Status::Loading || m_status == Status::TimedOut);
+        break;
+    case Status::Failure:
+        ASSERT(m_status == Status::Loading || m_status == Status::TimedOut);
+        break;
+    }
+
+    m_status = newStatus;
+
+    if (m_status == Status::Success || m_status == Status::Failure)
+        m_client.kick(*this);
 }
 
 void CSSFontFace::fontLoaded(CSSFontFaceSource&)
 {
-    // FIXME: Can we assert that m_segmentedFontFaces is not empty? That may
-    // require stopping in-progress font loading when the last
-    // CSSSegmentedFontFace is removed.
+    // If the font is already in the cache, CSSFontFaceSource may report it's loaded before it is added here as a source.
+    // Let's not pump the state machine until we've got all our sources. font() and load() are smart enough to act correctly
+    // when a source is failed or succeeded before we have asked it to load.
+    if (m_sourcesPopulated)
+        pump();
+
     if (m_segmentedFontFaces.isEmpty())
         return;
 
-    (*m_segmentedFontFaces.begin())->fontSelector().fontLoaded();
+    m_fontSelector->fontLoaded();
 
     for (auto* face : m_segmentedFontFaces)
         face->fontLoaded(*this);
+}
+
+size_t CSSFontFace::pump()
+{
+    size_t i;
+    for (i = 0; i < m_sources.size(); ++i) {
+        auto& source = m_sources[i];
+
+        if (source->status() == CSSFontFaceSource::Status::Pending) {
+            ASSERT(m_status == Status::Pending || m_status == Status::Loading || m_status == Status::TimedOut);
+            if (m_status == Status::Pending)
+                setStatus(Status::Loading);
+            source->load(m_fontSelector.get());
+        }
+
+        switch (source->status()) {
+        case CSSFontFaceSource::Status::Pending:
+            ASSERT_NOT_REACHED();
+            break;
+        case CSSFontFaceSource::Status::Loading:
+            ASSERT(m_status == Status::Pending || m_status == Status::Loading);
+            if (m_status == Status::Pending)
+                setStatus(Status::Loading);
+            return i;
+        case CSSFontFaceSource::Status::Success:
+            ASSERT(m_status == Status::Pending || m_status == Status::Loading || m_status == Status::TimedOut || m_status == Status::Success);
+            if (m_status == Status::Pending)
+                setStatus(Status::Loading);
+            if (m_status == Status::Loading || m_status == Status::TimedOut)
+                setStatus(Status::Success);
+            return i;
+        case CSSFontFaceSource::Status::Failure:
+            if (m_status == Status::Pending)
+                setStatus(Status::Loading);
+            break;
+        }
+    }
+    if (m_status == Status::Loading || m_status == Status::TimedOut)
+        setStatus(Status::Failure);
+    return m_sources.size();
+}
+
+void CSSFontFace::load()
+{
+    pump();
 }
 
 RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
@@ -258,12 +341,15 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
     if (allSourcesFailed())
         return nullptr;
 
-    ASSERT(!m_segmentedFontFaces.isEmpty());
-    CSSFontSelector& fontSelector = (*m_segmentedFontFaces.begin())->fontSelector();
-
-    for (auto& source : m_sources) {
+    // Our status is derived from the first non-failed source. However, this source may
+    // return null from font(), which means we need to continue looping through the remainder
+    // of the sources to try to find a font to use. These subsequent tries should not affect
+    // our own state, though.
+    size_t startIndex = pump();
+    for (size_t i = startIndex; i < m_sources.size(); ++i) {
+        auto& source = m_sources[i];
         if (source->status() == CSSFontFaceSource::Status::Pending)
-            source->load(fontSelector);
+            source->load(m_fontSelector.get());
 
         switch (source->status()) {
         case CSSFontFaceSource::Status::Pending:

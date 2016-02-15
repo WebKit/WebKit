@@ -373,6 +373,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'FocusEvent').hasOwnProperty('get')
 PASS Object.getOwnPropertyDescriptor(global, 'FocusEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'FocusEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'FocusEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'FontFace').value is FontFace
+PASS Object.getOwnPropertyDescriptor(global, 'FontFace').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'FontFace').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'FontFace').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'FontFace').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'FormData').value is FormData
 PASS Object.getOwnPropertyDescriptor(global, 'FormData').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'FormData').hasOwnProperty('set') is false

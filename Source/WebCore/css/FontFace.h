@@ -26,18 +26,28 @@
 #ifndef FontFace_h
 #define FontFace_h
 
+#include "CSSFontFace.h"
+#include "CSSPropertyNames.h"
+#include "DOMCoreException.h"
 #include "ExceptionCode.h"
+#include "JSDOMPromise.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace Deprecated {
+class ScriptValue;
+}
+
 namespace WebCore {
 
 class CSSFontFace;
+class CSSValue;
+class Dictionary;
 
-class FontFace : public RefCounted<FontFace> {
+class FontFace : public RefCounted<FontFace>, public CSSFontFaceClient {
 public:
-    static Ref<FontFace> create() { return adoptRef(*new FontFace()); }
+    static RefPtr<FontFace> create(JSC::ExecState&, ScriptExecutionContext&, const String& family, const Deprecated::ScriptValue& source, const Dictionary& descriptors, ExceptionCode&);
     virtual ~FontFace();
 
     void setFamily(const String&, ExceptionCode&);
@@ -55,11 +65,27 @@ public:
     String unicodeRange() const;
     String variant() const;
     String featureSettings() const;
+    String status() const;
+
+    typedef DOMPromise<FontFace&, DOMCoreException&> Promise;
+    Promise& promise() { return m_promise; }
+
+    void load();
+
+    CSSFontFace& backing() { return m_backing; }
+
+    static RefPtr<CSSValue> parseString(const String&, CSSPropertyID);
 
 private:
-    FontFace();
+    FontFace(JSC::ExecState&, CSSFontSelector&);
+
+    void kick(CSSFontFace&) override;
+
+    void fulfillPromise();
+    void rejectPromise(ExceptionCode);
 
     Ref<CSSFontFace> m_backing;
+    Promise m_promise;
 };
 
 }
