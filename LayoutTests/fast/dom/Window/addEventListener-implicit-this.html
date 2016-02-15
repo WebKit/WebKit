@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Checks that the Window's EventListener API can be called without an explicit 'this' value.");
+
+var wasWindowEventListenerCalled = false;
+
+var addEventListenerFunction = window.addEventListener;
+shouldNotThrow("addEventListenerFunction.call(undefined, 'myevent', function() { wasWindowEventListenerCalled = true; });");
+
+var dispatchEventFunction = window.dispatchEvent;
+shouldBeTrue("dispatchEventFunction.call(undefined, new Event('myevent'))");
+
+shouldBeTrue("wasWindowEventListenerCalled");
+
+// As of early 2016, this matches Firefox and Chrome's behavior: We fall back to using the global window, even if the function
+// came from a non-Window object.
+wasWindowEventListenerCalled = false;
+
+bodyDispatchEventFunction = document.body.dispatchEvent;
+shouldBeTrue("bodyDispatchEventFunction.call(undefined, new Event('myevent'))");
+
+shouldBeTrue("wasWindowEventListenerCalled");
+
+wasWindowEventListenerCalled = false;
+
+var xhr = new XMLHttpRequest();
+xhrDispatchEventFunction = xhr.dispatchEvent;
+shouldBeTrue("xhrDispatchEventFunction.call(undefined, new Event('myevent'))");
+
+shouldBeTrue("wasWindowEventListenerCalled");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

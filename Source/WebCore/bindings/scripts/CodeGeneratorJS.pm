@@ -3235,7 +3235,14 @@ sub GenerateFunctionCastedThis
         push(@implContent, "        return throwVMTypeError(state);\n");
     } else {
         push(@implContent, "    JSValue thisValue = state->thisValue();\n");
-        push(@implContent, "    auto castedThis = " . GetCastingHelperForThisObject($interface) . "(thisValue);\n");
+        my $castingHelper = GetCastingHelperForThisObject($interface);
+        if ($interfaceName eq "EventTarget") {
+            # We allow calling the EventTarget API without an explicit 'this' value and fall back to using the global object instead.
+            # As of early 2016, this matches Firefox and Chrome's behavior.
+            push(@implContent, "    auto castedThis = thisValue.isUndefinedOrNull() ? $castingHelper(thisValue.toThis(state, NotStrictMode)) : $castingHelper(thisValue);\n");
+        } else {
+            push(@implContent, "    auto castedThis = $castingHelper(thisValue);\n");
+        }
         my $domFunctionName = $function->signature->name;
         push(@implContent, "    if (UNLIKELY(!castedThis))\n");
         push(@implContent, "        return throwThisTypeError(*state, \"$interfaceName\", \"$domFunctionName\");\n");

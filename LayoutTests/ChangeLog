@@ -1,3 +1,16 @@
+2016-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196563): It is no longer possible to call window.addEventListener without an explicit 'this'
+        https://bugs.webkit.org/show_bug.cgi?id=154245
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a layout test to cover the use of the EventListener API without an
+        explicit 'this' value.
+
+        * fast/dom/Window/addEventListener-implicit-this-expected.txt: Added.
+        * fast/dom/Window/addEventListener-implicit-this.html: Added.
+
 2016-02-15  Daniel Bates  <dabates@apple.com>
 
         CSP: 'sandbox' should be ignored in report-only mode

@@ -1,3 +1,20 @@
+2016-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196563): It is no longer possible to call window.addEventListener without an explicit 'this'
+        https://bugs.webkit.org/show_bug.cgi?id=154245
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds support for calling the EventListener API without an
+        explicit 'this' value. If no explicit 'this' value is passed, then we
+        fall back to using the global object. This matches Chrome and Firefox's
+        behavior. It also fixes the Dromaeo/cssquery-dojo.html test.
+
+        Test: fast/dom/Window/addEventListener-implicit-this.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateFunctionCastedThis):
+
 2016-02-14  Gavin Barraclough  <barraclough@apple.com>
 
         Organize, deduplicate & comment JSDOMWindowCustom getOwnPropertySlot
