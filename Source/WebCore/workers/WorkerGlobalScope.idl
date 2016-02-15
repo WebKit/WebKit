@@ -31,7 +31,7 @@
     JSCustomGetOwnPropertySlotAndDescriptor,
     EventTarget,
     JSLegacyParent=JSWorkerGlobalScopeBase,
-] interface WorkerGlobalScope {
+] interface WorkerGlobalScope : EventTarget {
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [Replaceable] readonly attribute  WorkerGlobalScope self;
@@ -47,12 +47,6 @@
 
     [Custom] void importScripts(/*[Variadic] DOMString urls */);
     [Replaceable] readonly attribute WorkerNavigator navigator;
-
-    // EventTarget interface
-
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event event);
 
     // Additional constructors
 

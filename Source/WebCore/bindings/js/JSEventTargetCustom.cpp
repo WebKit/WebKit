@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,15 @@
 #include "config.h"
 #include "JSEventTarget.h"
 
+#include "DOMWindow.h"
+#include "EventTarget.h"
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
+#include "JSDOMWindow.h"
 #include "JSDOMWindowShell.h"
 #include "JSEventListener.h"
+#include "JSWorkerGlobalScope.h"
+#include "WorkerGlobalScope.h"
 
 using namespace JSC;
 
@@ -61,12 +66,23 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 EventTarget* JSEventTarget::toWrapped(JSC::JSValue value)
 {
     TRY_TO_UNWRAP_WITH_INTERFACE(DOMWindowShell)
+    TRY_TO_UNWRAP_WITH_INTERFACE(DOMWindow)
+    TRY_TO_UNWRAP_WITH_INTERFACE(WorkerGlobalScope)
     TRY_TO_UNWRAP_WITH_INTERFACE(EventTarget)
-    // FIXME: Remove this once all event targets extend EventTarget
-    DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_UNWRAP_WITH_INTERFACE)
-    return 0;
+    return nullptr;
 }
 
 #undef TRY_TO_UNWRAP_WITH_INTERFACE
+
+std::unique_ptr<JSEventTargetWrapper> jsEventTargetCast(JSC::JSValue thisValue)
+{
+    if (auto* target = JSC::jsDynamicCast<JSEventTarget*>(thisValue))
+        return std::make_unique<JSEventTargetWrapper>(target->wrapped(), *target);
+    if (auto* window = toJSDOMWindow(thisValue))
+        return std::make_unique<JSEventTargetWrapper>(window->wrapped(), *window);
+    if (auto* scope = toJSWorkerGlobalScope(thisValue))
+        return std::make_unique<JSEventTargetWrapper>(scope->wrapped(), *scope);
+    return nullptr;
+}
 
 } // namespace WebCore

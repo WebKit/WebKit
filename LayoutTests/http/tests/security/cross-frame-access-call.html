@@ -42,6 +42,7 @@ window.onload = function()
     // These always return undefined so we use the error console to detect failure
     shouldBe("window.addEventListener.call(targetWindow, 'load', null, false);", "undefined");
     shouldBe("window.removeEventListener.call(targetWindow, 'load', null, false);", "undefined");
+    shouldBe("window.dispatchEvent.call(targetWindow, new Event('click'));", "undefined");
     shouldBe("window.clearTimeout.call(targetWindow, 0);", "undefined");
     shouldBe("window.clearInterval.call(targetWindow, 0);", "undefined");
     shouldBe("window.print.call(targetWindow);", "undefined");

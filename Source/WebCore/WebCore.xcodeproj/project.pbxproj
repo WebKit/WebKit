@@ -1709,6 +1709,7 @@
 		4669B2871B852A0B000F905F /* JSDOMNamedFlowCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46F2768E1B85297F005C2556 /* JSDOMNamedFlowCollectionCustom.cpp */; };
 		467302021C4EFE7800BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
+		46B63F6C1C6E8D19002E914B /* JSEventTargetCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C83EFD1A9BBE2900A79A41 /* GeoNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */; };
 		46C83EFE1A9BBE2900A79A41 /* GeoNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46DB7D571B20FE46005651B2 /* VNodeTrackerCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DB7D561B20FE3C005651B2 /* VNodeTrackerCocoa.cpp */; };
@@ -9192,6 +9193,7 @@
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
 		467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreOpensDuringUnloadCountIncrementer.h; sourceTree = "<group>"; };
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMetadata.h; sourceTree = "<group>"; };
+		46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventTargetCustom.h; sourceTree = "<group>"; };
 		46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeoNotifier.cpp; sourceTree = "<group>"; };
 		46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoNotifier.h; sourceTree = "<group>"; };
 		46DB7D561B20FE3C005651B2 /* VNodeTrackerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VNodeTrackerCocoa.cpp; sourceTree = "<group>"; };
@@ -22197,6 +22199,7 @@
 				F3D461461161D53200CA0D09 /* JSErrorHandler.cpp */,
 				F3D461471161D53200CA0D09 /* JSErrorHandler.h */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTargetCustom.cpp */,
+				46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */,
 				3314ACE910892086000F0E56 /* JSExceptionBase.cpp */,
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
@@ -24987,6 +24990,7 @@
 				2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */,
 				2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */,
 				976D6C7F122B8A3D001FD1F7 /* BlobURL.h in Headers */,
+				46B63F6C1C6E8D19002E914B /* JSEventTargetCustom.h in Headers */,
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
 				589556ED18D4A44000764B03 /* BorderEdge.h in Headers */,

@@ -1,3 +1,98 @@
+2016-02-14  Chris Dumez  <cdumez@apple.com>
+
+        Window and WorkerGlobalScope should inherit EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=154170
+        <rdar://problem/24642377>
+
+        Reviewed by Darin Adler.
+
+        Window and WorkerGlobalScope should inherit EventTarget instead of
+        duplicating the EventTarget API in their IDL. These were the last
+        interfaces that needed fixing. The next step will be to get rid
+        of the [EventTarget] IDL extended attribute and rely entirely
+        on the EventTarget inheritance.
+
+        Test:
+        - fast/frames/detached-frame-eventListener.html
+        - Covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add JSEventTargetCustom.h header to the project.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        Drop custom bindings for Window's addEventListener() and
+        removeEventListener(). The only reason these needed custom
+        code was to add a check for frameless windows. The frameless
+        Window checks was moved to the respective methods in the
+        JSEventTarget generated bindings.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        Set WindowPrototype's prototype to EventTarget's prototype.
+
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDictionary.cpp:
+        Include "DOMWindow.h" to fix the build.
+
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::toWrapped):
+        Handle DOMWindow and WorkerGlobalScope explicitely in toWrapped()
+        and get rid of the DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_UNWRAP_WITH_INTERFACE)
+        now that all interfaces inherit EventTarget when they should.
+        The reason DOMWindow and WorkerGlobalScope still need special
+        handling is because their wrappers (JSDOMWindow /
+        JSWorkerGlobalScope) do not subclass JSEventTarget.
+
+        (WebCore::JSEventTargetOrGlobalScope::create):
+        * bindings/js/JSEventTargetCustom.h: Added.
+        (WebCore::JSEventTargetOrGlobalScope::wrapped):
+        (WebCore::JSEventTargetOrGlobalScope::operator JSC::JSObject&):
+        (WebCore::JSEventTargetOrGlobalScope::JSEventTargetOrGlobalScope):
+        Add a wrapper type for JSEventTarget / JSDOMWindow and
+        JSWorkerGlobalScope for use in the generated bindings. This is
+        needed because JSDOMWindow and JSWorkerGlobalScope do not
+        subclass JSEventTarget. Subclassing JSEventTarget would be
+        complicated for them because they already subclass
+        JSDOMWindowBase / JSWorkerGlobalScopeBase, which subclasses
+        JSDOMGlobalObject.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        Set WorkerGlobalScopePrototype's prototype to EventTarget's prototype.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldGenerateToJSDeclaration):
+        Do not generate to toJS() implementation for interfaces that use
+        the [CustomProxyToJSObject] IDL extended attribute, even if they
+        inherit EventTarget.
+
+        (GetCastingHelperForThisObject):
+        To initialize castedThis from thisValue JSValue, we now use the
+        JSEventTargetOrGlobalScope wrapper for the EventTarget
+        implementation. This is to work around the fact that JSDOMWindow
+        and JSWorkerGlobalScope do not subclass JSEventTarget.
+
+        (GenerateFunctionCastedThis):
+        - Drop code handling [WorkerGlobalScope] IDL extended attribute
+          as there is no such attribute.
+        - Use auto instead of auto* type for castedThis because
+          JSEventTargetOrGlobalScope::create() returns a unique_ptr.
+        - Do not check that castedThis inherits JSEventTarget in the
+          EventTarget bindings code as this no longer holds true.
+
+        (GenerateImplementation):
+        Generate frameless window() and security checks for EventTarget
+        methods when thisValue is a JSDOMWindow.
+
+        * dom/EventTarget.idl:
+        Add [JSCustomHeader] IDL Extended attribute as we need a header
+        to expose JSEventTargetOrGlobalScope class.
+
+        * page/DOMWindow.idl:
+        * workers/WorkerGlobalScope.idl:
+        Inherit EventTarget and stop duplicating the EventTarget API.
+        This matches the HTML specification.
+
 2016-02-14  Darin Adler  <darin@apple.com>
 
         Small tweaks to some SimpleLineLayout code

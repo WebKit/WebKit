@@ -3018,7 +3018,7 @@ JSValue JSTestObj::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "voidMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3030,7 +3030,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* sta
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "voidMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3053,7 +3053,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "byteMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3065,7 +3065,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* sta
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "byteMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3088,7 +3088,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "octetMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3100,7 +3100,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* st
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "octetMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3123,7 +3123,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "longMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3135,7 +3135,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* sta
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "longMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3158,7 +3158,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "objMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3170,7 +3170,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* stat
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "objMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3193,7 +3193,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithSequenceArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithSequenceArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3210,7 +3210,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithSequenceArg(Exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodReturningSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3227,7 +3227,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(E
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithEnumArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3248,7 +3248,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalEnumArgAndDefaultValue");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3277,7 +3277,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodThatRequiresAllArgsAndThrows");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3300,7 +3300,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "serializedValue");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3317,7 +3317,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "optionsObject");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3337,7 +3337,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithException");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3351,7 +3351,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionWithMessage(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithExceptionWithMessage");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3365,7 +3365,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionWithMe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "customMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3375,7 +3375,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(ExecState* s
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "customMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3385,7 +3385,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "privateMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3402,7 +3402,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(ExecState* 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "addEventListener");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3417,7 +3417,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecStat
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "removeEventListener");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3432,7 +3432,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptStateVoid");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3444,7 +3444,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptStateObj");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3458,7 +3458,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidException(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptStateVoidException");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3472,7 +3472,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidExcept
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjException(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptStateObjException");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3489,7 +3489,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContext(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptExecutionContext");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3504,7 +3504,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptState");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3519,7 +3519,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptStateObjException");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3539,7 +3539,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptExecutionContextAndScriptStateWithSpaces");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3556,7 +3556,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "withScriptArgumentsAndCallStack");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3569,7 +3569,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCal
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3591,7 +3591,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalArgAndDefaultValue");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3613,7 +3613,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArgAndD
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithNonOptionalArgAndOptionalArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3640,7 +3640,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithNonOptionalArgAndTwoOptionalArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3675,7 +3675,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalString");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3697,7 +3697,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalStringAndDefaultValue");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3719,7 +3719,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringA
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalStringIsUndefined");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3734,7 +3734,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullString(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalStringIsNullString");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3749,7 +3749,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithCallbackArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3766,7 +3766,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithNonCallbackArgAndCallbackArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3786,7 +3786,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithCallbackAndOptionalArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3804,7 +3804,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithCallbackFunctionArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3821,7 +3821,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctio
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithNonCallbackArgAndCallbackFunctionArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3841,7 +3841,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithCallbackFunctionAndOptionalArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3883,7 +3883,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "conditionalMethod1");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3898,7 +3898,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "conditionalMethod2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3913,7 +3913,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "conditionalMethod3");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3927,7 +3927,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecSt
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3947,7 +3947,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3974,7 +3974,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -3991,7 +3991,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4008,7 +4008,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4025,7 +4025,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod6(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4042,7 +4042,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod6(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod7(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4059,7 +4059,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod7(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod8(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4076,7 +4076,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod8(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod9(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4093,7 +4093,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod9(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod10(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4110,7 +4110,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod10
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod11(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4127,7 +4127,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod11
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod12(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4179,7 +4179,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethodWithOptionalParameter");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4206,7 +4206,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWi
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "overloadedMethodWithOptionalParameter");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4323,7 +4323,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "classMethodWithClamp");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4353,7 +4353,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithUnsignedLongSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4370,7 +4370,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSeq
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "stringArrayFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4390,7 +4390,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "domStringListFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4410,7 +4410,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithAndWithoutNullableSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4430,7 +4430,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNulla
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence2(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "methodWithAndWithoutNullableSequence2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4450,7 +4450,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNulla
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "getSVGDocument");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4467,7 +4467,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState*
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "convert1");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4484,7 +4484,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* state
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "convert2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4501,7 +4501,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* state
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "convert4");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4518,7 +4518,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* state
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "convert5");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4535,7 +4535,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(ExecState* state
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "mutablePointFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4547,7 +4547,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "immutablePointFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4559,7 +4559,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(Ex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "orange");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4571,7 +4571,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(ExecState* state)
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "strictFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4597,7 +4597,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequence(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "strictFunctionWithSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4622,7 +4622,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "strictFunctionWithArray");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4647,7 +4647,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "variadicStringMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4667,7 +4667,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "variadicDoubleMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4687,7 +4687,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "variadicNodeMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4710,7 +4710,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "any");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4736,7 +4736,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(ExecS
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState* state, JSPromiseDeferred* promiseDeferred)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "testPromiseFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4754,7 +4754,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState* state, JSPromiseDeferred* promiseDeferred)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "testPromiseFunctionWithFloatArgument");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4781,7 +4781,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithEx
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState* state, JSPromiseDeferred* promiseDeferred)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "testPromiseFunctionWithException");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
@@ -4801,7 +4801,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithOp
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState* state, JSPromiseDeferred* promiseDeferred)
 {
     JSValue thisValue = state->thisValue();
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "testPromiseFunctionWithOptionalIntArgument");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());

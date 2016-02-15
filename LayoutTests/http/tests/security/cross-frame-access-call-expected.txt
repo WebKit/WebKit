@@ -26,6 +26,7 @@ CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" fro
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 10: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 
 
@@ -45,6 +46,7 @@ PASS: window.btoa.call(targetWindow, 'string') should be 'undefined' and is.
 PASS: window.open.call(targetWindow, '') should be 'undefined' and is.
 PASS: window.addEventListener.call(targetWindow, 'load', null, false); should be 'undefined' and is.
 PASS: window.removeEventListener.call(targetWindow, 'load', null, false); should be 'undefined' and is.
+PASS: window.dispatchEvent.call(targetWindow, new Event('click')); should be 'undefined' and is.
 PASS: window.clearTimeout.call(targetWindow, 0); should be 'undefined' and is.
 PASS: window.clearInterval.call(targetWindow, 0); should be 'undefined' and is.
 PASS: window.print.call(targetWindow); should be 'undefined' and is.

@@ -27,6 +27,7 @@
 #include "JSDictionary.h"
 
 #include "ArrayValue.h"
+#include "DOMWindow.h"
 #include "Dictionary.h"
 #include "JSCSSFontFaceRule.h"
 #include "JSDOMError.h"

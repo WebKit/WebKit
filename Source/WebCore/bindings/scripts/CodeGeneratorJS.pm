@@ -558,6 +558,7 @@ sub ShouldGenerateToJSDeclaration
     return 0 if ($interface->extendedAttributes->{"SuppressToJSObject"});
     return 0 if not NeedsImplementationClass($interface);
     return 0 if $interface->name eq "AbstractView";
+    return 0 if $interface->extendedAttributes->{"CustomProxyToJSObject"};
     return 1 if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"} or $interface->extendedAttributes->{"CustomToJSObject"});
     return 1 if $interface->parent && $interface->parent eq "EventTarget";
     return 0;
@@ -1730,17 +1731,13 @@ sub GetRuntimeEnableFunctionName
 sub GetCastingHelperForThisObject
 {
     my $interface = shift;
+    my $interfaceName = $interface->name;
 
-    if ($interface->name eq "Node") {
-        return "jsNodeCast";
-    }
-    if ($interface->name eq "Element") {
-        return "jsElementCast";
-    }
-    if ($interface->name eq "Document") {
-        return "jsDocumentCast";
-    }
-    return "jsDynamicCast<JS" . $interface->name . "*>";
+    return "jsNodeCast" if $interfaceName eq "Node";
+    return "jsElementCast" if $interfaceName eq "Element";
+    return "jsDocumentCast" if $interfaceName eq "Document";
+    return "jsEventTargetCast" if $interfaceName eq "EventTarget";
+    return "jsDynamicCast<JS$interfaceName*>";
 }
 
 sub GetIndexedGetterExpression
@@ -2944,6 +2941,14 @@ sub GenerateImplementation
                         $implIncludes{"ExceptionCode.h"} = 1;
                     }
 
+                    # EventTarget needs to do some extra checks if castedThis is a JSDOMWindow.
+                    if ($interface->name eq "EventTarget") {
+                        $implIncludes{"DOMWindow.h"} = 1;
+                        push(@implContent, "    if (auto* window = castedThis->wrapped().toDOMWindow()) {\n");
+                        push(@implContent, "        if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(state, *window))\n");
+                        push(@implContent, "            return JSValue::encode(jsUndefined());\n");
+                        push(@implContent, "    }\n");
+                    }
                     # For compatibility with legacy content, the EventListener calls are generated without GenerateArgumentsCountCheck.
                     if ($function->signature->name eq "addEventListener") {
                         push(@implContent, GenerateEventListenerCall("add"));
@@ -3228,19 +3233,15 @@ sub GenerateFunctionCastedThis
         push(@implContent, "    $className* castedThis = to${className}(state->thisValue().toThis(state, NotStrictMode));\n");
         push(@implContent, "    if (UNLIKELY(!castedThis))\n");
         push(@implContent, "        return throwVMTypeError(state);\n");
-    } elsif ($interface->extendedAttributes->{"WorkerGlobalScope"}) {
-        push(@implContent, "    $className* castedThis = to${className}(state->thisValue().toThis(state, NotStrictMode));\n");
-        push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-        push(@implContent, "        return throwVMTypeError(state);\n");
     } else {
         push(@implContent, "    JSValue thisValue = state->thisValue();\n");
-        push(@implContent, "    $className* castedThis = " . GetCastingHelperForThisObject($interface) . "(thisValue);\n");
+        push(@implContent, "    auto castedThis = " . GetCastingHelperForThisObject($interface) . "(thisValue);\n");
         my $domFunctionName = $function->signature->name;
         push(@implContent, "    if (UNLIKELY(!castedThis))\n");
         push(@implContent, "        return throwThisTypeError(*state, \"$interfaceName\", \"$domFunctionName\");\n");
     }
 
-    push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n");
+    push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n") unless $interfaceName eq "EventTarget";
 }
 
 sub GenerateCallWith

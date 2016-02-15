@@ -25,6 +25,7 @@
     CustomToJSObject,
     JSCustomToNativeObject,
     EventTarget,
+    JSCustomHeader,
 ] interface EventTarget {
     [ObjCLegacyUnnamedParameters] void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     [ObjCLegacyUnnamedParameters] void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);

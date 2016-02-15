@@ -186,7 +186,7 @@ JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, const JSGlobalObject* gl
 EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestCustomNamedGetter* castedThis = jsDynamicCast<JSTestCustomNamedGetter*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestCustomNamedGetter*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestCustomNamedGetter", "anotherFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestCustomNamedGetter::info());

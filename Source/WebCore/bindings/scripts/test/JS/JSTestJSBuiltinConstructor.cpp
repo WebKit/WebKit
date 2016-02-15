@@ -199,7 +199,7 @@ JSValue JSTestJSBuiltinConstructor::getConstructor(VM& vm, const JSGlobalObject*
 EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestJSBuiltinConstructor* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestJSBuiltinConstructor", "testCustomFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestJSBuiltinConstructor::info());

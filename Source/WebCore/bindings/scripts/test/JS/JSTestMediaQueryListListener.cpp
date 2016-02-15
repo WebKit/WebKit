@@ -151,7 +151,7 @@ JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, const JSGlobalObjec
 EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestMediaQueryListListener* castedThis = jsDynamicCast<JSTestMediaQueryListListener*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestMediaQueryListListener*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestMediaQueryListListener", "method");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestMediaQueryListListener::info());

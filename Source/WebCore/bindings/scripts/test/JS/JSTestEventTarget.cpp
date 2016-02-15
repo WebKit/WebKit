@@ -198,7 +198,7 @@ JSValue JSTestEventTarget::getConstructor(VM& vm, const JSGlobalObject* globalOb
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestEventTarget", "item");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());

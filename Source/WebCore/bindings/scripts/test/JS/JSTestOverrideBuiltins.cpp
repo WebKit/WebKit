@@ -195,7 +195,7 @@ JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, const JSGlobalObject* glo
 EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestOverrideBuiltins* castedThis = jsDynamicCast<JSTestOverrideBuiltins*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestOverrideBuiltins*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestOverrideBuiltins", "namedItem");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestOverrideBuiltins::info());

@@ -200,7 +200,7 @@ JSValue JSTestActiveDOMObject::getConstructor(VM& vm, const JSGlobalObject* glob
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestActiveDOMObject*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestActiveDOMObject", "excitingFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
@@ -219,7 +219,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestActiveDOMObject*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestActiveDOMObject", "postMessage");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());

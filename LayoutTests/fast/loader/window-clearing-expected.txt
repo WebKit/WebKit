@@ -7,3 +7,5 @@ PASS: element 0 in the window's prototype chain was cleared
 PASS: element 1 in the window's prototype chain was cleared
 
 PASS: element 2 in the window's prototype chain was cleared
+
+PASS: element 3 in the window's prototype chain was cleared

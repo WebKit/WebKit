@@ -421,7 +421,7 @@ JSValue JSTestNondeterministic::getConstructor(VM& vm, const JSGlobalObject* glo
 EncodedJSValue JSC_HOST_CALL jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestNondeterministic*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestNondeterministic", "nondeterministicZeroArgFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestNondeterministic::info());

@@ -36,10 +36,9 @@
     JSCustomToNativeObject,
     CustomPutFunction,
     EventTarget,
-    JSGenerateToNativeObject,
     JSLegacyParent=JSDOMWindowBase,
     InterfaceName=Window,
-] interface DOMWindow {
+] interface DOMWindow : EventTarget {
     // DOM Level 0
     [Replaceable] readonly attribute Screen screen;
     [Replaceable] readonly attribute History history;
@@ -185,11 +184,6 @@
     [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 
     [Replaceable] readonly attribute DOMWindowCSS CSS;
-
-    // EventTarget interface
-    [Custom] void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [Custom] void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event event);
 
     void captureEvents(/*in long eventFlags*/);
     void releaseEvents(/*in long eventFlags*/);

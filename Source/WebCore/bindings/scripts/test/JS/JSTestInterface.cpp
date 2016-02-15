@@ -765,7 +765,7 @@ JSValue JSTestInterface::getConstructor(VM& vm, const JSGlobalObject* globalObje
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "implementsMethod1");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
@@ -780,7 +780,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(E
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "implementsMethod2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
@@ -809,7 +809,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "implementsMethod3");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
@@ -831,7 +831,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "supplementalMethod1");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
@@ -846,7 +846,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "supplementalMethod2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
@@ -875,7 +875,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "supplementalMethod3");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());

@@ -30,6 +30,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSDedicatedWorkerGlobalScope.h"
+#include "JSEventTarget.h"
 #include "ScriptSourceCode.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
@@ -89,6 +90,7 @@ void WorkerScriptController::initScript()
         ASSERT(structure->globalObject() == m_workerGlobalScopeWrapper);
         ASSERT(m_workerGlobalScopeWrapper->structure()->globalObject() == m_workerGlobalScopeWrapper);
         workerGlobalScopePrototype->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
+        workerGlobalScopePrototype->structure()->setPrototypeWithoutTransition(*m_vm, JSEventTarget::getPrototype(*m_vm, m_workerGlobalScopeWrapper.get()));
         dedicatedContextPrototype->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
     }
     ASSERT(m_workerGlobalScopeWrapper->globalObject() == m_workerGlobalScopeWrapper);

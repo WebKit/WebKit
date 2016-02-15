@@ -751,34 +751,6 @@ JSValue JSDOMWindow::setInterval(ExecState& state)
     return jsNumber(result);
 }
 
-JSValue JSDOMWindow::addEventListener(ExecState& state)
-{
-    Frame* frame = wrapped().frame();
-    if (!frame)
-        return jsUndefined();
-
-    JSValue listener = state.argument(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    wrapped().addEventListener(state.argument(0).toString(&state)->toAtomicString(&state), JSEventListener::create(asObject(listener), this, false, globalObject()->world()), state.argument(2).toBoolean(&state));
-    return jsUndefined();
-}
-
-JSValue JSDOMWindow::removeEventListener(ExecState& state)
-{
-    Frame* frame = wrapped().frame();
-    if (!frame)
-        return jsUndefined();
-
-    JSValue listener = state.argument(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    wrapped().removeEventListener(state.argument(0).toString(&state)->toAtomicString(&state), JSEventListener::create(asObject(listener), this, false, globalObject()->world()).ptr(), state.argument(2).toBoolean(&state));
-    return jsUndefined();
-}
-
 DOMWindow* JSDOMWindow::toWrapped(JSValue value)
 {
     if (!value.isObject())

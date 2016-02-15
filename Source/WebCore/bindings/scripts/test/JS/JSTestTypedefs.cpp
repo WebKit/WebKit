@@ -458,7 +458,7 @@ JSValue JSTestTypedefs::getConstructor(VM& vm, const JSGlobalObject* globalObjec
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "func");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -480,7 +480,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* stat
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "setShadow");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -521,7 +521,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "methodWithSequenceArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -538,7 +538,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableArrayArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "nullableArrayArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -555,7 +555,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableArrayArg(Exe
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "funcWithClamp");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -592,7 +592,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "immutablePointFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -604,7 +604,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFuncti
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "stringArrayFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -624,7 +624,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "stringArrayFunction2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -644,7 +644,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "callWithSequenceThatRequiresInclude");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
@@ -661,7 +661,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
-    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
+    auto castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestTypedefs", "methodWithException");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
