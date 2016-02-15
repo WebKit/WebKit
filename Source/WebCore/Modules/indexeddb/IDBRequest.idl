@@ -31,7 +31,6 @@
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
     ActiveDOMObject,
-    EventTarget,
     SkipVTableValidation,
     GenerateIsReachable=Impl,
 ] interface IDBRequest : EventTarget {

@@ -36,7 +36,6 @@ enum EndOfStreamError {
 [
     Conditional=MEDIA_SOURCE,
     ActiveDOMObject,
-    EventTarget,
     EnabledBySetting=MediaSource,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,

@@ -29,7 +29,6 @@
 
 [
     NoInterfaceObject,
-    EventTarget,
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface WebKitNamedFlow : EventTarget
 {

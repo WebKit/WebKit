@@ -27,7 +27,6 @@
     Conditional=VIDEO_TRACK,
     Constructor(unrestricted double startTime, unrestricted double endTime, DOMString text),
     ConstructorCallWith=ScriptExecutionContext,
-    EventTarget,
     JSCustomMarkFunction,
     CustomIsReachable,
     CustomToJSObject,

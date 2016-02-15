@@ -22,7 +22,6 @@
     NoInterfaceObject,
     Conditional=BATTERY_STATUS,
     ActiveDOMObject,
-    EventTarget,
 ] interface BatteryManager : EventTarget {
     readonly attribute boolean charging;
     readonly attribute unrestricted double chargingTime;

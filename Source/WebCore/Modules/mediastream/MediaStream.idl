@@ -24,7 +24,6 @@
 
 [
     Conditional=MEDIA_STREAM,
-    EventTarget,
     Constructor,
     Constructor(MediaStream stream),
     Constructor(MediaStreamTrack[] tracks),

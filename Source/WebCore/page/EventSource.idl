@@ -35,7 +35,6 @@
     Constructor(DOMString url, optional Dictionary eventSourceInit),
     ConstructorCallWith=ScriptExecutionContext,
     ConstructorRaisesException,
-    EventTarget,
 ] interface EventSource : EventTarget {
 
     readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.

@@ -24,7 +24,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    EventTarget,
     JSGenerateToJSObject,
     Constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate),
     ConstructorRaisesException,

@@ -26,7 +26,6 @@
 [
     Conditional=VIDEO_TRACK,
     GenerateIsReachable=ImplElementRoot,
-    EventTarget,
     JSCustomMarkFunction,
 ] interface TextTrackList : EventTarget {
     readonly attribute unsigned long length;

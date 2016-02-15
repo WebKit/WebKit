@@ -31,7 +31,6 @@
 [
     Conditional=MEDIA_SOURCE,
     NoInterfaceObject,
-    EventTarget,
     GenerateIsReachable=Impl,
     CallWith=ScriptExecutionContext,
 ] interface SourceBufferList : EventTarget {

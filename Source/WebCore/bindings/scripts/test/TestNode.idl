@@ -19,7 +19,6 @@
  */
 
 [
-    EventTarget,
     Constructor,
 ] interface TestNode : Node {
     attribute DOMString name;

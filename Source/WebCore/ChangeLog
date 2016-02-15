@@ -1,5 +1,68 @@
 2016-02-14  Chris Dumez  <cdumez@apple.com>
 
+        Drop the [EventTarget] WebKit-specific IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=154171
+
+        Reviewed by Sam Weinig.
+
+        Drop the [EventTarget] WebKit-specific IDL extended attribute now that
+        all interfaces inherit EventTarget when they should.
+
+        No new tests, no Web-Exposed behavior change.
+
+        * Modules/battery/BatteryManager.idl:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBOpenDBRequest.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/mediasession/MediaRemoteControls.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/speech/SpeechSynthesisUtterance.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (ImplementsInterface):
+        (SkipFunction): Deleted.
+        (GenerateCFile): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InstanceNeedsVisitChildren):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/TestEventTarget.idl:
+        * bindings/scripts/test/TestNode.idl:
+        * css/FontLoader.idl:
+        * dom/EventTarget.idl:
+        * dom/MessagePort.idl:
+        * dom/Node.idl:
+        * dom/WebKitNamedFlow.idl:
+        * fileapi/FileReader.idl:
+        * html/MediaController.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.idl:
+        * html/track/TextTrackList.idl:
+        * html/track/VideoTrackList.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/DOMWindow.idl:
+        * page/EventSource.idl:
+        * page/Performance.idl:
+        * workers/WorkerGlobalScope.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.idl:
+
+2016-02-14  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix the Mac CMake build after r196136
 
         * PlatformMac.cmake:

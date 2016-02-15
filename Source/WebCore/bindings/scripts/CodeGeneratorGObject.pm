@@ -335,12 +335,6 @@ sub SkipFunction {
         return 1;
     }
 
-    # Skip dispatch_event methods.
-    # FIXME: This can be removed once all classes implementing EventTarget inherit from it instead.
-    if ($parentNode->extendedAttributes->{"EventTarget"} && $function->signature->name eq "dispatchEvent") {
-        return 1;
-    }
-
     # Skip Console::profile() and Console::profileEnd() as they're not correctly generated for the moment.
     if ($functionName eq "webkit_dom_console_profile" || $functionName eq "webkit_dom_console_profile_end") {
         return 1;
@@ -1505,10 +1499,7 @@ sub ImplementsInterface {
     my $interface = shift;
     my $implementInterface = shift;
 
-    # FIXME: Check only the parent class once all classes implementing EventTarget inherit from it instead.
-    return 1 if $interface->parent and $interface->parent eq implementInterface and ShouldBeExposedAsInterface($interface->parent);
-    return 1 if $interface->extendedAttributes->{$implementInterface};
-    return 0;
+    return $codeGenerator->InheritsInterface($interface, $implementInterface);
 }
 
 sub GenerateCFile {

@@ -34,7 +34,6 @@
     ActiveDOMObject,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
-    EventTarget,
 ] interface FileReader : EventTarget {
     // ready states
     const unsigned short EMPTY = 0;

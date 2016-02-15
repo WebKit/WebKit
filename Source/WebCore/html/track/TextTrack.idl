@@ -28,7 +28,6 @@ enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "me
 
 [
     Conditional=VIDEO_TRACK,
-    EventTarget,
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction,
     SkipVTableValidation,

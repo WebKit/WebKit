@@ -27,7 +27,6 @@
  */
 
 [
-    EventTarget,
     MasqueradesAsUndefined
 ] interface TestEventTarget : EventTarget {
 

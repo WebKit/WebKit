@@ -41,7 +41,6 @@ enum XMLHttpRequestResponseType {
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     JSCustomMarkFunction,
-    EventTarget,
 ] interface XMLHttpRequest : EventTarget {
     // From XMLHttpRequestEventTarget
     attribute EventHandler onabort;

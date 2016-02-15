@@ -61,7 +61,6 @@ DocumentEventHandler
 EnabledAtRuntime=*
 EnabledBySetting=*
 EnforceRange
-EventTarget
 ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot
 GetterRaisesException

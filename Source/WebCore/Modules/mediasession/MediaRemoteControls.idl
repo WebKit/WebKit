@@ -27,7 +27,6 @@
     Conditional=MEDIA_SESSION,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
-    EventTarget,
 ] interface MediaRemoteControls : EventTarget {
     attribute boolean previousTrackEnabled;
     attribute boolean nextTrackEnabled;

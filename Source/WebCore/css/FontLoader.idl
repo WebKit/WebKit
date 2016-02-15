@@ -32,7 +32,6 @@
     NoInterfaceObject,
     Conditional=FONT_LOAD_EVENTS,
     ActiveDOMObject,
-    EventTarget,
     GenerateIsReachable=ImplDocument,
 ] interface FontLoader : EventTarget {
 

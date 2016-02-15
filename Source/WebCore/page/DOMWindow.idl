@@ -35,7 +35,6 @@
     JSCustomMarkFunction,
     JSCustomToNativeObject,
     CustomPutFunction,
-    EventTarget,
     JSLegacyParent=JSDOMWindowBase,
     InterfaceName=Window,
 ] interface DOMWindow : EventTarget {

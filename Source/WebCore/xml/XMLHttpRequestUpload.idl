@@ -28,7 +28,6 @@
 
 [
     GenerateIsReachable=Impl,
-    EventTarget,
 ] interface XMLHttpRequestUpload : EventTarget {
     // From XMLHttpRequestEventTarget
     attribute EventHandler onabort;
