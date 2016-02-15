@@ -1,5 +1,26 @@
 2016-02-15  Daniel Bates  <dabates@apple.com>
 
+        CSP: 'sandbox' should be ignored in report-only mode
+        https://bugs.webkit.org/show_bug.cgi?id=153167
+        <rdar://problem/22708669>
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink (patch by Mike West):
+        <https://src.chromium.org/viewvc/blink?revision=165322&view=revision>
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportInvalidDirectiveInReportOnlyMode): Added. Logs a
+        console message to the console to explain that the specified directive is invalid in
+        report-only mode.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::applySandboxPolicy): Do not apply sandbox
+        policy when in report-only mode and call ContentSecurityPolicy::reportInvalidDirectiveInReportOnlyMode()
+        to log a message to the console.
+
+2016-02-15  Daniel Bates  <dabates@apple.com>
+
         CSP: Allow schemeless source expressions to match an HTTP or HTTPS resource
         https://bugs.webkit.org/show_bug.cgi?id=154177
         <rdar://problem/22708772>

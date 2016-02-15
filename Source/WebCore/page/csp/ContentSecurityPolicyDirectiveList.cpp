@@ -504,6 +504,10 @@ void ContentSecurityPolicyDirectiveList::setCSPDirective(const String& name, con
 
 void ContentSecurityPolicyDirectiveList::applySandboxPolicy(const String& name, const String& sandboxPolicy)
 {
+    if (m_reportOnly) {
+        m_policy.reportInvalidDirectiveInReportOnlyMode(name);
+        return;
+    }
     if (m_haveSandboxPolicy) {
         m_policy.reportDuplicateDirective(name);
         return;

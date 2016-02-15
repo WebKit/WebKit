@@ -833,7 +833,6 @@ webkit.org/b/153166 http/tests/security/contentSecurityPolicy/report-uri-from-ja
 webkit.org/b/153166 http/tests/security/contentSecurityPolicy/report-uri.html [ Failure ]
 webkit.org/b/153166 webkit.org/b/153242 http/tests/security/contentSecurityPolicy/report-and-enforce.html [ Failure ]
 webkit.org/b/153166 webkit.org/b/153242 http/tests/security/contentSecurityPolicy/report-blocked-data-uri.html [ Failure ]
-webkit.org/b/153167 http/tests/security/contentSecurityPolicy/sandbox-report-only.html [ Failure ]
 webkit.org/b/153168 http/tests/security/contentSecurityPolicy/source-list-parsing-07.html [ Failure ]
 webkit.org/b/153170 http/tests/security/contentSecurityPolicy/source-list-parsing-paths-03.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html [ Pass Failure ]
