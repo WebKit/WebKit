@@ -69,15 +69,12 @@ FloatRect RunResolver::Run::rect() const
 
 StringView RunResolver::Run::text() const
 {
-    auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
     ASSERT(run.start < run.end);
-    auto& segment = resolver.m_flowContents.segmentForRun(run.start, run.end);
+    auto& segment = m_iterator.resolver().m_flowContents.segmentForRun(run.start, run.end);
     // We currently split runs on segment boundaries (different RenderObject).
     ASSERT(run.end <= segment.end);
-    if (segment.text.is8Bit())
-        return StringView(segment.text.characters8(), segment.text.length()).substring(run.start - segment.start, run.end - run.start);
-    return StringView(segment.text.characters16(), segment.text.length()).substring(run.start - segment.start, run.end - run.start);
+    return StringView(segment.text).substring(run.start - segment.start, run.end - run.start);
 }
 
 RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex, unsigned lineIndex)

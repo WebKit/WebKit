@@ -1,3 +1,33 @@
+2016-02-14  Darin Adler  <darin@apple.com>
+
+        Small tweaks to some SimpleLineLayout code
+        https://bugs.webkit.org/show_bug.cgi?id=154229
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow): Use std::ceil instead of ceilf.
+        Use auto instead of const auto& for a for loop where the local object is
+        copied and not a reference.
+        (WebCore::SimpleLineLayout::hitTestFlow): Use modern for loop.
+        (WebCore::SimpleLineLayout::collectFlowOverflow): Use std::ceil instead of
+        ceilf. Use a modern for loop, and use slightly more descriptive local
+        variable names.
+        (WebCore::SimpleLineLayout::computeBoundingBox): Use auto instead of
+        const auto& as above.
+        (WebCore::SimpleLineLayout::computeFirstRunLocation): Use auto and use
+        the name "range" for the range rather than the name "it", since the range
+        is not an iterator.
+        (WebCore::SimpleLineLayout::collectAbsoluteRects): Use auto instead of
+        const auto& as above.
+        (WebCore::SimpleLineLayout::collectAbsoluteQuads): Ditto.
+        (WebCore::SimpleLineLayout::showLineLayoutForFlow): Use modern for loop.
+
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text): Convert from a String
+        to a StringView using the StringView constructor instead of writing out
+        explicit 8-bit and 16-bit cases.
+
 2016-02-13  Antti Koivisto  <antti@apple.com>
 
         Factor class change style invalidation code into a class
