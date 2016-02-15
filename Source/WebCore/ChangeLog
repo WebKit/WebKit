@@ -1,5 +1,11 @@
 2016-02-14  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix the Mac CMake build after r196136
+
+        * PlatformMac.cmake:
+
+2016-02-14  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix the Windows build.
 
         * Modules/webdatabase/Database.cpp:
