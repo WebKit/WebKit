@@ -16,7 +16,6 @@ fast/zooming/ios [ Pass ]
 
 # Animation tests with issues
 animations/animation-direction-normal.html [ Pass Crash ]
-animations/animation-delay-changed.html [ Pass Crash ]
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 # Compositing tests that fail:

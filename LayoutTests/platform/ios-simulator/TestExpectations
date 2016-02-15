@@ -2919,3 +2919,5 @@ webkit.org/b/153762 fast/regions/text-break-properties.html [ Skip ]
 webkit.org/b/153029 fast/css-generated-content/details-summary-before-after.html [ Failure ]
 
 webkit.org/b/76121 imported/blink/fast/events/event-trusted.html [ Skip ]
+
+webkit.org/b/154253 animations/animation-delay-changed.html [ Pass Failure ]
