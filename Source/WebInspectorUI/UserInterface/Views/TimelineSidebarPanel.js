@@ -81,8 +81,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this.element.insertBefore(this._basicTitleBar, this.element.firstChild);
 
         if (WebInspector.FPSInstrument.supported()) {
-            var timelinesNavigationItem = new WebInspector.RadioButtonNavigationItem(WebInspector.TimelineSidebarPanel.ViewMode.Timelines, WebInspector.UIString("Timelines"))
-            var renderingFramesNavigationItem = new WebInspector.RadioButtonNavigationItem(WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames, WebInspector.UIString("Rendering Frames"))
+            let timelinesNavigationItem = new WebInspector.RadioButtonNavigationItem(WebInspector.TimelineOverview.ViewMode.Timelines, WebInspector.UIString("Timelines"))
+            let renderingFramesNavigationItem = new WebInspector.RadioButtonNavigationItem(WebInspector.TimelineOverview.ViewMode.RenderingFrames, WebInspector.UIString("Rendering Frames"))
             this._viewModeNavigationBar = new WebInspector.NavigationBar(null, [timelinesNavigationItem, renderingFramesNavigationItem], "tablist");
             this._viewModeNavigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._viewModeSelected, this);
 
@@ -198,9 +198,6 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         if (this._displayedContentView)
             this.contentBrowser.showContentView(this._displayedContentView);
 
-        if (this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
-            this._refreshFrameSelectionChart();
-
         this._toggleRecordingShortcut.disabled = false;
         this._toggleNewRecordingShortcut.disabled = false;
 
@@ -224,11 +221,6 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         WebInspector.timelineManager.removeEventListener(null, null, this);
 
         WebInspector.timelineManager.reset();
-    }
-
-    get viewMode()
-    {
-        return this._viewMode;
     }
 
     showDefaultContentView()
@@ -343,19 +335,12 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._displayedContentView.showOverviewTimelineView();
         this.contentBrowser.showContentView(this._displayedContentView);
-
-        var selectedByUser = false;
-        this._changeViewMode(WebInspector.TimelineSidebarPanel.ViewMode.Timelines, selectedByUser);
     }
 
     showTimelineViewForTimeline(timeline)
     {
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(this._displayedRecording.timelines.has(timeline.type), "Cannot show timeline because it does not belong to the shown recording.", timeline.type);
-
-        // The sidebar view mode must be in the correct state before changing the content view.
-        var selectedByUser = false;
-        this._changeViewMode(this._viewModeForTimeline(timeline), selectedByUser);
 
         if (this._timelineTreeElementMap.has(timeline)) {
             // Defer showing the relevant timeline to the onselect handler of the timelines tree element.
@@ -371,7 +356,6 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     updateFrameSelection(startFrameIndex, endFrameIndex)
     {
         console.assert(startFrameIndex <= endFrameIndex, startFrameIndex, endFrameIndex);
-        console.assert(this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames, this._viewMode);
         if (this._startFrameIndex === startFrameIndex && this._endFrameIndex === endFrameIndex)
             return;
 
@@ -418,7 +402,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         if (!this._displayedContentView)
             return true;
 
-        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames && this._renderingFrameTaskFilter.size) {
+        if (this._viewMode === WebInspector.TimelineOverview.ViewMode.RenderingFrames && this._renderingFrameTaskFilter.size) {
             while (treeElement && !(treeElement.record instanceof WebInspector.TimelineRecord))
                 treeElement = treeElement.parent;
 
@@ -487,7 +471,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         cookie[WebInspector.TimelineSidebarPanel.ShowingTimelineRecordingContentViewCookieKey] = this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
 
-        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
+        if (this._viewMode === WebInspector.TimelineOverview.ViewMode.RenderingFrames)
             cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = WebInspector.TimelineRecord.Type.RenderingFrame;
         else {
             var selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement;
@@ -593,7 +577,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     _renderingFrameTimelineTimesUpdated(event)
     {
-        if (this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
+        if (this._viewMode === WebInspector.TimelineOverview.ViewMode.RenderingFrames)
             this._refreshFrameSelectionChart();
     }
 
@@ -624,10 +608,19 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     _contentBrowserCurrentContentViewDidChange(event)
     {
-        var didShowTimelineRecordingContentView = this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
+        let didShowTimelineRecordingContentView = this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
         this.element.classList.toggle(WebInspector.TimelineSidebarPanel.TimelineRecordingContentViewShowingStyleClass, didShowTimelineRecordingContentView);
 
-        if (this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
+        if (!didShowTimelineRecordingContentView)
+            return;
+
+        this._updateViewModeIfNeeded();
+        this._timelineCountChanged();
+
+        this.updateFilter();
+
+        let timelineView = this.contentBrowser.currentContentView.currentTimelineView;
+        if (timelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
             this._refreshFrameSelectionChart();
     }
 
@@ -693,10 +686,15 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         var cookie = {};
         this.saveStateToCookie(cookie);
 
+        if (this._displayedContentView)
+            this._displayedContentView.removeEventListener(WebInspector.ContentView.Event.NavigationItemsDidChange, this._updateViewModeIfNeeded, this);
+
         // Try to get the recording content view if it exists already, if it does we don't want to restore the cookie.
         var onlyExisting = true;
         this._displayedContentView = this.contentBrowser.contentViewForRepresentedObject(this._displayedRecording, onlyExisting, {timelineSidebarPanel: this});
         if (this._displayedContentView) {
+            this._displayedContentView.addEventListener(WebInspector.ContentView.Event.NavigationItemsDidChange, this._updateViewModeIfNeeded, this);
+
             // Show the timeline that was being shown to update the sidebar tree state.
             var currentTimelineView = this._displayedContentView.currentTimelineView;
             if (currentTimelineView && currentTimelineView.representedObject instanceof WebInspector.Timeline)
@@ -710,6 +708,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         onlyExisting = false;
         this._displayedContentView = this.contentBrowser.contentViewForRepresentedObject(this._displayedRecording, onlyExisting, {timelineSidebarPanel: this});
+        if (this._displayedContentView)
+            this._displayedContentView.addEventListener(WebInspector.ContentView.Event.NavigationItemsDidChange, this._updateViewModeIfNeeded, this);
 
         // Restore the cookie to carry over the previous recording view state to the new recording.
         this.restoreStateFromCookie(cookie);
@@ -859,52 +859,32 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         if (!event.target.selectedNavigationItem)
             return;
 
-        var selectedNavigationItem = event.target.selectedNavigationItem;
-        var selectedByUser = true;
-        this._changeViewMode(selectedNavigationItem.identifier, selectedByUser);
+        let selectedNavigationItem = event.target.selectedNavigationItem;
+        let newViewMode = selectedNavigationItem.identifier;
+        if (this._viewMode === newViewMode)
+            return;
+
+        let timelineType = this._previousSelectedTimelineType;
+        if (newViewMode === WebInspector.TimelineOverview.ViewMode.RenderingFrames) {
+            this._previousSelectedTimelineType = this._timelinesTreeOutline.selectedTreeElement ? this._timelinesTreeOutline.selectedTreeElement.representedObject.type : null;
+            timelineType = WebInspector.TimelineRecord.Type.RenderingFrame;
+        }
+
+        if (timelineType) {
+            console.assert(this._displayedRecording.timelines.has(timelineType), timelineType);
+            this.showTimelineViewForTimeline(this._displayedRecording.timelines.get(timelineType));
+            return;
+        }
+
+        this.showTimelineOverview();
     }
 
     _viewModeForTimeline(timeline)
     {
         if (timeline && timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
-            return WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames;
+            return WebInspector.TimelineOverview.ViewMode.RenderingFrames;
 
-        return WebInspector.TimelineSidebarPanel.ViewMode.Timelines;
-    }
-
-    _changeViewMode(mode, selectedByUser)
-    {
-        if (!WebInspector.FPSInstrument.supported() || this._viewMode === mode)
-            return;
-
-        this._viewMode = mode;
-        this._viewModeNavigationBar.selectedNavigationItem = this._viewMode;
-
-        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.Timelines) {
-            this._timelinesTreeOutline.hidden = false;
-            this._frameSelectionChartSection.collapsed = true;
-        } else {
-            this._timelinesTreeOutline.hidden = true;
-            this._frameSelectionChartSection.collapsed = false;
-        }
-
-        if (selectedByUser) {
-            var timelineType = this._previousSelectedTimelineType;
-            if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames) {
-                this._previousSelectedTimelineType = this._timelinesTreeOutline.selectedTreeElement ? this._timelinesTreeOutline.selectedTreeElement.representedObject.type : null;
-                timelineType = WebInspector.TimelineRecord.Type.RenderingFrame;
-            }
-
-            if (timelineType) {
-                console.assert(this._displayedRecording.timelines.has(timelineType), timelineType);
-                this.showTimelineViewForTimeline(this._displayedRecording.timelines.get(timelineType));
-            } else
-                this.showTimelineOverview();
-        }
-
-        this._timelineCountChanged();
-
-        this.updateFilter();
+        return WebInspector.TimelineOverview.ViewMode.Timelines;
     }
 
     _frameSelectionLegendItemChecked(event)
@@ -1041,11 +1021,29 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         this._replayPauseResumeButtonItem.toggled = false;
     }
-};
 
-WebInspector.TimelineSidebarPanel.ViewMode = {
-    Timelines: "timeline-sidebar-panel-view-mode-timelines",
-    RenderingFrames: "timeline-sidebar-panel-view-mode-frames"
+    _updateViewModeIfNeeded()
+    {
+        let timelineView = this.contentBrowser.currentContentView.currentTimelineView;
+        let newViewMode = WebInspector.TimelineOverview.ViewMode.Timelines;
+        if (timelineView.representedObject instanceof WebInspector.Timeline && timelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            newViewMode = WebInspector.TimelineOverview.ViewMode.RenderingFrames;
+
+        if (newViewMode === this._viewMode)
+            return;
+
+        this._viewMode = newViewMode;
+
+        if (this._viewMode === WebInspector.TimelineOverview.ViewMode.Timelines) {
+            this._timelinesTreeOutline.hidden = false;
+            this._frameSelectionChartSection.collapsed = true;
+        } else {
+            this._timelinesTreeOutline.hidden = true;
+            this._frameSelectionChartSection.collapsed = false;
+        }
+
+        this._viewModeNavigationBar.selectedNavigationItem = this._viewMode;
+    }
 };
 
 WebInspector.TimelineSidebarPanel.HiddenStyleClassName = "hidden";

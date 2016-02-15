@@ -108,7 +108,7 @@ WebInspector.TimelineRecordFrame = class TimelineRecordFrame extends WebInspecto
 
     _calculateFrameDisplayData(graphDataSource)
     {
-        var secondsPerBlock = (graphDataSource.graphHeightSeconds / graphDataSource.element.offsetHeight) * WebInspector.TimelineRecordFrame.MinimumHeightPixels;
+        var secondsPerBlock = (graphDataSource.graphHeightSeconds / graphDataSource.height) * WebInspector.TimelineRecordFrame.MinimumHeightPixels;
         var segments = [];
         var invisibleSegments = [];
         var currentSegment = null;

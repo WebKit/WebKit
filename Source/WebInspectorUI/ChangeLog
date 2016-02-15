@@ -1,3 +1,140 @@
+2016-02-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: eliminate the linear and rendering frames TimelineOverview subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=154000
+        <rdar://problem/24553105>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch eliminates the TimelineOverview subclasses, and moves logic for switching between
+        a time-based or frame-based graph into the overview itself. The values of the overview's start
+        time, current time, and end time now match the values in the timeline recording regardless of the
+        current view mode. When viewing the rendering frames graph, the recording times are ignored and
+        all frames are included. The overview maintains separate zoom level and ruler selection settings
+        for each view mode.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/LinearTimelineOverview.js: Removed.
+        * UserInterface/Views/RenderingFrameTimelineOverview.js: Removed.
+        Removed TimelineOverview subclasses.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.get height):
+        Set FPS graph height to 108 pixels.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even)):
+        (.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:not(:first-child)):
+        (.timeline-overview > .graphs-container > .timeline-overview-graph:nth-child(even)): Deleted.
+        (.timeline-overview > .graphs-container > .timeline-overview-graph:not(:first-child)): Deleted.
+        Disable alternating graph styles when showing FPS instrument.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        Create separate settings for timelines and FPS view modes.
+        (WebInspector.TimelineOverview.prototype.get viewMode):
+        (WebInspector.TimelineOverview.prototype.set viewMode):
+        (WebInspector.TimelineOverview.prototype.set startTime):
+        Adjust the current ruler selection when start time changes. Not necessary
+        when showing the FPS instrument, which doesn't have a start time.
+        (WebInspector.TimelineOverview.prototype.get secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.set secondsPerPixel):
+        Now a wrapper around the corresponding view mode setting.
+        (WebInspector.TimelineOverview.prototype.set pixelAlignDuration):
+        (WebInspector.TimelineOverview.prototype.get scrollStartTime):
+        (WebInspector.TimelineOverview.prototype.set scrollStartTime):
+        Now a wrapper around the corresponding view mode setting.
+        (WebInspector.TimelineOverview.prototype.get visibleDuration):
+        (WebInspector.TimelineOverview.prototype.get height):
+        Return the sum height of all visible overview graphs.
+        (WebInspector.TimelineOverview.prototype.shown):
+        Show overview graphs for the current view mode.
+        (WebInspector.TimelineOverview.prototype.hidden):
+        (WebInspector.TimelineOverview.prototype.reset):
+        (WebInspector.TimelineOverview.prototype.recordWasFiltered):
+        (WebInspector.TimelineOverview.prototype.selectRecord):
+        (WebInspector.TimelineOverview.prototype.updateLayoutIfNeeded):
+        (WebInspector.TimelineOverview.prototype.layout):
+        Layout for both view modes is largely identical, and differs only in the treatment
+        of the overview's start time, current time, and end time. Time-based instruments
+        use time values from the recording, while the FPS instrument has a fixed start time
+        of zero, and a current and end time pinned to the last rendering frame.
+        (WebInspector.TimelineOverview.prototype._handleScrollEvent):
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        (WebInspector.TimelineOverview._handleGestureStart):
+        (WebInspector.TimelineOverview.prototype._handleGestureChange):
+        (WebInspector.TimelineOverview.prototype._instrumentAdded):
+        (WebInspector.TimelineOverview.prototype._instrumentRemoved):
+        (WebInspector.TimelineOverview.prototype._timelineRulerMouseClicked):
+        (WebInspector.TimelineOverview.prototype._timeRangeSelectionChanged):
+        Save the selection for the current view mode.
+        (WebInspector.TimelineOverview.prototype._recordSelected):
+        (WebInspector.TimelineOverview.prototype._resetSelection.reset):
+        (WebInspector.TimelineOverview.prototype._resetSelection):
+        (WebInspector.TimelineOverview.prototype._canShowTimelineType):
+        (WebInspector.TimelineOverview.prototype._viewModeDidChange):
+        Sets zoom level, ruler selection, and graph visibility based on current view mode.
+        (WebInspector.TimelineOverview.prototype._createViewModeSettings):
+        Helper function for creating an object to track the zoom level and ruler
+        selection of each view mode.
+        (WebInspector.TimelineOverview.prototype.get _currentSettings):
+        Internal getter for retrieving the settings for the current view mode.
+        (WebInspector.TimelineOverview.prototype.canShowTimeline): Deleted.
+        Not needed now that the overview contains all timelines.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph):
+        (WebInspector.TimelineOverviewGraph.prototype.shown):
+        (WebInspector.TimelineOverviewGraph.prototype.hidden):
+        Toggle CSS hidden class.
+
+        * UserInterface/Views/TimelineRecordFrame.js:
+        No need to query offsetHeight now that TimelineOverviewGraph has a height property.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        Create a single timeline overview.
+        (WebInspector.TimelineRecordingContentView.prototype.get timelineOverviewHeight):
+        (WebInspector.TimelineRecordingContentView.prototype.shown):
+        (WebInspector.TimelineRecordingContentView.prototype.hidden):
+        (WebInspector.TimelineRecordingContentView.prototype.recordWasFiltered):
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        Update the timeline  overview's mode based on the current timeline view.
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        Removed special handling for the FPS overview.
+        Removed selection start time adjustment, which is now handled internally by TimelineOverview.
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineOverviewHeight):
+        (WebInspector.TimelineRecordingContentView.prototype._recordingReset):
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        (WebInspector.TimelineRecordingContentView.prototype._updateFrameSelection):
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.TimelineSidebarPanel.prototype.saveStateToCookie):
+        (WebInspector.TimelineSidebarPanel.prototype._renderingFrameTimelineTimesUpdated):
+        (WebInspector.TimelineSidebarPanel.prototype._contentBrowserCurrentContentViewDidChange):
+        Refresh the view mode when the content view changes.
+        (WebInspector.TimelineSidebarPanel.prototype._recordingSelected):
+        (WebInspector.TimelineSidebarPanel.prototype._viewModeSelected):
+        (WebInspector.TimelineSidebarPanel.prototype._viewModeForTimeline):
+        (WebInspector.TimelineSidebarPanel.prototype._updateViewModeIfNeeded):
+        Sync the tree outline, frames chart, and navigation bar with the current view mode.
+        (WebInspector.TimelineSidebarPanel.prototype.shown):
+        Refreshing the frame selection is unnecessary. It's updated by the recording content
+        view whenever the ruler selection changes.
+        (WebInspector.TimelineSidebarPanel.prototype.get viewMode): Deleted.
+        No longer public, since the timeline overview now owns the view mode. Internally the sidebar
+        still tracks the current state so it can determine when the value has changed.
+        (WebInspector.TimelineSidebarPanel.prototype.showTimelineOverview):
+        (WebInspector.TimelineSidebarPanel.prototype.showTimelineViewForTimeline):
+        The sidebar should only be synced to the overview after the content view has changed.
+        (WebInspector.TimelineSidebarPanel.prototype.updateFrameSelection):
+        Removed unnecessary assertion.
+        (WebInspector.TimelineSidebarPanel.prototype._changeViewMode): Deleted.
+        Replaced by _updateViewModeIfNeeded.
+
 2016-02-15  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Show inherited CSS variables in the Style sidebar

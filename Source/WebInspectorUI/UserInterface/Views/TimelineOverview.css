@@ -90,12 +90,12 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
     height: 36px;
 }
 
-.timeline-overview > .graphs-container > .timeline-overview-graph:nth-child(even) {
+.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
     background-color: hsl(0, 0%, 96%);
     background-clip: padding-box;
 }
 
-.timeline-overview > .graphs-container > .timeline-overview-graph:not(:first-child) {
+.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:not(:first-child) {
     border-top: 1px solid hsla(0, 0%, 0%, 0.09);
 }
 
