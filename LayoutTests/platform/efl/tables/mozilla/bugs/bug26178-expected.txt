@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderTable {TABLE} at (0,0) size 66x46
-        RenderTableSection {THEAD} at (0,0) size 66x24
-          RenderTableRow {TR} at (0,2) size 66x20
-            RenderTableCell {TD} at (2,2) size 62x20 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 65x46
+        RenderTableSection {THEAD} at (0,0) size 65x24
+          RenderTableRow {TR} at (0,2) size 65x20
+            RenderTableCell {TD} at (2,2) size 61x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 59x17
                 text run at (1,1) width 59: "The head"
-        RenderTableSection {TBODY} at (0,24) size 66x22
-          RenderTableRow {TR} at (0,0) size 66x20
-            RenderTableCell {TD} at (2,0) size 62x20 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,24) size 65x22
+          RenderTableRow {TR} at (0,0) size 65x20
+            RenderTableCell {TD} at (2,0) size 61x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x17
                 text run at (1,1) width 57: "First row"
       RenderBlock {FORM} at (0,46) size 784x44

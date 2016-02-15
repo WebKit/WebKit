@@ -4,10 +4,10 @@ layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x561
       RenderBlock {FORM} at (0,0) size 784x36
-        RenderTable {TABLE} at (0,0) size 889x36 [bgcolor=#FFE030] [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 887x34
-            RenderTableRow {TR} at (0,0) size 887x34
-              RenderTableCell {TD} at (0,0) size 887x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 888x36 [bgcolor=#FFE030] [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 886x34
+            RenderTableRow {TR} at (0,0) size 886x34
+              RenderTableCell {TD} at (0,0) size 886x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {NOBR} at (0,0) size 884x17
                   RenderTextControl {INPUT} at (3,3) size 282x28 [bgcolor=#FFFFFF]
                   RenderText {#text} at (287,9) size 13x17
@@ -17,7 +17,7 @@ layer at (0,0) size 800x585
                     text run at (586,9) width 13: " - "
                   RenderTextControl {INPUT} at (601,3) size 282x28 [bgcolor=#FFFFFF]
                 RenderText {#text} at (0,0) size 0x0
-            RenderTableRow {TR} at (0,34) size 887x0
+            RenderTableRow {TR} at (0,34) size 886x0
 layer at (16,18) size 275x18
   RenderBlock {DIV} at (4,6) size 275x18
 layer at (315,18) size 275x18

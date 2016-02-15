@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 784x92
         RenderTableSection {TBODY} at (0,0) size 784x92
           RenderTableRow {TR} at (0,2) size 784x88
-            RenderTableCell {TD} at (2,2) size 639x88 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 637x86
-                RenderTableSection {TBODY} at (0,0) size 637x86
-                  RenderTableRow {TR} at (0,2) size 637x82
-                    RenderTableCell {TD} at (2,2) size 633x82 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 638x88 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 636x86
+                RenderTableSection {TBODY} at (0,0) size 636x86
+                  RenderTableRow {TR} at (0,2) size 636x82
+                    RenderTableCell {TD} at (2,2) size 632x82 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 54x79
                         text run at (1,1) width 54: "inside of"
                         text run at (1,63) width 30: "table"
