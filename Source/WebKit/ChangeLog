@@ -1,3 +1,17 @@
+2016-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build of projects built after WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=154249
+        rdar://problem/24644805
+
+        Reviewed by Chris Dumez.
+
+        * PlatformWin.cmake:
+        Copy all generated headers to ForwardingHeaders/WebKit, not just WebKit.h.
+        This should fix problems related to not finding headers from other projects, such as AccessibleApplication.h.
+        WebKit.h, WebKitCOMAPI.h, and CFDictionaryPropertyBag.h were copied correctly, so this should copy the rest
+        of the needed headers.
+
 2016-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal Windows WebKit debug build.

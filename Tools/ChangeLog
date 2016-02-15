@@ -1,3 +1,17 @@
+2016-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build of projects built after WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=154249
+        rdar://problem/24644805
+
+        Reviewed by Chris Dumez.
+
+        * DumpRenderTree/PlatformWin.cmake:
+        * MiniBrowser/win/CMakeLists.txt:
+        Don't include DerivedSources/WebKit/Interfaces to make MiniBrowser and DumpRenderTree
+        more like projects built internally after WebKit.  They should only need to use what
+        is in ForwardingHeaders/WebKit.
+
 2016-02-12  Nan Wang  <n_wang@apple.com>
 
         AX: Implement paragraph related text marker functions using TextIterator

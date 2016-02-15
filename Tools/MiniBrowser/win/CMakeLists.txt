@@ -2,8 +2,6 @@ set(MiniBrowser_INCLUDE_DIRECTORIES
     ../MiniBrowser.vcxproj
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit"
-    "${DERIVED_SOURCES_DIR}"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces"
     "${WTF_DIR}"
     "${CMAKE_SOURCE_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
