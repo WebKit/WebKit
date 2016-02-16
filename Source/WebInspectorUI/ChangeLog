@@ -1,3 +1,18 @@
+2016-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Non-overlay scrollbars obscure the ends of lines in the console and sidebars
+        https://bugs.webkit.org/show_bug.cgi?id=154276
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .data-container):
+        * UserInterface/Views/DatabaseContentView.css:
+        (.storage-view.query):
+        * UserInterface/Views/LogContentView.css:
+        (.content-view.log):
+        Replace all occurrences of "overflow-y: overlay" with "overflow-y: auto".
+
 2016-02-15  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Visual sidebar minor regression fixes

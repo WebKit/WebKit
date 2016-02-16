@@ -58,7 +58,7 @@
 }
 
 .content-view.log {
-    overflow-y: overlay;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 
