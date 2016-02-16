@@ -1,3 +1,13 @@
+2016-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Removed unused files after r196478.
+
+        * Configurations/DatabaseProcess.xcconfig: Removed.
+        * Configurations/NetworkProcess.xcconfig: Removed.
+        * Configurations/PluginProcess.xcconfig: Removed.
+        * Configurations/WebContentProcess.xcconfig: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-02-15  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [ThreadedCompositor] position:fixed elements do not have their own layers when threaded compositor is enabled.
