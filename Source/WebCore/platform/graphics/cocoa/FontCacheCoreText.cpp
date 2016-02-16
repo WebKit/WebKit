@@ -361,9 +361,9 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
     return result;
 }
 
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
+RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
 {
-    if (!originalFont || (!features.size() && variantSettings.isAllNormal()
+    if (!originalFont || (!features.size() && variantSettings.isAllNormal() && textRenderingMode == AutoTextRendering
         && (!fontFaceFeatures || !fontFaceFeatures->size()) && (!fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal())))
         return originalFont;
 
@@ -386,7 +386,14 @@ RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, const Font
     for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings))
         featuresToBeApplied.set(newFeature.key, newFeature.value);
 
-    // Step 5: Other properties
+    // Step 5: Other properties (text-rendering)
+    if (textRenderingMode == OptimizeSpeed) {
+        featuresToBeApplied.set(fontFeatureTag("liga"), 0);
+        featuresToBeApplied.set(fontFeatureTag("clig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("dlig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("hlig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("calt"), 0);
+    }
 
     // Step 6: Font-feature-settings
     for (auto& newFeature : features)

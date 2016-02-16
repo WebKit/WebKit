@@ -113,7 +113,8 @@ private:
     static std::array<unsigned, 2> makeFlagsKey(const FontDescription& description)
     {
         static_assert(USCRIPT_CODE_LIMIT < 0x1000, "Script code must fit in an unsigned along with the other flags");
-        unsigned first = static_cast<unsigned>(description.script()) << 8
+        unsigned first = static_cast<unsigned>(description.script()) << 10
+            | static_cast<unsigned>(description.textRenderingMode()) << 8
             | static_cast<unsigned>(description.fontSynthesis()) << 6
             | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
@@ -243,7 +244,7 @@ private:
 };
 
 #if PLATFORM(COCOA)
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings&);
+RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, TextRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings&);
 #endif
 
 #if !PLATFORM(MAC)
