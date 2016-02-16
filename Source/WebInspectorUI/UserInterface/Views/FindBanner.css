@@ -79,7 +79,9 @@ body.window-inactive .find-banner {
 .find-banner > input[type="search"] {
     margin: 1px 4px;
 
-    width: 143px;
+    width: 30vw;
+    min-width: 143px;
+    max-width: 210px;
     height: 19px;
 
     vertical-align: top;
@@ -193,6 +195,10 @@ body.window-inactive .find-banner {
     position: relative;
     top: auto;
     border: 0;
+}
+
+body .find-banner.console-find-banner {
+    flex-wrap: nowrap;
 }
 
 .find-banner.console-find-banner > input[type="search"] {

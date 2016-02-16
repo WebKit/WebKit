@@ -1,3 +1,17 @@
+2016-02-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Increase the width of the find banner's search field
+        https://bugs.webkit.org/show_bug.cgi?id=154284
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner > input[type="search"]):
+        Keep the minimum width the same as the current width.
+
+        (body .find-banner.console-find-banner):
+        Overwrite ".navigation-bar .item {flex-wrap: nowrap}".
+
 2016-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Non-overlay scrollbars obscure the ends of lines in the console and sidebars
