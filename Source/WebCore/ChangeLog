@@ -1,3 +1,17 @@
+2016-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Rollout r188659. This broke scrolling of iframes and overflow when
+        navigating back to a page in the page cache.
+        
+        The fix was overly agressive and had no layout test. I will fix the original
+        issue a different way.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clearScrollableAreas): Deleted.
+        * page/FrameView.h:
+
 2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] No hover-horizontal scrolling available
