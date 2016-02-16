@@ -280,6 +280,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_hasVisibleContent(false)
     , m_visibleDescendantStatusDirty(false)
     , m_hasVisibleDescendant(false)
+    , m_registeredScrollableArea(false)
     , m_3DTransformedDescendantStatusDirty(true)
     , m_has3DTransformedDescendant(false)
     , m_hasCompositingDescendant(false)
@@ -345,7 +346,10 @@ RenderLayer::~RenderLayer()
     if (inResizeMode() && !renderer().documentBeingDestroyed())
         renderer().frame().eventHandler().resizeLayerDestroyed();
 
-    renderer().view().frameView().removeScrollableArea(this);
+    ASSERT(m_registeredScrollableArea == renderer().view().frameView().containsScrollableArea(this));
+
+    if (m_registeredScrollableArea)
+        renderer().view().frameView().removeScrollableArea(this);
 
     if (!renderer().documentBeingDestroyed()) {
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -6730,10 +6734,18 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
 
     bool isScrollable = hasOverflow && isVisibleToHitTest;
     bool addedOrRemoved = false;
-    if (isScrollable)
-        addedOrRemoved = frameView.addScrollableArea(this);
-    else
+    
+    ASSERT(m_registeredScrollableArea == frameView.containsScrollableArea(this));
+    
+    if (isScrollable) {
+        if (!m_registeredScrollableArea) {
+            addedOrRemoved = frameView.addScrollableArea(this);
+            m_registeredScrollableArea = true;
+        }
+    } else if (m_registeredScrollableArea) {
         addedOrRemoved = frameView.removeScrollableArea(this);
+        m_registeredScrollableArea = false;
+    }
     
     if (addedOrRemoved)
         updateNeedsCompositedScrolling();
