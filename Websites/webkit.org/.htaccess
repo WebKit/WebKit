@@ -68,6 +68,13 @@ Redirect 301 /security /security-policy/
 Redirect 301 /status.html /status/
 Redirect 301 /team.html /team/
 
+# Old B3 Documentation
+Redirect 301 /documentation/b3/air/ /docs/b3/assembly-intermediate-representation.html
+Redirect 301 /documentation/b3/air /docs/b3/assembly-intermediate-representation.html
+Redirect 301 /documentation/b3/intermediate-representation/ /docs/b3/intermediate-representation.html
+Redirect 301 /documentation/b3/intermediate-representation /docs/b3/intermediate-representation.html
+Redirect 301 /documentation/b3 /docs/b3
+
 # Bugzilla
 
 RewriteRule ^b/(.*)$ https://bugs.webkit.org/show_bug.cgi?id=$1 [R=301,L,NE]

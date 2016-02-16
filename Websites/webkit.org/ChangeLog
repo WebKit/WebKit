@@ -1,3 +1,12 @@
+2016-02-16  Jonathan Davis  <jond@apple.com>
+
+        Add a redirect for B3 documentation
+        https://bugs.webkit.org/show_bug.cgi?id=154293
+
+        Reviewed by Timothy Hatcher.
+
+        * .htaccess:
+
 2016-02-15  Timothy Hatcher  <timothy@apple.com>
 
         Fix byline to avoid bumping into content sticks out.
