@@ -347,14 +347,23 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
 
 void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
+    auto* thisObject = jsCast<JSDOMWindow*>(cell);
     if (!thisObject->wrapped().frame())
         return;
 
+    String errorMessage;
+    if (!shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), errorMessage)) {
+        // We only allow setting "location" attribute cross-origin.
+        if (propertyName == exec->propertyNames().location)
+            lookupPut(exec, propertyName, thisObject, value, *s_info.staticPropHashTable, slot);
+        else
+            thisObject->printErrorMessage(errorMessage);
+        return;
+    }
+
     // Optimization: access JavaScript global variables directly before involving the DOM.
     if (thisObject->JSGlobalObject::hasOwnPropertyForWrite(exec, propertyName)) {
-        if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
-            JSGlobalObject::put(thisObject, exec, propertyName, value, slot);
+        JSGlobalObject::put(thisObject, exec, propertyName, value, slot);
         return;
     }
 
@@ -363,27 +372,22 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
             return;
     }
 
-    if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
-        Base::put(thisObject, exec, propertyName, value, slot);
+    Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 void JSDOMWindow::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)
 {
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
-    if (!thisObject->wrapped().frame())
+    auto* thisObject = jsCast<JSDOMWindow*>(cell);
+    if (!thisObject->wrapped().frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
         return;
     
-    Identifier propertyName = Identifier::from(exec, index);
-
     // Optimization: access JavaScript global variables directly before involving the DOM.
-    if (thisObject->JSGlobalObject::hasOwnPropertyForWrite(exec, propertyName)) {
-        if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
-            JSGlobalObject::putByIndex(thisObject, exec, index, value, shouldThrow);
+    if (thisObject->JSGlobalObject::hasOwnPropertyForWrite(exec, Identifier::from(exec, index))) {
+        JSGlobalObject::putByIndex(thisObject, exec, index, value, shouldThrow);
         return;
     }
     
-    if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
-        Base::putByIndex(thisObject, exec, index, value, shouldThrow);
+    Base::putByIndex(thisObject, exec, index, value, shouldThrow);
 }
 
 bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

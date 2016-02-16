@@ -1,3 +1,33 @@
+2016-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Do security checks early in JSDOMWindow::put*()
+        https://bugs.webkit.org/show_bug.cgi?id=154270
+
+        Reviewed by Gavin Barraclough.
+
+        Do security checks early in JSDOMWindow::put() / JSDOMWindow::putByIndex()
+        and return as soon as possible. This makes it less error-prone as we need
+        to do the security check only once, at the top of the function.
+
+        Also lock down the security further by calling lookupPut() only if the
+        property name is "location". The "location" property is the only one that
+        can be set cross-origin. Previously, trying to set a property such as
+        "name" (which cannot be set cross-origin) relied on the attribute setter
+        doing the security check when getting called. The new check is less error
+        prone and will correctly prevent overriding window's method cross-origin
+        once these move down from the prototype (Bug 154120).
+
+        Finally, the previous code was failing to set the "location" property
+        cross-origin after the window has been reified. This patch fixes the
+        issue by always calling the original "location" property setter from the
+        static table in the cross-origin case.
+
+        Test: http/tests/security/cross-origin-reified-window-location-setting.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        (WebCore::JSDOMWindow::putByIndex):
+
 2016-02-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Gather some rudimentary statistics during resource load 

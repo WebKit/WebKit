@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<iframe id="crossOriginFrame" src="http://localhost:8000/security/resources/reify-window.html"></iframe>
+<script>
+description("Tests that window.location can be set cross-origin even if the window object is reified.");
+jsTestIsAsync = true;
+
+function runTest()
+{
+    crossOriginWindow = crossOriginFrame.window;
+    shouldNotThrow("crossOriginWindow.location = 'about:blank'");
+
+    setTimeout(function() {
+        shouldBeEqualToString("crossOriginWindow.location.href", "about:blank");
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

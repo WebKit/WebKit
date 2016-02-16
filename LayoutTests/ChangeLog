@@ -1,3 +1,24 @@
+2016-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Do security checks early in JSDOMWindow::put*()
+        https://bugs.webkit.org/show_bug.cgi?id=154270
+
+        Reviewed by Gavin Barraclough.
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        Rebaseline. The extra security warnings are for the following properties:
+        closed, crypto, frameElement, pageXOffset and pageYOffset.
+        All these properties are read-only and therefore cannot be set (cross-origin
+        or not). The previous code was not doing an explicit check and ended up
+        trying to set these properties. However, since they are read-only, we would
+        silently fail to set them. The new code does the explicit check and therefore
+        will warn and NOT attempt to set.
+
+        * http/tests/security/cross-origin-reified-window-location-setting-expected.txt: Added.
+        * http/tests/security/cross-origin-reified-window-location-setting.html: Added.
+        Add test to check that setting window.location cross-origin still works after the
+        window object has been reified.
+
 2016-02-15  Mark Lam  <mark.lam@apple.com>
 
         [ARMv7] Some JSC test fails due to exhausting the JIT code heap on the no LLINT test configuration.
