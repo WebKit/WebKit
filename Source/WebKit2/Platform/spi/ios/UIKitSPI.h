@@ -24,7 +24,6 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <UIKit/UITouch.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -317,7 +316,6 @@ typedef enum {
 
 @interface UITapGestureRecognizer ()
 @property (nonatomic, readonly) CGPoint location;
-@property (nonatomic, readonly) NSArray  *touches;
 @end
 
 @class WebEvent;

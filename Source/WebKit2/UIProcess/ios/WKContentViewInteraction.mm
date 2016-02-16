@@ -433,7 +433,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 {
     _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
     [_doubleTapGestureRecognizer setNumberOfTapsRequired:2];
-    [_doubleTapGestureRecognizer setAllowedTouchTypes:@[@(UITouchTypeDirect)]];
     [_doubleTapGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [_singleTapGestureRecognizer requireOtherGestureToFail:_doubleTapGestureRecognizer.get()];
@@ -1332,8 +1331,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     // We don't want to clear the selection if it is in editable content.
     // The selection could have been set by autofocusing on page load and not
     // reflected in the UI process since the user was not interacting with the page.
-    UITouch *touch = [gestureRecognizer.touches lastObject];
-    if (!_page->editorState().isContentEditable && touch.type == UITouchTypeDirect)
+    if (!_page->editorState().isContentEditable)
         [_webSelectionAssistant clearSelection];
 
     _lastInteractionLocation = gestureRecognizer.location;

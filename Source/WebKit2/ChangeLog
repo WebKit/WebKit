@@ -1,3 +1,12 @@
+2016-02-16  Sam Weinig  <sam@webkit.org>
+
+        Revert r195826.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _createAndConfigureDoubleTapGestureRecognizer]):
+        (-[WKContentView _singleTapCommited:]):
+
 2016-02-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed buildfix after r196488. Just for fun.
