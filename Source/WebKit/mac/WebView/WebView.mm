@@ -168,6 +168,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/ResourceHandle.h>
+#import <WebCore/ResourceLoadObserver.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/RuntimeEnabledFeatures.h>
@@ -746,6 +747,25 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     NSString* cacheDir = [NSString _webkit_localCacheDirectoryWithBundleIdentifier:appName];
 
     webApplicationCacheStorage().setCacheDirectory(cacheDir);
+    
+    initialized = YES;
+}
+
+static void WebKitInitializeApplicationStatisticsStoragePathIfNecessary()
+{
+    static BOOL initialized = NO;
+    if (initialized)
+        return;
+    
+    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    if (!appName)
+        appName = [[NSProcessInfo processInfo] processName];
+    
+    ASSERT(appName);
+    
+    NSString *supportDirectory = [NSString _webkit_localStorageDirectoryWithBundleIdentifier:appName];
+    ResourceLoadObserver::sharedObserver().setStatisticsStorageDirectory(supportDirectory);
+    
     initialized = YES;
 }
 
@@ -943,6 +963,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
         WebKitInitializeStorageIfNecessary();
         WebKitInitializeApplicationCachePathIfNecessary();
+        WebKitInitializeApplicationStatisticsStoragePathIfNecessary();
 #if ENABLE(GAMEPAD)
         WebKitInitializeGamepadProviderIfNecessary();
 #endif
@@ -2451,6 +2472,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
+
+    settings.setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
+    ResourceLoadObserver::sharedObserver().readDataFromDiskIfNeeded();
 
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled([preferences gamepadsEnabled]);
@@ -4819,6 +4843,8 @@ static Vector<String> toStringVector(NSArray* patterns)
 + (void)_applicationWillTerminate
 {   
     applicationIsTerminating = YES;
+
+    ResourceLoadObserver::sharedObserver().writeDataToDisk();
 
     if (fastDocumentTeardownEnabled())
         [self closeAllWebViews];

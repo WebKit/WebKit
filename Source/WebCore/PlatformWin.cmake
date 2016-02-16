@@ -64,6 +64,8 @@ list(APPEND WebCore_SOURCES
     platform/audio/PlatformMediaSessionManager.cpp
 
     platform/cf/FileSystemCF.cpp
+    platform/cf/KeyedDecoderCF.cpp
+    platform/cf/KeyedEncoderCF.cpp
     platform/cf/SharedBufferCF.cpp
 
     platform/cf/win/CertificateCFWin.cpp

@@ -1,0 +1,13 @@
+<script src="redirect-updates-history-item.js"></script>
+<script>
+clearLocationCookie();
+
+onload = function() {
+    if (window.testRunner) {
+        testRunner.notifyDone();
+        log("Dumping Resource Load Statistics:");
+        log(window.internals.resourceLoadStatisticsForOrigin("127.0.0.1"));
+    }
+}
+</script>
+<body>PASS</body>

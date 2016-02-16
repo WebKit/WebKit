@@ -59,6 +59,7 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
+#include "ResourceLoadObserver.h"
 #include "SchemeRegistry.h"
 #include "ScriptController.h"
 #include "SecurityPolicy.h"
@@ -524,9 +525,19 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         timing().addRedirect(redirectResponse.url(), newRequest.url());
     }
 
+    ASSERT(m_frame);
+
+    Frame& topFrame = m_frame->tree().top();
+
+    ASSERT(m_frame->document());
+    ASSERT(topFrame.document());
+
+    if (Settings::resourceLoadStatisticsEnabled())
+        ResourceLoadObserver::sharedObserver().logFrameNavigation(!redirectResponse.isNull(), m_frame->document()->url(), newRequest.url(), m_frame->isMainFrame(), topFrame.document()->url());
+    
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if (frameLoader()->frame().isMainFrame())
+    if (m_frame->isMainFrame())
         newRequest.setFirstPartyForCookies(newRequest.url());
 
     // If we're fielding a redirect in response to a POST, force a load from origin, since
@@ -536,7 +547,6 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     if (newRequest.cachePolicy() == UseProtocolCachePolicy && isPostOrRedirectAfterPost(newRequest, redirectResponse))
         newRequest.setCachePolicy(ReloadIgnoringCacheData);
 
-    Frame& topFrame = m_frame->tree().top();
     if (&topFrame != m_frame) {
         if (!frameLoader()->mixedContentChecker().canDisplayInsecureContent(topFrame.document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url())) {
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));

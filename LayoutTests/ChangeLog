@@ -1,3 +1,16 @@
+2016-02-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Gather some rudimentary statistics during resource load 
+        https://bugs.webkit.org/show_bug.cgi?id=153575
+        <rdar://problem/24075254>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/navigation/resources/redirect-on-reload-updates-history-item-statistics.php: Added.
+        * http/tests/navigation/resources/redirect-updates-history-item-done-statistics.html: Added.
+        * http/tests/navigation/statistics-expected.txt: Added.
+        * http/tests/navigation/statistics.html: Added.
+
 2016-02-15  Chris Dumez  <cdumez@apple.com>
 
         The following properties should exist on the global object: AudioTrackList, AudioTrack, VideoTrackList, VideoTrack

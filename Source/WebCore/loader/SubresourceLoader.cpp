@@ -40,6 +40,7 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "ResourceLoadObserver.h"
 #include "Settings.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -189,6 +190,9 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
     ResourceLoader::willSendRequestInternal(newRequest, redirectResponse);
     if (newRequest.isNull())
         cancel();
+
+    if (Settings::resourceLoadStatisticsEnabled())
+        ResourceLoadObserver::sharedObserver().logSubresourceLoading(!redirectResponse.isNull(), redirectResponse.url(), newRequest.url(), m_frame ? m_frame->mainFrame().document()->url() : URL());
 }
 
 void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

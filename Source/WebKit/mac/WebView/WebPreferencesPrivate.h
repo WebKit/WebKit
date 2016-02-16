@@ -203,6 +203,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)displayListDrawingEnabled;
 - (void)setDisplayListDrawingEnabled:(BOOL)enabled;
 
+- (BOOL)resourceLoadStatisticsEnabled;
+- (void)setResourceLoadStatisticsEnabled:(BOOL)enabled;
+
 - (BOOL)canvasUsesAcceleratedDrawing;
 - (void)setCanvasUsesAcceleratedDrawing:(BOOL)enabled;
 

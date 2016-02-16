@@ -505,6 +505,7 @@ public:
         [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],  WebKitResourceLoadStatisticsEnabledPreferenceKey,
 #if PLATFORM(IOS)
         [NSNumber numberWithBool:YES],  WebKitFrameFlatteningEnabledPreferenceKey,
 #else
@@ -1827,6 +1828,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setDisplayListDrawingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitDisplayListDrawingEnabledPreferenceKey];
+}
+
+- (BOOL)resourceLoadStatisticsEnabled
+{
+    return [self _boolValueForKey:WebKitResourceLoadStatisticsEnabledPreferenceKey];
+}
+
+- (void)setResourceLoadStatisticsEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitResourceLoadStatisticsEnabledPreferenceKey];
 }
 
 - (BOOL)canvasUsesAcceleratedDrawing

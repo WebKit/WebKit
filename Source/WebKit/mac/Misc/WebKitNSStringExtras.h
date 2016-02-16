@@ -33,6 +33,7 @@
 #endif
 
 extern NSString *WebKitLocalCacheDefaultsKey;
+extern NSString *WebKitResourceLoadStatisticsDirectoryDefaultsKey;
 
 @interface NSString (WebKitExtras)
 
@@ -65,5 +66,6 @@ extern NSString *WebKitLocalCacheDefaultsKey;
 #endif
 
 + (NSString *)_webkit_localCacheDirectoryWithBundleIdentifier:(NSString*)bundleIdentifier;
++ (NSString *)_webkit_localStorageDirectoryWithBundleIdentifier:(NSString*)bundleIdentifier;
 
 @end

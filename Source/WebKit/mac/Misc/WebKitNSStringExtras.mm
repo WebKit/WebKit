@@ -46,6 +46,7 @@
 #endif
 
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
+NSString *WebKitResourceLoadStatisticsDirectoryDefaultsKey = @"WebKitResourceLoadStatisticsDirectory";
 
 using namespace WebCore;
 
@@ -309,6 +310,22 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     }
 
     return [cacheDir stringByAppendingPathComponent:bundleIdentifier];
+}
+
++ (NSString *)_webkit_localStorageDirectoryWithBundleIdentifier:(NSString*)bundleIdentifier
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *storageDirectory = [defaults objectForKey:WebKitResourceLoadStatisticsDirectoryDefaultsKey];
+
+    if (!storageDirectory || ![storageDirectory isKindOfClass:[NSString class]]) {
+        NSError *error;
+        NSString *storageDirectory = [[[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error] path];
+        
+        if (!storageDirectory || ![storageDirectory isKindOfClass:[NSString class]])
+            storageDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Application Support"];
+    }
+
+    return [storageDirectory stringByAppendingPathComponent:bundleIdentifier];
 }
 
 @end

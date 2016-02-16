@@ -1,3 +1,20 @@
+2016-02-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Gather some rudimentary statistics during resource load 
+        https://bugs.webkit.org/show_bug.cgi?id=153575
+        <rdar://problem/24075254>
+
+        Reviewed by Brady Eidson.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]): Add menu item for new debug flag.
+        (-[SettingsController toggleResourceLoadStatisticsEnabled:]): Added.
+        (-[SettingsController resourceLoadStatisticsEnabled]): Added.
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController didChangeSettings]): React to changes in
+        users's desire to track resource load statistics.
+
 2016-02-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Update Tools/efl/install-dependencies

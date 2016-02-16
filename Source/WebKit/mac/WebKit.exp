@@ -80,6 +80,7 @@ _WebKitErrorMIMETypeKey
 _WebKitErrorPlugInNameKey
 _WebKitErrorPlugInPageURLStringKey
 _WebKitLocalCacheDefaultsKey
+_WebKitResourceLoadStatisticsDirectoryDefaultsKey
 _WebLocalizedString
 _WebPlugInAttributesKey
 _WebPlugInBaseURLKey

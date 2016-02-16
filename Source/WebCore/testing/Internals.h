@@ -462,6 +462,9 @@ public:
     String userVisibleString(const DOMURL*);
     void setShowAllPlugins(bool);
 
+    String resourceLoadStatisticsForOrigin(String origin);
+    void setResourceLoadStatisticsEnabled(bool);
+
 #if ENABLE(STREAMS_API)
     bool isReadableStreamDisturbed(ScriptState&, JSC::JSValue);
 #endif

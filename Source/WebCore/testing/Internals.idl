@@ -433,4 +433,7 @@ enum AutoFillButtonType {
     void setShowAllPlugins(boolean showAll);
 
     [Conditional=STREAMS_API, CallWith=ScriptState] boolean isReadableStreamDisturbed(any stream);
+
+    DOMString resourceLoadStatisticsForOrigin(DOMString domain);
+    void setResourceLoadStatisticsEnabled(boolean enable);
 };

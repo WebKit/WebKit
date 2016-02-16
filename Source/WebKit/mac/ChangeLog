@@ -1,3 +1,30 @@
+2016-02-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Gather some rudimentary statistics during resource load 
+        https://bugs.webkit.org/show_bug.cgi?id=153575
+        <rdar://problem/24075254>
+
+        Reviewed by Brady Eidson.
+
+        * Misc/WebKitNSStringExtras.h:
+        * Misc/WebKitNSStringExtras.mm:
+        (+[NSString _webkit_localStorageDirectoryWithBundleIdentifier:]): Added.
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences resourceLoadStatisticsEnabled]): Added.
+        (-[WebPreferences setResourceLoadStatisticsEnabled:]): Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (WebKitInitializeApplicationCachePathIfNecessary):
+        (WebKitInitializeApplicationStatisticsStoragePathIfNecessary): Added.
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Add call to new
+        initialization method.
+        (-[WebView _preferencesChanged:]): Track changes in the user's desire to
+        monitor resource load statistics.
+        (+[WebView _applicationWillTerminate]): Write statistics to disk (if preferences
+        say to do so.)
+
 2016-02-13  Mark Lam  <mark.lam@apple.com>
 
         Add thread violation checks to WebView public APIs.
