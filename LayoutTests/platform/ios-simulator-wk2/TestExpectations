@@ -1989,6 +1989,7 @@ http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html [ Skip ]
 
 webkit.org/b/153380 webarchive/loading/object.html [ Pass Crash ]
+webkit.org/b/153380 webarchive/loading/missing-data.html [ Pass Crash ]
 
 webkit.org/b/153503 http/tests/appcache/404-resource-with-slow-main-resource.php [ Pass Failure ]
 
