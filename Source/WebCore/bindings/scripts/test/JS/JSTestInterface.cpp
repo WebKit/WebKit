@@ -323,26 +323,6 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(1) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-    { "IMPLEMENTSCONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(2) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    { "SUPPLEMENTALCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(1) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(2) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsMethod1", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionImplementsMethod1), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
@@ -374,6 +354,26 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "builtinFunction", JSC::Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testSupplementalBuiltinFunctionCodeGenerator), (intptr_t) (0) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(1) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    { "IMPLEMENTSCONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(2) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "SUPPLEMENTALCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(1) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif

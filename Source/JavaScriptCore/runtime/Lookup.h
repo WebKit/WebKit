@@ -268,18 +268,21 @@ inline bool getStaticValueSlot(ExecState* exec, const HashTable& table, ThisImp*
     return true;
 }
 
-inline void putEntry(ExecState* exec, const HashTableValue* entry, JSObject* base, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+// 'base' means the object holding the property (possibly in the prototype chain of the object put was called on).
+// 'thisValue' is the object that put is being applied to (in the case of a proxy, the proxy target).
+// 'slot.thisValue()' is the object the put was originally performed on (in the case of a proxy, the proxy itself).
+inline void putEntry(ExecState* exec, const HashTableValue* entry, JSObject* base, JSObject* thisValue, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     // If this is a function put it as an override property.
     if (entry->attributes() & BuiltinOrFunction) {
-        if (JSObject* thisObject = jsDynamicCast<JSObject*>(slot.thisValue()))
+        if (JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue))
             thisObject->putDirect(exec->vm(), propertyName, value);
     } else if (entry->attributes() & Accessor) {
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     } else if (!(entry->attributes() & ReadOnly)) {
-        JSValue thisValue = entry->attributes() & CustomAccessor ? slot.thisValue() : JSValue(base);
-        entry->propertyPutter()(exec, JSValue::encode(thisValue), JSValue::encode(value));
+        JSValue updateThisValue = entry->attributes() & CustomAccessor ? slot.thisValue() : JSValue(base);
+        entry->propertyPutter()(exec, JSValue::encode(updateThisValue), JSValue::encode(value));
         if (entry->attributes() & CustomAccessor)
             slot.setCustomAccessor(base, entry->propertyPutter());
         else
@@ -300,7 +303,7 @@ inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base
     if (!entry)
         return false;
 
-    putEntry(exec, entry, base, propertyName, value, slot);
+    putEntry(exec, entry, base, base, propertyName, value, slot);
     return true;
 }
 

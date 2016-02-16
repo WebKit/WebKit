@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006, 2007-2010, 2013-2105 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007-2010, 2013-2016 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -383,7 +383,7 @@ sub IsDOMGlobalObject
 
 sub GenerateGetOwnPropertySlotBody
 {
-    my ($interface, $interfaceName, $className, $hasAttributes, $inlined) = @_;
+    my ($interface, $interfaceName, $className, $hasInstanceProperties, $inlined) = @_;
 
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
     my $namedGetterFunction = GetNamedGetterFunction($interface);
@@ -392,12 +392,12 @@ sub GenerateGetOwnPropertySlotBody
     my @getOwnPropertySlotImpl = ();
 
     my $ownPropertyCheck = sub {
-        if ($hasAttributes) {
-            if ($inlined) {
-                push(@getOwnPropertySlotImpl, "    if (${namespaceMaybe}getStaticValueSlot<$className, Base>(state, *info()->staticPropHashTable, thisObject, propertyName, slot))\n");
-            } else {
-                push(@getOwnPropertySlotImpl, "    if (${namespaceMaybe}getStaticValueSlot<$className, Base>(state, ${className}Table, thisObject, propertyName, slot))\n");
-            }
+        if ($hasInstanceProperties) {
+            my $instanceFunctionCount = InstanceFunctionCount($interface);
+            # If there are functions on the instance, then call getStaticPropertySlot() instead of getStaticValueSlot().
+            my $staticPropertyGetFunction = $namespaceMaybe . ($instanceFunctionCount eq 0 ? "getStaticValueSlot" : "getStaticPropertySlot");
+            my $staticPropertyTable = $inlined ? "*info()->staticPropHashTable" : "${className}Table";
+            push(@getOwnPropertySlotImpl, "    if ($staticPropertyGetFunction<$className, Base>(state, ${staticPropertyTable}, thisObject, propertyName, slot))\n");
         } else {
             push(@getOwnPropertySlotImpl, "    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))\n");
         }
@@ -605,7 +605,7 @@ sub GetFunctionName
         return GetJSBuiltinFunctionName($className, $function);
     }
 
-    my $kind = $function->isStatic ? "Constructor" : "Prototype";
+    my $kind = $function->isStatic ? "Constructor" : (OperationShouldBeOnInstance($interface, $function) ? "Instance" : "Prototype");
     return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst($function->signature->name);
 }
 
@@ -729,6 +729,24 @@ sub AttributeShouldBeOnInstance
     return 0;
 }
 
+# https://heycam.github.io/webidl/#es-operations
+sub OperationShouldBeOnInstance
+{
+    my $interface = shift;
+    my $function = shift;
+
+    # FIXME: The bindings generator does not support putting runtime-enabled on the instance yet.
+    return 0 if $function->signature->extendedAttributes->{"EnabledAtRuntime"};
+
+    return 1 if IsDOMGlobalObject($interface);
+
+    # [Unforgeable] operations should be on the instance.
+    # https://heycam.github.io/webidl/#Unforgeable
+    return 1 if $function->signature->extendedAttributes->{"Unforgeable"} || $interface->extendedAttributes->{"Unforgeable"};
+
+    return 0;
+}
+
 sub GetIndexedGetterFunction
 {
     my $interface = shift;
@@ -741,32 +759,58 @@ sub GetNamedGetterFunction
     return GetSpecialAccessorFunctionForType($interface, "getter", "DOMString", 1);
 }
 
-sub InstanceAttributeCount
+sub InstanceFunctionCount
 {
     my $interface = shift;
     my $count = 0;
-    foreach my $attribute (@{$interface->attributes}) {
-        $count = $count + AttributeShouldBeOnInstance($interface, $attribute);
+
+    foreach my $function (@{$interface->functions}) {
+        $count++ if OperationShouldBeOnInstance($interface, $function);
     }
-    $count = $count + 1 if ConstructorShouldBeOnInstance($interface);
+
     return $count;
 }
 
-sub PrototypeAttributeCount
+sub PrototypeFunctionCount
+{
+    my $interface = shift;
+    my $count = 0;
+
+    foreach my $function (@{$interface->functions}) {
+        $count++ if !$function->isStatic && !OperationShouldBeOnInstance($interface, $function);
+    }
+
+    return $count;
+}
+
+sub InstancePropertyCount
 {
     my $interface = shift;
     my $count = 0;
     foreach my $attribute (@{$interface->attributes}) {
-        $count = $count + 1 if !AttributeShouldBeOnInstance($interface, $attribute);
+        $count++ if AttributeShouldBeOnInstance($interface, $attribute);
     }
-    $count = $count + 1 if !ConstructorShouldBeOnInstance($interface);
+    $count += InstanceFunctionCount($interface);
+    $count++ if ConstructorShouldBeOnInstance($interface);
+    return $count;
+}
+
+sub PrototypePropertyCount
+{
+    my $interface = shift;
+    my $count = 0;
+    foreach my $attribute (@{$interface->attributes}) {
+        $count++ if !AttributeShouldBeOnInstance($interface, $attribute);
+    }
+    $count += PrototypeFunctionCount($interface);
+    $count++ if !ConstructorShouldBeOnInstance($interface);
     return $count;
 }
 
 sub InstanceOverridesGetOwnPropertySlot
 {
     my $interface = shift;
-    my $numInstanceAttributes = InstanceAttributeCount($interface);
+    my $numInstanceProperties = InstancePropertyCount($interface);
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
@@ -779,17 +823,16 @@ sub InstanceOverridesGetOwnPropertySlot
         || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
         || $hasNamedGetter;
 
-    return $numInstanceAttributes > 0 || $hasComplexGetter;
+    return $numInstanceProperties > 0 || $hasComplexGetter;
 
 }
 
 sub PrototypeOverridesGetOwnPropertySlot
 {
     my $interface = shift;
-    my $numPrototypeAttributes = PrototypeAttributeCount($interface);
+    my $numPrototypeProperties = PrototypePropertyCount($interface);
     my $numConstants = @{$interface->constants};
-    my $numFunctions = @{$interface->functions};
-    return $numFunctions > 0 || $numConstants > 0 || $numPrototypeAttributes > 0;
+    return $numConstants > 0 || $numPrototypeProperties > 0;
 }
 
 sub InstanceOverridesPutImplementation
@@ -944,7 +987,7 @@ sub GenerateHeader
         push(@headerContent, "    static const bool needsDestruction = false;\n\n");
     }
 
-    my $hasStaticPropertyTable = InstanceAttributeCount($interface) > 0 ? "true" : "false";
+    my $hasStaticPropertyTable = InstancePropertyCount($interface) > 0 ? "true" : "false";
     push(@headerContent, "    static const bool hasStaticPropertyTable = $hasStaticPropertyTable;\n\n");
 
     # Prototype
@@ -1335,27 +1378,21 @@ sub GenerateHeader
     }
 }
 
-sub GenerateAttributesHashTable
+sub GeneratePropertiesHashTable
 {
-    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $entries) = @_;
+    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $runtimeEnabledFunctions) = @_;
 
     # FIXME: These should be functions on $interface.
     my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
     
-    # - Add all attributes in a hashtable definition
-    my $numAttributes = 0;
-    if ($isInstance) {
-        $numAttributes = InstanceAttributeCount($interface);
-    } else {
-        $numAttributes = PrototypeAttributeCount($interface);
-    }
-
+    # - Add all properties in a hashtable definition
+    my $propertyCount = $isInstance ? InstancePropertyCount($interface) : PrototypePropertyCount($interface);
 
     if (ConstructorShouldBeOnInstance($interface) == $isInstance) {
 
         if (NeedsConstructorProperty($interface)) {
-            die if !$numAttributes;
+            die if !$propertyCount;
             push(@$hashKeys, "constructor");
             my $getter = "js" . $interfaceName . "Constructor";
             push(@$hashValue1, $getter);
@@ -1366,7 +1403,7 @@ sub GenerateAttributesHashTable
         }
     }
 
-    return 0 if !$numAttributes;
+    return 0 if !$propertyCount;
 
     foreach my $attribute (@{$interface->attributes}) {
         next if ($attribute->isStatic);
@@ -1403,7 +1440,37 @@ sub GenerateAttributesHashTable
         }
     }
 
-    return $numAttributes;
+    foreach my $function (@{$interface->functions}) {
+        next if ($function->signature->extendedAttributes->{"Private"});
+        next if ($function->isStatic);
+        next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
+        next if OperationShouldBeOnInstance($interface, $function) != $isInstance;
+        my $name = $function->signature->name;
+        push(@$hashKeys, $name);
+
+        my $functionName = GetFunctionName($interface, $className, $function);
+        push(@$hashValue1, $functionName);
+
+        my $functionLength = GetFunctionLength($function);
+        push(@$hashValue2, $functionLength);
+
+        push(@$hashSpecials, ComputeFunctionSpecial($interface, $function));
+
+        my $conditional = $function->signature->extendedAttributes->{"Conditional"};
+        if ($conditional) {
+            $conditionals->{$name} = $conditional;
+        }
+
+        if ($function->signature->extendedAttributes->{"EnabledAtRuntime"}) {
+            if ($isInstance) {
+                die "We currently do not support [EnabledAtRuntime] operations on the instance.";
+            } else {
+                push(@$runtimeEnabledFunctions, $function);
+            }
+        }
+    }
+
+    return $propertyCount;
 }
 
 sub GenerateParametersCheckExpression
@@ -1533,7 +1600,7 @@ sub GenerateOverloadedFunction
     # overload is applicable, precedence is given according to the order of
     # declaration in the IDL.
 
-    my $kind = $function->isStatic ? "Constructor" : "Prototype";
+    my $kind = $function->isStatic ? "Constructor" : (OperationShouldBeOnInstance($interface, $function) ? "Instance" : "Prototype");
     my $functionName = "js${interfaceName}${kind}Function" . $codeGenerator->WK_ucfirst($function->signature->name);
 
     # FIXME: Implement support for overloaded functions with variadic arguments.
@@ -1864,18 +1931,20 @@ sub GenerateImplementation
     my @hashSpecials = ();
     my %conditionals = ();
     my $hashName = $className . "Table";
+    my @runtimeEnabledFunctions = ();
 
-    my $numInstanceAttributes = GenerateAttributesHashTable($object, $interface, 1,
+    # Generate hash table for properties on the instance.
+    my $numInstanceProperties = GeneratePropertiesHashTable($object, $interface, 1,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals);
+        \%conditionals, \@runtimeEnabledFunctions);
 
-    $object->GenerateHashTable($hashName, $numInstanceAttributes,
+    $object->GenerateHashTable($hashName, $numInstanceProperties,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals, 0) if $numInstanceAttributes > 0;
+        \%conditionals, 0) if $numInstanceProperties > 0;
 
-    # - Add all constants
+    # - Add all interface object (aka constructor) properties (constants, static attributes, static operations).
     if (NeedsConstructorProperty($interface)) {
         my $hashSize = 0;
         my $hashName = $className . "ConstructorTable";
@@ -1981,13 +2050,14 @@ sub GenerateImplementation
     @hashValue2 = ();
     @hashSpecials = ();
     %conditionals = ();
+    @runtimeEnabledFunctions = ();
 
-
-    my $numPrototypeAttributes = GenerateAttributesHashTable($object, $interface, 0,
+    # Generate hash table for properties on the prototype.
+    my $numPrototypeProperties = GeneratePropertiesHashTable($object, $interface, 0,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals);
-    my $hashSize = $numPrototypeAttributes;
+        \%conditionals, \@runtimeEnabledFunctions);
+    my $hashSize = $numPrototypeProperties;
 
     foreach my $constant (@{$interface->constants}) {
         my $name = $constant->name;
@@ -2005,33 +2075,6 @@ sub GenerateImplementation
         $hashSize++;
     }
 
-    my @runtimeEnabledFunctions = ();
-
-    foreach my $function (@{$interface->functions}) {
-        next if ($function->signature->extendedAttributes->{"Private"});
-        next if ($function->isStatic);
-        next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
-        my $name = $function->signature->name;
-        push(@hashKeys, $name);
-
-        my $functionName = GetFunctionName($interface, $className, $function);
-        push(@hashValue1, $functionName);
-
-        my $functionLength = GetFunctionLength($function);
-        push(@hashValue2, $functionLength);
-
-        push(@hashSpecials, ComputeFunctionSpecial($interface, $function));
-
-        my $conditional = $function->signature->extendedAttributes->{"Conditional"};
-        if ($conditional) {
-            $conditionals{$name} = $conditional;
-        }
-
-        push(@runtimeEnabledFunctions, $function) if $function->signature->extendedAttributes->{"EnabledAtRuntime"};
-
-        $hashSize++;
-    }
-
     my $justGenerateValueArray = !IsDOMGlobalObject($interface);
 
     $object->GenerateHashTable($hashName, $hashSize,
@@ -2046,7 +2089,9 @@ sub GenerateImplementation
     }
 
     if (PrototypeOverridesGetOwnPropertySlot($interface)) {
-        my $numPrototypeAttributes = PrototypeAttributeCount($interface);
+        my $prototypePropertyCount = PrototypePropertyCount($interface);
+        my $prototypeFunctionCount = PrototypeFunctionCount($interface);
+        my $prototypeAttributeCount = $prototypePropertyCount - $prototypeFunctionCount;
         if (IsDOMGlobalObject($interface)) {
             push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
@@ -2054,17 +2099,17 @@ sub GenerateImplementation
             push(@implContent, "    UNUSED_PARAM(vm);\n");
             push(@implContent, "    auto* thisObject = jsCast<${className}Prototype*>(object);\n");
 
-            if ($numConstants eq 0 && $numFunctions eq 0 && $numPrototypeAttributes eq 0) {
+            if ($numConstants eq 0 && $prototypePropertyCount eq 0) {
                 push(@implContent, "    return Base::getOwnPropertySlot(thisObject, state, propertyName, slot);\n");        
-            } elsif ($numConstants eq 0 && $numPrototypeAttributes eq 0) {
+            } elsif ($numConstants eq 0 && $prototypeAttributeCount eq 0) {
                 push(@implContent, "    return getStaticFunctionSlot<JSObject>(state, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
-            } elsif ($numFunctions eq 0 && $numPrototypeAttributes eq 0) {
+            } elsif ($prototypePropertyCount eq 0) {
                 push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(state, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
             } else {
                 push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(state, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
             }
             push(@implContent, "}\n\n");
-        } elsif ($numConstants > 0 || $numFunctions > 0 || $numPrototypeAttributes > 0) {
+        } elsif ($numConstants > 0 || $numPrototypeProperties > 0) {
             push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
             push(@implContent, "{\n");
             push(@implContent, "    Base::finishCreation(vm);\n");
@@ -2115,7 +2160,7 @@ sub GenerateImplementation
     # - Initialize static ClassInfo object
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
 
-    if ($numInstanceAttributes > 0) {
+    if ($numInstanceProperties > 0) {
         push(@implContent, "&${className}Table");
     } else {
         push(@implContent, "0");
@@ -2184,7 +2229,7 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    auto* thisObject = jsCast<${className}*>(object);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
-            push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numInstanceAttributes > 0, 0));
+            push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numInstanceProperties > 0, 0));
             push(@implContent, "}\n\n");
         }
 

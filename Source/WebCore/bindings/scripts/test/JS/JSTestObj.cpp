@@ -588,23 +588,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "attributeWithReservedEnumType", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithReservedEnumType), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithReservedEnumType) } },
     { "putForwardsAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsAttribute) } },
     { "putForwardsNullableAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsNullableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsNullableAttribute) } },
-#if ENABLE(Condition1)
-    { "CONDITIONAL_CONST", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
-#else
-    { 0, 0, NoIntrinsic, { 0, 0 } },
-#endif
-    { "CONST_VALUE_0", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
-    { "CONST_VALUE_1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(1) } },
-    { "CONST_VALUE_2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(2) } },
-    { "CONST_VALUE_4", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(4) } },
-    { "CONST_VALUE_8", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(8) } },
-    { "CONST_VALUE_9", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(-1) } },
-    { "CONST_VALUE_11", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0xffffffff) } },
-    { "CONST_VALUE_12", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0x01) } },
-    { "CONST_VALUE_13", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0X20) } },
-    { "CONST_VALUE_14", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0x1abc) } },
-    { "CONST_JAVASCRIPT", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(15) } },
-    { "readonly", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
     { "voidMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t) (0) } },
     { "voidMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t) (3) } },
     { "byteMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionByteMethod), (intptr_t) (0) } },
@@ -705,6 +688,23 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "testPromiseFunctionWithFloatArgument", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument), (intptr_t) (1) } },
     { "testPromiseFunctionWithException", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithException), (intptr_t) (0) } },
     { "testPromiseFunctionWithOptionalIntArgument", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument), (intptr_t) (0) } },
+#if ENABLE(Condition1)
+    { "CONDITIONAL_CONST", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+    { "CONST_VALUE_0", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
+    { "CONST_VALUE_1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(1) } },
+    { "CONST_VALUE_2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(2) } },
+    { "CONST_VALUE_4", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(4) } },
+    { "CONST_VALUE_8", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(8) } },
+    { "CONST_VALUE_9", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(-1) } },
+    { "CONST_VALUE_11", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0xffffffff) } },
+    { "CONST_VALUE_12", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0x01) } },
+    { "CONST_VALUE_13", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0X20) } },
+    { "CONST_VALUE_14", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0x1abc) } },
+    { "CONST_JAVASCRIPT", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(15) } },
+    { "readonly", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
 };
 
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };

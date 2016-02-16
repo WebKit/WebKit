@@ -416,7 +416,7 @@ void JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
         if (!obj->staticFunctionsReified()) {
             if (obj->classInfo()->hasStaticSetterOrReadonlyProperties()) {
                 if (auto* entry = obj->findPropertyHashEntry(propertyName)) {
-                    putEntry(exec, entry, obj, propertyName, value, slot);
+                    putEntry(exec, entry, obj, this, propertyName, value, slot);
                     return;
                 }
             }

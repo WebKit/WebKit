@@ -71,6 +71,10 @@ ALL PROPERTIES:
     returnValue
     cancelBubble
     clipboardData
+    stopPropagation
+    preventDefault
+    initEvent
+    stopImmediatePropagation
     NONE
     CAPTURING_PHASE
     AT_TARGET
@@ -91,10 +95,6 @@ ALL PROPERTIES:
     BLUR
     SELECT
     CHANGE
-    stopPropagation
-    preventDefault
-    initEvent
-    stopImmediatePropagation
     toString
     toLocaleString
     valueOf

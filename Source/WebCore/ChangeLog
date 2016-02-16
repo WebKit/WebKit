@@ -1,3 +1,50 @@
+2016-02-16  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Operations should be on the instance for global objects or if [Unforgeable]
+        https://bugs.webkit.org/show_bug.cgi?id=154120
+        <rdar://problem/24613231>
+
+        Reviewed by Gavin Barraclough.
+
+        Operations should be on the instance for global objects or if
+        [Unforgeable] as per the Web IDL specification:
+        - http://heycam.github.io/webidl/#es-operations
+        - http://heycam.github.io/webidl/#dfn-unforgeable-on-an-interface
+
+        This patch implements this behavior in order to align
+        with the specification and other browsers.
+
+        No new tests, already covered by existing tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        Update function names now that they have "Instance" in their
+        name instead of "Prototype".
+
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        - Update function names now that they have "Instance" in their
+          name instead of "Prototype".
+        - Move the functions hard-coding *before* the static table check
+          now that these functions are in the static table to maintain
+          the previous behavior.
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate):
+        Update function names now that they have "Instance" in their
+        name instead of "Prototype".
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        - Move functions to the instance if their interface is a global
+          object or if they are marked as [Unforgeable]. Operations are
+          now treated more like attributes, as they can now be either on
+          the instance or the prototype. In a lot of places, I now use
+          the naming "properties" instead of "attributes" as "properties"
+          refer both "attributes" and "operations" / "functions".
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        Rebaseline bindings tests.
+
 2016-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Rollout r188659. This broke scrolling of iframes and overflow when

@@ -50,15 +50,15 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
     // Check for the few functions that we allow, even when called cross-domain.
     // Make these read-only / non-configurable to prevent writes via defineProperty.
     if (propertyName == exec->propertyNames().replace) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationPrototypeFunctionReplace, 1>);
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
         return true;
     }
     if (propertyName == exec->propertyNames().reload) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationPrototypeFunctionReload, 0>);
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReload, 0>);
         return true;
     }
     if (propertyName == exec->propertyNames().assign) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationPrototypeFunctionAssign, 1>);
+        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionAssign, 1>);
         return true;
     }
 

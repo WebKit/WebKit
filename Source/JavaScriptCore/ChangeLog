@@ -1,3 +1,27 @@
+2016-02-16  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Operations should be on the instance for global objects or if [Unforgeable]
+        https://bugs.webkit.org/show_bug.cgi?id=154120
+        <rdar://problem/24613231>
+
+        Reviewed by Gavin Barraclough.
+
+        Have putEntry() take a thisValue parameter in addition to the base,
+        instead of relying on PropertySlot::thisValue() because this did not
+        always do the right thing. In particular, when JSDOMWindow::put() was
+        called to set a function, it would end up setting the new value on the
+        JSDOMWindowShell instead of the actual JSDOMWindow.
+        JSDOMWindow::getOwnPropertySlot() would then not be able to find it.
+        Therefore the following would fail:
+        $ window.open = "test"
+        $ console.log(window.open) // prints the native function instead of "test"
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        (JSC::lookupPut):
+
 2016-02-16  Keith Miller  <keith_miller@apple.com>
 
         ClonedArguments should not materialize its special properties unless they are being changed or deleted

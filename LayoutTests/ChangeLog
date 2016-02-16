@@ -1,3 +1,15 @@
+2016-02-16  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Operations should be on the instance for global objects or if [Unforgeable]
+        https://bugs.webkit.org/show_bug.cgi?id=154120
+        <rdar://problem/24613231>
+
+        Reviewed by Gavin Barraclough.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        Rebaseline test because the order of static properties has changed:
+        functions are now before constants instead of after.
+
 2016-02-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking webarchive/loading/missing-data.html as flaky on ios-simulator-wk2

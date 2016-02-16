@@ -109,7 +109,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
             return true;
         }
         if (propertyName == exec->propertyNames().close) {
-            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
             return true;
         }
 
@@ -122,19 +122,19 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     // These are the functions we allow access to cross-origin (DoNotCheckSecurity in IDL).
     // Always provide the original function, on a fresh uncached function object.
     if (propertyName == exec->propertyNames().blur) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionBlur, 0>);
         return true;
     }
     if (propertyName == exec->propertyNames().close) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
         return true;
     }
     if (propertyName == exec->propertyNames().focus) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionFocus, 0>);
         return true;
     }
     if (propertyName == exec->propertyNames().postMessage) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
         return true;
     }
 
@@ -258,31 +258,36 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // FIXME: we should probably be able to use getStaticPropertySlot here.
     if (Base::getOwnPropertySlot(thisObject, exec, propertyName, slot))
         return true;
-    if (!thisObject->staticFunctionsReified()) {
-        if (auto* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName)) {
-            slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());
-            return true;
-        }
-    }
+
     // FIXME: These are all bogus. Keeping these here make some tests pass that check these properties
     // are own properties of the window, but introduces other problems instead (e.g. if you overwrite
     // & delete then the original value is restored!) Should be removed.
     if (propertyName == exec->propertyNames().blur) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionBlur, 0>);
         return true;
     }
     if (propertyName == exec->propertyNames().close) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
         return true;
     }
     if (propertyName == exec->propertyNames().focus) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionFocus, 0>);
         return true;
     }
     if (propertyName == exec->propertyNames().postMessage) {
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
         return true;
     }
+
+    if (!thisObject->staticFunctionsReified()) {
+        if (auto* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName)) {
+            if (entry->attributes() & BuiltinOrFunctionOrAccessor)
+                return setUpStaticFunctionSlot(exec, entry, thisObject, propertyName, slot);
+            slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());
+            return true;
+        }
+    }
+
     // FIXME: this looks pretty bogus. It seems highly likely that if !canShowModalDialog the
     // funtion should still be present, or should be omitted entirely - present but reads as
     // undefined with unspecified attributes is likely wrong.
