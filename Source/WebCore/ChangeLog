@@ -1,3 +1,23 @@
+2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Mouse cursor doesn't change when entering scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=154243
+
+        Reviewed by Simon Fraser.
+
+        If the scrollbar is over or very close to text or a link, when
+        entering the scrollbar the cursor is not changed, keeping the beam
+        or hand cursor when using the scrollbar. Same happens for image
+        documents where the magnifier cursor is used and it remains when
+        entering the scrollbars. We should use pointer cursor always for
+        scrollbars.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateCursor): Request also to include
+        frame scrollbars in hit test result.
+        (WebCore::EventHandler::selectCursor): Use always pointer cursor
+        for scrollbars.
+
 2016-02-15  Antti Koivisto  <antti@apple.com>
 
         Optimize style invalidations for attribute selectors

@@ -1338,7 +1338,7 @@ void EventHandler::updateCursor()
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
 
-    HitTestRequest request(HitTestRequest::ReadOnly);
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::AllowFrameScrollbars);
     HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
     renderView->hitTest(request, result);
 
@@ -1361,6 +1361,14 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
     if (m_frame.mainFrame().eventHandler().panScrollInProgress())
         return NoCursorChange;
 #endif
+
+    // Use always pointer cursor for scrollbars.
+    if (result.scrollbar()) {
+#if ENABLE(CURSOR_VISIBILITY)
+        cancelAutoHideCursorTimer();
+#endif
+        return pointerCursor();
+    }
 
     Node* node = result.targetNode();
     if (!node)
