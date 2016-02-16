@@ -1367,8 +1367,8 @@ fast/css/currentColor-value-style-update.html [ Skip ]
 webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Failure ]
 
 # Yosemite and El Capitan do not support font feature coverage queries.
-[ Yosemite ElCapitan ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
-[ Yosemite ElCapitan ] css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] css3/font-variant-small-caps-synthesis.html [ Skip ]
+[ Yosemite ElCapitan ] css3/font-variant-petite-caps-synthesis.html [ Skip ]
 
 # This test relies on iOS-specific font fallback.
 [ Mavericks Yosemite ElCapitan ] fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
