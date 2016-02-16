@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
-#import "DynamicLinkerEnvironmentExtractor.h"
-#import "EnvironmentVariables.h"
 #import <WebCore/CFBundleSPI.h>
 #import <WebCore/ServersSPI.h>
 #import <WebCore/SoftLinking.h>
