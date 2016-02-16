@@ -1,5 +1,23 @@
 2016-02-15  Alex Christensen  <achristensen@webkit.org>
 
+        Implement content sniffing check with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154261
+
+        Reviewed by Andy Estes.
+
+        This fixes http/tests/xmlhttprequest/small-chunks-response-text.html when using NetworkSession.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        Content sniffing is enabled by default.  Disable it if the NetworkLoadParameters say not to.
+        This is analogous to behavior in ResourceHandle::createNSURLConnection.
+
+2016-02-15  Alex Christensen  <achristensen@webkit.org>
+
         Move Download authentication code to AuthenticationManager
         https://bugs.webkit.org/show_bug.cgi?id=154132
 

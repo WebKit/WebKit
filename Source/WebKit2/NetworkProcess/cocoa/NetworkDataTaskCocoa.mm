@@ -29,12 +29,13 @@
 #if USE(NETWORK_SESSION)
 
 #import <WebCore/AuthenticationChallenge.h>
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/ResourceRequest.h>
 #import <wtf/MainThread.h>
 
 namespace WebKit {
 
-NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentials storedCredentials)
+NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentials storedCredentials, WebCore::ContentSniffingPolicy shouldContentSniff)
     : m_failureTimer(*this, &NetworkDataTask::failureTimerFired)
     , m_session(session)
     , m_client(client)
@@ -56,10 +57,17 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
     m_password = request.url().pass();
     request.removeCredentials();
     
+    NSURLRequest *nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
+    if (shouldContentSniff == WebCore::DoNotSniffContent) {
+        NSMutableURLRequest *mutableRequest = [[nsRequest mutableCopy] autorelease];
+        [mutableRequest _setProperty:@(NO) forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
+        nsRequest = mutableRequest;
+    }
+
     if (storedCredentials == WebCore::AllowStoredCredentials)
-        m_task = [m_session.m_sessionWithCredentialStorage dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)];
+        m_task = [m_session.m_sessionWithCredentialStorage dataTaskWithRequest:nsRequest];
     else
-        m_task = [m_session.m_sessionWithoutCredentialStorage dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)];
+        m_task = [m_session.m_sessionWithoutCredentialStorage dataTaskWithRequest:nsRequest];
     
     ASSERT(!m_session.m_dataTaskMap.contains(taskIdentifier()));
     m_session.m_dataTaskMap.add(taskIdentifier(), this);

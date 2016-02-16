@@ -28,6 +28,7 @@
 
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ResourceHandleTypes.h>
+#include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/Timer.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -79,9 +80,9 @@ public:
 class NetworkDataTask : public RefCounted<NetworkDataTask> {
     friend class NetworkSession;
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::StoredCredentials storedCredentials)
+    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::StoredCredentials storedCredentials, WebCore::ContentSniffingPolicy shouldContentSniff)
     {
-        return adoptRef(*new NetworkDataTask(session, client, request, storedCredentials));
+        return adoptRef(*new NetworkDataTask(session, client, request, storedCredentials, shouldContentSniff));
     }
     
     void suspend();
@@ -111,7 +112,7 @@ public:
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
     
 private:
-    NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials);
+    NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ContentSniffingPolicy);
     
     enum FailureType {
         NoFailure,
