@@ -27,6 +27,8 @@
 #define WebDatabaseProvider_h
 
 #include <WebCore/DatabaseProvider.h>
+#include <WebCore/InProcessIDBServer.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
@@ -37,11 +39,7 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     virtual bool supportsModernIDB() const override { return false; }
-
-    virtual WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&) override
-    {
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    virtual WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&) override final;
 #endif
 
 private:
@@ -49,6 +47,7 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     virtual RefPtr<WebCore::IDBFactoryBackendInterface> createIDBFactoryBackend() override;
+    HashMap<uint64_t, RefPtr<WebCore::InProcessIDBServer>> m_idbEphemeralConnectionMap;
 #endif
 
     const uint64_t m_identifier;

@@ -44,7 +44,7 @@ class UniqueIDBDatabaseConnection;
 
 class IDBConnectionToClient : public RefCounted<IDBConnectionToClient> {
 public:
-    static Ref<IDBConnectionToClient> create(IDBConnectionToClientDelegate&);
+    WEBCORE_EXPORT static Ref<IDBConnectionToClient> create(IDBConnectionToClientDelegate&);
     
     uint64_t identifier() const;
 

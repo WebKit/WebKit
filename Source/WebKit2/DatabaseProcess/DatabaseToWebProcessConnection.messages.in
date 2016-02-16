@@ -24,9 +24,13 @@
 
 messages -> DatabaseToWebProcessConnection LegacyReceiver {
 #if ENABLE(INDEXED_DATABASE)
-    # Creates a connection for communication with a WebProcess
+    # Creates a connection for communication with a WebProcess (Legacy IDB)
     EstablishIDBConnection(uint64_t serverConnectionIdentifier)
     RemoveDatabaseProcessIDBConnection(uint64_t serverConnectionIdentifier)
+
+    # Creates a connection for communication with a WebProcess (Modern IDB)
+    EstablishIDBConnectionToServer(uint64_t serverConnectionIdentifier)
+    RemoveIDBConnectionToServer(uint64_t serverConnectionIdentifier)
 #endif
 }
 

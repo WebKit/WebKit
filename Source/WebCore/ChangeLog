@@ -1,3 +1,16 @@
+2016-02-16  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: WK2 IPC Scaffolding.
+        https://bugs.webkit.org/show_bug.cgi?id=154296
+
+        Reviewed by Alex Christensen.
+        
+        No change in behavior yet; Just laying the groundwork.
+
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+
 2016-02-16  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Operations should be on the instance for global objects or if [Unforgeable]

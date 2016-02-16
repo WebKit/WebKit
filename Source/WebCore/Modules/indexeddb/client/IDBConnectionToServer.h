@@ -52,7 +52,7 @@ class TransactionOperation;
 
 class IDBConnectionToServer : public RefCounted<IDBConnectionToServer> {
 public:
-    static Ref<IDBConnectionToServer> create(IDBConnectionToServerDelegate&);
+    WEBCORE_EXPORT static Ref<IDBConnectionToServer> create(IDBConnectionToServerDelegate&);
 
     uint64_t identifier() const;
 

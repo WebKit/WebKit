@@ -29,6 +29,8 @@
 #include "DatabaseProcessIDBConnection.h"
 #include "DatabaseProcessIDBConnectionMessages.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
+#include "Logging.h"
+#include "WebIDBConnectionToClient.h"
 #include <wtf/RunLoop.h>
 
 #if ENABLE(DATABASE_PROCESS)
@@ -112,6 +114,22 @@ void DatabaseToWebProcessConnection::removeDatabaseProcessIDBConnection(uint64_t
 
     RefPtr<DatabaseProcessIDBConnection> idbConnection = m_idbConnections.take(serverConnectionIdentifier);
     idbConnection->disconnectedFromWebProcess();
+}
+
+void DatabaseToWebProcessConnection::establishIDBConnectionToServer(uint64_t serverConnectionIdentifier)
+{
+    LOG(IndexedDB, "DatabaseToWebProcessConnection::establishIDBConnectionToServer - %" PRIu64, serverConnectionIdentifier);
+    ASSERT(!m_webIDBConnections.contains(serverConnectionIdentifier));
+
+    m_webIDBConnections.set(serverConnectionIdentifier, WebIDBConnectionToClient::create(*this, serverConnectionIdentifier));
+}
+
+void DatabaseToWebProcessConnection::removeIDBConnectionToServer(uint64_t serverConnectionIdentifier)
+{
+    ASSERT(m_webIDBConnections.contains(serverConnectionIdentifier));
+
+    auto connection = m_webIDBConnections.take(serverConnectionIdentifier);
+    connection->disconnectedFromWebProcess();
 }
 #endif
 

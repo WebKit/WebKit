@@ -48,7 +48,7 @@ public:
     explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
 
     static IDBResourceIdentifier deletedValue();
-    bool isHashTableDeletedValue() const;
+    WEBCORE_EXPORT bool isHashTableDeletedValue() const;
 
     static IDBResourceIdentifier emptyValue();
     bool isEmpty() const

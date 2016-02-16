@@ -29,9 +29,14 @@
 
 #include "Connection.h"
 #include "MessageSender.h"
+#include "WebIDBConnectionToServer.h"
 #include <wtf/RefCounted.h>
 
 #if ENABLE(DATABASE_PROCESS)
+
+namespace WebCore {
+class SessionID;
+}
 
 namespace WebKit {
 
@@ -51,6 +56,8 @@ public:
 #if ENABLE(INDEXED_DATABASE)
     void registerWebIDBServerConnection(WebIDBServerConnection&);
     void removeWebIDBServerConnection(WebIDBServerConnection&);
+
+    WebIDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&);
 #endif
 
 private:
@@ -71,6 +78,8 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     HashMap<uint64_t, WebIDBServerConnection*> m_webIDBServerConnections;
+
+    HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnections;
 #endif
 };
 

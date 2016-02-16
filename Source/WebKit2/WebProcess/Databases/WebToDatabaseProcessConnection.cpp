@@ -88,6 +88,15 @@ void WebToDatabaseProcessConnection::removeWebIDBServerConnection(WebIDBServerCo
 
     m_webIDBServerConnections.remove(connection.messageSenderDestinationID());
 }
+
+WebIDBConnectionToServer& WebToDatabaseProcessConnection::idbConnectionToServerForSession(const SessionID& sessionID)
+{
+    auto result = m_webIDBConnections.add(sessionID.sessionID(), nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = WebIDBConnectionToServer::create();
+
+    return *result.iterator->value;
+}
 #endif
 
 } // namespace WebKit

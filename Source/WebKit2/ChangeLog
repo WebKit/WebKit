@@ -1,3 +1,87 @@
+2016-02-16  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: WK2 IPC Scaffolding.
+        https://bugs.webkit.org/show_bug.cgi?id=154296
+
+        Reviewed by Alex Christensen.
+        
+        No change in behavior yet; Just laying the groundwork.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::establishIDBConnectionToServer):
+        (WebKit::DatabaseToWebProcessConnection::removeIDBConnectionToServer):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.messages.in:
+        
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp: Added.
+        (WebKit::WebIDBConnectionToClient::create):
+        (WebKit::WebIDBConnectionToClient::WebIDBConnectionToClient):
+        (WebKit::WebIDBConnectionToClient::~WebIDBConnectionToClient):
+        (WebKit::WebIDBConnectionToClient::disconnectedFromWebProcess):
+        (WebKit::WebIDBConnectionToClient::messageSenderConnection):
+        (WebKit::WebIDBConnectionToClient::connectionToClient):
+        (WebKit::WebIDBConnectionToClient::didDeleteDatabase):
+        (WebKit::WebIDBConnectionToClient::didOpenDatabase):
+        (WebKit::WebIDBConnectionToClient::didAbortTransaction):
+        (WebKit::WebIDBConnectionToClient::didCommitTransaction):
+        (WebKit::WebIDBConnectionToClient::didCreateObjectStore):
+        (WebKit::WebIDBConnectionToClient::didDeleteObjectStore):
+        (WebKit::WebIDBConnectionToClient::didClearObjectStore):
+        (WebKit::WebIDBConnectionToClient::didCreateIndex):
+        (WebKit::WebIDBConnectionToClient::didDeleteIndex):
+        (WebKit::WebIDBConnectionToClient::didPutOrAdd):
+        (WebKit::WebIDBConnectionToClient::didGetRecord):
+        (WebKit::WebIDBConnectionToClient::didGetCount):
+        (WebKit::WebIDBConnectionToClient::didDeleteRecord):
+        (WebKit::WebIDBConnectionToClient::didOpenCursor):
+        (WebKit::WebIDBConnectionToClient::didIterateCursor):
+        (WebKit::WebIDBConnectionToClient::fireVersionChangeEvent):
+        (WebKit::WebIDBConnectionToClient::didStartTransaction):
+        (WebKit::WebIDBConnectionToClient::notifyOpenDBRequestBlocked):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h: Added.
+        
+        * Platform/Logging.h:
+                
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp: Added.
+        (WebKit::generateConnectionToServerIdentifier):
+        (WebKit::WebIDBConnectionToServer::create):
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer):
+        (WebKit::WebIDBConnectionToServer::~WebIDBConnectionToServer):
+        (WebKit::WebIDBConnectionToServer::messageSenderConnection):
+        (WebKit::WebIDBConnectionToServer::coreConnectionToServer):
+        (WebKit::WebIDBConnectionToServer::deleteDatabase):
+        (WebKit::WebIDBConnectionToServer::openDatabase):
+        (WebKit::WebIDBConnectionToServer::abortTransaction):
+        (WebKit::WebIDBConnectionToServer::commitTransaction):
+        (WebKit::WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction):
+        (WebKit::WebIDBConnectionToServer::createObjectStore):
+        (WebKit::WebIDBConnectionToServer::deleteObjectStore):
+        (WebKit::WebIDBConnectionToServer::clearObjectStore):
+        (WebKit::WebIDBConnectionToServer::createIndex):
+        (WebKit::WebIDBConnectionToServer::deleteIndex):
+        (WebKit::WebIDBConnectionToServer::putOrAdd):
+        (WebKit::WebIDBConnectionToServer::getRecord):
+        (WebKit::WebIDBConnectionToServer::getCount):
+        (WebKit::WebIDBConnectionToServer::deleteRecord):
+        (WebKit::WebIDBConnectionToServer::openCursor):
+        (WebKit::WebIDBConnectionToServer::iterateCursor):
+        (WebKit::WebIDBConnectionToServer::establishTransaction):
+        (WebKit::WebIDBConnectionToServer::databaseConnectionClosed):
+        (WebKit::WebIDBConnectionToServer::abortOpenAndUpgradeNeeded):
+        (WebKit::WebIDBConnectionToServer::didFireVersionChangeEvent):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h: Added.
+
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::idbConnectionToServerForSession):
+        * WebProcess/Databases/WebDatabaseProvider.h:
+
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::idbConnectionToServerForSession):
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+
 2016-02-16  Sam Weinig  <sam@webkit.org>
 
         Revert r195826.

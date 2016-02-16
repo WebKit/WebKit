@@ -27,6 +27,9 @@
 #include "WebDatabaseProvider.h"
 
 #include "WebIDBFactoryBackend.h"
+#include "WebProcess.h"
+#include "WebToDatabaseProcessConnection.h"
+#include <WebCore/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -66,6 +69,21 @@ WebDatabaseProvider::~WebDatabaseProvider()
 }
 
 #if ENABLE(INDEXED_DATABASE)
+
+WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const WebCore::SessionID& sessionID)
+{
+    if (sessionID.isEphemeral()) {
+        auto result = m_idbEphemeralConnectionMap.add(sessionID.sessionID(), nullptr);
+        if (result.isNewEntry)
+            result.iterator->value = WebCore::InProcessIDBServer::create();
+
+        return result.iterator->value->connectionToServer();
+    }
+
+    ASSERT(WebProcess::singleton().webToDatabaseProcessConnection());
+    return WebProcess::singleton().webToDatabaseProcessConnection()->idbConnectionToServerForSession(sessionID).coreConnectionToServer();
+}
+
 RefPtr<WebCore::IDBFactoryBackendInterface> WebDatabaseProvider::createIDBFactoryBackend()
 {
 #if ENABLE(DATABASE_PROCESS)

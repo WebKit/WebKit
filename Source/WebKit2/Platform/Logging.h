@@ -41,6 +41,7 @@ namespace WebKit {
     M(ContextMenu) \
     M(IDB) \
     M(IconDatabase) \
+    M(IndexedDB) \
     M(InspectorServer) \
     M(KeyHandling) \
     M(Network) \
