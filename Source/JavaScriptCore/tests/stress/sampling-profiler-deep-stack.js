@@ -2,9 +2,11 @@ if (platformSupportsSamplingProfiler()) {
     load("./sampling-profiler/samplingProfiler.js");
 
     function foo(x) { 
+        let o = {};
         for (let i = 0; i < 1000; i++) {
             let x = i;
             x--;
+            o["x" + x] = x;
         }
         return x; 
     }

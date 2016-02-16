@@ -1,3 +1,21 @@
+2016-02-16  Saam barati  <sbarati@apple.com>
+
+        stress/sampling-profiler-deep-stack.js fails on ARM 32bit
+        https://bugs.webkit.org/show_bug.cgi?id=154255
+        <rdar://problem/24662996>
+
+        Reviewed by Mark Lam.
+
+        The bug here wasn't in the implementation of the sampling profiler 
+        itself. Rather, it was a bug in the test. JSC wasn't spending a lot
+        of time in a function that the test assumed a lot of time was spent in.
+        That's because the DFG was doing a good job at optimizing the function
+        at the leaf of the recursion. Because of that, we often wouldn't sample it.
+        I fixed this by making the leaf function do more work.
+
+        * tests/stress/sampling-profiler-deep-stack.js:
+        (platformSupportsSamplingProfiler.foo):
+
 2016-02-16  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Operations should be on the instance for global objects or if [Unforgeable]
