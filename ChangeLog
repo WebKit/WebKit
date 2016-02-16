@@ -1,3 +1,13 @@
+2016-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable INTL on WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=154256
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsWin.cmake:
+        Peavo updated icu and it works, so let's re-enable INTL on WinCairo to catch Windows build failures.
+
 2016-02-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][GTK] Fix ENABLE(SVG_OTF_CONVERTER) build
