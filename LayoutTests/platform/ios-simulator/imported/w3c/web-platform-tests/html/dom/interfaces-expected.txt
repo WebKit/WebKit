@@ -3824,30 +3824,30 @@ PASS Window interface: attribute scrollbars
 PASS Window interface: attribute statusbar 
 PASS Window interface: attribute toolbar 
 PASS Window interface: attribute status 
-FAIL Window interface: operation close() assert_equals: property should be writable if and only if not unforgeable expected true but got false
+PASS Window interface: operation close() 
 PASS Window interface: attribute closed 
-FAIL Window interface: operation stop() desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation focus() assert_equals: property should be writable if and only if not unforgeable expected true but got false
-FAIL Window interface: operation blur() assert_equals: property should be writable if and only if not unforgeable expected true but got false
+PASS Window interface: operation stop() 
+PASS Window interface: operation focus() 
+PASS Window interface: operation blur() 
 PASS Window interface: attribute frames 
 PASS Window interface: attribute length 
 PASS Window interface: attribute opener 
 PASS Window interface: attribute parent 
 PASS Window interface: attribute frameElement 
-FAIL Window interface: operation open(DOMString,DOMString,DOMString,boolean) desc is not an Object. (evaluating '"get" in desc')
+FAIL Window interface: operation open(DOMString,DOMString,DOMString,boolean) assert_equals: property has wrong .length expected 0 but got 2
 FAIL Window interface: attribute navigator assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function navigator() {
     [native code]
 }"
 FAIL Window interface: attribute external assert_own_property: The global object must have a property "external" expected property "external" missing
 PASS Window interface: attribute applicationCache 
-FAIL Window interface: operation alert() desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation confirm(DOMString) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation prompt(DOMString,DOMString) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation print() desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation showModalDialog(DOMString,any) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation postMessage(any,DOMString,[object Object]) assert_equals: property should be writable if and only if not unforgeable expected true but got false
-FAIL Window interface: operation captureEvents() desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation releaseEvents() desc is not an Object. (evaluating '"get" in desc')
+PASS Window interface: operation alert() 
+PASS Window interface: operation confirm(DOMString) 
+PASS Window interface: operation prompt(DOMString,DOMString) 
+PASS Window interface: operation print() 
+PASS Window interface: operation showModalDialog(DOMString,any) 
+PASS Window interface: operation postMessage(any,DOMString,[object Object]) 
+PASS Window interface: operation captureEvents() 
+PASS Window interface: operation releaseEvents() 
 PASS Window interface: attribute onabort 
 FAIL Window interface: attribute onautocomplete assert_own_property: The global object must have a property "onautocomplete" expected property "onautocomplete" missing
 FAIL Window interface: attribute onautocompleteerror assert_own_property: The global object must have a property "onautocompleteerror" expected property "onautocompleteerror" missing
@@ -3924,14 +3924,14 @@ PASS Window interface: attribute onpageshow
 PASS Window interface: attribute onpopstate 
 PASS Window interface: attribute onstorage 
 PASS Window interface: attribute onunload 
-FAIL Window interface: operation btoa(DOMString) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation atob(DOMString) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation setTimeout(Function,long,any) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation setTimeout(DOMString,long,any) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation clearTimeout(long) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation setInterval(Function,long,any) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation setInterval(DOMString,long,any) desc is not an Object. (evaluating '"get" in desc')
-FAIL Window interface: operation clearInterval(long) desc is not an Object. (evaluating '"get" in desc')
+PASS Window interface: operation btoa(DOMString) 
+PASS Window interface: operation atob(DOMString) 
+PASS Window interface: operation setTimeout(Function,long,any) 
+PASS Window interface: operation setTimeout(DOMString,long,any) 
+PASS Window interface: operation clearTimeout(long) 
+PASS Window interface: operation setInterval(Function,long,any) 
+PASS Window interface: operation setInterval(DOMString,long,any) 
+PASS Window interface: operation clearInterval(long) 
 FAIL Window interface: operation createImageBitmap(ImageBitmapSource,long,long,long,long) assert_own_property: global object missing non-static operation expected property "createImageBitmap" missing
 PASS Window interface: attribute sessionStorage 
 PASS Window interface: attribute localStorage 
@@ -4142,11 +4142,15 @@ PASS Location interface: window.location must have own property "port"
 PASS Location interface: window.location must have own property "pathname" 
 PASS Location interface: window.location must have own property "search" 
 PASS Location interface: window.location must have own property "hash" 
-FAIL Location interface: window.location must have own property "assign" assert_own_property: Doesn't have the unforgeable operation property expected property "assign" missing
-FAIL Location interface: calling assign(USVString) on window.location with too few arguments must throw TypeError assert_own_property: expected property "assign" missing
-FAIL Location interface: window.location must have own property "replace" assert_own_property: Doesn't have the unforgeable operation property expected property "replace" missing
-FAIL Location interface: calling replace(USVString) on window.location with too few arguments must throw TypeError assert_own_property: expected property "replace" missing
-FAIL Location interface: window.location must have own property "reload" assert_own_property: Doesn't have the unforgeable operation property expected property "reload" missing
+FAIL Location interface: window.location must have own property "assign" assert_equals: property should be writable if and only if not unforgeable expected false but got true
+FAIL Location interface: calling assign(USVString) on window.location with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+FAIL Location interface: window.location must have own property "replace" assert_equals: property should be writable if and only if not unforgeable expected false but got true
+FAIL Location interface: calling replace(USVString) on window.location with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+FAIL Location interface: window.location must have own property "reload" assert_equals: property should be writable if and only if not unforgeable expected false but got true
 PASS Location interface: window.location must have own property "ancestorOrigins" 
 PASS PopStateEvent interface: existence and properties of interface object 
 PASS PopStateEvent interface object length 
