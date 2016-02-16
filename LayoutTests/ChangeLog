@@ -1,3 +1,19 @@
+2016-02-15  Chris Dumez  <cdumez@apple.com>
+
+        The following properties should exist on the global object: AudioTrackList, AudioTrack, VideoTrackList, VideoTrack
+        https://bugs.webkit.org/show_bug.cgi?id=154250
+        <rdar://problem/24660829>
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline now that AudioTrackList, AudioTrack, VideoTrackList and VideoTrack
+        are exposed on the global Window object.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2016-02-15  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Rebaseline after r196244.

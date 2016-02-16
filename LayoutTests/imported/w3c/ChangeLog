@@ -1,5 +1,17 @@
 2016-02-15  Chris Dumez  <cdumez@apple.com>
 
+        The following properties should exist on the global object: AudioTrackList, AudioTrack, VideoTrackList, VideoTrack
+        https://bugs.webkit.org/show_bug.cgi?id=154250
+        <rdar://problem/24660829>
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-02-15  Chris Dumez  <cdumez@apple.com>
+
         Re-sync W3C web-platform-tests' html/dom/interfaces.html
         https://bugs.webkit.org/show_bug.cgi?id=154259
 

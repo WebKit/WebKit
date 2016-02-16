@@ -1,3 +1,24 @@
+2016-02-15  Chris Dumez  <cdumez@apple.com>
+
+        The following properties should exist on the global object: AudioTrackList, AudioTrack, VideoTrackList, VideoTrack
+        https://bugs.webkit.org/show_bug.cgi?id=154250
+        <rdar://problem/24660829>
+
+        Reviewed by Eric Carlson.
+
+        The following properties should exist on the global object:
+        - AudioTrackList, AudioTrack, VideoTrackList, VideoTrack
+
+        These interfaces are not marked as [NoInterfaceObject] in:
+        - https://html.spec.whatwg.org/#audiotracklist-and-videotracklist-objects
+
+        No new tests, already covered by existing tests.
+
+        * html/track/AudioTrack.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/VideoTrack.idl:
+        * html/track/VideoTrackList.idl:
+
 2016-02-15  Sam Weinig  <sam@webkit.org>
 
         Stop using NSMapTable in places where we were only using it to be GC safe
