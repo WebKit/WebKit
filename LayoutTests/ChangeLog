@@ -1,3 +1,13 @@
+2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] No hover-horizontal scrolling available
+        https://bugs.webkit.org/show_bug.cgi?id=122859
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll-expected.html: Added.
+        * platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html: Added.
+
 2016-02-16  Antti Koivisto  <antti@apple.com>
 
         Factor id mutation style invalidation code into a class

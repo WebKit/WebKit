@@ -1,3 +1,24 @@
+2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] No hover-horizontal scrolling available
+        https://bugs.webkit.org/show_bug.cgi?id=122859
+
+        Reviewed by Michael Catanzaro.
+
+        This is a regression of WebKit2, because in WebKit1 we used native
+        widgets for frame scrollbars that handled this automatically. Now
+        we need to also check if the mouse is over frame scrollbars to
+        adjust the wheel event.
+
+        Test: platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent): Pass the adjusted wheel
+        event to platformCompleteWheelEvent().
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::shouldTurnVerticalTicksIntoHorizontal):
+        Check also frame scrollbars.
+
 2016-02-16  Antti Koivisto  <antti@apple.com>
 
         Factor id mutation style invalidation code into a class
