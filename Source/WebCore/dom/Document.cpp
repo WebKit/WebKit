@@ -4599,6 +4599,9 @@ void Document::setInPageCache(bool flag)
                 v->resetScrollbars();
         }
         m_styleRecalcTimer.stop();
+
+        clearStyleResolver();
+        clearSelectorQueryCache();
     } else {
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();

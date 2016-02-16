@@ -74,7 +74,6 @@ void WebVisitedLinkStore::removeAllVisitedLinks()
 {
     for (auto& visitedLinkStore : visitedLinkStores())
         visitedLinkStore->removeVisitedLinkHashes();
-    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 void WebVisitedLinkStore::addVisitedLink(NSString *urlString)
@@ -103,7 +102,6 @@ void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
     m_visitedLinkHashes.remove(linkHash);
 
     invalidateStylesForLink(linkHash);
-    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 bool WebVisitedLinkStore::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
@@ -152,7 +150,6 @@ void WebVisitedLinkStore::addVisitedLinkHash(LinkHash linkHash)
     m_visitedLinkHashes.add(linkHash);
 
     invalidateStylesForLink(linkHash);
-    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 void WebVisitedLinkStore::removeVisitedLinkHashes()

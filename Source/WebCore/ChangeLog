@@ -1,3 +1,41 @@
+2016-02-16  Andreas Kling  <akling@apple.com>
+
+        Drop StyleResolver and SelectorQueryCache when entering PageCache.
+        <https://webkit.org/b/154238>
+
+        Reviewed by Antti Koivisto.
+
+        Stop keeping these around for cached pages to save lots of memory.
+        We can easily rebuild them if a cached navigation occurs, and this
+        way we also don't need to worry about invalidating style for cached
+        pages in all the right places.
+
+        Restoring a cached page will now lead to a forced style recalc.
+        We don't try to defer this (beyond a zero-timer) since it's going
+        to happen anyway, and it's nicer to front-load the cost rather than
+        stuttering on the first user content interaction.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear): Deleted.
+        * history/CachedPage.h:
+        (WebCore::CachedPage::markForVisitedLinkStyleRecalc): Deleted.
+        (WebCore::CachedPage::markForFullStyleRecalc): Deleted.
+        * history/PageCache.cpp:
+        (WebCore::PageCache::markPagesForVisitedLinkStyleRecalc): Deleted.
+        (WebCore::PageCache::markPagesForFullStyleRecalc): Deleted.
+        * history/PageCache.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors): Deleted.
+        * page/Page.cpp:
+        (WebCore::Page::setViewScaleFactor): Deleted.
+        (WebCore::Page::setDeviceScaleFactor): Deleted.
+        (WebCore::Page::setPagination): Deleted.
+        (WebCore::Page::setPaginationLineGridEnabled): Deleted.
+        (WebCore::Page::setVisitedLinkStore): Deleted.
+
 2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] clicking on the scrollbar trough steps rather than jumps to the clicked position

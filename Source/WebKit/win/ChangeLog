@@ -1,3 +1,14 @@
+2016-02-16  Andreas Kling  <akling@apple.com>
+
+        Drop StyleResolver and SelectorQueryCache when entering PageCache.
+        <https://webkit.org/b/154238>
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebVisitedLinkStore.cpp:
+        (WebVisitedLinkStore::removeAllVisitedLinks): Deleted.
+        (WebVisitedLinkStore::addVisitedLinkHash): Deleted.
+
 2016-02-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed Window build fix.

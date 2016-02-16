@@ -74,6 +74,8 @@ void CachedPage::restore(Page& page)
     ASSERT(m_cachedMainFrame->view()->frame().isMainFrame());
     ASSERT(!page.subframeCount());
 
+    page.setNeedsRecalcStyleInAllFrames();
+
     m_cachedMainFrame->open();
     
     // Restore the focus appearance for the focused element.
@@ -100,16 +102,8 @@ void CachedPage::restore(Page& page)
 #endif
     }
 
-    if (m_needStyleRecalcForVisitedLinks) {
-        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext())
-            frame->document()->visitedLinkState().invalidateStyleForAllLinks();
-    }
-
     if (m_needsDeviceOrPageScaleChanged)
         page.mainFrame().deviceOrPageScaleFactorChanged();
-
-    if (m_needsFullStyleRecalc)
-        page.setNeedsRecalcStyleInAllFrames();
 
 #if ENABLE(VIDEO_TRACK)
     if (m_needsCaptionPreferencesChanged)
@@ -129,8 +123,6 @@ void CachedPage::clear()
     ASSERT(m_cachedMainFrame);
     m_cachedMainFrame->clear();
     m_cachedMainFrame = nullptr;
-    m_needStyleRecalcForVisitedLinks = false;
-    m_needsFullStyleRecalc = false;
 #if ENABLE(VIDEO_TRACK)
     m_needsCaptionPreferencesChanged = false;
 #endif

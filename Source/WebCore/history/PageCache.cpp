@@ -311,23 +311,6 @@ unsigned PageCache::frameCount() const
     return frameCount;
 }
 
-void PageCache::markPagesForVisitedLinkStyleRecalc()
-{
-    for (auto& item : m_items) {
-        ASSERT(item->m_cachedPage);
-        item->m_cachedPage->markForVisitedLinkStyleRecalc();
-    }
-}
-
-void PageCache::markPagesForFullStyleRecalc(Page& page)
-{
-    for (auto& item : m_items) {
-        CachedPage& cachedPage = *item->m_cachedPage;
-        if (&page.mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
-            cachedPage.markForFullStyleRecalc();
-    }
-}
-
 void PageCache::markPagesForDeviceOrPageScaleChanged(Page& page)
 {
     for (auto& item : m_items) {
