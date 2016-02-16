@@ -184,8 +184,8 @@ TEST_F(EWK2ContextTest, ewk_context_web_process_count_limit)
     Evas_Object* webView1 = ewk_view_smart_add(evas, smart, context, pageGroup);
     Evas_Object* webView2 = ewk_view_smart_add(evas, smart, context, pageGroup);
 
-    PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
-    PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
+    pid_t webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
+    pid_t webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
 
     ASSERT_EQ(webView1WebProcessID, webView2WebProcessID);
 }
@@ -203,8 +203,8 @@ TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_web_process_count_limit)
     Evas_Object* webView1 = ewk_view_smart_add(evas, smart, context, pageGroup);
     Evas_Object* webView2 = ewk_view_smart_add(evas, smart, context, pageGroup);
 
-    PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
-    PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
+    pid_t webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
+    pid_t webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
 
     ASSERT_NE(webView1WebProcessID, webView2WebProcessID);
 }
@@ -222,13 +222,13 @@ TEST_F(EWK2ContextTest, ewk_context_network_process_count_limit)
     Evas_Object* webView1 = ewk_view_smart_add(evas, smart, context, pageGroup);
     Evas_Object* webView2 = ewk_view_smart_add(evas, smart, context, pageGroup);
 
-    PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
-    PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
+    pid_t webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
+    pid_t webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
 
     ASSERT_EQ(webView1WebProcessID, webView2WebProcessID);
 
-    PlatformProcessIdentifier webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess()->processIdentifier();
-    PlatformProcessIdentifier webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess()->processIdentifier();
+    pid_t webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess()->processIdentifier();
+    pid_t webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess()->processIdentifier();
 
     ASSERT_EQ(webView1NetworkProcessID, webView2NetworkProcessID);
 }
@@ -246,10 +246,10 @@ TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_network_count_limit)
     Evas_Object* webView1 = ewk_view_smart_add(evas, smart, context, pageGroup);
     Evas_Object* webView2 = ewk_view_smart_add(evas, smart, context, pageGroup);
 
-    PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
-    PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
-    PlatformProcessIdentifier webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess()->processIdentifier();
-    PlatformProcessIdentifier webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess()->processIdentifier();
+    pid_t webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
+    pid_t webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
+    pid_t webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess()->processIdentifier();
+    pid_t webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess()->processIdentifier();
 
     if (!webView1WebProcessID || !webView2WebProcessID)
         return;

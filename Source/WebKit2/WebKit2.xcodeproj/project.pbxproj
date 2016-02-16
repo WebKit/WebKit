@@ -1513,7 +1513,6 @@
 		BC8699B5116AADAA002A925B /* WKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8699B2116AADAA002A925B /* WKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC8699B6116AADAA002A925B /* WKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8699B3116AADAA002A925B /* WKView.mm */; };
 		BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8699B4116AADAA002A925B /* WKViewInternal.h */; };
-		BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */; };
 		BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8A501411765F5600757573 /* WKRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8ACA0F16670D7A004C1941 /* ObjCObjectGraph.h */; };
 		BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8ACA1016670D7B004C1941 /* ObjCObjectGraph.mm */; };
@@ -3568,7 +3567,6 @@
 		BC8699B2116AADAA002A925B /* WKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKView.h; sourceTree = "<group>"; };
 		BC8699B3116AADAA002A925B /* WKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKView.mm; sourceTree = "<group>"; };
 		BC8699B4116AADAA002A925B /* WKViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewInternal.h; sourceTree = "<group>"; };
-		BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformProcessIdentifier.h; sourceTree = "<group>"; };
 		BC87DFA91018101400564216 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		BC8A501411765F5600757573 /* WKRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRetainPtr.h; sourceTree = "<group>"; };
 		BC8ACA0F16670D7A004C1941 /* ObjCObjectGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCObjectGraph.h; sourceTree = "<group>"; };
@@ -6408,7 +6406,6 @@
 				51A7F2F2125BF820008AEB1D /* Logging.h */,
 				C0E3AA451209E2BA00A49D01 /* Module.cpp */,
 				C0E3AA441209E2BA00A49D01 /* Module.h */,
-				BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */,
 				1A24BED3120894D100FBB059 /* SharedMemory.h */,
 			);
 			path = Platform;
@@ -7472,7 +7469,6 @@
 				2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */,
 				2D8949F1182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h in Headers */,
 				BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */,
-				BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */,
 				1A6FB7D311E651E200DB1371 /* Plugin.h in Headers */,
 				31A67E0D165B2A99006CBA66 /* PlugInAutoStartProvider.h in Headers */,
 				1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */,

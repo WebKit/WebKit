@@ -30,7 +30,6 @@
 #include "ChildProcessProxy.h"
 #include "CustomProtocolManagerProxy.h"
 #include "MessageReceiverMap.h"
-#include "PlatformProcessIdentifier.h"
 #include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottlerClient.h"

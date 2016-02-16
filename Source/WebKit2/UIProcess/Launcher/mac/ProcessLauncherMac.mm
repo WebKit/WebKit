@@ -46,7 +46,7 @@
 
 namespace WebKit {
 
-typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, IPC::Connection::Identifier);
+typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(pid_t, IPC::Connection::Identifier);
 
 static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions)
 {

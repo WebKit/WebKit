@@ -27,7 +27,6 @@
 #define WebProcessLauncher_h
 
 #include "Connection.h"
-#include "PlatformProcessIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
@@ -72,7 +71,7 @@ public:
     }
 
     bool isLaunching() const { return m_isLaunching; }
-    PlatformProcessIdentifier processIdentifier() const { return m_processIdentifier; }
+    pid_t processIdentifier() const { return m_processIdentifier; }
 
     void terminateProcess();
     void invalidate();
@@ -81,7 +80,7 @@ private:
     ProcessLauncher(Client*, const LaunchOptions& launchOptions);
 
     void launchProcess();
-    void didFinishLaunchingProcess(PlatformProcessIdentifier, IPC::Connection::Identifier);
+    void didFinishLaunchingProcess(pid_t, IPC::Connection::Identifier);
 
     void platformInvalidate();
 
@@ -89,7 +88,7 @@ private:
 
     const LaunchOptions m_launchOptions;
     bool m_isLaunching;
-    PlatformProcessIdentifier m_processIdentifier;
+    pid_t m_processIdentifier;
 };
 
 } // namespace WebKit

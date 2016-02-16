@@ -186,7 +186,7 @@ public:
     void clearPluginClientPolicies();
 #endif
 
-    PlatformProcessIdentifier networkProcessIdentifier();
+    pid_t networkProcessIdentifier();
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);

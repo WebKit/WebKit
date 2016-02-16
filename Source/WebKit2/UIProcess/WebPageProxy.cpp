@@ -523,7 +523,7 @@ const API::PageConfiguration& WebPageProxy::configuration() const
     return m_configuration.get();
 }
 
-PlatformProcessIdentifier WebPageProxy::processIdentifier() const
+pid_t WebPageProxy::processIdentifier() const
 {
     if (m_isClosed)
         return 0;
