@@ -1,12 +1,13 @@
 function foo() {
     "use strict";
-    return arguments[0];
+    return [...arguments];
+
 }
 
 noInline(foo);
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < 200000; ++i) {
     var result = foo(i);
-    if (result != i)
+    if (result[0] != i)
         throw "Error: bad result: " + result;
 }

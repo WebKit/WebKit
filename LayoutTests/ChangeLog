@@ -1,3 +1,15 @@
+2016-02-16  Keith Miller  <keith_miller@apple.com>
+
+        ClonedArguments should not materialize its special properties unless they are being changed or deleted
+        https://bugs.webkit.org/show_bug.cgi?id=154128
+
+        Reviewed by Filip Pizlo.
+
+        Have argumnets-strict-mode test the speed of spreading the arguments object.
+
+        * js/regress/script-tests/arguments-strict-mode.js:
+        (foo):
+
 2016-02-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/events/keydown-1.html as flaky on mac-wk1 debug
