@@ -248,7 +248,15 @@ void DrawingAreaImpl::mainFrameContentSizeChanged(const WebCore::IntSize& newSiz
 
 void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
 {
-    m_webPage.corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
+    Settings& settings = m_webPage.corePage()->settings();
+    settings.setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    // Fixed position elements need to be composited and create stacking contexts
+    // in order to be scrolled by the ScrollingCoordinator.
+    settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+    settings.setFixedPositionCreatesStackingContext(true);
+#endif
 }
 
 void DrawingAreaImpl::layerHostDidFlushLayers()

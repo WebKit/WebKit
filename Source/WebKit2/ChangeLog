@@ -1,3 +1,17 @@
+2016-02-15  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [ThreadedCompositor] position:fixed elements do not have their own layers when threaded compositor is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=154100
+
+        Reviewed by Carlos Garcia Campos.
+
+        Currently, fixed elements are redrawn to a backing store every time layout or scroll happens.
+        It results in the bad effect on performance-wise. Letting fixed element have separate layers is
+        necessary when threaded compositor is enabled at least. Because async scrolling requires it.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updatePreferences):
+
 2016-02-15  Alex Christensen  <achristensen@webkit.org>
 
         Implement content sniffing check with NetworkSession
