@@ -119,6 +119,7 @@ public:
 
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     static bool matchesFocusPseudoClass(const Element&);
+    static bool attributeSelectorMatches(const Element&, const QualifiedName&, const AtomicString& attributeValue, const CSSSelector&);
 
     enum LinkMatchMask { MatchDefault = 0, MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
     static unsigned determineLinkMatchType(const CSSSelector*);

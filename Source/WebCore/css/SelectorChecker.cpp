@@ -518,6 +518,21 @@ static bool anyAttributeMatches(const Element& element, const CSSSelector& selec
     return false;
 }
 
+bool SelectorChecker::attributeSelectorMatches(const Element& element, const QualifiedName& attributeName, const AtomicString& attributeValue, const CSSSelector& selector)
+{
+    ASSERT(selector.isAttributeSelector());
+    auto& selectorAttribute = selector.attribute();
+    auto& selectorName = element.isHTMLElement() ? selector.attributeCanonicalLocalName() : selectorAttribute.localName();
+    if (!Attribute::nameMatchesFilter(attributeName, selectorAttribute.prefix(), selectorName, selectorAttribute.namespaceURI()))
+        return false;
+    bool caseSensitive = true;
+    if (selector.attributeValueMatchingIsCaseInsensitive())
+        caseSensitive = false;
+    else if (element.document().isHTMLDocument() && element.isHTMLElement() && !HTMLDocument::isCaseSensitiveAttribute(selector.attribute()))
+        caseSensitive = false;
+    return attributeValueMatches(Attribute(attributeName, attributeValue), selector.match(), selector.value(), caseSensitive);
+}
+
 static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContext& context)
 {
     // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk

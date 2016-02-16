@@ -6637,6 +6637,8 @@
 		E4A007851B820ED3002C5A6E /* DataURLDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A007841B820ED3002C5A6E /* DataURLDecoder.cpp */; };
 		E4A814D41C6DEC4000BF85AC /* ClassChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */; };
 		E4A814D61C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A814D51C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp */; };
+		E4A814D81C70E10500BF85AC /* AttributeChangeInvalidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A814D71C70E10500BF85AC /* AttributeChangeInvalidation.cpp */; };
+		E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */; };
 		E4AE7C1617D1BB950009FB31 /* ElementIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1517D1BB950009FB31 /* ElementIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */; };
@@ -14643,6 +14645,8 @@
 		E4A007841B820ED3002C5A6E /* DataURLDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataURLDecoder.cpp; sourceTree = "<group>"; };
 		E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassChangeInvalidation.h; sourceTree = "<group>"; };
 		E4A814D51C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassChangeInvalidation.cpp; sourceTree = "<group>"; };
+		E4A814D71C70E10500BF85AC /* AttributeChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeChangeInvalidation.cpp; sourceTree = "<group>"; };
+		E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeChangeInvalidation.h; sourceTree = "<group>"; };
 		E4AE7C1517D1BB950009FB31 /* ElementIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIterator.h; sourceTree = "<group>"; };
 		E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementAncestorIterator.h; sourceTree = "<group>"; };
 		E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitBezier.h; sourceTree = "<group>"; };
@@ -23433,6 +23437,8 @@
 		E4763D4A17B2704900D35206 /* style */ = {
 			isa = PBXGroup;
 			children = (
+				E4A814D71C70E10500BF85AC /* AttributeChangeInvalidation.cpp */,
+				E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */,
 				E4A814D51C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp */,
 				E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */,
 				1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */,
@@ -25909,6 +25915,7 @@
 				31313F661443B35F006E2A90 /* FilterEffectRenderer.h in Headers */,
 				49ECEB6E1499790D00CDD3A4 /* FilterOperation.h in Headers */,
 				49ECEB701499790D00CDD3A4 /* FilterOperations.h in Headers */,
+				E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */,
 				372C00D9129619F8005C9575 /* FindOptions.h in Headers */,
 				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
@@ -30440,6 +30447,7 @@
 				B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */,
 				9BD4E9161C462872005065BC /* JSCustomElementInterface.cpp in Sources */,
 				514C76380CE9225E007EF3CD /* JSSQLTransaction.cpp in Sources */,
+				E4A814D81C70E10500BF85AC /* AttributeChangeInvalidation.cpp in Sources */,
 				B59DD69E11902A42007E9684 /* JSSQLTransactionCallback.cpp in Sources */,
 				1AD2316E0CD269E700C1F194 /* JSSQLTransactionCustom.cpp in Sources */,
 				B59DD6A211902A52007E9684 /* JSSQLTransactionErrorCallback.cpp in Sources */,

@@ -1,3 +1,13 @@
+2016-02-15  Antti Koivisto  <antti@apple.com>
+
+        Optimize style invalidations for attribute selectors
+        https://bugs.webkit.org/show_bug.cgi?id=154242
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/style-invalidation-attribute-change-descendants-expected.txt: Added.
+        * fast/css/style-invalidation-attribute-change-descendants.html: Added.
+
 2016-02-16  Chris Dumez  <cdumez@apple.com>
 
         Do security checks early in JSDOMWindow::put*()

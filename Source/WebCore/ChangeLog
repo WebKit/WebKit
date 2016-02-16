@@ -1,3 +1,90 @@
+2016-02-15  Antti Koivisto  <antti@apple.com>
+
+        Optimize style invalidations for attribute selectors
+        https://bugs.webkit.org/show_bug.cgi?id=154242
+
+        Reviewed by Andreas Kling.
+
+        Currently we invalidate the whole element subtree if there are any attribute selectors for the changed attribute.
+        This is slow as generally few if any elements are really affected. Using attribute selectors for dynamic styling
+        should be performant.
+
+        This patch implements optimization strategy for attributes similar to what we already have for classes:
+
+        - Collect a map of all rules that contains descendant-affecting attribute selectors for a given attribute.
+        - When an attribute value changes check if there are any such rules for it.
+        - Check if the value change affects the results of any of the attribute selectors.
+        - Only if it does invalidate the exact descendant elements affected by the rules.
+
+        Test: fast/css/style-invalidation-attribute-change-descendants.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::ancestorClassRules):
+        (WebCore::DocumentRuleSets::ancestorAttributeRulesForHTML):
+
+            Create optimization RuleSets when needed.
+
+        * css/DocumentRuleSets.h:
+        (WebCore::DocumentRuleSets::uncommonAttribute):
+        (WebCore::DocumentRuleSets::features):
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::recursivelyCollectFeaturesFromSelector):
+        (WebCore::makeAttributeSelectorKey):
+        (WebCore::RuleFeatureSet::collectFeatures):
+
+            Collect rules with descendant affecting attribute selectors.
+
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::clear):
+        (WebCore::RuleFeatureSet::shrinkToFit):
+        * css/RuleFeature.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::anyAttributeMatches):
+        (WebCore::SelectorChecker::attributeSelectorMatches):
+
+            Expose function for matching single attribute selectors.
+
+        (WebCore::canMatchHoverOrActiveInQuirksMode):
+        * css/SelectorChecker.h:
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::makeIdForStyleResolution):
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::removeAttributeInternal):
+        (WebCore::Element::addAttributeInternal):
+        (WebCore::Element::removeAttribute):
+
+            Add AttributeChangeInvalidation where needed.
+
+        (WebCore::Element::needsStyleInvalidation):
+
+            Move to Element from ClassChangeInvalidation.
+
+        (WebCore::Element::willModifyAttribute):
+
+            No more full style invalidation on attribute change.
+
+        * style/AttributeChangeInvalidation.cpp: Added.
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyle):
+
+            Invalidate local style.
+            Check if we need to invalidate descendants by looking into ancestorAttributeRules.
+
+        (WebCore::Style::AttributeChangeInvalidation::invalidateDescendants):
+
+            Use StyleInvalidationAnalysis to invalidate the subtree for the relevant rules.
+
+        * style/AttributeChangeInvalidation.h: Added.
+        (WebCore::Style::AttributeChangeInvalidation::needsInvalidation):
+        (WebCore::Style::AttributeChangeInvalidation::AttributeChangeInvalidation):
+        (WebCore::Style::AttributeChangeInvalidation::~AttributeChangeInvalidation):
+
+            If needed, invalidate descendants before and after attribute change to catch rules that start and stop applying.
+
 2016-02-16  Chris Dumez  <cdumez@apple.com>
 
         Do security checks early in JSDOMWindow::put*()

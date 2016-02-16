@@ -23,57 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ClassChangeInvalidation_h
-#define ClassChangeInvalidation_h
+#ifndef AttributeChangeInvalidation_h
+#define AttributeChangeInvalidation_h
 
-#include "Document.h"
 #include "Element.h"
-#include "StyleResolver.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class DocumentRuleSets;
-class SpaceSplitString;
+class RuleSet;
 
 namespace Style {
 
-class ClassChangeInvalidation {
+class AttributeChangeInvalidation {
 public:
-    ClassChangeInvalidation(Element&, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
-    ~ClassChangeInvalidation();
+    AttributeChangeInvalidation(Element&, const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
+    ~AttributeChangeInvalidation();
 
 private:
-    using ClassChangeVector = Vector<AtomicStringImpl*, 4>;
-
-    void computeClassChange(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
-    void invalidateStyle(const ClassChangeVector&);
-
-    static ClassChangeVector collectClasses(const SpaceSplitString&);
+    void invalidateStyle(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
+    void invalidateDescendants();
 
     const bool m_isEnabled;
     Element& m_element;
 
-    ClassChangeVector m_addedClasses;
-    ClassChangeVector m_removedClasses;
+    RuleSet* m_descendantInvalidationRuleSet { nullptr };
 };
 
-inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
+inline AttributeChangeInvalidation::AttributeChangeInvalidation(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
     : m_isEnabled(element.needsStyleInvalidation())
     , m_element(element)
-
 {
     if (!m_isEnabled)
         return;
-    computeClassChange(oldClasses, newClasses);
-    invalidateStyle(m_removedClasses);
+    invalidateStyle(attributeName, oldValue, newValue);
+    invalidateDescendants();
 }
 
-inline ClassChangeInvalidation::~ClassChangeInvalidation()
+inline AttributeChangeInvalidation::~AttributeChangeInvalidation()
 {
     if (!m_isEnabled)
         return;
-    invalidateStyle(m_addedClasses);
+    invalidateDescendants();
 }
     
 }

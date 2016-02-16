@@ -279,6 +279,8 @@ public:
 
     virtual RenderStyle* computedStyle(PseudoId = NOPSEUDO) override;
 
+    bool needsStyleInvalidation() const;
+
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByEmpty() const { return hasRareData() && rareDataStyleAffectedByEmpty(); }
     bool childrenAffectedByHover() const { return getFlag(ChildrenAffectedByHoverRulesFlag); }

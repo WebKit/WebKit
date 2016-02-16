@@ -1,0 +1,149 @@
+Test that we invalidate the element subtree minimally on class attribute change
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hasExpectedStyle is true
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value ''
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value2'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Removing attribute 'myattr'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value3'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'dummy value3'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value4-foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value4-foobar'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'dummy value4-foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value5foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value5foobar'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'foovalue5'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'foovalue6'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myAttr' value 'foobarvalue6'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'MYATTR' value 'value6foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value7'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value7foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myATTR' value 'foovalue7foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'VALUE7foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'Value8'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'value8foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myATTR' value 'FOOVALue8foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'VALUE8foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr' value 'VALUE 8foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "InlineStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr2' value ''
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting attribute 'myattr2' value 'foo'
+PASS testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange") is true
+PASS testStyleChangeType("target", "NoStyleChange") is true
+PASS testStyleChangeType("inert", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

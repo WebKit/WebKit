@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "Attr.h"
+#include "AttributeChangeInvalidation.h"
 #include "CSSParser.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -1182,26 +1183,30 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
         return;
     }
 
+    if (inSynchronizationOfLazyAttribute) {
+        ensureUniqueElementData().attributeAt(index).setValue(newValue);
+        return;
+    }
+
     const Attribute& attribute = attributeAt(index);
+    QualifiedName attributeName = attribute.name();
     AtomicString oldValue = attribute.value();
-    bool valueChanged = newValue != oldValue;
-    QualifiedName attributeName = (!inSynchronizationOfLazyAttribute || valueChanged) ? attribute.name() : name;
 
-    if (!inSynchronizationOfLazyAttribute)
-        willModifyAttribute(attributeName, oldValue, newValue);
+    willModifyAttribute(attributeName, oldValue, newValue);
 
-    if (valueChanged) {
+    if (newValue != oldValue) {
         // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
         // will write into the ElementData.
         // FIXME: Refactor this so it makes some sense.
-        if (RefPtr<Attr> attrNode = inSynchronizationOfLazyAttribute ? nullptr : attrIfExists(attributeName))
+        if (RefPtr<Attr> attrNode = attrIfExists(attributeName))
             attrNode->setValue(newValue);
-        else
+        else {
+            Style::AttributeChangeInvalidation styleInvalidation(*this, name, oldValue, newValue);
             ensureUniqueElementData().attributeAt(index).setValue(newValue);
+        }
     }
 
-    if (!inSynchronizationOfLazyAttribute)
-        didModifyAttribute(attributeName, oldValue, newValue);
+    didModifyAttribute(attributeName, oldValue, newValue);
 }
 
 static inline AtomicString makeIdForStyleResolution(const AtomicString& value, bool inQuirksMode)
@@ -1267,9 +1272,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
         return;
 
     invalidateNodeListAndCollectionCachesInAncestors(&name, this);
-
-    // If there is currently no StyleResolver, we can't be sure that this attribute change won't affect style.
-    shouldInvalidateStyle |= !styleResolver;
 
     if (shouldInvalidateStyle)
         setNeedsStyleRecalc();
@@ -2050,27 +2052,38 @@ void Element::removeAttributeInternal(unsigned index, SynchronizationOfLazyAttri
     QualifiedName name = elementData.attributeAt(index).name();
     AtomicString valueBeingRemoved = elementData.attributeAt(index).value();
 
-    if (!inSynchronizationOfLazyAttribute) {
-        if (!valueBeingRemoved.isNull())
-            willModifyAttribute(name, valueBeingRemoved, nullAtom);
-    }
-
     if (RefPtr<Attr> attrNode = attrIfExists(name))
         detachAttrNodeFromElementWithValue(attrNode.get(), elementData.attributeAt(index).value());
 
-    elementData.removeAttribute(index);
+    if (inSynchronizationOfLazyAttribute) {
+        elementData.removeAttribute(index);
+        return;
+    }
 
-    if (!inSynchronizationOfLazyAttribute)
-        didRemoveAttribute(name, valueBeingRemoved);
+    if (!valueBeingRemoved.isNull())
+        willModifyAttribute(name, valueBeingRemoved, nullAtom);
+
+    {
+        Style::AttributeChangeInvalidation styleInvalidation(*this, name, valueBeingRemoved, nullAtom);
+        elementData.removeAttribute(index);
+    }
+
+    didRemoveAttribute(name, valueBeingRemoved);
 }
 
 void Element::addAttributeInternal(const QualifiedName& name, const AtomicString& value, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
-    if (!inSynchronizationOfLazyAttribute)
-        willModifyAttribute(name, nullAtom, value);
-    ensureUniqueElementData().addAttribute(name, value);
-    if (!inSynchronizationOfLazyAttribute)
-        didAddAttribute(name, value);
+    if (inSynchronizationOfLazyAttribute) {
+        ensureUniqueElementData().addAttribute(name, value);
+        return;
+    }
+
+    willModifyAttribute(name, nullAtom, value);
+    {
+        Style::AttributeChangeInvalidation styleInvalidation(*this, name, nullAtom, value);
+        ensureUniqueElementData().addAttribute(name, value);
+    }
+    didAddAttribute(name, value);
 }
 
 bool Element::removeAttribute(const AtomicString& name)
@@ -2483,6 +2496,18 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
     }
 
     return style;
+}
+
+bool Element::needsStyleInvalidation() const
+{
+    if (!inRenderedDocument())
+        return false;
+    if (styleChangeType() >= FullStyleChange)
+        return false;
+    if (!document().styleResolverIfExists())
+        return false;
+
+    return true;
 }
 
 void Element::setStyleAffectedByEmpty()
@@ -3078,12 +3103,6 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
     else if (name == HTMLNames::forAttr && hasTagName(labelTag)) {
         if (treeScope().shouldCacheLabelsByForAttribute())
             updateLabel(treeScope(), oldValue, newValue);
-    }
-
-    if (oldValue != newValue) {
-        auto styleResolver = document().styleResolverIfExists();
-        if (styleResolver && styleResolver->hasSelectorForAttribute(*this, name.localName()))
-            setNeedsStyleRecalc();
     }
 
     if (std::unique_ptr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(*this, name))

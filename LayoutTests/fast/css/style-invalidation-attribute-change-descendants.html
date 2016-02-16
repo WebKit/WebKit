@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    color: black;
+}
+[myattr] target {
+    color: rgb(1, 0, 0);
+}
+
+[myattr=value2] > inert target {
+    color: rgb(2, 0, 0);
+}
+
+[myattr~=value3] inert + target {
+    color: rgb(3, 0, 0);
+}
+
+[MYATTR|=value4] inert ~ target {
+    color: rgb(4, 0, 0);
+}
+
+[myAttr^=value5] target {
+    color: rgb(5, 0, 0);
+}
+
+[myattr$=value6] target {
+    color: rgb(6, 0, 0);
+}
+
+[myATTR*=value7] target {
+    color: rgb(7, 0, 0);
+}
+
+[myattr*=vaLUE8 i] target {
+    color: rgb(8, 0, 0);
+}
+
+[myattr2] > target {
+    color: rgb(9, 0, 0);
+}
+
+</style>
+</head>
+<body>
+    <root>
+        <!-- With renderer -->
+        <inert>
+            <inert>
+                <inert></inert>
+                <target>
+                    <inert></inert>
+                    <target></target>
+                </target>
+            </inert>
+            <target></target>
+            <inert></inert>
+        </inert>
+    </root>
+    <root style="display:none;">
+        <!-- Without renderer -->
+        <inert>
+            <inert>
+                <inert></inert>
+                <target>
+                    <inert></inert>
+                    <target></target>
+                </target>
+            </inert>
+            <target></target>
+            <inert></inert>
+        </inert>
+    </root>
+</body>
+<script>
+
+description('Test that we invalidate the element subtree minimally on class attribute change');
+
+function testStyleChangeType(tag, type)
+{
+    var elements = document.querySelectorAll(tag);
+    for (var i = 0; i < elements.length; ++i) {
+        if (window.internals.styleChangeType(elements[i]) != type)
+            return false;
+    }
+    return true;
+}
+
+function testStyleInvalidation(expectedDescendantStyleChange) {
+    // Ideally we would't invalidate the root at all.
+    shouldBeTrue('testStyleChangeType("root", "NoStyleChange") || testStyleChangeType("root", "InlineStyleChange")');
+
+    shouldBeTrue('testStyleChangeType("target", "' + expectedDescendantStyleChange +'")');
+
+    shouldBeTrue('testStyleChangeType("inert", "NoStyleChange")');
+}
+
+function setAttribute(name, value) {
+    debug("Setting attribute '" + name + "' value '" + value + "'");
+    var allRoots = document.querySelectorAll("root");
+    allRoots[0].setAttribute(name, value);
+    allRoots[1].setAttribute(name, value);
+}
+
+function removeAttribute(name) {
+    debug("Removing attribute '" + name + "'");
+    var allRoots = document.querySelectorAll("root");
+    allRoots[0].removeAttribute(name);
+    allRoots[1].removeAttribute(name);
+}
+
+function checkStyle(n) {
+    document.documentElement.offsetTop;
+
+    hasExpectedStyle = true;
+    expectedColor = 'rgb('+n+', 0, 0)';
+    var targets = document.querySelectorAll("target");
+    for (var i = 0; i < targets.length; ++i) {
+        hasExpectedStyle = getComputedStyle(targets[i]).color == expectedColor;
+        if (!hasExpectedStyle)
+            break;
+    }
+    shouldBeTrue("hasExpectedStyle");
+}
+
+checkStyle(0);
+testStyleInvalidation("NoStyleChange");
+checkStyle(0);
+
+setAttribute('myattr', '');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(1);
+
+setAttribute('myattr', 'foo');
+testStyleInvalidation("NoStyleChange");
+checkStyle(1);
+
+setAttribute('myattr', 'value2');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(2);
+
+setAttribute('myattr', 'foo');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(1);
+
+removeAttribute('myattr');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(0);
+
+setAttribute('myattr', 'value3');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(3);
+
+setAttribute('myattr', 'dummy value3');
+testStyleInvalidation("NoStyleChange");
+checkStyle(3);
+
+setAttribute('myattr', 'value4-foo');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(4);
+
+setAttribute('myattr', 'value4-foobar');
+testStyleInvalidation("NoStyleChange");
+checkStyle(4);
+
+setAttribute('myattr', 'dummy value4-foo');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(1);
+
+setAttribute('myattr', 'value5foo');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(5);
+
+setAttribute('myattr', 'value5foobar');
+testStyleInvalidation("NoStyleChange");
+checkStyle(5);
+
+setAttribute('myattr', 'foovalue5');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(1);
+
+setAttribute('myattr', 'foovalue6');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(6);
+
+setAttribute('myAttr', 'foobarvalue6');
+testStyleInvalidation("NoStyleChange");
+checkStyle(6);
+
+setAttribute('MYATTR', 'value6foo');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(1);
+
+setAttribute('myattr', 'value7');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(7);
+
+setAttribute('myattr', 'value7foo');
+testStyleInvalidation("NoStyleChange");
+checkStyle(7);
+
+setAttribute('myATTR', 'foovalue7foo');
+testStyleInvalidation("NoStyleChange");
+checkStyle(7);
+
+setAttribute('myattr', 'VALUE7foo');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(1);
+
+setAttribute('myattr', 'Value8');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(8);
+
+setAttribute('myattr', 'value8foo');
+testStyleInvalidation("NoStyleChange");
+checkStyle(8);
+
+setAttribute('myATTR', 'FOOVALue8foo');
+testStyleInvalidation("NoStyleChange");
+checkStyle(8);
+
+setAttribute('myattr', 'VALUE8foo');
+testStyleInvalidation("NoStyleChange");
+checkStyle(8);
+
+setAttribute('myattr', 'VALUE 8foo');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(1);
+
+setAttribute('myattr2', '');
+testStyleInvalidation("NoStyleChange");
+checkStyle(1);
+
+setAttribute('myattr2', 'foo');
+testStyleInvalidation("NoStyleChange");
+checkStyle(1);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>
