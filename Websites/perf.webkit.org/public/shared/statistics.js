@@ -116,6 +116,80 @@ var Statistics = new (function () {
         }
     }
 
+    this.movingAverage = function (values, backwardWindowSize, forwardWindowSize) {
+        var averages = new Array(values.length);
+        // We use naive O(n^2) algorithm for simplicy as well as to avoid accumulating round-off errors.
+        for (var i = 0; i < values.length; i++) {
+            var sum = 0;
+            var count = 0;
+            for (var j = i - backwardWindowSize; j < i + backwardWindowSize; j++) {
+                if (j >= 0 && j < values.length) {
+                    sum += values[j];
+                    count++;
+                }
+            }
+            averages[i] = sum / count;
+        }
+        return averages;
+    }
+
+    this.cumulativeMovingAverage = function (values) {
+        var averages = new Array(values.length);
+        var sum = 0;
+        for (var i = 0; i < values.length; i++) {
+            sum += values[i];
+            averages[i] = sum / (i + 1);
+        }
+        return averages;
+    }
+
+    this.exponentialMovingAverage = function (values, smoothingFactor) {
+        var averages = new Array(values.length);
+        var movingAverage = 0;
+        for (var i = 0; i < values.length; i++) {
+            movingAverage = smoothingFactor * values[i] + (1 - smoothingFactor) * movingAverage;
+            averages[i] = movingAverage;
+        }
+        return averages;
+    }
+
+    // The return value is the starting indices of each segment.
+    this.segmentTimeSeriesGreedyWithStudentsTTest = function (values, minLength) {
+        if (values.length < 2)
+            return [0];
+        var segments = new Array;
+        recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, 0, values.length, minLength, segments);
+        segments.push(values.length);
+        return segments;
+    }
+
+    this.debuggingSegmentation = false;
+    this.segmentTimeSeriesByMaximizingSchwarzCriterion = function (values) {
+        if (values.length < 2)
+            return [0];
+
+        // Split the time series into grids since splitIntoSegmentsUntilGoodEnough is O(n^2).
+        var gridLength = 500;
+        var totalSegmentation = [0];
+        for (var gridCount = 0; gridCount < Math.ceil(values.length / gridLength); gridCount++) {
+            var gridValues = values.slice(gridCount * gridLength, (gridCount + 1) * gridLength);
+            var segmentation = splitIntoSegmentsUntilGoodEnough(gridValues);
+
+            if (Statistics.debuggingSegmentation)
+                console.log('grid=' + gridCount, segmentation);
+
+            for (var i = 1; i < segmentation.length - 1; i++)
+                totalSegmentation.push(gridCount * gridLength + segmentation[i]);
+        }
+
+        if (Statistics.debuggingSegmentation)
+            console.log('Final Segmentation', totalSegmentation);
+
+        totalSegmentation.push(values.length);
+
+        return totalSegmentation;
+    }
+
     function recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, startIndex, length, minLength, segments) {
         var tMax = 0;
         var argTMax = null;
@@ -131,7 +205,7 @@ var Statistics = new (function () {
             }
         }
         if (!tMax) {
-            segments.push(values.slice(startIndex, startIndex + length));
+            segments.push(startIndex);
             return;
         }
         recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, startIndex, argTMax, minLength, segments);
@@ -190,131 +264,6 @@ var Statistics = new (function () {
     };
     function oneSidedToTwoSidedProbability(probability) { return 2 * probability - 1; }
     function twoSidedToOneSidedProbability(probability) { return (1 - (1 - probability) / 2); }
-
-    this.MovingAverageStrategies = [
-        {
-            id: 1,
-            label: 'Simple Moving Average',
-            parameterList: [
-                {label: "Backward window size", value: 8, min: 2, step: 1},
-                {label: "Forward window size", value: 4, min: 0, step: 1}
-            ],
-            execute: function (backwardWindowSize, forwardWindowSize, values) {
-                var averages = new Array(values.length);
-                // We use naive O(n^2) algorithm for simplicy as well as to avoid accumulating round-off errors.
-                for (var i = 0; i < values.length; i++) {
-                    var sum = 0;
-                    var count = 0;
-                    for (var j = i - backwardWindowSize; j < i + backwardWindowSize; j++) {
-                        if (j >= 0 && j < values.length) {
-                            sum += values[j];
-                            count++;
-                        }
-                    }
-                    averages[i] = sum / count;
-                }
-                return averages;
-            },
-
-        },
-        {
-            id: 2,
-            label: 'Cumulative Moving Average',
-            execute: function (values) {
-                var averages = new Array(values.length);
-                var sum = 0;
-                for (var i = 0; i < values.length; i++) {
-                    sum += values[i];
-                    averages[i] = sum / (i + 1);
-                }
-                return averages;
-            }
-        },
-        {
-            id: 3,
-            label: 'Exponential Moving Average',
-            parameterList: [{label: "Smoothing factor", value: 0.1, min: 0.001, max: 0.9}],
-            execute: function (smoothingFactor, values) {
-                if (!values.length || typeof(smoothingFactor) !== "number")
-                    return null;
-
-                var averages = new Array(values.length);
-                var movingAverage = 0;
-                averages[0] = values[0];
-                for (var i = 1; i < values.length; i++)
-                    averages[i] = smoothingFactor * values[i] + (1 - smoothingFactor) * averages[i - 1];
-                return averages;
-            }
-        },
-        {
-            id: 4,
-            isSegmentation: true,
-            label: 'Segmentation: Recursive t-test',
-            description: "Recursively split values into two segments if Welch's t-test detects a statistically significant difference.",
-            parameterList: [{label: "Minimum segment length", value: 20, min: 5}],
-            execute: function (minLength, values) {
-                if (values.length < 2)
-                    return null;
-
-                var averages = new Array(values.length);
-                var segments = new Array;
-                recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent(values, 0, values.length, minLength, segments);
-                var averageIndex = 0;
-                for (var j = 0; j < segments.length; j++) {
-                    var values = segments[j];
-                    var mean = Statistics.sum(values) / values.length;
-                    for (var i = 0; i < values.length; i++)
-                        averages[averageIndex++] = mean;
-                }
-
-                return averages;
-            }
-        },
-        {
-            id: 5,
-            isSegmentation: true,
-            label: 'Segmentation: Schwarz criterion',
-            description: 'Adaptive algorithm that maximizes the Schwarz criterion (BIC).',
-            // Based on Detection of Multiple Change–Points in Multivariate Time Series by Marc Lavielle (July 2006).
-            execute: function (values) {
-                if (values.length < 2)
-                    return null;
-
-                var averages = new Array(values.length);
-                var averageIndex = 0;
-
-                // Split the time series into grids since splitIntoSegmentsUntilGoodEnough is O(n^2).
-                var gridLength = 500;
-                var totalSegmentation = [0];
-                for (var gridCount = 0; gridCount < Math.ceil(values.length / gridLength); gridCount++) {
-                    var gridValues = values.slice(gridCount * gridLength, (gridCount + 1) * gridLength);
-                    var segmentation = splitIntoSegmentsUntilGoodEnough(gridValues);
-
-                    if (Statistics.debuggingSegmentation)
-                        console.log('grid=' + gridCount, segmentation);
-
-                    for (var i = 1; i < segmentation.length - 1; i++)
-                        totalSegmentation.push(gridCount * gridLength + segmentation[i]);
-                }
-
-                if (Statistics.debuggingSegmentation)
-                    console.log('Final Segmentation', totalSegmentation);
-
-                totalSegmentation.push(values.length);
-
-                for (var i = 1; i < totalSegmentation.length; i++) {
-                    var segment = values.slice(totalSegmentation[i - 1], totalSegmentation[i]);
-                    var average = Statistics.sum(segment) / segment.length;
-                    for (var j = 0; j < segment.length; j++)
-                        averages[averageIndex++] = average;
-                }
-
-                return averages;
-            }
-        },
-    ];
-
-    this.debuggingSegmentation = false;
 
     function splitIntoSegmentsUntilGoodEnough(values) {
         if (values.length < 2)
@@ -432,148 +381,7 @@ var Statistics = new (function () {
         return this.costMatrix[from][to - from - 1];
     }
 
-    this.EnvelopingStrategies = [
-        {
-            id: 100,
-            label: 'Average Difference',
-            description: 'The average difference between consecutive values.',
-            execute: function (values, movingAverages) {
-                if (values.length < 1)
-                    return NaN;
-
-                var diff = 0;
-                for (var i = 1; i < values.length; i++)
-                    diff += Math.abs(values[i] - values[i - 1]);
-
-                return diff / values.length;
-            }
-        },
-        {
-            id: 101,
-            label: 'Moving Average Standard Deviation',
-            description: 'The square root of the average deviation from the moving average with Bessel\'s correction.',
-            execute: function (values, movingAverages) {
-                if (values.length < 1)
-                    return NaN;
-
-                var diffSquareSum = 0;
-                for (var i = 1; i < values.length; i++) {
-                    var diff = (values[i] - movingAverages[i]);
-                    diffSquareSum += diff * diff;
-                }
-
-                return Math.sqrt(diffSquareSum / (values.length - 1));
-            }
-        },
-    ];
-
     this.debuggingTestingRangeNomination = false;
-
-    this.TestRangeSelectionStrategies = [
-        {
-            id: 301,
-            label: "t-test 99% significance",
-            execute: function (values, segmentedValues) {
-                if (!values.length)
-                    return [];
-
-                var previousMean = segmentedValues[0];
-                var selectedRanges = new Array;
-                for (var i = 1; i < segmentedValues.length; i++) {
-                    var currentMean = segmentedValues[i];
-                    if (currentMean == previousMean)
-                        continue;
-                    var found = false;
-                    for (var leftEdge = i - 2, rightEdge = i + 2; leftEdge >= 0 && rightEdge <= values.length; leftEdge--, rightEdge++) {
-                        if (segmentedValues[leftEdge] != previousMean || segmentedValues[rightEdge - 1] != currentMean)
-                            break;
-                        var result = Statistics.computeWelchsT(values, leftEdge, i - leftEdge, values, i, rightEdge - i, 0.98);
-                        if (result.significantlyDifferent) {
-                            selectedRanges.push([leftEdge, rightEdge - 1]);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found && Statistics.debuggingTestingRangeNomination)
-                        console.log('Failed to find a testing range at', i, 'changing from', previousMean, 'to', currentMean);
-                    previousMean = currentMean;
-                }
-                return selectedRanges;
-            }
-        }
-    ];
-
-    function createWesternElectricRule(windowSize, minOutlinerCount, limitFactor) {
-        return function (values, movingAverages, deviation) {
-            var results = new Array(values.length);
-            var limit = limitFactor * deviation;
-            for (var i = 0; i < values.length; i++)
-                results[i] = countValuesOnSameSide(values, movingAverages, limit, i, windowSize) >= minOutlinerCount ? windowSize : 0;
-            return results;
-        }
-    }
-
-    function countValuesOnSameSide(values, movingAverages, limit, startIndex, windowSize) {
-        var valuesAboveLimit = 0;
-        var valuesBelowLimit = 0;
-        var center = movingAverages[startIndex];
-        for (var i = startIndex; i < startIndex + windowSize && i < values.length; i++) {
-            var diff = values[i] - center;
-            valuesAboveLimit += (diff > limit);
-            valuesBelowLimit += (diff < -limit);
-        }
-        return Math.max(valuesAboveLimit, valuesBelowLimit);
-    }
-
-    this.AnomalyDetectionStrategy = [
-        // Western Electric rules: http://en.wikipedia.org/wiki/Western_Electric_rules
-        {
-            id: 200,
-            label: 'Western Electric: any point beyond 3σ',
-            description: 'Any single point falls outside 3σ limit from the moving average',
-            execute: createWesternElectricRule(1, 1, 3),
-        },
-        {
-            id: 201,
-            label: 'Western Electric: 2/3 points beyond 2σ',
-            description: 'Two out of three consecutive points fall outside 2σ limit from the moving average on the same side',
-            execute: createWesternElectricRule(3, 2, 2),
-        },
-        {
-            id: 202,
-            label: 'Western Electric: 4/5 points beyond σ',
-            description: 'Four out of five consecutive points fall outside 2σ limit from the moving average on the same side',
-            execute: createWesternElectricRule(5, 4, 1),
-        },
-        {
-            id: 203,
-            label: 'Western Electric: 9 points on same side',
-            description: 'Nine consecutive points on the same side of the moving average',
-            execute: createWesternElectricRule(9, 9, 0),
-        },
-        {
-            id: 210,
-            label: 'Mozilla: t-test 5 vs. 20 before that',
-            description: "Use student's t-test to determine whether the mean of the last five data points differs from the mean of the twenty values before that",
-            execute: function (values, movingAverages, deviation) {
-                var results = new Array(values.length);
-                var p = false;
-                for (var i = 20; i < values.length - 5; i++)
-                    results[i] = Statistics.testWelchsT(values.slice(i - 20, i), values.slice(i, i + 5), 0.98) ? 5 : 0;
-                return results;
-            }
-        },
-    ]
-
-    this.executeStrategy = function (strategy, rawValues, additionalArguments)
-    {
-        var parameters = (strategy.parameterList || []).map(function (param) {
-            var parsed = parseFloat(param.value);
-            return Math.min(param.max || Infinity, Math.max(param.min || -Infinity, isNaN(parsed) ? 0 : parsed));
-        });
-        parameters.push(rawValues);
-        return strategy.execute.apply(strategy, parameters.concat(additionalArguments));
-    };
 
 })();
 

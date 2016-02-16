@@ -1,5 +1,44 @@
 2016-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Extract the code specific to v2 UI out of shared statistics.js
+        https://bugs.webkit.org/show_bug.cgi?id=154277
+
+        Reviewed by Chris Dumez.
+
+        Extracted statistics-strategies.js out of statistics.js for v2 UI and detect-changes.js. The intent is to
+        deprecate this file once we implement refined statistics tools in v3 UI and adopt it in detect-changes.js.
+
+        * public/shared/statistics.js:
+        (Statistics.movingAverage): Extracted from the "Simple Moving Average" strategy.
+        (Statistics.cumultaiveMovingAverage): Extracted from the "Cumulative Moving Average" strategy.
+        (Statistics.exponentialMovingAverage): Extracted from the "Exponential Moving Average" strategy.
+        Use a temporary "movingAverage" to keep the last moving average instead of relying on the previous
+        entry in "averages" array to avoid special casing an array of length 1 and starting the loop at i = 1.
+        (Statistics.segmentTimeSeriesGreedyWithStudentsTTest): Extracted from "Segmentation: Recursive t-test"
+        strategy. Don't create the list of averages to match segmentTimeSeriesByMaximizingSchwarzCriterion here.
+        It's done in newly added averagesFromSegments.
+        (Statistics.segmentTimeSeriesByMaximizingSchwarzCriterion): Extracted from
+        "Segmentation: Schwarz criterion" strategy.
+        (.recursivelySplitIntoTwoSegmentsAtMaxTIfSignificantlyDifferent): Just store the start index to match
+        * public/v2/app.js:
+        (App.Pane.updateStatisticsTools):
+        (App.Pane._computeMovingAverageAndOutliers):
+        * public/v2/data.js:
+        * public/v2/index.html:
+        * public/v2/statistics-strategies.js: Added.
+        (StatisticsStrategies.MovingAverageStrategies): Added.
+        (averagesFromSegments): Extracted from "Segmentation: Schwarz criterion" strategy. Now used by both
+        "Segmentation: Recursive t-test" and "Segmentation: Schwarz criterion" strategies.
+        (StatisticsStrategies.EnvelopingStrategies): Moved from Statistics.EnvelopingStrategies.
+        (StatisticsStrategies.TestRangeSelectionStrategies): Moved from Statistics.TestRangeSelectionStrategies.
+        (createWesternElectricRule): Moved from statistics.js.
+        (countValuesOnSameSide): Ditto.
+        (StatisticsStrategies.executeStrategy): Moved from Statistics.executeStrategy.
+        * tools/detect-changes.js:
+        (computeRangesForTesting):
+
+2016-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         v1 UI and v2 UI should share statistics.js
         https://bugs.webkit.org/show_bug.cgi?id=154262
 

@@ -547,19 +547,19 @@ App.Pane = Ember.Object.extend({
     }.property('chartData'),
     updateStatisticsTools: function ()
     {
-        var movingAverageStrategies = Statistics.MovingAverageStrategies.map(this._cloneStrategy.bind(this));
+        var movingAverageStrategies = StatisticsStrategies.MovingAverageStrategies.map(this._cloneStrategy.bind(this));
         this.set('movingAverageStrategies', [{label: 'None'}].concat(movingAverageStrategies));
         this.set('chosenMovingAverageStrategy', this._configureStrategy(movingAverageStrategies, this.get('movingAverageConfig')));
 
-        var envelopingStrategies = Statistics.EnvelopingStrategies.map(this._cloneStrategy.bind(this));
+        var envelopingStrategies = StatisticsStrategies.EnvelopingStrategies.map(this._cloneStrategy.bind(this));
         this.set('envelopingStrategies', [{label: 'None'}].concat(envelopingStrategies));
         this.set('chosenEnvelopingStrategy', this._configureStrategy(envelopingStrategies, this.get('envelopingConfig')));
 
-        var testRangeSelectionStrategies = Statistics.TestRangeSelectionStrategies.map(this._cloneStrategy.bind(this));
+        var testRangeSelectionStrategies = StatisticsStrategies.TestRangeSelectionStrategies.map(this._cloneStrategy.bind(this));
         this.set('testRangeSelectionStrategies', [{label: 'None'}].concat(testRangeSelectionStrategies));
         this.set('chosenTestRangeSelectionStrategy', this._configureStrategy(testRangeSelectionStrategies, this.get('testRangeSelectionConfig')));
 
-        var anomalyDetectionStrategies = Statistics.AnomalyDetectionStrategy.map(this._cloneStrategy.bind(this));
+        var anomalyDetectionStrategies = StatisticsStrategies.AnomalyDetectionStrategy.map(this._cloneStrategy.bind(this));
         this.set('anomalyDetectionStrategies', anomalyDetectionStrategies);
     }.on('init'),
     _cloneStrategy: function (strategy)
@@ -640,21 +640,21 @@ App.Pane = Ember.Object.extend({
         if (!movingAverageIsSetByUser)
             return null;
 
-        var movingAverageValues = Statistics.executeStrategy(movingAverageStrategy, rawValues);
+        var movingAverageValues = StatisticsStrategies.executeStrategy(movingAverageStrategy, rawValues);
         if (!movingAverageValues)
             return null;
 
         var testRangeCandidates = [];
         if (movingAverageStrategy && movingAverageStrategy.isSegmentation && testRangeSelectionStrategy && testRangeSelectionStrategy.execute)
-            testRangeCandidates = Statistics.executeStrategy(testRangeSelectionStrategy, rawValues, [movingAverageValues]);
+            testRangeCandidates = StatisticsStrategies.executeStrategy(testRangeSelectionStrategy, rawValues, [movingAverageValues]);
 
         if (envelopingStrategy && envelopingStrategy.execute) {
-            var envelopeDelta = Statistics.executeStrategy(envelopingStrategy, rawValues, [movingAverageValues]);
+            var envelopeDelta = StatisticsStrategies.executeStrategy(envelopingStrategy, rawValues, [movingAverageValues]);
             var anomalies = {};
             if (anomalyDetectionStrategies.length) {
                 var isAnomalyArray = new Array(currentTimeSeriesData.length);
                 for (var strategy of anomalyDetectionStrategies) {
-                    var anomalyLengths = Statistics.executeStrategy(strategy, rawValues, [movingAverageValues, envelopeDelta]);
+                    var anomalyLengths = StatisticsStrategies.executeStrategy(strategy, rawValues, [movingAverageValues, envelopeDelta]);
                     for (var i = 0; i < currentTimeSeriesData.length; i++)
                         isAnomalyArray[i] = isAnomalyArray[i] || anomalyLengths[i];
                 }

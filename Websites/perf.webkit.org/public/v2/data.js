@@ -557,7 +557,7 @@ TimeSeries.prototype.nextPoint = function (point)
 }
 
 if (typeof module != 'undefined') {
-    Statistics = require('./js/statistics.js');
+    Statistics = require('../shared/statistics.js');
     module.exports.Measurement = Measurement;
     module.exports.RunsData = RunsData;
     module.exports.TimeSeries = TimeSeries;

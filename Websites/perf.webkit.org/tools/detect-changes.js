@@ -6,6 +6,7 @@ var https = require('https');
 var data = require('../public/v2/data.js');
 var RunsData = data.RunsData;
 var Statistics = require('../public/shared/statistics.js');
+var StatisticsStrategies = require('../public/v2/statistics-strategies.js');
 
 // FIXME: We shouldn't use a global variable like this.
 var settings;
@@ -172,13 +173,13 @@ function computeRangesForTesting(server, strategies, platformId, metricId)
 {
     // FIXME: Store the segmentation strategy on the server side.
     // FIXME: Configure each strategy.
-    var segmentationStrategy = findStrategyByLabel(Statistics.MovingAverageStrategies, strategies.segmentation.label);
+    var segmentationStrategy = findStrategyByLabel(StatisticsStrategies.MovingAverageStrategies, strategies.segmentation.label);
     if (!segmentationStrategy) {
         console.error('Failed to find the segmentation strategy: ' + strategies.segmentation.label);
         return;
     }
 
-    var testRangeStrategy = findStrategyByLabel(Statistics.TestRangeSelectionStrategies, strategies.testRange.label);
+    var testRangeStrategy = findStrategyByLabel(StatisticsStrategies.TestRangeSelectionStrategies, strategies.testRange.label);
     if (!testRangeStrategy) {
         console.error('Failed to find the test range selection strategy: ' + strategies.testRange.label);
         return;
@@ -204,9 +205,9 @@ function computeRangesForTesting(server, strategies, platformId, metricId)
         var currentTimeSeries = results[0].timeSeriesByCommitTime();
         var analysisTasks = results[1];
         var rawValues = currentTimeSeries.rawValues();
-        var segmentedValues = Statistics.executeStrategy(segmentationStrategy, rawValues);
+        var segmentedValues = StatisticsStrategies.executeStrategy(segmentationStrategy, rawValues);
 
-        var ranges = Statistics.executeStrategy(testRangeStrategy, rawValues, [segmentedValues]).map(function (range) {
+        var ranges = StatisticsStrategies.executeStrategy(testRangeStrategy, rawValues, [segmentedValues]).map(function (range) {
             var startPoint = currentTimeSeries.findPointByIndex(range[0]);
             var endPoint = currentTimeSeries.findPointByIndex(range[1]);
             return {
