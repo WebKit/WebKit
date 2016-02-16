@@ -1,3 +1,32 @@
+2016-02-15  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Visual sidebar minor regression fixes
+        https://bugs.webkit.org/show_bug.cgi?id=154237
+        <rdar://problem/24653135>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-special-property-placeholder):
+        Do not display the placeholder, as it is not used in comma separated value
+        property editors.
+
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle::before):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle): Deleted.
+        Added ::before to get rid of the "-" on subtitle elements (r196266).
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype.widthDidChange):
+        Recalculates the width for all comma separated value elements (r196266).
+
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateSections):
+        Only open/close sections with properties that have values when a new node
+        or selector item is selected.
+
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBorderSection):
+        Make copies of the default unit lists to prevent modifying the values used
+        later in other sections (r194728).
+
 2016-02-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: eliminate the linear and rendering frames TimelineOverview subclasses

@@ -114,6 +114,21 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         super.refresh();
     }
 
+    widthDidChange()
+    {
+        super.widthDidChange();
+
+        let width = this.element.realOffsetWidth;
+        for (let key in this._groups) {
+            let group = this._groups[key];
+            if (!group.specifiedWidthProperties)
+                continue;
+
+            for (let editor of group.specifiedWidthProperties)
+                editor.specifiedWidth = width;
+        }
+    }
+
     // Private
 
     _generateSection(id, displayName)
@@ -158,17 +173,18 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         for (let key in this._groups)
             this._updateProperties(this._groups[key], !!event);
 
-        for (let key in this._sections) {
-            let section = this._sections[key];
-            let oneSectionExpanded = false;
-            for (let group of section.groups) {
-                if (!group.collapsed) {
-                    oneSectionExpanded = true;
-                    break;
+        if (event) {
+            for (let key in this._sections) {
+                let section = this._sections[key];
+                let oneSectionExpanded = false;
+                for (let group of section.groups) {
+                    if (!group.collapsed) {
+                        oneSectionExpanded = true;
+                        break;
+                    }
                 }
+                section.collapsed = !oneSectionExpanded;
             }
-
-            section.collapsed = !oneSectionExpanded;
         }
     }
 
@@ -1075,12 +1091,12 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let nonKeywordUnits = [WebInspector.UIString("Number")];
 
-        let borderImageUnits = this._units.defaults;
+        let borderImageUnits = Object.shallowCopy(this._units.defaults);
         borderImageUnits.basic = nonKeywordUnits.concat(borderImageUnits.basic);
         let borderImageWidth = generateBorderImagePropertyEditors("border-image-width", this._keywords.boxModel, borderImageUnits);
         properties.borderImageWidth = new WebInspector.VisualStylePropertyCombiner("border-image-width", borderImageWidth.properties, true);
 
-        let borderOutsetUnits = this._units.defaultsSansPercent;
+        let borderOutsetUnits = Object.shallowCopy(this._units.defaultsSansPercent);
         borderOutsetUnits.basic = nonKeywordUnits.concat(borderOutsetUnits.basic);
         let borderImageOutset = generateBorderImagePropertyEditors("border-image-outset", this._keywords.defaults, borderOutsetUnits);
         properties.borderImageOutset = new WebInspector.VisualStylePropertyCombiner("border-image-outset", borderImageOutset.properties, true);
