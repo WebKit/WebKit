@@ -1,3 +1,16 @@
+2016-02-16  Daniel Bates  <dabates@apple.com>
+
+        CSP: Disallow an empty host in a host-source source expression
+        https://bugs.webkit.org/show_bug.cgi?id=153168
+        <rdar://problem/24383366>
+
+        Reviewed by Brent Fulgham.
+
+        Remove entry for test http/tests/security/contentSecurityPolicy/source-list-parsing-07.html
+        as it now passes.
+
+        * TestExpectations:
+
 2016-02-16  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Operations should be on the instance for global objects or if [Unforgeable]

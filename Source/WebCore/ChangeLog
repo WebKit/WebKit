@@ -1,3 +1,17 @@
+2016-02-16  Daniel Bates  <dabates@apple.com>
+
+        CSP: Disallow an empty host in a host-source source expression
+        https://bugs.webkit.org/show_bug.cgi?id=153168
+        <rdar://problem/24383366>
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink (patch by rob@robwu.nl):
+        <https://src.chromium.org/viewvc/blink?revision=180407&view=revision>
+
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::parseSource):
+
 2016-02-16  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: WK2 IPC Scaffolding.

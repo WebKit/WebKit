@@ -221,7 +221,7 @@ bool ContentSecurityPolicySourceList::parseSource(const UChar* begin, const UCha
                 || !skipExactly<UChar>(position, end, '/'))
                 return false;
             if (position == end)
-                return true;
+                return false;
             beginHost = position;
             skipWhile<UChar, isNotColonOrSlash>(position, end);
         }
