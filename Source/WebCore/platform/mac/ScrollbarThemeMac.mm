@@ -424,13 +424,33 @@ int ScrollbarThemeMac::minimumThumbLength(Scrollbar& scrollbar)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool ScrollbarThemeMac::shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent& evt)
+static bool shouldCenterOnThumb(const PlatformMouseEvent& evt)
 {
     if (evt.button() != LeftButton)
         return false;
     if (gJumpOnTrackClick)
         return !evt.altKey();
     return evt.altKey();
+}
+
+ScrollbarButtonPressAction ScrollbarThemeMac::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
+{
+    if (event.button() == RightButton)
+        return ScrollbarButtonPressAction::None;
+
+    switch (pressedPart) {
+    case BackTrackPart:
+    case ForwardTrackPart:
+        if (shouldCenterOnThumb(event))
+            return ScrollbarButtonPressAction::CenterOnThumb;
+        break;
+    case ThumbPart:
+        return ScrollbarButtonPressAction::StartDrag;
+    default:
+        break;
+    }
+
+    return ScrollbarButtonPressAction::Scroll;
 }
 
 bool ScrollbarThemeMac::shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent& event)

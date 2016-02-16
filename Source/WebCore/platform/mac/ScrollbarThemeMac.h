@@ -84,7 +84,7 @@ protected:
 
     virtual int minimumThumbLength(Scrollbar&) override;
     
-    virtual bool shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&) override;
+    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
     virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) override;
     int scrollbarPartToHIPressedState(ScrollbarPart);
 

@@ -53,7 +53,7 @@ public:
     virtual void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
     virtual void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
     virtual void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
-    virtual bool shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&) override;
+    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
     virtual int scrollbarThickness(ScrollbarControlSize) override;
     virtual int minimumThumbLength(Scrollbar&) override;
 

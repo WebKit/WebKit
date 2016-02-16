@@ -180,6 +180,13 @@ enum ScrollBehaviorForFixedElements {
     StickToViewportBounds
 };
 
+enum class ScrollbarButtonPressAction {
+    None,
+    CenterOnThumb,
+    StartDrag,
+    Scroll
+};
+
 }
 
 #endif

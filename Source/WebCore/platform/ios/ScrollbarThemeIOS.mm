@@ -111,11 +111,6 @@ int ScrollbarThemeIOS::minimumThumbLength(Scrollbar&)
     return 0;
 }
 
-bool ScrollbarThemeIOS::shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&)
-{
-    return false;
-}
-
 bool ScrollbarThemeIOS::paint(Scrollbar&, GraphicsContext&, const IntRect& /*damageRect*/)
 {
     return true;

@@ -391,31 +391,34 @@ bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
 
 bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
 {
-    // Early exit for right click
-    if (evt.button() == RightButton)
-        return true; // FIXME: Handled as context menu by Qt right now.  Should just avoid even calling this method on a right click though.
+    ScrollbarPart pressedPart = theme().hitTest(*this, evt.position());
+    auto action = theme().handleMousePressEvent(*this, evt, pressedPart);
+    if (action == ScrollbarButtonPressAction::None)
+        return true;
 
     m_scrollableArea.mouseIsDownInScrollbar(this, true);
-    setPressedPart(theme().hitTest(*this, evt.position()));
-    int pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
-    
-    if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && theme().shouldCenterOnThumb(*this, evt)) {
+    setPressedPart(pressedPart);
+
+    int pressedPosition = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
+    if (action == ScrollbarButtonPressAction::CenterOnThumb) {
         setHoveredPart(ThumbPart);
         setPressedPart(ThumbPart);
         m_dragOrigin = m_currentPos;
-        int thumbLen = theme().thumbLength(*this);
-        int desiredPos = pressedPos;
         // Set the pressed position to the middle of the thumb so that when we do the move, the delta
         // will be from the current pixel position of the thumb to the new desired position for the thumb.
-        m_pressedPos = theme().trackPosition(*this) + theme().thumbPosition(*this) + thumbLen / 2;
-        moveThumb(desiredPos);
+        m_pressedPos = theme().trackPosition(*this) + theme().thumbPosition(*this) + theme().thumbLength(*this) / 2;
+        moveThumb(pressedPosition);
         return true;
-    } else if (m_pressedPart == ThumbPart)
-        m_dragOrigin = m_currentPos;
-    
-    m_pressedPos = pressedPos;
+    }
 
-    autoscrollPressedPart(theme().initialAutoscrollTimerDelay());
+    m_pressedPos = pressedPosition;
+
+    if (action == ScrollbarButtonPressAction::StartDrag)
+        m_dragOrigin = m_currentPos;
+
+    if (action == ScrollbarButtonPressAction::Scroll)
+        autoscrollPressedPart(theme().initialAutoscrollTimerDelay());
+
     return true;
 }
 

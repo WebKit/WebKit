@@ -95,7 +95,7 @@ public:
     virtual void setUpContentShadowLayer(GraphicsLayer*) { }
 #endif
 
-    virtual bool shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&) { return false; }
+    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart);
     virtual bool shouldSnapBackToDragOrigin(Scrollbar&, const PlatformMouseEvent&) { return false; }
     virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) { return false; }
     virtual int thumbPosition(Scrollbar&) { return 0; } // The position of the thumb relative to the track.

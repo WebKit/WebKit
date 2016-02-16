@@ -193,9 +193,24 @@ IntRect ScrollbarThemeWin::trackRect(Scrollbar& scrollbar, bool)
     return IntRect(scrollbar.x(), scrollbar.y() + thickness, thickness, scrollbar.height() - 2 * thickness);
 }
 
-bool ScrollbarThemeWin::shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent& evt)
+ScrollbarButtonPressAction ScrollbarThemeWin::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
-    return evt.shiftKey() && evt.button() == LeftButton;
+    if (event.button() == RightButton)
+        return ScrollbarButtonPressAction::None;
+
+    switch (pressedPart) {
+    case BackTrackPart:
+    case ForwardTrackPart:
+        if (event.shiftKey() && event.button() == LeftButton)
+            return ScrollbarButtonPressAction::CenterOnThumb;
+        break;
+    case ThumbPart:
+        return ScrollbarButtonPressAction::StartDrag;
+    default:
+        break;
+    }
+
+    return ScrollbarButtonPressAction::Scroll;
 }
 
 bool ScrollbarThemeWin::shouldSnapBackToDragOrigin(Scrollbar& scrollbar, const PlatformMouseEvent& evt)

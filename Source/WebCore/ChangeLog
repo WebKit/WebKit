@@ -1,5 +1,46 @@
 2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] clicking on the scrollbar trough steps rather than jumps to the clicked position
+        https://bugs.webkit.org/show_bug.cgi?id=115363
+
+        Reviewed by Michael Catanzaro.
+
+        Allow ScrollbarTheme to decide the behavior of a button press event,
+        instead of only deciding whether to center on thumb or not. This
+        way we can match the current GTK+ behavior in WebKit, without
+        affecting other ports.
+
+        * platform/ScrollTypes.h: Add ScrollbarButtonPressAction enum.
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::mouseDown): Ask ScrollbarTheme to handle the
+        event for the pressed part and do the requested action.
+        * platform/ScrollbarTheme.cpp:
+        (WebCore::ScrollbarTheme::handleMousePressEvent): Add default
+        implementation. It's equivalent to the previous default implementation.
+        * platform/ScrollbarTheme.h:
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::handleMousePressEvent): Match current
+        GTK+ behavior: left click centers on thumb and right click
+        scrolls. Dragging the thumb works for left and middle buttons.
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/ios/ScrollbarThemeIOS.h: Remove shouldCenterOnThumb,
+        and don't override handleMousePressEvent since iOS wants the
+        default behavior.
+        * platform/ios/ScrollbarThemeIOS.mm:
+        * platform/mac/ScrollbarThemeMac.h: Override handleMousePressEvent
+        and remove shouldCenterOnThumb.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::shouldCenterOnThumb): Same implementation just made it
+        static to be used as helper.
+        (WebCore::ScrollbarThemeMac::handleMousePressEvent): Return the
+        desired action keeping the same behavior.
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::handleMousePressEvent): Ditto.
+        * platform/win/ScrollbarThemeWin.h:
+        * rendering/RenderScrollbarTheme.h:
+
+2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Mouse cursor doesn't change when entering scrollbars
         https://bugs.webkit.org/show_bug.cgi?id=154243
 

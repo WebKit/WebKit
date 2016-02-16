@@ -493,9 +493,25 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     return true;
 }
 
-bool ScrollbarThemeGtk::shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent& event)
+ScrollbarButtonPressAction ScrollbarThemeGtk::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
-    return (event.shiftKey() && event.button() == LeftButton) || (event.button() == MiddleButton);
+    switch (pressedPart) {
+    case BackTrackPart:
+    case ForwardTrackPart:
+        if (event.button() == LeftButton)
+            return ScrollbarButtonPressAction::CenterOnThumb;
+        if (event.button() == RightButton)
+            return ScrollbarButtonPressAction::Scroll;
+        break;
+    case ThumbPart:
+        if (event.button() != RightButton)
+            return ScrollbarButtonPressAction::StartDrag;
+        break;
+    default:
+        break;
+    }
+
+    return ScrollbarButtonPressAction::None;
 }
 
 int ScrollbarThemeGtk::scrollbarThickness(ScrollbarControlSize)

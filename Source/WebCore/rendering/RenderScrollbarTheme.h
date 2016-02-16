@@ -46,8 +46,8 @@ public:
 
     virtual void paintScrollCorner(ScrollView*, GraphicsContext&, const IntRect& cornerRect) override;
 
-    virtual bool shouldCenterOnThumb(Scrollbar& scrollbar, const PlatformMouseEvent& event) override { return ScrollbarTheme::theme().shouldCenterOnThumb(scrollbar, event); }
-    
+    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar& scrollbar, const PlatformMouseEvent& event, ScrollbarPart pressedPart) override { return ScrollbarTheme::theme().handleMousePressEvent(scrollbar, event, pressedPart); }
+
     virtual double initialAutoscrollTimerDelay() override { return ScrollbarTheme::theme().initialAutoscrollTimerDelay(); }
     virtual double autoscrollTimerDelay() override { return ScrollbarTheme::theme().autoscrollTimerDelay(); }
 
