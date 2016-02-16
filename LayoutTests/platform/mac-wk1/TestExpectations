@@ -64,6 +64,8 @@ webkit.org/b/153039 [ Debug ] inspector/heap/garbageCollected.html [ Pass Timeou
 
 webkit.org/b/153460 [ Debug ] inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
 
+webkit.org/b/154297 [ Debug ] fast/events/keydown-1.html [ Pass Failure ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
