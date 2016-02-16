@@ -39,9 +39,11 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
 {
     const CSSSelector* selector = &firstSelector;
     do {
-        if (selector->match() == CSSSelector::Id)
+        if (selector->match() == CSSSelector::Id) {
             idsInRules.add(selector->value().impl());
-        else if (selector->match() == CSSSelector::Class) {
+            if (matchesAncestor)
+                idsMatchingAncestorsInRules.add(selector->value().impl());
+        } else if (selector->match() == CSSSelector::Class) {
             classesInRules.add(selector->value().impl());
             if (matchesAncestor)
                 selectorFeatures.classesMatchingAncestors.append(selector->value().impl());
@@ -118,6 +120,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 void RuleFeatureSet::add(const RuleFeatureSet& other)
 {
     idsInRules.add(other.idsInRules.begin(), other.idsInRules.end());
+    idsMatchingAncestorsInRules.add(other.idsMatchingAncestorsInRules.begin(), other.idsMatchingAncestorsInRules.end());
     classesInRules.add(other.classesInRules.begin(), other.classesInRules.end());
     attributeCanonicalLocalNamesInRules.add(other.attributeCanonicalLocalNamesInRules.begin(), other.attributeCanonicalLocalNamesInRules.end());
     attributeLocalNamesInRules.add(other.attributeLocalNamesInRules.begin(), other.attributeLocalNamesInRules.end());
@@ -146,6 +149,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 void RuleFeatureSet::clear()
 {
     idsInRules.clear();
+    idsMatchingAncestorsInRules.clear();
     classesInRules.clear();
     attributeCanonicalLocalNamesInRules.clear();
     attributeLocalNamesInRules.clear();

@@ -2632,6 +2632,7 @@ set(WebCore_SOURCES
 
     style/AttributeChangeInvalidation.cpp
     style/ClassChangeInvalidation.cpp
+    style/IdChangeInvalidation.cpp
     style/InlineTextBoxStyle.cpp
     style/RenderTreePosition.cpp
     style/StyleChange.cpp

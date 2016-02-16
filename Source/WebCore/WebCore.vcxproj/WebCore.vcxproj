@@ -19297,6 +19297,7 @@
     <ClCompile Include="..\storage\StorageNamespaceProvider.cpp" />
     <ClCompile Include="..\style\AttributeChangeInvalidation.cpp" />
     <ClCompile Include="..\style\ClassChangeInvalidation.cpp" />
+    <ClCompile Include="..\style\IdChangeInvalidation.cpp" />
     <ClCompile Include="..\style\InlineTextBoxStyle.cpp" />
     <ClCompile Include="..\style\RenderTreePosition.cpp" />
     <ClCompile Include="..\style\StyleChange.cpp" />
@@ -22868,6 +22869,7 @@
     <ClInclude Include="..\storage\StorageNamespaceProvider.h" />
     <ClInclude Include="..\style\AttributeChangeInvalidation.h" />
     <ClInclude Include="..\style\ClassChangeInvalidation.h" />
+    <ClInclude Include="..\style\IdChangeInvalidation.h" />
     <ClInclude Include="..\style\InlineTextBoxStyle.h" />
     <ClInclude Include="..\style\RenderTreePosition.h" />
     <ClInclude Include="..\style\StyleChange.h" />

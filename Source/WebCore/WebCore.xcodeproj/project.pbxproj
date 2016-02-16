@@ -6639,6 +6639,8 @@
 		E4A814D61C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A814D51C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp */; };
 		E4A814D81C70E10500BF85AC /* AttributeChangeInvalidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A814D71C70E10500BF85AC /* AttributeChangeInvalidation.cpp */; };
 		E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */; };
+		E4A814DE1C7338D100BF85AC /* IdChangeInvalidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A814DD1C7338D100BF85AC /* IdChangeInvalidation.cpp */; };
+		E4A814E01C7338EB00BF85AC /* IdChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */; };
 		E4AE7C1617D1BB950009FB31 /* ElementIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1517D1BB950009FB31 /* ElementIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */; };
@@ -10548,8 +10550,8 @@
 		83D26D3D1AFDCC50001B3873 /* ParentNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ParentNode.idl; sourceTree = "<group>"; };
 		83D35AEA1C7187ED00F70D5A /* XMLHttpRequestEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestEventTarget.h; sourceTree = "<group>"; };
 		83D35AEB1C7187ED00F70D5A /* XMLHttpRequestEventTarget.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XMLHttpRequestEventTarget.idl; sourceTree = "<group>"; };
-		83D35AEF1C718D8400F70D5A /* JSXMLHttpRequestEventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSXMLHttpRequestEventTarget.cpp; path = JSXMLHttpRequestEventTarget.cpp; sourceTree = "<group>"; };
-		83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSXMLHttpRequestEventTarget.h; path = JSXMLHttpRequestEventTarget.h; sourceTree = "<group>"; };
+		83D35AEF1C718D8400F70D5A /* JSXMLHttpRequestEventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestEventTarget.cpp; sourceTree = "<group>"; };
+		83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestEventTarget.h; sourceTree = "<group>"; };
 		83E359A01BB1031D002CEB98 /* JSHTMLTimeElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLTimeElement.h; sourceTree = "<group>"; };
 		83E359A11BB1031D002CEB98 /* JSHTMLTimeElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTimeElement.cpp; sourceTree = "<group>"; };
 		83E959E11B8BC22B004D9385 /* NativeNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeNodeFilter.h; sourceTree = "<group>"; };
@@ -14647,6 +14649,8 @@
 		E4A814D51C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassChangeInvalidation.cpp; sourceTree = "<group>"; };
 		E4A814D71C70E10500BF85AC /* AttributeChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeChangeInvalidation.cpp; sourceTree = "<group>"; };
 		E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeChangeInvalidation.h; sourceTree = "<group>"; };
+		E4A814DD1C7338D100BF85AC /* IdChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdChangeInvalidation.cpp; sourceTree = "<group>"; };
+		E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdChangeInvalidation.h; sourceTree = "<group>"; };
 		E4AE7C1517D1BB950009FB31 /* ElementIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIterator.h; sourceTree = "<group>"; };
 		E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementAncestorIterator.h; sourceTree = "<group>"; };
 		E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitBezier.h; sourceTree = "<group>"; };
@@ -23441,6 +23445,8 @@
 				E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */,
 				E4A814D51C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp */,
 				E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */,
+				E4A814DD1C7338D100BF85AC /* IdChangeInvalidation.cpp */,
+				E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */,
 				1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */,
 				1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */,
 				5824ABA81AE849C8009074B7 /* RenderTreePosition.cpp */,
@@ -27866,6 +27872,7 @@
 				9393E605151A9A1800066F06 /* StyleCachedImageSet.h in Headers */,
 				E401E0A41C3C0B8300F34D10 /* StyleChange.h in Headers */,
 				9DAC7C571AF2CB6400437C44 /* StyleContentAlignmentData.h in Headers */,
+				E4A814E01C7338EB00BF85AC /* IdChangeInvalidation.h in Headers */,
 				BC779E171BB227CA00CAA8BF /* StyleCustomPropertyData.h in Headers */,
 				BC5EB67F0E81D4A700B25965 /* StyleDashboardRegion.h in Headers */,
 				A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */,
@@ -30487,6 +30494,7 @@
 				B2FA3D5A0AB75A6F000E5AC4 /* JSSVGClipPathElement.cpp in Sources */,
 				B2FA3D5C0AB75A6F000E5AC4 /* JSSVGColor.cpp in Sources */,
 				B2FA3D5E0AB75A6F000E5AC4 /* JSSVGComponentTransferFunctionElement.cpp in Sources */,
+				E4A814DE1C7338D100BF85AC /* IdChangeInvalidation.cpp in Sources */,
 				B2FA3D600AB75A6F000E5AC4 /* JSSVGCursorElement.cpp in Sources */,
 				B2FA3D620AB75A6F000E5AC4 /* JSSVGDefsElement.cpp in Sources */,
 				B2FA3D640AB75A6F000E5AC4 /* JSSVGDescElement.cpp in Sources */,

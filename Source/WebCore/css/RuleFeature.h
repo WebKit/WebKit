@@ -52,6 +52,7 @@ struct RuleFeatureSet {
     void collectFeatures(const RuleData&);
 
     HashSet<AtomicStringImpl*> idsInRules;
+    HashSet<AtomicStringImpl*> idsMatchingAncestorsInRules;
     HashSet<AtomicStringImpl*> classesInRules;
     HashSet<AtomicStringImpl*> attributeCanonicalLocalNamesInRules;
     HashSet<AtomicStringImpl*> attributeLocalNamesInRules;

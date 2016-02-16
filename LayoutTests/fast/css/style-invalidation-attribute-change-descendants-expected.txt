@@ -1,4 +1,4 @@
-Test that we invalidate the element subtree minimally on class attribute change
+Test that we invalidate the element subtree minimally on attribute change
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

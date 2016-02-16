@@ -57,6 +57,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTemplateElement.h"
+#include "IdChangeInvalidation.h"
 #include "IdTargetObserverRegistry.h"
 #include "KeyboardEvent.h"
 #include "MainFrame.h"
@@ -1216,24 +1217,9 @@ static inline AtomicString makeIdForStyleResolution(const AtomicString& value, b
     return value;
 }
 
-static bool checkNeedsStyleInvalidationForIdChange(const AtomicString& oldId, const AtomicString& newId, StyleResolver* styleResolver)
-{
-    ASSERT(newId != oldId);
-    if (!oldId.isEmpty() && styleResolver->hasSelectorForId(oldId))
-        return true;
-    if (!newId.isEmpty() && styleResolver->hasSelectorForId(newId))
-        return true;
-    return false;
-}
-
 void Element::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason)
 {
     bool valueIsSameAsBefore = oldValue == newValue;
-
-    StyleResolver* styleResolver = document().styleResolverIfExists();
-    bool testShouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
-
-    bool shouldInvalidateStyle = false;
 
     if (!valueIsSameAsBefore) {
         if (name == HTMLNames::idAttr) {
@@ -1245,15 +1231,17 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
             AtomicString oldId = elementData()->idForStyleResolution();
             AtomicString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
             if (newId != oldId) {
+                Style::IdChangeInvalidation styleInvalidation(*this, oldId, newId);
                 elementData()->setIdForStyleResolution(newId);
-                shouldInvalidateStyle = testShouldInvalidateStyle && checkNeedsStyleInvalidationForIdChange(oldId, newId, styleResolver);
             }
         } else if (name == classAttr)
             classAttributeChanged(newValue);
         else if (name == HTMLNames::nameAttr)
             elementData()->setHasNameAttribute(!newValue.isNull());
-        else if (name == HTMLNames::pseudoAttr)
-            shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
+        else if (name == HTMLNames::pseudoAttr) {
+            if (needsStyleInvalidation() && isInShadowTree())
+                setNeedsStyleRecalc(FullStyleChange);
+        }
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
         else if (name == HTMLNames::slotAttr) {
             if (auto* parent = parentElement()) {
@@ -1272,9 +1260,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
         return;
 
     invalidateNodeListAndCollectionCachesInAncestors(&name, this);
-
-    if (shouldInvalidateStyle)
-        setNeedsStyleRecalc();
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->handleAttributeChanged(name, this);
