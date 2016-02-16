@@ -1,5 +1,16 @@
 2016-02-16  Anders Carlsson  <andersca@apple.com>
 
+        Remove WebKit2 header cruft
+        https://bugs.webkit.org/show_bug.cgi?id=154309
+
+        Reviewed by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * mac/WKError.h: Removed.
+        * mac/WKPreferences.h: Removed.
+
+2016-02-16  Anders Carlsson  <andersca@apple.com>
+
         Remove unused environment variable classes
         https://bugs.webkit.org/show_bug.cgi?id=154308
 
