@@ -1,3 +1,21 @@
+2016-02-16  Brian Burg  <bburg@apple.com>
+
+        RemoteInspector should forward new automation session requests to its client
+        https://bugs.webkit.org/show_bug.cgi?id=154260
+        <rdar://problem/24663313>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        (Inspector::RemoteInspector::listingForAutomationTarget):
+        Use the correct key for the session identifier in the listing. The name()
+        override for RemoteAutomationTarget is actually the session identifier.
+
+        (Inspector::RemoteInspector::receivedAutomationSessionRequestMessage):
+        * inspector/remote/RemoteInspectorConstants.h: Add new constants.
+
 2016-02-16  Saam barati  <sbarati@apple.com>
 
         SamplingProfiler still fails with ASan enabled

@@ -117,6 +117,7 @@ private:
     void receivedConnectionDiedMessage(NSDictionary *userInfo);
     void receivedAutomaticInspectionConfigurationMessage(NSDictionary *userInfo);
     void receivedAutomaticInspectionRejectMessage(NSDictionary *userInfo);
+    void receivedAutomationSessionRequestMessage(NSDictionary *userInfo);
 
     static bool startEnabled;
 

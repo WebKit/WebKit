@@ -440,6 +440,8 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
         receivedAutomaticInspectionConfigurationMessage(userInfo);
     else if ([messageName isEqualToString:WIRAutomaticInspectionRejectMessage])
         receivedAutomaticInspectionRejectMessage(userInfo);
+    else if ([messageName isEqualToString:WIRAutomationSessionRequestMessage])
+        receivedAutomationSessionRequestMessage(userInfo);
     else
         NSLog(@"Unrecognized RemoteInspector XPC Message: %@", messageName);
 }
@@ -527,7 +529,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const Remote
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
     [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
-    [listing setObject:target.name() forKey:WIRTitleKey];
+    [listing setObject:target.name() forKey:WIRSessionIdentifierKey];
     [listing setObject:WIRTypeAutomation forKey:WIRTypeKey];
     [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
 
@@ -774,6 +776,21 @@ void RemoteInspector::receivedAutomaticInspectionRejectMessage(NSDictionary *use
     ASSERT(rejectionIdentifier == m_automaticInspectionCandidateTargetIdentifier);
     if (rejectionIdentifier == m_automaticInspectionCandidateTargetIdentifier)
         m_automaticInspectionPaused = false;
+}
+
+void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *userInfo)
+{
+    if (!m_client)
+        return;
+
+    if (!m_client->remoteAutomationAllowed())
+        return;
+
+    NSString *suggestedSessionIdentifier = [userInfo objectForKey:WIRSessionIdentifierKey];
+    if (!suggestedSessionIdentifier)
+        return;
+
+    m_client->requestAutomationSession(suggestedSessionIdentifier);
 }
 
 } // namespace Inspector
