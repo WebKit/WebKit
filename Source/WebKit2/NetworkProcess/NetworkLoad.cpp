@@ -54,7 +54,7 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters&
         return;
     }
     if (auto* networkSession = SessionTracker::networkSession(parameters.sessionID)) {
-        m_task = NetworkDataTask::create(*networkSession, *this, parameters.request, parameters.allowStoredCredentials, parameters.contentSniffingPolicy);
+        m_task = NetworkDataTask::create(*networkSession, *this, parameters.request, parameters.allowStoredCredentials, parameters.contentSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
         if (!parameters.defersLoading)
             m_task->resume();
     } else

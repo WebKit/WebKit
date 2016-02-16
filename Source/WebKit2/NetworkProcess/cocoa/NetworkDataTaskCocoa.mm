@@ -35,10 +35,13 @@
 
 namespace WebKit {
 
-NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentials storedCredentials, WebCore::ContentSniffingPolicy shouldContentSniff)
+NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentials storedCredentials, WebCore::ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     : m_failureTimer(*this, &NetworkDataTask::failureTimerFired)
     , m_session(session)
     , m_client(client)
+    , m_lastHTTPMethod(requestWithCredentials.httpMethod())
+    , m_firstRequest(requestWithCredentials)
+    , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
     ASSERT(isMainThread());
     
@@ -83,6 +86,39 @@ NetworkDataTask::~NetworkDataTask()
     }
 }
 
+void NetworkDataTask::willPerformHTTPRedirection(const WebCore::ResourceResponse& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler completionHandler)
+{
+    if (redirectResponse.httpStatusCode() == 307) {
+        ASSERT(m_lastHTTPMethod == request.httpMethod());
+        WebCore::FormData* body = m_firstRequest.httpBody();
+        if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"))
+            request.setHTTPBody(body);
+        
+        String originalContentType = m_firstRequest.httpContentType();
+        if (!originalContentType.isEmpty())
+            request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
+    }
+    
+    // Should not set Referer after a redirect from a secure resource to non-secure one.
+    if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && WebCore::protocolIs(request.httpReferrer(), "https"))
+        request.clearHTTPReferrer();
+    
+    const auto& url = request.url();
+    m_user = url.user();
+    m_password = url.pass();
+    m_lastHTTPMethod = request.httpMethod();
+    request.removeCredentials();
+    
+    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
+        // The network layer might carry over some headers from the original request that
+        // we want to strip here because the redirect is cross-origin.
+        request.clearHTTPAuthorization();
+        request.clearHTTPOrigin();
+    }
+    
+    client().willPerformHTTPRedirection(redirectResponse, request, completionHandler);
+}
+    
 void NetworkDataTask::scheduleFailure(FailureType type)
 {
     ASSERT(type != NoFailure);

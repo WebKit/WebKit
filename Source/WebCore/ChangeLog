@@ -1,3 +1,16 @@
+2016-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add checks before redirecting with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154298
+
+        Reviewed by Andy Estes.
+
+        This fixes http/tests/security/cors-post-redirect-307.html and 
+        http/tests/navigation/post-307-response.html when using NetworkSession.
+
+        * platform/network/ResourceRequestBase.h:
+        WEBCORE_EXPORT some functions newly used in WebKit2.
+
 2016-02-16  Daniel Bates  <dabates@apple.com>
 
         CSP: Fix parsing of 'host/path' source expressions

@@ -93,19 +93,19 @@ namespace WebCore {
         template<size_t length> void setHTTPHeaderField(const char (&)[length], const String&) = delete;
         template<size_t length> void addHTTPHeaderField(const char (&)[length], const String&) = delete;
 
-        void clearHTTPAuthorization();
+        WEBCORE_EXPORT void clearHTTPAuthorization();
 
         WEBCORE_EXPORT String httpContentType() const;
         WEBCORE_EXPORT void setHTTPContentType(const String&);
         void clearHTTPContentType();
 
-        String httpReferrer() const;
+        WEBCORE_EXPORT String httpReferrer() const;
         WEBCORE_EXPORT void setHTTPReferrer(const String&);
-        void clearHTTPReferrer();
+        WEBCORE_EXPORT void clearHTTPReferrer();
         
         String httpOrigin() const;
         void setHTTPOrigin(const String&);
-        void clearHTTPOrigin();
+        WEBCORE_EXPORT void clearHTTPOrigin();
 
         String httpUserAgent() const;
         void setHTTPUserAgent(const String&);

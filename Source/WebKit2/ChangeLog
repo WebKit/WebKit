@@ -1,3 +1,29 @@
+2016-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add checks before redirecting with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154298
+
+        Reviewed by Andy Estes.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::create):
+        (WebKit::NetworkDataTask::setPendingDownload):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        (WebKit::NetworkDataTask::willPerformHTTPRedirection):
+        Implemented based on ResourceHandle::willSendRequest but with two notable exceptions:
+        1. When using NSURLConnection, the last http method and the current http method are not always equal, and this
+        check needs to change the current http method to match the last http method when being redirected with an http
+        status code 307.  When using NSURLSession, the current http method is already updated properly.
+        2. I did not copy the part of ResourceHandle::willSendRequest that uses a CredentialStorage.  I'm trying to avoid
+        using CredentialStorages with NSURLSession.
+        (WebKit::NetworkDataTask::scheduleFailure):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+
 2016-02-16  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: WK2 IPC Scaffolding.
