@@ -2192,47 +2192,55 @@ PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_NET
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_DECODE" with the proper type (2) 
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_SRC_NOT_SUPPORTED" with the proper type (3) 
 FAIL MediaError interface: errorVideo.error must inherit property "code" with the proper type (4) assert_inherits: property "code" found on object expected in prototype chain
-FAIL AudioTrackList interface: existence and properties of interface object assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface object length assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface object name assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface: attribute length assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface: operation getTrackById(DOMString) assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface: attribute onchange assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface: attribute onaddtrack assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrackList interface: attribute onremovetrack assert_own_property: self does not have own property "AudioTrackList" expected property "AudioTrackList" missing
-FAIL AudioTrack interface: existence and properties of interface object assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface object length assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface object name assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface: attribute id assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface: attribute kind assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface: attribute label assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface: attribute language assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL AudioTrack interface: attribute enabled assert_own_property: self does not have own property "AudioTrack" expected property "AudioTrack" missing
-FAIL VideoTrackList interface: existence and properties of interface object assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface object length assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface object name assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface: attribute length assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface: operation getTrackById(DOMString) assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface: attribute selectedIndex assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface: attribute onchange assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface: attribute onaddtrack assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrackList interface: attribute onremovetrack assert_own_property: self does not have own property "VideoTrackList" expected property "VideoTrackList" missing
-FAIL VideoTrack interface: existence and properties of interface object assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface object length assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface object name assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface: existence and properties of interface prototype object assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface: attribute id assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface: attribute kind assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface: attribute label assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface: attribute language assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
-FAIL VideoTrack interface: attribute selected assert_own_property: self does not have own property "VideoTrack" expected property "VideoTrack" missing
+PASS AudioTrackList interface: existence and properties of interface object 
+PASS AudioTrackList interface object length 
+PASS AudioTrackList interface object name 
+PASS AudioTrackList interface: existence and properties of interface prototype object 
+PASS AudioTrackList interface: existence and properties of interface prototype object's "constructor" property 
+PASS AudioTrackList interface: attribute length 
+PASS AudioTrackList interface: operation getTrackById(DOMString) 
+PASS AudioTrackList interface: attribute onchange 
+PASS AudioTrackList interface: attribute onaddtrack 
+PASS AudioTrackList interface: attribute onremovetrack 
+PASS AudioTrack interface: existence and properties of interface object 
+PASS AudioTrack interface object length 
+PASS AudioTrack interface object name 
+PASS AudioTrack interface: existence and properties of interface prototype object 
+PASS AudioTrack interface: existence and properties of interface prototype object's "constructor" property 
+PASS AudioTrack interface: attribute id 
+FAIL AudioTrack interface: attribute kind assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function kind() {
+    [native code]
+}"
+PASS AudioTrack interface: attribute label 
+FAIL AudioTrack interface: attribute language assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function language() {
+    [native code]
+}"
+PASS AudioTrack interface: attribute enabled 
+PASS VideoTrackList interface: existence and properties of interface object 
+PASS VideoTrackList interface object length 
+PASS VideoTrackList interface object name 
+PASS VideoTrackList interface: existence and properties of interface prototype object 
+PASS VideoTrackList interface: existence and properties of interface prototype object's "constructor" property 
+PASS VideoTrackList interface: attribute length 
+PASS VideoTrackList interface: operation getTrackById(DOMString) 
+PASS VideoTrackList interface: attribute selectedIndex 
+PASS VideoTrackList interface: attribute onchange 
+PASS VideoTrackList interface: attribute onaddtrack 
+PASS VideoTrackList interface: attribute onremovetrack 
+PASS VideoTrack interface: existence and properties of interface object 
+PASS VideoTrack interface object length 
+PASS VideoTrack interface object name 
+PASS VideoTrack interface: existence and properties of interface prototype object 
+PASS VideoTrack interface: existence and properties of interface prototype object's "constructor" property 
+PASS VideoTrack interface: attribute id 
+FAIL VideoTrack interface: attribute kind assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function kind() {
+    [native code]
+}"
+PASS VideoTrack interface: attribute label 
+FAIL VideoTrack interface: attribute language assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function language() {
+    [native code]
+}"
+PASS VideoTrack interface: attribute selected 
 PASS MediaController interface: existence and properties of interface object 
 PASS MediaController interface object length 
 PASS MediaController interface object name 
