@@ -54,6 +54,10 @@ fast/history/page-cache-closed-audiocontext.html
 fast/history/page-cache-running-audiocontext.html
 fast/history/page-cache-suspended-audiocontext.html
 
+# No mousewheel events on iOS
+fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
+fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
+
 # Not supported on iOS
 batterystatus
 fast/mediastream

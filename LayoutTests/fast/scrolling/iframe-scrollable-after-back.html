@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #overflowing {
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        
+        .content {
+            height: 400px;
+            background-image: linear-gradient(white, gray)
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        }
+        
+        function logResult(s)
+        {
+            document.getElementById('result').textContent += s + "\n";
+        }
+
+        var postScrollCallback;
+
+        function iframeScrolled()
+        {
+            logResult('Scrolled; scrollTop is ' + document.getElementById('iframe').contentDocument.scrollingElement.scrollTop);
+            if (postScrollCallback)
+                postScrollCallback();
+        }
+        
+        function testScrollability(completionHandler)
+        {
+            var iframeTarget = document.getElementById('iframe');
+            var iframeBounds = iframeTarget.getBoundingClientRect();
+            
+            logResult('Sending wheel event; scrollTop is ' + iframeTarget.contentDocument.scrollingElement.scrollTop);
+
+            eventSender.mouseMoveTo(iframeBounds.left + 10, iframeBounds.top + 10);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+            postScrollCallback = completionHandler;
+        }
+        
+        function startTest()
+        {
+            if (!window.eventSender) {
+                logResult('This test must be run in DumpRenderTree/WebKitTestRunner');
+                return;
+            }
+
+            testScrollability(function() {
+                window.setTimeout(function() {
+                    logResult('\nNavigating forward then back\n');
+                    window.location.href = "data:text/html,<body onload='history.back()'></body>";
+                }, 0);
+            });
+            
+        }
+        
+        var showCount = 0;
+        function pageShowed()
+        {
+            if (++showCount == 2) {
+                testScrollability(function() {
+                    testRunner.notifyDone();
+                });
+            }
+        }
+        
+        window.addEventListener('load', startTest, false);
+        window.addEventListener('pageshow', pageShowed, false);
+    </script>
+</head>
+<body>
+
+<iframe id="iframe" src="resources/scroll-notifying-page.html"></iframe>
+
+<pre id="result"></pre>
+</body>
+</html>

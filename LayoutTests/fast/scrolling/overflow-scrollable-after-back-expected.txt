@@ -1,0 +1,8 @@
+Sending wheel event; scrollTop is 0
+Scrolled; scrollTop is 20
+
+Navigating forward then back
+
+Sending wheel event; scrollTop is 20
+Scrolled; scrollTop is 40
+

@@ -1,3 +1,22 @@
+2016-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add tests for iframe and overflow scrollability after navigating back
+        https://bugs.webkit.org/show_bug.cgi?id=154300
+
+        Reviewed by Brent Fulgham.
+        
+        Test that sends mousewheel events to overflow and iframe, before and after navigating
+        forward then back.
+        
+        These tests detect the regression caused by r188659.
+
+        * fast/scrolling/iframe-scrollable-after-back-expected.txt: Added.
+        * fast/scrolling/iframe-scrollable-after-back.html: Added.
+        * fast/scrolling/overflow-scrollable-after-back-expected.txt: Added.
+        * fast/scrolling/overflow-scrollable-after-back.html: Added.
+        * fast/scrolling/resources/scroll-notifying-page.html: Added.
+        * platform/ios-simulator/TestExpectations: Skip on iOS.
+
 2016-02-16  Daniel Bates  <dabates@apple.com>
 
         CSP: Update violation report 'Content-Type' header

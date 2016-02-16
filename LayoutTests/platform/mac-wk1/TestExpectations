@@ -193,6 +193,9 @@ scrollbars/scrolling-by-page-on-keyboard-spacebar.html
 # This test times out.
 webkit.org/b/147683 fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html [ Skip ]
 
+fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
+fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
+
 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
 
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
