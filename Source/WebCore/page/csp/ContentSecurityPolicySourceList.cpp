@@ -198,11 +198,7 @@ bool ContentSecurityPolicySourceList::parseSource(const UChar* begin, const UCha
     if (position < end && *position == '/') {
         // host/path || host/ || /
         //     ^            ^    ^
-        if (!parseHost(beginHost, position, host, hostHasWildcard)
-            || !parsePath(position, end, path)
-            || position != end)
-            return false;
-        return true;
+        return parseHost(beginHost, position, host, hostHasWildcard) && parsePath(position, end, path);
     }
 
     if (position < end && *position == ':') {
