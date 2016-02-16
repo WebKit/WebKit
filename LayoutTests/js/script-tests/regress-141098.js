@@ -1,3 +1,5 @@
+//@ noNoLLIntRunLayoutTest if $architecture == "arm"
+
 description("Regression test for https://webkit.org/b/141098. Make sure eval() properly handles running out of stack space. This test should run without crashing.");
 
 // The tiering up to test higher levels of optimization will only test the DFG

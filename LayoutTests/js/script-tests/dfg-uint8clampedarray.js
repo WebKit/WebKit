@@ -1,3 +1,5 @@
+//@ noNoLLIntRunLayoutTest if $architecture == "arm"
+
 description(
 "This tests that Uint8ClampedArrays work in the DFG."
 );

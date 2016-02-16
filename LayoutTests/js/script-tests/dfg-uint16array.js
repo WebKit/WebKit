@@ -1,3 +1,5 @@
+//@ noNoLLIntRunLayoutTest if $architecture == "arm"
+
 description(
 "This tests that uint16 arrays work in the DFG."
 );
