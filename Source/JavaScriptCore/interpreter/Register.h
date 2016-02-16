@@ -62,6 +62,7 @@ namespace JSC {
         int32_t i() const;
         CallFrame* callFrame() const;
         CodeBlock* codeBlock() const;
+        CodeBlock* asanUnsafeCodeBlock() const;
         JSObject* object() const;
         JSScope* scope() const;
         int32_t unboxedInt32() const;
@@ -72,6 +73,7 @@ namespace JSC {
         JSCell* unboxedCell() const;
         int32_t payload() const;
         int32_t tag() const;
+        int32_t unsafeTag() const;
         int32_t& payload();
         int32_t& tag();
 
@@ -155,6 +157,11 @@ namespace JSC {
         return u.codeBlock;
     }
 
+    SUPPRESS_ASAN ALWAYS_INLINE CodeBlock* Register::asanUnsafeCodeBlock() const
+    {
+        return u.codeBlock;
+    }
+
     ALWAYS_INLINE int32_t Register::unboxedInt32() const
     {
         return payload();
@@ -195,6 +202,11 @@ namespace JSC {
     }
 
     ALWAYS_INLINE int32_t Register::tag() const
+    {
+        return u.encodedValue.asBits.tag;
+    }
+
+    SUPPRESS_ASAN ALWAYS_INLINE int32_t Register::unsafeTag() const
     {
         return u.encodedValue.asBits.tag;
     }

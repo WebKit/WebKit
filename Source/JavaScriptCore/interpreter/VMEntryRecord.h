@@ -43,8 +43,10 @@ struct VMEntryRecord {
     VMEntryFrame* m_prevTopVMEntryFrame;
 
     ExecState* prevTopCallFrame() { return m_prevTopCallFrame; }
+    SUPPRESS_ASAN ExecState* unsafePrevTopCallFrame() { return m_prevTopCallFrame; }
 
     VMEntryFrame* prevTopVMEntryFrame() { return m_prevTopVMEntryFrame; }
+    SUPPRESS_ASAN VMEntryFrame* unsafePrevTopVMEntryFrame() { return m_prevTopVMEntryFrame; }
 };
 
 extern "C" VMEntryRecord* vmEntryRecord(VMEntryFrame*);

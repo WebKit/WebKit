@@ -79,9 +79,19 @@ unsigned CallFrame::callSiteAsRawBits() const
     return this[JSStack::ArgumentCount].tag();
 }
 
+SUPPRESS_ASAN unsigned CallFrame::unsafeCallSiteAsRawBits() const
+{
+    return this[JSStack::ArgumentCount].unsafeTag();
+}
+
 CallSiteIndex CallFrame::callSiteIndex() const
 {
     return CallSiteIndex(callSiteAsRawBits());
+}
+
+SUPPRESS_ASAN CallSiteIndex CallFrame::unsafeCallSiteIndex() const
+{
+    return CallSiteIndex(unsafeCallSiteAsRawBits());
 }
 
 #ifndef NDEBUG
@@ -192,6 +202,16 @@ CallFrame* CallFrame::callerFrame(VMEntryFrame*& currVMEntryFrame)
         return currVMEntryRecord->prevTopCallFrame();
     }
     return static_cast<CallFrame*>(callerFrameOrVMEntryFrame());
+}
+
+SUPPRESS_ASAN CallFrame* CallFrame::unsafeCallerFrame(VMEntryFrame*& currVMEntryFrame)
+{
+    if (unsafeCallerFrameOrVMEntryFrame() == currVMEntryFrame) {
+        VMEntryRecord* currVMEntryRecord = vmEntryRecord(currVMEntryFrame);
+        currVMEntryFrame = currVMEntryRecord->unsafePrevTopVMEntryFrame();
+        return currVMEntryRecord->unsafePrevTopCallFrame();
+    }
+    return static_cast<CallFrame*>(unsafeCallerFrameOrVMEntryFrame());
 }
 
 String CallFrame::friendlyFunctionName()

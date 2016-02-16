@@ -66,8 +66,9 @@ namespace JSC  {
     public:
         JSValue calleeAsValue() const { return this[JSStack::Callee].jsValue(); }
         JSObject* callee() const { return this[JSStack::Callee].object(); }
-        JSValue unsafeCallee() const { return this[JSStack::Callee].asanUnsafeJSValue(); }
+        SUPPRESS_ASAN JSValue unsafeCallee() const { return this[JSStack::Callee].asanUnsafeJSValue(); }
         CodeBlock* codeBlock() const { return this[JSStack::CodeBlock].Register::codeBlock(); }
+        SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const { return this[JSStack::CodeBlock].Register::asanUnsafeCodeBlock(); }
         JSScope* scope(int scopeRegisterOffset) const
         {
             ASSERT(this[scopeRegisterOffset].Register::scope());
@@ -115,7 +116,9 @@ namespace JSC  {
 
         CallFrame* callerFrame() const { return static_cast<CallFrame*>(callerFrameOrVMEntryFrame()); }
         void* callerFrameOrVMEntryFrame() const { return callerFrameAndPC().callerFrame; }
+        SUPPRESS_ASAN void* unsafeCallerFrameOrVMEntryFrame() const { return unsafeCallerFrameAndPC().callerFrame; }
 
+        CallFrame* unsafeCallerFrame(VMEntryFrame*&);
         JS_EXPORT_PRIVATE CallFrame* callerFrame(VMEntryFrame*&);
 
         static ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
@@ -130,7 +133,9 @@ namespace JSC  {
         bool callSiteBitsAreCodeOriginIndex() const;
 
         unsigned callSiteAsRawBits() const;
+        unsigned unsafeCallSiteAsRawBits() const;
         CallSiteIndex callSiteIndex() const;
+        CallSiteIndex unsafeCallSiteIndex() const;
     private:
         unsigned callSiteBitsAsBytecodeOffset() const;
     public:
@@ -282,6 +287,7 @@ namespace JSC  {
 
         CallerFrameAndPC& callerFrameAndPC() { return *reinterpret_cast<CallerFrameAndPC*>(this); }
         const CallerFrameAndPC& callerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
+        SUPPRESS_ASAN const CallerFrameAndPC& unsafeCallerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
 
         friend class JSStack;
     };
