@@ -1,3 +1,16 @@
+2016-02-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r196645.
+
+    2016-02-16  Sam Weinig  <sam@webkit.org>
+
+            Revert r195826.
+
+            * Platform/spi/ios/UIKitSPI.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _createAndConfigureDoubleTapGestureRecognizer]):
+            (-[WKContentView _singleTapCommited:]):
+
 2016-01-29  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r195826.
