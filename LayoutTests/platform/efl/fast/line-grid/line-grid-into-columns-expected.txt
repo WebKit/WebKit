@@ -50,7 +50,7 @@ layer at (0,0) size 800x540
 layer at (0,0) size 800x540
   RenderBlock {DIV} at (0,0) size 800x540
     RenderMultiColumnSet at (20,20) size 760x500
-layer at (20,20) size 362x966 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+layer at (20,20) size 362x966 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderMultiColumnFlowThread at (20,20) size 362x966
     RenderBlock {DIV} at (0,0) size 362x385
       RenderText {#text} at (0,39) size 352x99

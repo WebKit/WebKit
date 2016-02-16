@@ -14,6 +14,6 @@ layer at (0,0) size 800x158
 layer at (8,50) size 784x100 scrollX 200 scrollWidth 2572
   RenderBlock {DIV} at (0,34) size 784x100
     RenderMultiColumnSet at (0,0) size 784x100
-layer at (-192,50) size 337x600 backgroundClip at (8,50) size 784x100 clip at (8,50) size 784x100 outlineClip at (8,50) size 784x100
+layer at (-192,50) size 337x600 backgroundClip at (8,50) size 784x100 clip at (8,50) size 784x100
   RenderMultiColumnFlowThread at (0,0) size 337x600
     RenderBlock {DIV} at (0,0) size 337x600 [bgcolor=#C0C0C0]

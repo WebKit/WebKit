@@ -12,7 +12,7 @@ layer at (0,0) size 800x170
           text run at (0,18) width 465: "Test for the root layer getting correctly positioned. You should see no red."
 layer at (350,1) size 100x100
   RenderBlock (positioned) {DIV} at (350,1) size 100x100 [bgcolor=#FF0000]
-layer at (-100,0) size 300x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+layer at (-100,0) size 300x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderBlock (positioned) {DIV} at (-100,0) size 300x100 [bgcolor=#808080]
 layer at (100,0) size 600x102
   RenderBlock (relative positioned) {DIV} at (0,0) size 600x102 [border: (1px solid #000000)]

@@ -15,7 +15,7 @@ layer at (162,547) size 246x28
   RenderBlock (positioned) {FONT} at (162,547) size 246x28
     RenderText {#text} at (0,1) size 246x26
       text run at (0,1) width 246: "RTL-Center-Aligned"
-layer at (-85,451) size 93x84 backgroundClip at (0,0) size 901x585 clip at (0,0) size 901x585 outlineClip at (0,0) size 901x585
+layer at (-85,451) size 93x84 backgroundClip at (0,0) size 901x585 clip at (0,0) size 901x585
   RenderBlock (positioned) {FONT} at (-85,451) size 93x84
     RenderText {#text} at (0,1) size 93x82
       text run at (0,1) width 62: "RTL-"

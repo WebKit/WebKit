@@ -36,13 +36,13 @@ layer at (18,60) size 152x152 clip at (19,61) size 135x135 scrollY 50 scrollWidt
   RenderBlock {DIV} at (10,10) size 152x152 [border: (1px solid #000000)]
 layer at (194,60) size 152x152 clip at (195,61) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock {DIV} at (186,10) size 152x152 [border: (1px solid #000000)]
-layer at (19,11) size 210x510 backgroundClip at (19,61) size 135x135 clip at (19,61) size 135x135 outlineClip at (19,61) size 135x135
+layer at (19,11) size 210x510 backgroundClip at (19,61) size 135x135 clip at (19,61) size 135x135
   RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
         text run at (0,1) width 194: "This is the inner div"
         text run at (0,29) width 112: "that scrolls."
-layer at (195,11) size 210x510 backgroundClip at (195,61) size 135x135 clip at (195,61) size 135x135 outlineClip at (195,61) size 135x135
+layer at (195,11) size 210x510 backgroundClip at (195,61) size 135x135 clip at (195,61) size 135x135
   RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
@@ -50,7 +50,7 @@ layer at (195,11) size 210x510 backgroundClip at (195,61) size 135x135 clip at (
         text run at (0,29) width 112: "that scrolls."
 layer at (370,60) size 152x152 clip at (371,61) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock (relative positioned) {DIV} at (362,10) size 152x152 [border: (1px solid #000000)]
-layer at (371,11) size 210x510 backgroundClip at (371,61) size 135x135 clip at (371,61) size 135x135 outlineClip at (371,61) size 135x135
+layer at (371,11) size 210x510 backgroundClip at (371,61) size 135x135 clip at (371,61) size 135x135
   RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
@@ -58,7 +58,7 @@ layer at (371,11) size 210x510 backgroundClip at (371,61) size 135x135 clip at (
         text run at (0,29) width 112: "that scrolls."
 layer at (546,60) size 152x152 clip at (547,61) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock (relative positioned) {DIV} at (538,10) size 152x152 [border: (1px solid #000000)]
-layer at (547,11) size 210x510 backgroundClip at (547,61) size 135x135 clip at (547,61) size 135x135 outlineClip at (547,61) size 135x135
+layer at (547,11) size 210x510 backgroundClip at (547,61) size 135x135 clip at (547,61) size 135x135
   RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
@@ -73,7 +73,7 @@ layer at (18,236) size 152x152 clip at (19,237) size 135x135 scrollY 50 scrollWi
           text run at (0,29) width 112: "that scrolls."
 layer at (194,236) size 152x152 clip at (195,237) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock {DIV} at (186,186) size 152x152 [border: (1px solid #000000)]
-layer at (195,187) size 210x510 backgroundClip at (195,237) size 135x135 clip at (195,237) size 135x135 outlineClip at (195,237) size 135x135
+layer at (195,187) size 210x510 backgroundClip at (195,237) size 135x135 clip at (195,237) size 135x135
   RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
@@ -81,7 +81,7 @@ layer at (195,187) size 210x510 backgroundClip at (195,237) size 135x135 clip at
         text run at (0,29) width 112: "that scrolls."
 layer at (370,236) size 152x152 clip at (371,237) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock {DIV} at (362,186) size 152x152 [border: (1px solid #000000)]
-layer at (371,187) size 210x510 backgroundClip at (371,237) size 135x135 clip at (371,237) size 135x135 outlineClip at (371,237) size 135x135
+layer at (371,187) size 210x510 backgroundClip at (371,237) size 135x135 clip at (371,237) size 135x135
   RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
@@ -89,7 +89,7 @@ layer at (371,187) size 210x510 backgroundClip at (371,237) size 135x135 clip at
         text run at (0,29) width 112: "that scrolls."
 layer at (546,236) size 152x152 clip at (547,237) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock {DIV} at (538,186) size 152x152 [border: (1px solid #000000)]
-layer at (547,187) size 210x510 backgroundClip at (547,237) size 135x135 clip at (547,237) size 135x135 outlineClip at (547,237) size 135x135
+layer at (547,187) size 210x510 backgroundClip at (547,237) size 135x135 clip at (547,237) size 135x135
   RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
@@ -104,7 +104,7 @@ layer at (18,412) size 152x152 clip at (19,413) size 135x135 scrollY 50 scrollWi
           text run at (0,29) width 112: "that scrolls."
 layer at (194,412) size 152x152 clip at (195,413) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock (relative positioned) {DIV} at (186,362) size 152x152 [border: (1px solid #000000)]
-layer at (195,363) size 210x510 backgroundClip at (195,413) size 135x135 clip at (195,413) size 135x135 outlineClip at (195,413) size 135x135
+layer at (195,363) size 210x510 backgroundClip at (195,413) size 135x135 clip at (195,413) size 135x135
   RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
@@ -112,7 +112,7 @@ layer at (195,363) size 210x510 backgroundClip at (195,413) size 135x135 clip at
         text run at (0,29) width 112: "that scrolls."
 layer at (370,412) size 152x152 clip at (371,413) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock (relative positioned) {DIV} at (362,362) size 152x152 [border: (1px solid #000000)]
-layer at (371,363) size 210x510 backgroundClip at (371,413) size 135x135 clip at (371,413) size 135x135 outlineClip at (371,413) size 135x135
+layer at (371,363) size 210x510 backgroundClip at (371,413) size 135x135 clip at (371,413) size 135x135
   RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54
@@ -120,7 +120,7 @@ layer at (371,363) size 210x510 backgroundClip at (371,413) size 135x135 clip at
         text run at (0,29) width 112: "that scrolls."
 layer at (546,412) size 152x152 clip at (547,413) size 135x135 scrollY 50 scrollWidth 210 scrollHeight 510
   RenderBlock (relative positioned) {DIV} at (538,362) size 152x152 [border: (1px solid #000000)]
-layer at (547,363) size 210x510 backgroundClip at (547,413) size 135x135 clip at (547,413) size 135x135 outlineClip at (547,413) size 135x135
+layer at (547,363) size 210x510 backgroundClip at (547,413) size 135x135 clip at (547,413) size 135x135
   RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
     RenderBlock {P} at (5,29) size 200x56
       RenderText {#text} at (0,1) size 194x54

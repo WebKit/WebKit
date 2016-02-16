@@ -1,3 +1,117 @@
+2016-02-15  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Rebaseline after r196244.
+
+        Unreviewed test gardening.
+
+        * platform/efl/compositing/geometry/clipping-foreground-expected.txt:
+        * platform/efl/compositing/geometry/root-layer-update-expected.txt:
+        * platform/efl/compositing/overflow/ancestor-overflow-expected.txt:
+        * platform/efl/compositing/overflow/nested-scrolling-expected.txt:
+        * platform/efl/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/efl/compositing/overflow/parent-overflow-expected.txt:
+        * platform/efl/compositing/overflow/scrollbar-painting-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-on-overflow-expected.txt:
+        * platform/efl/compositing/sibling-positioning-expected.txt:
+        * platform/efl/css3/unicode-bidi-isolate-basic-expected.txt:
+        * platform/efl/fast/block/positioning/auto/vertical-rl/007-expected.txt:
+        * platform/efl/fast/block/positioning/vertical-rl/fixed-positioning-expected.txt:
+        * platform/efl/fast/borders/border-antialiasing-expected.txt:
+        * platform/efl/fast/clip/001-expected.txt:
+        * platform/efl/fast/clip/013-expected.txt:
+        * platform/efl/fast/clip/014-expected.txt:
+        * platform/efl/fast/clip/016-expected.txt:
+        * platform/efl/fast/clip/outline-overflowClip-expected.txt:
+        * platform/efl/fast/css/clip-zooming-expected.txt:
+        * platform/efl/fast/forms/validation-message-appearance-expected.txt:
+        * platform/efl/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+        * platform/efl/fast/line-grid/line-grid-inside-columns-expected.txt:
+        * platform/efl/fast/line-grid/line-grid-into-columns-expected.txt:
+        * platform/efl/fast/lists/scrolled-marker-paint-expected.txt:
+        * platform/efl/fast/multicol/client-rects-expected.txt:
+        * platform/efl/fast/multicol/column-break-with-balancing-expected.txt:
+        * platform/efl/fast/multicol/column-rules-expected.txt:
+        * platform/efl/fast/multicol/column-rules-stacking-expected.txt:
+        * platform/efl/fast/multicol/columns-shorthand-parsing-expected.txt:
+        * platform/efl/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/efl/fast/multicol/float-paginate-empty-lines-expected.txt:
+        * platform/efl/fast/multicol/float-paginate-expected.txt:
+        * platform/efl/fast/multicol/layers-in-multicol-expected.txt:
+        * platform/efl/fast/multicol/layers-split-across-columns-expected.txt:
+        * platform/efl/fast/multicol/max-height-columns-block-expected.txt:
+        * platform/efl/fast/multicol/nested-columns-expected.txt:
+        * platform/efl/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/efl/fast/multicol/overflow-across-columns-expected.txt:
+        * platform/efl/fast/multicol/overflow-across-columns-percent-height-expected.txt:
+        * platform/efl/fast/multicol/overflow-unsplittable-expected.txt:
+        * platform/efl/fast/multicol/paginate-block-replaced-expected.txt:
+        * platform/efl/fast/multicol/pagination/BottomToTop-bt-expected.txt:
+        * platform/efl/fast/multicol/pagination/BottomToTop-lr-expected.txt:
+        * platform/efl/fast/multicol/pagination/BottomToTop-rl-expected.txt:
+        * platform/efl/fast/multicol/pagination/BottomToTop-tb-expected.txt:
+        * platform/efl/fast/multicol/pagination/LeftToRight-bt-expected.txt:
+        * platform/efl/fast/multicol/pagination/LeftToRight-rl-expected.txt:
+        * platform/efl/fast/multicol/pagination/LeftToRight-tb-expected.txt:
+        * platform/efl/fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt:
+        * platform/efl/fast/multicol/pagination/RightToLeft-bt-expected.txt:
+        * platform/efl/fast/multicol/pagination/RightToLeft-lr-expected.txt:
+        * platform/efl/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt:
+        * platform/efl/fast/multicol/pagination/RightToLeft-rl-expected.txt:
+        * platform/efl/fast/multicol/pagination/RightToLeft-rl-hittest-expected.txt:
+        * platform/efl/fast/multicol/pagination/RightToLeft-tb-expected.txt:
+        * platform/efl/fast/multicol/pagination/TopToBottom-bt-expected.txt:
+        * platform/efl/fast/multicol/pagination/TopToBottom-lr-expected.txt:
+        * platform/efl/fast/multicol/pagination/TopToBottom-rl-expected.txt:
+        * platform/efl/fast/multicol/positive-leading-expected.txt:
+        * platform/efl/fast/multicol/scrolling-column-rules-expected.txt:
+        * platform/efl/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/efl/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/efl/fast/multicol/table-vertical-align-expected.txt:
+        * platform/efl/fast/multicol/tall-image-behavior-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/column-rules-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/float-paginate-complex-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/float-paginate-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/column-rules-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/float-paginate-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/efl/fast/overflow/clip-rects-fixed-ancestor-expected.txt:
+        * platform/efl/fast/overflow/float-in-relpositioned-expected.txt:
+        * platform/efl/fast/overflow/overflow-auto-position-absolute-expected.txt:
+        * platform/efl/fast/overflow/overflow-rtl-expected.txt:
+        * platform/efl/fast/overflow/paged-x-div-expected.txt:
+        * platform/efl/fast/overflow/paged-x-div-with-column-gap-expected.txt:
+        * platform/efl/fast/overflow/paged-x-on-root-expected.txt:
+        * platform/efl/fast/overflow/paged-x-with-column-gap-expected.txt:
+        * platform/efl/fast/overflow/paged-y-div-expected.txt:
+        * platform/efl/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/efl/fast/regions/repaint/region-painting-via-layout-expected.txt:
+        * platform/efl/fast/repaint/box-shadow-h-expected.txt:
+        * platform/efl/fast/repaint/box-shadow-v-expected.txt:
+        * platform/efl/fast/repaint/layer-outline-expected.txt:
+        * platform/efl/fast/repaint/layer-outline-horizontal-expected.txt:
+        * platform/efl/fast/table/edge-offsets-expected.txt:
+        * platform/efl/fast/transforms/overflow-with-transform-expected.txt:
+        * platform/efl/fast/transforms/rotated-transform-affects-scrolling-1-expected.txt: Added.
+        * platform/efl/fast/transforms/rotated-transform-affects-scrolling-2-expected.txt: Added.
+        * platform/efl/printing/single-line-must-not-be-split-into-two-pages-expected.txt:
+        * platform/efl/scrollbars/scrollbars-on-positioned-content-expected.txt:
+        * platform/efl/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt: Added.
+        * platform/efl/svg/custom/image-rescale-clip-expected.txt: Added.
+
 2016-02-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196607
