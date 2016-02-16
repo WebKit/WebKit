@@ -58,9 +58,6 @@ WEBCORE_EXPORT @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
 
 // Helper functions for DOM wrappers and gluing to Objective-C
 
-// Create an NSMapTable mapping from pointers to ObjC objects held with zeroing weak references.
-NSMapTable* createWrapperCache();
-
 id createDOMWrapper(JSC::JSObject*, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> current);
 
 NSObject* getDOMWrapper(DOMObjectInternal*);

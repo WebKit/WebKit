@@ -43,14 +43,14 @@
 #import <JavaScriptCore/JSContextInternal.h>
 #import <JavaScriptCore/JSValueInternal.h>
 #import <interpreter/CallFrame.h>
+#import <runtime/Completion.h>
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSLock.h>
-#import <runtime/Completion.h>
-#import <runtime/Completion.h>
+#import <wtf/HashMap.h>
 #import <wtf/Lock.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/Threading.h>
-#import <wtf/spi/cocoa/NSMapTableSPI.h>
 #import <wtf/text/WTFString.h>
 
 using namespace JSC::Bindings;
@@ -71,17 +71,20 @@ using JSC::makeSource;
 
 namespace WebCore {
 
-static NSMapTable* JSWrapperCache;
 static StaticLock spinLock;
+
+static HashMap<JSObject*, NSObject *>& wrapperCache()
+{
+    static NeverDestroyed<HashMap<JSObject*, NSObject *>> map;
+    return map;
+}
 
 NSObject* getJSWrapper(JSObject* impl)
 {
     ASSERT(isMainThread());
     LockHolder holder(&spinLock);
 
-    if (!JSWrapperCache)
-        return nil;
-    NSObject* wrapper = static_cast<NSObject*>(NSMapGet(JSWrapperCache, impl));
+    NSObject* wrapper = wrapperCache().get(impl);
     return wrapper ? [[wrapper retain] autorelease] : nil;
 }
 
@@ -90,28 +93,22 @@ void addJSWrapper(NSObject* wrapper, JSObject* impl)
     ASSERT(isMainThread());
     LockHolder holder(&spinLock);
 
-    if (!JSWrapperCache)
-        JSWrapperCache = createWrapperCache();
-    NSMapInsert(JSWrapperCache, impl, wrapper);
+    wrapperCache().set(impl, wrapper);
 }
 
 void removeJSWrapper(JSObject* impl)
 {
     LockHolder holder(&spinLock);
 
-    if (!JSWrapperCache)
-        return;
-    NSMapRemove(JSWrapperCache, impl);
+    wrapperCache().remove(impl);
 }
 
 static void removeJSWrapperIfRetainCountOne(NSObject* wrapper, JSObject* impl)
 {
     LockHolder holder(&spinLock);
 
-    if (!JSWrapperCache)
-        return;
     if ([wrapper retainCount] == 1)
-        NSMapRemove(JSWrapperCache, impl);
+        wrapperCache().remove(impl);
 }
 
 id createJSWrapper(JSC::JSObject* object, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> root)
