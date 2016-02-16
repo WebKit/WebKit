@@ -1,3 +1,14 @@
+2016-02-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Support for inline source maps
+        https://bugs.webkit.org/show_bug.cgi?id=154303
+        <rdar://problem/24670392>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/unit-tests/url-utilities-expected.txt: Added.
+        * inspector/unit-tests/url-utilities.html: Added.
+
 2016-02-16  Daniel Bates  <dabates@apple.com>
 
         CSP: Disallow an empty host in a host-source source expression

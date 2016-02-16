@@ -70,6 +70,25 @@ function parseSecurityOrigin(securityOrigin)
     return {scheme, host, port};
 }
 
+function parseDataURL(url)
+{
+    if (!url.startsWith("data:"))
+        return null;
+
+    // data:[<media type>][;charset=<character set>][;base64],<data>
+    let match = url.match(/^data:([^;,]*)?(?:;charset=([^;,]*?))?(;base64)?,(.*)$/);
+    if (!match)
+        return null;
+
+    let scheme = "data";
+    let mimeType = match[1] || "text/plain";
+    let charset = match[2] || "US-ASCII";
+    let base64 = !!match[3];
+    let data = decodeURIComponent(match[4]);
+
+    return {scheme, mimeType, charset, base64, data};
+}
+
 function parseURL(url)
 {
     url = url ? url.trim() : "";

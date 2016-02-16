@@ -74,6 +74,11 @@ WebInspector.SourceMap = class SourceMap extends WebInspector.Object
         }
 
         var urlComponents = parseURL(this._sourceMappingURL);
+
+        // Fallback for JavaScript debuggable named scripts that may not have a complete URL.
+        if (!urlComponents.path)
+            urlComponents.path = this._sourceMappingURL;
+
         urlComponents.path = urlComponents.path.substr(0, urlComponents.path.lastIndexOf(urlComponents.lastPathComponent));
         urlComponents.lastPathComponent = null;
         this._sourceMappingURLBasePathComponents = urlComponents;

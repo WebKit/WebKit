@@ -66,8 +66,10 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         this.contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         this.contentTreeOutline.includeSourceMapResourceChildren = true;
 
-        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
+        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
             this.contentTreeOutline.disclosureButtons = false;
+            WebInspector.SourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, () => { this.contentTreeOutline.disclosureButtons = true }, this);
+        }
 
         if (WebInspector.frameResourceManager.mainFrame)
             this._mainFrameMainResourceDidChange(WebInspector.frameResourceManager.mainFrame);

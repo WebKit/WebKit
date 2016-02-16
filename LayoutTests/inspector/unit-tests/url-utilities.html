@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("URLUtilities");
+
+    suite.addTestCase({
+        name: "parseDataURL",
+        test: () => {
+            function testInvalid(url) {
+                InspectorTest.log("Test: " + url);
+                InspectorTest.expectThat(parseDataURL(url) === null, "Should not be a data URL");
+            }
+
+            function testValid(url, expected) {
+                InspectorTest.log("");
+                InspectorTest.log("Test: " + url);
+
+                let {mimeType: expectedMimeType, charset: expectedCharset, base64: expectedBase64, data: expectedData, content: expectedContent} = expected;
+                let {mimeType: actualMimeType, charset: actualCharset, base64: actualBase64, data: actualData, scheme: actualScheme} = parseDataURL(url);
+                let actualContent = actualData;
+                if (actualBase64)
+                    actualContent = atob(actualContent);
+
+                InspectorTest.assert(actualScheme === "data", "scheme should always be 'data'");
+                InspectorTest.expectThat(actualMimeType === expectedMimeType, `mimeType should be: '${expectedMimeType}'`);
+                InspectorTest.expectThat(actualCharset === expectedCharset, `charset should be: '${expectedCharset}'`);
+                InspectorTest.expectThat(actualBase64 === expectedBase64, `base64 should be: '${expectedBase64}'`);
+                InspectorTest.expectThat(actualData === expectedData, `data should be: '${expectedData}'`);
+                if (expectedContent !== null)
+                    InspectorTest.expectThat(actualContent === expectedContent, `Resolved content should be: '${expectedContent}'`);
+            }
+
+            testInvalid("https://webkit.org");
+            testInvalid("data:");
+            testInvalid("data:text/plain;test");
+            testInvalid("data:text/plain;base64;test");
+
+            testValid("data:,", {
+                mimeType: "text/plain",
+                charset: "US-ASCII",
+                base64: false,
+                data: "",
+                content: "",
+            });
+
+            testValid("data:,test", {
+                mimeType: "text/plain",
+                charset: "US-ASCII",
+                base64: false,
+                data: "test",
+                content: "test",
+            });
+
+            testValid("data:text/plain,test", {
+                mimeType: "text/plain",
+                charset: "US-ASCII",
+                base64: false,
+                data: "test",
+                content: "test",
+            });
+
+            testValid("data:text/plain;charset=TEST,test", {
+                mimeType: "text/plain",
+                charset: "TEST",
+                base64: false,
+                data: "test",
+                content: "test",
+            });
+
+            testValid("data:application/json,{\"name\":\"test\",\"list\":[1,2,3]}", {
+                mimeType: "application/json",
+                charset: "US-ASCII",
+                base64: false,
+                data: '{"name":"test","list":[1,2,3]}',
+                content: '{"name":"test","list":[1,2,3]}',
+            });
+
+            InspectorTest.assert(encodeURIComponent('{"name":"test","list":[1,2,3]}') === "%7B%22name%22%3A%22test%22%2C%22list%22%3A%5B1%2C2%2C3%5D%7D");
+            testValid("data:application/json,%7B%22name%22%3A%22test%22%2C%22list%22%3A%5B1%2C2%2C3%5D%7D", {
+                mimeType: "application/json",
+                charset: "US-ASCII",
+                base64: false,
+                data: '{"name":"test","list":[1,2,3]}',
+                content: '{"name":"test","list":[1,2,3]}',
+            });
+
+            testValid("data:application/json;base64,eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119", {
+                mimeType: "application/json",
+                charset: "US-ASCII",
+                base64: true,
+                data: "eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119",
+                content: '{"name":"test","list":[1,2,3]}',
+            });
+
+            testValid("data:application/json;charset=utf-8;base64,eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119", {
+                mimeType: "application/json",
+                charset: "utf-8",
+                base64: true,
+                data: "eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119",
+                content: '{"name":"test","list":[1,2,3]}',
+            });
+
+            testValid("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==", {
+                mimeType: "image/png",
+                charset: "US-ASCII",
+                base64: true,
+                data: "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+                content: null, // Skip content check.
+            });
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

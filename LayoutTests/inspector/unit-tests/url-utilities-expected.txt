@@ -1,0 +1,74 @@
+
+== Running test suite: URLUtilities
+-- Running test case: parseDataURL
+Test: https://webkit.org
+PASS: Should not be a data URL
+Test: data:
+PASS: Should not be a data URL
+Test: data:text/plain;test
+PASS: Should not be a data URL
+Test: data:text/plain;base64;test
+PASS: Should not be a data URL
+
+Test: data:,
+PASS: mimeType should be: 'text/plain'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: ''
+PASS: Resolved content should be: ''
+
+Test: data:,test
+PASS: mimeType should be: 'text/plain'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: 'test'
+PASS: Resolved content should be: 'test'
+
+Test: data:text/plain,test
+PASS: mimeType should be: 'text/plain'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: 'test'
+PASS: Resolved content should be: 'test'
+
+Test: data:text/plain;charset=TEST,test
+PASS: mimeType should be: 'text/plain'
+PASS: charset should be: 'TEST'
+PASS: base64 should be: 'false'
+PASS: data should be: 'test'
+PASS: Resolved content should be: 'test'
+
+Test: data:application/json,{"name":"test","list":[1,2,3]}
+PASS: mimeType should be: 'application/json'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: '{"name":"test","list":[1,2,3]}'
+PASS: Resolved content should be: '{"name":"test","list":[1,2,3]}'
+
+Test: data:application/json,%7B%22name%22%3A%22test%22%2C%22list%22%3A%5B1%2C2%2C3%5D%7D
+PASS: mimeType should be: 'application/json'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: '{"name":"test","list":[1,2,3]}'
+PASS: Resolved content should be: '{"name":"test","list":[1,2,3]}'
+
+Test: data:application/json;base64,eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119
+PASS: mimeType should be: 'application/json'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'true'
+PASS: data should be: 'eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119'
+PASS: Resolved content should be: '{"name":"test","list":[1,2,3]}'
+
+Test: data:application/json;charset=utf-8;base64,eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119
+PASS: mimeType should be: 'application/json'
+PASS: charset should be: 'utf-8'
+PASS: base64 should be: 'true'
+PASS: data should be: 'eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119'
+PASS: Resolved content should be: '{"name":"test","list":[1,2,3]}'
+
+Test: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==
+PASS: mimeType should be: 'image/png'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'true'
+PASS: data should be: 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
+

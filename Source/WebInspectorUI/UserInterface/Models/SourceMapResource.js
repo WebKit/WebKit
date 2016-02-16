@@ -61,6 +61,10 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
         var sourceMappingBasePathURLComponents = this._sourceMap.sourceMappingBasePathURLComponents;
         var resourceURLComponents = this.urlComponents;
 
+        // Fallback for JavaScript debuggable named scripts that may not have a complete URL.
+        if (!resourceURLComponents.path)
+            resourceURLComponents.path = this.url;
+
         // Different schemes / hosts. Return the host + path of this resource.
         if (resourceURLComponents.scheme !== sourceMappingBasePathURLComponents.scheme || resourceURLComponents.host !== sourceMappingBasePathURLComponents.host)
             return resourceURLComponents.host + (resourceURLComponents.port ? (":" + resourceURLComponents.port) : "") + resourceURLComponents.path;
@@ -128,7 +132,8 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
         }
 
         // COMPATIBILITY (iOS 7): Network.loadResource did not exist.
-        if (!NetworkAgent.loadResource)
+        // Also, JavaScript Debuggable with SourceMaps that do not have inlined content may reach this.
+        if (!window.NetworkAgent || !NetworkAgent.loadResource)
             return sourceMapResourceLoadError.call(this);
 
         var frameIdentifier = null;
