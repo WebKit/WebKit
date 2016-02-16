@@ -127,6 +127,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckIdent:
     case CheckWatchdogTimer:
     case StringCharCodeAt:
+    case StringFromCharCode:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
     case GetTypedArrayByteOffset:

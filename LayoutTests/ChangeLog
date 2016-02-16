@@ -1,3 +1,19 @@
+2016-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support StringFromCharCode
+        https://bugs.webkit.org/show_bug.cgi?id=154267
+
+        Reviewed by Mark Lam.
+
+        * js/regress/script-tests/string-from-char-code.js: Added.
+        (result):
+        * js/regress/script-tests/untyped-string-from-char-code.js: Added.
+        (result):
+        * js/regress/string-from-char-code-expected.txt: Added.
+        * js/regress/string-from-char-code.html: Added.
+        * js/regress/untyped-string-from-char-code-expected.txt: Added.
+        * js/regress/untyped-string-from-char-code.html: Added.
+
 2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] No hover-horizontal scrolling available

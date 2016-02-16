@@ -602,11 +602,10 @@ private:
         }
 
         case StringFromCharCode:
-            if (node->child1()->shouldSpeculateUntypedForArithmetic()) {
+            if (node->child1()->shouldSpeculateInt32())
+                fixEdge<Int32Use>(node->child1());
+            else
                 fixEdge<UntypedUse>(node->child1());
-                break;
-            }
-            fixEdge<Int32Use>(node->child1());
             break;
 
         case StringCharAt:

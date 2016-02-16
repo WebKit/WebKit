@@ -870,6 +870,9 @@ private:
         case StringCharCodeAt:
             compileStringCharCodeAt();
             break;
+        case StringFromCharCode:
+            compileStringFromCharCode();
+            break;
         case GetByOffset:
         case GetGetterSetterByOffset:
             compileGetByOffset();
@@ -4520,6 +4523,50 @@ private:
         m_out.appendTo(continuation, lastNext);
         
         setInt32(m_out.phi(m_out.int32, char8Bit, char16Bit));
+    }
+
+    void compileStringFromCharCode()
+    {
+        Edge childEdge = m_node->child1();
+        
+        if (childEdge.useKind() == UntypedUse) {
+            LValue result = vmCall(
+                m_out.int64, m_out.operation(operationStringFromCharCodeUntyped), m_callFrame,
+                lowJSValue(childEdge));
+            setJSValue(result);
+            return;
+        }
+
+        DFG_ASSERT(m_graph, m_node, childEdge.useKind() == Int32Use);
+
+        LValue value = lowInt32(childEdge);
+        
+        LBasicBlock smallIntCase = FTL_NEW_BLOCK(m_out, ("StringFromCharCode small int case"));
+        LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("StringFromCharCode slow case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("StringFromCharCode continuation"));
+
+        m_out.branch(
+            m_out.aboveOrEqual(value, m_out.constInt32(0xff)),
+            rarely(slowCase), usually(smallIntCase));
+
+        LBasicBlock lastNext = m_out.appendTo(smallIntCase, slowCase);
+
+        LValue smallStrings = m_out.constIntPtr(vm().smallStrings.singleCharacterStrings());
+        LValue fastResultValue = m_out.loadPtr(
+            m_out.baseIndex(m_heaps.singleCharacterStrings, smallStrings, m_out.zeroExtPtr(value)));
+        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+
+        LValue slowResultValue = vmCall(
+            m_out.intPtr, m_out.operation(operationStringFromCharCode), m_callFrame, value);
+        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+
+        setJSValue(m_out.phi(m_out.int64, fastResult, slowResult));
     }
     
     void compileGetByOffset()
