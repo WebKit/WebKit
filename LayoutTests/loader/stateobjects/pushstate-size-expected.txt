@@ -17,8 +17,5 @@ Successfully added item: 14 times
 Successfully added item: 15 times
 Successfully added item: 16 times
 Successfully added item: 17 times
-Successfully added item: 18 times
-Successfully added item: 19 times
-Successfully added item: 20 times
 User gesture: Error: QuotaExceededError: DOM Exception 22
 

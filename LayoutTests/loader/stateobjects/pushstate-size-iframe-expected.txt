@@ -23,8 +23,5 @@ iFrame successfully added item: 4 times
 iFrame successfully added item: 5 times
 iFrame successfully added item: 6 times
 iFrame successfully added item: 7 times
-iFrame successfully added item: 8 times
-iFrame successfully added item: 9 times
-iFrame successfully added item: 10 times
 Expected exception: Error: QuotaExceededError: DOM Exception 22
 
