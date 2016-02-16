@@ -7,7 +7,7 @@ Frame: '<!--framePath //<!--frame0-->-->'
 --------
 CSP report received:
 CONTENT_TYPE: application/csp-report
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.html
+HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.php?test=/security/contentSecurityPolicy/report-uri-from-child-frame.html
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.html","referrer":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri-from-child-frame.html","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri save-report.php?test=generate-csp-report.html","blocked-uri":"","status-code":200}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.php?test=/security/contentSecurityPolicy/report-uri-from-child-frame.html","referrer":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri-from-child-frame.html","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri save-report.php?test=/security/contentSecurityPolicy/report-uri-from-child-frame.html","blocked-uri":"","status-code":200}}

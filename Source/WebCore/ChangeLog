@@ -1,3 +1,31 @@
+2016-02-16  Daniel Bates  <dabates@apple.com>
+
+        CSP: Update violation report 'Content-Type' header
+        https://bugs.webkit.org/show_bug.cgi?id=153166
+        <rdar://problem/24383327>
+
+        Reviewed by Brent Fulgham.
+
+        Inspired by Blink patch:
+        <https://src.chromium.org/viewvc/blink?view=rev&revision=154215>
+
+        Post the Content Security Policy violation report with Content-Type application/csp-report as
+        per section Reporting of the Content Security Policy 2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        Currently we post CSP violation reports with Content-Type application/json.
+
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::didBlockScript): Use report type ViolationReportType::XSSAuditor to PingLoader.
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendViolationReport): Modified to take argument of type ViolationReportType
+        to determine the appropriate Content-Type header to use for the report. For a XSS Auditor violation report
+        we use Content-Type application/json. For a Content Security Policy violation report we use Content-Type
+        application/csp-report. Additionally, pass a ASCIILiteral() to ResourceRequestBase::setHTTPMethod()
+        as opposed to a constant string literal to avoid a copy of a constant string literal.
+        * loader/PingLoader.h: Add enum class ViolationReportType.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation): Use report type ViolationReportType::ContentSecurityPolicy.
+
 2016-02-16  Alex Christensen  <achristensen@webkit.org>
 
         Add checks before redirecting with NetworkSession

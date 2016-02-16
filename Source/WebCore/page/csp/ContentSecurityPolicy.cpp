@@ -404,7 +404,7 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8());
 
     for (const auto& url : reportURIs)
-        PingLoader::sendViolationReport(*frame, document.completeURL(url), report.copyRef());
+        PingLoader::sendViolationReport(*frame, document.completeURL(url), report.copyRef(), ViolationReportType::ContentSecurityPolicy);
 }
 
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const

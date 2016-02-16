@@ -1,5 +1,5 @@
 CSP report received:
-CONTENT_TYPE: application/json
+CONTENT_TYPE: application/csp-report
 HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.html
 REQUEST_METHOD: POST
 === POST DATA ===

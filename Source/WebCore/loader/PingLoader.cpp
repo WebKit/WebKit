@@ -123,7 +123,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     startPingLoad(frame, request);
 }
 
-void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, RefPtr<FormData>&& report)
+void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, RefPtr<FormData>&& report, ViolationReportType reportType)
 {
     ResourceRequest request(reportURL);
 
@@ -132,9 +132,16 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, RefPtr<
         return;
 #endif
 
-    request.setHTTPMethod("POST");
-    request.setHTTPContentType("application/json");
+    request.setHTTPMethod(ASCIILiteral("POST"));
     request.setHTTPBody(WTFMove(report));
+    switch (reportType) {
+    case ViolationReportType::ContentSecurityPolicy:
+        request.setHTTPContentType(ASCIILiteral("application/csp-report"));
+        break;
+    case ViolationReportType::XSSAuditor:
+        request.setHTTPContentType(ASCIILiteral("application/json"));
+        break;
+    }
 
     bool removeCookies = true;
     if (Document* document = frame.document()) {
