@@ -67,7 +67,7 @@ private:
     void resolveBeforeOrAfterPseudoElement(Element&, Change, PseudoId, RenderTreePosition&);
 
     void createRenderTreeRecursively(Element&, RenderStyle&, RenderTreePosition&, RefPtr<RenderStyle>&& resolvedStyle);
-    void createRenderer(Element&, RenderStyle& inheritedStyle, RenderTreePosition&, RefPtr<RenderStyle>&& resolvedStyle);
+    void createRenderer(Element&, RenderTreePosition&, RefPtr<RenderStyle>&& resolvedStyle);
     void createRenderTreeForBeforeOrAfterPseudoElement(Element&, PseudoId, RenderTreePosition&);
     void createRenderTreeForChildren(ContainerNode&, RenderStyle&, RenderTreePosition&);
     void createRenderTreeForShadowRoot(ShadowRoot&);

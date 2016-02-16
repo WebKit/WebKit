@@ -188,24 +188,17 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
 }
 #endif
 
-void TreeResolver::createRenderer(Element& element, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, RefPtr<RenderStyle>&& resolvedStyle)
+void TreeResolver::createRenderer(Element& element, RenderTreePosition& renderTreePosition, RefPtr<RenderStyle>&& resolvedStyle)
 {
-    ASSERT(!element.renderer());
-
-    RefPtr<RenderStyle> style = resolvedStyle;
-
-    if (!shouldCreateRenderer(element, renderTreePosition.parent()))
-        return;
-
-    if (!style)
-        style = styleForElement(element, inheritedStyle);
+    ASSERT(shouldCreateRenderer(element, renderTreePosition.parent()));
+    ASSERT(resolvedStyle);
 
     RenderNamedFlowThread* parentFlowRenderer = 0;
 #if ENABLE(CSS_REGIONS)
-    parentFlowRenderer = moveToFlowThreadIfNeeded(element, *style);
+    parentFlowRenderer = moveToFlowThreadIfNeeded(element, *resolvedStyle);
 #endif
 
-    if (!element.rendererIsNeeded(*style))
+    if (!element.rendererIsNeeded(*resolvedStyle))
         return;
 
     renderTreePosition.computeNextSibling(element);
@@ -214,7 +207,7 @@ void TreeResolver::createRenderer(Element& element, RenderStyle& inheritedStyle,
         ? RenderTreePosition(*parentFlowRenderer, parentFlowRenderer->nextRendererForElement(element))
         : renderTreePosition;
 
-    RenderElement* newRenderer = element.createElementRenderer(style.releaseNonNull(), insertionPosition).leakPtr();
+    RenderElement* newRenderer = element.createElementRenderer(resolvedStyle.releaseNonNull(), insertionPosition).leakPtr();
     if (!newRenderer)
         return;
     if (!insertionPosition.canInsert(*newRenderer)) {
@@ -479,6 +472,8 @@ void TreeResolver::createRenderTreeForBeforeOrAfterPseudoElement(Element& curren
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 void TreeResolver::createRenderTreeForSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition)
 {
+    ASSERT(shouldCreateRenderer(slot, renderTreePosition.parent()));
+
     if (auto* assignedNodes = slot.assignedNodes()) {
         pushEnclosingScope();
         for (auto* child : *assignedNodes) {
@@ -500,12 +495,21 @@ void TreeResolver::createRenderTreeForSlotAssignees(HTMLSlotElement& slot, Rende
 
 void TreeResolver::createRenderTreeRecursively(Element& current, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, RefPtr<RenderStyle>&& resolvedStyle)
 {
+    ASSERT(!current.renderer());
+
     PostResolutionCallbackDisabler callbackDisabler(m_document);
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
+    bool shouldCallCreateRenderer = shouldCreateRenderer(current, renderTreePosition.parent());
+
+    RefPtr<RenderStyle> style = resolvedStyle;
+    if (!style)
+        style = styleForElement(current, inheritedStyle);
+
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (is<HTMLSlotElement>(current)) {
-        createRenderTreeForSlotAssignees(downcast<HTMLSlotElement>(current), inheritedStyle, renderTreePosition);
+        if (shouldCallCreateRenderer && current.rendererIsNeeded(*style))
+            createRenderTreeForSlotAssignees(downcast<HTMLSlotElement>(current), inheritedStyle, renderTreePosition);
         return;
     }
 #endif
@@ -513,7 +517,8 @@ void TreeResolver::createRenderTreeRecursively(Element& current, RenderStyle& in
     if (current.hasCustomStyleResolveCallbacks())
         current.willAttachRenderers();
 
-    createRenderer(current, inheritedStyle, renderTreePosition, WTFMove(resolvedStyle));
+    if (shouldCallCreateRenderer)
+        createRenderer(current, renderTreePosition, style.releaseNonNull());
 
     if (auto* renderer = current.renderer()) {
         SelectorFilterPusher selectorFilterPusher(scope().selectorFilter, current, SelectorFilterPusher::NoPush);

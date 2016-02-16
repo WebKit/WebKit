@@ -1,3 +1,16 @@
+2016-02-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r190430): WTFCrashWithSecurityImplication in:void SVGRootInlineBox::layoutCharactersInTextBoxes()
+        https://bugs.webkit.org/show_bug.cgi?id=154185
+
+        Reviewed by Ryosuke Niwa.
+        
+        Ensure that adding an HTMLSlotElement with text to an SVGTextElement will
+        not create a renderer and we won't crash.
+
+        * fast/shadow-dom/text-slot-child-crash-expected.txt: Added.
+        * fast/shadow-dom/text-slot-child-crash.svg: Added.
+
 2016-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Add tests for iframe and overflow scrollability after navigating back

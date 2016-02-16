@@ -1,3 +1,42 @@
+2016-02-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r190430): WTFCrashWithSecurityImplication in:void SVGRootInlineBox::layoutCharactersInTextBoxes()
+        https://bugs.webkit.org/show_bug.cgi?id=154185
+
+        Reviewed by Ryosuke Niwa.
+
+        This is a regression caused by adding support for HTMLSlotElement. The
+        crash happens when adding an HTMLSlotElement to anther element which should
+        not have it as a child like SVGTextElement for example. In this case, we
+        were creating a RenderText which should not be happen inside an SVG document.
+        The RenderText::createTextBox() was creating InlineTextBox for the slot's
+        text and attach it to the SVGRootInlineBox. In layoutCharactersInTextBoxes(),
+        the assumption is the inline box is either SVGInlineTextBox or SVGInlineFlowBox.
+        But since we have an InlineTextBox instead, the crash happens when casting
+        the InlineTextBox to SVGInlineFlowBox.
+
+        The fix is for createRenderTreeForSlotAssignees() to not create a renderer
+        when the parent element should not have a renderer for the this element.
+        This is the same thing we do for createRenderer() which handles the non
+        HTMLSlotElement case and which is called also from createRenderTreeRecursively().
+        
+        Test: fast/shadow-dom/text-slot-child-crash.svg
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::moveToFlowThreadIfNeeded):
+        (WebCore::Style::TreeResolver::createRenderer): Delete the check for
+        shouldCreateRenderer() and handling the case when resolvedStyle is null
+        since these are handled by the caller createRenderTreeRecursively().
+        
+        (WebCore::Style::TreeResolver::createRenderTreeForSlotAssignees):
+        Assert shouldCreateRenderer() is true for this element.
+        
+        (WebCore::Style::TreeResolver::createRenderTreeRecursively): Don't create
+        the renderer if shouldCreateRenderer() returns false. Also handle the case
+        when resolvedStyle is null and pass the new style to createRenderer().
+        
+        * style/StyleTreeResolver.h:
+
 2016-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Every RenderLayer should not have to remove itself from the scrollableArea set
