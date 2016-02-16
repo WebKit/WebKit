@@ -845,9 +845,6 @@ private:
         case NewArrayWithSize:
             compileNewArrayWithSize();
             break;
-        case NewTypedArray:
-            compileNewTypedArray();
-            break;
         case GetTypedArrayByteOffset:
             compileGetTypedArrayByteOffset();
             break;
@@ -4093,7 +4090,8 @@ private:
             
             LValue butterfly = m_out.sub(endOfStorage, payloadSize);
             
-            LValue object = allocateObject<JSArray>(structure, butterfly, failCase);
+            LValue object = allocateObject<JSArray>(
+                structure, butterfly, failCase);
             
             m_out.store32(publicLength, butterfly, m_heaps.Butterfly_publicLength);
             m_out.store32(vectorLength, butterfly, m_heaps.Butterfly_vectorLength);
@@ -4160,63 +4158,6 @@ private:
                 globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage)),
             m_out.constIntPtr(structure));
         setJSValue(vmCall(m_out.int64, m_out.operation(operationNewArrayWithSize), m_callFrame, structureValue, publicLength));
-    }
-
-    void compileNewTypedArray()
-    {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-        TypedArrayType type = m_node->typedArrayType();
-        Structure* structure = globalObject->typedArrayStructure(type);
-
-        LValue size = lowInt32(m_node->child1());
-
-        LBasicBlock smallEnoughCase = FTL_NEW_BLOCK(m_out, ("NewTypedArray small enough case"));
-        LBasicBlock nonZeroCase = FTL_NEW_BLOCK(m_out, ("NewTypedArray non-zero case"));
-        LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("NewTypedArray slow case"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("NewTypedArray continuation"));
-
-        m_out.branch(
-            m_out.above(size, m_out.constInt32(JSArrayBufferView::fastSizeLimit)),
-            rarely(slowCase), usually(smallEnoughCase));
-
-        LBasicBlock lastNext = m_out.appendTo(smallEnoughCase, nonZeroCase);
-
-        m_out.branch(m_out.notZero32(size), usually(nonZeroCase), rarely(slowCase));
-
-        m_out.appendTo(nonZeroCase, slowCase);
-
-        LValue byteSize = m_out.shl(m_out.zeroExtPtr(size), m_out.constInt32(logElementSize(type)));
-        if (elementSize(type) < 8) {
-            byteSize = m_out.bitAnd(
-                m_out.add(byteSize, m_out.constIntPtr(7)),
-                m_out.constIntPtr(~static_cast<intptr_t>(7)));
-        }
-        
-        LValue storage = allocateBasicStorage(byteSize, slowCase);
-
-        LValue fastResultValue = allocateObject<JSArrayBufferView>(structure, storage, slowCase);
-
-        m_out.storePtr(storage, fastResultValue, m_heaps.JSArrayBufferView_vector);
-        m_out.store32(size, fastResultValue, m_heaps.JSArrayBufferView_length);
-        m_out.store32(m_out.constInt32(FastTypedArray), fastResultValue, m_heaps.JSArrayBufferView_mode);
-
-        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
-        m_out.jump(continuation);
-
-        m_out.appendTo(slowCase, continuation);
-
-        LValue slowResultValue = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
-                    operationNewTypedArrayWithSizeForType(type), locations[0].directGPR(),
-                    CCallHelpers::TrustedImmPtr(structure), locations[1].directGPR());
-            },
-            size);
-        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(m_out.intPtr, fastResult, slowResult));
     }
     
     void compileAllocatePropertyStorage()
@@ -7990,11 +7931,6 @@ private:
         m_out.storePtr(newRemaining, m_out.absolute(&allocator.m_currentRemaining));
         return m_out.sub(
             m_out.loadPtr(m_out.absolute(&allocator.m_currentPayloadEnd)), newRemaining);
-    }
-
-    LValue allocateBasicStorage(LValue size, LBasicBlock slowPath)
-    {
-        return m_out.sub(allocateBasicStorageAndGetEnd(size, slowPath), size);
     }
     
     LValue allocateObject(Structure* structure)
