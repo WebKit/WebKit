@@ -47,6 +47,7 @@ public:
 
     enum RoleMode : int8_t {
         SameAsRep,
+        ForceLateUseUnlessRecoverable,
         ForceLateUse
     };
 
@@ -59,7 +60,8 @@ protected:
     // subclasses that implement that.
     void forEachArgImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
-        Air::Inst&, RoleMode, const ScopedLambda<Air::Inst::EachArgCallback>&);
+        Air::Inst&, RoleMode, Optional<unsigned> firstRecoverableIndex,
+        const ScopedLambda<Air::Inst::EachArgCallback>&);
     
     bool isValidImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,

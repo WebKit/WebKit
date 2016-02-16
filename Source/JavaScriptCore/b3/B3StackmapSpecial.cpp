@@ -73,7 +73,8 @@ const RegisterSet& StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
 
 void StackmapSpecial::forEachArgImpl(
     unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
-    Inst& inst, RoleMode roleMode, const ScopedLambda<Inst::EachArgCallback>& callback)
+    Inst& inst, RoleMode roleMode, Optional<unsigned> firstRecoverableIndex,
+    const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
@@ -89,6 +90,13 @@ void StackmapSpecial::forEachArgImpl(
 
         Arg::Role role;
         switch (roleMode) {
+        case ForceLateUseUnlessRecoverable:
+            ASSERT(firstRecoverableIndex);
+            if (arg != inst.args[*firstRecoverableIndex] && arg != inst.args[*firstRecoverableIndex + 1]) {
+                role = Arg::LateColdUse;
+                break;
+            }
+            FALLTHROUGH;
         case SameAsRep:
             switch (child.rep().kind()) {
             case ValueRep::WarmAny:
@@ -272,6 +280,9 @@ void printInternal(PrintStream& out, StackmapSpecial::RoleMode mode)
     switch (mode) {
     case StackmapSpecial::SameAsRep:
         out.print("SameAsRep");
+        return;
+    case StackmapSpecial::ForceLateUseUnlessRecoverable:
+        out.print("ForceLateUseUnlessRecoverable");
         return;
     case StackmapSpecial::ForceLateUse:
         out.print("ForceLateUse");

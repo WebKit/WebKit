@@ -2120,6 +2120,7 @@ private:
             switch (m_value->opcode()) {
             case CheckAdd:
                 opcode = opcodeForType(BranchAdd32, BranchAdd64, m_value->type());
+                stackmapRole = StackmapSpecial::ForceLateUseUnlessRecoverable;
                 commutativity = Commutative;
                 break;
             case CheckSub:

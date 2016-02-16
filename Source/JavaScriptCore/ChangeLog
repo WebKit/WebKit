@@ -1,3 +1,54 @@
+2016-02-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] BranchAdd can override arguments of its stackmap
+        https://bugs.webkit.org/show_bug.cgi?id=154274
+
+        Reviewed by Filip Pizlo.
+
+        With the 3 operands BranchAdd added in r196513, we can run into
+        a register allocation such that the destination register is also
+        used by a value in the stack map.
+
+        It use to be that BranchAdd was a 2 operand instruction.
+        In that form, the destination is also one of the source and
+        can be recovered through Sub. There is no conflict between
+        destination and the stackmap.
+
+        After r196513, the destination has its own value. It is uncommon
+        on x86 because of the aggressive aliasing but that can happen.
+        On ARM, that's a standard form since there is no need for aliasing.
+
+        Since the arguments of the stackmap are of type EarlyUse,
+        they appeared as not interfering with the destination. When the register
+        allocator gives the same register to the destination and something in
+        the stack map, the result of BranchAdd destroys the value kept alive
+        for the stackmap.
+
+        In this patch, I introduce a concept very similar to ForceLateUse
+        to keep the argument of the stackmap live in CheckAdd. The new
+        role is "ForceLateUseUnlessRecoverable".
+
+        In this mode, anything that is not also an input argument becomes
+        LateUse. As such, it interferes with the destination of CheckAdd.
+        The arguments are recovered by the slow patch of CheckAdd. They
+        remain Early use.
+
+        This new modes ensure that destination can be aliased to the source
+        when that's useful, while making sure it is not aliased with another
+        value that needs to be live on exit.
+
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::forEachArg):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (WTF::printInternal):
+        * b3/B3StackmapSpecial.h:
+        * b3/B3StackmapValue.h:
+
 2016-02-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Web Workers have no access to console for debugging

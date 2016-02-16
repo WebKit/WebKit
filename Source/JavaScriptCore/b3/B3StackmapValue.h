@@ -91,6 +91,11 @@ public:
     {
         appendVectorWithRep(vector, ValueRep::ColdAny);
     }
+    template<typename VectorType>
+    void appendLateColdAnys(const VectorType& vector)
+    {
+        appendVectorWithRep(vector, ValueRep::LateColdAny);
+    }
 
     // This is a helper for something you might do a lot of: append a value that should be constrained
     // to SomeRegister.

@@ -51,7 +51,7 @@ void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgC
     if (inst.origin->type() != Void)
         callback(inst.args[argIndex++], Arg::Def, inst.origin->airType(), inst.origin->airWidth());
 
-    forEachArgImpl(0, argIndex, inst, SameAsRep, callback);
+    forEachArgImpl(0, argIndex, inst, SameAsRep, Nullopt, callback);
     argIndex += inst.origin->numChildren();
 
     for (unsigned i = inst.origin->as<PatchpointValue>()->numGPScratchRegisters; i--;)

@@ -113,7 +113,11 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
             unsigned index = &arg - &hidden.args[0];
             callback(inst.args[1 + index], role, type, width);
         });
-    forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, m_stackmapRole, callback);
+
+    Optional<unsigned> firstRecoverableIndex;
+    if (m_checkOpcode == BranchAdd32 || m_checkOpcode == BranchAdd64)
+        firstRecoverableIndex = 1;
+    forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, m_stackmapRole, firstRecoverableIndex, callback);
 }
 
 bool CheckSpecial::isValid(Inst& inst)
