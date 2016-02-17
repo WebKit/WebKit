@@ -1,3 +1,9 @@
+2016-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix GTK build after r196720.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+
 2016-02-17  Anders Carlsson  <andersca@apple.com>
 
         Need listener-based version of runBeforeUnloadConfirmPanel

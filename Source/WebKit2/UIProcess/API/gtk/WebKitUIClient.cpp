@@ -86,9 +86,9 @@ private:
 
     virtual bool canRunBeforeUnloadConfirmPanel() const override { return true; }
 
-    virtual bool runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*) override
+    virtual void runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*, std::function<void (bool)> completionHandler) override
     {
-        return webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8());
+        completionHandler(webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8()));
     }
 
     virtual void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object*) override
