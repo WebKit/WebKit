@@ -157,6 +157,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 - (void)_handlePendingInitialPosition:(NSTimer*)timer
 {
     ASSERT_UNUSED(timer, timer == _sendLastPositionAsynchronouslyTimer);
+    ASSERT(WebThreadIsCurrent());
 
     if (_lastPosition) {
         Vector<WebView*> webViewsCopy;
@@ -196,12 +197,10 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     // We send the lastPosition asynchronously because WebKit does not handle updating the position synchronously.
     // On WebKit2, we could skip that and send the position directly from the UIProcess.
     _pendingInitialPositionWebView.add(webView);
-    if (!_sendLastPositionAsynchronouslyTimer)
-        _sendLastPositionAsynchronouslyTimer = [NSTimer scheduledTimerWithTimeInterval:0
-                                                                                target:self
-                                                                              selector:@selector(_handlePendingInitialPosition:)
-                                                                              userInfo:nil
-                                                                               repeats:NO];
+    if (!_sendLastPositionAsynchronouslyTimer) {
+        _sendLastPositionAsynchronouslyTimer = [NSTimer timerWithTimeInterval:0 target:self selector:@selector(_handlePendingInitialPosition:) userInfo:nil repeats:NO];
+        [WebThreadNSRunLoop() addTimer:_sendLastPositionAsynchronouslyTimer.get() forMode:NSDefaultRunLoopMode];
+    }
 }
 
 - (void)unregisterWebView:(WebView *)webView

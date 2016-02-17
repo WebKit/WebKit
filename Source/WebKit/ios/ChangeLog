@@ -1,3 +1,20 @@
+2016-02-17  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS WK1] NSTimer in WebGeolocationProviderIOS.mm fires on the main thread without the WebThreadLock
+        <http://webkit.org/b/154347>
+        <rdar://problem/19360382>
+
+        Reviewed by Andy Estes.
+
+        This isn't testable because the GeolocationClientMock in WebCore
+        bypasses this code in WebKit1.
+
+        * Misc/WebGeolocationProviderIOS.mm:
+        (-[WebGeolocationProviderIOS _handlePendingInitialPosition:]):
+        Assert that this is always called on the WebThread.
+        (-[WebGeolocationProviderIOS registerWebView:]): Register the
+        NSTimer on the WebThread NSRunLoop.
+
 2016-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove TextRun::allowsRoundingHacks()
