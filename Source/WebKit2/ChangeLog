@@ -1,3 +1,58 @@
+2016-02-16  Dean Jackson  <dino@apple.com>
+
+        Allow double tap to zoom in fast-click pages
+        https://bugs.webkit.org/show_bug.cgi?id=154318
+        <rdar://problem/24223767>
+
+        Reviewed by Simon Fraser and Benjamin Poulain.
+        
+        Most of the patch comes from Jon Lee.
+
+        Our fast-click algorithm exposed a number of cases where
+        people missed the double-tap-to-zoom behaviour. In particular,
+        when you double tap on a large body of text, typical in
+        blogs and articles.
+
+        This patch enhances the algorithm to have a parallel
+        double-tap gesture recognizer in the situations where
+        fast-click is enabled. This new gesture recongizer does
+        not cause the single tap to block for 350ms, so clicks
+        are still dispatched fast. If it fires, we already have
+        some information about whether we have a pending double
+        tap, based on the first tap.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::disableDoubleTapGesturesDuringTapIfNecessary): Remove the optimization
+        that only told the content view to disable on pages that allowed double taps. We now allow
+        them even on fast click pages.
+
+        * UIProcess/ios/WKContentViewInteraction.h: Add the new UITapGestureRecognizer for double taps
+        in fast click pages. This is called nonBlockingDoubleTapGestureRecognizer because, unlike
+        the existing DoubleTapGestureRecognizer, this one does not force the singleTapRecognizer
+        to wait.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]): Set up the new UITapGestureRecognizer.
+        (-[WKContentView cleanupInteraction]): And remove it when we're done.
+        (-[WKContentView _removeDefaultGestureRecognizers]): Ditto.
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView _inspectorNodeSearchRecognized:]): Something happened, we are no longer in
+        a potential double tap situation.
+        (-[WKContentView _disableDoubleTapGesturesDuringTapIfNecessary:]): Remove the check
+        for potential tap in progress.
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _highlightLongPressRecognized:]): Again, something happened, so we are
+        no longer in a double tap situation.
+        (-[WKContentView _longPressRecognized:]): Ditto.
+        (-[WKContentView _singleTapRecognized:]): Ditto.
+        (-[WKContentView _doubleTapRecognized:]): Ditto.
+        (-[WKContentView _resetIsDoubleTapPending]):
+        (-[WKContentView _fastDoubleTapRecognized:]): We're now pending a double tap.
+        (-[WKContentView _twoFingerDoubleTapRecognized:]):
+        (-[WKContentView _didNotHandleTapAsClick:]): If we get here and we have a pending
+        double tap, then trigger a zoom operation.
+        (-[WKContentView _setDoubleTapGesturesEnabled:]):
+
 2016-02-16  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix.

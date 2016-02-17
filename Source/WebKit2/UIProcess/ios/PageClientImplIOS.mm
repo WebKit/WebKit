@@ -261,9 +261,6 @@ void PageClientImpl::didChangeContentSize(const WebCore::IntSize&)
 
 void PageClientImpl::disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
 {
-    if (!m_webView._allowsDoubleTapGestures)
-        return;
-
     [m_contentView _disableDoubleTapGesturesDuringTapIfNecessary:requestID];
 }
 
