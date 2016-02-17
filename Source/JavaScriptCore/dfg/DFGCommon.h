@@ -36,12 +36,9 @@
 namespace JSC { namespace DFG {
 
 // We are in the middle of a transition from LLVM to B3 as the backend for the FTL. This flag will go
-// away once that transition is finished. For now, we enable B3 only on some platforms.
-#if (CPU(X86_64) || CPU(ARM64)) && ENABLE(FTL_JIT)
+// away once that transition is finished. For now, we enable B3 by default but we still have some old
+// LLVM code that hasn't been removed yet.
 #define FTL_USES_B3 1
-#else
-#define FTL_USES_B3 0
-#endif
 
 struct Node;
 

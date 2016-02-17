@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-#if FTL_USES_B3
+#if ENABLE(FTL_JIT)
 namespace B3 {
 class PCToOriginMap;
 }
@@ -56,7 +56,7 @@ public:
     PCToCodeOriginMapBuilder(VM&);
     PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder&& other);
 
-#if FTL_USES_B3
+#if ENABLE(FTL_JIT)
     PCToCodeOriginMapBuilder(VM&, B3::PCToOriginMap&&);
 #endif
 

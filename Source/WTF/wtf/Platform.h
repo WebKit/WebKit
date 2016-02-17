@@ -782,7 +782,7 @@
 #endif
 
 /* This controls whether B3 is built. It will not be used unless FTL_USES_B3 is enabled. */
-#if (CPU(X86_64) || CPU(ARM64)) && ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT)
 #define ENABLE_B3_JIT 1
 #endif
 

@@ -104,7 +104,7 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder&& ot
     , m_shouldBuildMapping(other.m_shouldBuildMapping)
 { }
 
-#if FTL_USES_B3
+#if ENABLE(FTL_JIT)
 PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(VM& vm, B3::PCToOriginMap&& b3PCToOriginMap)
     : m_vm(vm)
     , m_shouldBuildMapping(vm.shouldBuilderPCToCodeOriginMapping())
