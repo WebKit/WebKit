@@ -4,9 +4,22 @@ class ResultsTable extends ComponentBase {
         super(name);
         this._repositoryList = [];
         this._valueFormatter = null;
+        this._rangeSelectorLabels = null;
+        this._rangeSelectorCallback = null;
+        this._selectedRange = {};
     }
 
     setValueFormatter(valueFormatter) { this._valueFormatter = valueFormatter; }
+    setRangeSelectorLabels(labels) { this._rangeSelectorLabels = labels; }
+    setRangeSelectorCallback(callback) { this._rangeSelectorCallback = callback; }
+    selectedRange() { return this._selectedRange; }
+
+    _rangeSelectorClicked(label, row)
+    {
+        this._selectedRange[label] = row;
+        if (this._rangeSelectorCallback)
+            this._rangeSelectorCallback();
+    }
 
     render()
     {
@@ -23,12 +36,21 @@ class ResultsTable extends ComponentBase {
         var barGraphGroup = new BarGraphGroup(this._valueFormatter);
         var element = ComponentBase.createElement;
         var self = this;
+        var hasGroupHeading = false;
         var tableBodies = rowGroups.map(function (group) {
             var groupHeading = group.heading;
             var revisionSupressionCount = {};
+            hasGroupHeading = !!groupHeading;
 
             return element('tbody', group.rows.map(function (row, rowIndex) {
                 var cells = [];
+
+                if (self._rangeSelectorLabels) {
+                    self._selectedRange = {};
+                    for (var label of self._rangeSelectorLabels)
+                        cells.push(element('td', element('input',
+                            {type: 'radio', name: label, onchange: self._rangeSelectorClicked.bind(self, label, row)})));
+                }
 
                 if (groupHeading !== undefined && !rowIndex)
                     cells.push(element('th', {rowspan: group.rows.length}, groupHeading));
@@ -47,6 +69,7 @@ class ResultsTable extends ComponentBase {
 
         this.renderReplace(this.content().querySelector('table'), [
             element('thead', [
+                this._rangeSelectorLabels ? this._rangeSelectorLabels.map(function (label) { return element('th', label) }) : [],
                 this.heading(),
                 element('th', 'Result'),
                 repositoryList.map(function (repository) { return element('th', repository.label()); }),

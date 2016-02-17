@@ -1,3 +1,51 @@
+2016-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        v3 UI has the capability to schedule an A/B testing in a specific range
+        https://bugs.webkit.org/show_bug.cgi?id=154329
+
+        Reviewed by Chris Dumez.
+
+        Extended AnalysisTaskChartPane and ResultsTable so that users can select a range of points in either
+        the overview chart pane and the results viewer table. Extracted TestGroupForm out of the analysis task
+        page and used right below those two components in the analysis task page.
+
+        * public/v3/components/results-table.js:
+        (ResultsTable):
+        (ResultsTable.prototype.setRangeSelectorLabels): Added.
+        (ResultsTable.prototype.setRangeSelectorCallback): Added.
+        (ResultsTable.prototype.selectedRange): Added.
+        (ResultsTable.prototype._rangeSelectorClicked): Added.
+        (ResultsTable.prototype.render): Generate radio boxes to select a range.
+
+        * public/v3/components/test-group-form.js:
+        (TestGroupForm):
+        (TestGroupForm.prototype.setStartCallback): Added.
+        (TestGroupForm.prototype.setNeedsName): Added.
+        (TestGroupForm.prototype.setDisabled): Added.
+        (TestGroupForm.prototype.setLabel): Added.
+        (TestGroupForm.prototype.setRepetitionCount): Added.
+        (TestGroupForm.prototype._submitted): Added.
+        (TestGroupForm.htmlTemplate): Extracted from AnalysisTaskPage.htmlTemplate.
+
+        * public/v3/index.html:
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane.prototype._mainSelectionDidChange): Added. Delegates the work to AnalysisTaskPage.
+        (AnalysisTaskChartPane.prototype.selectedPoints): Added.
+        (AnalysisTaskPage):
+        (AnalysisTaskPage.prototype.title):
+        (AnalysisTaskPage.prototype.render):
+        (AnalysisTaskPage.prototype._renderTestGroupDetails): Use TestGroupForm's methods instead of mutating DOM. 
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup):
+        (AnalysisTaskPage.prototype._chartSelectionDidChange): Added.
+        (AnalysisTaskPage.prototype._createNewTestGroupFromChart): Added.
+        (AnalysisTaskPage.prototype._selectedRowInAnalysisResultsViewer): Added.
+        (AnalysisTaskPage.prototype._createNewTestGroupFromViewer): Added.
+        (AnalysisTaskPage.prototype._createRetryNameForTestGroup):
+        (AnalysisTaskPage.prototype._createTestGroupAfterVerifyingRootSetList): Extracted from _retryCurrentTestGroup
+        so that we can call it in _createNewTestGroupFromChart and _createNewTestGroupFromViewer.
+        (AnalysisTaskPage.htmlTemplate):
+
 2016-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extract the code specific to v2 UI out of shared statistics.js
