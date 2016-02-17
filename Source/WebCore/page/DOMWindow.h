@@ -34,6 +34,7 @@
 #include "Supplementable.h"
 #include <functional>
 #include <memory>
+#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace Inspector {
@@ -135,7 +136,7 @@ namespace WebCore {
         bool allowPopUp(); // Call on first window, not target window.
         static bool allowPopUp(Frame* firstFrame);
         static bool canShowModalDialog(const Frame*);
-        static bool canShowModalDialogNow(const Frame*);
+        WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
 
         // DOM Level 0
 
@@ -370,6 +371,7 @@ namespace WebCore {
 
         bool m_shouldPrintWhenFinishedLoading;
         bool m_suspendedForDocumentSuspension;
+        Optional<bool> m_canShowModalDialogOverride;
 
         HashSet<DOMWindowProperty*> m_properties;
 

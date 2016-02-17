@@ -373,20 +373,22 @@ bool DOMWindow::canShowModalDialog(const Frame* frame)
 {
     if (!frame)
         return false;
-    Page* page = frame->page();
-    if (!page)
-        return false;
-    return page->chrome().canRunModal();
+
+    // Override support for layout testing purposes.
+    if (auto* document = frame->document()) {
+        if (auto* window = document->domWindow()) {
+            if (window->m_canShowModalDialogOverride)
+                return window->m_canShowModalDialogOverride.value();
+        }
+    }
+
+    auto* page = frame->page();
+    return page ? page->chrome().canRunModal() : false;
 }
 
-bool DOMWindow::canShowModalDialogNow(const Frame* frame)
+void DOMWindow::setCanShowModalDialogOverride(bool allow)
 {
-    if (!frame)
-        return false;
-    Page* page = frame->page();
-    if (!page)
-        return false;
-    return page->chrome().canRunModal();
+    m_canShowModalDialogOverride = allow;
 }
 
 DOMWindow::DOMWindow(Document* document)
@@ -2240,7 +2242,7 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
         return;
     }
 
-    if (!canShowModalDialogNow(m_frame) || !firstWindow.allowPopUp())
+    if (!canShowModalDialog(m_frame) || !firstWindow.allowPopUp())
         return;
 
     RefPtr<Frame> dialogFrame = createWindow(urlString, emptyAtom, parseDialogFeatures(dialogFeaturesString, screenAvailableRect(m_frame->view())), activeWindow, *firstFrame, *m_frame, WTFMove(prepareDialogFunction));

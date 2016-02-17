@@ -580,6 +580,16 @@ void Internals::setOverrideCachePolicy(const String& policy)
     frame()->loader().setOverrideCachePolicyForTesting(stringToResourceRequestCachePolicy(policy));
 }
 
+void Internals::setCanShowModalDialogOverride(bool allow, ExceptionCode& ec)
+{
+    if (!contextDocument() || !contextDocument()->domWindow()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    contextDocument()->domWindow()->setCanShowModalDialogOverride(allow);
+}
+
 static ResourceLoadPriority stringToResourceLoadPriority(const String& policy)
 {
     if (policy == "ResourceLoadPriorityVeryLow")

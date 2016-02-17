@@ -275,16 +275,18 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
             slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
         return true;
     }
+
+    if (propertyName == exec->propertyNames().showModalDialog) {
+        if (Base::getOwnPropertySlot(thisObject, exec, propertyName, slot))
+            return true;
+        if (!DOMWindow::canShowModalDialog(frame))
+            return jsDOMWindowGetOwnPropertySlotNamedItemGetter(thisObject, *frame, exec, propertyName, slot);
+    }
+
     // (2) Regular own properties.
     if (getStaticPropertySlot<JSDOMWindow, Base>(exec, *JSDOMWindow::info()->staticPropHashTable, thisObject, propertyName, slot))
         return true;
-    // FIXME: this looks pretty bogus. It seems highly likely that if !canShowModalDialog the
-    // funtion should still be present, or should be omitted entirely - present but reads as
-    // undefined with unspecified attributes is likely wrong.
-    if (propertyName == exec->propertyNames().showModalDialog && !DOMWindow::canShowModalDialog(frame)) {
-        slot.setUndefined();
-        return true;
-    }
+
 #if ENABLE(INDEXED_DATABASE)
     // FIXME: With generated JS bindings built on static property tables there is no way to
     // completely remove a generated property at runtime. So to completely disable IndexedDB

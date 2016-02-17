@@ -98,6 +98,7 @@ public:
     bool isSharingStyleSheetContents(Element* linkA, Element* linkB);
     bool isStyleSheetLoadingSubresources(Element* link);
     void setOverrideCachePolicy(const String&);
+    void setCanShowModalDialogOverride(bool allow, ExceptionCode&);
     void setOverrideResourceLoadPriority(const String&);
     void setStrictRawResourceValidationPolicyDisabled(bool);
 

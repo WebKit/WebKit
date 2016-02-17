@@ -1,3 +1,41 @@
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196648): window.showModalDialog is no longer undefined if the client does not allow showing modal dialog
+        https://bugs.webkit.org/show_bug.cgi?id=154330
+
+        Reviewed by Gavin Barraclough.
+
+        window.showModalDialog is no longer undefined if the client does not
+        allow showing modal dialog after r196648. This patch fixes the issue
+        and add test coverage for this.
+
+        Test: fast/dom/Window/forbid-showModalDialog.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        - Move the DOMWindow::canShowModalDialog() check *before* checking
+          for static properties as showModalDialog is now in the static
+          property table after r196648.
+        - Add check for Base::getOwnPropertySlot() first to support overriding
+          window.showModalDialog (This behavior matches Firefox).
+        - Return false if DOMWindow::canShowModalDialog() returns false as this
+          seems cleaner than claiming that the property is there but undefined.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::canShowModalDialogNow): Deleted.
+        This was indentical to canShowModalDialog().
+
+        (WebCore::DOMWindow::canShowModalDialog):
+        (WebCore::DOMWindow::setCanShowModalDialogOverride):
+        (WebCore::DOMWindow::showModalDialog):
+        * page/DOMWindow.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setCanShowModalDialogOverride):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add support for overriding the ChromeClient's canShowModalDialog
+        decision and hook it up to Internals to add layout test coverage.
+
 2016-02-17  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: More WK2 IPC Scaffolding.

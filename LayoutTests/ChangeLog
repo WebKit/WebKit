@@ -1,3 +1,17 @@
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196648): window.showModalDialog is no longer undefined if the client does not allow showing modal dialog
+        https://bugs.webkit.org/show_bug.cgi?id=154330
+
+        Reviewed by Gavin Barraclough.
+
+        Add layout test to make sure that window.showModalDialog is undefined
+        when the client does not allow showing modal dialog and to check that
+        window.showModalDialog can be shadowed.
+
+        * fast/dom/Window/forbid-showModalDialog-expected.txt: Added.
+        * fast/dom/Window/forbid-showModalDialog.html: Added.
+
 2016-02-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196675.

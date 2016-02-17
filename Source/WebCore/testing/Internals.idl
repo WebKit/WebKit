@@ -437,4 +437,6 @@ enum AutoFillButtonType {
 
     DOMString resourceLoadStatisticsForOrigin(DOMString domain);
     void setResourceLoadStatisticsEnabled(boolean enable);
+
+    [RaisesException] void setCanShowModalDialogOverride(boolean allow);
 };

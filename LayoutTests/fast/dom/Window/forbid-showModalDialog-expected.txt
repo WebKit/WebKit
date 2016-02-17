@@ -1,0 +1,31 @@
+Tests that Window.showModalDialog is undefined if the client does not allow showing modal dialogs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Make sure window.showModalDialog is undefined when modal dialogs are not allowed.
+internals.setCanShowModalDialogOverride(false)
+PASS window.showModalDialog is undefined
+PASS window.hasOwnProperty('showModalDialog') is false
+
+Tests having a named property with name 'showModalDialog'.
+document.body.append(testFrame)
+PASS window.showModalDialog is testFrame.contentWindow
+testFrame.remove()
+PASS window.showModalDialog is undefined
+
+Tests that window.showModalDialog is no longer undefined when modal dialogs become allowed.
+internals.setCanShowModalDialogOverride(true)
+PASS window.showModalDialog is not undefined
+PASS window.hasOwnProperty('showModalDialog') is true
+PASS window.showModalDialog is an instance of Function
+
+Make sure window.showModalDialog can be shadowed.
+window.showModalDialog = 1
+PASS window.showModalDialog is 1
+delete window.showModalDialog
+PASS window.showModalDialog is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
