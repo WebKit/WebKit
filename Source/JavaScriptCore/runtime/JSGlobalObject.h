@@ -396,7 +396,6 @@ public:
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    bool hasOwnPropertyForWrite(ExecState*, PropertyName);
     JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     JS_EXPORT_PRIVATE static void defineGetter(JSObject*, ExecState*, PropertyName, JSObject* getterFunc, unsigned attributes);
@@ -715,15 +714,6 @@ inline JSGlobalObject* asGlobalObject(JSValue value)
 {
     ASSERT(asObject(value)->isGlobalObject());
     return jsCast<JSGlobalObject*>(asObject(value));
-}
-
-inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, PropertyName propertyName)
-{
-    PropertySlot slot(this);
-    if (Base::getOwnPropertySlot(this, exec, propertyName, slot))
-        return true;
-    bool slotIsWriteable;
-    return symbolTableGet(this, propertyName, slot, slotIsWriteable);
 }
 
 inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0, JSValue newTarget = JSValue())

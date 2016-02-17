@@ -356,17 +356,6 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
         return;
     }
 
-    // Optimization: access JavaScript global variables directly before involving the DOM.
-    if (thisObject->JSGlobalObject::hasOwnPropertyForWrite(exec, propertyName)) {
-        JSGlobalObject::put(thisObject, exec, propertyName, value, slot);
-        return;
-    }
-
-    if (!thisObject->staticFunctionsReified()) {
-        if (lookupPut(exec, propertyName, thisObject, value, *s_info.staticPropHashTable, slot))
-            return;
-    }
-
     Base::put(thisObject, exec, propertyName, value, slot);
 }
 
@@ -375,12 +364,6 @@ void JSDOMWindow::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSVa
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
     if (!thisObject->wrapped().frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped()))
         return;
-    
-    // Optimization: access JavaScript global variables directly before involving the DOM.
-    if (thisObject->JSGlobalObject::hasOwnPropertyForWrite(exec, Identifier::from(exec, index))) {
-        JSGlobalObject::putByIndex(thisObject, exec, index, value, shouldThrow);
-        return;
-    }
     
     Base::putByIndex(thisObject, exec, index, value, shouldThrow);
 }
