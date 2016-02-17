@@ -1,3 +1,17 @@
+2016-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        Copy http body when being redirected with 308 with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154348
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/navigation/post-308-response-expected.txt: Copied from LayoutTests/http/tests/navigation/post-307-response-expected.txt.
+        * http/tests/navigation/post-308-response.html: Copied from LayoutTests/http/tests/navigation/post-307-response.html.
+        * http/tests/navigation/resources/redirection-response.php:
+        Added a test verifying data is being sent with post requests after being redirected with an http status code of 308.
+        We already had non-CORS tests for 301, 302, 303, and 307, and we already had CORS tests for 301, 302, 303, 307, and 308.
+        This fills in the missing non-CORS test.
+
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196648): window.showModalDialog is no longer undefined if the client does not allow showing modal dialog

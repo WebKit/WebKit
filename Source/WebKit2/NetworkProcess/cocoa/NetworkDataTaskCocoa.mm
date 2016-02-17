@@ -88,7 +88,7 @@ NetworkDataTask::~NetworkDataTask()
 
 void NetworkDataTask::willPerformHTTPRedirection(const WebCore::ResourceResponse& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler completionHandler)
 {
-    if (redirectResponse.httpStatusCode() == 307) {
+    if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
         WebCore::FormData* body = m_firstRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"))

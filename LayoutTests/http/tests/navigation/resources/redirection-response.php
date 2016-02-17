@@ -24,6 +24,10 @@ switch ($status_code) {
         header("HTTP/1.1 307 Temporary Redirect");
         header("Location: http://" . $host . $uri);
         break;
+    case 308:
+        header("HTTP/1.1 308 Permanent Redirect");
+        header("Location: http://" . $host . $uri);
+        break;
     default:
         header("HTTP/1.1 500 Internal Server Error");
         echo "Unexpected status code ($status_code) received.";

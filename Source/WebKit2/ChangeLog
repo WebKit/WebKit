@@ -1,3 +1,16 @@
+2016-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        Copy http body when being redirected with 308 with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154348
+
+        Reviewed by Brady Eidson.
+        
+        This fixes http/tests/security/cors-post-redirect-308.html
+        which used to assert in ResourceRequest::doUpdateResourceHTTPBody
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::willPerformHTTPRedirection):
+
 2016-02-17  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: More WK2 IPC Scaffolding.
