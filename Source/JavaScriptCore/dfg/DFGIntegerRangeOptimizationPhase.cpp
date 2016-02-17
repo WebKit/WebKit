@@ -1203,6 +1203,43 @@ public:
                 // optimize by using the relationships before the operation, but we need to
                 // call executeNode() before we optimize.
                 switch (node->op()) {
+                case ArithAbs: {
+                    if (node->child1().useKind() != Int32Use)
+                        break;
+
+                    auto iter = m_relationships.find(node->child1().node());
+                    if (iter == m_relationships.end())
+                        break;
+
+                    int minValue = std::numeric_limits<int>::min();
+                    int maxValue = std::numeric_limits<int>::max();
+                    for (Relationship relationship : iter->value) {
+                        minValue = std::max(minValue, relationship.minValueOfLeft());
+                        maxValue = std::min(maxValue, relationship.maxValueOfLeft());
+                    }
+
+                    executeNode(block->at(nodeIndex));
+
+                    if (minValue >= 0) {
+                        node->convertToIdentityOn(node->child1().node());
+                        changed = true;
+                        break;
+                    }
+                    if (maxValue <= 0) {
+                        node->convertToArithNegate();
+                        if (minValue > std::numeric_limits<int>::min())
+                            node->setArithMode(Arith::Unchecked);
+                        changed = true;
+                        break;
+                    }
+                    if (minValue > std::numeric_limits<int>::min()) {
+                        node->setArithMode(Arith::Unchecked);
+                        changed = true;
+                        break;
+                    }
+
+                    break;
+                }
                 case ArithAdd: {
                     if (!node->isBinaryUseKind(Int32Use))
                         break;
@@ -1307,6 +1344,13 @@ private:
         case CheckInBounds: {
             setRelationship(Relationship::safeCreate(node->child1().node(), node->child2().node(), Relationship::LessThan));
             setRelationship(Relationship::safeCreate(node->child1().node(), m_zero, Relationship::GreaterThan, -1));
+            break;
+        }
+
+        case ArithAbs: {
+            if (node->child1().useKind() != Int32Use)
+                break;
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             break;
         }
             

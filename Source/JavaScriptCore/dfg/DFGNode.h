@@ -650,6 +650,12 @@ struct Node {
         child2() = Edge();
         m_op = ArithSqrt;
     }
+
+    void convertToArithNegate()
+    {
+        ASSERT(m_op == ArithAbs && child1().useKind() == Int32Use);
+        m_op = ArithNegate;
+    }
     
     JSValue asJSValue()
     {
@@ -1678,6 +1684,7 @@ struct Node {
     bool hasArithMode()
     {
         switch (op()) {
+        case ArithAbs:
         case ArithAdd:
         case ArithSub:
         case ArithNegate:

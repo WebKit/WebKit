@@ -334,6 +334,10 @@ private:
         case ArithAbs: {
             if (m_graph.unaryArithShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                    node->setArithMode(Arith::Unchecked);
+                else
+                    node->setArithMode(Arith::CheckOverflow);
                 break;
             }
             fixDoubleOrBooleanEdge(node->child1());

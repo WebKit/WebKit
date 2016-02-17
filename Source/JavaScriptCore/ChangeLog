@@ -1,3 +1,40 @@
+2016-02-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove the overflow check on ArithAbs when possible
+        https://bugs.webkit.org/show_bug.cgi?id=154325
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds support for ArithMode for ArithAbs.
+
+        It is useful for kraken tests where Math.abs() is used
+        on values for which the range is known.
+
+        For example, imaging-gaussian-blur has two Math.abs() with
+        integers that are always in a small range around zero.
+        The IntegerRangeOptimizationPhase detects the range correctly
+        so we can just update the ArithMode depending on the input.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToArithNegate):
+        (JSC::DFG::Node::hasArithMode):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAbs):
+        * tests/stress/arith-abs-integer-range-optimization.js: Added.
+        (negativeRange):
+        (negativeRangeIncludingZero):
+        (negativeRangeWithOverflow):
+        (positiveRange):
+        (positiveRangeIncludingZero):
+        (rangeWithoutOverflow):
+        * tests/stress/arith-abs-with-bitwise-or-zero.js: Added.
+        (opaqueAbs):
+
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
         SES selftest page crashes on nightly r196694

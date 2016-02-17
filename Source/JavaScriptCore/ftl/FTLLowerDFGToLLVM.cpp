@@ -2124,12 +2124,13 @@ private:
         switch (m_node->child1().useKind()) {
         case Int32Use: {
             LValue value = lowInt32(m_node->child1());
-            
+
             LValue mask = m_out.aShr(value, m_out.constInt32(31));
             LValue result = m_out.bitXor(mask, m_out.add(mask, value));
-            
-            speculate(Overflow, noValue(), 0, m_out.equal(result, m_out.constInt32(1 << 31)));
-            
+
+            if (shouldCheckOverflow(m_node->arithMode()))
+                speculate(Overflow, noValue(), 0, m_out.equal(result, m_out.constInt32(1 << 31)));
+
             setInt32(result);
             break;
         }
