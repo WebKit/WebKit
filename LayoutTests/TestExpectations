@@ -281,6 +281,15 @@ webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-m
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-set.html [ Skip ]
 webkit.org/b/148736 [ Debug ] imported/w3c/web-platform-tests/html/dom/interfaces.html [ Skip ]
 webkit.org/b/148822 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interfaces.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-embedded.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-forms.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-grouping.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-metadata.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-misc.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-obsolete.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-sections.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-tabular.html [ Skip ]
+webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-text.html  [ Skip ]
 
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure ]

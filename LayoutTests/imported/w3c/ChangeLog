@@ -1,5 +1,37 @@
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
+        Import W3C HTML reflection tests
+        https://bugs.webkit.org/show_bug.cgi?id=154310
+        <rdar://problem/24685826>
+
+        Reviewed by Ryosuke Niwa.
+
+        Import W3C HTML reflection tests from:
+        https://github.com/w3c/web-platform-tests/tree/master/html/dom
+
+        This improves our test coverage.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-embedded.html: Added.
+        * web-platform-tests/html/dom/reflection-forms-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-forms.html: Added.
+        * web-platform-tests/html/dom/reflection-grouping-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-grouping.html: Added.
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-metadata.html: Added.
+        * web-platform-tests/html/dom/reflection-misc-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-misc.html: Added.
+        * web-platform-tests/html/dom/reflection-obsolete-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-obsolete.html: Added.
+        * web-platform-tests/html/dom/reflection-sections-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-sections.html: Added.
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-tabular.html: Added.
+        * web-platform-tests/html/dom/reflection-text-expected.txt: Added.
+        * web-platform-tests/html/dom/reflection-text.html: Added.
+
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
         Window should have its 'constructor' property on the prototype
         https://bugs.webkit.org/show_bug.cgi?id=154037
         <rdar://problem/24689078>

@@ -1,3 +1,15 @@
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Import W3C HTML reflection tests
+        https://bugs.webkit.org/show_bug.cgi?id=154310
+        <rdar://problem/24685826>
+
+        Reviewed by Ryosuke Niwa.
+
+        Skip newly imported tests in Debug builds because they are slow.
+
+        * TestExpectations:
+
 2016-02-17  Alex Christensen  <achristensen@webkit.org>
 
         Copy http body when being redirected with 308 with NetworkSession
