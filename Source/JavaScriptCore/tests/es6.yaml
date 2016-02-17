@@ -1113,11 +1113,11 @@
 - path: es6/Set_Set[Symbol.species].js
   cmd: runES6 :normal
 - path: es6/spread_..._operator_with_astral_plane_strings_in_function_calls.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/spread_..._operator_with_generator_instances_in_arrays.js
   cmd: runES6 :normal
 - path: es6/spread_..._operator_with_generator_instances_in_calls.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/spread_..._operator_with_generic_iterables_in_arrays.js
   cmd: runES6 :fail
 - path: es6/spread_..._operator_with_generic_iterables_in_calls.js
@@ -1127,7 +1127,7 @@
 - path: es6/spread_..._operator_with_instances_of_iterables_in_calls.js
   cmd: runES6 :fail
 - path: es6/spread_..._operator_with_strings_in_function_calls.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/typed_arrays_%TypedArray%.from.js
   cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.of.js

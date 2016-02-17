@@ -221,7 +221,6 @@ public:
     int createPropertyList(const JSTokenLocation&, Property, int) { return PropertyListResult; }
     int createElementList(int, int) { return ElementsListResult; }
     int createElementList(int, int, int) { return ElementsListResult; }
-    int createElementList(int) { return ElementsListResult; }
     int createFormalParameterList() { return FormalParameterListResult; }
     void appendParameter(int, DestructuringPattern, int) { }
     int createClause(int, int) { return ClauseResult; }

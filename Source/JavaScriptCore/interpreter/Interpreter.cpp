@@ -247,7 +247,7 @@ unsigned sizeFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue argum
 
 void loadVarargs(CallFrame* callFrame, VirtualRegister firstElementDest, JSValue arguments, uint32_t offset, uint32_t length)
 {
-    if (UNLIKELY(!arguments.isCell()) || !length)
+    if (UNLIKELY(!arguments.isCell()))
         return;
     
     JSCell* cell = arguments.asCell();

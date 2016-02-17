@@ -757,18 +757,18 @@ PASS Invalid: "o.foo(bar...)"
 PASS Invalid: "function f() { o.foo(bar...) }"
 PASS Invalid: "o[foo](bar...)"
 PASS Invalid: "function f() { o[foo](bar...) }"
-PASS Valid:   "foo(a,...bar)" with ReferenceError
-PASS Valid:   "function f() { foo(a,...bar) }"
-PASS Valid:   "o.foo(a,...bar)" with ReferenceError
-PASS Valid:   "function f() { o.foo(a,...bar) }"
-PASS Valid:   "o[foo](a,...bar)" with ReferenceError
-PASS Valid:   "function f() { o[foo](a,...bar) }"
-PASS Valid:   "foo(...bar, a)" with ReferenceError
-PASS Valid:   "function f() { foo(...bar, a) }"
-PASS Valid:   "o.foo(...bar, a)" with ReferenceError
-PASS Valid:   "function f() { o.foo(...bar, a) }"
-PASS Valid:   "o[foo](...bar, a)" with ReferenceError
-PASS Valid:   "function f() { o[foo](...bar, a) }"
+PASS Invalid: "foo(a,...bar)"
+PASS Invalid: "function f() { foo(a,...bar) }"
+PASS Invalid: "o.foo(a,...bar)"
+PASS Invalid: "function f() { o.foo(a,...bar) }"
+PASS Invalid: "o[foo](a,...bar)"
+PASS Invalid: "function f() { o[foo](a,...bar) }"
+PASS Invalid: "foo(...bar, a)"
+PASS Invalid: "function f() { foo(...bar, a) }"
+PASS Invalid: "o.foo(...bar, a)"
+PASS Invalid: "function f() { o.foo(...bar, a) }"
+PASS Invalid: "o[foo](...bar, a)"
+PASS Invalid: "function f() { o[foo](...bar, a) }"
 PASS Valid:   "[...bar]" with ReferenceError
 PASS Valid:   "function f() { [...bar] }"
 PASS Valid:   "[a, ...bar]" with ReferenceError

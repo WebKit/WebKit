@@ -441,17 +441,6 @@ public:
 
     ElementNode* createElementList(int elisions, ExpressionNode* expr) { return new (m_parserArena) ElementNode(elisions, expr); }
     ElementNode* createElementList(ElementNode* elems, int elisions, ExpressionNode* expr) { return new (m_parserArena) ElementNode(elems, elisions, expr); }
-    ElementNode* createElementList(ArgumentListNode* elems)
-    {
-        ElementNode* head = new (m_parserArena) ElementNode(0, elems->m_expr);
-        ElementNode* tail = head;
-        elems = elems->m_next;
-        while (elems) {
-            tail = new (m_parserArena) ElementNode(tail, 0, elems->m_expr);
-            elems = elems->m_next;
-        }
-        return head;
-    }
 
     FormalParameterList createFormalParameterList() { return new (m_parserArena) FunctionParameters(); }
     void appendParameter(FormalParameterList list, DestructuringPattern pattern, ExpressionNode* defaultValue) 
