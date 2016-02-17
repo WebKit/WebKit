@@ -3226,6 +3226,16 @@ bool RenderLayer::isScrollSnapInProgress() const
 }
 #endif
 
+bool RenderLayer::usesMockScrollAnimator() const
+{
+    return Settings::usesMockScrollAnimator();
+}
+
+void RenderLayer::logMockScrollAnimatorMessage(const String& message) const
+{
+    renderer().document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, "RenderLayer: " + message);
+}
+
 int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const
 {
     if (!m_vBar

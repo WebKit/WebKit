@@ -1,0 +1,42 @@
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+  if (window.internals) {
+      window.internals.setUsesMockScrollAnimator(true);
+  }
+  if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+  }
+  window.onload = function () {
+      var list = document.getElementById("list");
+      if (window.eventSender) {
+          eventSender.mouseMoveTo(0, 0);
+          eventSender.mouseMoveTo(list.offsetLeft + 1, list.offsetTop + 1);
+          eventSender.mouseMoveTo(list.offsetLeft + list.offsetWidth - 4, list.offsetTop + 1);
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+          eventSender.mouseMoveTo(0, 0);
+      }
+      if (window.testRunner)
+          testRunner.notifyDone();
+  };
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<body>
+  <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=153398">https://bugs.webkit.org/show_bug.cgi?id=153398</a>.</p>
+  <select id="list" size="2">
+    <option>content1</option>
+    <option>content2</option>
+    <option>content3</option>
+    <option>content4</option>
+    <option>content5</option>
+    <option>content6</option>
+    <option>content7</option>
+    <option>content8</option>
+    <option>content9</option>
+    <option>content10</option>
+  </select>
+  <pre id="console"></pre>
+</body>
+</html>

@@ -27,6 +27,8 @@
 #include "ScrollbarThemeMock.h"
 
 #include "Scrollbar.h"
+// FIXME: This is a layering violation.
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -51,6 +53,13 @@ void ScrollbarThemeMock::paintThumb(GraphicsContext& context, Scrollbar& scrollb
 {
     if (scrollbar.enabled())
         context.fillRect(thumbRect, Color::darkGray);
+}
+
+bool ScrollbarThemeMock::usesOverlayScrollbars() const
+{
+    // FIXME: This is a layering violation, but ScrollbarThemeMock is also created depending on settings in platform layer,
+    // we should fix it in both places.
+    return Settings::usesOverlayScrollbars();
 }
 
 }

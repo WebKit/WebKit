@@ -307,6 +307,9 @@ public:
     void verticalScrollbarLayerDidChange();
     void horizontalScrollbarLayerDidChange();
 
+    virtual bool usesMockScrollAnimator() const { return false; }
+    virtual void logMockScrollAnimatorMessage(const String&) const { };
+
 protected:
     WEBCORE_EXPORT ScrollableArea();
     WEBCORE_EXPORT virtual ~ScrollableArea();

@@ -1,5 +1,64 @@
 2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Add a way to test ScrollAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=153479
+
+        Reviewed by Michael Catanzaro.
+
+        Tests: fast/scrolling/overlay-scrollbars-scroll-corner.html
+               fast/scrolling/scroll-animator-basic-events.html
+               fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html
+               fast/scrolling/scroll-animator-select-list-events.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::usesMockScrollAnimator):
+        (WebCore::FrameView::logMockScrollAnimatorMessage):
+        * page/FrameView.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setUsesMockScrollAnimator):
+        (WebCore::Settings::usesMockScrollAnimator):
+        * page/Settings.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollAnimator):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::usesMockScrollAnimator):
+        (WebCore::ScrollableArea::logMockScrollAnimatorMessage):
+        * platform/mock/ScrollAnimatorMock.cpp: Added.
+        (WebCore::ScrollAnimatorMock::create):
+        (WebCore::ScrollAnimatorMock::ScrollAnimatorMock):
+        (WebCore::ScrollAnimatorMock::~ScrollAnimatorMock):
+        (WebCore::ScrollAnimatorMock::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMock::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMock::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMock::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMock::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorMock::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorMock::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorMock::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimatorMock::mouseExitedScrollbar):
+        (WebCore::ScrollAnimatorMock::mouseIsDownInScrollbar):
+        * platform/mock/ScrollAnimatorMock.h: Added.
+        * platform/mock/ScrollbarThemeMock.cpp:
+        (WebCore::ScrollbarThemeMock::usesOverlayScrollbars):
+        * platform/mock/ScrollbarThemeMock.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::usesMockScrollAnimator):
+        (WebCore::RenderLayer::logMockScrollAnimatorMessage):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::usesMockScrollAnimator):
+        (WebCore::RenderListBox::logMockScrollAnimatorMessage):
+        * rendering/RenderListBox.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setUsesMockScrollAnimator):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Enable overlay scrollbars in GTK+ after r196641.
 
         This was blocked by bug #153404, but the commit that introduced

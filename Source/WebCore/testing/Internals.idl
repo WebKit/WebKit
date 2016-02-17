@@ -347,6 +347,7 @@ enum AutoFillButtonType {
     boolean isFromCurrentWorld(any obj);
 
     void setUsesOverlayScrollbars(boolean enabled);
+    void setUsesMockScrollAnimator(boolean enabled);
 
     void forceReload(boolean endToEnd);
 

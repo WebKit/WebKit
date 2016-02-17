@@ -13,7 +13,6 @@ onload = function()
     var elt = document.getElementById('elt');
     range.selectNodeContents(elt);
     if (window.internals) {
-        window.internals.setUsesOverlayScrollbars(true);
         window.internals.addTextMatchMarker(range, true);
     }
     if (window.testRunner)

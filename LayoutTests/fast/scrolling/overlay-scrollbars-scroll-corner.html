@@ -1,0 +1,22 @@
+<html>
+<style>
+    #scrollme {
+        width: 100px;
+        height: 100px;
+        overflow: auto;
+    }
+    #scrollme p {
+        width: 1000px;
+        height: 1000px;
+    }
+</style>
+<script>
+  if (window.internals) {
+      window.internals.setUsesOverlayScrollbars(true);
+  }
+</script>
+<body>
+  <p>This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=153352">https://bugs.webkit.org/show_bug.cgi?id=153352</a></p>
+  <div id="scrollme"><p>This is a scrollable div.</p></div>
+</body>
+</html>

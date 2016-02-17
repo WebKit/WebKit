@@ -253,6 +253,9 @@ webgl/1.0.3/151055_asan.html [ Failure ]
 # Lacking WK1 TestRunner API that evaluates JavaScript through JSC APIs and not WebCore APIs
 inspector/script-profiler/event-type-API.html
 
+# This test checks ScrollAnimator events only for main frame scrollbars that use native widgets in WK1.
+fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
+
 ########################################
 ### START OF (3) IndexedDB failures with SQLite
 

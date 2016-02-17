@@ -374,6 +374,7 @@ void Internals::resetToConsistentState(Page* page)
 
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
+    WebCore::Settings::setUsesMockScrollAnimator(false);
     page->inspectorController().setLegacyProfilerEnabled(false);
 #if ENABLE(VIDEO_TRACK)
     page->group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
@@ -2673,6 +2674,11 @@ bool Internals::isFromCurrentWorld(Deprecated::ScriptValue value) const
 void Internals::setUsesOverlayScrollbars(bool enabled)
 {
     WebCore::Settings::setUsesOverlayScrollbars(enabled);
+}
+
+void Internals::setUsesMockScrollAnimator(bool enabled)
+{
+    WebCore::Settings::setUsesMockScrollAnimator(enabled);
 }
 
 void Internals::forceReload(bool endToEnd)

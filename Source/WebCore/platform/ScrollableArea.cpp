@@ -39,6 +39,7 @@
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
+#include "ScrollAnimatorMock.h"
 #include "ScrollbarTheme.h"
 #include "TextStream.h"
 
@@ -75,8 +76,14 @@ ScrollableArea::~ScrollableArea()
 
 ScrollAnimator& ScrollableArea::scrollAnimator() const
 {
-    if (!m_scrollAnimator)
-        m_scrollAnimator = ScrollAnimator::create(const_cast<ScrollableArea&>(*this));
+    if (!m_scrollAnimator) {
+        if (usesMockScrollAnimator()) {
+            m_scrollAnimator = std::make_unique<ScrollAnimatorMock>(const_cast<ScrollableArea&>(*this), [this](const String& message) {
+                logMockScrollAnimatorMessage(message);
+            });
+        } else
+            m_scrollAnimator = ScrollAnimator::create(const_cast<ScrollableArea&>(*this));
+    }
 
     ASSERT(m_scrollAnimator);
     return *m_scrollAnimator.get();

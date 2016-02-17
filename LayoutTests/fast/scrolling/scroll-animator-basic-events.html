@@ -1,0 +1,40 @@
+<html>
+<style>
+    #scrollme {
+        width: 100px;
+        height: 100px;
+        overflow: auto;
+    }
+    #scrollme p {
+        height: 1000px;
+    }
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+  if (window.internals) {
+      window.internals.setUsesMockScrollAnimator(true);
+  }
+  if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+  }
+  window.onload = function () {
+      var div = document.querySelector('#scrollme');
+      if (window.eventSender) {
+          eventSender.mouseMoveTo(0, 0);
+          eventSender.mouseMoveTo(div.offsetLeft + 1, div.offsetTop + 1);
+          eventSender.mouseMoveTo(div.offsetLeft + div.offsetWidth - 4, div.offsetTop + 1);
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+          eventSender.mouseMoveTo(0, 0);
+      }
+      if (window.testRunner)
+          testRunner.notifyDone();
+  };
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<body>
+  <div id="scrollme"><p>This is a scrollable div.</p></div>
+  <pre id="console"></pre>
+</body>
+</html>

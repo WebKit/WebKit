@@ -11,6 +11,13 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
           (position 2.00 -6.00)
           (bounds 244.00 244.00)
           (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 207.00 22.00)
+              (bounds 15.00 200.00)
+              (drawsContent 1)
+            )
+          )
         )
       )
     )

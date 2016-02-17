@@ -1,3 +1,24 @@
+2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add a way to test ScrollAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=153479
+
+        Reviewed by Michael Catanzaro.
+
+        * compositing/overflow/overflow-scrollbar-layer-positions-expected.txt:
+        * fast/scrolling/overlay-scrollbars-scroll-corner-expected.html: Added.
+        * fast/scrolling/overlay-scrollbars-scroll-corner.html: Added.
+        * fast/scrolling/scroll-animator-basic-events-expected.txt: Added.
+        * fast/scrolling/scroll-animator-basic-events.html: Added.
+        * fast/scrolling/scroll-animator-overlay-scrollbars-hovered-expected.txt: Added.
+        * fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html: Added.
+        * fast/scrolling/scroll-animator-select-list-events-expected.txt: Added.
+        * fast/scrolling/scroll-animator-select-list-events.html: Added.
+        * fast/scrolling/scrollbar-tickmarks-hittest.html:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/fast/scrolling/scroll-animator-basic-events-expected.txt: Added.
+        * platform/mac-wk1/fast/scrolling/scroll-animator-select-list-events-expected.txt: Added.
+
 2016-02-16  Gavin Barraclough  <barraclough@apple.com>
 
         JSDOMWindow::getOwnPropertySlot should not search photo chain

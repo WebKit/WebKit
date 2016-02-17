@@ -636,6 +636,8 @@ private:
 
     virtual bool usesCompositedScrolling() const override;
     virtual bool usesAsyncScrolling() const override;
+    bool usesMockScrollAnimator() const override;
+    void logMockScrollAnimatorMessage(const String&) const override;
 
     // Override scrollbar notifications to update the AXObject cache.
     virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation) override;

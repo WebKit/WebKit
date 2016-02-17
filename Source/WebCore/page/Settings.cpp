@@ -84,6 +84,7 @@ bool Settings::gQTKitEnabled = false;
 
 bool Settings::gMockScrollbarsEnabled = false;
 bool Settings::gUsesOverlayScrollbars = false;
+bool Settings::gMockScrollAnimatorEnabled = false;
 
 #if ENABLE(MEDIA_STREAM)
 bool Settings::gMockCaptureDevicesEnabled = false;
@@ -653,6 +654,16 @@ void Settings::setUsesOverlayScrollbars(bool flag)
 bool Settings::usesOverlayScrollbars()
 {
     return gUsesOverlayScrollbars;
+}
+
+void Settings::setUsesMockScrollAnimator(bool flag)
+{
+    gMockScrollAnimatorEnabled = flag;
+}
+
+bool Settings::usesMockScrollAnimator()
+{
+    return gMockScrollAnimatorEnabled;
 }
 
 void Settings::setShouldRespectPriorityInCSSAttributeSetters(bool flag)

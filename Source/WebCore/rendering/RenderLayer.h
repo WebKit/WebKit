@@ -884,6 +884,8 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP)
     bool isScrollSnapInProgress() const override;
 #endif
+    bool usesMockScrollAnimator() const override;
+    void logMockScrollAnimatorMessage(const String&) const override;
 
 #if PLATFORM(IOS)
     void registerAsTouchEventListenerForScrolling();
