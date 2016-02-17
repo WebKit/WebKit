@@ -1,5 +1,11 @@
 2016-02-16  Alex Christensen  <achristensen@webkit.org>
 
+        CMake build fix.
+
+        * PlatformMac.cmake:
+
+2016-02-16  Alex Christensen  <achristensen@webkit.org>
+
         Use NSURLCredential from serverTrust when evaluating server trust AuthenticationChallenges with NetworkSession
         https://bugs.webkit.org/show_bug.cgi?id=154316
 

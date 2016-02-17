@@ -213,8 +213,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Cocoa/WebProcessProxyCocoa.mm
     UIProcess/Cocoa/WebViewImpl.mm
 
-    UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.mm
-    UIProcess/Launcher/mac/EnvironmentVariables.cpp
     UIProcess/Launcher/mac/ProcessLauncherMac.mm
 
     UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm
