@@ -508,4 +508,54 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
+TEST(WTF_HashMap, Ensure)
+{
+    HashMap<unsigned, unsigned> map;
+    {
+        auto value = map.ensure(1, [] { return 1; });
+        EXPECT_EQ(1u, value);
+        value = map.ensure(1, [] { return 2; });
+        EXPECT_EQ(1u, value);
+    }
+}
+
+TEST(WTF_HashMap, Ensure_MoveOnlyValues)
+{
+    HashMap<unsigned, MoveOnly> moveOnlyValues;
+    {
+        auto& value = moveOnlyValues.ensure(1, [] { return MoveOnly(1); });
+        EXPECT_EQ(1u, value.value());
+        auto& value2 = moveOnlyValues.ensure(1, [] { return MoveOnly(2); });
+        EXPECT_EQ(1u, value2.value());
+    }
+}
+
+TEST(WTF_HashMap, Ensure_UniquePointer)
+{
+    HashMap<unsigned, std::unique_ptr<unsigned>> map;
+    {
+        auto& value = map.ensure(1, [] { return std::make_unique<unsigned>(1); });
+        EXPECT_EQ(1u, *map.get(1));
+        EXPECT_EQ(1u, *value.get());
+        auto& value2 = map.ensure(1, [] { return std::make_unique<unsigned>(2); });
+        EXPECT_EQ(1u, *map.get(1));
+        EXPECT_EQ(1u, *value2.get());
+    }
+}
+
+TEST(WTF_HashMap, Ensure_RefPtr)
+{
+    HashMap<unsigned, RefPtr<RefLogger>> map;
+
+    {
+        DerivedRefLogger a("a");
+
+        map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
+        EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
+
+        map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
+        EXPECT_STREQ("", takeLogStr().c_str());
+    }
+}
+
 } // namespace TestWebKitAPI

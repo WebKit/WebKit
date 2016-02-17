@@ -1,3 +1,47 @@
+2016-02-16  Sam Weinig  <sam@webkit.org>
+
+        Add an ensure function on HashMap that takes a key and a function to make the lazy value initialization idiom easier
+        https://bugs.webkit.org/show_bug.cgi?id=134857
+
+        Reviewed by Geoffrey Garen.
+
+        The current idiom for adding a value to a HashMap if the key is not already present, to allow for not
+        unnecessarily constructing the new value if it won't be used, is:
+        
+        {
+            auto result = map.add(key, Value());
+            if (!result.isNewEntry)
+                return result.iterator->value;
+
+            result.iterator->value = createNewValue();
+            return result.iterator->value;
+        }
+
+        or sometimes
+
+        {
+            auto& value = map.add(key, Value()).iterator->value;
+            if (!value)
+                value = createNewValue();
+            return value;
+        }
+
+        With this patch, you can now use the new function HashMap::ensure(key, functor). This will allow us to 
+        change to using the following idiom:
+
+        {
+            return map.ensure(key, [] { return createNewValue(); });
+        }
+
+        The passed in functor will only be called if the key is not already present in the HashMap.
+
+        * wtf/HashMap.h:
+        (WTF::HashMapTranslator::translate):
+        (WTF::HashMapEnsureTranslator::hash):
+        (WTF::HashMapEnsureTranslator::equal):
+        (WTF::HashMapEnsureTranslator::translate):
+        (WTF::HashMapTranslatorAdapter::hash):
+
 2016-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         FTL_USES_B3 should be unconditionally true
