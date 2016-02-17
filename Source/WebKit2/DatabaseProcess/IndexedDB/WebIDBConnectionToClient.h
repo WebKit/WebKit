@@ -32,6 +32,15 @@
 #include "MessageSender.h"
 #include <WebCore/IDBConnectionToClient.h>
 
+namespace WebCore {
+class IDBCursorInfo;
+class IDBIndexInfo;
+class IDBObjectStoreInfo;
+class IDBRequestData;
+class IDBTransactionInfo;
+class SerializedScriptValue;
+}
+
 namespace WebKit {
 
 class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender, public RefCounted<WebIDBConnectionToClient> {
@@ -44,6 +53,7 @@ public:
     virtual uint64_t identifier() const override final { return m_identifier; }
     virtual uint64_t messageSenderDestinationID() override final { return m_identifier; }
 
+    // IDBConnectionToClientDelegate
     virtual void didDeleteDatabase(const WebCore::IDBResultData&) override final;
     virtual void didOpenDatabase(const WebCore::IDBResultData&) override final;
     virtual void didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) override final;
@@ -67,12 +77,37 @@ public:
     virtual void ref() override { RefCounted<WebIDBConnectionToClient>::ref(); }
     virtual void deref() override { RefCounted<WebIDBConnectionToClient>::deref(); }
 
+    // Messages received from WebProcess
+    void deleteDatabase(const WebCore::IDBRequestData&);
+    void openDatabase(const WebCore::IDBRequestData&);
+    void abortTransaction(const WebCore::IDBResourceIdentifier&);
+    void commitTransaction(const WebCore::IDBResourceIdentifier&);
+    void didFinishHandlingVersionChangeTransaction(const WebCore::IDBResourceIdentifier&);
+    void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&);
+    void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName);
+    void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier);
+    void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
+    void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
+    void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const IPC::DataReference& value, bool overwriteEnabled);
+    void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
+    void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
+    void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
+    void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&);
+    void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, unsigned long count);
+
+    void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
+    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
+    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier);
+    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier);
+
     void disconnectedFromWebProcess();
 
 private:
     WebIDBConnectionToClient(DatabaseToWebProcessConnection&, uint64_t serverConnectionIdentifier);
 
     virtual IPC::Connection* messageSenderConnection() override final;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
+
     Ref<DatabaseToWebProcessConnection> m_connection;
 
     uint64_t m_identifier;

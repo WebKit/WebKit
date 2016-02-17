@@ -98,11 +98,15 @@ public:
 
     const IDBGetResult& getResult() const;
 
+    WEBCORE_EXPORT IDBResultData();
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBResultData&);
+
 private:
     IDBResultData(const IDBResourceIdentifier&);
     IDBResultData(IDBResultType, const IDBResourceIdentifier&);
 
-    IDBResultType m_type;
+    IDBResultType m_type { IDBResultType::Error };
     IDBResourceIdentifier m_requestIdentifier;
 
     IDBError m_error;
@@ -113,6 +117,11 @@ private:
     std::unique_ptr<IDBGetResult> m_getResult;
     uint64_t m_resultInteger { 0 };
 };
+
+template<class Decoder> bool IDBResultData::decode(Decoder&, IDBResultData&)
+{
+    return false;
+}
 
 } // namespace WebCore
 

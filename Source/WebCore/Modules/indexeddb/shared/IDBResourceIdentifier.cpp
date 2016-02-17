@@ -49,6 +49,10 @@ static uint64_t nextServerResourceNumber()
     return currentNumber += 2;
 }
 
+IDBResourceIdentifier::IDBResourceIdentifier()
+{
+}
+
 IDBResourceIdentifier::IDBResourceIdentifier(uint64_t connectionIdentifier, uint64_t resourceIdentifier)
     : m_idbConnectionIdentifier(connectionIdentifier)
     , m_resourceNumber(resourceIdentifier)

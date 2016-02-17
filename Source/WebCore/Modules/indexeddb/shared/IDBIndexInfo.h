@@ -47,6 +47,9 @@ public:
     bool unique() const { return m_unique; }
     bool multiEntry() const { return m_multiEntry; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBIndexInfo&);
+
 #ifndef NDEBUG
     String loggingString(int indent = 0) const;
 #endif
@@ -59,6 +62,11 @@ private:
     bool m_unique { true };
     bool m_multiEntry { false };
 };
+
+template<class Decoder> bool IDBIndexInfo::decode(Decoder&, IDBIndexInfo&)
+{
+    return false;
+}
 
 } // namespace WebCore
 

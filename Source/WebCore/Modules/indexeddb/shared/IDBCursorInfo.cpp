@@ -43,6 +43,10 @@ IDBCursorInfo IDBCursorInfo::indexCursor(IDBClient::IDBTransaction& transaction,
     return { transaction, objectStoreIdentifier, indexIdentifier, range, direction, type };
 }
 
+IDBCursorInfo::IDBCursorInfo()
+{
+}
+
 IDBCursorInfo::IDBCursorInfo(IDBClient::IDBTransaction& transaction, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
     : m_cursorIdentifier(transaction.serverConnection())
     , m_transactionIdentifier(transaction.info().identifier())

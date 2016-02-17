@@ -2064,7 +2064,7 @@
 		517138F71BF128BB000D5F01 /* IndexValueStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517138F51BF12262000D5F01 /* IndexValueStore.cpp */; };
 		517138F81BF128BB000D5F01 /* IndexValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138F61BF12262000D5F01 /* IndexValueStore.h */; };
 		517138FB1BF3ADF4000D5F01 /* IDBCursorInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517138F91BF3ADAC000D5F01 /* IDBCursorInfo.cpp */; };
-		517138FC1BF3ADF4000D5F01 /* IDBCursorInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138FA1BF3ADAC000D5F01 /* IDBCursorInfo.h */; };
+		517138FC1BF3ADF4000D5F01 /* IDBCursorInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138FA1BF3ADAC000D5F01 /* IDBCursorInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517139051BF64DEC000D5F01 /* MemoryObjectStoreCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517139031BF64DE3000D5F01 /* MemoryObjectStoreCursor.cpp */; };
 		517139061BF64DEC000D5F01 /* MemoryObjectStoreCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */; };
 		517139071BF64DEF000D5F01 /* MemoryCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517139011BF64DE3000D5F01 /* MemoryCursor.cpp */; };
@@ -2204,7 +2204,7 @@
 		51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */; };
 		51D7236C1BB6174900478CA3 /* IDBResultData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7236A1BB60BFE00478CA3 /* IDBResultData.cpp */; };
-		51D7236D1BB6174900478CA3 /* IDBResultData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7236B1BB60BFE00478CA3 /* IDBResultData.h */; };
+		51D7236D1BB6174900478CA3 /* IDBResultData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7236B1BB60BFE00478CA3 /* IDBResultData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D7EFEA1BDE8F8C00E93E10 /* ThreadSafeDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 511FAEA91BDC989A00B4AFE4 /* ThreadSafeDataBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D7EFEC1BDEFA5100E93E10 /* TransactionOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7EFEB1BDEFA4700E93E10 /* TransactionOperation.cpp */; };
 		51DCE8020CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */; };

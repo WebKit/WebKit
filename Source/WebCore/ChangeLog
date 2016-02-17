@@ -1,3 +1,40 @@
+2016-02-17  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: More WK2 IPC Scaffolding.
+        https://bugs.webkit.org/show_bug.cgi?id=154317
+
+        Reviewed by Alex Christensen.
+
+        No change in behavior yet; Just laying the groundwork.
+
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        (WebCore::IDBCursorInfo::IDBCursorInfo):
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        (WebCore::IDBCursorInfo::decode):
+        * Modules/indexeddb/shared/IDBError.h:
+        (WebCore::IDBError::decode):
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        (WebCore::IDBIndexInfo::decode):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        (WebCore::IDBObjectStoreInfo::decode):
+        * Modules/indexeddb/shared/IDBRequestData.cpp:
+        (WebCore::IDBRequestData::IDBRequestData):
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        (WebCore::IDBRequestData::decode):
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::IDBResourceIdentifier::IDBResourceIdentifier):
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        (WebCore::IDBResourceIdentifier::decode):
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::IDBResultData):
+        * Modules/indexeddb/shared/IDBResultData.h:
+        (WebCore::IDBResultData::decode):
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::IDBTransactionInfo):
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        (WebCore::IDBTransactionInfo::decode):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-02-17  Eric Carlson  <eric.carlson@apple.com>
 
         [Win] Allow ports to disable automatic text track selection

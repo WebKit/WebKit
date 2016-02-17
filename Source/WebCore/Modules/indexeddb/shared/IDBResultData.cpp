@@ -34,6 +34,10 @@
 
 namespace WebCore {
 
+IDBResultData::IDBResultData()
+{
+}
+
 IDBResultData::IDBResultData(const IDBResourceIdentifier& requestIdentifier)
     : m_requestIdentifier(requestIdentifier)
 {

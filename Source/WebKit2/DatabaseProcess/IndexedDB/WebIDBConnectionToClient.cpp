@@ -134,6 +134,86 @@ void WebIDBConnectionToClient::notifyOpenDBRequestBlocked(const WebCore::IDBReso
 {
 }
 
+void WebIDBConnectionToClient::deleteDatabase(const IDBRequestData&)
+{
+}
+
+void WebIDBConnectionToClient::openDatabase(const IDBRequestData&)
+{
+}
+
+void WebIDBConnectionToClient::abortTransaction(const IDBResourceIdentifier&)
+{
+}
+
+void WebIDBConnectionToClient::commitTransaction(const IDBResourceIdentifier&)
+{
+}
+
+void WebIDBConnectionToClient::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier&)
+{
+}
+
+void WebIDBConnectionToClient::createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&)
+{
+}
+
+void WebIDBConnectionToClient::deleteObjectStore(const IDBRequestData&, const String&)
+{
+}
+
+void WebIDBConnectionToClient::clearObjectStore(const IDBRequestData&, uint64_t)
+{
+}
+
+void WebIDBConnectionToClient::createIndex(const IDBRequestData&, const IDBIndexInfo&)
+{
+}
+
+void WebIDBConnectionToClient::deleteIndex(const IDBRequestData&, uint64_t, const String&)
+{
+}
+
+void WebIDBConnectionToClient::putOrAdd(const IDBRequestData&, const IDBKeyData&, const IPC::DataReference&, bool)
+{
+}
+
+void WebIDBConnectionToClient::getRecord(const IDBRequestData&, const IDBKeyRangeData&)
+{
+}
+
+void WebIDBConnectionToClient::getCount(const IDBRequestData&, const IDBKeyRangeData&)
+{
+}
+
+void WebIDBConnectionToClient::deleteRecord(const IDBRequestData&, const IDBKeyRangeData&)
+{
+}
+
+void WebIDBConnectionToClient::openCursor(const IDBRequestData&, const IDBCursorInfo&)
+{
+}
+
+void WebIDBConnectionToClient::iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long)
+{
+}
+
+void WebIDBConnectionToClient::establishTransaction(uint64_t, const IDBTransactionInfo&)
+{
+}
+
+void WebIDBConnectionToClient::databaseConnectionClosed(uint64_t)
+{
+}
+
+void WebIDBConnectionToClient::abortOpenAndUpgradeNeeded(uint64_t, const IDBResourceIdentifier&)
+{
+}
+
+void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t, const IDBResourceIdentifier&)
+{
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

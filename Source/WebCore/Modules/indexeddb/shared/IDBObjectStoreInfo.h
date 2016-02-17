@@ -62,6 +62,9 @@ public:
     void deleteIndex(const String& indexName);
     void deleteIndex(uint64_t indexIdentifier);
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBObjectStoreInfo&);
+
 #ifndef NDEBUG
     String loggingString(int indent = 0) const;
 #endif
@@ -76,6 +79,11 @@ private:
     HashMap<uint64_t, IDBIndexInfo> m_indexMap;
 
 };
+
+template<class Decoder> bool IDBObjectStoreInfo::decode(Decoder&, IDBObjectStoreInfo&)
+{
+    return false;
+}
 
 } // namespace WebCore
 

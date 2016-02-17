@@ -67,6 +67,11 @@ public:
 
     IDBRequestData isolatedCopy();
 
+    WEBCORE_EXPORT IDBRequestData();
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBRequestData&);
+
 private:
     uint64_t m_serverConnectionIdentifier { 0 };
     std::unique_ptr<IDBResourceIdentifier> m_requestIdentifier;
@@ -81,6 +86,11 @@ private:
 
     IndexedDB::RequestType m_requestType { IndexedDB::RequestType::Other };
 };
+
+template<class Decoder> bool IDBRequestData::decode(Decoder&, IDBRequestData&)
+{
+    return false;
+}
 
 } // namespace WebCore
 

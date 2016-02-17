@@ -43,6 +43,7 @@ public:
     virtual uint64_t identifier() const override final { return m_identifier; }
     virtual uint64_t messageSenderDestinationID() override final { return m_identifier; }
 
+    // IDBConnectionToServerDelegate
     virtual void deleteDatabase(WebCore::IDBRequestData&) override final;
     virtual void openDatabase(WebCore::IDBRequestData&) override final;
     virtual void abortTransaction(WebCore::IDBResourceIdentifier&) override final;
@@ -67,10 +68,28 @@ public:
     virtual void ref() override { RefCounted<WebIDBConnectionToServer>::ref(); }
     virtual void deref() override { RefCounted<WebIDBConnectionToServer>::deref(); }
 
+    // Messages received from DatabaseProcess
+    void didDeleteDatabase(const WebCore::IDBResultData&);
+    void didOpenDatabase(const WebCore::IDBResultData&);
+    void didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&);
+    void didCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&);
+    void didCreateObjectStore(const WebCore::IDBResultData&);
+    void didDeleteObjectStore(const WebCore::IDBResultData&);
+    void didClearObjectStore(const WebCore::IDBResultData&);
+    void didCreateIndex(const WebCore::IDBResultData&);
+    void didDeleteIndex(const WebCore::IDBResultData&);
+    void didPutOrAdd(const WebCore::IDBResultData&);
+    void didGetRecord(const WebCore::IDBResultData&);
+    void didGetCount(const WebCore::IDBResultData&);
+    void didDeleteRecord(const WebCore::IDBResultData&);
+    void didOpenCursor(const WebCore::IDBResultData&);
+    void didIterateCursor(const WebCore::IDBResultData&);
+
 private:
     WebIDBConnectionToServer();
 
     virtual IPC::Connection* messageSenderConnection() override final;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
 
     uint64_t m_identifier;
     bool m_isOpenInServer { false };

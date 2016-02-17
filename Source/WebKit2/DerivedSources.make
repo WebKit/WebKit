@@ -115,6 +115,8 @@ MESSAGE_RECEIVERS = \
     WebFullScreenManagerProxy \
     WebGeolocationManager \
     WebGeolocationManagerProxy \
+    WebIDBConnectionToClient \
+    WebIDBConnectionToServer \
     WebIDBServerConnection \
     WebIconDatabase \
     WebIconDatabaseProxy \

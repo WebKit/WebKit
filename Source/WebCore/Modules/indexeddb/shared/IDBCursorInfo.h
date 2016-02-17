@@ -69,6 +69,10 @@ public:
 
     IDBCursorInfo isolatedCopy() const;
 
+    WEBCORE_EXPORT IDBCursorInfo();
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBCursorInfo&);
+
 private:
     IDBCursorInfo(IDBClient::IDBTransaction&, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
     IDBCursorInfo(IDBClient::IDBTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
@@ -86,6 +90,11 @@ private:
     IndexedDB::CursorDirection m_direction;
     IndexedDB::CursorType m_type;
 };
+
+template<class Decoder> bool IDBCursorInfo::decode(Decoder&, IDBCursorInfo&)
+{
+    return false;
+}
 
 } // namespace WebCore
 

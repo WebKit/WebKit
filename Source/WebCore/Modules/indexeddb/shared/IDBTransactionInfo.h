@@ -61,6 +61,10 @@ public:
 
     IDBDatabaseInfo* originalDatabaseInfo() const { return m_originalDatabaseInfo.get(); }
 
+    WEBCORE_EXPORT IDBTransactionInfo();
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBTransactionInfo&);
+
 #ifndef NDEBUG
     String loggingString() const;
 #endif
@@ -75,6 +79,11 @@ private:
     Vector<String> m_objectStores;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 };
+
+template<class Decoder> bool IDBTransactionInfo::decode(Decoder&, IDBTransactionInfo&)
+{
+    return false;
+}
 
 } // namespace WebCore
 

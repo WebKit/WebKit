@@ -76,8 +76,12 @@ public:
     String loggingString() const;
 #endif
 
+    WEBCORE_EXPORT IDBResourceIdentifier();
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBResourceIdentifier&);
+
 private:
-    IDBResourceIdentifier() = delete;
     IDBResourceIdentifier(uint64_t connectionIdentifier, uint64_t resourceIdentifier);
     uint64_t m_idbConnectionIdentifier { 0 };
     uint64_t m_resourceNumber { 0 };
@@ -113,6 +117,11 @@ struct IDBResourceIdentifierHashTraits : WTF::CustomHashTraits<IDBResourceIdenti
         return identifier.isHashTableDeletedValue();
     }
 };
+
+template<class Decoder> bool IDBResourceIdentifier::decode(Decoder&, IDBResourceIdentifier&)
+{
+    return false;
+}
 
 } // namespace WebCore
 

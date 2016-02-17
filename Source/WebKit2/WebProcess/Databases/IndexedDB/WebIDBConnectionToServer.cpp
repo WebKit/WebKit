@@ -32,7 +32,15 @@
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBConnectionToServer.h>
+#include <WebCore/IDBCursorInfo.h>
+#include <WebCore/IDBError.h>
+#include <WebCore/IDBIndexInfo.h>
+#include <WebCore/IDBObjectStoreInfo.h>
 #include <WebCore/IDBOpenDBRequestImpl.h>
+#include <WebCore/IDBRequestData.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IDBResultData.h>
+#include <WebCore/IDBTransactionInfo.h>
 
 using namespace WebCore;
 
@@ -156,6 +164,67 @@ void WebIDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnec
 void WebIDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
 {
 }
+
+void WebIDBConnectionToServer::didDeleteDatabase(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didOpenDatabase(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didAbortTransaction(const IDBResourceIdentifier&, const IDBError&)
+{
+}
+
+void WebIDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier&, const IDBError&)
+{
+}
+
+void WebIDBConnectionToServer::didCreateObjectStore(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didDeleteObjectStore(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didClearObjectStore(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didCreateIndex(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didDeleteIndex(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didPutOrAdd(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didGetRecord(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didGetCount(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didDeleteRecord(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didOpenCursor(const IDBResultData&)
+{
+}
+
+void WebIDBConnectionToServer::didIterateCursor(const IDBResultData&)
+{
+}
+
 
 } // namespace WebKit
 

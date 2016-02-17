@@ -33,6 +33,10 @@
 
 namespace WebCore {
 
+IDBRequestData::IDBRequestData()
+{
+}
+
 IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionToServer& connection, const IDBClient::IDBOpenDBRequest& request)
     : m_serverConnectionIdentifier(connection.identifier())
     , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connection, request))

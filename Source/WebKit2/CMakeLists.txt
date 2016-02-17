@@ -643,6 +643,7 @@ set(WebKit2_MESSAGES_IN_FILES
     DatabaseProcess/DatabaseToWebProcessConnection.messages.in
 
     DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in
+    DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in
 
     NetworkProcess/CustomProtocols/CustomProtocolManager.messages.in
 
@@ -695,6 +696,7 @@ set(WebKit2_MESSAGES_IN_FILES
 
     WebProcess/Cookies/WebCookieManager.messages.in
 
+    WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in
     WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in
 
     WebProcess/FullScreen/WebFullScreenManager.messages.in
