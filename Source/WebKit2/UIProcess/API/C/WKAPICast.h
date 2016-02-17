@@ -91,7 +91,6 @@ class WebGeolocationPosition;
 class WebGrammarDetail;
 class WebIconDatabase;
 class WebInspectorProxy;
-class WebMediaCacheManagerProxy;
 class WebMediaSessionFocusManager;
 class WebMediaSessionMetadata;
 class WebNotification;
@@ -135,7 +134,6 @@ WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
 WK_ADD_API_MAPPING(WKHitTestResultRef, API::HitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
-WK_ADD_API_MAPPING(WKMediaCacheManagerRef, WebMediaCacheManagerProxy)
 WK_ADD_API_MAPPING(WKMediaSessionFocusManagerRef, WebMediaSessionFocusManager)
 WK_ADD_API_MAPPING(WKMediaSessionMetadataRef, WebMediaSessionMetadata)
 WK_ADD_API_MAPPING(WKNavigationActionRef, API::NavigationAction)

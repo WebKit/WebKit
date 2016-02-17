@@ -47,7 +47,6 @@
 // Supplements
 #include "WebCookieManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
-#include "WebMediaCacheManagerProxy.h"
 #include "WebNotificationManagerProxy.h"
 #if ENABLE(BATTERY_STATUS)
 #include "WebBatteryManagerProxy.h"
@@ -431,11 +430,6 @@ WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef contextRef)
 WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef context)
 {
     return reinterpret_cast<WKKeyValueStorageManagerRef>(WKContextGetWebsiteDataStore(context));
-}
-
-WKMediaCacheManagerRef WKContextGetMediaCacheManager(WKContextRef contextRef)
-{
-    return toAPI(toImpl(contextRef)->supplement<WebMediaCacheManagerProxy>());
 }
 
 WKMediaSessionFocusManagerRef WKContextGetMediaSessionFocusManager(WKContextRef context)

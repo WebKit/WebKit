@@ -49,7 +49,6 @@
 #include "WebGeolocationManager.h"
 #include "WebIconDatabaseProxy.h"
 #include "WebLoaderStrategy.h"
-#include "WebMediaCacheManager.h"
 #include "WebMediaKeyStorageManager.h"
 #include "WebMemorySampler.h"
 #include "WebPage.h"
@@ -179,7 +178,6 @@ WebProcess::WebProcess()
     // limited.
     addSupplement<WebGeolocationManager>();
     addSupplement<WebCookieManager>();
-    addSupplement<WebMediaCacheManager>();
     addSupplement<AuthenticationManager>();
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

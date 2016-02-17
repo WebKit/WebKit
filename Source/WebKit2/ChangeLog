@@ -1,3 +1,51 @@
+2016-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused media cache manager code
+        https://bugs.webkit.org/show_bug.cgi?id=154339
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make:
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetMediaCacheManager): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKMediaCacheManager.cpp: Removed.
+        (WKMediaCacheManagerGetTypeID): Deleted.
+        (WKMediaCacheManagerGetHostnamesWithMediaCache): Deleted.
+        (WKMediaCacheManagerClearCacheForHostname): Deleted.
+        (WKMediaCacheManagerClearCacheForAllHostnames): Deleted.
+        * UIProcess/API/C/WKMediaCacheManager.h: Removed.
+        * UIProcess/WebMediaCacheManagerProxy.cpp: Removed.
+        (WebKit::WebMediaCacheManagerProxy::supplementName): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::create): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::WebMediaCacheManagerProxy): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::~WebMediaCacheManagerProxy): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::processPoolDestroyed): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::processDidClose): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::shouldTerminate): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::refWebContextSupplement): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::derefWebContextSupplement): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::getHostnamesWithMediaCache): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::clearCacheForHostname): Deleted.
+        (WebKit::WebMediaCacheManagerProxy::clearCacheForAllHostnames): Deleted.
+        * UIProcess/WebMediaCacheManagerProxy.h: Removed.
+        * UIProcess/WebMediaCacheManagerProxy.messages.in: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/MediaCache/WebMediaCacheManager.cpp: Removed.
+        (WebKit::WebMediaCacheManager::supplementName): Deleted.
+        (WebKit::WebMediaCacheManager::WebMediaCacheManager): Deleted.
+        (WebKit::WebMediaCacheManager::getHostnamesWithMediaCache): Deleted.
+        (WebKit::WebMediaCacheManager::clearCacheForHostname): Deleted.
+        (WebKit::WebMediaCacheManager::clearCacheForAllHostnames): Deleted.
+        * WebProcess/MediaCache/WebMediaCacheManager.h: Removed.
+        * WebProcess/MediaCache/WebMediaCacheManager.messages.in: Removed.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_webSQLiteDatabaseTracker): Deleted.
+
 2016-02-16  Dean Jackson  <dino@apple.com>
 
         Allow double tap to zoom in fast-click pages

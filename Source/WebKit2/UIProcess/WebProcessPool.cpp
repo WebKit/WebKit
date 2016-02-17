@@ -51,7 +51,6 @@
 #include "WebGeolocationManagerProxy.h"
 #include "WebIconDatabase.h"
 #include "WebKit2Initialize.h"
-#include "WebMediaCacheManagerProxy.h"
 #include "WebMemorySampler.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageGroup.h"
@@ -179,7 +178,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
     addSupplement<WebCookieManagerProxy>();
     addSupplement<WebGeolocationManagerProxy>();
-    addSupplement<WebMediaCacheManagerProxy>();
     addSupplement<WebNotificationManagerProxy>();
 #if USE(SOUP)
     addSupplement<WebSoupCustomProtocolRequestManager>();

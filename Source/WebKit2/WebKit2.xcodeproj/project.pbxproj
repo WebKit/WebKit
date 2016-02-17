@@ -740,16 +740,6 @@
 		3336763B130C99DC006C9DE2 /* WKResourceCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33AA1066131F060000D4A575 /* WebCookieManagerProxyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33AA1064131F060000D4A575 /* WebCookieManagerProxyClient.cpp */; };
 		33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 33AA1065131F060000D4A575 /* WebCookieManagerProxyClient.h */; };
-		33D3A3B51339600B00709BE4 /* WKMediaCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33D3A3B31339600B00709BE4 /* WKMediaCacheManager.cpp */; };
-		33D3A3B61339600B00709BE4 /* WKMediaCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D3A3B41339600B00709BE4 /* WKMediaCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		33D3A3BA1339606200709BE4 /* WebMediaCacheManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33D3A3B71339606200709BE4 /* WebMediaCacheManagerProxy.cpp */; };
-		33D3A3BB1339606200709BE4 /* WebMediaCacheManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D3A3B81339606200709BE4 /* WebMediaCacheManagerProxy.h */; };
-		33D3A3C1133960B000709BE4 /* WebMediaCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33D3A3BE133960B000709BE4 /* WebMediaCacheManager.cpp */; };
-		33D3A3C2133960B000709BE4 /* WebMediaCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D3A3BF133960B000709BE4 /* WebMediaCacheManager.h */; };
-		33D3A3C81339617900709BE4 /* WebMediaCacheManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33D3A3C41339617900709BE4 /* WebMediaCacheManagerMessageReceiver.cpp */; };
-		33D3A3C91339617900709BE4 /* WebMediaCacheManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D3A3C51339617900709BE4 /* WebMediaCacheManagerMessages.h */; };
-		33D3A3CA1339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33D3A3C61339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp */; };
-		33D3A3CB1339617900709BE4 /* WebMediaCacheManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D3A3C71339617900709BE4 /* WebMediaCacheManagerProxyMessages.h */; };
 		370F34A21829BE1E009027C8 /* WKNavigationData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 370F34A01829BE1E009027C8 /* WKNavigationData.mm */; };
 		370F34A31829BE1E009027C8 /* WKNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A11829BE1E009027C8 /* WKNavigationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		370F34A51829BEA3009027C8 /* WKNavigationDataInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */; };
@@ -2734,18 +2724,6 @@
 		33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKResourceCacheManager.h; sourceTree = "<group>"; };
 		33AA1064131F060000D4A575 /* WebCookieManagerProxyClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieManagerProxyClient.cpp; sourceTree = "<group>"; };
 		33AA1065131F060000D4A575 /* WebCookieManagerProxyClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieManagerProxyClient.h; sourceTree = "<group>"; };
-		33D3A3B31339600B00709BE4 /* WKMediaCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMediaCacheManager.cpp; sourceTree = "<group>"; };
-		33D3A3B41339600B00709BE4 /* WKMediaCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMediaCacheManager.h; sourceTree = "<group>"; };
-		33D3A3B71339606200709BE4 /* WebMediaCacheManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaCacheManagerProxy.cpp; sourceTree = "<group>"; };
-		33D3A3B81339606200709BE4 /* WebMediaCacheManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaCacheManagerProxy.h; sourceTree = "<group>"; };
-		33D3A3B91339606200709BE4 /* WebMediaCacheManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebMediaCacheManagerProxy.messages.in; sourceTree = "<group>"; };
-		33D3A3BE133960B000709BE4 /* WebMediaCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMediaCacheManager.cpp; path = MediaCache/WebMediaCacheManager.cpp; sourceTree = "<group>"; };
-		33D3A3BF133960B000709BE4 /* WebMediaCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMediaCacheManager.h; path = MediaCache/WebMediaCacheManager.h; sourceTree = "<group>"; };
-		33D3A3C0133960B000709BE4 /* WebMediaCacheManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebMediaCacheManager.messages.in; path = MediaCache/WebMediaCacheManager.messages.in; sourceTree = "<group>"; };
-		33D3A3C41339617900709BE4 /* WebMediaCacheManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaCacheManagerMessageReceiver.cpp; sourceTree = "<group>"; };
-		33D3A3C51339617900709BE4 /* WebMediaCacheManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaCacheManagerMessages.h; sourceTree = "<group>"; };
-		33D3A3C61339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaCacheManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		33D3A3C71339617900709BE4 /* WebMediaCacheManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaCacheManagerProxyMessages.h; sourceTree = "<group>"; };
 		3574B37F1665932C00859BB7 /* PDFAnnotationTextWidgetDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFAnnotationTextWidgetDetails.h; path = PDF/PDFAnnotationTextWidgetDetails.h; sourceTree = "<group>"; };
 		370F34A01829BE1E009027C8 /* WKNavigationData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigationData.mm; sourceTree = "<group>"; };
 		370F34A11829BE1E009027C8 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
@@ -4925,9 +4903,6 @@
 		33D3A3BD1339609800709BE4 /* MediaCache */ = {
 			isa = PBXGroup;
 			children = (
-				33D3A3BE133960B000709BE4 /* WebMediaCacheManager.cpp */,
-				33D3A3BF133960B000709BE4 /* WebMediaCacheManager.h */,
-				33D3A3C0133960B000709BE4 /* WebMediaCacheManager.messages.in */,
 				CD003A5019D49B5D005ABCE0 /* WebMediaKeyStorageManager.cpp */,
 				CD003A5119D49B5D005ABCE0 /* WebMediaKeyStorageManager.h */,
 			);
@@ -5919,9 +5894,6 @@
 				1C8E28331275D73800BC7BD0 /* WebInspectorProxy.cpp */,
 				1C8E28321275D73800BC7BD0 /* WebInspectorProxy.h */,
 				1C77C1951288A872006A742F /* WebInspectorProxy.messages.in */,
-				33D3A3B71339606200709BE4 /* WebMediaCacheManagerProxy.cpp */,
-				33D3A3B81339606200709BE4 /* WebMediaCacheManagerProxy.h */,
-				33D3A3B91339606200709BE4 /* WebMediaCacheManagerProxy.messages.in */,
 				C98C48A31B6FD4C300145103 /* WebMediaSessionFocusManager.cpp */,
 				C98C48A41B6FD4C300145103 /* WebMediaSessionFocusManager.h */,
 				C9C183371B73FD6A007036A7 /* WebMediaSessionFocusManagerClient.cpp */,
@@ -6074,8 +6046,6 @@
 				51A9E1081315CD18009E7031 /* WKKeyValueStorageManager.cpp */,
 				51A9E1091315CD18009E7031 /* WKKeyValueStorageManager.h */,
 				2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */,
-				33D3A3B31339600B00709BE4 /* WKMediaCacheManager.cpp */,
-				33D3A3B41339600B00709BE4 /* WKMediaCacheManager.h */,
 				C98C48A71B6FD5B500145103 /* WKMediaSessionFocusManager.cpp */,
 				C98C48A81B6FD5B500145103 /* WKMediaSessionFocusManager.h */,
 				C9CD43991B4B024200239E33 /* WKMediaSessionMetadata.cpp */,
@@ -6924,10 +6894,6 @@
 				1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */,
 				1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */,
 				1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */,
-				33D3A3C41339617900709BE4 /* WebMediaCacheManagerMessageReceiver.cpp */,
-				33D3A3C51339617900709BE4 /* WebMediaCacheManagerMessages.h */,
-				33D3A3C61339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp */,
-				33D3A3C71339617900709BE4 /* WebMediaCacheManagerProxyMessages.h */,
 				31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */,
 				31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */,
 				29D55DEF161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp */,
@@ -7670,10 +7636,6 @@
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
 				1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */,
-				33D3A3C2133960B000709BE4 /* WebMediaCacheManager.h in Headers */,
-				33D3A3C91339617900709BE4 /* WebMediaCacheManagerMessages.h in Headers */,
-				33D3A3BB1339606200709BE4 /* WebMediaCacheManagerProxy.h in Headers */,
-				33D3A3CB1339617900709BE4 /* WebMediaCacheManagerProxyMessages.h in Headers */,
 				CD003A5319D49B5D005ABCE0 /* WebMediaKeyStorageManager.h in Headers */,
 				C98C48A61B6FD4C300145103 /* WebMediaSessionFocusManager.h in Headers */,
 				C9C1833C1B74026D007036A7 /* WebMediaSessionFocusManagerClient.h in Headers */,
@@ -7904,7 +7866,6 @@
 				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
-				33D3A3B61339600B00709BE4 /* WKMediaCacheManager.h in Headers */,
 				C98C48AA1B6FD5B500145103 /* WKMediaSessionFocusManager.h in Headers */,
 				C9CD439D1B4B024F00239E33 /* WKMediaSessionMetadata.h in Headers */,
 				BC4075FE124FF0270068F20A /* WKMutableArray.h in Headers */,
@@ -9157,10 +9118,6 @@
 				C0337DD3127A2A0E008FF4F4 /* WebKeyboardEvent.cpp in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
 				BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */,
-				33D3A3C1133960B000709BE4 /* WebMediaCacheManager.cpp in Sources */,
-				33D3A3C81339617900709BE4 /* WebMediaCacheManagerMessageReceiver.cpp in Sources */,
-				33D3A3BA1339606200709BE4 /* WebMediaCacheManagerProxy.cpp in Sources */,
-				33D3A3CA1339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp in Sources */,
 				CD003A5219D49B5D005ABCE0 /* WebMediaKeyStorageManager.cpp in Sources */,
 				C98C48A51B6FD4C300145103 /* WebMediaSessionFocusManager.cpp in Sources */,
 				C9C1833B1B74026A007036A7 /* WebMediaSessionFocusManagerClient.cpp in Sources */,
@@ -9362,7 +9319,6 @@
 				A54293A5195A43DD002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm in Sources */,
 				51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */,
 				07297F9E1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp in Sources */,
-				33D3A3B51339600B00709BE4 /* WKMediaCacheManager.cpp in Sources */,
 				C98C48A91B6FD5B500145103 /* WKMediaSessionFocusManager.cpp in Sources */,
 				C9CD439E1B4B025300239E33 /* WKMediaSessionMetadata.cpp in Sources */,
 				BC4075FD124FF0270068F20A /* WKMutableArray.cpp in Sources */,
