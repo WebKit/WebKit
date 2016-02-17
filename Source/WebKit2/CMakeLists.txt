@@ -380,7 +380,6 @@ set(WebKit2_SOURCES
     UIProcess/WebIconDatabase.cpp
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
-    UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebNavigationState.cpp
     UIProcess/WebOpenPanelResultListenerProxy.cpp
     UIProcess/WebPageDiagnosticLoggingClient.cpp
@@ -436,7 +435,6 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKIconDatabase.cpp
     UIProcess/API/C/WKInspector.cpp
     UIProcess/API/C/WKKeyValueStorageManager.cpp
-    UIProcess/API/C/WKMediaCacheManager.cpp
     UIProcess/API/C/WKMediaSessionMetadata.cpp
     UIProcess/API/C/WKNavigationActionRef.cpp
     UIProcess/API/C/WKNavigationDataRef.cpp
@@ -563,8 +561,6 @@ set(WebKit2_SOURCES
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
 
-    WebProcess/MediaCache/WebMediaCacheManager.cpp
-
     WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
     WebProcess/Network/NetworkProcessConnection.cpp
@@ -673,7 +669,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebGeolocationManagerProxy.messages.in
     UIProcess/WebIconDatabase.messages.in
     UIProcess/WebInspectorProxy.messages.in
-    UIProcess/WebMediaCacheManagerProxy.messages.in
     UIProcess/WebPageProxy.messages.in
     UIProcess/WebPasteboardProxy.messages.in
     UIProcess/WebProcessPool.messages.in
@@ -707,8 +702,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/Geolocation/WebGeolocationManager.messages.in
 
     WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in
-
-    WebProcess/MediaCache/WebMediaCacheManager.messages.in
 
     WebProcess/Network/NetworkProcessConnection.messages.in
     WebProcess/Network/WebResourceLoader.messages.in
