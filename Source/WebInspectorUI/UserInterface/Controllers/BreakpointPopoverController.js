@@ -180,13 +180,14 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
                 this._ignoreCountInput.id = "edit-breakpoint-popover-ignore";
                 this._ignoreCountInput.type = "number";
                 this._ignoreCountInput.min = 0;
-                this._ignoreCountInput.value = this._ignoreCount || 0;
+                this._ignoreCountInput.value = 0;
                 this._ignoreCountInput.addEventListener("change", this._popoverIgnoreInputChanged.bind(this));
 
-                let ignoreCountText = ignoreCountData.appendChild(document.createElement("span"));
                 ignoreCountLabel.setAttribute("for", this._ignoreCountInput.id);
                 ignoreCountLabel.textContent = WebInspector.UIString("Ignore");
-                ignoreCountText.textContent = WebInspector.UIString("times before stopping");
+
+                this._ignoreCountText = ignoreCountData.appendChild(document.createElement("span"));
+                this._updateIgnoreCountText();
             }
 
             let actionRow = table.appendChild(document.createElement("tr"));
@@ -259,6 +260,8 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
 
         this._ignoreCountInput.value = ignoreCount;
         this._breakpoint.ignoreCount = ignoreCount;
+
+        this._updateIgnoreCountText();
     }
 
     _popoverToggleAutoContinueCheckboxChanged(event)
@@ -296,6 +299,14 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
             let nextElement = this._actionsContainer.children[index + 1] || null;
             this._actionsContainer.insertBefore(breakpointActionView.element, nextElement);
         }
+    }
+
+    _updateIgnoreCountText()
+    {
+        if (this._breakpoint.ignoreCount === 1)
+            this._ignoreCountText.textContent = WebInspector.UIString("time before stopping");
+        else
+            this._ignoreCountText.textContent = WebInspector.UIString("times before stopping");
     }
 
     breakpointActionViewAppendActionView(breakpointActionView, newAction)

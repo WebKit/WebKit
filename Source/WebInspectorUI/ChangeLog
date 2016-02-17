@@ -1,3 +1,24 @@
+2016-02-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add singular and plural cases for "Ignore n times before stopping" label in breakpoint editor
+        https://bugs.webkit.org/show_bug.cgi?id=154335
+        <rdar://problem/24655491>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Added string for singular ignore count.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype._createPopoverContent):
+        Remove unused variable "this._ignoreCount" and update ignore count text.
+
+        (WebInspector.BreakpointPopoverController.prototype._popoverIgnoreInputChanged):
+        Update ignore count text as value changes.
+
+        (WebInspector.BreakpointPopoverController.prototype._updateIgnoreCountText):
+        Set singular text when count === 1, otherwise set plural text.
+
 2016-02-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r196620): Web Inspector: Selecting last message in the console makes the scrollbar visible
