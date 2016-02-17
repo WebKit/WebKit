@@ -1,5 +1,14 @@
 2016-02-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Adding an ios-specific baseline for accessibility/ios-simulator/centerpoint.html during failure investigation
+        https://bugs.webkit.org/show_bug.cgi?id=154137
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/accessibility/ios-simulator/centerpoint-expected.txt: Added.
+
+2016-02-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator
 
         Unreviewed test gardening.
