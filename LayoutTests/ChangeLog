@@ -1,3 +1,12 @@
+2016-02-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add ios-simulator baseline for new W3C HTML tests added with r196710
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt: Added.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt: Added.
+
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
         SES selftest page crashes on nightly r196694
