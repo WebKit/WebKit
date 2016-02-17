@@ -1,3 +1,11 @@
+2016-02-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping tests added with r196688 on ios-simulator due to reliance on unsupported mouse events.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
         Window should have its 'constructor' property on the prototype
