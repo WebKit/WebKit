@@ -1,3 +1,15 @@
+2016-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Add tests for iframe and overflow scrollability after navigating back
+        https://bugs.webkit.org/show_bug.cgi?id=154300
+
+        Fix the tests added in r196665 to be agnostic about how many pixels a wheel event scrolls.
+
+        * fast/scrolling/iframe-scrollable-after-back-expected.txt:
+        * fast/scrolling/iframe-scrollable-after-back.html:
+        * fast/scrolling/overflow-scrollable-after-back-expected.txt:
+        * fast/scrolling/overflow-scrollable-after-back.html:
+
 2016-02-17  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function. Arrow function should raise exception ReferenceError only when access to 'arguments'  on top level

@@ -1,8 +1,8 @@
-Sending wheel event; scrollTop is 0
-Scrolled; scrollTop is 20
+Sending mouseWheel events
+PASS: mouseWheel caused scrolling
 
 Navigating forward then back
 
-Sending wheel event; scrollTop is 20
-Scrolled; scrollTop is 40
+Sending mouseWheel events
+PASS: mouseWheel caused scrolling
 

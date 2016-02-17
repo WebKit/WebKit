@@ -28,11 +28,18 @@
             document.getElementById('result').textContent += s + "\n";
         }
 
+        var scrollTopBeforeScroll;
         var postScrollCallback;
 
         function divScrolled()
         {
-            logResult('Scrolled; scrollTop is ' + document.getElementById('overflowing').scrollTop);
+            var newScrollTop = document.getElementById('overflowing').scrollTop;
+
+            if (newScrollTop > scrollTopBeforeScroll)
+                logResult('PASS: mouseWheel caused scrolling');
+            else
+                logResult('FAIL; mouseWheel did not scroll; scrollTop is ' + newScrollTop + ', was ' + scrollTopBeforeScroll);
+
             if (postScrollCallback)
                 postScrollCallback();
         }
@@ -42,7 +49,8 @@
             var divTarget = document.getElementById('overflowing');
             var divBounds = divTarget.getBoundingClientRect();
             
-            logResult('Sending wheel event; scrollTop is ' + divTarget.scrollTop);
+            scrollTopBeforeScroll = divTarget.scrollTop;
+            logResult('Sending mouseWheel events');
 
             eventSender.mouseMoveTo(divBounds.left + 10, divBounds.top + 10);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');

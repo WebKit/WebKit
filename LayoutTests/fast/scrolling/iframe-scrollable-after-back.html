@@ -28,11 +28,17 @@
             document.getElementById('result').textContent += s + "\n";
         }
 
+        var scrollTopBeforeScroll;
         var postScrollCallback;
 
         function iframeScrolled()
         {
-            logResult('Scrolled; scrollTop is ' + document.getElementById('iframe').contentDocument.scrollingElement.scrollTop);
+            var newScrollTop = document.getElementById('iframe').contentDocument.scrollingElement.scrollTop;
+            if (newScrollTop > scrollTopBeforeScroll)
+                logResult('PASS: mouseWheel caused scrolling');
+            else
+                logResult('FAIL; mouseWheel did not scroll; scrollTop is ' + newScrollTop + ', was ' + scrollTopBeforeScroll);
+
             if (postScrollCallback)
                 postScrollCallback();
         }
@@ -42,7 +48,8 @@
             var iframeTarget = document.getElementById('iframe');
             var iframeBounds = iframeTarget.getBoundingClientRect();
             
-            logResult('Sending wheel event; scrollTop is ' + iframeTarget.contentDocument.scrollingElement.scrollTop);
+            scrollTopBeforeScroll = iframeTarget.contentDocument.scrollingElement.scrollTop;
+            logResult('Sending mouseWheel events');
 
             eventSender.mouseMoveTo(iframeBounds.left + 10, iframeBounds.top + 10);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
