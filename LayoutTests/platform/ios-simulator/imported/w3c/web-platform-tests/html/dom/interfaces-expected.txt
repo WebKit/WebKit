@@ -3811,7 +3811,7 @@ PASS Window interface: existence and properties of interface object
 PASS Window interface object length 
 PASS Window interface object name 
 FAIL Window interface: existence and properties of interface prototype object assert_equals: Class name for prototype of Window.prototype is not "WindowProperties" expected "[object WindowProperties]" but got "[object EventTargetPrototype]"
-FAIL Window interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Window.prototype does not have own property "constructor" expected property "constructor" missing
+PASS Window interface: existence and properties of interface prototype object's "constructor" property 
 PASS Window interface: attribute self 
 PASS Window interface: attribute name 
 FAIL Window interface: attribute history assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function history() {
@@ -4084,12 +4084,16 @@ FAIL Window interface: window must inherit property "createImageBitmap" with the
 FAIL Window interface: calling createImageBitmap(ImageBitmapSource,long,long,long,long) on window with too few arguments must throw TypeError assert_own_property: expected property "createImageBitmap" missing
 PASS Window interface: window must inherit property "sessionStorage" with the proper type (123) 
 PASS Window interface: window must inherit property "localStorage" with the proper type (124) 
-FAIL EventTarget interface: window must inherit property "addEventListener" with the proper type (0) assert_inherits: property "addEventListener" found on object expected in prototype chain
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_inherits: property "addEventListener" found on object expected in prototype chain
-FAIL EventTarget interface: window must inherit property "removeEventListener" with the proper type (1) assert_inherits: property "removeEventListener" found on object expected in prototype chain
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_inherits: property "removeEventListener" found on object expected in prototype chain
-FAIL EventTarget interface: window must inherit property "dispatchEvent" with the proper type (2) assert_inherits: property "dispatchEvent" found on object expected in prototype chain
-FAIL EventTarget interface: calling dispatchEvent(Event) on window with too few arguments must throw TypeError assert_inherits: property "dispatchEvent" found on object expected in prototype chain
+PASS EventTarget interface: window must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: window must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: window must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on window with too few arguments must throw TypeError 
 PASS BarProp interface: existence and properties of interface object 
 PASS BarProp interface object length 
 PASS BarProp interface object name 
@@ -4274,41 +4278,41 @@ PASS Navigator interface object length
 PASS Navigator interface object name 
 PASS Navigator interface: existence and properties of interface prototype object 
 PASS Navigator interface: existence and properties of interface prototype object's "constructor" property 
-FAIL Navigator interface: attribute appCodeName assert_true: The prototype object must have a property "appCodeName" expected true got false
-FAIL Navigator interface: attribute appName assert_true: The prototype object must have a property "appName" expected true got false
-FAIL Navigator interface: attribute appVersion assert_true: The prototype object must have a property "appVersion" expected true got false
-FAIL Navigator interface: attribute platform assert_true: The prototype object must have a property "platform" expected true got false
-FAIL Navigator interface: attribute product assert_true: The prototype object must have a property "product" expected true got false
+PASS Navigator interface: attribute appCodeName 
+PASS Navigator interface: attribute appName 
+PASS Navigator interface: attribute appVersion 
+PASS Navigator interface: attribute platform 
+PASS Navigator interface: attribute product 
 FAIL Navigator interface: operation taintEnabled() assert_own_property: interface prototype object missing non-static operation expected property "taintEnabled" missing
-FAIL Navigator interface: attribute userAgent assert_true: The prototype object must have a property "userAgent" expected true got false
-FAIL Navigator interface: attribute language assert_true: The prototype object must have a property "language" expected true got false
+PASS Navigator interface: attribute userAgent 
+PASS Navigator interface: attribute language 
 FAIL Navigator interface: attribute languages assert_true: The prototype object must have a property "languages" expected true got false
-FAIL Navigator interface: attribute onLine assert_true: The prototype object must have a property "onLine" expected true got false
+PASS Navigator interface: attribute onLine 
 FAIL Navigator interface: operation registerProtocolHandler(DOMString,DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "registerProtocolHandler" missing
 FAIL Navigator interface: operation registerContentHandler(DOMString,DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "registerContentHandler" missing
 FAIL Navigator interface: operation isProtocolHandlerRegistered(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "isProtocolHandlerRegistered" missing
 FAIL Navigator interface: operation isContentHandlerRegistered(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "isContentHandlerRegistered" missing
 FAIL Navigator interface: operation unregisterProtocolHandler(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "unregisterProtocolHandler" missing
 FAIL Navigator interface: operation unregisterContentHandler(DOMString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "unregisterContentHandler" missing
-FAIL Navigator interface: attribute cookieEnabled assert_true: The prototype object must have a property "cookieEnabled" expected true got false
+PASS Navigator interface: attribute cookieEnabled 
 FAIL Navigator interface: operation yieldForStorageUpdates() assert_own_property: interface prototype object missing non-static operation expected property "yieldForStorageUpdates" missing
-FAIL Navigator interface: attribute plugins assert_true: The prototype object must have a property "plugins" expected true got false
-FAIL Navigator interface: attribute mimeTypes assert_true: The prototype object must have a property "mimeTypes" expected true got false
+PASS Navigator interface: attribute plugins 
+PASS Navigator interface: attribute mimeTypes 
 FAIL Navigator interface: attribute javaEnabled assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
 PASS Navigator must be primary interface of window.navigator 
 PASS Stringification of window.navigator 
-FAIL Navigator interface: window.navigator must inherit property "appCodeName" with the proper type (0) assert_inherits: property "appCodeName" found on object expected in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "appName" with the proper type (1) assert_inherits: property "appName" found on object expected in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "appVersion" with the proper type (2) assert_inherits: property "appVersion" found on object expected in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "platform" with the proper type (3) assert_inherits: property "platform" found on object expected in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "product" with the proper type (4) assert_inherits: property "product" found on object expected in prototype chain
+PASS Navigator interface: window.navigator must inherit property "appCodeName" with the proper type (0) 
+PASS Navigator interface: window.navigator must inherit property "appName" with the proper type (1) 
+PASS Navigator interface: window.navigator must inherit property "appVersion" with the proper type (2) 
+PASS Navigator interface: window.navigator must inherit property "platform" with the proper type (3) 
+PASS Navigator interface: window.navigator must inherit property "product" with the proper type (4) 
 FAIL Navigator interface: window.navigator must inherit property "taintEnabled" with the proper type (5) assert_inherits: property "taintEnabled" not found in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "userAgent" with the proper type (6) assert_inherits: property "userAgent" found on object expected in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "language" with the proper type (7) assert_inherits: property "language" found on object expected in prototype chain
+PASS Navigator interface: window.navigator must inherit property "userAgent" with the proper type (6) 
+PASS Navigator interface: window.navigator must inherit property "language" with the proper type (7) 
 FAIL Navigator interface: window.navigator must inherit property "languages" with the proper type (8) assert_inherits: property "languages" not found in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "onLine" with the proper type (9) assert_inherits: property "onLine" found on object expected in prototype chain
+PASS Navigator interface: window.navigator must inherit property "onLine" with the proper type (9) 
 FAIL Navigator interface: window.navigator must inherit property "registerProtocolHandler" with the proper type (10) assert_inherits: property "registerProtocolHandler" not found in prototype chain
 FAIL Navigator interface: calling registerProtocolHandler(DOMString,DOMString,DOMString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "registerProtocolHandler" not found in prototype chain
 FAIL Navigator interface: window.navigator must inherit property "registerContentHandler" with the proper type (11) assert_inherits: property "registerContentHandler" not found in prototype chain
@@ -4321,10 +4325,10 @@ FAIL Navigator interface: window.navigator must inherit property "unregisterProt
 FAIL Navigator interface: calling unregisterProtocolHandler(DOMString,DOMString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "unregisterProtocolHandler" not found in prototype chain
 FAIL Navigator interface: window.navigator must inherit property "unregisterContentHandler" with the proper type (15) assert_inherits: property "unregisterContentHandler" not found in prototype chain
 FAIL Navigator interface: calling unregisterContentHandler(DOMString,DOMString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "unregisterContentHandler" not found in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "cookieEnabled" with the proper type (16) assert_inherits: property "cookieEnabled" found on object expected in prototype chain
+PASS Navigator interface: window.navigator must inherit property "cookieEnabled" with the proper type (16) 
 FAIL Navigator interface: window.navigator must inherit property "yieldForStorageUpdates" with the proper type (17) assert_inherits: property "yieldForStorageUpdates" not found in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "plugins" with the proper type (18) assert_inherits: property "plugins" found on object expected in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "mimeTypes" with the proper type (19) assert_inherits: property "mimeTypes" found on object expected in prototype chain
+PASS Navigator interface: window.navigator must inherit property "plugins" with the proper type (18) 
+PASS Navigator interface: window.navigator must inherit property "mimeTypes" with the proper type (19) 
 FAIL Navigator interface: window.navigator must inherit property "javaEnabled" with the proper type (20) assert_equals: expected "boolean" but got "function"
 PASS PluginArray interface: existence and properties of interface object 
 PASS PluginArray interface object length 
