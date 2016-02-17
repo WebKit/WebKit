@@ -3703,7 +3703,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(TreeBuilder& context, SpreadMode mode)
+template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(TreeBuilder& context)
 {
     consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings, "Expected opening '(' at start of argument list");
     JSTokenLocation location(tokenLocation());
@@ -3711,39 +3711,60 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
         next(TreeBuilder::DontBuildStrings);
         return context.createArguments();
     }
-    if (match(DOTDOTDOT) && mode == AllowSpread) {
+    auto argumentsStart = m_token.m_startPosition;
+    auto argumentsDivot = m_token.m_endPosition;
+
+    ArgumentType argType = ArgumentType::Normal;
+    TreeExpression firstArg = parseArgument(context, argType);
+    failIfFalse(firstArg, "Cannot parse function argument");
+    semanticFailIfTrue(match(DOTDOTDOT), "The '...' operator should come before the target expression");
+
+    bool hasSpread = false;
+    if (argType == ArgumentType::Spread)
+        hasSpread = true;
+    TreeArgumentsList argList = context.createArgumentsList(location, firstArg);
+    TreeArgumentsList tail = argList;
+
+    while (match(COMMA)) {
+        JSTokenLocation argumentLocation(tokenLocation());
+        next(TreeBuilder::DontBuildStrings);
+
+        TreeExpression arg = parseArgument(context, argType);
+        propagateError();
+        semanticFailIfTrue(match(DOTDOTDOT), "The '...' operator should come before the target expression");
+
+        if (argType == ArgumentType::Spread)
+            hasSpread = true;
+
+        tail = context.createArgumentsList(argumentLocation, tail, arg);
+    }
+
+    handleProductionOrFail(CLOSEPAREN, ")", "end", "argument list");
+    if (hasSpread) {
+        TreeExpression spreadArray = context.createSpreadExpression(location, context.createArray(location, context.createElementList(argList)), argumentsStart, argumentsDivot, m_lastTokenEndPosition);
+        return context.createArguments(context.createArgumentsList(location, spreadArray));
+    }
+
+    return context.createArguments(argList);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArgument(TreeBuilder& context, ArgumentType& type)
+{
+    if (UNLIKELY(match(DOTDOTDOT))) {
         JSTokenLocation spreadLocation(tokenLocation());
         auto start = m_token.m_startPosition;
         auto divot = m_token.m_endPosition;
         next();
-        auto spreadExpr = parseAssignmentExpression(context);
+        TreeExpression spreadExpr = parseAssignmentExpression(context);
+        propagateError();
         auto end = m_lastTokenEndPosition;
-        if (!spreadExpr)
-            failWithMessage("Cannot parse spread expression");
-        if (!consume(CLOSEPAREN)) {
-            if (match(COMMA))
-                semanticFail("Spread operator may only be applied to the last argument passed to a function");
-            handleProductionOrFail(CLOSEPAREN, ")", "end", "argument list");
-        }
-        auto spread = context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, end);
-        TreeArgumentsList argList = context.createArgumentsList(location, spread);
-        return context.createArguments(argList);
+        type = ArgumentType::Spread;
+        return context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, end);
     }
-    TreeExpression firstArg = parseAssignmentExpression(context);
-    failIfFalse(firstArg, "Cannot parse function argument");
-    
-    TreeArgumentsList argList = context.createArgumentsList(location, firstArg);
-    TreeArgumentsList tail = argList;
-    while (match(COMMA)) {
-        JSTokenLocation argumentLocation(tokenLocation());
-        next(TreeBuilder::DontBuildStrings);
-        TreeExpression arg = parseAssignmentExpression(context);
-        failIfFalse(arg, "Cannot parse function argument");
-        tail = context.createArgumentsList(argumentLocation, tail, arg);
-    }
-    semanticFailIfTrue(match(DOTDOTDOT), "The '...' operator should come before the target expression");
-    handleProductionOrFail(CLOSEPAREN, ")", "end", "argument list");
-    return context.createArguments(argList);
+
+    type = ArgumentType::Normal;
+    return parseAssignmentExpression(context);
 }
 
 template <typename LexerType>
@@ -3814,12 +3835,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             if (newCount) {
                 newCount--;
                 JSTextPosition expressionEnd = lastTokenEndPosition();
-                TreeArguments arguments = parseArguments(context, AllowSpread);
+                TreeArguments arguments = parseArguments(context);
                 failIfFalse(arguments, "Cannot parse call arguments");
                 base = context.createNewExpr(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             } else {
                 JSTextPosition expressionEnd = lastTokenEndPosition();
-                TreeArguments arguments = parseArguments(context, AllowSpread);
+                TreeArguments arguments = parseArguments(context);
                 failIfFalse(arguments, "Cannot parse call arguments");
                 if (baseIsSuper)
                     currentFunctionScope()->setHasDirectSuper();
