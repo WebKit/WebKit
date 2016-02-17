@@ -1,5 +1,26 @@
 2016-02-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        REGRESSION(r196268): WTFCrashWithSecurityImplication on SVG path animation tests
+        https://bugs.webkit.org/show_bug.cgi?id=154221
+
+        Reviewed by Brent Fulgham.
+
+        In r196268, a destructor was added to SVGListPropertyTearOff that notifies
+        its wrapper (the SVGAnimatedListPropertyTearoff) about its deletion. This
+        allows the wrapper to nullify any references to the wrapped content.
+        
+        We needed to do the same thing for SVGPathSegListPropertyTearOff. Both
+        SVGPathSegListPropertyTearOff and SVGListPropertyTearOff inherit from
+        SVGListProperty and both hold pointers to SVGAnimatedListPropertyTearOff
+        which needs to be notified.
+        
+        Tests: exiting svg path animation tests should not crash.
+
+        * svg/properties/SVGPathSegListPropertyTearOff.h:
+        (WebCore::SVGPathSegListPropertyTearOff::~SVGPathSegListPropertyTearOff):
+
+2016-02-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         REGRESSION (r190430): WTFCrashWithSecurityImplication in:void SVGRootInlineBox::layoutCharactersInTextBoxes()
         https://bugs.webkit.org/show_bug.cgi?id=154185
 
