@@ -340,7 +340,7 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
     }
     
     if (!m_challenge.protectionSpace().isPasswordBased()) {
-        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(m_challenge));
         return;
     }
     

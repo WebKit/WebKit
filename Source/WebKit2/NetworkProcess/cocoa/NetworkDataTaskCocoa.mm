@@ -189,6 +189,12 @@ auto NetworkDataTask::taskIdentifier() -> TaskIdentifier
 {
     return [m_task taskIdentifier];
 }
+
+WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge& challenge)
+{
+    return WebCore::Credential([NSURLCredential credentialForTrust:challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust]);
+}
+
 }
 
 #endif

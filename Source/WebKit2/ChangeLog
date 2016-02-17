@@ -1,3 +1,21 @@
+2016-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Use NSURLCredential from serverTrust when evaluating server trust AuthenticationChallenges with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154316
+
+        Reviewed by Brady Eidson.
+        
+        This fixes http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
+        and many other layout tests that use https because it allows https connections with servers
+        with self-signed certificates when TestController::canAuthenticateAgainstProtectionSpace in
+        WebKitTestRunner says it's OK, or when any other WKPageNavigationClient says it's ok. 
+
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::serverTrustCredential):
+
 2016-02-16  Anders Carlsson  <andersca@apple.com>
 
         Use pid_t everywhere, instead of PlatformProcessIdentifier

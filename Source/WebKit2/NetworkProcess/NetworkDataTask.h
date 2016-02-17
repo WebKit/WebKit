@@ -140,6 +140,10 @@ private:
 #endif
 };
 
+#if PLATFORM(COCOA)
+WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);
+#endif
+    
 }
 
 #endif
