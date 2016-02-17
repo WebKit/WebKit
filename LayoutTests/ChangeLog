@@ -1,3 +1,16 @@
+2016-02-17  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function. Arrow function should raise exception ReferenceError only when access to 'arguments'  on top level
+        https://bugs.webkit.org/show_bug.cgi?id=152570
+
+        Reviewed by Saam Barati.
+
+        Add tests to ensure that arrrow function return error when it binds arguments on top level
+
+        * js/arrowfunction-lexical-bind-arguments-top-level-expected.txt: Added.
+        * js/arrowfunction-lexical-bind-arguments-top-level.html: Added.
+        * js/script-tests/arrowfunction-lexical-bind-arguments-top-level.js: Added.
+
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
         Import W3C HTML reflection tests
