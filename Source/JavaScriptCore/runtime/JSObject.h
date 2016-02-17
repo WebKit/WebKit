@@ -1228,7 +1228,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
             structure->didReplaceProperty(offset);
             slot.setExistingProperty(this, offset);
 
-            if ((attributes & Accessor) != (currentAttributes & Accessor)) {
+            if ((attributes & Accessor) != (currentAttributes & Accessor) || (attributes & CustomAccessor) != (currentAttributes & CustomAccessor)) {
                 ASSERT(!(attributes & ReadOnly));
                 setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
             }

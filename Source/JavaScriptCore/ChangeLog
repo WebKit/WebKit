@@ -1,3 +1,32 @@
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
+        SES selftest page crashes on nightly r196694
+        https://bugs.webkit.org/show_bug.cgi?id=154350
+        <rdar://problem/24704334>
+
+        Reviewed by Mark Lam.
+
+        SES selftest page crashes after r196001 / r196145 when calling
+        Object.getOwnPropertyDescriptor(window, "length") after the window
+        has been reified and "length" has been shadowed by a value property.
+
+        It was crashing in JSObject::getOwnPropertyDescriptor() because
+        we are getting a slot that has attribute "CustomAccessor" but
+        the property is not a CustomGetterSetter. In this case, since
+        window.length is [Replaceable] and has been set to a numeric value,
+        it makes that the property is not a CustomGetterSetter. However,
+        the "CustomAccessor" attribute should have been dropped from the
+        slot when window.length was shadowed. Therefore, this code path
+        should not be exercised at all when calling
+        getOwnPropertyDescriptor().
+
+        The issue was that putDirectInternal() was updating the slot
+        attributes only if the "Accessor" flag has changed, but not
+        the "customAccessor" flag. This patch fixes the issue.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+
 2016-02-17  Saam barati  <sbarati@apple.com>
 
         Implement Proxy [[Get]]

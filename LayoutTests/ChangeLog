@@ -1,3 +1,18 @@
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
+        SES selftest page crashes on nightly r196694
+        https://bugs.webkit.org/show_bug.cgi?id=154350
+        <rdar://problem/24704334>
+
+        Reviewed by Mark Lam.
+
+        Add test coverage for the crash which happens when shadowing window.length
+        with a value after the window property and then calling
+        Object.getOwnPropertyDescriptor(window, "length").
+
+        * js/window-length-getOwnPropertyDescriptor-crash-expected.txt: Added.
+        * js/window-length-getOwnPropertyDescriptor-crash.html: Added.
+
 2016-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Add tests for iframe and overflow scrollability after navigating back
