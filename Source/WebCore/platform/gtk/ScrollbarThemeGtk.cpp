@@ -241,9 +241,7 @@ ScrollbarThemeGtk::ScrollbarThemeGtk()
 #if USE(COORDINATED_GRAPHICS_THREADED)
     m_usesOverlayScrollbars = true;
 #else
-    // FIXME: Disable overlay scrollbars by default for now due to bug #153404.
-    // Invert the logic here once bug #153404 is fixed.
-    m_usesOverlayScrollbars = !g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "1");
+    m_usesOverlayScrollbars = g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0");
 #endif
 #endif
     static bool themeMonitorInitialized = false;
