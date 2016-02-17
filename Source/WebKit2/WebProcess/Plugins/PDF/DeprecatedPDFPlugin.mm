@@ -1091,6 +1091,14 @@ bool PDFPlugin::initialize(const Parameters& parameters)
     return true;
 }
 
+void PDFPlugin::willDetatchRenderer()
+{
+    if (webFrame()) {
+        if (FrameView* frameView = webFrame()->coreFrame()->view())
+            frameView->removeScrollableArea(this);
+    }
+}
+
 void PDFPlugin::destroy()
 {
     m_pdfLayerController.get().delegate = 0;

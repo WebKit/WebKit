@@ -1,3 +1,33 @@
+2016-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        PDFPlugin's scrollableArea container is not properly unregistered when page is going into the PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=148182
+
+        Reviewed by Brent Fulgham.
+        
+        When handling Command-arrow key while showing a scrollable PDF, the timing of PDFPlugin
+        teardown and navigation could result in PDFPlugin::destroy() getting the wrong FrameView,
+        so the old FrameView was left with a stale pointer in its scrollableAreaSet.
+
+        Fix this by adding an explicit willDetatchRenderer() which is called on the plugin
+        before the Frame gets a new FrameView.
+
+        Also narrow the scope of the RefPtr<Widget> in HTMLPlugInElement::defaultEventHandler()
+        so that the Widget is not kept alive over a possible navigation.
+
+        I was unable to make an automated test, because reproducing the bug requires handling
+        a Command-arrow key event in a way that the last ref to a Widget is held over the event
+        handling, and this wasn't possible in an iframe.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h:
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::willDetatchRenderer):
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::willDetatchRenderer):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::willDetatchRenderer):
+        * WebProcess/Plugins/PluginView.h:
+
 2016-02-17  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Encoder/Decoder/Messaging scaffolding for WK2 IPC.

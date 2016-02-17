@@ -301,6 +301,8 @@ public:
 
     virtual bool requiresUnifiedScaleFactor() const { return false; }
 
+    virtual void willDetatchRenderer() { }
+
 protected:
     Plugin(PluginType);
 

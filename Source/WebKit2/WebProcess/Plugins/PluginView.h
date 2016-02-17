@@ -167,6 +167,7 @@ private:
     virtual void beginSnapshottingRunningPlugin() override;
     virtual bool shouldAllowNavigationFromDrags() const override;
     virtual bool shouldNotAddLayer() const override;
+    virtual void willDetatchRenderer() override;
 
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&) override;

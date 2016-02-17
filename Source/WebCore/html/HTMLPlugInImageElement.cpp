@@ -272,6 +272,10 @@ void HTMLPlugInImageElement::willDetachRenderers()
         setNeedsWidgetUpdate(true);
     }
 
+    Widget* widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
+    if (is<PluginViewBase>(widget))
+        downcast<PluginViewBase>(*widget).willDetatchRenderer();
+
     HTMLPlugInElement::willDetachRenderers();
 }
 

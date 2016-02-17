@@ -163,6 +163,7 @@ private:
     virtual bool getFormValue(String& formValue) override { return false; }
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
     virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const override;
+    virtual void willDetatchRenderer() override;
 
     virtual bool isBeingAsynchronouslyInitialized() const override { return false; }
 

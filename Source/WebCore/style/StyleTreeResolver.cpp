@@ -613,7 +613,7 @@ static void detachRenderTree(Element& current, DetachType detachType)
 
     if (current.renderer())
         current.renderer()->destroyAndCleanupAnonymousWrappers();
-    current.setRenderer(0);
+    current.setRenderer(nullptr);
 
     if (current.hasCustomStyleResolveCallbacks())
         current.didDetachRenderers();

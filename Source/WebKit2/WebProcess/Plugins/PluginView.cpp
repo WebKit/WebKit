@@ -1005,6 +1005,14 @@ bool PluginView::shouldNotAddLayer() const
     return m_pluginElement->displayState() < HTMLPlugInElement::Restarting && !m_plugin->supportsSnapshotting();
 }
 
+void PluginView::willDetatchRenderer()
+{
+    if (!m_isInitialized || !m_plugin)
+        return;
+
+    m_plugin->willDetatchRenderer();
+}
+
 PassRefPtr<SharedBuffer> PluginView::liveResourceData() const
 {
     if (!m_isInitialized || !m_plugin)
