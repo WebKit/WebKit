@@ -267,9 +267,6 @@ void PageClientImpl::didChangeContentSize(const WebCore::IntSize&)
 
 void PageClientImpl::disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
 {
-    if (!m_webView._allowsDoubleTapGestures)
-        return;
-
     [m_contentView _disableDoubleTapGesturesDuringTapIfNecessary:requestID];
 }
 
@@ -505,6 +502,11 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
 void PageClientImpl::commitPotentialTapFailed()
 {
     [m_contentView _commitPotentialTapFailed];
+}
+
+void PageClientImpl::didNotHandleTapAsClick()
+{
+    [m_contentView _didNotHandleTapAsClick];
 }
 
 void PageClientImpl::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)

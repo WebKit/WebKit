@@ -7,18 +7,21 @@
     <script src="../../../resources/js-test-pre.js"></script>
     <script id="ui-script" type="text/plain">
         (function() {
-            uiController.didEndZoomingCallback = function() {
-                uiController.uiScriptComplete("FAIL: Zoomed to scale " + uiController.zoomScale + " when we should only be firing fast clicks.");
-            };
+            var count = 0;
+            function fireSuccessiveTaps() {
+                if (count < 3)
+                    uiController.singleTapAtPoint(200, 200, fireSuccessiveTaps);
+                else
+                    uiController.uiScriptComplete("");
 
-            function fireSuccessiveSingleTaps() {
-                uiController.singleTapAtPoint(200, 200, fireSuccessiveSingleTaps);
+                count++;
             }
-            fireSuccessiveSingleTaps();
+            fireSuccessiveTaps();
         })();
     </script>
 
     <script>
+    var scriptCompleted = false;
     var clickCount = 0;
     if (window.testRunner)
         testRunner.waitUntilDone();
@@ -29,13 +32,17 @@
 
     function runTest() {
         if (testRunner.runUIScript)
-            testRunner.runUIScript(getUIScript(), function(result) { });
+            testRunner.runUIScript(getUIScript(), function(result) {
+                scriptCompleted = true;
+                if (clickCount == 3)
+                    testRunner.notifyDone();
+            });
     }
     function handleClicked() {
         clickCount++;
         document.body.appendChild(document.createTextNode("Click!"));
         document.body.appendChild(document.createElement("br"));
-        if (clickCount == 3)
+        if (clickCount == 3 && scriptCompleted)
             testRunner.notifyDone();
     }
     </script>

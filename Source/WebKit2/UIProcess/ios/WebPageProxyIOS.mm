@@ -912,6 +912,7 @@ void WebPageProxy::commitPotentialTapFailed()
 void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 {
     m_uiClient->didNotHandleTapAsClick(point);
+    m_pageClient.didNotHandleTapAsClick();
 }
 
 void WebPageProxy::disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
