@@ -1,3 +1,14 @@
+2016-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused function
+        https://bugs.webkit.org/show_bug.cgi?id=154358
+
+        Reviewed by Sam Weinig.
+
+        * Platform/cg/CGUtilities.cpp:
+        (WebKit::paintBitmapContext): Deleted.
+        * Platform/cg/CGUtilities.h:
+
 2016-02-17  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: More Encoder/Decoder/Messaging scaffolding for WK2 IPC.

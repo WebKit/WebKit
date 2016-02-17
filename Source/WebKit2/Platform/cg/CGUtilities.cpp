@@ -48,10 +48,4 @@ void paintImage(CGContextRef context, CGImageRef image, CGFloat scaleFactor, CGP
     CGContextRestoreGState(context);
 }
 
-void paintBitmapContext(CGContextRef context, CGContextRef bitmapContext, CGFloat scaleFactor, CGPoint destination, CGRect source)
-{
-    RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(bitmapContext));
-    paintImage(context, image.get(), scaleFactor, destination, source);
-}
-
 } // namespace WebKit
