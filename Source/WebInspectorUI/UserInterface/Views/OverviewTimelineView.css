@@ -32,12 +32,8 @@
 }
 
 .timeline-view.overview > .timeline-ruler > .header {
-    border-top: 1px solid hsl(0, 0%, 70%);
+    border-top: 1px solid var(--border-color);
     height: 23px;
-}
-
-body.window-inactive .timeline-view.overview > .timeline-ruler > .header {
-    border-top-color: hsl(0, 0%, 85%);
 }
 
 .timeline-view.overview > .timeline-ruler > .event-markers {

@@ -152,7 +152,7 @@ body.window-inactive.legacy-mac .toolbar .dashboard-container {
 body.latest-mac .toolbar .item.button,
 body.latest-mac .toolbar .search-bar > input[type="search"],
 body.latest-mac .toolbar .dashboard-container {
-    background-image: linear-gradient(hsl(0, 0%, 99%), hsl(0, 0%, 94%));
+    background-image: linear-gradient(hsl(0, 0%, 99%), var(--panel-background-color));
     box-shadow: hsla(0, 0%, 0%, 0.3) 0 1px 1px -1px;
 
     border-radius: 4px;

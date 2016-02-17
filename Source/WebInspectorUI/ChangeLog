@@ -1,5 +1,106 @@
 2016-02-17  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: add CSS variables for common border/background colors
+        https://bugs.webkit.org/show_bug.cgi?id=154302
+        <rdar://problem/24680944>
+
+        Reviewed by Timothy Hatcher.
+
+        Added CSS variables for commonly used border and background colors, and removed
+        duplicate CSS variables with less generic names. Inactive border colors declared in
+        rules with a body.window-inactive selector have been removed. A new rule using this
+        selector in Variables.css sets "--border-color" to the inactive color.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .pseudo-classes):
+        (.sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container)):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-has-label)):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid.inline):
+        (.data-grid th):
+        (.data-grid :matches(th, td):not(:last-child)):
+        (body.window-inactive .data-grid th): Deleted.
+        (body.window-inactive .data-grid :matches(th, td):not(:last-child)): Deleted.
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger.paused .details-section.scripts):
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section):
+        (.details-section .details-section:first-child):
+        (.details-section > .header):
+        (.details-section > .content > .group):
+        (.details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child)):
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar):
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner):
+        (body.window-inactive .find-banner): Deleted.
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        (.panel.details.layer-tree .bottom-bar):
+        * UserInterface/Views/Main.css:
+        (body.docked.bottom):
+        (body.docked.right):
+        (#split-content-browser):
+        (#split-content-browser > .navigation-bar):
+        (body.window-inactive.docked.bottom): Deleted.
+        (body.window-inactive.docked.right): Deleted.
+        (body.window-inactive #split-content-browser): Deleted.
+        * UserInterface/Views/MemoryCategoryView.css:
+        (.memory-category-view):
+        (.memory-category-view > .details):
+        (body.window-inactive .memory-category-view): Deleted.
+        (body.window-inactive .memory-category-view > .details): Deleted.
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory):
+        (.timeline-view.memory > .content > .overview):
+        (.timeline-view.memory > .content > .details > .subtitle):
+        (.timeline-view.memory > .content > .overview > .divider):
+        (body.window-inactive .timeline-view.memory): Deleted.
+        (body.window-inactive .timeline-view.memory > .content > .overview): Deleted.
+        (body.window-inactive .timeline-view.memory > .content > .details > .subtitle): Deleted.
+        (body.window-inactive .timeline-view.memory > .content > .overview > .divider): Deleted.
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar):
+        (body.window-inactive .navigation-bar): Deleted.
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .overflow-shadow):
+        (body.window-inactive .sidebar > .panel.navigation > .overflow-shadow): Deleted.
+        * UserInterface/Views/NetworkSidebarPanel.css:
+        (.sidebar > .panel.navigation.network > .title-bar):
+        (body.window-inactive .sidebar > .panel.navigation.network > .title-bar): Deleted.
+        * UserInterface/Views/OverviewTimelineView.css:
+        (.timeline-view.overview > .timeline-ruler > .header):
+        (body.window-inactive .timeline-view.overview > .timeline-ruler > .header): Deleted.
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console):
+        (body.window-inactive .quick-console): Deleted.
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar):
+        (.sidebar.left):
+        (.sidebar.right):
+        (body.window-inactive .sidebar.left): Deleted.
+        (body.window-inactive .sidebar.right): Deleted.
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.data-grid.timeline th):
+        (body.window-inactive .data-grid.timeline th): Deleted.
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header):
+        (body.window-inactive .timeline-ruler > .header): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .title-bar):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar): Deleted.
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar.timeline-events): Deleted.
+        * UserInterface/Views/Toolbar.css:
+        (body.latest-mac .toolbar .dashboard-container):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (body.window-inactive *):
+        * UserInterface/Views/VisualStyleSelectorSection.css:
+        (.details-section.visual-style-selector-section:not(.collapsed) > .header):
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider):
+
+2016-02-17  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Add singular and plural cases for "Ignore n times before stopping" label in breakpoint editor
         https://bugs.webkit.org/show_bug.cgi?id=154335
         <rdar://problem/24655491>

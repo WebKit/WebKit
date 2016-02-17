@@ -24,7 +24,7 @@
  */
 
 .find-banner {
-    border-bottom: 1px solid hsl(0, 0%, 70%);
+    border-bottom: 1px solid var(--border-color);
 
     position: absolute;
     top: -22px;
@@ -42,10 +42,6 @@
     transition-timing-function: ease-in;
 
     z-index: var(--z-index-header);
-}
-
-body.window-inactive .find-banner {
-    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .find-banner.showing {

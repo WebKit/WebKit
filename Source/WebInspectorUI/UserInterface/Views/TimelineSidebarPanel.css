@@ -57,8 +57,8 @@
 
     height: 29px;
 
-    border-bottom: 1px solid hsl(0, 0%, 70%);
-    background-color: hsl(0, 0%, 94%);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--panel-background-color);
     color: hsl(0, 0%, 22%);
 
     white-space: nowrap;
@@ -71,10 +71,6 @@
 
     white-space: nowrap;
     overflow: hidden;
-}
-
-body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar {
-    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .sidebar > .panel.navigation.timeline > .title-bar.timelines {
@@ -100,7 +96,7 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar {
 .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
     display: flex;
     height: 23px;
-    border-top: 1px solid hsl(0, 0%, 70%);
+    border-top: 1px solid var(--border-color);
 }
 
 .sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar {
@@ -117,10 +113,6 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar {
 
 .sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple .arrows {
     color: black;
-}
-
-body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
-    border-top-color: hsl(0, 0%, 85%);
 }
 
 .sidebar > .panel.navigation.timeline > .timelines-content {

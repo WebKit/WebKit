@@ -58,7 +58,7 @@
     display: flex;
     bottom: 0;
     width: 100%;
-    border-top: 1px solid hsl(0, 0%, 70%);
+    border-top: 1px solid var(--border-color);
     background-color: white;
 }
 

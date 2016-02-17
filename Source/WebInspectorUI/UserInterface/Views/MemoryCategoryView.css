@@ -25,25 +25,17 @@
 
 .memory-category-view {
     display: flex;
-    border-bottom: 1px solid var(--memory-active-divider-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .memory-category-view > .details {
     width: 150px;
     padding-left: 15px;
     padding-top: 10px;
-    border-right: 1px solid var(--memory-active-divider-color);
+    border-right: 1px solid var(--border-color);
     font-family: '-webkit-system-font';
     font-size: 12px;
     color: hsl(0, 0%, 70%);
-}
-
-body.window-inactive .memory-category-view {
-    border-bottom-color: var(--memory-inactive-divider-color);
-}
-
-body.window-inactive .memory-category-view > .details {
-    border-right-color: var(--memory-inactive-divider-color);
 }
 
 .memory-category-view > .details > .name {

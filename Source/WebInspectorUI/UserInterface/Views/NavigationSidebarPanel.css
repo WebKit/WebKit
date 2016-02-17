@@ -45,16 +45,12 @@
 
     opacity: 0;
 
-    border-bottom: 1px solid hsl(0, 0%, 70%);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar > .panel.navigation > .overflow-shadow.top {
     top: 28px;
     bottom: initial;
-}
-
-body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
-    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .sidebar > .panel.navigation > .content .empty-content-placeholder {

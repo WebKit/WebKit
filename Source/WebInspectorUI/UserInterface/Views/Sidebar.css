@@ -26,7 +26,7 @@
 .sidebar {
     position: relative;
 
-    background-color: hsl(0, 0%, 94%);
+    background-color: var(--panel-background-color);
 }
 
 .sidebar.collapsed {
@@ -77,17 +77,9 @@
 }
 
 .sidebar.left {
-    border-right: 1px solid hsl(0, 0%, 70%);
+    border-right: 1px solid var(--border-color);
 }
 
 .sidebar.right {
-    border-left: 1px solid hsl(0, 0%, 70%);
-}
-
-body.window-inactive .sidebar.left {
-    border-right-color: hsl(0, 0%, 85%);
-}
-
-body.window-inactive .sidebar.right {
-    border-left-color: hsl(0, 0%, 85%);
+    border-left: 1px solid var(--border-color);
 }

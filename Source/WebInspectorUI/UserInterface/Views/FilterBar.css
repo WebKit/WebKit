@@ -31,7 +31,7 @@
     white-space: nowrap;
     overflow: hidden;
 
-    background-color: hsl(0, 0%, 94%);
+    background-color: var(--panel-background-color);
 }
 
 .filter-bar > .navigation-bar {

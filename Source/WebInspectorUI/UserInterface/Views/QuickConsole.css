@@ -30,17 +30,13 @@
     align-items: flex-end;
 
     background-color: white;
-    border-top: 1px solid hsl(0, 0%, 74%);
+    border-top: 1px solid var(--border-color);
     padding: 3px 0 4px;
 
     outline: none;
     overflow: hidden;
 
     font-family: Menlo, monospace;
-}
-
-body.window-inactive .quick-console {
-    border-top-color: hsl(0, 0%, 85%);
 }
 
 .quick-console.showing-log {

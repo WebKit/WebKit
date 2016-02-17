@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,9 @@
     --z-index-glass-pane-for-drag: 2048;
     --z-index-uncaught-exception-sheet: 4096;
 
+    --border-color: hsl(0, 0%, 70%);
+    --panel-background-color: hsl(0, 0%, 94%);
+
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
 
     --syntax-highlight-number-color: hsl(248, 100%, 40%);
@@ -40,8 +43,6 @@
     --syntax-highlight-regexp-color: hsl(20, 100%, 44%);
     --syntax-highlight-symbol-color: hsl(172, 45%, 45%);
 
-    --memory-active-divider-color: hsl(0, 0%, 70%);
-    --memory-inactive-divider-color: hsl(0, 0%, 85%);
     --memory-javascript-fill-color: hsl(269, 65%, 75%);
     --memory-javascript-stroke-color: hsl(269, 33%, 50%);
     --memory-images-fill-color: hsl(0, 65%, 75%);
@@ -52,4 +53,8 @@
     --memory-page-stroke-color: hsl(22, 40%, 50%);
     --memory-max-comparison-fill-color: hsl(220, 10%, 75%);
     --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
+}
+
+body.window-inactive * {
+    --border-color: hsl(0, 0%, 85%);
 }

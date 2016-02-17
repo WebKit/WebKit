@@ -42,8 +42,8 @@
 
     height: 23px;
 
-    border-bottom: 1px solid hsl(0, 0%, 70%);
-    background-color: hsl(0, 0%, 94%);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--panel-background-color);
     color: hsl(0, 0%, 22%);
 
     white-space: nowrap;
@@ -56,10 +56,6 @@
 
     white-space: nowrap;
     overflow: hidden;
-}
-
-body.window-inactive .sidebar > .panel.navigation.network > .title-bar {
-    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .sidebar > .panel.navigation.network.network-grid-content-view-showing > .content {

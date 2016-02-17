@@ -43,17 +43,13 @@
 }
 
 .timeline-ruler > .header {
-    border-bottom: 1px solid hsl(0, 0%, 70%);
+    border-bottom: 1px solid var(--border-color);
 
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 29px;
-}
-
-body.window-inactive .timeline-ruler > .header {
-    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .timeline-ruler > .header > .divider {

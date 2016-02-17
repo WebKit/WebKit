@@ -58,7 +58,7 @@
 }
 
 .data-grid.inline {
-    border: 1px solid hsl(0, 0%, 70%);
+    border: 1px solid var(--border-color);
 }
 
 .data-grid.no-header > table.header {
@@ -75,7 +75,7 @@
 
     background-color: white;
 
-    border-bottom: 1px solid hsl(0, 0%, 70%);
+    border-bottom: 1px solid var(--border-color);
 
     font-weight: normal;
 
@@ -86,16 +86,8 @@
     overflow: hidden;
 }
 
-body.window-inactive .data-grid th {
-    border-bottom-color: hsl(0, 0%, 85%);
-}
-
 .data-grid :matches(th, td):not(:last-child) {
-    border-right: 1px solid hsl(0, 0%, 70%);
-}
-
-body.window-inactive .data-grid :matches(th, td):not(:last-child) {
-    border-right-color: hsl(0, 0%, 85%);
+    border-right: 1px solid var(--border-color);
 }
 
 .data-grid th.sortable:active {

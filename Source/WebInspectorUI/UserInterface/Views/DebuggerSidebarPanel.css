@@ -57,7 +57,7 @@
 }
 
 .sidebar > .panel.navigation.debugger.paused .details-section.scripts {
-    border-bottom: 1px solid hsl(0, 0%, 70%);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar > .panel.navigation.debugger .details-section.scripts .header {

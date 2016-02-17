@@ -40,7 +40,7 @@
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes {
     padding: 6px 10px;
-    border-bottom: 1px solid hsl(0, 0%, 70%);
+    border-bottom: 1px solid var(--border-color);
 
     display: flex;
     flex-flow: row wrap;
@@ -71,7 +71,7 @@
     position: absolute;
     width: 100%;
     background-color: white;
-    border-top: 1px solid hsl(0, 0%, 70%);
+    border-top: 1px solid var(--border-color);
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container {
@@ -182,7 +182,7 @@
 .sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-has-label) {
     margin-top: 0;
     border-top: none;
-    border-bottom: 1px solid hsl(0, 0%, 70%);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section > .header > .selector > .filter-matching {
