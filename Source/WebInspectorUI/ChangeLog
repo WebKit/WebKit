@@ -1,3 +1,16 @@
+2016-02-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r196620): Web Inspector: Selecting last message in the console makes the scrollbar visible
+        https://bugs.webkit.org/show_bug.cgi?id=154326
+        <rdar://problem/24692717>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-item.selected::after):
+        Make sure the selected message marker (blue vertical line) doesn't
+        go over the content view.
+
 2016-02-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: Support for inline source maps

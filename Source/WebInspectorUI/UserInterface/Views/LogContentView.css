@@ -107,7 +107,7 @@
     content: "";
     left: 0;
     top: -1px;
-    bottom: -1px;
+    bottom: 0;
     background: hsl(0, 0%, 60%);
     width: 2px;
     z-index: 10;
