@@ -1,3 +1,45 @@
+2016-02-17  Mark Lam  <mark.lam@apple.com>
+
+        StringPrototype functions should check for exceptions after calling JSString::value().
+        https://bugs.webkit.org/show_bug.cgi?id=154340
+
+        Reviewed by Filip Pizlo.
+
+        JSString::value() can throw an exception if the JS string is a rope and value()
+        needs to resolve the rope but encounters an OutOfMemory error.  If value() is not
+        able to resolve the rope, it will return a null string (in addition to throwing
+        the exception).  If StringPrototype functions do not check for exceptions after
+        calling JSString::value(), they may eventually use the returned null string and
+        crash the VM.
+
+        The fix is to add all the necessary exception checks, and do the appropriate
+        handling if needed.
+
+        Also in a few place where when an exception is detected, we return JSValue(), I
+        changed it to return jsUndefined() instead to be consistent with the rest of the
+        file.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+        (JSC::trimString):
+
 2016-02-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196675.

@@ -490,13 +490,16 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
     String replacementString;
     CallData callData;
     CallType callType = getCallData(replaceValue, callData);
-    if (callType == CallTypeNone)
+    if (callType == CallTypeNone) {
         replacementString = replaceValue.toString(exec)->value(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
 
     const String& source = string->value(exec);
     unsigned sourceLen = source.length();
     if (exec->hadException())
-        return JSValue::encode(JSValue());
+        return JSValue::encode(jsUndefined());
     RegExpObject* regExpObject = asRegExpObject(searchValue);
     RegExp* regExp = regExpObject->regExp();
     bool global = regExp->global();
@@ -505,7 +508,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
         // ES5.1 15.5.4.10 step 8.a.
         regExpObject->setLastIndex(exec, 0);
         if (exec->hadException())
-            return JSValue::encode(JSValue());
+            return JSValue::encode(jsUndefined());
 
         if (callType == CallTypeNone && !replacementString.length())
             return removeUsingRegExpSearch(exec, string, source, regExp);
@@ -526,7 +529,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
         JSFunction* func = jsCast<JSFunction*>(replaceValue);
         CachedCall cachedCall(exec, func, argCount);
         if (exec->hadException())
-            return JSValue::encode(jsNull());
+            return JSValue::encode(jsUndefined());
         VM* vm = &exec->vm();
         if (source.is8Bit()) {
             while (true) {
@@ -555,7 +558,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                 JSValue jsResult = cachedCall.call();
                 replacements.append(jsResult.toString(exec)->value(exec));
                 if (exec->hadException())
-                    break;
+                    return JSValue::encode(jsUndefined());
 
                 lastIndex = result.end;
                 startPosition = lastIndex;
@@ -594,7 +597,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                 JSValue jsResult = cachedCall.call();
                 replacements.append(jsResult.toString(exec)->value(exec));
                 if (exec->hadException())
-                    break;
+                    return JSValue::encode(jsUndefined());
 
                 lastIndex = result.end;
                 startPosition = lastIndex;
@@ -635,7 +638,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
 
                 replacements.append(call(exec, replaceValue, callType, callData, jsUndefined(), args).toString(exec)->value(exec));
                 if (exec->hadException())
-                    break;
+                    return JSValue::encode(jsUndefined());
             } else {
                 int replLen = replacementString.length();
                 if (lastIndex < result.start || replLen) {
@@ -990,7 +993,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
             // ES5.1 15.5.4.10 step 8.a.
             regExpObject->setLastIndex(exec, 0);
             if (exec->hadException())
-                return JSValue::encode(JSValue());
+                return JSValue::encode(jsUndefined());
         }
     } else {
         /*
@@ -999,7 +1002,13 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
          *  replaced with the result of the expression new RegExp(regexp).
          *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
          */
-        regExp = RegExp::create(exec->vm(), a0.isUndefined() ? emptyString() : a0.toString(exec)->value(exec), NoFlags);
+        String patternString = emptyString();
+        if (!a0.isUndefined()) {
+            patternString = a0.toString(exec)->value(exec);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        }
+        regExp = RegExp::create(exec->vm(), patternString, NoFlags);
         if (!regExp->isValid())
             return throwVMError(exec, createSyntaxError(exec, regExp->errorMessage()));
     }
@@ -1042,6 +1051,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     int len = s.length();
     RELEASE_ASSERT(len >= 0);
 
@@ -1104,6 +1116,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     // 2. Let S be the result of calling ToString, giving it the this value as its argument.
     // 6. Let s be the number of characters in S.
     String input = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    ASSERT(!input.isNull());
 
     // 3. Let A be a new array created as if by the expression new Array()
     //    where Array is the standard built-in constructor with that name.
@@ -1230,6 +1245,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
         }
     } else {
         String separator = separatorValue.toString(exec)->value(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
 
         // 9. If lim == 0, return A.
         if (!limit)
@@ -1439,9 +1456,14 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
 
     JSValue a0 = exec->argument(0);
-    return JSValue::encode(jsNumber(Collator().collate(s, a0.toString(exec)->value(exec))));
+    String str = a0.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(jsNumber(Collator().collate(s, str)));
 }
 
 #if ENABLE(INTL)
@@ -1549,6 +1571,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<big>", s, "</big>"));
 }
 
@@ -1558,6 +1582,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<small>", s, "</small>"));
 }
 
@@ -1567,6 +1593,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<blink>", s, "</blink>"));
 }
 
@@ -1576,6 +1604,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncBold(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<b>", s, "</b>"));
 }
 
@@ -1585,6 +1615,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<tt>", s, "</tt>"));
 }
 
@@ -1594,6 +1626,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<i>", s, "</i>"));
 }
 
@@ -1603,6 +1637,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<strike>", s, "</strike>"));
 }
 
@@ -1612,6 +1648,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSub(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<sub>", s, "</sub>"));
 }
 
@@ -1621,6 +1659,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSup(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(jsMakeNontrivialString(exec, "<sup>", s, "</sup>"));
 }
 
@@ -1630,6 +1670,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     JSValue a0 = exec->argument(0);
     String color = a0.toWTFString(exec);
     color.replaceWithLiteral('"', "&quot;");
@@ -1643,6 +1686,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     JSValue a0 = exec->argument(0);
 
     uint32_t smallInteger;
@@ -1692,6 +1738,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     JSValue a0 = exec->argument(0);
     String anchor = a0.toWTFString(exec);
     anchor.replaceWithLiteral('"', "&quot;");
@@ -1705,6 +1754,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
     String s = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     JSValue a0 = exec->argument(0);
     String linkText = a0.toWTFString(exec);
     linkText.replaceWithLiteral('"', "&quot;");
@@ -1747,6 +1799,9 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
     if (!checkObjectCoercible(thisValue))
         return throwTypeError(exec);
     String str = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
     unsigned left = 0;
     if (trimKind & TrimLeft) {
         while (left < str.length() && isStrWhiteSpace(str[left]))
