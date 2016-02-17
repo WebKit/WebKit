@@ -3768,8 +3768,8 @@ void WebPageProxy::rootViewToAccessibilityScreen(const IntRect& viewRect, IntRec
     result = m_pageClient.rootViewToAccessibilityScreen(viewRect);
 }
 #endif
-    
-void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose)
+
+void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, RefPtr<Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply> reply)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -3777,7 +3777,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
     // Since runBeforeUnloadConfirmPanel() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer().stop();
 
-    shouldClose = m_uiClient->runBeforeUnloadConfirmPanel(this, message, frame);
+    m_uiClient->runBeforeUnloadConfirmPanel(this, message, frame, [reply](bool result) { reply->send(result); });
 }
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)

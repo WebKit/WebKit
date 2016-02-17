@@ -48,6 +48,8 @@ enum {
 };
 typedef uint32_t WKPluginUnavailabilityReason;
 
+WK_EXPORT WKTypeID WKPageRunBeforeUnloadConfirmPanelResultListenerGetTypeID();
+WK_EXPORT void WKPageRunBeforeUnloadConfirmPanelResultListenerCall(WKPageRunBeforeUnloadConfirmPanelResultListenerRef listener, bool result);
 
 WK_EXPORT WKTypeID WKPageRunJavaScriptAlertResultListenerGetTypeID();
 WK_EXPORT void WKPageRunJavaScriptAlertResultListenerCall(WKPageRunJavaScriptAlertResultListenerRef listener);
@@ -60,6 +62,7 @@ WK_EXPORT void WKPageRunJavaScriptPromptResultListenerCall(WKPageRunJavaScriptPr
 
 typedef void (*WKPageUIClientCallback)(WKPageRef page, const void* clientInfo);
 typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo);
+typedef void (*WKPageRunBeforeUnloadConfirmPanelCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKPageRunBeforeUnloadConfirmPanelResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptAlertResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptConfirmCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptConfirmResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptPromptCallback)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptPromptResultListenerRef listener, const void *clientInfo);
@@ -80,7 +83,6 @@ typedef bool (*WKPageGetIsResizableCallback)(WKPageRef page, const void *clientI
 typedef void (*WKPageSetIsResizableCallback)(WKPageRef page, bool resizable, const void *clientInfo);
 typedef WKRect (*WKPageGetWindowFrameCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageSetWindowFrameCallback)(WKPageRef page, WKRect frame, const void *clientInfo);
-typedef bool (*WKPageRunBeforeUnloadConfirmPanelCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo);
 typedef unsigned long long (*WKPageExceededDatabaseQuotaCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void *clientInfo);
 typedef void (*WKPageRunOpenPanelCallback)(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageDecidePolicyForGeolocationPermissionRequestCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo);
@@ -113,7 +115,7 @@ typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV1)(WKPageRe
 typedef void (*WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
 typedef bool (*WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
 typedef WKStringRef (*WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
-
+typedef bool (*WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6)(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo);
 
 typedef struct WKPageUIClientBase {
     int                                                                 version;
@@ -148,7 +150,7 @@ typedef struct WKPageUIClientV0 {
     WKPageSetIsResizableCallback                                        setIsResizable;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;
-    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+    WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6    runBeforeUnloadConfirmPanel;
     WKPageUIClientCallback                                              didDraw;
     WKPageUIClientCallback                                              pageDidScroll;
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
@@ -193,7 +195,7 @@ typedef struct WKPageUIClientV1 {
     WKPageSetIsResizableCallback                                        setIsResizable;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;
-    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+    WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6    runBeforeUnloadConfirmPanel;
     WKPageUIClientCallback                                              didDraw;
     WKPageUIClientCallback                                              pageDidScroll;
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
@@ -244,7 +246,7 @@ typedef struct WKPageUIClientV2 {
     WKPageSetIsResizableCallback                                        setIsResizable;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;
-    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+    WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6    runBeforeUnloadConfirmPanel;
     WKPageUIClientCallback                                              didDraw;
     WKPageUIClientCallback                                              pageDidScroll;
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
@@ -300,7 +302,7 @@ typedef struct WKPageUIClientV3 {
     WKPageSetIsResizableCallback                                        setIsResizable;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;
-    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+    WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6    runBeforeUnloadConfirmPanel;
     WKPageUIClientCallback                                              didDraw;
     WKPageUIClientCallback                                              pageDidScroll;
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
@@ -359,7 +361,7 @@ typedef struct WKPageUIClientV4 {
     WKPageSetIsResizableCallback                                        setIsResizable;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;
-    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+    WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6    runBeforeUnloadConfirmPanel;
     WKPageUIClientCallback                                              didDraw;
     WKPageUIClientCallback                                              pageDidScroll;
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
@@ -424,7 +426,7 @@ typedef struct WKPageUIClientV5 {
     WKPageSetIsResizableCallback                                        setIsResizable;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;
-    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+    WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6    runBeforeUnloadConfirmPanel;
     WKPageUIClientCallback                                              didDraw;
     WKPageUIClientCallback                                              pageDidScroll;
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
@@ -497,7 +499,7 @@ typedef struct WKPageUIClientV6 {
     WKPageSetIsResizableCallback                                        setIsResizable;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;
-    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+    WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6    runBeforeUnloadConfirmPanel;
     WKPageUIClientCallback                                              didDraw;
     WKPageUIClientCallback                                              pageDidScroll;
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
@@ -548,6 +550,89 @@ typedef struct WKPageUIClientV6 {
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
     WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
 } WKPageUIClientV6;
+
+typedef struct WKPageUIClientV7 {
+    WKPageUIClientBase                                                  base;
+
+    // Version 0.
+    WKPageCreateNewPageCallback_deprecatedForUseWithV0                  createNewPage_deprecatedForUseWithV0;
+    WKPageUIClientCallback                                              showPage;
+    WKPageUIClientCallback                                              close;
+    WKPageTakeFocusCallback                                             takeFocus;
+    WKPageFocusCallback                                                 focus;
+    WKPageUnfocusCallback                                               unfocus;
+    WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV0             runJavaScriptAlert_deprecatedForUseWithV0;
+    WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV0           runJavaScriptConfirm_deprecatedForUseWithV0;
+    WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV0            runJavaScriptPrompt_deprecatedForUseWithV0;
+    WKPageSetStatusTextCallback                                         setStatusText;
+    WKPageMouseDidMoveOverElementCallback_deprecatedForUseWithV0        mouseDidMoveOverElement_deprecatedForUseWithV0;
+    WKPageMissingPluginButtonClickedCallback_deprecatedForUseWithV0     missingPluginButtonClicked_deprecatedForUseWithV0;
+    WKPageDidNotHandleKeyEventCallback                                  didNotHandleKeyEvent;
+    WKPageDidNotHandleWheelEventCallback                                didNotHandleWheelEvent;
+    WKPageGetToolbarsAreVisibleCallback                                 toolbarsAreVisible;
+    WKPageSetToolbarsAreVisibleCallback                                 setToolbarsAreVisible;
+    WKPageGetMenuBarIsVisibleCallback                                   menuBarIsVisible;
+    WKPageSetMenuBarIsVisibleCallback                                   setMenuBarIsVisible;
+    WKPageGetStatusBarIsVisibleCallback                                 statusBarIsVisible;
+    WKPageSetStatusBarIsVisibleCallback                                 setStatusBarIsVisible;
+    WKPageGetIsResizableCallback                                        isResizable;
+    WKPageSetIsResizableCallback                                        setIsResizable;
+    WKPageGetWindowFrameCallback                                        getWindowFrame;
+    WKPageSetWindowFrameCallback                                        setWindowFrame;
+    WKPageRunBeforeUnloadConfirmPanelCallback_deprecatedForUseWithV6    runBeforeUnloadConfirmPanel_deprecatedForUseWithV6;
+    WKPageUIClientCallback                                              didDraw;
+    WKPageUIClientCallback                                              pageDidScroll;
+    WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
+    WKPageRunOpenPanelCallback                                          runOpenPanel;
+    WKPageDecidePolicyForGeolocationPermissionRequestCallback           decidePolicyForGeolocationPermissionRequest;
+    WKPageHeaderHeightCallback                                          headerHeight;
+    WKPageFooterHeightCallback                                          footerHeight;
+    WKPageDrawHeaderCallback                                            drawHeader;
+    WKPageDrawFooterCallback                                            drawFooter;
+    WKPagePrintFrameCallback                                            printFrame;
+    WKPageUIClientCallback                                              runModal;
+    void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
+    WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
+    void*                                                               shouldInterruptJavaScript_unavailable;
+
+    // Version 1.
+    WKPageCreateNewPageCallback_deprecatedForUseWithV1                  createNewPage_deprecatedForUseWithV1;
+    WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
+    WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
+    WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
+
+    // Version 2.
+    WKPageShowColorPickerCallback                                       showColorPicker;
+    WKPageHideColorPickerCallback                                       hideColorPicker;
+    WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
+
+    // Version 3.
+    WKPagePinnedStateDidChangeCallback                                  pinnedStateDidChange;
+
+    // Version 4.
+    void*                                                               unused2; // Used to be didBeginTrackingPotentialLongMousePress.
+    void*                                                               unused3; // Used to be didRecognizeLongMousePress.
+    void*                                                               unused4; // Used to be didCancelTrackingPotentialLongMousePress.
+    WKPageIsPlayingAudioDidChangeCallback                               isPlayingAudioDidChange;
+
+    // Version 5.
+    WKPageDecidePolicyForUserMediaPermissionRequestCallback             decidePolicyForUserMediaPermissionRequest;
+    WKPageDidClickAutoFillButtonCallback                                didClickAutoFillButton;
+    WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
+    WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
+    WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
+    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+
+    // Version 6.
+    WKPageCreateNewPageCallback                                         createNewPage;
+    WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
+    WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
+    WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
+    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
+
+    // Version 7.
+    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
+} WKPageUIClientV7;
 
 #ifdef __cplusplus
 }

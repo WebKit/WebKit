@@ -69,7 +69,7 @@ messages -> WebPageProxy {
     RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame)
 #endif
 
-    RunBeforeUnloadConfirmPanel(String message, uint64_t frameID) -> (bool shouldClose)
+    RunBeforeUnloadConfirmPanel(String message, uint64_t frameID) -> (bool shouldClose) Delayed
     PageDidScroll()
     RunOpenPanel(uint64_t frameID, struct WebCore::FileChooserSettings parameters)
     PrintFrame(uint64_t frameID) -> ()

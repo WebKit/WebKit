@@ -1,3 +1,29 @@
+2016-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Need listener-based version of runBeforeUnloadConfirmPanel
+        https://bugs.webkit.org/show_bug.cgi?id=154354
+        rdar://problem/23736691
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::runBeforeUnloadConfirmPanel):
+        * UIProcess/API/C/WKPage.cpp:
+        (fixUpBotchedPageUIClient):
+        (WebKit::RunBeforeUnloadConfirmPanelResultListener::create):
+        (WebKit::RunBeforeUnloadConfirmPanelResultListener::~RunBeforeUnloadConfirmPanelResultListener):
+        (WebKit::RunBeforeUnloadConfirmPanelResultListener::call):
+        (WKPageRunBeforeUnloadConfirmPanelResultListenerGetTypeID):
+        (WKPageRunBeforeUnloadConfirmPanelResultListenerCall):
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
 2016-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         PDFPlugin's scrollableArea container is not properly unregistered when page is going into the PageCache

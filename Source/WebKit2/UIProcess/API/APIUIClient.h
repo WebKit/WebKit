@@ -116,7 +116,7 @@ public:
     virtual WebCore::FloatRect windowFrame(WebKit::WebPageProxy*) { return WebCore::FloatRect(); }
 
     virtual bool canRunBeforeUnloadConfirmPanel() const { return false; }
-    virtual bool runBeforeUnloadConfirmPanel(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*) { return true; }
+    virtual void runBeforeUnloadConfirmPanel(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, std::function<void (bool)> completionHandler) { completionHandler(true); }
 
     virtual void pageDidScroll(WebKit::WebPageProxy*) { }
 
