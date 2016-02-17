@@ -192,11 +192,9 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
 
 static bool jsDOMWindowGetOwnPropertySlotNamedItemGetter(JSDOMWindow* thisObject, Frame& frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    // FIXME: If the property is present on the prototype we should 'return false;', not
-    // return the property. This is supposed to be an 'own' access.
     JSValue proto = thisObject->prototype();
-    if (proto.isObject() && asObject(proto)->getPropertySlot(exec, propertyName, slot))
-        return true;
+    if (proto.isObject() && asObject(proto)->hasProperty(exec, propertyName))
+        return false;
 
     // Check for child frames by name before built-in properties to match Mozilla. This does
     // not match IE, but some sites end up naming frames things that conflict with window

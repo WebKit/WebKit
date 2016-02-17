@@ -1,6 +1,6 @@
 PASS window.hasOwnProperty("Element") is true
 PASS window.hasOwnProperty("x") is true
-FAIL window.hasOwnProperty("y") should be false. Was true.
+PASS window.hasOwnProperty("y") is false
 PASS window.hasOwnProperty("f") is true
 PASS window.hasOwnProperty("div") is true
 FAIL window.hasOwnProperty("a") should be true. Was false.

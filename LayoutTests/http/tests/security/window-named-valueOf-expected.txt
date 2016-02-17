@@ -1,3 +1,5 @@
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "null" from accessing a frame with origin "http://localhost:8080".  The frame requesting access has a protocol of "data", the frame being accessed has a protocol of "http". Protocols must match.
 
+CONSOLE MESSAGE: line 1: Blocked a frame with origin "null" from accessing a frame with origin "http://localhost:8080".  The frame requesting access has a protocol of "data", the frame being accessed has a protocol of "http". Protocols must match.
+
 This passes if it doesn't alert the contents of innocent-victim.  

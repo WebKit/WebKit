@@ -4084,12 +4084,16 @@ FAIL Window interface: window must inherit property "createImageBitmap" with the
 FAIL Window interface: calling createImageBitmap(ImageBitmapSource,long,long,long,long) on window with too few arguments must throw TypeError assert_own_property: expected property "createImageBitmap" missing
 PASS Window interface: window must inherit property "sessionStorage" with the proper type (123) 
 PASS Window interface: window must inherit property "localStorage" with the proper type (124) 
-FAIL EventTarget interface: window must inherit property "addEventListener" with the proper type (0) assert_inherits: property "addEventListener" found on object expected in prototype chain
-FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_inherits: property "addEventListener" found on object expected in prototype chain
-FAIL EventTarget interface: window must inherit property "removeEventListener" with the proper type (1) assert_inherits: property "removeEventListener" found on object expected in prototype chain
-FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_inherits: property "removeEventListener" found on object expected in prototype chain
-FAIL EventTarget interface: window must inherit property "dispatchEvent" with the proper type (2) assert_inherits: property "dispatchEvent" found on object expected in prototype chain
-FAIL EventTarget interface: calling dispatchEvent(Event) on window with too few arguments must throw TypeError assert_inherits: property "dispatchEvent" found on object expected in prototype chain
+PASS EventTarget interface: window must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: window must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+    [native code]
+}" did not throw
+PASS EventTarget interface: window must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on window with too few arguments must throw TypeError 
 PASS BarProp interface: existence and properties of interface object 
 PASS BarProp interface object length 
 PASS BarProp interface object name 

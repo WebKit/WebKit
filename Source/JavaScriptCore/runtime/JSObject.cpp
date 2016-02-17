@@ -2552,15 +2552,6 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
     if (!methodTable(exec->vm())->getOwnPropertySlot(this, exec, propertyName, slot))
         return false;
 
-    // JSDOMWindow::getOwnPropertySlot() may return attributes from the prototype chain but getOwnPropertyDescriptor()
-    // should only work for 'own' properties so we exit early if we detect that the property is not an own property.
-    if (slot.slotBase() != this && slot.slotBase()) {
-        auto* proxy = jsDynamicCast<JSProxy*>(this);
-        // In the case of DOMWindow, |this| may be a JSDOMWindowShell so we also need to check the shell's target Window.
-        if (!proxy || proxy->target() != slot.slotBase())
-            return false;
-    }
-
     if (slot.isAccessor())
         descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
     else if (slot.attributes() & CustomAccessor) {

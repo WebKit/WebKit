@@ -1,3 +1,17 @@
+2016-02-16  Gavin Barraclough  <barraclough@apple.com>
+
+        JSDOMWindow::getOwnPropertySlot should not search photo chain
+        https://bugs.webkit.org/show_bug.cgi?id=154102
+
+        Reviewed by Chris Dumez.
+
+        Should only return *own* properties.
+
+        * fast/dom/Window/es52-globals-expected.txt:
+        * http/tests/security/window-named-valueOf-expected.txt:
+        * imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+            - update test results.
+
 2016-02-16  Keith Miller  <keith_miller@apple.com>
 
         Spread operator should be allowed when not the first argument of parameter list
