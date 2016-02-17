@@ -1,3 +1,25 @@
+2016-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support NewTypedArray
+        https://bugs.webkit.org/show_bug.cgi?id=154268
+
+        Reviewed by Saam Barati.
+
+        3% speed-up on pdfjs. This was already covered by many different tests.
+
+        Rolling this back in after fixing the butterfly argument.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileAllocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateBasicStorageAndGetEnd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateBasicStorage):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateObject):
+
 2016-02-16  Gavin Barraclough  <barraclough@apple.com>
 
         JSDOMWindow::getOwnPropertySlot should just call getStaticPropertySlot
