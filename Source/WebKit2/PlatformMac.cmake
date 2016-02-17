@@ -280,7 +280,6 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/InjectedBundle/mac/InjectedBundleMac.mm
 
-    WebProcess/MediaCache/WebMediaCacheManager.cpp
     WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
     WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm

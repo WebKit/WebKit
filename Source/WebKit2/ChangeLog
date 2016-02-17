@@ -2,6 +2,12 @@
 
         CMake build fix after r196698.
 
+        * PlatformMac.cmake:
+
+2016-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        CMake build fix after r196698.
+
         * CMakeLists.txt:
 
 2016-02-17  Anders Carlsson  <andersca@apple.com>
