@@ -551,7 +551,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     CodeBlock* codeBlock = exec->codeBlock();
     const Identifier& ident = codeBlock->identifier(pc[3].u.operand);
     JSValue baseValue = LLINT_OP_C(2).jsValue();
-    PropertySlot slot(baseValue);
+    PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::Get);
 
     JSValue result = baseValue.get(exec, ident, slot);
     LLINT_CHECK_EXCEPTION();
@@ -602,7 +602,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_arguments_length)
     CodeBlock* codeBlock = exec->codeBlock();
     const Identifier& ident = codeBlock->identifier(pc[3].u.operand);
     JSValue baseValue = LLINT_OP(2).jsValue();
-    PropertySlot slot(baseValue);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
     LLINT_RETURN(baseValue.get(exec, ident, slot));
 }
 
@@ -1413,7 +1413,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     // ModuleVar is always converted to ClosureVar for get_from_scope.
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
-    PropertySlot slot(scope);
+    PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
     if (!scope->getPropertySlot(exec, ident, slot)) {
         if (getPutInfo.resolveMode() == ThrowIfNotFound)
             LLINT_RETURN(exec->vm().throwException(exec, createUndefinedVariableError(exec, ident)));
@@ -1461,7 +1461,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
         && jsDynamicCast<JSGlobalLexicalEnvironment*>(scope)
         && getPutInfo.initializationMode() != Initialization) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
-        PropertySlot slot(scope);
+        PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
         JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, exec, ident, slot);
         if (slot.getValue(exec, ident) == jsTDZValue())
             LLINT_THROW(createTDZError(exec));

@@ -581,7 +581,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
 
     ExecState* exec = callee->globalObject()->globalExec();
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
-        PropertySlot slot(callee);
+        PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry);
         PropertyName propertyName(ident);
         if (callee->getPropertySlot(exec, propertyName, slot)) {
             if (slot.isValue()) {

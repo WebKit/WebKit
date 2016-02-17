@@ -1,3 +1,152 @@
+2016-02-17  Saam barati  <sbarati@apple.com>
+
+        Implement Proxy [[Get]]
+        https://bugs.webkit.org/show_bug.cgi?id=154081
+
+        Reviewed by Michael Saboff.
+
+        This patch implements ProxyObject and ProxyConstructor. Their
+        implementations are straight forward and follow the spec.
+        The largest change in this patch is adding a second parameter
+        to PropertySlot's constructor that specifies the internal method type of
+        the getOwnPropertySlot inquiry. We use getOwnPropertySlot to 
+        implement more than one Internal Method in the spec. Because 
+        of this, we need InternalMethodType to give us context about 
+        which Internal Method we're executing. Specifically, Proxy will 
+        call into different handlers based on this information.
+
+        InternalMethodType is an enum with the following values:
+        - Get
+          This corresponds to [[Get]] internal method in the spec.
+        - GetOwnProperty
+          This corresponds to [[GetOwnProperty]] internal method in the spec.
+        - HasProperty
+          This corresponds to [[HasProperty]] internal method in the spec.
+        - VMInquiry
+          This is basically everything else that isn't one of the above
+          types. This value also mandates that getOwnPropertySlot does
+          not perform any user observable effects. I.e, it can't call
+          a JS function.
+
+        The other non-VMInquiry InternalMethodTypes are allowed to perform user
+        observable effects. I.e, in future patches, ProxyObject will implement
+        InternalMethodType::HasProperty and InternalMethodType::GetOwnProperty, which will both be defined
+        to call user defined JS functions, which clearly have the right to perform
+        user observable effects.
+
+        This patch implements getOwnPropertySlot of ProxyObject under
+        InternalMethodType::Get. 
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        (JSC::JSCallbackObject<Parent>::staticFunctionGetter):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::caughtValue):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::get):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::regExpMatchesArrayStructure):
+        (JSC::JSGlobalObject::moduleRecordStructure):
+        (JSC::JSGlobalObject::moduleNamespaceObjectStructure):
+        (JSC::JSGlobalObject::proxyObjectStructure):
+        (JSC::JSGlobalObject::wasmModuleStructure):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::getOwnPropertySlot):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::callbackGetter):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        (JSC::JSObject::hasProperty):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::hasOwnProperty):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirectIndex):
+        (JSC::JSObject::get):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncToString):
+        * runtime/PropertySlot.h:
+        (JSC::attributesForStructure):
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::isCacheableGetter):
+        (JSC::PropertySlot::isCacheableCustom):
+        (JSC::PropertySlot::internalMethodType):
+        (JSC::PropertySlot::disableCaching):
+        (JSC::PropertySlot::getValue):
+        * runtime/ProxyConstructor.cpp: Added.
+        (JSC::ProxyConstructor::create):
+        (JSC::ProxyConstructor::ProxyConstructor):
+        (JSC::ProxyConstructor::finishCreation):
+        (JSC::constructProxyObject):
+        (JSC::ProxyConstructor::getConstructData):
+        (JSC::ProxyConstructor::getCallData):
+        * runtime/ProxyConstructor.h: Added.
+        (JSC::ProxyConstructor::createStructure):
+        * runtime/ProxyObject.cpp: Added.
+        (JSC::ProxyObject::ProxyObject):
+        (JSC::ProxyObject::finishCreation):
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+        (JSC::ProxyObject::getOwnPropertySlot):
+        (JSC::ProxyObject::getOwnPropertySlotByIndex):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h: Added.
+        (JSC::ProxyObject::create):
+        (JSC::ProxyObject::createStructure):
+        (JSC::ProxyObject::target):
+        (JSC::ProxyObject::handler):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectGet):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        * tests/es6.yaml:
+        * tests/stress/proxy-basic.js: Added.
+        (assert):
+        (let.handler.get null):
+        (get let):
+        (let.handler.get switch):
+        (let.handler):
+        (let.theTarget.get x):
+        * tests/stress/proxy-in-proto-chain.js: Added.
+        (assert):
+        * tests/stress/proxy-of-a-proxy.js: Added.
+        (assert):
+        (throw.new.Error.):
+        * tests/stress/proxy-property-descriptor.js: Added.
+        (assert):
+        (set Object):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASMModuleParser::getImportedValue):
+
 2016-02-17  Mark Lam  <mark.lam@apple.com>
 
         StringPrototype functions should check for exceptions after calling JSString::value().

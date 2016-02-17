@@ -106,7 +106,7 @@ static EncodedJSValue callbackGetter(ExecState* exec, EncodedJSValue thisValue, 
     JSModuleRecord* targetModule = resolution.moduleRecord;
     JSModuleEnvironment* targetEnvironment = targetModule->moduleEnvironment();
 
-    PropertySlot trampolineSlot(targetEnvironment);
+    PropertySlot trampolineSlot(targetEnvironment, PropertySlot::InternalMethodType::Get);
     if (!targetEnvironment->methodTable(exec->vm())->getOwnPropertySlot(targetEnvironment, exec, resolution.localName, trampolineSlot))
         return JSValue::encode(jsUndefined());
 

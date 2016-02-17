@@ -548,7 +548,7 @@ inline JSValue DialogHandler::returnValue() const
     if (!globalObject)
         return jsUndefined();
     Identifier identifier = Identifier::fromString(&m_exec, "returnValue");
-    PropertySlot slot(globalObject);
+    PropertySlot slot(globalObject, PropertySlot::InternalMethodType::Get);
     if (!JSGlobalObject::getOwnPropertySlot(globalObject, &m_exec, identifier, slot))
         return jsUndefined();
     return slot.getValue(&m_exec, identifier);

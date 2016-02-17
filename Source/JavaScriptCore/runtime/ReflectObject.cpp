@@ -135,7 +135,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectGet(ExecState* exec)
     if (exec->argumentCount() >= 3)
         receiver = exec->argument(2);
 
-    PropertySlot slot(receiver);
+    PropertySlot slot(receiver, PropertySlot::InternalMethodType::Get);
     return JSValue::encode(target.get(exec, propertyName, slot));
 }
 

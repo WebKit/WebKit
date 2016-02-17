@@ -83,7 +83,7 @@ bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, ExecState* exec, Pr
     if (resolution.type == JSModuleRecord::Resolution::Type::Resolved) {
         // When resolveImport resolves the resolution, the imported module environment must have the binding.
         JSModuleEnvironment* importedModuleEnvironment = resolution.moduleRecord->moduleEnvironment();
-        PropertySlot redirectSlot(importedModuleEnvironment);
+        PropertySlot redirectSlot(importedModuleEnvironment, PropertySlot::InternalMethodType::Get);
         bool result = importedModuleEnvironment->methodTable(exec->vm())->getOwnPropertySlot(importedModuleEnvironment, exec, resolution.localName, redirectSlot);
         ASSERT_UNUSED(result, result);
         ASSERT(redirectSlot.isValue());

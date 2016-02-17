@@ -150,7 +150,7 @@ static JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
         if (isTypedView(object->classInfo()->typedArrayStorageType))
             length = jsCast<JSArrayBufferView*>(object)->length();
         else {
-            PropertySlot lengthSlot(object);
+            PropertySlot lengthSlot(object, PropertySlot::InternalMethodType::Get);
             object->getPropertySlot(exec, vm.propertyNames->length, lengthSlot);
 
             JSValue iteratorFunc = object->get(exec, vm.propertyNames->iteratorSymbol);

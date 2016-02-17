@@ -174,7 +174,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    PropertySlot slot(thisObject);
+    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
     if (thisObject->getPropertySlot(exec, propertyName, slot)) {
         if (slot.isAccessor()) {
             GetterSetter* getterSetter = slot.getterSetter();
@@ -201,7 +201,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    PropertySlot slot(thisObject);
+    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
     if (thisObject->getPropertySlot(exec, propertyName, slot)) {
         if (slot.isAccessor()) {
             GetterSetter* getterSetter = slot.getterSetter();
@@ -264,7 +264,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
     JSString* result = thisObject->structure(vm)->objectToStringValue();
     if (!result) {
         PropertyName toStringTagSymbol = exec->propertyNames().toStringTagSymbol;
-        PropertySlot toStringTagSlot(thisObject);
+        PropertySlot toStringTagSlot(thisObject, PropertySlot::InternalMethodType::Get);
         if (thisObject->getPropertySlot(exec, toStringTagSymbol, toStringTagSlot)) {
             JSValue stringTag = toStringTagSlot.getValue(exec, toStringTagSymbol);
             if (stringTag.isString()) {

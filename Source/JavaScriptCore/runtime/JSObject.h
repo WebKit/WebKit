@@ -266,7 +266,7 @@ public:
     {
         if (JSValue result = tryGetIndexQuickly(i))
             return result;
-        PropertySlot slot(this);
+        PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
         if (methodTable(exec->vm())->getOwnPropertySlotByIndex(this, exec, i, slot))
             return slot.getValue(exec, i);
         return JSValue();
@@ -1190,7 +1190,7 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyN
 
 inline JSValue JSObject::get(ExecState* exec, PropertyName propertyName) const
 {
-    PropertySlot slot(this);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
     if (const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot))
         return slot.getValue(exec, propertyName);
     
@@ -1199,7 +1199,7 @@ inline JSValue JSObject::get(ExecState* exec, PropertyName propertyName) const
 
 inline JSValue JSObject::get(ExecState* exec, unsigned propertyName) const
 {
-    PropertySlot slot(this);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
     if (const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot))
         return slot.getValue(exec, propertyName);
 

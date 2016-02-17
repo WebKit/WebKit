@@ -127,7 +127,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             return true;
         }
 
-        PropertySlot slot(globalObject);
+        PropertySlot slot(globalObject, PropertySlot::InternalMethodType::VMInquiry);
         bool hasOwnProperty = globalObject->getOwnPropertySlot(globalObject, exec, ident, slot);
         if (!hasOwnProperty) {
             op = ResolveOp(makeType(UnresolvedProperty, needsVarInjectionChecks), 0, 0, 0, 0, 0);

@@ -264,7 +264,7 @@ String JSObject::calculatedClassName(JSObject* object)
 {
     String prototypeFunctionName;
     ExecState* exec = object->globalObject()->globalExec();
-    PropertySlot slot(object->structure()->storedPrototype());
+    PropertySlot slot(object->structure()->storedPrototype(), PropertySlot::InternalMethodType::VMInquiry);
     PropertyName constructor(exec->propertyNames().constructor);
     if (object->getPropertySlot(exec, constructor, slot)) {
         if (slot.isValue()) {
@@ -1270,15 +1270,17 @@ void JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSVa
     structure->setHasGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
 }
 
+// HasProperty(O, P) from Section 7.3.10 of the spec.
+// http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasproperty
 bool JSObject::hasProperty(ExecState* exec, PropertyName propertyName) const
 {
-    PropertySlot slot(this);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
     return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
 bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 {
-    PropertySlot slot(this);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
     return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
@@ -1304,15 +1306,17 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
     return true;
 }
 
+// HasOwnProperty(O, P) from section 7.3.11 in the spec.
+// http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasownproperty
 bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName) const
 {
-    PropertySlot slot(this);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
     return const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
 }
 
 bool JSObject::hasOwnProperty(ExecState* exec, unsigned propertyName) const
 {
-    PropertySlot slot(this);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
     return const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlotByIndex(const_cast<JSObject*>(this), exec, propertyName, slot);
 }
 
@@ -2548,7 +2552,7 @@ static JSBoundSlotBaseFunction* getBoundSlotBaseFunctionForGetterSetter(ExecStat
 
 bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
-    JSC::PropertySlot slot(this);
+    JSC::PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
     if (!methodTable(exec->vm())->getOwnPropertySlot(this, exec, propertyName, slot))
         return false;
 

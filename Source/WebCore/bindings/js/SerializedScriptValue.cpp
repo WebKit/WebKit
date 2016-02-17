@@ -641,7 +641,7 @@ private:
 
     JSValue getProperty(JSObject* object, const Identifier& propertyName)
     {
-        PropertySlot slot(object);
+        PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
         if (object->methodTable()->getOwnPropertySlot(object, m_exec, propertyName, slot))
             return slot.getValue(m_exec, propertyName);
         return JSValue();

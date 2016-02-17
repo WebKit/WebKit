@@ -209,7 +209,7 @@ JSValue DebuggerScope::caughtValue(ExecState* exec) const
     SymbolTable* catchSymbolTable = catchEnvironment->symbolTable();
     RELEASE_ASSERT(catchSymbolTable->size() == 1);
     PropertyName errorName(catchSymbolTable->begin(catchSymbolTable->m_lock)->key.get());
-    PropertySlot slot(m_scope.get());
+    PropertySlot slot(m_scope.get(), PropertySlot::InternalMethodType::Get);
     bool success = catchEnvironment->getOwnPropertySlot(catchEnvironment, exec, errorName, slot);
     RELEASE_ASSERT(success && slot.isValue());
     return slot.getValue(exec, errorName);

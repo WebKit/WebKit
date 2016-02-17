@@ -151,7 +151,7 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsi
 {
     if (JSValue result = object->tryGetIndexQuickly(index))
         return result;
-    PropertySlot slot(object);
+    PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
     if (!object->getPropertySlot(exec, index, slot))
         return JSValue();
     return slot.getValue(exec, index);

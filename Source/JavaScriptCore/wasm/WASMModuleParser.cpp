@@ -358,7 +358,7 @@ void WASMModuleParser::getImportedValue(ExecState* exec, const String& importNam
 {
     FAIL_IF_FALSE(m_imports, "Accessing property of non-object.");
     Identifier identifier = Identifier::fromString(&m_vm, importName);
-    PropertySlot slot(m_imports.get());
+    PropertySlot slot(m_imports.get(), PropertySlot::InternalMethodType::Get);
     if (!m_imports->getPropertySlot(exec, identifier, slot))
         FAIL_WITH_MESSAGE("Can't find a property named \"" + importName + '"');
     FAIL_IF_FALSE(slot.isValue(), "\"" + importName + "\" is not a data property.");

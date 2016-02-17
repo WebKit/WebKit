@@ -128,6 +128,8 @@
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "ParserError.h"
+#include "ProxyConstructor.h"
+#include "ProxyObject.h"
 #include "ReflectObject.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
@@ -366,6 +368,7 @@ void JSGlobalObject::init(VM& vm)
 
     m_moduleRecordStructure.set(vm, this, JSModuleRecord::createStructure(vm, this, m_objectPrototype.get()));
     m_moduleNamespaceObjectStructure.set(vm, this, JSModuleNamespaceObject::createStructure(vm, this, jsNull()));
+    m_proxyObjectStructure.set(vm, this, ProxyObject::createStructure(vm, this, m_objectPrototype.get()));
     
 #if ENABLE(WEBASSEMBLY)
     m_wasmModuleStructure.set(vm, this, JSWASMModule::createStructure(vm, this));
@@ -454,6 +457,8 @@ m_ ## lowerName ## Prototype->putDirectWithoutTransition(vm, vm.propertyNames->c
     putDirectWithoutTransition(vm, vm.propertyNames->SyntaxError, m_syntaxErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->TypeError, m_typeErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->URIError, m_URIErrorConstructor.get(), DontEnum);
+
+    putDirectWithoutTransition(vm, vm.propertyNames->Proxy, ProxyConstructor::create(vm, ProxyConstructor::createStructure(vm, this, m_functionPrototype.get())), DontEnum);
     
     
 #define PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
@@ -626,7 +631,7 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
 bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
-    PropertySlot slot(thisObject);
+    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
     // silently ignore attempts to add accessors aliasing vars.
     if (descriptor.isAccessorDescriptor() && symbolTableGet(thisObject, propertyName, slot))
         return false;

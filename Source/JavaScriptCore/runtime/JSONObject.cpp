@@ -466,7 +466,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         if (m_isJSArray && asArray(m_object.get())->canGetIndexQuickly(index))
             value = asArray(m_object.get())->getIndexQuickly(index);
         else {
-            PropertySlot slot(m_object.get());
+            PropertySlot slot(m_object.get(), PropertySlot::InternalMethodType::Get);
             if (m_object->methodTable()->getOwnPropertySlotByIndex(m_object.get(), exec, index, slot)) {
                 value = slot.getValue(exec, index);
                 if (exec->hadException())
@@ -484,7 +484,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         stringifyResult = stringifier.appendStringifiedValue(builder, value, m_object.get(), index);
     } else {
         // Get the value.
-        PropertySlot slot(m_object.get());
+        PropertySlot slot(m_object.get(), PropertySlot::InternalMethodType::Get);
         Identifier& propertyName = m_propertyNames->propertyNameVector()[index];
         if (!m_object->methodTable()->getOwnPropertySlot(m_object.get(), exec, propertyName, slot))
             return true;
@@ -618,7 +618,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 if (isJSArray(array) && array->canGetIndexQuickly(index))
                     inValue = array->getIndexQuickly(index);
                 else {
-                    PropertySlot slot(array);
+                    PropertySlot slot(array, PropertySlot::InternalMethodType::Get);
                     if (array->methodTable()->getOwnPropertySlotByIndex(array, m_exec, index, slot))
                         inValue = slot.getValue(m_exec, index);
                     else
@@ -670,7 +670,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     propertyStack.removeLast();
                     break;
                 }
-                PropertySlot slot(object);
+                PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
                 if (object->methodTable()->getOwnPropertySlot(object, m_exec, properties[index], slot))
                     inValue = slot.getValue(m_exec, properties[index]);
                 else

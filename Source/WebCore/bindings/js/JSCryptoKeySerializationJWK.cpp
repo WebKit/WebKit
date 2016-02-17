@@ -53,7 +53,7 @@ namespace WebCore {
 static bool getJSArrayFromJSON(ExecState* exec, JSObject* json, const char* key, JSArray*& result)
 {
     Identifier identifier = Identifier::fromString(exec, key);
-    PropertySlot slot(json);
+    PropertySlot slot(json, PropertySlot::InternalMethodType::Get);
 
     if (!json->getPropertySlot(exec, identifier, slot))
         return false;
@@ -73,7 +73,7 @@ static bool getJSArrayFromJSON(ExecState* exec, JSObject* json, const char* key,
 static bool getStringFromJSON(ExecState* exec, JSObject* json, const char* key, String& result)
 {
     Identifier identifier = Identifier::fromString(exec, key);
-    PropertySlot slot(json);
+    PropertySlot slot(json, PropertySlot::InternalMethodType::Get);
 
     if (!json->getPropertySlot(exec, identifier, slot))
         return false;
@@ -94,7 +94,7 @@ static bool getStringFromJSON(ExecState* exec, JSObject* json, const char* key, 
 static bool getBooleanFromJSON(ExecState* exec, JSObject* json, const char* key, bool& result)
 {
     Identifier identifier = Identifier::fromString(exec, key);
-    PropertySlot slot(json);
+    PropertySlot slot(json, PropertySlot::InternalMethodType::Get);
 
     if (!json->getPropertySlot(exec, identifier, slot))
         return false;

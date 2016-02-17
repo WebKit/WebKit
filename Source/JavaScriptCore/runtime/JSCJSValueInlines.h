@@ -705,7 +705,7 @@ inline JSValue JSValue::toThis(ExecState* exec, ECMAMode ecmaMode) const
 
 ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, PropertyName propertyName) const
 {
-    PropertySlot slot(asValue());
+    PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);
     return get(exec, propertyName, slot);
 }
 
@@ -732,7 +732,7 @@ ALWAYS_INLINE bool JSValue::getPropertySlot(ExecState* exec, PropertyName proper
 
 ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName) const
 {
-    PropertySlot slot(asValue());
+    PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);
     return get(exec, propertyName, slot);
 }
 

@@ -52,6 +52,7 @@
     macro(NumberFormat) \
     macro(Object) \
     macro(Promise) \
+    macro(Proxy) \
     macro(RangeError) \
     macro(ReferenceError) \
     macro(Reflect) \

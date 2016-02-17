@@ -59,26 +59,34 @@ inline unsigned attributesForStructure(unsigned attributes)
 }
 
 class PropertySlot {
-    enum PropertyType {
+    enum PropertyType : uint8_t {
         TypeUnset,
         TypeValue,
         TypeGetter,
         TypeCustom
     };
 
-    enum CacheabilityType {
+    enum CacheabilityType : uint8_t {
         CachingDisallowed,
         CachingAllowed
     };
 
 public:
-    explicit PropertySlot(const JSValue thisValue)
-        : m_propertyType(TypeUnset)
-        , m_offset(invalidOffset)
+    enum class InternalMethodType : uint8_t {
+        Get, // [[Get]] internal method in the spec.
+        HasProperty, // [[HasProperty]] internal method in the spec.
+        GetOwnProperty, // [[GetOwnProperty]] internal method in the spec.
+        VMInquiry, // Our VM is just poking around. When this is the InternalMethodType, getOwnPropertySlot is not allowed to do user observable actions.
+    };
+
+    explicit PropertySlot(const JSValue thisValue, InternalMethodType internalMethodType)
+        : m_offset(invalidOffset)
         , m_thisValue(thisValue)
         , m_slotBase(nullptr)
         , m_watchpointSet(nullptr)
         , m_cacheability(CachingAllowed)
+        , m_propertyType(TypeUnset)
+        , m_internalMethodType(internalMethodType)
     {
     }
 
@@ -95,6 +103,8 @@ public:
     bool isCacheableValue() const { return isCacheable() && isValue(); }
     bool isCacheableGetter() const { return isCacheable() && isAccessor(); }
     bool isCacheableCustom() const { return isCacheable() && isCustom(); }
+
+    InternalMethodType internalMethodType() const { return m_internalMethodType; }
 
     void disableCaching()
     {
@@ -262,12 +272,13 @@ private:
         } custom;
     } m_data;
 
-    PropertyType m_propertyType;
     PropertyOffset m_offset;
     JSValue m_thisValue;
     JSObject* m_slotBase;
     WatchpointSet* m_watchpointSet;
     CacheabilityType m_cacheability;
+    PropertyType m_propertyType;
+    InternalMethodType m_internalMethodType;
 };
 
 ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, PropertyName propertyName) const
