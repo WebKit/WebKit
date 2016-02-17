@@ -656,7 +656,6 @@ sub InterfaceRequiresAttributesOnInstanceForCompatibility
 
     # Needed for compatibility with existing content
     return 1 if $interfaceName =~ "Touch";
-    return 1 if $interfaceName =~ "Navigator";
     return 1 if $interfaceName =~ "ClientRect";
 
     return 0;

@@ -20,8 +20,6 @@
 [
     Conditional=GEOLOCATION,
 ] partial interface Navigator {
-    // FIXME: We should consider making this attribute replaceable only to the
-    // Amazon app on iOS.
-    [Replaceable] readonly attribute Geolocation geolocation;
+    readonly attribute Geolocation geolocation;
 };
 
