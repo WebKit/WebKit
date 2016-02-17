@@ -1,5 +1,23 @@
 2016-02-16  Gavin Barraclough  <barraclough@apple.com>
 
+        JSDOMWindow::getOwnPropertySlot should just call getStaticPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=154257
+
+        Reviewed by Chris Dumez.
+
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticFunctionSlot):
+        (JSC::getStaticValueSlot):
+            - this could all do with a little more love.
+              But enforce the basic precedence:
+                (1) regular storage properties always win over static table properties.
+                (2) if properties have been reified, don't consult the static tables.
+                (3) only if the property is not present on the object & not reified
+                    should the static hashtable be consulted.
+
+2016-02-16  Gavin Barraclough  <barraclough@apple.com>
+
         JSDOMWindow::getOwnPropertySlot should not search photo chain
         https://bugs.webkit.org/show_bug.cgi?id=154102
 

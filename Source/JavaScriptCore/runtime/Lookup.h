@@ -210,10 +210,15 @@ inline BuiltinGenerator HashTableValue::builtinAccessorSetterGenerator() const
 template <class ThisImp, class ParentImp>
 inline bool getStaticPropertySlot(ExecState* exec, const HashTable& table, ThisImp* thisObj, PropertyName propertyName, PropertySlot& slot)
 {
-    const HashTableValue* entry = table.entry(propertyName);
+    if (ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot))
+        return true;
 
-    if (!entry) // not found, forward to parent
-        return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
+    if (thisObj->staticFunctionsReified())
+        return false;
+
+    auto* entry = table.entry(propertyName);
+    if (!entry)
+        return false;
 
     if (entry->attributes() & BuiltinOrFunctionOrAccessor)
         return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
@@ -238,7 +243,10 @@ inline bool getStaticFunctionSlot(ExecState* exec, const HashTable& table, JSObj
     if (ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot))
         return true;
 
-    const HashTableValue* entry = table.entry(propertyName);
+    if (thisObj->staticFunctionsReified())
+        return false;
+
+    auto* entry = table.entry(propertyName);
     if (!entry)
         return false;
 
@@ -252,10 +260,15 @@ inline bool getStaticFunctionSlot(ExecState* exec, const HashTable& table, JSObj
 template <class ThisImp, class ParentImp>
 inline bool getStaticValueSlot(ExecState* exec, const HashTable& table, ThisImp* thisObj, PropertyName propertyName, PropertySlot& slot)
 {
-    const HashTableValue* entry = table.entry(propertyName);
+    if (ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot))
+        return true;
 
-    if (!entry) // not found, forward to parent
-        return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
+    if (thisObj->staticFunctionsReified())
+        return false;
+
+    auto* entry = table.entry(propertyName);
+    if (!entry)
+        return false;
 
     ASSERT(!(entry->attributes() & BuiltinOrFunctionOrAccessor));
 

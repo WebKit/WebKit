@@ -1,5 +1,16 @@
 2016-02-16  Gavin Barraclough  <barraclough@apple.com>
 
+        JSDOMWindow::getOwnPropertySlot should just call getStaticPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=154257
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+            - JSDOMWindow::getOwnPropertySlot should just call getStaticPropertySlot
+
+2016-02-16  Gavin Barraclough  <barraclough@apple.com>
+
         JSDOMWindow::getOwnPropertySlot should not search photo chain
         https://bugs.webkit.org/show_bug.cgi?id=154102
 
