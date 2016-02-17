@@ -137,28 +137,28 @@ bool IDBRequestData::decode(Decoder& decoder, IDBRequestData& request)
     if (!decoder.decode(hasObject))
         return false;
     if (hasObject) {
-        IDBResourceIdentifier identifier;
-        if (!decoder.decode(identifier))
+        std::unique_ptr<IDBResourceIdentifier> object = std::make_unique<IDBResourceIdentifier>();
+        if (!decoder.decode(*object))
             return false;
-        request.m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(identifier);
+        request.m_requestIdentifier = WTFMove(object);
     }
 
     if (!decoder.decode(hasObject))
         return false;
     if (hasObject) {
-        IDBResourceIdentifier identifier;
-        if (!decoder.decode(identifier))
+        std::unique_ptr<IDBResourceIdentifier> object = std::make_unique<IDBResourceIdentifier>();
+        if (!decoder.decode(*object))
             return false;
-        request.m_transactionIdentifier = std::make_unique<IDBResourceIdentifier>(identifier);
+        request.m_transactionIdentifier = WTFMove(object);
     }
 
     if (!decoder.decode(hasObject))
         return false;
     if (hasObject) {
-        IDBResourceIdentifier identifier;
-        if (!decoder.decode(identifier))
+        std::unique_ptr<IDBResourceIdentifier> object = std::make_unique<IDBResourceIdentifier>();
+        if (!decoder.decode(*object))
             return false;
-        request.m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(identifier);
+        request.m_cursorIdentifier = WTFMove(object);
     }
 
     return true;

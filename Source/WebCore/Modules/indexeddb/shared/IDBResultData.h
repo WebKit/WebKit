@@ -118,9 +118,86 @@ private:
     uint64_t m_resultInteger { 0 };
 };
 
-template<class Decoder> bool IDBResultData::decode(Decoder&, IDBResultData&)
+template<class Encoder>
+void IDBResultData::encode(Encoder& encoder) const
 {
-    return false;
+    encoder << m_requestIdentifier << m_error << m_databaseConnectionIdentifier << m_resultInteger;
+
+    encoder.encodeEnum(m_type);
+
+    encoder << !!m_databaseInfo;
+    if (m_databaseInfo)
+        encoder << *m_databaseInfo;
+
+    encoder << !!m_transactionInfo;
+    if (m_transactionInfo)
+        encoder << *m_transactionInfo;
+
+    encoder << !!m_resultKey;
+    if (m_resultKey)
+        encoder << *m_resultKey;
+
+    encoder << !!m_getResult;
+    if (m_getResult)
+        encoder << *m_getResult;
+}
+
+template<class Decoder> bool IDBResultData::decode(Decoder& decoder, IDBResultData& result)
+{
+    if (!decoder.decode(result.m_requestIdentifier))
+        return false;
+
+    if (!decoder.decode(result.m_error))
+        return false;
+
+    if (!decoder.decode(result.m_databaseConnectionIdentifier))
+        return false;
+
+    if (!decoder.decode(result.m_resultInteger))
+        return false;
+
+    if (!decoder.decodeEnum(result.m_type))
+        return false;
+
+    bool hasObject;
+
+    if (!decoder.decode(hasObject))
+        return false;
+    if (hasObject) {
+        std::unique_ptr<IDBDatabaseInfo> object = std::make_unique<IDBDatabaseInfo>();
+        if (!decoder.decode(*object))
+            return false;
+        result.m_databaseInfo = WTFMove(object);
+    }
+
+    if (!decoder.decode(hasObject))
+        return false;
+    if (hasObject) {
+        std::unique_ptr<IDBTransactionInfo> object = std::make_unique<IDBTransactionInfo>();
+        if (!decoder.decode(*object))
+            return false;
+        result.m_transactionInfo = WTFMove(object);
+    }
+
+    if (!decoder.decode(hasObject))
+        return false;
+    if (hasObject) {
+        std::unique_ptr<IDBKeyData> object = std::make_unique<IDBKeyData>();
+        if (!decoder.decode(*object))
+            return false;
+        result.m_resultKey = WTFMove(object);
+    }
+
+    if (!decoder.decode(hasObject))
+        return false;
+    if (hasObject) {
+        std::unique_ptr<IDBGetResult> object = std::make_unique<IDBGetResult>();
+        if (!decoder.decode(*object))
+            return false;
+        result.m_getResult = WTFMove(object);
+    }
+
+    return true;
 }
 
 } // namespace WebCore

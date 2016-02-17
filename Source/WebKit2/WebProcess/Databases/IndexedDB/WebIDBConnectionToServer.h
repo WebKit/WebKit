@@ -84,6 +84,9 @@ public:
     void didDeleteRecord(const WebCore::IDBResultData&);
     void didOpenCursor(const WebCore::IDBResultData&);
     void didIterateCursor(const WebCore::IDBResultData&);
+    void fireVersionChangeEvent(uint64_t uniqueDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
+    void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&);
+    void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
 
 private:
     WebIDBConnectionToServer();

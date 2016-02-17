@@ -1,3 +1,27 @@
+2016-02-17  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: More Encoder/Decoder/Messaging scaffolding for WK2 IPC.
+        https://bugs.webkit.org/show_bug.cgi?id=154356
+
+        Reviewed by Alex Christensen.
+
+        No change in behavior yet; Just laying the groundwork.
+
+        * Modules/indexeddb/shared/IDBDatabaseInfo.h:
+        (WebCore::IDBDatabaseInfo::encode):
+        (WebCore::IDBDatabaseInfo::decode):
+
+        * Modules/indexeddb/shared/IDBError.h:
+        (WebCore::IDBError::encode):
+        (WebCore::IDBError::decode):
+
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        (WebCore::IDBRequestData::decode):
+
+        * Modules/indexeddb/shared/IDBResultData.h:
+        (WebCore::IDBResultData::encode):
+        (WebCore::IDBResultData::decode):
+
 2016-02-17  Saam barati  <sbarati@apple.com>
 
         Implement Proxy [[Get]]

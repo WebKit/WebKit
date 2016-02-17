@@ -28,6 +28,12 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "WebCoreArgumentCoders.h"
+#include "WebIDBConnectionToServerMessages.h"
+#include <WebCore/IDBError.h>
+#include <WebCore/IDBResultData.h>
+#include <WebCore/UniqueIDBDatabaseConnection.h>
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -62,76 +68,94 @@ WebCore::IDBServer::IDBConnectionToClient& WebIDBConnectionToClient::connectionT
     return *m_connectionToClient;
 }
 
-void WebIDBConnectionToClient::didDeleteDatabase(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didDeleteDatabase(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidDeleteDatabase(resultData));
 }
 
-void WebIDBConnectionToClient::didOpenDatabase(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didOpenDatabase(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidOpenDatabase(resultData));
 }
 
-void WebIDBConnectionToClient::didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&)
+void WebIDBConnectionToClient::didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError& error)
 {
+    send(Messages::WebIDBConnectionToServer::DidAbortTransaction(transactionIdentifier, error));
 }
 
-void WebIDBConnectionToClient::didCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&)
+void WebIDBConnectionToClient::didCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError& error)
 {
+    send(Messages::WebIDBConnectionToServer::DidCommitTransaction(transactionIdentifier, error));
 }
 
-void WebIDBConnectionToClient::didCreateObjectStore(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didCreateObjectStore(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidCreateObjectStore(resultData));
 }
 
-void WebIDBConnectionToClient::didDeleteObjectStore(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didDeleteObjectStore(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidDeleteObjectStore(resultData));
 }
 
-void WebIDBConnectionToClient::didClearObjectStore(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didClearObjectStore(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidClearObjectStore(resultData));
 }
 
-void WebIDBConnectionToClient::didCreateIndex(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didCreateIndex(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidCreateIndex(resultData));
 }
 
-void WebIDBConnectionToClient::didDeleteIndex(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didDeleteIndex(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidDeleteIndex(resultData));
 }
 
-void WebIDBConnectionToClient::didPutOrAdd(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidPutOrAdd(resultData));
 }
 
-void WebIDBConnectionToClient::didGetRecord(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didGetRecord(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidGetRecord(resultData));
 }
 
-void WebIDBConnectionToClient::didGetCount(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didGetCount(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidGetCount(resultData));
 }
 
-void WebIDBConnectionToClient::didDeleteRecord(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didDeleteRecord(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidDeleteRecord(resultData));
 }
 
-void WebIDBConnectionToClient::didOpenCursor(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didOpenCursor(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidOpenCursor(resultData));
 }
 
-void WebIDBConnectionToClient::didIterateCursor(const WebCore::IDBResultData&)
+void WebIDBConnectionToClient::didIterateCursor(const WebCore::IDBResultData& resultData)
 {
+    send(Messages::WebIDBConnectionToServer::DidIterateCursor(resultData));
 }
 
-void WebIDBConnectionToClient::fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
+void WebIDBConnectionToClient::fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
+    send(Messages::WebIDBConnectionToServer::FireVersionChangeEvent(connection.identifier(), requestIdentifier, requestedVersion));
 }
 
-void WebIDBConnectionToClient::didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&)
+void WebIDBConnectionToClient::didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError& error)
 {
+    send(Messages::WebIDBConnectionToServer::DidStartTransaction(transactionIdentifier, error));
 }
 
 void WebIDBConnectionToClient::notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 {
+    send(Messages::WebIDBConnectionToServer::NotifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion));
 }
 
 void WebIDBConnectionToClient::deleteDatabase(const IDBRequestData&)

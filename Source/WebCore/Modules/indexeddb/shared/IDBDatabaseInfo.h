@@ -59,13 +59,16 @@ public:
     void deleteObjectStore(const String& objectStoreName);
     void deleteObjectStore(uint64_t objectStoreIdentifier);
 
+    WEBCORE_EXPORT IDBDatabaseInfo();
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBDatabaseInfo&);
+
 #ifndef NDEBUG
     String loggingString() const;
 #endif
 
 private:
-    IDBDatabaseInfo();
-
     IDBObjectStoreInfo* getInfoForExistingObjectStore(const String& objectStoreName);
     IDBObjectStoreInfo* getInfoForExistingObjectStore(uint64_t objectStoreIdentifier);
 
@@ -76,6 +79,30 @@ private:
     HashMap<uint64_t, IDBObjectStoreInfo> m_objectStoreMap;
 
 };
+
+template<class Encoder>
+void IDBDatabaseInfo::encode(Encoder& encoder) const
+{
+    encoder << m_name << m_version << m_maxObjectStoreID << m_objectStoreMap;
+}
+
+template<class Decoder>
+bool IDBDatabaseInfo::decode(Decoder& decoder, IDBDatabaseInfo& info)
+{
+    if (!decoder.decode(info.m_name))
+        return false;
+
+    if (!decoder.decode(info.m_version))
+        return false;
+
+    if (!decoder.decode(info.m_maxObjectStoreID))
+        return false;
+
+    if (!decoder.decode(info.m_objectStoreMap))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

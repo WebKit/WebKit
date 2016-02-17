@@ -249,6 +249,17 @@ void WebIDBConnectionToServer::didIterateCursor(const IDBResultData&)
 {
 }
 
+void WebIDBConnectionToServer::fireVersionChangeEvent(uint64_t, const WebCore::IDBResourceIdentifier&, uint64_t)
+{
+}
+
+void WebIDBConnectionToServer::didStartTransaction(const WebCore::IDBResourceIdentifier&, const WebCore::IDBError&)
+{
+}
+
+void WebIDBConnectionToServer::notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier&, uint64_t, uint64_t)
+{
+}
 
 } // namespace WebKit
 

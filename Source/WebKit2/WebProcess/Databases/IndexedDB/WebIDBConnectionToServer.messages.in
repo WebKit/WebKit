@@ -38,6 +38,11 @@ messages -> WebIDBConnectionToServer {
     DidDeleteRecord(WebCore::IDBResultData result)
     DidOpenCursor(WebCore::IDBResultData result)
     DidIterateCursor(WebCore::IDBResultData result)
+
+    FireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, uint64_t requestedVersion)
+    DidStartTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
+    NotifyOpenDBRequestBlocked(WebCore::IDBResourceIdentifier requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
