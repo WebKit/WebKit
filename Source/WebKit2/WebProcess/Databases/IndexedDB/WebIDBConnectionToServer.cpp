@@ -28,7 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DataReference.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
+#include "WebIDBConnectionToClientMessages.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBConnectionToServer.h>
@@ -85,84 +87,106 @@ IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServ
     return *m_connectionToServer;
 }
 
-void WebIDBConnectionToServer::deleteDatabase(IDBRequestData&)
+void WebIDBConnectionToServer::deleteDatabase(IDBRequestData& requestData)
 {
+    send(Messages::WebIDBConnectionToClient::DeleteDatabase(requestData));
 }
 
-void WebIDBConnectionToServer::openDatabase(IDBRequestData&)
+void WebIDBConnectionToServer::openDatabase(IDBRequestData& requestData)
 {
+    send(Messages::WebIDBConnectionToClient::OpenDatabase(requestData));
 }
 
-void WebIDBConnectionToServer::abortTransaction(IDBResourceIdentifier&)
+void WebIDBConnectionToServer::abortTransaction(IDBResourceIdentifier& transactionIdentifier)
 {
+    send(Messages::WebIDBConnectionToClient::AbortTransaction(transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::commitTransaction(IDBResourceIdentifier&)
+void WebIDBConnectionToServer::commitTransaction(IDBResourceIdentifier& transactionIdentifier)
 {
+    send(Messages::WebIDBConnectionToClient::CommitTransaction(transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier&)
+void WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier& transactionIdentifier)
 {
+    send(Messages::WebIDBConnectionToClient::DidFinishHandlingVersionChangeTransaction(transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&)
+void WebIDBConnectionToServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
 {
+    send(Messages::WebIDBConnectionToClient::CreateObjectStore(requestData, info));
 }
 
-void WebIDBConnectionToServer::deleteObjectStore(const IDBRequestData&, const String& objectStoreName)
+void WebIDBConnectionToServer::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
 {
+    send(Messages::WebIDBConnectionToClient::DeleteObjectStore(requestData, objectStoreName));
 }
 
-void WebIDBConnectionToServer::clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier)
+void WebIDBConnectionToServer::clearObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier)
 {
+    send(Messages::WebIDBConnectionToClient::ClearObjectStore(requestData, objectStoreIdentifier));
 }
 
-void WebIDBConnectionToServer::createIndex(const IDBRequestData&, const IDBIndexInfo&)
+void WebIDBConnectionToServer::createIndex(const IDBRequestData& requestData, const IDBIndexInfo& info)
 {
+    send(Messages::WebIDBConnectionToClient::CreateIndex(requestData, info));
 }
 
-void WebIDBConnectionToServer::deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName)
+void WebIDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
 {
+    send(Messages::WebIDBConnectionToClient::DeleteIndex(requestData, objectStoreIdentifier, indexName));
 }
 
-void WebIDBConnectionToServer::putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode)
+void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, IDBKey* key, SerializedScriptValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
 {
+    IDBKeyData keyData(key);
+    IPC::DataReference valueData(value.data());
+    send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, valueData, mode != IndexedDB::ObjectStoreOverwriteMode::NoOverwrite));
 }
 
-void WebIDBConnectionToServer::getRecord(const IDBRequestData&, const IDBKeyRangeData&)
+void WebIDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range)
 {
+    send(Messages::WebIDBConnectionToClient::GetRecord(requestData, range));
 }
 
-void WebIDBConnectionToServer::getCount(const IDBRequestData&, const IDBKeyRangeData&)
+void WebIDBConnectionToServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& range)
 {
+    send(Messages::WebIDBConnectionToClient::GetCount(requestData, range));
 }
 
-void WebIDBConnectionToServer::deleteRecord(const IDBRequestData&, const IDBKeyRangeData&)
+void WebIDBConnectionToServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range)
 {
+    send(Messages::WebIDBConnectionToClient::DeleteRecord(requestData, range));
 }
 
-void WebIDBConnectionToServer::openCursor(const IDBRequestData&, const IDBCursorInfo&)
+void WebIDBConnectionToServer::openCursor(const IDBRequestData& requestData, const IDBCursorInfo& info)
 {
+    send(Messages::WebIDBConnectionToClient::OpenCursor(requestData, info));
 }
 
-void WebIDBConnectionToServer::iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count)
+void WebIDBConnectionToServer::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
 {
+    send(Messages::WebIDBConnectionToClient::IterateCursor(requestData, key, count));
 }
 
-void WebIDBConnectionToServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&)
+void WebIDBConnectionToServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
+    send(Messages::WebIDBConnectionToClient::EstablishTransaction(databaseConnectionIdentifier, info));
 }
 
 void WebIDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
+    send(Messages::WebIDBConnectionToClient::DatabaseConnectionClosed(databaseConnectionIdentifier));
 }
 
 void WebIDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
+    send(Messages::WebIDBConnectionToClient::AbortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier));
 }
 
 void WebIDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
 {
+    send(Messages::WebIDBConnectionToClient::DidFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier));
 }
 
 void WebIDBConnectionToServer::didDeleteDatabase(const IDBResultData&)

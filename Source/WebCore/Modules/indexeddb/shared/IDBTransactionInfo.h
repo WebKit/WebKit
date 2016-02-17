@@ -80,9 +80,29 @@ private:
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 };
 
-template<class Decoder> bool IDBTransactionInfo::decode(Decoder&, IDBTransactionInfo&)
+template<class Encoder>
+void IDBTransactionInfo::encode(Encoder& encoder) const
 {
-    return false;
+    encoder << m_identifier << m_newVersion << m_objectStores;
+    encoder.encodeEnum(m_mode);
+}
+
+template<class Decoder>
+bool IDBTransactionInfo::decode(Decoder& decoder, IDBTransactionInfo& info)
+{
+    if (!decoder.decode(info.m_identifier))
+        return false;
+
+    if (!decoder.decode(info.m_newVersion))
+        return false;
+
+    if (!decoder.decode(info.m_objectStores))
+        return false;
+
+    if (!decoder.decodeEnum(info.m_mode))
+        return false;
+
+    return true;
 }
 
 } // namespace WebCore

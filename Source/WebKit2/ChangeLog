@@ -1,3 +1,36 @@
+2016-02-17  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Encoder/Decoder/Messaging scaffolding for WK2 IPC.
+        https://bugs.webkit.org/show_bug.cgi?id=154351
+
+        Reviewed by Alex Christensen.
+
+        No change in behavior yet; Just laying the groundwork.
+
+        Implement in all of the client->server message sends, requiring many Encoder/Decoders for
+        IDB objects to also be implemented:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::deleteDatabase):
+        (WebKit::WebIDBConnectionToServer::openDatabase):
+        (WebKit::WebIDBConnectionToServer::abortTransaction):
+        (WebKit::WebIDBConnectionToServer::commitTransaction):
+        (WebKit::WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction):
+        (WebKit::WebIDBConnectionToServer::createObjectStore):
+        (WebKit::WebIDBConnectionToServer::deleteObjectStore):
+        (WebKit::WebIDBConnectionToServer::clearObjectStore):
+        (WebKit::WebIDBConnectionToServer::createIndex):
+        (WebKit::WebIDBConnectionToServer::deleteIndex):
+        (WebKit::WebIDBConnectionToServer::putOrAdd):
+        (WebKit::WebIDBConnectionToServer::getRecord):
+        (WebKit::WebIDBConnectionToServer::getCount):
+        (WebKit::WebIDBConnectionToServer::deleteRecord):
+        (WebKit::WebIDBConnectionToServer::openCursor):
+        (WebKit::WebIDBConnectionToServer::iterateCursor):
+        (WebKit::WebIDBConnectionToServer::establishTransaction):
+        (WebKit::WebIDBConnectionToServer::databaseConnectionClosed):
+        (WebKit::WebIDBConnectionToServer::abortOpenAndUpgradeNeeded):
+        (WebKit::WebIDBConnectionToServer::didFireVersionChangeEvent):
+
 2016-02-17  Alex Christensen  <achristensen@webkit.org>
 
         Copy http body when being redirected with 308 with NetworkSession

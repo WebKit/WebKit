@@ -80,9 +80,34 @@ private:
 
 };
 
-template<class Decoder> bool IDBObjectStoreInfo::decode(Decoder&, IDBObjectStoreInfo&)
+template<class Encoder>
+void IDBObjectStoreInfo::encode(Encoder& encoder) const
 {
-    return false;
+    encoder << m_identifier << m_name << m_keyPath << m_autoIncrement << m_maxIndexID << m_indexMap;
+}
+
+template<class Decoder>
+bool IDBObjectStoreInfo::decode(Decoder& decoder, IDBObjectStoreInfo& info)
+{
+    if (!decoder.decode(info.m_identifier))
+        return false;
+
+    if (!decoder.decode(info.m_name))
+        return false;
+
+    if (!decoder.decode(info.m_keyPath))
+        return false;
+
+    if (!decoder.decode(info.m_autoIncrement))
+        return false;
+
+    if (!decoder.decode(info.m_maxIndexID))
+        return false;
+
+    if (!decoder.decode(info.m_indexMap))
+        return false;
+
+    return true;
 }
 
 } // namespace WebCore

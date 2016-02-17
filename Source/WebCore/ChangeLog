@@ -1,3 +1,40 @@
+2016-02-17  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Encoder/Decoder/Messaging scaffolding for WK2 IPC.
+        https://bugs.webkit.org/show_bug.cgi?id=154351
+
+        Reviewed by Alex Christensen.
+
+        No change in behavior yet; Just laying the groundwork.
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::encode):
+        (WebCore::IDBDatabaseIdentifier::decode):
+        
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        (WebCore::IDBCursorInfo::encode):
+        (WebCore::IDBCursorInfo::decode):
+        
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        (WebCore::IDBIndexInfo::encode):
+        (WebCore::IDBIndexInfo::decode):
+        
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        (WebCore::IDBObjectStoreInfo::encode):
+        (WebCore::IDBObjectStoreInfo::decode):
+        
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        (WebCore::IDBRequestData::encode):
+        (WebCore::IDBRequestData::decode):
+        
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        (WebCore::IDBResourceIdentifier::encode):
+        (WebCore::IDBResourceIdentifier::decode):
+        
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        (WebCore::IDBTransactionInfo::encode):
+        (WebCore::IDBTransactionInfo::decode):
+
 2016-02-17  Andreas Kling  <akling@apple.com>
 
         [iOS] Purge GraphicsServices font cache on memory warning.

@@ -63,9 +63,34 @@ private:
     bool m_multiEntry { false };
 };
 
-template<class Decoder> bool IDBIndexInfo::decode(Decoder&, IDBIndexInfo&)
+template<class Encoder>
+void IDBIndexInfo::encode(Encoder& encoder) const
 {
-    return false;
+    encoder << m_identifier << m_objectStoreIdentifier << m_name << m_keyPath << m_unique << m_multiEntry;
+}
+
+template<class Decoder>
+bool IDBIndexInfo::decode(Decoder& decoder, IDBIndexInfo& info)
+{
+    if (!decoder.decode(info.m_identifier))
+        return false;
+
+    if (!decoder.decode(info.m_objectStoreIdentifier))
+        return false;
+
+    if (!decoder.decode(info.m_name))
+        return false;
+
+    if (!decoder.decode(info.m_keyPath))
+        return false;
+
+    if (!decoder.decode(info.m_unique))
+        return false;
+
+    if (!decoder.decode(info.m_multiEntry))
+        return false;
+
+    return true;
 }
 
 } // namespace WebCore

@@ -118,9 +118,22 @@ struct IDBResourceIdentifierHashTraits : WTF::CustomHashTraits<IDBResourceIdenti
     }
 };
 
-template<class Decoder> bool IDBResourceIdentifier::decode(Decoder&, IDBResourceIdentifier&)
+template<class Encoder>
+void IDBResourceIdentifier::encode(Encoder& encoder) const
 {
-    return false;
+    encoder << m_idbConnectionIdentifier << m_resourceNumber;
+}
+
+template<class Decoder>
+bool IDBResourceIdentifier::decode(Decoder& decoder, IDBResourceIdentifier& identifier)
+{
+    if (!decoder.decode(identifier.m_idbConnectionIdentifier))
+        return false;
+
+    if (!decoder.decode(identifier.m_resourceNumber))
+        return false;
+
+    return true;
 }
 
 } // namespace WebCore

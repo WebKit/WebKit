@@ -94,6 +94,9 @@ public:
 
     String databaseDirectoryRelativeToRoot(const String& rootDirectory) const;
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBDatabaseIdentifier&);
+
 #ifndef NDEBUG
     String debugString() const;
 #endif
@@ -115,6 +118,27 @@ struct IDBDatabaseIdentifierHashTraits : WTF::SimpleClassHashTraits<IDBDatabaseI
     static const bool emptyValueIsZero = false;
     static bool isEmptyValue(const IDBDatabaseIdentifier& info) { return info.isEmpty(); }
 };
+
+template<class Encoder>
+void IDBDatabaseIdentifier::encode(Encoder& encoder) const
+{
+    encoder << m_databaseName << m_openingOrigin << m_mainFrameOrigin;
+}
+
+template<class Decoder>
+bool IDBDatabaseIdentifier::decode(Decoder& decoder, IDBDatabaseIdentifier& identifier)
+{
+    if (!decoder.decode(identifier.m_databaseName))
+        return false;
+
+    if (!decoder.decode(identifier.m_openingOrigin))
+        return false;
+
+    if (!decoder.decode(identifier.m_mainFrameOrigin))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 
