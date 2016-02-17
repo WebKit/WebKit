@@ -1916,6 +1916,36 @@ AccessibilityTextMarker AccessibilityUIElement::nextParagraphEndTextMarkerForTex
     return nullptr;
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXSentenceTextMarkerRangeForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id previousTextMarker = [m_element accessibilityAttributeValue:@"AXPreviousSentenceStartTextMarkerForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker(previousTextMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id nextTextMarker = [m_element accessibilityAttributeValue:@"AXNextSentenceEndTextMarkerForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker(nextTextMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
 #endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
 
 JSStringRef AccessibilityUIElement::supportedActions()

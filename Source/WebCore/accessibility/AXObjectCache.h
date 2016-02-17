@@ -214,6 +214,11 @@ public:
     RefPtr<Range> paragraphForCharacterOffset(const CharacterOffset&);
     CharacterOffset nextParagraphEndCharacterOffset(const CharacterOffset&);
     CharacterOffset previousParagraphStartCharacterOffset(const CharacterOffset&);
+    
+    // Sentence
+    RefPtr<Range> sentenceForCharacterOffset(const CharacterOffset&);
+    CharacterOffset nextSentenceEndCharacterOffset(const CharacterOffset&);
+    CharacterOffset previousSentenceStartCharacterOffset(const CharacterOffset&);
 
     enum AXNotification {
         AXActiveDescendantChanged,
@@ -317,12 +322,14 @@ protected:
     UChar32 characterBefore(const CharacterOffset&);
     CharacterOffset startOrEndCharacterOffsetForRange(RefPtr<Range>, bool);
     CharacterOffset characterOffsetForNodeAndOffset(Node&, int, TraverseOption = TraverseOptionDefault);
-    CharacterOffset previousWordBoundary(CharacterOffset&, BoundarySearchFunction);
-    CharacterOffset nextWordBoundary(CharacterOffset&, BoundarySearchFunction);
+    CharacterOffset previousBoundary(const CharacterOffset&, BoundarySearchFunction);
+    CharacterOffset nextBoundary(const CharacterOffset&, BoundarySearchFunction);
     CharacterOffset startCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);
     CharacterOffset endCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);
     CharacterOffset startCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
     CharacterOffset endCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+    CharacterOffset startCharacterOffsetOfSentence(const CharacterOffset&);
+    CharacterOffset endCharacterOffsetOfSentence(const CharacterOffset&);
 
 private:
     AccessibilityObject* rootWebArea();

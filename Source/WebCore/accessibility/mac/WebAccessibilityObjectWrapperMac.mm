@@ -4112,9 +4112,12 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
     }
     
     if ([attribute isEqualToString:@"AXSentenceTextMarkerRangeForTextMarker"]) {
-        VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
-        VisiblePositionRange vpRange = m_object->sentenceForPosition(visiblePos);
-        return [self textMarkerRangeFromVisiblePositions:vpRange.start endPosition:vpRange.end];
+        AXObjectCache* cache = m_object->axObjectCache();
+        if (!cache)
+            return nil;
+        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
+        RefPtr<Range> range = cache->sentenceForCharacterOffset(characterOffset);
+        return [self textMarkerRangeFromRange:range];
     }
     
     if ([attribute isEqualToString:@"AXParagraphTextMarkerRangeForTextMarker"]) {
@@ -4155,18 +4158,30 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
     }
     
     if ([attribute isEqualToString:@"AXNextSentenceEndTextMarkerForTextMarker"]) {
-        VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
-        return [self textMarkerForVisiblePosition:m_object->nextSentenceEndPosition(visiblePos)];
+        AXObjectCache* cache = m_object->axObjectCache();
+        if (!cache)
+            return nil;
+        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
+        CharacterOffset nextEnd = cache->nextSentenceEndCharacterOffset(characterOffset);
+        return [self textMarkerForCharacterOffset:nextEnd];
     }
     
     if ([attribute isEqualToString:@"AXPreviousSentenceStartTextMarkerForTextMarker"]) {
-        VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
-        return [self textMarkerForVisiblePosition:m_object->previousSentenceStartPosition(visiblePos)];
+        AXObjectCache* cache = m_object->axObjectCache();
+        if (!cache)
+            return nil;
+        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
+        CharacterOffset previousStart = cache->previousSentenceStartCharacterOffset(characterOffset);
+        return [self textMarkerForCharacterOffset:previousStart];
     }
     
     if ([attribute isEqualToString:@"AXNextParagraphEndTextMarkerForTextMarker"]) {
-        VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
-        return [self textMarkerForVisiblePosition:m_object->nextParagraphEndPosition(visiblePos)];
+        AXObjectCache* cache = m_object->axObjectCache();
+        if (!cache)
+            return nil;
+        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
+        CharacterOffset nextEnd = cache->nextParagraphEndCharacterOffset(characterOffset);
+        return [self textMarkerForCharacterOffset:nextEnd];
     }
     
     if ([attribute isEqualToString:@"AXPreviousParagraphStartTextMarkerForTextMarker"]) {

@@ -658,7 +658,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
 
 // ---------
 
-static unsigned startWordBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
+unsigned startWordBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
     ASSERT(offset);
     if (mayHaveMoreContext && !startOfLastWordBoundaryContext(text.substring(0, offset))) {
@@ -689,7 +689,7 @@ VisiblePosition startOfWord(const VisiblePosition& c, EWordSide side)
     return previousBoundary(p, startWordBoundary);
 }
 
-static unsigned endWordBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
+unsigned endWordBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
     ASSERT(offset <= text.length());
     if (mayHaveMoreContext && endOfFirstWordBoundaryContext(text.substring(offset)) == text.length() - offset) {
@@ -1096,7 +1096,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
 
 // ---------
 
-static unsigned startSentenceBoundary(StringView text, unsigned, BoundarySearchContextAvailability, bool&)
+unsigned startSentenceBoundary(StringView text, unsigned, BoundarySearchContextAvailability, bool&)
 {
     // FIXME: The following function can return -1; we don't handle that.
     return textBreakPreceding(sentenceBreakIterator(text), text.length());
@@ -1107,7 +1107,7 @@ VisiblePosition startOfSentence(const VisiblePosition& position)
     return previousBoundary(position, startSentenceBoundary);
 }
 
-static unsigned endSentenceBoundary(StringView text, unsigned, BoundarySearchContextAvailability, bool&)
+unsigned endSentenceBoundary(StringView text, unsigned, BoundarySearchContextAvailability, bool&)
 {
     return textBreakNext(sentenceBreakIterator(text));
 }

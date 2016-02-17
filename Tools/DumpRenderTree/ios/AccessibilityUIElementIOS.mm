@@ -585,6 +585,21 @@ AccessibilityTextMarker AccessibilityUIElement::nextParagraphEndTextMarkerForTex
     return nullptr;
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker(AccessibilityTextMarker*)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker*)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker*)
+{
+    return nullptr;
+}
+
 #endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS)
 
 #pragma mark Unused

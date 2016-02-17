@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8"> 
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="text1" tabindex="0">
+This i<span>s a sen</span>tence,
+right? Yes!
+</div>
+
+<div id="text2">
+test audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file.
+</div>
+
+<div id="text3">
+巧克力
+是食物吗? 是的。
+</div>
+
+<div id="text3a">
+كيف حالك؟
+</div>
+
+<pre id="text4">
+both   spaces
+line breaks. Right?
+</pre>
+
+<div id="text5">
+This is my first sentence. <br><br>
+This is my second sentence. This is my third sentence.
+This is my fourth sentence.
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that sentence navigation is working correctly.");
+    
+    if (window.accessibilityController) {
+    
+        // Check that we can get the paragraph range with span tag.
+        var text = accessibilityController.accessibleElementById("text1");
+        var textMarkerRange = text.textMarkerRangeForElement(text);
+        var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        var currentMarker = advanceAndVerify(startMarker, 1, text);
+        
+        // Audio tag.
+        text = accessibilityController.accessibleElementById("text2");
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(startMarker, 1, text);
+        
+        // Multi-languages.
+        text = accessibilityController.accessibleElementById("text3");
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(startMarker, 1, text);
+        
+        text = accessibilityController.accessibleElementById("text3a");
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(startMarker, 1, text);
+        
+        // Check the case with pre tag.
+        text = accessibilityController.accessibleElementById("text4");
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        currentMarker = advanceAndVerify(startMarker, 1, text);
+        currentMarker = advanceAndVerify(currentMarker, 15, text);
+        
+        // Check getting the correct sentences.
+        text = accessibilityController.accessibleElementById("text5");
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        verifySentences(text, startMarker, 5);
+        
+        function advanceAndVerify(currentMarker, offset, obj) {
+            var previousMarker = currentMarker;
+            for (var i = 0; i < offset; i++) {
+                previousMarker = currentMarker;
+                currentMarker = obj.nextTextMarker(previousMarker);
+            }
+            verifySentenceRangeForTextMarker(previousMarker, currentMarker, obj);
+            return currentMarker;
+        }
+        
+        function replaceAttachmentInString(str) {
+            str =  str.replace(String.fromCharCode(65532), "[ATTACHMENT]");
+            return str;
+        }
+        
+        function verifySentenceRangeForTextMarker(preMarker, textMarker, obj) {
+            var markerRange = obj.textMarkerRangeForMarkers(preMarker, textMarker);
+            var currentCharacter = replaceAttachmentInString(obj.stringForTextMarkerRange(markerRange));
+            debug("Current character is: " + currentCharacter);
+            
+            var range = obj.sentenceTextMarkerRangeForTextMarker(textMarker);
+            var sentence = replaceAttachmentInString(obj.stringForTextMarkerRange(range));
+            debug("Current sentence is: " + sentence);
+            
+            var preStart = obj.previousSentenceStartTextMarkerForTextMarker(textMarker);
+            var nextEnd = obj.nextSentenceEndTextMarkerForTextMarker(textMarker);
+            var preAndNextSentenceRange = obj.textMarkerRangeForMarkers(preStart, nextEnd);
+            var preAndNextSentence = replaceAttachmentInString(obj.stringForTextMarkerRange(preAndNextSentenceRange));
+            debug("Pre sentence start to next sentence end: " + preAndNextSentence + "\n");
+        }
+        
+        function verifySentences(obj, startMarker, sentenceCount) {
+            var current = startMarker;
+            var i = 0;
+            while(i < sentenceCount) {
+                current = obj.nextSentenceEndTextMarkerForTextMarker(current);
+                var currRange = obj.sentenceTextMarkerRangeForTextMarker(current);
+                var currSentence = obj.stringForTextMarkerRange(currRange);
+                debug("Sentence: " + currSentence);
+                i++;
+            }
+            
+            // Backwards.
+            i = 0;
+            while(i < sentenceCount) {
+                current = obj.previousSentenceStartTextMarkerForTextMarker(current);
+                var next = obj.nextTextMarker(current);
+                var currRange = obj.sentenceTextMarkerRangeForTextMarker(next);
+                var currSentence = obj.stringForTextMarkerRange(currRange);
+                debug("Sentence: " + currSentence);
+                i++;
+            }
+        }    
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

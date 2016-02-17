@@ -1,3 +1,55 @@
+2016-02-17  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement sentence related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=154312
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (nextParagraphEndTextMarkerForTextMarkerCallback):
+        (sentenceTextMarkerRangeForTextMarkerCallback):
+        (previousSentenceStartTextMarkerForTextMarkerCallback):
+        (nextSentenceEndTextMarkerForTextMarkerCallback):
+        (setSelectedVisibleTextRangeCallback):
+        (AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker):
+        (AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker):
+        (AccessibilityUIElement::supportedActions):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker):
+        (WTR::_convertMathMultiscriptPairsToString):
+
 2016-02-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Gather some rudimentary statistics during resource load 

@@ -1943,6 +1943,36 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextParagraphEndText
     return nullptr;
 }
 
+PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXSentenceTextMarkerRangeForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarkerRange::create(textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id previousParagraphStartMarker = [m_element accessibilityAttributeValue:@"AXPreviousSentenceStartTextMarkerForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker::create(previousParagraphStartMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id nextParagraphEndMarker = [m_element accessibilityAttributeValue:@"AXNextSentenceEndTextMarkerForTextMarker" forParameter:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker::create(nextParagraphEndMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return nullptr;
+}
+
 static NSString *_convertMathMultiscriptPairsToString(NSArray *pairs)
 {
     __block NSMutableString *result = [NSMutableString string];

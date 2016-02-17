@@ -1,3 +1,56 @@
+2016-02-17  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement sentence related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=154312
+
+        Reviewed by Chris Fleizach.
+
+        Using CharacterOffset to implement sentence related text marker calls. Reused
+        logic from VisibleUnits class. Also fixed an issue where paragraph navigation
+        should skip preceding and following BR nodes.
+
+        Test: accessibility/mac/text-marker-sentence-nav.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::resetNodeAndOffsetForReplacedNode):
+        (WebCore::setRangeStartOrEndWithCharacterOffset):
+        (WebCore::AXObjectCache::characterOffsetForNodeAndOffset):
+        (WebCore::AXObjectCache::previousCharacterOffset):
+        (WebCore::AXObjectCache::startCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::endCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::previousWordStartCharacterOffset):
+        (WebCore::AXObjectCache::leftWordRange):
+        (WebCore::AXObjectCache::rightWordRange):
+        (WebCore::AXObjectCache::characterBefore):
+        (WebCore::characterOffsetNodeIsBR):
+        (WebCore::parentEditingBoundary):
+        (WebCore::AXObjectCache::nextBoundary):
+        (WebCore::AXObjectCache::previousBoundary):
+        (WebCore::AXObjectCache::paragraphForCharacterOffset):
+        (WebCore::AXObjectCache::nextParagraphEndCharacterOffset):
+        (WebCore::AXObjectCache::previousParagraphStartCharacterOffset):
+        (WebCore::AXObjectCache::startCharacterOffsetOfSentence):
+        (WebCore::AXObjectCache::endCharacterOffsetOfSentence):
+        (WebCore::AXObjectCache::sentenceForCharacterOffset):
+        (WebCore::AXObjectCache::nextSentenceEndCharacterOffset):
+        (WebCore::AXObjectCache::previousSentenceStartCharacterOffset):
+        (WebCore::AXObjectCache::rootAXEditableElement):
+        (WebCore::startWordBoundary): Deleted.
+        (WebCore::endWordBoundary): Deleted.
+        (WebCore::AXObjectCache::nextWordBoundary): Deleted.
+        (WebCore::AXObjectCache::previousWordBoundary): Deleted.
+        * accessibility/AXObjectCache.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startWordBoundary):
+        (WebCore::startOfWord):
+        (WebCore::endWordBoundary):
+        (WebCore::startSentenceBoundary):
+        (WebCore::startOfSentence):
+        (WebCore::endSentenceBoundary):
+        * editing/VisibleUnits.h:
+
 2016-02-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] GridSpan refactoring

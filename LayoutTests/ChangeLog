@@ -1,3 +1,15 @@
+2016-02-17  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement sentence related text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=154312
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/text-marker-paragraph-nav-expected.txt:
+        * accessibility/mac/text-marker-paragraph-nav.html:
+        * accessibility/mac/text-marker-sentence-nav-expected.txt: Added.
+        * accessibility/mac/text-marker-sentence-nav.html: Added.
+
 2016-02-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Adding an ios-specific baseline for accessibility/ios-simulator/centerpoint.html during failure investigation

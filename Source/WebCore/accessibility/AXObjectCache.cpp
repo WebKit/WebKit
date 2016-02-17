@@ -1609,7 +1609,7 @@ static Node* resetNodeAndOffsetForReplacedNode(Node* replacedNode, int& offset, 
     return replacedNode->parentNode();
 }
 
-static void setRangeStartOrEndWithCharacterOffset(RefPtr<Range> range, CharacterOffset& characterOffset, bool isStart, ExceptionCode& ec)
+static void setRangeStartOrEndWithCharacterOffset(RefPtr<Range> range, const CharacterOffset& characterOffset, bool isStart, ExceptionCode& ec)
 {
     if (!range) {
         ec = RangeError;
@@ -1738,11 +1738,11 @@ CharacterOffset AXObjectCache::characterOffsetForNodeAndOffset(Node& node, int o
                 charOffset = characterOffsetForNodeAndOffset(*domNode, 0, TraverseOptionToNodeEnd);
             } else
                 return CharacterOffset();
-            if (!offset)
+            if (charOffset.offset == offset)
                 break;
         }
         if (offset > 0)
-            charOffset = characterOffsetForNodeAndOffset(*charOffset.node, charOffset.offset - offset);
+            charOffset = characterOffsetForNodeAndOffset(*charOffset.node, charOffset.offset - offset, TraverseOptionIncludeStart);
         return charOffset;
     }
     
@@ -1919,33 +1919,6 @@ CharacterOffset AXObjectCache::previousCharacterOffset(const CharacterOffset& ch
     return characterOffsetForNodeAndOffset(*characterOffset.node, characterOffset.offset - 1, ignoreStart ? TraverseOptionDefault : TraverseOptionIncludeStart);
 }
 
-static unsigned startWordBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
-{
-    ASSERT(offset);
-    if (mayHaveMoreContext && !startOfLastWordBoundaryContext(text.substring(0, offset))) {
-        needMoreContext = true;
-        return 0;
-    }
-    needMoreContext = false;
-    int start, end;
-    U16_BACK_1(text, 0, offset);
-    findWordBoundary(text, offset, &start, &end);
-    return start;
-}
-
-static unsigned endWordBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
-{
-    ASSERT(offset <= text.length());
-    if (mayHaveMoreContext && endOfFirstWordBoundaryContext(text.substring(offset)) == text.length() - offset) {
-        needMoreContext = true;
-        return text.length();
-    }
-    needMoreContext = false;
-    int end;
-    findEndWordBoundary(text, offset, &end);
-    return end;
-}
-
 CharacterOffset AXObjectCache::startCharacterOffsetOfWord(const CharacterOffset& characterOffset, EWordSide side)
 {
     if (characterOffset.isNull())
@@ -1962,7 +1935,7 @@ CharacterOffset AXObjectCache::startCharacterOffsetOfWord(const CharacterOffset&
             return characterOffset;
     }
     
-    return previousWordBoundary(c, startWordBoundary);
+    return previousBoundary(c, startWordBoundary);
 }
 
 CharacterOffset AXObjectCache::endCharacterOffsetOfWord(const CharacterOffset& characterOffset, EWordSide side)
@@ -1981,7 +1954,7 @@ CharacterOffset AXObjectCache::endCharacterOffsetOfWord(const CharacterOffset& c
             return characterOffset;
     }
     
-    return nextWordBoundary(c, endWordBoundary);
+    return nextBoundary(c, endWordBoundary);
 }
 
 CharacterOffset AXObjectCache::previousWordStartCharacterOffset(const CharacterOffset& characterOffset)
@@ -2010,7 +1983,7 @@ CharacterOffset AXObjectCache::nextWordEndCharacterOffset(const CharacterOffset&
 
 RefPtr<Range> AXObjectCache::leftWordRange(const CharacterOffset& characterOffset)
 {
-    CharacterOffset start = previousWordStartCharacterOffset(characterOffset);
+    CharacterOffset start = startCharacterOffsetOfWord(characterOffset, LeftWordIfOnBoundary);
     CharacterOffset end = endCharacterOffsetOfWord(start);
     return rangeForUnorderedCharacterOffsets(start, end);
 }
@@ -2018,7 +1991,7 @@ RefPtr<Range> AXObjectCache::leftWordRange(const CharacterOffset& characterOffse
 RefPtr<Range> AXObjectCache::rightWordRange(const CharacterOffset& characterOffset)
 {
     CharacterOffset start = startCharacterOffsetOfWord(characterOffset);
-    CharacterOffset end = nextWordEndCharacterOffset(start);
+    CharacterOffset end = endCharacterOffsetOfWord(start);
     return rangeForUnorderedCharacterOffsets(start, end);
 }
 
@@ -2043,6 +2016,14 @@ UChar32 AXObjectCache::characterBefore(const CharacterOffset& characterOffset)
 {
     return characterForCharacterOffset(characterOffset);
 }
+
+static bool characterOffsetNodeIsBR(const CharacterOffset& characterOffset)
+{
+    if (characterOffset.isNull())
+        return false;
+    
+    return characterOffset.node->hasTagName(brTag);
+}
     
 static Node* parentEditingBoundary(Node* node)
 {
@@ -2060,7 +2041,7 @@ static Node* parentEditingBoundary(Node* node)
     return boundary;
 }
 
-CharacterOffset AXObjectCache::nextWordBoundary(CharacterOffset& characterOffset, BoundarySearchFunction searchFunction)
+CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffset, BoundarySearchFunction searchFunction)
 {
     if (characterOffset.isNull())
         return CharacterOffset();
@@ -2092,13 +2073,18 @@ CharacterOffset AXObjectCache::nextWordBoundary(CharacterOffset& characterOffset
     
     if (it.atEnd() && next == string.size())
         return end;
+    
+    // The endSentenceBoundary function will include a line break at the end of the sentence.
+    if (searchFunction == endSentenceBoundary && string[next - 1] == '\n')
+        next--;
+    
     if (next > prefixLength)
         return characterOffsetForNodeAndOffset(*characterOffset.node, characterOffset.offset + next - prefixLength);
     
     return characterOffset;
 }
 
-CharacterOffset AXObjectCache::previousWordBoundary(CharacterOffset& characterOffset, BoundarySearchFunction searchFunction)
+CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& characterOffset, BoundarySearchFunction searchFunction)
 {
     if (characterOffset.isNull())
         return CharacterOffset();
@@ -2141,6 +2127,9 @@ CharacterOffset AXObjectCache::previousWordBoundary(CharacterOffset& characterOf
     }
     
     int characterCount = characterOffset.offset - (string.size() - suffixLength - next);
+    // We don't want to go to the previous node if the node is at the start of a new line.
+    if (characterCount < 0 && (characterOffsetNodeIsBR(characterOffset) || string[string.size() - 1] == '\n'))
+        characterCount = 0;
     return characterOffsetForNodeAndOffset(*characterOffset.node, characterCount, TraverseOptionIncludeStart);
 }
 
@@ -2198,7 +2187,7 @@ CharacterOffset AXObjectCache::endCharacterOffsetOfParagraph(const CharacterOffs
 RefPtr<Range> AXObjectCache::paragraphForCharacterOffset(const CharacterOffset& characterOffset)
 {
     CharacterOffset start = startCharacterOffsetOfParagraph(characterOffset);
-    CharacterOffset end = endCharacterOffsetOfParagraph(characterOffset);
+    CharacterOffset end = endCharacterOffsetOfParagraph(start);
     
     return rangeForUnorderedCharacterOffsets(start, end);
 }
@@ -2206,13 +2195,60 @@ RefPtr<Range> AXObjectCache::paragraphForCharacterOffset(const CharacterOffset& 
 CharacterOffset AXObjectCache::nextParagraphEndCharacterOffset(const CharacterOffset& characterOffset)
 {
     // make sure we move off of a paragraph end
-    return endCharacterOffsetOfParagraph(nextCharacterOffset(characterOffset));
+    CharacterOffset next = nextCharacterOffset(characterOffset);
+    
+    // We should skip the following BR node.
+    if (characterOffsetNodeIsBR(next) && !characterOffsetNodeIsBR(characterOffset))
+        next = nextCharacterOffset(next);
+    
+    return endCharacterOffsetOfParagraph(next);
 }
 
 CharacterOffset AXObjectCache::previousParagraphStartCharacterOffset(const CharacterOffset& characterOffset)
 {
     // make sure we move off of a paragraph start
-    return startCharacterOffsetOfParagraph(previousCharacterOffset(characterOffset, false));
+    CharacterOffset previous = previousCharacterOffset(characterOffset, false);
+    
+    // We should skip the preceding BR node.
+    if (characterOffsetNodeIsBR(previous) && !characterOffsetNodeIsBR(characterOffset))
+        previous = previousCharacterOffset(previous, false);
+    
+    return startCharacterOffsetOfParagraph(previous);
+}
+
+CharacterOffset AXObjectCache::startCharacterOffsetOfSentence(const CharacterOffset& characterOffset)
+{
+    return previousBoundary(characterOffset, startSentenceBoundary);
+}
+
+CharacterOffset AXObjectCache::endCharacterOffsetOfSentence(const CharacterOffset& characterOffset)
+{
+    return nextBoundary(characterOffset, endSentenceBoundary);
+}
+
+RefPtr<Range> AXObjectCache::sentenceForCharacterOffset(const CharacterOffset& characterOffset)
+{
+    CharacterOffset start = startCharacterOffsetOfSentence(characterOffset);
+    CharacterOffset end = endCharacterOffsetOfSentence(start);
+    return rangeForUnorderedCharacterOffsets(start, end);
+}
+
+CharacterOffset AXObjectCache::nextSentenceEndCharacterOffset(const CharacterOffset& characterOffset)
+{
+    // Make sure we move off of a sentence end.
+    return endCharacterOffsetOfSentence(nextCharacterOffset(characterOffset));
+}
+
+CharacterOffset AXObjectCache::previousSentenceStartCharacterOffset(const CharacterOffset& characterOffset)
+{
+    // Make sure we move off of a sentence start.
+    CharacterOffset previous = previousCharacterOffset(characterOffset, false);
+    
+    // We should skip the preceding BR node.
+    if (!previous.isNull() && previous.node->hasTagName(brTag) && !characterOffset.node->hasTagName(brTag))
+        previous = previousCharacterOffset(previous, false);
+    
+    return startCharacterOffsetOfSentence(previous);
 }
 
 const Element* AXObjectCache::rootAXEditableElement(const Node* node)

@@ -46,7 +46,7 @@ line breaks
 some<br>text
 </div>
 
-<div id="text9">this is my first paragraph. Of text. it has some text.<br>
+<div id="text9">this is my first paragraph. Of text. it has some text.<br><br><br>
 this is my second paragraph. Of text. it has some text.<br>
 this is my third paragraph. Of text. it has some text.<br><br>
 </div>
@@ -121,7 +121,7 @@ this is my third paragraph. Of text. it has some text.<br><br>
         startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
         startMarker = text.nextTextMarker(startMarker);
         var endMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange);
-        verifyParagraphs(text, startMarker, 3);
+        verifyParagraphs(text, startMarker, 5);
         
         // Check the paragraph marker runs from start to end, and backwards.
         // Make sure it won't hang.
@@ -160,26 +160,23 @@ this is my third paragraph. Of text. it has some text.<br><br>
         }
         
         function verifyParagraphs(obj, startMarker, paragraphCount) {
-            // Move to the end of first paragraph, so the first paragraph
-            // won't print twice.
-            var current = obj.nextParagraphEndTextMarkerForTextMarker(startMarker);
+            var current = startMarker;
             var i = 0;
             while(i < paragraphCount) {
+                current = obj.nextParagraphEndTextMarkerForTextMarker(current);
                 var currRange = obj.paragraphTextMarkerRangeForTextMarker(current);
                 var currParagraph = obj.stringForTextMarkerRange(currRange);
                 debug("Paragraph: " + currParagraph);
-                current = obj.nextParagraphEndTextMarkerForTextMarker(current);
                 i++;
             }
             
             // Backwards.
-            current = obj.previousParagraphStartTextMarkerForTextMarker(current);
             i = 0;
             while(i < paragraphCount) {
+                current = obj.previousParagraphStartTextMarkerForTextMarker(current);
                 var currRange = obj.paragraphTextMarkerRangeForTextMarker(current);
                 var currParagraph = obj.stringForTextMarkerRange(currRange);
                 debug("Paragraph: " + currParagraph);
-                current = obj.previousParagraphStartTextMarkerForTextMarker(current);
                 i++;
             }
         }

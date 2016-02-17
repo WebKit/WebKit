@@ -1131,6 +1131,21 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousParagraphSta
     return nullptr;
 }
 
+PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    return nullptr;
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    return nullptr;
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPostscriptsDescription() const
 {
     return 0;
