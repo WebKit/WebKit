@@ -1,3 +1,14 @@
+2016-02-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [Win] Allow ports to disable automatic text track selection
+        https://bugs.webkit.org/show_bug.cgi?id=154322
+        <rdar://problem/24623986>
+
+        Reviewed by Brent Fulgham.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (MTEnableCaption2015BehaviorPtr): Implement for Windows.
+
 2016-02-17  Gavin Barraclough  <barraclough@apple.com>
 
         JSDOMWindow::put should not do the same thing twice
