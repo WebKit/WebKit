@@ -40,6 +40,7 @@
 #import <wtf/CurrentTime.h>
 
 #if PLATFORM(IOS)
+#import "GraphicsServicesSPI.h"
 #import "SystemMemory.h"
 #import "WebCoreThread.h"
 #endif
@@ -65,6 +66,13 @@ void MemoryPressureHandler::platformReleaseMemory(Critical critical)
     {
         ReliefLogger log("Drain IOSurfacePool");
         IOSurfacePool::sharedPool().discardAllSurfaces();
+    }
+#endif
+
+#if PLATFORM(IOS)
+    {
+        ReliefLogger log("Purging GraphicsServices font cache");
+        GSFontPurgeFontCache();
     }
 #endif
 

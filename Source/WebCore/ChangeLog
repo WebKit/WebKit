@@ -1,3 +1,17 @@
+2016-02-17  Andreas Kling  <akling@apple.com>
+
+        [iOS] Purge GraphicsServices font cache on memory warning.
+        <https://webkit.org/b/154343>
+
+        Reviewed by Antti Koivisto.
+
+        The GS font cache was holding on to the last retain on CSS fonts after they stop being used.
+        Call SPI to purge it on memory pressure.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        * platform/spi/ios/GraphicsServicesSPI.h:
+
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196648): window.showModalDialog is no longer undefined if the client does not allow showing modal dialog
