@@ -1,3 +1,77 @@
+2016-02-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] GridSpan refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=153868
+
+        Reviewed by Sergio Villar Senin.
+
+        Add new enum to know if a GridSpan is definite or indefinite.
+        That way we don't need GridUnresolvedSpan class (which is removed).
+        We can always have two GridSpans in GridCoordinate,
+        if the position is "auto" the GridSpan will be marked as indefinite.
+        This will allow in a follow-up patch to avoid repeated calls
+        to methods that resolve positions.
+
+        Most operations in GridSpan are restricted to definite GridSpans (access
+        to positions, iterator, etc.). For indefinite GridSpans we only need to
+        know that they're indefinite, we shouldn't use the rest of the data.
+
+        No new tests, no change of behavior.
+
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::stringForPosition):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems):
+        (WebCore::RenderGrid::insertItemIntoGrid):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemsOnGrid): Deleted.
+        (WebCore::RenderGrid::autoPlacementMinorAxisDirection): Deleted.
+        (WebCore::RenderGrid::populateGridPositions): Deleted.
+        * rendering/style/GridCoordinate.h:
+        (WebCore::GridSpan::definiteGridSpan):
+        (WebCore::GridSpan::indefiniteGridSpan):
+        (WebCore::GridSpan::operator==):
+        (WebCore::GridSpan::integerSpan):
+        (WebCore::GridSpan::resolvedInitialPosition):
+        (WebCore::GridSpan::resolvedFinalPosition):
+        (WebCore::GridSpan::begin):
+        (WebCore::GridSpan::end):
+        (WebCore::GridSpan::isDefinite):
+        (WebCore::GridSpan::GridSpan):
+        (WebCore::GridCoordinate::GridCoordinate):
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::initialPositionSide):
+        (WebCore::finalPositionSide):
+        (WebCore::adjustGridPositionsFromStyle):
+        (WebCore::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionAgainstOppositePosition):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromStyle):
+        (WebCore::implicitNamedGridLineForSide): Deleted.
+        (WebCore::GridResolvedPosition::isNonExistentNamedLineOrArea): Deleted.
+        (WebCore::resolveNamedGridLinePositionFromStyle): Deleted.
+        (WebCore::resolveGridPositionFromStyle): Deleted.
+        * rendering/style/GridResolvedPosition.h:
+        (WebCore::GridResolvedPosition::GridResolvedPosition): Deleted.
+        (WebCore::GridResolvedPosition::operator*): Deleted.
+        (WebCore::GridResolvedPosition::operator++): Deleted.
+        (WebCore::GridResolvedPosition::operator==): Deleted.
+
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
         Window should have its 'constructor' property on the prototype

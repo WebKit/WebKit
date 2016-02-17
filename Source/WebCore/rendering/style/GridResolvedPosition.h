@@ -46,31 +46,6 @@ enum GridTrackSizingDirection {
     ForRows
 };
 
-class GridUnresolvedSpan {
-public:
-    GridUnresolvedSpan(GridPosition initialPosition, GridPositionSide initialPositionSide, GridPosition finalPosition, GridPositionSide finalPositionSide)
-        : m_initialPosition(initialPosition)
-        , m_finalPosition(finalPosition)
-        , m_initialPositionSide(initialPositionSide)
-        , m_finalPositionSide(finalPositionSide)
-    {
-    }
-
-    const GridPosition& initialPosition() const { return m_initialPosition; }
-    const GridPosition& finalPosition() const { return m_finalPosition; }
-    GridPositionSide initialPositionSide() const { return m_initialPositionSide; }
-    GridPositionSide finalPositionSide() const { return m_finalPositionSide; }
-
-    bool requiresAutoPlacement() const;
-    void adjustGridPositionsFromStyle(const RenderStyle& gridContainerStyle);
-
-private:
-    GridPosition m_initialPosition;
-    GridPosition m_finalPosition;
-    GridPositionSide m_initialPositionSide;
-    GridPositionSide m_finalPositionSide;
-};
-
 // This class represents a line index into one of the dimensions of the grid array.
 // Wraps an unsigned integer just for the purpose of knowing what we manipulate in the grid code.
 class GridResolvedPosition {
@@ -137,8 +112,7 @@ public:
     }
 
     static GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, const GridResolvedPosition&);
-    static GridSpan resolveGridPositionsFromStyle(const GridUnresolvedSpan&, const RenderStyle&);
-    static GridUnresolvedSpan unresolvedSpanFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
+    static GridSpan resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
     static unsigned explicitGridColumnCount(const RenderStyle&);
     static unsigned explicitGridRowCount(const RenderStyle&);
     static bool isNonExistentNamedLineOrArea(const String& lineName, const RenderStyle&, GridPositionSide);

@@ -190,7 +190,7 @@ public:
         const unsigned endOfVaryingTrackIndex = (m_direction == ForColumns) ? m_grid.size() : m_grid[0].size();
         for (; varyingTrackIndex < endOfVaryingTrackIndex; ++varyingTrackIndex) {
             if (isEmptyAreaEnough(rowSpan, columnSpan)) {
-                std::unique_ptr<GridCoordinate> result = std::make_unique<GridCoordinate>(GridSpan(m_rowIndex, m_rowIndex + rowSpan), GridSpan(m_columnIndex, m_columnIndex + columnSpan));
+                std::unique_ptr<GridCoordinate> result = std::make_unique<GridCoordinate>(GridSpan::definiteGridSpan(m_rowIndex, m_rowIndex + rowSpan), GridSpan::definiteGridSpan(m_columnIndex, m_columnIndex + columnSpan));
                 // Advance the iterator to avoid an infinite loop where we would return the same grid area over and over.
                 ++varyingTrackIndex;
                 return result;
@@ -566,7 +566,7 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     // 4. Grow all Grid tracks having a fraction as the MaxTrackSizingFunction.
     double flexFraction = 0;
     if (hasDefiniteFreeSpace)
-        flexFraction = findFlexFactorUnitSize(tracks, GridSpan(0, tracks.size()), direction, initialFreeSpace.value());
+        flexFraction = findFlexFactorUnitSize(tracks, GridSpan::definiteGridSpan(0, tracks.size()), direction, initialFreeSpace.value());
     else {
         for (const auto& trackIndex : flexibleSizedTracksIndex)
             flexFraction = std::max(flexFraction, normalizedFlexFraction(tracks[trackIndex], gridTrackSize(direction, trackIndex).maxTrackBreadth().flex()));
@@ -577,7 +577,7 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
                 const GridSpan span = cachedGridSpan(*gridItem, direction);
 
                 // Do not include already processed items.
-                if (i > 0 && span.resolvedInitialPosition.toInt() <= flexibleSizedTracksIndex[i - 1])
+                if (i > 0 && span.resolvedInitialPosition().toInt() <= flexibleSizedTracksIndex[i - 1])
                     continue;
 
                 flexFraction = std::max(flexFraction, findFlexFactorUnitSize(tracks, span, direction, maxContentForChild(*gridItem, direction, sizingData.columnTracks)));
@@ -865,7 +865,7 @@ void RenderGrid::resolveContentBasedTrackSizingFunctions(GridTrackSizingDirectio
 
 void RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems(GridTrackSizingDirection direction, const GridSpan& span, RenderBox& gridItem, GridTrack& track, Vector<GridTrack>& columnTracks)
 {
-    const GridResolvedPosition trackPosition = span.resolvedInitialPosition;
+    const GridResolvedPosition trackPosition = span.resolvedInitialPosition();
     GridTrackSize trackSize = gridTrackSize(direction, trackPosition.toInt());
 
     if (trackSize.hasMinContentMinTrackBreadth())
@@ -1138,7 +1138,7 @@ void RenderGrid::ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnS
 
 void RenderGrid::insertItemIntoGrid(RenderBox& child, const GridCoordinate& coordinate)
 {
-    ensureGridSize(coordinate.rows.resolvedFinalPosition.toInt(), coordinate.columns.resolvedFinalPosition.toInt());
+    ensureGridSize(coordinate.rows.resolvedFinalPosition().toInt(), coordinate.columns.resolvedFinalPosition().toInt());
 
     for (auto& row : coordinate.rows) {
         for (auto& column : coordinate.columns)
@@ -1160,21 +1160,18 @@ void RenderGrid::placeItemsOnGrid()
         if (child->isOutOfFlowPositioned())
             continue;
 
-        auto unresolvedRowPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), *child, ForRows);
-        auto unresolvedColumnPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), *child, ForColumns);
+        GridSpan rowPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *child, ForRows);
+        GridSpan columnPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *child, ForColumns);
 
-        if (unresolvedRowPositions.requiresAutoPlacement() || unresolvedColumnPositions.requiresAutoPlacement()) {
-
+        if (!rowPositions.isDefinite() || !columnPositions.isDefinite()) {
             bool majorAxisDirectionIsForColumns = autoPlacementMajorAxisDirection() == ForColumns;
-            if ((majorAxisDirectionIsForColumns && unresolvedColumnPositions.requiresAutoPlacement())
-                || (!majorAxisDirectionIsForColumns && unresolvedRowPositions.requiresAutoPlacement()))
+            if ((majorAxisDirectionIsForColumns && !columnPositions.isDefinite())
+                || (!majorAxisDirectionIsForColumns && !rowPositions.isDefinite()))
                 autoMajorAxisAutoGridItems.append(child);
             else
                 specifiedMajorAxisAutoGridItems.append(child);
             continue;
         }
-        GridSpan rowPositions = GridResolvedPosition::resolveGridPositionsFromStyle(unresolvedRowPositions, style());
-        GridSpan columnPositions = GridResolvedPosition::resolveGridPositionsFromStyle(unresolvedColumnPositions, style());
         insertItemIntoGrid(*child, GridCoordinate(rowPositions, columnPositions));
     }
 
@@ -1197,24 +1194,22 @@ void RenderGrid::populateExplicitGridAndOrderIterator()
 
         populator.collectChild(*child);
 
-        auto unresolvedRowPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), *child, ForRows);
-        if (!unresolvedRowPositions.requiresAutoPlacement()) {
-            GridSpan rowPositions = GridResolvedPosition::resolveGridPositionsFromStyle(unresolvedRowPositions, style());
-            maximumRowIndex = std::max(maximumRowIndex, rowPositions.resolvedFinalPosition.toInt());
+        GridSpan rowPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *child, ForRows);
+        if (rowPositions.isDefinite()) {
+            maximumRowIndex = std::max(maximumRowIndex, rowPositions.resolvedFinalPosition().toInt());
         } else {
             // Grow the grid for items with a definite row span, getting the largest such span.
             GridSpan positions = GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(style(), *child, ForRows, GridResolvedPosition(0));
-            maximumRowIndex = std::max(maximumRowIndex, positions.resolvedFinalPosition.toInt());
+            maximumRowIndex = std::max(maximumRowIndex, positions.resolvedFinalPosition().toInt());
         }
 
-        auto unresolvedColumnPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), *child, ForColumns);
-        if (!unresolvedColumnPositions.requiresAutoPlacement()) {
-            GridSpan columnPositions = GridResolvedPosition::resolveGridPositionsFromStyle(unresolvedColumnPositions, style());
-            maximumColumnIndex = std::max(maximumColumnIndex, columnPositions.resolvedFinalPosition.toInt());
+        GridSpan columnPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *child, ForColumns);
+        if (columnPositions.isDefinite()) {
+            maximumColumnIndex = std::max(maximumColumnIndex, columnPositions.resolvedFinalPosition().toInt());
         } else {
             // Grow the grid for items with a definite column span, getting the largest such span.
             GridSpan positions = GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(style(), *child, ForColumns, GridResolvedPosition(0));
-            maximumColumnIndex = std::max(maximumColumnIndex, positions.resolvedFinalPosition.toInt());
+            maximumColumnIndex = std::max(maximumColumnIndex, positions.resolvedFinalPosition().toInt());
         }
     }
 
@@ -1242,20 +1237,19 @@ void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>& au
     HashMap<unsigned, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> minorAxisCursors;
 
     for (auto& autoGridItem : autoGridItems) {
-        auto unresolvedMajorAxisPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), *autoGridItem, autoPlacementMajorAxisDirection());
-        ASSERT(!unresolvedMajorAxisPositions.requiresAutoPlacement());
-        GridSpan majorAxisPositions = GridResolvedPosition::resolveGridPositionsFromStyle(unresolvedMajorAxisPositions, style());
+        GridSpan majorAxisPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), *autoGridItem, autoPlacementMajorAxisDirection());
+        ASSERT(majorAxisPositions.isDefinite());
         GridSpan minorAxisPositions = GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(style(), *autoGridItem, autoPlacementMinorAxisDirection(), GridResolvedPosition(0));
-        unsigned majorAxisInitialPosition = majorAxisPositions.resolvedInitialPosition.toInt();
+        unsigned majorAxisInitialPosition = majorAxisPositions.resolvedInitialPosition().toInt();
 
-        GridIterator iterator(m_grid, autoPlacementMajorAxisDirection(), majorAxisPositions.resolvedInitialPosition.toInt(), isGridAutoFlowDense ? 0 : minorAxisCursors.get(majorAxisInitialPosition));
+        GridIterator iterator(m_grid, autoPlacementMajorAxisDirection(), majorAxisPositions.resolvedInitialPosition().toInt(), isGridAutoFlowDense ? 0 : minorAxisCursors.get(majorAxisInitialPosition));
         std::unique_ptr<GridCoordinate> emptyGridArea = iterator.nextEmptyGridArea(majorAxisPositions.integerSpan(), minorAxisPositions.integerSpan());
         if (!emptyGridArea)
             emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(*autoGridItem, autoPlacementMajorAxisDirection(), majorAxisPositions);
         insertItemIntoGrid(*autoGridItem, *emptyGridArea);
 
         if (!isGridAutoFlowDense)
-            minorAxisCursors.set(majorAxisInitialPosition, isForColumns ? emptyGridArea->rows.resolvedInitialPosition.toInt() : emptyGridArea->columns.resolvedInitialPosition.toInt());
+            minorAxisCursors.set(majorAxisInitialPosition, isForColumns ? emptyGridArea->rows.resolvedInitialPosition().toInt() : emptyGridArea->columns.resolvedInitialPosition().toInt());
     }
 }
 
@@ -1276,7 +1270,7 @@ void RenderGrid::placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>& autoGri
 
 void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacementCursor& autoPlacementCursor)
 {
-    ASSERT(GridResolvedPosition::unresolvedSpanFromStyle(style(), gridItem, autoPlacementMajorAxisDirection()).requiresAutoPlacement());
+    ASSERT(!GridResolvedPosition::resolveGridPositionsFromStyle(style(), gridItem, autoPlacementMajorAxisDirection()).isDefinite());
     GridSpan majorAxisPositions = GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(style(), gridItem, autoPlacementMajorAxisDirection(), GridResolvedPosition(0));
 
     const unsigned endOfMajorAxis = (autoPlacementMajorAxisDirection() == ForColumns) ? gridColumnCount() : gridRowCount();
@@ -1284,16 +1278,14 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacement
     unsigned minorAxisAutoPlacementCursor = autoPlacementMajorAxisDirection() == ForColumns ? autoPlacementCursor.first : autoPlacementCursor.second;
 
     std::unique_ptr<GridCoordinate> emptyGridArea;
-    auto unresolvedMinorAxisPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), gridItem, autoPlacementMinorAxisDirection());
-    if (!unresolvedMinorAxisPositions.requiresAutoPlacement()) {
-        GridSpan minorAxisPositions = GridResolvedPosition::resolveGridPositionsFromStyle(unresolvedMinorAxisPositions, style());
-
+    GridSpan minorAxisPositions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), gridItem, autoPlacementMinorAxisDirection());
+    if (minorAxisPositions.isDefinite()) {
         // Move to the next track in major axis if initial position in minor axis is before auto-placement cursor.
-        if (minorAxisPositions.resolvedInitialPosition.toInt() < minorAxisAutoPlacementCursor)
+        if (minorAxisPositions.resolvedInitialPosition().toInt() < minorAxisAutoPlacementCursor)
             majorAxisAutoPlacementCursor++;
 
         if (majorAxisAutoPlacementCursor < endOfMajorAxis) {
-            GridIterator iterator(m_grid, autoPlacementMinorAxisDirection(), minorAxisPositions.resolvedInitialPosition.toInt(), majorAxisAutoPlacementCursor);
+            GridIterator iterator(m_grid, autoPlacementMinorAxisDirection(), minorAxisPositions.resolvedInitialPosition().toInt(), majorAxisAutoPlacementCursor);
             emptyGridArea = iterator.nextEmptyGridArea(minorAxisPositions.integerSpan(), majorAxisPositions.integerSpan());
         }
 
@@ -1308,7 +1300,7 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacement
 
             if (emptyGridArea) {
                 // Check that it fits in the minor axis direction, as we shouldn't grow in that direction here (it was already managed in populateExplicitGridAndOrderIterator()).
-                GridResolvedPosition minorAxisFinalPositionIndex = autoPlacementMinorAxisDirection() == ForColumns ? emptyGridArea->columns.resolvedFinalPosition : emptyGridArea->rows.resolvedFinalPosition;
+                GridResolvedPosition minorAxisFinalPositionIndex = autoPlacementMinorAxisDirection() == ForColumns ? emptyGridArea->columns.resolvedFinalPosition() : emptyGridArea->rows.resolvedFinalPosition();
                 const unsigned endOfMinorAxis = autoPlacementMinorAxisDirection() == ForColumns ? gridColumnCount() : gridRowCount();
                 if (minorAxisFinalPositionIndex.toInt() <= endOfMinorAxis)
                     break;
@@ -1327,8 +1319,8 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacement
     }
 
     insertItemIntoGrid(gridItem, *emptyGridArea);
-    autoPlacementCursor.first = emptyGridArea->rows.resolvedInitialPosition.toInt();
-    autoPlacementCursor.second = emptyGridArea->columns.resolvedInitialPosition.toInt();
+    autoPlacementCursor.first = emptyGridArea->rows.resolvedInitialPosition().toInt();
+    autoPlacementCursor.second = emptyGridArea->columns.resolvedInitialPosition().toInt();
 }
 
 GridTrackSizingDirection RenderGrid::autoPlacementMajorAxisDirection() const
@@ -1460,8 +1452,8 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
 {
     ASSERT(child.isHorizontalWritingMode() == isHorizontalWritingMode());
 
-    auto unresolvedPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), child, direction);
-    if (unresolvedPositions.requiresAutoPlacement()) {
+    GridSpan positions = GridResolvedPosition::resolveGridPositionsFromStyle(style(), child, direction);
+    if (!positions.isDefinite()) {
         offset = LayoutUnit();
         breadth = (direction == ForColumns) ? clientLogicalWidth() : clientLogicalHeight();
         return;
@@ -1471,18 +1463,17 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
     GridPosition endPosition = (direction == ForColumns) ? child.style().gridItemColumnEnd() : child.style().gridItemRowEnd();
     size_t lastTrackIndex = (direction == ForColumns ? gridColumnCount() : gridRowCount()) - 1;
 
-    GridSpan positions = GridResolvedPosition::resolveGridPositionsFromStyle(unresolvedPositions, style());
     bool startIsAuto = startPosition.isAuto()
         || (startPosition.isNamedGridArea() && GridResolvedPosition::isNonExistentNamedLineOrArea(startPosition.namedGridLine(), style(), (direction == ForColumns) ? ColumnStartSide : RowStartSide))
-        || (positions.resolvedInitialPosition.toInt() > lastTrackIndex);
+        || (positions.resolvedInitialPosition().toInt() > lastTrackIndex);
     bool endIsAuto = endPosition.isAuto()
         || (endPosition.isNamedGridArea() && GridResolvedPosition::isNonExistentNamedLineOrArea(endPosition.namedGridLine(), style(), (direction == ForColumns) ? ColumnEndSide : RowEndSide))
-        || (positions.resolvedFinalPosition.prev().toInt() > lastTrackIndex);
+        || (positions.resolvedFinalPosition().prev().toInt() > lastTrackIndex);
 
     GridResolvedPosition firstPosition = GridResolvedPosition(0);
-    GridResolvedPosition initialPosition = startIsAuto ? firstPosition : positions.resolvedInitialPosition;
+    GridResolvedPosition initialPosition = startIsAuto ? firstPosition : positions.resolvedInitialPosition();
     GridResolvedPosition lastPosition = GridResolvedPosition(lastTrackIndex);
-    GridResolvedPosition finalPosition = endIsAuto ? lastPosition : positions.resolvedFinalPosition.prev();
+    GridResolvedPosition finalPosition = endIsAuto ? lastPosition : positions.resolvedFinalPosition().prev();
 
     // Positioned children do not grow the grid, so we need to clamp the positions to avoid ending up outside of it.
     initialPosition = std::min<GridResolvedPosition>(initialPosition, lastPosition);
@@ -1542,11 +1533,11 @@ LayoutUnit RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets(const Re
     const auto& span = cachedGridSpan(child, direction);
     const auto& linePositions = (direction == ForColumns) ? m_columnPositions : m_rowPositions;
 
-    LayoutUnit initialTrackPosition = linePositions[span.resolvedInitialPosition.toInt()];
-    LayoutUnit finalTrackPosition = linePositions[span.resolvedFinalPosition.prev().toInt()];
+    LayoutUnit initialTrackPosition = linePositions[span.resolvedInitialPosition().toInt()];
+    LayoutUnit finalTrackPosition = linePositions[span.resolvedFinalPosition().prev().toInt()];
 
     // Track Positions vector stores the 'start' grid line of each track, so we have to add last track's baseSize.
-    return finalTrackPosition - initialTrackPosition + tracks[span.resolvedFinalPosition.prev().toInt()].baseSize();
+    return finalTrackPosition - initialTrackPosition + tracks[span.resolvedFinalPosition().prev().toInt()].baseSize();
 }
 
 void RenderGrid::populateGridPositions(GridSizingData& sizingData)
@@ -1825,7 +1816,7 @@ static inline LayoutUnit offsetBetweenTracks(ContentDistributionType distributio
 LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
 {
     const GridSpan& rowsSpan = cachedGridSpan(child, ForRows);
-    unsigned childStartLine = rowsSpan.resolvedInitialPosition.toInt();
+    unsigned childStartLine = rowsSpan.resolvedInitialPosition().toInt();
     LayoutUnit startOfRow = m_rowPositions[childStartLine];
     LayoutUnit startPosition = startOfRow + marginBeforeForChild(child);
     if (hasAutoMarginsInColumnAxis(child))
@@ -1836,7 +1827,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
         return startPosition;
     case GridAxisEnd:
     case GridAxisCenter: {
-        unsigned childEndLine = rowsSpan.resolvedFinalPosition.toInt();
+        unsigned childEndLine = rowsSpan.resolvedFinalPosition().toInt();
         LayoutUnit endOfRow = m_rowPositions[childEndLine];
         // m_rowPositions include gutters so we need to substract them to get the actual end position for a given
         // row (this does not have to be done for the last track as there are no more m_rowPositions after it)
@@ -1859,7 +1850,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
 LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
 {
     const GridSpan& columnsSpan = cachedGridSpan(child, ForColumns);
-    unsigned childStartLine = columnsSpan.resolvedInitialPosition.toInt();
+    unsigned childStartLine = columnsSpan.resolvedInitialPosition().toInt();
     LayoutUnit startOfColumn = m_columnPositions[childStartLine];
     LayoutUnit startPosition = startOfColumn + marginStartForChild(child);
     if (hasAutoMarginsInRowAxis(child))
@@ -1870,7 +1861,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
         return startPosition;
     case GridAxisEnd:
     case GridAxisCenter: {
-        unsigned childEndLine = columnsSpan.resolvedFinalPosition.toInt();
+        unsigned childEndLine = columnsSpan.resolvedFinalPosition().toInt();
         LayoutUnit endOfColumn = m_columnPositions[childEndLine];
         // m_columnPositions include gutters so we need to substract them to get the actual end position for a given
         // column (this does not have to be done for the last track as there are no more m_columnPositions after it)
