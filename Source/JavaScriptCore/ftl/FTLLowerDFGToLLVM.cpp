@@ -4920,7 +4920,8 @@ private:
             || m_node->isBinaryUseKind(ObjectUse)
             || m_node->isBinaryUseKind(BooleanUse)
             || m_node->isBinaryUseKind(SymbolUse)
-            || m_node->isBinaryUseKind(StringIdentUse)) {
+            || m_node->isBinaryUseKind(StringIdentUse)
+            || m_node->isBinaryUseKind(StringUse)) {
             compileCompareStrictEq();
             return;
         }
@@ -4984,6 +4985,31 @@ private:
         if (m_node->isBinaryUseKind(StringIdentUse)) {
             setBoolean(
                 m_out.equal(lowStringIdent(m_node->child1()), lowStringIdent(m_node->child2())));
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(StringUse)) {
+            LValue left = lowCell(m_node->child1());
+            LValue right = lowCell(m_node->child2());
+
+            LBasicBlock notTriviallyEqualCase = FTL_NEW_BLOCK(m_out, ("CompareStrictEq/String not trivially equal case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareStrictEq/String continuation"));
+
+            speculateString(m_node->child1(), left);
+
+            ValueFromBlock fastResult = m_out.anchor(m_out.booleanTrue);
+            m_out.branch(
+                m_out.equal(left, right), unsure(continuation), unsure(notTriviallyEqualCase));
+
+            LBasicBlock lastNext = m_out.appendTo(notTriviallyEqualCase, continuation);
+
+            speculateString(m_node->child2(), right);
+            
+            ValueFromBlock slowResult = m_out.anchor(stringsEqual(left, right));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setBoolean(m_out.phi(m_out.boolean, fastResult, slowResult));
             return;
         }
 
@@ -7699,6 +7725,107 @@ private:
         
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(m_out.boolean, fastResult, slowResult));
+    }
+
+    LValue stringsEqual(LValue leftJSString, LValue rightJSString)
+    {
+        LBasicBlock notTriviallyUnequalCase = FTL_NEW_BLOCK(m_out, ("stringsEqual not trivially unequal case"));
+        LBasicBlock notEmptyCase = FTL_NEW_BLOCK(m_out, ("stringsEqual not empty case"));
+        LBasicBlock leftReadyCase = FTL_NEW_BLOCK(m_out, ("stringsEqual left ready case"));
+        LBasicBlock rightReadyCase = FTL_NEW_BLOCK(m_out, ("stringsEqual right ready case"));
+        LBasicBlock left8BitCase = FTL_NEW_BLOCK(m_out, ("stringsEqual left 8-bit case"));
+        LBasicBlock right8BitCase = FTL_NEW_BLOCK(m_out, ("stringsEqual right 8-bit case"));
+        LBasicBlock loop = FTL_NEW_BLOCK(m_out, ("stringsEqual loop"));
+        LBasicBlock bytesEqual = FTL_NEW_BLOCK(m_out, ("stringsEqual bytes equal"));
+        LBasicBlock trueCase = FTL_NEW_BLOCK(m_out, ("stringsEqual true case"));
+        LBasicBlock falseCase = FTL_NEW_BLOCK(m_out, ("stringsEqual false case"));
+        LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("stringsEqual slow case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("stringsEqual continuation"));
+
+        LValue length = m_out.load32(leftJSString, m_heaps.JSString_length);
+
+        m_out.branch(
+            m_out.notEqual(length, m_out.load32(rightJSString, m_heaps.JSString_length)),
+            unsure(falseCase), unsure(notTriviallyUnequalCase));
+
+        LBasicBlock lastNext = m_out.appendTo(notTriviallyUnequalCase, notEmptyCase);
+
+        m_out.branch(m_out.isZero32(length), unsure(trueCase), unsure(notEmptyCase));
+
+        m_out.appendTo(notEmptyCase, leftReadyCase);
+
+        LValue left = m_out.loadPtr(leftJSString, m_heaps.JSString_value);
+        LValue right = m_out.loadPtr(rightJSString, m_heaps.JSString_value);
+
+        m_out.branch(m_out.notNull(left), usually(leftReadyCase), rarely(slowCase));
+
+        m_out.appendTo(leftReadyCase, rightReadyCase);
+        
+        m_out.branch(m_out.notNull(right), usually(rightReadyCase), rarely(slowCase));
+
+        m_out.appendTo(rightReadyCase, left8BitCase);
+
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(left, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            unsure(slowCase), unsure(left8BitCase));
+
+        m_out.appendTo(left8BitCase, right8BitCase);
+
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(right, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            unsure(slowCase), unsure(right8BitCase));
+
+        m_out.appendTo(right8BitCase, loop);
+
+        LValue leftData = m_out.loadPtr(left, m_heaps.StringImpl_data);
+        LValue rightData = m_out.loadPtr(right, m_heaps.StringImpl_data);
+
+        ValueFromBlock indexAtStart = m_out.anchor(length);
+
+        m_out.jump(loop);
+
+        m_out.appendTo(loop, bytesEqual);
+
+        LValue indexAtLoopTop = m_out.phi(m_out.int32, indexAtStart);
+        LValue indexInLoop = m_out.sub(indexAtLoopTop, m_out.int32One);
+
+        LValue leftByte = m_out.load8ZeroExt32(
+            m_out.baseIndex(m_heaps.characters8, leftData, m_out.zeroExtPtr(indexInLoop)));
+        LValue rightByte = m_out.load8ZeroExt32(
+            m_out.baseIndex(m_heaps.characters8, rightData, m_out.zeroExtPtr(indexInLoop)));
+
+        m_out.branch(m_out.notEqual(leftByte, rightByte), unsure(falseCase), unsure(bytesEqual));
+
+        m_out.appendTo(bytesEqual, trueCase);
+
+        ValueFromBlock indexForNextIteration = m_out.anchor(indexInLoop);
+        m_out.addIncomingToPhi(indexAtLoopTop, indexForNextIteration);
+        m_out.branch(m_out.notZero32(indexInLoop), unsure(loop), unsure(trueCase));
+
+        m_out.appendTo(trueCase, falseCase);
+        
+        ValueFromBlock trueResult = m_out.anchor(m_out.booleanTrue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(falseCase, slowCase);
+
+        ValueFromBlock falseResult = m_out.anchor(m_out.booleanFalse);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+
+        LValue slowResultValue = vmCall(
+            m_out.int64, m_out.operation(operationCompareStringEq), m_callFrame,
+            leftJSString, rightJSString);
+        ValueFromBlock slowResult = m_out.anchor(unboxBoolean(slowResultValue));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(m_out.boolean, trueResult, falseResult, slowResult);
     }
 
 #if FTL_USES_B3

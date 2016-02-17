@@ -1,5 +1,29 @@
 2016-02-16  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support CompareEq(String:, String:)
+        https://bugs.webkit.org/show_bug.cgi?id=154269
+        rdar://problem/24499921
+
+        Reviewed by Benjamin Poulain.
+
+        Looks like a slight pdfjs slow-down, probably because we're having some recompilations. I
+        think we should land the increased coverage first and fix the issues after, especially since
+        the regression is so small and doesn't have a statistically significant effect on the overall
+        score.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToLLVM::nonSpeculativeCompare):
+        (JSC::FTL::DFG::LowerDFGToLLVM::stringsEqual):
+        * tests/stress/ftl-string-equality.js: Added.
+        * tests/stress/ftl-string-ident-equality.js: Added.
+        * tests/stress/ftl-string-strict-equality.js: Added.
+
+2016-02-16  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should support NewTypedArray
         https://bugs.webkit.org/show_bug.cgi?id=154268
 
