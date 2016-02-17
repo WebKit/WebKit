@@ -32,6 +32,10 @@ function runTest()
     shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "scrollbars").get.call(crossOriginWindow)');
     shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "navigator").get.call(crossOriginWindow)');
     shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "screenX").get.call(crossOriginWindow)');
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow)');
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow.__proto__)');
+    shouldThrowOrReturnUndefined('crossOriginWindow.constructor');
+    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(crossOriginWindow.__proto__, "constructor").value');
     shouldBeTrue('Object.getOwnPropertyDescriptor(window, "location").get.call(crossOriginWindow) === crossOriginWindow.location');
     finishJSTest();
 }

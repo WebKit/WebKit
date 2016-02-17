@@ -62,9 +62,8 @@ shouldBeTrue("descriptor.configurable");
 shouldBe("descriptor.value", "window.Node");
 
 debug("");
-// FIXME: 'constructor' should be on the prototype.
-debug("* window.constructor");
-descriptor = Object.getOwnPropertyDescriptor(window, "constructor");
+debug("* window.__proto__.constructor");
+descriptor = Object.getOwnPropertyDescriptor(window.__proto__, "constructor");
 shouldBeFalse("descriptor.enumerable");
 shouldBeTrue("descriptor.writable");
 shouldBeTrue("descriptor.configurable");

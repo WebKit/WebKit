@@ -1,3 +1,66 @@
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Window should have its 'constructor' property on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=154037
+        <rdar://problem/24689078>
+
+        Reviewed by Gavin Barraclough.
+
+        Window should have its 'constructor' property on the prototype as per
+        the Web IDL specification:
+        http://heycam.github.io/webidl/#interface-prototype-object
+
+        Firefox and Chrome already match the specification.
+
+        No new tests, covered by:
+        - fast/dom/Window/window-constructor-settable.html
+        - fast/dom/Window/window-constructor.html
+        - http/tests/security/cross-origin-window-property-access.html
+        - imported/w3c/web-platform-tests/html/dom/interfaces.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ConstructorShouldBeOnInstance): Deleted.
+        Drop this routine as all constructors are now on the prototype.
+
+        (InstancePropertyCount):
+        Do not account for constructor properties as these can only be
+        on the prototype now.
+
+        (PrototypePropertyCount):
+        Increment the property count by 1 if the interface has a constructor
+        property (e.g. [NoInterfaceObject] interfaces do not have one).
+
+        (GeneratePropertiesHashTable):
+        Stop calling ConstructorShouldBeOnInstance() as it no longer exists.
+        Always generated the "constructor" property if:
+        1. We are generating the prototype hash table.
+        and
+        2. The interface needs a constructor (i.e. not marked as
+           [NoInterfaceObject]).
+
+        (GenerateImplementation):
+        - Drop code handling the case where ConstructorShouldBeOnInstance()
+          returns true as constructors are not always on the prototype and
+          the ConstructorShouldBeOnInstance() routine has been dropped.
+        - Drop code handling [CustomProxyToJSObject]. Now that the constructor
+          is always on the prototype, we never need to cast thisValue to a
+          JSDOMWindow (by calling toJSDOMWindow). In the Window case, thisValue
+          is now casted to a JSDOMWindowPrototype*, similarly to other interfaces
+          so we don't need a special casting function anymore.
+        - Stop generating security checks. This only impacts Window as it is the
+          only interface marked as [CheckSecurity]. The cross-origin checking code
+          as it was would not work when "constructor" is on the prototype because
+          thisValue is a JSDOMWindowPrototype, not a JSDOMWindow and we have no
+          way of getting the wrapped window. Also, the security check is no longer
+          needed because:
+          1. Accessing crossOriginWindow.constructor will not work now that
+             constructor is on the prototype because
+             JSDOMWindow::getOwnPropertySlot() already prevents access to the
+             prototype in the cross-origin case.
+          2. "constructor" is a value property, not a getter/setter. Therefore,
+             it is no possible to use the getter/setter from a same origin window
+             instance and call it on a cross origin window.
+
 2016-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add a way to test ScrollAnimator

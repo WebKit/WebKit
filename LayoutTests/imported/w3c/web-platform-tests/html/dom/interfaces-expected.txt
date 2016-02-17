@@ -3811,7 +3811,7 @@ PASS Window interface: existence and properties of interface object
 PASS Window interface object length 
 PASS Window interface object name 
 FAIL Window interface: existence and properties of interface prototype object assert_equals: Class name for prototype of Window.prototype is not "WindowProperties" expected "[object WindowProperties]" but got "[object EventTargetPrototype]"
-FAIL Window interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Window.prototype does not have own property "constructor" expected property "constructor" missing
+PASS Window interface: existence and properties of interface prototype object's "constructor" property 
 PASS Window interface: attribute self 
 PASS Window interface: attribute name 
 FAIL Window interface: attribute history assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function history() {

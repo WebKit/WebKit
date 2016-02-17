@@ -681,16 +681,6 @@ sub InterfaceRequiresAttributesOnInstance
     return 0;
 }
 
-sub ConstructorShouldBeOnInstance
-{
-    my $interface = shift;
-
-    # FIXME: constructor should always be on the prototype:
-    # http://www.w3.org/TR/WebIDL/#interface-prototype-object
-    return 1 if $interface->extendedAttributes->{"CheckSecurity"};
-    return 0;
-}
-
 sub AttributeShouldBeOnInstanceForCompatibility
 {
     my $interface = shift;
@@ -790,7 +780,6 @@ sub InstancePropertyCount
         $count++ if AttributeShouldBeOnInstance($interface, $attribute);
     }
     $count += InstanceFunctionCount($interface);
-    $count++ if ConstructorShouldBeOnInstance($interface);
     return $count;
 }
 
@@ -802,7 +791,7 @@ sub PrototypePropertyCount
         $count++ if !AttributeShouldBeOnInstance($interface, $attribute);
     }
     $count += PrototypeFunctionCount($interface);
-    $count++ if !ConstructorShouldBeOnInstance($interface);
+    $count++ if NeedsConstructorProperty($interface);
     return $count;
 }
 
@@ -1388,18 +1377,15 @@ sub GeneratePropertiesHashTable
     # - Add all properties in a hashtable definition
     my $propertyCount = $isInstance ? InstancePropertyCount($interface) : PrototypePropertyCount($interface);
 
-    if (ConstructorShouldBeOnInstance($interface) == $isInstance) {
+    if (!$isInstance && NeedsConstructorProperty($interface)) {
+        die if !$propertyCount;
+        push(@$hashKeys, "constructor");
+        my $getter = "js" . $interfaceName . "Constructor";
+        push(@$hashValue1, $getter);
 
-        if (NeedsConstructorProperty($interface)) {
-            die if !$propertyCount;
-            push(@$hashKeys, "constructor");
-            my $getter = "js" . $interfaceName . "Constructor";
-            push(@$hashValue1, $getter);
-
-            my $setter = "setJS" . $interfaceName . "Constructor";
-            push(@$hashValue2, $setter);
-            push(@$hashSpecials, "DontEnum");
-        }
+        my $setter = "setJS" . $interfaceName . "Constructor";
+        push(@$hashValue2, $setter);
+        push(@$hashSpecials, "DontEnum");
     }
 
     return 0 if !$propertyCount;
@@ -2523,27 +2509,11 @@ sub GenerateImplementation
         if (NeedsConstructorProperty($interface)) {
             my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
-            if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* state, EncodedJSValue thisValue, PropertyName)\n");
-                push(@implContent, "{\n");
-                push(@implContent, "    ${className}* domObject = to${className}(JSValue::decode(thisValue));\n");
-            } elsif (ConstructorShouldBeOnInstance($interface)) {
-                push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* state, EncodedJSValue thisValue, PropertyName)\n");
-                push(@implContent, "{\n");
-                push(@implContent, "    ${className}* domObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-            } else {
-                push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* state, EncodedJSValue thisValue, PropertyName)\n");
-                push(@implContent, "{\n");
-                push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
-            }
+            push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* state, EncodedJSValue thisValue, PropertyName)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
             push(@implContent, "    if (!domObject)\n");
             push(@implContent, "        return throwVMTypeError(state);\n");
-
-            if ($interface->extendedAttributes->{"CheckSecurity"}) {
-                die if !ConstructorShouldBeOnInstance($interface);
-                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, domObject->wrapped()))\n");
-                push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-            }
 
             if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
                 push(@implContent, "    return JSValue::encode(${className}::getConstructor(state->vm(), domObject->globalObject()));\n");
@@ -2561,25 +2531,11 @@ sub GenerateImplementation
         push(@implContent, "void ${constructorFunctionName}(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
         push(@implContent, "{\n");
         push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
-        if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-            push(@implContent, "    ${className}* domObject = to${className}(JSValue::decode(thisValue));\n");
-        } elsif (ConstructorShouldBeOnInstance($interface)) {
-            push(@implContent, "    ${className}* domObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-        } else {
-            push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
-        }
+        push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
         push(@implContent, "    if (UNLIKELY(!domObject)) {\n");
         push(@implContent, "        throwVMTypeError(state);\n");
         push(@implContent, "        return;\n");
         push(@implContent, "    }\n");
-        if ($interface->extendedAttributes->{"CheckSecurity"}) {
-            if ($interfaceName eq "DOMWindow") {
-                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, domObject->wrapped()))\n");
-            } else {
-                push(@implContent, "    if (!shouldAllowAccessToFrame(state, domObject->wrapped().frame()))\n");
-            }
-            push(@implContent, "        return;\n");
-        }
 
         push(@implContent, "    // Shadowing a built-in constructor\n");
 

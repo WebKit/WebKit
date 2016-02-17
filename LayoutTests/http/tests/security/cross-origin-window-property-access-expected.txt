@@ -3,6 +3,8 @@ CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" fro
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 15: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 15: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 Tests that using another window's property getter does not bypass cross-origin checks.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -14,6 +16,10 @@ PASS Object.getOwnPropertyDescriptor(window, "menubar").get.call(crossOriginWind
 PASS Object.getOwnPropertyDescriptor(window, "scrollbars").get.call(crossOriginWindow) returned undefined.
 PASS Object.getOwnPropertyDescriptor(window, "navigator").get.call(crossOriginWindow) returned undefined.
 PASS Object.getOwnPropertyDescriptor(window, "screenX").get.call(crossOriginWindow) returned undefined.
+PASS Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow) threw exception TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call').
+PASS Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow.__proto__) threw exception TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call').
+PASS crossOriginWindow.constructor returned undefined.
+PASS Object.getOwnPropertyDescriptor(crossOriginWindow.__proto__, "constructor").value threw exception TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(crossOriginWindow.__proto__, "constructor")').
 PASS Object.getOwnPropertyDescriptor(window, "location").get.call(crossOriginWindow) === crossOriginWindow.location is true
 PASS successfullyParsed is true
 

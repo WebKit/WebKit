@@ -1,3 +1,15 @@
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Window should have its 'constructor' property on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=154037
+        <rdar://problem/24689078>
+
+        Reviewed by Gavin Barraclough.
+
+        Rebaseline W3C test now that one more check is passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-02-16  Chris Dumez  <cdumez@apple.com>
 
         Navigator.geolocation should not be marked a [Replaceable] and should be on the prototype

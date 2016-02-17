@@ -54,7 +54,7 @@ PASS descriptor.writable is true
 PASS descriptor.configurable is true
 PASS descriptor.value is window.Node
 
-* window.constructor
+* window.__proto__.constructor
 PASS descriptor.enumerable is false
 PASS descriptor.writable is true
 PASS descriptor.configurable is true
