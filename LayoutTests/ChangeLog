@@ -1,3 +1,24 @@
+2016-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        JSC ARM Linux test gardening after r196625
+        https://bugs.webkit.org/show_bug.cgi?id=154392
+
+        Reviewed by Mark Lam.
+
+        * js/script-tests/dfg-float32array.js:
+        * js/script-tests/dfg-float64array.js:
+        * js/script-tests/dfg-int16array.js:
+        * js/script-tests/dfg-int32array-overflow-values.js:
+        * js/script-tests/dfg-int32array.js:
+        * js/script-tests/dfg-int8array.js:
+        * js/script-tests/dfg-osr-entry-hoisted-clobbered-structure-check.js:
+        * js/script-tests/dfg-uint16array.js:
+        * js/script-tests/dfg-uint32array-overflow-values.js:
+        * js/script-tests/dfg-uint32array.js:
+        * js/script-tests/dfg-uint8array.js:
+        * js/script-tests/dfg-uint8clampedarray.js:
+        * js/script-tests/regress-141098.js:
+
 2016-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Loading] Implement FontFaceSet

@@ -1,4 +1,4 @@
-//@ noNoLLIntRunLayoutTest if $architecture == "arm"
+//@ noNoLLIntRunLayoutTest if $architecture == "arm" and $hostOS == "darwin"
 
 description("Regression test for https://webkit.org/b/141098. Make sure eval() properly handles running out of stack space. This test should run without crashing.");
 
