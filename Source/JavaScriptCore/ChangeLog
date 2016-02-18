@@ -1,3 +1,27 @@
+2016-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash on SES selftest page when loading the page while WebInspector is open
+        https://bugs.webkit.org/show_bug.cgi?id=154378
+        <rdar://problem/24713422>
+
+        Reviewed by Mark Lam.
+
+        Do a partial revert of r196676 so that JSObject::getOwnPropertyDescriptor()
+        returns early again if it detects that getOwnPropertySlot() returns a
+        non-own property. This check was removed in r196676 because we assumed that
+        only JSDOMWindow::getOwnPropertySlot() could return non-own properties.
+        However, as it turns out, DebuggerScope::getOwnPropertySlot() does so as
+        well.
+
+        Not having the check would lead to crashes when using the debugger because
+        we would get a slot with the CustomAccessor attribute but getDirect() would
+        then fail to return the property (because it is not an own property). We
+        would then cast the value returned by getDirect() to a CustomGetterSetter*
+        and dereference it.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+
 2016-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix VS build. I didn't know we still did that, but apparently there's a bot

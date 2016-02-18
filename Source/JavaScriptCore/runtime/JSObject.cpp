@@ -2556,6 +2556,15 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
     if (!methodTable(exec->vm())->getOwnPropertySlot(this, exec, propertyName, slot))
         return false;
 
+    // DebuggerScope::getOwnPropertySlot() (and possibly others) may return attributes from the prototype chain
+    // but getOwnPropertyDescriptor() should only work for 'own' properties so we exit early if we detect that
+    // the property is not an own property.
+    if (slot.slotBase() != this && slot.slotBase()) {
+        auto* proxy = jsDynamicCast<JSProxy*>(this);
+        if (!proxy || proxy->target() != slot.slotBase())
+            return false;
+    }
+
     if (slot.isAccessor())
         descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
     else if (slot.attributes() & CustomAccessor) {
