@@ -1,3 +1,9 @@
+2016-02-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix CMake build. This got messed up when rebasing.
+
+        * CMakeLists.txt:
+
 2016-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(DFG_JIT) build after r195865

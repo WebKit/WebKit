@@ -413,7 +413,7 @@ set(JavaScriptCore_SOURCES
     ftl/FTLLazySlowPath.cpp
     ftl/FTLLink.cpp
     ftl/FTLLocation.cpp
-    ftl/FTLLowerDFGToLLVM.cpp
+    ftl/FTLLowerDFGToB3.cpp
     ftl/FTLOSREntry.cpp
     ftl/FTLOSRExit.cpp
     ftl/FTLOSRExitCompiler.cpp
