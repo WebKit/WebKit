@@ -1,3 +1,21 @@
+2016-02-17  Brian Burg  <bburg@apple.com>
+
+        RemoteInspector deadlocks if _WKAutomationDelegate creates/registers a target synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=154359
+        <rdar://problem/24708897>
+
+        Reviewed by Joseph Pecoraro.
+
+        RemoteInspector always grabs a lock whenever receiving or sending XPC messages. If it
+        forwards a new session request via _WKAutomationDelegate, and the client synchronously
+        creates and registers a session, then RemoteInspector will try to grab the lock again
+        while adding the session to its registry, causing a deadlock.
+
+        * UIProcess/Cocoa/AutomationClient.mm:
+        (WebKit::AutomationClient::requestAutomationSession): Add a dispatch_async() to
+        protect clients from accidentally deadlocking. They shouldn't have to care about
+        RemoteInspector's locking mechanisms.
+
 2016-02-17  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused function

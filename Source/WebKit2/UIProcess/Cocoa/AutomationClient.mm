@@ -69,8 +69,13 @@ bool AutomationClient::remoteAutomationAllowed() const
 
 void AutomationClient::requestAutomationSession(const String& sessionIdentifier)
 {
-    if (m_delegateMethods.requestAutomationSession)
-        [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:sessionIdentifier];
+    // Force clients to create and register a session asynchronously. Otherwise,
+    // RemoteInspector will try to acquire its lock to register the new session and
+    // deadlock because it's already taken while handling XPC messages.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (m_delegateMethods.requestAutomationSession)
+            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:sessionIdentifier];
+    });
 }
 
 } // namespace WebKit
