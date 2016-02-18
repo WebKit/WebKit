@@ -1,3 +1,15 @@
+2016-02-18  Brian Burg  <bburg@apple.com>
+
+        RemoteInspector deadlocks if _WKAutomationDelegate creates/registers a target synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=154359
+        <rdar://problem/24708897>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/Cocoa/AutomationClient.mm:
+        (WebKit::AutomationClient::requestAutomationSession):
+        Make an NSString out of the String reference so it gets captured correctly.
+
 2016-02-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement client->server operations in WK2.

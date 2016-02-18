@@ -72,9 +72,11 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier)
     // Force clients to create and register a session asynchronously. Otherwise,
     // RemoteInspector will try to acquire its lock to register the new session and
     // deadlock because it's already taken while handling XPC messages.
+
+    NSString *retainedIdentifier = sessionIdentifier;
     dispatch_async(dispatch_get_main_queue(), ^{
         if (m_delegateMethods.requestAutomationSession)
-            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:sessionIdentifier];
+            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:retainedIdentifier];
     });
 }
 
