@@ -31,7 +31,7 @@
 #include "DFGCommon.h"
 #include "FTLAbbreviatedTypes.h"
 #include "FTLAbstractHeapRepository.h"
-#include "FTLB3Output.h"
+#include "FTLOutput.h"
 #include "FTLTypedPointer.h"
 #include "JSCInlines.h"
 #include "Options.h"

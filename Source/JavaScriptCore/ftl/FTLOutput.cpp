@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FTLB3Output.h"
+#include "FTLOutput.h"
 
 #if ENABLE(FTL_JIT)
 

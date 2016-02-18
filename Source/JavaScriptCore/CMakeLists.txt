@@ -1000,10 +1000,9 @@ if (ENABLE_FTL_JIT)
         ftl/FTLAbstractHeap.cpp
         ftl/FTLAbstractHeapRepository.cpp
         ftl/FTLAvailableRecovery.cpp
-        ftl/FTLB3Compile.cpp
-        ftl/FTLB3Output.cpp
         ftl/FTLCapabilities.cpp
         ftl/FTLCommonValues.cpp
+        ftl/FTLCompile.cpp
         ftl/FTLExceptionTarget.cpp
         ftl/FTLExitArgument.cpp
         ftl/FTLExitArgumentForOperand.cpp
@@ -1023,6 +1022,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLOSRExitCompiler.cpp
         ftl/FTLOSRExitHandle.cpp
         ftl/FTLOperations.cpp
+        ftl/FTLOutput.cpp
         ftl/FTLPatchpointExceptionHandle.cpp
         ftl/FTLRecoveryOpcode.cpp
         ftl/FTLSaveRestore.cpp

@@ -1,5 +1,21 @@
 2016-02-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename FTLB3Blah to FTLBlah
+        https://bugs.webkit.org/show_bug.cgi?id=154365
+
+        Rubber stamped by Geoffrey Garen, Benjamin Poulain, Awesome Kling, and Saam Barati.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLB3Compile.cpp: Removed.
+        * ftl/FTLB3Output.cpp: Removed.
+        * ftl/FTLB3Output.h: Removed.
+        * ftl/FTLCompile.cpp: Copied from Source/JavaScriptCore/ftl/FTLB3Compile.cpp.
+        * ftl/FTLOutput.cpp: Copied from Source/JavaScriptCore/ftl/FTLB3Output.cpp.
+        * ftl/FTLOutput.h: Copied from Source/JavaScriptCore/ftl/FTLB3Output.h.
+
+2016-02-17  Filip Pizlo  <fpizlo@apple.com>
+
         Remove LLVM dependencies from WebKit
         https://bugs.webkit.org/show_bug.cgi?id=154323
 

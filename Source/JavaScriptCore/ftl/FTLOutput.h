@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FTLB3Output_h
-#define FTLB3Output_h
+#ifndef FTLOutput_h
+#define FTLOutput_h
 
 #include "DFGCommon.h"
 
@@ -532,4 +532,4 @@ inline LValue Output::fround(LValue doubleValue)
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLB3Output_h
+#endif // FTLOutput_h
