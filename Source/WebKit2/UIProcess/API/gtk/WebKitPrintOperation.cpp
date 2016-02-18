@@ -198,13 +198,14 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
      * The #WebKitPrintOperation::finished signal is emitted after this one.
      */
     signals[FAILED] =
-        g_signal_new("failed",
-                     G_TYPE_FROM_CLASS(gObjectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0, 0, 0,
-                     g_cclosure_marshal_VOID__POINTER,
-                     G_TYPE_NONE, 1,
-                     G_TYPE_POINTER);
+        g_signal_new(
+            "failed",
+            G_TYPE_FROM_CLASS(gObjectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            g_cclosure_marshal_VOID__BOXED,
+            G_TYPE_NONE, 1,
+            G_TYPE_ERROR | G_SIGNAL_TYPE_STATIC_SCOPE);
 }
 
 #if HAVE(GTK_UNIX_PRINTING)

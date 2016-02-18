@@ -1075,16 +1075,17 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *    %FALSE to propagate the event further.
      */
     signals[LOAD_FAILED] =
-        g_signal_new("load-failed",
-                     G_TYPE_FROM_CLASS(webViewClass),
-                     G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, load_failed),
-                     g_signal_accumulator_true_handled, 0,
-                     webkit_marshal_BOOLEAN__ENUM_STRING_POINTER,
-                     G_TYPE_BOOLEAN, 3,
-                     WEBKIT_TYPE_LOAD_EVENT,
-                     G_TYPE_STRING,
-                     G_TYPE_POINTER);
+        g_signal_new(
+            "load-failed",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET(WebKitWebViewClass, load_failed),
+            g_signal_accumulator_true_handled, 0,
+            g_cclosure_marshal_generic,
+            G_TYPE_BOOLEAN, 3,
+            WEBKIT_TYPE_LOAD_EVENT,
+            G_TYPE_STRING,
+            G_TYPE_ERROR | G_SIGNAL_TYPE_STATIC_SCOPE);
 
     /**
      * WebKitWebView::load-failed-with-tls-errors:

@@ -262,13 +262,14 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * after an error and #WebKitDownload::finished signal is emitted after this one.
      */
     signals[FAILED] =
-        g_signal_new("failed",
-                     G_TYPE_FROM_CLASS(objectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0, 0, 0,
-                     g_cclosure_marshal_VOID__POINTER,
-                     G_TYPE_NONE, 1,
-                     G_TYPE_POINTER);
+        g_signal_new(
+            "failed",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            g_cclosure_marshal_VOID__BOXED,
+            G_TYPE_NONE, 1,
+            G_TYPE_ERROR | G_SIGNAL_TYPE_STATIC_SCOPE);
 
     /**
      * WebKitDownload::decide-destination:

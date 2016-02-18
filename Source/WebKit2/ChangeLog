@@ -1,3 +1,23 @@
+2016-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use G_TYPE_ERROR instead of G_TYPE_POINTER for GError parameters of signals
+        https://bugs.webkit.org/show_bug.cgi?id=153786
+
+        Reviewed by Michael Catanzaro.
+
+        It's binary compatible and it's needed by binding generator to
+        properly identify those parameters as GError.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkit_download_class_init):
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkit_print_operation_class_init):
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_class_init):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        * UIProcess/API/gtk/webkit2marshal.list:
+
 2016-02-18  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Move WebView from CoordinatedGraphics to efl
