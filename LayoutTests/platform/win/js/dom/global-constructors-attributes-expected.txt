@@ -298,6 +298,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'FontFace').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'FontFace').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'FontFace').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'FontFace').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'FontFaceSet').value is FontFaceSet
+PASS Object.getOwnPropertyDescriptor(global, 'FontFaceSet').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'FontFaceSet').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'FontFaceSet').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'FontFaceSet').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'FormData').value is FormData
 PASS Object.getOwnPropertyDescriptor(global, 'FormData').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'FormData').hasOwnProperty('set') is false

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ class CSSFontFace;
 class CSSValue;
 class Dictionary;
 
-class FontFace : public RefCounted<FontFace>, public CSSFontFaceClient {
+class FontFace final : public RefCounted<FontFace>, public CSSFontFace::Client {
 public:
     static RefPtr<FontFace> create(JSC::ExecState&, ScriptExecutionContext&, const String& family, const Deprecated::ScriptValue& source, const Dictionary& descriptors, ExceptionCode&);
     virtual ~FontFace();
@@ -79,7 +79,7 @@ public:
 private:
     FontFace(JSC::ExecState&, CSSFontSelector&);
 
-    void kick(CSSFontFace&) override;
+    virtual void stateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
 
     void fulfillPromise();
     void rejectPromise(ExceptionCode);

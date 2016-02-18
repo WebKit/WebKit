@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (window.internals)
+    window.internals.clearMemoryCache();
+
+var fontFace1 = new FontFace("family1", "url('asdf')", {});
+var fontFace2 = new FontFace("family2", "url('asdf')", {});
+var fontFace3 = new FontFace("family3", "url('../../resources/Ahem.ttf')", {});
+var fontFace4 = new FontFace("family3", "url('../../resources/Ahem.ttf')", {'weight': 'bold'});
+var fontFace5 = new FontFace("family5", "url('../../resources/Ahem.otf')", {});
+
+shouldThrow("new FontFaceSet()");
+shouldBe("new FontFaceSet([]).size", "0");
+shouldBe("new FontFaceSet([fontFace1]).size", "1");
+
+var fontFaceSet = new FontFaceSet([]);
+shouldBeEqualToString("fontFaceSet.status", "loaded");
+fontFaceSet.add(fontFace1);
+var iterator = fontFaceSet.entries();
+var item = iterator.next();
+shouldBeFalse("item.done");
+shouldBe("item.value", "[fontFace1, fontFace1]");
+item = iterator.next();
+shouldBeTrue("item.done");
+
+iterator = fontFaceSet.keys();
+item = iterator.next();
+shouldBeFalse("item.done");
+shouldBe("item.value", "fontFace1");
+item = iterator.next();
+shouldBeTrue("item.done");
+
+iterator = fontFaceSet.values();
+item = iterator.next();
+shouldBeFalse("item.done");
+shouldBe("item.value", "fontFace1");
+item = iterator.next();
+shouldBeTrue("item.done");
+
+shouldBe("fontFaceSet.add(fontFace2)", "fontFaceSet");
+shouldBe("fontFaceSet.size", "2");
+
+iterator = fontFaceSet.keys();
+item = iterator.next();
+shouldBeFalse("item.done");
+shouldBe("item.value", "fontFace1");
+item = iterator.next();
+shouldBeFalse("item.done");
+shouldBe("item.value", "fontFace2");
+item = iterator.next();
+shouldBeTrue("item.done");
+
+shouldBe("fontFaceSet.delete(fontFace1)", "true");
+shouldBe("fontFaceSet.delete(fontFace3)", "false");
+fontFaceSet.clear();
+shouldBe("fontFaceSet.size", "0");
+shouldBeTrue("fontFaceSet.values().next().done");
+shouldThrow("fontFaceSet.check('garbage')");
+shouldBeTrue("fontFaceSet.check('16px garbage')");
+
+self.jsTestIsAsync = true;
+fontFaceSet.add(fontFace1);
+shouldBeFalse("fontFaceSet.check('16px family1')");
+var item;
+fontFaceSet.load("garbage").then(function(arg) {
+    testFailed("Should not be able to parse garbage");
+    finishJSTest();
+}, function(arg) {
+    item = arg;
+    shouldBe("item.code", "item.SYNTAX_ERR");
+    shouldBeFalse("fontFaceSet.check('16px family1')");
+    return fontFaceSet.load("16px garbage");
+}).then(function(arg) {
+    item = arg;
+    shouldBe("item", "[]");
+    return fontFaceSet.load("16px family1");
+}, function(arg) {
+    testFailed("Should not be able to parse garbage");
+    finishJSTest();
+}).then(function(arg) {
+    testFailed("Bogus URL should not load");
+    finishJSTest();
+}, function(arg) {
+    item = arg;
+    shouldBe("item.code", "item.NETWORK_ERR");
+    fontFaceSet.add(fontFace3);
+    shouldBeFalse("fontFaceSet.check('16px family3')");
+    var result = fontFaceSet.load("16px family3");
+    shouldBeEqualToString("fontFaceSet.status", "loading");
+    return result;
+}).then(function(arg) {
+    item = arg;
+    shouldBe("item", "[fontFace3]");
+    shouldBeTrue("fontFaceSet.check('16px family3')");
+    shouldBeEqualToString("fontFaceSet.status", "loaded");
+    var result = fontFaceSet.load("16px family3"); // Test when it's in the cache.
+    shouldBeEqualToString("fontFaceSet.status", "loaded");
+    return result;
+}, function(arg) {
+    testFailed("Real URL should load");
+    finishJSTest();
+}).then(function(arg) {
+    item = arg;
+    shouldBe("item", "[fontFace3]");
+    fontFaceSet.add(fontFace4);
+    return fontFaceSet.load("16px family3");
+}, function(arg) {
+    testFailed("Real URL should load");
+    finishJSTest();
+}).then(function(arg) {
+    item = arg;
+    shouldBe("item", "[fontFace3, fontFace4]");
+    fontFaceSet.add(fontFace4);
+    fontFaceSet.load("16px family3");
+    return fontFaceSet.ready;
+}, function(arg) {
+    testFailed("Multiple matching faces should load");
+    finishJSTest();
+}).then(function(arg) {
+    item = arg;
+    shouldBe("item", "fontFaceSet");
+    fontFaceSet.add(fontFace5);
+    shouldBeEqualToString("fontFaceSet.status", "loaded");
+    fontFaceSet.load("16px family5");
+    shouldBeEqualToString("fontFaceSet.status", "loading");
+    return fontFaceSet.ready;
+}, function(arg) {
+    testFailed("Ready attribute should never fail");
+    finishJSTest();
+}).then(function(arg) {
+    item = arg;
+    shouldBe("item", "fontFaceSet");
+    finishJSTest();
+}, function(arg) {
+    testFailed("Ready attribute should never fail");
+    finishJSTest();
+});
+shouldBeEqualToString("fontFaceSet.status", "loaded");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

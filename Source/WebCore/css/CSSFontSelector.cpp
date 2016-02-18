@@ -117,7 +117,7 @@ void CSSFontSelector::appendSources(CSSFontFace& fontFace, CSSValueList& srcList
     fontFace.sourcesPopulated();
 }
 
-static String familyNameFromPrimitive(const CSSPrimitiveValue& value)
+String CSSFontSelector::familyNameFromPrimitive(const CSSPrimitiveValue& value)
 {
     if (value.isFontFamily())
         return value.fontFamily().familyName;
@@ -154,7 +154,7 @@ void CSSFontSelector::registerLocalFontFacesForFamily(const String& familyName)
 
     Vector<Ref<CSSFontFace>> faces = { };
     for (auto mask : traitsMasks) {
-        Ref<CSSFontFace> face = CSSFontFace::create(*this, *this, true);
+        Ref<CSSFontFace> face = CSSFontFace::create(*this, nullptr, true);
         
         RefPtr<CSSValueList> familyList = CSSValueList::createCommaSeparated();
         familyList->append(CSSValuePool::singleton().createFontFamilyValue(familyName));
@@ -201,7 +201,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace& fontFaceRule, boo
     if (!srcList.length())
         return;
 
-    Ref<CSSFontFace> fontFace = CSSFontFace::create(*this, *this);
+    Ref<CSSFontFace> fontFace = CSSFontFace::create(*this);
 
     if (!fontFace->setFamilies(*fontFamily))
         return;
@@ -495,10 +495,6 @@ void CSSFontSelector::beginLoadTimerFired()
         m_document->frame()->loader().checkLoadComplete();
 }
 
-
-void CSSFontSelector::kick(CSSFontFace&)
-{
-}
 
 size_t CSSFontSelector::fallbackFontCount()
 {

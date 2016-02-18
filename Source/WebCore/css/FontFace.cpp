@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,13 +111,15 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionCont
 }
 
 FontFace::FontFace(JSC::ExecState& execState, CSSFontSelector& fontSelector)
-    : m_backing(CSSFontFace::create(*this, fontSelector))
+    : m_backing(CSSFontFace::create(fontSelector, this))
     , m_promise(createPromise(execState))
 {
+    m_backing->addClient(*this);
 }
 
 FontFace::~FontFace()
 {
+    m_backing->removeClient(*this);
 }
 
 RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID propertyID)
@@ -315,10 +317,10 @@ String FontFace::status() const
     return String("error", String::ConstructFromLiteral);
 }
 
-void FontFace::kick(CSSFontFace& face)
+void FontFace::stateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontFace::Status newState)
 {
     ASSERT_UNUSED(face, &face == m_backing.ptr());
-    switch (m_backing->status()) {
+    switch (newState) {
     case CSSFontFace::Status::TimedOut:
         rejectPromise(NETWORK_ERR);
         return;

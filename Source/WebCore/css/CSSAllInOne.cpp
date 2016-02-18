@@ -42,6 +42,7 @@
 #include "CSSFontFace.cpp"
 #include "CSSFontFaceLoadEvent.cpp"
 #include "CSSFontFaceRule.cpp"
+#include "CSSFontFaceSet.cpp"
 #include "CSSFontFaceSource.cpp"
 #include "CSSFontFaceSrcValue.cpp"
 #include "CSSFontFeatureValue.cpp"

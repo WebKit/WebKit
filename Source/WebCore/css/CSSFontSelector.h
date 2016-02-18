@@ -41,13 +41,14 @@
 namespace WebCore {
 
 class CSSFontFaceRule;
+class CSSPrimitiveValue;
 class CSSSegmentedFontFace;
 class CSSValueList;
 class CachedFont;
 class Document;
 class StyleRuleFontFace;
 
-class CSSFontSelector final : public FontSelector, public CSSFontFaceClient {
+class CSSFontSelector final : public FontSelector {
 public:
     static Ref<CSSFontSelector> create(Document& document)
     {
@@ -80,6 +81,8 @@ public:
 
     void beginLoadingFontSoon(CachedFont*);
 
+    static String familyNameFromPrimitive(const CSSPrimitiveValue&);
+
 private:
     explicit CSSFontSelector(Document&);
 
@@ -88,8 +91,6 @@ private:
     void beginLoadTimerFired();
 
     void registerLocalFontFacesForFamily(const String&);
-
-    void kick(CSSFontFace&) override;
 
     Document* m_document;
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_fontFaces;

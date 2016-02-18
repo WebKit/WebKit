@@ -45,9 +45,9 @@
 
 namespace WebCore {
 
-CSSFontFace::CSSFontFace(CSSFontFaceClient& client, CSSFontSelector& fontSelector, bool isLocalFallback)
+CSSFontFace::CSSFontFace(CSSFontSelector& fontSelector, FontFace* wrapper, bool isLocalFallback)
     : m_fontSelector(fontSelector)
-    , m_client(client)
+    , m_wrapper(wrapper)
     , m_isLocalFallback(isLocalFallback)
 {
 }
@@ -230,14 +230,14 @@ bool CSSFontFace::allSourcesFailed() const
     return true;
 }
 
-void CSSFontFace::addedToSegmentedFontFace(CSSSegmentedFontFace& segmentedFontFace)
+void CSSFontFace::addClient(Client& client)
 {
-    m_segmentedFontFaces.add(&segmentedFontFace);
+    m_clients.add(&client);
 }
 
-void CSSFontFace::removedFromSegmentedFontFace(CSSSegmentedFontFace& segmentedFontFace)
+void CSSFontFace::removeClient(Client& client)
 {
-    m_segmentedFontFaces.remove(&segmentedFontFace);
+    m_clients.remove(&client);
 }
 
 void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource>&& source)
@@ -268,10 +268,10 @@ void CSSFontFace::setStatus(Status newStatus)
         break;
     }
 
-    m_status = newStatus;
+    for (auto& client : m_clients)
+        client->stateChanged(*this, m_status, newStatus);
 
-    if (m_status == Status::Success || m_status == Status::Failure)
-        m_client.kick(*this);
+    m_status = newStatus;
 }
 
 void CSSFontFace::fontLoaded(CSSFontFaceSource&)
@@ -282,13 +282,10 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource&)
     if (m_sourcesPopulated)
         pump();
 
-    if (m_segmentedFontFaces.isEmpty())
-        return;
-
     m_fontSelector->fontLoaded();
 
-    for (auto* face : m_segmentedFontFaces)
-        face->fontLoaded(*this);
+    for (auto& client : m_clients)
+        client->fontLoaded(*this);
 }
 
 size_t CSSFontFace::pump()

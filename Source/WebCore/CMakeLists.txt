@@ -331,6 +331,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/Counter.idl
     css/DOMWindowCSS.idl
     css/FontFace.idl
+    css/FontFaceSet.idl
     css/FontLoader.idl
     css/MediaList.idl
     css/MediaQueryList.idl
@@ -1110,6 +1111,7 @@ set(WebCore_SOURCES
     bindings/js/JSCSSRuleListCustom.cpp
     bindings/js/JSCSSStyleDeclarationCustom.cpp
     bindings/js/JSFontFaceCustom.cpp
+    bindings/js/JSFontFaceSetCustom.cpp
     bindings/js/JSCSSValueCustom.cpp
     bindings/js/JSCallbackData.cpp
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
@@ -1302,8 +1304,10 @@ set(WebCore_SOURCES
     css/CSSCursorImageValue.cpp
     css/CSSDefaultStyleSheets.cpp
     css/CSSFilterImageValue.cpp
+    css/FontFaceSet.cpp
     css/FontFace.cpp
     css/CSSFontFace.cpp
+    css/CSSFontFaceSet.cpp
     css/CSSFontFaceLoadEvent.cpp
     css/CSSFontFaceRule.cpp
     css/CSSFontFaceSource.cpp

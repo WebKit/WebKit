@@ -950,6 +950,11 @@
 		1C21E57C183ED1FF001C289D /* IOSurfacePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */; };
 		1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C21E57B183ED1FF001C289D /* IOSurfacePool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C2417BA1992C04100EF9938 /* SpellingDot@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C2417B91992C04100EF9938 /* SpellingDot@3x.png */; };
+		1C24EEA41C729CE40080F8FC /* FontFaceSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C24EEA21C729CE40080F8FC /* FontFaceSet.cpp */; };
+		1C24EEA51C729CE40080F8FC /* FontFaceSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C24EEA31C729CE40080F8FC /* FontFaceSet.h */; };
+		1C24EEA81C72A7B40080F8FC /* JSFontFaceSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C24EEA61C72A7B40080F8FC /* JSFontFaceSet.cpp */; };
+		1C24EEA91C72A7B40080F8FC /* JSFontFaceSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C24EEA71C72A7B40080F8FC /* JSFontFaceSet.h */; };
+		1C24EEAB1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C24EEAA1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp */; };
 		1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */; };
 		1C3249111C6D6A3B007EDB32 /* FontVariantBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C3249101C6D6A3B007EDB32 /* FontVariantBuilder.cpp */; };
 		1C3969D01B74211E002BCFA7 /* FontCacheCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */; };
@@ -5915,6 +5920,8 @@
 		C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */; };
 		C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */; };
 		C2015C0A1BE6FEB200822389 /* FontVariantBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */; };
+		C26017A31C72DC9900F74A16 /* CSSFontFaceSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C26017A11C72DC9900F74A16 /* CSSFontFaceSet.cpp */; };
+		C26017A41C72DC9900F74A16 /* CSSFontFaceSet.h in Headers */ = {isa = PBXBuildFile; fileRef = C26017A21C72DC9900F74A16 /* CSSFontFaceSet.h */; };
 		C280833F1C6DC26F001451B6 /* JSFontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = C280833E1C6DC22C001451B6 /* JSFontFace.h */; };
 		C28083401C6DC275001451B6 /* JSFontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C280833D1C6DC22C001451B6 /* JSFontFace.cpp */; };
 		C28083421C6DC96A001451B6 /* JSFontFaceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */; };
@@ -8376,6 +8383,12 @@
 		1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IOSurfacePool.cpp; sourceTree = "<group>"; };
 		1C21E57B183ED1FF001C289D /* IOSurfacePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfacePool.h; sourceTree = "<group>"; };
 		1C2417B91992C04100EF9938 /* SpellingDot@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SpellingDot@3x.png"; sourceTree = "<group>"; };
+		1C24EEA11C729B320080F8FC /* FontFaceSet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FontFaceSet.idl; sourceTree = "<group>"; };
+		1C24EEA21C729CE40080F8FC /* FontFaceSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFaceSet.cpp; sourceTree = "<group>"; };
+		1C24EEA31C729CE40080F8FC /* FontFaceSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFaceSet.h; sourceTree = "<group>"; };
+		1C24EEA61C72A7B40080F8FC /* JSFontFaceSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFaceSet.cpp; sourceTree = "<group>"; };
+		1C24EEA71C72A7B40080F8FC /* JSFontFaceSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFontFaceSet.h; sourceTree = "<group>"; };
+		1C24EEAA1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFaceSetCustom.cpp; sourceTree = "<group>"; };
 		1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoaderMac.cpp; sourceTree = "<group>"; };
 		1C3249101C6D6A3B007EDB32 /* FontVariantBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontVariantBuilder.cpp; sourceTree = "<group>"; };
 		1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCacheCoreText.cpp; sourceTree = "<group>"; };
@@ -13837,6 +13850,8 @@
 		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
 		C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontVariantBuilder.h; sourceTree = "<group>"; };
 		C24685131A148E1800811792 /* CoreGraphicsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreGraphicsSPI.h; sourceTree = "<group>"; };
+		C26017A11C72DC9900F74A16 /* CSSFontFaceSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceSet.cpp; sourceTree = "<group>"; };
+		C26017A21C72DC9900F74A16 /* CSSFontFaceSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFaceSet.h; sourceTree = "<group>"; };
 		C280833C1C6DB194001451B6 /* FontFace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FontFace.idl; sourceTree = "<group>"; };
 		C280833D1C6DC22C001451B6 /* JSFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFace.cpp; sourceTree = "<group>"; };
 		C280833E1C6DC22C001451B6 /* JSFontFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFontFace.h; sourceTree = "<group>"; };
@@ -17561,6 +17576,8 @@
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1C24EEA61C72A7B40080F8FC /* JSFontFaceSet.cpp */,
+				1C24EEA71C72A7B40080F8FC /* JSFontFaceSet.h */,
 				C280833D1C6DC22C001451B6 /* JSFontFace.cpp */,
 				C280833E1C6DC22C001451B6 /* JSFontFace.h */,
 				9908B0F31BCACFFE00ED0F65 /* ByteLengthQueuingStrategyBuiltins.cpp */,
@@ -22471,6 +22488,7 @@
 				A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */,
 				BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */,
 				C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */,
+				1C24EEAA1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -23780,6 +23798,11 @@
 				1C66260E1C6E7CA600AB527C /* FontFace.cpp */,
 				1C66260F1C6E7CA600AB527C /* FontFace.h */,
 				C280833C1C6DB194001451B6 /* FontFace.idl */,
+				1C24EEA11C729B320080F8FC /* FontFaceSet.idl */,
+				1C24EEA21C729CE40080F8FC /* FontFaceSet.cpp */,
+				1C24EEA31C729CE40080F8FC /* FontFaceSet.h */,
+				C26017A11C72DC9900F74A16 /* CSSFontFaceSet.cpp */,
+				C26017A21C72DC9900F74A16 /* CSSFontFaceSet.h */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -26502,6 +26525,7 @@
 				0FDA7C1F188322FC00C954B5 /* JSGestureEvent.h in Headers */,
 				8482B7521198CB6B00BFB005 /* JSHashChangeEvent.h in Headers */,
 				BC94D14F0C275C68006BC617 /* JSHistory.h in Headers */,
+				1C24EEA51C729CE40080F8FC /* FontFaceSet.h in Headers */,
 				BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */,
 				1A4A2DF00A1B852A00C807F8 /* JSHTMLAnchorElement.h in Headers */,
 				1A4A2DF20A1B852A00C807F8 /* JSHTMLAppletElement.h in Headers */,
@@ -27315,6 +27339,7 @@
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
 				536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */,
 				F55B3DCA1251F12D003EF269 /* PasswordInputType.h in Headers */,
+				1C24EEA91C72A7B40080F8FC /* JSFontFaceSet.h in Headers */,
 				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,
 				C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */,
 				B27535800B053814002CE64F /* Path.h in Headers */,
@@ -28050,6 +28075,7 @@
 				0810764412828556007C63BA /* SVGListProperty.h in Headers */,
 				088A0E09126EF1DB00978F7A /* SVGListPropertyTearOff.h in Headers */,
 				B2227A410D00BF220071B782 /* SVGLocatable.h in Headers */,
+				C26017A41C72DC9900F74A16 /* CSSFontFaceSet.h in Headers */,
 				436708EE12D9CA4B00044234 /* SVGMarkerData.h in Headers */,
 				B2227A440D00BF220071B782 /* SVGMarkerElement.h in Headers */,
 				B2227A470D00BF220071B782 /* SVGMaskElement.h in Headers */,
@@ -29870,6 +29896,7 @@
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
 				5185FC771BB4C4E80012898F /* IDBAny.cpp in Sources */,
 				5198F7BE1BC338AF00E2CC5F /* IDBAnyImpl.cpp in Sources */,
+				C26017A31C72DC9900F74A16 /* CSSFontFaceSet.cpp in Sources */,
 				C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */,
 				516D7D711BB5F0BD00AF7C77 /* IDBConnectionToClient.cpp in Sources */,
 				5198F7C01BC4856700E2CC5F /* IDBConnectionToServer.cpp in Sources */,
@@ -30395,6 +30422,7 @@
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
+				1C24EEA41C729CE40080F8FC /* FontFaceSet.cpp in Sources */,
 				FD8AA63E169514A700D2EA68 /* JSPannerNodeCustom.cpp in Sources */,
 				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
 				8A9A587011E84C36008ACFD1 /* JSPerformanceNavigation.cpp in Sources */,
@@ -31165,6 +31193,7 @@
 				ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */,
 				A454424E119B3687009BE912 /* RenderMeter.cpp in Sources */,
 				1A3586DF15264C450022A659 /* RenderMultiColumnFlowThread.cpp in Sources */,
+				1C24EEA81C72A7B40080F8FC /* JSFontFaceSet.cpp in Sources */,
 				BCE32B9E1517C22700F542EC /* RenderMultiColumnSet.cpp in Sources */,
 				BC1A7D9718FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.cpp in Sources */,
 				8AC822FC180FC03300FB64D5 /* RenderNamedFlowFragment.cpp in Sources */,
@@ -31586,6 +31615,7 @@
 				511EC12B1C50ABBF0032F983 /* SQLiteIDBTransaction.cpp in Sources */,
 				845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */,
 				081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */,
+				1C24EEAB1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp in Sources */,
 				B2227A0B0D00BF220071B782 /* SVGFilterElement.cpp in Sources */,
 				B2227A0E0D00BF220071B782 /* SVGFilterPrimitiveStandardAttributes.cpp in Sources */,
 				B2227A110D00BF220071B782 /* SVGFitToViewBox.cpp in Sources */,

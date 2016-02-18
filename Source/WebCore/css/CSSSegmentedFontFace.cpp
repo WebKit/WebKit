@@ -45,19 +45,19 @@ CSSSegmentedFontFace::CSSSegmentedFontFace(CSSFontSelector& fontSelector)
 CSSSegmentedFontFace::~CSSSegmentedFontFace()
 {
     for (auto& face : m_fontFaces)
-        face->removedFromSegmentedFontFace(*this);
-}
-
-void CSSSegmentedFontFace::fontLoaded(CSSFontFace&)
-{
-    m_cache.clear();
+        face->removeClient(*this);
 }
 
 void CSSSegmentedFontFace::appendFontFace(Ref<CSSFontFace>&& fontFace)
 {
     m_cache.clear();
-    fontFace->addedToSegmentedFontFace(*this);
+    fontFace->addClient(*this);
     m_fontFaces.append(WTFMove(fontFace));
+}
+
+void CSSSegmentedFontFace::fontLoaded(CSSFontFace&)
+{
+    m_cache.clear();
 }
 
 static void appendFontWithInvalidUnicodeRangeIfLoading(FontRanges& ranges, Ref<Font>&& font, const Vector<CSSFontFace::UnicodeRange>& unicodeRanges)

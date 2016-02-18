@@ -2084,7 +2084,13 @@
     <ClCompile Include="..\css\CSSCursorImageValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\FontFaceSet.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\FontFace.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\CSSFontFaceSet.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\CSSFontFace.cpp">
@@ -4262,6 +4268,9 @@
     <ClCompile Include="..\bindings\js\JSCSSRuleListCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSFontFaceSetCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSFontFaceCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -5272,6 +5281,9 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileReaderSync.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontFaceSet.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontFace.cpp">
@@ -9067,7 +9079,13 @@
     <ClInclude Include="..\css\CSSCursorImageValue.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\FontFaceSet.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\FontFace.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\CSSFontFaceSet.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSFontFace.h">
@@ -12700,6 +12718,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileReaderSync.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontFaceSet.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontFace.h">

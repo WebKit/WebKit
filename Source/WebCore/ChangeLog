@@ -1,3 +1,133 @@
+2016-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Implement FontFaceSet
+        https://bugs.webkit.org/show_bug.cgi?id=153348
+
+        Reviewed by Simon Fraser.
+
+        The CSS Font Loading spec includes a FontFaceSet object which represents
+        a collection of FontFaces. This patch implements such an object, and
+        backs it with a vector of FontFaces. Similarly to the FontFace object,
+        FontFaceSet is separated into a FontFaceSet frontend object and a
+        CSSFontFaceSet backend object, which actually owns the FontFace objects.
+        All the interaction with Promises is performed in the frontend object.
+
+        This patch does not implement the EventTarget part of the FontFaceSet
+        API, so the only way to know when a font is finished loading is by using
+        the associated Promise objects.
+
+        The CSS Font Loading spec describes how the Document should vend an
+        instance of FontFaceSet which represents the font faces currently
+        associated with the Document. However, that functionality is
+        forthcoming. Currently, the only way to get a FontFaceSet is to create
+        one yourself (using the constructor). Therefore, this patch does not
+        implement the spec's notion of a "CSS-connected font face."
+
+        Test: fast/text/font-face-set-javascript.html
+
+        * CMakeLists.txt: Add new files.
+        * DerivedSources.make: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSFontFaceSetCustom.cpp: Added.
+        (WebCore::JSFontFaceSet::ready): Use the Promise member.
+        (WebCore::JSFontFaceSet::entries): Use existing iterator code.
+        (WebCore::JSFontFaceSet::keys):
+        (WebCore::JSFontFaceSet::values):
+        * css/CSSAllInOne.cpp: Add new files.
+        * css/CSSFontFace.cpp: We now have a collection of clients (instead of
+        just one). Also, we need to keep a pointer to our FontFace wrapper.
+        (WebCore::CSSFontFace::CSSFontFace):
+        (WebCore::CSSFontFace::addClient):
+        (WebCore::CSSFontFace::removeClient):
+        (WebCore::CSSFontFace::setStatus): Rename the delegate callback to be
+        more clear.
+        (WebCore::CSSFontFace::fontLoaded):
+        (WebCore::CSSFontFace::addedToSegmentedFontFace): Deleted.
+        (WebCore::CSSFontFace::removedFromSegmentedFontFace): Deleted.
+        * css/CSSFontFace.h: Same as above.
+        (WebCore::CSSFontFace::create):
+        (WebCore::CSSFontFace::Client::~Client):
+        (WebCore::CSSFontFace::Client::kick):
+        (WebCore::CSSFontFace::Client::stateChanged):
+        (WebCore::CSSFontFace::wrapper):
+        (WebCore::CSSFontFaceClient::~CSSFontFaceClient): Deleted.
+        * css/CSSFontFaceSet.cpp: Added. Initial imlementation.
+        (WebCore::CSSFontFaceSet::CSSFontFaceSet):
+        (WebCore::CSSFontFaceSet::~CSSFontFaceSet):
+        (WebCore::CSSFontFaceSet::incrementActiveCount):
+        (WebCore::CSSFontFaceSet::decrementActiveCount):
+        (WebCore::CSSFontFaceSet::has):
+        (WebCore::CSSFontFaceSet::add):
+        (WebCore::CSSFontFaceSet::remove):
+        (WebCore::extractFamilies):
+        (WebCore::familiesIntersect): Because this is an initial imlementation,
+        this function is not optimized. A subsequent patch (which implements
+        Document.fonts) will optimize this.
+        (WebCore::CSSFontFaceSet::matchingFaces):
+        (WebCore::CSSFontFaceSet::load):
+        (WebCore::CSSFontFaceSet::check):
+        (WebCore::CSSFontFaceSet::stateChanged):
+        * css/CSSFontFaceSet.h: Added.
+        (WebCore::CSSFontFaceSetClient::~CSSFontFaceSetClient):
+        (WebCore::CSSFontFaceSet::size):
+        (WebCore::CSSFontFaceSet::operator[]):
+        (WebCore::CSSFontFaceSet::status):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::familyNameFromPrimitive):
+        (WebCore::CSSFontSelector::registerLocalFontFacesForFamily):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::familyNameFromPrimitive): Deleted.
+        (WebCore::CSSFontSelector::kick): Deleted.
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::~CSSSegmentedFontFace):
+        (WebCore::CSSSegmentedFontFace::appendFontFace):
+        (WebCore::CSSSegmentedFontFace::kick):
+        (WebCore::CSSSegmentedFontFace::fontLoaded): Deleted.
+        * css/CSSSegmentedFontFace.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::FontFace):
+        (WebCore::FontFace::~FontFace):
+        (WebCore::FontFace::stateChanged): Renamed to make its purpose clearer.
+        (WebCore::FontFace::kick): Deleted.
+        * css/FontFace.h:
+        * css/FontFaceSet.cpp: Added.
+        (WebCore::createPromise):
+        (WebCore::FontFaceSet::FontFaceSet):
+        (WebCore::FontFaceSet::~FontFaceSet):
+        (WebCore::FontFaceSet::Iterator::Iterator):
+        (WebCore::FontFaceSet::Iterator::next):
+        (WebCore::FontFaceSet::PendingPromise::PendingPromise):
+        (WebCore::FontFaceSet::PendingPromise::~PendingPromise):
+        (WebCore::FontFaceSet::has):
+        (WebCore::FontFaceSet::size):
+        (WebCore::FontFaceSet::add):
+        (WebCore::FontFaceSet::remove):
+        (WebCore::FontFaceSet::clear):
+        (WebCore::FontFaceSet::load): Most of the complexity of loading is
+        due to the promises involved. Rather than use the Javascript function
+        Promise.all(), this patch builds a data structure to represent the
+        promises which need to be resolved. When fonts finish loading, we look
+        at the data structure to determine which promises to resolve.
+        (WebCore::FontFaceSet::check):
+        (WebCore::FontFaceSet::status):
+        (WebCore::FontFaceSet::canSuspendForDocumentSuspension):
+        (WebCore::FontFaceSet::startedLoading):
+        (WebCore::FontFaceSet::completedLoading):
+        (WebCore::FontFaceSet::fulfillPromise): Keep the promise alive.
+        (WebCore::FontFaceSet::faceFinished):
+        * css/FontFaceSet.h: Added.
+        (WebCore::FontFaceSet::create):
+        (WebCore::FontFaceSet::load):
+        (WebCore::FontFaceSet::check):
+        (WebCore::FontFaceSet::createIterator):
+        (WebCore::FontFaceSet::PendingPromise::create):
+        * css/FontFaceSet.idl: Added.
+        * dom/EventNames.h:
+        * dom/EventTargetFactory.in:
+
 2016-02-17  Mark Lam  <mark.lam@apple.com>
 
         Callers of JSString::value() should check for exceptions thereafter.

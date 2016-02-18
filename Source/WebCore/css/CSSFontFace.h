@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,16 +44,15 @@ class CSSValue;
 class CSSValueList;
 class FontDescription;
 class Font;
+class FontFace;
 
-class CSSFontFaceClient {
+// FIXME: This class does not need to be reference counted.
+class CSSFontFace final : public RefCounted<CSSFontFace> {
 public:
-    virtual ~CSSFontFaceClient() { }
-    virtual void kick(CSSFontFace&) = 0;
-};
-
-class CSSFontFace : public RefCounted<CSSFontFace> {
-public:
-    static Ref<CSSFontFace> create(CSSFontFaceClient& client, CSSFontSelector& fontSelector, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(client, fontSelector, isLocalFallback)); }
+    static Ref<CSSFontFace> create(CSSFontSelector& fontSelector, FontFace* wrapper = nullptr, bool isLocalFallback = false)
+    {
+        return adoptRef(*new CSSFontFace(fontSelector, wrapper, isLocalFallback));
+    }
     virtual ~CSSFontFace();
 
     bool setFamilies(CSSValue&);
@@ -80,8 +79,9 @@ public:
     bool isLocalFallback() const { return m_isLocalFallback; }
     Status status() const { return m_status; }
 
-    void addedToSegmentedFontFace(CSSSegmentedFontFace&);
-    void removedFromSegmentedFontFace(CSSSegmentedFontFace&);
+    class Client;
+    void addClient(Client&);
+    void removeClient(Client&);
 
     bool allSourcesFailed() const;
 
@@ -92,6 +92,13 @@ public:
 
     void load();
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual void fontLoaded(CSSFontFace&) { };
+        virtual void stateChanged(CSSFontFace&, Status oldState, Status newState) { UNUSED_PARAM(oldState); UNUSED_PARAM(newState); };
+    };
 
     // Pending => Loading  => TimedOut
     //              ||  \\    //  ||
@@ -125,12 +132,14 @@ public:
         UChar32 m_to;
     };
 
+    FontFace* wrapper() const { return m_wrapper; }
+
 #if ENABLE(SVG_FONTS)
     bool hasSVGFontFaceSource() const;
 #endif
 
 private:
-    CSSFontFace(CSSFontFaceClient&, CSSFontSelector&, bool isLocalFallback);
+    CSSFontFace(CSSFontSelector&, FontFace*, bool isLocalFallback);
 
     size_t pump();
     void setStatus(Status);
@@ -138,9 +147,9 @@ private:
     RefPtr<CSSValueList> m_families;
     FontTraitsMask m_traitsMask { static_cast<FontTraitsMask>(FontStyleNormalMask | FontWeight400Mask) };
     Vector<UnicodeRange> m_ranges;
-    HashSet<CSSSegmentedFontFace*> m_segmentedFontFaces; // FIXME: Refactor this (in favor of CSSFontFaceClient) when implementing FontFaceSet.
+    HashSet<Client*> m_clients;
     Ref<CSSFontSelector> m_fontSelector;
-    CSSFontFaceClient& m_client;
+    FontFace* m_wrapper;
     FontFeatureSettings m_featureSettings;
     FontVariantSettings m_variantSettings;
     Vector<std::unique_ptr<CSSFontFaceSource>> m_sources;

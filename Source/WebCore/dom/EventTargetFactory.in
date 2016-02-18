@@ -9,7 +9,7 @@ DOMApplicationCache
 DOMWindow
 EventSource
 FileReader
-FontLoader conditional=FONT_LOAD_EVENTS
+FontFaceSet
 IDBDatabase conditional=INDEXED_DATABASE
 IDBOpenDBRequest conditional=INDEXED_DATABASE
 IDBRequest conditional=INDEXED_DATABASE
