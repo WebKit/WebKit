@@ -699,7 +699,7 @@ sub AttributeShouldBeOnInstance
 
     # [Unforgeable] attributes should be on the instance.
     # https://heycam.github.io/webidl/#Unforgeable
-    return 1 if $attribute->signature->extendedAttributes->{"Unforgeable"} || $interface->extendedAttributes->{"Unforgeable"};
+    return 1 if IsUnforgeable($interface, $attribute);
 
     # It becomes hard to reason about attributes that require security checks if we push
     # them down the prototype chain, so before we do these we'll need to carefully consider
@@ -731,7 +731,7 @@ sub OperationShouldBeOnInstance
 
     # [Unforgeable] operations should be on the instance.
     # https://heycam.github.io/webidl/#Unforgeable
-    return 1 if $function->signature->extendedAttributes->{"Unforgeable"} || $interface->extendedAttributes->{"Unforgeable"};
+    return 1 if IsUnforgeable($interface, $function);
 
     return 0;
 }
@@ -1397,8 +1397,7 @@ sub GeneratePropertiesHashTable
         push(@$hashKeys, $name);
 
         my @specials = ();
-        push(@specials, "DontDelete") if $attribute->signature->extendedAttributes->{"Unforgeable"}
-            || $interface->extendedAttributes->{"Unforgeable"};
+        push(@specials, "DontDelete") if IsUnforgeable($interface, $attribute);
 
         # As per Web IDL specification, constructor properties on the ECMAScript global object should not be enumerable.
         my $is_global_constructor = $attribute->signature->type =~ /Constructor$/;
@@ -5072,14 +5071,21 @@ sub HeaderNeedsPrototypeDeclaration
     return IsDOMGlobalObject($interface) || $interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"} || $interface->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"};
 }
 
+sub IsUnforgeable
+{
+    my $interface = shift;
+    my $property = shift;
+
+    return $property->signature->extendedAttributes->{"Unforgeable"} || $interface->extendedAttributes->{"Unforgeable"};
+}
+
 sub ComputeFunctionSpecial
 {
     my $interface = shift;
     my $function = shift;
 
     my @specials = ();
-    push(@specials, "DontDelete") if $function->signature->extendedAttributes->{"Unforgeable"}
-       || $interface->extendedAttributes->{"Unforgeable"};
+    push(@specials, ("DontDelete", "ReadOnly")) if IsUnforgeable($interface, $function);
     push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
     if (IsJSBuiltin($interface, $function)) {
         push(@specials, "JSC::Builtin");

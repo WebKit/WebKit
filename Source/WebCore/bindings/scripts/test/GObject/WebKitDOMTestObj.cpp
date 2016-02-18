@@ -91,6 +91,7 @@ enum {
     PROP_STRING_ATTR,
     PROP_TEST_OBJ_ATTR,
     PROP_LENIENT_TEST_OBJ_ATTR,
+    PROP_UNFORGEABLE_ATTR,
     PROP_XML_OBJ_ATTR,
     PROP_CREATE,
     PROP_REFLECTED_STRING_ATTR,
@@ -302,6 +303,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_LENIENT_TEST_OBJ_ATTR:
         g_value_set_object(value, webkit_dom_test_obj_get_lenient_test_obj_attr(self));
+        break;
+    case PROP_UNFORGEABLE_ATTR:
+        g_value_take_string(value, webkit_dom_test_obj_get_unforgeable_attr(self));
         break;
     case PROP_XML_OBJ_ATTR:
         g_value_set_object(value, webkit_dom_test_obj_get_xml_obj_attr(self));
@@ -604,6 +608,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:lenient-test-obj-attr",
             "read-only WebKitDOMTestObj* TestObj:lenient-test-obj-attr",
             WEBKIT_DOM_TYPE_TEST_OBJ,
+            WEBKIT_PARAM_READABLE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_UNFORGEABLE_ATTR,
+        g_param_spec_string(
+            "unforgeable-attr",
+            "TestObj:unforgeable-attr",
+            "read-only gchar* TestObj:unforgeable-attr",
+            "",
             WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
@@ -1210,6 +1224,15 @@ WebKitDOMTestObj* webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* sel
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->objMethodWithArgs(longArg, convertedStrArg, convertedObjArg));
     return WebKit::kit(gobjectResult.get());
+}
+
+glong webkit_dom_test_obj_unforgeable_method(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    glong result = item->unforgeableMethod();
+    return result;
 }
 
 void webkit_dom_test_obj_method_with_enum_arg(WebKitDOMTestObj* self, WebKitDOMTestEnumType* enumArg)
@@ -1842,6 +1865,15 @@ void webkit_dom_test_obj_set_lenient_test_obj_attr(WebKitDOMTestObj* self, WebKi
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::TestObj* convertedValue = WebKit::core(value);
     item->setLenientTestObjAttr(convertedValue);
+}
+
+gchar* webkit_dom_test_obj_get_unforgeable_attr(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->unforgeableAttr());
+    return result;
 }
 
 WebKitDOMTestObj* webkit_dom_test_obj_get_xml_obj_attr(WebKitDOMTestObj* self)

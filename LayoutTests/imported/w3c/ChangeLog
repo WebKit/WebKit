@@ -1,5 +1,17 @@
 2016-02-18  Chris Dumez  <cdumez@apple.com>
 
+        [Unforgeable] operations should not be writable as per Web IDL
+        https://bugs.webkit.org/show_bug.cgi?id=154396
+        <rdar://problem/24721063>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-02-18  Chris Dumez  <cdumez@apple.com>
+
         Fix behavior of reflecting unsigned long IDL attributes that are limited to only non-negative numbers greater than zero
         https://bugs.webkit.org/show_bug.cgi?id=154398
 

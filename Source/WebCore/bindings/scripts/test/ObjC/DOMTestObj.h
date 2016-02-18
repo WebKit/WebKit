@@ -74,6 +74,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property (copy) NSString *stringAttr;
 @property (strong) DOMTestObj *testObjAttr;
 @property (strong) DOMTestObj *lenientTestObjAttr;
+@property (readonly, copy) NSString *unforgeableAttr;
 @property (strong) DOMTestObj *XMLObjAttr;
 @property BOOL create;
 @property (copy) NSString *reflectedStringAttr;
@@ -140,6 +141,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (int)longMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (DOMTestObj *)objMethod;
 - (DOMTestObj *)objMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (int)unforgeableMethod;
 - (void)methodWithEnumArg:(DOMTestEnumType *)enumArg;
 - (void)methodWithOptionalEnumArgAndDefaultValue:(DOMTestEnumType *)enumArg;
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg;

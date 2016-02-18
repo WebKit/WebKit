@@ -239,6 +239,12 @@
     IMPL->setLenientTestObjAttr(core(newLenientTestObjAttr));
 }
 
+- (NSString *)unforgeableAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->unforgeableAttr();
+}
+
 - (DOMTestObj *)XMLObjAttr
 {
     WebCore::JSMainThreadNullState state;
@@ -955,6 +961,12 @@
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->objMethodWithArgs(longArg, strArg, core(objArg))));
+}
+
+- (int)unforgeableMethod
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->unforgeableMethod();
 }
 
 - (void)methodWithEnumArg:(DOMTestEnumType *)enumArg
