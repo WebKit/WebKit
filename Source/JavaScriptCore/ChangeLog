@@ -1,3 +1,26 @@
+2016-02-18  Andreas Kling  <akling@apple.com>
+
+        JSString resolution of substrings should use StringImpl sharing optimization.
+        <https://webkit.org/b/154068>
+        <rdar://problem/24629358>
+
+        Reviewed by Antti Koivisto.
+
+        When resolving a JSString that's actually a substring of another JSString,
+        use the StringImpl sharing optimization to create a new string pointing into
+        the parent one, instead of copying out the bytes of the string.
+
+        This dramatically reduces peak memory usage on Gerrit diff viewer pages.
+
+        Another approach to this would be to induce GC far more frequently due to
+        the added cost of copying out these substrings. It would reduce the risk
+        of prolonging the life of strings only kept alive by substrings.
+
+        This patch chooses to trade that risk for less GC and lower peak memory.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRope):
+
 2016-02-18  Chris Dumez  <cdumez@apple.com>
 
         Crash on SES selftest page when loading the page while WebInspector is open

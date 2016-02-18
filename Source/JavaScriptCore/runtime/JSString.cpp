@@ -237,7 +237,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
     
     if (isSubstring()) {
         ASSERT(!substringBase()->isRope());
-        m_value = substringBase()->m_value.substring(substringOffset(), m_length);
+        m_value = substringBase()->m_value.substringSharingImpl(substringOffset(), m_length);
         substringBase().clear();
         return;
     }
