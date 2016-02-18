@@ -24,6 +24,12 @@ class RootSet extends DataModelObject {
     repositories() { return this._repositories; }
     commitForRepository(repository) { return this._repositoryToCommitMap[repository.id()]; }
 
+    revisionForRepository(repository)
+    {
+        var commit = this._repositoryToCommitMap[repository.id()];
+        return commit ? commit.revision() : null;
+    }
+
     latestCommitTime()
     {
         if (this._latestCommitTime == null) {
@@ -81,3 +87,22 @@ class MeasurementRootSet extends RootSet {
         return RootSet.findById(rootSetId) || (new MeasurementRootSet(rootSetId, revisionList));
     }
 }
+
+class CustomRootSet {
+
+    constructor()
+    {
+        this._revisionListByRepository = new Map;
+    }
+
+    setRevisionForRepository(repository, revision)
+    {
+        console.assert(repository instanceof Repository);
+        this._revisionListByRepository.set(repository, revision);
+    }
+
+    repositories() { return Array.from(this._revisionListByRepository.keys()); }
+    revisionForRepository(repository) { return this._revisionListByRepository.get(repository); }
+
+}
+

@@ -63,16 +63,14 @@ class AnalysisTaskPage extends PageWithHeading {
         this._bugTrackerControl = this.content().querySelector('.bug-tracker-control');
         this._bugNumberControl = this.content().querySelector('.bug-number-control');
 
-        this._newTestGroupFormForChart = this.content().querySelector('.overview-chart test-group-form').component();
+        this._newTestGroupFormForChart = this.content().querySelector('.overview-chart customizable-test-group-form').component();
         this._newTestGroupFormForChart.setStartCallback(this._createNewTestGroupFromChart.bind(this));
 
-        this._newTestGroupFormForViewer = this.content().querySelector('.analysis-results-view test-group-form').component();
+        this._newTestGroupFormForViewer = this.content().querySelector('.analysis-results-view customizable-test-group-form').component();
         this._newTestGroupFormForViewer.setStartCallback(this._createNewTestGroupFromViewer.bind(this));
-        this._selectedRowInAnalysisResultsViewer();
 
         this._retryForm = this.content().querySelector('.test-group-retry-form').firstChild.component();
         this._retryForm.setStartCallback(this._retryCurrentTestGroup.bind(this));
-        this._retryForm.setNeedsName(false);
     }
 
     title() { return this._task ? this._task.label() : 'Analysis Task'; }
@@ -198,12 +196,6 @@ class AnalysisTaskPage extends PageWithHeading {
 
         this.content().querySelector('.error-message').textContent = this._errorMessage || '';
 
-        if (this._task) {
-            var v2URL = `/v2/#/analysis/task/${this._task.id()}`;
-            this.content().querySelector('.error-message').innerHTML =
-                `<p>To schedule a custom A/B testing, use <a href="${v2URL}">v2 UI</a>.</p>`;
-        }
-
         this._chartPane.render();
 
         var element = ComponentBase.createElement;
@@ -255,13 +247,22 @@ class AnalysisTaskPage extends PageWithHeading {
                 }));
         }
 
+        var selectedRange = this._analysisResultsViewer.selectedRange();
+        var a = selectedRange['A'];
+        var b = selectedRange['B'];
+        this._newTestGroupFormForViewer.setRootSetMap(a && b ? {'A': a.rootSet(), 'B': b.rootSet()} : null);
+        this._newTestGroupFormForViewer.render();
+
+        this._renderTestGroupList();
+        this._renderTestGroupDetails();
+
+        var points = this._chartPane.selectedPoints();
+        this._newTestGroupFormForChart.setRootSetMap(points && points.length >= 2 ?
+                {'A': points[0].rootSet(), 'B': points[points.length - 1].rootSet()} : null);
         this._newTestGroupFormForChart.render();
 
         this._analysisResultsViewer.setCurrentTestGroup(this._currentTestGroup);
         this._analysisResultsViewer.render();
-
-        this._renderTestGroupList();
-        this._renderTestGroupDetails();
 
         this._testGroupResultsTable.render();
 
@@ -417,68 +418,70 @@ class AnalysisTaskPage extends PageWithHeading {
         });
     }
 
-    _retryCurrentTestGroup(unusedName, repetitionCount)
+    _retryCurrentTestGroup(repetitionCount)
     {
         console.assert(this._currentTestGroup);
         var testGroup = this._currentTestGroup;
         var newName = this._createRetryNameForTestGroup(testGroup.name());
         var rootSetList = testGroup.requestedRootSets();
-        var rootSetLabels = rootSetList.map(function (rootSet) { return testGroup.labelForRootSet(rootSet); });
-        return this._createTestGroupAfterVerifyingRootSetList(newName, repetitionCount, rootSetList, rootSetLabels);
+
+        var rootSetMap = {};
+        for (var rootSet of rootSetList)
+            rootSetMap[testGroup.labelForRootSet(rootSet)] = rootSet;
+
+        return this._createTestGroupAfterVerifyingRootSetList(newName, repetitionCount, rootSetMap);
     }
 
     _chartSelectionDidChange()
     {
-        var points = this._chartPane.selectedPoints();
-        this._newTestGroupFormForChart.setDisabled(!points || points.length < 2);
+        this.render();
     }
 
-    _createNewTestGroupFromChart(name, repetitionCount)
+    _createNewTestGroupFromChart(name, repetitionCount, rootSetMap)
     {
-        var points = this._chartPane.selectedPoints();
-        console.assert(points && points.length >= 2);
-        return this._createTestGroupAfterVerifyingRootSetList(name, repetitionCount,
-            [points[0].rootSet(), points[points.length - 1].rootSet()], ['A', 'B']);
+        return this._createTestGroupAfterVerifyingRootSetList(name, repetitionCount, rootSetMap);
     }
 
     _selectedRowInAnalysisResultsViewer()
     {
-        var selectedRange = this._analysisResultsViewer.selectedRange();
-        this._newTestGroupFormForViewer.setDisabled(!selectedRange['A'] || !selectedRange['B']);
+        this.render();
     }
 
-    _createNewTestGroupFromViewer(name, repetitionCount)
+    _createNewTestGroupFromViewer(name, repetitionCount, rootSetMap)
     {
-        var selectedRange = this._analysisResultsViewer.selectedRange();
-        console.assert(selectedRange && selectedRange['A'] && selectedRange['B']);
-        return this._createTestGroupAfterVerifyingRootSetList(name, repetitionCount,
-            [selectedRange['A'].rootSet(), selectedRange['B'].rootSet()], ['A', 'B']);
+        return this._createTestGroupAfterVerifyingRootSetList(name, repetitionCount, rootSetMap);
     }
 
-    _createTestGroupAfterVerifyingRootSetList(testGroupName, repetitionCount, rootSetList, rootSetLabels)
+    _createTestGroupAfterVerifyingRootSetList(testGroupName, repetitionCount, rootSetMap)
     {
         if (this._hasDuplicateTestGroupName(testGroupName))
             alert(`There is already a test group named "${testGroupName}"`);
 
         var rootSetsByName = {};
-        for (var repository of rootSetList[0].repositories())
-            rootSetsByName[repository.name()] = [];
+        var firstLabel;
+        for (firstLabel in rootSetMap) {
+            var rootSet = rootSetMap[firstLabel];
+            for (var repository of rootSet.repositories())
+                rootSetsByName[repository.name()] = [];
+            break;
+        }
 
         var setIndex = 0;
-        for (var rootSet of rootSetList) {
+        for (var label in rootSetMap) {
+            var rootSet = rootSetMap[label];
             for (var repository of rootSet.repositories()) {
                 var list = rootSetsByName[repository.name()];
                 if (!list) {
-                    alert(`Set ${rootSetLabels[setIndex]} specifies ${repository.label()} but set ${rootSetLabels[0]} does not.`);
+                    alert(`Set ${label} specifies ${repository.label()} but set ${firstLabel} does not.`);
                     return null;
                 }
-                list.push(rootSet.commitForRepository(repository).revision());
+                list.push(rootSet.revisionForRepository(repository));
             }
             setIndex++;
             for (var name in rootSetsByName) {
                 var list = rootSetsByName[name];
                 if (list.length < setIndex) {
-                    alert(`Set ${rootSetLabels[0]} specifies ${repository.label()} but set ${rootSetLabels[setIndex]} does not.`);
+                    alert(`Set ${firstLabel} specifies ${repository.label()} but set ${label} does not.`);
                     return null;
                 }
             }
@@ -555,11 +558,11 @@ class AnalysisTaskPage extends PageWithHeading {
                 </div>
                 <section class="overview-chart">
                     <analysis-task-chart-pane></analysis-task-chart-pane>
-                    <div class="new-test-group-form"><test-group-form></test-group-form></div>
+                    <div class="new-test-group-form"><customizable-test-group-form></customizable-test-group-form></div>
                 </section>
                 <section class="analysis-results-view">
                     <analysis-results-viewer></analysis-results-viewer>
-                    <div class="new-test-group-form"><test-group-form></test-group-form></div>
+                    <div class="new-test-group-form"><customizable-test-group-form></customizable-test-group-form></div>
                 </section>
                 <section class="test-group-view">
                     <ul class="test-group-list"></ul>
@@ -615,7 +618,9 @@ class AnalysisTaskPage extends PageWithHeading {
             .analysis-task-status {
                 margin: 0;
                 display: flex;
-                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
+                margin-bottom: 1rem;
+                border-bottom: solid 1px #ccc;
             }
 
             .analysis-task-status > section {
@@ -650,8 +655,12 @@ class AnalysisTaskPage extends PageWithHeading {
                 overflow-y: scroll;
             }
 
+
             .analysis-results-view {
-                margin: 2.5rem 1rem;
+                border-top: solid 1px #ccc;
+                border-bottom: solid 1px #ccc;
+                margin: 1rem 0;
+                padding: 1rem;
             }
 
             .test-configuration h3 {

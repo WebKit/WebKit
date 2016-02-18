@@ -1,3 +1,78 @@
+2016-02-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        v3 UI should allow custom revisions for A/B testing
+        https://bugs.webkit.org/show_bug.cgi?id=154379
+
+        Reviewed by Chris Dumez.
+
+        Added the capability to customize revisions selected in the overview chart and the results viewer.
+
+        Newly added CustomizableTestGroupForm is responsible for allowing users to modify the set of revisions in
+        a new A/B testing group. Unlike TestGroupForm which doesn't know anything about which revisions are selected
+        for each project/repository, CustomizableTestGroupForm is aware of the list of revisions used in each set.
+
+        The list of revisions used in each set is represented by RootSet if users had not customized them, and
+        CustomRootSet otherwise; the latter was added since regular RootSet object requires CommitLog and other
+        DataModelObjects which are hard to create without corresponding database entries.
+
+        * public/v3/components/customizable-test-group-form.js: Added.
+        (CustomizableTestGroupForm): Added.
+        (CustomizableTestGroupForm.prototype.setRootSetMap): Added.
+        (CustomizableTestGroupForm.prototype._submitted): Overrides the superclass' method.
+        (CustomizableTestGroupForm.prototype._customize): Ditto. Unlike TestGroupForm's callback, this class'
+        callback passes in a root set map as the third argument.
+        (CustomizableTestGroupForm.prototype._computeRootSetMap): Added. Returns this._rootSetMap, which is set by
+        AnalysisTaskPage if user had not customized the root sets. Otherwise return a new map with CustomRootSet's.
+        (CustomizableTestGroupForm.prototype.render): Added. Creates a table to allow customization of root sets.
+        (CustomizableTestGroupForm._constructRevisionRadioButtons): Added.
+        (CustomizableTestGroupForm._createRadioButton): Added.
+        (CustomizableTestGroupForm.cssTemplate): Added.
+        (CustomizableTestGroupForm.formContent): Added. This method is called by TestGroupForm.htmlTemplate.
+        * public/v3/components/test-group-form.js:
+        (TestGroupForm): Updated the various methods to not directly mutate DOM. Store the state in instance
+        variables and update DOM in render() as done elsewhere.
+        (TestGroupForm.prototype.setNeedsName): Deleted. We no longer need this flag since TestGroupForm which is
+        used for retries never needs a name and CustomizableTestGroupForm which is used to create a new test group
+        always requires a name.
+        (TestGroupForm.prototype.setDisabled):
+        (TestGroupForm.prototype.setLabel):
+        (TestGroupForm.prototype.setRepetitionCount):
+        (TestGroupForm.prototype.render): Added.
+        (TestGroupForm.prototype._submitted): Moved the code to prevent the default action has been moved to the
+        constructor since this method is overridden by CustomizableTestGroupForm.
+        (TestGroupForm.cssTemplate): Added.
+        (TestGroupForm.htmlTemplate):
+        (TestGroupForm.formContent): Extracted from htmlTemplate.
+        * public/v3/index.html:
+        * public/v3/models/repository.js:
+        (Repository.sortByNamePreferringOnesWithURL): Added.
+        * public/v3/models/root-set.js:
+        (RootSet.prototype.revisionForRepository): Added so that _createTestGroupAfterVerifyingRootSetList can retrieve
+        the revision information from CustomRootSet without going through CommitLog objects since CustomRootSet doesn't
+        have associated CommitLog objects.
+        (CustomRootSet): Added. Used by CustomizableTestGroupForm to create a custom root map since regular RootSet
+        requires CommitLog and other related objects which are hard to create without database entries.
+        (CustomRootSet.prototype.setRevisionForRepository): Added.
+        (CustomRootSet.prototype.repositories): Added.
+        (CustomRootSet.prototype.revisionForRepository): Added.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage):
+        (AnalysisTaskPage.prototype.render): Removed the reference to v2 UI since v3 UI is now strictly more powerful
+        than v2 UI. Also update the root set maps in each form here.
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup): No longer takes unused name argument as it got removed
+        from TestGroupForm.
+        (AnalysisTaskPage.prototype._chartSelectionDidChange): No longer updates the disabled-ness here since it's now
+        done in render() via setRootSetMap().
+        (AnalysisTaskPage.prototype._createNewTestGroupFromChart): Now takes rootSetMap as an argument.
+        (AnalysisTaskPage.prototype._selectedRowInAnalysisResultsViewer): No longer updates the disabled-ness here
+        since it's now done in render() via setRootSetMap().
+        (AnalysisTaskPage.prototype._createNewTestGroupFromViewer): Now takes rootSetMap as an argument.
+        (AnalysisTaskPage.prototype._createTestGroupAfterVerifyingRootSetList): Take a dictionary of root set labels
+        such as A and B, which maps to a RootSet or a newly-added CustomRootSet.
+        (AnalysisTaskPage.htmlTemplate): Use customizable-test-group-form for creating a new A/B testing group. Retry
+        form will continue to use TestGroupForm since customizing revisions is non-sensical in retries.
+        (AnalysisTaskPage.cssTemplate): Updated the style.
+
 2016-02-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         v3 UI has the capability to schedule an A/B testing in a specific range

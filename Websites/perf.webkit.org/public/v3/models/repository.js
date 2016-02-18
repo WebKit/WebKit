@@ -19,4 +19,20 @@ class Repository extends LabeledObject {
     {
         return (this._blameUrl || '').replace(/\$1/g, from).replace(/\$2/g, to);
     }
+
+    static sortByNamePreferringOnesWithURL(repositories)
+    {
+        return repositories.sort(function (a, b) {
+            if (!!a._blameUrl == !!b._blameUrl) {
+                if (a.name() > b.name())
+                    return 1;
+                else if (a.name() < b.name())
+                    return -1;
+                return 0;
+            } else if (b._blameUrl) // a > b
+                return 1;
+            return -1;
+        });
+    }
+
 }
