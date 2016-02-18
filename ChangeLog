@@ -1,3 +1,15 @@
+2016-02-18  Joonghun Park  <jh718.park@samsung.com>
+
+        [CMake] Remove meaningless conditional statements in CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=153778
+
+        Reviewed by Csaba Osztrogonác.
+
+        * CMakeLists.txt:
+        Use CMAKE_FOO_OUTPUT_DIRECTORY located in CMakeLists.txt as default value.
+        And remove conditional statements which has enclosed these one
+        because they don't have meaning anymore.
+
 2016-02-15  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable INTL on WinCairo
