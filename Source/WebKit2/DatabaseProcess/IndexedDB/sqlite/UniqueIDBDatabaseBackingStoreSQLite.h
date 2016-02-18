@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
-#include "UniqueIDBDatabase.h" 
+#include "LegacyUniqueIDBDatabase.h" 
 #include "UniqueIDBDatabaseBackingStore.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/PassRefPtr.h>
@@ -51,7 +51,7 @@ class SQLiteIDBTransaction;
 
 class UniqueIDBDatabaseBackingStoreSQLite final : public UniqueIDBDatabaseBackingStore {
 public:
-    static Ref<UniqueIDBDatabaseBackingStore> create(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
+    static Ref<UniqueIDBDatabaseBackingStore> create(const LegacyUniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
     {
         return adoptRef(*new UniqueIDBDatabaseBackingStoreSQLite(identifier, databaseDirectory));
     }
@@ -95,7 +95,7 @@ public:
     void unregisterCursor(SQLiteIDBCursor*);
 
 private:
-    UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
+    UniqueIDBDatabaseBackingStoreSQLite(const LegacyUniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
 
     std::unique_ptr<WebCore::SQLiteDatabase> openSQLiteDatabaseAtPath(const String&);
     std::unique_ptr<WebCore::IDBDatabaseMetadata> extractExistingMetadata();
@@ -108,7 +108,7 @@ private:
 
     int idbKeyCollate(int aLength, const void* a, int bLength, const void* b);
 
-    UniqueIDBDatabaseIdentifier m_identifier;
+    LegacyUniqueIDBDatabaseIdentifier m_identifier;
     String m_absoluteDatabaseDirectory;
 
     std::unique_ptr<WebCore::SQLiteDatabase> m_sqliteDB;

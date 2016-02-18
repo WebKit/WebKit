@@ -32,7 +32,7 @@
 #include "DatabaseProcessMessages.h"
 #include "DatabaseProcessProxyMessages.h"
 #include "DatabaseToWebProcessConnection.h"
-#include "UniqueIDBDatabase.h"
+#include "LegacyUniqueIDBDatabase.h"
 #include "WebCrossThreadCopier.h"
 #include "WebsiteData.h"
 #include <WebCore/CrossThreadTask.h>
@@ -96,21 +96,21 @@ void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringRefe
 }
 
 #if ENABLE(INDEXED_DATABASE)
-RefPtr<UniqueIDBDatabase> DatabaseProcess::getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
+RefPtr<LegacyUniqueIDBDatabase> DatabaseProcess::getOrCreateLegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabaseIdentifier& identifier)
 {
     auto addResult = m_idbDatabases.add(identifier, nullptr);
 
     if (!addResult.isNewEntry)
         return addResult.iterator->value;
 
-    RefPtr<UniqueIDBDatabase> database = UniqueIDBDatabase::create(identifier);
+    RefPtr<LegacyUniqueIDBDatabase> database = LegacyUniqueIDBDatabase::create(identifier);
     addResult.iterator->value = database.get();
     return database;
 }
 
-void DatabaseProcess::removeUniqueIDBDatabase(const UniqueIDBDatabase& database)
+void DatabaseProcess::removeLegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabase& database)
 {
-    const UniqueIDBDatabaseIdentifier& identifier = database.identifier();
+    const LegacyUniqueIDBDatabaseIdentifier& identifier = database.identifier();
     ASSERT(m_idbDatabases.contains(identifier));
 
     m_idbDatabases.remove(identifier);

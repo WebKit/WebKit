@@ -29,7 +29,7 @@
 #if ENABLE(DATABASE_PROCESS)
 
 #include "ChildProcess.h"
-#include "UniqueIDBDatabaseIdentifier.h"
+#include "LegacyUniqueIDBDatabaseIdentifier.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ struct SecurityOriginData;
 namespace WebKit {
 
 class DatabaseToWebProcessConnection;
-class UniqueIDBDatabase;
+class LegacyUniqueIDBDatabase;
 
 struct DatabaseProcessCreationParameters;
 
@@ -55,8 +55,8 @@ public:
 #if ENABLE(INDEXED_DATABASE)
     const String& indexedDatabaseDirectory() const { return m_indexedDatabaseDirectory; }
 
-    RefPtr<UniqueIDBDatabase> getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
-    void removeUniqueIDBDatabase(const UniqueIDBDatabase&);
+    RefPtr<LegacyUniqueIDBDatabase> getOrCreateLegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabaseIdentifier&);
+    void removeLegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabase&);
 
     void ensureIndexedDatabaseRelativePathExists(const String&);
     String absoluteIndexedDatabasePathFromDatabaseRelativePath(const String&);
@@ -109,7 +109,7 @@ private:
 #if ENABLE(INDEXED_DATABASE)
     String m_indexedDatabaseDirectory;
 
-    HashMap<UniqueIDBDatabaseIdentifier, RefPtr<UniqueIDBDatabase>> m_idbDatabases;
+    HashMap<LegacyUniqueIDBDatabaseIdentifier, RefPtr<LegacyUniqueIDBDatabase>> m_idbDatabases;
 #endif
 
     Deque<std::unique_ptr<WebCore::CrossThreadTask>> m_databaseTasks;

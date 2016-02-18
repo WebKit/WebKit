@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "UniqueIDBDatabase.h"
+#include "LegacyUniqueIDBDatabase.h"
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
@@ -49,12 +49,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-String UniqueIDBDatabase::calculateAbsoluteDatabaseFilename(const String& absoluteDatabaseDirectory)
+String LegacyUniqueIDBDatabase::calculateAbsoluteDatabaseFilename(const String& absoluteDatabaseDirectory)
 {
     return pathByAppendingComponent(absoluteDatabaseDirectory, "IndexedDB.sqlite3");
 }
 
-UniqueIDBDatabase::UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
+LegacyUniqueIDBDatabase::LegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabaseIdentifier& identifier)
     : m_identifier(identifier)
     , m_acceptingNewRequests(true)
     , m_didGetMetadataFromBackingStore(false)
@@ -73,13 +73,13 @@ UniqueIDBDatabase::UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifi
     DatabaseProcess::singleton().ensureIndexedDatabaseRelativePathExists(m_databaseRelativeDirectory);
 }
 
-UniqueIDBDatabase::~UniqueIDBDatabase()
+LegacyUniqueIDBDatabase::~LegacyUniqueIDBDatabase()
 {
     ASSERT(!m_acceptingNewRequests);
     ASSERT(m_pendingMetadataRequests.isEmpty());
 }
 
-String UniqueIDBDatabase::filenameForDatabaseName() const
+String LegacyUniqueIDBDatabase::filenameForDatabaseName() const
 {
     ASSERT(!m_identifier.databaseName().isNull());
 
@@ -92,38 +92,38 @@ String UniqueIDBDatabase::filenameForDatabaseName() const
     return filename;
 }
 
-String UniqueIDBDatabase::databaseFilenameIdentifier(const SecurityOriginData& originData) const
+String LegacyUniqueIDBDatabase::databaseFilenameIdentifier(const SecurityOriginData& originData) const
 {
     Ref<SecurityOrigin> securityOrigin(SecurityOrigin::create(originData.protocol, originData.host, originData.port));
     return securityOrigin.get().databaseIdentifier();
 }
 
-bool UniqueIDBDatabase::canShareDatabases(const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin) const
+bool LegacyUniqueIDBDatabase::canShareDatabases(const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin) const
 {
     // For now, an origin's database access is predicated on equality with the other origin.
     // We might need to make this more nuanced later.
     return openingOrigin == mainFrameOrigin;
 }
 
-void UniqueIDBDatabase::registerConnection(DatabaseProcessIDBConnection& connection)
+void LegacyUniqueIDBDatabase::registerConnection(DatabaseProcessIDBConnection& connection)
 {
     ASSERT(!m_connections.contains(&connection));
     m_connections.add(&connection);
 }
 
-void UniqueIDBDatabase::unregisterConnection(DatabaseProcessIDBConnection& connection)
+void LegacyUniqueIDBDatabase::unregisterConnection(DatabaseProcessIDBConnection& connection)
 {
     ASSERT(m_connections.contains(&connection));
     resetAllTransactions(connection);
     m_connections.remove(&connection);
 
     if (m_connections.isEmpty() && m_pendingTransactionRollbacks.isEmpty()) {
-        shutdown(UniqueIDBDatabaseShutdownType::NormalShutdown);
-        DatabaseProcess::singleton().removeUniqueIDBDatabase(*this);
+        shutdown(LegacyUniqueIDBDatabaseShutdownType::NormalShutdown);
+        DatabaseProcess::singleton().removeLegacyUniqueIDBDatabase(*this);
     }
 }
 
-void UniqueIDBDatabase::shutdown(UniqueIDBDatabaseShutdownType type)
+void LegacyUniqueIDBDatabase::shutdown(LegacyUniqueIDBDatabaseShutdownType type)
 {
     ASSERT(RunLoop::isMain());
 
@@ -140,31 +140,31 @@ void UniqueIDBDatabase::shutdown(UniqueIDBDatabaseShutdownType type)
         m_databaseTasks.clear();
     }
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::shutdownBackingStore, type, absoluteDatabaseDirectory()), DatabaseTaskType::Shutdown);
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::shutdownBackingStore, type, absoluteDatabaseDirectory()), DatabaseTaskType::Shutdown);
 }
 
-void UniqueIDBDatabase::shutdownBackingStore(UniqueIDBDatabaseShutdownType type, const String& databaseDirectory)
+void LegacyUniqueIDBDatabase::shutdownBackingStore(LegacyUniqueIDBDatabaseShutdownType type, const String& databaseDirectory)
 {
     ASSERT(!RunLoop::isMain());
 
     m_backingStore = nullptr;
 
-    if (type == UniqueIDBDatabaseShutdownType::DeleteShutdown) {
-        String dbFilename = UniqueIDBDatabase::calculateAbsoluteDatabaseFilename(databaseDirectory);
-        LOG(IDB, "UniqueIDBDatabase::shutdownBackingStore deleting file '%s' on disk", dbFilename.utf8().data());
+    if (type == LegacyUniqueIDBDatabaseShutdownType::DeleteShutdown) {
+        String dbFilename = LegacyUniqueIDBDatabase::calculateAbsoluteDatabaseFilename(databaseDirectory);
+        LOG(IDB, "LegacyUniqueIDBDatabase::shutdownBackingStore deleting file '%s' on disk", dbFilename.utf8().data());
         deleteFile(dbFilename);
         deleteEmptyDirectory(databaseDirectory);
     }
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didShutdownBackingStore, type), DatabaseTaskType::Shutdown);
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didShutdownBackingStore, type), DatabaseTaskType::Shutdown);
 }
 
-void UniqueIDBDatabase::didShutdownBackingStore(UniqueIDBDatabaseShutdownType type)
+void LegacyUniqueIDBDatabase::didShutdownBackingStore(LegacyUniqueIDBDatabaseShutdownType type)
 {
     ASSERT(RunLoop::isMain());
 
     // Balanced by a ref in ::shutdown()
-    RefPtr<UniqueIDBDatabase> protector(adoptRef(this));
+    RefPtr<LegacyUniqueIDBDatabase> protector(adoptRef(this));
 
     // Empty out remaining main thread tasks.
     while (performNextMainThreadTask()) {
@@ -188,7 +188,7 @@ void UniqueIDBDatabase::didShutdownBackingStore(UniqueIDBDatabaseShutdownType ty
     m_pendingShutdownTask = nullptr;
 }
 
-void UniqueIDBDatabase::deleteDatabase(std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::deleteDatabase(std::function<void (bool)> successCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -200,19 +200,19 @@ void UniqueIDBDatabase::deleteDatabase(std::function<void (bool)> successCallbac
         return;
     }
 
-    RefPtr<UniqueIDBDatabase> protector(this);
-    m_pendingShutdownTask = AsyncRequestImpl<UniqueIDBDatabaseShutdownType>::create([this, protector, successCallback](UniqueIDBDatabaseShutdownType type) {
+    RefPtr<LegacyUniqueIDBDatabase> protector(this);
+    m_pendingShutdownTask = AsyncRequestImpl<LegacyUniqueIDBDatabaseShutdownType>::create([this, protector, successCallback](LegacyUniqueIDBDatabaseShutdownType type) {
         // If the shutdown just completed was a Delete shutdown then we succeeded.
         // If not report failure instead of trying again.
-        successCallback(type == UniqueIDBDatabaseShutdownType::DeleteShutdown);
+        successCallback(type == LegacyUniqueIDBDatabaseShutdownType::DeleteShutdown);
     }, [this, protector, successCallback] {
         successCallback(false);
     });
 
-    shutdown(UniqueIDBDatabaseShutdownType::DeleteShutdown);
+    shutdown(LegacyUniqueIDBDatabaseShutdownType::DeleteShutdown);
 }
 
-void UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void (bool, const IDBDatabaseMetadata&)> completionCallback)
+void LegacyUniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void (bool, const IDBDatabaseMetadata&)> completionCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -248,10 +248,10 @@ void UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void (bo
     m_pendingMetadataRequests.append(request.release());
 
     if (shouldOpenBackingStore)
-        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::openBackingStoreAndReadMetadata, m_identifier, absoluteDatabaseDirectory()));
+        postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::openBackingStoreAndReadMetadata, m_identifier, absoluteDatabaseDirectory()));
 }
 
-void UniqueIDBDatabase::openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
+void LegacyUniqueIDBDatabase::openBackingStoreAndReadMetadata(const LegacyUniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(!m_backingStore);
@@ -264,10 +264,10 @@ void UniqueIDBDatabase::openBackingStoreAndReadMetadata(const UniqueIDBDatabaseI
     m_backingStore = UniqueIDBDatabaseBackingStoreSQLite::create(identifier, databaseDirectory);
     std::unique_ptr<IDBDatabaseMetadata> metadata = m_backingStore->getOrEstablishMetadata();
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didOpenBackingStoreAndReadMetadata, metadata ? *metadata : IDBDatabaseMetadata(), !!metadata));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didOpenBackingStoreAndReadMetadata, metadata ? *metadata : IDBDatabaseMetadata(), !!metadata));
 }
 
-void UniqueIDBDatabase::didOpenBackingStoreAndReadMetadata(const IDBDatabaseMetadata& metadata, bool success)
+void LegacyUniqueIDBDatabase::didOpenBackingStoreAndReadMetadata(const IDBDatabaseMetadata& metadata, bool success)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_metadata);
@@ -283,32 +283,32 @@ void UniqueIDBDatabase::didOpenBackingStoreAndReadMetadata(const IDBDatabaseMeta
     }
 }
 
-void UniqueIDBDatabase::openTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::openTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode, std::function<void (bool)> successCallback)
 {
-    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &UniqueIDBDatabase::openBackingStoreTransaction, transactionIdentifier, objectStoreIDs, mode), successCallback);
+    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::openBackingStoreTransaction, transactionIdentifier, objectStoreIDs, mode), successCallback);
 }
 
-void UniqueIDBDatabase::beginTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::beginTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback)
 {
-    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &UniqueIDBDatabase::beginBackingStoreTransaction, transactionIdentifier), successCallback);
+    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::beginBackingStoreTransaction, transactionIdentifier), successCallback);
 }
 
-void UniqueIDBDatabase::commitTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::commitTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback)
 {
-    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &UniqueIDBDatabase::commitBackingStoreTransaction, transactionIdentifier), successCallback);
+    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::commitBackingStoreTransaction, transactionIdentifier), successCallback);
 }
 
-void UniqueIDBDatabase::resetTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::resetTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback)
 {
-    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &UniqueIDBDatabase::resetBackingStoreTransaction, transactionIdentifier), successCallback);
+    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::resetBackingStoreTransaction, transactionIdentifier), successCallback);
 }
 
-void UniqueIDBDatabase::rollbackTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::rollbackTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback)
 {
-    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &UniqueIDBDatabase::rollbackBackingStoreTransaction, transactionIdentifier), successCallback);
+    postTransactionOperation(transactionIdentifier, createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::rollbackBackingStoreTransaction, transactionIdentifier), successCallback);
 }
 
-void UniqueIDBDatabase::postTransactionOperation(const IDBIdentifier& transactionIdentifier, std::unique_ptr<CrossThreadTask> task, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::postTransactionOperation(const IDBIdentifier& transactionIdentifier, std::unique_ptr<CrossThreadTask> task, std::function<void (bool)> successCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -334,7 +334,7 @@ void UniqueIDBDatabase::postTransactionOperation(const IDBIdentifier& transactio
     m_pendingTransactionRequests.add(transactionIdentifier, request.release());
 }
 
-void UniqueIDBDatabase::didCompleteTransactionOperation(const IDBIdentifier& transactionIdentifier, bool success)
+void LegacyUniqueIDBDatabase::didCompleteTransactionOperation(const IDBIdentifier& transactionIdentifier, bool success)
 {
     ASSERT(RunLoop::isMain());
 
@@ -347,7 +347,7 @@ void UniqueIDBDatabase::didCompleteTransactionOperation(const IDBIdentifier& tra
         finalizeRollback(transactionIdentifier);
 }
 
-void UniqueIDBDatabase::changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion, std::function<void (bool)> successCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -371,45 +371,45 @@ void UniqueIDBDatabase::changeDatabaseVersion(const IDBIdentifier& transactionId
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::changeDatabaseVersionInBackingStore, requestID, transactionIdentifier, newVersion));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::changeDatabaseVersionInBackingStore, requestID, transactionIdentifier, newVersion));
 }
 
-void UniqueIDBDatabase::didChangeDatabaseVersion(uint64_t requestID, bool success)
+void LegacyUniqueIDBDatabase::didChangeDatabaseVersion(uint64_t requestID, bool success)
 {
     didCompleteBoolRequest(requestID, success);
 }
 
-void UniqueIDBDatabase::didCreateObjectStore(uint64_t requestID, bool success)
+void LegacyUniqueIDBDatabase::didCreateObjectStore(uint64_t requestID, bool success)
 {
     didCompleteBoolRequest(requestID, success);
 }
 
-void UniqueIDBDatabase::didDeleteObjectStore(uint64_t requestID, bool success)
+void LegacyUniqueIDBDatabase::didDeleteObjectStore(uint64_t requestID, bool success)
 {
     didCompleteBoolRequest(requestID, success);
 }
 
-void UniqueIDBDatabase::didClearObjectStore(uint64_t requestID, bool success)
+void LegacyUniqueIDBDatabase::didClearObjectStore(uint64_t requestID, bool success)
 {
     didCompleteBoolRequest(requestID, success);
 }
 
-void UniqueIDBDatabase::didCreateIndex(uint64_t requestID, bool success)
+void LegacyUniqueIDBDatabase::didCreateIndex(uint64_t requestID, bool success)
 {
     didCompleteBoolRequest(requestID, success);
 }
 
-void UniqueIDBDatabase::didDeleteIndex(uint64_t requestID, bool success)
+void LegacyUniqueIDBDatabase::didDeleteIndex(uint64_t requestID, bool success)
 {
     didCompleteBoolRequest(requestID, success);
 }
 
-void UniqueIDBDatabase::didCompleteBoolRequest(uint64_t requestID, bool success)
+void LegacyUniqueIDBDatabase::didCompleteBoolRequest(uint64_t requestID, bool success)
 {
     m_pendingDatabaseTasks.take(requestID).get().completeRequest(success);
 }
 
-void UniqueIDBDatabase::createObjectStore(const IDBIdentifier& transactionIdentifier, const IDBObjectStoreMetadata& metadata, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::createObjectStore(const IDBIdentifier& transactionIdentifier, const IDBObjectStoreMetadata& metadata, std::function<void (bool)> successCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -434,10 +434,10 @@ void UniqueIDBDatabase::createObjectStore(const IDBIdentifier& transactionIdenti
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::createObjectStoreInBackingStore, requestID, transactionIdentifier, metadata));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::createObjectStoreInBackingStore, requestID, transactionIdentifier, metadata));
 }
 
-void UniqueIDBDatabase::deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void (bool)> successCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -461,10 +461,10 @@ void UniqueIDBDatabase::deleteObjectStore(const IDBIdentifier& transactionIdenti
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::deleteObjectStoreInBackingStore, requestID, transactionIdentifier, objectStoreID));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::deleteObjectStoreInBackingStore, requestID, transactionIdentifier, objectStoreID));
 }
 
-void UniqueIDBDatabase::clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void (bool)> successCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -484,10 +484,10 @@ void UniqueIDBDatabase::clearObjectStore(const IDBIdentifier& transactionIdentif
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::clearObjectStoreInBackingStore, requestID, transactionIdentifier, objectStoreID));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::clearObjectStoreInBackingStore, requestID, transactionIdentifier, objectStoreID));
 }
 
-void UniqueIDBDatabase::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata, std::function<void (bool)> successCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -518,10 +518,10 @@ void UniqueIDBDatabase::createIndex(const IDBIdentifier& transactionIdentifier, 
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::createIndexInBackingStore, requestID, transactionIdentifier, objectStoreID, metadata));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::createIndexInBackingStore, requestID, transactionIdentifier, objectStoreID, metadata));
 }
 
-void UniqueIDBDatabase::deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, std::function<void (bool)> successCallback)
+void LegacyUniqueIDBDatabase::deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, std::function<void (bool)> successCallback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -552,10 +552,10 @@ void UniqueIDBDatabase::deleteIndex(const IDBIdentifier& transactionIdentifier, 
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::deleteIndexInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::deleteIndexInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID));
 }
 
-void UniqueIDBDatabase::putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyData& keyData, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys, std::function<void (const IDBKeyData&, uint32_t, const String&)> callback)
+void LegacyUniqueIDBDatabase::putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyData& keyData, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys, std::function<void (const IDBKeyData&, uint32_t, const String&)> callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -575,10 +575,10 @@ void UniqueIDBDatabase::putRecord(const IDBIdentifier& transactionIdentifier, in
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::putRecordInBackingStore, requestID, transactionIdentifier, m_metadata->objectStores.get(objectStoreID), keyData, value.vector(), putMode, indexIDs, indexKeys));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::putRecordInBackingStore, requestID, transactionIdentifier, m_metadata->objectStores.get(objectStoreID), keyData, value.vector(), putMode, indexIDs, indexKeys));
 }
 
-void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType, std::function<void (const IDBGetResult&, uint32_t, const String&)> callback)
+void LegacyUniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType, std::function<void (const IDBGetResult&, uint32_t, const String&)> callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -598,10 +598,10 @@ void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, in
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::getRecordFromBackingStore, requestID, transactionIdentifier, m_metadata->objectStores.get(objectStoreID), indexID, keyRangeData, cursorType));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::getRecordFromBackingStore, requestID, transactionIdentifier, m_metadata->objectStores.get(objectStoreID), indexID, keyRangeData, cursorType));
 }
 
-void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRangeData, std::function<void (int64_t, const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
+void LegacyUniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRangeData, std::function<void (int64_t, const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -621,10 +621,10 @@ void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, i
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::openCursorInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID, cursorDirection, cursorType, taskType, keyRangeData));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::openCursorInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID, cursorDirection, cursorType, taskType, keyRangeData));
 }
 
-void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void (const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
+void LegacyUniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void (const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -642,10 +642,10 @@ void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uin
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::advanceCursorInBackingStore, requestID, cursorIdentifier, count));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::advanceCursorInBackingStore, requestID, cursorIdentifier, count));
 }
 
-void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, const IDBKeyData& key, std::function<void (const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
+void LegacyUniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, const IDBKeyData& key, std::function<void (const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&)> callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -663,10 +663,10 @@ void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, con
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::iterateCursorInBackingStore, requestID, cursorIdentifier, key));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::iterateCursorInBackingStore, requestID, cursorIdentifier, key));
 }
 
-void UniqueIDBDatabase::count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, std::function<void (int64_t, uint32_t, const String&)> callback)
+void LegacyUniqueIDBDatabase::count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData, std::function<void (int64_t, uint32_t, const String&)> callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -684,10 +684,10 @@ void UniqueIDBDatabase::count(const IDBIdentifier& transactionIdentifier, int64_
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::countInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID, keyRangeData));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::countInBackingStore, requestID, transactionIdentifier, objectStoreID, indexID, keyRangeData));
 }
 
-void UniqueIDBDatabase::deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData, std::function<void (uint32_t, const String&)> callback)
+void LegacyUniqueIDBDatabase::deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData, std::function<void (uint32_t, const String&)> callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -705,122 +705,122 @@ void UniqueIDBDatabase::deleteRange(const IDBIdentifier& transactionIdentifier, 
     uint64_t requestID = request->requestID();
     m_pendingDatabaseTasks.add(requestID, request.release());
 
-    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::deleteRangeInBackingStore, requestID, transactionIdentifier, objectStoreID, keyRangeData));
+    postDatabaseTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::deleteRangeInBackingStore, requestID, transactionIdentifier, objectStoreID, keyRangeData));
 }
 
-void UniqueIDBDatabase::openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode)
+void LegacyUniqueIDBDatabase::openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->establishTransaction(transactionIdentifier, objectStoreIDs, mode);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didEstablishTransaction, transactionIdentifier, success));
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didEstablishTransaction, transactionIdentifier, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
 }
 
-void UniqueIDBDatabase::beginBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
+void LegacyUniqueIDBDatabase::beginBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->beginTransaction(transactionIdentifier);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
 }
 
-void UniqueIDBDatabase::commitBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
+void LegacyUniqueIDBDatabase::commitBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->commitTransaction(transactionIdentifier);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
 }
 
-void UniqueIDBDatabase::resetBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
+void LegacyUniqueIDBDatabase::resetBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->resetTransaction(transactionIdentifier);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didResetTransaction, transactionIdentifier, success));
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didResetTransaction, transactionIdentifier, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
 }
 
-void UniqueIDBDatabase::rollbackBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
+void LegacyUniqueIDBDatabase::rollbackBackingStoreTransaction(const IDBIdentifier& transactionIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->rollbackTransaction(transactionIdentifier);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
 }
 
-void UniqueIDBDatabase::changeDatabaseVersionInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, uint64_t newVersion)
+void LegacyUniqueIDBDatabase::changeDatabaseVersionInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, uint64_t newVersion)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->changeDatabaseVersion(transactionIdentifier, newVersion);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didChangeDatabaseVersion, requestID, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didChangeDatabaseVersion, requestID, success));
 }
 
-void UniqueIDBDatabase::createObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, const IDBObjectStoreMetadata& metadata)
+void LegacyUniqueIDBDatabase::createObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, const IDBObjectStoreMetadata& metadata)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->createObjectStore(transactionIdentifier, metadata);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCreateObjectStore, requestID, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCreateObjectStore, requestID, success));
 }
 
-void UniqueIDBDatabase::deleteObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
+void LegacyUniqueIDBDatabase::deleteObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->deleteObjectStore(transactionIdentifier, objectStoreID);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didDeleteObjectStore, requestID, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didDeleteObjectStore, requestID, success));
 }
 
-void UniqueIDBDatabase::clearObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
+void LegacyUniqueIDBDatabase::clearObjectStoreInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->clearObjectStore(transactionIdentifier, objectStoreID);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didClearObjectStore, requestID, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didClearObjectStore, requestID, success));
 }
 
-void UniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata)
+void LegacyUniqueIDBDatabase::createIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBIndexMetadata& metadata)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->createIndex(transactionIdentifier, objectStoreID, metadata);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCreateIndex, requestID, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCreateIndex, requestID, success));
 }
 
-void UniqueIDBDatabase::deleteIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID)
+void LegacyUniqueIDBDatabase::deleteIndexInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
 
     bool success = m_backingStore->deleteIndex(transactionIdentifier, objectStoreID, indexID);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didDeleteIndex, requestID, success));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didDeleteIndex, requestID, success));
 }
 
-void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, const IDBKeyData& inputKeyData, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)
+void LegacyUniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, const IDBKeyData& inputKeyData, const Vector<uint8_t>& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<IDBKeyData>>& indexKeys)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
@@ -831,7 +831,7 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
 
     if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && inputKeyData.isNull()) {
         if (!m_backingStore->generateKeyNumber(transaction, objectStoreMetadata.id, keyNumber)) {
-            postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
+            postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
             return;
         }
         key.setNumberValue(keyNumber);
@@ -842,11 +842,11 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
     if (putMode == IDBDatabaseBackend::AddOnly) {
         bool keyExists;
         if (!m_backingStore->keyExistsInObjectStore(transaction, objectStoreMetadata.id, key, keyExists)) {
-            postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
+            postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
             return;
         }
         if (keyExists) {
-            postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::ConstraintError, ASCIILiteral("Key already exists in the object store")));
+            postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::ConstraintError, ASCIILiteral("Key already exists in the object store")));
             return;
         }
     }
@@ -854,12 +854,12 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
     // The spec says that even if we're about to overwrite the record, perform the steps to delete it first.
     // This is important because formally deleting it from from the object store also removes it from the appropriate indexes.
     if (!m_backingStore->deleteRecord(transaction, objectStoreMetadata.id, key)) {
-        postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Replacing an existing key in backing store, unable to delete previous record.")));
+        postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Replacing an existing key in backing store, unable to delete previous record.")));
         return;
     }
 
     if (!m_backingStore->putRecord(transaction, objectStoreMetadata.id, key, value.data(), value.size())) {
-        postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error putting a record")));
+        postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error putting a record")));
         return;
     }
 
@@ -867,7 +867,7 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
     for (size_t i = 0; i < indexIDs.size(); ++i) {
         for (size_t j = 0; j < indexKeys[i].size(); ++j) {
             if (!m_backingStore->putIndexRecord(transaction, objectStoreMetadata.id, indexIDs[i], key, indexKeys[i][j])) {
-                postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error writing index key")));
+                postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error writing index key")));
                 return;
             }
         }
@@ -877,20 +877,20 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
 
     if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && key.type() == KeyType::Number) {
         if (!m_backingStore->updateKeyGeneratorNumber(transaction, objectStoreMetadata.id, keyNumber, keyWasGenerated)) {
-            postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error updating key generator")));
+            postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error updating key generator")));
             return;
         }
     }
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, key, 0, String(StringImpl::empty())));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didPutRecordInBackingStore, requestID, key, 0, String(StringImpl::empty())));
 }
 
-void UniqueIDBDatabase::didPutRecordInBackingStore(uint64_t requestID, const IDBKeyData& keyData, uint32_t errorCode, const String& errorMessage)
+void LegacyUniqueIDBDatabase::didPutRecordInBackingStore(uint64_t requestID, const IDBKeyData& keyData, uint32_t errorCode, const String& errorMessage)
 {
     m_pendingDatabaseTasks.take(requestID).get().completeRequest(keyData, errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType)
+void LegacyUniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBIdentifier& transaction, const IDBObjectStoreMetadata& objectStoreMetadata, int64_t indexID, const IDBKeyRangeData& keyRangeData, IndexedDB::CursorType cursorType)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
@@ -898,7 +898,7 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
     RefPtr<IDBKeyRange> keyRange = keyRangeData.maybeCreateIDBKeyRange();
     ASSERT(keyRange);
     if (!keyRange) {
-        postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Invalid IDBKeyRange requested from backing store")));
+        postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Invalid IDBKeyRange requested from backing store")));
         return;
     }
 
@@ -908,10 +908,10 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
 
         if (keyRange->isOnlyKey()) {
             if (!m_backingStore->getKeyRecordFromObjectStore(transaction, objectStoreMetadata.id, *keyRange->lower(), result))
-                postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get key record from object store in backing store")));
+                postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get key record from object store in backing store")));
             else {
                 IDBGetResult getResult = result ? IDBGetResult(result.release(), keyRange->lower(), objectStoreMetadata.keyPath) : IDBGetResult();
-                postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, getResult, 0, String(StringImpl::empty())));
+                postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didGetRecordFromBackingStore, requestID, getResult, 0, String(StringImpl::empty())));
             }
 
             return;
@@ -920,10 +920,10 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
         RefPtr<IDBKey> resultKey;
 
         if (!m_backingStore->getKeyRangeRecordFromObjectStore(transaction, objectStoreMetadata.id, *keyRange, result, resultKey))
-            postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get key range record from object store in backing store")));
+            postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get key range record from object store in backing store")));
         else {
             IDBGetResult getResult = result ? IDBGetResult(result.release(), resultKey.release(), objectStoreMetadata.keyPath) : IDBGetResult();
-            postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, getResult, 0, String(StringImpl::empty())));
+            postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didGetRecordFromBackingStore, requestID, getResult, 0, String(StringImpl::empty())));
         }
 
         return;
@@ -933,22 +933,22 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
 
     IDBGetResult result;
     if (!m_backingStore->getIndexRecord(transaction, objectStoreMetadata.id, indexID, keyRangeData, cursorType, result)) {
-        postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get index record from backing store")));
+        postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didGetRecordFromBackingStore, requestID, IDBGetResult(), IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get index record from backing store")));
         return;
     }
 
     // We must return a key path to know how to inject the result key into the result value object.
     result.setKeyPath(objectStoreMetadata.keyPath);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, result, 0, String(StringImpl::empty())));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didGetRecordFromBackingStore, requestID, result, 0, String(StringImpl::empty())));
 }
 
-void UniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const IDBGetResult& result, uint32_t errorCode, const String& errorMessage)
+void LegacyUniqueIDBDatabase::didGetRecordFromBackingStore(uint64_t requestID, const IDBGetResult& result, uint32_t errorCode, const String& errorMessage)
 {
     m_pendingDatabaseTasks.take(requestID).get().completeRequest(result, errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange)
+void LegacyUniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, IndexedDB::CursorDirection cursorDirection, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, const IDBKeyRangeData& keyRange)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(m_backingStore);
@@ -966,15 +966,15 @@ void UniqueIDBDatabase::openCursorInBackingStore(uint64_t requestID, const IDBId
         errorMessage = ASCIILiteral("Unknown error opening cursor in backing store");
     }
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didOpenCursorInBackingStore, requestID, cursorID, key, primaryKey, valueBuffer, errorCode, errorMessage));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didOpenCursorInBackingStore, requestID, cursorID, key, primaryKey, valueBuffer, errorCode, errorMessage));
 }
 
-void UniqueIDBDatabase::didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
+void LegacyUniqueIDBDatabase::didOpenCursorInBackingStore(uint64_t requestID, int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
 {
     m_pendingDatabaseTasks.take(requestID).get().completeRequest(cursorID, key, primaryKey, SharedBuffer::create(valueBuffer.data(), valueBuffer.size()), errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::advanceCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, uint64_t count)
+void LegacyUniqueIDBDatabase::advanceCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, uint64_t count)
 {
     IDBKeyData key;
     IDBKeyData primaryKey;
@@ -988,15 +988,15 @@ void UniqueIDBDatabase::advanceCursorInBackingStore(uint64_t requestID, const ID
         errorMessage = ASCIILiteral("Unknown error advancing cursor in backing store");
     }
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didAdvanceCursorInBackingStore, requestID, key, primaryKey, valueBuffer, errorCode, errorMessage));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didAdvanceCursorInBackingStore, requestID, key, primaryKey, valueBuffer, errorCode, errorMessage));
 }
 
-void UniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
+void LegacyUniqueIDBDatabase::didAdvanceCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
 {
     m_pendingDatabaseTasks.take(requestID).get().completeRequest(key, primaryKey, SharedBuffer::create(valueBuffer.data(), valueBuffer.size()), errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, const IDBKeyData& iterateKey)
+void LegacyUniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const IDBIdentifier& cursorIdentifier, const IDBKeyData& iterateKey)
 {
     IDBKeyData key;
     IDBKeyData primaryKey;
@@ -1010,53 +1010,53 @@ void UniqueIDBDatabase::iterateCursorInBackingStore(uint64_t requestID, const ID
         errorMessage = ASCIILiteral("Unknown error iterating cursor in backing store");
     }
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didIterateCursorInBackingStore, requestID, key, primaryKey, valueBuffer, errorCode, errorMessage));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didIterateCursorInBackingStore, requestID, key, primaryKey, valueBuffer, errorCode, errorMessage));
 }
 
-void UniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
+void LegacyUniqueIDBDatabase::didIterateCursorInBackingStore(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const Vector<uint8_t>& valueBuffer, uint32_t errorCode, const String& errorMessage)
 {
     m_pendingDatabaseTasks.take(requestID).get().completeRequest(key, primaryKey, SharedBuffer::create(valueBuffer.data(), valueBuffer.size()), errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::countInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData)
+void LegacyUniqueIDBDatabase::countInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const IDBKeyRangeData& keyRangeData)
 {
     int64_t count;
 
     if (!m_backingStore->count(transactionIdentifier, objectStoreID, indexID, keyRangeData, count)) {
         LOG_ERROR("Failed to get count from backing store.");
-        postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCountInBackingStore, requestID, 0, IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get count from backing store")));
+        postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCountInBackingStore, requestID, 0, IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get count from backing store")));
 
         return;
     }
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didCountInBackingStore, requestID, count, 0, String(StringImpl::empty())));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didCountInBackingStore, requestID, count, 0, String(StringImpl::empty())));
 }
 
-void UniqueIDBDatabase::didCountInBackingStore(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage)
+void LegacyUniqueIDBDatabase::didCountInBackingStore(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage)
 {
     m_pendingDatabaseTasks.take(requestID).get().completeRequest(count, errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::deleteRangeInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData)
+void LegacyUniqueIDBDatabase::deleteRangeInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const IDBKeyRangeData& keyRangeData)
 {
     if (!m_backingStore->deleteRange(transactionIdentifier, objectStoreID, keyRangeData)) {
         LOG_ERROR("Failed to delete range from backing store.");
-        postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get count from backing store")));
+        postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get count from backing store")));
 
         return;
     }
 
     m_backingStore->notifyCursorsOfChanges(transactionIdentifier, objectStoreID);
 
-    postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, 0, String(StringImpl::empty())));
+    postMainThreadTask(createCrossThreadTask(*this, &LegacyUniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, 0, String(StringImpl::empty())));
 }
 
-void UniqueIDBDatabase::didDeleteRangeInBackingStore(uint64_t requestID, uint32_t errorCode, const String& errorMessage)
+void LegacyUniqueIDBDatabase::didDeleteRangeInBackingStore(uint64_t requestID, uint32_t errorCode, const String& errorMessage)
 {
     m_pendingDatabaseTasks.take(requestID).get().completeRequest(errorCode, errorMessage);
 }
 
-void UniqueIDBDatabase::didEstablishTransaction(const IDBIdentifier& transactionIdentifier, bool success)
+void LegacyUniqueIDBDatabase::didEstablishTransaction(const IDBIdentifier& transactionIdentifier, bool success)
 {
     ASSERT(RunLoop::isMain());
     if (!success)
@@ -1066,7 +1066,7 @@ void UniqueIDBDatabase::didEstablishTransaction(const IDBIdentifier& transaction
     transactions.iterator->value.add(transactionIdentifier);
 }
 
-void UniqueIDBDatabase::didResetTransaction(const IDBIdentifier& transactionIdentifier, bool success)
+void LegacyUniqueIDBDatabase::didResetTransaction(const IDBIdentifier& transactionIdentifier, bool success)
 {
     ASSERT(RunLoop::isMain());
     if (!success)
@@ -1077,7 +1077,7 @@ void UniqueIDBDatabase::didResetTransaction(const IDBIdentifier& transactionIden
         transactions.get()->value.remove(transactionIdentifier);
 }
 
-void UniqueIDBDatabase::resetAllTransactions(const DatabaseProcessIDBConnection& connection)
+void LegacyUniqueIDBDatabase::resetAllTransactions(const DatabaseProcessIDBConnection& connection)
 {
     ASSERT(RunLoop::isMain());
     auto transactions = m_establishedTransactions.find(&connection);
@@ -1091,7 +1091,7 @@ void UniqueIDBDatabase::resetAllTransactions(const DatabaseProcessIDBConnection&
     }
 }
 
-void UniqueIDBDatabase::finalizeRollback(const WebKit::IDBIdentifier& transactionId)
+void LegacyUniqueIDBDatabase::finalizeRollback(const WebKit::IDBIdentifier& transactionId)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_pendingTransactionRollbacks.contains(transactionId));
@@ -1105,20 +1105,20 @@ void UniqueIDBDatabase::finalizeRollback(const WebKit::IDBIdentifier& transactio
         m_pendingTransactionRollbacks.remove(transactionId);
         resetTransaction(transactionId, [this, transactionId](bool) {
             if (m_acceptingNewRequests && m_connections.isEmpty() && m_pendingTransactionRollbacks.isEmpty()) {
-                shutdown(UniqueIDBDatabaseShutdownType::NormalShutdown);
-                DatabaseProcess::singleton().removeUniqueIDBDatabase(*this);
+                shutdown(LegacyUniqueIDBDatabaseShutdownType::NormalShutdown);
+                DatabaseProcess::singleton().removeLegacyUniqueIDBDatabase(*this);
             }
         });
     });
 }
 
-String UniqueIDBDatabase::absoluteDatabaseDirectory() const
+String LegacyUniqueIDBDatabase::absoluteDatabaseDirectory() const
 {
     ASSERT(RunLoop::isMain());
     return DatabaseProcess::singleton().absoluteIndexedDatabasePathFromDatabaseRelativePath(m_databaseRelativeDirectory);
 }
 
-void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<CrossThreadTask> task, DatabaseTaskType taskType)
+void LegacyUniqueIDBDatabase::postMainThreadTask(std::unique_ptr<CrossThreadTask> task, DatabaseTaskType taskType)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1129,13 +1129,13 @@ void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<CrossThreadTask> task
 
     m_mainThreadTasks.append(WTFMove(task));
 
-    RefPtr<UniqueIDBDatabase> database(this);
+    RefPtr<LegacyUniqueIDBDatabase> database(this);
     RunLoop::main().dispatch([database] {
         database->performNextMainThreadTask();
     });
 }
 
-bool UniqueIDBDatabase::performNextMainThreadTask()
+bool LegacyUniqueIDBDatabase::performNextMainThreadTask()
 {
     ASSERT(RunLoop::isMain());
 
@@ -1158,7 +1158,7 @@ bool UniqueIDBDatabase::performNextMainThreadTask()
     return moreTasks;
 }
 
-void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<CrossThreadTask> task, DatabaseTaskType taskType)
+void LegacyUniqueIDBDatabase::postDatabaseTask(std::unique_ptr<CrossThreadTask> task, DatabaseTaskType taskType)
 {
     ASSERT(RunLoop::isMain());
 
@@ -1169,20 +1169,20 @@ void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<CrossThreadTask> task, 
 
     m_databaseTasks.append(WTFMove(task));
 
-    RefPtr<UniqueIDBDatabase> database(this);
+    RefPtr<LegacyUniqueIDBDatabase> database(this);
     DatabaseProcess::singleton().queue().dispatch([database] {
         database->performNextDatabaseTask();
     });
 }
 
-void UniqueIDBDatabase::performNextDatabaseTask()
+void LegacyUniqueIDBDatabase::performNextDatabaseTask()
 {
     ASSERT(!RunLoop::isMain());
 
     // It is possible that this database might be shutting down on the main thread.
     // In this case, immediately after releasing m_databaseTaskMutex, this database might get deleted.
     // We take a ref() to make sure the database is still live while this last task is performed.
-    RefPtr<UniqueIDBDatabase> protector(this);
+    RefPtr<LegacyUniqueIDBDatabase> protector(this);
 
     std::unique_ptr<CrossThreadTask> task;
     {

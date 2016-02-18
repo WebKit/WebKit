@@ -1,3 +1,128 @@
+2016-02-17  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Rename some "UniqueIDBDatabase" classes that conflict with new classes in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=154363.
+
+        Reviewed by Alex Christensen.
+
+        Adding "Legacy" to the front of the name fixes problems for now.
+        
+        And all of this gunk will go away after Modern IDB is done, anyways.
+        
+        * CMakeLists.txt:
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::getOrCreateLegacyUniqueIDBDatabase):
+        (WebKit::DatabaseProcess::removeLegacyUniqueIDBDatabase):
+        (WebKit::DatabaseProcess::getOrCreateUniqueIDBDatabase): Deleted.
+        (WebKit::DatabaseProcess::removeUniqueIDBDatabase): Deleted.
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::establishConnection):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/LegacyUniqueIDBDatabase.cpp: Renamed from Source/WebKit2/DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp.
+        (WebKit::LegacyUniqueIDBDatabase::calculateAbsoluteDatabaseFilename):
+        (WebKit::LegacyUniqueIDBDatabase::LegacyUniqueIDBDatabase):
+        (WebKit::LegacyUniqueIDBDatabase::~LegacyUniqueIDBDatabase):
+        (WebKit::LegacyUniqueIDBDatabase::filenameForDatabaseName):
+        (WebKit::LegacyUniqueIDBDatabase::databaseFilenameIdentifier):
+        (WebKit::LegacyUniqueIDBDatabase::canShareDatabases):
+        (WebKit::LegacyUniqueIDBDatabase::registerConnection):
+        (WebKit::LegacyUniqueIDBDatabase::unregisterConnection):
+        (WebKit::LegacyUniqueIDBDatabase::shutdown):
+        (WebKit::LegacyUniqueIDBDatabase::shutdownBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didShutdownBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::deleteDatabase):
+        (WebKit::LegacyUniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::LegacyUniqueIDBDatabase::openBackingStoreAndReadMetadata):
+        (WebKit::LegacyUniqueIDBDatabase::didOpenBackingStoreAndReadMetadata):
+        (WebKit::LegacyUniqueIDBDatabase::openTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::beginTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::commitTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::resetTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::rollbackTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::postTransactionOperation):
+        (WebKit::LegacyUniqueIDBDatabase::didCompleteTransactionOperation):
+        (WebKit::LegacyUniqueIDBDatabase::changeDatabaseVersion):
+        (WebKit::LegacyUniqueIDBDatabase::didChangeDatabaseVersion):
+        (WebKit::LegacyUniqueIDBDatabase::didCreateObjectStore):
+        (WebKit::LegacyUniqueIDBDatabase::didDeleteObjectStore):
+        (WebKit::LegacyUniqueIDBDatabase::didClearObjectStore):
+        (WebKit::LegacyUniqueIDBDatabase::didCreateIndex):
+        (WebKit::LegacyUniqueIDBDatabase::didDeleteIndex):
+        (WebKit::LegacyUniqueIDBDatabase::didCompleteBoolRequest):
+        (WebKit::LegacyUniqueIDBDatabase::createObjectStore):
+        (WebKit::LegacyUniqueIDBDatabase::deleteObjectStore):
+        (WebKit::LegacyUniqueIDBDatabase::clearObjectStore):
+        (WebKit::LegacyUniqueIDBDatabase::createIndex):
+        (WebKit::LegacyUniqueIDBDatabase::deleteIndex):
+        (WebKit::LegacyUniqueIDBDatabase::putRecord):
+        (WebKit::LegacyUniqueIDBDatabase::getRecord):
+        (WebKit::LegacyUniqueIDBDatabase::openCursor):
+        (WebKit::LegacyUniqueIDBDatabase::cursorAdvance):
+        (WebKit::LegacyUniqueIDBDatabase::cursorIterate):
+        (WebKit::LegacyUniqueIDBDatabase::count):
+        (WebKit::LegacyUniqueIDBDatabase::deleteRange):
+        (WebKit::LegacyUniqueIDBDatabase::openBackingStoreTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::beginBackingStoreTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::commitBackingStoreTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::resetBackingStoreTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::rollbackBackingStoreTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::changeDatabaseVersionInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::createObjectStoreInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::deleteObjectStoreInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::clearObjectStoreInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::createIndexInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::deleteIndexInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::putRecordInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didPutRecordInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::getRecordFromBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didGetRecordFromBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::openCursorInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didOpenCursorInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::advanceCursorInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didAdvanceCursorInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::iterateCursorInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didIterateCursorInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::countInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didCountInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::deleteRangeInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didDeleteRangeInBackingStore):
+        (WebKit::LegacyUniqueIDBDatabase::didEstablishTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::didResetTransaction):
+        (WebKit::LegacyUniqueIDBDatabase::resetAllTransactions):
+        (WebKit::LegacyUniqueIDBDatabase::finalizeRollback):
+        (WebKit::LegacyUniqueIDBDatabase::absoluteDatabaseDirectory):
+        (WebKit::LegacyUniqueIDBDatabase::postMainThreadTask):
+        (WebKit::LegacyUniqueIDBDatabase::performNextMainThreadTask):
+        (WebKit::LegacyUniqueIDBDatabase::postDatabaseTask):
+        (WebKit::LegacyUniqueIDBDatabase::performNextDatabaseTask):
+        * DatabaseProcess/IndexedDB/LegacyUniqueIDBDatabase.h: Renamed from Source/WebKit2/DatabaseProcess/IndexedDB/UniqueIDBDatabase.h.
+        (WebKit::LegacyUniqueIDBDatabase::create):
+        (WebKit::LegacyUniqueIDBDatabase::identifier):
+        * DatabaseProcess/IndexedDB/LegacyUniqueIDBDatabaseIdentifier.cpp: Renamed from Source/WebKit2/DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.cpp.
+        (WebKit::LegacyUniqueIDBDatabaseIdentifier::LegacyUniqueIDBDatabaseIdentifier):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifier::isHashTableDeletedValue):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifier::hash):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifier::isNull):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifier::isolatedCopy):
+        (WebKit::operator==):
+        * DatabaseProcess/IndexedDB/LegacyUniqueIDBDatabaseIdentifier.h: Renamed from Source/WebKit2/DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.h.
+        (WebKit::LegacyUniqueIDBDatabaseIdentifier::databaseName):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifier::openingOrigin):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifier::mainFrameOrigin):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifierHash::hash):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifierHash::equal):
+        (WebKit::LegacyUniqueIDBDatabaseIdentifierHashTraits::isEmptyValue):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::UniqueIDBDatabaseBackingStoreSQLite):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::LegacyUniqueIDBDatabaseIdentifier>::copy):
+        (WebCore::UniqueIDBDatabaseIdentifier>::copy): Deleted.
+        * Shared/WebCrossThreadCopier.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-02-17  Anders Carlsson  <andersca@apple.com>
 
         Remove WebContextSupplement::shouldTerminate, it's no longer used

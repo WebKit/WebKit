@@ -37,9 +37,9 @@ struct SecurityOriginData;
 
 namespace WebKit {
 class IDBIdentifier;
-class UniqueIDBDatabaseIdentifier;
+class LegacyUniqueIDBDatabaseIdentifier;
 
-enum class UniqueIDBDatabaseShutdownType;
+enum class LegacyUniqueIDBDatabaseShutdownType;
 }
 
 namespace WTF {
@@ -48,8 +48,8 @@ class ASCIILiteral;
 
 namespace WebCore {
 
-template<> struct CrossThreadCopierBase<false, false, WebKit::UniqueIDBDatabaseIdentifier> {
-    static WebKit::UniqueIDBDatabaseIdentifier copy(const WebKit::UniqueIDBDatabaseIdentifier&);
+template<> struct CrossThreadCopierBase<false, false, WebKit::LegacyUniqueIDBDatabaseIdentifier> {
+    static WebKit::LegacyUniqueIDBDatabaseIdentifier copy(const WebKit::LegacyUniqueIDBDatabaseIdentifier&);
 };
 
 template<> struct CrossThreadCopierBase<false, false, WebKit::IDBIdentifier> {
@@ -57,8 +57,8 @@ template<> struct CrossThreadCopierBase<false, false, WebKit::IDBIdentifier> {
 };
 
 
-template<> struct CrossThreadCopierBase<false, false, WebKit::UniqueIDBDatabaseShutdownType> {
-    static WebKit::UniqueIDBDatabaseShutdownType copy(const WebKit::UniqueIDBDatabaseShutdownType& type)
+template<> struct CrossThreadCopierBase<false, false, WebKit::LegacyUniqueIDBDatabaseShutdownType> {
+    static WebKit::LegacyUniqueIDBDatabaseShutdownType copy(const WebKit::LegacyUniqueIDBDatabaseShutdownType& type)
     {
         return type;
     }

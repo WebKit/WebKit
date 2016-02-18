@@ -31,7 +31,7 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 #include "DatabaseProcessIDBConnectionMessages.h"
-#include "UniqueIDBDatabaseIdentifier.h"
+#include "LegacyUniqueIDBDatabaseIdentifier.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,7 +43,7 @@ struct IDBKeyRangeData;
 namespace WebKit {
 
 class DatabaseToWebProcessConnection;
-class UniqueIDBDatabase;
+class LegacyUniqueIDBDatabase;
 
 class DatabaseProcessIDBConnection : public RefCounted<DatabaseProcessIDBConnection>, public IPC::MessageSender {
 public:
@@ -99,7 +99,7 @@ private:
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;
 
-    RefPtr<UniqueIDBDatabase> m_uniqueIDBDatabase;
+    RefPtr<LegacyUniqueIDBDatabase> m_uniqueIDBDatabase;
 };
 
 } // namespace WebKit

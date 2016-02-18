@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniqueIDBDatabaseIdentifier_h
-#define UniqueIDBDatabaseIdentifier_h
+#ifndef LegacyUniqueIDBDatabaseIdentifier_h
+#define LegacyUniqueIDBDatabaseIdentifier_h
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
@@ -35,10 +35,10 @@
 
 namespace WebKit {
 
-class UniqueIDBDatabaseIdentifier {
+class LegacyUniqueIDBDatabaseIdentifier {
 public:
-    UniqueIDBDatabaseIdentifier();
-    UniqueIDBDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOriginData& openingOrigin, const WebCore::SecurityOriginData& mainFrameOrigin);
+    LegacyUniqueIDBDatabaseIdentifier();
+    LegacyUniqueIDBDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOriginData& openingOrigin, const WebCore::SecurityOriginData& mainFrameOrigin);
 
     bool isNull() const;
 
@@ -46,11 +46,11 @@ public:
     const WebCore::SecurityOriginData& openingOrigin() const { return m_openingOrigin; }
     const WebCore::SecurityOriginData& mainFrameOrigin() const { return m_mainFrameOrigin; }
 
-    UniqueIDBDatabaseIdentifier(WTF::HashTableDeletedValueType);
+    LegacyUniqueIDBDatabaseIdentifier(WTF::HashTableDeletedValueType);
     bool isHashTableDeletedValue() const;
     unsigned hash() const;
 
-    UniqueIDBDatabaseIdentifier isolatedCopy() const;
+    LegacyUniqueIDBDatabaseIdentifier isolatedCopy() const;
 
 private:
     String m_databaseName;
@@ -58,29 +58,29 @@ private:
     WebCore::SecurityOriginData m_mainFrameOrigin;
 };
 
-bool operator==(const UniqueIDBDatabaseIdentifier&, const UniqueIDBDatabaseIdentifier&);
+bool operator==(const LegacyUniqueIDBDatabaseIdentifier&, const LegacyUniqueIDBDatabaseIdentifier&);
 
-struct UniqueIDBDatabaseIdentifierHash {
-    static unsigned hash(const UniqueIDBDatabaseIdentifier& identifier) { return identifier.hash(); }
-    static bool equal(const UniqueIDBDatabaseIdentifier& a, const UniqueIDBDatabaseIdentifier& b) { return a == b; }
+struct LegacyUniqueIDBDatabaseIdentifierHash {
+    static unsigned hash(const LegacyUniqueIDBDatabaseIdentifier& identifier) { return identifier.hash(); }
+    static bool equal(const LegacyUniqueIDBDatabaseIdentifier& a, const LegacyUniqueIDBDatabaseIdentifier& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
-struct UniqueIDBDatabaseIdentifierHashTraits : WTF::SimpleClassHashTraits<UniqueIDBDatabaseIdentifier> {
+struct LegacyUniqueIDBDatabaseIdentifierHashTraits : WTF::SimpleClassHashTraits<LegacyUniqueIDBDatabaseIdentifier> {
     static const bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const UniqueIDBDatabaseIdentifier& info) { return info.isNull(); }
+    static bool isEmptyValue(const LegacyUniqueIDBDatabaseIdentifier& info) { return info.isNull(); }
 };
 
 } // namespace WebKit
 
 namespace WTF {
 
-template<> struct HashTraits<WebKit::UniqueIDBDatabaseIdentifier> : WebKit::UniqueIDBDatabaseIdentifierHashTraits { };
-template<> struct DefaultHash<WebKit::UniqueIDBDatabaseIdentifier> {
-    typedef WebKit::UniqueIDBDatabaseIdentifierHash Hash;
+template<> struct HashTraits<WebKit::LegacyUniqueIDBDatabaseIdentifier> : WebKit::LegacyUniqueIDBDatabaseIdentifierHashTraits { };
+template<> struct DefaultHash<WebKit::LegacyUniqueIDBDatabaseIdentifier> {
+    typedef WebKit::LegacyUniqueIDBDatabaseIdentifierHash Hash;
 };
 
 } // namespaec WTF
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
-#endif // UniqueIDBDatabaseIdentifier_h
+#endif // LegacyUniqueIDBDatabaseIdentifier_h

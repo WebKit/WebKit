@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "UniqueIDBDatabaseIdentifier.h"
+#include "LegacyUniqueIDBDatabaseIdentifier.h"
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
@@ -32,11 +32,11 @@
 
 namespace WebKit {
 
-UniqueIDBDatabaseIdentifier::UniqueIDBDatabaseIdentifier()
+LegacyUniqueIDBDatabaseIdentifier::LegacyUniqueIDBDatabaseIdentifier()
 {
 }
 
-UniqueIDBDatabaseIdentifier::UniqueIDBDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOriginData& openingOrigin, const WebCore::SecurityOriginData& mainFrameOrigin)
+LegacyUniqueIDBDatabaseIdentifier::LegacyUniqueIDBDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOriginData& openingOrigin, const WebCore::SecurityOriginData& mainFrameOrigin)
     : m_databaseName(databaseName)
     , m_openingOrigin(openingOrigin)
     , m_mainFrameOrigin(mainFrameOrigin)
@@ -45,17 +45,17 @@ UniqueIDBDatabaseIdentifier::UniqueIDBDatabaseIdentifier(const String& databaseN
     ASSERT(!m_databaseName.isNull());
 }
 
-UniqueIDBDatabaseIdentifier::UniqueIDBDatabaseIdentifier(WTF::HashTableDeletedValueType)
+LegacyUniqueIDBDatabaseIdentifier::LegacyUniqueIDBDatabaseIdentifier(WTF::HashTableDeletedValueType)
     : m_databaseName(WTF::HashTableDeletedValue)
 {
 }
 
-bool UniqueIDBDatabaseIdentifier::isHashTableDeletedValue() const
+bool LegacyUniqueIDBDatabaseIdentifier::isHashTableDeletedValue() const
 {
     return m_databaseName.isHashTableDeletedValue();
 }
 
-unsigned UniqueIDBDatabaseIdentifier::hash() const
+unsigned LegacyUniqueIDBDatabaseIdentifier::hash() const
 {
     unsigned hashCodes[7] = {
         m_databaseName.impl() ? m_databaseName.impl()->hash() : 0,
@@ -69,15 +69,15 @@ unsigned UniqueIDBDatabaseIdentifier::hash() const
     return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 }
 
-bool UniqueIDBDatabaseIdentifier::isNull() const
+bool LegacyUniqueIDBDatabaseIdentifier::isNull() const
 {
-    // Only a default constructed UniqueIDBDatabaseIdentifier can have a null database name.
+    // Only a default constructed LegacyUniqueIDBDatabaseIdentifier can have a null database name.
     return m_databaseName.isNull();
 }
 
-UniqueIDBDatabaseIdentifier UniqueIDBDatabaseIdentifier::isolatedCopy() const
+LegacyUniqueIDBDatabaseIdentifier LegacyUniqueIDBDatabaseIdentifier::isolatedCopy() const
 {
-    UniqueIDBDatabaseIdentifier result;
+    LegacyUniqueIDBDatabaseIdentifier result;
 
     result.m_databaseName = m_databaseName.isolatedCopy();
     result.m_openingOrigin = m_openingOrigin.isolatedCopy();
@@ -86,7 +86,7 @@ UniqueIDBDatabaseIdentifier UniqueIDBDatabaseIdentifier::isolatedCopy() const
     return result;
 }
 
-bool operator==(const UniqueIDBDatabaseIdentifier& a, const UniqueIDBDatabaseIdentifier& b)
+bool operator==(const LegacyUniqueIDBDatabaseIdentifier& a, const LegacyUniqueIDBDatabaseIdentifier& b)
 {
     if (&a == &b)
         return true;

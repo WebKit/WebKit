@@ -96,7 +96,7 @@ static int64_t generateDatabaseId()
     return ++databaseID;
 }
 
-UniqueIDBDatabaseBackingStoreSQLite::UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
+UniqueIDBDatabaseBackingStoreSQLite::UniqueIDBDatabaseBackingStoreSQLite(const LegacyUniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
     : m_identifier(identifier)
     , m_absoluteDatabaseDirectory(databaseDirectory)
 {
@@ -427,7 +427,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
 {
     ASSERT(!RunLoop::isMain());
 
-    String dbFilename = UniqueIDBDatabase::calculateAbsoluteDatabaseFilename(m_absoluteDatabaseDirectory);
+    String dbFilename = LegacyUniqueIDBDatabase::calculateAbsoluteDatabaseFilename(m_absoluteDatabaseDirectory);
 
     m_sqliteDB = openSQLiteDatabaseAtPath(dbFilename);
     if (!m_sqliteDB)

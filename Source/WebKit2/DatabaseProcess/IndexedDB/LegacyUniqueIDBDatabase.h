@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniqueIDBDatabase_h
-#define UniqueIDBDatabase_h
+#ifndef LegacyUniqueIDBDatabase_h
+#define LegacyUniqueIDBDatabase_h
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 #include "AsyncRequest.h"
 #include "IDBIdentifier.h"
-#include "UniqueIDBDatabaseIdentifier.h"
+#include "LegacyUniqueIDBDatabaseIdentifier.h"
 #include <WebCore/IDBDatabaseBackend.h>
 #include <WebCore/IndexedDB.h>
 #include <functional>
@@ -60,23 +60,23 @@ namespace WebKit {
 class DatabaseProcessIDBConnection;
 class UniqueIDBDatabaseBackingStore;
 
-enum class UniqueIDBDatabaseShutdownType {
+enum class LegacyUniqueIDBDatabaseShutdownType {
     NormalShutdown,
     DeleteShutdown
 };
 
-class UniqueIDBDatabase : public ThreadSafeRefCounted<UniqueIDBDatabase> {
+class LegacyUniqueIDBDatabase : public ThreadSafeRefCounted<LegacyUniqueIDBDatabase> {
 public:
-    static Ref<UniqueIDBDatabase> create(const UniqueIDBDatabaseIdentifier& identifier)
+    static Ref<LegacyUniqueIDBDatabase> create(const LegacyUniqueIDBDatabaseIdentifier& identifier)
     {
-        return adoptRef(*new UniqueIDBDatabase(identifier));
+        return adoptRef(*new LegacyUniqueIDBDatabase(identifier));
     }
 
-    ~UniqueIDBDatabase();
+    ~LegacyUniqueIDBDatabase();
 
     static String calculateAbsoluteDatabaseFilename(const String& absoluteDatabaseDirectory);
 
-    const UniqueIDBDatabaseIdentifier& identifier() const { return m_identifier; }
+    const LegacyUniqueIDBDatabaseIdentifier& identifier() const { return m_identifier; }
 
     void registerConnection(DatabaseProcessIDBConnection&);
     void unregisterConnection(DatabaseProcessIDBConnection&);
@@ -109,9 +109,9 @@ public:
     void deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRangeData&, std::function<void (uint32_t, const String&)> callback);
 
 private:
-    UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
+    LegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabaseIdentifier&);
 
-    UniqueIDBDatabaseIdentifier m_identifier;
+    LegacyUniqueIDBDatabaseIdentifier m_identifier;
 
     bool m_inMemory;
     String m_databaseRelativeDirectory;
@@ -127,7 +127,7 @@ private:
     };
     void postDatabaseTask(std::unique_ptr<WebCore::CrossThreadTask>, DatabaseTaskType = DatabaseTaskType::Normal);
 
-    void shutdown(UniqueIDBDatabaseShutdownType);
+    void shutdown(LegacyUniqueIDBDatabaseShutdownType);
 
     // Method that attempts to make legal filenames from all legal database names
     String filenameForDatabaseName() const;
@@ -143,7 +143,7 @@ private:
     // To be called from the database workqueue thread only
     void performNextDatabaseTask();
     void postMainThreadTask(std::unique_ptr<WebCore::CrossThreadTask>, DatabaseTaskType = DatabaseTaskType::Normal);
-    void openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
+    void openBackingStoreAndReadMetadata(const LegacyUniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
     void openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode);
     void beginBackingStoreTransaction(const IDBIdentifier&);
     void commitBackingStoreTransaction(const IDBIdentifier&);
@@ -166,7 +166,7 @@ private:
     void countInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&);
     void deleteRangeInBackingStore(uint64_t requestID, const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRangeData&);
 
-    void shutdownBackingStore(UniqueIDBDatabaseShutdownType, const String& databaseDirectory);
+    void shutdownBackingStore(LegacyUniqueIDBDatabaseShutdownType, const String& databaseDirectory);
 
     // Callbacks from the database workqueue thread, to be performed on the main thread only
     bool performNextMainThreadTask();
@@ -186,7 +186,7 @@ private:
     void didCountInBackingStore(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage);
     void didDeleteRangeInBackingStore(uint64_t requestID, uint32_t errorCode, const String& errorMessage);
 
-    void didShutdownBackingStore(UniqueIDBDatabaseShutdownType);
+    void didShutdownBackingStore(LegacyUniqueIDBDatabaseShutdownType);
     void didCompleteBoolRequest(uint64_t requestID, bool success);
 
     void didEstablishTransaction(const IDBIdentifier& transactionIdentifier, bool success);
@@ -218,4 +218,4 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
-#endif // UniqueIDBDatabase_h
+#endif // LegacyUniqueIDBDatabase_h
