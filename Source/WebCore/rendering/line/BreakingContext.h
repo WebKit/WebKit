@@ -200,6 +200,7 @@ private:
 
         RenderObject* renderer() const { return this->at(0).renderer(); }
         unsigned offset() const { return this->at(0).offset(); }
+        int nextBreakablePosition() const { return this->at(0).nextBreakablePosition(); }
         bool atTextParagraphSeparator() const { return this->at(0).atTextParagraphSeparator(); }
         UChar previousInSameNode() const { return this->at(0).previousInSameNode(); }
         const InlineIterator& get(size_t i) const { return this->at(i); };
@@ -776,6 +777,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
     // words with their trailing space, then subtract its width.
     HashSet<const Font*> fallbackFonts;
+    UChar lastCharacterFromPreviousRenderText = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar lastCharacter = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar secondToLastCharacter = m_renderTextInfo.lineBreakIterator.secondToLastCharacter();
     WordTrailingSpace wordTrailingSpace(renderText, style, textLayout);
@@ -903,8 +905,33 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                         m_lineInfo.setPreviousLineBrokeCleanly(true);
                         wordMeasurement.endOffset = m_lineBreakHistory.offset();
                     }
-                    if (m_lineBreakHistory.offset() && downcast<RenderText>(m_lineBreakHistory.renderer()) && downcast<RenderText>(*m_lineBreakHistory.renderer()).textLength() && downcast<RenderText>(*m_lineBreakHistory.renderer()).characterAt(m_lineBreakHistory.offset() - 1) == softHyphen && style.hyphens() != HyphensNone)
-                        hyphenated = true;
+                    // Check if the last breaking position is a soft-hyphen.
+                    if (!hyphenated && style.hyphens() != HyphensNone) {
+                        Optional<int> lastBreakingPositon;
+                        const RenderObject* rendererAtBreakingPosition = nullptr;
+                        if (m_lineBreakHistory.offset() || m_lineBreakHistory.nextBreakablePosition() > -1) {
+                            lastBreakingPositon = m_lineBreakHistory.offset();
+                            rendererAtBreakingPosition = m_lineBreakHistory.renderer();
+                        } else if (m_current.nextBreakablePosition() > -1 && (unsigned)m_current.nextBreakablePosition() <= m_current.offset()) {
+                            // We might just be right after the soft-hyphen
+                            lastBreakingPositon = m_current.nextBreakablePosition();
+                            rendererAtBreakingPosition = m_current.renderer();
+                        }
+                        if (lastBreakingPositon) {
+                            Optional<UChar> characterBeforeBreakingPosition;
+                            // When last breaking position points to the start of the current context, we need to look at the last character from
+                            // the previous non-empty text renderer.
+                            if (!lastBreakingPositon.value())
+                                characterBeforeBreakingPosition = lastCharacterFromPreviousRenderText;
+                            else if (is<RenderText>(rendererAtBreakingPosition)) {
+                                const auto& textRenderer = downcast<RenderText>(*rendererAtBreakingPosition);
+                                ASSERT(textRenderer.textLength() > (unsigned)(lastBreakingPositon.value() - 1));
+                                characterBeforeBreakingPosition = textRenderer.characterAt(lastBreakingPositon.value() - 1);
+                            }
+                            if (characterBeforeBreakingPosition)
+                                hyphenated = characterBeforeBreakingPosition.value() == softHyphen;
+                        }
+                    }
                     if (m_lineBreakHistory.offset() && m_lineBreakHistory.offset() != (unsigned)wordMeasurement.endOffset && !wordMeasurement.width) {
                         if (charWidth) {
                             wordMeasurement.endOffset = m_lineBreakHistory.offset();

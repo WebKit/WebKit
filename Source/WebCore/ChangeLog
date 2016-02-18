@@ -1,3 +1,22 @@
+2016-02-18  Zalan Bujtas  <zalan@apple.com>
+
+        Soft hyphen is not shown when it is placed at the end of an inline element
+        https://bugs.webkit.org/show_bug.cgi?id=153980
+
+        Reviewed by David Hyatt.
+
+        This patch handles the case when the character at the breaking position does not fit the
+        line and soft-hyphen, as the first breaking opportunity, is followed by this overflowing character.
+        (foo&shy;bar where b overflows the line).
+        In such cases we don't yet have an item in the breaking history so we need to take a look at
+        the current context instead.    
+
+        Test: fast/text/soft-hyphen-as-first-breaking-opportunity.html
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::InlineIteratorHistory::nextBreakablePosition):
+        (WebCore::BreakingContext::handleText):
+
 2016-02-18  Andreas Kling  <akling@apple.com>
 
         Fake memory pressure handler should log detailed memory breakdown.
