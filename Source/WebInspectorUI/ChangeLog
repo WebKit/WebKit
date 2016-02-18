@@ -1,5 +1,20 @@
 2016-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        REGRESSION (r196620): Web Inspector: DataGrid headers and resizers are misaligned when the scrollbar is visible
+        https://bugs.webkit.org/show_bug.cgi?id=154280
+        <rdar://problem/24670567>
+
+        Reviewed by Timothy Hatcher.
+
+        Revert back to "overflow-y: overlay".
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .data-container):
+        * UserInterface/Views/DatabaseContentView.css:
+        (.storage-view.query):
+
+2016-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
         REGRESSION (r196620): Web Inspector: When the scrollbars are always visible, the console prompt is 1px taller
         https://bugs.webkit.org/show_bug.cgi?id=154328
         <rdar://problem/24692996>

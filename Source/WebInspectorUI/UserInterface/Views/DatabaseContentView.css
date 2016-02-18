@@ -39,7 +39,7 @@
 
 .storage-view.query {
     padding: 2px 0;
-    overflow-y: auto;
+    overflow-y: overlay;
     overflow-x: hidden;
     -webkit-text-size-adjust: auto;
 }

@@ -50,7 +50,7 @@
     left: 0;
     right: 0;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: overlay;
 }
 
 .data-grid.inline .data-container {
