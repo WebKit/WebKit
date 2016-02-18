@@ -1,3 +1,13 @@
+2016-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(DFG_JIT) build after r195865
+        https://bugs.webkit.org/show_bug.cgi?id=154391
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::tryGetBytecodeIndex):
+
 2016-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         Remove remaining references to LLVM, and make sure comments refer to the backend as "B3" not "LLVM"

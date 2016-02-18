@@ -296,7 +296,9 @@ SamplingProfiler::~SamplingProfiler()
 
 static ALWAYS_INLINE unsigned tryGetBytecodeIndex(unsigned llintPC, CodeBlock* codeBlock, bool& isValid)
 {
+#if ENABLE(DFG_JIT)
     RELEASE_ASSERT(!codeBlock->hasCodeOrigins());
+#endif
 
 #if USE(JSVALUE64)
     unsigned bytecodeIndex = llintPC;
