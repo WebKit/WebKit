@@ -6951,10 +6951,10 @@ PASS input.size: IDL set to 2147483647 should not throw
 PASS input.size: IDL set to 2147483647 followed by getAttribute() 
 PASS input.size: IDL set to 2147483647 followed by IDL get 
 PASS input.size: IDL set to 2147483648 should not throw 
-FAIL input.size: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "20" but got "2147483648"
+PASS input.size: IDL set to 2147483648 followed by getAttribute() 
 PASS input.size: IDL set to 2147483648 followed by IDL get 
 PASS input.size: IDL set to 4294967295 should not throw 
-FAIL input.size: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "20" but got "4294967295"
+PASS input.size: IDL set to 4294967295 followed by getAttribute() 
 PASS input.size: IDL set to 4294967295 followed by IDL get 
 PASS input.src: typeof IDL attribute 
 PASS input.src: IDL get with DOM attribute unset 
@@ -14624,10 +14624,10 @@ PASS textarea.cols: IDL set to 2147483647 should not throw
 PASS textarea.cols: IDL set to 2147483647 followed by getAttribute() 
 PASS textarea.cols: IDL set to 2147483647 followed by IDL get 
 PASS textarea.cols: IDL set to 2147483648 should not throw 
-FAIL textarea.cols: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "20" but got "-2147483648"
+PASS textarea.cols: IDL set to 2147483648 followed by getAttribute() 
 PASS textarea.cols: IDL set to 2147483648 followed by IDL get 
 PASS textarea.cols: IDL set to 4294967295 should not throw 
-FAIL textarea.cols: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "20" but got "-1"
+PASS textarea.cols: IDL set to 4294967295 followed by getAttribute() 
 PASS textarea.cols: IDL set to 4294967295 followed by IDL get 
 PASS textarea.dirName: typeof IDL attribute 
 PASS textarea.dirName: IDL get with DOM attribute unset 
@@ -15683,10 +15683,10 @@ PASS textarea.rows: IDL set to 2147483647 should not throw
 PASS textarea.rows: IDL set to 2147483647 followed by getAttribute() 
 PASS textarea.rows: IDL set to 2147483647 followed by IDL get 
 PASS textarea.rows: IDL set to 2147483648 should not throw 
-FAIL textarea.rows: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "2" but got "-2147483648"
+PASS textarea.rows: IDL set to 2147483648 followed by getAttribute() 
 PASS textarea.rows: IDL set to 2147483648 followed by IDL get 
 PASS textarea.rows: IDL set to 4294967295 should not throw 
-FAIL textarea.rows: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "2" but got "-1"
+PASS textarea.rows: IDL set to 4294967295 followed by getAttribute() 
 PASS textarea.rows: IDL set to 4294967295 followed by IDL get 
 PASS textarea.wrap: typeof IDL attribute 
 PASS textarea.wrap: IDL get with DOM attribute unset 

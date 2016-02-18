@@ -2974,11 +2974,11 @@ PASS colgroup.span: IDL get with DOM attribute unset
 PASS colgroup.span: setAttribute() to -2147483649 followed by getAttribute() 
 PASS colgroup.span: setAttribute() to -2147483649 followed by IDL get 
 PASS colgroup.span: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to -2147483648 followed by IDL get assert_equals: expected 1 but got -2147483648
+PASS colgroup.span: setAttribute() to -2147483648 followed by IDL get 
 PASS colgroup.span: setAttribute() to -36 followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to -36 followed by IDL get assert_equals: expected 1 but got -36
+PASS colgroup.span: setAttribute() to -36 followed by IDL get 
 PASS colgroup.span: setAttribute() to -1 followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to -1 followed by IDL get assert_equals: expected 1 but got -1
+PASS colgroup.span: setAttribute() to -1 followed by IDL get 
 PASS colgroup.span: setAttribute() to 0 followed by getAttribute() 
 PASS colgroup.span: setAttribute() to 0 followed by IDL get 
 PASS colgroup.span: setAttribute() to 1 followed by getAttribute() 
@@ -2994,7 +2994,7 @@ PASS colgroup.span: setAttribute() to 4294967296 followed by IDL get
 PASS colgroup.span: setAttribute() to "" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to "" followed by IDL get 
 PASS colgroup.span: setAttribute() to "-1" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to "-1" followed by IDL get assert_equals: expected 1 but got -1
+PASS colgroup.span: setAttribute() to "-1" followed by IDL get 
 PASS colgroup.span: setAttribute() to "-0" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to "-0" followed by IDL get 
 PASS colgroup.span: setAttribute() to "0" followed by getAttribute() 
@@ -3084,11 +3084,11 @@ PASS colgroup.span: IDL set to 2147483647 should not throw
 PASS colgroup.span: IDL set to 2147483647 followed by getAttribute() 
 PASS colgroup.span: IDL set to 2147483647 followed by IDL get 
 PASS colgroup.span: IDL set to 2147483648 should not throw 
-FAIL colgroup.span: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "1" but got "-2147483648"
-FAIL colgroup.span: IDL set to 2147483648 followed by IDL get assert_equals: expected 1 but got -2147483648
+PASS colgroup.span: IDL set to 2147483648 followed by getAttribute() 
+PASS colgroup.span: IDL set to 2147483648 followed by IDL get 
 PASS colgroup.span: IDL set to 4294967295 should not throw 
-FAIL colgroup.span: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "1" but got "-1"
-FAIL colgroup.span: IDL set to 4294967295 followed by IDL get assert_equals: expected 1 but got -1
+PASS colgroup.span: IDL set to 4294967295 followed by getAttribute() 
+PASS colgroup.span: IDL set to 4294967295 followed by IDL get 
 PASS colgroup.align: typeof IDL attribute 
 PASS colgroup.align: IDL get with DOM attribute unset 
 PASS colgroup.align: setAttribute() to "" followed by getAttribute() 
@@ -4241,11 +4241,11 @@ PASS col.span: IDL get with DOM attribute unset
 PASS col.span: setAttribute() to -2147483649 followed by getAttribute() 
 PASS col.span: setAttribute() to -2147483649 followed by IDL get 
 PASS col.span: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL col.span: setAttribute() to -2147483648 followed by IDL get assert_equals: expected 1 but got -2147483648
+PASS col.span: setAttribute() to -2147483648 followed by IDL get 
 PASS col.span: setAttribute() to -36 followed by getAttribute() 
-FAIL col.span: setAttribute() to -36 followed by IDL get assert_equals: expected 1 but got -36
+PASS col.span: setAttribute() to -36 followed by IDL get 
 PASS col.span: setAttribute() to -1 followed by getAttribute() 
-FAIL col.span: setAttribute() to -1 followed by IDL get assert_equals: expected 1 but got -1
+PASS col.span: setAttribute() to -1 followed by IDL get 
 PASS col.span: setAttribute() to 0 followed by getAttribute() 
 PASS col.span: setAttribute() to 0 followed by IDL get 
 PASS col.span: setAttribute() to 1 followed by getAttribute() 
@@ -4261,7 +4261,7 @@ PASS col.span: setAttribute() to 4294967296 followed by IDL get
 PASS col.span: setAttribute() to "" followed by getAttribute() 
 PASS col.span: setAttribute() to "" followed by IDL get 
 PASS col.span: setAttribute() to "-1" followed by getAttribute() 
-FAIL col.span: setAttribute() to "-1" followed by IDL get assert_equals: expected 1 but got -1
+PASS col.span: setAttribute() to "-1" followed by IDL get 
 PASS col.span: setAttribute() to "-0" followed by getAttribute() 
 PASS col.span: setAttribute() to "-0" followed by IDL get 
 PASS col.span: setAttribute() to "0" followed by getAttribute() 
@@ -4351,11 +4351,11 @@ PASS col.span: IDL set to 2147483647 should not throw
 PASS col.span: IDL set to 2147483647 followed by getAttribute() 
 PASS col.span: IDL set to 2147483647 followed by IDL get 
 PASS col.span: IDL set to 2147483648 should not throw 
-FAIL col.span: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "1" but got "-2147483648"
-FAIL col.span: IDL set to 2147483648 followed by IDL get assert_equals: expected 1 but got -2147483648
+PASS col.span: IDL set to 2147483648 followed by getAttribute() 
+PASS col.span: IDL set to 2147483648 followed by IDL get 
 PASS col.span: IDL set to 4294967295 should not throw 
-FAIL col.span: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "1" but got "-1"
-FAIL col.span: IDL set to 4294967295 followed by IDL get assert_equals: expected 1 but got -1
+PASS col.span: IDL set to 4294967295 followed by getAttribute() 
+PASS col.span: IDL set to 4294967295 followed by IDL get 
 PASS col.align: typeof IDL attribute 
 PASS col.align: IDL get with DOM attribute unset 
 PASS col.align: setAttribute() to "" followed by getAttribute() 

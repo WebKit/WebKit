@@ -21,7 +21,6 @@
 
 interface HTMLTextAreaElement : HTMLElement {
     [Reflect] attribute boolean autofocus;
-    attribute long cols;
     [Reflect] attribute DOMString dirName;
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
@@ -30,7 +29,13 @@ interface HTMLTextAreaElement : HTMLElement {
     [Reflect] attribute DOMString placeholder;
     [Reflect] attribute boolean readOnly;
     [Reflect] attribute boolean required;
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     attribute long rows;
+    attribute long cols;
+#else
+    attribute unsigned long rows;
+    attribute unsigned long cols;
+#endif
     [Reflect] attribute DOMString wrap;
 
     readonly attribute DOMString type;

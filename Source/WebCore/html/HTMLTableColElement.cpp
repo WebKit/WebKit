@@ -27,6 +27,7 @@
 
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "RenderTableCol.h"
 #include "Text.h"
@@ -64,8 +65,7 @@ void HTMLTableColElement::collectStyleForPresentationAttribute(const QualifiedNa
 void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == spanAttr) {
-        int newSpan = value.toInt();
-        m_span = newSpan ? newSpan : 1;
+        m_span = limitToOnlyNonNegativeNumbersGreaterThanZero(value.string().toUInt());
         if (is<RenderTableCol>(renderer()))
             downcast<RenderTableCol>(*renderer()).updateFromElement();
     } else if (name == widthAttr) {
@@ -90,9 +90,9 @@ const StyleProperties* HTMLTableColElement::additionalPresentationAttributeStyle
     return nullptr;
 }
 
-void HTMLTableColElement::setSpan(int n)
+void HTMLTableColElement::setSpan(unsigned n)
 {
-    setIntegralAttribute(spanAttr, n);
+    setUnsignedIntegralAttribute(spanAttr, limitToOnlyNonNegativeNumbersGreaterThanZero(n));
 }
 
 String HTMLTableColElement::width() const

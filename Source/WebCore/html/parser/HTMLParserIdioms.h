@@ -106,6 +106,12 @@ inline bool isHTMLSpaceButNotLineBreak(UChar character)
     return isHTMLSpace(character) && !isHTMLLineBreak(character);
 }
 
+// https://html.spec.whatwg.org/multipage/infrastructure.html#limited-to-only-non-negative-numbers-greater-than-zero
+inline unsigned limitToOnlyNonNegativeNumbersGreaterThanZero(unsigned value, unsigned defaultValue = 1)
+{
+    return (value > 0 && value <= 2147483647) ? value : defaultValue;
+}
+
 }
 
 #endif

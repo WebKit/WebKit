@@ -1,3 +1,54 @@
+2016-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Fix behavior of reflecting unsigned long IDL attributes that are limited to only non-negative numbers greater than zero
+        https://bugs.webkit.org/show_bug.cgi?id=154398
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix behavior of reflecting unsigned long IDL attributes that are limited
+        to only non-negative numbers greater than zero to comply with:
+        - https://html.spec.whatwg.org/#limited-to-only-non-negative-numbers-greater-than-zero
+
+        This patch updates the following IDL attributes:
+        - colgroup.span
+        - col.span
+        - input.size
+        - textarea.cols
+        - textareal.rows
+
+        All of them now:
+        - Have "unsigned long" type on IDL size and "unsigned" type on native
+          side.
+        - On getting, return the value if it is in the range [1; 2147483647],
+          otherwise return the default value.
+        - On setting, set to the input value if it is in the range
+          [1; 2147483647], otherwise, set to the default value.
+
+        Note that as per the specification, we are supposed to throw an
+        IndexSizeError exception when trying to set those attributes to zero.
+        However, we instead use the default value to match other browsers.
+        It would be risky to be the only browser to throw in this case.
+
+        No new tests, already covered by existing test.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::setSize):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute):
+        (WebCore::HTMLTableColElement::setSpan):
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableColElement.idl:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseAttribute):
+        (WebCore::HTMLTextAreaElement::setCols):
+        (WebCore::HTMLTextAreaElement::setRows):
+        (WebCore::HTMLTextAreaElement::shouldUseInputMethod): Deleted.
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.idl:
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::limitToOnlyNonNegativeNumbersGreaterThanZero):
+
 2016-02-18  David Kilzer  <ddkilzer@apple.com>
 
         Remove redundant ASSERT_WITH_MESSAGE_UNUSED() from SOFT_LINK_FRAMEWORK_FOR_SOURCE() macro

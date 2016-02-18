@@ -34,8 +34,8 @@ class HTMLTableColElement final : public HTMLTablePartElement {
 public:
     static Ref<HTMLTableColElement> create(const QualifiedName& tagName, Document&);
 
-    int span() const { return m_span; }
-    void setSpan(int);
+    unsigned span() const { return m_span; }
+    void setSpan(unsigned);
 
     String width() const;
 
@@ -47,7 +47,7 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
     virtual const StyleProperties* additionalPresentationAttributeStyle() override;
 
-    int m_span;
+    unsigned m_span;
 };
 
 } //namespace
