@@ -1,3 +1,18 @@
+2016-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebContextSupplement::shouldTerminate, it's no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=154367
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebContextSupplement.h:
+        (WebKit::WebContextSupplement::shouldTerminate): Deleted.
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::shouldTerminate): Deleted.
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::shouldTerminate): Deleted.
+
 2016-02-17  Brian Burg  <bburg@apple.com>
 
         RemoteInspector deadlocks if _WKAutomationDelegate creates/registers a target synchronously

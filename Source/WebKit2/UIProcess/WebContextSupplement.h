@@ -60,11 +60,6 @@ public:
     {
     }
 
-    virtual bool shouldTerminate(WebProcessProxy*) const
-    {
-        return true;
-    }
-
     WebProcessPool* processPool() const { return m_processPool; }
     void clearProcessPool() { m_processPool = nullptr; }
 

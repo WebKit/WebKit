@@ -92,7 +92,6 @@ private:
     virtual void processPoolDestroyed() override;
     virtual void processDidClose(WebProcessProxy*) override;
     virtual void processDidClose(NetworkProcessProxy*) override;
-    virtual bool shouldTerminate(WebProcessProxy*) const override;
     virtual void refWebContextSupplement() override;
     virtual void derefWebContextSupplement() override;
 

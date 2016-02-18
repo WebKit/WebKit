@@ -83,11 +83,6 @@ void WebCookieManagerProxy::processDidClose(NetworkProcessProxy*)
     invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::ProcessExited);
 }
 
-bool WebCookieManagerProxy::shouldTerminate(WebProcessProxy*) const
-{
-    return true;
-}
-
 void WebCookieManagerProxy::refWebContextSupplement()
 {
     API::Object::ref();
