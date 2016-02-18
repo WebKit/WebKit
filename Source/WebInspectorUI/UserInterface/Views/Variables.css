@@ -36,6 +36,7 @@
     --panel-background-color: hsl(0, 0%, 94%);
 
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
+    --console-prompt-min-height: 30px;
 
     --syntax-highlight-number-color: hsl(248, 100%, 40%);
     --syntax-highlight-boolean-color: hsl(309, 85%, 35%);

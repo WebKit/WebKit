@@ -25,6 +25,7 @@
 
 .quick-console {
     position: relative;
+    min-height: var(--console-prompt-min-height);
 
     display: flex;
     align-items: flex-end;

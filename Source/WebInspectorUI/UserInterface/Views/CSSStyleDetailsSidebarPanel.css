@@ -76,7 +76,7 @@
 
 .sidebar > .panel.details.css-style > .content ~ .options-container {
     bottom: 0;
-    height: 29px;
+    height: var(--console-prompt-min-height);
 }
 
 .sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) ~ :matches(.options-container, .class-list-container) {
@@ -123,7 +123,7 @@
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container {
     flex-wrap: wrap;
-    bottom: 29px;
+    bottom: var(--console-prompt-min-height);
     max-height: 65px;
     padding: 3px 2px;
     overflow-y: scroll;
