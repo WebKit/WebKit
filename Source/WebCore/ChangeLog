@@ -1,3 +1,33 @@
+2016-02-17  Dean Jackson  <dino@apple.com>
+
+        WebKitCSSMatrix transformList with calculated relative length crashes Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=153333
+        <rdar://problem/17198383>
+
+        Reviewed by Simon Fraser.
+
+        WebKitCSSMatrix objects should fail to construct when not
+        using absolute lengths.
+
+        Updated existing tests:
+        - transforms/cssmatrix-2d-interface.xhtml
+        - transforms/cssmatrix-3d-interface.xhtml
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTransform): Tell transformsForValue
+        that we don't require absolute lengths.
+        * css/TransformFunctions.cpp:
+        (WebCore::convertToFloatLength): Add an optional parameter that will
+        cause the conversion to fail if the primitive value has a non-absolute
+        length.
+        (WebCore::transformsForValue): Pass the parameter for requiring an
+        absolute length on to convertToFloatLength when necessary.
+        * css/TransformFunctions.h:
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue): In this case we do
+        require all transform strings to have absolute lengths, not ones
+        that depend on the font size or are calculated.
+
 2016-02-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196712.

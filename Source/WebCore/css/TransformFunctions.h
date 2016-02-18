@@ -42,8 +42,13 @@ class WebKitCSSTransformValue;
 
 struct Length;
 
-bool transformsForValue(CSSValue&, const CSSToLengthConversionData&, TransformOperations&);
-Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
+enum class TransformConversion {
+    Auto,
+    RequiresAbsoluteLength
+};
+
+bool transformsForValue(CSSValue&, const CSSToLengthConversionData&, TransformConversion transformConversion, TransformOperations&);
+Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&, TransformConversion transformConversion = TransformConversion::Auto);
 
 }
 #endif

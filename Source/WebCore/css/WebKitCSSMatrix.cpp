@@ -67,7 +67,7 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
             return;
 
         TransformOperations operations;
-        if (!transformsForValue(*value, CSSToLengthConversionData(), operations)) {
+        if (!transformsForValue(*value, CSSToLengthConversionData(), TransformConversion::RequiresAbsoluteLength, operations)) {
             ec = SYNTAX_ERR;
             return;
         }

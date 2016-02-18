@@ -59,8 +59,21 @@ shouldBe('parseFloat(a3[0])', '1');
 shouldBe('a3[1]', '""');
 
 debug("");
-debug("Test bad input to string constructor");
+debug("Test bad input to constructor");
 shouldThrow('new WebKitCSSMatrix("banana")');
+shouldThrow('new WebKitCSSMatrix("translate3d(1em, 0, 0)")');
+shouldThrow('new WebKitCSSMatrix("translate3d(10px, 1em, 0)")');
+shouldThrow('new WebKitCSSMatrix("translate3d(10px, 10px, calc(10px))")');
+shouldThrow('new WebKitCSSMatrix("translate3d(calc(10px), 10px, 10px)")');
+shouldThrow('new WebKitCSSMatrix("translate3d(10px, calc(10px), 10px)")');
+shouldThrow('new WebKitCSSMatrix("translate3d(1ex, 0, 0)")');
+shouldThrow('new WebKitCSSMatrix("translatez(1em)")');
+shouldThrow('new WebKitCSSMatrix("translatez(calc(10px))")');
+shouldThrow('new WebKitCSSMatrix("translate(1%, 0, 0)")');
+shouldThrow('new WebKitCSSMatrix("perspective(1em)")');
+shouldThrow('new WebKitCSSMatrix("perspective(calc(10px))")');
+shouldThrow('new WebKitCSSMatrix("perspective(1ex)")');
+shouldThrow('new WebKitCSSMatrix("perspective(1%)")');
 
 debug("");
 debug("Test attributes on default matrix");

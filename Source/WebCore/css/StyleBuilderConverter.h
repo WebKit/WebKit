@@ -355,7 +355,7 @@ inline PassRefPtr<StyleImage> StyleBuilderConverter::convertStyleImage(StyleReso
 inline TransformOperations StyleBuilderConverter::convertTransform(StyleResolver& styleResolver, CSSValue& value)
 {
     TransformOperations operations;
-    transformsForValue(value, styleResolver.state().cssToLengthConversionData(), operations);
+    transformsForValue(value, styleResolver.state().cssToLengthConversionData(), TransformConversion::Auto, operations);
     return operations;
 }
 

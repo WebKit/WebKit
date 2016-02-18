@@ -22,8 +22,17 @@ PASS parseFloat(a2[4]) is 0
 PASS parseFloat(a3[0]) is 0
 PASS a3[1] is ""
 
-Test bad input to string constructor
+Test bad input to constructor
 PASS new WebKitCSSMatrix("banana") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translate(1em)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translate(10px, 1em)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translate(10px, calc(10px))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translate(1ex)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translate(1%)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translatex(1em)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translatex(calc(10px))") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translatey(1em)") threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix("translatey(calc(10px))") threw exception Error: SyntaxError: DOM Exception 12.
 
 Test attributes on default matrix
 PASS m.a is 1
