@@ -1,3 +1,38 @@
+2016-02-18  Andreas Kling  <akling@apple.com>
+
+        Reduce tiling coverage immediately when memory pressure hits.
+        <https://webkit.org/b/154374>
+
+        Reviewed by Simon Fraser.
+
+        We already had a policy that reduced tiling coverage to a minimum while the system
+        is under memory pressure. However, that policy wouldn't kick in immediately after
+        receiving the pressure notification, but the next time we flush compositing state.
+
+        This change makes it happen sooner, improving our chances to escape death!
+
+        * page/Page.h:
+        * page/Page.cpp:
+        (WebCore::Page::forEachPage):
+
+            Add a little helper for visiting every Page.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory):
+
+            When under critical memory pressure, schedule a compositing flush in all Pages.
+            This ensures that the reduced tiling coverage policy takes effect, allowing us to
+            immediately drop several tiles in each visible web view.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
+            To ensure that this behavior is testable with the fake memory pressure notification,
+            make the fake handler set the "in memory pressure" state just like the real one would.
+            I don't know why we were not doing this previously, it was just an oversight.
+            After the simulation completes, it schedules a runloop callback that resets the
+            "in memory pressure" state.
+
 2016-02-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Loading] Implement FontFaceSet

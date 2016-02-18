@@ -176,6 +176,8 @@ public:
     PageGroup& group();
     PageGroup* groupPtr() { return m_group; } // can return 0
 
+    static void forEachPage(std::function<void(Page&)>);
+
     void incrementSubframeCount() { ++m_subframeCount; }
     void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }
     int subframeCount() const { checkSubframeCountConsistency(); return m_subframeCount; }

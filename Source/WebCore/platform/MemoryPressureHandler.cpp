@@ -27,6 +27,8 @@
 #include "MemoryPressureHandler.h"
 
 #include "CSSValuePool.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "FontCache.h"
@@ -156,6 +158,11 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
         GCController::singleton().garbageCollectNow();
     } else
         GCController::singleton().garbageCollectNowIfNotDoneRecently();
+
+    // We reduce tiling coverage while under memory pressure, so make sure to drop excess tiles ASAP.
+    Page::forEachPage([](Page& page) {
+        page.chrome().client().scheduleCompositingLayerFlush();
+    });
 }
 
 void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchronous)
