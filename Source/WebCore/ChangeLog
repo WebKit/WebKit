@@ -1,3 +1,17 @@
+2016-02-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r196712.
+        https://bugs.webkit.org/show_bug.cgi?id=154371
+
+        This change caused 5 API test failures on ios-simulator
+        (Requested by ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "[iOS] Purge GraphicsServices font cache on memory warning."
+        https://bugs.webkit.org/show_bug.cgi?id=154343
+        http://trac.webkit.org/changeset/196712
+
 2016-02-17  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: More Encoder/Decoder/Messaging scaffolding for WK2 IPC.

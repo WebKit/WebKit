@@ -41,7 +41,6 @@ WTF_EXTERN_C_BEGIN
 void GSInitialize(void);
 uint64_t GSCurrentEventTimestamp(void);
 CFStringRef GSSystemRootDirectory(void);
-void GSFontPurgeFontCache(void);
 
 WTF_EXTERN_C_END
 
