@@ -143,6 +143,8 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     CallData callData;
     CallType callType;
     JSValue getOwnPropertyDescriptorMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "getOwnPropertyDescriptor"), ASCIILiteral("'getOwnPropertyDescriptor' property of a Proxy's handler should be callable."));
+    if (exec->hadException())
+        return false;
     JSObject* target = this->target();
     if (getOwnPropertyDescriptorMethod.isUndefined())
         return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);

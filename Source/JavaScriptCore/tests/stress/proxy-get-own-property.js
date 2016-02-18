@@ -186,3 +186,27 @@ function assert(b) {
         assert(pDesc.enumerable === true);
     }
 }
+
+{
+    let target = {};
+    let error = null;
+    let handler = { get getOwnPropertyDescriptor() {
+        error = new Error("blah");
+        throw error;
+    }};
+    Object.defineProperty(target, "x", {
+        enumerable: true,
+        configurable: false
+    });
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let threw = false;
+        try {
+            let pDesc = Object.getOwnPropertyDescriptor(proxy, "x");
+        } catch(e) {
+            threw = true;
+            assert(e === error);
+        }
+        assert(threw);
+    }
+}

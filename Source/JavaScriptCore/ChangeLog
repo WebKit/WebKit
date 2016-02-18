@@ -1,5 +1,25 @@
 2016-02-18  Saam Barati  <sbarati@apple.com>
 
+        Follow up fix to Implement Proxy.[[GetOwnProperty]]
+        https://bugs.webkit.org/show_bug.cgi?id=154314
+
+        Reviewed by Filip Pizlo.
+
+        Part of the implementation was broken because
+        of how JSObject::getOwnPropertyDescriptor worked.
+        I've fixed JSObject::getOwnPropertyDescriptor to
+        be able to handle ProxyObject.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        * tests/stress/proxy-get-own-property.js:
+        (assert):
+        (assert.let.handler.get getOwnPropertyDescriptor):
+
+2016-02-18  Saam Barati  <sbarati@apple.com>
+
         Implement Proxy.[[GetOwnProperty]]
         https://bugs.webkit.org/show_bug.cgi?id=154314
 

@@ -46,6 +46,7 @@
 #include "JSCInlines.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
+#include "ProxyObject.h"
 #include "Reject.h"
 #include "SlotVisitorInlines.h"
 #include <math.h>
@@ -2560,9 +2561,13 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
     // but getOwnPropertyDescriptor() should only work for 'own' properties so we exit early if we detect that
     // the property is not an own property.
     if (slot.slotBase() != this && slot.slotBase()) {
-        auto* proxy = jsDynamicCast<JSProxy*>(this);
-        if (!proxy || proxy->target() != slot.slotBase())
-            return false;
+        JSProxy* jsProxy = jsDynamicCast<JSProxy*>(this);
+        if (!jsProxy || jsProxy->target() != slot.slotBase()) {
+            // Try ProxyObject.
+            ProxyObject* proxyObject = jsDynamicCast<ProxyObject*>(this);
+            if (!proxyObject || proxyObject->target() != slot.slotBase())
+                return false;
+        }
     }
 
     if (slot.isAccessor())
