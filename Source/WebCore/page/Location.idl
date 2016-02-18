@@ -39,8 +39,8 @@
 ] interface Location {
     [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString href;
 
-    [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void assign([Default=Undefined] optional DOMString url);
-    [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace([Default=Undefined] optional DOMString url);
+    [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void assign(DOMString url);
+    [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(DOMString url);
     [CallWith=ActiveWindow, ForwardDeclareInHeader] void reload();
 
     // URI decomposition attributes

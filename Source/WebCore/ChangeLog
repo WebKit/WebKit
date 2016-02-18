@@ -1,3 +1,34 @@
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r196648): http://w3c-test.org/html/dom/interfaces.html redirects at the end of the test
+        https://bugs.webkit.org/show_bug.cgi?id=154357
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make location.assign() / location.replace()'s parameter mandatory,
+        as per the specification:
+        https://html.spec.whatwg.org/multipage/browsers.html#the-location-interface
+
+        Previously, calling location.assign() / location.replace() without
+        parameter would be identical to calling location.assign("undefined") /
+        location.replace("undefined"), which is not useful.
+
+        After r196648, http://w3c-test.org/html/dom/interfaces.html was able to
+        test location.assign() / location.replace() further because they are now
+        on the instance (where they should be) instead of the prototype. One of
+        these tests calls these functions without parameter, expecting them to
+        throw an exception. However, in WebKit, it would not throw and it would
+        redirect us to http://w3c-test.org/html/dom/undefined.
+
+        Firefox and Chrome both follow the specification already and throw in
+        this case.
+
+        No new tests, already covered by existing test.
+
+        * page/Location.idl:
+        Make location.assign() / location.replace()'s parameter mandatory,
+        as per the specification.
+
 2016-02-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196738.

@@ -1,5 +1,16 @@
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r196648): http://w3c-test.org/html/dom/interfaces.html redirects at the end of the test
+        https://bugs.webkit.org/show_bug.cgi?id=154357
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-02-17  Chris Dumez  <cdumez@apple.com>
+
         Import W3C HTML reflection tests
         https://bugs.webkit.org/show_bug.cgi?id=154310
         <rdar://problem/24685826>
