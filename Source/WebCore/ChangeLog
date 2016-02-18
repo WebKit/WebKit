@@ -1,3 +1,24 @@
+2016-02-17  David Kilzer  <ddkilzer@apple.com>
+
+        [Cocoa] Always check the return value of dlopen() and dlsym() in Release builds
+        <http://webkit.org/b/154364>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac/SoftLinking.h:
+        (SOFT_LINK_LIBRARY): Change ASSERT_WITH_MESSAGE() to
+        RELEASE_ASSERT_WITH_MESSAGE().
+        (SOFT_LINK_FRAMEWORK): Ditto.
+        (SOFT_LINK_PRIVATE_FRAMEWORK): Ditto.
+        (SOFT_LINK_STAGED_FRAMEWORK): Ditto.
+        (SOFT_LINK_FRAMEWORK_IN_UMBRELLA): Ditto.
+        (SOFT_LINK): Ditto.
+        (SOFT_LINK_POINTER): Ditto.
+        (SOFT_LINK_CONSTANT): Ditto.
+        (SOFT_LINK_FRAMEWORK_FOR_SOURCE): Add
+        RELEASE_ASSERT_WITH_MESSAGE() when soft-link is not
+        optional.
+
 2016-02-17  Chris Dumez  <cdumez@apple.com>
 
         Regression(r196648): http://w3c-test.org/html/dom/interfaces.html redirects at the end of the test

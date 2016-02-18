@@ -34,26 +34,33 @@
 #define SOFT_LINK_LIBRARY(lib) \
     static void* lib##Library() \
     { \
-        static void* dylib = dlopen("/usr/lib/" #lib ".dylib", RTLD_NOW); \
-        ASSERT_WITH_MESSAGE(dylib, "%s", dlerror()); \
+        static void* dylib = ^{ \
+            void *result = dlopen("/usr/lib/" #lib ".dylib", RTLD_NOW); \
+            RELEASE_ASSERT_WITH_MESSAGE(result, "%s", dlerror()); \
+            return result; \
+        }(); \
         return dylib; \
     }
 
 #define SOFT_LINK_FRAMEWORK(framework) \
     static void* framework##Library() \
     { \
-        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
-        ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
+        static void* frameworkLibrary = ^{ \
+            void* result = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            RELEASE_ASSERT_WITH_MESSAGE(result, "%s", dlerror()); \
+            return result; \
+        }(); \
         return frameworkLibrary; \
     }
 
 #define SOFT_LINK_PRIVATE_FRAMEWORK(framework) \
     static void* framework##Library() \
     { \
-        static void* frameworkLibrary = 0; \
-        if (!frameworkLibrary) \
-            frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
-        ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
+        static void* frameworkLibrary = ^{ \
+            void* result = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            RELEASE_ASSERT_WITH_MESSAGE(result, "%s", dlerror()); \
+            return result; \
+        }(); \
         return frameworkLibrary; \
     }
 
@@ -78,17 +85,20 @@
             void* result = dlopen("/System/Library/" #unstagedLocation "/" #framework ".framework/Versions/" #version "/" #framework, RTLD_LAZY); \
             if (!result) \
                 result = dlopen("/System/Library/StagedFrameworks/Safari/" #framework ".framework/Versions/" #version "/" #framework, RTLD_LAZY); \
+            RELEASE_ASSERT_WITH_MESSAGE(result, "%s", dlerror()); \
             return result; \
         }(); \
-        ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
         return frameworkLibrary; \
     }
 
 #define SOFT_LINK_FRAMEWORK_IN_UMBRELLA(umbrella, framework) \
     static void* framework##Library() \
     { \
-        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
-        ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
+        static void* frameworkLibrary = ^{ \
+            void* result = dlopen("/System/Library/Frameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            RELEASE_ASSERT_WITH_MESSAGE(result, "%s", dlerror()); \
+            return result; \
+        }(); \
         return frameworkLibrary; \
     }
 
@@ -102,7 +112,7 @@
     static resultType init##functionName parameterDeclarations \
     { \
         softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
-        ASSERT_WITH_MESSAGE(softLink##functionName, "%s", dlerror()); \
+        RELEASE_ASSERT_WITH_MESSAGE(softLink##functionName, "%s", dlerror()); \
         return softLink##functionName parameterNames; \
     } \
     \
@@ -215,7 +225,7 @@
     static type init##name() \
     { \
         void** pointer = static_cast<void**>(dlsym(framework##Library(), #name)); \
-        ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
+        RELEASE_ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
         pointer##name = static_cast<type>(*pointer); \
         get##name = name##Function; \
         return pointer##name; \
@@ -253,7 +263,7 @@
     static type init##name() \
     { \
         void* constant = dlsym(framework##Library(), #name); \
-        ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
+        RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
         constant##name = *static_cast<type*>(constant); \
         get##name = name##Function; \
         return constant##name; \
@@ -308,6 +318,8 @@
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            if (!isOptional) \
+                RELEASE_ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
         }); \
         ASSERT_WITH_MESSAGE_UNUSED(isOptional, isOptional || frameworkLibrary, "%s", dlerror()); \
         return frameworkLibrary; \
