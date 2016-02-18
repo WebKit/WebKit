@@ -66,26 +66,15 @@ public:
     }
     
     LazySlowPath(
-#if FTL_USES_B3
         CodeLocationJump patchableJump, CodeLocationLabel done,
-#else // FLT_USES_B3
-        CodeLocationLabel patchpoint,
-#endif // FTL_USES_B3
         CodeLocationLabel exceptionTarget, const RegisterSet& usedRegisters,
         CallSiteIndex, RefPtr<Generator>
-#if !FTL_USES_B3
-        , GPRReg newZeroReg, ScratchRegisterAllocator
-#endif // FTL_USES_B3
         );
 
     ~LazySlowPath();
 
-#if FTL_USES_B3
     CodeLocationJump patchableJump() const { return m_patchableJump; }
     CodeLocationLabel done() const { return m_done; }
-#else // FTL_USES_B3
-    CodeLocationLabel patchpoint() const { return m_patchpoint; }
-#endif // FTL_USES_B3
     const RegisterSet& usedRegisters() const { return m_usedRegisters; }
     CallSiteIndex callSiteIndex() const { return m_callSiteIndex; }
 
@@ -94,27 +83,13 @@ public:
     MacroAssemblerCodeRef stub() const { return m_stub; }
 
 private:
-#if FTL_USES_B3
     CodeLocationJump m_patchableJump;
     CodeLocationLabel m_done;
-#else // FTL_USES_B3
-    CodeLocationLabel m_patchpoint;
-#endif // FTL_USES_B3
     CodeLocationLabel m_exceptionTarget;
     RegisterSet m_usedRegisters;
     CallSiteIndex m_callSiteIndex;
     MacroAssemblerCodeRef m_stub;
     RefPtr<Generator> m_generator;
-#if !FTL_USES_B3
-    GPRReg m_newZeroValueRegister;
-    // FIXME: Remove this field in one of two ways:
-    // 1) When landing B3, we should remove this field because it will no
-    // longer be the case where a location being in SP means it's zero.
-    // 2) If we don't land B3, this same idea can be expressed in less
-    // memory using just a single GPRReg.
-    // https://bugs.webkit.org/show_bug.cgi?id=151768
-    ScratchRegisterAllocator m_scratchRegisterAllocator;
-#endif // FTL_USES_B3
 };
 
 } } // namespace JSC::FTL

@@ -28,7 +28,7 @@
 
 #include "DFGCommon.h"
 
-#if ENABLE(FTL_JIT) && FTL_USES_B3
+#if ENABLE(FTL_JIT)
 
 #include "CCallHelpers.h"
 #include <wtf/ThreadSafeRefCounted.h>
@@ -61,7 +61,7 @@ struct OSRExitHandle : public ThreadSafeRefCounted<OSRExitHandle> {
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT) && FTL_USES_B3
+#endif // ENABLE(FTL_JIT)
 
 #endif // FTLOSRExitHandle_h
 

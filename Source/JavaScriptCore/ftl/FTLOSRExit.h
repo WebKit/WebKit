@@ -38,7 +38,6 @@
 #include "FTLExitValue.h"
 #include "FTLFormattedValue.h"
 #include "FTLOSRExitHandle.h"
-#include "FTLStackMaps.h"
 #include "FTLStackmapArgumentList.h"
 #include "HandlerInfo.h"
 #include "MethodOfGettingAValueProfile.h"
@@ -68,20 +67,6 @@ class State;
 struct OSRExitDescriptorImpl;
 struct OSRExitHandle;
 
-#if !FTL_USES_B3
-enum class ExceptionType : uint8_t {
-    None,
-    CCallException,
-    JSCall,
-    GetById,
-    GetByIdCallOperation,
-    PutById,
-    PutByIdCallOperation,
-    LazySlowPath,
-    BinaryOpGenerator,
-};
-#endif // !FTL_USES_B3
-
 struct OSRExitDescriptor {
     OSRExitDescriptor(
         DataFormat profileDataFormat, MethodOfGettingAValueProfile,
@@ -98,14 +83,8 @@ struct OSRExitDescriptor {
     Operands<ExitValue> m_values;
     Bag<ExitTimeObjectMaterialization> m_materializations;
 
-#if !FTL_USES_B3
-    uint32_t m_stackmapID;
-    bool m_isInvalidationPoint;
-#endif // !FTL_USES_B3
-    
     void validateReferences(const TrackedReferences&);
 
-#if FTL_USES_B3
     // Call this once we have a place to emit the OSR exit jump and we have data about how the state
     // should be recovered. This effectively emits code that does the exit, though the code is really a
     // patchable jump and we emit the real code lazily. The description of how to emit the real code is
@@ -135,70 +114,26 @@ private:
     RefPtr<OSRExitHandle> prepareOSRExitHandle(
         State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
         unsigned offset = 0);
-#endif // FTL_USES_B3
 };
-
-#if !FTL_USES_B3
-struct OSRExitDescriptorImpl {
-    OSRExitDescriptorImpl(ExitKind kind, CodeOrigin exitOrigin, CodeOrigin forExitProfile, ExceptionType exceptionType)
-        : m_kind(kind)
-        , m_codeOrigin(exitOrigin)
-        , m_codeOriginForExitProfile(forExitProfile)
-        , m_exceptionType(exceptionType)
-    {
-    }
-
-    ExitKind m_kind;
-    CodeOrigin m_codeOrigin;
-    CodeOrigin m_codeOriginForExitProfile;
-    ExceptionType m_exceptionType;
-    CodeOrigin m_semanticCodeOriginForCallFrameHeader;
-    HandlerInfo m_baselineExceptionHandler;
-};
-#endif // !FTL_USES_B3
 
 struct OSRExit : public DFG::OSRExitBase {
     OSRExit(
         OSRExitDescriptor*, ExitKind,
-#if FTL_USES_B3
         CodeOrigin, CodeOrigin codeOriginForExitProfile
-#else // FTL_USES_B3
-        OSRExitDescriptorImpl&, uint32_t stackmapRecordIndex
-#endif // FTL_USES_B3
         );
 
     OSRExitDescriptor* m_descriptor;
     MacroAssemblerCodeRef m_code;
-#if FTL_USES_B3
     // This tells us where to place a jump.
     CodeLocationJump m_patchableJump;
     Vector<B3::ValueRep> m_valueReps;
-#else // FTL_USES_B3
-    // Offset within the exit stubs of the stub for this exit.
-    unsigned m_patchableCodeOffset;
-    // Offset within Stackmap::records
-    uint32_t m_stackmapRecordIndex;
-    ExceptionType m_exceptionType;
-    RegisterSet registersToPreserveForCallThatMightThrow;
-#endif // FTL_USES_B3
 
     CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
     }
-
-#if !FTL_USES_B3
-    void gatherRegistersToSpillForCallIfException(StackMaps&, StackMaps::Record&);
-    void spillRegistersToSpillSlot(CCallHelpers&, int32_t stackSpillSlot);
-    void recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot);
-
-    bool willArriveAtExitFromIndirectExceptionCheck() const;
-    bool willArriveAtOSRExitFromCallOperation() const;
-    bool needsRegisterRecoveryOnGenericUnwindOSRExitPath() const;
-#endif // !FTL_USES_B3
 };
-
 
 } } // namespace JSC::FTL
 

@@ -51,9 +51,6 @@ OSRExitDescriptor::OSRExitDescriptor(
     : m_profileDataFormat(profileDataFormat)
     , m_valueProfile(valueProfile)
     , m_values(numberOfArguments, numberOfLocals)
-#if !FTL_USES_B3
-    , m_isInvalidationPoint(false)
-#endif // !FTL_USES_B3
 {
 }
 
@@ -66,7 +63,6 @@ void OSRExitDescriptor::validateReferences(const TrackedReferences& trackedRefer
         materialization->validateReferences(trackedReferences);
 }
 
-#if FTL_USES_B3
 RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExit(
     State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin, CCallHelpers& jit,
     const StackmapGenerationParams& params, unsigned offset)
@@ -103,9 +99,7 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
     exit.m_valueReps.shrinkToFit();
     return handle;
 }
-#endif // FTL_USES_B3
 
-#if FTL_USES_B3
 OSRExit::OSRExit(
     OSRExitDescriptor* descriptor,
     ExitKind exitKind, CodeOrigin codeOrigin, CodeOrigin codeOriginForExitProfile)
@@ -113,147 +107,12 @@ OSRExit::OSRExit(
     , m_descriptor(descriptor)
 {
 }
-#else // FTL_USES_B3
-OSRExit::OSRExit(
-    OSRExitDescriptor* descriptor, ExitKind exitKind, OSRExitDescriptorImpl& exitDescriptorImpl,
-    uint32_t stackmapRecordIndex)
-    : OSRExitBase(exitKind, exitDescriptorImpl.m_codeOrigin, exitDescriptorImpl.m_codeOriginForExitProfile)
-    , m_descriptor(descriptor)
-    , m_stackmapRecordIndex(stackmapRecordIndex)
-    , m_exceptionType(exitDescriptorImpl.m_exceptionType)
-{
-}
-#endif // FTL_USES_B3
 
 CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
 {
-#if FTL_USES_B3
     UNUSED_PARAM(ftlCodeBlock);
     return m_patchableJump;
-#else // FTL_USES_B3
-    return CodeLocationJump(
-        reinterpret_cast<char*>(
-            ftlCodeBlock->jitCode()->ftl()->exitThunks().dataLocation()) +
-        m_patchableCodeOffset);
-#endif // FTL_USES_B3
 }
-
-#if !FTL_USES_B3
-void OSRExit::gatherRegistersToSpillForCallIfException(StackMaps& stackmaps, StackMaps::Record& record)
-{
-    RELEASE_ASSERT(m_exceptionType == ExceptionType::JSCall);
-
-    RegisterSet volatileRegisters = RegisterSet::volatileRegistersForJSCall();
-
-    auto addNeededRegisters = [&] (const ExitValue& exitValue) {
-        auto handleLocation = [&] (const FTL::Location& location) {
-            if (location.involvesGPR() && volatileRegisters.get(location.gpr()))
-                this->registersToPreserveForCallThatMightThrow.set(location.gpr());
-            else if (location.isFPR() && volatileRegisters.get(location.fpr()))
-                this->registersToPreserveForCallThatMightThrow.set(location.fpr());
-        };
-
-        switch (exitValue.kind()) {
-        case ExitValueArgument:
-            handleLocation(FTL::Location::forStackmaps(&stackmaps, record.locations[exitValue.exitArgument().argument()]));
-            break;
-        case ExitValueRecovery:
-            handleLocation(FTL::Location::forStackmaps(&stackmaps, record.locations[exitValue.rightRecoveryArgument()]));
-            handleLocation(FTL::Location::forStackmaps(&stackmaps, record.locations[exitValue.leftRecoveryArgument()]));
-            break;
-        default:
-            break;
-        }
-    };
-    for (ExitTimeObjectMaterialization* materialization : m_descriptor->m_materializations) {
-        for (unsigned propertyIndex = materialization->properties().size(); propertyIndex--;)
-            addNeededRegisters(materialization->properties()[propertyIndex].value());
-    }
-    for (unsigned index = m_descriptor->m_values.size(); index--;)
-        addNeededRegisters(m_descriptor->m_values[index]);
-}
-
-void OSRExit::spillRegistersToSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot)
-{
-    RELEASE_ASSERT(isGenericUnwindHandler() || willArriveAtOSRExitFromCallOperation());
-    unsigned count = 0;
-    for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
-        if (registersToPreserveForCallThatMightThrow.get(reg)) {
-            jit.store64(reg, CCallHelpers::addressFor(stackSpillSlot + count));
-            count++;
-        }
-    }
-    for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
-        if (registersToPreserveForCallThatMightThrow.get(reg)) {
-            jit.storeDouble(reg, CCallHelpers::addressFor(stackSpillSlot + count));
-            count++;
-        }
-    }
-}
-
-void OSRExit::recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot)
-{
-    RELEASE_ASSERT(isGenericUnwindHandler() || willArriveAtOSRExitFromCallOperation());
-    unsigned count = 0;
-    for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
-        if (registersToPreserveForCallThatMightThrow.get(reg)) {
-            jit.load64(CCallHelpers::addressFor(stackSpillSlot + count), reg);
-            count++;
-        }
-    }
-    for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
-        if (registersToPreserveForCallThatMightThrow.get(reg)) {
-            jit.loadDouble(CCallHelpers::addressFor(stackSpillSlot + count), reg);
-            count++;
-        }
-    }
-}
-
-bool OSRExit::willArriveAtExitFromIndirectExceptionCheck() const
-{
-    switch (m_exceptionType) {
-    case ExceptionType::JSCall:
-    case ExceptionType::GetById:
-    case ExceptionType::PutById:
-    case ExceptionType::LazySlowPath:
-    case ExceptionType::BinaryOpGenerator:
-    case ExceptionType::GetByIdCallOperation:
-    case ExceptionType::PutByIdCallOperation:
-        return true;
-    default:
-        return false;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-bool OSRExit::willArriveAtOSRExitFromCallOperation() const
-{
-    switch (m_exceptionType) {
-    case ExceptionType::GetByIdCallOperation:
-    case ExceptionType::PutByIdCallOperation:
-    case ExceptionType::BinaryOpGenerator:
-        return true;
-    default:
-        return false;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-bool OSRExit::needsRegisterRecoveryOnGenericUnwindOSRExitPath() const
-{
-    // Calls/PutByIds/GetByIds all have a generic unwind osr exit paths.
-    // But, GetById and PutById ICs will do register recovery themselves
-    // because they're responsible for spilling necessary registers, so
-    // they also must recover registers themselves.
-    // Calls don't work this way. We compile Calls as patchpoints in LLVM.
-    // A call patchpoint might pass us volatile registers for locations
-    // we will do value recovery on. Therefore, before we make the call,
-    // we must spill these registers. Otherwise, the call will clobber them.
-    // Therefore, the corresponding OSR exit for the call will need to
-    // recover the spilled registers.
-    return m_exceptionType == ExceptionType::JSCall;
-}
-#endif // !FTL_USES_B3
 
 } } // namespace JSC::FTL
 

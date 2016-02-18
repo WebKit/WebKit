@@ -29,7 +29,6 @@
 #include "DFGCommon.h"
 
 #if ENABLE(FTL_JIT)
-#if FTL_USES_B3
 
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
@@ -531,7 +530,6 @@ inline LValue Output::fround(LValue doubleValue)
 
 } } // namespace JSC::FTL
 
-#endif // FTL_USES_B3
 #endif // ENABLE(FTL_JIT)
 
 #endif // FTLB3Output_h

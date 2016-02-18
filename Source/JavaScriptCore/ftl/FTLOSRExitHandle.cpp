@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLOSRExitHandle.h"
 
-#if ENABLE(FTL_JIT) && FTL_USES_B3
+#if ENABLE(FTL_JIT)
 
 #include "FTLOSRExit.h"
 #include "FTLState.h"
@@ -58,5 +58,5 @@ void OSRExitHandle::emitExitThunk(State& state, CCallHelpers& jit)
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT) && FTL_USES_B3
+#endif // ENABLE(FTL_JIT)
 

@@ -45,11 +45,9 @@
 #include "FTLExceptionTarget.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLFormattedValue.h"
-#include "FTLInlineCacheSize.h"
 #include "FTLLazySlowPathCall.h"
 #include "FTLLoweredNodeValue.h"
 #include "FTLOperations.h"
-#include "FTLOutput.h"
 #include "FTLPatchpointExceptionHandle.h"
 #include "FTLThunks.h"
 #include "FTLWeightedTarget.h"
@@ -58,6 +56,7 @@
 #include "JITBitOrGenerator.h"
 #include "JITBitXorGenerator.h"
 #include "JITDivGenerator.h"
+#include "JITInlineCacheGenerator.h"
 #include "JITLeftShiftGenerator.h"
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
@@ -76,7 +75,6 @@
 #if !OS(WINDOWS)
 #include <dlfcn.h>
 #endif
-#include <llvm/InitializeLLVM.h>
 #include <unordered_set>
 #include <wtf/Box.h>
 #include <wtf/ProcessID.h>
@@ -127,18 +125,10 @@ public:
     LowerDFGToLLVM(State& state)
         : m_graph(state.graph)
         , m_ftlState(state)
-        , m_heaps(state.context)
         , m_out(state)
-#if FTL_USES_B3
         , m_proc(*state.proc)
-#endif
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
-        , m_stackmapIDs(0)
-#if !FTL_USES_B3
-        , m_tbaaKind(mdKindID(state.context, "tbaa"))
-        , m_tbaaStructKind(mdKindID(state.context, "tbaa.struct"))
-#endif
     {
     }
     
@@ -156,28 +146,10 @@ public:
         
         m_graph.ensureDominators();
 
-#if !FTL_USES_B3
-        state->module =
-            moduleCreateWithNameInContext(name.data(), state->context);
-        
-        state->function = addFunction(
-            state->module, name.data(), functionType(m_out.int64));
-        setFunctionCallingConv(state->function, LLVMCCallConv);
-        if (isX86() && Options::llvmDisallowAVX()) {
-            // AVX makes V8/raytrace 80% slower. It makes Kraken/audio-oscillator 4.5x
-            // slower. It should be disabled.
-            addTargetDependentFunctionAttr(state->function, "target-features", "-avx");
-        }
-#endif // !FTL_USES_B3
-        
         if (verboseCompilationEnabled())
             dataLog("Function ready, beginning lowering.\n");
 
-#if FTL_USES_B3
         m_out.initialize(m_heaps);
-#else
-        m_out.initialize(state->module, state->function, m_heaps);
-#endif
 
         // We use prologue frequency for all of the initialization code.
         m_out.setFrequency(1);
@@ -200,148 +172,27 @@ public:
         m_out.setFrequency(1);
         
         m_out.appendTo(m_prologue, stackOverflow);
-#if FTL_USES_B3
         m_out.initializeConstants(m_proc, m_prologue);
-#endif
         createPhiVariables();
 
-#if FTL_USES_B3
         size_t sizeOfCaptured = sizeof(JSValue) * m_graph.m_nextMachineLocal;
         B3::SlotBaseValue* capturedBase = m_out.lockedStackSlot(sizeOfCaptured);
         m_captured = m_out.add(capturedBase, m_out.constIntPtr(sizeOfCaptured));
         state->capturedValue = capturedBase->slot();
-#else // FTL_USES_B3
-        LValue capturedAlloca = m_out.alloca(arrayType(m_out.int64, m_graph.m_nextMachineLocal));
-        
-        m_captured = m_out.add(
-            m_out.ptrToInt(capturedAlloca, m_out.intPtr),
-            m_out.constIntPtr(m_graph.m_nextMachineLocal * sizeof(Register)));
-        
-        state->capturedStackmapID = m_stackmapIDs++;
-        m_out.call(
-            m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(state->capturedStackmapID),
-            m_out.int32Zero, capturedAlloca);
-#endif // FTL_USE_B3
 
         auto preOrder = m_graph.blocksInPreOrder();
 
-#if !FTL_USES_B3
-        bool hasVarargs = false;
-        size_t maxNumberOfCatchSpills = 0;
-        for (DFG::BasicBlock* block : preOrder) {
-            for (Node* node : *block) {
-                switch (node->op()) {
-                case CallVarargs:
-                case TailCallVarargs:
-                case TailCallVarargsInlinedCaller:
-                case CallForwardVarargs:
-                case TailCallForwardVarargs:
-                case TailCallForwardVarargsInlinedCaller:
-                case ConstructVarargs:
-                case ConstructForwardVarargs:
-                    hasVarargs = true;
-                    break;
-                default:
-                    break;
-                }
-
-                if (m_graph.m_hasExceptionHandlers) {
-                    switch (node->op()) {
-                    case Call:
-                    case CallVarargs:
-                    case CallForwardVarargs:
-                    case Construct:
-                    case ConstructVarargs:
-                    case ConstructForwardVarargs:
-                    case TailCallInlinedCaller:
-                    case TailCallVarargsInlinedCaller:
-                    case TailCallForwardVarargsInlinedCaller: {
-                        CodeOrigin opCatchOrigin;
-                        HandlerInfo* exceptionHandler;
-                        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(node->origin.forExit, opCatchOrigin, exceptionHandler);
-                        if (willCatchException)
-                            maxNumberOfCatchSpills = std::max(maxNumberOfCatchSpills, m_graph.localsLiveInBytecode(opCatchOrigin).bitCount());
-                        break;
-                    }
-                    case ArithDiv:
-                    case ArithMul:
-                    case ArithSub:
-                    case ValueAdd:
-                    case DFG::BitAnd:
-                    case DFG::BitOr:
-                    case DFG::BitXor:
-                    case BitLShift:
-                    case BitRShift:
-                    case BitURShift:
-                        if (!node->isBinaryUseKind(UntypedUse))
-                            break; // We only compile patchpoints for UntypedUse.
-                        FALLTHROUGH;
-
-                    case GetById:
-                    case GetByIdFlush: {
-                        // We may have to flush one thing for GetByIds/ binary ops when the base and result or the left/right and the result
-                        // are assigned the same register. For a more comprehensive overview, look at the comment in FTLCompile.cpp
-                        CodeOrigin opCatchOrigin;
-                        HandlerInfo* exceptionHandler;
-                        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(node->origin.forExit, opCatchOrigin, exceptionHandler);
-                        if (willCatchException) {
-                            static const size_t numberOfGetByIdOrBinaryOpSpills = 1;
-                            maxNumberOfCatchSpills = std::max(maxNumberOfCatchSpills, numberOfGetByIdOrBinaryOpSpills);
-                        }
-                        break;
-                    }
-                    default:
-                        break;
-                    }
-                }
-            }
-        }
-
-        // B3 doesn't need the varargs spill slot because we just use call arg area size as a way to
-        // request spill slots.
-        if (hasVarargs) {
-            LValue varargsSpillSlots = m_out.alloca(
-                arrayType(m_out.int64, JSCallVarargs::numSpillSlotsNeeded()));
-            state->varargsSpillSlotsStackmapID = m_stackmapIDs++;
-            m_out.call(
-                m_out.voidType, m_out.stackmapIntrinsic(),
-                m_out.constInt64(state->varargsSpillSlotsStackmapID),
-                m_out.int32Zero, varargsSpillSlots);
-        }
-
-        // B3 doesn't need the exception spill slot because we just use the 
-        if (m_graph.m_hasExceptionHandlers && maxNumberOfCatchSpills) {
-            RegisterSet volatileRegisters = RegisterSet::volatileRegistersForJSCall();
-            maxNumberOfCatchSpills = std::min(volatileRegisters.numberOfSetRegisters(), maxNumberOfCatchSpills);
-
-            LValue exceptionHandlingVolatileRegistersSpillSlots = m_out.alloca(
-                arrayType(m_out.int64, maxNumberOfCatchSpills));
-            state->exceptionHandlingSpillSlotStackmapID = m_stackmapIDs++;
-            m_out.call(
-                m_out.voidType, m_out.stackmapIntrinsic(),
-                m_out.constInt64(state->exceptionHandlingSpillSlotStackmapID),
-                m_out.int32Zero, exceptionHandlingVolatileRegistersSpillSlots);
-        }
-#endif // !FTL_USES_B3
-        
         // We should not create any alloca's after this point, since they will cease to
         // be mem2reg candidates.
         
-#if FTL_USES_B3
         m_callFrame = m_out.framePointer();
-#else
-        m_callFrame = m_out.ptrToInt(
-            m_out.call(m_out.intPtr, m_out.frameAddressIntrinsic(), m_out.int32Zero), m_out.intPtr);
-#endif
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
         m_tagMask = m_out.constInt64(TagMask);
 
-#if FTL_USES_B3
         // Make sure that B3 knows that we really care about the mask registers. This forces the
         // constants to be materialized in registers.
         m_proc.addFastConstant(m_tagTypeNumber->key());
         m_proc.addFastConstant(m_tagMask->key());
-#endif // FTL_USES_B3
         
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
         
@@ -350,7 +201,6 @@ public:
         
         m_out.appendTo(stackOverflow, m_handleExceptions);
         m_out.call(m_out.voidType, m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()));
-#if FTL_USES_B3
         m_out.patchpoint(Void)->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
                 // We are terminal, so we can clobber everything. That's why we don't claim to
@@ -368,17 +218,9 @@ public:
                         linkBuffer.link(call, FunctionPtr(lookupExceptionHandlerFromCallerFrame));
                     });
             });
-#else // FTL_USES_B3
-        state->handleStackOverflowExceptionStackmapID = m_stackmapIDs++;
-        m_out.call(
-            m_out.voidType, m_out.stackmapIntrinsic(),
-            m_out.constInt64(state->handleStackOverflowExceptionStackmapID),
-            m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
-#endif // FTL_USES_B3
         m_out.unreachable();
         
         m_out.appendTo(m_handleExceptions, checkArguments);
-#if FTL_USES_B3
         Box<CCallHelpers::Label> exceptionHandler = state->exceptionHandler;
         m_out.patchpoint(Void)->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
@@ -388,12 +230,6 @@ public:
                         linkBuffer.link(jump, linkBuffer.locationOf(*exceptionHandler));
                     });
             });
-#else
-        state->handleExceptionStackmapID = m_stackmapIDs++;
-        m_out.call(
-            m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(state->handleExceptionStackmapID),
-            m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
-#endif
         m_out.unreachable();
         
         m_out.appendTo(checkArguments, lowBlock(m_graph.block(0)));
@@ -443,7 +279,6 @@ public:
         for (DFG::BasicBlock* block : preOrder)
             compileBlock(block);
 
-#if FTL_USES_B3
         // We create all Phi's up front, but we may then decide not to compile the basic block
         // that would have contained one of them. So this creates orphans, which triggers B3
         // validation failures. Calling this fixes the issue.
@@ -457,16 +292,6 @@ public:
 
         // We put the blocks into the B3 procedure in a super weird order. Now we reorder them.
         m_out.applyBlockOrder();
-#endif // FTL_USES_B3
-
-#if !FTL_USES_B3
-        if (Options::dumpLLVMIR())
-            dumpModule(state->module);
-        if (verboseCompilationEnabled())
-            state->dumpState("after lowering");
-        if (validationEnabled())
-            verifyModule(state->module);
-#endif
     }
 
 private:
@@ -502,11 +327,7 @@ private:
                     DFG_CRASH(m_graph, node, "Bad Phi node result type");
                     break;
                 }
-#if FTL_USES_B3
                 m_phis.add(node, m_proc.add<Value>(B3::Phi, type, Origin(node)));
-#else
-                m_phis.add(node, m_out.alloca(type));
-#endif
             }
         }
     }
@@ -595,9 +416,7 @@ private:
         
         m_node = m_highBlock->at(nodeIndex);
         m_origin = m_node->origin;
-#if FTL_USES_B3
         m_out.setOrigin(m_node);
-#endif
         
         if (verboseCompilationEnabled())
             dataLog("Lowering ", m_node, "\n");
@@ -1118,80 +937,6 @@ private:
         return true;
     }
 
-    enum ConstInt32OperandOptimizationSupport {
-        HasConstInt32OperandOptimization,
-        DoesNotHaveConstInt32OperandOptimization,
-    };
-
-    enum ConstDoubleOperandOptimizationSupport {
-        HasConstDoubleOperandOptimization,
-        DoesNotHaveConstDoubleOperandOptimization,
-    };
-
-    template <typename SnippetICDescriptor,
-        ConstInt32OperandOptimizationSupport constInt32Opt = HasConstInt32OperandOptimization,
-        ConstDoubleOperandOptimizationSupport constDoubleOpt = DoesNotHaveConstDoubleOperandOptimization>
-    void compileUntypedBinaryOp()
-    {
-        Edge& leftChild = m_node->child1();
-        Edge& rightChild = m_node->child2();
-
-        if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
-            setJSValue(vmCall(m_out.int64, m_out.operation(SnippetICDescriptor::nonNumberSlowPathFunction()), m_callFrame,
-                lowJSValue(leftChild), lowJSValue(rightChild)));
-            return;
-        }
-
-        unsigned stackmapID = m_stackmapIDs++;
-
-        if (Options::verboseCompilation())
-            dataLog("    Emitting ", SnippetICDescriptor::opName(), " patchpoint with stackmap #", stackmapID, "\n");
-
-#if FTL_USES_B3
-        CRASH();
-#else
-        LValue left = lowJSValue(leftChild);
-        LValue right = lowJSValue(rightChild);
-
-        SnippetOperand leftOperand(abstractValue(leftChild).resultType());
-        SnippetOperand rightOperand(abstractValue(rightChild).resultType());
-
-        if (constInt32Opt == HasConstInt32OperandOptimization && leftChild->isInt32Constant())
-            leftOperand.setConstInt32(leftChild->asInt32());
-        else if (constDoubleOpt == HasConstDoubleOperandOptimization && leftChild->isDoubleConstant())
-            leftOperand.setConstDouble(leftChild->asNumber());
-
-        if (leftOperand.isConst()) {
-            // Because the snippet does not support both operands being constant, if the left
-            // operand is already a constant, we'll just pretend the right operand is not.
-        } else if (constInt32Opt == HasConstInt32OperandOptimization && rightChild->isInt32Constant())
-            rightOperand.setConstInt32(rightChild->asInt32());
-        else if (constDoubleOpt == HasConstDoubleOperandOptimization && rightChild->isDoubleConstant())
-            rightOperand.setConstDouble(rightChild->asNumber());
-
-        RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
-
-        // Arguments: id, bytes, target, numArgs, args...
-        StackmapArgumentList arguments;
-        arguments.append(m_out.constInt64(stackmapID));
-        arguments.append(m_out.constInt32(SnippetICDescriptor::icSize()));
-        arguments.append(constNull(m_out.ref8));
-        arguments.append(m_out.constInt32(2));
-        arguments.append(left);
-        arguments.append(right);
-
-        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
-            ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
-
-        LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-
-        m_ftlState.binaryOps.append(SnippetICDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
-
-        setJSValue(call);
-#endif
-    }
-
     void compileUpsilon()
     {
         LValue upsilonValue = nullptr;
@@ -1221,19 +966,13 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
         }
-#if FTL_USES_B3
         ValueFromBlock upsilon = m_out.anchor(upsilonValue);
         LValue phiNode = m_phis.get(m_node->phi());
         m_out.addIncomingToPhi(phiNode, upsilon);
-#else
-        LValue destination = m_phis.get(m_node->phi());
-        m_out.set(upsilonValue, destination);
-#endif
     }
     
     void compilePhi()
     {
-#if FTL_USES_B3
         LValue phi = m_phis.get(m_node);
         m_out.m_block->append(phi);
 
@@ -1257,30 +996,6 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
         }
-#else
-        LValue source = m_phis.get(m_node);
-        
-        switch (m_node->flags() & NodeResultMask) {
-        case NodeResultDouble:
-            setDouble(m_out.get(source));
-            break;
-        case NodeResultInt32:
-            setInt32(m_out.get(source));
-            break;
-        case NodeResultInt52:
-            setInt52(m_out.get(source));
-            break;
-        case NodeResultBoolean:
-            setBoolean(m_out.get(source));
-            break;
-        case NodeResultJS:
-            setJSValue(m_out.get(source));
-            break;
-        default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
-            break;
-        }
-#endif
     }
     
     void compileDoubleConstant()
@@ -1666,11 +1381,7 @@ private:
     
     void compileValueAdd()
     {
-#if FTL_USES_B3
         emitBinarySnippet<JITAddGenerator>(operationValueAdd);
-#else // FTL_USES_B3
-        compileUntypedBinaryOp<ValueAddDescriptor>();
-#endif // FTL_USES_B3
     }
     
     void compileStrCat()
@@ -1704,47 +1415,10 @@ private:
                 break;
             }
 
-#if FTL_USES_B3
             CheckValue* result =
                 isSub ? m_out.speculateSub(left, right) : m_out.speculateAdd(left, right);
             blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
             setInt32(result);
-#else // FTL_USES_B3
-            LValue result;
-            if (!isSub) {
-                result = m_out.addWithOverflow32(left, right);
-                
-                if (doesKill(m_node->child2())) {
-                    addAvailableRecovery(
-                        m_node->child2(), SubRecovery,
-                        m_out.extractValue(result, 0), left, DataFormatInt32);
-                } else if (doesKill(m_node->child1())) {
-                    addAvailableRecovery(
-                        m_node->child1(), SubRecovery,
-                        m_out.extractValue(result, 0), right, DataFormatInt32);
-                }
-            } else {
-                result = m_out.subWithOverflow32(left, right);
-                
-                if (doesKill(m_node->child2())) {
-                    // result = left - right
-                    // result - left = -right
-                    // right = left - result
-                    addAvailableRecovery(
-                        m_node->child2(), SubRecovery,
-                        left, m_out.extractValue(result, 0), DataFormatInt32);
-                } else if (doesKill(m_node->child1())) {
-                    // result = left - right
-                    // result + right = left
-                    addAvailableRecovery(
-                        m_node->child1(), AddRecovery,
-                        m_out.extractValue(result, 0), right, DataFormatInt32);
-                }
-            }
-
-            speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
-            setInt32(m_out.extractValue(result, 0));
-#endif // FTL_USES_B3
             break;
         }
             
@@ -1760,48 +1434,10 @@ private:
 
             LValue left = lowInt52(m_node->child1());
             LValue right = lowInt52(m_node->child2());
-#if FTL_USES_B3
             CheckValue* result =
                 isSub ? m_out.speculateSub(left, right) : m_out.speculateAdd(left, right);
             blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
             setInt52(result);
-#else // FTL_USES_B3
-
-            LValue result;
-            if (!isSub) {
-                result = m_out.addWithOverflow64(left, right);
-                
-                if (doesKill(m_node->child2())) {
-                    addAvailableRecovery(
-                        m_node->child2(), SubRecovery,
-                        m_out.extractValue(result, 0), left, DataFormatInt52);
-                } else if (doesKill(m_node->child1())) {
-                    addAvailableRecovery(
-                        m_node->child1(), SubRecovery,
-                        m_out.extractValue(result, 0), right, DataFormatInt52);
-                }
-            } else {
-                result = m_out.subWithOverflow64(left, right);
-                
-                if (doesKill(m_node->child2())) {
-                    // result = left - right
-                    // result - left = -right
-                    // right = left - result
-                    addAvailableRecovery(
-                        m_node->child2(), SubRecovery,
-                        left, m_out.extractValue(result, 0), DataFormatInt52);
-                } else if (doesKill(m_node->child1())) {
-                    // result = left - right
-                    // result + right = left
-                    addAvailableRecovery(
-                        m_node->child1(), AddRecovery,
-                        m_out.extractValue(result, 0), right, DataFormatInt52);
-                }
-            }
-
-            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(result, 1));
-            setInt52(m_out.extractValue(result, 0));
-#endif // FTL_USES_B3
             break;
         }
             
@@ -1819,11 +1455,7 @@ private:
                 break;
             }
 
-#if FTL_USES_B3
             emitBinarySnippet<JITSubGenerator>(operationValueSub);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<ArithSubDescriptor, DoesNotHaveConstInt32OperandOptimization, DoesNotHaveConstDoubleOperandOptimization>();
-#endif // FTL_USES_B3
             break;
         }
 
@@ -1851,15 +1483,9 @@ private:
             if (!shouldCheckOverflow(m_node->arithMode()))
                 result = m_out.mul(left, right);
             else {
-#if FTL_USES_B3
                 CheckValue* speculation = m_out.speculateMul(left, right);
                 blessSpeculation(speculation, Overflow, noValue(), nullptr, m_origin);
                 result = speculation;
-#else // FTL_USES_B3
-                LValue overflowResult = m_out.mulWithOverflow32(left, right);
-                speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
-                result = m_out.extractValue(overflowResult, 0);
-#endif // FTL_USES_B3
             }
             
             if (shouldCheckNegativeZero(m_node->arithMode())) {
@@ -1885,14 +1511,8 @@ private:
             LValue left = lowWhicheverInt52(m_node->child1(), kind);
             LValue right = lowInt52(m_node->child2(), opposite(kind));
 
-#if FTL_USES_B3
             CheckValue* result = m_out.speculateMul(left, right);
             blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
-#else // FTL_USES_B3
-            LValue overflowResult = m_out.mulWithOverflow64(left, right);
-            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
-            LValue result = m_out.extractValue(overflowResult, 0);
-#endif // FTL_USES_B3
 
             if (shouldCheckNegativeZero(m_node->arithMode())) {
                 LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
@@ -1919,11 +1539,7 @@ private:
         }
 
         case UntypedUse: {
-#if FTL_USES_B3
             emitBinarySnippet<JITMulGenerator>(operationValueMul);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<ArithMulDescriptor>();
-#endif // FTL_USES_B3
             break;
         }
 
@@ -1992,11 +1608,7 @@ private:
         }
 
         case UntypedUse: {
-#if FTL_USES_B3
             emitBinarySnippet<JITDivGenerator, NeedScratchFPR>(operationValueDiv);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<ArithDivDescriptor, HasConstInt32OperandOptimization, HasConstDoubleOperandOptimization>();
-#endif // FTL_USES_B3
             break;
         }
 
@@ -2312,17 +1924,9 @@ private:
             else if (!shouldCheckNegativeZero(m_node->arithMode())) {
                 // "0 - x" is the canonical way of saying "-x" in both B3 and LLVM. This gets
                 // lowered to the right thing.
-#if FTL_USES_B3
                 CheckValue* check = m_out.speculateSub(m_out.int32Zero, value);
                 blessSpeculation(check, Overflow, noValue(), nullptr, m_origin);
                 result = check;
-#else // FTL_USES_B3
-                // We don't have a negate-with-overflow intrinsic. Hopefully this
-                // does the trick, though.
-                LValue overflowResult = m_out.subWithOverflow32(m_out.int32Zero, value);
-                speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
-                result = m_out.extractValue(overflowResult, 0);
-#endif // FTL_USES_B3
             } else {
                 speculate(Overflow, noValue(), 0, m_out.testIsZero32(value, m_out.constInt32(0x7fffffff)));
                 result = m_out.neg(value);
@@ -2344,14 +1948,8 @@ private:
             }
             
             LValue value = lowInt52(m_node->child1());
-#if FTL_USES_B3
             CheckValue* result = m_out.speculateSub(m_out.int64Zero, value);
             blessSpeculation(result, Int52Overflow, noValue(), nullptr, m_origin);
-#else // FTL_USES_B3
-            LValue overflowResult = m_out.subWithOverflow64(m_out.int64Zero, value);
-            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
-            LValue result = m_out.extractValue(overflowResult, 0);
-#endif // FTL_USES_B3
             speculate(NegativeZero, noValue(), 0, m_out.isZero64(result));
             setInt52(result);
             break;
@@ -2371,11 +1969,7 @@ private:
     void compileBitAnd()
     {
         if (m_node->isBinaryUseKind(UntypedUse)) {
-#if FTL_USES_B3
             emitBinaryBitOpSnippet<JITBitAndGenerator>(operationValueBitAnd);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<BitAndDescriptor>();
-#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.bitAnd(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
@@ -2384,11 +1978,7 @@ private:
     void compileBitOr()
     {
         if (m_node->isBinaryUseKind(UntypedUse)) {
-#if FTL_USES_B3
             emitBinaryBitOpSnippet<JITBitOrGenerator>(operationValueBitOr);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<BitOrDescriptor>();
-#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.bitOr(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
@@ -2397,11 +1987,7 @@ private:
     void compileBitXor()
     {
         if (m_node->isBinaryUseKind(UntypedUse)) {
-#if FTL_USES_B3
             emitBinaryBitOpSnippet<JITBitXorGenerator>(operationValueBitXor);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<BitXorDescriptor>();
-#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.bitXor(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
@@ -2410,11 +1996,7 @@ private:
     void compileBitRShift()
     {
         if (m_node->isBinaryUseKind(UntypedUse)) {
-#if FTL_USES_B3
             emitRightShiftSnippet(JITRightShiftGenerator::SignedShift);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<BitRShiftDescriptor>();
-#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.aShr(
@@ -2425,11 +2007,7 @@ private:
     void compileBitLShift()
     {
         if (m_node->isBinaryUseKind(UntypedUse)) {
-#if FTL_USES_B3
             emitBinaryBitOpSnippet<JITLeftShiftGenerator>(operationValueBitLShift);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<BitLShiftDescriptor>();
-#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.shl(
@@ -2440,11 +2018,7 @@ private:
     void compileBitURShift()
     {
         if (m_node->isBinaryUseKind(UntypedUse)) {
-#if FTL_USES_B3
             emitRightShiftSnippet(JITRightShiftGenerator::UnsignedShift);
-#else // FTL_USES_B3
-            compileUntypedBinaryOp<BitURShiftDescriptor>();
-#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.lShr(
@@ -2688,7 +2262,6 @@ private:
         LValue value = lowJSValue(node->child2());
         auto uid = m_graph.identifiers()[node->identifierNumber()];
 
-#if FTL_USES_B3
         B3::PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(base);
         patchpoint->appendSomeRegister(value);
@@ -2746,32 +2319,6 @@ private:
                             });
                     });
             });
-#else
-        // Arguments: id, bytes, target, numArgs, args...
-        unsigned stackmapID = m_stackmapIDs++;
-
-        if (verboseCompilationEnabled())
-            dataLog("    Emitting PutById patchpoint with stackmap #", stackmapID, "\n");
-
-        StackmapArgumentList arguments;
-        arguments.append(base); 
-        arguments.append(value);
-
-        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, ExceptionType::PutById, 2); // 2 arguments show up in the stackmap locations: the base and the value.
-
-        arguments.insert(0, m_out.constInt32(2)); 
-        arguments.insert(0, constNull(m_out.ref8)); 
-        arguments.insert(0, m_out.constInt32(sizeOfPutById()));
-        arguments.insert(0, m_out.constInt64(stackmapID));
-
-        LValue call = m_out.call(m_out.voidType, m_out.patchpointVoidIntrinsic(), arguments);
-        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-        
-        m_ftlState.putByIds.append(PutByIdDescriptor(
-            stackmapID, node->origin.semantic, uid,
-            m_graph.executableFor(node->origin.semantic)->ecmaMode(),
-            node->op() == PutByIdDirect ? Direct : NotDirect));
-#endif
     }
     
     void compileGetButterfly()
@@ -4410,17 +3957,10 @@ private:
         LValue length = m_out.load32(kids[0], m_heaps.JSString_length);
         for (unsigned i = 1; i < numKids; ++i) {
             flags = m_out.bitAnd(flags, m_out.load32(kids[i], m_heaps.JSString_flags));
-#if FTL_USES_B3
             CheckValue* lengthCheck = m_out.speculateAdd(
                 length, m_out.load32(kids[i], m_heaps.JSString_length));
             blessSpeculation(lengthCheck, Uncountable, noValue(), nullptr, m_origin);
             length = lengthCheck;
-#else // FTL_USES_B3            
-            LValue lengthAndOverflow = m_out.addWithOverflow32(
-                length, m_out.load32(kids[i], m_heaps.JSString_length));
-            speculate(Uncountable, noValue(), 0, m_out.extractValue(lengthAndOverflow, 1));
-            length = m_out.extractValue(lengthAndOverflow, 0);
-#endif // FTL_USES_B3
         }
         m_out.store32(
             m_out.bitAnd(m_out.constInt32(JSString::Is8Bit), flags),
@@ -5170,7 +4710,6 @@ private:
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
 
-#if FTL_USES_B3
         unsigned frameSize = JSStack::CallFrameHeaderSize + numArgs;
         unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
 
@@ -5264,38 +4803,6 @@ private:
             });
 
         setJSValue(patchpoint);
-#else
-        unsigned stackmapID = m_stackmapIDs++;
-
-        unsigned frameSize = JSStack::CallFrameHeaderSize + numArgs;
-        unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
-        unsigned padding = alignedFrameSize - frameSize;
-        // Documentation about stackmap and patchpoint intrinsics:
-        // http://llvm.org/docs/StackMaps.html
-        StackmapArgumentList arguments;
-        arguments.append(jsCallee); // callee -> %rax
-        arguments.append(getUndef(m_out.int64)); // code block
-        arguments.append(jsCallee); // callee -> stack
-        arguments.append(m_out.constInt64(numArgs)); // argument count and zeros for the tag
-        for (unsigned i = 0; i < numArgs; ++i)
-            arguments.append(lowJSValue(m_graph.varArgChild(node, 1 + i)));
-        for (unsigned i = 0; i < padding; ++i)
-            arguments.append(getUndef(m_out.int64));
-
-        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, ExceptionType::JSCall, 0); // No call arguments show up in the stackmap locations.
-
-        arguments.insert(0, m_out.constInt32(1 + alignedFrameSize - JSStack::CallerFrameAndPCSize));
-        arguments.insert(0, constNull(m_out.ref8));
-        arguments.insert(0, m_out.constInt32(sizeOfCall()));
-        arguments.insert(0, m_out.constInt64(stackmapID));
-        
-        LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-        setInstructionCallingConvention(call, LLVMWebKitJSCallConv);
-        
-        m_ftlState.jsCalls.append(JSCall(stackmapID, node, codeOriginDescriptionOfCallSite()));
-        
-        setJSValue(call);
-#endif
     }
 
     void compileTailCall()
@@ -5305,7 +4812,6 @@ private:
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
         
-#if FTL_USES_B3
         // We want B3 to give us all of the arguments using whatever mechanism it thinks is
         // convenient. The generator then shuffles those arguments into our own call frame,
         // destroying our frame in the process.
@@ -5397,36 +4903,6 @@ private:
                             linkBuffer.locationOfNearCall(fastCall));
                     });
             });
-#else
-        StackmapArgumentList exitArguments;
-        exitArguments.reserveCapacity(numArgs + 6);
-
-        unsigned stackmapID = m_stackmapIDs++;
-        exitArguments.append(jsCallee);
-        exitArguments.append(m_tagTypeNumber);
-
-        Vector<ExitValue> callArguments(numArgs);
-
-        bool needsTagTypeNumber { false };
-        for (unsigned i = 0; i < numArgs; ++i) {
-            callArguments[i] =
-                exitValueForTailCall(exitArguments, m_graph.varArgChild(node, 1 + i).node());
-            if (callArguments[i].dataFormat() == DataFormatInt32)
-                needsTagTypeNumber = true;
-        }
-
-        JSTailCall tailCall(stackmapID, node, WTFMove(callArguments));
-
-        exitArguments.insert(0, m_out.constInt32(needsTagTypeNumber ? 2 : 1));
-        exitArguments.insert(0, constNull(m_out.ref8));
-        exitArguments.insert(0, m_out.constInt32(tailCall.estimatedSize()));
-        exitArguments.insert(0, m_out.constInt64(stackmapID));
-
-        LValue call = m_out.call(m_out.voidType, m_out.patchpointVoidIntrinsic(), exitArguments);
-        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-
-        m_ftlState.jsTailCalls.append(tailCall);
-#endif
         
         m_out.unreachable();
     }
@@ -5458,7 +4934,6 @@ private:
             break;
         }
         
-#if FTL_USES_B3
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
 
         // Append the forms of the arguments that we will use before any clobbering happens.
@@ -5700,39 +5175,6 @@ private:
             setJSValue(patchpoint);
             break;
         }
-#else
-        UNUSED_PARAM(forwarding);
-        unsigned stackmapID = m_stackmapIDs++;
-        
-        StackmapArgumentList arguments;
-        arguments.append(jsCallee);
-        if (jsArguments)
-            arguments.append(jsArguments);
-        ASSERT(thisArg);
-        arguments.append(thisArg);
-
-        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, ExceptionType::JSCall, 0); // No call arguments show up in stackmap locations.
-
-        arguments.insert(0, m_out.constInt32(2 + !!jsArguments));
-        arguments.insert(0, constNull(m_out.ref8));
-        arguments.insert(0, m_out.constInt32(sizeOfICFor(node)));
-        arguments.insert(0, m_out.constInt64(stackmapID));
-        
-        LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-        setInstructionCallingConvention(call, LLVMCCallConv);
-        
-        m_ftlState.jsCallVarargses.append(JSCallVarargs(stackmapID, node, codeOriginDescriptionOfCallSite()));
-
-        switch (node->op()) {
-        case TailCallVarargs:
-        case TailCallForwardVarargs:
-            m_out.unreachable();
-            break;
-
-        default:
-            setJSValue(call);
-        }
-#endif
     }
     
     void compileLoadVarargs()
@@ -6094,7 +5536,6 @@ private:
 
         DFG_ASSERT(m_graph, m_node, m_origin.exitOK);
         
-#if FTL_USES_B3
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         OSRExitDescriptor* descriptor = appendOSRExitDescriptor(noValue(), nullptr);
         NodeOrigin origin = m_origin;
@@ -6141,15 +5582,6 @@ private:
 
         // When this abruptly terminates, it could read any heap location.
         patchpoint->effects.reads = HeapRange::top();
-#else // FTL_USES_B3
-
-        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(UncountableInvalidation, ExceptionType::None, noValue(), nullptr, m_origin);
-        
-        StackmapArgumentList arguments = buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last().m_codeOrigin, FormattedValue());
-        callStackmap(exitDescriptor, arguments);
-        
-        exitDescriptor->m_isInvalidationPoint = true;
-#endif // FTL_USES_B3
     }
     
     void compileIsUndefined()
@@ -6334,7 +5766,6 @@ private:
         if (JSString* string = node->child1()->dynamicCastConstant<JSString*>()) {
             if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
                 UniquedStringImpl* str = bitwise_cast<UniquedStringImpl*>(string->tryGetValueImpl());
-#if FTL_USES_B3
                 B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
                 patchpoint->appendSomeRegister(cell);
                 patchpoint->clobber(RegisterSet::macroScratchRegisters());
@@ -6394,19 +5825,6 @@ private:
                     });
 
                 setJSValue(patchpoint);
-#else // FTL_USES_B3
-                unsigned stackmapID = m_stackmapIDs++;
-            
-                LValue call = m_out.call(
-                    m_out.int64, m_out.patchpointInt64Intrinsic(),
-                    m_out.constInt64(stackmapID), m_out.constInt32(sizeOfIn()),
-                    constNull(m_out.ref8), m_out.constInt32(1), cell);
-
-                setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-
-                m_ftlState.checkIns.append(CheckInDescriptor(stackmapID, node->origin.semantic, str));
-                setJSValue(call);
-#endif // FTL_USES_B3
                 return;
             }
         } 
@@ -7414,7 +6832,6 @@ private:
         Node* node = m_node;
         UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
 
-#if FTL_USES_B3
         B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
 
@@ -7476,30 +6893,6 @@ private:
             });
 
         return patchpoint;
-#else
-        // Arguments: id, bytes, target, numArgs, args...
-        unsigned stackmapID = m_stackmapIDs++;
-        
-        if (Options::verboseCompilation())
-            dataLog("    Emitting GetById patchpoint with stackmap #", stackmapID, "\n");
-        
-        StackmapArgumentList arguments;
-        arguments.append(base);
-
-        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, ExceptionType::GetById, 2); // 2 arguments show up in the stackmap locations: the result and the base.
-
-        arguments.insert(0, m_out.constInt32(1)); 
-        arguments.insert(0, constNull(m_out.ref8));
-        arguments.insert(0, m_out.constInt32(sizeOfGetById()));
-        arguments.insert(0, m_out.constInt64(stackmapID)); 
-
-        LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-        
-        m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, node->origin.semantic, uid));
-        
-        return call;
-#endif
     }
 
     LValue loadButterflyWithBarrier(LValue object)
@@ -7829,7 +7222,6 @@ private:
         return m_out.phi(m_out.boolean, trueResult, falseResult, slowResult);
     }
 
-#if FTL_USES_B3
     enum ScratchFPRUsage {
         DontNeedScratchFPR,
         NeedScratchFPR
@@ -8014,7 +7406,6 @@ private:
 
         setJSValue(patchpoint);
     }
-#endif // FTL_USES_B3
 
     LValue allocateCell(LValue allocator, LBasicBlock slowPath)
     {
@@ -9136,7 +8527,6 @@ private:
     template<typename Functor>
     LValue lazySlowPath(const Functor& functor, const Vector<LValue>& userArguments)
     {
-#if FTL_USES_B3
         CodeOrigin origin = m_node->origin.semantic;
         
         PatchpointValue* result = m_out.patchpoint(B3::Int64);
@@ -9210,28 +8600,6 @@ private:
                     });
             });
         return result;
-#else
-        unsigned stackmapID = m_stackmapIDs++;
-
-        StackmapArgumentList arguments;
-        arguments.append(m_out.constInt64(stackmapID));
-        arguments.append(m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
-        arguments.append(constNull(m_out.ref8));
-        arguments.append(m_out.constInt32(userArguments.size()));
-        arguments.appendVector(userArguments);
-
-        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, ExceptionType::LazySlowPath, userArguments.size() + 1); // All the arguments plus the result show up in the stackmap locations.
-
-        LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-        
-        RefPtr<LazySlowPathLinkerTask> linker =
-            createSharedTask<LazySlowPathLinkerFunction>(functor);
-
-        m_ftlState.lazySlowPaths.append(LazySlowPathDescriptor(stackmapID, m_node->origin.semantic, linker));
-
-        return call;
-#endif
     }
     
     void speculate(
@@ -10469,7 +9837,6 @@ private:
         m_out.appendTo(continuation);
     }
 
-#if FTL_USES_B3
     RefPtr<PatchpointExceptionHandle> preparePatchpointForExceptions(PatchpointValue* value)
     {
         CodeOrigin opCatchOrigin;
@@ -10505,50 +9872,12 @@ private:
         return PatchpointExceptionHandle::create(
             m_ftlState, exitDescriptor, origin, offset, *exceptionHandler);
     }
-#else // FTL_USES_B3
-    void appendOSRExitArgumentsForPatchpointIfWillCatchException(StackmapArgumentList& arguments, ExceptionType exceptionType, unsigned offsetOfExitArguments)
-    {
-        CodeOrigin opCatchOrigin;
-        HandlerInfo* exceptionHandler;
-        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_origin.forExit, opCatchOrigin, exceptionHandler);
-        if (!willCatchException)
-            return;
-
-        ExitKind exitKind;
-        switch (exceptionType) {
-        case ExceptionType::JSCall:
-        case ExceptionType::GetById:
-        case ExceptionType::PutById:
-            exitKind = GenericUnwind;
-            break;
-        case ExceptionType::LazySlowPath:
-        case ExceptionType::BinaryOpGenerator:
-            exitKind = ExceptionCheck;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
-        appendOSRExitDescriptor(exitKind, exceptionType, noValue(), nullptr, m_origin.withForExitAndExitOK(opCatchOrigin, true));
-        OSRExitDescriptor* exitDescriptor = &m_ftlState.jitCode->osrExitDescriptors.last();
-        exitDescriptor->m_stackmapID = m_stackmapIDs - 1;
-
-        OSRExitDescriptorImpl& exitDescriptorImpl = m_ftlState.osrExitDescriptorImpls.last();
-        exitDescriptorImpl.m_semanticCodeOriginForCallFrameHeader = codeOriginDescriptionOfCallSite();
-        exitDescriptorImpl.m_baselineExceptionHandler = *exceptionHandler;
-
-        StackmapArgumentList freshList =
-            buildExitArguments(exitDescriptor, exitDescriptorImpl.m_codeOrigin, noValue(), offsetOfExitArguments);
-        arguments.appendVector(freshList);
-    }
-#endif // FTL_USES_B3
 
     LBasicBlock lowBlock(DFG::BasicBlock* block)
     {
         return m_blocks.get(block);
     }
 
-#if FTL_USES_B3
     OSRExitDescriptor* appendOSRExitDescriptor(FormattedValue lowValue, Node* highValue)
     {
         return &m_ftlState.jitCode->osrExitDescriptors.alloc(
@@ -10556,18 +9885,6 @@ private:
             availabilityMap().m_locals.numberOfArguments(),
             availabilityMap().m_locals.numberOfLocals());
     }
-#else // FTL_USES_B3
-    OSRExitDescriptor* appendOSRExitDescriptor(ExitKind kind, ExceptionType exceptionType, FormattedValue lowValue, Node* highValue, NodeOrigin origin)
-    {
-        OSRExitDescriptor& result = m_ftlState.jitCode->osrExitDescriptors.alloc(
-            lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
-            availabilityMap().m_locals.numberOfArguments(),
-            availabilityMap().m_locals.numberOfLocals());
-        m_ftlState.osrExitDescriptorImpls.alloc(
-            kind, origin.forExit, origin.semantic, exceptionType);
-        return &result;
-    }
-#endif // FTL_USES_B3
     
     void appendOSRExit(
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition, 
@@ -10603,36 +9920,10 @@ private:
         if (failCondition == m_out.booleanFalse)
             return;
 
-#if FTL_USES_B3
         blessSpeculation(
             m_out.speculate(failCondition), kind, lowValue, highValue, origin);
-#else // FTL_USES_B3
-        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue, highValue, origin);
-
-        if (failCondition == m_out.booleanTrue) {
-            emitOSRExitCall(exitDescriptor, lowValue);
-            return;
-        }
-
-        LBasicBlock lastNext = nullptr;
-        LBasicBlock continuation = nullptr;
-        
-        LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node));
-        continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
-        
-        m_out.branch(failCondition, rarely(failCase), usually(continuation));
-        
-        lastNext = m_out.appendTo(failCase, continuation);
-        
-        emitOSRExitCall(exitDescriptor, lowValue);
-        
-        m_out.unreachable();
-        
-        m_out.appendTo(continuation, lastNext);
-#endif // FTL_USES_B3
     }
 
-#if FTL_USES_B3
     void blessSpeculation(CheckValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin)
     {
         OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(lowValue, highValue);
@@ -10646,14 +9937,6 @@ private:
                     *state, kind, origin, jit, params, 0);
             });
     }
-#endif
-
-#if !FTL_USES_B3
-    void emitOSRExitCall(OSRExitDescriptor* exitDescriptor, FormattedValue lowValue)
-    {
-        callStackmap(exitDescriptor, buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last().m_codeOrigin, lowValue));
-    }
-#endif
 
     StackmapArgumentList buildExitArguments(
         OSRExitDescriptor* exitDescriptor, CodeOrigin exitOrigin, FormattedValue lowValue,
@@ -10729,17 +10012,6 @@ private:
         }
     }
 
-#if !FTL_USES_B3
-    void callStackmap(OSRExitDescriptor* exitDescriptor, StackmapArgumentList arguments)
-    {
-        exitDescriptor->m_stackmapID = m_stackmapIDs++;
-        arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
-        arguments.insert(0, m_out.constInt64(exitDescriptor->m_stackmapID));
-        
-        m_out.call(m_out.voidType, m_out.stackmapIntrinsic(), arguments);
-    }
-#endif // !FTL_USES_B3
-    
     ExitValue exitValueForAvailability(
         StackmapArgumentList& arguments, const HashMap<Node*, ExitTimeObjectMaterialization*>& map,
         Availability availability)
@@ -10830,15 +10102,8 @@ private:
             return exitArgument(arguments, DataFormatStrictInt52, value.value());
         
         value = m_booleanValues.get(node);
-#if FTL_USES_B3
         if (isValid(value))
             return exitArgument(arguments, DataFormatBoolean, value.value());
-#else // FTL_USES_B3
-        if (isValid(value)) {
-            LValue valueToPass = m_out.zeroExt(value.value(), m_out.int32);
-            return exitArgument(arguments, DataFormatBoolean, valueToPass);
-        }
-#endif // FTL_USES_B3
         
         value = m_jsValueValues.get(node);
         if (isValid(value))
@@ -11108,13 +10373,7 @@ private:
 #if ENABLE(MASM_PROBE)
     void probe(std::function<void (CCallHelpers::ProbeContext*)> probeFunc)
     {
-#if FTL_USES_B3
         UNUSED_PARAM(probeFunc);
-#else // !FTL_USES_B3
-        uint32_t stackmapID = m_stackmapIDs++;
-        m_ftlState.probes.append(ProbeDescriptor(stackmapID, probeFunc));
-        m_out.call(m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(stackmapID), m_out.constInt32(sizeOfProbe()));
-#endif // !FTL_USES_B3
     }
 #endif
 
@@ -11131,15 +10390,7 @@ private:
 #else
         m_out.call(
             m_out.voidType,
-#if FTL_USES_B3
             m_out.constIntPtr(ftlUnreachable),
-#else // FTL_USES_B3
-            m_out.intToPtr(
-                m_out.constIntPtr(ftlUnreachable),
-                pointerType(
-                    functionType(
-                        m_out.voidType, m_out.intPtr, m_out.int32, m_out.int32))),
-#endif // FTL_USES_B3
             m_out.constIntPtr(codeBlock()), m_out.constInt32(blockIndex),
             m_out.constInt32(nodeIndex));
 #endif
@@ -11155,9 +10406,7 @@ private:
     State& m_ftlState;
     AbstractHeapRepository m_heaps;
     Output m_out;
-#if FTL_USES_B3
     Procedure& m_proc;
-#endif
     
     LBasicBlock m_prologue;
     LBasicBlock m_handleExceptions;
@@ -11196,12 +10445,6 @@ private:
     NodeOrigin m_origin;
     unsigned m_nodeIndex;
     Node* m_node;
-    
-    uint32_t m_stackmapIDs;
-#if !FTL_USES_B3
-    unsigned m_tbaaKind;
-    unsigned m_tbaaStructKind;
-#endif
 };
 
 } // anonymous namespace

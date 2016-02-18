@@ -37,9 +37,9 @@
 
 namespace JSC {
 
-void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out, InstructionSubsetHint subsetHint)
+void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
 {
-    if (tryToDisassemble(codePtr, size, prefix, out, subsetHint))
+    if (tryToDisassemble(codePtr, size, prefix, out))
         return;
     
     out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), static_cast<char*>(codePtr.executableAddress()) + size);
@@ -67,7 +67,6 @@ public:
     MacroAssemblerCodeRef codeRef;
     size_t size { 0 };
     const char* prefix { nullptr };
-    InstructionSubsetHint subsetHint { MacroAssemblerSubset };
 };
 
 class AsynchronousDisassembler {
@@ -107,9 +106,7 @@ private:
             }
 
             dataLog(task->header);
-            disassemble(
-                task->codeRef.code(), task->size, task->prefix, WTF::dataFile(),
-                task->subsetHint);
+            disassemble(task->codeRef.code(), task->size, task->prefix, WTF::dataFile());
         }
     }
     
@@ -131,15 +128,13 @@ AsynchronousDisassembler& asynchronousDisassembler()
 } // anonymous namespace
 
 void disassembleAsynchronously(
-    const CString& header, const MacroAssemblerCodeRef& codeRef, size_t size, const char* prefix,
-    InstructionSubsetHint subsetHint)
+    const CString& header, const MacroAssemblerCodeRef& codeRef, size_t size, const char* prefix)
 {
     std::unique_ptr<DisassemblyTask> task = std::make_unique<DisassemblyTask>();
     task->header = strdup(header.data()); // Yuck! We need this because CString does racy refcounting.
     task->codeRef = codeRef;
     task->size = size;
     task->prefix = prefix;
-    task->subsetHint = subsetHint;
     
     asynchronousDisassembler().enqueue(WTFMove(task));
 }

@@ -30,8 +30,6 @@
 
 #include "DFGCommon.h"
 #include "FPRInfo.h"
-#include "FTLDWARFRegister.h"
-#include "FTLStackMaps.h"
 #include "GPRInfo.h"
 #include "Reg.h"
 #include <wtf/HashMap.h>
@@ -74,11 +72,6 @@ public:
         return result;
     }
     
-    static Location forRegister(DWARFRegister dwarfReg, int32_t addend)
-    {
-        return forRegister(dwarfReg.reg(), addend);
-    }
-    
     static Location forIndirect(Reg reg, int32_t offset)
     {
         Location result;
@@ -86,11 +79,6 @@ public:
         result.u.variable.regIndex = reg.index();
         result.u.variable.offset = offset;
         return result;
-    }
-    
-    static Location forIndirect(DWARFRegister dwarfReg, int32_t offset)
-    {
-        return forIndirect(dwarfReg.reg(), offset);
     }
     
     static Location forConstant(int64_t constant)
@@ -101,14 +89,8 @@ public:
         return result;
     }
 
-#if FTL_USES_B3
     static Location forValueRep(const B3::ValueRep&);
-#endif // FTL_USES_B3
 
-    // You can pass a null StackMaps if you are confident that the location doesn't
-    // involve a wide constant.
-    static Location forStackmaps(const StackMaps*, const StackMaps::Location&);
-    
     Kind kind() const { return m_kind; }
 
     bool hasReg() const { return kind() == Register || kind() == Indirect; }

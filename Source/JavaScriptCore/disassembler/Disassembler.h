@@ -36,12 +36,10 @@ namespace JSC {
 class MacroAssemblerCodePtr;
 class MacroAssemblerCodeRef;
 
-enum InstructionSubsetHint { MacroAssemblerSubset, LLVMSubset };
-
 #if ENABLE(DISASSEMBLER)
-bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, PrintStream&, InstructionSubsetHint = MacroAssemblerSubset);
+bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, PrintStream&);
 #else
-inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, PrintStream&, InstructionSubsetHint = MacroAssemblerSubset)
+inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, PrintStream&)
 {
     return false;
 }
@@ -49,13 +47,12 @@ inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, 
 
 // Prints either the disassembly, or a line of text indicating that disassembly failed and
 // the range of machine code addresses.
-void disassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, PrintStream& out, InstructionSubsetHint = MacroAssemblerSubset);
+void disassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, PrintStream& out);
 
 // Asynchronous disassembly. This happens on another thread, and calls the provided
 // callback when the disassembly is done.
 void disassembleAsynchronously(
-    const CString& header, const MacroAssemblerCodeRef&, size_t, const char* prefix,
-    InstructionSubsetHint = MacroAssemblerSubset);
+    const CString& header, const MacroAssemblerCodeRef&, size_t, const char* prefix);
 
 JS_EXPORT_PRIVATE void waitForAsynchronousDisassembly();
 

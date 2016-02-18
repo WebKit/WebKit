@@ -118,7 +118,7 @@ namespace JSC { namespace FTL {
 class AbstractHeapRepository {
     WTF_MAKE_NONCOPYABLE(AbstractHeapRepository);
 public:
-    AbstractHeapRepository(LContext);
+    AbstractHeapRepository();
     ~AbstractHeapRepository();
     
     AbstractHeap root;
@@ -188,11 +188,6 @@ public:
 
 private:
     friend class AbstractHeap;
-    
-    LContext m_context;
-#if !FTL_USES_B3
-    unsigned m_tbaaKind;
-#endif
 };
 
 } } // namespace JSC::FTL

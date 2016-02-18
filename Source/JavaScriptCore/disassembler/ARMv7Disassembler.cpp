@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out, InstructionSubsetHint)
+bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
 {
     ARMv7DOpcode armOpcode;
 

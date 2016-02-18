@@ -51,9 +51,7 @@ public:
     
     float value() const { return m_value; }
 
-#if FTL_USES_B3
     B3::FrequencyClass frequencyClass() const { return value() ? B3::FrequencyClass::Normal : B3::FrequencyClass::Rare; }
-#endif
     
     unsigned scaleToTotal(double total) const
     {

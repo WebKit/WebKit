@@ -30,26 +30,10 @@
 
 #include "B3OpaqueByproducts.h"
 #include "DFGCommonData.h"
-#include "FTLDataSection.h"
 #include "FTLLazySlowPath.h"
 #include "FTLOSRExit.h"
-#include "FTLStackMaps.h"
-#include "FTLUnwindInfo.h"
 #include "JITCode.h"
-#include "LLVMAPI.h"
 #include <wtf/RefCountedArray.h>
-
-#if !FTL_USES_B3
-#if OS(DARWIN)
-#define SECTION_NAME_PREFIX "__"
-#elif OS(LINUX)
-#define SECTION_NAME_PREFIX "."
-#else
-#error "Unsupported platform"
-#endif
-
-#define SECTION_NAME(NAME) (SECTION_NAME_PREFIX NAME)
-#endif // !FTL_USES_B3
 
 namespace JSC {
 
@@ -69,14 +53,8 @@ public:
     size_t size() override;
     bool contains(void*) override;
 
-#if FTL_USES_B3
     void initializeB3Code(CodeRef);
     void initializeB3Byproducts(std::unique_ptr<B3::OpaqueByproducts>);
-#else
-    void initializeExitThunks(CodeRef);
-    void addHandle(PassRefPtr<ExecutableMemoryHandle>);
-    void addDataSection(PassRefPtr<DataSection>);
-#endif
     void initializeAddressForCall(CodePtr);
     void initializeArityCheckEntrypoint(CodeRef);
     
@@ -86,14 +64,7 @@ public:
 
     Optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
 
-#if FTL_USES_B3
     CodeRef b3Code() const { return m_b3Code; }
-#else
-    const Vector<RefPtr<ExecutableMemoryHandle>>& handles() const { return m_handles; }
-    const Vector<RefPtr<DataSection>>& dataSections() const { return m_dataSections; }
-    
-    CodePtr exitThunks();
-#endif
     
     JITCode* ftl() override;
     DFG::CommonData* dfgCommon() override;
@@ -102,25 +73,13 @@ public:
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
     SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
-#if !FTL_USES_B3
-    StackMaps stackmaps;
-#endif // !FTL_USES_B3
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
-    int32_t osrExitFromGenericUnwindStackSpillSlot;
     
 private:
     CodePtr m_addressForCall;
-#if FTL_USES_B3
     CodeRef m_b3Code;
     std::unique_ptr<B3::OpaqueByproducts> m_b3Byproducts;
-#else
-    Vector<RefPtr<DataSection>> m_dataSections;
-    Vector<RefPtr<ExecutableMemoryHandle>> m_handles;
-#endif
     CodeRef m_arityCheckEntrypoint;
-#if !FTL_USES_B3
-    CodeRef m_exitThunks;
-#endif
 };
 
 } } // namespace JSC::FTL

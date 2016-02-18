@@ -42,16 +42,9 @@ namespace FTL {
 
 class CommonValues {
 public:
-    CommonValues(LContext context);
+    CommonValues();
 
-#if FTL_USES_B3
     void initializeConstants(B3::Procedure&, B3::BasicBlock*);
-#else // FTL_USES_B3
-    void initialize(LModule module)
-    {
-        m_module = module;
-    }
-#endif // FTL_USES_B3
     
     const LType voidType;
     const LType boolean;
@@ -60,22 +53,8 @@ public:
     const LType intPtr;
     const LType floatType;
     const LType doubleType;
-#if !FTL_USES_B3
-    const LType int8;
-    const LType int16;
-    const LType ref8;
-    const LType ref16;
-    const LType ref32;
-    const LType ref64;
-    const LType refPtr;
-    const LType refFloat;
-    const LType refDouble;
-#endif
     LValue booleanTrue { nullptr };
     LValue booleanFalse { nullptr };
-#if !FTL_USES_B3
-    LValue int8Zero { nullptr };
-#endif
     LValue int32Zero { nullptr };
     LValue int32One { nullptr };
     LValue int64Zero { nullptr };
@@ -91,9 +70,6 @@ public:
     const LValue branchWeights { nullptr };
     
     const ValueRange nonNegativeInt32;
-
-    LContext const m_context;
-    LModule m_module;
 };
 
 } } // namespace JSC::FTL

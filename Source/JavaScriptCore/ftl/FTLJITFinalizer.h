@@ -31,9 +31,7 @@
 #include "DFGFinalizer.h"
 #include "FTLGeneratedFunction.h"
 #include "FTLJITCode.h"
-#include "FTLOSRExitCompilationInfo.h"
 #include "FTLSlowPathCall.h"
-#include "LLVMAPI.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 
@@ -60,22 +58,11 @@ public:
     bool finalize() override;
     bool finalizeFunction() override;
 
-#if FTL_USES_B3
     std::unique_ptr<LinkBuffer> b3CodeLinkBuffer;
-#endif
 
     // Eventually, we can get rid of this with B3.
     std::unique_ptr<LinkBuffer> entrypointLinkBuffer;
     
-#if !FTL_USES_B3
-    // In B3, we can do all of this directly in the B3 code. That includes slow paths and exception handlers.
-    std::unique_ptr<LinkBuffer> exitThunksLinkBuffer;
-    std::unique_ptr<LinkBuffer> sideCodeLinkBuffer;
-    std::unique_ptr<LinkBuffer> handleExceptionsLinkBuffer;
-    Vector<OutOfLineCodeInfo> outOfLineCodeInfos;
-    Vector<OSRExitCompilationInfo> osrExit;
-#endif
-
     Vector<CCallHelpers::Jump> lazySlowPathGeneratorJumps;
     GeneratedFunction function;
     RefPtr<JITCode> jitCode;

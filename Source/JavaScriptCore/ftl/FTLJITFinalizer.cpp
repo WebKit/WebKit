@@ -51,19 +51,8 @@ size_t JITFinalizer::codeSize()
 {
     size_t result = 0;
 
-#if FTL_USES_B3
     if (b3CodeLinkBuffer)
         result += b3CodeLinkBuffer->size();
-#else // FTL_USES_B3
-    if (exitThunksLinkBuffer)
-        result += exitThunksLinkBuffer->size();
-    if (sideCodeLinkBuffer)
-        result += sideCodeLinkBuffer->size();
-    if (handleExceptionsLinkBuffer)
-        result += handleExceptionsLinkBuffer->size();
-    for (unsigned i = jitCode->handles().size(); i--;)
-        result += jitCode->handles()[i]->sizeInBytes();
-#endif // FTL_USES_B3
     
     if (entrypointLinkBuffer)
         result += entrypointLinkBuffer->size();
@@ -81,65 +70,10 @@ bool JITFinalizer::finalizeFunction()
 {
     bool dumpDisassembly = shouldDumpDisassembly() || Options::asyncDisassembly();
     
-#if FTL_USES_B3
     jitCode->initializeB3Code(
         FINALIZE_CODE_IF(
             dumpDisassembly, *b3CodeLinkBuffer,
             ("FTL B3 code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data())));
-
-#else // FTL_USES_B3
-    for (unsigned i = jitCode->handles().size(); i--;) {
-        MacroAssembler::cacheFlush(
-            jitCode->handles()[i]->start(), jitCode->handles()[i]->sizeInBytes());
-    }
-
-    if (exitThunksLinkBuffer) {
-        for (unsigned i = 0; i < osrExit.size(); ++i) {
-            OSRExitCompilationInfo& info = osrExit[i];
-            exitThunksLinkBuffer->link(
-                info.m_thunkJump,
-                CodeLocationLabel(
-                    m_plan.vm.getCTIStub(osrExitGenerationThunkGenerator).code()));
-        }
-        
-        jitCode->initializeExitThunks(
-            FINALIZE_CODE_IF(
-                dumpDisassembly, *exitThunksLinkBuffer,
-                ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data())));
-    } // else this function had no OSR exits, so no exit thunks.
-    
-    if (sideCodeLinkBuffer) {
-        // Side code is for special slow paths that we generate ourselves, like for inline
-        // caches.
-        
-        for (CCallHelpers::Jump jump : lazySlowPathGeneratorJumps) {
-            sideCodeLinkBuffer->link(
-                jump,
-                CodeLocationLabel(
-                    m_plan.vm.getCTIStub(lazySlowPathGenerationThunkGenerator).code()));
-        }
-        
-        jitCode->addHandle(FINALIZE_CODE_IF(
-            dumpDisassembly, *sideCodeLinkBuffer,
-            ("FTL side code for %s",
-                toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data()))
-            .executableMemory());
-    }
-    
-    if (handleExceptionsLinkBuffer) {
-        jitCode->addHandle(FINALIZE_CODE_IF(
-            dumpDisassembly, *handleExceptionsLinkBuffer,
-            ("FTL exception handler for %s",
-                toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data()))
-            .executableMemory());
-    }
-
-    for (unsigned i = 0; i < outOfLineCodeInfos.size(); ++i) {
-        jitCode->addHandle(FINALIZE_CODE_IF(
-            dumpDisassembly, *outOfLineCodeInfos[i].m_linkBuffer,
-            ("FTL out of line code for %s inline cache", outOfLineCodeInfos[i].m_codeDescription)).executableMemory());
-    }
-#endif // FTL_USES_B3
 
     jitCode->initializeArityCheckEntrypoint(
         FINALIZE_CODE_IF(
@@ -147,9 +81,6 @@ bool JITFinalizer::finalizeFunction()
             ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), function)));
     
     m_plan.codeBlock->setJITCode(jitCode);
-#if !FTL_USES_B3
-    m_plan.vm.updateFTLLargestStackSize(jitCode->stackmaps.stackSize());
-#endif
 
     if (m_plan.compilation)
         m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.compilation);

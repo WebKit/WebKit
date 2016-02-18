@@ -1,3 +1,259 @@
+2016-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove LLVM dependencies from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=154323
+
+        Reviewed by Antti Koivisto and Benjamin Poulain.
+
+        We have switched all ports that use the FTL JIT to using B3 as the backend. This renders all
+        LLVM-related code dead, including the disassembler, which was only reachable when you were on
+        a platform that already had an in-tree disassembler.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGCommon.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::compileTimeStats):
+        * disassembler/ARM64Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * disassembler/ARMv7Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * disassembler/Disassembler.cpp:
+        (JSC::disassemble):
+        (JSC::disassembleAsynchronously):
+        * disassembler/Disassembler.h:
+        (JSC::tryToDisassemble):
+        * disassembler/LLVMDisassembler.cpp: Removed.
+        * disassembler/LLVMDisassembler.h: Removed.
+        * disassembler/UDis86Disassembler.cpp:
+        (JSC::tryToDisassembleWithUDis86):
+        * disassembler/UDis86Disassembler.h:
+        (JSC::tryToDisassembleWithUDis86):
+        * disassembler/X86Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * ftl/FTLAbbreviatedTypes.h:
+        * ftl/FTLAbbreviations.h: Removed.
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::AbstractHeap::decorateInstruction):
+        (JSC::FTL::AbstractHeap::dump):
+        (JSC::FTL::AbstractField::dump):
+        (JSC::FTL::IndexedAbstractHeap::IndexedAbstractHeap):
+        (JSC::FTL::IndexedAbstractHeap::~IndexedAbstractHeap):
+        (JSC::FTL::IndexedAbstractHeap::baseIndex):
+        (JSC::FTL::IndexedAbstractHeap::dump):
+        (JSC::FTL::NumberedAbstractHeap::NumberedAbstractHeap):
+        (JSC::FTL::NumberedAbstractHeap::dump):
+        (JSC::FTL::AbsoluteAbstractHeap::AbsoluteAbstractHeap):
+        (JSC::FTL::AbstractHeap::tbaaMetadataSlow): Deleted.
+        * ftl/FTLAbstractHeap.h:
+        (JSC::FTL::AbstractHeap::AbstractHeap):
+        (JSC::FTL::AbstractHeap::heapName):
+        (JSC::FTL::IndexedAbstractHeap::atAnyIndex):
+        (JSC::FTL::NumberedAbstractHeap::atAnyNumber):
+        (JSC::FTL::AbsoluteAbstractHeap::atAnyAddress):
+        (JSC::FTL::AbstractHeap::tbaaMetadata): Deleted.
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLB3Compile.cpp:
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::check):
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::store):
+        * ftl/FTLB3Output.h:
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        (JSC::FTL::CommonValues::initializeConstants):
+        * ftl/FTLCommonValues.h:
+        (JSC::FTL::CommonValues::initialize): Deleted.
+        * ftl/FTLCompile.cpp: Removed.
+        * ftl/FTLCompileBinaryOp.cpp: Removed.
+        * ftl/FTLCompileBinaryOp.h: Removed.
+        * ftl/FTLDWARFDebugLineInfo.cpp: Removed.
+        * ftl/FTLDWARFDebugLineInfo.h: Removed.
+        * ftl/FTLDWARFRegister.cpp: Removed.
+        * ftl/FTLDWARFRegister.h: Removed.
+        * ftl/FTLDataSection.cpp: Removed.
+        * ftl/FTLDataSection.h: Removed.
+        * ftl/FTLExceptionHandlerManager.cpp: Removed.
+        * ftl/FTLExceptionHandlerManager.h: Removed.
+        * ftl/FTLExceptionTarget.cpp:
+        * ftl/FTLExceptionTarget.h:
+        * ftl/FTLExitThunkGenerator.cpp: Removed.
+        * ftl/FTLExitThunkGenerator.h: Removed.
+        * ftl/FTLFail.cpp:
+        (JSC::FTL::fail):
+        * ftl/FTLInlineCacheDescriptor.h: Removed.
+        * ftl/FTLInlineCacheSize.cpp: Removed.
+        * ftl/FTLInlineCacheSize.h: Removed.
+        * ftl/FTLIntrinsicRepository.cpp: Removed.
+        * ftl/FTLIntrinsicRepository.h: Removed.
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::~JITCode):
+        (JSC::FTL::JITCode::initializeB3Code):
+        (JSC::FTL::JITCode::initializeB3Byproducts):
+        (JSC::FTL::JITCode::initializeAddressForCall):
+        (JSC::FTL::JITCode::contains):
+        (JSC::FTL::JITCode::ftl):
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::FTL::JITCode::initializeExitThunks): Deleted.
+        (JSC::FTL::JITCode::addHandle): Deleted.
+        (JSC::FTL::JITCode::addDataSection): Deleted.
+        (JSC::FTL::JITCode::exitThunks): Deleted.
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::b3Code):
+        (JSC::FTL::JITCode::handles): Deleted.
+        (JSC::FTL::JITCode::dataSections): Deleted.
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::codeSize):
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLJSCall.cpp: Removed.
+        * ftl/FTLJSCall.h: Removed.
+        * ftl/FTLJSCallBase.cpp: Removed.
+        * ftl/FTLJSCallBase.h: Removed.
+        * ftl/FTLJSCallVarargs.cpp: Removed.
+        * ftl/FTLJSCallVarargs.h: Removed.
+        * ftl/FTLJSTailCall.cpp: Removed.
+        * ftl/FTLJSTailCall.h: Removed.
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::LazySlowPath):
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLazySlowPath.h:
+        (JSC::FTL::LazySlowPath::createGenerator):
+        (JSC::FTL::LazySlowPath::patchableJump):
+        (JSC::FTL::LazySlowPath::done):
+        (JSC::FTL::LazySlowPath::usedRegisters):
+        (JSC::FTL::LazySlowPath::callSiteIndex):
+        (JSC::FTL::LazySlowPath::stub):
+        (JSC::FTL::LazySlowPath::patchpoint): Deleted.
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::forValueRep):
+        (JSC::FTL::Location::dump):
+        (JSC::FTL::Location::forStackmaps): Deleted.
+        * ftl/FTLLocation.h:
+        (JSC::FTL::Location::forRegister):
+        (JSC::FTL::Location::forIndirect):
+        (JSC::FTL::Location::forConstant):
+        (JSC::FTL::Location::kind):
+        (JSC::FTL::Location::hasReg):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::createPhiVariables):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileUpsilon):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePhi):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileDoubleConstant):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStrCat):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithDiv):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithNegate):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitAnd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitOr):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitXor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitRShift):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitLShift):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitURShift):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetButterfly):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileLoadVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIsUndefined):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIn):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadButterflyWithBarrier):
+        (JSC::FTL::DFG::LowerDFGToLLVM::stringsEqual):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitRightShiftSnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateCell):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculate):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::preparePatchpointForExceptions):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitDescriptor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForAvailability):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::probe):
+        (JSC::FTL::DFG::LowerDFGToLLVM::crash):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileUntypedBinaryOp): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitOSRExitCall): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::callStackmap): Deleted.
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::OSRExitDescriptor):
+        (JSC::FTL::OSRExitDescriptor::validateReferences):
+        (JSC::FTL::OSRExitDescriptor::emitOSRExit):
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::gatherRegistersToSpillForCallIfException): Deleted.
+        (JSC::FTL::OSRExit::spillRegistersToSpillSlot): Deleted.
+        (JSC::FTL::OSRExit::recoverRegistersFromSpillSlot): Deleted.
+        (JSC::FTL::OSRExit::willArriveAtExitFromIndirectExceptionCheck): Deleted.
+        (JSC::FTL::OSRExit::willArriveAtOSRExitFromCallOperation): Deleted.
+        (JSC::FTL::OSRExit::needsRegisterRecoveryOnGenericUnwindOSRExitPath): Deleted.
+        * ftl/FTLOSRExit.h:
+        (JSC::FTL::OSRExit::considerAddingAsFrequentExitSite):
+        (JSC::FTL::OSRExitDescriptorImpl::OSRExitDescriptorImpl): Deleted.
+        * ftl/FTLOSRExitCompilationInfo.h: Removed.
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileRecovery):
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLOSRExitHandle.cpp:
+        * ftl/FTLOSRExitHandle.h:
+        * ftl/FTLOutput.cpp: Removed.
+        * ftl/FTLOutput.h: Removed.
+        * ftl/FTLPatchpointExceptionHandle.cpp:
+        * ftl/FTLPatchpointExceptionHandle.h:
+        * ftl/FTLStackMaps.cpp: Removed.
+        * ftl/FTLStackMaps.h: Removed.
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        (JSC::FTL::State::~State):
+        (JSC::FTL::State::dumpState): Deleted.
+        * ftl/FTLState.h:
+        * ftl/FTLUnwindInfo.cpp: Removed.
+        * ftl/FTLUnwindInfo.h: Removed.
+        * ftl/FTLValueRange.cpp:
+        (JSC::FTL::ValueRange::decorateInstruction):
+        * ftl/FTLValueRange.h:
+        (JSC::FTL::ValueRange::ValueRange):
+        (JSC::FTL::ValueRange::begin):
+        (JSC::FTL::ValueRange::end):
+        * ftl/FTLWeight.h:
+        (JSC::FTL::Weight::value):
+        (JSC::FTL::Weight::frequencyClass):
+        (JSC::FTL::Weight::scaleToTotal):
+        * llvm/InitializeLLVM.cpp: Removed.
+        * llvm/InitializeLLVM.h: Removed.
+        * llvm/InitializeLLVMMac.cpp: Removed.
+        * llvm/InitializeLLVMPOSIX.cpp: Removed.
+        * llvm/InitializeLLVMPOSIX.h: Removed.
+        * llvm/LLVMAPI.cpp: Removed.
+        * llvm/LLVMAPI.h: Removed.
+        * llvm/LLVMAPIFunctions.h: Removed.
+        * llvm/LLVMHeaders.h: Removed.
+        * llvm/library/LLVMAnchor.cpp: Removed.
+        * llvm/library/LLVMExports.cpp: Removed.
+        * llvm/library/LLVMOverrides.cpp: Removed.
+        * llvm/library/config_llvm.h: Removed.
+
 2016-02-17  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove the overflow check on ArithAbs when possible

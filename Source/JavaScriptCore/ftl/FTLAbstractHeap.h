@@ -53,18 +53,12 @@ public:
     AbstractHeap()
         : m_parent(0)
         , m_heapName(0)
-#if !FTL_USES_B3
-        , m_tbaaMetadata(0)
-#endif
     {
     }
     
     AbstractHeap(AbstractHeap* parent, const char* heapName)
         : m_parent(parent)
         , m_heapName(heapName)
-#if !FTL_USES_B3
-        , m_tbaaMetadata(0)
-#endif
     {
     }
     
@@ -93,16 +87,6 @@ public:
         return m_heapName;
     }
 
-#if !FTL_USES_B3
-    LValue tbaaMetadata(const AbstractHeapRepository& repository) const
-    {
-        ASSERT(isInitialized());
-        if (LIKELY(!!m_tbaaMetadata))
-            return m_tbaaMetadata;
-        return tbaaMetadataSlow(repository);
-    }
-#endif
-    
     void decorateInstruction(LValue instruction, const AbstractHeapRepository&) const;
 
     void dump(PrintStream&) const;
@@ -110,15 +94,8 @@ public:
 private:
     friend class AbstractHeapRepository;
 
-#if !FTL_USES_B3
-    LValue tbaaMetadataSlow(const AbstractHeapRepository&) const;
-#endif
-    
     AbstractHeap* m_parent;
     const char* m_heapName;
-#if !FTL_USES_B3
-    mutable LValue m_tbaaMetadata;
-#endif
 };
 
 // Think of "AbstractField" as being an "AbstractHeapWithOffset". I would have named
@@ -155,7 +132,7 @@ private:
 
 class IndexedAbstractHeap {
 public:
-    IndexedAbstractHeap(LContext, AbstractHeap* parent, const char* heapName, ptrdiff_t offset, size_t elementSize);
+    IndexedAbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset, size_t elementSize);
     ~IndexedAbstractHeap();
     
     const AbstractHeap& atAnyIndex() const { return m_heapForAnyIndex; }
@@ -188,10 +165,6 @@ private:
     size_t m_heapNameLength;
     ptrdiff_t m_offset;
     size_t m_elementSize;
-#if !FTL_USES_B3
-    LValue m_scaleTerm;
-    bool m_canShift;
-#endif
     std::array<AbstractField, 16> m_smallIndices;
     
     struct WithoutZeroOrOneHashTraits : WTF::GenericHashTraits<ptrdiff_t> {
@@ -211,7 +184,7 @@ private:
 
 class NumberedAbstractHeap {
 public:
-    NumberedAbstractHeap(LContext, AbstractHeap* parent, const char* heapName);
+    NumberedAbstractHeap(AbstractHeap* parent, const char* heapName);
     ~NumberedAbstractHeap();
     
     const AbstractHeap& atAnyNumber() const { return m_indexedHeap.atAnyIndex(); }
@@ -230,7 +203,7 @@ private:
 
 class AbsoluteAbstractHeap {
 public:
-    AbsoluteAbstractHeap(LContext, AbstractHeap* parent, const char* heapName);
+    AbsoluteAbstractHeap(AbstractHeap* parent, const char* heapName);
     ~AbsoluteAbstractHeap();
     
     const AbstractHeap& atAnyAddress() const { return m_indexedHeap.atAnyIndex(); }

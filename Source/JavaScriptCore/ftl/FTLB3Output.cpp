@@ -27,7 +27,6 @@
 #include "FTLB3Output.h"
 
 #if ENABLE(FTL_JIT)
-#if FTL_USES_B3
 
 #include "B3MathExtras.h"
 #include "B3StackmapGenerationParams.h"
@@ -37,8 +36,7 @@ namespace JSC { namespace FTL {
 using namespace B3;
 
 Output::Output(State& state)
-    : CommonValues(state.context)
-    , m_proc(*state.proc)
+    : m_proc(*state.proc)
 {
 }
 
@@ -244,8 +242,61 @@ void Output::check(LValue condition, WeightedTarget taken)
     check(condition, taken, taken.weight().inverse());
 }
 
+LValue Output::load(TypedPointer pointer, LoadType type)
+{
+    switch (type) {
+    case Load8SignExt32:
+        return load8SignExt32(pointer);
+    case Load8ZeroExt32:
+        return load8ZeroExt32(pointer);
+    case Load16SignExt32:
+        return load8SignExt32(pointer);
+    case Load16ZeroExt32:
+        return load8ZeroExt32(pointer);
+    case Load32:
+        return load32(pointer);
+    case Load64:
+        return load64(pointer);
+    case LoadPtr:
+        return loadPtr(pointer);
+    case LoadFloat:
+        return loadFloat(pointer);
+    case LoadDouble:
+        return loadDouble(pointer);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+void Output::store(LValue value, TypedPointer pointer, StoreType type)
+{
+    switch (type) {
+    case Store32As8:
+        store32As8(value, pointer);
+        return;
+    case Store32As16:
+        store32As16(value, pointer);
+        return;
+    case Store32:
+        store32(value, pointer);
+        return;
+    case Store64:
+        store64(value, pointer);
+        return;
+    case StorePtr:
+        storePtr(value, pointer);
+        return;
+    case StoreFloat:
+        storeFloat(value, pointer);
+        return;
+    case StoreDouble:
+        storeDouble(value, pointer);
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } } // namespace JSC::FTL
 
-#endif // FTL_USES_B3
 #endif // ENABLE(FTL_JIT)
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLExceptionTarget.h"
 
-#if ENABLE(FTL_JIT) && FTL_USES_B3
+#if ENABLE(FTL_JIT)
 
 #include "FTLState.h"
 
@@ -72,5 +72,5 @@ ExceptionTarget::ExceptionTarget(
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT) && FTL_USES_B3
+#endif // ENABLE(FTL_JIT)
 

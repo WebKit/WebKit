@@ -30,7 +30,6 @@
 
 #include "DFGFailedFinalizer.h"
 #include "FTLJITCode.h"
-#include "LLVMAPI.h"
 
 namespace JSC { namespace FTL {
 
@@ -39,11 +38,6 @@ using namespace DFG;
 void fail(State& state)
 {
     state.graph.m_plan.finalizer = std::make_unique<FailedFinalizer>(state.graph.m_plan);
-    
-#if !FTL_USES_B3
-    if (state.module)
-        llvm->DisposeModule(state.module);
-#endif
 }
 
 } } // namespace JSC::FTL

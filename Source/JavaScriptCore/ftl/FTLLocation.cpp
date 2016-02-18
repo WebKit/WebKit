@@ -39,7 +39,6 @@ namespace JSC { namespace FTL {
 
 using namespace B3;
 
-#if FTL_USES_B3
 Location Location::forValueRep(const ValueRep& rep)
 {
     switch (rep.kind()) {
@@ -53,34 +52,6 @@ Location Location::forValueRep(const ValueRep& rep)
         RELEASE_ASSERT_NOT_REACHED();
         return Location();
     }
-}
-#endif // FTL_USES_B3
-
-Location Location::forStackmaps(const StackMaps* stackmaps, const StackMaps::Location& location)
-{
-    switch (location.kind) {
-    case StackMaps::Location::Unprocessed:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-        
-    case StackMaps::Location::Register:
-    case StackMaps::Location::Direct:
-        return forRegister(location.dwarfReg, location.offset);
-        
-    case StackMaps::Location::Indirect:
-        return forIndirect(location.dwarfReg, location.offset);
-        
-    case StackMaps::Location::Constant:
-        return forConstant(location.offset);
-        
-    case StackMaps::Location::ConstantIndex:
-        ASSERT(stackmaps);
-        return forConstant(stackmaps->constants[location.offset].integer);
-    }
-    
-    RELEASE_ASSERT_NOT_REACHED();
-
-    return Location();
 }
 
 void Location::dump(PrintStream& out) const

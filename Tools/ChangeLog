@@ -1,3 +1,16 @@
+2016-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove LLVM dependencies from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=154323
+
+        Reviewed by Antti Koivisto and Benjamin Poulain.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        (isContentOfFileEqualToString):
+        (fileContains): Deleted.
+        (buildLLVM): Deleted.
+        (symlinkLLVMLibrariesIfNeeded): Deleted.
+
 2016-02-16  Sam Weinig  <sam@webkit.org>
 
         Add an ensure function on HashMap that takes a key and a function to make the lazy value initialization idiom easier

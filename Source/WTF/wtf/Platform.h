@@ -711,11 +711,6 @@
 #define ENABLE_JIT 1
 #endif
 
-/* Do we have LLVM? */
-#if !defined(HAVE_LLVM) && OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK) && ENABLE(FTL_JIT) && (CPU(X86_64) || CPU(ARM64))
-#define HAVE_LLVM 1
-#endif
-
 /* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
 #if USE(JSVALUE32_64)
 #undef ENABLE_FTL_JIT
@@ -728,12 +723,6 @@
 #define ENABLE_FTL_JIT 0
 #endif
 
-/* If possible, try to enable the LLVM disassembler. This is optional and we can
-   fall back on UDis86 if necessary. */
-#if !defined(USE_LLVM_DISASSEMBLER) && HAVE(LLVM) && (CPU(X86_64) || CPU(X86) || CPU(ARM64))
-#define USE_LLVM_DISASSEMBLER 1
-#endif
-
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */
@@ -742,11 +731,11 @@
 #define USE_UDIS86 1
 #endif
 
-#if !defined(ENABLE_DISASSEMBLER) && (USE(UDIS86) || USE(LLVM_DISASSEMBLER))
+#if !defined(ENABLE_DISASSEMBLER) && USE(UDIS86)
 #define ENABLE_DISASSEMBLER 1
 #endif
 
-#if !defined(USE_ARM64_DISASSEMBLER) && ENABLE(JIT) && CPU(ARM64) && !USE(LLVM_DISASSEMBLER)
+#if !defined(USE_ARM64_DISASSEMBLER) && ENABLE(JIT) && CPU(ARM64)
 #define USE_ARM64_DISASSEMBLER 1
 #endif
 

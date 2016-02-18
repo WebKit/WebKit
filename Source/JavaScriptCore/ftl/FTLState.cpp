@@ -29,12 +29,10 @@
 #if ENABLE(FTL_JIT)
 
 #include "CodeBlockWithJITType.h"
-#include "FTLAbbreviations.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"
 #include "FTLPatchpointExceptionHandle.h"
-#include <llvm/InitializeLLVM.h>
 #include <stdio.h>
 
 namespace JSC { namespace FTL {
@@ -44,16 +42,7 @@ using namespace DFG;
 
 State::State(Graph& graph)
     : graph(graph)
-#if FTL_USES_B3
-    , context(nullptr)
-#else
-    , context(llvm->ContextCreate())
-#endif
-    , module(0)
-    , function(0)
     , generatedFunction(0)
-    , unwindDataSection(0)
-    , unwindDataSectionSize(0)
 {
     switch (graph.m_plan.mode) {
     case FTLMode: {
@@ -75,7 +64,6 @@ State::State(Graph& graph)
     graph.m_plan.finalizer = std::make_unique<JITFinalizer>(graph.m_plan);
     finalizer = static_cast<JITFinalizer*>(graph.m_plan.finalizer.get());
 
-#if FTL_USES_B3
     proc = std::make_unique<Procedure>();
 
     proc->setOriginPrinter(
@@ -84,31 +72,10 @@ State::State(Graph& graph)
         });
 
     proc->setFrontendData(&graph);
-#endif // FTL_USES_B3
 }
 
 State::~State()
 {
-#if !FTL_USES_B3
-    llvm->ContextDispose(context);
-#endif
-}
-
-void State::dumpState(const char* when)
-{
-    dumpState(module, when);
-}
-
-void State::dumpState(LModule module, const char* when)
-{
-#if FTL_USES_B3
-    UNUSED_PARAM(module);
-    if (!when || !!when)
-        CRASH();
-#else
-    dataLog("LLVM IR for ", CodeBlockWithJITType(graph.m_codeBlock, FTL::JITCode::FTLJIT), " ", when, ":\n");
-    dumpModule(module);
-#endif
 }
 
 } } // namespace JSC::FTL

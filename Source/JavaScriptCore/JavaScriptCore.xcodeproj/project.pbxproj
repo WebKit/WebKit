@@ -135,13 +135,10 @@
 		0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */; };
 		0F235BD617178E1C00690C7F /* FTLExitArgumentForOperand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC017178E1C00690C7F /* FTLExitArgumentForOperand.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BD717178E1C00690C7F /* FTLStackmapArgumentList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F235BD817178E1C00690C7F /* FTLExitThunkGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BC217178E1C00690C7F /* FTLExitThunkGenerator.cpp */; };
-		0F235BD917178E1C00690C7F /* FTLExitThunkGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC317178E1C00690C7F /* FTLExitThunkGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BDA17178E1C00690C7F /* FTLExitValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BC417178E1C00690C7F /* FTLExitValue.cpp */; };
 		0F235BDB17178E1C00690C7F /* FTLExitValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC517178E1C00690C7F /* FTLExitValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BDC17178E1C00690C7F /* FTLOSRExit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BC617178E1C00690C7F /* FTLOSRExit.cpp */; };
 		0F235BDD17178E1C00690C7F /* FTLOSRExit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC717178E1C00690C7F /* FTLOSRExit.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F235BDE17178E1C00690C7F /* FTLOSRExitCompilationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC817178E1C00690C7F /* FTLOSRExitCompilationInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BDF17178E1C00690C7F /* FTLOSRExitCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BC917178E1C00690C7F /* FTLOSRExitCompiler.cpp */; };
 		0F235BE017178E1C00690C7F /* FTLOSRExitCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BCA17178E1C00690C7F /* FTLOSRExitCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BE117178E1C00690C7F /* FTLThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BCB17178E1C00690C7F /* FTLThunks.cpp */; };
@@ -166,9 +163,6 @@
 		0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55817F74EDB00ABB217 /* ValueRecovery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E55717F74EDB00ABB217 /* ValueRecovery.cpp */; };
 		0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */; };
-		0F25F1AE181635F300522F39 /* FTLInlineCacheDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1A7181635F300522F39 /* FTLInlineCacheDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F25F1AF181635F300522F39 /* FTLInlineCacheSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F25F1A8181635F300522F39 /* FTLInlineCacheSize.cpp */; };
-		0F25F1B0181635F300522F39 /* FTLInlineCacheSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1A9181635F300522F39 /* FTLInlineCacheSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F25F1B1181635F300522F39 /* FTLSlowPathCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F25F1AA181635F300522F39 /* FTLSlowPathCall.cpp */; };
 		0F25F1B2181635F300522F39 /* FTLSlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */; };
@@ -452,11 +446,7 @@
 		0F682FB319BCB36400FA3BAD /* DFGSSACalculator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F682FB119BCB36400FA3BAD /* DFGSSACalculator.h */; };
 		0F69CC88193AC60A0045759E /* DFGFrozenValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F69CC86193AC60A0045759E /* DFGFrozenValue.cpp */; };
 		0F69CC89193AC60A0045759E /* DFGFrozenValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F69CC87193AC60A0045759E /* DFGFrozenValue.h */; };
-		0F6B1CB5185FC9E900845D97 /* FTLJSCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CB3185FC9E900845D97 /* FTLJSCall.cpp */; };
-		0F6B1CB6185FC9E900845D97 /* FTLJSCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CB4185FC9E900845D97 /* FTLJSCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CB71861244C00845D97 /* ArityCheckMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F6B1CC51862C47800845D97 /* FTLUnwindInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CC11862C47800845D97 /* FTLUnwindInfo.cpp */; };
-		0F6B1CC61862C47800845D97 /* FTLUnwindInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CC21862C47800845D97 /* FTLUnwindInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6B8AD81C4EDDA200969052 /* B3DuplicateTails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B8AD61C4EDDA200969052 /* B3DuplicateTails.cpp */; };
 		0F6B8AD91C4EDDA200969052 /* B3DuplicateTails.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B8AD71C4EDDA200969052 /* B3DuplicateTails.h */; };
 		0F6B8ADC1C4EFAC300969052 /* B3SSACalculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B8ADA1C4EFAC300969052 /* B3SSACalculator.cpp */; };
@@ -553,13 +543,9 @@
 		0F9B1DB41C0E42A500E5BFD2 /* FTLB3Output.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9B1DB31C0E42A500E5BFD2 /* FTLB3Output.cpp */; };
 		0F9B1DB71C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9B1DB51C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp */; };
 		0F9B1DB81C0E42BD00E5BFD2 /* FTLOSRExitHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9B1DB61C0E42BD00E5BFD2 /* FTLOSRExitHandle.h */; };
-		0F9C5E5E18E35F5E00D431C3 /* FTLDWARFRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9C5E5C18E35F5E00D431C3 /* FTLDWARFRegister.cpp */; };
-		0F9C5E5F18E35F5E00D431C3 /* FTLDWARFRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9C5E5D18E35F5E00D431C3 /* FTLDWARFRegister.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D336E165DBB8D005AD387 /* Disassembler.cpp */; };
 		0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */; };
 		0F9D339717FFC4E60073C2BC /* DFGFlushedAt.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */; };
-		0F9D339A1803ADB70073C2BC /* FTLStackMaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D33981803ADB70073C2BC /* FTLStackMaps.cpp */; };
-		0F9D339B1803ADB70073C2BC /* FTLStackMaps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D33991803ADB70073C2BC /* FTLStackMaps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9D36941AE9CC33000D4DFB /* DFGCleanUpPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D36921AE9CC33000D4DFB /* DFGCleanUpPhase.cpp */; };
 		0F9D36951AE9CC33000D4DFB /* DFGCleanUpPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D36931AE9CC33000D4DFB /* DFGCleanUpPhase.h */; };
 		0F9D4C0C1C3E1C11006CD984 /* FTLExceptionTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D4C0A1C3E1C11006CD984 /* FTLExceptionTarget.cpp */; };
@@ -668,26 +654,8 @@
 		0FCCAE4516D0CF7400D0C65B /* ParserError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCCAE4316D0CF6E00D0C65B /* ParserError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FCEFAAB1804C13E00472CE4 /* FTLSaveRestore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */; };
 		0FCEFAAC1804C13E00472CE4 /* FTLSaveRestore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FCEFAB01805CA6D00472CE4 /* InitializeLLVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAAE1805CA6D00472CE4 /* InitializeLLVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FCEFAC11805D94E00472CE4 /* LLVMOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC01805D94100472CE4 /* LLVMOverrides.cpp */; };
-		0FCEFAC31805E74000472CE4 /* LLVMExports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC21805E74000472CE4 /* LLVMExports.cpp */; };
-		0FCEFACA1805E75500472CE4 /* InitializeLLVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC41805E75500472CE4 /* InitializeLLVM.cpp */; };
-		0FCEFACC1805E75500472CE4 /* InitializeLLVMPOSIX.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC61805E75500472CE4 /* InitializeLLVMPOSIX.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FCEFACD1805E75500472CE4 /* LLVMAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC71805E75500472CE4 /* LLVMAPI.cpp */; };
-		0FCEFACE1805E75500472CE4 /* LLVMAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC81805E75500472CE4 /* LLVMAPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FCEFACF1805E75500472CE4 /* LLVMAPIFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC91805E75500472CE4 /* LLVMAPIFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FCEFAD11805E77900472CE4 /* LLVMAPIFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC91805E75500472CE4 /* LLVMAPIFunctions.h */; };
-		0FCEFAD31805EDCC00472CE4 /* LLVMHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAD21805EDCC00472CE4 /* LLVMHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FCEFAD41805EDCC00472CE4 /* LLVMHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAD21805EDCC00472CE4 /* LLVMHeaders.h */; };
-		0FCEFAD71806174600472CE4 /* LLVMAnchor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAD61806174600472CE4 /* LLVMAnchor.cpp */; };
-		0FCEFADA180620DA00472CE4 /* LLVMAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC81805E75500472CE4 /* LLVMAPI.h */; };
-		0FCEFADC18064A1400472CE4 /* config_llvm.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFADB18064A1400472CE4 /* config_llvm.h */; };
 		0FCEFADF180738C000472CE4 /* FTLLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFADD180738C000472CE4 /* FTLLocation.cpp */; };
 		0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFADE180738C000472CE4 /* FTLLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FD1202F1A8AED12000F5280 /* FTLJSCallBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD1202D1A8AED12000F5280 /* FTLJSCallBase.cpp */; };
-		0FD120301A8AED12000F5280 /* FTLJSCallBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD1202E1A8AED12000F5280 /* FTLJSCallBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FD120331A8C85BD000F5280 /* FTLJSCallVarargs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD120311A8C85BD000F5280 /* FTLJSCallVarargs.cpp */; };
-		0FD120341A8C85BD000F5280 /* FTLJSCallVarargs.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD120321A8C85BD000F5280 /* FTLJSCallVarargs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2C92316D01EE900C7803F /* StructureInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD3C82614115D4000FD81CB /* DFGDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3C82014115CF800FD81CB /* DFGDriver.cpp */; };
 		0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82214115D0E00FD81CB /* DFGDriver.h */; };
@@ -759,18 +727,13 @@
 		0FE834181A6EF97B00D04847 /* PolymorphicCallStubRoutine.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE834161A6EF97B00D04847 /* PolymorphicCallStubRoutine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE8534B1723CDA500B618F5 /* DFGDesiredWatchpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */; };
 		0FE8534C1723CDA500B618F5 /* DFGDesiredWatchpoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE8534A1723CDA500B618F5 /* DFGDesiredWatchpoints.h */; };
-		0FE95F7918B5694700B531FB /* FTLDataSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE95F7718B5694700B531FB /* FTLDataSection.cpp */; };
-		0FE95F7A18B5694700B531FB /* FTLDataSection.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE95F7818B5694700B531FB /* FTLDataSection.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FEA0A08170513DB00BB722C /* FTLAbbreviations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA09FD170513DB00BB722C /* FTLAbbreviations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */; };
 		0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA09FF170513DB00BB722C /* FTLCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FEA0A0B170513DB00BB722C /* FTLCompile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A00170513DB00BB722C /* FTLCompile.cpp */; };
 		0FEA0A0C170513DB00BB722C /* FTLCompile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A01170513DB00BB722C /* FTLCompile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A0D170513DB00BB722C /* FTLJITCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A02170513DB00BB722C /* FTLJITCode.cpp */; };
 		0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A03170513DB00BB722C /* FTLJITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A0F170513DB00BB722C /* FTLLowerDFGToLLVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A04170513DB00BB722C /* FTLLowerDFGToLLVM.cpp */; };
 		0FEA0A10170513DB00BB722C /* FTLLowerDFGToLLVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FEA0A11170513DB00BB722C /* FTLOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A06170513DB00BB722C /* FTLOutput.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A12170513DB00BB722C /* FTLState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A07170513DB00BB722C /* FTLState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A161706BB9000BB722C /* FTLState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A151706BB9000BB722C /* FTLState.cpp */; };
 		0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A171708B00700BB722C /* FTLAbstractHeap.cpp */; };
@@ -779,10 +742,7 @@
 		0FEA0A1F1708B00700BB722C /* FTLAbstractHeapRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A1A1708B00700BB722C /* FTLAbstractHeapRepository.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A201708B00700BB722C /* FTLTypedPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A1B1708B00700BB722C /* FTLTypedPointer.h */; };
 		0FEA0A231709606900BB722C /* FTLCommonValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A211709606900BB722C /* FTLCommonValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FEA0A241709606900BB722C /* FTLIntrinsicRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A221709606900BB722C /* FTLIntrinsicRepository.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A271709623B00BB722C /* FTLCommonValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A251709623B00BB722C /* FTLCommonValues.cpp */; };
-		0FEA0A281709623B00BB722C /* FTLIntrinsicRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A261709623B00BB722C /* FTLIntrinsicRepository.cpp */; };
-		0FEA0A2A1709629600BB722C /* FTLOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A291709629600BB722C /* FTLOutput.cpp */; };
 		0FEA0A2C170B661900BB722C /* FTLFormattedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A2B170B661900BB722C /* FTLFormattedValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A31170D40BF00BB722C /* DFGCommonData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A2D170D40BF00BB722C /* DFGCommonData.cpp */; };
 		0FEA0A32170D40BF00BB722C /* DFGCommonData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A2E170D40BF00BB722C /* DFGCommonData.h */; };
@@ -1177,8 +1137,6 @@
 		2AABCDE718EF294200002096 /* GCLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AABCDE618EF294200002096 /* GCLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */; };
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2AC922BB18A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */; };
-		2AC922BC18A16182003CE0FB /* FTLDWARFDebugLineInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */; };
 		2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD2EDFA19799E38004D6478 /* EnumerationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
 		2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ADFA26218EF3540004F9FCC /* GCLogging.cpp */; };
@@ -1230,8 +1188,6 @@
 		623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 623A37EB1B87A7BD00754209 /* RegisterMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		627673231B680C1E00FD9F2E /* CallMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627673211B680C1E00FD9F2E /* CallMode.cpp */; };
 		627673241B680C1E00FD9F2E /* CallMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 627673221B680C1E00FD9F2E /* CallMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		62774DAA1B8D4B190006F05A /* FTLJSTailCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62774DA81B8D4B190006F05A /* FTLJSTailCall.cpp */; };
-		62774DAB1B8D4B190006F05A /* FTLJSTailCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 62774DA91B8D4B190006F05A /* FTLJSTailCall.h */; };
 		62D2D38F1ADF103F000206C1 /* FunctionRareData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */; };
 		62D2D3901ADF103F000206C1 /* FunctionRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D2D38E1ADF103F000206C1 /* FunctionRareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62D755D41B84FB3D001801FA /* CallFrameShuffler64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D755D31B84FB39001801FA /* CallFrameShuffler64.cpp */; };
@@ -1327,8 +1283,6 @@
 		79CFC6F01C33B10000C768EA /* LLIntPCRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 79CFC6EF1C33B10000C768EA /* LLIntPCRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79D5CD5A1C1106A900CECA07 /* SamplingProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79D5CD581C1106A900CECA07 /* SamplingProfiler.cpp */; };
 		79D5CD5B1C1106A900CECA07 /* SamplingProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 79D5CD591C1106A900CECA07 /* SamplingProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		79DF66B01BF26A570001CF11 /* FTLExceptionHandlerManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */; };
-		79DF66B11BF26A570001CF11 /* FTLExceptionHandlerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */; };
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79F8FC1E1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */; };
@@ -1530,10 +1484,8 @@
 		99F1A6FE1B8E6D9400463B26 /* InspectorFrontendRouter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99F1A6FC1B8E6D9400463B26 /* InspectorFrontendRouter.cpp */; };
 		99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = 99F1A7001B98FBEC00463B26 /* InspectorFrontendRouter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9E729407190F01A5001A91B5 /* InitializeThreading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */; };
-		9E729408190F021E001A91B5 /* InitializeLLVMPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC51805E75500472CE4 /* InitializeLLVMPOSIX.cpp */; };
 		9E72940B190F0514001A91B5 /* BundlePath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E72940A190F0514001A91B5 /* BundlePath.h */; };
 		9EA5C7A1190F084200508EBE /* BundlePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9E729409190F0306001A91B5 /* BundlePath.mm */; };
-		9EA5C7A2190F088700508EBE /* InitializeLLVMMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9EA5C7A0190F05D200508EBE /* InitializeLLVMMac.cpp */; };
 		A125846E1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = A125846C1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h */; };
 		A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = A125846D1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h */; };
 		A12BBFF21B044A8B00664B69 /* IntlObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A12BBFF11B044A8B00664B69 /* IntlObject.h */; };
@@ -1855,8 +1807,6 @@
 		A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */; };
 		A7E5A3A71797432D00E893C0 /* CompilationResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A3A51797432D00E893C0 /* CompilationResult.cpp */; };
 		A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E5A3A61797432D00E893C0 /* CompilationResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A7E5AB371799E4B200D2833D /* LLVMDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E5AB331799E4B200D2833D /* LLVMDisassembler.cpp */; };
-		A7E5AB381799E4B200D2833D /* LLVMDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E5AB341799E4B200D2833D /* LLVMDisassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E5AB351799E4B200D2833D /* UDis86Disassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */; };
 		A7F2996B17A0BB670010417A /* FTLFail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F2996917A0BB670010417A /* FTLFail.cpp */; };
@@ -2080,8 +2030,6 @@
 		FE187A0D1C030D5C0038BBCA /* JITDivGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A0B1C0229230038BBCA /* JITDivGenerator.h */; };
 		FE187A0E1C030D640038BBCA /* JITDivGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE187A0A1C0229230038BBCA /* JITDivGenerator.cpp */; };
 		FE187A0F1C030D6C0038BBCA /* SnippetOperand.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A0C1C02EBA70038BBCA /* SnippetOperand.h */; };
-		FE187A191C0E13E30038BBCA /* FTLCompileBinaryOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE187A151C0E13C60038BBCA /* FTLCompileBinaryOp.cpp */; };
-		FE187A1A1C0E13E60038BBCA /* FTLCompileBinaryOp.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A161C0E13C60038BBCA /* FTLCompileBinaryOp.h */; };
 		FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1C0FFC1B193E9800B53FCA /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1C0FFF1B194FD100B53FCA /* Exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1C0FFE1B194FD100B53FCA /* Exception.cpp */; };
 		FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */; };
@@ -2146,13 +2094,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0F93274E1C20BCBA00CF6564;
 			remoteInfo = dynbench;
-		};
-		0FCEFABC1805D66300472CE4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0FCEFAB51805D61600472CE4;
-			remoteInfo = llvmForJSC;
 		};
 		0FEC85B01BDB5D8F0080FF74 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2338,13 +2279,10 @@
 		0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitArgumentForOperand.cpp; path = ftl/FTLExitArgumentForOperand.cpp; sourceTree = "<group>"; };
 		0F235BC017178E1C00690C7F /* FTLExitArgumentForOperand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExitArgumentForOperand.h; path = ftl/FTLExitArgumentForOperand.h; sourceTree = "<group>"; };
 		0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLStackmapArgumentList.h; path = ftl/FTLStackmapArgumentList.h; sourceTree = "<group>"; };
-		0F235BC217178E1C00690C7F /* FTLExitThunkGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitThunkGenerator.cpp; path = ftl/FTLExitThunkGenerator.cpp; sourceTree = "<group>"; };
-		0F235BC317178E1C00690C7F /* FTLExitThunkGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExitThunkGenerator.h; path = ftl/FTLExitThunkGenerator.h; sourceTree = "<group>"; };
 		0F235BC417178E1C00690C7F /* FTLExitValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitValue.cpp; path = ftl/FTLExitValue.cpp; sourceTree = "<group>"; };
 		0F235BC517178E1C00690C7F /* FTLExitValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExitValue.h; path = ftl/FTLExitValue.h; sourceTree = "<group>"; };
 		0F235BC617178E1C00690C7F /* FTLOSRExit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOSRExit.cpp; path = ftl/FTLOSRExit.cpp; sourceTree = "<group>"; };
 		0F235BC717178E1C00690C7F /* FTLOSRExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOSRExit.h; path = ftl/FTLOSRExit.h; sourceTree = "<group>"; };
-		0F235BC817178E1C00690C7F /* FTLOSRExitCompilationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOSRExitCompilationInfo.h; path = ftl/FTLOSRExitCompilationInfo.h; sourceTree = "<group>"; };
 		0F235BC917178E1C00690C7F /* FTLOSRExitCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOSRExitCompiler.cpp; path = ftl/FTLOSRExitCompiler.cpp; sourceTree = "<group>"; };
 		0F235BCA17178E1C00690C7F /* FTLOSRExitCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOSRExitCompiler.h; path = ftl/FTLOSRExitCompiler.h; sourceTree = "<group>"; };
 		0F235BCB17178E1C00690C7F /* FTLThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLThunks.cpp; path = ftl/FTLThunks.cpp; sourceTree = "<group>"; };
@@ -2369,9 +2307,6 @@
 		0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineCallFrameSet.h; sourceTree = "<group>"; };
 		0F24E55717F74EDB00ABB217 /* ValueRecovery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueRecovery.cpp; sourceTree = "<group>"; };
 		0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCallArrayAllocatorSlowPathGenerator.h; path = dfg/DFGCallArrayAllocatorSlowPathGenerator.h; sourceTree = "<group>"; };
-		0F25F1A7181635F300522F39 /* FTLInlineCacheDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLInlineCacheDescriptor.h; path = ftl/FTLInlineCacheDescriptor.h; sourceTree = "<group>"; };
-		0F25F1A8181635F300522F39 /* FTLInlineCacheSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLInlineCacheSize.cpp; path = ftl/FTLInlineCacheSize.cpp; sourceTree = "<group>"; };
-		0F25F1A9181635F300522F39 /* FTLInlineCacheSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLInlineCacheSize.h; path = ftl/FTLInlineCacheSize.h; sourceTree = "<group>"; };
 		0F25F1AA181635F300522F39 /* FTLSlowPathCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSlowPathCall.cpp; path = ftl/FTLSlowPathCall.cpp; sourceTree = "<group>"; };
 		0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSlowPathCall.h; path = ftl/FTLSlowPathCall.h; sourceTree = "<group>"; };
 		0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSlowPathCallKey.cpp; path = ftl/FTLSlowPathCallKey.cpp; sourceTree = "<group>"; };
@@ -2653,11 +2588,7 @@
 		0F682FB119BCB36400FA3BAD /* DFGSSACalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSSACalculator.h; path = dfg/DFGSSACalculator.h; sourceTree = "<group>"; };
 		0F69CC86193AC60A0045759E /* DFGFrozenValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFrozenValue.cpp; path = dfg/DFGFrozenValue.cpp; sourceTree = "<group>"; };
 		0F69CC87193AC60A0045759E /* DFGFrozenValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFrozenValue.h; path = dfg/DFGFrozenValue.h; sourceTree = "<group>"; };
-		0F6B1CB3185FC9E900845D97 /* FTLJSCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJSCall.cpp; path = ftl/FTLJSCall.cpp; sourceTree = "<group>"; };
-		0F6B1CB4185FC9E900845D97 /* FTLJSCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJSCall.h; path = ftl/FTLJSCall.h; sourceTree = "<group>"; };
 		0F6B1CB71861244C00845D97 /* ArityCheckMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArityCheckMode.h; sourceTree = "<group>"; };
-		0F6B1CC11862C47800845D97 /* FTLUnwindInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLUnwindInfo.cpp; path = ftl/FTLUnwindInfo.cpp; sourceTree = "<group>"; };
-		0F6B1CC21862C47800845D97 /* FTLUnwindInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLUnwindInfo.h; path = ftl/FTLUnwindInfo.h; sourceTree = "<group>"; };
 		0F6B8AD61C4EDDA200969052 /* B3DuplicateTails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3DuplicateTails.cpp; path = b3/B3DuplicateTails.cpp; sourceTree = "<group>"; };
 		0F6B8AD71C4EDDA200969052 /* B3DuplicateTails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3DuplicateTails.h; path = b3/B3DuplicateTails.h; sourceTree = "<group>"; };
 		0F6B8ADA1C4EFAC300969052 /* B3SSACalculator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3SSACalculator.cpp; path = b3/B3SSACalculator.cpp; sourceTree = "<group>"; };
@@ -2751,13 +2682,9 @@
 		0F9B1DB31C0E42A500E5BFD2 /* FTLB3Output.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLB3Output.cpp; path = ftl/FTLB3Output.cpp; sourceTree = "<group>"; };
 		0F9B1DB51C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOSRExitHandle.cpp; path = ftl/FTLOSRExitHandle.cpp; sourceTree = "<group>"; };
 		0F9B1DB61C0E42BD00E5BFD2 /* FTLOSRExitHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOSRExitHandle.h; path = ftl/FTLOSRExitHandle.h; sourceTree = "<group>"; };
-		0F9C5E5C18E35F5E00D431C3 /* FTLDWARFRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDWARFRegister.cpp; path = ftl/FTLDWARFRegister.cpp; sourceTree = "<group>"; };
-		0F9C5E5D18E35F5E00D431C3 /* FTLDWARFRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDWARFRegister.h; path = ftl/FTLDWARFRegister.h; sourceTree = "<group>"; };
 		0F9D336E165DBB8D005AD387 /* Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Disassembler.cpp; path = disassembler/Disassembler.cpp; sourceTree = "<group>"; };
 		0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFlushedAt.cpp; path = dfg/DFGFlushedAt.cpp; sourceTree = "<group>"; };
 		0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFlushedAt.h; path = dfg/DFGFlushedAt.h; sourceTree = "<group>"; };
-		0F9D33981803ADB70073C2BC /* FTLStackMaps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLStackMaps.cpp; path = ftl/FTLStackMaps.cpp; sourceTree = "<group>"; };
-		0F9D33991803ADB70073C2BC /* FTLStackMaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLStackMaps.h; path = ftl/FTLStackMaps.h; sourceTree = "<group>"; };
 		0F9D36921AE9CC33000D4DFB /* DFGCleanUpPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCleanUpPhase.cpp; path = dfg/DFGCleanUpPhase.cpp; sourceTree = "<group>"; };
 		0F9D36931AE9CC33000D4DFB /* DFGCleanUpPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCleanUpPhase.h; path = dfg/DFGCleanUpPhase.h; sourceTree = "<group>"; };
 		0F9D4C0A1C3E1C11006CD984 /* FTLExceptionTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExceptionTarget.cpp; path = ftl/FTLExceptionTarget.cpp; sourceTree = "<group>"; };
@@ -2878,26 +2805,9 @@
 		0FCCAE4316D0CF6E00D0C65B /* ParserError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserError.h; sourceTree = "<group>"; };
 		0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSaveRestore.cpp; path = ftl/FTLSaveRestore.cpp; sourceTree = "<group>"; };
 		0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSaveRestore.h; path = ftl/FTLSaveRestore.h; sourceTree = "<group>"; };
-		0FCEFAAE1805CA6D00472CE4 /* InitializeLLVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitializeLLVM.h; path = llvm/InitializeLLVM.h; sourceTree = "<group>"; };
-		0FCEFAB61805D61600472CE4 /* libllvmForJSC.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libllvmForJSC.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LLVMForJSC.xcconfig; sourceTree = "<group>"; };
-		0FCEFAC01805D94100472CE4 /* LLVMOverrides.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LLVMOverrides.cpp; sourceTree = "<group>"; };
-		0FCEFAC21805E74000472CE4 /* LLVMExports.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLVMExports.cpp; sourceTree = "<group>"; };
-		0FCEFAC41805E75500472CE4 /* InitializeLLVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InitializeLLVM.cpp; path = llvm/InitializeLLVM.cpp; sourceTree = "<group>"; };
-		0FCEFAC51805E75500472CE4 /* InitializeLLVMPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InitializeLLVMPOSIX.cpp; path = llvm/InitializeLLVMPOSIX.cpp; sourceTree = "<group>"; };
-		0FCEFAC61805E75500472CE4 /* InitializeLLVMPOSIX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitializeLLVMPOSIX.h; path = llvm/InitializeLLVMPOSIX.h; sourceTree = "<group>"; };
-		0FCEFAC71805E75500472CE4 /* LLVMAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLVMAPI.cpp; path = llvm/LLVMAPI.cpp; sourceTree = "<group>"; };
-		0FCEFAC81805E75500472CE4 /* LLVMAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMAPI.h; path = llvm/LLVMAPI.h; sourceTree = "<group>"; };
-		0FCEFAC91805E75500472CE4 /* LLVMAPIFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMAPIFunctions.h; path = llvm/LLVMAPIFunctions.h; sourceTree = "<group>"; };
-		0FCEFAD21805EDCC00472CE4 /* LLVMHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMHeaders.h; path = llvm/LLVMHeaders.h; sourceTree = "<group>"; };
-		0FCEFAD61806174600472CE4 /* LLVMAnchor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLVMAnchor.cpp; sourceTree = "<group>"; };
-		0FCEFADB18064A1400472CE4 /* config_llvm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config_llvm.h; sourceTree = "<group>"; };
 		0FCEFADD180738C000472CE4 /* FTLLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLocation.cpp; path = ftl/FTLLocation.cpp; sourceTree = "<group>"; };
 		0FCEFADE180738C000472CE4 /* FTLLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLocation.h; path = ftl/FTLLocation.h; sourceTree = "<group>"; };
-		0FD1202D1A8AED12000F5280 /* FTLJSCallBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJSCallBase.cpp; path = ftl/FTLJSCallBase.cpp; sourceTree = "<group>"; };
-		0FD1202E1A8AED12000F5280 /* FTLJSCallBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJSCallBase.h; path = ftl/FTLJSCallBase.h; sourceTree = "<group>"; };
-		0FD120311A8C85BD000F5280 /* FTLJSCallVarargs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJSCallVarargs.cpp; path = ftl/FTLJSCallVarargs.cpp; sourceTree = "<group>"; };
-		0FD120321A8C85BD000F5280 /* FTLJSCallVarargs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJSCallVarargs.h; path = ftl/FTLJSCallVarargs.h; sourceTree = "<group>"; };
 		0FD2C92316D01EE900C7803F /* StructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureInlines.h; sourceTree = "<group>"; };
 		0FD3C82014115CF800FD81CB /* DFGDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDriver.cpp; path = dfg/DFGDriver.cpp; sourceTree = "<group>"; };
 		0FD3C82214115D0E00FD81CB /* DFGDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDriver.h; path = dfg/DFGDriver.h; sourceTree = "<group>"; };
@@ -2971,18 +2881,13 @@
 		0FE834161A6EF97B00D04847 /* PolymorphicCallStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolymorphicCallStubRoutine.h; sourceTree = "<group>"; };
 		0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWatchpoints.cpp; path = dfg/DFGDesiredWatchpoints.cpp; sourceTree = "<group>"; };
 		0FE8534A1723CDA500B618F5 /* DFGDesiredWatchpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredWatchpoints.h; path = dfg/DFGDesiredWatchpoints.h; sourceTree = "<group>"; };
-		0FE95F7718B5694700B531FB /* FTLDataSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDataSection.cpp; path = ftl/FTLDataSection.cpp; sourceTree = "<group>"; };
-		0FE95F7818B5694700B531FB /* FTLDataSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDataSection.h; path = ftl/FTLDataSection.h; sourceTree = "<group>"; };
-		0FEA09FD170513DB00BB722C /* FTLAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLAbbreviations.h; path = ftl/FTLAbbreviations.h; sourceTree = "<group>"; };
 		0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLCapabilities.cpp; path = ftl/FTLCapabilities.cpp; sourceTree = "<group>"; };
 		0FEA09FF170513DB00BB722C /* FTLCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCapabilities.h; path = ftl/FTLCapabilities.h; sourceTree = "<group>"; };
-		0FEA0A00170513DB00BB722C /* FTLCompile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLCompile.cpp; path = ftl/FTLCompile.cpp; sourceTree = "<group>"; };
 		0FEA0A01170513DB00BB722C /* FTLCompile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCompile.h; path = ftl/FTLCompile.h; sourceTree = "<group>"; };
 		0FEA0A02170513DB00BB722C /* FTLJITCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJITCode.cpp; path = ftl/FTLJITCode.cpp; sourceTree = "<group>"; };
 		0FEA0A03170513DB00BB722C /* FTLJITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJITCode.h; path = ftl/FTLJITCode.h; sourceTree = "<group>"; };
 		0FEA0A04170513DB00BB722C /* FTLLowerDFGToLLVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLowerDFGToLLVM.cpp; path = ftl/FTLLowerDFGToLLVM.cpp; sourceTree = "<group>"; };
 		0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLowerDFGToLLVM.h; path = ftl/FTLLowerDFGToLLVM.h; sourceTree = "<group>"; };
-		0FEA0A06170513DB00BB722C /* FTLOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOutput.h; path = ftl/FTLOutput.h; sourceTree = "<group>"; };
 		0FEA0A07170513DB00BB722C /* FTLState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLState.h; path = ftl/FTLState.h; sourceTree = "<group>"; };
 		0FEA0A151706BB9000BB722C /* FTLState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLState.cpp; path = ftl/FTLState.cpp; sourceTree = "<group>"; };
 		0FEA0A171708B00700BB722C /* FTLAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLAbstractHeap.cpp; path = ftl/FTLAbstractHeap.cpp; sourceTree = "<group>"; };
@@ -2991,10 +2896,7 @@
 		0FEA0A1A1708B00700BB722C /* FTLAbstractHeapRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLAbstractHeapRepository.h; path = ftl/FTLAbstractHeapRepository.h; sourceTree = "<group>"; };
 		0FEA0A1B1708B00700BB722C /* FTLTypedPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLTypedPointer.h; path = ftl/FTLTypedPointer.h; sourceTree = "<group>"; };
 		0FEA0A211709606900BB722C /* FTLCommonValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCommonValues.h; path = ftl/FTLCommonValues.h; sourceTree = "<group>"; };
-		0FEA0A221709606900BB722C /* FTLIntrinsicRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLIntrinsicRepository.h; path = ftl/FTLIntrinsicRepository.h; sourceTree = "<group>"; };
 		0FEA0A251709623B00BB722C /* FTLCommonValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLCommonValues.cpp; path = ftl/FTLCommonValues.cpp; sourceTree = "<group>"; };
-		0FEA0A261709623B00BB722C /* FTLIntrinsicRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLIntrinsicRepository.cpp; path = ftl/FTLIntrinsicRepository.cpp; sourceTree = "<group>"; };
-		0FEA0A291709629600BB722C /* FTLOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOutput.cpp; path = ftl/FTLOutput.cpp; sourceTree = "<group>"; };
 		0FEA0A2B170B661900BB722C /* FTLFormattedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLFormattedValue.h; path = ftl/FTLFormattedValue.h; sourceTree = "<group>"; };
 		0FEA0A2D170D40BF00BB722C /* DFGCommonData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCommonData.cpp; path = dfg/DFGCommonData.cpp; sourceTree = "<group>"; };
 		0FEA0A2E170D40BF00BB722C /* DFGCommonData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCommonData.h; path = dfg/DFGCommonData.h; sourceTree = "<group>"; };
@@ -3345,8 +3247,6 @@
 		2AABCDE618EF294200002096 /* GCLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCLogging.h; sourceTree = "<group>"; };
 		2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
 		2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
-		2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDWARFDebugLineInfo.cpp; path = ftl/FTLDWARFDebugLineInfo.cpp; sourceTree = "<group>"; };
-		2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDWARFDebugLineInfo.h; path = ftl/FTLDWARFDebugLineInfo.h; sourceTree = "<group>"; };
 		2AD2EDFA19799E38004D6478 /* EnumerationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumerationMode.h; sourceTree = "<group>"; };
 		2AD8932917E3868F00668276 /* HeapIterationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapIterationScope.h; sourceTree = "<group>"; };
 		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
@@ -3408,8 +3308,6 @@
 		623A37EB1B87A7BD00754209 /* RegisterMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterMap.h; sourceTree = "<group>"; };
 		627673211B680C1E00FD9F2E /* CallMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallMode.cpp; sourceTree = "<group>"; };
 		627673221B680C1E00FD9F2E /* CallMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallMode.h; sourceTree = "<group>"; };
-		62774DA81B8D4B190006F05A /* FTLJSTailCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJSTailCall.cpp; path = ftl/FTLJSTailCall.cpp; sourceTree = "<group>"; };
-		62774DA91B8D4B190006F05A /* FTLJSTailCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJSTailCall.h; path = ftl/FTLJSTailCall.h; sourceTree = "<group>"; };
 		62A9A29E1B0BED4800BD54CA /* DFGLazyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLazyNode.cpp; path = dfg/DFGLazyNode.cpp; sourceTree = "<group>"; };
 		62A9A29F1B0BED4800BD54CA /* DFGLazyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLazyNode.h; path = dfg/DFGLazyNode.h; sourceTree = "<group>"; };
 		62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionRareData.cpp; sourceTree = "<group>"; };
@@ -3538,8 +3436,6 @@
 		79CFC6EF1C33B10000C768EA /* LLIntPCRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntPCRanges.h; path = llint/LLIntPCRanges.h; sourceTree = "<group>"; };
 		79D5CD581C1106A900CECA07 /* SamplingProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingProfiler.cpp; sourceTree = "<group>"; };
 		79D5CD591C1106A900CECA07 /* SamplingProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingProfiler.h; sourceTree = "<group>"; };
-		79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExceptionHandlerManager.cpp; path = ftl/FTLExceptionHandlerManager.cpp; sourceTree = "<group>"; };
-		79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExceptionHandlerManager.h; path = ftl/FTLExceptionHandlerManager.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
 		79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironment.h; sourceTree = "<group>"; };
 		79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGMaximalFlushInsertionPhase.cpp; path = dfg/DFGMaximalFlushInsertionPhase.cpp; sourceTree = "<group>"; };
@@ -3783,7 +3679,6 @@
 		9B4954E81A6640DB002815A6 /* ParserFunctionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserFunctionInfo.h; sourceTree = "<group>"; };
 		9E729409190F0306001A91B5 /* BundlePath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundlePath.mm; sourceTree = "<group>"; };
 		9E72940A190F0514001A91B5 /* BundlePath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BundlePath.h; sourceTree = "<group>"; };
-		9EA5C7A0190F05D200508EBE /* InitializeLLVMMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InitializeLLVMMac.cpp; path = llvm/InitializeLLVMMac.cpp; sourceTree = "<group>"; };
 		A125846C1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormatConstructor.lut.h; sourceTree = "<group>"; };
 		A125846D1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormatPrototype.lut.h; sourceTree = "<group>"; };
 		A12BBFF11B044A8B00664B69 /* IntlObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlObject.h; sourceTree = "<group>"; };
@@ -4106,8 +4001,6 @@
 		A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiteralParser.cpp; sourceTree = "<group>"; };
 		A7E5A3A51797432D00E893C0 /* CompilationResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationResult.cpp; sourceTree = "<group>"; };
 		A7E5A3A61797432D00E893C0 /* CompilationResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompilationResult.h; sourceTree = "<group>"; };
-		A7E5AB331799E4B200D2833D /* LLVMDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLVMDisassembler.cpp; path = disassembler/LLVMDisassembler.cpp; sourceTree = "<group>"; };
-		A7E5AB341799E4B200D2833D /* LLVMDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMDisassembler.h; path = disassembler/LLVMDisassembler.h; sourceTree = "<group>"; };
 		A7E5AB351799E4B200D2833D /* UDis86Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UDis86Disassembler.h; path = disassembler/UDis86Disassembler.h; sourceTree = "<group>"; };
 		A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = X86Disassembler.cpp; path = disassembler/X86Disassembler.cpp; sourceTree = "<group>"; };
 		A7F2996917A0BB670010417A /* FTLFail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLFail.cpp; path = ftl/FTLFail.cpp; sourceTree = "<group>"; };
@@ -4362,8 +4255,6 @@
 		FE187A0A1C0229230038BBCA /* JITDivGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITDivGenerator.cpp; sourceTree = "<group>"; };
 		FE187A0B1C0229230038BBCA /* JITDivGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITDivGenerator.h; sourceTree = "<group>"; };
 		FE187A0C1C02EBA70038BBCA /* SnippetOperand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetOperand.h; sourceTree = "<group>"; };
-		FE187A151C0E13C60038BBCA /* FTLCompileBinaryOp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLCompileBinaryOp.cpp; path = ftl/FTLCompileBinaryOp.cpp; sourceTree = "<group>"; };
-		FE187A161C0E13C60038BBCA /* FTLCompileBinaryOp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCompileBinaryOp.h; path = ftl/FTLCompileBinaryOp.h; sourceTree = "<group>"; };
 		FE1C0FFC1B193E9800B53FCA /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		FE1C0FFE1B194FD100B53FCA /* Exception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Exception.cpp; sourceTree = "<group>"; };
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
@@ -4435,13 +4326,6 @@
 			files = (
 				0F9327521C20BCBA00CF6564 /* Foundation.framework in Frameworks */,
 				0F9327531C20BCBA00CF6564 /* JavaScriptCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0FCEFAB31805D61600472CE4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4520,7 +4404,6 @@
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
 				932F5BE10822A1C700736975 /* jsc */,
 				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
-				0FCEFAB61805D61600472CE4 /* libllvmForJSC.dylib */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				0FEC85AD1BDB5CF10080FF74 /* testb3 */,
@@ -4565,7 +4448,6 @@
 				1429D77A0ED20D7300B89619 /* interpreter */,
 				1429D92C0ED22D7000B89619 /* jit */,
 				0F46809C14BA7F4D00BFE272 /* llint */,
-				0FCEFAAD1805CA4400472CE4 /* llvm */,
 				7E39D8370EC3A388003AF11A /* parser */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				95AB831A0DA42C6900BC83F3 /* profiler */,
@@ -4628,40 +4510,10 @@
 			name = llint;
 			sourceTree = "<group>";
 		};
-		0FCEFAAD1805CA4400472CE4 /* llvm */ = {
-			isa = PBXGroup;
-			children = (
-				0FCEFABF1805D94100472CE4 /* library */,
-				0FCEFAC41805E75500472CE4 /* InitializeLLVM.cpp */,
-				0FCEFAAE1805CA6D00472CE4 /* InitializeLLVM.h */,
-				9EA5C7A0190F05D200508EBE /* InitializeLLVMMac.cpp */,
-				0FCEFAC51805E75500472CE4 /* InitializeLLVMPOSIX.cpp */,
-				0FCEFAC61805E75500472CE4 /* InitializeLLVMPOSIX.h */,
-				0FCEFAC71805E75500472CE4 /* LLVMAPI.cpp */,
-				0FCEFAC81805E75500472CE4 /* LLVMAPI.h */,
-				0FCEFAC91805E75500472CE4 /* LLVMAPIFunctions.h */,
-				0FCEFAD21805EDCC00472CE4 /* LLVMHeaders.h */,
-			);
-			name = llvm;
-			sourceTree = "<group>";
-		};
-		0FCEFABF1805D94100472CE4 /* library */ = {
-			isa = PBXGroup;
-			children = (
-				0FCEFADB18064A1400472CE4 /* config_llvm.h */,
-				0FCEFAD61806174600472CE4 /* LLVMAnchor.cpp */,
-				0FCEFAC21805E74000472CE4 /* LLVMExports.cpp */,
-				0FCEFAC01805D94100472CE4 /* LLVMOverrides.cpp */,
-			);
-			name = library;
-			path = llvm/library;
-			sourceTree = "<group>";
-		};
 		0FEA09FC1705137F00BB722C /* ftl */ = {
 			isa = PBXGroup;
 			children = (
 				0FDB2CC7173DA51E007B3C1B /* FTLAbbreviatedTypes.h */,
-				0FEA09FD170513DB00BB722C /* FTLAbbreviations.h */,
 				0FEA0A171708B00700BB722C /* FTLAbstractHeap.cpp */,
 				0FEA0A181708B00700BB722C /* FTLAbstractHeap.h */,
 				0FEA0A191708B00700BB722C /* FTLAbstractHeapRepository.cpp */,
@@ -4675,18 +4527,7 @@
 				0FEA09FF170513DB00BB722C /* FTLCapabilities.h */,
 				0FEA0A251709623B00BB722C /* FTLCommonValues.cpp */,
 				0FEA0A211709606900BB722C /* FTLCommonValues.h */,
-				0FEA0A00170513DB00BB722C /* FTLCompile.cpp */,
 				0FEA0A01170513DB00BB722C /* FTLCompile.h */,
-				FE187A151C0E13C60038BBCA /* FTLCompileBinaryOp.cpp */,
-				FE187A161C0E13C60038BBCA /* FTLCompileBinaryOp.h */,
-				0FE95F7718B5694700B531FB /* FTLDataSection.cpp */,
-				0FE95F7818B5694700B531FB /* FTLDataSection.h */,
-				2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */,
-				2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */,
-				0F9C5E5C18E35F5E00D431C3 /* FTLDWARFRegister.cpp */,
-				0F9C5E5D18E35F5E00D431C3 /* FTLDWARFRegister.h */,
-				79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */,
-				79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */,
 				0F9D4C0A1C3E1C11006CD984 /* FTLExceptionTarget.cpp */,
 				0F9D4C0B1C3E1C11006CD984 /* FTLExceptionTarget.h */,
 				0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */,
@@ -4695,8 +4536,6 @@
 				0F235BC017178E1C00690C7F /* FTLExitArgumentForOperand.h */,
 				0F2B9CEE19D0BAC100B1D1B5 /* FTLExitPropertyValue.cpp */,
 				0F2B9CEF19D0BAC100B1D1B5 /* FTLExitPropertyValue.h */,
-				0F235BC217178E1C00690C7F /* FTLExitThunkGenerator.cpp */,
-				0F235BC317178E1C00690C7F /* FTLExitThunkGenerator.h */,
 				0F2B9CF019D0BAC100B1D1B5 /* FTLExitTimeObjectMaterialization.cpp */,
 				0F2B9CF119D0BAC100B1D1B5 /* FTLExitTimeObjectMaterialization.h */,
 				0F235BC417178E1C00690C7F /* FTLExitValue.cpp */,
@@ -4707,23 +4546,10 @@
 				0FD8A31517D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp */,
 				0FD8A31617D51F2200CA2C40 /* FTLForOSREntryJITCode.h */,
 				A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */,
-				0F25F1A7181635F300522F39 /* FTLInlineCacheDescriptor.h */,
-				0F25F1A8181635F300522F39 /* FTLInlineCacheSize.cpp */,
-				0F25F1A9181635F300522F39 /* FTLInlineCacheSize.h */,
-				0FEA0A261709623B00BB722C /* FTLIntrinsicRepository.cpp */,
-				0FEA0A221709606900BB722C /* FTLIntrinsicRepository.h */,
 				0FEA0A02170513DB00BB722C /* FTLJITCode.cpp */,
 				0FEA0A03170513DB00BB722C /* FTLJITCode.h */,
 				A78A977D179738D5009DF744 /* FTLJITFinalizer.cpp */,
 				A78A977E179738D5009DF744 /* FTLJITFinalizer.h */,
-				0F6B1CB3185FC9E900845D97 /* FTLJSCall.cpp */,
-				0F6B1CB4185FC9E900845D97 /* FTLJSCall.h */,
-				0FD1202D1A8AED12000F5280 /* FTLJSCallBase.cpp */,
-				0FD1202E1A8AED12000F5280 /* FTLJSCallBase.h */,
-				0FD120311A8C85BD000F5280 /* FTLJSCallVarargs.cpp */,
-				0FD120321A8C85BD000F5280 /* FTLJSCallVarargs.h */,
-				62774DA81B8D4B190006F05A /* FTLJSTailCall.cpp */,
-				62774DA91B8D4B190006F05A /* FTLJSTailCall.h */,
 				0FB4FB701BC843140025CA5A /* FTLLazySlowPath.cpp */,
 				0FB4FB711BC843140025CA5A /* FTLLazySlowPath.h */,
 				0FB4FB721BC843140025CA5A /* FTLLazySlowPathCall.h */,
@@ -4740,13 +4566,10 @@
 				0FD8A31817D51F2200CA2C40 /* FTLOSREntry.h */,
 				0F235BC617178E1C00690C7F /* FTLOSRExit.cpp */,
 				0F235BC717178E1C00690C7F /* FTLOSRExit.h */,
-				0F235BC817178E1C00690C7F /* FTLOSRExitCompilationInfo.h */,
 				0F235BC917178E1C00690C7F /* FTLOSRExitCompiler.cpp */,
 				0F235BCA17178E1C00690C7F /* FTLOSRExitCompiler.h */,
 				0F9B1DB51C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp */,
 				0F9B1DB61C0E42BD00E5BFD2 /* FTLOSRExitHandle.h */,
-				0FEA0A291709629600BB722C /* FTLOutput.cpp */,
-				0FEA0A06170513DB00BB722C /* FTLOutput.h */,
 				0F9D4C0E1C3E2C74006CD984 /* FTLPatchpointExceptionHandle.cpp */,
 				0F9D4C0F1C3E2C74006CD984 /* FTLPatchpointExceptionHandle.h */,
 				0F485325187DFDEC0083B687 /* FTLRecoveryOpcode.cpp */,
@@ -4758,16 +4581,12 @@
 				0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */,
 				0F25F1AD181635F300522F39 /* FTLSlowPathCallKey.h */,
 				0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */,
-				0F9D33981803ADB70073C2BC /* FTLStackMaps.cpp */,
-				0F9D33991803ADB70073C2BC /* FTLStackMaps.h */,
 				0FEA0A151706BB9000BB722C /* FTLState.cpp */,
 				0FEA0A07170513DB00BB722C /* FTLState.h */,
 				A7FCC26C17A0B6AA00786D1A /* FTLSwitchCase.h */,
 				0F235BCB17178E1C00690C7F /* FTLThunks.cpp */,
 				0F235BCC17178E1C00690C7F /* FTLThunks.h */,
 				0FEA0A1B1708B00700BB722C /* FTLTypedPointer.h */,
-				0F6B1CC11862C47800845D97 /* FTLUnwindInfo.cpp */,
-				0F6B1CC21862C47800845D97 /* FTLUnwindInfo.h */,
 				0FDB2CC8173DA51E007B3C1B /* FTLValueFromBlock.h */,
 				0F5A6281188C98D40072C9DF /* FTLValueRange.cpp */,
 				0F5A6282188C98D40072C9DF /* FTLValueRange.h */,
@@ -5021,8 +4840,6 @@
 				65C0284F171795E200351E35 /* ARMv7Disassembler.cpp */,
 				0F9D336E165DBB8D005AD387 /* Disassembler.cpp */,
 				0FF4272F158EBD44004CB9FF /* Disassembler.h */,
-				A7E5AB331799E4B200D2833D /* LLVMDisassembler.cpp */,
-				A7E5AB341799E4B200D2833D /* LLVMDisassembler.h */,
 				0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */,
 				A7E5AB351799E4B200D2833D /* UDis86Disassembler.h */,
 				A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */,
@@ -7032,17 +6849,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		0FCEFAB41805D61600472CE4 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0FCEFADC18064A1400472CE4 /* config_llvm.h in Headers */,
-				0FCEFADA180620DA00472CE4 /* LLVMAPI.h in Headers */,
-				0FCEFAD11805E77900472CE4 /* LLVMAPIFunctions.h in Headers */,
-				0FCEFAD41805EDCC00472CE4 /* LLVMHeaders.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		144005C70A5338C60005F061 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -7061,7 +6867,6 @@
 			files = (
 				0FFA549816B8835300B3A982 /* A64DOpcode.h in Headers */,
 				0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */,
-				FE187A1A1C0E13E60038BBCA /* FTLCompileBinaryOp.h in Headers */,
 				860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */,
 				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
 				0FEC856E1BDACDC70080FF74 /* AirAllocateStack.h in Headers */,
@@ -7082,7 +6887,6 @@
 				0F6183311C45BF070072450B /* AirLowerMacros.h in Headers */,
 				0FEC85771BDACDC70080FF74 /* AirFrequentedBlock.h in Headers */,
 				0FEC85791BDACDC70080FF74 /* AirGenerate.h in Headers */,
-				79DF66B11BF26A570001CF11 /* FTLExceptionHandlerManager.h in Headers */,
 				0FEC857A1BDACDC70080FF74 /* AirGenerationContext.h in Headers */,
 				0FEC857C1BDACDC70080FF74 /* AirHandleCalleeSaves.h in Headers */,
 				0FEC857E1BDACDC70080FF74 /* AirInsertionSet.h in Headers */,
@@ -7525,7 +7329,6 @@
 				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
 				0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */,
 				0FDB2CC9173DA520007B3C1B /* FTLAbbreviatedTypes.h in Headers */,
-				0FEA0A08170513DB00BB722C /* FTLAbbreviations.h in Headers */,
 				0FEA0A1D1708B00700BB722C /* FTLAbstractHeap.h in Headers */,
 				0FEA0A1F1708B00700BB722C /* FTLAbstractHeapRepository.h in Headers */,
 				0F485328187DFDEC0083B687 /* FTLAvailableRecovery.h in Headers */,
@@ -7533,15 +7336,11 @@
 				0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */,
 				0FEA0A231709606900BB722C /* FTLCommonValues.h in Headers */,
 				0FEA0A0C170513DB00BB722C /* FTLCompile.h in Headers */,
-				0FE95F7A18B5694700B531FB /* FTLDataSection.h in Headers */,
-				2AC922BC18A16182003CE0FB /* FTLDWARFDebugLineInfo.h in Headers */,
-				0F9C5E5F18E35F5E00D431C3 /* FTLDWARFRegister.h in Headers */,
 				0F235BD417178E1C00690C7F /* FTLExitArgument.h in Headers */,
 				0F338E0C1BF0276C0013C88F /* B3Compilation.h in Headers */,
 				0F235BD617178E1C00690C7F /* FTLExitArgumentForOperand.h in Headers */,
 				0F235BD717178E1C00690C7F /* FTLStackmapArgumentList.h in Headers */,
 				0F2B9CF519D0BAC100B1D1B5 /* FTLExitPropertyValue.h in Headers */,
-				0F235BD917178E1C00690C7F /* FTLExitThunkGenerator.h in Headers */,
 				0F2B9CF719D0BAC100B1D1B5 /* FTLExitTimeObjectMaterialization.h in Headers */,
 				0F235BDB17178E1C00690C7F /* FTLExitValue.h in Headers */,
 				0FE0E4AE1C24C94A002E17B6 /* AirTmpWidth.h in Headers */,
@@ -7549,15 +7348,8 @@
 				0FEA0A2C170B661900BB722C /* FTLFormattedValue.h in Headers */,
 				0FD8A31A17D51F2200CA2C40 /* FTLForOSREntryJITCode.h in Headers */,
 				A78A977F179738D5009DF744 /* FTLGeneratedFunction.h in Headers */,
-				0F25F1AE181635F300522F39 /* FTLInlineCacheDescriptor.h in Headers */,
-				0F25F1B0181635F300522F39 /* FTLInlineCacheSize.h in Headers */,
-				0FEA0A241709606900BB722C /* FTLIntrinsicRepository.h in Headers */,
 				0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */,
 				A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */,
-				0F6B1CB6185FC9E900845D97 /* FTLJSCall.h in Headers */,
-				0FD120301A8AED12000F5280 /* FTLJSCallBase.h in Headers */,
-				0FD120341A8C85BD000F5280 /* FTLJSCallVarargs.h in Headers */,
-				62774DAB1B8D4B190006F05A /* FTLJSTailCall.h in Headers */,
 				0FB4FB741BC843140025CA5A /* FTLLazySlowPath.h in Headers */,
 				0FB4FB751BC843140025CA5A /* FTLLazySlowPathCall.h in Headers */,
 				0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */,
@@ -7568,19 +7360,15 @@
 				0F338E101BF0276C0013C88F /* B3MoveConstants.h in Headers */,
 				0FD8A31C17D51F2200CA2C40 /* FTLOSREntry.h in Headers */,
 				0F235BDD17178E1C00690C7F /* FTLOSRExit.h in Headers */,
-				0F235BDE17178E1C00690C7F /* FTLOSRExitCompilationInfo.h in Headers */,
 				0F235BE017178E1C00690C7F /* FTLOSRExitCompiler.h in Headers */,
-				0FEA0A11170513DB00BB722C /* FTLOutput.h in Headers */,
 				0F48532A187DFDEC0083B687 /* FTLRecoveryOpcode.h in Headers */,
 				0FCEFAAC1804C13E00472CE4 /* FTLSaveRestore.h in Headers */,
 				0F25F1B2181635F300522F39 /* FTLSlowPathCall.h in Headers */,
 				0F25F1B4181635F300522F39 /* FTLSlowPathCallKey.h in Headers */,
-				0F9D339B1803ADB70073C2BC /* FTLStackMaps.h in Headers */,
 				0FEA0A12170513DB00BB722C /* FTLState.h in Headers */,
 				A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */,
 				0F235BE217178E1C00690C7F /* FTLThunks.h in Headers */,
 				0FEA0A201708B00700BB722C /* FTLTypedPointer.h in Headers */,
-				0F6B1CC61862C47800845D97 /* FTLUnwindInfo.h in Headers */,
 				0FDB2CCA173DA523007B3C1B /* FTLValueFromBlock.h in Headers */,
 				0F5A6284188C98D40072C9DF /* FTLValueRange.h in Headers */,
 				0F0332C618B53FA9005F979A /* FTLWeight.h in Headers */,
@@ -7668,8 +7456,6 @@
 				0F0A75231B94BFA900110660 /* InferredType.h in Headers */,
 				0FFC92121B94D4DF0071DD66 /* InferredTypeTable.h in Headers */,
 				0FF8BDEB1AD4CF7100DFE884 /* InferredValue.h in Headers */,
-				0FCEFAB01805CA6D00472CE4 /* InitializeLLVM.h in Headers */,
-				0FCEFACC1805E75500472CE4 /* InitializeLLVMPOSIX.h in Headers */,
 				BC18C4100E16F5CD00B34460 /* InitializeThreading.h in Headers */,
 				A513E5B8185B8BD3007E95AD /* InjectedScript.h in Headers */,
 				A514B2C3185A684400F3C7CB /* InjectedScriptBase.h in Headers */,
@@ -7933,10 +7719,6 @@
 				FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */,
 				0F4680A514BA7F8D00BFE272 /* LLIntSlowPaths.h in Headers */,
 				0F0B839D14BCF46600885B4F /* LLIntThunks.h in Headers */,
-				0FCEFACE1805E75500472CE4 /* LLVMAPI.h in Headers */,
-				0FCEFACF1805E75500472CE4 /* LLVMAPIFunctions.h in Headers */,
-				A7E5AB381799E4B200D2833D /* LLVMDisassembler.h in Headers */,
-				0FCEFAD31805EDCC00472CE4 /* LLVMHeaders.h in Headers */,
 				142E3139134FF0A600AFADB5 /* Local.h in Headers */,
 				142E313A134FF0A600AFADB5 /* LocalScope.h in Headers */,
 				BC18C4370E16F5CD00B34460 /* Lookup.h in Headers */,
@@ -8285,23 +8067,6 @@
 			productReference = 0F9327591C20BCBA00CF6564 /* dynbench */;
 			productType = "com.apple.product-type.tool";
 		};
-		0FCEFAB51805D61600472CE4 /* llvmForJSC */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0FCEFAB71805D61600472CE4 /* Build configuration list for PBXNativeTarget "llvmForJSC" */;
-			buildPhases = (
-				0FCEFAB21805D61600472CE4 /* Sources */,
-				0FCEFAB31805D61600472CE4 /* Frameworks */,
-				0FCEFAB41805D61600472CE4 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = llvmForJSC;
-			productName = llvmForJSC;
-			productReference = 0FCEFAB61805D61600472CE4 /* libllvmForJSC.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		0FEC85941BDB5CF10080FF74 /* testb3 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0FEC85A81BDB5CF10080FF74 /* Build configuration list for PBXNativeTarget "testb3" */;
@@ -8400,7 +8165,6 @@
 				3732811A17FCD235004AD519 /* Postprocess Headers */,
 				932F5B910822A1C700736975 /* Sources */,
 				932F5BD20822A1C700736975 /* Frameworks */,
-				0FCEFAD91806191800472CE4 /* Copy LLVM Library Into Framework */,
 				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */,
 				3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */,
 				A55DEAA416703DF7003DB841 /* Check For Inappropriate Macros in External Headers */,
@@ -8409,7 +8173,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				0FCEFABD1805D66300472CE4 /* PBXTargetDependency */,
 				65788AAD18B40A7B00C189FF /* PBXTargetDependency */,
 				65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */,
 			);
@@ -8464,7 +8227,6 @@
 			targets = (
 				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
-				0FCEFAB51805D61600472CE4 /* llvmForJSC */,
 				0F4680A914BA7FD900BFE272 /* LLInt Offsets */,
 				65FB3F6609D11E9100F49DEB /* Derived Sources */,
 				0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */,
@@ -8507,21 +8269,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/LLIntDesiredOffsets.h\" \"X86,X86_64,ARMv7,ARMv7s,ARM64,C_LOOP\"\n";
-		};
-		0FCEFAD91806191800472CE4 /* Copy LLVM Library Into Framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/libllvmForJSC.dylib",
-			);
-			name = "Copy LLVM Library Into Framework";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif [[ $ENABLE_FTL_JIT != \"ENABLE_FTL_JIT\" ]]\nthen\n    exit 0\nfi\n\nif [[ ${CONFIGURATION:=Debug} != \"Production\" ]]\nthen\n    # Copy the llvmForJSC library into the framework.\n    ditto \"${BUILT_PRODUCTS_DIR}/libllvmForJSC.dylib\" \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Libraries/libllvmForJSC.dylib\"\nfi\n\nif [[ $PLATFORM_NAME != \"macosx\" ]]\nthen\n    exit 0\nfi\n\nif [ ! -e \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\" ]\nthen\n    ln -fs \"Versions/Current/Libraries\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\"\nfi";
 		};
 		1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8726,16 +8473,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F93275B1C20BCDF00CF6564 /* dynbench.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0FCEFAB21805D61600472CE4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0FCEFAD71806174600472CE4 /* LLVMAnchor.cpp in Sources */,
-				0FCEFAC31805E74000472CE4 /* LLVMExports.cpp in Sources */,
-				0FCEFAC11805D94E00472CE4 /* LLVMOverrides.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9064,7 +8801,6 @@
 				0FB17662196B8F9E0091052A /* DFGPureValue.cpp in Sources */,
 				0F3A1BF91A9ECB7D000DE01A /* DFGPutStackSinkingPhase.cpp in Sources */,
 				0F2FCCFB18A60070001A27F8 /* DFGSafepoint.cpp in Sources */,
-				FE187A191C0E13E30038BBCA /* FTLCompileBinaryOp.cpp in Sources */,
 				86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */,
 				86880F1F14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp in Sources */,
 				86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */,
@@ -9129,28 +8865,17 @@
 				0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */,
 				0F338E1B1BF286EA0013C88F /* B3BlockInsertionSet.cpp in Sources */,
 				0FEA0A271709623B00BB722C /* FTLCommonValues.cpp in Sources */,
-				0FEA0A0B170513DB00BB722C /* FTLCompile.cpp in Sources */,
-				0FE95F7918B5694700B531FB /* FTLDataSection.cpp in Sources */,
-				2AC922BB18A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp in Sources */,
-				0F9C5E5E18E35F5E00D431C3 /* FTLDWARFRegister.cpp in Sources */,
 				0F235BD317178E1C00690C7F /* FTLExitArgument.cpp in Sources */,
 				0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */,
 				0F2B9CF419D0BAC100B1D1B5 /* FTLExitPropertyValue.cpp in Sources */,
-				0F235BD817178E1C00690C7F /* FTLExitThunkGenerator.cpp in Sources */,
 				0F2B9CF619D0BAC100B1D1B5 /* FTLExitTimeObjectMaterialization.cpp in Sources */,
 				0F235BDA17178E1C00690C7F /* FTLExitValue.cpp in Sources */,
 				A7F2996B17A0BB670010417A /* FTLFail.cpp in Sources */,
 				0FD8A31917D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp in Sources */,
-				0F25F1AF181635F300522F39 /* FTLInlineCacheSize.cpp in Sources */,
-				0FEA0A281709623B00BB722C /* FTLIntrinsicRepository.cpp in Sources */,
 				0FEA0A0D170513DB00BB722C /* FTLJITCode.cpp in Sources */,
 				0F6B8AE21C4EFE1700969052 /* B3BreakCriticalEdges.cpp in Sources */,
 				A78A9780179738D5009DF744 /* FTLJITFinalizer.cpp in Sources */,
-				0F6B1CB5185FC9E900845D97 /* FTLJSCall.cpp in Sources */,
-				0FD1202F1A8AED12000F5280 /* FTLJSCallBase.cpp in Sources */,
 				0F725CAF1C506D3B00AD943A /* B3FoldPathConstants.cpp in Sources */,
-				0FD120331A8C85BD000F5280 /* FTLJSCallVarargs.cpp in Sources */,
-				62774DAA1B8D4B190006F05A /* FTLJSTailCall.cpp in Sources */,
 				FE187A0E1C030D640038BBCA /* JITDivGenerator.cpp in Sources */,
 				0FB4FB731BC843140025CA5A /* FTLLazySlowPath.cpp in Sources */,
 				0F8F2B95172E04A0007DBDA5 /* FTLLink.cpp in Sources */,
@@ -9160,18 +8885,15 @@
 				0FD8A31B17D51F2200CA2C40 /* FTLOSREntry.cpp in Sources */,
 				0F235BDC17178E1C00690C7F /* FTLOSRExit.cpp in Sources */,
 				0F235BDF17178E1C00690C7F /* FTLOSRExitCompiler.cpp in Sources */,
-				0FEA0A2A1709629600BB722C /* FTLOutput.cpp in Sources */,
 				A55165D21BDF0B98003B75C1 /* InspectorScriptProfilerAgent.cpp in Sources */,
 				0F485329187DFDEC0083B687 /* FTLRecoveryOpcode.cpp in Sources */,
 				0FCEFAAB1804C13E00472CE4 /* FTLSaveRestore.cpp in Sources */,
 				0F25F1B1181635F300522F39 /* FTLSlowPathCall.cpp in Sources */,
 				0F338DF11BE93AD10013C88F /* B3StackmapValue.cpp in Sources */,
 				0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */,
-				0F9D339A1803ADB70073C2BC /* FTLStackMaps.cpp in Sources */,
 				4319DA031C1BE40A001D260B /* B3LowerMacrosAfterOptimizations.cpp in Sources */,
 				0FEA0A161706BB9000BB722C /* FTLState.cpp in Sources */,
 				0F235BE117178E1C00690C7F /* FTLThunks.cpp in Sources */,
-				0F6B1CC51862C47800845D97 /* FTLUnwindInfo.cpp in Sources */,
 				0F5A6283188C98D40072C9DF /* FTLValueRange.cpp in Sources */,
 				2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */,
 				147F39CB107EC37600427A48 /* FunctionConstructor.cpp in Sources */,
@@ -9202,9 +8924,6 @@
 				0F0A75221B94BFA900110660 /* InferredType.cpp in Sources */,
 				0FFC92111B94D4DF0071DD66 /* InferredTypeTable.cpp in Sources */,
 				0FF8BDEA1AD4CF7100DFE884 /* InferredValue.cpp in Sources */,
-				0FCEFACA1805E75500472CE4 /* InitializeLLVM.cpp in Sources */,
-				9EA5C7A2190F088700508EBE /* InitializeLLVMMac.cpp in Sources */,
-				9E729408190F021E001A91B5 /* InitializeLLVMPOSIX.cpp in Sources */,
 				9E729407190F01A5001A91B5 /* InitializeThreading.cpp in Sources */,
 				A513E5B7185B8BD3007E95AD /* InjectedScript.cpp in Sources */,
 				A514B2C2185A684400F3C7CB /* InjectedScriptBase.cpp in Sources */,
@@ -9362,7 +9081,6 @@
 				0F2B66FE17B6B5AB00A7AE3F /* JSTypedArrays.cpp in Sources */,
 				534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */,
 				DEA7E2441BBC677200D78440 /* JSTypedArrayViewPrototype.cpp in Sources */,
-				79DF66B01BF26A570001CF11 /* FTLExceptionHandlerManager.cpp in Sources */,
 				86E3C61A167BABEE006D760A /* JSValue.mm in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
 				86E3C61C167BABEE006D760A /* JSVirtualMachine.mm in Sources */,
@@ -9387,8 +9105,6 @@
 				0F4680A814BA7FAB00BFE272 /* LLIntExceptions.cpp in Sources */,
 				0F4680A414BA7F8D00BFE272 /* LLIntSlowPaths.cpp in Sources */,
 				0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */,
-				0FCEFACD1805E75500472CE4 /* LLVMAPI.cpp in Sources */,
-				A7E5AB371799E4B200D2833D /* LLVMDisassembler.cpp in Sources */,
 				14469DDE107EC7E700650446 /* Lookup.cpp in Sources */,
 				0F4680CC14BBB17A00BFE272 /* LowLevelInterpreter.cpp in Sources */,
 				A5AB49DC1BEC8082007020FB /* PerGlobalObjectWrapperWorld.cpp in Sources */,
@@ -9627,11 +9343,6 @@
 			target = 0F93274E1C20BCBA00CF6564 /* dynbench */;
 			targetProxy = 0F93275C1C20BF3A00CF6564 /* PBXContainerItemProxy */;
 		};
-		0FCEFABD1805D66300472CE4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0FCEFAB51805D61600472CE4 /* llvmForJSC */;
-			targetProxy = 0FCEFABC1805D66300472CE4 /* PBXContainerItemProxy */;
-		};
 		0FEC85B11BDB5D8F0080FF74 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0FEC85941BDB5CF10080FF74 /* testb3 */;
@@ -9793,34 +9504,6 @@
 		0F9327581C20BCBA00CF6564 /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
-		0FCEFAB81805D61600472CE4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		0FCEFAB91805D61600472CE4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		0FCEFABA1805D61600472CE4 /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */;
-			buildSettings = {
-			};
-			name = Profiling;
-		};
-		0FCEFABB1805D61600472CE4 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -10216,17 +9899,6 @@
 				0F9327561C20BCBA00CF6564 /* Release */,
 				0F9327571C20BCBA00CF6564 /* Profiling */,
 				0F9327581C20BCBA00CF6564 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		0FCEFAB71805D61600472CE4 /* Build configuration list for PBXNativeTarget "llvmForJSC" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0FCEFAB81805D61600472CE4 /* Debug */,
-				0FCEFAB91805D61600472CE4 /* Release */,
-				0FCEFABA1805D61600472CE4 /* Profiling */,
-				0FCEFABB1805D61600472CE4 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

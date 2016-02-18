@@ -32,7 +32,6 @@
 #include "MacroAssemblerCodeRef.h"
 #include "Options.h"
 #include "UDis86Disassembler.h"
-#include "LLVMDisassembler.h"
 
 namespace JSC {
 
@@ -43,29 +42,9 @@ namespace JSC {
 // whether he's using the subset of the architecture that our MacroAssembler
 // supports (in which case we go with UDis86) or if he's using the LLVM subset.
 
-bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out, InstructionSubsetHint subsetHint)
+bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
 {
-    if (Options::forceUDis86Disassembler())
-        return tryToDisassembleWithUDis86(codePtr, size, prefix, out, subsetHint);
-
-    if (Options::forceLLVMDisassembler())
-        return tryToDisassembleWithLLVM(codePtr, size, prefix, out, subsetHint);
-    
-    if (subsetHint == MacroAssemblerSubset
-        && tryToDisassembleWithUDis86(codePtr, size, prefix, out, MacroAssemblerSubset))
-        return true;
-
-    if (subsetHint == LLVMSubset
-        && tryToDisassembleWithLLVM(codePtr, size, prefix, out, LLVMSubset))
-        return true;
-    
-    if (tryToDisassembleWithUDis86(codePtr, size, prefix, out, subsetHint))
-        return true;
-    if (tryToDisassembleWithLLVM(codePtr, size, prefix, out, subsetHint))
-        return true;
-    
-    RELEASE_ASSERT_NOT_REACHED();
-    return false;
+    return tryToDisassembleWithUDis86(codePtr, size, prefix, out);
 }
 
 } // namespace JSC

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLCompile.h"
 
-#if ENABLE(FTL_JIT) && FTL_USES_B3
+#if ENABLE(FTL_JIT)
 
 #include "AirCode.h"
 #include "B3Generate.h"
@@ -39,12 +39,8 @@
 #include "DFGOperations.h"
 #include "DataView.h"
 #include "Disassembler.h"
-#include "FTLExceptionHandlerManager.h"
-#include "FTLExitThunkGenerator.h"
-#include "FTLInlineCacheSize.h"
 #include "FTLJITCode.h"
 #include "FTLThunks.h"
-#include "FTLUnwindInfo.h"
 #include "JITSubGenerator.h"
 #include "LinkBuffer.h"
 #include "PCToCodeOriginMap.h"
@@ -153,5 +149,5 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT) && FTL_USES_B3
+#endif // ENABLE(FTL_JIT)
 

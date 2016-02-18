@@ -1,3 +1,19 @@
+2016-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove LLVM dependencies from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=154323
+
+        Reviewed by Antti Koivisto and Benjamin Poulain.
+
+        * LLVMIncludesElCapitan.tar.bz2: Removed.
+        * LLVMIncludesIOS9.tar.bz2: Removed.
+        * LLVMIncludesMavericks.tar.bz2: Removed.
+        * LLVMIncludesYosemite.tar.bz2: Removed.
+        * LLVMLibrariesElCapitan.tar.bz2: Removed.
+        * LLVMLibrariesIOS9.tar.bz2: Removed.
+        * LLVMLibrariesMavericks.tar.bz2: Removed.
+        * LLVMLibrariesYosemite.tar.bz2: Removed.
+
 2016-01-27  Daniel Bates  <dabates@apple.com>
 
         Remove WebKitSystemInterface for iOS SDK < 9

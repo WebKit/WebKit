@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLPatchpointExceptionHandle.h"
 
-#if ENABLE(FTL_JIT) && FTL_USES_B3
+#if ENABLE(FTL_JIT)
 
 #include "B3StackmapGenerationParams.h"
 #include "FTLExceptionTarget.h"
@@ -117,5 +117,5 @@ RefPtr<OSRExitHandle> PatchpointExceptionHandle::createHandle(
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT) && FTL_USES_B3
+#endif // ENABLE(FTL_JIT)
 

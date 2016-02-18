@@ -89,7 +89,6 @@
 #include "FTLLink.h"
 #include "FTLLowerDFGToLLVM.h"
 #include "FTLState.h"
-#include "InitializeLLVM.h"
 #endif
 
 namespace JSC { namespace DFG {
@@ -225,7 +224,7 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
         }
         dataLog("Optimized ", codeBlockName, " using ", mode, " with ", pathName, " into ", finalizer ? finalizer->codeSize() : 0, " bytes in ", after - before, " ms");
         if (path == FTLPath)
-            dataLog(" (DFG: ", m_timeBeforeFTL - before, ", LLVM: ", after - m_timeBeforeFTL, ")");
+            dataLog(" (DFG: ", m_timeBeforeFTL - before, ", B3: ", after - m_timeBeforeFTL, ")");
         dataLog(".\n");
     }
 }
@@ -440,7 +439,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         if (Options::useMovHintRemoval())
             performMovHintRemoval(dfg);
         performCleanUp(dfg);
-        performDCE(dfg); // We rely on this to kill dead code that won't be recognized as dead by LLVM.
+        performDCE(dfg); // We rely on this to kill dead code that won't be recognized as dead by B3.
         if (Options::useCopyBarrierOptimization())
             performCopyBarrierOptimization(dfg);
         performStackLayout(dfg);
@@ -454,30 +453,14 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         }
 
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:", shouldDumpDisassembly(mode));
-        
-#if HAVE(LLVM) && !FTL_USES_B3
-        bool haveLLVM;
-#endif
+
+        // Flash a safepoint in case the GC wants some action.
         Safepoint::Result safepointResult;
         {
             GraphSafepoint safepoint(dfg, safepointResult);
-#if HAVE(LLVM) && !FTL_USES_B3
-            haveLLVM = initializeLLVM();
-#endif
         }
         if (safepointResult.didGetCancelled())
             return CancelPath;
-
-#if HAVE(LLVM) && !FTL_USES_B3
-        if (!haveLLVM) {
-            if (Options::ftlCrashesIfCantInitializeLLVM()) {
-                dataLog("LLVM can't be initialized.\n");
-                CRASH();
-            }
-            finalizer = std::make_unique<FailedFinalizer>(*this);
-            return FailPath;
-        }
-#endif
 
         FTL::State state(dfg);
         FTL::lowerDFGToLLVM(state);
@@ -503,13 +486,6 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             FTL::fail(state);
             return FTLPath;
         }
-
-#if !FTL_USES_B3
-        if (state.jitCode->stackmaps.stackSize() > Options::llvmMaxStackSize()) {
-            FTL::fail(state);
-            return FTLPath;
-        }
-#endif
 
         FTL::link(state);
         
@@ -690,7 +666,7 @@ HashMap<CString, double> Plan::compileTimeStats()
         result.add("DFG Compile Time", totalDFGCompileTime);
         result.add("FTL Compile Time", totalFTLCompileTime);
         result.add("FTL (DFG) Compile Time", totalFTLDFGCompileTime);
-        result.add("FTL (LLVM) Compile Time", totalFTLLLVMCompileTime);
+        result.add("FTL (B3) Compile Time", totalFTLLLVMCompileTime);
     }
     return result;
 }
