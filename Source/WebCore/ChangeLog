@@ -1,3 +1,16 @@
+2016-02-18  David Kilzer  <ddkilzer@apple.com>
+
+        Remove redundant ASSERT_WITH_MESSAGE_UNUSED() from SOFT_LINK_FRAMEWORK_FOR_SOURCE() macro
+
+        Follow-up fix noted by Andy Estes for:
+
+            [Cocoa] Always check the return value of dlopen() and dlsym() in Release builds
+            <http://webkit.org/b/154364>
+
+        * platform/mac/SoftLinking.h:
+        (SOFT_LINK_FRAMEWORK_FOR_SOURCE): Remove redundant
+        ASSERT_WITH_MESSAGE_UNUSED().
+
 2016-02-18  Andreas Kling  <akling@apple.com>
 
         Reduce tiling coverage immediately when memory pressure hits.

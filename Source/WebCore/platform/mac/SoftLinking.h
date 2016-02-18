@@ -321,7 +321,6 @@
             if (!isOptional) \
                 RELEASE_ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
         }); \
-        ASSERT_WITH_MESSAGE_UNUSED(isOptional, isOptional || frameworkLibrary, "%s", dlerror()); \
         return frameworkLibrary; \
     } \
     }
