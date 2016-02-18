@@ -1,3 +1,24 @@
+2016-02-17  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add Context menu separators to Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=154360
+
+        Reviewed by Joseph Pecoraro.
+
+        In the Styles sidebar, there are three main sections for the context menu:
+        - Copy and Duplicate/Show-source
+        - Add pseudo-class rules
+        - Add/Select pseudo-element rules
+        These three sections were all put together in the same context menu, which
+        was very crowded as a result. Separators have been added to make it so that
+        these three sections are now separated and clearly show their different uses.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleSelectorPaste):
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent):
+
 2016-02-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: add CSS variables for common border/background colors

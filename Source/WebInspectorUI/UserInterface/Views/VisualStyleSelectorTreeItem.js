@@ -164,6 +164,8 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
             return;
 
         if (WebInspector.CSSStyleManager.ForceablePseudoClasses.every((className) => !this.representedObject.selectorText.includes(":" + className))) {
+            contextMenu.appendSeparator();
+
             for (let pseudoClass of WebInspector.CSSStyleManager.ForceablePseudoClasses) {
                 if (pseudoClass === "visited" && this.representedObject.node.nodeName() !== "A")
                     continue;
@@ -177,6 +179,8 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
                 });
             }
         }
+
+        contextMenu.appendSeparator();
 
         for (let pseudoElement of WebInspector.CSSStyleManager.PseudoElementNames) {
             let pseudoElementSelector = "::" + pseudoElement;

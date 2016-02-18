@@ -463,6 +463,8 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             return;
 
         if (WebInspector.CSSStyleManager.ForceablePseudoClasses.every((className) => !this._style.selectorText.includes(":" + className))) {
+            contextMenu.appendSeparator();
+
             for (let pseudoClass of WebInspector.CSSStyleManager.ForceablePseudoClasses) {
                 if (pseudoClass === "visited" && this._style.node.nodeName() !== "A")
                     continue;
@@ -485,6 +487,8 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                 });
             }
         }
+
+        contextMenu.appendSeparator();
 
         for (let pseudoElement of WebInspector.CSSStyleManager.PseudoElementNames) {
             let pseudoElementSelector = "::" + pseudoElement;
