@@ -1,3 +1,40 @@
+2016-02-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Implement server->client operations in WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=154411
+
+        Reviewed by Alex Christensen.
+
+        No change in behavior yet; Just laying the groundwork.
+
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::WebIDBConnectionToClient):
+        (WebKit::WebIDBConnectionToClient::~WebIDBConnectionToClient):
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::didDeleteDatabase):
+        (WebKit::WebIDBConnectionToServer::didOpenDatabase):
+        (WebKit::WebIDBConnectionToServer::didAbortTransaction):
+        (WebKit::WebIDBConnectionToServer::didCommitTransaction):
+        (WebKit::WebIDBConnectionToServer::didCreateObjectStore):
+        (WebKit::WebIDBConnectionToServer::didDeleteObjectStore):
+        (WebKit::WebIDBConnectionToServer::didClearObjectStore):
+        (WebKit::WebIDBConnectionToServer::didCreateIndex):
+        (WebKit::WebIDBConnectionToServer::didDeleteIndex):
+        (WebKit::WebIDBConnectionToServer::didPutOrAdd):
+        (WebKit::WebIDBConnectionToServer::didGetRecord):
+        (WebKit::WebIDBConnectionToServer::didGetCount):
+        (WebKit::WebIDBConnectionToServer::didDeleteRecord):
+        (WebKit::WebIDBConnectionToServer::didOpenCursor):
+        (WebKit::WebIDBConnectionToServer::didIterateCursor):
+        (WebKit::WebIDBConnectionToServer::fireVersionChangeEvent):
+        (WebKit::WebIDBConnectionToServer::didStartTransaction):
+        (WebKit::WebIDBConnectionToServer::notifyOpenDBRequestBlocked):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::didReceiveMessage):
+
 2016-02-18  Brian Burg  <bburg@apple.com>
 
         RemoteInspector deadlocks if _WKAutomationDelegate creates/registers a target synchronously

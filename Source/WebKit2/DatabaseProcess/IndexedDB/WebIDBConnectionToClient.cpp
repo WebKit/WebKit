@@ -48,13 +48,16 @@ Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(DatabaseToWebProc
 
 WebIDBConnectionToClient::WebIDBConnectionToClient(DatabaseToWebProcessConnection& connection, uint64_t serverConnectionIdentifier)
     : m_connection(connection)
+    , m_identifier(serverConnectionIdentifier)
 {
     relaxAdoptionRequirement();
     m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
+    DatabaseProcess::singleton().idbServer().registerConnection(*m_connectionToClient);
 }
 
 WebIDBConnectionToClient::~WebIDBConnectionToClient()
 {
+    DatabaseProcess::singleton().idbServer().unregisterConnection(*m_connectionToClient);
 }
 
 void WebIDBConnectionToClient::disconnectedFromWebProcess()

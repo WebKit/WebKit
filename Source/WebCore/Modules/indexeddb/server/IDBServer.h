@@ -53,8 +53,8 @@ public:
     static Ref<IDBServer> create();
     WEBCORE_EXPORT static Ref<IDBServer> create(const String& databaseDirectoryPath);
 
-    void registerConnection(IDBConnectionToClient&);
-    void unregisterConnection(IDBConnectionToClient&);
+    WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
+    WEBCORE_EXPORT void unregisterConnection(IDBConnectionToClient&);
 
     // Operations requested by the client.
     WEBCORE_EXPORT void openDatabase(const IDBRequestData&);

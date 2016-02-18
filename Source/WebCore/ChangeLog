@@ -1,3 +1,18 @@
+2016-02-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Implement server->client operations in WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=154411
+
+        Reviewed by Alex Christensen.
+
+        No change in behavior yet; Just laying the groundwork.
+    
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        (WebCore::IDBTransactionInfo::encode):
+        (WebCore::IDBTransactionInfo::decode):
+
 2016-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix unused-const-variable warning on non Cocoa platforms

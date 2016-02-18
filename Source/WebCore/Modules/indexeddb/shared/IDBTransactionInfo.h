@@ -85,6 +85,10 @@ void IDBTransactionInfo::encode(Encoder& encoder) const
 {
     encoder << m_identifier << m_newVersion << m_objectStores;
     encoder.encodeEnum(m_mode);
+
+    encoder << !!m_originalDatabaseInfo;
+    if (m_originalDatabaseInfo)
+        encoder << *m_originalDatabaseInfo;
 }
 
 template<class Decoder>
@@ -101,6 +105,17 @@ bool IDBTransactionInfo::decode(Decoder& decoder, IDBTransactionInfo& info)
 
     if (!decoder.decodeEnum(info.m_mode))
         return false;
+
+    bool hasObject;
+    if (!decoder.decode(hasObject))
+        return false;
+
+    if (hasObject) {
+        std::unique_ptr<IDBDatabaseInfo> object = std::make_unique<IDBDatabaseInfo>();
+        if (!decoder.decode(*object))
+            return false;
+        info.m_originalDatabaseInfo = WTFMove(object);
+    }
 
     return true;
 }

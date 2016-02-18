@@ -57,57 +57,57 @@ public:
     uint64_t identifier() const;
 
     void deleteDatabase(IDBOpenDBRequest&);
-    void didDeleteDatabase(const IDBResultData&);
+    WEBCORE_EXPORT void didDeleteDatabase(const IDBResultData&);
 
     void openDatabase(IDBOpenDBRequest&);
-    void didOpenDatabase(const IDBResultData&);
+    WEBCORE_EXPORT void didOpenDatabase(const IDBResultData&);
 
     void createObjectStore(TransactionOperation&, const IDBObjectStoreInfo&);
-    void didCreateObjectStore(const IDBResultData&);
+    WEBCORE_EXPORT void didCreateObjectStore(const IDBResultData&);
 
     void deleteObjectStore(TransactionOperation&, const String& objectStoreName);
-    void didDeleteObjectStore(const IDBResultData&);
+    WEBCORE_EXPORT void didDeleteObjectStore(const IDBResultData&);
 
     void clearObjectStore(TransactionOperation&, uint64_t objectStoreIdentifier);
-    void didClearObjectStore(const IDBResultData&);
+    WEBCORE_EXPORT void didClearObjectStore(const IDBResultData&);
 
     void createIndex(TransactionOperation&, const IDBIndexInfo&);
-    void didCreateIndex(const IDBResultData&);
+    WEBCORE_EXPORT void didCreateIndex(const IDBResultData&);
 
     void deleteIndex(TransactionOperation&, uint64_t objectStoreIdentifier, const String& indexName);
-    void didDeleteIndex(const IDBResultData&);
+    WEBCORE_EXPORT void didDeleteIndex(const IDBResultData&);
 
     void putOrAdd(TransactionOperation&, RefPtr<IDBKey>&, RefPtr<SerializedScriptValue>&, const IndexedDB::ObjectStoreOverwriteMode);
-    void didPutOrAdd(const IDBResultData&);
+    WEBCORE_EXPORT void didPutOrAdd(const IDBResultData&);
 
     void getRecord(TransactionOperation&, const IDBKeyRangeData&);
-    void didGetRecord(const IDBResultData&);
+    WEBCORE_EXPORT void didGetRecord(const IDBResultData&);
 
     void getCount(TransactionOperation&, const IDBKeyRangeData&);
-    void didGetCount(const IDBResultData&);
+    WEBCORE_EXPORT void didGetCount(const IDBResultData&);
 
     void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
-    void didDeleteRecord(const IDBResultData&);
+    WEBCORE_EXPORT void didDeleteRecord(const IDBResultData&);
 
     void openCursor(TransactionOperation&, const IDBCursorInfo&);
-    void didOpenCursor(const IDBResultData&);
+    WEBCORE_EXPORT void didOpenCursor(const IDBResultData&);
 
     void iterateCursor(TransactionOperation&, const IDBKeyData&, unsigned long count);
-    void didIterateCursor(const IDBResultData&);
+    WEBCORE_EXPORT void didIterateCursor(const IDBResultData&);
 
     void commitTransaction(IDBTransaction&);
-    void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+    WEBCORE_EXPORT void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
     void didFinishHandlingVersionChangeTransaction(IDBTransaction&);
 
     void abortTransaction(IDBTransaction&);
-    void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+    WEBCORE_EXPORT void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
-    void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
+    WEBCORE_EXPORT void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
 
-    void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
-    void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
+    WEBCORE_EXPORT void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+    WEBCORE_EXPORT void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
 
     void establishTransaction(IDBTransaction&);
 
