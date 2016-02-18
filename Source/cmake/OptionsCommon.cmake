@@ -124,11 +124,6 @@ if (UNIX AND NOT APPLE AND NOT ENABLED_COMPILER_SANITIZERS)
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined ${CMAKE_SHARED_LINKER_FLAGS}")
 endif ()
 
-if (USE_LLVM_DISASSEMBLER)
-    find_package(LLVM REQUIRED)
-    SET_AND_EXPOSE_TO_BUILD(HAVE_LLVM TRUE)
-endif ()
-
 # Enable the usage of OpenMP.
 #  - At this moment, OpenMP is only used as an alternative implementation
 #    to native threads for the parallelization of the SVG filters.

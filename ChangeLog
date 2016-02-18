@@ -1,3 +1,17 @@
+2016-02-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Remove LLVM support
+        https://bugs.webkit.org/show_bug.cgi?id=154370
+
+        Reviewed by Csaba Osztrogonác.
+
+        After switching all CMake ports to B3, this was only needed for the LLVM disassembler, which
+        has been removed from JSC. Feel free to bring this back if restoring the LLVM disassembler,
+        but for the time being this is dead code.
+
+        * Source/cmake/FindLLVM.cmake: Removed.
+        * Source/cmake/OptionsCommon.cmake:
+
 2016-02-18  Joonghun Park  <jh718.park@samsung.com>
 
         [CMake] Remove meaningless conditional statements in CMakeLists.txt
