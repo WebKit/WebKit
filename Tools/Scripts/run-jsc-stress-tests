@@ -398,7 +398,7 @@ $numPasses = 0
 BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true"]
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000"]
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100"]
-FTL_OPTIONS = ["--useFTLJIT=true", "--ftlCrashesIfCantInitializeLLVM=true"]
+FTL_OPTIONS = ["--useFTLJIT=true"]
 
 $runlist = []
 
@@ -823,10 +823,6 @@ def runNoCJITNoASO
     run("no-cjit-no-aso", "--useArchitectureSpecificOptimizations=false", *NO_CJIT_OPTIONS)
 end
 
-def runFTLNoCJITNoSimpleOpt
-    run("ftl-no-cjit-no-simple-opt", "--llvmSimpleOpt=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
-end
-
 def runNoCJITNoAccessInlining
     run("no-cjit-no-access-inlining", "--useAccessInlining=false", *NO_CJIT_OPTIONS)
 end
@@ -888,7 +884,6 @@ end
 
 def defaultSpotCheckNoMaximalFlush
     defaultQuickRun
-    runFTLNoCJITNoSimpleOpt
     runFTLNoCJITOSRValidation
     runNoCJITNoAccessInlining
     runFTLNoCJITNoAccessInlining

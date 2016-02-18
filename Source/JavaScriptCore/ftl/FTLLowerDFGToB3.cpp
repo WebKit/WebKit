@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FTLLowerDFGToLLVM.h"
+#include "FTLLowerDFGToB3.h"
 
 #if ENABLE(FTL_JIT)
 
@@ -105,7 +105,7 @@ NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
 }
 #endif
 
-// Using this instead of typeCheck() helps to reduce the load on LLVM, by creating
+// Using this instead of typeCheck() helps to reduce the load on B3, by creating
 // significantly less dead code.
 #define FTL_TYPE_CHECK_WITH_EXIT_KIND(exitKind, lowValue, highValue, typesPassedThrough, failCondition) do { \
         FormattedValue _ftc_lowValue = (lowValue);                      \
@@ -119,10 +119,10 @@ NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
 #define FTL_TYPE_CHECK(lowValue, highValue, typesPassedThrough, failCondition) \
     FTL_TYPE_CHECK_WITH_EXIT_KIND(BadType, lowValue, highValue, typesPassedThrough, failCondition)
 
-class LowerDFGToLLVM {
-    WTF_MAKE_NONCOPYABLE(LowerDFGToLLVM);
+class LowerDFGToB3 {
+    WTF_MAKE_NONCOPYABLE(LowerDFGToB3);
 public:
-    LowerDFGToLLVM(State& state)
+    LowerDFGToB3(State& state)
         : m_graph(state.graph)
         , m_ftlState(state)
         , m_out(state)
@@ -359,7 +359,7 @@ private:
         
         // All of this effort to find the next block gives us the ability to keep the
         // generated IR in roughly program order. This ought not affect the performance
-        // of the generated code (since we expect LLVM to reorder things) but it will
+        // of the generated code (since we expect B3 to reorder things) but it will
         // make IR dumps easier to read.
         m_out.appendTo(lowBlock, m_nextLowBlock);
         
@@ -1764,8 +1764,6 @@ private:
 
     void compileArithPow()
     {
-        // FIXME: investigate llvm.powi to better understand its performance characteristics.
-        // It might be better to have the inline loop in DFG too.
         if (m_node->child2().useKind() == Int32Use)
             setDouble(m_out.doublePowi(lowDouble(m_node->child1()), lowInt32(m_node->child2())));
         else {
@@ -1922,8 +1920,6 @@ private:
             if (!shouldCheckOverflow(m_node->arithMode()))
                 result = m_out.neg(value);
             else if (!shouldCheckNegativeZero(m_node->arithMode())) {
-                // "0 - x" is the canonical way of saying "-x" in both B3 and LLVM. This gets
-                // lowered to the right thing.
                 CheckValue* check = m_out.speculateSub(m_out.int32Zero, value);
                 blessSpeculation(check, Overflow, noValue(), nullptr, m_origin);
                 result = check;
@@ -4217,7 +4213,9 @@ private:
         MultiGetByOffsetData& data = m_node->multiGetByOffsetData();
 
         if (data.cases.isEmpty()) {
-            // Protect against creating a Phi function with zero inputs. LLVM doesn't like that.
+            // Protect against creating a Phi function with zero inputs. LLVM didn't like that.
+            // It's not clear if this is needed anymore.
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=154382
             terminate(BadCache);
             return;
         }
@@ -5842,7 +5840,7 @@ private:
         LBasicBlock defaultHasInstance = FTL_NEW_BLOCK(m_out, ("OverridesHasInstance Symbol.hasInstance is default"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("OverridesHasInstance continuation"));
 
-        // Unlike in the DFG, we don't worry about cleaning this code up for the case where we have proven the hasInstanceValue is a constant as LLVM should fix it for us.
+        // Unlike in the DFG, we don't worry about cleaning this code up for the case where we have proven the hasInstanceValue is a constant as B3 should fix it for us.
 
         ASSERT(!m_node->child2().node()->isCellConstant() || defaultHasInstanceFunction == m_node->child2().node()->asCell());
 
@@ -8439,23 +8437,23 @@ private:
 
     // This is a mechanism for creating a code generator that fills in a gap in the code using our
     // own MacroAssembler. This is useful for slow paths that involve a lot of code and we don't want
-    // to pay the price of LLVM optimizing it. A lazy slow path will only be generated if it actually
+    // to pay the price of B3 optimizing it. A lazy slow path will only be generated if it actually
     // executes. On the other hand, a lazy slow path always incurs the cost of two additional jumps.
-    // Also, the lazy slow path's register allocation state is slaved to whatever LLVM did, so you
+    // Also, the lazy slow path's register allocation state is slaved to whatever B3 did, so you
     // have to use a ScratchRegisterAllocator to try to use some unused registers and you may have
     // to spill to top of stack if there aren't enough registers available.
     //
     // Lazy slow paths involve three different stages of execution. Each stage has unique
     // capabilities and knowledge. The stages are:
     //
-    // 1) DFG->LLVM lowering, i.e. code that runs in this phase. Lowering is the last time you will
+    // 1) DFG->B3 lowering, i.e. code that runs in this phase. Lowering is the last time you will
     //    have access to LValues. If there is an LValue that needs to be fed as input to a lazy slow
     //    path, then you must pass it as an argument here (as one of the varargs arguments after the
     //    functor). But, lowering doesn't know which registers will be used for those LValues. Hence
     //    you pass a lambda to lazySlowPath() and that lambda will run during stage (2):
     //
     // 2) FTLCompile.cpp's fixFunctionBasedOnStackMaps. This code is the only stage at which we know
-    //    the mapping from arguments passed to this method in (1) and the registers that LLVM
+    //    the mapping from arguments passed to this method in (1) and the registers that B3
     //    selected for those arguments. You don't actually want to generate any code here, since then
     //    the slow path wouldn't actually be lazily generated. Instead, you want to save the
     //    registers being used for the arguments and defer code generation to stage (3) by creating
@@ -8465,8 +8463,8 @@ private:
     //    executing for the first time. It will call the generator you created in stage (2).
     //
     // Note that each time you invoke stage (1), stage (2) may be invoked zero, one, or many times.
-    // Stage (2) will usually be invoked once for stage (1). But, LLVM may kill the code, in which
-    // case stage (2) won't run. LLVM may duplicate the code (for example via jump threading),
+    // Stage (2) will usually be invoked once for stage (1). But, B3 may kill the code, in which
+    // case stage (2) won't run. B3 may duplicate the code (for example via tail duplication),
     // leading to many calls to your stage (2) lambda. Stage (3) may be called zero or once for each
     // stage (2). It will be called zero times if the slow path never runs. This is what you hope for
     // whenever you use the lazySlowPath() mechanism.
@@ -9134,7 +9132,7 @@ private:
     }
     LValue unboxBoolean(LValue jsValue)
     {
-        // We want to use a cast that guarantees that LLVM knows that even the integer
+        // We want to use a cast that guarantees that B3 knows that even the integer
         // value is just 0 or 1. But for now we do it the dumb way.
         return m_out.notZero64(m_out.bitAnd(jsValue, m_out.constInt64(1)));
     }
@@ -9715,7 +9713,7 @@ private:
 
         // We emit the store barrier slow path lazily. In a lot of cases, this will never fire. And
         // when it does fire, it makes sense for us to generate this code using our JIT rather than
-        // wasting LLVM's time optimizing it.
+        // wasting B3's time optimizing it.
         lazySlowPath(
             [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 GPRReg baseGPR = locations[1].directGPR();
@@ -10425,9 +10423,9 @@ private:
     HashMap<Node*, LoweredNodeValue> m_storageValues;
     HashMap<Node*, LoweredNodeValue> m_doubleValues;
     
-    // This is a bit of a hack. It prevents LLVM from having to do CSE on loading of arguments.
+    // This is a bit of a hack. It prevents B3 from having to do CSE on loading of arguments.
     // It's nice to have these optimizations on our end because we can guarantee them a bit better.
-    // Probably also saves LLVM compile time.
+    // Probably also saves B3 compile time.
     HashMap<Node*, LValue> m_loadedArgumentValues;
     
     HashMap<Node*, LValue> m_phis;
@@ -10449,9 +10447,9 @@ private:
 
 } // anonymous namespace
 
-void lowerDFGToLLVM(State& state)
+void lowerDFGToB3(State& state)
 {
-    LowerDFGToLLVM lowering(state);
+    LowerDFGToB3 lowering(state);
     lowering.lower();
 }
 

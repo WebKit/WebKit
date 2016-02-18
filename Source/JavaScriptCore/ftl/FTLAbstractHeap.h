@@ -39,9 +39,9 @@
 
 namespace JSC { namespace FTL {
 
-// The FTL JIT tries to aid LLVM's TBAA. The FTL's notion of how this
-// happens is the AbstractHeap. AbstractHeaps are a simple type system
-// with sub-typing.
+// This is here because we used to generate LLVM's TBAA. In the future we will want to generate
+// B3 HeapRanges instead.
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=154319
 
 class AbstractHeapRepository;
 class Output;

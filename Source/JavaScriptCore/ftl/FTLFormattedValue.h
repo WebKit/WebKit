@@ -35,10 +35,7 @@ namespace JSC { namespace FTL {
 
 // This class is mostly used for OSR; it's a way of specifying how a value is formatted
 // in cases where it wouldn't have been obvious from looking at other indicators (like
-// the type of the LLVMValueRef or the type of the DFG::Node). Typically this arises
-// because LLVMValueRef doesn't give us the granularity we need to begin with, and we
-// use this in situations where there is no good way to say what node the value came
-// from.
+// the type of the B3::Value* or the type of the DFG::Node).
 
 class FormattedValue {
 public:

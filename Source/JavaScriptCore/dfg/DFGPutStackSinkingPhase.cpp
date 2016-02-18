@@ -57,7 +57,7 @@ public:
         // for sunken PutStacks in the presence of interesting control flow merges, and where the
         // value being PutStack'd is also otherwise live in the DFG code. We could work around this
         // by doing the sinking over CPS, or maybe just by doing really smart hoisting. It's also
-        // possible that the duplicate Phi graph can be deduplicated by LLVM. It would be best if we
+        // possible that the duplicate Phi graph can be deduplicated by B3. It would be best if we
         // could observe that there is already a Phi graph in place that does what we want. In
         // principle if we have a request to place a Phi at a particular place, we could just check
         // if there is already a Phi that does what we want. Because PutStackSinkingPhase runs just

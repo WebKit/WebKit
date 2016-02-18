@@ -238,7 +238,7 @@ static void compileStub(
             registerScratch, materializationToPointer);
     };
     
-    // Note that we come in here, the stack used to be as LLVM left it except that someone called pushToSave().
+    // Note that we come in here, the stack used to be as B3 left it except that someone called pushToSave().
     // We don't care about the value they saved. But, we do appreciate the fact that they did it, because we use
     // that slot for saveAllRegisters().
 

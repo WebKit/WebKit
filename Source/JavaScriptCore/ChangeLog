@@ -1,3 +1,101 @@
+2016-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove remaining references to LLVM, and make sure comments refer to the backend as "B3" not "LLVM"
+        https://bugs.webkit.org/show_bug.cgi?id=154383
+
+        Reviewed by Saam Barati.
+
+        I did a grep -i llvm of all of our code and did one of the following for each occurence:
+
+        - Renamed it to B3. This is appropriate when we were using "LLVM" to mean "the FTL
+          backend".
+
+        - Removed the reference because I found it to be dead. In some cases it was a dead
+          comment: it was telling us things about what LLVM did and that's just not relevant
+          anymore. In other cases it was dead code that I forgot to delete in a previous patch.
+
+        - Edited the comment in some smart way. There were comments talking about what LLVM did
+          that were still of interest. In some cases, I added a FIXME to consider changing the
+          code below the comment on the grounds that it was written in a weird way to placate
+          LLVM and so we can do it better now.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::compileTimeStats):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSSAConversionPhase.h:
+        * dfg/DFGStaticExecutionCountEstimationPhase.h:
+        * dfg/DFGUnificationPhase.cpp:
+        (JSC::DFG::UnificationPhase::run):
+        * disassembler/ARM64Disassembler.cpp:
+        (JSC::tryToDisassemble): Deleted.
+        * disassembler/X86Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::IndexedAbstractHeap::initialize):
+        * ftl/FTLAbstractHeap.h:
+        * ftl/FTLFormattedValue.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::restoreInto):
+        * ftl/FTLLowerDFGToB3.cpp: Copied from Source/JavaScriptCore/ftl/FTLLowerDFGToLLVM.cpp.
+        (JSC::FTL::DFG::ftlUnreachable):
+        (JSC::FTL::DFG::LowerDFGToB3::LowerDFGToB3):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBlock):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithNegate):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiGetByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileOverridesHasInstance):
+        (JSC::FTL::DFG::LowerDFGToB3::isBoolean):
+        (JSC::FTL::DFG::LowerDFGToB3::unboxBoolean):
+        (JSC::FTL::DFG::LowerDFGToB3::emitStoreBarrier):
+        (JSC::FTL::lowerDFGToB3):
+        (JSC::FTL::DFG::LowerDFGToLLVM::LowerDFGToLLVM): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBlock): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithNegate): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMultiGetByOffset): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileOverridesHasInstance): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::isBoolean): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::unboxBoolean): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitStoreBarrier): Deleted.
+        (JSC::FTL::lowerDFGToLLVM): Deleted.
+        * ftl/FTLLowerDFGToB3.h: Copied from Source/JavaScriptCore/ftl/FTLLowerDFGToLLVM.h.
+        * ftl/FTLLowerDFGToLLVM.cpp: Removed.
+        * ftl/FTLLowerDFGToLLVM.h: Removed.
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLWeight.h:
+        (JSC::FTL::Weight::frequencyClass):
+        (JSC::FTL::Weight::inverse):
+        (JSC::FTL::Weight::scaleToTotal): Deleted.
+        * ftl/FTLWeightedTarget.h:
+        (JSC::FTL::rarely):
+        (JSC::FTL::unsure):
+        * jit/CallFrameShuffler64.cpp:
+        (JSC::CallFrameShuffler::emitDisplace):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::ftlCalleeSaveRegisters):
+        * llvm: Removed.
+        * llvm/InitializeLLVMLinux.cpp: Removed.
+        * llvm/InitializeLLVMWin.cpp: Removed.
+        * llvm/library: Removed.
+        * llvm/library/LLVMTrapCallback.h: Removed.
+        * llvm/library/libllvmForJSC.version: Removed.
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+        * wasm/WASMFunctionB3IRGenerator.h: Copied from Source/JavaScriptCore/wasm/WASMFunctionLLVMIRGenerator.h.
+        * wasm/WASMFunctionLLVMIRGenerator.h: Removed.
+        * wasm/WASMFunctionParser.cpp:
+
 2016-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Build system cleanup

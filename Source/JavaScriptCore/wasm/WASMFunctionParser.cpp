@@ -31,7 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSWASMModule.h"
 #include "WASMFunctionCompiler.h"
-#include "WASMFunctionLLVMIRGenerator.h"
+#include "WASMFunctionB3IRGenerator.h"
 #include "WASMFunctionSyntaxChecker.h"
 
 #define PROPAGATE_ERROR() do { if (!m_errorMessage.isNull()) return 0; } while (0)

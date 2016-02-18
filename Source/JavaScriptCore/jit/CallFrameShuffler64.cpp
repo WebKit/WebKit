@@ -284,7 +284,7 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& cachedRecovery)
         // absolutely need to load the callee-save registers into
         // different GPRs initially but not enough pressure to
         // then have to spill all of them. And even in that case,
-        // depending on the order in which LLVM saves the
+        // depending on the order in which B3 saves the
         // callee-saves, we will probably still be safe. Anyway,
         // the couple extra move instructions compared to an
         // efficient cycle-based algorithm are not going to hurt

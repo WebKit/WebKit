@@ -180,22 +180,11 @@ typedef const char* optionString;
     \
     v(bool, useFTLJIT, true, "allows the FTL JIT to be used if true") \
     v(bool, useFTLTBAA, true, nullptr) \
-    v(bool, useLLVMFastISel, false, nullptr) \
-    v(bool, useLLVMSmallCodeModel, false, nullptr) \
-    v(bool, dumpLLVMIR, false, nullptr) \
     v(bool, validateFTLOSRExitLiveness, false, nullptr) \
-    v(bool, llvmAlwaysFailsBeforeCompile, false, nullptr) \
-    v(bool, llvmAlwaysFailsBeforeLink, false, nullptr) \
-    v(bool, llvmSimpleOpt, true, nullptr) \
-    v(unsigned, llvmBackendOptimizationLevel, 2, nullptr) \
-    v(unsigned, llvmOptimizationLevel, 2, nullptr) \
-    v(unsigned, llvmSizeLevel, 0, nullptr) \
-    v(unsigned, llvmMaxStackSize, 128 * KB, nullptr) \
-    v(bool, llvmDisallowAVX, true, nullptr) \
+    v(bool, b3AlwaysFailsBeforeCompile, false, nullptr) \
+    v(bool, b3AlwaysFailsBeforeLink, false, nullptr) \
     v(bool, ftlCrashes, false, nullptr) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
-    v(bool, ftlCrashesIfCantInitializeLLVM, false, nullptr) \
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED, nullptr) \
-    v(bool, assumeAllRegsInFTLICAreLive, false, nullptr) \
     v(bool, useAccessInlining, true, nullptr) \
     v(unsigned, maxAccessVariantListSize, 8, nullptr) \
     v(bool, usePolyvariantDevirtualization, true, nullptr) \
@@ -219,9 +208,6 @@ typedef const char* optionString;
     v(int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), nullptr) \
     \
     v(bool, useProfiler, false, nullptr) \
-    \
-    v(bool, forceUDis86Disassembler, false, nullptr) \
-    v(bool, forceLLVMDisassembler, false, nullptr) \
     \
     v(bool, useArchitectureSpecificOptimizations, true, nullptr) \
     \
@@ -378,7 +364,6 @@ enum OptionEquivalence {
     v(alwaysDoFullCollection, useGenerationalGC, InvertedOption) \
     v(enableOSREntryToDFG, useOSREntryToDFG, SameOption) \
     v(enableOSREntryToFTL, useOSREntryToFTL, SameOption) \
-    v(enableLLVMFastISel, useLLVMFastISel, SameOption) \
     v(enableAccessInlining, useAccessInlining, SameOption) \
     v(enablePolyvariantDevirtualization, usePolyvariantDevirtualization, SameOption) \
     v(enablePolymorphicAccessInlining, usePolymorphicAccessInlining, SameOption) \

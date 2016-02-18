@@ -428,7 +428,7 @@ private:
                     // FIXME: For ClonedArguments, we would have already done a separate bounds check.
                     // This code will cause us to have two bounds checks - the original one that we
                     // already factored out in SSALoweringPhase, and the new one we insert here, which is
-                    // often implicitly part of GetMyArgumentByVal. LLVM will probably eliminate the
+                    // often implicitly part of GetMyArgumentByVal. B3 will probably eliminate the
                     // second bounds check, but still - that's just silly.
                     // https://bugs.webkit.org/show_bug.cgi?id=143076
                     

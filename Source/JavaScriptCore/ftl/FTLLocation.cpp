@@ -130,7 +130,7 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
     
     switch (kind()) {
     case Register:
-        // LLVM used some register that we don't know about!
+        // B3 used some register that we don't know about!
         dataLog("Unrecognized location: ", *this, "\n");
         RELEASE_ASSERT_NOT_REACHED();
         return;
@@ -151,8 +151,6 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
         return;
         
     case Unprocessed:
-        // Should never see this - it's an enumeration entry on LLVM's side that means that
-        // it hasn't processed this location.
         RELEASE_ASSERT_NOT_REACHED();
         return;
     }

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WASMFunctionLLVMIRGenerator_h
-#define WASMFunctionLLVMIRGenerator_h
+#ifndef WASMFunctionB3IRGenerator_h
+#define WASMFunctionB3IRGenerator_h
 
 #if ENABLE(WEBASSEMBLY) && ENABLE(FTL_JIT)
 
@@ -37,7 +37,7 @@ namespace JSC {
 using FTL::LBasicBlock;
 using FTL::LValue;
 
-class WASMFunctionLLVMIRGenerator {
+class WASMFunctionB3IRGenerator {
 public:
     typedef LValue Expression;
     typedef int Statement;
@@ -391,4 +391,4 @@ public:
 
 #endif // ENABLE(WEBASSEMBLY)
 
-#endif // WASMFunctionLLVMIRGenerator_h
+#endif // WASMFunctionB3IRGenerator_h

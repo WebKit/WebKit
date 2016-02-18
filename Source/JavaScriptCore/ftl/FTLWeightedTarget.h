@@ -73,9 +73,8 @@ inline WeightedTarget rarely(LBasicBlock block)
     return WeightedTarget(block, 0);
 }
 
-// This means we let LLVM figure it out basic on its static estimates. LLVM's static
-// estimates are usually pretty darn good, so there's generally nothing wrong with
-// using this.
+// Currently in B3 this is the equivalent of "usually", but we like to make the distinction in
+// case we ever make B3 support proper branch weights. We used to do that in LLVM.
 inline WeightedTarget unsure(LBasicBlock block)
 {
     return WeightedTarget(block, Weight());

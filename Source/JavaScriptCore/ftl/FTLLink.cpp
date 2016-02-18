@@ -48,7 +48,7 @@ void link(State& state)
     CodeBlock* codeBlock = graph.m_codeBlock;
     VM& vm = graph.m_vm;
     
-    // LLVM will create its own jump tables as needed.
+    // B3 will create its own jump tables as needed.
     codeBlock->clearSwitchJumpTables();
 
     state.jitCode->common.requiredRegisterCountForExit = graph.requiredRegisterCountForExit();
@@ -175,7 +175,7 @@ void link(State& state)
         // We jump to here straight from DFG code, after having boxed up all of the
         // values into the scratch buffer. Everything should be good to go - at this
         // point we've even done the stack check. Basically we just have to make the
-        // call to the LLVM-generated code.
+        // call to the B3-generated code.
         CCallHelpers::Label start = jit.label();
         jit.emitFunctionEpilogue();
         CCallHelpers::Jump mainPathJump = jit.jump();

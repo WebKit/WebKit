@@ -732,8 +732,8 @@
 		0FEA0A0C170513DB00BB722C /* FTLCompile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A01170513DB00BB722C /* FTLCompile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A0D170513DB00BB722C /* FTLJITCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A02170513DB00BB722C /* FTLJITCode.cpp */; };
 		0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A03170513DB00BB722C /* FTLJITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FEA0A0F170513DB00BB722C /* FTLLowerDFGToLLVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A04170513DB00BB722C /* FTLLowerDFGToLLVM.cpp */; };
-		0FEA0A10170513DB00BB722C /* FTLLowerDFGToLLVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FEA0A0F170513DB00BB722C /* FTLLowerDFGToB3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A04170513DB00BB722C /* FTLLowerDFGToB3.cpp */; };
+		0FEA0A10170513DB00BB722C /* FTLLowerDFGToB3.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A05170513DB00BB722C /* FTLLowerDFGToB3.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A12170513DB00BB722C /* FTLState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A07170513DB00BB722C /* FTLState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A161706BB9000BB722C /* FTLState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A151706BB9000BB722C /* FTLState.cpp */; };
 		0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A171708B00700BB722C /* FTLAbstractHeap.cpp */; };
@@ -1296,7 +1296,7 @@
 		7B39F76E1B62DE3200360FB4 /* WASMModuleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B39F76A1B62DE2200360FB4 /* WASMModuleParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B39F7701B62DE3200360FB4 /* WASMReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B39F76C1B62DE2200360FB4 /* WASMReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B39F7721B63574D00360FB4 /* WASMReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B39F7711B63574B00360FB4 /* WASMReader.cpp */; };
-		7B8329BF1BB21FE300649A6E /* WASMFunctionLLVMIRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8329BE1BB21FD100649A6E /* WASMFunctionLLVMIRGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B8329BF1BB21FE300649A6E /* WASMFunctionB3IRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8329BE1BB21FD100649A6E /* WASMFunctionB3IRGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B98D1361B60CD5F0023B1A4 /* JSWASMModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B98D1341B60CD5A0023B1A4 /* JSWASMModule.cpp */; };
 		7B98D1371B60CD620023B1A4 /* JSWASMModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B98D1351B60CD5A0023B1A4 /* JSWASMModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7BC547D31B6959A100959B58 /* WASMFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC547D21B69599B00959B58 /* WASMFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2886,8 +2886,8 @@
 		0FEA0A01170513DB00BB722C /* FTLCompile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCompile.h; path = ftl/FTLCompile.h; sourceTree = "<group>"; };
 		0FEA0A02170513DB00BB722C /* FTLJITCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJITCode.cpp; path = ftl/FTLJITCode.cpp; sourceTree = "<group>"; };
 		0FEA0A03170513DB00BB722C /* FTLJITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJITCode.h; path = ftl/FTLJITCode.h; sourceTree = "<group>"; };
-		0FEA0A04170513DB00BB722C /* FTLLowerDFGToLLVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLowerDFGToLLVM.cpp; path = ftl/FTLLowerDFGToLLVM.cpp; sourceTree = "<group>"; };
-		0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLowerDFGToLLVM.h; path = ftl/FTLLowerDFGToLLVM.h; sourceTree = "<group>"; };
+		0FEA0A04170513DB00BB722C /* FTLLowerDFGToB3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLowerDFGToB3.cpp; path = ftl/FTLLowerDFGToB3.cpp; sourceTree = "<group>"; };
+		0FEA0A05170513DB00BB722C /* FTLLowerDFGToB3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLowerDFGToB3.h; path = ftl/FTLLowerDFGToB3.h; sourceTree = "<group>"; };
 		0FEA0A07170513DB00BB722C /* FTLState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLState.h; path = ftl/FTLState.h; sourceTree = "<group>"; };
 		0FEA0A151706BB9000BB722C /* FTLState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLState.cpp; path = ftl/FTLState.cpp; sourceTree = "<group>"; };
 		0FEA0A171708B00700BB722C /* FTLAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLAbstractHeap.cpp; path = ftl/FTLAbstractHeap.cpp; sourceTree = "<group>"; };
@@ -3449,7 +3449,7 @@
 		7B39F76A1B62DE2200360FB4 /* WASMModuleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMModuleParser.h; sourceTree = "<group>"; };
 		7B39F76C1B62DE2200360FB4 /* WASMReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMReader.h; sourceTree = "<group>"; };
 		7B39F7711B63574B00360FB4 /* WASMReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMReader.cpp; sourceTree = "<group>"; };
-		7B8329BE1BB21FD100649A6E /* WASMFunctionLLVMIRGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMFunctionLLVMIRGenerator.h; sourceTree = "<group>"; };
+		7B8329BE1BB21FD100649A6E /* WASMFunctionB3IRGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMFunctionB3IRGenerator.h; sourceTree = "<group>"; };
 		7B98D1341B60CD5A0023B1A4 /* JSWASMModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWASMModule.cpp; sourceTree = "<group>"; };
 		7B98D1351B60CD5A0023B1A4 /* JSWASMModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWASMModule.h; sourceTree = "<group>"; };
 		7BC547D21B69599B00959B58 /* WASMFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMFormat.h; sourceTree = "<group>"; };
@@ -4555,8 +4555,8 @@
 				0F8F2B94172E049E007DBDA5 /* FTLLink.h */,
 				0FCEFADD180738C000472CE4 /* FTLLocation.cpp */,
 				0FCEFADE180738C000472CE4 /* FTLLocation.h */,
-				0FEA0A04170513DB00BB722C /* FTLLowerDFGToLLVM.cpp */,
-				0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */,
+				0FEA0A04170513DB00BB722C /* FTLLowerDFGToB3.cpp */,
+				0FEA0A05170513DB00BB722C /* FTLLowerDFGToB3.h */,
 				A7D89D0117A0B90400773AD8 /* FTLLoweredNodeValue.h */,
 				0F2B9CF219D0BAC100B1D1B5 /* FTLOperations.cpp */,
 				0F2B9CF319D0BAC100B1D1B5 /* FTLOperations.h */,
@@ -5374,7 +5374,7 @@
 				7B0247521B8682D500542440 /* WASMConstants.h */,
 				7BC547D21B69599B00959B58 /* WASMFormat.h */,
 				7B2E010D1B97AA5800EF5D5C /* WASMFunctionCompiler.h */,
-				7B8329BE1BB21FD100649A6E /* WASMFunctionLLVMIRGenerator.h */,
+				7B8329BE1BB21FD100649A6E /* WASMFunctionB3IRGenerator.h */,
 				7B0247531B8682D500542440 /* WASMFunctionParser.cpp */,
 				7B0247541B8682D500542440 /* WASMFunctionParser.h */,
 				7B0247581B868EAE00542440 /* WASMFunctionSyntaxChecker.h */,
@@ -7354,7 +7354,7 @@
 				0FB4FB751BC843140025CA5A /* FTLLazySlowPathCall.h in Headers */,
 				0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */,
 				0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */,
-				0FEA0A10170513DB00BB722C /* FTLLowerDFGToLLVM.h in Headers */,
+				0FEA0A10170513DB00BB722C /* FTLLowerDFGToB3.h in Headers */,
 				A7D89D0217A0B90400773AD8 /* FTLLoweredNodeValue.h in Headers */,
 				0F2B9CF919D0BAC100B1D1B5 /* FTLOperations.h in Headers */,
 				0F338E101BF0276C0013C88F /* B3MoveConstants.h in Headers */,
@@ -7991,7 +7991,7 @@
 				7B0247551B8682DD00542440 /* WASMConstants.h in Headers */,
 				7BC547D31B6959A100959B58 /* WASMFormat.h in Headers */,
 				7B2E010E1B97AA6900EF5D5C /* WASMFunctionCompiler.h in Headers */,
-				7B8329BF1BB21FE300649A6E /* WASMFunctionLLVMIRGenerator.h in Headers */,
+				7B8329BF1BB21FE300649A6E /* WASMFunctionB3IRGenerator.h in Headers */,
 				7B0247571B8682E400542440 /* WASMFunctionParser.h in Headers */,
 				0F6B8ADD1C4EFAC300969052 /* B3SSACalculator.h in Headers */,
 				7B0247591B868EB700542440 /* WASMFunctionSyntaxChecker.h in Headers */,
@@ -8880,7 +8880,7 @@
 				0FB4FB731BC843140025CA5A /* FTLLazySlowPath.cpp in Sources */,
 				0F8F2B95172E04A0007DBDA5 /* FTLLink.cpp in Sources */,
 				0FCEFADF180738C000472CE4 /* FTLLocation.cpp in Sources */,
-				0FEA0A0F170513DB00BB722C /* FTLLowerDFGToLLVM.cpp in Sources */,
+				0FEA0A0F170513DB00BB722C /* FTLLowerDFGToB3.cpp in Sources */,
 				0F2B9CF819D0BAC100B1D1B5 /* FTLOperations.cpp in Sources */,
 				0FD8A31B17D51F2200CA2C40 /* FTLOSREntry.cpp in Sources */,
 				0F235BDC17178E1C00690C7F /* FTLOSRExit.cpp in Sources */,

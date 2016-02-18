@@ -27,20 +27,13 @@
 #include "Disassembler.h"
 
 #if ENABLE(DISASSEMBLER)
-#if USE(UDIS86) || (USE(LLVM_DISASSEMBLER) && (CPU(X86_64) || CPU(X86)))
+#if USE(UDIS86)
 
 #include "MacroAssemblerCodeRef.h"
 #include "Options.h"
 #include "UDis86Disassembler.h"
 
 namespace JSC {
-
-// This horrifying monster is needed because neither of our disassemblers supports
-// all of x86, and using them together to disassemble the same instruction stream
-// would result in a fairly jarring print-out since they print in different
-// styles. Maybe we can do better in the future, but for now the caller hints
-// whether he's using the subset of the architecture that our MacroAssembler
-// supports (in which case we go with UDis86) or if he's using the LLVM subset.
 
 bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
 {
@@ -49,5 +42,5 @@ bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const c
 
 } // namespace JSC
 
-#endif // USE(UDIS86) || USE(LLVM_DISASSEMBLER)
+#endif // USE(UDIS86)
 #endif // ENABLE(DISASSEMBLER)

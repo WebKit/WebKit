@@ -1,3 +1,12 @@
+2016-02-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove remaining references to LLVM, and make sure comments refer to the backend as "B3" not "LLVM"
+        https://bugs.webkit.org/show_bug.cgi?id=154383
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         Remove LLVM dependencies from WebKit

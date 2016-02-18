@@ -87,7 +87,7 @@
 #include "FTLCompile.h"
 #include "FTLFail.h"
 #include "FTLLink.h"
-#include "FTLLowerDFGToLLVM.h"
+#include "FTLLowerDFGToB3.h"
 #include "FTLState.h"
 #endif
 
@@ -98,7 +98,7 @@ namespace {
 double totalDFGCompileTime;
 double totalFTLCompileTime;
 double totalFTLDFGCompileTime;
-double totalFTLLLVMCompileTime;
+double totalFTLB3CompileTime;
 
 void dumpAndVerifyGraph(Graph& graph, const char* text, bool forceDump = false)
 {
@@ -195,7 +195,7 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
         if (isFTL(mode)) {
             totalFTLCompileTime += after - before;
             totalFTLDFGCompileTime += m_timeBeforeFTL - before;
-            totalFTLLLVMCompileTime += after - m_timeBeforeFTL;
+            totalFTLB3CompileTime += after - m_timeBeforeFTL;
         } else
             totalDFGCompileTime += after - before;
     }
@@ -463,12 +463,12 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return CancelPath;
 
         FTL::State state(dfg);
-        FTL::lowerDFGToLLVM(state);
+        FTL::lowerDFGToB3(state);
         
         if (computeCompileTimes())
             m_timeBeforeFTL = monotonicallyIncreasingTimeMS();
         
-        if (Options::llvmAlwaysFailsBeforeCompile()) {
+        if (Options::b3AlwaysFailsBeforeCompile()) {
             FTL::fail(state);
             return FTLPath;
         }
@@ -477,7 +477,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         if (safepointResult.didGetCancelled())
             return CancelPath;
         
-        if (Options::llvmAlwaysFailsBeforeLink()) {
+        if (Options::b3AlwaysFailsBeforeLink()) {
             FTL::fail(state);
             return FTLPath;
         }
@@ -666,7 +666,7 @@ HashMap<CString, double> Plan::compileTimeStats()
         result.add("DFG Compile Time", totalDFGCompileTime);
         result.add("FTL Compile Time", totalFTLCompileTime);
         result.add("FTL (DFG) Compile Time", totalFTLDFGCompileTime);
-        result.add("FTL (B3) Compile Time", totalFTLLLVMCompileTime);
+        result.add("FTL (B3) Compile Time", totalFTLB3CompileTime);
     }
     return result;
 }

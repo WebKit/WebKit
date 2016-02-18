@@ -60,10 +60,8 @@ public:
                     if (!phi->children.child(childIdx))
                         break;
 
-                    // We'd like to reverse the order of unification because it helps to reveal
-                    // more bugs on our end, though it's otherwise not observable. But we do it
-                    // this way because it works around a bug in open source LLVM's live-outs
-                    // computation.
+                    // FIXME: Consider reversing the order of this unification, since the other
+                    // order will reveal more bugs. https://bugs.webkit.org/show_bug.cgi?id=154368
                     phi->variableAccessData()->unify(phi->children.child(childIdx)->variableAccessData());
                 }
             }

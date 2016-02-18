@@ -115,7 +115,9 @@ void IndexedAbstractHeap::initialize(AbstractField& field, ptrdiff_t signedIndex
     //
     //    Blah_neg_A
     //
-    // This is important because LLVM uses the string to distinguish the types.
+    // This used to be important because we used to use the string to distinguish the types. This is
+    // not relevant anymore, and this code will be removed eventually.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=154319
     
     static const char* negSplit = "_neg_";
     static const char* posSplit = "_";
