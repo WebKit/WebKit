@@ -1,3 +1,44 @@
+2016-02-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Implement client->server operations in WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=154400
+
+        Reviewed by Alex Christensen.
+
+        No change in behavior yet; Just laying the groundwork.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::idbServer):
+        * DatabaseProcess/DatabaseProcess.h:
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didReceiveMessage):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::deleteDatabase):
+        (WebKit::WebIDBConnectionToClient::openDatabase):
+        (WebKit::WebIDBConnectionToClient::abortTransaction):
+        (WebKit::WebIDBConnectionToClient::commitTransaction):
+        (WebKit::WebIDBConnectionToClient::didFinishHandlingVersionChangeTransaction):
+        (WebKit::WebIDBConnectionToClient::createObjectStore):
+        (WebKit::WebIDBConnectionToClient::deleteObjectStore):
+        (WebKit::WebIDBConnectionToClient::clearObjectStore):
+        (WebKit::WebIDBConnectionToClient::createIndex):
+        (WebKit::WebIDBConnectionToClient::deleteIndex):
+        (WebKit::WebIDBConnectionToClient::putOrAdd):
+        (WebKit::WebIDBConnectionToClient::getRecord):
+        (WebKit::WebIDBConnectionToClient::getCount):
+        (WebKit::WebIDBConnectionToClient::deleteRecord):
+        (WebKit::WebIDBConnectionToClient::openCursor):
+        (WebKit::WebIDBConnectionToClient::iterateCursor):
+        (WebKit::WebIDBConnectionToClient::establishTransaction):
+        (WebKit::WebIDBConnectionToClient::databaseConnectionClosed):
+        (WebKit::WebIDBConnectionToClient::abortOpenAndUpgradeNeeded):
+        (WebKit::WebIDBConnectionToClient::didFireVersionChangeEvent):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in:
+
 2016-02-18  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK][Threaded Compositor] The web inspector doesn't work when using the threaded compositor

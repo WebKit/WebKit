@@ -72,7 +72,7 @@ public:
         return adoptRef(*new UniqueIDBDatabase(server, identifier));
     }
 
-    ~UniqueIDBDatabase();
+    WEBCORE_EXPORT ~UniqueIDBDatabase();
 
     void openDatabaseConnection(IDBConnectionToClient&, const IDBRequestData&);
 

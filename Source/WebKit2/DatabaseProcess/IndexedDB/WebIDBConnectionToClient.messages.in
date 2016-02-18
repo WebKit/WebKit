@@ -33,7 +33,7 @@ messages -> WebIDBConnectionToClient {
     ClearObjectStore(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier);
     CreateIndex(WebCore::IDBRequestData requestData, WebCore::IDBIndexInfo info);
     DeleteIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, String indexName);
-    PutOrAdd(WebCore::IDBRequestData requestData, WebCore::IDBKeyData key, IPC::DataReference value, bool overwriteEnabled);
+    PutOrAdd(WebCore::IDBRequestData requestData, WebCore::IDBKeyData key, IPC::DataReference value, unsigned overwriteMode);
     GetRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range);
     GetCount(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range);
     DeleteRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range);

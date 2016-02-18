@@ -39,7 +39,7 @@ class IDBKeyPath;
 
 class IDBObjectStoreInfo {
 public:
-    IDBObjectStoreInfo();
+    WEBCORE_EXPORT IDBObjectStoreInfo();
     IDBObjectStoreInfo(uint64_t identifier, const String& name, const IDBKeyPath&, bool autoIncrement);
 
     uint64_t identifier() const { return m_identifier; }

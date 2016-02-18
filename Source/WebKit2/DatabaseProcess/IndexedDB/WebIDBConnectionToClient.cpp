@@ -28,10 +28,13 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DataReference.h"
+#include "DatabaseProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include <WebCore/IDBError.h>
 #include <WebCore/IDBResultData.h>
+#include <WebCore/ThreadSafeDataBuffer.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 
 using namespace WebCore;
@@ -158,84 +161,115 @@ void WebIDBConnectionToClient::notifyOpenDBRequestBlocked(const WebCore::IDBReso
     send(Messages::WebIDBConnectionToServer::NotifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion));
 }
 
-void WebIDBConnectionToClient::deleteDatabase(const IDBRequestData&)
+void WebIDBConnectionToClient::deleteDatabase(const IDBRequestData& request)
 {
+    DatabaseProcess::singleton().idbServer().deleteDatabase(request);
 }
 
-void WebIDBConnectionToClient::openDatabase(const IDBRequestData&)
+void WebIDBConnectionToClient::openDatabase(const IDBRequestData& request)
 {
+    DatabaseProcess::singleton().idbServer().openDatabase(request);
 }
 
-void WebIDBConnectionToClient::abortTransaction(const IDBResourceIdentifier&)
+void WebIDBConnectionToClient::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
+    DatabaseProcess::singleton().idbServer().abortTransaction(transactionIdentifier);
 }
 
-void WebIDBConnectionToClient::commitTransaction(const IDBResourceIdentifier&)
+void WebIDBConnectionToClient::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
+    DatabaseProcess::singleton().idbServer().commitTransaction(transactionIdentifier);
 }
 
-void WebIDBConnectionToClient::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier&)
+void WebIDBConnectionToClient::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
+    DatabaseProcess::singleton().idbServer().didFinishHandlingVersionChangeTransaction(transactionIdentifier);
 }
 
-void WebIDBConnectionToClient::createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&)
+void WebIDBConnectionToClient::createObjectStore(const IDBRequestData& request, const IDBObjectStoreInfo& info)
 {
+    DatabaseProcess::singleton().idbServer().createObjectStore(request, info);
 }
 
-void WebIDBConnectionToClient::deleteObjectStore(const IDBRequestData&, const String&)
+void WebIDBConnectionToClient::deleteObjectStore(const IDBRequestData& request, const String& name)
 {
+    DatabaseProcess::singleton().idbServer().deleteObjectStore(request, name);
 }
 
-void WebIDBConnectionToClient::clearObjectStore(const IDBRequestData&, uint64_t)
+void WebIDBConnectionToClient::clearObjectStore(const IDBRequestData& request, uint64_t objectStoreIdentifier)
 {
+    DatabaseProcess::singleton().idbServer().clearObjectStore(request, objectStoreIdentifier);
 }
 
-void WebIDBConnectionToClient::createIndex(const IDBRequestData&, const IDBIndexInfo&)
+void WebIDBConnectionToClient::createIndex(const IDBRequestData& request, const IDBIndexInfo& info)
 {
+    DatabaseProcess::singleton().idbServer().createIndex(request, info);
 }
 
-void WebIDBConnectionToClient::deleteIndex(const IDBRequestData&, uint64_t, const String&)
+void WebIDBConnectionToClient::deleteIndex(const IDBRequestData& request, uint64_t objectStoreIdentifier, const String& name)
 {
+    DatabaseProcess::singleton().idbServer().deleteIndex(request, objectStoreIdentifier, name);
 }
 
-void WebIDBConnectionToClient::putOrAdd(const IDBRequestData&, const IDBKeyData&, const IPC::DataReference&, bool)
+void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDBKeyData& key, const IPC::DataReference& data, unsigned overwriteMode)
 {
+    if (overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::NoOverwrite)
+        && overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::Overwrite)
+        && overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor)) {
+        // FIXME: This message from the WebProcess is corrupt.
+        // The DatabaseProcess should return early at this point, but can we also kill the bad WebProcess?
+        return;
+    }
+
+    IndexedDB::ObjectStoreOverwriteMode mode = static_cast<IndexedDB::ObjectStoreOverwriteMode>(overwriteMode);
+    auto buffer = ThreadSafeDataBuffer::copyVector(data.vector());
+
+    DatabaseProcess::singleton().idbServer().putOrAdd(request, key, buffer, mode);
 }
 
-void WebIDBConnectionToClient::getRecord(const IDBRequestData&, const IDBKeyRangeData&)
+void WebIDBConnectionToClient::getRecord(const IDBRequestData& request, const IDBKeyRangeData& range)
 {
+    DatabaseProcess::singleton().idbServer().getRecord(request, range);
 }
 
-void WebIDBConnectionToClient::getCount(const IDBRequestData&, const IDBKeyRangeData&)
+void WebIDBConnectionToClient::getCount(const IDBRequestData& request, const IDBKeyRangeData& range)
 {
+    DatabaseProcess::singleton().idbServer().getCount(request, range);
 }
 
-void WebIDBConnectionToClient::deleteRecord(const IDBRequestData&, const IDBKeyRangeData&)
+void WebIDBConnectionToClient::deleteRecord(const IDBRequestData& request, const IDBKeyRangeData& range)
 {
+    DatabaseProcess::singleton().idbServer().deleteRecord(request, range);
 }
 
-void WebIDBConnectionToClient::openCursor(const IDBRequestData&, const IDBCursorInfo&)
+void WebIDBConnectionToClient::openCursor(const IDBRequestData& request, const IDBCursorInfo& info)
 {
+    DatabaseProcess::singleton().idbServer().openCursor(request, info);
 }
 
-void WebIDBConnectionToClient::iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long)
+void WebIDBConnectionToClient::iterateCursor(const IDBRequestData& request, const IDBKeyData& key, unsigned long count)
 {
+    DatabaseProcess::singleton().idbServer().iterateCursor(request, key, count);
 }
 
-void WebIDBConnectionToClient::establishTransaction(uint64_t, const IDBTransactionInfo&)
+void WebIDBConnectionToClient::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
+    DatabaseProcess::singleton().idbServer().establishTransaction(databaseConnectionIdentifier, info);
 }
 
-void WebIDBConnectionToClient::databaseConnectionClosed(uint64_t)
+void WebIDBConnectionToClient::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
+    DatabaseProcess::singleton().idbServer().databaseConnectionClosed(databaseConnectionIdentifier);
 }
 
-void WebIDBConnectionToClient::abortOpenAndUpgradeNeeded(uint64_t, const IDBResourceIdentifier&)
+void WebIDBConnectionToClient::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
+    DatabaseProcess::singleton().idbServer().abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
 }
 
-void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t, const IDBResourceIdentifier&)
+void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
+    DatabaseProcess::singleton().idbServer().didFireVersionChangeEvent(databaseConnectionIdentifier, transactionIdentifier);
 }
 
 } // namespace WebKit

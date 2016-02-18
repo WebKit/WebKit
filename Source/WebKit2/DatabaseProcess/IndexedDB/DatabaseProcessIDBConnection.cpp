@@ -32,8 +32,8 @@
 #include "DatabaseProcess.h"
 #include "DatabaseToWebProcessConnection.h"
 #include "IDBIdentifier.h"
-#include "Logging.h"
 #include "LegacyUniqueIDBDatabase.h"
+#include "Logging.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBServerConnectionMessages.h"
 #include <WebCore/IDBDatabaseMetadata.h>

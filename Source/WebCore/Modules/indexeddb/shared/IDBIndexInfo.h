@@ -35,7 +35,7 @@ namespace WebCore {
 
 class IDBIndexInfo {
 public:
-    IDBIndexInfo();
+    WEBCORE_EXPORT IDBIndexInfo();
     IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
 
     IDBIndexInfo isolatedCopy() const;

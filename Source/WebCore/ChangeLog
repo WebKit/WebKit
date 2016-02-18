@@ -1,3 +1,17 @@
+2016-02-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Implement client->server operations in WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=154400
+
+        Reviewed by Alex Christensen.
+
+        No change in behavior yet; Just laying the groundwork.
+
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+
 2016-02-18  Chris Dumez  <cdumez@apple.com>
 
         [Unforgeable] operations should not be writable as per Web IDL

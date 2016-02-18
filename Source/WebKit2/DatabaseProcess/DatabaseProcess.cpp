@@ -115,6 +115,14 @@ void DatabaseProcess::removeLegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabas
 
     m_idbDatabases.remove(identifier);
 }
+
+IDBServer::IDBServer& DatabaseProcess::idbServer()
+{
+    if (!m_idbServer)
+        m_idbServer = IDBServer::IDBServer::create(indexedDatabaseDirectory());
+
+    return *m_idbServer;
+}
 #endif
 
 void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationParameters& parameters)

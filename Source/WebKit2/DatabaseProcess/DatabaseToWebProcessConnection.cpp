@@ -31,6 +31,7 @@
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "Logging.h"
 #include "WebIDBConnectionToClient.h"
+#include "WebIDBConnectionToClientMessages.h"
 #include <wtf/RunLoop.h>
 
 #if ENABLE(DATABASE_PROCESS)
@@ -62,6 +63,13 @@ void DatabaseToWebProcessConnection::didReceiveMessage(IPC::Connection& connecti
     }
 
 #if ENABLE(INDEXED_DATABASE)
+    if (decoder.messageReceiverName() == Messages::WebIDBConnectionToClient::messageReceiverName()) {
+        auto iterator = m_webIDBConnections.find(decoder.destinationID());
+        if (iterator != m_webIDBConnections.end())
+            iterator->value->didReceiveMessage(connection, decoder);
+        return;
+    }
+    
     if (decoder.messageReceiverName() == Messages::DatabaseProcessIDBConnection::messageReceiverName()) {
         IDBConnectionMap::iterator backendIterator = m_idbConnections.find(decoder.destinationID());
         if (backendIterator != m_idbConnections.end())

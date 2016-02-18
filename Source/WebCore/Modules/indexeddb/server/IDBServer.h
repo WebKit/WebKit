@@ -51,33 +51,33 @@ namespace IDBServer {
 class IDBServer : public RefCounted<IDBServer> {
 public:
     static Ref<IDBServer> create();
-    static Ref<IDBServer> create(const String& databaseDirectoryPath);
+    WEBCORE_EXPORT static Ref<IDBServer> create(const String& databaseDirectoryPath);
 
     void registerConnection(IDBConnectionToClient&);
     void unregisterConnection(IDBConnectionToClient&);
 
     // Operations requested by the client.
-    void openDatabase(const IDBRequestData&);
-    void deleteDatabase(const IDBRequestData&);
-    void abortTransaction(const IDBResourceIdentifier&);
-    void commitTransaction(const IDBResourceIdentifier&);
-    void didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier&);
-    void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
-    void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
-    void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier);
-    void createIndex(const IDBRequestData&, const IDBIndexInfo&);
-    void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
-    void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
-    void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
-    void getCount(const IDBRequestData&, const IDBKeyRangeData&);
-    void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
-    void openCursor(const IDBRequestData&, const IDBCursorInfo&);
-    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
+    WEBCORE_EXPORT void openDatabase(const IDBRequestData&);
+    WEBCORE_EXPORT void deleteDatabase(const IDBRequestData&);
+    WEBCORE_EXPORT void abortTransaction(const IDBResourceIdentifier&);
+    WEBCORE_EXPORT void commitTransaction(const IDBResourceIdentifier&);
+    WEBCORE_EXPORT void didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier&);
+    WEBCORE_EXPORT void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
+    WEBCORE_EXPORT void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
+    WEBCORE_EXPORT void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier);
+    WEBCORE_EXPORT void createIndex(const IDBRequestData&, const IDBIndexInfo&);
+    WEBCORE_EXPORT void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
+    WEBCORE_EXPORT void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
+    WEBCORE_EXPORT void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
+    WEBCORE_EXPORT void getCount(const IDBRequestData&, const IDBKeyRangeData&);
+    WEBCORE_EXPORT void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
+    WEBCORE_EXPORT void openCursor(const IDBRequestData&, const IDBCursorInfo&);
+    WEBCORE_EXPORT void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
 
-    void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);
-    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
-    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
-    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
+    WEBCORE_EXPORT void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);
+    WEBCORE_EXPORT void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
+    WEBCORE_EXPORT void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
+    WEBCORE_EXPORT void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
 
     void postDatabaseTask(std::unique_ptr<CrossThreadTask>&&);
     void postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&&);

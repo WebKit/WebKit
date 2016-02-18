@@ -29,7 +29,10 @@
 #if ENABLE(DATABASE_PROCESS)
 
 #include "ChildProcess.h"
+#include "LegacyUniqueIDBDatabase.h"
 #include "LegacyUniqueIDBDatabaseIdentifier.h"
+#include <WebCore/IDBServer.h>
+#include <WebCore/UniqueIDBDatabase.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -41,7 +44,6 @@ struct SecurityOriginData;
 namespace WebKit {
 
 class DatabaseToWebProcessConnection;
-class LegacyUniqueIDBDatabase;
 
 struct DatabaseProcessCreationParameters;
 
@@ -60,6 +62,8 @@ public:
 
     void ensureIndexedDatabaseRelativePathExists(const String&);
     String absoluteIndexedDatabasePathFromDatabaseRelativePath(const String&);
+
+    WebCore::IDBServer::IDBServer& idbServer();
 #endif
 
     WorkQueue& queue() { return m_queue.get(); }
@@ -110,6 +114,8 @@ private:
     String m_indexedDatabaseDirectory;
 
     HashMap<LegacyUniqueIDBDatabaseIdentifier, RefPtr<LegacyUniqueIDBDatabase>> m_idbDatabases;
+
+    RefPtr<WebCore::IDBServer::IDBServer> m_idbServer;
 #endif
 
     Deque<std::unique_ptr<WebCore::CrossThreadTask>> m_databaseTasks;
