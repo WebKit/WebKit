@@ -70,7 +70,10 @@ static const float autostartSoonAfterUserGestureThreshold = 5.0;
 
 // This delay should not exceed the snapshot delay in PluginView.cpp
 static const auto simulatedMouseClickTimerDelay = std::chrono::milliseconds { 750 };
+
+#if PLATFORM(COCOA)
 static const auto removeSnapshotTimerDelay = std::chrono::milliseconds { 1500 };
+#endif
 
 static const String titleText(Page* page, String mimeType)
 {
