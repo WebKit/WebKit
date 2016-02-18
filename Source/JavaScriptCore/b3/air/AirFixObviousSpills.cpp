@@ -237,7 +237,7 @@ private:
                 if (Arg::isValidImmForm(alias->constant))
                     arg = Arg::imm(alias->constant);
                 else
-                    arg = Arg::imm64(alias->constant);
+                    arg = Arg::bigImm(alias->constant);
                 didThings = true;
                 return;
             }

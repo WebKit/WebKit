@@ -367,6 +367,19 @@ public:
         m_assembler.and_<64>(dest, src1, src2);
     }
 
+    void and64(TrustedImm64 imm, RegisterID src, RegisterID dest)
+    {
+        LogicalImmediate logicalImm = LogicalImmediate::create64(imm.m_value);
+
+        if (logicalImm.isValid()) {
+            m_assembler.and_<64>(dest, src, logicalImm);
+            return;
+        }
+
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.and_<64>(dest, src, dataTempRegister);
+    }
+
     void and64(RegisterID src, RegisterID dest)
     {
         m_assembler.and_<64>(dest, dest, src);
@@ -578,7 +591,20 @@ public:
         signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.orr<64>(dest, src, dataTempRegister);
     }
-    
+
+    void or64(TrustedImm64 imm, RegisterID src, RegisterID dest)
+    {
+        LogicalImmediate logicalImm = LogicalImmediate::create64(imm.m_value);
+
+        if (logicalImm.isValid()) {
+            m_assembler.orr<64>(dest, src, logicalImm);
+            return;
+        }
+
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.orr<64>(dest, src, dataTempRegister);
+    }
+
     void or64(TrustedImm64 imm, RegisterID dest)
     {
         LogicalImmediate logicalImm = LogicalImmediate::create64(static_cast<intptr_t>(static_cast<int64_t>(imm.m_value)));
@@ -829,6 +855,23 @@ public:
     void xor64(TrustedImm32 imm, RegisterID dest)
     {
         xor64(imm, dest, dest);
+    }
+
+    void xor64(TrustedImm64 imm, RegisterID src, RegisterID dest)
+    {
+        if (imm.m_value == -1)
+            m_assembler.mvn<64>(dest, src);
+        else {
+            LogicalImmediate logicalImm = LogicalImmediate::create64(imm.m_value);
+
+            if (logicalImm.isValid()) {
+                m_assembler.eor<64>(dest, src, logicalImm);
+                return;
+            }
+
+            move(imm, getCachedDataTempRegisterIDAndInvalidate());
+            m_assembler.eor<64>(dest, src, dataTempRegister);
+        }
     }
 
     void xor64(TrustedImm32 imm, RegisterID src, RegisterID dest)

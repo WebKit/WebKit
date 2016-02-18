@@ -498,6 +498,26 @@ private:
         return Arg();
     }
 
+    Arg bitImm(Value* value)
+    {
+        if (value->hasInt()) {
+            int64_t intValue = value->asInt();
+            if (Arg::isValidBitImmForm(intValue))
+                return Arg::bitImm(intValue);
+        }
+        return Arg();
+    }
+
+    Arg bitImm64(Value* value)
+    {
+        if (value->hasInt()) {
+            int64_t intValue = value->asInt();
+            if (Arg::isValidBitImm64Form(intValue))
+                return Arg::bitImm64(intValue);
+        }
+        return Arg();
+    }
+
     Arg immOrTmp(Value* value)
     {
         if (Arg result = imm(value))
@@ -642,6 +662,36 @@ private:
                 // A non-commutative operation could have an immediate in left.
                 if (imm(left)) {
                     append(opcode, imm(left), tmp(right), result);
+                    return;
+                }
+            }
+        }
+
+        if (isValidForm(opcode, Arg::BitImm, Arg::Tmp, Arg::Tmp)) {
+            if (commutativity == Commutative) {
+                if (Arg rightArg = bitImm(right)) {
+                    append(opcode, rightArg, tmp(left), result);
+                    return;
+                }
+            } else {
+                // A non-commutative operation could have an immediate in left.
+                if (Arg leftArg = bitImm(left)) {
+                    append(opcode, leftArg, tmp(right), result);
+                    return;
+                }
+            }
+        }
+
+        if (isValidForm(opcode, Arg::BitImm64, Arg::Tmp, Arg::Tmp)) {
+            if (commutativity == Commutative) {
+                if (Arg rightArg = bitImm64(right)) {
+                    append(opcode, rightArg, tmp(left), result);
+                    return;
+                }
+            } else {
+                // A non-commutative operation could have an immediate in left.
+                if (Arg leftArg = bitImm64(left)) {
+                    append(opcode, leftArg, tmp(right), result);
                     return;
                 }
             }
@@ -928,10 +978,10 @@ private:
                 if (imm(value.value()))
                     arg = imm(value.value());
                 else if (value.value()->hasInt64())
-                    arg = Arg::imm64(value.value()->asInt64());
+                    arg = Arg::bigImm(value.value()->asInt64());
                 else if (value.value()->hasDouble() && canBeInternal(value.value())) {
                     commitInternal(value.value());
-                    arg = Arg::imm64(bitwise_cast<int64_t>(value.value()->asDouble()));
+                    arg = Arg::bigImm(bitwise_cast<int64_t>(value.value()->asDouble()));
                 } else
                     arg = tmp(value.value());
                 break;
@@ -1934,7 +1984,7 @@ private:
             if (imm(m_value))
                 append(Move, imm(m_value), tmp(m_value));
             else
-                append(Move, Arg::imm64(m_value->asInt()), tmp(m_value));
+                append(Move, Arg::bigImm(m_value->asInt()), tmp(m_value));
             return;
         }
 

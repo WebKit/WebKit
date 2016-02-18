@@ -76,7 +76,7 @@ bool CCallSpecial::isValid(Inst& inst)
             if (is32Bit())
                 break;
             return false;
-        case Arg::Imm64:
+        case Arg::BigImm:
             if (is64Bit())
                 break;
             return false;
@@ -125,7 +125,7 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
 {
     switch (inst.args[calleeArgOffset].kind()) {
     case Arg::Imm:
-    case Arg::Imm64:
+    case Arg::BigImm:
         jit.move(inst.args[calleeArgOffset].asTrustedImmPtr(), scratchRegister);
         jit.call(scratchRegister);
         break;

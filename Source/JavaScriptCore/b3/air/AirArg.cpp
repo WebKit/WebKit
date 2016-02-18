@@ -121,7 +121,13 @@ void Arg::dump(PrintStream& out) const
     case Imm:
         out.print("$", m_offset);
         return;
-    case Imm64:
+    case BigImm:
+        out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
+        return;
+    case BitImm:
+        out.print("$", m_offset);
+        return;
+    case BitImm64:
         out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
         return;
     case Addr:
@@ -185,8 +191,14 @@ void printInternal(PrintStream& out, Arg::Kind kind)
     case Arg::Imm:
         out.print("Imm");
         return;
-    case Arg::Imm64:
-        out.print("Imm64");
+    case Arg::BigImm:
+        out.print("BigImm");
+        return;
+    case Arg::BitImm:
+        out.print("BitImm");
+        return;
+    case Arg::BitImm64:
+        out.print("BitImm64");
         return;
     case Arg::Addr:
         out.print("Addr");

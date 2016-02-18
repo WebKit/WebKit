@@ -310,7 +310,7 @@ Vector<Inst> emitShuffle(
             else {
                 ASSERT(pair.src().isSomeImm());
                 ASSERT(move == Move32);
-                result.append(Inst(Move, origin, Arg::imm64(pair.src().value()), scratch));
+                result.append(Inst(Move, origin, Arg::bigImm(pair.src().value()), scratch));
             }
             result.append(Inst(moveForWidth(pair.width()), origin, scratch, pair.dst()));
             returnScratch(scratchIndex, scratch);

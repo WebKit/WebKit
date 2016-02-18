@@ -190,7 +190,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(Imm64)|(Addr)|(Index)|(RelCond)|(ResCond)|(DoubleCond))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(Addr)|(Index)|(RelCond)|(ResCond)|(DoubleCond))\Z/
 end
 
 def isArch(token)
@@ -264,7 +264,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, Imm64, Tmp, Addr, Index, RelCond, ResCond, or DoubleCond)") unless isKind(result)
+        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, Tmp, Addr, Index, RelCond, ResCond, or DoubleCond)") unless isKind(result)
         advance
         result
     end
@@ -426,7 +426,7 @@ class Parser
                         parseError("Form has wrong number of arguments for overload") unless kinds.length == signature.length
                         kinds.each_with_index {
                             | kind, index |
-                            if kind.name == "Imm" or kind.name == "Imm64"
+                            if kind.name == "Imm" or kind.name == "BigImm" or kind.name == "BitImm" or kind.name == "BitImm64"
                                 if signature[index].role != "U"
                                     parseError("Form has an immediate for a non-use argument")
                                 end
@@ -530,14 +530,14 @@ def matchForms(outp, speed, forms, columnIndex, columnGetter, filter, callback)
     outp.puts "switch (#{columnGetter[columnIndex]}) {"
     groups.each_pair {
         | key, value |
-        outp.puts "#if USE(JSVALUE64)" if key == "Imm64"
+        outp.puts "#if USE(JSVALUE64)" if key == "BigImm" or key == "BitImm64"
         Kind.argKinds(key).each {
             | argKind |
             outp.puts "case Arg::#{argKind}:"
         }
         matchForms(outp, speed, value, columnIndex + 1, columnGetter, filter, callback)
         outp.puts "break;"
-        outp.puts "#endif // USE(JSVALUE64)" if key == "Imm64"
+        outp.puts "#endif // USE(JSVALUE64)" if key == "BigImm" or key == "BitImm64"
     }
     outp.puts "default:"
     outp.puts "break;"
@@ -798,6 +798,12 @@ writeH("OpcodeGenerated") {
                 when "Imm"
                     outp.puts "if (!Arg::isValidImmForm(args[#{index}].value()))"
                     outp.puts "OPGEN_RETURN(false);"
+                when "BitImm"
+                    outp.puts "if (!Arg::isValidBitImmForm(args[#{index}].value()))"
+                    outp.puts "OPGEN_RETURN(false);"
+                when "BitImm64"
+                    outp.puts "if (!Arg::isValidBitImm64Form(args[#{index}].value()))"
+                    outp.puts "OPGEN_RETURN(false);"
                 when "Addr"
                     if arg.role == "UA"
                         outp.puts "if (args[#{index}].isStack() && args[#{index}].stackSlot()->isSpill())"
@@ -809,7 +815,7 @@ writeH("OpcodeGenerated") {
                 when "Index"
                     outp.puts "if (!Arg::isValidIndexForm(args[#{index}].scale(), args[#{index}].offset(), #{arg.widthCode}))"
                     outp.puts "OPGEN_RETURN(false);"
-                when "Imm64"
+                when "BigImm"
                 when "RelCond"
                 when "ResCond"
                 when "DoubleCond"
@@ -1055,9 +1061,9 @@ writeH("OpcodeGenerated") {
                     else
                         outp.print "args[#{index}].fpr()"
                     end
-                when "Imm"
+                when "Imm", "BitImm"
                     outp.print "args[#{index}].asTrustedImm32()"
-                when "Imm64"
+                when "BigImm", "BitImm64"
                     outp.print "args[#{index}].asTrustedImm64()"
                 when "Addr"
                     outp.print "args[#{index}].asAddress()"

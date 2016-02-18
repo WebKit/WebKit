@@ -207,7 +207,7 @@ bool StackmapSpecial::isArgValidForValue(const Air::Arg& arg, Value* value)
     switch (arg.kind()) {
     case Arg::Tmp:
     case Arg::Imm:
-    case Arg::Imm64:
+    case Arg::BigImm:
         break;
     default:
         if (!arg.isStackMemory())
@@ -255,7 +255,7 @@ ValueRep StackmapSpecial::repForArg(Code& code, const Arg& arg)
         return ValueRep::reg(arg.reg());
         break;
     case Arg::Imm:
-    case Arg::Imm64:
+    case Arg::BigImm:
         return ValueRep::constant(arg.value());
         break;
     case Arg::Addr:

@@ -60,11 +60,14 @@ public:
         Tmp,
 
         // This is an immediate that the instruction will materialize. Imm is the immediate that can be
-        // inlined into most instructions, while Imm64 indicates a constant materialization and is
+        // inlined into most instructions, while BigImm indicates a constant materialization and is
         // usually only usable with Move. Specials may also admit it, for example for stackmaps used for
         // OSR exit and tail calls.
+        // BitImm is an immediate for Bitwise operation (And, Xor, etc).
         Imm,
-        Imm64,
+        BigImm,
+        BitImm,
+        BitImm64,
 
         // These are the addresses. Instructions may load from (Use), store to (Def), or evaluate
         // (UseAddr) addresses.
@@ -475,17 +478,33 @@ public:
         return result;
     }
 
-    static Arg imm64(int64_t value)
+    static Arg bigImm(int64_t value)
     {
         Arg result;
-        result.m_kind = Imm64;
+        result.m_kind = BigImm;
+        result.m_offset = value;
+        return result;
+    }
+
+    static Arg bitImm(int64_t value)
+    {
+        Arg result;
+        result.m_kind = BitImm;
+        result.m_offset = value;
+        return result;
+    }
+
+    static Arg bitImm64(int64_t value)
+    {
+        Arg result;
+        result.m_kind = BitImm64;
         result.m_offset = value;
         return result;
     }
 
     static Arg immPtr(const void* address)
     {
-        return imm64(bitwise_cast<intptr_t>(address));
+        return bigImm(bitwise_cast<intptr_t>(address));
     }
 
     static Arg addr(Air::Tmp base, int32_t offset = 0)
@@ -652,14 +671,24 @@ public:
         return kind() == Imm;
     }
 
-    bool isImm64() const
+    bool isBigImm() const
     {
-        return kind() == Imm64;
+        return kind() == BigImm;
+    }
+
+    bool isBitImm() const
+    {
+        return kind() == BitImm;
+    }
+
+    bool isBitImm64() const
+    {
+        return kind() == BitImm64;
     }
 
     bool isSomeImm() const
     {
-        return isImm() || isImm64();
+        return isImm() || isBigImm() || isBitImm() || isBitImm64();
     }
 
     bool isAddr() const
@@ -747,7 +776,7 @@ public:
 
     int64_t value() const
     {
-        ASSERT(kind() == Imm || kind() == Imm64);
+        ASSERT(isSomeImm());
         return m_offset;
     }
 
@@ -767,7 +796,7 @@ public:
 
     void* pointerValue() const
     {
-        ASSERT(kind() == Imm64);
+        ASSERT(kind() == BigImm);
         return bitwise_cast<void*>(static_cast<intptr_t>(m_offset));
     }
 
@@ -837,7 +866,9 @@ public:
     {
         switch (kind()) {
         case Imm:
-        case Imm64:
+        case BigImm:
+        case BitImm:
+        case BitImm64:
         case Addr:
         case Index:
         case Stack:
@@ -861,6 +892,8 @@ public:
     {
         switch (kind()) {
         case Imm:
+        case BitImm:
+        case BitImm64:
         case RelCond:
         case ResCond:
         case DoubleCond:
@@ -872,7 +905,7 @@ public:
         case Index:
         case Stack:
         case CallArg:
-        case Imm64: // Yes, we allow Imm64 as a double immediate. We use this for implementing stackmaps.
+        case BigImm: // Yes, we allow BigImm as a double immediate. We use this for implementing stackmaps.
             return true;
         case Tmp:
             return isFPTmp();
@@ -884,6 +917,8 @@ public:
     {
         switch (kind()) {
         case Imm:
+        case BitImm:
+        case BitImm64:
         case Special:
         case Tmp:
             return true;
@@ -994,6 +1029,24 @@ public:
         return false;
     }
 
+    static bool isValidBitImmForm(int64_t value)
+    {
+        if (isX86())
+            return B3::isRepresentableAs<int32_t>(value);
+        if (isARM64())
+            return ARM64LogicalImmediate::create32(value).isValid();
+        return false;
+    }
+
+    static bool isValidBitImm64Form(int64_t value)
+    {
+        if (isX86())
+            return B3::isRepresentableAs<int32_t>(value);
+        if (isARM64())
+            return ARM64LogicalImmediate::create64(value).isValid();
+        return false;
+    }
+
     static bool isValidAddrForm(int32_t offset, Optional<Width> width = Nullopt)
     {
         if (isX86())
@@ -1042,8 +1095,12 @@ public:
             return true;
         case Imm:
             return isValidImmForm(value());
-        case Imm64:
+        case BigImm:
             return true;
+        case BitImm:
+            return isValidBitImmForm(value());
+        case BitImm64:
+            return isValidBitImm64Form(value());
         case Addr:
         case Stack:
         case CallArg:
@@ -1119,14 +1176,14 @@ public:
 
     MacroAssembler::TrustedImm32 asTrustedImm32() const
     {
-        ASSERT(isImm());
+        ASSERT(isImm() || isBitImm());
         return MacroAssembler::TrustedImm32(static_cast<int32_t>(m_offset));
     }
 
 #if USE(JSVALUE64)
     MacroAssembler::TrustedImm64 asTrustedImm64() const
     {
-        ASSERT(isImm64());
+        ASSERT(isBigImm() || isBitImm64());
         return MacroAssembler::TrustedImm64(value());
     }
 #endif
@@ -1134,7 +1191,7 @@ public:
     MacroAssembler::TrustedImmPtr asTrustedImmPtr() const
     {
         if (is64Bit())
-            ASSERT(isImm64());
+            ASSERT(isBigImm());
         else
             ASSERT(isImm());
         return MacroAssembler::TrustedImmPtr(pointerValue());

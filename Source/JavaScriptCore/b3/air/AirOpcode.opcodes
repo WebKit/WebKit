@@ -39,7 +39,7 @@
 # Argument kinds:
 # Tmp => temporary or register
 # Imm => 32-bit immediate int
-# Imm64 => TrustedImm64
+# BigImm => TrustedImm64
 # Addr => address as temporary/register+offset
 # Index => BaseIndex address
 # Abs => AbsoluteAddress
@@ -270,6 +270,7 @@ Lea UA:G:Ptr, D:G:Ptr
 
 And32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
+    arm64: BitImm, Tmp, Tmp
     x86: Tmp, Addr, Tmp
     x86: Addr, Tmp, Tmp
 
@@ -282,6 +283,7 @@ And32 U:G:32, UZD:G:32
 
 64: And64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
+    arm64: BitImm64, Tmp, Tmp
 
 x86_64: And64 U:G:64, UD:G:64
     Tmp, Tmp
@@ -361,6 +363,7 @@ x86_64: Urshift64 U:G:64, UD:G:64
 
 Or32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
+    arm64: BitImm, Tmp, Tmp
     x86: Tmp, Addr, Tmp
     x86: Addr, Tmp, Tmp
 
@@ -373,6 +376,7 @@ Or32 U:G:32, UZD:G:32
 
 64: Or64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
+    arm64: BitImm64, Tmp, Tmp
 
 64: Or64 U:G:64, UD:G:64
     Tmp, Tmp
@@ -380,6 +384,7 @@ Or32 U:G:32, UZD:G:32
 
 Xor32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
+    arm64: BitImm, Tmp, Tmp
     x86: Tmp, Addr, Tmp
     x86: Addr, Tmp, Tmp
 
@@ -392,6 +397,7 @@ Xor32 U:G:32, UZD:G:32
 
 64: Xor64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
+    arm64: BitImm64, Tmp, Tmp
 
 64: Xor64 U:G:64, UD:G:64
     Tmp, Tmp
@@ -464,7 +470,7 @@ ConvertFloatToDouble U:F:32, D:F:64
 Move U:G:Ptr, D:G:Ptr
     Tmp, Tmp
     Imm, Tmp as signExtend32ToPtr
-    Imm64, Tmp
+    BigImm, Tmp
     Addr, Tmp as loadPtr # This means that "Move Addr, Tmp" is code-generated as "load" not "move".
     Index, Tmp as loadPtr
     Tmp, Addr as storePtr

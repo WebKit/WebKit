@@ -1,3 +1,75 @@
+2016-02-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] ARM64: Support the immediate format used for bit operations in Air
+        https://bugs.webkit.org/show_bug.cgi?id=154327
+
+        Reviewed by Filip Pizlo.
+
+        ARM64 supports a pretty rich form of immediates for bit operation.
+        There are two formats used to encode repeating patterns and common
+        input in a dense form.
+
+        In this patch, I add 2 new type of Arg: BitImm32 and BitImm64.
+        Those represents the valid immediate forms for bit operation.
+        On x86, any 32bits value is valid. On ARM64, all the encoding
+        form are tried and the immediate is used when possible.
+
+        The arg type Imm64 is renamed to BigImm to better represent what
+        it is: an immediate that does not fit into Imm.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::LogicalImmediate::create32): Deleted.
+        (JSC::LogicalImmediate::create64): Deleted.
+        (JSC::LogicalImmediate::value): Deleted.
+        (JSC::LogicalImmediate::isValid): Deleted.
+        (JSC::LogicalImmediate::is64bit): Deleted.
+        (JSC::LogicalImmediate::LogicalImmediate): Deleted.
+        (JSC::LogicalImmediate::mask): Deleted.
+        (JSC::LogicalImmediate::partialHSB): Deleted.
+        (JSC::LogicalImmediate::highestSetBit): Deleted.
+        (JSC::LogicalImmediate::findBitRange): Deleted.
+        (JSC::LogicalImmediate::encodeLogicalImmediate): Deleted.
+        * assembler/AssemblerCommon.h:
+        (JSC::ARM64LogicalImmediate::create32):
+        (JSC::ARM64LogicalImmediate::create64):
+        (JSC::ARM64LogicalImmediate::value):
+        (JSC::ARM64LogicalImmediate::isValid):
+        (JSC::ARM64LogicalImmediate::is64bit):
+        (JSC::ARM64LogicalImmediate::ARM64LogicalImmediate):
+        (JSC::ARM64LogicalImmediate::mask):
+        (JSC::ARM64LogicalImmediate::partialHSB):
+        (JSC::ARM64LogicalImmediate::highestSetBit):
+        (JSC::ARM64LogicalImmediate::findBitRange):
+        (JSC::ARM64LogicalImmediate::encodeLogicalImmediate):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::and64):
+        (JSC::MacroAssemblerARM64::or64):
+        (JSC::MacroAssemblerARM64::xor64):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::bitImm):
+        (JSC::B3::Air::LowerToAir::bitImm64):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::dump):
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::bitImm):
+        (JSC::B3::Air::Arg::bitImm64):
+        (JSC::B3::Air::Arg::isBitImm):
+        (JSC::B3::Air::Arg::isBitImm64):
+        (JSC::B3::Air::Arg::isSomeImm):
+        (JSC::B3::Air::Arg::value):
+        (JSC::B3::Air::Arg::isGP):
+        (JSC::B3::Air::Arg::isFP):
+        (JSC::B3::Air::Arg::hasType):
+        (JSC::B3::Air::Arg::isValidBitImmForm):
+        (JSC::B3::Air::Arg::isValidBitImm64Form):
+        (JSC::B3::Air::Arg::isValidForm):
+        (JSC::B3::Air::Arg::asTrustedImm32):
+        (JSC::B3::Air::Arg::asTrustedImm64):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+
 2016-02-17  Keith Miller  <keith_miller@apple.com>
 
         Spread operator should be allowed when not the first argument of parameter list
