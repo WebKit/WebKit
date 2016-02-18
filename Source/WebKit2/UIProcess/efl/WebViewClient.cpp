@@ -24,11 +24,9 @@
  */
 
 #include "config.h"
-
-#if USE(COORDINATED_GRAPHICS)
-
 #include "WebViewClient.h"
 
+#if USE(COORDINATED_GRAPHICS)
 #include "NotImplemented.h"
 #include "WKAPICast.h"
 #include "WKBase.h"

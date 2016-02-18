@@ -1,3 +1,16 @@
+2016-02-18  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Move WebView from CoordinatedGraphics to efl
+        https://bugs.webkit.org/show_bug.cgi?id=154332
+
+        Reviewed by Csaba Osztrogonác.
+
+        * PlatformEfl.cmake:
+        * UIProcess/efl/WebView.cpp: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/WebView.cpp.
+        * UIProcess/efl/WebView.h: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/WebView.h.
+        * UIProcess/efl/WebViewClient.cpp: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/WebViewClient.cpp.
+        * UIProcess/efl/WebViewClient.h: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/WebViewClient.h.
+
 2016-02-17  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Rename some "UniqueIDBDatabase" classes that conflict with new classes in WebCore.

@@ -25,10 +25,9 @@
  */
 
 #include "config.h"
-#if USE(COORDINATED_GRAPHICS)
-
 #include "WebView.h"
 
+#if USE(COORDINATED_GRAPHICS)
 #include "APIPageConfiguration.h"
 #include "CoordinatedDrawingAreaProxy.h"
 #include "CoordinatedGraphicsScene.h"
