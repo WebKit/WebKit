@@ -1,3 +1,16 @@
+2016-02-18  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Storage tab navigation bar should fit on a single line
+        https://bugs.webkit.org/show_bug.cgi?id=152473
+        <rdar://problem/24023435>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js:
+        (Number.constrain):
+        Reworked logic to ensure that the returned value is never less than the
+        given minimum value.
+
 2016-02-17  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: In the styles sidebar, Option-clicking on --css-variable should jump to its definition
