@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/python
 
 # Copyright (C) 2005, 2006, 2007, 2015 Apple Inc.  All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
@@ -28,73 +28,51 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Script to run Apache with the same configuration as used in http layout tests.
+import optparse
+import subprocess
+import sys
+import tempfile
+import time
 
-use strict;
-use warnings;
+from webkitpy.common.host import Host
+from webkitpy.port import platform_options
 
-use Cwd;
-use File::Path;
-use File::Basename;
-use Getopt::Long;
-use FindBin;
+def parse_args(args):
+    parser = optparse.OptionParser()
+    parser.add_option("-a", "--all-interfaces", help="Bind to all interfaces", action="store_true", dest="http_all_interfaces")
+    parser.add_option("-p", "--port", help="Bind to port NNNN", action="store", type="int", dest="http_port")
+    return parser.parse_args(args)
 
-use lib $FindBin::Bin;
-use webkitperl::httpd;
-use webkitdirs;
+def main(argv, stdout, stderr):
+    options, args = parse_args(argv)
+    host = Host()
 
-# FIXME: Dynamic HTTP-port configuration in this file is wrong.  The various
-# apache config files in LayoutTests/http/config govern the port numbers.
-# Dynamic configuration as-written will also cause random failures in
-# an IPv6 environment.  See https://bugs.webkit.org/show_bug.cgi?id=37104.
-# Argument handling
-my $httpdPort = 8000;
-my $allInterfaces = 0;
-my $showHelp;
+    log_file = tempfile.NamedTemporaryFile()
+    options.http_access_log = log_file.name
+    options.http_error_log = log_file.name
+    options.platform = None
 
-my $result = GetOptions(
-    'all-interfaces|a' => \$allInterfaces,
-    'help|h' => \$showHelp,
-    'port=i' => \$httpdPort,
-);
+    try:
+        port = host.port_factory.get(options.platform, options)
+    except NotImplementedError, e:
+        print >> stderr, str(e)
+        return EXCEPTIONAL_EXIT_STATUS
 
-if (!$result || @ARGV || $showHelp) {
-    print "Usage: " . basename($0) . " [options]\n";
-    print "  -a|--all-interfaces  Bind to all interfaces\n";
-    print "  -h|--help            Show this help message\n";
-    print "  -p|--port NNNN       Bind to port NNNN\n";
-    exit 1;
-}
+    # FIXME(154294): somehow retrieve the actual ports and interfaces bound by the httpd server
+    http_port = options.http_port if options.http_port is not None else "8000"
+    if options.http_all_interfaces is not None:
+        print "Starting httpd on port %s (all interfaces)" % http_port
+    else:
+        print "Starting httpd on <http://127.0.0.1:%s>" % http_port
 
-setConfiguration();
-my $productDir = productDir();
-chdirWebKit();
-my $testDirectory = File::Spec->catfile(getcwd(), "LayoutTests");
-my $listen = "127.0.0.1:$httpdPort";
-$listen = "$httpdPort" if ($allInterfaces);
+    port.start_http_server()
 
-if ($allInterfaces) {
-    print "Starting httpd on port $httpdPort (all interfaces)...\n";
-} else {
-    print "Starting httpd on <http://$listen/>...\n";
-}
-setShouldWaitForUserInterrupt();
-print "Press Ctrl+C to stop it.\n\n";
+    try:
+        tail = subprocess.Popen(['tail', '-F', log_file.name], stdout=subprocess.PIPE)
+        while True:
+            sys.stdout.write(tail.stdout.readline())
+    except KeyboardInterrupt:
+        port.stop_http_server()
 
-my @args = (
-    "-C", "Listen $listen",
-    # Run in single-process mode, do not detach from the controlling terminal.
-    "-X",
-    # Disable Keep-Alive support. Makes testing in multiple browsers easier (no need to wait
-    # for another browser's connection to expire).
-    "-c", "KeepAlive off"
-);
-
-if (!isAnyWindows()) {
-    push(@args, "-c", "CustomLog |/usr/bin/tee common");
-    push(@args, "-c", "ErrorLog |/usr/bin/tee");
-}
-
-my @defaultArgs = getDefaultConfigForTestDirectory($testDirectory);
-@args = (@defaultArgs, @args);
-openHTTPD(@args);
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:], sys.stdout, sys.stderr))

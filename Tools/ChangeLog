@@ -1,3 +1,23 @@
+2016-02-18  Jer Noble  <jer.noble@apple.com>
+
+        run-webkit-httpd should use webkitpy to run httpd.
+        https://bugs.webkit.org/show_bug.cgi?id=154271
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update run-webkit-httpd to use webkitpy.port to launch httpd. Pass on http_port and http_all_interface
+        options to match the current run-webkit-httpd (optional) behavior.
+
+        * Scripts/run-webkit-httpd:
+        (parse_args):
+        (main):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd._prepare_config):
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.start_http_server):
+
 2016-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         Remove remaining references to LLVM, and make sure comments refer to the backend as "B3" not "LLVM"

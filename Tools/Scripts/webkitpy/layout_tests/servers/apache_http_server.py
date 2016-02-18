@@ -43,7 +43,7 @@ _log = logging.getLogger(__name__)
 
 
 class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
-    def __init__(self, port_obj, output_dir, additional_dirs=None):
+    def __init__(self, port_obj, output_dir, additional_dirs=None, port=None):
         """Args:
           port_obj: handle to the platform-specific routines
           output_dir: the absolute path to the layout test result directory
@@ -51,10 +51,15 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         http_server_base.HttpServerBase.__init__(self, port_obj)
         # We use the name "httpd" instead of "apache" to make our paths (e.g. the pid file: /tmp/WebKit/httpd.pid)
         # match old-run-webkit-tests: https://bugs.webkit.org/show_bug.cgi?id=63956
+
         self._name = 'httpd'
-        self._mappings = [{'port': 8000},
-                          {'port': 8080},
-                          {'port': 8443, 'sslcert': True}]
+        self._port = port
+        if self._port is not None:
+            self._mappings = [{'port': self._port}]
+        else:
+            self._mappings = [{'port': 8000},
+                              {'port': 8080},
+                              {'port': 8443, 'sslcert': True}]
         self._output_dir = output_dir
         self._filesystem.maybe_make_directory(output_dir)
 
@@ -79,6 +84,12 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         access_log = self._filesystem.join(output_dir, "access_log.txt")
         error_log = self._filesystem.join(output_dir, "error_log.txt")
         document_root = self._filesystem.join(test_dir, "http", "tests")
+
+        if port_obj.get_option('http_access_log'):
+            access_log = port_obj.get_option('http_access_log')
+
+        if port_obj.get_option('http_error_log'):
+            error_log = port_obj.get_option('http_error_log')
 
         # FIXME: We shouldn't be calling a protected method of _port_obj!
         executable = self._port_obj._path_to_apache()
@@ -110,10 +121,12 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         except:
             enable_ipv6 = False
 
+        bind_address = '' if self._port_obj.get_option("http_all_interfaces") else '127.0.0.1:'
+
         for mapping in self._mappings:
             port = mapping['port']
 
-            start_cmd += ['-C', "\'Listen 127.0.0.1:%d\'" % port]
+            start_cmd += ['-C', "\'Listen %s%d\'" % (bind_address, port)]
 
             # We listen to both IPv4 and IPv6 loop-back addresses, but ignore
             # requests to 8000 from random users on network.
