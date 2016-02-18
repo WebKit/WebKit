@@ -1,3 +1,18 @@
+2016-02-17  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: In the styles sidebar, Option-clicking on --css-variable should jump to its definition
+        https://bugs.webkit.org/show_bug.cgi?id=154082
+        <rdar://problem/24593361>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.tokenTrackingControllerHighlightedRangeWasClicked.showRangeInSourceCode):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.tokenTrackingControllerHighlightedRangeWasClicked):
+        Now tests to see if the highlighted token was a CSS variable and if
+        so, attempts to show the declaration of the CSS variable instead of
+        the location where it is used.
+
 2016-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r196620): Web Inspector: DataGrid headers and resizers are misaligned when the scrollbar is visible

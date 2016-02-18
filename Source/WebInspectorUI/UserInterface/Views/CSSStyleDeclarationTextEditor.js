@@ -1622,34 +1622,50 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     tokenTrackingControllerHighlightedRangeWasClicked(tokenTrackingController)
     {
-        console.assert(this._style.ownerRule.sourceCodeLocation);
-        if (!this._style.ownerRule.sourceCodeLocation)
+        let sourceCodeLocation = this._style.ownerRule.sourceCodeLocation;
+        console.assert(sourceCodeLocation);
+        if (!sourceCodeLocation)
             return;
 
+        let candidate = tokenTrackingController.candidate;
+        console.assert(candidate);
+        if (!candidate)
+            return;
+
+        let token = candidate.hoveredToken;
+
         // Special case command clicking url(...) links.
-        var token = this._tokenTrackingController.candidate.hoveredToken;
-        if (/\blink\b/.test(token.type)) {
-            var url = token.string;
-            var baseURL = this._style.ownerRule.sourceCodeLocation.sourceCode.url;
+        if (token && /\blink\b/.test(token.type)) {
+            let url = token.string;
+            let baseURL = sourceCodeLocation.sourceCode.url;
             WebInspector.openURL(absoluteURL(url, baseURL));
             return;
         }
 
-        // Jump to the rule if we can't find a property.
-        // Find a better source code location from the property that was clicked.
-        var sourceCodeLocation = this._style.ownerRule.sourceCodeLocation;
-        var marks = this._codeMirror.findMarksAt(this._tokenTrackingController.candidate.hoveredTokenRange.start);
-        for (var i = 0; i < marks.length; ++i) {
-            var mark = marks[i];
-            var property = mark.__cssProperty;
-            if (property) {
-                var sourceCode = sourceCodeLocation.sourceCode;
-                var styleSheetTextRange = property.styleSheetTextRange;
-                sourceCodeLocation = sourceCode.createSourceCodeLocation(styleSheetTextRange.startLine, styleSheetTextRange.startColumn);
-            }
+        function showRangeInSourceCode(sourceCode, range)
+        {
+            if (!sourceCode || !range)
+                return false;
+
+            WebInspector.showSourceCodeLocation(sourceCode.createSourceCodeLocation(range.startLine, range.startColumn));
+            return true;
         }
 
-        WebInspector.showSourceCodeLocation(sourceCodeLocation);
+        // Special case option clicking CSS variables.
+        if (token && /\bvariable-2\b/.test(token.type)) {
+            let property = this._style.nodeStyles.effectivePropertyForName(token.string);
+            if (property && showRangeInSourceCode(property.ownerStyle.ownerRule.sourceCodeLocation.sourceCode, property.styleSheetTextRange))
+                return;
+        }
+
+        // Jump to the rule if we can't find a property.
+        // Find a better source code location from the property that was clicked.
+        let marks = this._codeMirror.findMarksAt(candidate.hoveredTokenRange.start);
+        for (let mark of marks) {
+            let property = mark.__cssProperty;
+            if (property && showRangeInSourceCode(sourceCodeLocation.sourceCode, property.styleSheetTextRange))
+                return;
+        }
     }
 
     tokenTrackingControllerNewHighlightCandidate(tokenTrackingController, candidate)
