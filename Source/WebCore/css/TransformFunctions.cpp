@@ -76,14 +76,12 @@ static TransformOperation::OperationType transformOperationType(WebKitCSSTransfo
     return TransformOperation::NONE;
 }
 
-Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData, TransformConversion transformConversion)
+Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
-    if (transformConversion == TransformConversion::RequiresAbsoluteLength && !primitiveValue->isFontIndependentLength())
-        return Length(Undefined);
-    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion>(conversionData) : Length(Undefined);
+    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(Undefined);
 }
 
-bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conversionData, TransformConversion transformConversion, TransformOperations& outOperations)
+bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conversionData, TransformOperations& outOperations)
 {
     if (!is<CSSValueList>(value)) {
         outOperations.clear();
@@ -164,13 +162,13 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
             Length tx = Length(0, Fixed);
             Length ty = Length(0, Fixed);
             if (transformValue.operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                ty = convertToFloatLength(&firstValue, conversionData, transformConversion);
+                ty = convertToFloatLength(&firstValue, conversionData);
             else {
-                tx = convertToFloatLength(&firstValue, conversionData, transformConversion);
+                tx = convertToFloatLength(&firstValue, conversionData);
                 if (transformValue.operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                     if (transformValue.length() > 1) {
                         CSSPrimitiveValue& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-                        ty = convertToFloatLength(&secondValue, conversionData, transformConversion);
+                        ty = convertToFloatLength(&secondValue, conversionData);
                     }
                 }
             }
@@ -187,19 +185,19 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
             Length ty = Length(0, Fixed);
             Length tz = Length(0, Fixed);
             if (transformValue.operationType() == WebKitCSSTransformValue::TranslateZTransformOperation)
-                tz = convertToFloatLength(&firstValue, conversionData, transformConversion);
+                tz = convertToFloatLength(&firstValue, conversionData);
             else if (transformValue.operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                ty = convertToFloatLength(&firstValue, conversionData, transformConversion);
+                ty = convertToFloatLength(&firstValue, conversionData);
             else {
-                tx = convertToFloatLength(&firstValue, conversionData, transformConversion);
+                tx = convertToFloatLength(&firstValue, conversionData);
                 if (transformValue.operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                     if (transformValue.length() > 2) {
                         CSSPrimitiveValue& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
-                        tz = convertToFloatLength(&thirdValue, conversionData, transformConversion);
+                        tz = convertToFloatLength(&thirdValue, conversionData);
                     }
                     if (transformValue.length() > 1) {
                         CSSPrimitiveValue& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-                        ty = convertToFloatLength(&secondValue, conversionData, transformConversion);
+                        ty = convertToFloatLength(&secondValue, conversionData);
                     }
                 }
             }
@@ -302,7 +300,7 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
         case WebKitCSSTransformValue::PerspectiveTransformOperation: {
             Length p = Length(0, Fixed);
             if (firstValue.isLength())
-                p = convertToFloatLength(&firstValue, conversionData, transformConversion);
+                p = convertToFloatLength(&firstValue, conversionData);
             else {
                 // This is a quirk that should go away when 3d transforms are finalized.
                 double val = firstValue.getDoubleValue();

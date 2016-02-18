@@ -28,21 +28,8 @@ PASS parseFloat(a2[14]) is 0
 PASS parseFloat(a3[0]) is 1
 PASS a3[1] is ""
 
-Test bad input to constructor
+Test bad input to string constructor
 PASS new WebKitCSSMatrix("banana") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translate3d(1em, 0, 0)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translate3d(10px, 1em, 0)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translate3d(10px, 10px, calc(10px))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translate3d(calc(10px), 10px, 10px)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translate3d(10px, calc(10px), 10px)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translate3d(1ex, 0, 0)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translatez(1em)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translatez(calc(10px))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("translate(1%, 0, 0)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("perspective(1em)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("perspective(calc(10px))") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("perspective(1ex)") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebKitCSSMatrix("perspective(1%)") threw exception Error: SyntaxError: DOM Exception 12.
 
 Test attributes on default matrix
 PASS m.m11 is 1

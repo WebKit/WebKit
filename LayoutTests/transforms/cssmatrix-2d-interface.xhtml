@@ -40,17 +40,8 @@ shouldBe('parseFloat(a3[0])', '0');
 shouldBe('a3[1]', '""');
 
 debug("");
-debug("Test bad input to constructor");
+debug("Test bad input to string constructor");
 shouldThrow('new WebKitCSSMatrix("banana")');
-shouldThrow('new WebKitCSSMatrix("translate(1em)")');
-shouldThrow('new WebKitCSSMatrix("translate(10px, 1em)")');
-shouldThrow('new WebKitCSSMatrix("translate(10px, calc(10px))")');
-shouldThrow('new WebKitCSSMatrix("translate(1ex)")');
-shouldThrow('new WebKitCSSMatrix("translate(1%)")');
-shouldThrow('new WebKitCSSMatrix("translatex(1em)")');
-shouldThrow('new WebKitCSSMatrix("translatex(calc(10px))")');
-shouldThrow('new WebKitCSSMatrix("translatey(1em)")');
-shouldThrow('new WebKitCSSMatrix("translatey(calc(10px))")');
 
 debug("");
 debug("Test attributes on default matrix");

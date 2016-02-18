@@ -1,3 +1,18 @@
+2016-02-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r196738.
+        https://bugs.webkit.org/show_bug.cgi?id=154380
+
+        broke css3/calc/transforms-translate.html (Requested by
+        alexchristensen on #webkit).
+
+        Reverted changeset:
+
+        "WebKitCSSMatrix transformList with calculated relative length
+        crashes Safari."
+        https://bugs.webkit.org/show_bug.cgi?id=153333
+        http://trac.webkit.org/changeset/196738
+
 2016-02-17  Dean Jackson  <dino@apple.com>
 
         WebKitCSSMatrix transformList with calculated relative length crashes Safari.
