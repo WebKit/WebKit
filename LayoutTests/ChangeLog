@@ -1,5 +1,13 @@
 2016-02-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196770
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-02-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/html/dom/reflection-forms.html for ios-simulator after r196769 
 
         Unreviewed test gardening.
