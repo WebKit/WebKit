@@ -114,8 +114,13 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
         return false;
 
     String stringValue = value.toString(exec)->value(exec);
-    if (exec->hadException())
+    if (exec->hadException()) {
+        // The return value indicates whether putDelegate() should handle the put operation (which
+        // if true, tells the caller not to execute the generic put). It does not indicate whether
+        // putDelegate() did successfully complete the operation or not (which it didn't in this
+        // case due to the exception).
         return true;
+    }
 
     ExceptionCode ec = 0;
     wrapped().setItem(propertyNameToString(propertyName), stringValue, ec);

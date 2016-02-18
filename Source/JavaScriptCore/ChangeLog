@@ -1,3 +1,36 @@
+2016-02-17  Mark Lam  <mark.lam@apple.com>
+
+        Callers of JSString::value() should check for exceptions thereafter.
+        https://bugs.webkit.org/show_bug.cgi?id=154346
+
+        Reviewed by Geoffrey Garen.
+
+        JSString::value() can throw an exception if the JS string is a rope and value() 
+        needs to resolve the rope but encounters an OutOfMemory error.  If value() is not
+        able to resolve the rope, it will return a null string (in addition to throwing
+        the exception).  If a caller does not check for exceptions after calling
+        JSString::value(), they may eventually use the returned null string and crash the
+        VM.
+
+        The fix is to add all the necessary exception checks, and do the appropriate
+        handling if needed.
+
+        * jsc.cpp:
+        (functionRun):
+        (functionLoad):
+        (functionReadFile):
+        (functionCheckSyntax):
+        (functionLoadWebAssembly):
+        (functionLoadModule):
+        (functionCheckModuleSyntax):
+        * runtime/DateConstructor.cpp:
+        (JSC::dateParse):
+        (JSC::dateNow):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::functionPrint):
+
 2016-02-17  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] ARM64: Support the immediate format used for bit operations in Air

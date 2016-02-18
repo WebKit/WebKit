@@ -1,3 +1,21 @@
+2016-02-17  Mark Lam  <mark.lam@apple.com>
+
+        Callers of JSString::value() should check for exceptions thereafter.
+        https://bugs.webkit.org/show_bug.cgi?id=154346
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.  The crash that results from this issue is dependent on a race
+        condition where an OutOfMemory error occurs precisely at the point where the
+        JSString::value() function is called on a rope JSString.
+
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::putDelegate):
+        - Added a comment at the site of the exception check to clarify the meaning of
+          the return value.
+
 2016-02-17  David Kilzer  <ddkilzer@apple.com>
 
         [Cocoa] Always check the return value of dlopen() and dlsym() in Release builds

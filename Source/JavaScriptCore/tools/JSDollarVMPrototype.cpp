@@ -303,7 +303,10 @@ static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         if (i)
             dataLog(" ");
-        dataLog(exec->uncheckedArgument(i).toString(exec)->value(exec));
+        String argStr = exec->uncheckedArgument(i).toString(exec)->value(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        dataLog(argStr);
     }
     return JSValue::encode(jsUndefined());
 }

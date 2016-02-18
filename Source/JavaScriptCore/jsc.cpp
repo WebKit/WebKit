@@ -1243,6 +1243,8 @@ EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1272,6 +1274,8 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1288,6 +1292,8 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1298,6 +1304,8 @@ EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1565,6 +1573,8 @@ EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*)
 EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     Vector<char> buffer;
     if (!fillBufferWithContentsOfFile(fileName, buffer))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1584,6 +1594,8 @@ EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
 {
     String fileName = exec->argument(0).toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
@@ -1608,6 +1620,8 @@ EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
 {
     String source = exec->argument(0).toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
 
     StopWatch stopWatch;
     stopWatch.start();
