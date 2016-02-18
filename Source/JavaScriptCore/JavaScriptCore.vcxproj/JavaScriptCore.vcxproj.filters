@@ -1659,7 +1659,7 @@
     <ClCompile Include="..\ftl\FTLLocation.cpp">
       <Filter>ftl</Filter>
     </ClCompile>
-    <ClCompile Include="..\ftl\FTLLowerDFGToLLVM.cpp">
+    <ClCompile Include="..\ftl\FTLLowerDFGToB3.cpp">
       <Filter>ftl</Filter>
     </ClCompile>
     <ClCompile Include="..\ftl\FTLOSREntry.cpp">
@@ -1706,18 +1706,6 @@
     </ClCompile>
     <ClCompile Include="..\disassembler\X86Disassembler.cpp">
       <Filter>disassembler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\disassembler\LLVMDisassembler.cpp">
-      <Filter>disassembler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\llvm\InitializeLLVM.cpp">
-      <Filter>llvm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\llvm\InitializeLLVMWin.cpp">
-      <Filter>llvm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\llvm\LLVMAPI.cpp">
-      <Filter>llvm</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\ConsoleMessage.cpp">
       <Filter>inspector</Filter>
@@ -4299,7 +4287,7 @@
     <ClInclude Include="..\ftl\FTLLocation.h">
       <Filter>ftl</Filter>
     </ClInclude>
-    <ClInclude Include="..\ftl\FTLLowerDFGToLLVM.h">
+    <ClInclude Include="..\ftl\FTLLowerDFGToB3.h">
       <Filter>ftl</Filter>
     </ClInclude>
     <ClInclude Include="..\ftl\FTLLoweredNodeValue.h">
@@ -4364,21 +4352,6 @@
     </ClInclude>
     <ClInclude Include="..\ftl\FTLWeightedTarget.h">
       <Filter>ftl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\disassembler\LLVMDisassembler.h">
-      <Filter>disassembler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\llvm\InitializeLLVM.h">
-      <Filter>llvm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\llvm\LLVMAPI.h">
-      <Filter>llvm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\llvm\LLVMAPIFunctions.h">
-      <Filter>llvm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\llvm\LLVMHeaders.h">
-      <Filter>llvm</Filter>
     </ClInclude>
     <ClInclude Include="..\assembler\AbortReason.h">
       <Filter>assembler</Filter>
@@ -4652,7 +4625,7 @@
     <ClInclude Include="..\wasm\WASMFunctionCompiler.h">
       <Filter>wasm</Filter>
     </ClInclude>
-    <ClInclude Include="..\wasm\WASMFunctionLLVMIRGenerator.h">
+    <ClInclude Include="..\wasm\WASMFunctionB3IRGenerator.h">
       <Filter>wasm</Filter>
     </ClInclude>
     <ClInclude Include="..\wasm\WASMFunctionParser.h">

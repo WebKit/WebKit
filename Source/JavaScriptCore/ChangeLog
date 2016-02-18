@@ -1,5 +1,13 @@
 2016-02-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix VS build. I didn't know we still did that, but apparently there's a bot
+        for that.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
+2016-02-18  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix CMake build. This got messed up when rebasing.
 
         * CMakeLists.txt:

@@ -515,7 +515,6 @@
     <ClCompile Include="..\dfg\DFGWatchpointCollectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGWorklist.cpp" />
     <ClCompile Include="..\disassembler\Disassembler.cpp" />
-    <ClCompile Include="..\disassembler\LLVMDisassembler.cpp" />
     <ClCompile Include="..\disassembler\X86Disassembler.cpp" />
     <ClCompile Include="..\ftl\FTLAbstractHeap.cpp" />
     <ClCompile Include="..\ftl\FTLAbstractHeapRepository.cpp" />
@@ -547,7 +546,7 @@
     <ClCompile Include="..\ftl\FTLLazySlowPath.cpp" />
     <ClCompile Include="..\ftl\FTLLink.cpp" />
     <ClCompile Include="..\ftl\FTLLocation.cpp" />
-    <ClCompile Include="..\ftl\FTLLowerDFGToLLVM.cpp" />
+    <ClCompile Include="..\ftl\FTLLowerDFGToB3.cpp" />
     <ClCompile Include="..\ftl\FTLOSREntry.cpp" />
     <ClCompile Include="..\ftl\FTLOSRExit.cpp" />
     <ClCompile Include="..\ftl\FTLOSRExitCompiler.cpp" />
@@ -688,9 +687,6 @@
     <ClCompile Include="..\llint\LLIntSlowPaths.cpp" />
     <ClCompile Include="..\llint\LLIntThunks.cpp" />
     <ClCompile Include="..\llint\LowLevelInterpreter.cpp" />
-    <ClCompile Include="..\llvm\InitializeLLVM.cpp" />
-    <ClCompile Include="..\llvm\InitializeLLVMWin.cpp" />
-    <ClCompile Include="..\llvm\LLVMAPI.cpp" />
     <ClCompile Include="..\parser\Lexer.cpp" />
     <ClCompile Include="..\parser\ModuleAnalyzer.cpp" />
     <ClCompile Include="..\parser\Nodes.cpp" />
@@ -1299,7 +1295,6 @@
     <ClInclude Include="..\dfg\DFGWatchpointCollectionPhase.h" />
     <ClInclude Include="..\dfg\DFGWorklist.h" />
     <ClInclude Include="..\disassembler\Disassembler.h" />
-    <ClInclude Include="..\disassembler\LLVMDisassembler.h" />
     <ClInclude Include="..\ftl\FTLAbbreviatedTypes.h" />
     <ClInclude Include="..\ftl\FTLAbbreviations.h" />
     <ClInclude Include="..\ftl\FTLAbstractHeap.h" />
@@ -1337,7 +1332,7 @@
     <ClInclude Include="..\ftl\FTLLazySlowPathCall.h" />
     <ClInclude Include="..\ftl\FTLLink.h" />
     <ClInclude Include="..\ftl\FTLLocation.h" />
-    <ClInclude Include="..\ftl\FTLLowerDFGToLLVM.h" />
+    <ClInclude Include="..\ftl\FTLLowerDFGToB3.h" />
     <ClInclude Include="..\ftl\FTLLoweredNodeValue.h" />
     <ClInclude Include="..\ftl\FTLOSREntry.h" />
     <ClInclude Include="..\ftl\FTLOSRExit.h" />
@@ -1530,10 +1525,6 @@
     <ClInclude Include="..\llint\LLIntSlowPaths.h" />
     <ClInclude Include="..\llint\LLIntThunks.h" />
     <ClInclude Include="..\llint\LowLevelInterpreter.h" />
-    <ClInclude Include="..\llvm\InitializeLLVM.h" />
-    <ClInclude Include="..\llvm\LLVMAPI.h" />
-    <ClInclude Include="..\llvm\LLVMAPIFunctions.h" />
-    <ClInclude Include="..\llvm\LLVMHeaders.h" />
     <ClInclude Include="..\parser\ASTBuilder.h" />
     <ClInclude Include="..\parser\Lexer.h" />
     <ClInclude Include="..\parser\ModuleAnalyzer.h" />
@@ -1880,7 +1871,7 @@
     <ClInclude Include="..\wasm\WASMConstants.h" />
     <ClInclude Include="..\wasm\WASMFormat.h" />
     <ClInclude Include="..\wasm\WASMFunctionCompiler.h" />
-    <ClInclude Include="..\wasm\WASMFunctionLLVMIRGenerator.h" />
+    <ClInclude Include="..\wasm\WASMFunctionB3IRGenerator.h" />
     <ClInclude Include="..\wasm\WASMFunctionParser.h" />
     <ClInclude Include="..\wasm\WASMFunctionSyntaxChecker.h" />
     <ClInclude Include="..\wasm\WASMModuleParser.h" />
