@@ -58,10 +58,6 @@ struct _WebKitSettingsPrivate {
         fantasyFontFamily = preferences->fantasyFontFamily().utf8();
         pictographFontFamily = preferences->pictographFontFamily().utf8();
         defaultCharset = preferences->defaultTextEncodingName().utf8();
-
-#if USE(COORDINATED_GRAPHICS_THREADED)
-        preferences->setForceCompositingMode(true);
-#endif
     }
 
     RefPtr<WebPreferences> preferences;

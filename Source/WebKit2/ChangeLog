@@ -1,3 +1,20 @@
+2016-02-18  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK][Threaded Compositor] The web inspector doesn't work when using the threaded compositor
+        https://bugs.webkit.org/show_bug.cgi?id=154067
+
+        Reviewed by Carlos Garcia Campos.
+
+        The forceCompositingMode should be true for threaded compositor. We set it true for a normal webView
+        in _WebKitSettingsPrivate() but we do not for inspector anywhere. So DrawingArea is not
+        properly created for the inspector. Let's move the setting to WebPreferences::platformInitializeStore
+        which is a common place for the webView and the inspector.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate::_WebKitSettingsPrivate): Deleted.
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+
 2016-02-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196765.
