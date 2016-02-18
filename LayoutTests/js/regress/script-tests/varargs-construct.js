@@ -14,7 +14,7 @@ function bar() {
 
 noInline(bar);
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < 100000; ++i) {
     var result = bar(1, 2);
     if (result.f != 1)
         throw "Error: bad result.f: " + result.f;

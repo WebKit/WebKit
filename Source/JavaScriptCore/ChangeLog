@@ -1,3 +1,44 @@
+2016-02-17  Keith Miller  <keith_miller@apple.com>
+
+        Spread operator should be allowed when not the first argument of parameter list
+        https://bugs.webkit.org/show_bug.cgi?id=152721
+
+        Reviewed by Saam Barati.
+
+        Spread arguments to functions should now be ES6 compliant. Before we
+        would only take a spread operator if it was the sole argument to a
+        function. Additionally, we would not use the Symbol.iterator on the
+        object to generate the arguments. Instead we would do a loop up to the
+        length mapping indexed properties to the corresponding argument. We fix
+        both these issues by doing an AST transformation from foo(...a, b, ...c, d)
+        to foo(...[...a, b, ...c, d]) (where the spread on the rhs uses the
+        old spread semantics). This solution has the downside of requiring the
+        allocation of another object and copying each element twice but avoids a
+        large change to the vm calling convention.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::loadVarargs):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createElementList):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseArguments):
+        (JSC::Parser<LexerType>::parseArgument):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createElementList):
+        * tests/es6.yaml:
+        * tests/stress/spread-calling.js: Added.
+        (testFunction):
+        (testEmpty):
+        (makeObject):
+        (otherIterator.return.next):
+        (otherIterator):
+        (totalIter):
+        (throwingIter.return.next):
+        (throwingIter):
+        (i.catch):
+
 2016-02-17  Brian Burg  <bburg@apple.com>
 
         Remove a wrong cast in RemoteInspector::receivedSetupMessage

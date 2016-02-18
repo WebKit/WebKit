@@ -1,3 +1,22 @@
+2016-02-17  Keith Miller  <keith_miller@apple.com>
+
+        Spread operator should be allowed when not the first argument of parameter list
+        https://bugs.webkit.org/show_bug.cgi?id=152721
+
+        Reviewed by Saam Barati.
+
+        Update tests with new semantics of spread calling. Additionally,
+        adjust benchmarks to run in a more reasonable time now that
+        spread is implemented correctly.
+
+        * js/basic-spread-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        * js/regress/script-tests/deltablue-varargs.js:
+        (deltaBlue):
+        * js/regress/script-tests/varargs-construct.js:
+        * js/script-tests/basic-spread.js:
+        * js/script-tests/parser-syntax-check.js:
+
 2016-02-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add ios-simulator baseline for new W3C HTML tests added with r196710

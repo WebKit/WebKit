@@ -880,9 +880,9 @@ function change(v, newValue) {
 var planner = null;
 
 function deltaBlue() {
-  chainTest(...args(100));
-  projectionTest(...args(100));
+  chainTest(...args(25));
+  projectionTest(...args(25));
 }
 
-for (var i = 0; i < 30; ++i)
+for (var i = 0; i < 5; ++i)
     deltaBlue(...args());
