@@ -618,7 +618,7 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
 
     // Attempt to create a connection. This may fail if the page already has an inspector or if it disallows inspection.
     RemoteControllableTarget* target = findResult->value;
-    RefPtr<RemoteConnectionToTarget> connectionToTarget = adoptRef(new RemoteConnectionToTarget(downcast<RemoteInspectionTarget>(target), connectionIdentifier, sender));
+    RefPtr<RemoteConnectionToTarget> connectionToTarget = adoptRef(new RemoteConnectionToTarget(target, connectionIdentifier, sender));
 
     if (is<RemoteInspectionTarget>(target)) {
         bool isAutomaticInspection = m_automaticInspectionCandidateTargetIdentifier == target->targetIdentifier();

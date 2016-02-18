@@ -1,3 +1,16 @@
+2016-02-17  Brian Burg  <bburg@apple.com>
+
+        Remove a wrong cast in RemoteInspector::receivedSetupMessage
+        https://bugs.webkit.org/show_bug.cgi?id=154361
+        <rdar://problem/24709281>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        Not only is this cast unnecessary (the constructor accepts the base class),
+        but it is wrong since the target could be an automation target. Remove it.
+
 2016-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         Rename FTLB3Blah to FTLBlah
