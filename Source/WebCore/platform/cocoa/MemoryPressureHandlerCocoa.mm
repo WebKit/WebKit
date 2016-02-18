@@ -32,12 +32,14 @@
 #import "JSDOMWindowBase.h"
 #import "LayerPool.h"
 #import "Logging.h"
+#import "ResourceUsageThread.h"
 #import "WebCoreSystemInterface.h"
 #import <mach/mach.h>
 #import <mach/task_info.h>
 #import <malloc/malloc.h>
 #import <notify.h>
 #import <wtf/CurrentTime.h>
+#import <sys/sysctl.h>
 
 #if PLATFORM(IOS)
 #import "SystemMemory.h"
@@ -128,6 +130,10 @@ void MemoryPressureHandler::install()
 
     // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
     notify_register_dispatch("org.WebKit.lowMemory", &_notifyToken, dispatch_get_main_queue(), ^(int) {
+#if ENABLE(RESOURCE_USAGE)
+        auto footprintBefore = pagesPerVMTag();
+#endif
+
         bool wasUnderMemoryPressure = m_underMemoryPressure;
         m_underMemoryPressure = true;
 
@@ -136,6 +142,11 @@ void MemoryPressureHandler::install()
         WTF::releaseFastMallocFreeMemory();
 
         malloc_zone_pressure_relief(nullptr, 0);
+
+#if ENABLE(RESOURCE_USAGE)
+        auto footprintAfter = pagesPerVMTag();
+        logFootprintComparison(footprintBefore, footprintAfter);
+#endif
 
         // Since this is a simulation, unset the "under memory pressure" flag on next runloop.
         dispatch_async(dispatch_get_main_queue(), ^{

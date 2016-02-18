@@ -51,13 +51,59 @@ static size_t vmPageSize()
     return pageSize;
 }
 
-struct TagInfo {
-    TagInfo() { }
-    size_t dirty { 0 };
-    size_t reclaimable { 0 };
-};
+void logFootprintComparison(const std::array<TagInfo, 256>& before, const std::array<TagInfo, 256>& after)
+{
+    const size_t pageSize = vmPageSize();
 
-static std::array<TagInfo, 256> pagesPerVMTag()
+    WTFLogAlways("Per-tag breakdown of memory reclaimed by pressure handler:");
+    WTFLogAlways("  ## %16s %10s %10s %10s", "VM Tag", "Before", "After", "Diff");
+    for (unsigned i = 0; i < 256; ++i) {
+        ssize_t dirtyBefore = before[i].dirty * pageSize;
+        ssize_t dirtyAfter = after[i].dirty * pageSize;
+        ssize_t dirtyDiff = dirtyAfter - dirtyBefore;
+        if (!dirtyBefore && !dirtyAfter)
+            continue;
+        String tagName = displayNameForVMTag(i);
+        if (!tagName)
+            tagName = String::format("Tag %u", i);
+        WTFLogAlways("  %02X %16s %10ld %10ld %10ld",
+            i,
+            tagName.ascii().data(),
+            dirtyBefore,
+            dirtyAfter,
+            dirtyDiff
+        );
+    }
+}
+
+const char* displayNameForVMTag(unsigned tag)
+{
+    switch (tag) {
+    case VM_MEMORY_IOKIT: return "IOKit";
+    case VM_MEMORY_LAYERKIT: return "CoreAnimation";
+    case VM_MEMORY_IMAGEIO: return "ImageIO";
+    case VM_MEMORY_CGIMAGE: return "CG image";
+    case VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR: return "JSC JIT";
+    case VM_MEMORY_MALLOC: return "malloc";
+    case VM_MEMORY_MALLOC_HUGE: return "malloc (huge)";
+    case VM_MEMORY_MALLOC_LARGE: return "malloc (large)";
+    case VM_MEMORY_MALLOC_SMALL: return "malloc (small)";
+    case VM_MEMORY_MALLOC_TINY: return "malloc (tiny)";
+    case VM_MEMORY_MALLOC_NANO: return "malloc (nano)";
+    case VM_MEMORY_TCMALLOC: return "bmalloc";
+    case VM_MEMORY_FOUNDATION: return "Foundation";
+    case VM_MEMORY_STACK: return "Stack";
+    case VM_MEMORY_SQLITE: return "SQLite";
+    case VM_MEMORY_UNSHARED_PMAP: return "pmap (unshared)";
+    case VM_MEMORY_DYLIB: return "dylib";
+    case VM_MEMORY_CORESERVICES: return "CoreServices";
+    case VM_MEMORY_OS_ALLOC_ONCE: return "os_alloc_once";
+    case VM_MEMORY_LIBDISPATCH: return "libdispatch";
+    default: return nullptr;
+    }
+}
+
+std::array<TagInfo, 256> pagesPerVMTag()
 {
     std::array<TagInfo, 256> tags;
     task_t task = mach_task_self();

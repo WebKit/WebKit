@@ -1,3 +1,23 @@
+2016-02-18  Andreas Kling  <akling@apple.com>
+
+        Fake memory pressure handler should log detailed memory breakdown.
+        <https://webkit.org/b/154415>
+
+        Reviewed by Antti Koivisto.
+
+        Piggyback on the RESOURCE_USAGE code to implement some detailed memory footprint diffing
+        and have the fake memory handler dump before/after/diff after it runs.
+
+        * page/ResourceUsageThread.h:
+        (WebCore::TagInfo::TagInfo):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::logFootprintComparison):
+        (WebCore::displayNameForVMTag):
+        (WebCore::pagesPerVMTag):
+        (WebCore::TagInfo::TagInfo): Deleted.
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2016-02-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement server->client operations in WK2.

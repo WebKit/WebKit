@@ -29,6 +29,7 @@
 #if ENABLE(RESOURCE_USAGE)
 
 #include "ResourceUsageData.h"
+#include <array>
 #include <functional>
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>
@@ -71,6 +72,18 @@ private:
     // They should ensure their use of the VM is thread safe.
     JSC::VM* m_vm { nullptr };
 };
+
+#if PLATFORM(COCOA)
+struct TagInfo {
+    TagInfo() { }
+    size_t dirty { 0 };
+    size_t reclaimable { 0 };
+};
+
+const char* displayNameForVMTag(unsigned);
+std::array<TagInfo, 256> pagesPerVMTag();
+void logFootprintComparison(const std::array<TagInfo, 256>&, const std::array<TagInfo, 256>&);
+#endif
 
 } // namespace WebCore
 
