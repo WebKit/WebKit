@@ -254,10 +254,12 @@ TEST(WTF_ParkingLot, UnparkOneFifty)
     repeatParkingTest(1, 1, 10000, 50, 50);
 }
 
+#if !PLATFORM(IOS)
 TEST(WTF_ParkingLot, UnparkOneFiftyThenFiftyAll)
 {
     repeatParkingTest(2, 1, 10000, 100, 50);
 }
+#endif
 
 TEST(WTF_ParkingLot, HundredUnparkAllOneFast)
 {
