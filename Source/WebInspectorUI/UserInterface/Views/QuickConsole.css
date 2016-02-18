@@ -72,7 +72,7 @@
 }
 
 .quick-console > .console-prompt > .CodeMirror {
-    margin: 4px 0 3px;
+    margin: 4px 0 1px;
 }
 
 .quick-console > .navigation-bar {
@@ -80,4 +80,8 @@
     border: none;
 
     height: 21px;
+}
+
+.quick-console .execution-context {
+    margin-top: -1px;
 }
