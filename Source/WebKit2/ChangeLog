@@ -1,3 +1,15 @@
+2016-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove two unused functions
+        https://bugs.webkit.org/show_bug.cgi?id=154397
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetPluginSiteDataManager): Deleted.
+        (WKContextGetResourceCacheManager): Deleted.
+        * UIProcess/API/C/WKContext.h:
+
 2016-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use G_TYPE_ERROR instead of G_TYPE_POINTER for GError parameters of signals
