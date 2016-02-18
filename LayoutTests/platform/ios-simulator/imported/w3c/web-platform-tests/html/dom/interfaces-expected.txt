@@ -4147,13 +4147,9 @@ PASS Location interface: window.location must have own property "pathname"
 PASS Location interface: window.location must have own property "search" 
 PASS Location interface: window.location must have own property "hash" 
 FAIL Location interface: window.location must have own property "assign" assert_equals: property should be writable if and only if not unforgeable expected false but got true
-FAIL Location interface: calling assign(USVString) on window.location with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS Location interface: calling assign(USVString) on window.location with too few arguments must throw TypeError 
 FAIL Location interface: window.location must have own property "replace" assert_equals: property should be writable if and only if not unforgeable expected false but got true
-FAIL Location interface: calling replace(USVString) on window.location with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+PASS Location interface: calling replace(USVString) on window.location with too few arguments must throw TypeError 
 FAIL Location interface: window.location must have own property "reload" assert_equals: property should be writable if and only if not unforgeable expected false but got true
 PASS Location interface: window.location must have own property "ancestorOrigins" 
 PASS PopStateEvent interface: existence and properties of interface object 
