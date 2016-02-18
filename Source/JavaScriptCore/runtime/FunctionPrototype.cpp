@@ -153,13 +153,18 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
     // If the [[Class]] internal property of Target is "Function", then ...
     // Else set the length own property of F to 0.
     unsigned length = 0;
-    if (targetObject->inherits(JSFunction::info())) {
-        ASSERT(target.get(exec, exec->propertyNames().length).isNumber());
+    if (targetObject->hasOwnProperty(exec, exec->propertyNames().length)) {
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
         // a. Let L be the length property of Target minus the length of A.
         // b. Set the length own property of F to either 0 or L, whichever is larger.
-        unsigned targetLength = (unsigned)target.get(exec, exec->propertyNames().length).asNumber();
-        if (targetLength > numBoundArgs)
-            length = targetLength - numBoundArgs;
+        JSValue lengthValue = target.get(exec, exec->propertyNames().length);
+        if (lengthValue.isNumber()) {
+            unsigned targetLength = (unsigned)lengthValue.asNumber();
+            if (targetLength > numBoundArgs)
+                length = targetLength - numBoundArgs;
+        }
     }
 
     JSString* name = target.get(exec, exec->propertyNames().name).toString(exec);

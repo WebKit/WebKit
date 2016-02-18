@@ -2655,34 +2655,38 @@ private:
     VM& m_vm;
 };
 
-bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
+
+// 9.1.6.3 of the spec
+// http://www.ecma-international.org/ecma-262/6.0/index.html#sec-validateandapplypropertydescriptor
+bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, PropertyName propertyName, bool isExtensible,
+    const PropertyDescriptor& descriptor, bool isCurrentDefined, const PropertyDescriptor& current, bool throwException)
 {
-    // Track on the globaldata that we're in define property.
-    // Currently DefineOwnProperty uses delete to remove properties when they are being replaced
-    // (particularly when changing attributes), however delete won't allow non-configurable (i.e.
-    // DontDelete) properties to be deleted. For now, we can use this flag to make this work.
-    DefineOwnPropertyScope scope(exec);
-    
     // If we have a new property we can just put it on normally
-    PropertyDescriptor current;
-    if (!getOwnPropertyDescriptor(exec, propertyName, current)) {
+    // Step 2.
+    if (!isCurrentDefined) {
         // unless extensions are prevented!
-        if (!isExtensible()) {
+        // Step 2.a
+        if (!isExtensible) {
             if (throwException)
                 exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible.")));
             return false;
         }
+        if (!object)
+            return true;
+        // Step 2.c/d
         PropertyDescriptor oldDescriptor;
         oldDescriptor.setValue(jsUndefined());
-        return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
+        // FIXME: spec says to always return true here.
+        return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
     }
-
+    // Step 3.
     if (descriptor.isEmpty())
         return true;
-
+    // Step 4.
     if (current.equalTo(exec, descriptor))
         return true;
 
+    // Step 5.
     // Filter out invalid changes
     if (!current.configurable()) {
         if (descriptor.configurable()) {
@@ -2696,16 +2700,18 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
             return false;
         }
     }
-
+    
+    // Step 6.
     // A generic descriptor is simply changing the attributes of an existing property
     if (descriptor.isGenericDescriptor()) {
-        if (!current.attributesEqual(descriptor)) {
-            methodTable(exec->vm())->deleteProperty(this, exec, propertyName);
-            return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
+        if (!current.attributesEqual(descriptor) && object) {
+            object->methodTable(exec->vm())->deleteProperty(object, exec, propertyName);
+            return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
         }
         return true;
     }
-
+    
+    // Step 7.
     // Changing between a normal property or an accessor property
     if (descriptor.isDataDescriptor() != current.isDataDescriptor()) {
         if (!current.configurable()) {
@@ -2713,10 +2719,15 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
                 exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
             return false;
         }
-        methodTable(exec->vm())->deleteProperty(this, exec, propertyName);
-        return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
+
+        if (!object)
+            return true;
+
+        object->methodTable(exec->vm())->deleteProperty(object, exec, propertyName);
+        return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
     }
 
+    // Step 8.
     // Changing the value and attributes of an existing property
     if (descriptor.isDataDescriptor()) {
         if (!current.configurable()) {
@@ -2735,10 +2746,13 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
         }
         if (current.attributesEqual(descriptor) && !descriptor.value())
             return true;
-        methodTable(exec->vm())->deleteProperty(this, exec, propertyName);
-        return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
+        if (!object)
+            return true;
+        object->methodTable(exec->vm())->deleteProperty(object, exec, propertyName);
+        return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
     }
 
+    // Step 9.
     // Changing the accessor functions of an existing accessor property
     ASSERT(descriptor.isAccessorDescriptor());
     if (!current.configurable()) {
@@ -2758,7 +2772,11 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
             return false;
         }
     }
-    JSValue accessor = getDirect(exec->vm(), propertyName);
+
+    // Step 10/11.
+    if (!object)
+        return true;
+    JSValue accessor = object->getDirect(exec->vm(), propertyName);
     if (!accessor)
         return false;
     GetterSetter* getterSetter;
@@ -2779,10 +2797,22 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     }
     if (current.attributesEqual(descriptor) && !getterSetterChanged)
         return true;
-    methodTable(exec->vm())->deleteProperty(this, exec, propertyName);
+    object->methodTable(exec->vm())->deleteProperty(object, exec, propertyName);
     unsigned attrs = descriptor.attributesOverridingCurrent(current);
-    putDirectAccessor(exec, propertyName, getterSetter, attrs | Accessor);
+    object->putDirectAccessor(exec, propertyName, getterSetter, attrs | Accessor);
     return true;
+}
+
+bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
+{
+    // Track on the globaldata that we're in define property.
+    // Currently DefineOwnProperty uses delete to remove properties when they are being replaced
+    // (particularly when changing attributes), however delete won't allow non-configurable (i.e.
+    // DontDelete) properties to be deleted. For now, we can use this flag to make this work.
+    DefineOwnPropertyScope scope(exec);
+    PropertyDescriptor current;
+    bool isCurrentDefined = getOwnPropertyDescriptor(exec, propertyName, current);
+    return validateAndApplyPropertyDescriptor(exec, this, propertyName, isExtensible(), descriptor, isCurrentDefined, current, throwException);
 }
 
 bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
@@ -2902,6 +2932,31 @@ void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Proper
             break;
         prototype = asObject(nextProto);
     }
+}
+
+// Implements GetMethod(O, P) in section 7.3.9 of the spec.
+// http://www.ecma-international.org/ecma-262/6.0/index.html#sec-getmethod
+JSValue JSObject::getMethod(ExecState* exec, CallData& callData, CallType& callType, const Identifier& ident, const String& errorMessage)
+{
+    JSValue method = get(exec, ident);
+    if (exec->hadException())
+        return jsUndefined();
+
+    if (method.isUndefined() || method.isNull())
+        return jsUndefined();
+
+    if (!method.isCell()) {
+        throwVMTypeError(exec, errorMessage);
+        return jsUndefined();
+    }
+
+    callType = method.asCell()->methodTable()->getCallData(method.asCell(), callData);
+    if (callType == CallTypeNone) {
+        throwVMTypeError(exec, errorMessage);
+        return jsUndefined();
+    }
+
+    return method;
 }
 
 } // namespace JSC

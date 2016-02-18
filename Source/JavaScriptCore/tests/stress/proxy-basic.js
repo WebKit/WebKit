@@ -63,9 +63,8 @@ assert(Proxy.prototype === undefined);
                 proxy["foo"];
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: 'get' property of Proxy's handler should be callable.");
         }
-        assert(threw);
+        assert(!threw);
     }
 }
 
@@ -82,7 +81,7 @@ assert(Proxy.prototype === undefined);
                 proxy["foo"];
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: 'get' property of Proxy's handler should be callable.");
+            assert(e.toString() === "TypeError: 'get' property of a Proxy's handler object should be callable.");
         }
         assert(threw);
     }
@@ -183,5 +182,30 @@ assert(Proxy.prototype === undefined);
     handler.get = undefined;
     for (let i = 0; i < 500; i++) {
         assert(proxy.x === 40);
+    }
+}
+
+{
+    let error = null;
+    let theTarget = new Proxy({}, {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            error = new Error("hello!")
+            throw error;
+        }
+    });
+
+    let handler = {
+        get: function(target, propName, proxyArg) {
+            return 30;
+        }
+    };
+
+    let proxy = new Proxy(theTarget, handler);
+    for (let i = 0; i < 500; i++) {
+        try {
+            proxy.x;
+        } catch(e) {
+            assert(e === error);
+        }
     }
 }

@@ -63,7 +63,8 @@ private:
     static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    bool getOwnPropertySlotCommon(ExecState*, PropertySlot&);
+    bool getOwnPropertySlotCommon(ExecState*, PropertyName, PropertySlot&);
+    bool performInternalMethodGetOwnProperty(ExecState*, PropertyName, PropertySlot&);
 
     WriteBarrier<JSObject> m_target;
     WriteBarrier<Unknown> m_handler;

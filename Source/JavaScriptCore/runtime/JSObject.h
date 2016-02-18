@@ -717,6 +717,8 @@ public:
         return &m_butterfly;
     }
 
+    JSValue getMethod(ExecState* exec, CallData& callData, CallType& callType, const Identifier& ident, const String& errorMessage);
+
     DECLARE_EXPORT_INFO;
 
 protected:
@@ -1470,6 +1472,9 @@ ALWAYS_INLINE Identifier makeIdentifier(VM&, const Identifier& name)
 {
     return name;
 }
+
+bool validateAndApplyPropertyDescriptor(ExecState*, JSObject*, PropertyName, bool isExtensible,
+    const PropertyDescriptor& descriptor, bool isCurrentDefined, const PropertyDescriptor& current, bool throwException);
 
 // Helper for defining native functions, if you're not using a static hash table.
 // Use this macro from within finishCreation() methods in prototypes. This assumes

@@ -1,3 +1,45 @@
+2016-02-18  Saam Barati  <sbarati@apple.com>
+
+        Implement Proxy.[[GetOwnProperty]]
+        https://bugs.webkit.org/show_bug.cgi?id=154314
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements Proxy.[[GetOwnProperty]].
+        It's a straight forward implementation as described
+        in section 9.5.5 of the specification:
+        http://www.ecma-international.org/ecma-262/6.0/index.html#sec-proxy-object-internal-methods-and-internal-slots-getownproperty-p
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+        * runtime/JSObject.cpp:
+        (JSC::validateAndApplyPropertyDescriptor):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        (JSC::JSObject::defineOwnProperty):
+        (JSC::JSObject::getGenericPropertyNames):
+        (JSC::JSObject::getMethod):
+        * runtime/JSObject.h:
+        (JSC::JSObject::butterflyAddress):
+        (JSC::makeIdentifier):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+        (JSC::ProxyObject::getOwnPropertySlot):
+        (JSC::ProxyObject::getOwnPropertySlotByIndex):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        * tests/es6.yaml:
+        * tests/stress/proxy-basic.js:
+        (let.handler.get null):
+        * tests/stress/proxy-get-own-property.js: Added.
+        (assert):
+        (throw.new.Error.let.handler.getOwnPropertyDescriptor):
+        (throw.new.Error):
+        (let.handler.getOwnPropertyDescriptor):
+        (i.catch):
+        (assert.let.handler.getOwnPropertyDescriptor):
+
 2016-02-18  Andreas Kling  <akling@apple.com>
 
         JSString resolution of substrings should use StringImpl sharing optimization.

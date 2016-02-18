@@ -1025,7 +1025,7 @@
 - path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_Object.assign.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_Object.prototype.hasOwnProperty.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_ownKeys_calls_SerializeJSONObject.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_ownKeys_calls_SetIntegrityLevel.js
