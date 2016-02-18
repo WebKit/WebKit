@@ -358,6 +358,8 @@ set(JavaScriptCore_SOURCES
     dfg/DFGThreadData.cpp
     dfg/DFGThunks.cpp
     dfg/DFGTierUpCheckInjectionPhase.cpp
+    dfg/DFGToFTLDeferredCompilationCallback.cpp
+    dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp
     dfg/DFGTransition.cpp
     dfg/DFGTypeCheckHoistingPhase.cpp
     dfg/DFGUnificationPhase.cpp
@@ -391,6 +393,41 @@ set(JavaScriptCore_SOURCES
     disassembler/udis86/udis86_syn-att.c
     disassembler/udis86/udis86_syn-intel.c
     disassembler/udis86/udis86_syn.c
+
+    ftl/FTLAbstractHeap.cpp
+    ftl/FTLAbstractHeapRepository.cpp
+    ftl/FTLAvailableRecovery.cpp
+    ftl/FTLCapabilities.cpp
+    ftl/FTLCommonValues.cpp
+    ftl/FTLCompile.cpp
+    ftl/FTLExceptionTarget.cpp
+    ftl/FTLExitArgument.cpp
+    ftl/FTLExitArgumentForOperand.cpp
+    ftl/FTLExitPropertyValue.cpp
+    ftl/FTLExitTimeObjectMaterialization.cpp
+    ftl/FTLExitValue.cpp
+    ftl/FTLFail.cpp
+    ftl/FTLForOSREntryJITCode.cpp
+    ftl/FTLJITCode.cpp
+    ftl/FTLJITFinalizer.cpp
+    ftl/FTLLazySlowPath.cpp
+    ftl/FTLLink.cpp
+    ftl/FTLLocation.cpp
+    ftl/FTLLowerDFGToLLVM.cpp
+    ftl/FTLOSREntry.cpp
+    ftl/FTLOSRExit.cpp
+    ftl/FTLOSRExitCompiler.cpp
+    ftl/FTLOSRExitHandle.cpp
+    ftl/FTLOperations.cpp
+    ftl/FTLOutput.cpp
+    ftl/FTLPatchpointExceptionHandle.cpp
+    ftl/FTLRecoveryOpcode.cpp
+    ftl/FTLSaveRestore.cpp
+    ftl/FTLSlowPathCall.cpp
+    ftl/FTLSlowPathCallKey.cpp
+    ftl/FTLState.cpp
+    ftl/FTLThunks.cpp
+    ftl/FTLValueRange.cpp
 
     heap/CodeBlockSet.cpp
     heap/ConservativeRoots.cpp
@@ -523,6 +560,14 @@ set(JavaScriptCore_SOURCES
     jit/TempRegisterSet.cpp
     jit/ThunkGenerators.cpp
 
+    llint/LLIntCLoop.cpp
+    llint/LLIntData.cpp
+    llint/LLIntEntrypoint.cpp
+    llint/LLIntExceptions.cpp
+    llint/LLIntSlowPaths.cpp
+    llint/LLIntThunks.cpp
+    llint/LowLevelInterpreter.cpp
+
     parser/Lexer.cpp
     parser/ModuleAnalyzer.cpp
     parser/Nodes.cpp
@@ -552,26 +597,6 @@ set(JavaScriptCore_SOURCES
     profiler/ProfilerOriginStack.cpp
     profiler/ProfilerProfiledBytecodes.cpp
 
-    tools/CodeProfile.cpp
-    tools/CodeProfiling.cpp
-    tools/FunctionOverrides.cpp
-    tools/JSDollarVM.cpp
-    tools/JSDollarVMPrototype.cpp
-
-    wasm/JSWASMModule.cpp
-    wasm/WASMFunctionParser.cpp
-    wasm/WASMModuleParser.cpp
-    wasm/WASMReader.cpp
-
-    yarr/RegularExpression.cpp
-    yarr/YarrCanonicalizeUCS2.cpp
-    yarr/YarrInterpreter.cpp
-    yarr/YarrJIT.cpp
-    yarr/YarrPattern.cpp
-    yarr/YarrSyntaxChecker.cpp
-)
-
-set(JavaScriptCore_RUNTIME_SOURCES
     runtime/ArgList.cpp
     runtime/ArrayBuffer.cpp
     runtime/ArrayBufferNeuteringWatchpoint.cpp
@@ -789,10 +814,24 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/WeakMapPrototype.cpp
     runtime/WeakSetConstructor.cpp
     runtime/WeakSetPrototype.cpp
-)
 
-list(APPEND JavaScriptCore_SOURCES
-    ${JavaScriptCore_RUNTIME_SOURCES}
+    tools/CodeProfile.cpp
+    tools/CodeProfiling.cpp
+    tools/FunctionOverrides.cpp
+    tools/JSDollarVM.cpp
+    tools/JSDollarVMPrototype.cpp
+
+    wasm/JSWASMModule.cpp
+    wasm/WASMFunctionParser.cpp
+    wasm/WASMModuleParser.cpp
+    wasm/WASMReader.cpp
+
+    yarr/RegularExpression.cpp
+    yarr/YarrCanonicalizeUCS2.cpp
+    yarr/YarrInterpreter.cpp
+    yarr/YarrJIT.cpp
+    yarr/YarrPattern.cpp
+    yarr/YarrSyntaxChecker.cpp
 )
 
 set(JavaScriptCore_OBJECT_LUT_SOURCES
@@ -979,58 +1018,6 @@ if (MSVC)
 else ()
     list(APPEND JavaScriptCore_HEADERS
         ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntAssembly.h
-    )
-endif ()
-
-list(APPEND JavaScriptCore_SOURCES
-    llint/LLIntCLoop.cpp
-    llint/LLIntData.cpp
-    llint/LLIntEntrypoint.cpp
-    llint/LLIntExceptions.cpp
-    llint/LLIntSlowPaths.cpp
-    llint/LLIntThunks.cpp
-    llint/LowLevelInterpreter.cpp
-)
-
-if (ENABLE_FTL_JIT)
-    list(APPEND JavaScriptCore_SOURCES
-        dfg/DFGToFTLDeferredCompilationCallback.cpp
-        dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp
-
-        ftl/FTLAbstractHeap.cpp
-        ftl/FTLAbstractHeapRepository.cpp
-        ftl/FTLAvailableRecovery.cpp
-        ftl/FTLCapabilities.cpp
-        ftl/FTLCommonValues.cpp
-        ftl/FTLCompile.cpp
-        ftl/FTLExceptionTarget.cpp
-        ftl/FTLExitArgument.cpp
-        ftl/FTLExitArgumentForOperand.cpp
-        ftl/FTLExitPropertyValue.cpp
-        ftl/FTLExitTimeObjectMaterialization.cpp
-        ftl/FTLExitValue.cpp
-        ftl/FTLFail.cpp
-        ftl/FTLForOSREntryJITCode.cpp
-        ftl/FTLJITCode.cpp
-        ftl/FTLJITFinalizer.cpp
-        ftl/FTLLazySlowPath.cpp
-        ftl/FTLLink.cpp
-        ftl/FTLLocation.cpp
-        ftl/FTLLowerDFGToLLVM.cpp
-        ftl/FTLOSREntry.cpp
-        ftl/FTLOSRExit.cpp
-        ftl/FTLOSRExitCompiler.cpp
-        ftl/FTLOSRExitHandle.cpp
-        ftl/FTLOperations.cpp
-        ftl/FTLOutput.cpp
-        ftl/FTLPatchpointExceptionHandle.cpp
-        ftl/FTLRecoveryOpcode.cpp
-        ftl/FTLSaveRestore.cpp
-        ftl/FTLSlowPathCall.cpp
-        ftl/FTLSlowPathCallKey.cpp
-        ftl/FTLState.cpp
-        ftl/FTLThunks.cpp
-        ftl/FTLValueRange.cpp
     )
 endif ()
 
