@@ -1,3 +1,16 @@
+2016-02-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix pessimizing-move warnings
+        https://bugs.webkit.org/show_bug.cgi?id=154395
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/efl/CairoUtilitiesEfl.cpp:
+        (WebCore::evasObjectFromCairoImageSurface):
+        * platform/graphics/surfaces/GLTransportSurface.cpp:
+        (WebCore::GLTransportSurface::createTransportSurface):
+        (WebCore::GLTransportSurfaceClient::createTransportSurfaceClient):
+
 2016-02-19  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] clean-up various leaks
