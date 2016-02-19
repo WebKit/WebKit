@@ -193,7 +193,7 @@ static void webkit_web_audio_src_init(WebKitWebAudioSrc* src)
     priv->bus = 0;
 
     g_rec_mutex_init(&priv->mutex);
-    priv->task = gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcLoop), src, 0);
+    priv->task = adoptGRef(gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcLoop), src, 0));
 
     gst_task_set_lock(priv->task.get(), &priv->mutex);
 }

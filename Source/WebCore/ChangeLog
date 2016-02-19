@@ -1,3 +1,18 @@
+2016-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] clean-up various leaks
+        https://bugs.webkit.org/show_bug.cgi?id=154285
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webkit_web_audio_src_init): Take full ownership of the GstTask.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef): Null pointer support in ASSERTs.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::initializeGStreamerAndRegisterWebKitElements): Take full ownership of the GstElementFactory pointers.
+        (WebCore::MediaPlayerPrivateGStreamer::isAvailable): Ditto.
+
 2016-02-18  Andy Estes  <aestes@apple.com>
 
         Revert to dispatching the popstate event synchronously
