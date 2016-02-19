@@ -1,3 +1,26 @@
+2016-02-19  Zalan Bujtas  <zalan@apple.com>
+
+        Blocked plug-in placeholder is sometimes not shown.
+        https://bugs.webkit.org/show_bug.cgi?id=154434
+        <rdar://problem/22584973>
+
+        Reviewed by Brent Fulgham.
+
+        m_isUnavailablePluginIndicatorHidden was set to false incorrectly as initial value.
+        It prevented RenderEmbeddedObject from issuing repaint when the plugin indicator
+        was set to visible (m_isUnavailablePluginIndicatorHidden <- false) the first time.
+        (The reason why the indicator showed up most of the time was because some renderer
+        triggered repaint on the view.)
+
+        Unable to test.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden):
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject): Deleted.
+        (WebCore::RenderEmbeddedObject::setUnavailablePluginIndicatorIsPressed): Deleted.
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObject::showsUnavailablePluginIndicator):
+
 2016-02-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix pessimizing-move warnings

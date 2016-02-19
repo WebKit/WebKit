@@ -99,7 +99,6 @@ static const Color& unavailablePluginBorderColor()
 RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, Ref<RenderStyle>&& style)
     : RenderWidget(element, WTFMove(style))
     , m_isPluginUnavailable(false)
-    , m_isUnavailablePluginIndicatorHidden(false)
     , m_unavailablePluginIndicatorIsPressed(false)
     , m_mouseDownWasInUnavailablePluginIndicator(false)
 {
@@ -192,7 +191,6 @@ void RenderEmbeddedObject::setUnavailablePluginIndicatorIsPressed(bool pressed)
 {
     if (m_unavailablePluginIndicatorIsPressed == pressed)
         return;
-
     m_unavailablePluginIndicatorIsPressed = pressed;
     repaint();
 }
@@ -342,10 +340,10 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
 
 void RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden(bool hidden)
 {
-    if (m_isUnavailablePluginIndicatorHidden == hidden)
+    auto newState = hidden ? UnavailablePluginIndicatorState::Hidden : UnavailablePluginIndicatorState::Visible;
+    if (m_isUnavailablePluginIndicatorState == newState)
         return;
-
-    m_isUnavailablePluginIndicatorHidden = hidden;
+    m_isUnavailablePluginIndicatorState = newState;
     repaint();
 }
 
