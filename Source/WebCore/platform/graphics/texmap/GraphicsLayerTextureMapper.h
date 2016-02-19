@@ -86,7 +86,7 @@ public:
     virtual void flushCompositingState(const FloatRect&, bool) override;
     virtual void flushCompositingStateForThisLayerOnly(bool) override;
 
-    void updateBackingStoreIncludingSubLayers();
+    void updateBackingStoreIncludingSubLayers(const FloatRect&);
 
     TextureMapperLayer& layer() { return m_layer; }
 
@@ -102,6 +102,7 @@ public:
     void setRepaintCount(int);
 
     void setAnimations(const TextureMapperAnimations&);
+    void setAsNonCompositingLayer() { m_isNonCompositingLayer = true; }
 
 private:
     // GraphicsLayer
@@ -113,9 +114,14 @@ private:
 
     void commitLayerChanges();
     void updateDebugBorderAndRepaintCount();
-    void updateBackingStoreIfNeeded();
+    void updateBackingStoreIfNeeded(const FloatRect&);
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
+
+    bool selfOrAncestorHasActiveTransformAnimation() const;
+    void computeTransformedVisibleRect();
+    void markVisibleRectAsDirty();
+    FloatRect transformedVisibleRect(const FloatRect&);
 
     // This set of flags help us defer which properties of the layer have been
     // modified by the compositor, so we can know what to look for in the next flush.
@@ -182,6 +188,11 @@ private:
 
     IntSize m_committedScrollOffset;
     bool m_isScrollable;
+
+    bool m_isNonCompositingLayer;
+    bool m_isVisibleRectDirty;
+    GraphicsLayerTransform m_layerTransform;
+    TransformationMatrix m_cachedInverseTransform;
 };
 
 } // namespace WebCore

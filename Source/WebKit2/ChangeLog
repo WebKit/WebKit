@@ -1,3 +1,17 @@
+2016-02-18  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Limit the number of tiles according to the visible area
+        https://bugs.webkit.org/show_bug.cgi?id=126122
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize): Because we creates
+        nonCompositingLayer with a size of current view, we should not apply
+        the currently visible rect when creating / deleting tiles.
+        (WebKit::LayerTreeHostGtk::flushPendingLayerChanges): Passes the current
+        visible rect to the GraphicsLayers.
+
 2016-02-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix IDBGetResult encoder/decoder.

@@ -1,3 +1,41 @@
+2016-02-18  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Limit the number of tiles according to the visible area
+        https://bugs.webkit.org/show_bug.cgi?id=126122
+
+        Reviewed by Carlos Garcia Campos.
+
+        TextureMapperTiledBackingStore creates tiles for whole layer bounds, which
+        means it creates the huge amount of textures if there is an excessively big
+        layer.  Not only it wastes the memory and the CPU time, it even can crash GPU
+        drivers.
+
+        This patch modifies TextureMapperTiledBackingStore to take into account the
+        visible area with a coverage multiplier when creating tiles.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        Set a flag to recalculate the visible area of the layer when there are
+        geometric changes.
+        (WebCore::GraphicsLayerTextureMapper::setContentsToImage):
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly):
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers):
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStoreIfNeeded):
+        (WebCore::GraphicsLayerTextureMapper::markVisibleRectAsDirty):
+        (WebCore::GraphicsLayerTextureMapper::selfOrAncestorHasActiveTransformAnimation):
+        (WebCore::GraphicsLayerTextureMapper::computeTransformedVisibleRect):
+        Compute the inverse transform matrix to map a global visible are to
+        the local visible area.
+        (WebCore::clampToContentsRectIfRectIsInfinite):
+        (WebCore::GraphicsLayerTextureMapper::transformedVisibleRect):
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        (WebCore::TextureMapperTiledBackingStore::paintToTextureMapper):
+        In HiDPI, the directly composited image is uploaded to the unscaled
+        texture to reduce memory usages. So we should apply device scale
+        factor to render it correctly.
+        (WebCore::TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded):
+        Create tiles which covered by visible rect with a coverage multiplier.
+
 2016-02-18  Brent Fulgham  <bfulgham@apple.com>
 
         Extend HashCountedSet with a method to efficiently set the count of an entry
