@@ -106,6 +106,8 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
 
     _swatchElementClicked(event)
     {
+        this.dispatchEventToListeners(WebInspector.InlineSwatch.Event.BeforeClicked);
+
         if (this._type === WebInspector.InlineSwatch.Type.Color && event.shiftKey && this._value) {
             let nextFormat = this._value.nextFormat();
             console.assert(nextFormat);
@@ -264,5 +266,6 @@ WebInspector.InlineSwatch.Type = {
 };
 
 WebInspector.InlineSwatch.Event = {
+    BeforeClicked: "inline-swatch-before-clicked",
     ValueChanged: "inline-swatch-value-changed"
 };

@@ -324,6 +324,12 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             this._delegate.cssStyleDeclarationSectionEditorFocused(this);
     }
 
+    cssStyleDeclarationTextEditorBlurActiveEditor()
+    {
+        if (typeof this._delegate.cssStyleDeclarationSectionBlurActiveEditor === "function")
+            this._delegate.cssStyleDeclarationSectionBlurActiveEditor(this);
+    }
+
     cssStyleDeclarationTextEditorSwitchRule(reverse)
     {
         if (!this._delegate)

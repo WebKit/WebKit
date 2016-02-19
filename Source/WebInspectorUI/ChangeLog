@@ -1,3 +1,37 @@
+2016-02-18  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Styles Sidebar focus jumps when trying to edit a color
+        https://bugs.webkit.org/show_bug.cgi?id=154404
+        <rdar://problem/24725744>
+
+        Reviewed by Timothy Hatcher.
+
+        Clicking an inline swatch in the CSS Rules sidebar causes any focused
+        editor, if any, to become blurred and therefore fire its handler function.
+        This causes an issue because when a CodeMirror instance in the styles
+        sidebar becomes blurred, it is possible for the entire Rules sidebar to
+        refresh and recreate all of the sections (r187714), meaning that it will
+        reselect whatever editor was previously selected before the refresh,
+        causing the swatch popup to be blurred and therefore dismiss.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.cssStyleDeclarationTextEditorBlurActiveEditor):
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createInlineSwatches.createSwatch):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._inlineSwatchBeforeClicked):
+        Add listener for new event and call to delegate function for handling it.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch.prototype._swatchElementClicked):
+        Now fires an event before the clicked logic happens, but still after the
+        click event is fired on the element.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionBlurActiveEditor):
+        Clears the previously focused editor so when a reset happens no editor
+        is refocused.
+
 2016-02-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Native Parameter Lists to Console prototype functions

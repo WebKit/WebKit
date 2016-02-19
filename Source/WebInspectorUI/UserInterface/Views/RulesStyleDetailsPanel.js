@@ -320,6 +320,11 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         this._previousFocusedSection = focusedSection;
     }
 
+    cssStyleDeclarationSectionBlurActiveEditor()
+    {
+        this._previousFocusedSection = null;
+    }
+
     cssStyleDeclarationSectionEditorNextRule(currentSection)
     {
         currentSection.clearSelection();

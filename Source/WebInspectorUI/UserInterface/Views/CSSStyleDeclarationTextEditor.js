@@ -871,6 +871,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     {
         function createSwatch(swatch, marker, valueObject, valueString)
         {
+            swatch.addEventListener(WebInspector.InlineSwatch.Event.BeforeClicked, this._inlineSwatchBeforeClicked, this);
             swatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._inlineSwatchValueChanged, this);
 
             let codeMirrorTextMarker = marker.codeMirrorTextMarker;
@@ -1300,6 +1301,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         }
 
         this._codeMirror.operation(update.bind(this));
+    }
+
+    _inlineSwatchBeforeClicked(event)
+    {
+        if (this._delegate && typeof this._delegate.cssStyleDeclarationTextEditorBlurActiveEditor === "function")
+            this._delegate.cssStyleDeclarationTextEditorBlurActiveEditor();
     }
 
     _inlineSwatchValueChanged(event)
