@@ -754,9 +754,8 @@ void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromIt
 
         HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
         ASSERT(fromChildItem);
-        Frame* childFrame = m_frame.tree().child(childFrameName);
-        ASSERT(childFrame);
-        childFrame->loader().history().recursiveGoToItem(const_cast<HistoryItem&>(childItem.get()), fromChildItem, type);
+        if (Frame* childFrame = m_frame.tree().child(childFrameName))
+            childFrame->loader().history().recursiveGoToItem(const_cast<HistoryItem&>(childItem.get()), fromChildItem, type);
     }
 }
 
