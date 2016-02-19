@@ -1,5 +1,21 @@
 2016-02-18  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Fix IDBGetResult encoder/decoder.
+        https://bugs.webkit.org/show_bug.cgi?id=154421
+
+        Reviewed by Alex Christensen.
+
+        No new tests, as Modern IDB is still disabled for WK2.
+        
+        But if you manually enable it, "Basic IndexedDB Seems To Work"
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IDBGetResult>::encode): Deleted.
+        (IPC::ArgumentCoder<IDBGetResult>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
+2016-02-18  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Implement server->client operations in WK2.
         https://bugs.webkit.org/show_bug.cgi?id=154411
 

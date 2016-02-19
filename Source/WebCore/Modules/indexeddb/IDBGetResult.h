@@ -93,6 +93,9 @@ public:
     const IDBKeyPath& keyPath() const { return m_keyPath; }
     bool isDefined() const { return m_isDefined; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, IDBGetResult&);
+
     // FIXME: When removing LegacyIDB, remove these setters.
     // https://bugs.webkit.org/show_bug.cgi?id=150854
 
@@ -110,6 +113,45 @@ private:
     IDBKeyPath m_keyPath;
     bool m_isDefined { true };
 };
+
+template<class Encoder>
+void IDBGetResult::encode(Encoder& encoder) const
+{
+    encoder << m_keyData << m_primaryKeyData << m_keyPath << m_isDefined;
+
+    encoder << !!m_valueBuffer.data();
+    if (m_valueBuffer.data())
+        encoder << *m_valueBuffer.data();
+}
+
+template<class Decoder>
+bool IDBGetResult::decode(Decoder& decoder, IDBGetResult& result)
+{
+    if (!decoder.decode(result.m_keyData))
+        return false;
+
+    if (!decoder.decode(result.m_primaryKeyData))
+        return false;
+
+    if (!decoder.decode(result.m_keyPath))
+        return false;
+
+    if (!decoder.decode(result.m_isDefined))
+        return false;
+
+    bool hasObject;
+    if (!decoder.decode(hasObject))
+        return false;
+
+    if (hasObject) {
+        Vector<uint8_t> value;
+        if (!decoder.decode(value))
+            return false;
+        result.m_valueBuffer = ThreadSafeDataBuffer::adoptVector(value);
+    }
+
+    return true;
+}
 
 } // namespace WebCore
 

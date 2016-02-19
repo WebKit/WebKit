@@ -47,7 +47,6 @@ class FloatRoundedRect;
 class FloatSize;
 class FixedPositionViewportConstraints;
 class HTTPHeaderMap;
-class IDBGetResult;
 class IntPoint;
 class IntRect;
 class IntSize;
@@ -402,13 +401,6 @@ template<> struct ArgumentCoder<WebCore::FilterOperation> {
 };
 bool decodeFilterOperation(ArgumentDecoder&, RefPtr<WebCore::FilterOperation>&);
 #endif
-
-#if ENABLE(INDEXED_DATABASE)
-template<> struct ArgumentCoder<WebCore::IDBGetResult> {
-    static void encode(ArgumentEncoder&, const WebCore::IDBGetResult&);
-    static bool decode(ArgumentDecoder&, WebCore::IDBGetResult&);
-};
-#endif // ENABLE(INDEXED_DATABASE)
 
 template<> struct ArgumentCoder<WebCore::SessionID> {
     static void encode(ArgumentEncoder&, const WebCore::SessionID&);

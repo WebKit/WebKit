@@ -1823,54 +1823,6 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
 }
 #endif // !USE(COORDINATED_GRAPHICS)
 
-#if ENABLE(INDEXED_DATABASE)
-
-void ArgumentCoder<IDBGetResult>::encode(ArgumentEncoder& encoder, const IDBGetResult& result)
-{
-    bool nullData = !result.valueBuffer().data();
-    encoder << nullData;
-
-    if (!nullData)
-        encoder << DataReference(result.valueBuffer().data()->data(), result.valueBuffer().data()->size());
-
-    encoder << result.keyData() << result.keyPath();
-}
-
-bool ArgumentCoder<IDBGetResult>::decode(ArgumentDecoder& decoder, IDBGetResult& result)
-{
-    bool nullData;
-    if (!decoder.decode(nullData))
-        return false;
-
-    if (nullData)
-        result.setValueBuffer({ });
-    else {
-        DataReference data;
-        if (!decoder.decode(data))
-            return false;
-
-        Vector<uint8_t> vector(data.size());
-        memcpy(vector.data(), data.data(), data.size());
-        result.setValueBuffer(ThreadSafeDataBuffer::adoptVector(vector));
-    }
-
-    IDBKeyData keyData;
-    if (!decoder.decode(keyData))
-        return false;
-
-    result.setKeyData(keyData);
-
-    IDBKeyPath keyPath;
-    if (!decoder.decode(keyPath))
-        return false;
-
-    result.setKeyPath(keyPath);
-
-    return true;
-}
-
-#endif // ENABLE(INDEXED_DATABASE)
-
 void ArgumentCoder<SessionID>::encode(ArgumentEncoder& encoder, const SessionID& sessionID)
 {
     encoder << sessionID.sessionID();
