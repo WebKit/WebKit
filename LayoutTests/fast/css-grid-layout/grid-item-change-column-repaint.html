@@ -9,6 +9,7 @@ function repaintTest()
 }
 window.addEventListener("load", runRepaintTest, false);
 </script>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 body {
@@ -16,7 +17,6 @@ body {
 }
 
 .grid {
-    width: -webkit-min-content;
     -webkit-grid-template-rows: 50px;
     -webkit-grid-template-columns: minmax(100px, 180px) 100px minmax(50px, 100px);
 }
@@ -27,7 +27,7 @@ body {
 <body>
 <div>This test checks that changing the grid-column on a grid item properly repaint. The final grid item should be 50px * 50px. There should be no trace of the grid item at the old position.</div>
 <div class="constrainedContainer">
-    <div class="grid">
+    <div class="grid fit-content">
         <div class="sizedToGridArea"></div>
     </div>
 </div>

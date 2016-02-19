@@ -2,6 +2,7 @@
 <html>
 <head>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <script src="../../resources/check-layout.js"></script>
 <style>
 body {
@@ -38,41 +39,10 @@ body {
     -webkit-grid-auto-rows: minmax(40px, auto);
 }
 
-.spaceBetween {
-    justify-content: space-between;
-    align-content: space-between;
-}
-
-.spaceAround {
-    justify-content: space-around;
-    align-content: space-around;
-}
-
-.spaceEvenly {
-    justify-content: space-evenly;
-    align-content: space-evenly;
-}
-
-.stretch {
-    justify-content: stretch;
-    align-content: stretch;
-}
 
 .cell {
     width: 20px;
     height: 40px;
-}
-.justifyCenter {
-    justify-self: center;
-}
-.alignCenter {
-    align-self: center;
-}
-.justifyEnd {
-    justify-self: end;
-}
-.alignEnd {
-    align-self: end;
 }
 </style>
 </head>
@@ -82,9 +52,9 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-between' | self-alignment: center</p>
-    <div class="grid spaceBetween" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyCenter" data-offset-x="70" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignCenter" data-offset-x="280" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceBetween" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfCenter" data-offset-x="70" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfCenter" data-offset-x="280" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -92,9 +62,9 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-between' | self-alignment: end</p>
-    <div class="grid spaceBetween" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyEnd" data-offset-x="140" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignEnd" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceBetween" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfEnd" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -102,9 +72,9 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-around' | self-alignment: center</p>
-    <div class="grid spaceAround" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyCenter" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignCenter" data-offset-x="240" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceAround" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfCenter" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfCenter" data-offset-x="240" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="40" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -112,9 +82,9 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-around' | self-alignment: end</p>
-    <div class="grid spaceAround" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyEnd" data-offset-x="140" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignEnd" data-offset-x="240" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceAround" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfEnd" data-offset-x="240" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="40" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -122,9 +92,9 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-evenly' | self-alignment: center</p>
-    <div class="grid spaceEvenly" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyCenter" data-offset-x="100" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignCenter" data-offset-x="220" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceEvenly" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfCenter" data-offset-x="100" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfCenter" data-offset-x="220" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="60" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -132,9 +102,9 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-evenly' | self-alignment: end</p>
-    <div class="grid spaceEvenly" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyEnd" data-offset-x="140" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignEnd" data-offset-x="220" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceEvenly" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfEnd" data-offset-x="220" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="60" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -142,9 +112,9 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'stretch' | self-alignment: center</p>
-    <div class="grid stretchedGrid stretch" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyCenter alignCenter" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell justifyCenter alignCenter" data-offset-x="240" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid stretchedGrid contentStretch" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfCenter alignSelfCenter" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell justifySelfCenter alignSelfCenter" data-offset-x="240" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="0" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
         <div class="d" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
     </div>
@@ -152,9 +122,9 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'stretch' | self-alignment: end</p>
-    <div class="grid stretchedGrid stretch" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyEnd alignEnd" data-offset-x="180" data-offset-y="60" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell justifyEnd alignEnd" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid stretchedGrid contentStretch" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfEnd alignSelfEnd" data-offset-x="180" data-offset-y="60" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell justifySelfEnd alignSelfEnd" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="0" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
         <div class="d" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
     </div>
@@ -163,9 +133,9 @@ body {
 <!-- RTL direction. -->
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-between' | self-alignment: center</p>
-    <div class="grid spaceBetween directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyCenter" data-offset-x="210" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignCenter" data-offset-x="0" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceBetween directionRTL" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfCenter" data-offset-x="210" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfCenter" data-offset-x="0" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -173,9 +143,9 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-between' | self-alignment: end</p>
-    <div class="grid spaceBetween directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyEnd" data-offset-x="140" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignEnd" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceBetween directionRTL" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfEnd" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -183,9 +153,9 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-around' | self-alignment: center</p>
-    <div class="grid spaceAround directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyCenter" data-offset-x="190" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignCenter" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceAround directionRTL" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfCenter" data-offset-x="190" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfCenter" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="240" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -193,9 +163,9 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-around' | self-alignment: end</p>
-    <div class="grid spaceAround directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyEnd" data-offset-x="140" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignEnd" data-offset-x="40" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceAround directionRTL" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfEnd" data-offset-x="40" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="240" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -203,9 +173,9 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-evenly' | self-alignment: center</p>
-    <div class="grid spaceEvenly directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyCenter" data-offset-x="180" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignCenter" data-offset-x="60" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceEvenly directionRTL" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfCenter" data-offset-x="180" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfCenter" data-offset-x="60" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="220" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -213,9 +183,9 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-evenly' | self-alignment: end</p>
-    <div class="grid spaceEvenly directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyEnd" data-offset-x="140" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignEnd" data-offset-x="60" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid contentSpaceEvenly directionRTL" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell alignSelfEnd" data-offset-x="60" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="220" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
         <div class="d" data-offset-x="140" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
     </div>
@@ -223,9 +193,9 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'stretch' | self-alignment: center</p>
-    <div class="grid stretchedGrid stretch directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyCenter alignCenter" data-offset-x="190" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell justifyCenter alignCenter" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid stretchedGrid contentStretch directionRTL" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfCenter alignSelfCenter" data-offset-x="190" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell justifySelfCenter alignSelfCenter" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="200" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
         <div class="d" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
     </div>
@@ -233,9 +203,9 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'stretch' | self-alignment: end</p>
-    <div class="grid stretchedGrid stretch directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifyEnd alignEnd" data-offset-x="100" data-offset-y="60" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell justifyEnd alignEnd" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
+    <div class="grid stretchedGrid contentStretch directionRTL" data-expected-width="300" data-expected-height="200">
+        <div class="a cell justifySelfEnd alignSelfEnd" data-offset-x="100" data-offset-y="60" data-expected-width="20" data-expected-height="40"></div>
+        <div class="b cell justifySelfEnd alignSelfEnd" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="c" data-offset-x="200" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
         <div class="d" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
     </div>

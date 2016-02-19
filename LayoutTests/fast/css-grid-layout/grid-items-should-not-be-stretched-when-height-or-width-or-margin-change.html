@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
 <script src="../../resources/check-layout.js"></script>
 <style>
 .grid {
-    width: -webkit-fit-content;
     position: relative;
 }
 .content {
@@ -15,19 +15,19 @@
 #fromMarginAuto { margin: auto; }
 </style>
 <p>The grids below had initially 'stretched' items, but we have changed 'height', 'width' and 'margin' to values which don't allow stretch. This test verifies that the layout algorithm properly detects such changes and clear the override height and width accordingly.</p>
-<div class="grid" style="-webkit-grid-template: 200px 200px / 200px 200px;">
+<div class="grid fit-content" style="-webkit-grid-template: 200px 200px / 200px 200px;">
     <div id="toFixedHeight" class="firstRowFirstColumn" data-expected-width="200" data-expected-height="100"></div>
     <div class="firstRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
     <div class="secondRowFirstColumn" data-expected-width="200" data-expected-height="200"></div>
     <div id="fromFixedHeight" class="secondRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
 </div>
-<div class="grid" style="-webkit-grid-template: 200px 200px / 200px 200px;">
+<div class="grid fit-content" style="-webkit-grid-template: 200px 200px / 200px 200px;">
     <div id="toFixedWidth" class="firstRowFirstColumn" data-expected-width="150" data-expected-height="200"></div>
     <div class="firstRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
     <div class="secondRowFirstColumn" data-expected-width="200" data-expected-height="200"></div>
     <div id="fromFixedWidth" class="secondRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
 </div>
-<div class="grid" style="-webkit-grid-template: 200px 200px / 200px 200px;">
+<div class="grid fit-content" style="-webkit-grid-template: 200px 200px / 200px 200px;">
     <div id="toMarginAuto" class="firstRowFirstColumn" data-expected-width="150" data-expected-height="100">
         <div style="width: 150px; height: 100px"></div>
     </div>
@@ -37,19 +37,19 @@
         <div style="width: 150px; height: 100px"></div>
     </div>
 </div>
-<div class="grid">
+<div class="grid fit-content">
     <div id="contentSized-toFixedHeight" class="firstRowFirstColumn" data-expected-width="200" data-expected-height="100"></div>
     <div class="firstRowSecondColumn" data-expected-width="200" data-expected-height="200"><div class="content"></div></div>
     <div class="secondRowFirstColumn" data-expected-width="200" data-expected-height="200"><div class="content"></div></div>
     <div id="contentSized-fromFixedHeight" class="secondRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
 </div>
-<div class="grid">
+<div class="grid fit-content">
     <div id="contentSized-toFixedWidth" class="firstRowFirstColumn" data-expected-width="150" data-expected-height="200"></div>
     <div class="firstRowSecondColumn" data-expected-width="200" data-expected-height="200"><div class="content"></div></div>
     <div class="secondRowFirstColumn" data-expected-width="200" data-expected-height="200"><div class="content"></div></div>
     <div id="contentSized-fromFixedWidth" class="secondRowSecondColumn" data-expected-width="200" data-expected-height="200"></div>
 </div>
-<div class="grid">
+<div class="grid fit-content">
     <div id="contentSized-toMarginAuto" class="firstRowFirstColumn" data-expected-width="150" data-expected-height="100">
         <div style="width: 150px; height: 100px"></div>
     </div>

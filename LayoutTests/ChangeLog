@@ -1,3 +1,122 @@
+2016-02-19  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout Refactoring some layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=154291
+
+        Refactored several tests so they use the shared sizing keywords
+        instead of specific CSS rules.
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/css-grid-layout/calc-resolution-grid-item.html:
+        * fast/css-grid-layout/flex-and-intrinsic-sizes-expected.txt:
+        * fast/css-grid-layout/flex-and-intrinsic-sizes.html:
+        * fast/css-grid-layout/grid-align-justify-margin-border-padding-vertical-lr.html:
+        * fast/css-grid-layout/grid-align-justify-margin-border-padding-vertical-rl.html:
+        * fast/css-grid-layout/grid-align-justify-margin-border-padding.html:
+        * fast/css-grid-layout/grid-align-justify-overflow.html:
+        * fast/css-grid-layout/grid-align-justify-stretch.html:
+        * fast/css-grid-layout/grid-align.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-container-margin-border-padding-scrollbar.html:
+        * fast/css-grid-layout/grid-content-alignment-and-self-alignment.html:
+        * fast/css-grid-layout/grid-content-alignment-overflow.html:
+        * fast/css-grid-layout/grid-content-alignment-with-span-vertical-lr.html:
+        * fast/css-grid-layout/grid-content-alignment-with-span-vertical-rl.html:
+        * fast/css-grid-layout/grid-content-alignment-with-span.html:
+        * fast/css-grid-layout/grid-element-change-columns-repaint.html:
+        * fast/css-grid-layout/grid-element-change-rows-repaint.html:
+        * fast/css-grid-layout/grid-element-repeat-get-set.html:
+        * fast/css-grid-layout/grid-gutters-and-alignment.html:
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-lr.html:
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-rl.html:
+        * fast/css-grid-layout/grid-item-auto-margins-alignment.html:
+        * fast/css-grid-layout/grid-item-auto-margins-and-stretch.html:
+        * fast/css-grid-layout/grid-item-auto-sized-align-justify-margin-border-padding.html:
+        * fast/css-grid-layout/grid-item-change-column-repaint.html:
+        * fast/css-grid-layout/grid-item-order-paint-order.html:
+        * fast/css-grid-layout/grid-item-stretch-with-margins-borders-padding-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-stretch-with-margins-borders-padding-vertical-lr-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-stretch-with-margins-borders-padding-vertical-lr.html: Added.
+        * fast/css-grid-layout/grid-item-stretch-with-margins-borders-padding-vertical-rl-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-stretch-with-margins-borders-padding-vertical-rl.html: Added.
+        * fast/css-grid-layout/grid-item-stretch-with-margins-borders-padding.html: Added.
+        * fast/css-grid-layout/grid-item-z-index-stacking-context-expected.html:
+        * fast/css-grid-layout/grid-item-z-index-stacking-context.html:
+        * fast/css-grid-layout/grid-items-should-not-be-stretched-when-height-or-width-or-margin-change.html:
+        * fast/css-grid-layout/grid-justify-content-distribution.html:
+        * fast/css-grid-layout/grid-justify-content-vertical-lr.html:
+        * fast/css-grid-layout/grid-justify-content-vertical-rl.html:
+        * fast/css-grid-layout/justify-self-cell.html:
+        * fast/css-grid-layout/min-width-height-auto-and-margins.html:
+        * fast/css-grid-layout/minmax-fixed-logical-height-only.html:
+        * fast/css-grid-layout/minmax-fixed-logical-width-only.html:
+        * fast/css-grid-layout/minmax-max-content-resolution-columns.html:
+        * fast/css-grid-layout/minmax-max-content-resolution-rows.html:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track-in-percent-grid.html:
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track.html:
+        * fast/css-grid-layout/percent-of-indefinite-track-size-in-auto.html:
+        * fast/css-grid-layout/percent-of-indefinite-track-size.html:
+        * fast/css-grid-layout/percent-track-breadths-regarding-container-size.html:
+        * fast/css-grid-layout/place-cell-by-index.html:
+        * fast/css-grid-layout/resources/grid-alignment.css:
+        (.alignSelfCenterSafe):
+        (.alignSelfCenterUnsafe):
+        (.alignSelfEndSafe):
+        (.alignSelfEndUnsafe):
+        (.alignItemsAuto):
+        (.alignItemsStretch):
+        (.alignItemsStart):
+        (.alignItemsEnd):
+        (.alignItemsCenterSafe):
+        (.alignItemsCenterUnsafe):
+        (.alignItemsEndSafe):
+        (.alignItemsEndUnsafe):
+        (.justifySelfAuto):
+        (.justifySelfStretch):
+        (.justifySelfStart):
+        (.justifySelfCenter):
+        (.justifySelfEnd):
+        (.justifySelfRight):
+        (.justifySelfLeft):
+        (.justifySelfFlexStart):
+        (.justifySelfFlexEnd):
+        (.justifySelfSelfStart):
+        (.justifySelfSelfEnd):
+        (.justifySelfCenterSafe):
+        (.justifySelfCenterUnsafe):
+        (.justifyItemsAuto):
+        (.justifyItemsStretch):
+        (.justifyItemsStart):
+        (.justifyItemsCenter):
+        (.justifyItemsEnd):
+        (.justifyItemsCenterSafe):
+        (.justifyItemsCenterUnsafe):
+        (.justifyItemsEndSafe):
+        (.justifyItemsEndUnsafe):
+        (.selfStretch):
+        (.contentStart):
+        (.contentCenter):
+        (.contentEnd):
+        (.contentCenterSafe):
+        (.contentCenterUnsafe):
+        (.contentEndSafe):
+        (.contentEndUnsafe):
+        (.contentSpaceBetween):
+        (.contentSpaceAround):
+        (.contentSpaceEvenly):
+        (.contentStretch):
+        * fast/css-grid-layout/resources/grid.css:
+        (.verticalRL):
+        (.verticalLR):
+        (.horizontalTB):
+        (.horizontalBT):
+        (.inline-grid): Deleted.
+        (.firstRowFirstColumn): Deleted.
+        (.directionRTL): Deleted.
+
 2016-02-18  Andy Estes  <aestes@apple.com>
 
         Revert to dispatching the popstate event synchronously

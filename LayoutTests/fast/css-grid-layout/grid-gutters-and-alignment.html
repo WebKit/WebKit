@@ -1,7 +1,7 @@
 <!DOCTYPE html>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
 <link href="resources/grid-alignment.css" rel="stylesheet">
-<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel=stylesheet>
 <script src="../../resources/check-layout.js"></script>
 <script src="../../resources/js-test.js"></script>
 <style>
@@ -10,7 +10,6 @@ body { margin: 0px; }
 .grid100And200 {
     -webkit-grid-template-columns: 100px 100px;
     -webkit-grid-template-rows: 200px 200px;
-    width: -webkit-fit-content;
     position: relative; /* For the <p> comments */
 }
 
@@ -36,7 +35,6 @@ body { margin: 0px; }
     border-width: 5px 10px 15px 20px;
     border-style: dotted;
     border-color: blue;
-    width: -webkit-fit-content;
     position: relative; /* For the <p> comments */
 }
 
@@ -54,11 +52,6 @@ body { margin: 0px; }
     height: 50px;
     width: 20px;
     position: relative;
-}
-
-.stretch {
-    align-self: stretch;
-    justify-self: stretch;
 }
 
 .stretchedGrid { -webkit-grid-auto-columns: auto; }
@@ -95,7 +88,7 @@ div.gridWithPaddingBorder > div.cell {
 
 <!-- Check that gutters do not interfere with self alignment computation. -->
 <div class="container">
-    <div class="grid grid100And200 alignItemsCenter gridRowColumnGaps" data-expected-width="221" data-expected-height="417">
+    <div class="grid grid100And200 fit-content alignItemsCenter gridRowColumnGaps" data-expected-width="221" data-expected-height="417">
         <div class="cell alignSelfAuto firstRowFirstColumn" data-offset-x="0" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="cell firstRowSecondColumn" data-offset-x="121" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="cell alignSelfSelfStart secondRowFirstColumn" data-offset-x="0" data-offset-y="217" data-expected-width="20" data-expected-height="40"></div>
@@ -104,7 +97,7 @@ div.gridWithPaddingBorder > div.cell {
 </div>
 
 <div class="container">
-    <div class="grid grid100And200 verticalLR gridRowColumnGaps" data-expected-width="417" data-expected-height="221">
+    <div class="grid grid100And200 fit-content verticalLR gridRowColumnGaps" data-expected-width="417" data-expected-height="221">
         <div class="alignSelfStretch firstRowFirstColumn verticalRL" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="100">
         </div>
         <div class="cell alignSelfStart firstRowSecondColumn verticalRL" data-offset-x="0" data-offset-y="121" data-expected-width="20" data-expected-height="40">
@@ -126,7 +119,7 @@ div.gridWithPaddingBorder > div.cell {
 </div>
 
 <div class="container">
-     <div class="grid grid100And200 directionRTL gridRowColumnGaps" data-expected-width="221" data-expected-height="417">
+     <div class="grid grid100And200 fit-content directionRTL gridRowColumnGaps" data-expected-width="221" data-expected-height="417">
          <div class="alignSelfStretch firstRowFirstColumn" data-offset-x="121" data-offset-y="0" data-expected-width="100" data-expected-height="200"></div>
          <div class="cell alignSelfStart firstRowSecondColumn" data-offset-x="80" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
          <div class="cell alignSelfEnd firstRowSecondColumn" data-offset-x="80" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
@@ -274,10 +267,10 @@ div.gridWithPaddingBorder > div.cell {
 <div class="container">
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: LTR (parall) | align-items: 'self-start' | justify-items: 'self-start'</p>
-    <div class="grid gridWithPaddingBorder directionLTR itemsSelfStart gridRowColumnGaps" data-expected-width="396" data-expected-height="467">
+    <div class="grid gridWithPaddingBorder fit-content directionLTR itemsSelfStart gridRowColumnGaps" data-expected-width="396" data-expected-height="467">
         <div class="directionLTR cell firstRowFirstColumn"     data-offset-x="46" data-offset-y="14"  data-expected-width="20"  data-expected-height="40"></div>
-        <div class="directionLTR stretch firstRowSecondColumn" data-offset-x="151" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
-        <div class="directionLTR stretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="227" data-expected-width="100" data-expected-height="200"></div>
+        <div class="directionLTR selfStretch firstRowSecondColumn" data-offset-x="151" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
+        <div class="directionLTR selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="227" data-expected-width="100" data-expected-height="200"></div>
         <div class="directionLTR cell secondRowSecondColumn"   data-offset-x="167" data-offset-y="231" data-expected-width="20"  data-expected-height="40"></div>
     </div>
 </div>
@@ -285,10 +278,10 @@ div.gridWithPaddingBorder > div.cell {
 <div class="container">
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: LTR (ortho) | align-items: 'self-end' | justify-items: 'self-end'</p>
-    <div class="grid gridWithPaddingBorder directionLTR itemsSelfEnd gridRowColumnGaps" data-expected-width="396" data-expected-height="467">
+    <div class="grid gridWithPaddingBorder fit-content directionLTR itemsSelfEnd gridRowColumnGaps" data-expected-width="396" data-expected-height="467">
         <div class="directionRTL cell firstRowFirstColumn"     data-offset-x="46"  data-offset-y="158" data-expected-width="20"  data-expected-height="40"></div>
-        <div class="directionRTL stretch firstRowSecondColumn" data-offset-x="151" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
-        <div class="directionRTL stretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="227" data-expected-width="100" data-expected-height="200"></div>
+        <div class="directionRTL selfStretch firstRowSecondColumn" data-offset-x="151" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
+        <div class="directionRTL selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="227" data-expected-width="100" data-expected-height="200"></div>
         <div class="directionRTL cell secondRowSecondColumn"   data-offset-x="167" data-offset-y="375" data-expected-width="20"  data-expected-height="40"></div>
     </div>
 </div>
@@ -296,10 +289,10 @@ div.gridWithPaddingBorder > div.cell {
 <div class="container">
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL | align-items: 'right' | justify-items: 'right'</p>
-    <div class="grid gridWithPaddingBorder directionRTL itemsRight gridRowColumnGaps"     data-expected-width="396" data-expected-height="467">
+    <div class="grid gridWithPaddingBorder fit-content directionRTL itemsRight gridRowColumnGaps"     data-expected-width="396" data-expected-height="467">
         <div class="cell firstRowFirstColumn"     data-offset-x="323" data-offset-y="14"  data-expected-width="20"  data-expected-height="40"></div>
-        <div class="stretch firstRowSecondColumn" data-offset-x="30"  data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
-        <div class="stretch secondRowFirstColumn" data-offset-x="251" data-offset-y="227" data-expected-width="100" data-expected-height="200"></div>
+        <div class="selfStretch firstRowSecondColumn" data-offset-x="30"  data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
+        <div class="selfStretch secondRowFirstColumn" data-offset-x="251" data-offset-y="227" data-expected-width="100" data-expected-height="200"></div>
         <div class="cell secondRowSecondColumn"   data-offset-x="202" data-offset-y="231" data-expected-width="20"  data-expected-height="40"></div>
     </div>
 </div>
@@ -307,10 +300,10 @@ div.gridWithPaddingBorder > div.cell {
 <div class="container">
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL (parall) | align-items: 'self-start' | justify-items: 'self-start'</p>
-    <div class="grid gridWithPaddingBorder directionRTL itemsSelfStart gridRowColumnGaps" data-expected-width="396" data-expected-height="467">
+    <div class="grid gridWithPaddingBorder fit-content directionRTL itemsSelfStart gridRowColumnGaps" data-expected-width="396" data-expected-height="467">
         <div class="directionRTL cell firstRowFirstColumn"     data-offset-x="323" data-offset-y="14"  data-expected-width="20"  data-expected-height="40"></div>
-        <div class="directionRTL stretch firstRowSecondColumn" data-offset-x="30"  data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
-        <div class="directionRTL stretch secondRowFirstColumn" data-offset-x="251" data-offset-y="227" data-expected-width="100" data-expected-height="200"></div>
+        <div class="directionRTL selfStretch firstRowSecondColumn" data-offset-x="30"  data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
+        <div class="directionRTL selfStretch secondRowFirstColumn" data-offset-x="251" data-offset-y="227" data-expected-width="100" data-expected-height="200"></div>
         <div class="directionRTL cell secondRowSecondColumn"   data-offset-x="202"  data-offset-y="231" data-expected-width="20"  data-expected-height="40"></div>
     </div>
 </div>

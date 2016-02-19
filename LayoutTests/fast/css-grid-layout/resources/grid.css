@@ -3,13 +3,6 @@
     background-color: grey;
 }
 
-.indefiniteSizeGrid {
-    display: -webkit-grid;
-    background-color: grey;
-    width: -webkit-min-content;
-    height: auto;
-}
-
 .inline-grid {
     display: -webkit-inline-grid;
     background-color: grey;
@@ -316,21 +309,24 @@
 }
 
 .verticalRL {
+    writing-mode: vertical-rl;
     -webkit-writing-mode: vertical-rl;
 }
-
 .verticalLR {
+    writing-mode: vertical-lr;
     -webkit-writing-mode: vertical-lr;
 }
-
+.horizontalTB {
+    writing-mode: horizontal-tb;
+    -webkit-writing-mode: horizontal-tb;
+}
 .horizontalBT {
+    writing-mode: horizontal-bt;
     -webkit-writing-mode: horizontal-bt;
 }
-
 .directionRTL {
     direction: rtl;
 }
-
 .directionLTR {
     direction: ltr;
 }

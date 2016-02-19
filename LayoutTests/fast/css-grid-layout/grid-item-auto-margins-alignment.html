@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <script src="../../resources/check-layout.js"></script>
 <style>
 body {
@@ -11,7 +13,6 @@ body {
 .grid {
     -webkit-grid-template-columns: 100px 100px;
     -webkit-grid-template-rows: 200px 200px;
-    width: -webkit-fit-content;
     margin-bottom: 20px;
 }
 
@@ -25,11 +26,6 @@ body {
 .autoMarginBottom { margin-bottom: auto; }
 .autoMarginLeft { margin-left: auto; }
 .autoMargin { margin: auto; }
-
-.itemsCenter {
-    align-items: center;
-    justify-items: center;
-}
 </style>
 </head>
 <body onload="checkLayout('.grid')">
@@ -38,7 +34,7 @@ body {
 
 <p>Direction: LTR | Self Aligmment: center | fixed size items | 1 auto-margin</p>
 <div style="position: relative">
-    <div class="grid itemsCenter" data-expected-width="200" data-expected-height="400">
+    <div class="grid fit-content itemsCenter">
         <div class="item autoMarginTop firstRowFirstColumn" data-offset-x="40" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="item autoMarginRight firstRowSecondColumn" data-offset-x="100" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="item autoMarginLeft secondRowFirstColumn" data-offset-x="80" data-offset-y="280" data-expected-width="20" data-expected-height="40"></div>
@@ -48,7 +44,7 @@ body {
 
 <p>Direction: LTR | Self Aligmment: start | fixed size items | 4 auto-margin</p>
 <div style="position: relative">
-    <div class="grid" data-expected-width="200" data-expected-height="400">
+    <div class="grid fit-content">
         <div class="item autoMargin firstRowFirstColumn" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="item autoMargin firstRowSecondColumn" data-offset-x="140" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="item autoMargin secondRowFirstColumn" data-offset-x="40" data-offset-y="280" data-expected-width="20" data-expected-height="40"></div>
@@ -58,7 +54,7 @@ body {
 
 <p>Direction: LTR | Self Aligmment: center | auto size items | 1 auto-margin</p>
 <div style="position: relative">
-    <div class="grid itemsCenter" data-expected-width="200" data-expected-height="400">
+    <div class="grid fit-content itemsCenter">
         <div class="autoMarginTop firstRowFirstColumn" data-offset-x="40" data-offset-y="160" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
         <div class="autoMarginRight firstRowSecondColumn" data-offset-x="100" data-offset-y="80" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
         <div class="autoMarginLeft secondRowFirstColumn" data-offset-x="80" data-offset-y="280" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
@@ -68,7 +64,7 @@ body {
 
 <p>Direction: LTR | Self Aligmment: start | auto size items | 4 auto-margin</p>
 <div style="position: relative">
-    <div class="grid" data-expected-width="200" data-expected-height="400">
+    <div class="grid fit-content">
         <div class="autoMargin firstRowFirstColumn" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
         <div class="autoMargin firstRowSecondColumn" data-offset-x="140" data-offset-y="80" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
         <div class="autoMargin secondRowFirstColumn" data-offset-x="40" data-offset-y="280" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
@@ -79,7 +75,7 @@ body {
 <!-- direction RTL -->
 <p>Direction: RTL | Self Aligmment: center | fixed size items | 1 auto-margin</p>
 <div style="position: relative">
-    <div class="grid itemsCenter directionRTL" data-expected-width="200" data-expected-height="400">
+    <div class="grid fit-content itemsCenter directionRTL">
         <div class="item autoMarginTop firstRowFirstColumn" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
         <div class="item autoMarginRight firstRowSecondColumn" data-offset-x="0" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="item autoMarginLeft secondRowFirstColumn" data-offset-x="180" data-offset-y="280" data-expected-width="20" data-expected-height="40"></div>
@@ -89,7 +85,7 @@ body {
 
 <p>Direction: RTL | Self Aligmment: start | fixed size items | 4 auto-margin</p>
 <div style="position: relative">
-    <div class="grid directionRTL" data-expected-width="200" data-expected-height="400">
+    <div class="grid fit-content directionRTL">
         <div class="item autoMargin firstRowFirstColumn" data-offset-x="140" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="item autoMargin firstRowSecondColumn" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
         <div class="item autoMargin secondRowFirstColumn" data-offset-x="140" data-offset-y="280" data-expected-width="20" data-expected-height="40"></div>
@@ -99,7 +95,7 @@ body {
 
 <p>Direction: RTL | Self Aligmment: center | auto size items | 1 auto-margin</p>
 <div style="position: relative">
-    <div class="grid itemsCenter directionRTL" data-expected-width="200" data-expected-height="400">
+    <div class="grid fit-content itemsCenter directionRTL">
         <div class="autoMarginTop firstRowFirstColumn" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
         <div class="autoMarginRight firstRowSecondColumn" data-offset-x="0" data-offset-y="80" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
         <div class="autoMarginLeft secondRowFirstColumn" data-offset-x="180" data-offset-y="280" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
@@ -109,7 +105,7 @@ body {
 
 <p>Direction: RTL | Self Aligmment: start | auto size items | 4 auto-margin</p>
 <div style="position: relative">
-    <div class="grid directionRTL" data-expected-width="200" data-expected-height="400">
+    <div class="grid fit-content directionRTL">
         <div class="autoMargin firstRowFirstColumn" data-offset-x="140" data-offset-y="80" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
         <div class="autoMargin firstRowSecondColumn" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>
         <div class="autoMargin secondRowFirstColumn" data-offset-x="140" data-offset-y="280" data-expected-width="20" data-expected-height="40"><div class="item"></div></div>

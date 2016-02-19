@@ -2,6 +2,7 @@
 <html>
 <head>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <script src="../../resources/check-layout.js"></script>
 <style>
 body {
@@ -37,22 +38,6 @@ body {
     -webkit-grid-auto-columns: auto;
     -webkit-grid-auto-rows: auto;
 }
-.spaceBetween {
-    justify-content: space-between;
-    align-content: space-between;
-}
-.spaceAround {
-    justify-content: space-around;
-    align-content: space-around;
-}
-.spaceEvenly {
-    justify-content: space-evenly;
-    align-content: space-evenly;
-}
-.stretch {
-    justify-content: stretch;
-    align-content: stretch;
-}
 </style>
 </head>
 <body onload="checkLayout('.grid')">
@@ -61,7 +46,7 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-between'</p>
-    <div class="grid spaceBetween verticalRL" data-expected-width="200" data-expected-height="300">
+    <div class="grid contentSpaceBetween verticalRL" data-expected-width="200" data-expected-height="300">
         <div class="a" data-offset-x="160" data-offset-y="0" data-expected-width="40" data-expected-height="160"></div>
         <div class="b" data-offset-x="0" data-offset-y="280" data-expected-width="200" data-expected-height="20"></div>
         <div class="c" data-offset-x="0" data-offset-y="0" data-expected-width="40" data-expected-height="20"></div>
@@ -71,7 +56,7 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-around'</p>
-    <div class="grid spaceAround verticalRL" data-expected-width="200" data-expected-height="300">
+    <div class="grid contentSpaceAround verticalRL" data-expected-width="200" data-expected-height="300">
         <div class="a" data-offset-x="130" data-offset-y="40" data-expected-width="40" data-expected-height="120"></div>
         <div class="b" data-offset-x="30" data-offset-y="240" data-expected-width="140" data-expected-height="20"></div>
         <div class="c" data-offset-x="30" data-offset-y="40" data-expected-width="40" data-expected-height="20"></div>
@@ -81,7 +66,7 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'space-evenly'</p>
-    <div class="grid spaceEvenly verticalRL" data-expected-width="200" data-expected-height="300">
+    <div class="grid contentSpaceEvenly verticalRL" data-expected-width="200" data-expected-height="300">
         <div class="a" data-offset-x="120" data-offset-y="60" data-expected-width="40" data-expected-height="100"></div>
         <div class="b" data-offset-x="40" data-offset-y="220" data-expected-width="120" data-expected-height="20"></div>
         <div class="c" data-offset-x="40" data-offset-y="60" data-expected-width="40" data-expected-height="20"></div>
@@ -91,7 +76,7 @@ body {
 
 <div style="position: relative">
     <p>direction: LTR | distribution: 'stretch'</p>
-    <div class="grid stretchedGrid stretch verticalRL" data-expected-width="200" data-expected-height="300">
+    <div class="grid stretchedGrid contentStretch verticalRL" data-expected-width="200" data-expected-height="300">
         <div class="a" data-offset-x="100" data-offset-y="0" data-expected-width="100" data-expected-height="200"></div>
         <div class="b" data-offset-x="0" data-offset-y="200" data-expected-width="200" data-expected-height="100"></div>
         <div class="c" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="100"></div>
@@ -102,7 +87,7 @@ body {
 <!-- RTL direction. -->
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-between'</p>
-    <div class="grid spaceBetween verticalRL directionRTL" data-expected-width="200" data-expected-height="300">
+    <div class="grid contentSpaceBetween verticalRL directionRTL" data-expected-width="200" data-expected-height="300">
         <div class="a" data-offset-x="160" data-offset-y="140" data-expected-width="40" data-expected-height="160"></div>
         <div class="b" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="20"></div>
         <div class="c" data-offset-x="0" data-offset-y="280" data-expected-width="40" data-expected-height="20"></div>
@@ -112,7 +97,7 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-around'</p>
-    <div class="grid spaceAround verticalRL directionRTL" data-expected-width="200" data-expected-height="300">
+    <div class="grid contentSpaceAround verticalRL directionRTL" data-expected-width="200" data-expected-height="300">
         <div class="a" data-offset-x="130" data-offset-y="140" data-expected-width="40" data-expected-height="120"></div>
         <div class="b" data-offset-x="30" data-offset-y="40" data-expected-width="140" data-expected-height="20"></div>
         <div class="c" data-offset-x="30" data-offset-y="240" data-expected-width="40" data-expected-height="20"></div>
@@ -122,7 +107,7 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'space-evenly'</p>
-    <div class="grid spaceEvenly verticalRL directionRTL" data-expected-width="200" data-expected-height="300">
+    <div class="grid contentSpaceEvenly verticalRL directionRTL" data-expected-width="200" data-expected-height="300">
         <div class="a" data-offset-x="120" data-offset-y="140" data-expected-width="40" data-expected-height="100"></div>
         <div class="b" data-offset-x="40" data-offset-y="60" data-expected-width="120" data-expected-height="20"></div>
         <div class="c" data-offset-x="40" data-offset-y="220" data-expected-width="40" data-expected-height="20"></div>
@@ -132,7 +117,7 @@ body {
 
 <div style="position: relative">
     <p>direction: RTL | distribution: 'stretch'</p>
-    <div class="grid stretchedGrid stretch verticalRL directionRTL" data-expected-width="200" data-expected-height="300">
+    <div class="grid stretchedGrid contentStretch verticalRL directionRTL" data-expected-width="200" data-expected-height="300">
         <div class="a" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="200"></div>
         <div class="b" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="100"></div>
         <div class="c" data-offset-x="0" data-offset-y="200" data-expected-width="100" data-expected-height="100"></div>

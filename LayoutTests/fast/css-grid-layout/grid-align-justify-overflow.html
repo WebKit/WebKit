@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <script src="../../resources/check-layout.js"></script>
 <style>
 body {
@@ -10,7 +12,6 @@ body {
 .grid {
     -webkit-grid-template-columns: 150px 150px;
     -webkit-grid-template-rows: 120px 120px 120px;
-    width: -webkit-fit-content;
     margin-bottom: 20px;
 }
 .cellOverflowWidth {
@@ -25,28 +26,6 @@ body {
     width: 50px;
     height: 40px;
 }
-.alignItemsCenter { align-items: center; }
-.alignItemsCenterSafe { align-items: center safe; }
-.alignItemsCenterUnsafe { align-items: center unsafe; }
-.alignItemsEnd { align-items: end; }
-.alignItemsEndSafe { align-items: end safe; }
-.alignItemsEndUnsafe { align-items: end unsafe; }
-.alignSelfCenter { align-self: center; }
-.alignSelfCenterSafe { align-self: center safe; }
-.alignSelfCenterUnsafe { align-self: center unsafe; }
-.alignSelfEnd { align-self: end; }
-.alignSelfEndSafe { align-self: end safe; }
-.alignSelfEndUnsafe { align-self: end unsafe; }
-.justifyItemsCenter { justify-items: center; }
-.justifyItemsCenterSafe { justify-items: center safe; }
-.justifyItemsCenterUnsafe { justify-items: center unsafe; }
-.justifyItemsEnd { justify-items: end; }
-.justifyItemsEndSafe { justify-items: end safe; }
-.justifyItemsEndUnsafe { justify-items: end unsafe; }
-.justifySelfCenter { justify-self: center; }
-.justifySelfCenterSafe { justify-self: center safe; }
-.justifySelfCenterUnsafe { justify-self: center unsafe; }
-.justifySelfEnd { justify-self: end; }
 .thirdRowFirstColumn {
     background-color: green;
     -webkit-grid-column: 1;
@@ -59,7 +38,7 @@ body {
 <p>This test checks that the 'overflow' keyword is applied correctly for 'align' and 'justify' properties.</p>
 
 <div style="position: relative">
-    <div class="grid alignItemsCenter justifyItemsCenter" data-expected-width="300" data-expected-height="360">
+    <div class="grid fit-content alignItemsCenter justifyItemsCenter" data-expected-width="300" data-expected-height="360">
         <div class="cellOverflowWidth  firstRowFirstColumn" data-offset-x="-15" data-offset-y="40" data-expected-width="180" data-expected-height="40"></div>
         <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="50" data-offset-y="160" data-expected-width="50" data-expected-height="40"></div>
         <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="50" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
@@ -70,7 +49,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid alignItemsCenterUnsafe justifyItemsCenterUnsafe" data-expected-width="300" data-expected-height="360">
+    <div class="grid fit-content alignItemsCenterUnsafe justifyItemsCenterUnsafe" data-expected-width="300" data-expected-height="360">
         <div class="cellOverflowHeight firstRowFirstColumn" data-offset-x="50" data-offset-y="-15" data-expected-width="50" data-expected-height="150"></div>
         <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="50" data-offset-y="160" data-expected-width="50" data-expected-height="40"></div>
         <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="50" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
@@ -81,7 +60,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid alignItemsCenterSafe justifyItemsCenterSafe" data-expected-width="300" data-expected-height="360">
+    <div class="grid fit-content alignItemsCenterSafe justifyItemsCenterSafe" data-expected-width="300" data-expected-height="360">
         <div class="cellOverflowWidth  firstRowFirstColumn" data-offset-x="0" data-offset-y="40" data-expected-width="180" data-expected-height="40"></div>
         <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="50" data-offset-y="160" data-expected-width="50" data-expected-height="40"></div>
         <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="50" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
@@ -92,7 +71,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid alignItemsCenterSafe justifyItemsCenterSafe" data-expected-width="300" data-expected-height="360">
+    <div class="grid fit-content alignItemsCenterSafe justifyItemsCenterSafe" data-expected-width="300" data-expected-height="360">
         <div class="cellOverflowHeight firstRowFirstColumn" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="150"></div>
         <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="50" data-offset-y="160" data-expected-width="50" data-expected-height="40"></div>
         <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="50" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
@@ -103,7 +82,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid alignItemsEnd justifyItemsEnd" data-expected-width="300" data-expected-height="360">
+    <div class="grid fit-content alignItemsEnd justifyItemsEnd" data-expected-width="300" data-expected-height="360">
         <div class="cellOverflowWidth  firstRowFirstColumn" data-offset-x="-30" data-offset-y="80" data-expected-width="180" data-expected-height="40"></div>
         <div class="cellWithNoOverflow secondRowFirstColumn justifySelfCenter" data-offset-x="50" data-offset-y="200" data-expected-width="50" data-expected-height="40"></div>
         <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="100" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
@@ -114,7 +93,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid alignItemsEndUnsafe justifyItemsEndUnsafe" data-expected-width="300" data-expected-height="360">
+    <div class="grid fit-content alignItemsEndUnsafe justifyItemsEndUnsafe" data-expected-width="300" data-expected-height="360">
         <div class="cellOverflowHeight firstRowFirstColumn" data-offset-x="100" data-offset-y="-30" data-expected-width="50" data-expected-height="150"></div>
         <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="100" data-offset-y="200" data-expected-width="50" data-expected-height="40"></div>
         <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="100" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
@@ -125,7 +104,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid alignItemsEndSafe justifyItemsEndSafe" data-expected-width="300" data-expected-height="360">
+    <div class="grid fit-content alignItemsEndSafe justifyItemsEndSafe" data-expected-width="300" data-expected-height="360">
         <div class="cellOverflowWidth  firstRowFirstColumn" data-offset-x="0" data-offset-y="80" data-expected-width="180" data-expected-height="40"></div>
         <div class="cellWithNoOverflow secondRowFirstColumn justifySelfCenterUnsafe" data-offset-x="50" data-offset-y="200" data-expected-width="50" data-expected-height="40"></div>
         <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="100" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
@@ -136,7 +115,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid alignItemsEndSafe justifyItemsEndSafe" data-expected-width="300" data-expected-height="360">
+    <div class="grid fit-content alignItemsEndSafe justifyItemsEndSafe" data-expected-width="300" data-expected-height="360">
         <div class="cellOverflowHeight firstRowFirstColumn" data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="150"></div>
         <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="100" data-offset-y="200" data-expected-width="50" data-expected-height="40"></div>
         <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="100" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>

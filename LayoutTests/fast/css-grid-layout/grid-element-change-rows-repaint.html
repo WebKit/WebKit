@@ -9,6 +9,7 @@ function repaintTest()
 }
 window.addEventListener("load", runRepaintTest, false);
 </script>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 body {
@@ -16,7 +17,6 @@ body {
 }
 
 .grid {
-    width: -webkit-fit-content;
     -webkit-grid-template-rows: 50px 100px;
     -webkit-grid-template-columns: 100px;
 }
@@ -27,7 +27,7 @@ body {
 <body>
 <div>This test checks that changing the grid-template-rows lead to a repaint. The final grid element should be 100px * 150px, the grid item should be 100px * 100px. No trace of the elements before the grid-template-rows change should be seen.</div>
 <div class="constrainedContainer">
-    <div class="grid">
+    <div class="grid fit-content">
         <div class="sizedToGridArea"></div>
     </div>
 </div>

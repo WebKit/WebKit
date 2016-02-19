@@ -2,6 +2,7 @@
 <html>
 <head>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <script src="../../resources/check-layout.js"></script>
 <style>
 body {
@@ -22,37 +23,6 @@ body {
     width: 200px;
     height: 150px;
 }
-
-.center {
-    align-content: center;
-    justify-content: center;
-}
-
-.centerSafe {
-    align-content: center safe;
-    justify-content: center safe;
-}
-
-.centerUnsafe {
-    align-content: center unsafe;
-    justify-content: center unsafe;
-}
-
-.end {
-    align-content: end;
-    justify-content: end;
-}
-
-.endSafe {
-    align-content: end safe;
-    justify-content: end safe;
-}
-
-.endUnsafe {
-    align-content: end unsafe;
-    justify-content: end unsafe;
-}
-
 </style>
 </head>
 <body onload="checkLayout('.grid')">
@@ -60,7 +30,7 @@ body {
 <p>This test checks that the 'overflow' keyword is applied correctly for Content Alignment properties.</p>
 
 <div style="position: relative">
-    <div class="grid overflowWidth center" data-expected-width="60" data-expected-height="300">
+    <div class="grid overflowWidth contentCenter" data-expected-width="60" data-expected-height="300">
         <div class="firstRowFirstColumn" data-offset-x="-20" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
         <div class="secondRowFirstColumn" data-offset-x="-20" data-offset-y="150" data-expected-width="50" data-expected-height="100"></div>
         <div class="firstRowSecondColumn" data-offset-x="30" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
@@ -69,7 +39,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid overflowHeight centerUnsafe" data-expected-width="200" data-expected-height="150">
+    <div class="grid overflowHeight contentCenterUnsafe" data-expected-width="200" data-expected-height="150">
         <div class="firstRowFirstColumn" data-offset-x="50" data-offset-y="-25" data-expected-width="50" data-expected-height="100"></div>
         <div class="secondRowFirstColumn" data-offset-x="50" data-offset-y="75" data-expected-width="50" data-expected-height="100"></div>
         <div class="firstRowSecondColumn" data-offset-x="100" data-offset-y="-25" data-expected-width="50" data-expected-height="100"></div>
@@ -78,7 +48,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid overflowWidth centerSafe" data-expected-width="60" data-expected-height="300">
+    <div class="grid overflowWidth contentCenterSafe" data-expected-width="60" data-expected-height="300">
         <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
         <div class="secondRowFirstColumn" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="100"></div>
         <div class="firstRowSecondColumn" data-offset-x="50" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
@@ -87,7 +57,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid overflowHeight centerSafe" data-expected-width="200" data-expected-height="150">
+    <div class="grid overflowHeight contentCenterSafe" data-expected-width="200" data-expected-height="150">
         <div class="firstRowFirstColumn" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="100"></div>
         <div class="secondRowFirstColumn" data-offset-x="50" data-offset-y="100" data-expected-width="50" data-expected-height="100"></div>
         <div class="firstRowSecondColumn" data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="100"></div>
@@ -96,7 +66,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid overflowWidth end" data-expected-width="60" data-expected-height="300">
+    <div class="grid overflowWidth contentEnd" data-expected-width="60" data-expected-height="300">
         <div class="firstRowFirstColumn" data-offset-x="-40" data-offset-y="100" data-expected-width="50" data-expected-height="100"></div>
         <div class="secondRowFirstColumn" data-offset-x="-40" data-offset-y="200" data-expected-width="50" data-expected-height="100"></div>
         <div class="firstRowSecondColumn" data-offset-x="10" data-offset-y="100" data-expected-width="50" data-expected-height="100"></div>
@@ -105,7 +75,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid overflowHeight endUnsafe" data-expected-width="200" data-expected-height="150">
+    <div class="grid overflowHeight contentEndUnsafe" data-expected-width="200" data-expected-height="150">
         <div class="firstRowFirstColumn" data-offset-x="100" data-offset-y="-50" data-expected-width="50" data-expected-height="100"></div>
         <div class="secondRowFirstColumn" data-offset-x="100" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
         <div class="firstRowSecondColumn" data-offset-x="150" data-offset-y="-50" data-expected-width="50" data-expected-height="100"></div>
@@ -114,7 +84,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid overflowWidth endSafe" data-expected-width="60" data-expected-height="300">
+    <div class="grid overflowWidth contentEndSafe" data-expected-width="60" data-expected-height="300">
         <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="100" data-expected-width="50" data-expected-height="100"></div>
         <div class="secondRowFirstColumn" data-offset-x="0" data-offset-y="200" data-expected-width="50" data-expected-height="100"></div>
         <div class="firstRowSecondColumn" data-offset-x="50" data-offset-y="100" data-expected-width="50" data-expected-height="100"></div>
@@ -123,7 +93,7 @@ body {
 </div>
 
 <div style="position: relative">
-    <div class="grid overflowHeight endSafe" data-expected-width="200" data-expected-height="150">
+    <div class="grid overflowHeight contentEndSafe" data-expected-width="200" data-expected-height="150">
         <div class="firstRowFirstColumn" data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="100"></div>
         <div class="secondRowFirstColumn" data-offset-x="100" data-offset-y="100" data-expected-width="50" data-expected-height="100"></div>
         <div class="firstRowSecondColumn" data-offset-x="150" data-offset-y="0" data-expected-width="50" data-expected-height="100"></div>

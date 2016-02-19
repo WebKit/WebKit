@@ -1,9 +1,10 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
 <style>
-.grid {
+.definite {
     /* Give an explicit size to the grid so that percentage grid tracks have a consistent resolution */
     width: 800px;
     height: 600px;
@@ -70,26 +71,27 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<div class="grid gridWithFixed" id="gridWithFixedElement"></div>
-<div class="grid gridWithPercent" id="gridWithPercentElement"></div>
-<div class="indefiniteSizeGrid gridWithPercent" id="gridWithPercentWithoutSize"></div>
-<div class="indefiniteSizeGrid gridWithPercent" id="gridWithPercentWithoutSizeWithChildren">
+<div class="grid definite gridWithFixed" id="gridWithFixedElement"></div>
+<div class="grid definite gridWithPercent" id="gridWithPercentElement"></div>
+<div class="grid min-content gridWithPercent" id="gridWithPercentWithoutSize"></div>
+<div class="grid min-content gridWithPercent" id="gridWithPercentWithoutSizeWithChildren">
     <div class="gridItem"></div>
 </div>
-<div class="grid gridWithAuto" id="gridWithAutoElement"></div>
-<div class="grid gridWithAuto" id="gridWithAutoWithChildrenElement">
+<div class="grid definite gridWithAuto" id="gridWithAutoElement"></div>
+<div class="grid definite gridWithAuto" id="gridWithAutoWithChildrenElement">
     <div class="gridItem"></div>
 </div>
-<div class="grid gridWithMinMax" id="gridWithMinMax"></div>
-<div class="grid gridWithFixedMultiple" id="gridWithFixedMultiple"></div>
-<div class="grid gridWithPercentageSameStringMultipleTimes" id="gridWithPercentageSameStringMultipleTimes"></div>
-<div class="grid gridWithRepeat" id="gridWithRepeatElement"></div>
-<div class="grid gridWithEmptyBrackets" id="gridWithEmptyBrackets"></div>
-<div class="grid gridWithoutBrackets" id="gridWithoutBrackets"></div>
-<div class="grid gridWithInvalidNestedBrackets" id="gridWithInvalidNestedBrackets"></div>
-<div class="grid gridWithUnbalancedBrackets" id="gridWithUnbalancedBrackets"></div>
-<div class="grid gridWithMisplacedBrackets" id="gridWithMisplacedBrackets"></div>
-<div class="grid gridWithContiguousBrackets" id="gridWithContiguousBrackets"></div>
+<div class="grid definite gridWithMinMax" id="gridWithMinMax"></div>
+<div class="grid definite gridWithFixedMultiple" id="gridWithFixedMultiple"></div>
+<div class="grid definite gridWithPercentageSameStringMultipleTimes" id="gridWithPercentageSameStringMultipleTimes"></div>
+<div class="grid definite gridWithRepeat" id="gridWithRepeatElement"></div>
+<div class="grid definite gridWithEmptyBrackets" id="gridWithEmptyBrackets"></div>
+<div class="grid definite gridWithoutBrackets" id="gridWithoutBrackets"></div>
+<div class="grid definite gridWithInvalidNestedBrackets" id="gridWithInvalidNestedBrackets"></div>
+<div class="grid definite gridWithUnbalancedBrackets" id="gridWithUnbalancedBrackets"></div>
+<div class="grid definite gridWithMisplacedBrackets" id="gridWithMisplacedBrackets"></div>
+<div class="grid definite gridWithContiguousBrackets" id="gridWithContiguousBrackets"></div>
+<div class="grid definite gridWithInvalidCustomIdents" id="gridWithInvalidCustomIdents"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script>
     description('Test that setting and getting grid-template-columns and grid-template-rows works as expected');

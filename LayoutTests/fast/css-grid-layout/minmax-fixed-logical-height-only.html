@@ -26,21 +26,18 @@
 #grid4 {
     -webkit-grid-template-columns: 30px;
     -webkit-grid-template-rows: minmax(20px, 80px) 60px;
-    -webkit-writing-mode: vertical-rl;
 }
 
 #grid5 {
     -webkit-grid-template-columns: 30px;
     /* 90% > 80px, 80px should be ignored. */
     -webkit-grid-template-rows: minmax(90%, 80px) minmax(10px, 60%);
-    -webkit-writing-mode: vertical-lr;
 }
 
 #grid6 {
     /* Overlapping range. */
     -webkit-grid-template-columns: 30px;
     -webkit-grid-template-rows: minmax(10px, 180px) minmax(30px, 150px);
-    -webkit-writing-mode: horizontal-bt;
 }
 
 .firstRowFirstColumn {
@@ -74,17 +71,17 @@
     <div class="secondRowFirstColumn" data-expected-height="110" data-expected-width="30"></div>
 </div>
 
-<div class="grid" id="grid4" data-expected-width="100" data-expected-height="200">
+<div class="grid verticalRL" id="grid4" data-expected-width="100" data-expected-height="200">
     <div class="firstRowFirstColumn" data-expected-height="30" data-expected-width="40"></div>
     <div class="secondRowFirstColumn" data-expected-height="30" data-expected-width="60"></div>
 </div>
 
-<div class="grid" id="grid5" data-expected-width="100" data-expected-height="200">
+<div class="grid verticalLR" id="grid5" data-expected-width="100" data-expected-height="200">
     <div class="firstRowFirstColumn" data-expected-height="30" data-expected-width="90"></div>
     <div class="secondRowFirstColumn" data-expected-height="30" data-expected-width="10"></div>
 </div>
 
-<div class="grid" id="grid6" data-expected-width="100" data-expected-height="200">
+<div class="grid horizontalBT" id="grid6" data-expected-width="100" data-expected-height="200">
     <div class="firstRowFirstColumn" data-expected-height="90" data-expected-width="30"></div>
     <div class="secondRowFirstColumn" data-expected-height="110" data-expected-width="30"></div>
 </div>

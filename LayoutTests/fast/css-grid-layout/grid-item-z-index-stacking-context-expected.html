@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
@@ -17,15 +18,15 @@
 <p>This test checks that grid items with 'z-index' do produce a stacking context and that we honor the property.</p>
 <p>For this test to pass, there should be no red below.</p>
 
-<div class="grid">
+<div class="grid fit-content">
     <div class="sizedToGridArea green"></div>
 </div>
 
-<div class="grid">
+<div class="grid fit-content">
     <div class="sizedToGridArea green"></div>
 </div>
 
-<div class="grid">
+<div class="grid fit-content">
     <div class="sizedToGridArea green firstRowBothColumn"></div>
 </div>
 
