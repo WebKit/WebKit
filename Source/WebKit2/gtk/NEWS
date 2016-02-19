@@ -1,3 +1,18 @@
+==================
+WebKitGTK+ 2.11.90
+==================
+
+What's new in WebKitGTK+ 2.11.90?
+
+  - Switch to use overlay scrollbars like all other GTK+ widgets and ensure the behavior
+    is consistent with GTK+ too.
+  - Limit the number of tiles according to the visible area. This was causing a huge memory
+    consumption with some websites.
+  - Fix toggle buttons rendering with GTK+ 3.19.
+  - Fix HTTP authentication dialog rendering when accelerated compositing mode is enabled.
+  - Use G_TYPE_ERROR instead of G_TYPE_POINTER for GError parameters of signals.
+  - Fix several memory leaks.
+
 =================
 WebKitGTK+ 2.11.5
 =================
