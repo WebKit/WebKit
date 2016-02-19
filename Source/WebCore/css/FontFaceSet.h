@@ -63,7 +63,7 @@ public:
     void load(const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode&);
     bool check(const String& font, ExceptionCode& ec) { return check(font, String(" ", String::ConstructFromLiteral), ec); }
     bool check(const String& font, const String& text, ExceptionCode&);
-    
+
     String status() const;
 
     typedef DOMPromise<FontFaceSet&, DOMCoreException&> Promise;

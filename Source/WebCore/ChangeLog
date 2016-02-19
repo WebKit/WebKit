@@ -1,3 +1,15 @@
+2016-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing post-review comments after r196747.
+
+        Unreviewed.
+
+        * css/CSSFontFaceSet.h:
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::size):
+        (WebCore::FontFaceSet::clear):
+        * css/FontFaceSet.h:
+
 2016-02-18  Zalan Bujtas  <zalan@apple.com>
 
         Soft hyphen is not shown when it is placed at the end of an inline element

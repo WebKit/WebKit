@@ -47,7 +47,7 @@ public:
     ~CSSFontFaceSet();
 
     bool hasFace(const CSSFontFace&) const;
-    size_t size() const { return m_faces.size(); }
+    size_t faceCount() const { return m_faces.size(); }
     void add(CSSFontFace&);
     void remove(const CSSFontFace&);
     const CSSFontFace& operator[](size_t i) const { return m_faces[i]; }

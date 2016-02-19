@@ -87,7 +87,7 @@ bool FontFaceSet::has(FontFace* face) const
 
 size_t FontFaceSet::size() const
 {
-    return m_backing.size();
+    return m_backing.faceCount();
 }
 
 FontFaceSet& FontFaceSet::add(FontFace* face)
@@ -110,7 +110,7 @@ bool FontFaceSet::remove(FontFace* face)
 
 void FontFaceSet::clear()
 {
-    while (m_backing.size())
+    while (m_backing.faceCount())
         m_backing.remove(m_backing[0]);
 }
 
