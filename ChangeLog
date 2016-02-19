@@ -1,3 +1,12 @@
+2016-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Bump internal jhbuild versions to 1.6.3
+        https://bugs.webkit.org/show_bug.cgi?id=149594
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindGStreamer.cmake: Check gst-gl version for the latest stable release of GStreamer.
+
 2016-02-18  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the "All Source (target WebProcess)" scheme.

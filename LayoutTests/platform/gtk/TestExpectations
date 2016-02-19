@@ -482,7 +482,6 @@ webkit.org/b/141466 fast/media/mq-pointer-matchMedia.html [ Failure ]
 webkit.org/b/141466 fast/media/mq-pointer-styling.html [ Failure ]
 webkit.org/b/141466 fast/media/mq-pointer.html [ Failure ]
 
-webkit.org/b/141468 [ Release ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 webkit.org/b/141469 [ Release ] http/tests/media/hls/hls-progress.html [ Failure ]
 webkit.org/b/141423 svg/css/getComputedStyle-basic.xhtml [ Failure ]
@@ -567,8 +566,6 @@ webkit.org/b/146718 accessibility/aria-hidden-false-works-in-subtrees.html [ Fai
 
 webkit.org/b/146719 accessibility/aria-roledescription.html [ Failure ]
 
-webkit.org/b/146720 [ Release ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Failure ]
-webkit.org/b/146720 [ Release ] http/tests/media/hls/video-controller-getStartDate.html [ Failure ]
 webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
 
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
@@ -645,6 +642,31 @@ webkit.org/b/153540 http/tests/media/media-stream [ Skip ]
 webkit.org/b/153833 css3/touch-action/touch-action-manipulation-fast-clicks.html [ Skip ]
 webkit.org/b/153833 fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html [ Skip ]
 webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
+
+# Tests failing with GStreamer 1.6.3
+webkit.org/b/154390 http/tests/media/reload-after-dialog.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/video-referer.html [ Failure ]
+webkit.org/b/154390 http/tests/media/video-cancel-load.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/video-play-stall-before-meta-data.html [ Failure ]
+webkit.org/b/154390 http/tests/media/video-useragent.html [ Failure ]
+webkit.org/b/154390 http/tests/media/video-buffered-range-contains-currentTime.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/video-load-suspend.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/video-query-url.html [ Failure ]
+webkit.org/b/154390 http/tests/media/video-error-abort.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/remove-while-loading.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/video-throttled-load-metadata.html [ Failure ]
+webkit.org/b/154390 http/tests/media/video-served-as-text.html [ Failure ]
+webkit.org/b/154390 http/tests/media/video-load-twice.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/video-auth.html [ Failure ]
+webkit.org/b/154390 http/tests/media/video-redirect.html [ Failure ]
+webkit.org/b/154390 http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/hls/hls-video-resize.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/hls/hls-accessiblity-describes-video.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/hls/video-cookie.html [ Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1027,7 +1049,6 @@ webkit.org/b/132254 fast/sub-pixel/simple-clipping.html [ ImageOnlyFailure Crash
 webkit.org/b/132257 fast/history/form-submit-in-frame-via-onclick.html [ Timeout Pass ]
 webkit.org/b/132260 fast/workers/worker-close.html [ Timeout Pass ]
 webkit.org/b/132261 html5lib/generated/run-tests16-data.html [ Timeout Pass ]
-webkit.org/b/132262 http/tests/media/video-redirect.html [ Timeout Pass ]
 webkit.org/b/132267 mathml/wbr-in-mroot-crash.html [ Timeout Pass ]
 webkit.org/b/132272 fast/dom/gc-10.html [ Failure Pass ]
 webkit.org/b/132279 perf/mouse-event.html [ Failure Pass ]
@@ -1295,8 +1316,6 @@ webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Pass Slo
 webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
 
 webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
-
-Bug(GTK) [ Release ] http/tests/media/hls/video-cookie.html [ Pass Slow ]
 
 webkit.org/b/149916 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Slow ]
 webkit.org/b/149916 inspector/codemirror/prettyprinting-css.html [ Pass Slow ]
@@ -2279,8 +2298,6 @@ webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
 
 webkit.org/b/137695 media/video-controls-audiotracks-trackmenu.html [ Failure ]
 webkit.org/b/138074 media/video-volume-slider-drag.html [ Failure ]
-
-webkit.org/b/138073 [ Release ] http/tests/media/hls/hls-audio-tracks.html [ Failure ]
 
 # Font is clipped incorrectly
 webkit.org/b/138077 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
