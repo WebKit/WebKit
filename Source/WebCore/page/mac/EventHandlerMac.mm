@@ -1008,10 +1008,9 @@ static FrameView* frameViewForLatchingState(Frame& frame, ScrollLatchingState* l
 
 bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer, ScrollableArea* scrollableArea)
 {
-    FrameView* view = m_frame.view();
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
-    if (!view)
-        return false;
+    ASSERT(m_frame.view());
+    FrameView* view = m_frame.view();
 
     ScrollLatchingState* latchingState = m_frame.mainFrame().latchingState();
     if (wheelEvent.useLatchedEventElement() && !latchingIsLockedToAncestorOfThisFrame(m_frame) && latchingState && latchingState->scrollableContainer()) {
