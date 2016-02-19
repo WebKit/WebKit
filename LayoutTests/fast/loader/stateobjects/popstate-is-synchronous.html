@@ -6,7 +6,7 @@
 <div id="description"></div>
 <pre id="console"></pre>
 <script>
-description('Tests that popstate events fire asynchronously.');
+description('Tests that popstate events fire synchronously during fragment navigation.');
 
 window.onload = function()
 {
@@ -21,16 +21,16 @@ window.onpopstate = function()
 {
     debug('popstate fired');
 
-    if (initialPopState) {
-        initialPopState = false;
+    if (!initialPopState) {
+        window.setTimeout(finishJSTest, 0);
+        return;
+    }
 
-        // This should not be re-entrant; there should be no other log lines
-        // between the "Setting..." and "Set..." lines.
-        debug('Setting hash to #foo');
-        location.hash = '#foo';
-        debug('Set hash to #foo');
-    } else
-        finishJSTest();
+    initialPopState = false;
+
+    debug('Setting hash to #foo');
+    location.hash = '#foo';
+    debug('Set hash to #foo');
 }
 
 var successfullyParsed = true;

@@ -1,12 +1,12 @@
-Tests that popstate events fire asynchronously.
+Tests that popstate events fire synchronously during fragment navigation.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 onload fired
 popstate fired
 Setting hash to #foo
-Set hash to #foo
 popstate fired
+Set hash to #foo
 PASS successfullyParsed is true
 
 TEST COMPLETE
