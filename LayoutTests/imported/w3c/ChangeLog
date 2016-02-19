@@ -1,5 +1,16 @@
 2016-02-18  Chris Dumez  <cdumez@apple.com>
 
+        window.history / window.navigator should not be replaceable
+        https://bugs.webkit.org/show_bug.cgi?id=154412
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-02-18  Chris Dumez  <cdumez@apple.com>
+
         HTMLTableHeaderCellElement.scope should only return known values
         https://bugs.webkit.org/show_bug.cgi?id=154423
         <rdar://problem/24731018>

@@ -28,7 +28,7 @@ shouldBeTrue("descriptor.get.call() === window.screen");
 debug("");
 debug("* Window.navigator");
 descriptor = Object.getOwnPropertyDescriptor(window, "navigator");
-checkWindowPropertyDescriptor(descriptor, false);
+checkWindowPropertyDescriptor(descriptor, true);
 shouldBeTrue("descriptor.get.call(window) === window.navigator");
 shouldBeTrue("descriptor.get.call() === window.navigator");
 

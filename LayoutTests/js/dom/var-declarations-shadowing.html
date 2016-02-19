@@ -220,8 +220,8 @@ shouldBe(eval('devicePixelRatio == marker'), "eval('devicePixelRatio == marker')
 try {
     eval("var navigator = marker");
 } catch(e) { }
-shouldBe(navigator == marker, "navigator == marker", true);
-shouldBe(eval('navigator == marker'), "eval('navigator == marker')", true);
+shouldBe(navigator == marker, "navigator == marker", false);
+shouldBe(eval('navigator == marker'), "eval('navigator == marker')", false);
 
 try {
     eval("var clientInformation = marker");
@@ -256,8 +256,8 @@ shouldBe(eval('screen == marker'), "eval('screen == marker')", true);
 try {
     eval("var history = marker");
 } catch(e) { }
-shouldBe(history == marker, "history == marker", true);
-shouldBe(eval('history == marker'), "eval('history == marker')", true);
+shouldBe(history == marker, "history == marker", false);
+shouldBe(eval('history == marker'), "eval('history == marker')", false);
 
 log("-----");
 

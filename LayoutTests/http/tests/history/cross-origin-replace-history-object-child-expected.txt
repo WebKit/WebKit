@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 30: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 ALERT: Child window's history object before attempt to clear: undefined
 ALERT: About to shadow child window's history object: [object History]
-ALERT: Shadowed child window's history object: 
+ALERT: PASS: Could not shadow child window's history object: [object History]
 CONSOLE MESSAGE: line 18: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 ALERT: Child window's history object after attempt to clear: undefined
 

@@ -1,3 +1,24 @@
+2016-02-18  Chris Dumez  <cdumez@apple.com>
+
+        window.history / window.navigator should not be replaceable
+        https://bugs.webkit.org/show_bug.cgi?id=154412
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline existing tests now that window.history and
+        window.navigator are no longer replaceable.
+
+        * fast/dom/Window/get-set-properties-expected.txt:
+        * fast/dom/Window/get-set-properties.html:
+        * fast/dom/Window/window-property-shadowing-expected.txt:
+        * fast/dom/Window/window-property-shadowing.html:
+        * http/tests/history/cross-origin-replace-history-object-child-expected.txt:
+        * http/tests/history/resources/cross-origin-replaces-history-object-child-iframe.html:
+        * js/dom/var-declarations-shadowing-expected.txt:
+        * js/dom/var-declarations-shadowing.html:
+        * js/getOwnPropertyDescriptor-window-attributes-expected.txt:
+        * js/getOwnPropertyDescriptor-window-attributes.html:
+
 2016-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Wheel event callback removing the window causes crash in WebCore.

@@ -14,7 +14,7 @@ PASS descriptor.get.call() === window.screen is true
 
 * Window.navigator
 PASS descriptor.get is an instance of Function
-PASS descriptor.set is an instance of Function
+PASS descriptor.set is undefined.
 PASS descriptor.enumerable is true
 PASS descriptor.configurable is true
 PASS descriptor.get.call(nonWindowObject) threw exception TypeError: The DOMWindow.navigator getter can only be used on instances of DOMWindow.
