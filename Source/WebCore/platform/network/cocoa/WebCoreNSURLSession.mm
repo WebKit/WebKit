@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)resource:(PlatformMediaResource&)resource sentBytes:(unsigned long long)bytesSent totalBytesToBeSent:(unsigned long long)totalBytesToBeSent;
 - (void)resource:(PlatformMediaResource&)resource receivedResponse:(const ResourceResponse&)response;
+- (BOOL)resource:(PlatformMediaResource&)resource shouldCacheResponse:(const ResourceResponse&)response;
 - (void)resource:(PlatformMediaResource&)resource receivedData:(const char*)data length:(int)length;
 - (void)resource:(PlatformMediaResource&)resource receivedRedirect:(const ResourceResponse&)response request:(ResourceRequest&)request;
 - (void)resource:(PlatformMediaResource&)resource accessControlCheckFailedWithError:(const ResourceError&)error;
@@ -316,6 +317,7 @@ public:
 
     void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
     void redirectReceived(PlatformMediaResource&, ResourceRequest&, const ResourceResponse&) override;
+    bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
     void dataReceived(PlatformMediaResource&, const char* /* data */, int /* length */) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
@@ -334,6 +336,11 @@ void WebCoreNSURLSessionDataTaskClient::dataSent(PlatformMediaResource& resource
 void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response)
 {
     [m_task resource:resource receivedResponse:response];
+}
+
+bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResource& resource, const ResourceResponse& response)
+{
+    return [m_task resource:resource shouldCacheResponse:response];
 }
 
 void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const char* data, int length)
@@ -533,6 +540,17 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
             });
         }];
     }];
+}
+
+- (BOOL)resource:(PlatformMediaResource&)resource shouldCacheResponse:(const ResourceResponse&)response
+{
+    ASSERT_UNUSED(resource, &resource == _resource);
+    UNUSED_PARAM(response);
+
+    ASSERT(isMainThread());
+
+    // FIXME: remove if <rdar://problem/20001985> is ever resolved.
+    return response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty();
 }
 
 - (void)resource:(PlatformMediaResource&)resource receivedData:(const char*)data length:(int)length

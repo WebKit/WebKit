@@ -70,6 +70,7 @@ public:
     // CachedResourceClient
     void responseReceived(CachedResource*, const ResourceResponse&) override;
     void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
+    bool shouldCacheResponse(CachedResource*, const ResourceResponse&) override;
     void dataSent(CachedResource*, unsigned long long, unsigned long long) override;
     void dataReceived(CachedResource*, const char*, int) override;
     void notifyFinished(CachedResource*) override;

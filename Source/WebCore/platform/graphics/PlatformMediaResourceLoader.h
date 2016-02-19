@@ -44,6 +44,7 @@ public:
 
     virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&) { }
     virtual void redirectReceived(PlatformMediaResource&, ResourceRequest&, const ResourceResponse&) { }
+    virtual bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) { return true; }
     virtual void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) { }
     virtual void dataReceived(PlatformMediaResource&, const char*, int) { }
     virtual void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) { }

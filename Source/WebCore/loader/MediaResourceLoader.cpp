@@ -131,6 +131,16 @@ void MediaResource::responseReceived(CachedResource* resource, const ResourceRes
         m_client->responseReceived(*this, response);
 }
 
+bool MediaResource::shouldCacheResponse(CachedResource* resource, const ResourceResponse& response)
+{
+    ASSERT_UNUSED(resource, resource == m_resource);
+
+    RefPtr<MediaResource> protect(this);
+    if (m_client)
+        return m_client->shouldCacheResponse(*this, response);
+    return true;
+}
+
 void MediaResource::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& response)
 {
     ASSERT_UNUSED(resource, resource == m_resource);
