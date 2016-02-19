@@ -62,6 +62,7 @@ JSString* jsOwnedString(ExecState*, const String&);
 
 JSRopeString* jsStringBuilder(VM*);
 
+bool isJSString(JSCell*);
 bool isJSString(JSValue);
 JSString* asString(JSValue);
 
@@ -646,9 +647,14 @@ ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, unsigned pro
     return false;
 }
 
+inline bool isJSString(JSCell* cell)
+{
+    return cell->type() == StringType;
+}
+
 inline bool isJSString(JSValue v)
 {
-    return v.isCell() && v.asCell()->type() == StringType;
+    return v.isCell() && isJSString(v.asCell());
 }
 
 ALWAYS_INLINE StringView JSRopeString::unsafeView(ExecState& state) const

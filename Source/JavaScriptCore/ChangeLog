@@ -1,3 +1,13 @@
+2016-02-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add isJSString(JSCell*) variant to avoid Cell->JSValue->Cell conversion
+        https://bugs.webkit.org/show_bug.cgi?id=154442
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSString.h:
+        (JSC::isJSString):
+
 2016-02-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve the instruction selection of Select
