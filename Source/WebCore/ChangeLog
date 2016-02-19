@@ -1,3 +1,18 @@
+2016-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Wheel event callback removing the window causes crash in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=150871
+
+        Reviewed by Brent Fulgham.
+        
+        Null check the FrameView before using it, since the iframe may have been removed
+        from its parent document inside the event handler.
+
+        Test: fast/events/wheel-event-destroys-frame.html
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformCompleteWheelEvent):
+
 2016-02-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix IDBGetResult encoder/decoder.
