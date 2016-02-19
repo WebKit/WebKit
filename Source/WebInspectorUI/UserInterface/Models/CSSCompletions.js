@@ -97,7 +97,7 @@ WebInspector.CSSCompletions = class CSSCompletions
                 return;
 
             var propertyNamesForCodeMirror = {};
-            var valueKeywordsForCodeMirror = {"inherit": true, "initial": true, "unset": true, "revert": true};
+            var valueKeywordsForCodeMirror = {"inherit": true, "initial": true, "unset": true, "revert": true, "var": true};
             var colorKeywordsForCodeMirror = {};
 
             function nameForCodeMirror(name)
