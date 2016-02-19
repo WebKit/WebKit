@@ -65,6 +65,7 @@ function format_test_group($group_row) {
         'name' => $group_row['testgroup_name'],
         'author' => $group_row['testgroup_author'],
         'createdAt' => strtotime($group_row['testgroup_created_at']) * 1000,
+        'hidden' => Database::is_true($group_row['testgroup_hidden']),
         'buildRequests' => array(),
         'rootSets' => array(),
     );

@@ -8,7 +8,11 @@ class TestGroupResultsTable extends ResultsTable {
     }
 
     didUpdateResults() { this._renderedTestGroup = null; }
-    setTestGroup(testGroup) { this._testGroup = testGroup; }
+    setTestGroup(testGroup)
+    {
+        this._testGroup = testGroup;
+        this._renderedTestGroup = null;
+    }
 
     heading()
     {

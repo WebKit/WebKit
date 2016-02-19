@@ -1,5 +1,56 @@
 2016-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard should let user cancel pending A/B testing and hide failed ones
+        https://bugs.webkit.org/show_bug.cgi?id=154433
+
+        Reviewed by Chris Dumez.
+
+        Added a button to hide a test group in the details view (the bottom table) in the analysis task page, and
+        "Show hidden tests" link to show the hidden test groups on demand. When a test group is hidden, all pending
+        requests in the group will also be canceled since a common scenario of using this feature is that the user
+        had triggered an useless A/B testing; e.g. all builds will fail, wrong, etc... We can revisit and add the
+        capability to just cancel the pending requests and leaving the group visible later if necessary.
+
+        Run `ALTER TYPE build_request_status_type ADD VALUE 'canceled';` to add the new type.
+
+        * init-database.sql: Added testgroup_hidden column to analysis_test_groups table and added 'canceled'
+        as a value to build_request_status_type table.
+        * public/api/test-groups.php:
+        (format_test_group): Added 'hidden' field in the JSON result.
+        * public/privileged-api/update-test-group.php:
+        (main): Added the support for updating testgroup_hidden column. When this column is set to true, also
+        cancel all pending build requests (by setting its request_status to 'canceled' which will be ignore by
+        the syncing script).
+        * public/v3/components/test-group-results-table.js:
+        (TestGroupResultsTable.prototype.setTestGroup): Reset _renderedTestGroup here so that the next call to
+        render() will update the table; e.g. when build requests' status change from 'Pending' to 'Canceled'.
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.hasCompleted): A build request is considered complete/finished if it's canceled.
+        (BuildRequest.prototype.hasPending): Added.
+        (BuildRequest.prototype.statusLabel): Handle 'canceled' status.
+        * public/v3/models/test-group.js:
+        (TestGroup):
+        (TestGroup.prototype.updateSingleton): Added to update 'hidden' field.
+        (TestGroup.prototype.isHidden): Added.
+        (TestGroup.prototype.hasPending): Added.
+        (TestGroup.prototype.hasPending): Added.
+        (TestGroup.prototype.updateHiddenFlag): Added. Uses the privileged API to update testgroup_hidden column.
+        The JSON API also updates the status of the 'pending' build requests in the group to 'canceled'.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage): Added _showHiddenTestGroups and _filteredTestGroups as instance variables.
+        (AnalysisTaskPage.prototype._didFetchTestGroups):
+        (AnalysisTaskPage.prototype._showAllTestGroups): Added.
+        (AnalysisTaskPage.prototype._didUpdateTestGroupHiddenState): Extracted from _didFetchTestGroups.
+        (AnalysisTaskPage.prototype._renderTestGroupList): Use the filtered list of test groups to show the list
+        of test groups. When all test groups are shown, we would first show the hidden ones after the regular ones.
+        (AnalysisTaskPage.prototype._createTestGroupListItem): Extracted from _renderTestGroupList.
+        (AnalysisTaskPage.prototype._renderTestGroupDetails): Update the text inside the button to hide the test
+        group. Also show a warning text that the pending requests will be canceled if there are any.
+        (AnalysisTaskPage.prototype._hideCurrentTestGroup): Added.
+        (AnalysisTaskPage.cssTemplate): Updated the style.
+
+2016-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         The rows in the analysis results table should be expandable
         https://bugs.webkit.org/show_bug.cgi?id=154427
 

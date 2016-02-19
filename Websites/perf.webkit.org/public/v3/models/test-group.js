@@ -7,6 +7,7 @@ class TestGroup extends LabeledObject {
         this._taskId = object.task;
         this._authorName = object.author;
         this._createdAt = new Date(object.createdAt);
+        this._isHidden = object.hidden;
         this._buildRequests = [];
         this._requestsAreInOrder = false;
         this._repositories = null;
@@ -17,7 +18,19 @@ class TestGroup extends LabeledObject {
         this._platform = object.platform;
     }
 
+    updateSingleton(object)
+    {
+        super.updateSingleton(object);
+
+        console.assert(this._taskId == object.task);
+        console.assert(+this._createdAt == +object.createdAt);
+        console.assert(this._platform == object.platform);
+
+        this._isHidden = object.hidden;
+    }
+
     createdAt() { return this._createdAt; }
+    isHidden() { return this._isHidden; }
     buildRequests() { return this._buildRequests; }
     addBuildRequest(request)
     {
@@ -96,6 +109,11 @@ class TestGroup extends LabeledObject {
         return this._buildRequests.some(function (request) { return request.hasStarted(); });
     }
 
+    hasPending()
+    {
+        return this._buildRequests.some(function (request) { return request.hasPending(); });
+    }
+
     compareTestResults(rootSetA, rootSetB)
     {
         var beforeValues = this._valuesForRootSet(rootSetA);
@@ -159,6 +177,19 @@ class TestGroup extends LabeledObject {
         return PrivilegedAPI.sendRequest('update-test-group', {
             group: id,
             name: newName,
+        }).then(function (data) {
+            return TestGroup.cachedFetch(`../api/test-groups/${id}`, {}, true)
+                .then(TestGroup._createModelsFromFetchedTestGroups.bind(TestGroup));
+        });
+    }
+
+    updateHiddenFlag(hidden)
+    {
+        var self = this;
+        var id = this.id();
+        return PrivilegedAPI.sendRequest('update-test-group', {
+            group: id,
+            hidden: !!hidden,
         }).then(function (data) {
             return TestGroup.cachedFetch(`../api/test-groups/${id}`, {}, true)
                 .then(TestGroup._createModelsFromFetchedTestGroups.bind(TestGroup));

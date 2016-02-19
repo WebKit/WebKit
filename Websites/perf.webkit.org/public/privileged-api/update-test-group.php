@@ -14,6 +14,9 @@ function main() {
     if (array_key_exists('name', $data))
         $values['name'] = $data['name'];
 
+    if (array_key_exists('hidden', $data))
+        $values['hidden'] = Database::to_database_boolean($data['hidden']);
+
     if (!$values)
         exit_with_error('NothingToUpdate');
 
@@ -23,6 +26,11 @@ function main() {
     if (!$db->update_row('analysis_test_groups', 'testgroup', array('id' => $test_group_id), $values)) {
         $db->rollback_transaction();
         exit_with_error('FailedToUpdateTestGroup', array('id' => $test_group_id, 'values' => $values));
+    }
+
+    if (array_get($data, 'hidden')) {
+        $db->query_and_get_affected_rows('UPDATE build_requests SET request_status = $1
+            WHERE request_group = $2 AND request_status = $3', array('canceled', $test_group_id, 'pending'));
     }
 
     $db->commit_transaction();

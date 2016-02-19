@@ -30,8 +30,9 @@ class BuildRequest extends DataModelObject {
     order() { return this._order; }
     rootSet() { return this._rootSet; }
 
-    hasCompleted() { return this._status == 'failed' || this._status == 'completed'; }
+    hasCompleted() { return this._status == 'failed' || this._status == 'completed' || this._status == 'canceled'; }
     hasStarted() { return this._status != 'pending'; }
+    hasPending() { return this._status == 'pending'; }
     statusLabel()
     {
         switch (this._status) {
@@ -45,6 +46,8 @@ class BuildRequest extends DataModelObject {
             return 'Failed';
         case 'completed':
             return 'Completed';
+        case 'canceled':
+            return 'Canceled';
         }
     }
     statusUrl() { return this._statusUrl; }

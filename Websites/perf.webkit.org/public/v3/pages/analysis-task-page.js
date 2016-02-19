@@ -44,6 +44,8 @@ class AnalysisTaskPage extends PageWithHeading {
         this._endPoint = null;
         this._errorMessage = null;
         this._currentTestGroup = null;
+        this._filteredTestGroups = null;
+        this._showHiddenTestGroups = false;
 
         this._chartPane = this.content().querySelector('analysis-task-chart-pane').component();
         this._chartPane.setPage(this);
@@ -69,8 +71,10 @@ class AnalysisTaskPage extends PageWithHeading {
         this._newTestGroupFormForViewer = this.content().querySelector('.analysis-results-view customizable-test-group-form').component();
         this._newTestGroupFormForViewer.setStartCallback(this._createNewTestGroupFromViewer.bind(this));
 
-        this._retryForm = this.content().querySelector('.test-group-retry-form').firstChild.component();
+        this._retryForm = this.content().querySelector('.test-group-retry-form test-group-form').component();
         this._retryForm.setStartCallback(this._retryCurrentTestGroup.bind(this));
+        this._hideButton = this.content().querySelector('.test-group-hide-button');
+        this._hideButton.onclick = this._hideCurrentTestGroup.bind(this);
     }
 
     title() { return this._task ? this._task.label() : 'Analysis Task'; }
@@ -157,12 +161,29 @@ class AnalysisTaskPage extends PageWithHeading {
     _didFetchTestGroups(testGroups)
     {
         this._testGroups = testGroups.sort(function (a, b) { return +a.createdAt() - b.createdAt(); });
-        this._currentTestGroup = testGroups.length ? testGroups[testGroups.length - 1] : null;
-
-        this._analysisResultsViewer.setTestGroups(testGroups);
-        this._testGroupResultsTable.setTestGroup(this._currentTestGroup);
+        this._didUpdateTestGroupHiddenState();
         this._assignTestResultsIfPossible();
         this.render();
+    }
+
+    _showAllTestGroups()
+    {
+        this._showHiddenTestGroups = true;
+        this._didUpdateTestGroupHiddenState();
+        this.render();
+    }
+
+    _didUpdateTestGroupHiddenState()
+    {
+        this._renderedCurrentTestGroup = null;
+        this._renderedTestGroups = null;
+        if (!this._showHiddenTestGroups)
+            this._filteredTestGroups = this._testGroups.filter(function (group) { return !group.isHidden(); });
+        else
+            this._filteredTestGroups = this._testGroups;
+        this._currentTestGroup = this._filteredTestGroups ? this._filteredTestGroups[this._filteredTestGroups.length - 1] : null;
+        this._analysisResultsViewer.setTestGroups(this._filteredTestGroups);
+        this._testGroupResultsTable.setTestGroup(this._currentTestGroup);
     }
 
     _didFetchAnalysisResults(results)
@@ -277,31 +298,43 @@ class AnalysisTaskPage extends PageWithHeading {
             this._renderedTestGroups = this._testGroups;
             this._testGroupLabelMap.clear();
 
-            var self = this;
-            var updateTestGroupName = this._updateTestGroupName.bind(this);
-            var showTestGroup = this._showTestGroup.bind(this);
+            var unhiddenTestGroups = this._filteredTestGroups.filter(function (group) { return !group.isHidden(); });
+            var hiddenTestGroups = this._filteredTestGroups.filter(function (group) { return group.isHidden(); });
 
-            this.renderReplace(this.content().querySelector('.test-group-list'),
-                this._testGroups.map(function (group) {
-                    var text = new EditableText(group.label());
-                    text.setStartedEditingCallback(function () { return text.render(); });
-                    text.setUpdateCallback(function () { return updateTestGroupName(group); });
+            var listItems = [];
+            for (var group of hiddenTestGroups)
+                listItems.unshift(this._createTestGroupListItem(group));
+            for (var group of unhiddenTestGroups)
+                listItems.unshift(this._createTestGroupListItem(group));
 
-                    self._testGroupLabelMap.set(group, text);
-                    return element('li', {class: 'test-group-list-' + group.id()},
-                        link(text, group.label(), function () { showTestGroup(group); }));
-                }).reverse());
+            if (this._testGroups.length != this._filteredTestGroups.length) {
+                listItems.push(element('li', {class: 'test-group-list-show-all'},
+                    link('Show hidden tests', this._showAllTestGroups.bind(this))));
+            }
+
+            this.renderReplace(this.content().querySelector('.test-group-list'), listItems);
 
             this._renderedCurrentTestGroup = null;
         }
 
         if (this._testGroups) {
-            for (var testGroup of this._testGroups) {
+            for (var testGroup of this._filteredTestGroups) {
                 var label = this._testGroupLabelMap.get(testGroup);
                 label.setText(testGroup.label());
                 label.render();
             }
         }
+    }
+
+    _createTestGroupListItem(group)
+    {
+        var text = new EditableText(group.label());
+        text.setStartedEditingCallback(function () { return text.render(); });
+        text.setUpdateCallback(this._updateTestGroupName.bind(this, group));
+
+        this._testGroupLabelMap.set(group, text);
+        return ComponentBase.createElement('li', {class: 'test-group-list-' + group.id()},
+            ComponentBase.createLink(text, group.label(), this._showTestGroup.bind(this, group)));
     }
 
     _renderTestGroupDetails()
@@ -331,6 +364,12 @@ class AnalysisTaskPage extends PageWithHeading {
             if (this._currentTestGroup)
                 this._retryForm.setRepetitionCount(this._currentTestGroup.repetitionCount());
             this._retryForm.element().style.display = this._currentTestGroup ? null : 'none';
+
+            this.content().querySelector('.test-group-hide-button').textContent
+                = this._currentTestGroup && this._currentTestGroup.isHidden() ? 'Unhide' : 'Hide';
+
+            this.content().querySelector('.pending-request-cancel-warning').style.display
+                = this._currentTestGroup && this._currentTestGroup.hasPending() ? null : 'none';
 
             this._renderedCurrentTestGroup = this._currentTestGroup;
         }
@@ -373,7 +412,21 @@ class AnalysisTaskPage extends PageWithHeading {
             self.render();
         }, function (error) {
             self.render();
-            alert('Failed to update the name: ' + error);
+            alert('Failed to hide the test name: ' + error);
+        });
+    }
+
+    _hideCurrentTestGroup()
+    {
+        var self = this;
+        console.assert(this._currentTestGroup);
+        return this._currentTestGroup.updateHiddenFlag(!this._currentTestGroup.isHidden()).then(function () {
+            self._didUpdateTestGroupHiddenState();
+            self.render();
+        }, function (error) {
+            self._mayHaveMutatedTestGroupHiddenState();
+            self.render();
+            alert('Failed to update the group: ' + error);
         });
     }
 
@@ -569,6 +622,8 @@ class AnalysisTaskPage extends PageWithHeading {
                     <div class="test-group-details">
                         <test-group-results-table></test-group-results-table>
                         <div class="test-group-retry-form"><test-group-form></test-group-form></div>
+                        <button class="test-group-hide-button">Hide</button>
+                        <span class="pending-request-cancel-warning">(cancels pending requests)</span>
                     </div>
                 </section>
             </div>
@@ -690,6 +745,10 @@ class AnalysisTaskPage extends PageWithHeading {
                 margin: 0.5rem;
             }
 
+            .test-group-hide-button {
+                margin: 0.5rem;
+            }
+
             .test-group-list {
                 display: table-cell;
                 margin: 0;
@@ -697,6 +756,7 @@ class AnalysisTaskPage extends PageWithHeading {
                 list-style: none;
                 border-right: solid 1px #ccc;
                 white-space: nowrap;
+                min-width: 8rem;
             }
 
             .test-group-list:empty {
@@ -707,15 +767,27 @@ class AnalysisTaskPage extends PageWithHeading {
 
             .test-group-list > li {
                 display: block;
+                font-size: 0.9rem;
             }
 
             .test-group-list > li > a {
                 display: block;
                 color: inherit;
                 text-decoration: none;
-                font-size: 0.9rem;
                 margin: 0;
                 padding: 0.2rem;
+            }
+            
+            .test-group-list > li.test-group-list-show-all {
+                font-size: 0.8rem;
+                margin-top: 0.5rem;
+                padding-right: 1rem;
+                text-align: center;
+                color: #999;
+            }
+
+            .test-group-list > li.test-group-list-show-all:not(.selected) a:hover {
+                background: inherit;
             }
 
             .test-group-list > li.selected > a {
