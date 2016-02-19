@@ -1,3 +1,13 @@
+2016-02-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Native Parameter Lists to Console prototype functions
+        https://bugs.webkit.org/show_bug.cgi?id=154419
+        <rdar://problem/24730314>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2016-02-18  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Align console prompt with execution context selector

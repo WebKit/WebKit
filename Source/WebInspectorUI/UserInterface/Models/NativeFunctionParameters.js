@@ -352,6 +352,29 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
+    Console: {
+        assert: "condition, [message], [...values]",
+        count: "[label]",
+        debug: "message, [...values]",
+        dir: "object",
+        dirxml: "object",
+        error: "message, [...values]",
+        group: "[name]",
+        groupCollapsed: "[name]",
+        groupEnd: "[name]",
+        info: "message, [...values]",
+        log: "message, [...values]",
+        profile: "name",
+        profileEnd: "name",
+        table: "data, [columns]",
+        time: "name",
+        timeEnd: "name",
+        timeStamp: "[label]",
+        trace: "message, [...values]",
+        warn: "message, [...values]",
+        __proto__: null,
+    },
+
     // Curated DOM Interfaces.
 
     Element: {
