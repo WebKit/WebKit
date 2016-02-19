@@ -40,7 +40,7 @@ namespace WebCore {
 CFCachedURLResponseRef SubresourceLoader::willCacheResponse(ResourceHandle* handle, CFCachedURLResponseRef cachedResponse)
 {
     DiskCacheMonitor::monitorFileBackingStoreCreation(request(), m_resource->sessionID(), cachedResponse);
-    if (!m_resource->shouldCacheResponse(CFCachedURLResponseGetWrappedResponse(cachedResponse))
+    if (!m_resource->shouldCacheResponse(CFCachedURLResponseGetWrappedResponse(cachedResponse)))
         return nullptr;
     return ResourceLoader::willCacheResponse(handle, cachedResponse);
 }
