@@ -129,7 +129,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
 
     static cssTemplate()
     {
-        return super.cssTemplate() + `
+        return `
             .customize-link {
                 color: #333;
             }

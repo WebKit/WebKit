@@ -1,3 +1,19 @@
+2016-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Statistically significant A/B testing results should be color coded in details view
+        https://bugs.webkit.org/show_bug.cgi?id=154414
+
+        Reviewed by Chris Dumez.
+
+        Color code the statistically significant comparisions in TestGroupResultsTable as done in the analysis
+        results viewer.
+
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm.cssTemplate): Build fix after r196768.
+        * public/v3/components/test-group-results-table.js:
+        (TestGroupResultsTable.prototype.buildRowGroups): Add the status as a class name.
+        (TestGroupResultsTable.cssTemplate): Added styles to color-code statistically significant results.
+
 2016-02-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         v3 UI should allow custom revisions for A/B testing
