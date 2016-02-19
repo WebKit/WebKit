@@ -1,3 +1,18 @@
+2016-02-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove more LLVM related dead code after r196729
+        https://bugs.webkit.org/show_bug.cgi?id=154387
+
+        Reviewed by Filip Pizlo.
+
+        * Configurations/CompileRuntimeToLLVMIR.xcconfig: Removed.
+        * Configurations/LLVMForJSC.xcconfig: Removed.
+        * JavaScriptCore.vcxproj/libllvmForJSC/libllvmForJSC.props: Removed.
+        * JavaScriptCore.vcxproj/libllvmForJSC/libllvmForJSC.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/libllvmForJSC/libllvmForJSC.vcxproj.filters: Removed.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * disassembler/X86Disassembler.cpp:
+
 2016-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add isJSString(JSCell*) variant to avoid Cell->JSValue->Cell conversion
