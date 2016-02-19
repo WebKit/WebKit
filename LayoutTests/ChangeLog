@@ -1,3 +1,14 @@
+2016-02-19  Nan Wang  <n_wang@apple.com>
+
+        AX: Inconsistency between CharacterOffset and VisiblePostition
+        https://bugs.webkit.org/show_bug.cgi?id=154431
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/text-marker-word-nav-expected.txt:
+        * accessibility/mac/text-marker-word-nav.html:
+        * accessibility/text-marker/text-marker-previous-next.html:
+
 2016-02-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator after r196797

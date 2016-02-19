@@ -1293,19 +1293,9 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
     if (!m_object)
         return nil;
     
-    // extract the start and end VisiblePosition
-    VisiblePosition startVisiblePosition = visiblePositionForStartOfTextMarkerRange(m_object->axObjectCache(), textMarkerRange);
-    if (startVisiblePosition.isNull())
-        return nil;
-    
-    VisiblePosition endVisiblePosition = visiblePositionForEndOfTextMarkerRange(m_object->axObjectCache(), textMarkerRange);
-    if (endVisiblePosition.isNull())
-        return nil;
-    
-    VisiblePositionRange visiblePositionRange(startVisiblePosition, endVisiblePosition);
-    // iterate over the range to build the AX attributed string
+    RefPtr<Range> range = [self rangeForTextMarkerRange:textMarkerRange];
     NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
-    TextIterator it(makeRange(startVisiblePosition, endVisiblePosition).get());
+    TextIterator it(range.get());
     while (!it.atEnd()) {
         // locate the node and starting offset for this range
         Node& node = it.range()->startContainer();

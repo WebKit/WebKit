@@ -57,17 +57,20 @@ test audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file
         var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
         var currentMarker = advanceAndVerify(startMarker, 1, text);
         
+        // Check that we are at the end of paragraph, so right word should be empty
+        currentMarker = advanceAndVerify(currentMarker, 9, text);
+        
         // Check the case with span
         // At "T" in "Thisis", should return the word as "Thisislongword".
-        currentMarker = advanceAndVerify(currentMarker, 10, text);
+        currentMarker = advanceAndVerify(currentMarker, 2, text);
         // At " " before "I", the word should be "I'll".
-        currentMarker = advanceAndVerify(currentMarker, 14, text);
+        currentMarker = advanceAndVerify(currentMarker, 15, text);
         // At " " before "try", the word should excludes "."
-        currentMarker = advanceAndVerify(currentMarker, 5, text);
+        currentMarker = advanceAndVerify(currentMarker, 6, text);
         
         // Check the case with contenteditable
         // At "e" in "editable", the word should NOT include "Content" before it.
-        currentMarker = advanceAndVerify(currentMarker, 17, text);
+        currentMarker = advanceAndVerify(currentMarker, 19, text);
         
         // Check the case with replaced node, the replaced node should be considered a word.
         var text2 = accessibilityController.accessibleElementById("text2");

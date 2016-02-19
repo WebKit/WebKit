@@ -196,8 +196,9 @@ public:
     void textMarkerDataForPreviousCharacterOffset(TextMarkerData&, const CharacterOffset&);
     VisiblePosition visiblePositionForTextMarkerData(TextMarkerData&);
     CharacterOffset characterOffsetForTextMarkerData(TextMarkerData&);
-    CharacterOffset nextCharacterOffset(const CharacterOffset&, bool ignoreStart = true);
-    CharacterOffset previousCharacterOffset(const CharacterOffset&, bool ignoreStart = true);
+    // Use ignoreNextNodeStart/ignorePreviousNodeEnd to determine the behavior when we are at node boundary. 
+    CharacterOffset nextCharacterOffset(const CharacterOffset&, bool ignoreNextNodeStart = true);
+    CharacterOffset previousCharacterOffset(const CharacterOffset&, bool ignorePreviousNodeEnd = true);
     void startOrEndTextMarkerDataForRange(TextMarkerData&, RefPtr<Range>, bool);
     AccessibilityObject* accessibilityObjectForTextMarkerData(TextMarkerData&);
     RefPtr<Range> rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&);
@@ -314,7 +315,7 @@ protected:
     enum TraverseOption { TraverseOptionDefault = 1 << 0, TraverseOptionToNodeEnd = 1 << 1, TraverseOptionIncludeStart = 1 << 2 };
     Node* nextNode(Node*) const;
     Node* previousNode(Node*) const;
-    CharacterOffset traverseToOffsetInRange(RefPtr<Range>, int, bool, bool stayWithinRange = false);
+    CharacterOffset traverseToOffsetInRange(RefPtr<Range>, int, TraverseOption = TraverseOptionDefault, bool stayWithinRange = false);
     VisiblePosition visiblePositionFromCharacterOffset(const CharacterOffset&);
     CharacterOffset characterOffsetFromVisiblePosition(const VisiblePosition&);
     void setTextMarkerDataWithCharacterOffset(TextMarkerData&, const CharacterOffset&);

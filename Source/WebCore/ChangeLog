@@ -1,3 +1,40 @@
+2016-02-19  Nan Wang  <n_wang@apple.com>
+
+        AX: Inconsistency between CharacterOffset and VisiblePostition
+        https://bugs.webkit.org/show_bug.cgi?id=154431
+
+        Reviewed by Chris Fleizach.
+
+        VoiceOver is not getting the correct text marker from VisiblePostition when
+        navigating using arrow keys. We should make the CharacterOffset behavior consistent
+        with VisiblePosition so that the conversion between the two won't create different
+        text markers.
+        
+        Changes are covered in the modified tests.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::characterOffsetForTextMarkerData):
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::startOrEndCharacterOffsetForRange):
+        (WebCore::AXObjectCache::startOrEndTextMarkerDataForRange):
+        (WebCore::AXObjectCache::characterOffsetForNodeAndOffset):
+        (WebCore::AXObjectCache::textMarkerDataForNextCharacterOffset):
+        (WebCore::AXObjectCache::textMarkerDataForPreviousCharacterOffset):
+        (WebCore::AXObjectCache::visiblePositionFromCharacterOffset):
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+        (WebCore::AXObjectCache::accessibilityObjectForTextMarkerData):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        (WebCore::AXObjectCache::nextCharacterOffset):
+        (WebCore::AXObjectCache::previousCharacterOffset):
+        (WebCore::AXObjectCache::startCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::endCharacterOffsetOfWord):
+        (WebCore::AXObjectCache::previousWordStartCharacterOffset):
+        (WebCore::AXObjectCache::previousParagraphStartCharacterOffset):
+        (WebCore::AXObjectCache::previousSentenceStartCharacterOffset):
+        * accessibility/AXObjectCache.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]):
+
 2016-02-19  Jer Noble  <jer.noble@apple.com>
 
         Allow CachedRawResource clients to opt out of caching on a per-response basis

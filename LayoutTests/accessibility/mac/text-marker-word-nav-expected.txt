@@ -19,6 +19,11 @@ Left word is: word1
 Right word is: word1
 Pre word start to next word end: word1
 
+Current character is: t
+Left word is: test
+Right word is: 
+Pre word start to next word end: test'line break'Thisislongword
+
 Current character is: T
 Left word is: Thisislongword
 Right word is: Thisislongword
@@ -86,17 +91,17 @@ Pre word start to next word end: both
 
 Current character is: s
 Left word is: spaces
-Right word is: 'line break'
+Right word is: 
 Pre word start to next word end: spaces'line break'
 
 Current character is: e
 Left word is: some
-Right word is: 'line break'
+Right word is: 
 Pre word start to next word end: some'line break'
 
 Current character is: 'line break'
-Left word is: 'line break'
-Right word is: text
+Left word is: 
+Right word is: 
 Pre word start to next word end: 'line break'text
 
 Current character is:  
