@@ -1,3 +1,14 @@
+2016-02-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake][GTK] Clean up llvm guard in PlatformGTK.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=154430
+
+        Reviewed by Saam Barati.
+
+        llvm isn't used anymore.
+
+        * PlatformGTK.cmake: Remove USE_LLVM_DISASSEMBLER guard.
+
 2016-02-18  Saam Barati  <sbarati@apple.com>
 
         Implement Proxy.[[HasProperty]]
