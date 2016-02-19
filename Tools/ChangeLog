@@ -1,3 +1,20 @@
+2016-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the --target-web-process and --use-web-process-xpc-service options.
+
+        Rubber-stamped by Dan Bernstein.
+
+        We now always use XPC, and --target-web-process is no longer supported.
+
+        * Scripts/webkitdirs.pm:
+        (execMacWebKitAppForDebugging):
+        (shouldTargetWebProcess): Deleted.
+        (determineShouldTargetWebProcess): Deleted.
+        (shouldUseXPCServiceForWebProcess): Deleted.
+        (determineShouldUseXPCServiceForWebProcess): Deleted.
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded): Deleted.
+        (argumentsForRunAndDebugMacWebKitApp): Deleted.
+
 2016-02-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip API test WTF_ParkingLot.UnparkOneFiftyThenFiftyAll on ios-simulator

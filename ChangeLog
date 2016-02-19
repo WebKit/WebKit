@@ -1,3 +1,11 @@
+2016-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the "All Source (target WebProcess)" scheme.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme: Removed.
+
 2016-02-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Remove LLVM support

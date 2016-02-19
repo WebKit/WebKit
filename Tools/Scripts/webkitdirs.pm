@@ -138,8 +138,6 @@ my $isCMakeBuild;
 my $isWin64;
 my $isInspectorFrontend;
 my $portName;
-my $shouldTargetWebProcess;
-my $shouldUseXPCServiceForWebProcess;
 my $shouldUseGuardMalloc;
 my $shouldNotUseNinja;
 my $xcodeVersion;
@@ -1383,30 +1381,6 @@ sub isWindowsNT()
     return $ENV{'OS'} eq 'Windows_NT';
 }
 
-sub shouldTargetWebProcess
-{
-    determineShouldTargetWebProcess();
-    return $shouldTargetWebProcess;
-}
-
-sub determineShouldTargetWebProcess
-{
-    return if defined($shouldTargetWebProcess);
-    $shouldTargetWebProcess = checkForArgumentAndRemoveFromARGV("--target-web-process");
-}
-
-sub shouldUseXPCServiceForWebProcess
-{
-    determineShouldUseXPCServiceForWebProcess();
-    return $shouldUseXPCServiceForWebProcess;
-}
-
-sub determineShouldUseXPCServiceForWebProcess
-{
-    return if defined($shouldUseXPCServiceForWebProcess);
-    $shouldUseXPCServiceForWebProcess = checkForArgumentAndRemoveFromARGV("--use-web-process-xpc-service");
-}
-
 sub debugger
 {
     determineDebugger();
@@ -2173,12 +2147,10 @@ Usage: @{[basename($0)]} [options] [args ...]
   --help                            Show this help message
   --no-saved-state                  Launch the application without state restoration (OS X 10.7 and later)
   -g|--guard-malloc                 Enable Guard Malloc (OS X only)
-  --use-web-process-xpc-service     Launch the Web Process as an XPC Service (OS X only)
 EOF
 
     if ($includeOptionsForDebugging) {
         print STDERR <<EOF;
-  --target-web-process              Debug the web process
   --use-gdb                         Use GDB (this is the default when using Xcode 4.4 or earlier)
   --use-lldb                        Use LLDB (this is the default when using Xcode 4.5 or later)
 EOF
@@ -2195,7 +2167,6 @@ sub argumentsForRunAndDebugMacWebKitApp()
         # FIXME: Don't set ApplePersistenceIgnoreState once all supported OS versions respect ApplePersistenceIgnoreStateQuietly (rdar://15032886).
         push @args, ("-ApplePersistenceIgnoreState", "YES");
     }
-    push @args, ("-WebKit2UseXPCServiceForWebProcess", "YES") if shouldUseXPCServiceForWebProcess();
     unshift @args, @ARGV;
 
     return @args;
@@ -2531,23 +2502,8 @@ sub execMacWebKitAppForDebugging($)
     setupMacWebKitEnvironment($productDir);
 
     my @architectureFlags = ($architectureSwitch, architecture());
-    if (!shouldTargetWebProcess()) {
-        print "Starting @{[basename($appPath)]} under $debugger with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-        exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
-    } else {
-        if (shouldUseXPCServiceForWebProcess()) {
-            die "Targeting the Web Process is not compatible with using an XPC Service for the Web Process at this time.";
-        }
-        
-        my $webProcessShimPath = File::Spec->catfile($productDir, "SecItemShim.dylib");
-        my $webProcessPath = File::Spec->catdir($productDir, "WebProcess.app");
-        my $webKit2ExecutablePath = File::Spec->catfile($productDir, "WebKit2.framework", "WebKit2");
-
-        appendToEnvironmentVariableList("DYLD_INSERT_LIBRARIES", $webProcessShimPath);
-
-        print "Starting WebProcess under $debugger with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-        exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $webProcessPath, $webKit2ExecutablePath, "-type", "webprocess", "-client-executable", $appPath or die;
-    }
+    print "Starting @{[basename($appPath)]} under $debugger with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+    exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
 }
 
 sub debugSafari
