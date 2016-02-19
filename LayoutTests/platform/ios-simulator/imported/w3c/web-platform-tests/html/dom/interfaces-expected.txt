@@ -4134,7 +4134,7 @@ PASS Location interface: existence and properties of interface prototype object'
 PASS Location must be primary interface of window.location 
 PASS Stringification of window.location 
 PASS Location interface: window.location must have own property "href" 
-FAIL Location interface: window.location must have own property "origin" assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS Location interface: window.location must have own property "origin" 
 PASS Location interface: window.location must have own property "protocol" 
 PASS Location interface: window.location must have own property "host" 
 PASS Location interface: window.location must have own property "hostname" 
