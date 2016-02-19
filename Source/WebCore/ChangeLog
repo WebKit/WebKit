@@ -1,3 +1,15 @@
+2016-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Extend HashCountedSet with a method to efficiently set the count of an entry
+        https://bugs.webkit.org/show_bug.cgi?id=154352
+
+        Reviewed by Geoffrey Garen.
+
+        Tested by new TestWebKitAPI tests.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::decodeHashCountedSet): Update to use new HashCountedSet::add method.
+
 2016-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Wheel event callback removing the window causes crash in WebCore.

@@ -1,3 +1,20 @@
+2016-02-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Extend HashCountedSet with a method to efficiently set the count of an entry
+        https://bugs.webkit.org/show_bug.cgi?id=154352
+
+        Reviewed by Geoffrey Garen.
+
+        Tested by new TestWebKitAPI tests.
+
+        Update the HashCountedSet class with a new 'add' method to support efficient initialization of
+        the count of a given key. Also provide move and pointer template specializations to expand the
+        types of data that can be used as 'keys' in the HashCountedSet to match the underlying HashMap
+        implementation.
+
+        * wtf/HashCountedSet.h:
+        (WTF::Traits>::add): Added new overload supporting a supplied count.
+
 2016-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         Remove LLVM dependencies from WebKit
