@@ -1,3 +1,30 @@
+2016-02-18  Chris Dumez  <cdumez@apple.com>
+
+        HTMLTableHeaderCellElement.scope should only return known values
+        https://bugs.webkit.org/show_bug.cgi?id=154423
+        <rdar://problem/24731018>
+
+        Reviewed by Ryosuke Niwa.
+
+        HTMLTableHeaderCellElement.scope should only return known values as per:
+        - https://html.spec.whatwg.org/multipage/tables.html#dom-th-scope
+
+        Known values are document here:
+        - https://html.spec.whatwg.org/multipage/tables.html#attr-th-scope
+
+        No new tests, already covered by existing test.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTableHeaderCellElement.cpp: Copied from Source/WebCore/html/HTMLTableHeaderCellElement.h.
+        (WebCore::HTMLTableHeaderCellElement::scope):
+        (WebCore::HTMLTableHeaderCellElement::setScope):
+        * html/HTMLTableHeaderCellElement.h:
+        * html/HTMLTableHeaderCellElement.idl:
+
 2016-02-18  Brent Fulgham  <bfulgham@apple.com>
 
         Extend HashCountedSet with a method to efficiently set the count of an entry

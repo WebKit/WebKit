@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLTableHeaderCellElement_h
-#define HTMLTableHeaderCellElement_h
+#include "config.h"
+#include "HTMLTableHeaderCellElement.h"
 
 #include "HTMLNames.h"
-#include "HTMLTableCellElement.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class HTMLTableHeaderCellElement final : public HTMLTableCellElement {
-public:
-    static Ref<HTMLTableHeaderCellElement> create(Document& document)
-    {
-        return adoptRef(*new HTMLTableHeaderCellElement(HTMLNames::thTag, document));
-    }
+const AtomicString& HTMLTableHeaderCellElement::scope() const
+{
+    // https://html.spec.whatwg.org/multipage/tables.html#attr-th-scope
+    static NeverDestroyed<const AtomicString> row("row", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> col("col", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> rowgroup("rowgroup", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> colgroup("colgroup", AtomicString::ConstructFromLiteral);
 
-    static Ref<HTMLTableHeaderCellElement> create(const QualifiedName& tagName, Document& document)
-    {
-        ASSERT(tagName == HTMLNames::thTag);
-        return adoptRef(*new HTMLTableHeaderCellElement(tagName, document));
-    }
-
-    const AtomicString& scope() const;
-    void setScope(const AtomicString&);
-
-private:
-    using HTMLTableCellElement::HTMLTableCellElement;
-};
-
+    const AtomicString& value = fastGetAttribute(HTMLNames::scopeAttr);
+    if (equalIgnoringASCIICase(value, row))
+        return row;
+    if (equalIgnoringASCIICase(value, col))
+        return col;
+    if (equalIgnoringASCIICase(value, rowgroup))
+        return rowgroup;
+    if (equalIgnoringASCIICase(value, colgroup))
+        return colgroup;
+    return emptyAtom;
 }
 
-#endif // HTMLTableHeaderCellElement_h
+void HTMLTableHeaderCellElement::setScope(const AtomicString& scope)
+{
+    setAttributeWithoutSynchronization(HTMLNames::scopeAttr, scope);
+}
 
+} // namespace WebCore

@@ -12610,177 +12610,177 @@ PASS th.scope: IDL get with DOM attribute unset
 PASS th.scope: setAttribute() to "" followed by getAttribute() 
 PASS th.scope: setAttribute() to "" followed by IDL get 
 PASS th.scope: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL th.scope: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS th.scope: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS th.scope: setAttribute() to undefined followed by getAttribute() 
-FAIL th.scope: setAttribute() to undefined followed by IDL get assert_equals: expected "" but got "undefined"
+PASS th.scope: setAttribute() to undefined followed by IDL get 
 PASS th.scope: setAttribute() to 7 followed by getAttribute() 
-FAIL th.scope: setAttribute() to 7 followed by IDL get assert_equals: expected "" but got "7"
+PASS th.scope: setAttribute() to 7 followed by IDL get 
 PASS th.scope: setAttribute() to 1.5 followed by getAttribute() 
-FAIL th.scope: setAttribute() to 1.5 followed by IDL get assert_equals: expected "" but got "1.5"
+PASS th.scope: setAttribute() to 1.5 followed by IDL get 
 PASS th.scope: setAttribute() to true followed by getAttribute() 
-FAIL th.scope: setAttribute() to true followed by IDL get assert_equals: expected "" but got "true"
+PASS th.scope: setAttribute() to true followed by IDL get 
 PASS th.scope: setAttribute() to false followed by getAttribute() 
-FAIL th.scope: setAttribute() to false followed by IDL get assert_equals: expected "" but got "false"
+PASS th.scope: setAttribute() to false followed by IDL get 
 PASS th.scope: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL th.scope: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected "" but got "[object Object]"
+PASS th.scope: setAttribute() to object "[object Object]" followed by IDL get 
 PASS th.scope: setAttribute() to NaN followed by getAttribute() 
-FAIL th.scope: setAttribute() to NaN followed by IDL get assert_equals: expected "" but got "NaN"
+PASS th.scope: setAttribute() to NaN followed by IDL get 
 PASS th.scope: setAttribute() to Infinity followed by getAttribute() 
-FAIL th.scope: setAttribute() to Infinity followed by IDL get assert_equals: expected "" but got "Infinity"
+PASS th.scope: setAttribute() to Infinity followed by IDL get 
 PASS th.scope: setAttribute() to -Infinity followed by getAttribute() 
-FAIL th.scope: setAttribute() to -Infinity followed by IDL get assert_equals: expected "" but got "-Infinity"
+PASS th.scope: setAttribute() to -Infinity followed by IDL get 
 PASS th.scope: setAttribute() to "\0" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "\0" followed by IDL get assert_equals: expected "" but got "\0"
+PASS th.scope: setAttribute() to "\0" followed by IDL get 
 PASS th.scope: setAttribute() to null followed by getAttribute() 
-FAIL th.scope: setAttribute() to null followed by IDL get assert_equals: expected "" but got "null"
+PASS th.scope: setAttribute() to null followed by IDL get 
 PASS th.scope: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL th.scope: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected "" but got "test-toString"
+PASS th.scope: setAttribute() to object "test-toString" followed by IDL get 
 PASS th.scope: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL th.scope: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected "" but got "test-valueOf"
+PASS th.scope: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS th.scope: setAttribute() to "row" followed by getAttribute() 
 PASS th.scope: setAttribute() to "row" followed by IDL get 
 PASS th.scope: setAttribute() to "xrow" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "xrow" followed by IDL get assert_equals: expected "" but got "xrow"
+PASS th.scope: setAttribute() to "xrow" followed by IDL get 
 PASS th.scope: setAttribute() to "row\0" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "row\0" followed by IDL get assert_equals: expected "" but got "row\0"
+PASS th.scope: setAttribute() to "row\0" followed by IDL get 
 PASS th.scope: setAttribute() to "ow" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "ow" followed by IDL get assert_equals: expected "" but got "ow"
+PASS th.scope: setAttribute() to "ow" followed by IDL get 
 PASS th.scope: setAttribute() to "ROW" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "ROW" followed by IDL get assert_equals: expected "row" but got "ROW"
+PASS th.scope: setAttribute() to "ROW" followed by IDL get 
 PASS th.scope: setAttribute() to "col" followed by getAttribute() 
 PASS th.scope: setAttribute() to "col" followed by IDL get 
 PASS th.scope: setAttribute() to "xcol" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "xcol" followed by IDL get assert_equals: expected "" but got "xcol"
+PASS th.scope: setAttribute() to "xcol" followed by IDL get 
 PASS th.scope: setAttribute() to "col\0" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "col\0" followed by IDL get assert_equals: expected "" but got "col\0"
+PASS th.scope: setAttribute() to "col\0" followed by IDL get 
 PASS th.scope: setAttribute() to "ol" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "ol" followed by IDL get assert_equals: expected "" but got "ol"
+PASS th.scope: setAttribute() to "ol" followed by IDL get 
 PASS th.scope: setAttribute() to "COL" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "COL" followed by IDL get assert_equals: expected "col" but got "COL"
+PASS th.scope: setAttribute() to "COL" followed by IDL get 
 PASS th.scope: setAttribute() to "rowgroup" followed by getAttribute() 
 PASS th.scope: setAttribute() to "rowgroup" followed by IDL get 
 PASS th.scope: setAttribute() to "xrowgroup" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "xrowgroup" followed by IDL get assert_equals: expected "" but got "xrowgroup"
+PASS th.scope: setAttribute() to "xrowgroup" followed by IDL get 
 PASS th.scope: setAttribute() to "rowgroup\0" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "rowgroup\0" followed by IDL get assert_equals: expected "" but got "rowgroup\0"
+PASS th.scope: setAttribute() to "rowgroup\0" followed by IDL get 
 PASS th.scope: setAttribute() to "owgroup" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "owgroup" followed by IDL get assert_equals: expected "" but got "owgroup"
+PASS th.scope: setAttribute() to "owgroup" followed by IDL get 
 PASS th.scope: setAttribute() to "ROWGROUP" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "ROWGROUP" followed by IDL get assert_equals: expected "rowgroup" but got "ROWGROUP"
+PASS th.scope: setAttribute() to "ROWGROUP" followed by IDL get 
 PASS th.scope: setAttribute() to "colgroup" followed by getAttribute() 
 PASS th.scope: setAttribute() to "colgroup" followed by IDL get 
 PASS th.scope: setAttribute() to "xcolgroup" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "xcolgroup" followed by IDL get assert_equals: expected "" but got "xcolgroup"
+PASS th.scope: setAttribute() to "xcolgroup" followed by IDL get 
 PASS th.scope: setAttribute() to "colgroup\0" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "colgroup\0" followed by IDL get assert_equals: expected "" but got "colgroup\0"
+PASS th.scope: setAttribute() to "colgroup\0" followed by IDL get 
 PASS th.scope: setAttribute() to "olgroup" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "olgroup" followed by IDL get assert_equals: expected "" but got "olgroup"
+PASS th.scope: setAttribute() to "olgroup" followed by IDL get 
 PASS th.scope: setAttribute() to "COLGROUP" followed by getAttribute() 
-FAIL th.scope: setAttribute() to "COLGROUP" followed by IDL get assert_equals: expected "colgroup" but got "COLGROUP"
+PASS th.scope: setAttribute() to "COLGROUP" followed by IDL get 
 PASS th.scope: IDL set to "" should not throw 
 PASS th.scope: IDL set to "" followed by getAttribute() 
 PASS th.scope: IDL set to "" followed by IDL get 
 PASS th.scope: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " should not throw 
 PASS th.scope: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL th.scope: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS th.scope: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS th.scope: IDL set to undefined should not throw 
 PASS th.scope: IDL set to undefined followed by getAttribute() 
-FAIL th.scope: IDL set to undefined followed by IDL get assert_equals: expected "" but got "undefined"
+PASS th.scope: IDL set to undefined followed by IDL get 
 PASS th.scope: IDL set to 7 should not throw 
 PASS th.scope: IDL set to 7 followed by getAttribute() 
-FAIL th.scope: IDL set to 7 followed by IDL get assert_equals: expected "" but got "7"
+PASS th.scope: IDL set to 7 followed by IDL get 
 PASS th.scope: IDL set to 1.5 should not throw 
 PASS th.scope: IDL set to 1.5 followed by getAttribute() 
-FAIL th.scope: IDL set to 1.5 followed by IDL get assert_equals: expected "" but got "1.5"
+PASS th.scope: IDL set to 1.5 followed by IDL get 
 PASS th.scope: IDL set to true should not throw 
 PASS th.scope: IDL set to true followed by getAttribute() 
-FAIL th.scope: IDL set to true followed by IDL get assert_equals: expected "" but got "true"
+PASS th.scope: IDL set to true followed by IDL get 
 PASS th.scope: IDL set to false should not throw 
 PASS th.scope: IDL set to false followed by getAttribute() 
-FAIL th.scope: IDL set to false followed by IDL get assert_equals: expected "" but got "false"
+PASS th.scope: IDL set to false followed by IDL get 
 PASS th.scope: IDL set to object "[object Object]" should not throw 
 PASS th.scope: IDL set to object "[object Object]" followed by getAttribute() 
-FAIL th.scope: IDL set to object "[object Object]" followed by IDL get assert_equals: expected "" but got "[object Object]"
+PASS th.scope: IDL set to object "[object Object]" followed by IDL get 
 PASS th.scope: IDL set to NaN should not throw 
 PASS th.scope: IDL set to NaN followed by getAttribute() 
-FAIL th.scope: IDL set to NaN followed by IDL get assert_equals: expected "" but got "NaN"
+PASS th.scope: IDL set to NaN followed by IDL get 
 PASS th.scope: IDL set to Infinity should not throw 
 PASS th.scope: IDL set to Infinity followed by getAttribute() 
-FAIL th.scope: IDL set to Infinity followed by IDL get assert_equals: expected "" but got "Infinity"
+PASS th.scope: IDL set to Infinity followed by IDL get 
 PASS th.scope: IDL set to -Infinity should not throw 
 PASS th.scope: IDL set to -Infinity followed by getAttribute() 
-FAIL th.scope: IDL set to -Infinity followed by IDL get assert_equals: expected "" but got "-Infinity"
+PASS th.scope: IDL set to -Infinity followed by IDL get 
 PASS th.scope: IDL set to "\0" should not throw 
 PASS th.scope: IDL set to "\0" followed by getAttribute() 
-FAIL th.scope: IDL set to "\0" followed by IDL get assert_equals: expected "" but got "\0"
+PASS th.scope: IDL set to "\0" followed by IDL get 
 PASS th.scope: IDL set to null should not throw 
-FAIL th.scope: IDL set to null followed by IDL get assert_equals: expected "" but got "null"
+PASS th.scope: IDL set to null followed by IDL get 
 PASS th.scope: IDL set to object "test-toString" should not throw 
 PASS th.scope: IDL set to object "test-toString" followed by getAttribute() 
-FAIL th.scope: IDL set to object "test-toString" followed by IDL get assert_equals: expected "" but got "test-toString"
+PASS th.scope: IDL set to object "test-toString" followed by IDL get 
 PASS th.scope: IDL set to object "test-valueOf" should not throw 
 PASS th.scope: IDL set to object "test-valueOf" followed by getAttribute() 
-FAIL th.scope: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected "" but got "test-valueOf"
+PASS th.scope: IDL set to object "test-valueOf" followed by IDL get 
 PASS th.scope: IDL set to "row" should not throw 
 PASS th.scope: IDL set to "row" followed by getAttribute() 
 PASS th.scope: IDL set to "row" followed by IDL get 
 PASS th.scope: IDL set to "xrow" should not throw 
 PASS th.scope: IDL set to "xrow" followed by getAttribute() 
-FAIL th.scope: IDL set to "xrow" followed by IDL get assert_equals: expected "" but got "xrow"
+PASS th.scope: IDL set to "xrow" followed by IDL get 
 PASS th.scope: IDL set to "row\0" should not throw 
 PASS th.scope: IDL set to "row\0" followed by getAttribute() 
-FAIL th.scope: IDL set to "row\0" followed by IDL get assert_equals: expected "" but got "row\0"
+PASS th.scope: IDL set to "row\0" followed by IDL get 
 PASS th.scope: IDL set to "ow" should not throw 
 PASS th.scope: IDL set to "ow" followed by getAttribute() 
-FAIL th.scope: IDL set to "ow" followed by IDL get assert_equals: expected "" but got "ow"
+PASS th.scope: IDL set to "ow" followed by IDL get 
 PASS th.scope: IDL set to "ROW" should not throw 
 PASS th.scope: IDL set to "ROW" followed by getAttribute() 
-FAIL th.scope: IDL set to "ROW" followed by IDL get assert_equals: expected "row" but got "ROW"
+PASS th.scope: IDL set to "ROW" followed by IDL get 
 PASS th.scope: IDL set to "col" should not throw 
 PASS th.scope: IDL set to "col" followed by getAttribute() 
 PASS th.scope: IDL set to "col" followed by IDL get 
 PASS th.scope: IDL set to "xcol" should not throw 
 PASS th.scope: IDL set to "xcol" followed by getAttribute() 
-FAIL th.scope: IDL set to "xcol" followed by IDL get assert_equals: expected "" but got "xcol"
+PASS th.scope: IDL set to "xcol" followed by IDL get 
 PASS th.scope: IDL set to "col\0" should not throw 
 PASS th.scope: IDL set to "col\0" followed by getAttribute() 
-FAIL th.scope: IDL set to "col\0" followed by IDL get assert_equals: expected "" but got "col\0"
+PASS th.scope: IDL set to "col\0" followed by IDL get 
 PASS th.scope: IDL set to "ol" should not throw 
 PASS th.scope: IDL set to "ol" followed by getAttribute() 
-FAIL th.scope: IDL set to "ol" followed by IDL get assert_equals: expected "" but got "ol"
+PASS th.scope: IDL set to "ol" followed by IDL get 
 PASS th.scope: IDL set to "COL" should not throw 
 PASS th.scope: IDL set to "COL" followed by getAttribute() 
-FAIL th.scope: IDL set to "COL" followed by IDL get assert_equals: expected "col" but got "COL"
+PASS th.scope: IDL set to "COL" followed by IDL get 
 PASS th.scope: IDL set to "rowgroup" should not throw 
 PASS th.scope: IDL set to "rowgroup" followed by getAttribute() 
 PASS th.scope: IDL set to "rowgroup" followed by IDL get 
 PASS th.scope: IDL set to "xrowgroup" should not throw 
 PASS th.scope: IDL set to "xrowgroup" followed by getAttribute() 
-FAIL th.scope: IDL set to "xrowgroup" followed by IDL get assert_equals: expected "" but got "xrowgroup"
+PASS th.scope: IDL set to "xrowgroup" followed by IDL get 
 PASS th.scope: IDL set to "rowgroup\0" should not throw 
 PASS th.scope: IDL set to "rowgroup\0" followed by getAttribute() 
-FAIL th.scope: IDL set to "rowgroup\0" followed by IDL get assert_equals: expected "" but got "rowgroup\0"
+PASS th.scope: IDL set to "rowgroup\0" followed by IDL get 
 PASS th.scope: IDL set to "owgroup" should not throw 
 PASS th.scope: IDL set to "owgroup" followed by getAttribute() 
-FAIL th.scope: IDL set to "owgroup" followed by IDL get assert_equals: expected "" but got "owgroup"
+PASS th.scope: IDL set to "owgroup" followed by IDL get 
 PASS th.scope: IDL set to "ROWGROUP" should not throw 
 PASS th.scope: IDL set to "ROWGROUP" followed by getAttribute() 
-FAIL th.scope: IDL set to "ROWGROUP" followed by IDL get assert_equals: expected "rowgroup" but got "ROWGROUP"
+PASS th.scope: IDL set to "ROWGROUP" followed by IDL get 
 PASS th.scope: IDL set to "colgroup" should not throw 
 PASS th.scope: IDL set to "colgroup" followed by getAttribute() 
 PASS th.scope: IDL set to "colgroup" followed by IDL get 
 PASS th.scope: IDL set to "xcolgroup" should not throw 
 PASS th.scope: IDL set to "xcolgroup" followed by getAttribute() 
-FAIL th.scope: IDL set to "xcolgroup" followed by IDL get assert_equals: expected "" but got "xcolgroup"
+PASS th.scope: IDL set to "xcolgroup" followed by IDL get 
 PASS th.scope: IDL set to "colgroup\0" should not throw 
 PASS th.scope: IDL set to "colgroup\0" followed by getAttribute() 
-FAIL th.scope: IDL set to "colgroup\0" followed by IDL get assert_equals: expected "" but got "colgroup\0"
+PASS th.scope: IDL set to "colgroup\0" followed by IDL get 
 PASS th.scope: IDL set to "olgroup" should not throw 
 PASS th.scope: IDL set to "olgroup" followed by getAttribute() 
-FAIL th.scope: IDL set to "olgroup" followed by IDL get assert_equals: expected "" but got "olgroup"
+PASS th.scope: IDL set to "olgroup" followed by IDL get 
 PASS th.scope: IDL set to "COLGROUP" should not throw 
 PASS th.scope: IDL set to "COLGROUP" followed by getAttribute() 
-FAIL th.scope: IDL set to "COLGROUP" followed by IDL get assert_equals: expected "colgroup" but got "COLGROUP"
+PASS th.scope: IDL set to "COLGROUP" followed by IDL get 
 PASS th.abbr: typeof IDL attribute 
 PASS th.abbr: IDL get with DOM attribute unset 
 PASS th.abbr: setAttribute() to "" followed by getAttribute() 

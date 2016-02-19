@@ -3926,6 +3926,9 @@
     <ClCompile Include="..\html\HTMLTableElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\HTMLTableHeaderCellElement.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\HTMLTablePartElement.cpp">
       <Filter>html</Filter>
     </ClCompile>

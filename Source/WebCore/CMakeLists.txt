@@ -1729,6 +1729,7 @@ set(WebCore_SOURCES
     html/HTMLTableCellElement.cpp
     html/HTMLTableColElement.cpp
     html/HTMLTableElement.cpp
+    html/HTMLTableHeaderCellElement.cpp
     html/HTMLTablePartElement.cpp
     html/HTMLTableRowElement.cpp
     html/HTMLTableRowsCollection.cpp
