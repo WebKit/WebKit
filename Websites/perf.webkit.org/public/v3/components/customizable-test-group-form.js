@@ -43,7 +43,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
             var customRootSet = new CustomRootSet;
             for (var repository of this._renderedRepositorylist) {
                 var className = CustomizableTestGroupForm._classForLabelAndRepository(label, repository);
-                var revision = this.content().getElementsByClassName(className)[0].value;
+                var revision = this.content().querySelector('.' + className).value;
                 console.assert(revision);
                 if (revision)
                     customRootSet.setRevisionForRepository(repository, revision);

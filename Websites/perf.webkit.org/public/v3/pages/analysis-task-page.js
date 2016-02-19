@@ -534,7 +534,7 @@ class AnalysisTaskPage extends PageWithHeading {
             for (var name in rootSetsByName) {
                 var list = rootSetsByName[name];
                 if (list.length < setIndex) {
-                    alert(`Set ${firstLabel} specifies ${repository.label()} but set ${label} does not.`);
+                    alert(`Set ${firstLabel} specifies ${name} but set ${label} does not.`);
                     return null;
                 }
             }
