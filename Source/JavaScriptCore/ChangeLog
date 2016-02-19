@@ -1,3 +1,39 @@
+2016-02-19  Saam Barati  <sbarati@apple.com>
+
+        [ES6] Implement Proxy.[[Call]]
+        https://bugs.webkit.org/show_bug.cgi?id=154425
+
+        Reviewed by Mark Lam.
+
+        This patch is a straight forward implementation of
+        Proxy.[[Call]] with respect to section 9.5.12
+        of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::finishCreation):
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::getOwnPropertySlotByIndex):
+        (JSC::performProxyCall):
+        (JSC::ProxyObject::getCallData):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        (JSC::ProxyObject::create):
+        * tests/es6.yaml:
+        * tests/stress/proxy-call.js: Added.
+        (assert):
+        (throw.new.Error.let.target):
+        (throw.new.Error.let.handler.apply):
+        (throw.new.Error):
+        (assert.let.target):
+        (assert.let.handler.get apply):
+        (let.target):
+        (let.handler.apply):
+        (i.catch):
+        (assert.let.handler.apply):
+
 2016-02-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove more LLVM related dead code after r196729

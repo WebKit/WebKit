@@ -65,7 +65,11 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
         return;
     }
 
-    m_target.set(vm, this, jsCast<JSObject*>(target));
+    CallData ignored;
+    JSObject* targetAsObject = jsCast<JSObject*>(target);
+    m_isCallable = targetAsObject->methodTable(vm)->getCallData(targetAsObject, ignored) != CallTypeNone;
+
+    m_target.set(vm, this, targetAsObject);
     m_handler.set(vm, this, handler);
 }
 
@@ -105,8 +109,6 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
     arguments.append(thisObject);
     JSValue trapResult = call(exec, getHandler, callType, callData, handler, arguments);
     if (exec->hadException())
@@ -152,8 +154,6 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
-    if (exec->hadException())
-        return false;
     JSValue trapResult = call(exec, getOwnPropertyDescriptorMethod, callType, callData, handler, arguments);
     if (exec->hadException())
         return false;
@@ -234,8 +234,6 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
-    if (exec->hadException())
-        return false;
     JSValue trapResult = call(exec, hasMethod, callType, callData, handler, arguments);
     if (exec->hadException())
         return false;
@@ -296,6 +294,51 @@ bool ProxyObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     if (exec->hadException())
         return false;
     return thisObject->getOwnPropertySlotCommon(exec, ident.impl(), slot);
+}
+
+static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    ProxyObject* proxy = jsCast<ProxyObject*>(exec->callee());
+    JSValue handlerValue = proxy->handler();
+    if (handlerValue.isNull())
+        return throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue applyMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "apply"), ASCIILiteral("'apply' property of a Proxy's handler should be callable."));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    JSObject* target = proxy->target();
+    if (applyMethod.isUndefined()) {
+        CallData callData;
+        CallType callType = target->methodTable(vm)->getCallData(target, callData);
+        RELEASE_ASSERT(callType != CallTypeNone);
+        return JSValue::encode(call(exec, target, callType, callData, exec->thisValue(), ArgList(exec)));
+    }
+
+    JSArray* argArray = constructArray(exec, static_cast<ArrayAllocationProfile*>(nullptr), ArgList(exec));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    arguments.append(exec->thisValue());
+    arguments.append(argArray);
+    return JSValue::encode(call(exec, applyMethod, callType, callData, handler, arguments));
+}
+
+CallType ProxyObject::getCallData(JSCell* cell, CallData& callData)
+{
+    ProxyObject* proxy = jsCast<ProxyObject*>(cell);
+    if (!proxy->m_isCallable) {
+        callData.js.functionExecutable = nullptr;
+        callData.js.scope = nullptr;
+        return CallTypeNone;
+    }
+
+    callData.native.function = performProxyCall;
+    return CallTypeHost;
 }
 
 void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
