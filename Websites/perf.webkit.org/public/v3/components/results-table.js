@@ -33,6 +33,8 @@ class ResultsTable extends ComponentBase {
         var extraRepositories = [];
         var repositoryList = this._computeRepositoryList(rowGroups, extraRepositories);
 
+        this._selectedRange = {};
+
         var barGraphGroup = new BarGraphGroup(this._valueFormatter);
         var element = ComponentBase.createElement;
         var self = this;
@@ -46,10 +48,14 @@ class ResultsTable extends ComponentBase {
                 var cells = [];
 
                 if (self._rangeSelectorLabels) {
-                    self._selectedRange = {};
-                    for (var label of self._rangeSelectorLabels)
-                        cells.push(element('td', element('input',
-                            {type: 'radio', name: label, onchange: self._rangeSelectorClicked.bind(self, label, row)})));
+                    for (var label of self._rangeSelectorLabels) {
+                        var content = '';
+                        if (row.rootSet()) {
+                            content = element('input',
+                                {type: 'radio', name: label, onchange: self._rangeSelectorClicked.bind(self, label, row)});
+                        }
+                        cells.push(element('td', content));
+                    }
                 }
 
                 if (groupHeading !== undefined && !rowIndex)

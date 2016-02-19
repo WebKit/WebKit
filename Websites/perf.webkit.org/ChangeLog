@@ -1,5 +1,43 @@
 2016-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The rows in the analysis results table should be expandable
+        https://bugs.webkit.org/show_bug.cgi?id=154427
+
+        Reviewed by Chris Dumez.
+
+        Added "(Expand)" link between rows that have hidden points. Upon click it inserts the hidden rows.
+
+        We insert around five rows at a time when there are hundreds of hidden points but we also avoid leaving
+        behind expandable rows of less than two rows.
+
+        Also fixed a bug in CustomizableTestGroupForm that getElementsById would throw in the shipping Safari
+        because getElementsById doesn't exist on Element.prototype by using class name instead.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer):
+        (AnalysisResultsViewer.prototype.setCurrentTestGroup): Removed superfluous call to render().
+        (AnalysisResultsViewer.prototype.setPoints): Always show the start and the end points.
+        (AnalysisResultsViewer.prototype.buildRowGroups):
+        (AnalysisResultsViewer.prototype._buildRowsForPointsAndTestGroups): Add an instance of ExpandableRow which
+        shows a "(Expand)" link to show hidden rows here.
+        (AnalysisResultsViewer.prototype._expandBetween): Added. Expands rows between two points.
+        (AnalysisResultsViewer.cssTemplate): Added rules for "(Expand)" links.
+        (AnalysisResultsViewer.ExpandableRow): Added.
+        (AnalysisResultsViewer.ExpandableRow.prototype.resultContent): Added. Overrides what's in the results column.
+        (AnalysisResultsViewer.ExpandableRow.prototype.heading): Added. Generates "(Expand)" link.
+
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm.prototype._computeRootSetMap): Use getElementsByClassName instead of
+        getElementById.
+        (CustomizableTestGroupForm.prototype._classForLabelAndRepository): Renamed from _idForLabelAndRepository.
+        (CustomizableTestGroupForm._constructRevisionRadioButtons): Set class name instead of id.
+
+        * public/v3/components/results-table.js:
+        (ResultsTable.prototype.render): Don't generate radio buttons to select a row when root set is missing;
+        e.g. for rows that show "(Expand)" links.
+
+2016-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Statistically significant A/B testing results should be color coded in details view
         https://bugs.webkit.org/show_bug.cgi?id=154414
 

@@ -42,8 +42,8 @@ class CustomizableTestGroupForm extends TestGroupForm {
         for (var label in this._rootSetMap) {
             var customRootSet = new CustomRootSet;
             for (var repository of this._renderedRepositorylist) {
-                var id = CustomizableTestGroupForm._idForLabelAndRepository(label, repository);
-                var revision = this.content().getElementById(id).value;
+                var className = CustomizableTestGroupForm._classForLabelAndRepository(label, repository);
+                var revision = this.content().getElementsByClassName(className)[0].value;
                 console.assert(revision);
                 if (revision)
                     customRootSet.setRevisionForRepository(repository, revision);
@@ -92,14 +92,14 @@ class CustomizableTestGroupForm extends TestGroupForm {
                     }))]));
     }
 
-    static _idForLabelAndRepository(label, repository) { return label + '-' + repository.id(); }
+    static _classForLabelAndRepository(label, repository) { return label + '-' + repository.id(); }
 
     static _constructRevisionRadioButtons(rootSetMap, repository, rowLabel)
     {
-        var id = this._idForLabelAndRepository(rowLabel, repository);
-        var groupName = id + '-group';
+        var className = this._classForLabelAndRepository(rowLabel, repository);
+        var groupName = className + '-group';
         var element = ComponentBase.createElement;
-        var revisionEditor = element('input', {id: id});
+        var revisionEditor = element('input', {class: className});
 
         var nodes = [];
         for (var labelToChoose in rootSetMap) {
