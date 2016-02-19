@@ -124,10 +124,8 @@ static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, Has
         unsigned count;
         if (!decoderInner.decodeUInt32("count", count))
             return false;
-        
-        // FIXME: Create a HashCountedSet method to do this efficiently
-        for (unsigned i = 0; i < count; ++i)
-            hashCountedSet.add(origin);
+
+        hashCountedSet.add(origin, count);
         return true;
     });
 }

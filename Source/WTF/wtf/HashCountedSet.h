@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008, 2013, 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
 #ifndef WTF_HashCountedSet_h
 #define WTF_HashCountedSet_h
 
+#include <initializer_list>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -37,6 +38,22 @@ namespace WTF {
         typedef typename ImplType::iterator iterator;
         typedef typename ImplType::const_iterator const_iterator;
         typedef typename ImplType::AddResult AddResult;
+
+        HashCountedSet()
+        {
+        }
+
+        HashCountedSet(std::initializer_list<typename ImplType::KeyValuePairType> initializerList)
+        {
+            for (const auto& keyValuePair : initializerList)
+                add(keyValuePair.key, keyValuePair.value);
+        }
+
+        HashCountedSet(std::initializer_list<typename ImplType::KeyType> initializerList)
+        {
+            for (const auto& value : initializerList)
+                add(value);
+        }
         
         void swap(HashCountedSet&);
         
@@ -59,7 +76,12 @@ namespace WTF {
         // The return value includes both an iterator to the value's location,
         // and an isNewEntry bool that indicates whether it is a new or existing entry.
         AddResult add(const ValueType&);
-        
+        AddResult add(ValueType&&);
+
+        // Increments the count of a value by the passed amount.
+        AddResult add(const ValueType&, unsigned);
+        AddResult add(ValueType&&, unsigned);
+
         // Decrements the count of the value, and removes it if count goes down to zero.
         // Returns true if the value is removed.
         bool remove(const ValueType&);
@@ -73,9 +95,17 @@ namespace WTF {
         // Clears the whole set.
         void clear();
 
+        // Overloads for smart pointer keys that take the raw pointer type as the parameter.
+        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(typename GetPtrHelper<V>::PtrType);
+        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, const_iterator>::type find(typename GetPtrHelper<V>::PtrType) const;
+        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(typename GetPtrHelper<V>::PtrType) const;
+        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, unsigned>::type count(typename GetPtrHelper<V>::PtrType) const;
+        template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(typename GetPtrHelper<V>::PtrType);
+
     private:
         ImplType m_impl;
     };
+
 
     template<typename Value, typename HashFunctions, typename Traits>
     inline void HashCountedSet<Value, HashFunctions, Traits>::swap(HashCountedSet& other)
@@ -156,6 +186,30 @@ namespace WTF {
         ++result.iterator->value;
         return result;
     }
+
+    template<typename Value, typename HashFunctions, typename Traits>
+    inline typename HashCountedSet<Value, HashFunctions, Traits>::AddResult HashCountedSet<Value, HashFunctions, Traits>::add(ValueType&& value)
+    {
+        AddResult result = m_impl.add(std::forward<Value>(value), 0);
+        ++result.iterator->value;
+        return result;
+    }
+
+    template<typename Value, typename HashFunctions, typename Traits>
+    inline typename HashCountedSet<Value, HashFunctions, Traits>::AddResult HashCountedSet<Value, HashFunctions, Traits>::add(const ValueType& value, unsigned count)
+    {
+        AddResult result = m_impl.add(value, 0);
+        result.iterator->value += count;
+        return result;
+    }
+    
+    template<typename Value, typename HashFunctions, typename Traits>
+    inline typename HashCountedSet<Value, HashFunctions, Traits>::AddResult HashCountedSet<Value, HashFunctions, Traits>::add(ValueType&& value, unsigned count)
+    {
+        AddResult result = m_impl.add(std::forward<Value>(value), 0);
+        result.iterator->value += count;
+        return result;
+    }
     
     template<typename Value, typename HashFunctions, typename Traits>
     inline bool HashCountedSet<Value, HashFunctions, Traits>::remove(const ValueType& value)
@@ -229,8 +283,42 @@ namespace WTF {
             vector[i] = (*it).key;
     }
 
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename V>
+    inline auto HashCountedSet<Value, HashFunctions, Traits>::find(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type
+    {
+        return m_impl.find(value);
+    }
+    
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename V>
+    inline auto HashCountedSet<Value, HashFunctions, Traits>::find(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, const_iterator>::type
+    {
+        return m_impl.find(value);
+    }
+    
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename V>
+    inline auto HashCountedSet<Value, HashFunctions, Traits>::contains(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+    {
+        return m_impl.contains(value);
+    }
+    
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename V>
+    inline auto HashCountedSet<Value, HashFunctions, Traits>::count(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, unsigned>::type
+    {
+        return m_impl.get(value);
+    }
+    
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename V>
+    inline auto HashCountedSet<Value, HashFunctions, Traits>::remove(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+    {
+        return remove(find(value));
+    }
 
-} // namespace khtml
+} // namespace WTF
 
 using WTF::HashCountedSet;
 
