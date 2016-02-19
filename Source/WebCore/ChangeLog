@@ -1,3 +1,9 @@
+2016-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GObject DOM bindings API break after r196769.
+
+        * html/HTMLTextAreaElement.idl:
+
 2016-02-18  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Limit the number of tiles according to the visible area
