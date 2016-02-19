@@ -1,3 +1,31 @@
+2016-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Purge as much as we can from WKDeprecatedFunctions.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=154459
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKArrayIsMutable): Deleted.
+        (WKPageSetVisibilityState): Deleted.
+        (WKDictionaryIsMutable): Deleted.
+        (WKDictionaryAddItem): Deleted.
+        (WKDictionaryRemoveItem): Deleted.
+        (WKPreferencesSetRegionBasedColumnsEnabled): Deleted.
+        (WKPreferencesGetRegionBasedColumnsEnabled): Deleted.
+        (WKPreferencesSetMultithreadedWebGLEnabled): Deleted.
+        (WKPreferencesGetMultithreadedWebGLEnabled): Deleted.
+        (WKPreferencesSetScreenFontSubstitutionEnabled): Deleted.
+        (WKPreferencesGetScreenFontSubstitutionEnabled): Deleted.
+        (WKInspectorIsDebuggingJavaScript): Deleted.
+        (WKInspectorToggleJavaScriptDebugging): Deleted.
+        (WKInspectorIsProfilingJavaScript): Deleted.
+        (WKInspectorToggleJavaScriptProfiling): Deleted.
+        (WKContextGetProcessModel): Deleted.
+        (WKGraphicsContextGetCGContext): Deleted.
+        (WKContextGetProcessSuppressionEnabled): Deleted.
+        (WKContextSetProcessSuppressionEnabled): Deleted.
+
 2016-02-19  Brady Eidson  <beidson@apple.com>
 
         Add "databaseProcessDidCrash" to the WKContextClient; Adopt it in WKTR.
