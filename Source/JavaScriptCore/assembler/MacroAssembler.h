@@ -177,6 +177,8 @@ public:
         switch (cond) {
         case Zero:
         case NonZero:
+        case Signed:
+        case PositiveOrZero:
             return true;
         default:
             return false;
@@ -190,6 +192,10 @@ public:
             return NonZero;
         case NonZero:
             return Zero;
+        case Signed:
+            return PositiveOrZero;
+        case PositiveOrZero:
+            return Signed;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return Zero; // Make compiler happy for release builds.

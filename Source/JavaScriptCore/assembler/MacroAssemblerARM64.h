@@ -1601,10 +1601,22 @@ public:
         moveConditionallyAfterFloatingPointCompare<64>(cond, src, dest);
     }
 
+    void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.fcmp<64>(left, right);
+        moveConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
+    }
+
     void moveConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
     {
         m_assembler.fcmp<32>(left, right);
         moveConditionallyAfterFloatingPointCompare<64>(cond, src, dest);
+    }
+
+    void moveConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.fcmp<32>(left, right);
+        moveConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
     }
 
     template<int datasize>
@@ -1626,6 +1638,27 @@ public:
             return;
         }
         m_assembler.csel<datasize>(dest, src, dest, ARM64Condition(cond));
+    }
+
+    template<int datasize>
+    void moveConditionallyAfterFloatingPointCompare(DoubleCondition cond, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        if (cond == DoubleNotEqual) {
+            Jump unordered = makeBranch(ARM64Assembler::ConditionVS);
+            m_assembler.csel<datasize>(dest, thenCase, elseCase, ARM64Assembler::ConditionNE);
+            unordered.link(this);
+            return;
+        }
+        if (cond == DoubleEqualOrUnordered) {
+            // If the compare is unordered, thenCase is copied to dest and the
+            // next csel has all arguments equal to thenCase.
+            // If the compare is ordered, dest is unchanged and EQ decides
+            // what value to set.
+            m_assembler.csel<datasize>(dest, thenCase, elseCase, ARM64Assembler::ConditionVS);
+            m_assembler.csel<datasize>(dest, thenCase, dest, ARM64Assembler::ConditionEQ);
+            return;
+        }
+        m_assembler.csel<datasize>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
     void mulDouble(FPRegisterID src, FPRegisterID dest)
@@ -1894,10 +1927,22 @@ public:
         m_assembler.csel<32>(dest, src, dest, ARM64Condition(cond));
     }
 
+    void moveConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.cmp<32>(left, right);
+        m_assembler.csel<32>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
     void moveConditionally64(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
     {
         m_assembler.cmp<64>(left, right);
         m_assembler.csel<64>(dest, src, dest, ARM64Condition(cond));
+    }
+
+    void moveConditionally64(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.cmp<64>(left, right);
+        m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
     void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
@@ -1906,10 +1951,22 @@ public:
         m_assembler.csel<32>(dest, src, dest, ARM64Condition(cond));
     }
 
+    void moveConditionallyTest32(ResultCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.tst<32>(left, right);
+        m_assembler.csel<32>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
     void moveConditionallyTest64(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
     {
         m_assembler.tst<64>(testReg, mask);
         m_assembler.csel<64>(dest, src, dest, ARM64Condition(cond));
+    }
+
+    void moveConditionallyTest64(ResultCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.tst<64>(left, right);
+        m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
     // Forwards / external control flow operations:

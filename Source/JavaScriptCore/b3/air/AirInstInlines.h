@@ -196,6 +196,16 @@ inline Optional<unsigned> Inst::shouldTryAliasingDef()
         if (args.size() == 4)
             return 3;
         break;
+    case MoveConditionally32:
+    case MoveConditionally64:
+    case MoveConditionallyTest32:
+    case MoveConditionallyTest64:
+    case MoveConditionallyDouble:
+    case MoveConditionallyFloat:
+        if (args.size() == 6)
+            return 5;
+        break;
+        break;
     case Patch:
         return PatchCustom::shouldTryAliasingDef(*this);
     default:

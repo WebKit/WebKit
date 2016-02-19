@@ -713,19 +713,39 @@ BranchNeg32 U:G:32, UZD:G:32 /branch
 MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp
 
+MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+    RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
+
 64: MoveConditionally64 U:G:32, U:G:64, U:G:64, U:G:Ptr, UD:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp
+
+64: MoveConditionally64 U:G:32, U:G:64, U:G:64, U:G:Ptr, U:G:Ptr, D:G:Ptr
+    RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
 MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp
     x86: ResCond, Tmp, Imm, Tmp, Tmp
 
+MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+    ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
+    x86: ResCond, Tmp, Imm, Tmp, Tmp, Tmp
+
 64: MoveConditionallyTest64 U:G:32, U:G:64, U:G:64, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp
     x86: ResCond, Tmp, Imm, Tmp, Tmp
 
+64: MoveConditionallyTest64 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+    ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
+    x86_64: ResCond, Tmp, Imm, Tmp, Tmp, Tmp
+
+MoveConditionallyDouble U:G:32, U:F:64, U:F:64, U:G:Ptr, U:G:Ptr, D:G:Ptr
+    DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
+
 MoveConditionallyDouble U:G:32, U:F:64, U:F:64, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp
+
+MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+    DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
 MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp
