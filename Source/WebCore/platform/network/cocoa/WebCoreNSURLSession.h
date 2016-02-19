@@ -48,6 +48,12 @@ class PlatformMediaResourceLoader;
 class WebCoreNSURLSessionDataTaskClient;
 }
 
+enum class WebCoreNSURLSessionCORSAccessCheckResults {
+    Unknown,
+    Pass,
+    Fail,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
@@ -59,12 +65,14 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     BOOL _invalidated;
     NSUInteger _nextTaskIdentifier;
     OSObjectPtr<dispatch_queue_t> _internalQueue;
+    WebCoreNSURLSessionCORSAccessCheckResults _corsResults;
 }
 - (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
 @property (readonly, retain) NSOperationQueue *delegateQueue;
 @property (nullable, readonly, retain) id <NSURLSessionDelegate> delegate;
 @property (readonly, copy) NSURLSessionConfiguration *configuration;
 @property (copy) NSString *sessionDescription;
+@property (readonly) BOOL didPassCORSAccessChecks;
 - (void)finishTasksAndInvalidate;
 - (void)invalidateAndCancel;
 
@@ -97,7 +105,6 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 
 @interface WebCoreNSURLSessionDataTask : NSObject {
     WebCoreNSURLSession *_session;
-    std::unique_ptr<WebCore::WebCoreNSURLSessionDataTaskClient> _client;
     RefPtr<WebCore::PlatformMediaResource> _resource;
     RetainPtr<NSURLResponse> _response;
     NSUInteger _taskIdentifier;

@@ -216,7 +216,8 @@ private:
 
     virtual void updateVideoLayerGravity() override;
 
-    virtual bool hasSingleSecurityOrigin() const override;
+    bool hasSingleSecurityOrigin() const override;
+    bool didPassCORSAccessCheck() const override;
 
     MediaTime getStartDate() const override;
 

@@ -1,3 +1,30 @@
+2016-02-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] CORS-compliant videos throw security errors when painting to Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=154188
+        <rdar://problem/22959556>
+
+        Reviewed by Alex Christensen.
+
+        Pass the CORS access check results from WebCoreNSURLSession to it's client,
+        MediaPlayerPrivateAVFoundationObjC.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck): Ask the WebCoreNSURLSession.
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession task:didReceiveCORSAccessCheckResult:]): Conditionally set _corsResults.
+        (-[WebCoreNSURLSession didPassCORSAccessChecks]): Return _corsResults.
+        (WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed): Call -resource:accessControlCheckFailedWithError:.
+        (WebCoreNSURLSessionDataTaskClient::loadFailed): Call -resource:loadFailedWithError:.
+        (-[WebCoreNSURLSessionDataTask resource:receivedResponse:]): Set _response within the delegate queue.
+        (-[WebCoreNSURLSessionDataTask _resource:loadFinishedWithError:]): Renamed from resourceFinished:
+        (-[WebCoreNSURLSessionDataTask resource:accessControlCheckFailedWithError:]): Ditto.
+        (-[WebCoreNSURLSessionDataTask resource:loadFailedWithError:]): Ditto.
+        (-[WebCoreNSURLSessionDataTask resourceFinished:]): Ditto.
+
 2016-02-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix.

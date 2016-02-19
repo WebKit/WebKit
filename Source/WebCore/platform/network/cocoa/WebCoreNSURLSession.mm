@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readwrite, retain) id<NSURLSessionTaskDelegate> delegate;
 - (void)taskCompleted:(WebCoreNSURLSessionDataTask *)task;
 - (void)addDelegateOperation:(void (^)(void))operation;
+- (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveCORSAccessCheckResult:(BOOL)result;
 @end
 
 @interface WebCoreNSURLSessionDataTask ()
@@ -58,6 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)resource:(PlatformMediaResource&)resource receivedResponse:(const ResourceResponse&)response;
 - (void)resource:(PlatformMediaResource&)resource receivedData:(const char*)data length:(int)length;
 - (void)resource:(PlatformMediaResource&)resource receivedRedirect:(const ResourceResponse&)response request:(ResourceRequest&)request;
+- (void)resource:(PlatformMediaResource&)resource accessControlCheckFailedWithError:(const ResourceError&)error;
+- (void)resource:(PlatformMediaResource&)resource loadFailedWithError:(const ResourceError&)error;
 - (void)resourceFinished:(PlatformMediaResource&)resource;
 @end
 
@@ -72,10 +75,12 @@ NS_ASSUME_NONNULL_END
     if (!self)
         return nil;
 
+    ASSERT(_corsResults == WebCoreNSURLSessionCORSAccessCheckResults::Unknown);
+    ASSERT(!_invalidated);
+
     _loader = &loader;
     self.delegate = inDelegate;
     _queue = inQueue ? inQueue : [NSOperationQueue mainQueue];
-    _invalidated = NO;
     _internalQueue = adoptOSObject(dispatch_queue_create("WebCoreNSURLSession _internalQueue", DISPATCH_QUEUE_SERIAL));
 
     return self;
@@ -120,6 +125,15 @@ NS_ASSUME_NONNULL_END
     });
 }
 
+- (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveCORSAccessCheckResult:(BOOL)result
+{
+    UNUSED_PARAM(task);
+    if (!result)
+        _corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Fail;
+    else if (_corsResults != WebCoreNSURLSessionCORSAccessCheckResults::Fail)
+        _corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Pass;
+}
+
 #pragma mark - NSURLSession API
 @synthesize sessionDescription=_sessionDescription;
 @dynamic delegate;
@@ -149,6 +163,12 @@ NS_ASSUME_NONNULL_END
 - (PlatformMediaResourceLoader&)loader
 {
     return *_loader;
+}
+
+@dynamic didPassCORSAccessChecks;
+- (BOOL)didPassCORSAccessChecks
+{
+    return _corsResults == WebCoreNSURLSessionCORSAccessCheckResults::Pass;
 }
 
 - (void)finishTasksAndInvalidate
@@ -298,6 +318,8 @@ public:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
     void dataReceived(PlatformMediaResource&, const char* /* data */, int /* length */) override;
+    void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
+    void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&) override;
 
 private:
@@ -322,6 +344,16 @@ void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& reso
 void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest& request, const ResourceResponse& response)
 {
     [m_task resource:resource receivedRedirect:response request:request];
+}
+
+void WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed(PlatformMediaResource& resource, const ResourceError& error)
+{
+    [m_task resource:resource accessControlCheckFailedWithError:error];
+}
+
+void WebCoreNSURLSessionDataTaskClient::loadFailed(PlatformMediaResource& resource, const ResourceError& error)
+{
+    [m_task resource:resource loadFailedWithError:error];
 }
 
 void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& resource)
@@ -473,11 +505,14 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 {
     ASSERT_UNUSED(resource, &resource == _resource);
     ASSERT(isMainThread());
-    _response = response.nsURLResponse();
+    [self.session task:self didReceiveCORSAccessCheckResult:resource.didPassAccessControlCheck()];
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     [self _setDefersLoading:YES];
+    RetainPtr<NSURLResponse> strongResponse { response.nsURLResponse() };
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    [self.session addDelegateOperation:[strongSelf] {
+    [self.session addDelegateOperation:[strongSelf, strongResponse] {
+        strongSelf->_response = strongResponse.get();
+
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if (![dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveResponse:completionHandler:)]) {
             callOnMainThread([strongSelf] {
@@ -486,7 +521,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
             return;
         }
 
-        [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveResponse:strongSelf.get().response completionHandler:[strongSelf] (NSURLSessionResponseDisposition disposition) {
+        [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveResponse:strongResponse.get() completionHandler:[strongSelf] (NSURLSessionResponseDisposition disposition) {
             if (disposition == NSURLSessionResponseCancel)
                 [strongSelf cancel];
             else if (disposition == NSURLSessionResponseAllow)
@@ -531,21 +566,35 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     // API, this can be implemented.
 }
 
-- (void)resourceFinished:(PlatformMediaResource&)resource
+- (void)_resource:(PlatformMediaResource&)resource loadFinishedWithError:(NSError *)error
 {
     ASSERT_UNUSED(resource, &resource == _resource);
-    self.state = NSURLSessionTaskStateCompleted;
-
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    [self.session addDelegateOperation:[strongSelf] {
+    RetainPtr<NSError> strongError { error };
+    [self.session addDelegateOperation:[strongSelf, strongError] {
         id<NSURLSessionTaskDelegate> delegate = (id<NSURLSessionTaskDelegate>)strongSelf.get().session.delegate;
         if ([delegate respondsToSelector:@selector(URLSession:task:didCompleteWithError:)])
-            [delegate URLSession:(NSURLSession *)strongSelf.get().session task:(NSURLSessionDataTask *)strongSelf.get() didCompleteWithError:nil];
+            [delegate URLSession:(NSURLSession *)strongSelf.get().session task:(NSURLSessionDataTask *)strongSelf.get() didCompleteWithError:strongError.get()];
 
         callOnMainThread([strongSelf] {
             [strongSelf.get().session taskCompleted:strongSelf.get()];
         });
     }];
+}
+
+- (void)resource:(PlatformMediaResource&)resource accessControlCheckFailedWithError:(const ResourceError&)error
+{
+    [self _resource:resource loadFinishedWithError:error.nsError()];
+}
+
+- (void)resource:(PlatformMediaResource&)resource loadFailedWithError:(const ResourceError&)error
+{
+    [self _resource:resource loadFinishedWithError:error.nsError()];
+}
+
+- (void)resourceFinished:(PlatformMediaResource&)resource
+{
+    [self _resource:resource loadFinishedWithError:nil];
 }
 @end
 
