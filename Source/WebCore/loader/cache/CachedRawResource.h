@@ -61,6 +61,7 @@ private:
 
     virtual void redirectReceived(ResourceRequest&, const ResourceResponse&) override;
     virtual void responseReceived(const ResourceResponse&) override;
+    virtual bool shouldCacheResponse(const ResourceResponse&) override;
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
 
     virtual void switchClientsToRevalidatedResource() override;

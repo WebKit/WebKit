@@ -186,6 +186,16 @@ void CachedRawResource::responseReceived(const ResourceResponse& response)
         c->responseReceived(this, m_response);
 }
 
+bool CachedRawResource::shouldCacheResponse(const ResourceResponse& response)
+{
+    CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
+    while (CachedRawResourceClient* c = w.next()) {
+        if (!c->shouldCacheResponse(this, response))
+            return false;
+    }
+    return true;
+}
+
 void CachedRawResource::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);

@@ -1,3 +1,25 @@
+2016-02-19  Jer Noble  <jer.noble@apple.com>
+
+        Allow CachedRawResource clients to opt out of caching on a per-response basis
+        https://bugs.webkit.org/show_bug.cgi?id=154453
+
+        Reviewed by Brady Eidson.
+
+        For CF or NS networking clients, the system loader will ask whether the client (the
+        SubResourceLoader in this case) wants the response to be cached. This breaks for byte
+        range requests due to <rdar://problem/20001985>. Allow the SubresourceLoader to query
+        its clients, and return null, if they opt out.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::shouldCacheResponse):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedRawResourceClient.h:
+        (WebCore::CachedRawResourceClient::shouldCacheResponse):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::shouldCacheResponse):
+        * loader/cocoa/SubresourceLoaderCocoa.mm:
+        (WebCore::SubresourceLoader::willCacheResponse):
+
 2016-02-19  Zalan Bujtas  <zalan@apple.com>
 
         Blocked plug-in placeholder is sometimes not shown.
