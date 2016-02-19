@@ -3814,9 +3814,7 @@ FAIL Window interface: existence and properties of interface prototype object as
 PASS Window interface: existence and properties of interface prototype object's "constructor" property 
 PASS Window interface: attribute self 
 PASS Window interface: attribute name 
-FAIL Window interface: attribute history assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function history() {
-    [native code]
-}"
+PASS Window interface: attribute history 
 PASS Window interface: attribute locationbar 
 PASS Window interface: attribute menubar 
 PASS Window interface: attribute personalbar 
@@ -3835,9 +3833,7 @@ PASS Window interface: attribute opener
 PASS Window interface: attribute parent 
 PASS Window interface: attribute frameElement 
 FAIL Window interface: operation open(DOMString,DOMString,DOMString,boolean) assert_equals: property has wrong .length expected 0 but got 2
-FAIL Window interface: attribute navigator assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function navigator() {
-    [native code]
-}"
+PASS Window interface: attribute navigator 
 FAIL Window interface: attribute external assert_own_property: The global object must have a property "external" expected property "external" missing
 PASS Window interface: attribute applicationCache 
 PASS Window interface: operation alert() 
