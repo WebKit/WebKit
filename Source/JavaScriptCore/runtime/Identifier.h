@@ -282,6 +282,11 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(const Identifier& identifier)
     return parseIndex(*uid);
 }
 
+JSValue identifierToJSValue(VM&, const Identifier&);
+// This will stringify private symbols. When leaking JSValues to
+// non-internal code, make sure to use this function and not the above one.
+JSValue identifierToSafePublicJSValue(VM&, const Identifier&);
+
 // FIXME: It may be better for this to just be a typedef for PtrHash, since PtrHash may be cheaper to
 // compute than loading the StringImpl's hash from memory. That change would also reduce the likelihood of
 // crashes in code that somehow dangled a StringImpl.

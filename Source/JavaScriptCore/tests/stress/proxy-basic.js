@@ -209,3 +209,76 @@ assert(Proxy.prototype === undefined);
         }
     }
 }
+
+{
+    let field = Symbol();
+    let theTarget = {
+        [field]: 40
+    };
+    let handler = {
+        get: function(target, propName, proxyArg) {
+            assert(propName === field);
+            return target[field];
+        }
+    };
+
+    let proxy = new Proxy(theTarget, handler);
+    for (let i = 0; i < 500; i++) {
+        assert(proxy[field] === 40);
+    }
+}
+
+{
+    let theTarget = [];
+    let sawPrivateSymbolAsString = false;
+    let handler = {
+        get: function(target, propName, proxyArg) {
+            if (typeof propName === "string")
+                sawPrivateSymbolAsString = propName === "PrivateSymbol.arrayIterationKind";
+            return target[propName];
+        }
+    };
+
+    let proxy = new Proxy(theTarget, handler);
+    for (let i = 0; i < 100; i++) {
+        let threw = false;
+        try {
+            proxy[Symbol.iterator]().next.call(proxy);
+        } catch(e) {
+            // this will throw because we conver private symbols to strings.
+            threw = true;
+        }
+        assert(threw);
+        assert(sawPrivateSymbolAsString);
+        sawPrivateSymbolAsString = false;
+    }
+}
+
+{
+    let prop = Symbol();
+    let theTarget = { };
+    Object.defineProperty(theTarget, prop, {
+        enumerable: true,
+        configurable: true
+    });
+    let called = false;
+    let handler = {
+        getOwnPropertyDescriptor: function(target, propName) {
+            assert(prop === propName);
+            called = true;
+            return {
+                enumerable: true,
+                configurable: true
+            };
+        }
+    };
+
+    let proxy = new Proxy(theTarget, handler);
+    for (let i = 0; i < 100; i++) {
+        let pDesc = Object.getOwnPropertyDescriptor(proxy, prop);
+        assert(pDesc.configurable);
+        assert(pDesc.enumerable);
+        assert(called);
+        called = false;
+    }
+}

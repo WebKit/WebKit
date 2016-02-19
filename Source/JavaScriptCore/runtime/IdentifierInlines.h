@@ -28,6 +28,7 @@
 
 #include "CallFrame.h"
 #include "Identifier.h"
+#include "Symbol.h"
 
 namespace JSC  {
 
@@ -132,6 +133,20 @@ inline Identifier Identifier::fromString(ExecState* exec, const AtomicString& at
 inline Identifier Identifier::fromString(ExecState* exec, const char* s)
 {
     return Identifier(exec, AtomicString(s));
+}
+
+inline JSValue identifierToJSValue(VM& vm, const Identifier& identifier)
+{
+    if (identifier.isSymbol())
+        return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
+    return jsString(&vm, identifier.impl());
+}
+
+inline JSValue identifierToSafePublicJSValue(VM& vm, const Identifier& identifier) 
+{
+    if (identifier.isSymbol() && !vm.propertyNames->isPrivateName(identifier))
+        return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
+    return jsString(&vm, identifier.impl());
 }
 
 } // namespace JSC

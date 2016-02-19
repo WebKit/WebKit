@@ -104,7 +104,7 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(jsString(exec, propertyName.uid()));
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     arguments.append(thisObject);
@@ -151,7 +151,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(jsString(exec, propertyName.uid()));
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     if (exec->hadException())
         return false;
     JSValue trapResult = call(exec, getOwnPropertyDescriptorMethod, callType, callData, handler, arguments);

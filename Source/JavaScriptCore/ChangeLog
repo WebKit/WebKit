@@ -1,5 +1,34 @@
 2016-02-18  Saam Barati  <sbarati@apple.com>
 
+        Proxy's don't properly handle Symbols as PropertyKeys.
+        https://bugs.webkit.org/show_bug.cgi?id=154385
+
+        Reviewed by Mark Lam and Yusuke Suzuki.
+
+        We were converting all PropertyKeys to strings, even when
+        the PropertyName was a Symbol. In the spec, PropertyKeys are
+        either a Symbol or a String. We now respect that in Proxy.[[Get]] and
+        Proxy.[[GetOwnProperty]].
+
+        * runtime/Completion.cpp:
+        (JSC::profiledEvaluate):
+        (JSC::createSymbolForEntryPointModule):
+        (JSC::identifierToJSValue): Deleted.
+        * runtime/Identifier.h:
+        (JSC::parseIndex):
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::fromString):
+        (JSC::identifierToJSValue):
+        (JSC::identifierToSafePublicJSValue):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        * tests/es6.yaml:
+        * tests/stress/proxy-basic.js:
+        (let.handler.getOwnPropertyDescriptor):
+
+2016-02-18  Saam Barati  <sbarati@apple.com>
+
         Follow up fix to Implement Proxy.[[GetOwnProperty]]
         https://bugs.webkit.org/show_bug.cgi?id=154314
 

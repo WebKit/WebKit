@@ -27,6 +27,7 @@
 #include "CodeProfiling.h"
 #include "Debugger.h"
 #include "Exception.h"
+#include "IdentifierInlines.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
@@ -118,13 +119,6 @@ JSValue profiledEvaluate(ExecState* exec, ProfilingReason reason, const SourceCo
 {
     ScriptProfilingScope profilingScope(exec->vmEntryGlobalObject(), reason);
     return evaluate(exec, source, thisValue, returnedException);
-}
-
-static JSValue identifierToJSValue(VM& vm, const Identifier& identifier)
-{
-    if (identifier.isSymbol())
-        return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(&vm, identifier.impl());
 }
 
 static Symbol* createSymbolForEntryPointModule(VM& vm)
