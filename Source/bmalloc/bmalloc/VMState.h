@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Owner_h
-#define Owner_h
+#ifndef VMState_h
+#define VMState_h
 
 namespace bmalloc {
 
-enum class Owner : unsigned {
-    VMHeap,
-    Heap
+class VMState {
+public:
+    enum class HasPhysical : bool {
+        False = false,
+        True = true
+    };
+
+    enum State : unsigned {
+        Invalid = 0x0,
+        Physical = 0x1,
+        Virtual = 0x2,
+        Mixed = 0x3
+    };
+
+    VMState(State vmState)
+        : m_state(vmState)
+    {
+    }
+
+    explicit VMState(unsigned vmState)
+        : m_state(static_cast<State>(vmState))
+    {
+    }
+
+    inline bool hasPhysical()
+    {
+        return !!(m_state & VMState::Physical);
+    }
+
+    inline bool hasVirtual()
+    {
+        return !!(m_state & VMState::Virtual);
+    }
+
+    inline void merge(VMState otherVMState)
+    {
+        m_state = static_cast<State>(m_state | otherVMState.m_state);
+    }
+
+    bool operator==(VMState other) const { return m_state == other.m_state; }
+    explicit operator unsigned() const { return m_state; }
+
+private:
+    State m_state;
 };
 
 } // namespace bmalloc
 
-#endif // Owner_h
+#endif // VMState_h

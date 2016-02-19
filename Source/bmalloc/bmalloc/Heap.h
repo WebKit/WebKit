@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,7 +85,8 @@ private:
 
     void deallocateLarge(std::lock_guard<StaticMutex>&, const LargeObject&);
 
-    void splitLarge(BeginTag*, size_t, EndTag*&, Range&);
+    LargeObject& splitAndAllocate(LargeObject&, size_t);
+    LargeObject& splitAndAllocate(LargeObject&, size_t, size_t);
     void mergeLarge(BeginTag*&, EndTag*&, Range&);
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);

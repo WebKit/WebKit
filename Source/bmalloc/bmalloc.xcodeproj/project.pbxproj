@@ -26,7 +26,7 @@
 		14C6216F1A9A9A6200E72293 /* LargeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C6216E1A9A9A6200E72293 /* LargeObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C919C818FCC59F0028DB43 /* BPlatform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CC394C18EA8858004AFE34 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F271BE18EA3963008C152F /* libbmalloc.a */; };
-		14D2CD9B1AA12CFB00770440 /* Owner.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2CD9A1AA12CFB00770440 /* Owner.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14D2CD9B1AA12CFB00770440 /* VMState.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2CD9A1AA12CFB00770440 /* VMState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8818CD17CE002201E4 /* LargeChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD788D18F48CC600950702 /* BeginTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64518B54A700076FA3F /* BeginTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD788E18F48CCD00950702 /* BoundaryTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 1485655E18A43AF900ED6942 /* BoundaryTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -139,7 +139,7 @@
 		14C6216E1A9A9A6200E72293 /* LargeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LargeObject.h; path = bmalloc/LargeObject.h; sourceTree = "<group>"; };
 		14C919C818FCC59F0028DB43 /* BPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPlatform.h; path = bmalloc/BPlatform.h; sourceTree = "<group>"; };
 		14CC394418EA8743004AFE34 /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		14D2CD9A1AA12CFB00770440 /* Owner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Owner.h; path = bmalloc/Owner.h; sourceTree = "<group>"; };
+		14D2CD9A1AA12CFB00770440 /* VMState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VMState.h; path = bmalloc/VMState.h; sourceTree = "<group>"; };
 		14D9DB4517F2447100EAAB79 /* FixedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FixedVector.h; path = bmalloc/FixedVector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		14DA32071885F9E6007269E0 /* Line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Line.h; path = bmalloc/Line.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		14DA320C18875B09007269E0 /* Heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Heap.h; path = bmalloc/Heap.h; sourceTree = "<group>"; };
@@ -226,9 +226,9 @@
 				143EF9AE1A9FABF6004F5C77 /* FreeList.h */,
 				147AAA8818CD17CE002201E4 /* LargeChunk.h */,
 				14C6216E1A9A9A6200E72293 /* LargeObject.h */,
-				14D2CD9A1AA12CFB00770440 /* Owner.h */,
 				146BEE2118C845AE0002D5A2 /* SegregatedFreeList.cpp */,
 				146BEE1E18C841C50002D5A2 /* SegregatedFreeList.h */,
+				14D2CD9A1AA12CFB00770440 /* VMState.h */,
 			);
 			name = "heap: large | xlarge";
 			sourceTree = "<group>";
@@ -356,7 +356,7 @@
 				14DD788E18F48CCD00950702 /* BoundaryTag.h in Headers */,
 				14DD78C818F48D7500950702 /* FixedVector.h in Headers */,
 				14DD78B718F48D6B00950702 /* MediumLine.h in Headers */,
-				14D2CD9B1AA12CFB00770440 /* Owner.h in Headers */,
+				14D2CD9B1AA12CFB00770440 /* VMState.h in Headers */,
 				14DD78B618F48D6B00950702 /* MediumChunk.h in Headers */,
 				14DD78BC18F48D6B00950702 /* SmallLine.h in Headers */,
 				14DD789818F48D4A00950702 /* Allocator.h in Headers */,

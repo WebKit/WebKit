@@ -183,10 +183,10 @@ inline void vmDeallocatePhysicalPagesSloppy(void* p, size_t size)
     vmDeallocatePhysicalPages(begin, end - begin);
 }
 
-// Expands requests that are un-page-aligned. NOTE: Allocation must proceed left-to-right.
+// Expands requests that are un-page-aligned.
 inline void vmAllocatePhysicalPagesSloppy(void* p, size_t size)
 {
-    char* begin = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p));
+    char* begin = roundDownToMultipleOf<vmPageSize>(static_cast<char*>(p));
     char* end = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p) + size);
 
     if (begin >= end)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,9 @@
 #define BoundaryTag_h
 
 #include "BAssert.h"
-#include "Owner.h"
 #include "Range.h"
 #include "Sizes.h"
+#include "VMState.h"
 #include <cstring>
 
 namespace bmalloc {
@@ -50,9 +50,9 @@ public:
     bool isEnd() { return m_isEnd; }
     void setEnd(bool isEnd) { m_isEnd = isEnd; }
 
-    Owner owner() { return static_cast<Owner>(m_owner); }
-    void setOwner(Owner owner) { m_owner = static_cast<unsigned>(owner); }
-    
+    VMState vmState() { return VMState(m_vmState); }
+    void setVMState(VMState vmState) { m_vmState = static_cast<unsigned>(vmState); }
+
     bool isMarked() { return m_isMarked; }
     void setMarked(bool isMarked) { m_isMarked = isMarked; }
 
@@ -71,7 +71,7 @@ public:
     BeginTag* next();
 
 private:
-    static const size_t flagBits = 4;
+    static const size_t flagBits = 5;
     static const size_t compactBeginBits = 4;
     static const size_t sizeBits = bitCount<unsigned>() - flagBits - compactBeginBits;
 
@@ -85,7 +85,7 @@ private:
 
     bool m_isFree: 1;
     bool m_isEnd: 1;
-    unsigned m_owner: 1;
+    unsigned m_vmState: 2;
     bool m_isMarked: 1;
     unsigned m_compactBegin: compactBeginBits;
     unsigned m_size: sizeBits;
@@ -122,7 +122,7 @@ inline void BoundaryTag::initSentinel()
 {
     setRange(Range(nullptr, largeMin));
     setFree(false);
-    setOwner(Owner::VMHeap);
+    setVMState(VMState::Virtual);
 }
 
 } // namespace bmalloc
