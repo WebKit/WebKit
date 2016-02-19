@@ -1,5 +1,11 @@
 2016-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert an unintended change made in the previous commit.
+
+        * init-database.sql:
+
+2016-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard should let user cancel pending A/B testing and hide failed ones
         https://bugs.webkit.org/show_bug.cgi?id=154433
 
