@@ -437,13 +437,6 @@ public:
         return symbolTable;
     }
     
-    static SymbolTable* createNameScopeTable(VM& vm, const Identifier& ident, unsigned attributes)
-    {
-        SymbolTable* result = create(vm);
-        result->add(ident.impl(), SymbolTableEntry(VarOffset(ScopeOffset(0)), attributes));
-        return result;
-    }
-    
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
 
