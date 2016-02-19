@@ -1,5 +1,17 @@
 2016-02-19  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Skip inspector/css/modify-rule-selector.html. rdar://problem/24748351
+
+        This test relies on TestPage infrastructure which is not present on the branch.
+
+        * TestExpectations:
+        Skip inspector/css/modify-rule-selector.html
+
+        * platform/mac-wk2/TestExpectations:
+        Remove expectation for inspector/css/modify-rule-selector.html
+
+2016-02-19  Matthew Hanson  <matthew_hanson@apple.com>
+
         Remove extraneous '-' from parse-filter-image test expectation. rdar://problem/24743218
 
 2016-02-12  Matthew Hanson  <matthew_hanson@apple.com>

@@ -579,3 +579,5 @@ inspector/css/matched-style-properties.html [Skip]
 inspector/css/pseudo-element-matches.html [Skip]
 inspector/css/selector-specificity.html [Skip]
 inspector/model/parse-script-syntax-tree.html [Skip]
+
+webkit.org/b/147229 inspector/css/modify-rule-selector.html [ Skip ]
