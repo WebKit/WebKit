@@ -210,18 +210,72 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     return true;
 }
 
+bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    VM& vm = exec->vm();
+    slot.setValue(this, None, jsUndefined()); // Nobody should rely on our value, but be safe and protect against any bad actors reading our value.
+    
+    JSValue handlerValue = this->handler();
+    if (handlerValue.isNull()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+        return false;
+    }
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue hasMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->has, ASCIILiteral("'has' property of a Proxy's handler should be callable."));
+    if (exec->hadException())
+        return false;
+    JSObject* target = this->target();
+    if (hasMethod.isUndefined())
+        return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    if (exec->hadException())
+        return false;
+    JSValue trapResult = call(exec, hasMethod, callType, callData, handler, arguments);
+    if (exec->hadException())
+        return false;
+
+    bool trapResultAsBool = trapResult.toBoolean(exec);
+    if (exec->hadException())
+        return false;
+
+    if (!trapResultAsBool) {
+        PropertyDescriptor descriptor;
+        bool isPropertyDescriptorDefined = target->getOwnPropertyDescriptor(exec, propertyName, descriptor); 
+        if (exec->hadException())
+            return false;
+        if (isPropertyDescriptorDefined) {
+            if (!descriptor.configurable()) {
+                throwVMTypeError(exec, ASCIILiteral("Proxy 'has' must return 'true' for non-configurable properties."));
+                return false;
+            }
+            if (!target->isExtensible()) {
+                throwVMTypeError(exec, ASCIILiteral("Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property."));
+                return false;
+            }
+        }
+    }
+
+    return trapResultAsBool;
+}
+
 bool ProxyObject::getOwnPropertySlotCommon(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    slot.disableCaching();
     switch (slot.internalMethodType()) {
     case PropertySlot::InternalMethodType::Get:
         slot.setCustom(this, CustomAccessor, performProxyGet);
-        slot.disableCaching();
         return true;
     case PropertySlot::InternalMethodType::GetOwnProperty:
         return performInternalMethodGetOwnProperty(exec, propertyName, slot);
+    case PropertySlot::InternalMethodType::HasProperty:
+        return performHasProperty(exec, propertyName, slot);
     default:
-        // FIXME: Implement Proxy.[[HasProperty]].
-        // https://bugs.webkit.org/show_bug.cgi?id=154313
         return false;
     }
 

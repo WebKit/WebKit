@@ -1,5 +1,35 @@
 2016-02-18  Saam Barati  <sbarati@apple.com>
 
+        Implement Proxy.[[HasProperty]]
+        https://bugs.webkit.org/show_bug.cgi?id=154313
+
+        Reviewed by Filip Pizlo.
+
+        This patch is a straight forward implementation of
+        Proxy.[[HasProperty]] with respect to section 9.5.7
+        of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-hasproperty-p
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+        * runtime/ProxyObject.h:
+        * tests/es6.yaml:
+        * tests/stress/proxy-basic.js:
+        (assert):
+        (let.handler.has):
+        * tests/stress/proxy-has-property.js: Added.
+        (assert):
+        (throw.new.Error.let.handler.get has):
+        (throw.new.Error):
+        (assert.let.handler.has):
+        (let.handler.has):
+        (getOwnPropertyDescriptor):
+        (i.catch):
+
+2016-02-18  Saam Barati  <sbarati@apple.com>
+
         Proxy's don't properly handle Symbols as PropertyKeys.
         https://bugs.webkit.org/show_bug.cgi?id=154385
 

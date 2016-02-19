@@ -8,8 +8,60 @@ assert(Proxy.length === 2);
 assert(Proxy.prototype === undefined);
 
 {
-    for (let i = 0; i < 1000; i++)
+    for (let i = 0; i < 100; i++)
         assert((new Proxy({}, {})).__proto__ === Object.prototype);
+}
+
+{
+    for (let i = 0; i < 100; i++) {
+        let threw = false;
+        try {
+            new Proxy({}, 20);
+        } catch(e) {
+            threw = true;
+            assert(e.toString() === "TypeError: A Proxy's 'handler' should be an Object");
+        }
+        assert(threw);
+    }
+}
+
+{
+    for (let i = 0; i < 100; i++) {
+        let threw = false;
+        try {
+            new Proxy({}, "");
+        } catch(e) {
+            threw = true;
+            assert(e.toString() === "TypeError: A Proxy's 'handler' should be an Object");
+        }
+        assert(threw);
+    }
+}
+
+{
+    for (let i = 0; i < 100; i++) {
+        let threw = false;
+        try {
+            new Proxy(20, {});
+        } catch(e) {
+            threw = true;
+            assert(e.toString() === "TypeError: A Proxy's 'target' should be an Object");
+        }
+        assert(threw);
+    }
+}
+
+{
+    for (let i = 0; i < 100; i++) {
+        let threw = false;
+        try {
+            new Proxy("", {});
+        } catch(e) {
+            threw = true;
+            assert(e.toString() === "TypeError: A Proxy's 'target' should be an Object");
+        }
+        assert(threw);
+    }
 }
 
 {
@@ -278,6 +330,31 @@ assert(Proxy.prototype === undefined);
         let pDesc = Object.getOwnPropertyDescriptor(proxy, prop);
         assert(pDesc.configurable);
         assert(pDesc.enumerable);
+        assert(called);
+        called = false;
+    }
+}
+
+{
+    let prop = Symbol();
+    let theTarget = { };
+    Object.defineProperty(theTarget, prop, {
+        enumerable: true,
+        configurable: true
+    });
+    let called = false;
+    let handler = {
+        has: function(target, propName) {
+            assert(prop === propName);
+            called = true;
+            return true;
+        }
+    };
+
+    let proxy = new Proxy(theTarget, handler);
+    for (let i = 0; i < 100; i++) {
+        let result = prop in proxy;
+        assert(result);
         assert(called);
         called = false;
     }

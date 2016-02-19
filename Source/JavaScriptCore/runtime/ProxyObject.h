@@ -65,6 +65,7 @@ private:
 
     bool getOwnPropertySlotCommon(ExecState*, PropertyName, PropertySlot&);
     bool performInternalMethodGetOwnProperty(ExecState*, PropertyName, PropertySlot&);
+    bool performHasProperty(ExecState*, PropertyName, PropertySlot&);
 
     WriteBarrier<JSObject> m_target;
     WriteBarrier<Unknown> m_handler;
