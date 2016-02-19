@@ -1,3 +1,17 @@
+2016-02-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] [SVG -> OTF Converter] All uses of a font except the first one are invisible
+        https://bugs.webkit.org/show_bug.cgi?id=154465
+
+        Reviewed by Alex Christensen.
+
+        We should re-use the existing converted data if it exists.
+
+        Covered by existing tests.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+
 2016-02-19  Antti Koivisto  <antti@apple.com>
 
         ComposedTreeIterator traverses normal children for elements with empty shadow root

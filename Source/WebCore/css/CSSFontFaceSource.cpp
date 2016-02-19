@@ -155,14 +155,14 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 #if ENABLE(SVG_OTF_CONVERTER)
     if (!is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
         return nullptr;
-    SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
-    // FIXME: Re-run this when script modifies the element or any of its descendents
-    // FIXME: We might have already converted this font. Make existing conversions discoverable.
-    if (auto otfFont = convertSVGToOTFFont(fontElement))
-        m_generatedOTFBuffer = SharedBuffer::adoptVector(otfFont.value());
-    if (!m_generatedOTFBuffer)
-        return nullptr;
-    m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
+    if (!m_inDocumentCustomPlatformData) {
+        SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
+        if (auto otfFont = convertSVGToOTFFont(fontElement))
+            m_generatedOTFBuffer = SharedBuffer::adoptVector(otfFont.value());
+        if (!m_generatedOTFBuffer)
+            return nullptr;
+        m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
+    }
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
 #if PLATFORM(COCOA)
