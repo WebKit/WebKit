@@ -1,3 +1,24 @@
+2016-02-19  Brady Eidson  <beidson@apple.com>
+
+        Add "databaseProcessDidCrash" to the WKContextClient; Adopt it in WKTR.
+        https://bugs.webkit.org/show_bug.cgi?id=154428
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextGetDatabaseProcessIdentifier):
+
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::databaseProcessDidCrash):
+        * UIProcess/WebContextClient.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::databaseProcessCrashed):
+        (WebKit::WebProcessPool::databaseProcessIdentifier):
+        * UIProcess/WebProcessPool.h:
+
 2016-02-18  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Limit the number of tiles according to the visible area

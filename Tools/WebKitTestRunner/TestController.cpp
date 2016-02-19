@@ -433,12 +433,13 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient.base);
 
-    WKContextClientV1 contextClient = {
-        { 1, this },
+    WKContextClientV2 contextClient = {
+        { 2, this },
         0, // plugInAutoStartOriginHashesChanged
         networkProcessDidCrash,
         0, // plugInInformationBecameAvailable
         0, // copyWebCryptoMasterKey
+        databaseProcessDidCrash,
     };
     WKContextSetClient(m_context.get(), &contextClient.base);
 
@@ -821,6 +822,16 @@ const char* TestController::networkProcessName()
 #endif
 }
 
+const char* TestController::databaseProcessName()
+{
+    // FIXME: Find a way to not hardcode the process name.
+#if PLATFORM(COCOA)
+    return "com.apple.WebKit.Databases.Development";
+#else
+    return "DatabaseProcess";
+#endif
+}
+
 static std::string testPath(WKURLRef url)
 {
     auto scheme = adoptWK(WKURLCopyScheme(url));
@@ -1138,6 +1149,11 @@ void TestController::networkProcessDidCrash(WKContextRef context, const void *cl
     static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash();
 }
 
+void TestController::databaseProcessDidCrash(WKContextRef context, const void *clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->databaseProcessDidCrash();
+}
+
 void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous)
 {
     WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
@@ -1441,6 +1457,17 @@ void TestController::networkProcessDidCrash()
     fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(pid));
 #else
     fprintf(stderr, "#CRASHED - %s\n", networkProcessName());
+#endif
+    exit(1);
+}
+
+void TestController::databaseProcessDidCrash()
+{
+#if PLATFORM(COCOA)
+    pid_t pid = WKContextGetDatabaseProcessIdentifier(m_context.get());
+    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", databaseProcessName(), static_cast<long>(pid));
+#else
+    fprintf(stderr, "#CRASHED - %s\n", databaseProcessName());
 #endif
     exit(1);
 }

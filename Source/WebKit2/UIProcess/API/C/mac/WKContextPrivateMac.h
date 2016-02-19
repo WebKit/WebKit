@@ -78,6 +78,7 @@ WK_EXPORT bool WKContextShouldBlockWebGL();
 WK_EXPORT bool WKContextShouldSuggestBlockWebGL();
 
 WK_EXPORT pid_t WKContextGetNetworkProcessIdentifier(WKContextRef context);
+WK_EXPORT pid_t WKContextGetDatabaseProcessIdentifier(WKContextRef context);
 
 #ifdef __cplusplus
 }

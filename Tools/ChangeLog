@@ -1,3 +1,16 @@
+2016-02-19  Brady Eidson  <beidson@apple.com>
+
+        Add "databaseProcessDidCrash" to the WKContextClient; Adopt it in WKTR.
+        https://bugs.webkit.org/show_bug.cgi?id=154428
+
+        Reviewed by Jer Noble.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::databaseProcessName):
+        (WTR::TestController::databaseProcessDidCrash):
+        * WebKitTestRunner/TestController.h:
+
 2016-02-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Bump internal jhbuild versions to 1.6.3

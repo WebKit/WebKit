@@ -187,6 +187,7 @@ public:
 #endif
 
     pid_t networkProcessIdentifier();
+    pid_t databaseProcessIdentifier();
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);

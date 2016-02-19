@@ -114,6 +114,7 @@ public:
 
     static const char* webProcessName();
     static const char* networkProcessName();
+    static const char* databaseProcessName();
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 
@@ -185,6 +186,8 @@ private:
     // WKContextClient
     static void networkProcessDidCrash(WKContextRef, const void*);
     void networkProcessDidCrash();
+    static void databaseProcessDidCrash(WKContextRef, const void*);
+    void databaseProcessDidCrash();
 
     // WKPageNavigationClient
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);
