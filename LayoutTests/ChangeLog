@@ -1,3 +1,7 @@
+2016-02-19  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Remove extraneous '-' from parse-filter-image test expectation. rdar://problem/24743218
+
 2016-02-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r196401. rdar://problem/24611749
