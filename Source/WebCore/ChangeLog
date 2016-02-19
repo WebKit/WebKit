@@ -1,3 +1,28 @@
+2016-02-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Wheel event callback removing the window causes crash in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=150871
+
+        Reviewed by Brent Fulgham.
+
+        Null check the FrameView before using it, since the iframe may have been removed
+        from its parent document inside the event handler.
+        
+        The new test triggered a cross-load side-effect, where wheel event filtering wasn't
+        reset between page loads. Fix by calling clearLatchedState() in EventHandler::clear(),
+        which resets the filtering.
+
+        Test: fast/events/wheel-event-destroys-frame.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        * page/WheelEventDeltaFilter.cpp:
+        (WebCore::WheelEventDeltaFilter::filteredDelta):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformCompleteWheelEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
 2016-02-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] [SVG -> OTF Converter] All uses of a font except the first one are invisible

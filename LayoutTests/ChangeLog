@@ -1,3 +1,13 @@
+2016-02-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Wheel event callback removing the window causes crash in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=150871
+
+        Reviewed by Brent Fulgham.
+
+        * fast/events/wheel-event-destroys-frame-expected.txt: Added.
+        * fast/events/wheel-event-destroys-frame.html: Added.
+
 2016-02-19  Antti Koivisto  <antti@apple.com>
 
         ComposedTreeIterator traverses normal children for elements with empty shadow root

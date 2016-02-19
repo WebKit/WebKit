@@ -2349,6 +2349,8 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     if (!box)
         return;
 
+    LOG_WITH_STREAM(Scrolling, stream << "RenderLayer::scrollTo " << position);
+
     ScrollPosition newPosition = position;
     if (box->style().overflowX() != OMARQUEE) {
         // Ensure that the dimensions will be computed if they need to be (for overflow:hidden blocks).
