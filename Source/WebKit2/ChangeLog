@@ -1,3 +1,26 @@
+2016-02-19  Beth Dakin  <bdakin@apple.com>
+
+        Enhance EditorState to include TypingAttributes, alignment, and color
+        https://bugs.webkit.org/show_bug.cgi?id=154424
+
+        Reviewed by Dean Jackson and Sam Weinig.
+
+        TypingAttributes is already available for iOS and GTK. This patch hooks 
+        that up on Mac as well, and it moves the calculation of that to the shared 
+        file since there is no reason for this to be written in an iOS-only way. This 
+        patch also adds textColor and textAlignment to EditorState, and since those 
+        are not technically platform-specific either, they are also calculated in the 
+        shared editorState() function.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState):
+
 2016-02-19  Anders Carlsson  <andersca@apple.com>
 
         Purge as much as we can from WKDeprecatedFunctions.cpp

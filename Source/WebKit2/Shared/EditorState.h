@@ -27,6 +27,7 @@
 #define EditorState_h
 
 #include "ArgumentCoders.h"
+#include <WebCore/Color.h>
 #include <WebCore/IntRect.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,6 +43,14 @@ enum TypingAttributes {
     AttributeItalics = 2,
     AttributeUnderline = 4,
     AttributeStrikeThrough = 8
+};
+
+enum TextAlignment {
+    NoAlignment = 0,
+    LeftAlignment = 1,
+    RightAlignment = 2,
+    CenterAlignment = 3,
+    JustifiedAlignment = 4,
 };
 
 struct EditorState {
@@ -64,13 +73,15 @@ struct EditorState {
 
 #if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
     struct PostLayoutData {
-#if PLATFORM(IOS) || PLATFORM(GTK)
         uint32_t typingAttributes { AttributeNone };
+#if PLATFORM(IOS) || PLATFORM(GTK)
         WebCore::IntRect caretRectAtStart;
 #endif
 #if PLATFORM(IOS) || PLATFORM(MAC)
         WebCore::IntRect selectionClipRect;
         uint64_t selectedTextLength { 0 };
+        uint32_t textAlignment { NoAlignment };
+        WebCore::Color textColor { WebCore::Color::black };
 #endif
 #if PLATFORM(IOS)
         WebCore::IntRect caretRectAtEnd;

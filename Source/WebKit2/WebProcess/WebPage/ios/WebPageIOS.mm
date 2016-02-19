@@ -190,30 +190,6 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     if (!selection.isNone()) {
         if (m_assistedNode && m_assistedNode->renderer())
             postLayoutData.selectionClipRect = view->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
-        
-        Node* nodeToRemove;
-        if (RenderStyle* style = Editor::styleForSelectionStart(&frame, nodeToRemove)) {
-            CTFontRef font = style->fontCascade().primaryFont().getCTFont();
-            CTFontSymbolicTraits traits = font ? CTFontGetSymbolicTraits(font) : 0;
-            
-            if (traits & kCTFontTraitBold)
-                postLayoutData.typingAttributes |= AttributeBold;
-            if (traits & kCTFontTraitItalic)
-                postLayoutData.typingAttributes |= AttributeItalics;
-            
-            RefPtr<EditingStyle> typingStyle = frame.selection().typingStyle();
-            if (typingStyle && typingStyle->style()) {
-                String value = typingStyle->style()->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect);
-                if (value.contains("underline"))
-                    postLayoutData.typingAttributes |= AttributeUnderline;
-            } else {
-                if (style->textDecorationsInEffect() & TextDecorationUnderline)
-                    postLayoutData.typingAttributes |= AttributeUnderline;
-            }
-            
-            if (nodeToRemove)
-                nodeToRemove->remove(ASSERT_NO_EXCEPTION);
-        }
     }
 }
 
