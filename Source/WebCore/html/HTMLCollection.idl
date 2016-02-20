@@ -23,6 +23,7 @@
     GenerateIsReachable=ImplOwnerNodeRoot,
     ObjCPolymorphic,
     ReportExtraMemoryCost,
+    CustomEnumerateProperty
 ] interface HTMLCollection {
     readonly attribute unsigned long length;
 

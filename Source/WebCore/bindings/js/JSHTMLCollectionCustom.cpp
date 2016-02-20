@@ -77,4 +77,23 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, HTMLCollection* collec
     return CREATE_DOM_WRAPPER(globalObject, HTMLCollection, collection);
 }
 
+// FIXME: These custom bindings are only needed temporarily to add release assertions in order to help
+// track down a possible lifetime issue (rdar://problem/24457478).
+void JSHTMLCollection::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    auto* thisObject = jsDynamicCast<JSHTMLCollection*>(object);
+    RELEASE_ASSERT_WITH_MESSAGE(thisObject, "Bad cast from JSObject to JSHTMLCollection");
+    RELEASE_ASSERT_WITH_MESSAGE(thisObject->wrapped().refCount() > 0, "Wrapped object is dead");
+    RELEASE_ASSERT_WITH_MESSAGE(!thisObject->wrapped().wasDeletionStarted(), "Wrapped object is being destroyed");
+    RELEASE_ASSERT_WITH_MESSAGE(!currentWorld(state).isNormal() || thisObject->wrapped().wrapper(), "Wrapper is dead");
+
+    for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
+        propertyNames.add(Identifier::from(state, i));
+    if (mode.includeDontEnumProperties()) {
+        for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
+            propertyNames.add(Identifier::fromString(state, propertyName));
+    }
+    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+}
+
 } // namespace WebCore
