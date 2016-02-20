@@ -1,3 +1,20 @@
+2016-02-20  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Text Align segmented control blinks while editing other properties in Visual Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=154487
+        <rdar://problem/24754703>
+
+        Reviewed by Timothy Hatcher.
+
+        The icon list property editor blinking issue was caused by the fact that
+        the selected value was toggled on/off each time the value was set on the
+        editor. In order to prevent this, the logic for the setter value() was
+        modified to just match a keyword icon to the given value and select it.
+
+        * UserInterface/Views/VisualStyleKeywordIconList.js:
+        (WebInspector.VisualStyleKeywordIconList.prototype.set value):
+        (WebInspector.VisualStyleKeywordIconList.prototype._handleKeywordChanged):
+
 2016-02-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Placeholder text in Visual Styles sidebar table row should be white
