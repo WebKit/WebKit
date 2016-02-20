@@ -1,3 +1,19 @@
+2016-02-20  Olivier Blin  <olivier.blin@softathome.com>
+
+        Remove declaration of unimplemented methods in LocaleICU
+        https://bugs.webkit.org/show_bug.cgi?id=154482
+
+        Reviewed by Michael Catanzaro.
+
+        detectSignAndGetDigitRange() and matchedDecimalSymbolIndex() are
+        implemented in PlatformLocale, not LocaleICU.
+
+        They were moved out from LocaleICU to NumberLocalizer in r124459
+        (2012), which has then been renamed as Localizer, then Locale, and
+        finally PlatformLocale.
+
+        * platform/text/LocaleICU.h:
+
 2016-02-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196837.

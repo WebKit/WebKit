@@ -68,9 +68,6 @@ private:
     String decimalTextAttribute(UNumberFormatTextAttribute);
     virtual void initializeLocaleData() override;
 
-    bool detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
-    unsigned matchedDecimalSymbolIndex(const String& input, unsigned& position);
-
     bool initializeShortDateFormat();
     UDateFormat* openDateFormat(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle) const;
 
