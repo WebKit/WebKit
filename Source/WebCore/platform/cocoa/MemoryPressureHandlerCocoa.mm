@@ -46,6 +46,8 @@
 #import "WebCoreThread.h"
 #endif
 
+#define ENABLE_FMW_FOOTPRINT_COMPARISON 0
+
 extern "C" void cache_simulate_memory_warning_event(uint64_t);
 extern "C" void _sqlite3_purgeEligiblePagerCacheMemory(void);
 
@@ -130,7 +132,7 @@ void MemoryPressureHandler::install()
 
     // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
     notify_register_dispatch("org.WebKit.lowMemory", &_notifyToken, dispatch_get_main_queue(), ^(int) {
-#if ENABLE(RESOURCE_USAGE)
+#if ENABLE(FMW_FOOTPRINT_COMPARISON)
         auto footprintBefore = pagesPerVMTag();
 #endif
 
@@ -143,7 +145,7 @@ void MemoryPressureHandler::install()
 
         malloc_zone_pressure_relief(nullptr, 0);
 
-#if ENABLE(RESOURCE_USAGE)
+#if ENABLE(FMW_FOOTPRINT_COMPARISON)
         auto footprintAfter = pagesPerVMTag();
         logFootprintComparison(footprintBefore, footprintAfter);
 #endif

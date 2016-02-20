@@ -1,3 +1,16 @@
+2016-02-20  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r196780): Fake memory handler takes too long to run now.
+
+        Unreviewed bot fix.
+
+        Put the footprint comparison code behind a compile-time flag for now.
+        It's taking too long to run on bots, and memory is getting measured
+        before all the pressure relief code has a chance to run.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2016-02-20  Olivier Blin  <olivier.blin@softathome.com>
 
         Do not require UDate in LocaleICU with !ENABLE_DATE_AND_TIME_INPUT_TYPES
