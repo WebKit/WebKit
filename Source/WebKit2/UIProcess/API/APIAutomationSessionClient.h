@@ -30,7 +30,6 @@
 
 namespace WebKit {
 class WebAutomationSession;
-class WebProcessPool;
 }
 
 namespace API {
@@ -40,7 +39,8 @@ public:
     virtual ~AutomationSessionClient() { }
 
     virtual String sessionIdentifier() const { return String(); }
-    virtual void didRequestNewWindow(WebKit::WebProcessPool*, WebKit::WebAutomationSession*) { }
+    virtual void didDisconnectFromRemote(WebKit::WebAutomationSession*) { }
+    virtual void didRequestNewWindow(WebKit::WebAutomationSession*) { }
 };
 
 } // namespace API

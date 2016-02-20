@@ -78,6 +78,11 @@
     _session->setSessionIdentifier(sessionIdentifier);
 }
 
+- (BOOL)isPaired
+{
+    return _session->isPaired();
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

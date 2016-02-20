@@ -69,6 +69,9 @@ void WebAutomationSession::disconnect(Inspector::FrontendChannel* channel)
 {
     m_remoteChannel = nullptr;
     setIsPaired(false);
+    
+    if (m_client)
+        m_client->didDisconnectFromRemote(this);
 }
 
 #endif // ENABLE(REMOTE_INSPECTOR)

@@ -34,6 +34,7 @@
 @protocol _WKAutomationSessionDelegate <NSObject>
 @optional
 - (void)_automationSessionDidRequestNewWindow:(_WKAutomationSession *)automationSession;
+- (void)_automationSessionDidDisconnectFromRemote:(_WKAutomationSession *)automationSession;
 @end
 
 #endif // WK_API_ENABLED

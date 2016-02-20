@@ -1,3 +1,37 @@
+2016-02-19  Brian Burg  <bburg@apple.com>
+
+        WebAutomationSession should tell its delegate when its remote end disconnects
+        https://bugs.webkit.org/show_bug.cgi?id=154426
+        <rdar://problem/24732382>
+
+        Reviewed by Timothy Hatcher.
+
+        The client might want to free up resources or close spawned windows
+        if the remote end has disconnected from the automation session.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::didDisconnectFromRemote): Added.
+        (API::AutomationSessionClient::didRequestNewWindow):
+        Remove WebProcessPool* argument as it is never used.
+
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession isPaired]):
+        Expose whether the session is paired with a remote end.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h: Add method.
+        * UIProcess/Cocoa/AutomationSessionClient.h: Add method.
+        Remove WebProcessPool* argument as it is never used.
+
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::AutomationSessionClient):
+        (WebKit::AutomationSessionClient::didRequestNewWindow):
+        (WebKit::AutomationSessionClient::didDisconnectFromRemote):
+        Add necessary forwarding boilerplate.
+
+        * UIProcess/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::disconnect): Inform the client.
+
 2016-02-19  Beth Dakin  <bdakin@apple.com>
 
         Enhance EditorState to include TypingAttributes, alignment, and color

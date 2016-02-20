@@ -38,12 +38,19 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
     : m_delegate(delegate)
 {
     m_delegateMethods.didRequestNewWindow = [delegate respondsToSelector:@selector(_automationSessionDidRequestNewWindow:)];
+    m_delegateMethods.didDisconnectFromRemote = [delegate respondsToSelector:@selector(_automationSessionDidDisconnectFromRemote:)];
 }
 
-void AutomationSessionClient::didRequestNewWindow(WebProcessPool*, WebAutomationSession* session)
+void AutomationSessionClient::didRequestNewWindow(WebAutomationSession* session)
 {
     if (m_delegateMethods.didRequestNewWindow)
         [m_delegate.get() _automationSessionDidRequestNewWindow:wrapper(*session)];
+}
+
+void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession* session)
+{
+    if (m_delegateMethods.didDisconnectFromRemote)
+        [m_delegate.get() _automationSessionDidDisconnectFromRemote:wrapper(*session)];
 }
 
 } // namespace WebKit
