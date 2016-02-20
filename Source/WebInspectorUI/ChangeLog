@@ -1,3 +1,14 @@
+2016-02-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Inherited selector rows have text too low
+        https://bugs.webkit.org/show_bug.cgi?id=154489
+        <rdar://problem/24754774>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleSelectorSection.css:
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider):
+
 2016-02-19  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Color picker in Visual Styles sidebar should not default to zero alpha

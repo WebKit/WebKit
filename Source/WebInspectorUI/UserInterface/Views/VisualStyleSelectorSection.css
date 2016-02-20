@@ -102,8 +102,7 @@
 .details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider {
     position: -webkit-sticky;
     top: -1px;
-    height: 17px;
-    padding: 2px;
+    height: 19px;
     background-color: hsl(0, 0%, 95%);
     border-color: var(--border-color);
     border-style: solid;
