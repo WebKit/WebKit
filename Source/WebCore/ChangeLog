@@ -1,3 +1,31 @@
+2016-02-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Use more concrete types for parsing positions
+        https://bugs.webkit.org/show_bug.cgi?id=154481
+
+        Reviewed by Dean Jackson.
+
+        Use CSSPrimitiveValues for position-parsing functions where possible, to avoid
+        the need to downcast<> the values returned by the parsing functions.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parsePositionX):
+        (WebCore::CSSParser::parsePositionY):
+        (WebCore::CSSParser::parse4ValuesFillPosition):
+        (WebCore::CSSParser::parse3ValuesFillPosition):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parse2ValuesFillPosition):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransformOriginShorthand):
+        (WebCore::CSSParser::parseBasicShapeCircle):
+        (WebCore::CSSParser::parseBasicShapeEllipse):
+        (WebCore::CSSParser::parseDeprecatedRadialGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::parseTransformOrigin):
+        (WebCore::CSSParser::parsePerspectiveOrigin):
+        * css/CSSParser.h:
+
 2016-02-18  Gavin Barraclough  <barraclough@apple.com>
 
         JSObject::getPropertySlot - index-as-propertyname, override on prototype, & shadow
