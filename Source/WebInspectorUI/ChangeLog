@@ -1,5 +1,38 @@
 2016-02-20  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Visual Styles: Modifying background expands Font section
+        https://bugs.webkit.org/show_bug.cgi?id=154491
+        <rdar://problem/24755440>
+
+        Reviewed by Timothy Hatcher.
+
+        When the user selects a new style, the Visual sidebar examines the property
+        editors in each subsection to see if any have a value and expands/collapses
+        the subsection accordingly. This issue was happening because that logic was
+        also being triggered when the user didn't select a new style, which is
+        controlled by DOMNodeStyles and the significantChange value in refresh().
+
+        * UserInterface/Base/Utilities.js:
+        (String.prototype.toCamelCase):
+        Added utility function to transform a string into a camel-cased version.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        Dropped unused variable and added checks to make sure doubly-matching styles
+        don't count as a significant change and cause refreshes of the styles sidebar.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateSections):
+        If this function has an event, meaning it was triggered by a newly selected
+        selector in the selector section, loop through each subsection and perform
+        the logic described above, but instead only to open sections.
+
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateSection.replaceDashWithCapital): Deleted.
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateProperties):
+        Removed logic that was already being called by _sectionModified().
+
+2016-02-20  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Text Align segmented control blinks while editing other properties in Visual Styles sidebar
         https://bugs.webkit.org/show_bug.cgi?id=154487
         <rdar://problem/24754703>

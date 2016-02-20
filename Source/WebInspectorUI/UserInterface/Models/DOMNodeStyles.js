@@ -160,28 +160,42 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
             this._refreshPending = false;
 
-            var significantChange = this._previousSignificantChange || false;
-            if (!significantChange) {
-                for (var key in this._styleDeclarationsMap) {
-                    // Check if the same key exists in the previous map and has the same style objects.
-                    if (key in this._previousStyleDeclarationsMap && Object.shallowEqual(this._styleDeclarationsMap[key], this._previousStyleDeclarationsMap[key]))
+            let significantChange = false;
+            for (let key in this._styleDeclarationsMap) {
+                // Check if the same key exists in the previous map and has the same style objects.
+                if (key in this._previousStyleDeclarationsMap) {
+                    if (Object.shallowEqual(this._styleDeclarationsMap[key], this._previousStyleDeclarationsMap[key]))
                         continue;
 
-                    if (!this._includeUserAgentRulesOnNextRefresh) {
-                        // We can assume all the styles with the same key are from the same stylesheet and rule, so we only check the first.
-                        var firstStyle = this._styleDeclarationsMap[key][0];
-                        if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent) {
-                            // User Agent styles get different identifiers after some edits. This would cause us to fire a significant refreshed
-                            // event more than it is helpful. And since the user agent stylesheet is static it shouldn't match differently
-                            // between refreshes for the same node. This issue is tracked by: https://webkit.org/b/110055
-                            continue;
+                    // Some styles have selectors such that they will match with the DOM node twice (for example "::before, ::after").
+                    // In this case a second style for a second matching may be generated and added which will cause the shallowEqual
+                    // to not return true, so in this case we just want to ensure that all the current styles existed previously.
+                    let styleFound = false;
+                    for (let style of this._styleDeclarationsMap[key]) {
+                        if (this._previousStyleDeclarationsMap[key].includes(style)) {
+                            styleFound = true;
+                            break;
                         }
                     }
 
-                    // This key is new or has different style objects than before. This is a significant change.
-                    significantChange = true;
-                    break;
+                    if (styleFound)
+                        continue;
                 }
+
+                if (!this._includeUserAgentRulesOnNextRefresh) {
+                    // We can assume all the styles with the same key are from the same stylesheet and rule, so we only check the first.
+                    let firstStyle = this._styleDeclarationsMap[key][0];
+                    if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent) {
+                        // User Agent styles get different identifiers after some edits. This would cause us to fire a significant refreshed
+                        // event more than it is helpful. And since the user agent stylesheet is static it shouldn't match differently
+                        // between refreshes for the same node. This issue is tracked by: https://webkit.org/b/110055
+                        continue;
+                    }
+                }
+
+                // This key is new or has different style objects than before. This is a significant change.
+                significantChange = true;
+                break;
             }
 
             if (!significantChange) {
@@ -208,9 +222,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             // Delete the previous maps now that any reused rules and style have been moved over.
             delete this._previousRulesMap;
             delete this._previousStyleDeclarationsMap;
-
-            // Delete the previous saved significant change flag so we rescan for a significant change next time.
-            delete this._previousSignificantChange;
 
             this.dispatchEventToListeners(WebInspector.DOMNodeStyles.Event.Refreshed, {significantChange});
         }
