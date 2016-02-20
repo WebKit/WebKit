@@ -58,6 +58,7 @@ namespace Sizes {
 
     static const size_t smallMax = 1024;
     static const size_t smallLineSize = 256;
+    static const size_t smallLineCount = vmPageSize / smallLineSize;
     static const size_t smallLineMask = ~(smallLineSize - 1ul);
 
     static const size_t smallChunkSize = superChunkSize / 2;

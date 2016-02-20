@@ -1,3 +1,56 @@
+2016-02-19  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Chunk, Page, and Line don't need to be class templates
+        https://bugs.webkit.org/show_bug.cgi?id=154480
+
+        Reviewed by Gavin Barraclough.
+
+        We needed class templates to distinguish between small and medium,
+        but medium is gone now.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Chunk.h: Removed.
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::initializeLineMetadata):
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        * bmalloc/Heap.h:
+        * bmalloc/Line.h: Removed.
+        * bmalloc/Page.h: Removed.
+        * bmalloc/Sizes.h:
+        * bmalloc/SmallChunk.h: Replaced with Source/bmalloc/bmalloc/Chunk.h.
+        (bmalloc::SmallChunk::begin):
+        (bmalloc::SmallChunk::end):
+        (bmalloc::SmallChunk::lines):
+        (bmalloc::SmallChunk::pages):
+        (bmalloc::SmallChunk::get):
+        (bmalloc::SmallLine::get):
+        (bmalloc::SmallLine::begin):
+        (bmalloc::SmallLine::end):
+        (bmalloc::SmallPage::get):
+        (bmalloc::SmallPage::begin):
+        (bmalloc::SmallPage::end):
+        (bmalloc::Chunk::begin): Deleted.
+        (bmalloc::Chunk::end): Deleted.
+        (bmalloc::Chunk::lines): Deleted.
+        (bmalloc::Chunk::pages): Deleted.
+        * bmalloc/SmallLine.h: Replaced with Source/bmalloc/bmalloc/Line.h.
+        (bmalloc::SmallLine::ref):
+        (bmalloc::SmallLine::deref):
+        (bmalloc::Line<Traits>::begin): Deleted.
+        (bmalloc::Line<Traits>::end): Deleted.
+        (bmalloc::Line<Traits>::ref): Deleted.
+        (bmalloc::Line<Traits>::deref): Deleted.
+        * bmalloc/SmallPage.h: Replaced with Source/bmalloc/bmalloc/Page.h.
+        (bmalloc::SmallPage::hasFreeLines):
+        (bmalloc::SmallPage::setHasFreeLines):
+        (bmalloc::SmallPage::ref):
+        (bmalloc::SmallPage::deref):
+        (bmalloc::Page::hasFreeLines): Deleted.
+        (bmalloc::Page::setHasFreeLines): Deleted.
+        (bmalloc::Page<Traits>::ref): Deleted.
+        (bmalloc::Page<Traits>::deref): Deleted.
+        * bmalloc/SmallTraits.h: Removed.
+
 2016-02-18  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Remove the concept of medium objects
