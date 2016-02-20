@@ -860,4 +860,17 @@ HTMLFormElement* HTMLFormElement::findClosestFormAncestor(const Element& startEl
     return const_cast<HTMLFormElement*>(ancestorsOfType<HTMLFormElement>(startElement).first());
 }
 
+void HTMLFormElement::setAutocomplete(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(autocompleteAttr, value);
+}
+
+const String& HTMLFormElement::autocomplete() const
+{
+    static NeverDestroyed<const String> on("on", String::ConstructFromLiteral);
+    static NeverDestroyed<const String> off("off", String::ConstructFromLiteral);
+
+    return equalIgnoringASCIICase(fastGetAttribute(autocompleteAttr), off) ? off : on;
+}
+
 } // namespace

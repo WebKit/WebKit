@@ -674,131 +674,131 @@ PASS form.acceptCharset (<form accept-charset>): IDL set to object "test-valueOf
 PASS form.acceptCharset (<form accept-charset>): IDL set to object "test-valueOf" followed by getAttribute() 
 PASS form.acceptCharset (<form accept-charset>): IDL set to object "test-valueOf" followed by IDL get 
 PASS form.autocomplete: typeof IDL attribute 
-FAIL form.autocomplete: IDL get with DOM attribute unset assert_equals: expected "on" but got ""
+PASS form.autocomplete: IDL get with DOM attribute unset 
 PASS form.autocomplete: setAttribute() to "" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "" followed by IDL get assert_equals: expected "on" but got ""
+PASS form.autocomplete: setAttribute() to "" followed by IDL get 
 PASS form.autocomplete: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "on" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS form.autocomplete: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS form.autocomplete: setAttribute() to undefined followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to undefined followed by IDL get assert_equals: expected "on" but got "undefined"
+PASS form.autocomplete: setAttribute() to undefined followed by IDL get 
 PASS form.autocomplete: setAttribute() to 7 followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to 7 followed by IDL get assert_equals: expected "on" but got "7"
+PASS form.autocomplete: setAttribute() to 7 followed by IDL get 
 PASS form.autocomplete: setAttribute() to 1.5 followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to 1.5 followed by IDL get assert_equals: expected "on" but got "1.5"
+PASS form.autocomplete: setAttribute() to 1.5 followed by IDL get 
 PASS form.autocomplete: setAttribute() to true followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to true followed by IDL get assert_equals: expected "on" but got "true"
+PASS form.autocomplete: setAttribute() to true followed by IDL get 
 PASS form.autocomplete: setAttribute() to false followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to false followed by IDL get assert_equals: expected "on" but got "false"
+PASS form.autocomplete: setAttribute() to false followed by IDL get 
 PASS form.autocomplete: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected "on" but got "[object Object]"
+PASS form.autocomplete: setAttribute() to object "[object Object]" followed by IDL get 
 PASS form.autocomplete: setAttribute() to NaN followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to NaN followed by IDL get assert_equals: expected "on" but got "NaN"
+PASS form.autocomplete: setAttribute() to NaN followed by IDL get 
 PASS form.autocomplete: setAttribute() to Infinity followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to Infinity followed by IDL get assert_equals: expected "on" but got "Infinity"
+PASS form.autocomplete: setAttribute() to Infinity followed by IDL get 
 PASS form.autocomplete: setAttribute() to -Infinity followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to -Infinity followed by IDL get assert_equals: expected "on" but got "-Infinity"
+PASS form.autocomplete: setAttribute() to -Infinity followed by IDL get 
 PASS form.autocomplete: setAttribute() to "\0" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "\0" followed by IDL get assert_equals: expected "on" but got "\0"
+PASS form.autocomplete: setAttribute() to "\0" followed by IDL get 
 PASS form.autocomplete: setAttribute() to null followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to null followed by IDL get assert_equals: expected "on" but got "null"
+PASS form.autocomplete: setAttribute() to null followed by IDL get 
 PASS form.autocomplete: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected "on" but got "test-toString"
+PASS form.autocomplete: setAttribute() to object "test-toString" followed by IDL get 
 PASS form.autocomplete: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected "on" but got "test-valueOf"
+PASS form.autocomplete: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "on" followed by getAttribute() 
 PASS form.autocomplete: setAttribute() to "on" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "xon" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "xon" followed by IDL get assert_equals: expected "on" but got "xon"
+PASS form.autocomplete: setAttribute() to "xon" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "on\0" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "on\0" followed by IDL get assert_equals: expected "on" but got "on\0"
+PASS form.autocomplete: setAttribute() to "on\0" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "n" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "n" followed by IDL get assert_equals: expected "on" but got "n"
+PASS form.autocomplete: setAttribute() to "n" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "ON" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "ON" followed by IDL get assert_equals: expected "on" but got "ON"
+PASS form.autocomplete: setAttribute() to "ON" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "off" followed by getAttribute() 
 PASS form.autocomplete: setAttribute() to "off" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "xoff" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "xoff" followed by IDL get assert_equals: expected "on" but got "xoff"
+PASS form.autocomplete: setAttribute() to "xoff" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "off\0" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "off\0" followed by IDL get assert_equals: expected "on" but got "off\0"
+PASS form.autocomplete: setAttribute() to "off\0" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "ff" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "ff" followed by IDL get assert_equals: expected "on" but got "ff"
+PASS form.autocomplete: setAttribute() to "ff" followed by IDL get 
 PASS form.autocomplete: setAttribute() to "OFF" followed by getAttribute() 
-FAIL form.autocomplete: setAttribute() to "OFF" followed by IDL get assert_equals: expected "off" but got "OFF"
+PASS form.autocomplete: setAttribute() to "OFF" followed by IDL get 
 PASS form.autocomplete: IDL set to "" should not throw 
 PASS form.autocomplete: IDL set to "" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "" followed by IDL get assert_equals: expected "on" but got ""
+PASS form.autocomplete: IDL set to "" followed by IDL get 
 PASS form.autocomplete: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " should not throw 
 PASS form.autocomplete: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL form.autocomplete: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "on" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS form.autocomplete: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS form.autocomplete: IDL set to undefined should not throw 
 PASS form.autocomplete: IDL set to undefined followed by getAttribute() 
-FAIL form.autocomplete: IDL set to undefined followed by IDL get assert_equals: expected "on" but got "undefined"
+PASS form.autocomplete: IDL set to undefined followed by IDL get 
 PASS form.autocomplete: IDL set to 7 should not throw 
 PASS form.autocomplete: IDL set to 7 followed by getAttribute() 
-FAIL form.autocomplete: IDL set to 7 followed by IDL get assert_equals: expected "on" but got "7"
+PASS form.autocomplete: IDL set to 7 followed by IDL get 
 PASS form.autocomplete: IDL set to 1.5 should not throw 
 PASS form.autocomplete: IDL set to 1.5 followed by getAttribute() 
-FAIL form.autocomplete: IDL set to 1.5 followed by IDL get assert_equals: expected "on" but got "1.5"
+PASS form.autocomplete: IDL set to 1.5 followed by IDL get 
 PASS form.autocomplete: IDL set to true should not throw 
 PASS form.autocomplete: IDL set to true followed by getAttribute() 
-FAIL form.autocomplete: IDL set to true followed by IDL get assert_equals: expected "on" but got "true"
+PASS form.autocomplete: IDL set to true followed by IDL get 
 PASS form.autocomplete: IDL set to false should not throw 
 PASS form.autocomplete: IDL set to false followed by getAttribute() 
-FAIL form.autocomplete: IDL set to false followed by IDL get assert_equals: expected "on" but got "false"
+PASS form.autocomplete: IDL set to false followed by IDL get 
 PASS form.autocomplete: IDL set to object "[object Object]" should not throw 
 PASS form.autocomplete: IDL set to object "[object Object]" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to object "[object Object]" followed by IDL get assert_equals: expected "on" but got "[object Object]"
+PASS form.autocomplete: IDL set to object "[object Object]" followed by IDL get 
 PASS form.autocomplete: IDL set to NaN should not throw 
 PASS form.autocomplete: IDL set to NaN followed by getAttribute() 
-FAIL form.autocomplete: IDL set to NaN followed by IDL get assert_equals: expected "on" but got "NaN"
+PASS form.autocomplete: IDL set to NaN followed by IDL get 
 PASS form.autocomplete: IDL set to Infinity should not throw 
 PASS form.autocomplete: IDL set to Infinity followed by getAttribute() 
-FAIL form.autocomplete: IDL set to Infinity followed by IDL get assert_equals: expected "on" but got "Infinity"
+PASS form.autocomplete: IDL set to Infinity followed by IDL get 
 PASS form.autocomplete: IDL set to -Infinity should not throw 
 PASS form.autocomplete: IDL set to -Infinity followed by getAttribute() 
-FAIL form.autocomplete: IDL set to -Infinity followed by IDL get assert_equals: expected "on" but got "-Infinity"
+PASS form.autocomplete: IDL set to -Infinity followed by IDL get 
 PASS form.autocomplete: IDL set to "\0" should not throw 
 PASS form.autocomplete: IDL set to "\0" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "\0" followed by IDL get assert_equals: expected "on" but got "\0"
+PASS form.autocomplete: IDL set to "\0" followed by IDL get 
 PASS form.autocomplete: IDL set to null should not throw 
-FAIL form.autocomplete: IDL set to null followed by IDL get assert_equals: expected "on" but got "null"
+PASS form.autocomplete: IDL set to null followed by IDL get 
 PASS form.autocomplete: IDL set to object "test-toString" should not throw 
 PASS form.autocomplete: IDL set to object "test-toString" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to object "test-toString" followed by IDL get assert_equals: expected "on" but got "test-toString"
+PASS form.autocomplete: IDL set to object "test-toString" followed by IDL get 
 PASS form.autocomplete: IDL set to object "test-valueOf" should not throw 
 PASS form.autocomplete: IDL set to object "test-valueOf" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected "on" but got "test-valueOf"
+PASS form.autocomplete: IDL set to object "test-valueOf" followed by IDL get 
 PASS form.autocomplete: IDL set to "on" should not throw 
 PASS form.autocomplete: IDL set to "on" followed by getAttribute() 
 PASS form.autocomplete: IDL set to "on" followed by IDL get 
 PASS form.autocomplete: IDL set to "xon" should not throw 
 PASS form.autocomplete: IDL set to "xon" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "xon" followed by IDL get assert_equals: expected "on" but got "xon"
+PASS form.autocomplete: IDL set to "xon" followed by IDL get 
 PASS form.autocomplete: IDL set to "on\0" should not throw 
 PASS form.autocomplete: IDL set to "on\0" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "on\0" followed by IDL get assert_equals: expected "on" but got "on\0"
+PASS form.autocomplete: IDL set to "on\0" followed by IDL get 
 PASS form.autocomplete: IDL set to "n" should not throw 
 PASS form.autocomplete: IDL set to "n" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "n" followed by IDL get assert_equals: expected "on" but got "n"
+PASS form.autocomplete: IDL set to "n" followed by IDL get 
 PASS form.autocomplete: IDL set to "ON" should not throw 
 PASS form.autocomplete: IDL set to "ON" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "ON" followed by IDL get assert_equals: expected "on" but got "ON"
+PASS form.autocomplete: IDL set to "ON" followed by IDL get 
 PASS form.autocomplete: IDL set to "off" should not throw 
 PASS form.autocomplete: IDL set to "off" followed by getAttribute() 
 PASS form.autocomplete: IDL set to "off" followed by IDL get 
 PASS form.autocomplete: IDL set to "xoff" should not throw 
 PASS form.autocomplete: IDL set to "xoff" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "xoff" followed by IDL get assert_equals: expected "on" but got "xoff"
+PASS form.autocomplete: IDL set to "xoff" followed by IDL get 
 PASS form.autocomplete: IDL set to "off\0" should not throw 
 PASS form.autocomplete: IDL set to "off\0" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "off\0" followed by IDL get assert_equals: expected "on" but got "off\0"
+PASS form.autocomplete: IDL set to "off\0" followed by IDL get 
 PASS form.autocomplete: IDL set to "ff" should not throw 
 PASS form.autocomplete: IDL set to "ff" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "ff" followed by IDL get assert_equals: expected "on" but got "ff"
+PASS form.autocomplete: IDL set to "ff" followed by IDL get 
 PASS form.autocomplete: IDL set to "OFF" should not throw 
 PASS form.autocomplete: IDL set to "OFF" followed by getAttribute() 
-FAIL form.autocomplete: IDL set to "OFF" followed by IDL get assert_equals: expected "off" but got "OFF"
+PASS form.autocomplete: IDL set to "OFF" followed by IDL get 
 PASS form.enctype: typeof IDL attribute 
 PASS form.enctype: IDL get with DOM attribute unset 
 PASS form.enctype: setAttribute() to "" followed by getAttribute() 

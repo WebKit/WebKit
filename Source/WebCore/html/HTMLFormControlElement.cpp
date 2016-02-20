@@ -713,10 +713,15 @@ static inline unsigned maxTokensForAutofillFieldCategory(AutofillCategory catego
 // https://html.spec.whatwg.org/multipage/forms.html#processing-model-3
 String HTMLFormControlElement::autocomplete() const
 {
+    bool wearingAutofillAnchorMantle = is<HTMLInputElement>(*this) && downcast<HTMLInputElement>(this)->isInputTypeHidden();
+
     const AtomicString& attributeValue = fastGetAttribute(autocompleteAttr);
     SpaceSplitString tokens(attributeValue, true);
-    if (tokens.isEmpty())
-        return String();
+    if (tokens.isEmpty()) {
+        if (wearingAutofillAnchorMantle)
+            return String();
+        return form() ? form()->autocomplete() : ASCIILiteral("on");
+    }
 
     size_t currentTokenIndex = tokens.size() - 1;
     const auto& fieldToken = tokens[currentTokenIndex];
@@ -727,7 +732,6 @@ String HTMLFormControlElement::autocomplete() const
     if (tokens.size() > maxTokensForAutofillFieldCategory(category))
         return String();
 
-    bool wearingAutofillAnchorMantle = is<HTMLInputElement>(*this) && downcast<HTMLInputElement>(this)->isInputTypeHidden();
     if ((category == AutofillCategory::Off || category == AutofillCategory::Automatic) && wearingAutofillAnchorMantle)
         return String();
 

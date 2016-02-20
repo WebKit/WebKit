@@ -24,7 +24,7 @@
 ] interface HTMLFormElement : HTMLElement {
     [Reflect=accept_charset] attribute DOMString acceptCharset;
     [Reflect, URL] attribute DOMString action;
-    [Reflect] attribute DOMString autocomplete;
+    attribute DOMString autocomplete;
     [TreatNullAs=NullString] attribute DOMString enctype;
     [TreatNullAs=NullString] attribute DOMString encoding;
     [TreatNullAs=NullString] attribute DOMString method;

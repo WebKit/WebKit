@@ -3,10 +3,10 @@
       
       
 
-FAIL form autocomplete attribute missing assert_equals: expected "on" but got ""
-FAIL form autocomplete attribute on assert_equals: expected "on" but got ""
-FAIL form autocomplete attribute off assert_equals: expected "off" but got ""
-FAIL form autocomplete attribute invalid assert_equals: expected "on" but got "foobar"
+PASS form autocomplete attribute missing 
+PASS form autocomplete attribute on 
+PASS form autocomplete attribute off 
+PASS form autocomplete attribute invalid 
 PASS name is an allowed autocomplete field name 
 PASS honorific-prefix is an allowed autocomplete field name 
 PASS given-name is an allowed autocomplete field name 

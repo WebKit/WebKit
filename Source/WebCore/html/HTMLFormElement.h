@@ -66,6 +66,9 @@ public:
 
     bool shouldAutocomplete() const;
 
+    void setAutocomplete(const AtomicString&);
+    const String& autocomplete() const;
+
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
     WEBCORE_EXPORT bool autocorrect() const;
     void setAutocorrect(bool);
