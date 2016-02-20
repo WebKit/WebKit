@@ -54,7 +54,6 @@ private:
 inline void SmallLine::ref(std::lock_guard<StaticMutex>&, unsigned char refCount)
 {
     BASSERT(!m_refCount);
-    BASSERT(refCount <= maxRefCount);
     m_refCount = refCount;
 }
 

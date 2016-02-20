@@ -1,3 +1,15 @@
+2016-02-19  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Fix debug build error since r196847
+
+        Fix gcc build warning appeared as below
+        by removing BASSERT(refCount <= maxRefCount).
+        error: comparison is always true due to limited range of data type
+        [-Werror=type-limits]
+
+        * bmalloc/SmallLine.h:
+        (bmalloc::SmallLine::ref): Deleted.
+
 2016-02-19  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Chunk, Page, and Line don't need to be class templates
