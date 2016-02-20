@@ -99,8 +99,8 @@ StyleInvalidationAnalysis::CheckDescendants StyleInvalidationAnalysis::invalidat
 {
     if (m_hasShadowPseudoElementRulesInAuthorSheet) {
         // FIXME: This could do actual rule matching too.
-        if (auto* shadowRoot = element.shadowRoot())
-            shadowRoot->setNeedsStyleRecalc();
+        if (element.shadowRoot())
+            element.setNeedsStyleRecalc();
     }
 
     switch (element.styleChangeType()) {

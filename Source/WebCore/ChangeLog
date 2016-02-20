@@ -1,3 +1,73 @@
+2016-02-20  Antti Koivisto  <antti@apple.com>
+
+        Resolve style iteratively
+        https://bugs.webkit.org/show_bug.cgi?id=154355
+
+        Reviewed by Andreas Kling.
+
+        Instead of a set of recursive functions use ComposedTreeIterator for traversing the DOM
+        tree in composed tree order.
+
+        This, along with maintaining explicit parent stack makes style resolve code more tractable
+        for future work.
+
+        It also makes the ComposedTreeIterator the definite authority for the shape of the composed tree
+        instead of duplicating it as a set of recursive style resolve functions. This eliminates
+        a significant source of bugs and confusion.
+
+        The render tree building code path remains recursive for now.
+
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::StyleInvalidationAnalysis::invalidateIfNeeded):
+
+            Invalidate the host element instead of the shadow root. This reduces need for special handling for shadow roots.
+
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::initializeContextStack):
+        (WebCore::ComposedTreeIterator::dropAssertions):
+
+            Add support for dropping DOM mutation assertions.
+
+        (WebCore::ComposedTreeIterator::traverseShadowRoot):
+        * dom/ComposedTreeIterator.h:
+        (WebCore::ComposedTreeIterator::context):
+        (WebCore::ComposedTreeIterator::current):
+        * dom/PseudoElement.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::TreeResolver):
+        (WebCore::Style::TreeResolver::Scope::Scope):
+        (WebCore::Style::TreeResolver::Parent::Parent):
+        (WebCore::Style::TreeResolver::pushScope):
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::pseudoStyleCacheIsInvalid):
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::resolveTextNode):
+        (WebCore::Style::TreeResolver::resolveBeforeOrAfterPseudoElement):
+        (WebCore::Style::TreeResolver::pushParent):
+        (WebCore::Style::TreeResolver::popParent):
+        (WebCore::Style::TreeResolver::popParentsToDepth):
+
+            Maintain explicit parent stack.
+
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
+            The main loop that iterates over the composed tree and computes style for dirty elements.
+
+        (WebCore::Style::TreeResolver::resolve):
+        (WebCore::Style::detachRenderTree):
+        (WebCore::Style::TreeResolver::resolveLocally): Deleted.
+        (WebCore::Style::TreeResolver::resolveChildAtShadowBoundary): Deleted.
+        (WebCore::Style::TreeResolver::resolveShadowTree): Deleted.
+        (WebCore::Style::TreeResolver::resolveChildren): Deleted.
+        (WebCore::Style::TreeResolver::resolveSlotAssignees): Deleted.
+        (WebCore::Style::TreeResolver::resolveRecursively): Deleted.
+
+            Recursive functions go away.
+
+        * style/StyleTreeResolver.h:
+        (WebCore::Style::TreeResolver::scope):
+        (WebCore::Style::TreeResolver::parent):
+
 2016-02-20  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r196780): Fake memory handler takes too long to run now.
