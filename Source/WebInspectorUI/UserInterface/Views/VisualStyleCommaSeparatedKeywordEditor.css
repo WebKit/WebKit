@@ -89,9 +89,10 @@
     line-height: 15px;
 }
 
+.visual-style-property-container .visual-style-comma-separated-keyword-item-editor::-webkit-input-placeholder,
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle {
-    font-size: 9px;
-    color: hsl(0, 0%, 83%);
+    font-size: 10px;
+    color: hsla(0, 0%, 100%, 0.7);
 }
 
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle::before {
