@@ -1,3 +1,12 @@
+2016-02-20  Olivier Blin  <olivier.blin@softathome.com>
+
+        [cmake] Use ICU include dirs in WebKit2 and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=154479
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt:
+
 2016-02-19  Brian Burg  <bburg@apple.com>
 
         WebAutomationSession should tell its delegate when its remote end disconnects

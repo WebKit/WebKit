@@ -1,3 +1,12 @@
+2016-02-20  Olivier Blin  <olivier.blin@softathome.com>
+
+        [cmake] Use ICU include dirs in WebKit2 and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=154479
+
+        Reviewed by Michael Catanzaro.
+
+        * WebKitTestRunner/CMakeLists.txt:
+
 2016-02-19  Konstantin Tokarev  <annulen@yandex.ru>
 
         [GTK] Fixed link error when G_DEFINE_AUTOPTR_CLEANUP_FUNC is not defined.
