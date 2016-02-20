@@ -1,3 +1,143 @@
+2016-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Remove the concept of medium objects
+        https://bugs.webkit.org/show_bug.cgi?id=154436
+
+        Reviewed by Sam Weinig.
+
+        There's no need to distinguish medium objects from small: Small object
+        metadata works naturally for both as long as we allow an object to
+        span more than two small lines. (We already allow an object to span
+        more than one small line.)
+
+        This change reduces memory use because it eliminates the 1kB line size,
+        so we don't have to hold down 1kB lines for individual 264+ byte objects.
+
+        1kB lines were always a bit of a compromise. The main point of bump
+        allocation is to take advantage of cache lines. Cache lines are usually
+        64 bytes, so line sizes above 256 bytes are a bit of a stretch.
+
+        This change speeds up small object benchmarks because it eliminates the
+        branch to detect medium objects in deallocation log processing.
+
+        This change reduces virtual memory use from worst cast 4X to worst case
+        2X because the medium chunk is gone. iOS cares about virtual memory use
+        and terminates apps above ~1GB, so this change gives us more breathing room.
+
+        This change slows down medium benchmarks a bit because we end up doing
+        more work to recycle fragmented medium objects. Overall, the tradeoff
+        seems justified, since we have a net speedup and a memory use savings.
+
+        * bmalloc.xcodeproj/project.pbxproj: Removed all the medium files. We
+        can simplify even further in a follow-up patch, removing the base class
+        templates for Chunk, Page, and Line as well.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator):
+        (bmalloc::Allocator::allocate):
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::scavenge):
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::refillAllocator):
+        (bmalloc::Allocator::allocateSlowCase): Medium is gone. Small max is the
+        new medium max.
+
+        * bmalloc/Allocator.h:
+        (bmalloc::Allocator::allocateFastCase): Ditto.
+
+        * bmalloc/BumpAllocator.h:
+        (bmalloc::BumpAllocator::validate):
+        (bmalloc::BumpAllocator::allocate): No more medium.
+
+        * bmalloc/Chunk.h: No more medium.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::processObjectLog): No check for medium. This is
+        a speedup.
+
+        (bmalloc::Deallocator::deallocateSlowCase): No more medium.
+
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::deallocateFastCase): Ditto.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::initializeLineMetadata): The algorithm here changed from
+        iterating each line to iterating each object. This helps us accomodate
+        objects that might span more than two lines -- i.e., all objects between
+        (512 bytes, 1024 bytes].
+
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeSmallPages):
+        (bmalloc::Heap::scavengeLargeObjects): Medium is gone.
+
+        (bmalloc::Heap::allocateSmallBumpRanges): Allow for lines that allocate
+        zero objects. This happens when an object spans more than two lines --
+        the middle lines allocate zero objects.
+
+        Also set the "has free lines" bit to false if we consume the last free
+        line. This needs to be a bit now because not all pages agree on their
+        maximum refcount anymore, so we need an explicit signal for the transition
+        from maximum to maximum - 1.
+
+        (bmalloc::Heap::allocateSmallPage): This code didn't change; I just removed
+        the medium code.
+
+        (bmalloc::Heap::deallocateSmallLine): Changed the algorithm to check
+        hasFreeLines. See allocateSmallBumpRanges.
+
+        (bmalloc::Heap::scavengeMediumPages): Deleted.
+        (bmalloc::Heap::allocateMediumBumpRanges): Deleted.
+        (bmalloc::Heap::allocateMediumPage): Deleted.
+        (bmalloc::Heap::deallocateMediumLine): Deleted.
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::derefMediumLine): Deleted.
+
+        * bmalloc/LargeChunk.h:
+        (bmalloc::LargeChunk::get):
+        (bmalloc::LargeChunk::endTag):
+        * bmalloc/Line.h: No more medium.
+
+        * bmalloc/MediumChunk.h: Removed.
+        * bmalloc/MediumLine.h: Removed.
+        * bmalloc/MediumPage.h: Removed.
+        * bmalloc/MediumTraits.h: Removed.
+
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/ObjectType.h:
+        (bmalloc::isSmall):
+        (bmalloc::isXLarge):
+        (bmalloc::isSmallOrMedium): Deleted.
+        (bmalloc::isMedium): Deleted. No more medium.
+
+        * bmalloc/Page.h:
+        (bmalloc::Page::sizeClass):
+        (bmalloc::Page::setSizeClass):
+        (bmalloc::Page::hasFreeLines):
+        (bmalloc::Page::setHasFreeLines): Add the free lines bit. You get better
+        codegen if you make it the low bit, since ref / deref can then add / sub
+        2. So do that.
+
+        * bmalloc/Sizes.h:
+        (bmalloc::Sizes::sizeClass): Expand the small size class to include the
+        medium size class.
+
+        * bmalloc/SuperChunk.h:
+        (bmalloc::SuperChunk::SuperChunk):
+        (bmalloc::SuperChunk::smallChunk):
+        (bmalloc::SuperChunk::largeChunk):
+        (bmalloc::SuperChunk::mediumChunk): Deleted. No more medium.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::grow):
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateSmallPage): Set the has free lines bit before
+        returning a Page to the Heap since this is the correct default state
+        when we first allocate a page.
+
+        (bmalloc::VMHeap::allocateMediumPage): Deleted.
+        (bmalloc::VMHeap::deallocateMediumPage): Deleted.
+
 2016-02-19  Michael Saboff  <msaboff@apple.com>
 
         bmalloc: Unify VMHeap and Heap LargeObjects free lists to reduce fragmentation

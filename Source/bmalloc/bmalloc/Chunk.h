@@ -77,7 +77,7 @@ private:
 template<class Traits>
 inline auto Chunk<Traits>::get(void* object) -> Chunk*
 {
-    BASSERT(isSmallOrMedium(object));
+    BASSERT(isSmall(object));
     return static_cast<Chunk*>(mask(object, chunkMask));
 }
 

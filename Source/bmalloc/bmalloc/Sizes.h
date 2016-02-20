@@ -54,22 +54,15 @@ namespace Sizes {
     static const size_t vmPageMask = ~(vmPageSize - 1);
     
     static const size_t superChunkSize = 2 * MB;
+    static const size_t superChunkMask = ~(superChunkSize - 1);
 
-    static const size_t smallMax = 256;
+    static const size_t smallMax = 1024;
     static const size_t smallLineSize = 256;
     static const size_t smallLineMask = ~(smallLineSize - 1ul);
 
-    static const size_t smallChunkSize = superChunkSize / 4;
-    static const size_t smallChunkOffset = superChunkSize * 3 / 4;
+    static const size_t smallChunkSize = superChunkSize / 2;
+    static const size_t smallChunkOffset = superChunkSize / 2;
     static const size_t smallChunkMask = ~(smallChunkSize - 1ul);
-
-    static const size_t mediumMax = 1024;
-    static const size_t mediumLineSize = 1024;
-    static const size_t mediumLineMask = ~(mediumLineSize - 1ul);
-
-    static const size_t mediumChunkSize = superChunkSize / 4;
-    static const size_t mediumChunkOffset = superChunkSize * 2 / 4;
-    static const size_t mediumChunkMask = ~(mediumChunkSize - 1ul);
 
     static const size_t largeChunkSize = superChunkSize / 2;
 #if BPLATFORM(IOS)
@@ -82,7 +75,7 @@ namespace Sizes {
 
     static const size_t largeAlignment = 64;
     static const size_t largeMax = largeChunkSize - largeChunkMetadataSize;
-    static const size_t largeMin = mediumMax;
+    static const size_t largeMin = smallMax;
     
     static const size_t xLargeAlignment = vmPageSize;
     static const size_t xLargeMax = std::numeric_limits<size_t>::max() - xLargeAlignment; // Make sure that rounding up to xLargeAlignment does not overflow.
@@ -90,12 +83,9 @@ namespace Sizes {
     static const size_t freeListSearchDepth = 16;
     static const size_t freeListGrowFactor = 2;
 
-    static const uintptr_t typeMask = (superChunkSize - 1) & ~((superChunkSize / 4) - 1); // 4 taggable chunks
-    static const uintptr_t smallType = (superChunkSize + smallChunkOffset) & typeMask;
-    static const uintptr_t mediumType = (superChunkSize + mediumChunkOffset) & typeMask;
-    static const uintptr_t largeTypeMask = ~(mediumType & smallType);
-    static const uintptr_t smallOrMediumTypeMask = mediumType & smallType;
-    static const uintptr_t smallOrMediumSmallTypeMask = smallType ^ mediumType; // Only valid if object is known to be small or medium.
+    static const uintptr_t typeMask = (superChunkSize - 1) & ~((superChunkSize / 2) - 1); // 2 taggable chunks
+    static const uintptr_t largeMask = typeMask & (superChunkSize + largeChunkOffset);
+    static const uintptr_t smallMask = typeMask & (superChunkSize + smallChunkOffset);
 
     static const size_t deallocatorLogCapacity = 256;
     static const size_t bumpRangeCacheCapacity = 3;
@@ -104,7 +94,7 @@ namespace Sizes {
 
     inline size_t sizeClass(size_t size)
     {
-        static const size_t sizeClassMask = (mediumMax / alignment) - 1;
+        static const size_t sizeClassMask = (smallMax / alignment) - 1;
         return mask((size - 1) / alignment, sizeClassMask);
     }
 
