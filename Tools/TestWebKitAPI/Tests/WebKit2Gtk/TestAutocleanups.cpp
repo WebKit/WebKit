@@ -57,8 +57,14 @@ void beforeAll()
     WebViewTest::add("Autocleanups", "web-process-autocleanups", testWebProcessAutocleanups);
 }
 
-void afterAll()
+#else
+
+void beforeAll()
 {
 }
 
 #endif // G_DEFINE_AUTOPTR_CLEANUP_FUNC
+
+void afterAll()
+{
+}
