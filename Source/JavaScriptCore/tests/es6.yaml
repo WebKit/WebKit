@@ -911,7 +911,7 @@
 - path: es6/Proxy_Array.isArray_support.js
   cmd: runES6 :fail
 - path: es6/Proxy_construct_handler.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_constructor_requires_new.js
   cmd: runES6 :normal
 - path: es6/Proxy_defineProperty_handler.js
@@ -967,7 +967,7 @@
 - path: es6/Proxy_internal_get_calls_ClassDefinitionEvaluation.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_CreateDynamicFunction.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_CreateListFromArrayLike.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_Date.prototype.toJSON.js

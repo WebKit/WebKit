@@ -146,6 +146,7 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(SymbolType == 7);
     STATIC_ASSERT(ObjectType == 21);
     STATIC_ASSERT(FinalObjectType == 22);
+    STATIC_ASSERT(JSFunctionType == 24);
     STATIC_ASSERT(MasqueradesAsUndefined == 1);
     STATIC_ASSERT(ImplementsDefaultHasInstance == 2);
     STATIC_ASSERT(FirstConstantRegisterIndex == 0x40000000);

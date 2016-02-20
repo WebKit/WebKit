@@ -597,6 +597,7 @@ _llint_op_create_this:
     traceExecution()
     loadisFromInstruction(2, t0)
     loadp [cfr, t0, 8], t0
+    bbneq JSCell::m_type[t0], JSFunctionType, .opCreateThisSlow
     loadp JSFunction::m_rareData[t0], t3
     btpz t3, .opCreateThisSlow
     loadp FunctionRareData::m_objectAllocationProfile + ObjectAllocationProfile::m_allocator[t3], t1

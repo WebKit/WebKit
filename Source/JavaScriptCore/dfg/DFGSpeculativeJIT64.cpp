@@ -3740,6 +3740,8 @@ void SpeculativeJIT::compile(Node* node)
 
         MacroAssembler::JumpList slowPath;
 
+        slowPath.append(m_jit.branch8(JITCompiler::NotEqual,
+            JITCompiler::Address(calleeGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(JSFunctionType)));
         m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfRareData()), rareDataGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR));
         m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorGPR);

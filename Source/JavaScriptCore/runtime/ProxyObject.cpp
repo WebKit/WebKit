@@ -65,9 +65,13 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
         return;
     }
 
-    CallData ignored;
     JSObject* targetAsObject = jsCast<JSObject*>(target);
-    m_isCallable = targetAsObject->methodTable(vm)->getCallData(targetAsObject, ignored) != CallTypeNone;
+
+    CallData ignoredCallData;
+    m_isCallable = targetAsObject->methodTable(vm)->getCallData(targetAsObject, ignoredCallData) != CallTypeNone;
+
+    ConstructData ignoredConstructData;
+    m_isConstructible = jsCast<JSObject*>(target)->methodTable(vm)->getConstructData(jsCast<JSObject*>(target), ignoredConstructData) != ConstructTypeNone;
 
     m_target.set(vm, this, targetAsObject);
     m_handler.set(vm, this, handler);
@@ -349,6 +353,56 @@ void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(&thisObject->m_target);
     visitor.append(&thisObject->m_handler);
+}
+
+static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    ProxyObject* proxy = jsCast<ProxyObject*>(exec->callee());
+    JSValue handlerValue = proxy->handler();
+    if (handlerValue.isNull())
+        return throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue constructMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "construct"), ASCIILiteral("'construct' property of a Proxy's handler should be constructible."));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    JSObject* target = proxy->target();
+    if (constructMethod.isUndefined()) {
+        ConstructData constructData;
+        ConstructType constructType = target->methodTable(vm)->getConstructData(target, constructData);
+        RELEASE_ASSERT(constructType != ConstructTypeNone);
+        return JSValue::encode(construct(exec, target, constructType, constructData, ArgList(exec), exec->newTarget()));
+    }
+
+    JSArray* argArray = constructArray(exec, static_cast<ArrayAllocationProfile*>(nullptr), ArgList(exec));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    arguments.append(argArray);
+    arguments.append(exec->newTarget());
+    JSValue result = call(exec, constructMethod, callType, callData, handler, arguments);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    if (!result.isObject())
+        return throwVMTypeError(exec, ASCIILiteral("Result from Proxy handler's 'construct' method should be an object."));
+    return JSValue::encode(result);
+}
+
+ConstructType ProxyObject::getConstructData(JSCell* cell, ConstructData& constructData)
+{
+    ProxyObject* proxy = jsCast<ProxyObject*>(cell);
+    if (!proxy->m_isConstructible) {
+        constructData.js.functionExecutable = nullptr;
+        constructData.js.scope = nullptr;
+        return ConstructTypeNone;
+    }
+
+    constructData.native.function = performProxyConstruct;
+    return ConstructTypeHost;
 }
 
 } // namespace JSC

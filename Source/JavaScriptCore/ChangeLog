@@ -1,3 +1,63 @@
+2016-02-19  Saam Barati  <sbarati@apple.com>
+
+        [ES6] Implement Proxy.[[Construct]]
+        https://bugs.webkit.org/show_bug.cgi?id=154440
+
+        Reviewed by Oliver Hunt.
+
+        This patch is mostly an implementation of
+        Proxy.[[Construct]] with respect to section 9.5.13
+        of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-construct-argumentslist-newtarget
+
+        This patch also changes op_create_this to accept new.target's
+        that aren't JSFunctions. This is necessary implementing Proxy.[[Construct]] 
+        because we might construct a JSFunction with a new.target being
+        a Proxy. This will also be needed when we implement Reflect.construct.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::finishCreation):
+        (JSC::ProxyObject::visitChildren):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::getConstructData):
+        * runtime/ProxyObject.h:
+        * tests/es6.yaml:
+        * tests/stress/proxy-construct.js: Added.
+        (assert):
+        (throw.new.Error.let.target):
+        (throw.new.Error):
+        (assert.let.target):
+        (assert.let.handler.get construct):
+        (let.target):
+        (let.handler.construct):
+        (i.catch):
+        (assert.let.handler.construct):
+        (assert.let.construct):
+        (assert.else.assert.let.target):
+        (assert.else.assert.let.construct):
+        (assert.else.assert):
+        (new.proxy.let.target):
+        (new.proxy.let.construct):
+        (new.proxy):
+
 2016-02-19  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         [INTL] Implement Number Format Functions

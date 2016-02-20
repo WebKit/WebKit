@@ -221,17 +221,22 @@ SLOW_PATH_DECL(slow_path_create_out_of_band_arguments)
 SLOW_PATH_DECL(slow_path_create_this)
 {
     BEGIN();
-    JSFunction* constructor = jsCast<JSFunction*>(OP(2).jsValue().asCell());
+    JSObject* result;
+    JSCell* constructorAsCell = OP(2).jsValue().asCell();
+    if (constructorAsCell->type() == JSFunctionType) {
+        JSFunction* constructor = jsCast<JSFunction*>(constructorAsCell);
+        auto& cacheWriteBarrier = pc[4].u.jsCell;
+        if (!cacheWriteBarrier)
+            cacheWriteBarrier.set(exec->vm(), exec->codeBlock(), constructor);
+        else if (cacheWriteBarrier.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cacheWriteBarrier.get() != constructor)
+            cacheWriteBarrier.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
-    auto& cacheWriteBarrier = pc[4].u.jsCell;
-    if (!cacheWriteBarrier)
-        cacheWriteBarrier.set(exec->vm(), exec->codeBlock(), constructor);
-    else if (cacheWriteBarrier.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cacheWriteBarrier.get() != constructor)
-        cacheWriteBarrier.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
-
-    size_t inlineCapacity = pc[3].u.operand;
-    Structure* structure = constructor->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure();
-    RETURN(constructEmptyObject(exec, structure));
+        size_t inlineCapacity = pc[3].u.operand;
+        Structure* structure = constructor->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure();
+        result = constructEmptyObject(exec, structure);
+    } else
+        result = constructEmptyObject(exec);
+    RETURN(result);
 }
 
 SLOW_PATH_DECL(slow_path_to_this)

@@ -970,6 +970,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     RegisterID scratchReg = regT3;
 
     emitLoadPayload(callee, calleeReg);
+    addSlowCase(branch8(NotEqual, Address(calleeReg, JSCell::typeInfoTypeOffset()), TrustedImm32(JSFunctionType)));
     loadPtr(Address(calleeReg, JSFunction::offsetOfRareData()), rareDataReg);
     addSlowCase(branchTestPtr(Zero, rareDataReg));
     loadPtr(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorReg);
@@ -987,6 +988,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    linkSlowCase(iter); // Callee::m_type != JSFunctionType.
     linkSlowCase(iter); // doesn't have rare data
     linkSlowCase(iter); // doesn't have an allocation profile
     linkSlowCase(iter); // allocation failed

@@ -330,6 +330,7 @@ const StringType = 6
 const SymbolType = 7
 const ObjectType = 21
 const FinalObjectType = 22
+const JSFunctionType = 24
 
 # Type flags constants.
 const MasqueradesAsUndefined = 1

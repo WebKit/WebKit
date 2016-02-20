@@ -691,6 +691,7 @@ _llint_op_create_this:
     traceExecution()
     loadi 8[PC], t0
     loadp PayloadOffset[cfr, t0, 8], t0
+    bbneq JSCell::m_type[t0], JSFunctionType, .opCreateThisSlow
     loadp JSFunction::m_rareData[t0], t5
     btpz t5, .opCreateThisSlow
     loadp FunctionRareData::m_objectAllocationProfile + ObjectAllocationProfile::m_allocator[t5], t1

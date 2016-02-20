@@ -164,8 +164,10 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    if (constructor->type() == JSFunctionType)
+        return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure());
 
-    return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure());
+    return constructEmptyObject(exec);
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
