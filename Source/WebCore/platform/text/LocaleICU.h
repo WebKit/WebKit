@@ -68,19 +68,17 @@ private:
     String decimalTextAttribute(UNumberFormatTextAttribute);
     virtual void initializeLocaleData() override;
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     bool initializeShortDateFormat();
     UDateFormat* openDateFormat(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle) const;
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     std::unique_ptr<Vector<String>> createLabelVector(const UDateFormat*, UDateFormatSymbolType, int32_t startIndex, int32_t size);
     void initializeDateTimeFormat();
 #endif
 
     CString m_locale;
     UNumberFormat* m_numberFormat;
-    UDateFormat* m_shortDateFormat;
     bool m_didCreateDecimalFormat;
-    bool m_didCreateShortDateFormat;
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     std::unique_ptr<Vector<String>> m_monthLabels;
@@ -91,12 +89,14 @@ private:
     String m_timeFormatWithoutSeconds;
     String m_dateTimeFormatWithSeconds;
     String m_dateTimeFormatWithoutSeconds;
+    UDateFormat* m_shortDateFormat;
     UDateFormat* m_mediumTimeFormat;
     UDateFormat* m_shortTimeFormat;
     Vector<String> m_shortMonthLabels;
     Vector<String> m_standAloneMonthLabels;
     Vector<String> m_shortStandAloneMonthLabels;
     Vector<String> m_timeAMPMLabels;
+    bool m_didCreateShortDateFormat;
     bool m_didCreateTimeFormat;
 #endif
 };
