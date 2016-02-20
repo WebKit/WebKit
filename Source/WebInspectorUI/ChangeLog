@@ -1,3 +1,20 @@
+2016-02-19  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Color picker in Visual Styles sidebar should not default to zero alpha
+        https://bugs.webkit.org/show_bug.cgi?id=154474
+        <rdar://problem/24750217>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch.prototype._fallbackValue):
+        Changed the fallback value for color from transparent to white so that
+        the color picker starts out with an alpha value of 1.
+
+        (WebInspector.InlineSwatch.prototype._handleContextMenuEvent):
+        Prevents context menu events from having an effect if there is no value
+        for them to modify.
+
 2016-02-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: CSS var() function should be syntax highlighted
