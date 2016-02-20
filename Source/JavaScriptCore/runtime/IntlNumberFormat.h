@@ -29,6 +29,7 @@
 #if ENABLE(INTL)
 
 #include "JSDestructibleObject.h"
+#include <unicode/unum.h>
 
 namespace JSC {
 
@@ -45,6 +46,7 @@ public:
     DECLARE_INFO;
 
     void initializeNumberFormat(ExecState&, JSValue locales, JSValue optionsValue);
+    JSValue formatNumber(ExecState&, double number);
     JSObject* resolvedOptions(ExecState&);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
@@ -60,8 +62,13 @@ private:
     enum class Style { Decimal, Percent, Currency };
     enum class CurrencyDisplay { Code, Symbol, Name };
 
-    const char* styleString(Style);
-    const char* currencyDisplayString(CurrencyDisplay);
+    struct UNumberFormatDeleter {
+        void operator()(UNumberFormat*) const;
+    };
+
+    void createNumberFormat(ExecState&);
+    static const char* styleString(Style);
+    static const char* currencyDisplayString(CurrencyDisplay);
 
     String m_locale;
     String m_numberingSystem;
@@ -73,12 +80,11 @@ private:
     unsigned m_maximumFractionDigits { 3 };
     unsigned m_minimumSignificantDigits { 0 };
     unsigned m_maximumSignificantDigits { 0 };
+    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
     WriteBarrier<JSBoundFunction> m_boundFormat;
     bool m_useGrouping { true };
     bool m_initializedNumberFormat { false };
 };
-    
-EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState*);
 
 } // namespace JSC
 

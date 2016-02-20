@@ -237,6 +237,91 @@ shouldBe("new Intl.NumberFormat().format.call(null, 1.2)", "Intl.NumberFormat().
 shouldBe("new Intl.NumberFormat().format.call(Intl.DateTimeFormat('ar'), 1.2)", "Intl.NumberFormat().format(1.2)");
 shouldBe("new Intl.NumberFormat().format.call(5, 1.2)", "Intl.NumberFormat().format(1.2)");
 
+// Test various values.
+shouldBe("Intl.NumberFormat('en').format(42)", "'42'");
+shouldBe("Intl.NumberFormat('en').format('42')", "'42'");
+shouldBe("Intl.NumberFormat('en').format({ valueOf() { return 42; } })", "'42'");
+shouldBe("Intl.NumberFormat('en').format('one')", "'NaN'");
+shouldBe("Intl.NumberFormat('en').format(NaN)", "'NaN'");
+shouldBe("Intl.NumberFormat('en').format(Infinity)", "'∞'");
+shouldBe("Intl.NumberFormat('en').format(-Infinity)", "'-∞'");
+shouldBe("Intl.NumberFormat('en').format(0)", "'0'");
+shouldBe("Intl.NumberFormat('en').format(-0)", "'0'");
+shouldBe("Intl.NumberFormat('en').format(Number.MIN_VALUE)", "'0'");
+shouldBe("Intl.NumberFormat('en').format(Number.MAX_VALUE)", "'179,769,313,486,232,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000'");
+
+// Test locales.
+shouldBe("Intl.NumberFormat('en').format(1234.567)", "'1,234.567'");
+shouldBe("Intl.NumberFormat('es').format(1234.567)", "'1.234,567'");
+shouldBe("Intl.NumberFormat('fr').format(1234.567)", "'1 234,567'");
+
+// Test numbering systems.
+shouldBe("Intl.NumberFormat('en-u-nu-latn').format(1234.567)", "'1,234.567'");
+shouldBe("Intl.NumberFormat('en-u-nu-fullwide').format(1234.567)", "'１,２３４.５６７'");
+shouldBe("Intl.NumberFormat('th-u-nu-thai').format(1234.567)", "'๑,๒๓๔.๕๖๗'");
+shouldBe("Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(1234.567)", "'一,二三四.五六七'");
+
+// Test the style option.
+shouldBe("Intl.NumberFormat('en', {style: 'decimal'}).format(4.2)", "'4.2'");
+shouldBe("Intl.NumberFormat('en', {style: 'percent'}).format(4.2)", "'420%'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4.2)", "'$4.20'");
+
+// Test the currency option.
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4)", "'$4.00'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4.2)", "'$4.20'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(-4.2)", "'-$4.20'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(NaN)", "'NaN'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(Infinity)", "'$∞'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'JPY'}).format(4.2)", "'¥4'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'xXx'}).format(4.2)", "'XXX4.20'");
+
+// Test the currencyDisplay option.
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}).format(4)", "'USD4.00'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'symbol'}).format(4)", "'$4.00'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}).format(4)", "'4.00 US dollars'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'code'}).format(-4.2)", "'-JPY4'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'symbol'}).format(-4.2)", "'-¥4'");
+shouldBe("Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'name'}).format(-4.2)", "'-4 Japanese yen'");
+shouldBe("Intl.NumberFormat('fr', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}).format(4)", "'4,00 dollars des États-Unis'");
+shouldBe("Intl.NumberFormat('fr', {style: 'currency', currency: 'JPY', currencyDisplay: 'name'}).format(4)", "'4 yens japonais'");
+
+// Test the minimumIntegerDigits option.
+shouldBe("Intl.NumberFormat('en', {minimumIntegerDigits: 4}).format(12)", "'0,012'");
+shouldBe("Intl.NumberFormat('en', {minimumIntegerDigits: 4}).format(12345)", "'12,345'");
+
+// Test the minimumFractionDigits option.
+shouldBe("Intl.NumberFormat('en', {minimumFractionDigits: 3}).format(1)", "'1.000'");
+shouldBe("Intl.NumberFormat('en', {minimumFractionDigits: 3}).format(1.2)", "'1.200'");
+shouldBe("Intl.NumberFormat('en', {minimumFractionDigits: 3}).format(1.2345)", "'1.235'");
+
+// Test the maximumFractionDigits option.
+shouldBe("Intl.NumberFormat('en', {minimumFractionDigits: 3, maximumFractionDigits: 4}).format(1.2345)", "'1.2345'");
+shouldBe("Intl.NumberFormat('en', {minimumFractionDigits: 3, maximumFractionDigits: 4}).format(1.23454)", "'1.2345'");
+shouldBe("Intl.NumberFormat('en', {minimumFractionDigits: 3, maximumFractionDigits: 4}).format(1.23455)", "'1.2346'");
+shouldBe("Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(0.5)", "'1'");
+shouldBe("Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(0.4)", "'0'");
+shouldBe("Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(-0.4)", "'-0'");
+shouldBe("Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(-0.5)", "'-1'");
+
+// Test the minimumSignificantDigits option.
+shouldBe("Intl.NumberFormat('en', {minimumSignificantDigits: 4}).format(0.12)", "'0.1200'");
+shouldBe("Intl.NumberFormat('en', {minimumSignificantDigits: 4}).format(1.2)", "'1.200'");
+shouldBe("Intl.NumberFormat('en', {minimumSignificantDigits: 4}).format(12)", "'12.00'");
+shouldBe("Intl.NumberFormat('en', {minimumSignificantDigits: 4}).format(123456)", "'123,456'");
+
+// Test the maximumSignificantDigits option.
+shouldBe("Intl.NumberFormat('en', {maximumSignificantDigits: 4}).format(0.1)", "'0.1'");
+shouldBe("Intl.NumberFormat('en', {maximumSignificantDigits: 4}).format(0.1234567)", "'0.1235'");
+shouldBe("Intl.NumberFormat('en', {maximumSignificantDigits: 4}).format(1234567)", "'1,235,000'");
+
+// Test the useGrouping option.
+shouldBe("Intl.NumberFormat('en', {useGrouping: true}).format(1234567.123)", "'1,234,567.123'");
+shouldBe("Intl.NumberFormat('es', {useGrouping: true}).format(1234567.123)", "'1.234.567,123'");
+shouldBe("Intl.NumberFormat('fr', {useGrouping: true}).format(1234567.123)", "'1 234 567,123'");
+shouldBe("Intl.NumberFormat('en', {useGrouping: false}).format(1234567.123)", "'1234567.123'");
+shouldBe("Intl.NumberFormat('es', {useGrouping: false}).format(1234567.123)", "'1234567,123'");
+shouldBe("Intl.NumberFormat('fr', {useGrouping: false}).format(1234567.123)", "'1234567,123'");
+
 // 11.3.5 Intl.NumberFormat.prototype.resolvedOptions ()
 
 shouldBe("Intl.NumberFormat.prototype.resolvedOptions.length", "0");

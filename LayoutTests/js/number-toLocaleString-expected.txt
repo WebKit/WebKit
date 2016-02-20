@@ -19,6 +19,11 @@ PASS Number.prototype.toLocaleString.call([]) threw exception TypeError: Number.
 PASS Number.prototype.toLocaleString.call(Symbol()) threw exception TypeError: Number.prototype.toLocaleString called on incompatible symbol.
 PASS (0).toLocaleString() is "0"
 PASS new Number(1).toLocaleString() is "1"
+PASS (0).toLocaleString('i') threw exception RangeError: invalid language tag: i.
+PASS Infinity.toLocaleString() is "∞"
+PASS (123456.789).toLocaleString('ar') is "١٢٣٬٤٥٦٫٧٨٩"
+PASS (123456.789).toLocaleString('zh-Hans-CN-u-nu-hanidec') is "一二三,四五六.七八九"
+PASS (123.456).toLocaleString('en', { maximumSignificantDigits: 3 }) is "123"
 PASS successfullyParsed is true
 
 TEST COMPLETE

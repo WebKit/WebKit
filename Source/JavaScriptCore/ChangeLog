@@ -1,3 +1,23 @@
+2016-02-19  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [INTL] Implement Number Format Functions
+        https://bugs.webkit.org/show_bug.cgi?id=147605
+
+        Reviewed by Darin Adler.
+
+        This patch implements Intl.NumberFormat.prototype.format() according
+        to the ECMAScript 2015 Internationalization API spec (ECMA-402 2nd edition.)
+
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::UNumberFormatDeleter::operator()):
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::createNumberFormat):
+        (JSC::IntlNumberFormat::formatNumber):
+        (JSC::IntlNumberFormatFuncFormatNumber): Deleted.
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatFuncFormatNumber):
+
 2016-02-18  Gavin Barraclough  <barraclough@apple.com>
 
         JSObject::getPropertySlot - index-as-propertyname, override on prototype, & shadow

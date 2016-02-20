@@ -1,3 +1,16 @@
+2016-02-19  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [INTL] Implement Number Format Functions
+        https://bugs.webkit.org/show_bug.cgi?id=147605
+
+        Reviewed by Darin Adler.
+
+        * js/intl-numberformat-expected.txt:
+        * js/intl-numberformat.html:
+        * js/number-toLocaleString-expected.txt:
+        * js/script-tests/intl-numberformat.js:
+        * js/script-tests/number-toLocaleString.js:
+
 2016-02-18  Gavin Barraclough  <barraclough@apple.com>
 
         JSObject::getPropertySlot - index-as-propertyname, override on prototype, & shadow

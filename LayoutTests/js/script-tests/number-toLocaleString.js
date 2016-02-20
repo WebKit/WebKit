@@ -20,13 +20,13 @@ shouldThrow("Number.prototype.toLocaleString.call(Symbol())", "'TypeError: Numbe
 shouldBeEqualToString("(0).toLocaleString()", "0");
 shouldBeEqualToString("new Number(1).toLocaleString()", "1");
 
-// FIXME: Test for NumberFormat behavior once implemented.
-// shouldThrow("(0).toLocaleString('i')");
-// shouldBeEqualToString("Infinity.toLocaleString()", "∞");
+// Test for NumberFormat behavior.
+shouldThrow("(0).toLocaleString('i')", "'RangeError: invalid language tag: i'");
+shouldBeEqualToString("Infinity.toLocaleString()", "∞");
 
 // Test that locale parameter is passed through properly.
-// shouldBeEqualToString("(123456.789).toLocaleString('ar')", "١٢٣٤٥٦٫٧٨٩");
-// shouldBeEqualToString("(123456.789).toLocaleString('zh-Hans-CN-u-nu-hanidec')", "一二三,四五六.七八九");
+shouldBeEqualToString("(123456.789).toLocaleString('ar')", "١٢٣٬٤٥٦٫٧٨٩");
+shouldBeEqualToString("(123456.789).toLocaleString('zh-Hans-CN-u-nu-hanidec')", "一二三,四五六.七八九");
 
 // Test that options parameter is passed through properly.
-// shouldBeEqualToString("(123.456).toLocaleString('en', { maximumSignificantDigits: 3 })", "123");
+shouldBeEqualToString("(123.456).toLocaleString('en', { maximumSignificantDigits: 3 })", "123");

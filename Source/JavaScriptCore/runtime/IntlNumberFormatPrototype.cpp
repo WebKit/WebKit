@@ -83,6 +83,24 @@ bool IntlNumberFormatPrototype::getOwnPropertySlot(JSObject* object, ExecState* 
     return getStaticFunctionSlot<JSObject>(state, numberFormatPrototypeTable, jsCast<IntlNumberFormatPrototype*>(object), propertyName, slot);
 }
 
+static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* state)
+{
+    // 11.3.4 Format Number Functions (ECMA-402 2.0)
+    // 1. Let nf be the this value.
+    // 2. Assert: Type(nf) is Object and nf has an [[initializedNumberFormat]] internal slot whose value  true.
+    IntlNumberFormat* numberFormat = jsCast<IntlNumberFormat*>(state->thisValue());
+
+    // 3. If value is not provided, let value be undefined.
+    // 4. Let x be ToNumber(value).
+    double number = state->argument(0).toNumber(state);
+    // 5. ReturnIfAbrupt(x).
+    if (state->hadException())
+        return JSValue::encode(jsUndefined());
+
+    // 6. Return FormatNumber(nf, x).
+    return JSValue::encode(numberFormat->formatNumber(*state, number));
+}
+
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* state)
 {
     // 11.3.3 Intl.NumberFormat.prototype.format (ECMA-402 2.0)
