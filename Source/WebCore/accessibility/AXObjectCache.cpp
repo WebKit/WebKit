@@ -1418,10 +1418,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
     AXObjectCache* cache = renderer->document().axObjectCache();
     if (!cache->isIDinUse(textMarkerData.axID))
         return VisiblePosition();
-    
-    if (deepPos.deprecatedNode() != textMarkerData.node || deepPos.deprecatedEditingOffset() != textMarkerData.offset)
-        return VisiblePosition();
-    
+
     return visiblePos;
 }
 

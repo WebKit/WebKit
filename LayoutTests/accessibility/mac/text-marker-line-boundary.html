@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+    <body id="body" tabindex="0">
+        <div tabindex="0" id="text" contenteditable=true>
+            1
+            <br>2
+        </div>
+
+        <p id="description"></p>
+        <div id="console"></div>
+
+        <script>
+
+            description("This verifies that navigating through a line boundary with arrows returns");
+
+            var index = 0;
+            if (window.accessibilityController) {
+                accessibilityController.enableEnhancedAccessibility(true);
+                var webArea = accessibilityController.rootElement.childAtIndex(0);
+                webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true);
+
+                document.getElementById("text").focus();
+                var text = accessibilityController.focusedElement;
+
+                eventSender.keyDown("rightArrow");
+                eventSender.keyDown("rightArrow");
+                var textMarkerRange = text.selectedTextMarkerRange()
+                var endMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange);
+                var nextMarker = text.nextTextMarker(endMarker);
+                var lineTextMarkerRange = text.lineTextMarkerRangeForTextMarker(nextMarker);
+                index = text.indexForTextMarker(nextMarker);
+                // -1 for NSNotFound
+                shouldBeFalse("index == -1");
+            }
+
+            </script>
+
+        <script src="../../resources/js-test-post.js"></script>
+
+    </body>
+</html>
+

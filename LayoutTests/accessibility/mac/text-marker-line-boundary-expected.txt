@@ -1,0 +1,12 @@
+1 
+2
+This verifies that navigating through a line boundary with arrows returns
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS index == -1 is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

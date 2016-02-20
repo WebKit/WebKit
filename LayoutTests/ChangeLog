@@ -1,3 +1,13 @@
+2016-02-19  Doug Russell  <d_russell@apple.com>
+
+        Bug 154366: AX: AXObjectCache::visiblePositionForTextMarkerData() doesn't account for visibly equivalent positions
+        https://bugs.webkit.org/show_bug.cgi?id=154366
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/text-marker-line-boundary-expected.txt: Added.
+        * accessibility/mac/text-marker-line-boundary.html: Added.
+
 2016-02-19  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         [INTL] Implement Number Format Functions
