@@ -1,3 +1,40 @@
+2016-02-18  Gavin Barraclough  <barraclough@apple.com>
+
+        JSObject::getPropertySlot - index-as-propertyname, override on prototype, & shadow
+        https://bugs.webkit.org/show_bug.cgi?id=154416
+
+        Reviewed by Geoff Garen.
+
+        Here's the bug. Suppose you call JSObject::getOwnProperty and -
+          - PropertyName contains an index,
+          - An object on the prototype chain overrides getOwnPropertySlot, and has that index property,
+          - The base of the access (or another object on the prototype chain) shadows that property.
+
+        JSObject::getPropertySlot is written assuming the common case is that propertyName is not an
+        index, and as such walks up the prototype chain looking for non-index properties before it
+        tries calling parseIndex.
+
+        At the point we reach an object on the prototype chain overriding getOwnPropertySlot (which
+        would potentially return the property) we may have already skipped over non-overriding
+        objects that contain the property in index storage.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnNonIndexPropertySlot):
+            - renamed from inlineGetOwnPropertySlot to better describe behaviour;
+              added ASSERT guarding that this method never returns index properties -
+              if it ever does, this is unsafe for getPropertySlot.
+        (JSC::JSObject::getOwnPropertySlot):
+            - inlineGetOwnPropertySlot -> getOwnNonIndexPropertySlot.
+        (JSC::JSObject::getPropertySlot):
+            - In case of object overriding getOwnPropertySlot check if propertyName is an index.
+        (JSC::JSObject::getNonIndexPropertySlot):
+            - called by getPropertySlot if we encounter an object that overrides getOwnPropertySlot,
+              in order to avoid repeated calls to parseIndex.
+        (JSC::JSObject::inlineGetOwnPropertySlot): Deleted.
+            - this was renamed to getOwnNonIndexPropertySlot.
+        (JSC::JSObject::fastGetOwnPropertySlot): Deleted.
+            - this was folded back in to getPropertySlot.
+
 2016-02-19  Saam Barati  <sbarati@apple.com>
 
         [ES6] Implement Proxy.[[Call]]

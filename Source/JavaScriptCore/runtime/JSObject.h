@@ -113,7 +113,6 @@ public:
     JSValue get(ExecState*, PropertyName) const;
     JSValue get(ExecState*, unsigned propertyName) const;
 
-    bool fastGetOwnPropertySlot(ExecState*, VM&, Structure&, PropertyName, PropertySlot&);
     bool getPropertySlot(ExecState*, PropertyName, PropertySlot&);
     bool getPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
@@ -859,7 +858,8 @@ private:
 
     JS_EXPORT_PRIVATE NEVER_INLINE void putInlineSlow(ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-    bool inlineGetOwnPropertySlot(VM&, Structure&, PropertyName, PropertySlot&);
+    bool getNonIndexPropertySlot(ExecState*, PropertyName, PropertySlot&);
+    bool getOwnNonIndexPropertySlot(VM&, Structure&, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
     void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned, Structure&);
 
@@ -1094,12 +1094,17 @@ inline JSValue JSObject::prototype() const
     return structure()->storedPrototype();
 }
 
-ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
+// It is safe to call this method with a PropertyName that is actually an index,
+// but if so will always return false (doesn't search index storage).
+ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
 {
     unsigned attributes;
     PropertyOffset offset = structure.get(vm, propertyName, attributes);
     if (!isValidOffset(offset))
         return false;
+
+    // getPropertySlot relies on this method never returning index properties!
+    ASSERT(!parseIndex(propertyName));
 
     JSValue value = getDirect(offset);
     if (value.isCell()) {
@@ -1138,18 +1143,11 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, ExecState* exe
 {
     VM& vm = exec->vm();
     Structure& structure = *object->structure(vm);
-    if (object->inlineGetOwnPropertySlot(vm, structure, propertyName, slot))
+    if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
         return true;
     if (Optional<uint32_t> index = parseIndex(propertyName))
         return getOwnPropertySlotByIndex(object, exec, index.value(), slot);
     return false;
-}
-
-ALWAYS_INLINE bool JSObject::fastGetOwnPropertySlot(ExecState* exec, VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
-{
-    if (LIKELY(!TypeInfo::overridesGetOwnPropertySlot(inlineTypeFlags())))
-        return inlineGetOwnPropertySlot(vm, structure, propertyName, slot);
-    return structure.classInfo()->methodTable.getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 // It may seem crazy to inline a function this large but it makes a big difference
@@ -1160,8 +1158,19 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
     auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     while (true) {
+        if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()))) {
+            // If propertyName is an index then we may have missed it (as this loop is using
+            // getOwnNonIndexPropertySlot), so we cannot safely call the overridden getOwnPropertySlot
+            // (lest we return a property from a prototype that is shadowed). Check now for an index,
+            // if so we need to start afresh from this object.
+            if (Optional<uint32_t> index = parseIndex(propertyName))
+                return getPropertySlot(exec, index.value(), slot);
+            // Safe to continue searching from current position; call getNonIndexPropertySlot to avoid
+            // parsing the int again.
+            return object->getNonIndexPropertySlot(exec, propertyName, slot);
+        }
         Structure& structure = *structureIDTable.get(object->structureID());
-        if (object->fastGetOwnPropertySlot(exec, vm, structure, propertyName, slot))
+        if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
             return true;
         JSValue prototype = structure.storedPrototype();
         if (!prototype.isObject())
@@ -1182,6 +1191,28 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyN
     while (true) {
         Structure& structure = *structureIDTable.get(object->structureID());
         if (structure.classInfo()->methodTable.getOwnPropertySlotByIndex(object, exec, propertyName, slot))
+            return true;
+        JSValue prototype = structure.storedPrototype();
+        if (!prototype.isObject())
+            return false;
+        object = asObject(prototype);
+    }
+}
+
+ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    // This method only supports non-index PropertyNames.
+    ASSERT(!parseIndex(propertyName));
+
+    VM& vm = exec->vm();
+    auto& structureIDTable = vm.heap.structureIDTable();
+    JSObject* object = this;
+    while (true) {
+        Structure& structure = *structureIDTable.get(object->structureID());
+        if (LIKELY(!TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()))) {
+            if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
+                return true;
+        } else if (structure.classInfo()->methodTable.getOwnPropertySlot(object, exec, propertyName, slot))
             return true;
         JSValue prototype = structure.storedPrototype();
         if (!prototype.isObject())

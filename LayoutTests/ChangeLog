@@ -1,3 +1,16 @@
+2016-02-18  Gavin Barraclough  <barraclough@apple.com>
+
+        JSObject::getPropertySlot - index-as-propertyname, override on prototype, & shadow
+        https://bugs.webkit.org/show_bug.cgi?id=154416
+
+        Reviewed by Geoff Garen.
+
+        * js/index-property-shadows-overriden-get-own-property-slot-expected.txt: Added.
+        * js/index-property-shadows-overriden-get-own-property-slot.html: Added.
+        * js/script-tests/index-property-shadows-overriden-get-own-property-slot.js: Added.
+        (test):
+            - added test case.
+
 2016-02-19  Chris Dumez  <cdumez@apple.com>
 
         HTMLFormElement.autocomplete should only return known values

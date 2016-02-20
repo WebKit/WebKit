@@ -3461,7 +3461,7 @@ bool Internals::isReadableStreamDisturbed(ScriptState& state, JSValue stream)
     const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().isReadableStreamDisturbedPrivateName();
     JSValue value;
     PropertySlot propertySlot(value, PropertySlot::InternalMethodType::Get);
-    globalObject->fastGetOwnPropertySlot(&state, state.vm(), *globalObject->structure(), privateName, propertySlot);
+    globalObject->methodTable()->getOwnPropertySlot(globalObject, &state, privateName, propertySlot);
     value = propertySlot.getValue(&state, privateName);
     ASSERT(value.isFunction());
 
