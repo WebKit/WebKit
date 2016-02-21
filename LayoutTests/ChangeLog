@@ -1,5 +1,21 @@
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
+        Another attempt to fix the Content Extension test failures following <https://trac.webkit.org/changeset/196875>
+        (https://bugs.webkit.org/show_bug.cgi?id=154307) 
+
+        Rename Content Extension JSON files so that they are associated with tests http/tests/contentextensions/block-cookies-in-csp-report.php
+        http/tests/contentextensions/block-csp-report.php and http/tests/contentextensions/hide-on-csp-report.php. These
+        files were formerly named block-cookies-in-csp-report.html, block-csp-report.html, and hide-on-csp-report.html,
+        respectively, prior to <https://trac.webkit.org/changeset/196878>. Also, update expected result for test block-csp-report.html
+        following <https://trac.webkit.org/changeset/196878>.
+
+        * http/tests/contentextensions/block-cookies-in-csp-report.php.json: Renamed from LayoutTests/http/tests/contentextensions/block-cookies-in-csp-report.html.json.
+        * http/tests/contentextensions/block-csp-report-expected.txt:
+        * http/tests/contentextensions/block-csp-report.php.json: Renamed from LayoutTests/http/tests/contentextensions/block-csp-report.html.json.
+        * http/tests/contentextensions/hide-on-csp-report.php.json: Renamed from LayoutTests/http/tests/contentextensions/hide-on-csp-report.html.json.
+
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the Content Extension test failures following <https://trac.webkit.org/changeset/196875>
         (https://bugs.webkit.org/show_bug.cgi?id=154307)
 

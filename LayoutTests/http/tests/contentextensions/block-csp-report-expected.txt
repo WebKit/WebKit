@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Refused to load the image 'http://localhost/foo.png' because it violates the following Content Security Policy directive: "img-src 'self'".
 
-CONSOLE MESSAGE: line 34: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/block-csp-report.html from loading a resource from http://localhost:8000/contentextensions/resources/save-ping.php?test=contentextensions-block-csp-report
+CONSOLE MESSAGE: line 33: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/block-csp-report.php from loading a resource from http://localhost:8000/contentextensions/resources/save-ping.php?test=contentextensions-block-csp-report
 This test creates a CSP violation report, but the report URL matches a 'block' rule.  
 
 --------
