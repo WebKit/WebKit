@@ -1,3 +1,17 @@
+2016-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for universal slave password
+        https://bugs.webkit.org/show_bug.cgi?id=154476
+
+        Reviewed by David Kilzer.
+
+        Added the support for universalSlavePassword.
+
+        * config.json:
+        * public/include/report-processor.php:
+        (ReportProcessor::process):
+        (ReportProcessor::authenticate_and_construct_build_data): Extracted from process().
+
 2016-02-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Analysis tasks page complains about missing repository but with a wrong name

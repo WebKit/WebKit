@@ -32,14 +32,43 @@ class ReportProcessor {
         array_key_exists('builderName', $report) or $this->exit_with_error('MissingBuilderName');
         array_key_exists('buildTime', $report) or $this->exit_with_error('MissingBuildTime');
 
+        $build_data = $this->authenticate_and_construct_build_data($report, $existing_report_id);
+        if (!$existing_report_id)
+            $this->store_report($report, $build_data);
+
+        $this->ensure_aggregators();
+
+        $this->runs = new TestRunsGenerator($this->db, $this->name_to_aggregator_id, $this->report_id);
+        $this->recursively_ensure_tests($report['tests']);
+
+        $this->runs->aggregate();
+        $this->runs->compute_caches();
+
+        $platform_id = $this->db->select_or_insert_row('platforms', 'platform', array('name' => $report['platform']));
+        if (!$platform_id)
+            $this->exit_with_error('FailedToInsertPlatform', array('name' => $report['platform']));
+
+        // FIXME: Deprecate and unsupport "jobId".
+        $build_id = $this->resolve_build_id($build_data, array_get($report, 'revisions', array()),
+            array_get($report, 'jobId', array_get($report, 'buildRequest')));
+
+        $this->runs->commit($platform_id, $build_id);
+    }
+
+    private function authenticate_and_construct_build_data(&$report, $existing_report_id) {
         $builder_info = array('name' => $report['builderName']);
         $slave_name = array_get($report, 'slaveName', NULL);
         $slave_id = NULL;
         if (!$existing_report_id) {
             $hash = NULL;
             if ($slave_name && array_key_exists('slavePassword', $report)) {
-                $hash = hash('sha256', $report['slavePassword']);
-                $slave = $this->db->select_first_row('build_slaves', 'slave', array('name' => $slave_name, 'password_hash' => $hash));
+                $universal_password = config('universalSlavePassword');
+                if ($universal_password && $universal_password == $report['slavePassword'])
+                    $slave = $this->db->select_first_row('build_slaves', 'slave', array('name' => $slave_name));
+                else {
+                    $hash = hash('sha256', $report['slavePassword']);
+                    $slave = $this->db->select_first_row('build_slaves', 'slave', array('name' => $slave_name, 'password_hash' => $hash));
+                }
                 if ($slave)
                     $slave_id = $slave['slave_id'];
             } else if (array_key_exists('builderPassword', $report))
@@ -68,37 +97,17 @@ class ReportProcessor {
                 $slave_id = $this->db->select_or_insert_row('build_slaves', 'slave', array('name' => $slave_name));
         }
 
-        $build_data = $this->construct_build_data($report, $builder_id, $slave_id);
-        if (!$existing_report_id)
-            $this->store_report($report, $build_data);
-
-        $this->ensure_aggregators();
-
-        $this->runs = new TestRunsGenerator($this->db, $this->name_to_aggregator_id, $this->report_id);
-        $this->recursively_ensure_tests($report['tests']);
-
-        $this->runs->aggregate();
-        $this->runs->compute_caches();
-
-        $platform_id = $this->db->select_or_insert_row('platforms', 'platform', array('name' => $report['platform']));
-        if (!$platform_id)
-            $this->exit_with_error('FailedToInsertPlatform', array('name' => $report['platform']));
-
-        // FIXME: Deprecate and unsupport "jobId".
-        $build_id = $this->resolve_build_id($build_data, array_get($report, 'revisions', array()),
-            array_get($report, 'jobId', array_get($report, 'buildRequest')));
-
-        $this->runs->commit($platform_id, $build_id);
+        return $this->construct_build_data($report, $builder_id, $slave_id);
     }
 
-    private function construct_build_data($report, $builder_id, $slave_id) {
+    private function construct_build_data(&$report, $builder_id, $slave_id) {
         array_key_exists('buildNumber', $report) or $this->exit_with_error('MissingBuildNumber');
         array_key_exists('buildTime', $report) or $this->exit_with_error('MissingBuildTime');
 
         return array('builder' => $builder_id, 'slave' => $slave_id, 'number' => $report['buildNumber'], 'time' => $report['buildTime']);
     }
 
-    private function store_report($report, $build_data) {
+    private function store_report(&$report, $build_data) {
         assert(!$this->report_id);
         $this->report_id = $this->db->insert_row('reports', 'report', array(
             'builder' => $build_data['builder'],
@@ -118,7 +127,7 @@ class ReportProcessor {
         }
     }
 
-    private function resolve_build_id($build_data, $revisions, $build_request_id) {
+    private function resolve_build_id(&$build_data, $revisions, $build_request_id) {
         // FIXME: This code has a race condition. See <rdar://problem/15876303>.
         $results = $this->db->query_and_fetch_all("SELECT build_id, build_slave FROM builds
             WHERE build_builder = $1 AND build_number = $2 AND build_time <= $3 AND build_time + interval '1 day' > $3",
@@ -168,7 +177,7 @@ class ReportProcessor {
         return $build_id;
     }
 
-    private function recursively_ensure_tests($tests, $parent_id = NULL, $level = 0) {
+    private function recursively_ensure_tests(&$tests, $parent_id = NULL, $level = 0) {
         foreach ($tests as $test_name => $test) {
             $test_id = $this->db->select_or_insert_row('tests', 'test', $parent_id ? array('name' => $test_name, 'parent' => $parent_id) : array('name' => $test_name),
                 array('name' => $test_name, 'parent' => $parent_id, 'url' => array_get($test, 'url')));

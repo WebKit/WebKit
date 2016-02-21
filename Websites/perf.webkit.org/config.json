@@ -10,6 +10,7 @@
         "password": "password",
         "name": "webkit-perf-db"
     },
+    "universalSlavePassword": null,
     "maintenanceMode": false,
     "maintenanceDirectory": "reported/",
     "testServer": {
