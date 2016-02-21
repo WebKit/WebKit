@@ -1,3 +1,23 @@
+2016-02-20  Mark Lam  <mark.lam@apple.com>
+
+        Use of inlined asm statements causes problems for -std=c99 builds.
+        https://bugs.webkit.org/show_bug.cgi?id=154507
+
+        Reviewed by Dan Bernstein.
+
+        WTF's Assertions.h may inadvertantly get included by other projects that are built
+        with -std=c99.  The use of the inlined asm statements with the keyword "asm" is
+        not recognized when the -std compiler flag is used.
+
+        https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html says "When writing code that
+        can be compiled with -ansi and the various -std options, use __asm__ instead of
+        asm (see Alternate Keywords)."
+
+        So, to be a good citizen, we can change the use of "asm" in CRASH() to "__asm__"
+        so that we don't break the build of such other projects.
+
+        * wtf/Assertions.h:
+
 2016-02-18  Brent Fulgham  <bfulgham@apple.com>
 
         Extend HashCountedSet with a method to efficiently set the count of an entry
