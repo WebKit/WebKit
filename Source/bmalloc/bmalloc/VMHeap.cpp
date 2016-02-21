@@ -36,21 +36,37 @@ VMHeap::VMHeap()
 {
 }
 
-void VMHeap::grow()
+void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock)
 {
-    SuperChunk* superChunk = SuperChunk::create();
+    if (!m_smallChunks.size())
+        allocateSuperChunk(lock);
+
+    // We initialize chunks lazily to avoid dirtying their metadata pages.
+    SmallChunk* smallChunk = new (m_smallChunks.pop()->smallChunk()) SmallChunk(lock);
+    for (auto* it = smallChunk->begin(); it < smallChunk->end(); ++it)
+        m_smallPages.push(it);
+}
+
+void VMHeap::allocateLargeChunk(std::lock_guard<StaticMutex>& lock)
+{
+    if (!m_largeChunks.size())
+        allocateSuperChunk(lock);
+
+    // We initialize chunks lazily to avoid dirtying their metadata pages.
+    LargeChunk* largeChunk = new (m_largeChunks.pop()->largeChunk()) LargeChunk;
+    LargeObject largeObject(largeChunk->begin());
+    m_largeObjects.insert(largeObject);
+}
+
+void VMHeap::allocateSuperChunk(std::lock_guard<StaticMutex>&)
+{
+    SuperChunk* superChunk =
+        new (vmAllocate(superChunkSize, superChunkSize)) SuperChunk;
+    m_smallChunks.push(superChunk);
+    m_largeChunks.push(superChunk);
 #if BOS(DARWIN)
     m_zone.addSuperChunk(superChunk);
 #endif
-
-    SmallChunk* smallChunk = superChunk->smallChunk();
-    for (auto* it = smallChunk->begin(); it != smallChunk->end(); ++it)
-        m_smallPages.push(it);
-
-    LargeChunk* largeChunk = superChunk->largeChunk();
-    LargeObject result(LargeObject::init(largeChunk).begin());
-    BASSERT(result.size() == largeMax);
-    m_largeObjects.insert(result);
 }
 
 } // namespace bmalloc

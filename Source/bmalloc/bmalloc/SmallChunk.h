@@ -35,36 +35,41 @@ namespace bmalloc {
 
 class SmallChunk {
 public:
+    SmallChunk(std::lock_guard<StaticMutex>&);
+
     static SmallChunk* get(void*);
 
     SmallPage* begin() { return SmallPage::get(SmallLine::get(m_memory)); }
-    SmallPage* end() { return &m_pages[pageCount]; }
+    SmallPage* end() { return m_pages.end(); }
     
-    SmallLine* lines() { return m_lines; }
-    SmallPage* pages() { return m_pages; }
-
+    SmallLine* lines() { return m_lines.begin(); }
+    SmallPage* pages() { return m_pages.begin(); }
+    
 private:
-    static_assert(!(vmPageSize % smallLineSize), "vmPageSize must be an even multiple of line size");
-    static_assert(!(smallChunkSize % smallLineSize), "chunk size must be an even multiple of line size");
-
-    static const size_t lineCount = smallChunkSize / smallLineSize;
-    static const size_t pageCount = smallChunkSize / vmPageSize;
-
-    SmallLine m_lines[lineCount];
-    SmallPage m_pages[pageCount];
-
-    // Align to vmPageSize to avoid sharing physical pages with metadata.
-    // Otherwise, we'll confuse the scavenger into trying to scavenge metadata.
-    // FIXME: Below #ifdef workaround fix should be removed after all linux based ports bump
-    // own gcc version. See https://bugs.webkit.org/show_bug.cgi?id=140162#c87
-#if BPLATFORM(IOS)
-    char m_memory[] __attribute__((aligned(16384)));
-    static_assert(vmPageSize == 16384, "vmPageSize and alignment must be same");
-#else
-    char m_memory[] __attribute__((aligned(4096)));
-    static_assert(vmPageSize == 4096, "vmPageSize and alignment must be same");
-#endif
+    std::array<SmallLine, smallChunkSize / smallLineSize> m_lines;
+    std::array<SmallPage, smallChunkSize / vmPageSize> m_pages;
+    char m_memory[] __attribute__((aligned(smallLineSize)));
 };
+
+static_assert(!(vmPageSize % smallLineSize), "vmPageSize must be an even multiple of line size");
+static_assert(!(smallChunkSize % smallLineSize), "chunk size must be an even multiple of line size");
+static_assert(
+    sizeof(SmallChunk) - vmPageSize % sizeof(SmallChunk) < vmPageSize - 2 * smallMax,
+        "the first page of object memory in a small chunk can't allocate smallMax");
+
+inline SmallChunk::SmallChunk(std::lock_guard<StaticMutex>& lock)
+{
+    // Track the memory used for metadata by allocating imaginary objects.
+    for (SmallLine* line = m_lines.begin(); line < SmallLine::get(m_memory); ++line) {
+        line->ref(lock, 1);
+
+        SmallPage* page = SmallPage::get(line);
+        page->ref(lock);
+    }
+
+    for (SmallPage* page = begin(); page != end(); ++page)
+        page->setHasFreeLines(lock, true);
+}
 
 inline SmallChunk* SmallChunk::get(void* object)
 {

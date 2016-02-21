@@ -33,37 +33,27 @@ namespace bmalloc {
 
 class SuperChunk {
 public:
-    static SuperChunk* create();
-
-    SmallChunk* smallChunk();
-    LargeChunk* largeChunk();
-
-private:
     SuperChunk();
-};
 
-inline SuperChunk* SuperChunk::create()
-{
-    void* result = static_cast<char*>(vmAllocate(superChunkSize, superChunkSize));
-    return new (result) SuperChunk;
-}
+    void* smallChunk();
+    void* largeChunk();
+};
 
 inline SuperChunk::SuperChunk()
 {
-    new (smallChunk()) SmallChunk;
-    new (largeChunk()) LargeChunk;
+    BASSERT(!test(this, ~superChunkMask));
+    BASSERT(!test(smallChunk(), ~smallChunkMask));
+    BASSERT(!test(largeChunk(), ~largeChunkMask));
 }
 
-inline SmallChunk* SuperChunk::smallChunk()
+inline void* SuperChunk::smallChunk()
 {
-    return reinterpret_cast<SmallChunk*>(
-        reinterpret_cast<char*>(this) + smallChunkOffset);
+    return reinterpret_cast<char*>(this) + smallChunkOffset;
 }
 
-inline LargeChunk* SuperChunk::largeChunk()
+inline void* SuperChunk::largeChunk()
 {
-    return reinterpret_cast<LargeChunk*>(
-        reinterpret_cast<char*>(this) + largeChunkOffset);
+    return reinterpret_cast<char*>(this) + largeChunkOffset;
 }
 
 } // namespace bmalloc

@@ -99,6 +99,7 @@ inline void BumpAllocator::refill(const BumpRange& bumpRange)
     BASSERT(!canAllocate());
     m_ptr = bumpRange.begin;
     m_remaining = bumpRange.objectCount;
+    BASSERT(canAllocate());
 }
 
 inline void BumpAllocator::clear()

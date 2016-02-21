@@ -31,12 +31,13 @@
 #include "ObjectType.h"
 #include "Sizes.h"
 #include "VMAllocate.h"
+#include <array>
 
 namespace bmalloc {
 
 class LargeChunk {
 public:
-    static LargeChunk* create();
+    LargeChunk();
     static LargeChunk* get(void*);
 
     static BeginTag* beginTag(void*);
@@ -46,8 +47,8 @@ public:
     char* end() { return reinterpret_cast<char*>(this) + largeChunkSize; }
 
 private:
-     // Round up to ensure 2 dummy boundary tags -- for the left and right sentinels.
-     static const size_t boundaryTagCount = max(2 * largeMin / sizeof(BoundaryTag), largeChunkSize / largeMin); 
+    static const size_t boundaryTagCount = largeChunkSize / largeMin;
+    static_assert(boundaryTagCount > 2, "LargeChunk must have space for two sentinel boundary tags");
 
     // Our metadata layout includes a left and right edge sentinel.
     // Metadata takes up enough space to leave at least the first two
@@ -63,23 +64,40 @@ private:
     //
     // We use the X's for boundary tags and the O's for edge sentinels.
 
-    BoundaryTag m_boundaryTags[boundaryTagCount];
-
-    // Align to vmPageSize to avoid sharing physical pages with metadata.
-    // Otherwise, we'll confuse the scavenger into trying to scavenge metadata.
-    // FIXME: Below #ifdef workaround fix should be removed after all linux based ports bump
-    // own gcc version. See https://bugs.webkit.org/show_bug.cgi?id=140162#c87
-#if BPLATFORM(IOS)
-    char m_memory[] __attribute__((aligned(16384)));
-    static_assert(vmPageSize == 16384, "vmPageSize and alignment must be same");
-#else
-    char m_memory[] __attribute__((aligned(4096)));
-    static_assert(vmPageSize == 4096, "vmPageSize and alignment must be same");
-#endif
+    std::array<BoundaryTag, boundaryTagCount> m_boundaryTags;
+    char m_memory[] __attribute__((aligned(largeAlignment)));
 };
 
-static_assert(largeChunkMetadataSize == sizeof(LargeChunk), "'largeChunkMetadataSize' should be the same number as sizeof(LargeChunk) or our computation in Sizes.h for 'largeMax' is wrong");
-static_assert(largeChunkMetadataSize + largeMax <= largeChunkSize, "We will think we can accommodate larger objects than we can in reality");
+static_assert(largeChunkMetadataSize == sizeof(LargeChunk), "Our largeChunkMetadataSize math in Sizes.h is wrong");
+static_assert(largeChunkMetadataSize + largeMax == largeChunkSize, "largeMax is too small or too big");
+
+inline LargeChunk::LargeChunk()
+{
+    Range range(begin(), end() - begin());
+    BASSERT(range.size() == largeMax);
+
+    BeginTag* beginTag = LargeChunk::beginTag(range.begin());
+    beginTag->setRange(range);
+    beginTag->setFree(true);
+    beginTag->setVMState(VMState::Virtual);
+
+    EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
+    endTag->init(beginTag);
+
+    // Mark the left and right edges of our range as allocated. This naturally
+    // prevents merging logic from overflowing left (into metadata) or right
+    // (beyond our chunk), without requiring special-case checks.
+
+    EndTag* leftSentinel = beginTag->prev();
+    BASSERT(leftSentinel >= m_boundaryTags.begin());
+    BASSERT(leftSentinel < m_boundaryTags.end());
+    leftSentinel->initSentinel();
+
+    BeginTag* rightSentinel = endTag->next();
+    BASSERT(rightSentinel >= m_boundaryTags.begin());
+    BASSERT(rightSentinel < m_boundaryTags.end());
+    rightSentinel->initSentinel();
+}
 
 inline LargeChunk* LargeChunk::get(void* object)
 {

@@ -1,3 +1,76 @@
+2016-02-21  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Don't use a whole page for metadata
+        https://bugs.webkit.org/show_bug.cgi?id=154510
+
+        Reviewed by Andreas Kling.
+
+        (1) Don't round up metadata to a page boundary. This saves 1.5% dirty
+        memory on iOS and 0.2% on Mac. It also enables a future patch to allocate
+        smaller chunks without wasting memory.
+
+        (2) Initialize metadata lazily. This saves dirty memory when the program
+        allocates primarily small or large objects (but not both), leaving some
+        metadata uninitialized.
+
+        * bmalloc.xcodeproj/project.pbxproj: Medium objects are gone now.
+
+        * bmalloc/BumpAllocator.h:
+        (bmalloc::BumpAllocator::refill): Added an ASSERT to help debug a bug
+        I cause while working on this patch.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateSmallBumpRanges): Ditto.
+
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::allocateLarge): Updated for interface change.
+
+        * bmalloc/LargeChunk.h: Changed the boundaryTagCount calculation to
+        a static_assert.
+
+        Don't round up to page boundary. (See above.)
+
+        (bmalloc::LargeChunk::LargeChunk): Moved code here from LargeChunk::init.
+        A constructor is a more natural / automatic way to do this initialization.
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::init): Deleted. Moved to LargeChunk.
+
+        * bmalloc/Sizes.h: Chagned largeChunkMetadataSize to a simpler constant
+        because metadata size no longer varies by page size.
+
+        * bmalloc/SmallChunk.h:
+        (bmalloc::SmallChunk::begin):
+        (bmalloc::SmallChunk::end):
+        (bmalloc::SmallChunk::lines):
+        (bmalloc::SmallChunk::pages): Use std::array to make begin/end
+        calculations easier.
+
+        (bmalloc::SmallChunk::SmallChunk): Treat our metadata like a series
+        of allocated objects. We used to avoid trampling our metadata by
+        starting object memory at the next page. Now we share the first page
+        between metadata and objects, and we account for metadata explicitly.
+
+        * bmalloc/SuperChunk.h:
+        (bmalloc::SuperChunk::SuperChunk):
+        (bmalloc::SuperChunk::smallChunk):
+        (bmalloc::SuperChunk::largeChunk):
+        (bmalloc::SuperChunk::create): Deleted. Don't eagerly run the SmallChunk
+        and LargeChunk constructors. We'll run them lazily as needed.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        (bmalloc::VMHeap::allocateSmallChunk):
+        (bmalloc::VMHeap::allocateLargeChunk):
+        (bmalloc::VMHeap::allocateSuperChunk):
+        (bmalloc::VMHeap::grow): Deleted. Track small and large chunks explicitly
+        so we can initialize them lazily.
+
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateSmallPage):
+        (bmalloc::VMHeap::allocateLargeObject): Specify whether we're allocating
+        a small or large chunk since we don't allocate both at once anymore.
+
 2016-02-20  Mark Lam  <mark.lam@apple.com>
 
         Use of inlined asm statements causes problems for -std=c99 builds.
