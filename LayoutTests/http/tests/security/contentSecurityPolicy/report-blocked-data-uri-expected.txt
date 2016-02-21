@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 8: Refused to load the image 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' because it violates the following Content Security Policy directive: "img-src 'none'".
+CONSOLE MESSAGE: Refused to load the image 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' because it violates the following Content Security Policy directive: "img-src 'none'".
 
 CSP report received:
 CONTENT_TYPE: application/csp-report

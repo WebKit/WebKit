@@ -1,8 +1,8 @@
+<?php
+    header("Content-Security-Policy: default-src 'self'; report-uri ../resources/save-report.php");
+?>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; report-uri ../resources/save-report.php">
-</head>
 <body>
     <script>
         // This script block will trigger a violation report.

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'". Either the 'unsafe-inline' keyword, a hash ('sha256-2jEXxWe/uIoRJGbfoW7Bd11qhRclP9IuS5ZXCbhCUnM='), or a nonce ('nonce-...') is required to enable inline execution.
+CONSOLE MESSAGE: line 1: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
 
 
 

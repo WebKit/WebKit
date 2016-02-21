@@ -4,4 +4,4 @@ HTTP_COOKIE: hello=world
 HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.php
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.php","referrer":"","violated-directive":"img-src 'none'","original-policy":"img-src 'none'; report-uri /security/contentSecurityPolicy/resources/save-report.php","blocked-uri":"http://127.0.0.1:8000/security/resources/abe.png"}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.php","referrer":"","violated-directive":"img-src 'none'","effective-directive":"img-src","original-policy":"img-src 'none'; report-uri /security/contentSecurityPolicy/resources/save-report.php","blocked-uri":"http://127.0.0.1:8000/security/resources/abe.png","status-code":200}}
