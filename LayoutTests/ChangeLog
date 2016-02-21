@@ -1,5 +1,19 @@
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
+        CSP: Violation report should include column number
+        https://bugs.webkit.org/show_bug.cgi?id=154418
+        <rdar://problem/24729525>
+
+        Reviewed by Brent Fulgham.
+
+        Update expected results to include source file column information where the violation occurred.
+
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt:
+
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
         CSP: Violation report should include HTTP status code and effective-directive of protected resource
         https://bugs.webkit.org/show_bug.cgi?id=154288
         <rdar://problem/24674982>
