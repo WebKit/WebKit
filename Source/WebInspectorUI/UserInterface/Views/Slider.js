@@ -81,6 +81,12 @@ WebInspector.Slider = class Slider extends WebInspector.Object
         return this._maxX;
     }
 
+    recalculateKnobX()
+    {
+        this._maxX = 0;
+        this.knobX = this._value;
+    }
+
     // Protected
 
     handleEvent(event)

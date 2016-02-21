@@ -1,5 +1,34 @@
 2016-02-20  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Opacity slider thumb sometimes goes past the bar in Visual Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=154497
+
+        Reviewed by Timothy Hatcher.
+
+        Since WebInspector.Slider uses CSS transforms to move the slider knob
+        along the track, if the width of the track changes then the position
+        of the knob would stay the same since it was translated instead of
+        adjusting its position relative to the new width.
+
+        * UserInterface/Views/Slider.js:
+        (WebInspector.Slider.prototype.recalculateKnobX):
+        Resets the maxX value to 0 to ensure that a new maxX is calculated with
+        the current width.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.set specifiedWidth): Deleted.
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.recalculateWidth):
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype.widthDidChange):
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateProperties):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateDisplaySection):
+
+        * UserInterface/Views/VisualStyleUnitSlider.js:
+        (WebInspector.VisualStyleUnitSlider.prototype.recalculateWidth):
+
+2016-02-20  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Visual Styles: Modifying background expands Font section
         https://bugs.webkit.org/show_bug.cgi?id=154491
         <rdar://problem/24755440>
