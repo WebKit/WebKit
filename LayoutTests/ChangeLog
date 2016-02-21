@@ -1,5 +1,20 @@
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the Content Extension test failures following <https://trac.webkit.org/changeset/196875>
+        (https://bugs.webkit.org/show_bug.cgi?id=154307)
+
+        Convert Content Extension tests that use the Content Security Policy directive report-uri from HTML files
+        to PHP scripts and modified them to define the content security policy for the page via the Content-Security-Policy
+        HTTP header instead of via a meta element so that the report-uri directive is honored. Following
+        <https://trac.webkit.org/changeset/196875> the directive report-uri is only honored when contained in a
+        policy that is delivered via an HTTP header. That is, it is no longer honored when delivered in a meta element.
+
+        * http/tests/contentextensions/block-cookies-in-csp-report.php: Renamed from LayoutTests/http/tests/contentextensions/block-cookies-in-csp-report.html.
+        * http/tests/contentextensions/block-csp-report.php: Renamed from LayoutTests/http/tests/contentextensions/block-csp-report.html.
+        * http/tests/contentextensions/hide-on-csp-report.php: Renamed from LayoutTests/http/tests/contentextensions/hide-on-csp-report.html.
+
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
         CSP: Violation report should include column number
         https://bugs.webkit.org/show_bug.cgi?id=154418
         <rdar://problem/24729525>

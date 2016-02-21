@@ -1,5 +1,7 @@
+<?php
+    header("Content-Security-Policy: img-src 'self'; report-uri /contentextensions/resources/save-ping.php?test=contentextensions-block-cookies-in-csp-report");
+?>
 <head>
-<meta http-equiv="Content-Security-Policy" content="img-src 'self'; report-uri /contentextensions/resources/save-ping.php?test=contentextensions-block-cookies-in-csp-report">
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
