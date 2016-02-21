@@ -115,10 +115,10 @@ ContentSecurityPolicyDirectiveList::ContentSecurityPolicyDirectiveList(ContentSe
     m_reportOnly = (type == ContentSecurityPolicyHeaderType::Report || type == ContentSecurityPolicyHeaderType::PrefixedReport);
 }
 
-std::unique_ptr<ContentSecurityPolicyDirectiveList> ContentSecurityPolicyDirectiveList::create(ContentSecurityPolicy& policy, const String& header, ContentSecurityPolicyHeaderType type)
+std::unique_ptr<ContentSecurityPolicyDirectiveList> ContentSecurityPolicyDirectiveList::create(ContentSecurityPolicy& policy, const String& header, ContentSecurityPolicyHeaderType type, ContentSecurityPolicy::PolicyFrom from)
 {
     auto directives = std::make_unique<ContentSecurityPolicyDirectiveList>(policy, type);
-    directives->parse(header);
+    directives->parse(header, from);
 
     if (!directives->checkEval(directives->operativeDirective(directives->m_scriptSrc.get()))) {
         String message = makeString("Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"", directives->operativeDirective(directives->m_scriptSrc.get())->text(), "\".\n");
@@ -389,7 +389,7 @@ bool ContentSecurityPolicyDirectiveList::allowBaseURI(const URL& url, ContentSec
 // policy            = directive-list
 // directive-list    = [ directive *( ";" [ directive ] ) ]
 //
-void ContentSecurityPolicyDirectiveList::parse(const String& policy)
+void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecurityPolicy::PolicyFrom policyFrom)
 {
     m_header = policy;
     if (policy.isEmpty())
@@ -406,7 +406,18 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy)
         String name, value;
         if (parseDirective(directiveBegin, position, name, value)) {
             ASSERT(!name.isEmpty());
-            addDirective(name, value);
+            switch (policyFrom) {
+            case ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta:
+                // FIXME: We also need to ignore directive report-uri (https://bugs.webkit.org/show_bug.cgi?id=154307).
+                if (equalLettersIgnoringASCIICase(name, sandbox)) {
+                    m_policy.reportInvalidDirectiveInHTTPEquivMeta(name);
+                    break;
+                }
+                FALLTHROUGH;
+            default:
+                addDirective(name, value);
+                break;
+            }
         }
 
         ASSERT(position == end || *position == ';');

@@ -41,7 +41,7 @@ class ContentSecurityPolicyDirectiveList {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ContentSecurityPolicyDirectiveList)
 public:
-    static std::unique_ptr<ContentSecurityPolicyDirectiveList> create(ContentSecurityPolicy&, const String&, ContentSecurityPolicyHeaderType);
+    static std::unique_ptr<ContentSecurityPolicyDirectiveList> create(ContentSecurityPolicy&, const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom);
     ContentSecurityPolicyDirectiveList(ContentSecurityPolicy&, ContentSecurityPolicyHeaderType);
 
     const String& header() const { return m_header; }
@@ -72,7 +72,7 @@ public:
     const Vector<String>& reportURIs() const { return m_reportURIs; }
 
 private:
-    void parse(const String&);
+    void parse(const String&, ContentSecurityPolicy::PolicyFrom);
 
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
     void parseReportURI(const String& name, const String& value);

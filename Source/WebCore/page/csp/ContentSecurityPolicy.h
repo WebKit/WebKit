@@ -67,9 +67,14 @@ public:
     };
     ReflectedXSSDisposition reflectedXSSDisposition() const;
 
+    enum class PolicyFrom {
+        HTTPEquivMeta,
+        HTTPHeader,
+        Inherited,
+    };
     ContentSecurityPolicyResponseHeaders responseHeaders() const;
     void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&);
-    void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType);
+    void processHTTPEquiv(const String& content, ContentSecurityPolicyHeaderType type) { didReceiveHeader(content, type, ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta); }
 
     enum class ReportingStatus {
         SendReport,
@@ -123,6 +128,7 @@ public:
     void reportInvalidSandboxFlags(const String&) const;
     void reportInvalidReflectedXSS(const String&) const;
     void reportInvalidDirectiveInReportOnlyMode(const String&) const;
+    void reportInvalidDirectiveInHTTPEquivMeta(const String&) const;
     void reportMissingReportURI(const String&) const;
     void reportUnsupportedDirective(const String&) const;
     void reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const URL& blockedURL, const Vector<String>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
@@ -135,6 +141,8 @@ public:
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
     void applyPolicyToScriptExecutionContext();
+
+    void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom);
 
     ScriptExecutionContext* m_scriptExecutionContext { nullptr };
     std::unique_ptr<ContentSecurityPolicySource> m_selfSource;

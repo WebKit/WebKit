@@ -1,3 +1,48 @@
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
+        CSP: sandbox directive should be ignored when contained in a policy defined via a meta element
+        https://bugs.webkit.org/show_bug.cgi?id=154299
+        <rdar://problem/24680433>
+
+        Reviewed by Brent Fulgham.
+
+        The Content Security Policy sandbox directive should only be honored when enforcing a policy
+        defined via an HTTP header as per section sandbox of the Content Security Policy 2.0 spec.,
+        <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        Currently we honor the sandbox directive when enforcing a policy defined either via an HTML
+        meta element or an HTTP header. Instead we should only honor this directive when defined
+        via an HTTP header and log a message to the Web Inspector console to explain that the directive
+        was ignored as suggested in <https://www.w3.org/TR/2015/CR-CSP2-20150721/#delivery-html-meta-element>.
+
+        Tests: http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header2.php
+               http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe.php
+               http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header.php
+               http/tests/security/contentSecurityPolicy/sandbox-in-meta-tag-ignored.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Substitute ContentSecurityPolicy::processHTTPEquiv() for
+        ContentSecurityPolicy::didReceiveHeader() as the latter was made private.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::copyStateFrom): Updated as needed based on ContentSecurityPolicy::didReceiveHeader() change below.
+        (WebCore::ContentSecurityPolicy::didReceiveHeaders): Ditto.
+        (WebCore::ContentSecurityPolicy::didReceiveHeader): Modified to take argument of type ContentSecurityPolicy::PolicyFrom
+        and pass it through to ContentSecurityPolicyDirectiveList::create().
+        (WebCore::ContentSecurityPolicy::reportInvalidDirectiveInHTTPEquivMeta): Logs a message to the Web Inspector console
+        that the specified directive was ignored because it was delivered via an HTML meta element.
+        * page/csp/ContentSecurityPolicy.h: Made member function ContentSecurityPolicy::didReceiveHeader() private. Defined
+        enum class PolicyFrom to represent the source of the Content Security Policy: HTTP equiv meta element, HTTP header, or
+        inherited from another ContentSecurityPolicy object (this value is only used by ContentSecurityPolicy::copyStateFrom()).
+        (WebCore::ContentSecurityPolicy::processHTTPEquiv): Added; turns around and calls ContentSecurityPolicy::didReceiveHeader().
+        The name of this function better describes its purpose - to handle the processing of a Content Security Policy
+        delivered via <meta http-equiv="Content-Security-Policy" content="...">.
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::create): Modified to take argument of type ContentSecurityPolicy::PolicyFrom
+        as pass it through to ContentSecurityPolicyDirectiveList::parse().
+        (WebCore::ContentSecurityPolicyDirectiveList::parse): Modified to ignore the directive sandbox when the Content Security
+        Policy came from an HTML meta element.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+
 2016-02-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196866.

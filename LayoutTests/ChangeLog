@@ -1,3 +1,45 @@
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
+        CSP: sandbox directive should be ignored when contained in a policy defined via a meta element
+        https://bugs.webkit.org/show_bug.cgi?id=154299
+        <rdar://problem/24680433>
+
+        Reviewed by Brent Fulgham.
+
+        Add test http/tests/security/contentSecurityPolicy/sandbox-in-meta-tag-ignored.html to ensure that we ignore
+        the sandbox directive when delivered via an HTML meta element and log a message to the Web Inspector console.
+
+        Remove tests http/tests/security/contentSecurityPolicy/sandbox-{allow-scripts-subframe, empty, empty-subframe}.html
+        that are no longer meaningful now that we ignore the sandbox directive when delivered via an HTML meta element and
+        create analogous tests for when the sandbox directive is delivered via an HTTP header.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header2-expected.txt: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-expected.txt.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header2.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/sandbox-allow-scripts.html.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-subframe-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-subframe.html: Removed.
+        This test is no longer meaningful now that we ignore the sandbox directive when delivered via an HTML meta element.
+        An analogous test for when the directive is delivered via an HTTP header is http/tests/security/contentSecurityPolicy//sandbox-allow-scripts-in-http-header.html.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe.php: Added. Derived from test http/tests/security/contentSecurityPolicy/sandbox-empty-subframe.html.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header.php: Added. Derived from test http/tests/security/contentSecurityPolicy/sandbox-empty.html.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-subframe-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-subframe.html: Removed.
+        This test is no longer meaningful now that we ignore the sandbox directive when delivered via an HTML meta element.
+        The analogous test for when the directive is delivered via an HTTP header is http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe.php.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/sandbox-empty.html: Removed.
+        This test is no longer meaningful now that we ignore the sandbox directive when delivered via an HTML meta element.
+        The analogous test for when the directive is delivered via an HTTP header is http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header.php.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-in-meta-tag-ignored-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-in-meta-tag-ignored.html: Added.
+
 2016-02-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196866.
