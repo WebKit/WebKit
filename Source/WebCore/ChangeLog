@@ -1,5 +1,27 @@
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
+        CSP: report-url directive should be ignored when contained in a policy defined via a meta element
+        https://bugs.webkit.org/show_bug.cgi?id=154307
+        <rdar://problem/24684817>
+
+        Reviewed by Brent Fulgham.
+
+        The Content Security Policy report-uri directive should only be honored when defined via an HTTP header
+        as per section report-uri of the Content Security Policy 2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        Currently we honor the report-uri directive when enforcing or monitoring a policy defined either via
+        an HTML meta element or an HTTP header. Instead we should only honor this directive when defined
+        via an HTTP header and log a message to the Web Inspector console to explain that the directive
+        was ignored as suggested in <https://www.w3.org/TR/2015/CR-CSP2-20150721/#delivery-html-meta-element>.
+
+        Test: http/tests/security/contentSecurityPolicy/report-uri-in-meta-tag-ignored.html
+
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::parse): Modified to ignore the directive report-uri when
+        the Content Security Policy came from an HTML meta element.
+
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
         CSP: sandbox directive should be ignored when contained in a policy defined via a meta element
         https://bugs.webkit.org/show_bug.cgi?id=154299
         <rdar://problem/24680433>

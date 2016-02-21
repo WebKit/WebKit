@@ -1,12 +1,12 @@
+<?php
+    header("Content-Security-Policy: img-src 'none'; report-uri http://localhost:8080/security/contentSecurityPolicy/resources/save-report.php");
+?>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="Content-Security-Policy" content="img-src 'none'; report-uri /security/contentSecurityPolicy/resources/save-report.php">
-</head>
 <body>
 <script>
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/cookies/resources/setCookies.cgi", false);
+    xhr.open("GET", "http://localhost:8080/cookies/resources/setCookies.cgi", false);
     xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");
     xhr.send(null);
 </script>

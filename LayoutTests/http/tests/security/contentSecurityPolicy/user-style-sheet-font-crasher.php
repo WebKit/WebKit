@@ -1,6 +1,8 @@
+<?php
+    header("Content-Security-Policy: font-src http://webkit.org; report-uri http://webkit.org/report;");
+?>
 <html>
 <head>
-<meta content="font-src http://webkit.org; report-uri http://webkit.org/report;" http-equiv="Content-Security-Policy">
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();

@@ -1,8 +1,8 @@
+<?php
+    header("Content-Security-Policy: img-src 'none'; report-uri resources/save-report.php");
+?>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="Content-Security-Policy" content="img-src 'none'; report-uri resources/save-report.php">
-</head>
 <body>
     <script>
         // This script block will trigger a violation report.
