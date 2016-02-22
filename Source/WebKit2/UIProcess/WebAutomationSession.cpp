@@ -27,20 +27,12 @@
 #include "WebAutomationSession.h"
 
 #include "APIAutomationSessionClient.h"
-#include <JavaScriptCore/InspectorBackendDispatcher.h>
-#include <JavaScriptCore/InspectorFrontendRouter.h>
-
-using namespace Inspector;
 
 namespace WebKit {
 
 WebAutomationSession::WebAutomationSession()
     : m_client(std::make_unique<API::AutomationSessionClient>())
-    , m_frontendRouter(FrontendRouter::create())
-    , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
 {
-    // FIXME: to actually handle incoming commands, an agent needs to be created
-    // and registered with the backend dispatcher in the constructor.
 }
 
 WebAutomationSession::~WebAutomationSession()
@@ -60,9 +52,9 @@ void WebAutomationSession::setClient(std::unique_ptr<API::AutomationSessionClien
 
 // Inspector::RemoteAutomationTarget API
 
-void WebAutomationSession::dispatchMessageFromRemote(const String& message)
+void WebAutomationSession::dispatchMessageFromRemote(const String&)
 {
-    m_backendDispatcher->dispatch(message);
+    // FIXME: to be implemented.
 }
 
 void WebAutomationSession::connect(Inspector::FrontendChannel* channel, bool isAutomaticConnection)
@@ -70,20 +62,14 @@ void WebAutomationSession::connect(Inspector::FrontendChannel* channel, bool isA
     UNUSED_PARAM(isAutomaticConnection);
 
     m_remoteChannel = channel;
-    m_frontendRouter->connectFrontend(channel);
-
     setIsPaired(true);
 }
 
 void WebAutomationSession::disconnect(Inspector::FrontendChannel* channel)
 {
-    ASSERT(channel == m_remoteChannel);
-
     m_remoteChannel = nullptr;
-    m_frontendRouter->disconnectFrontend(channel);
-
     setIsPaired(false);
-
+    
     if (m_client)
         m_client->didDisconnectFromRemote(this);
 }

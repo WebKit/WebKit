@@ -112,9 +112,7 @@ def generate_from_specification(primary_specification_filepath=None,
                                 concatenate_output=False,
                                 output_dirpath=None,
                                 force_output=False,
-                                framework_name="",
-                                generate_frontend=True,
-                                generate_backend=True):
+                                framework_name=""):
 
     def load_specification(protocol, filepath, isSupplemental=False):
         try:
@@ -150,7 +148,6 @@ def generate_from_specification(primary_specification_filepath=None,
         generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCInternalHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
-
     elif protocol.framework is Frameworks.JavaScriptCore:
         generators.append(JSBackendCommandsGenerator(protocol, primary_specification_filepath))
         generators.append(CppAlternateBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
@@ -160,19 +157,6 @@ def generate_from_specification(primary_specification_filepath=None,
         generators.append(CppFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
         generators.append(CppProtocolTypesHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(CppProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
-
-    elif protocol.framework is Frameworks.WebKit and generate_backend:
-        generators.append(CppBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(CppProtocolTypesHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
-
-    elif protocol.framework is Frameworks.WebKit and generate_frontend:
-        # FIXME <rdar://problem/23466925>: This list of generators for the frontend is a placeholder.
-        generators.append(ObjCConversionHelpersGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
-
     elif protocol.framework is Frameworks.WebInspector:
         generators.append(ObjCBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
@@ -206,15 +190,14 @@ def generate_from_specification(primary_specification_filepath=None,
 
 
 if __name__ == '__main__':
-    allowed_framework_names = ['JavaScriptCore', 'WebInspector', 'WebKit', 'Test']
+    allowed_framework_names = ['JavaScriptCore', 'WebInspector', 'Test']
     cli_parser = optparse.OptionParser(usage="usage: %prog [options] PrimaryProtocol.json [SupplementalProtocol.json ...]")
     cli_parser.add_option("-o", "--outputDir", help="Directory where generated files should be written.")
     cli_parser.add_option("--framework", type="choice", choices=allowed_framework_names, help="The framework that the primary specification belongs to.")
     cli_parser.add_option("--force", action="store_true", help="Force output of generated scripts, even if nothing changed.")
     cli_parser.add_option("-v", "--debug", action="store_true", help="Log extra output for debugging the generator itself.")
     cli_parser.add_option("-t", "--test", action="store_true", help="Enable test mode. Use unique output filenames created by prepending the input filename.")
-    cli_parser.add_option("--frontend", action="store_true", help="Generate code for the frontend-side of the protocol only.")
-    cli_parser.add_option("--backend", action="store_true", help="Generate code for the backend-side of the protocol only.")
+
     options = None
 
     arg_options, arg_values = cli_parser.parse_args()
@@ -227,22 +210,13 @@ if __name__ == '__main__':
     if arg_options.debug:
         log.setLevel(logging.DEBUG)
 
-    generate_backend = arg_options.backend;
-    generate_frontend = arg_options.frontend;
-    # Default to generating both the frontend and backend if neither is specified.
-    if not generate_backend and not generate_frontend:
-        generate_backend = True
-        generate_frontend = True
-
     options = {
         'primary_specification_filepath': arg_values[0],
         'supplemental_specification_filepaths': arg_values[1:],
         'output_dirpath': arg_options.outputDir,
         'concatenate_output': arg_options.test,
         'framework_name': arg_options.framework,
-        'force_output': arg_options.force,
-        'generate_backend': generate_backend,
-        'generate_frontend': generate_frontend,
+        'force_output': arg_options.force
     }
 
     try:

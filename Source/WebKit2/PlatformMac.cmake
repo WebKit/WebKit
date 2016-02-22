@@ -6,8 +6,6 @@ add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
 add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
-set(JavaScriptCore_SCRIPTS_DIR "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/Scripts")
-
 list(APPEND WebKit2_LIBRARIES
     WebKit
 )
@@ -142,8 +140,7 @@ list(APPEND WebKit2_SOURCES
     Shared/mac/WebMemorySampler.mac.mm
 
     UIProcess/ViewGestureController.cpp
-
-    UIProcess/Automation/WebAutomationSession.cpp
+    UIProcess/WebAutomationSession.cpp
 
     UIProcess/API/APIUserScript.cpp
     UIProcess/API/APIUserStyleSheet.cpp
@@ -355,7 +352,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/C/mac"
     "${WEBKIT2_DIR}/UIProcess/API/Cocoa"
     "${WEBKIT2_DIR}/UIProcess/API/mac"
-    "${WEBKIT2_DIR}/UIProcess/Automation"
     "${WEBKIT2_DIR}/UIProcess/Cocoa"
     "${WEBKIT2_DIR}/UIProcess/Launcher/mac"
     "${WEBKIT2_DIR}/UIProcess/Scrolling"
@@ -497,40 +493,6 @@ add_custom_command(
     VERBATIM)
 list(APPEND WebKit2_SOURCES
     ${DERIVED_SOURCES_WEBKIT2_DIR}/MessageRecorderProbes.h
-)
-
-set(WebKit2_JSON_RPC_GENERATOR_SCRIPTS
-    ${JavaScriptCore_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/cpp_generator.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/cpp_generator_templates.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/generate_cpp_backend_dispatcher_header.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/generate_cpp_backend_dispatcher_implementation.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/generate_cpp_protocol_types_header.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/generate_cpp_protocol_types_implementation.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/generator.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/generator_templates.py
-    ${JavaScriptCore_SCRIPTS_DIR}/codegen/models.py
-)
-
-set(WebKit2_JSON_RPC_GENERATOR_INPUTS
-    ${WEBKIT2_DIR}/UIProcess/Automation/Automation.json
-)
-
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.h ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.cpp
-    MAIN_DEPENDENCY ${WebKit2_JSON_RPC_GENERATOR_INPUTS}
-    DEPENDS ${WebKit2_JSON_RPC_GENERATOR_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_WEBKIT2_DIR}" --framework WebKit --backend ${WebKit2_JSON_RPC_GENERATOR_INPUTS}
-    VERBATIM)
-
-list(APPEND WebKit2_HEADERS
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.h
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.h
-)
-
-list(APPEND WebKit2_SOURCES
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.cpp
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.cpp
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit2_FORWARDING_HEADERS_FILES} DIRECTORIES ${WebKit2_FORWARDING_HEADERS_DIRECTORIES})
