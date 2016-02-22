@@ -176,8 +176,8 @@ std::pair<float, float> SVGGlyphToPathTranslator::extents()
 {
     AffineTransform glyphPathTransform = transform();
     FloatPoint beginning = glyphPathTransform.mapPoint(m_currentPoint);
-    FloatSize end = glyphPathTransform.mapSize(FloatSize(m_glyphBuffer.advanceAt(m_index)));
-    return std::make_pair(beginning.x(), beginning.x() + end.width());
+    float width = narrowPrecisionToFloat(m_glyphBuffer.advanceAt(m_index).width() * glyphPathTransform.xScale());
+    return std::make_pair(beginning.x(), beginning.x() + width);
 }
 
 auto SVGGlyphToPathTranslator::underlineType() -> GlyphUnderlineType
