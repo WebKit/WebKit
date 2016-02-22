@@ -1,5 +1,14 @@
 2016-02-22  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline tests for ios-simulator after W3C HTML/DOM re-sync in r196883
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+
+2016-02-22  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/html/dom/reflection-forms.html for ios-simulator after r196893
 
         Unreviewed test gardening.

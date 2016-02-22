@@ -751,31 +751,24 @@ PASS EventTarget interface: document.implementation.createDocument(null, "", nul
 PASS EventTarget interface: calling dispatchEvent(Event) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 FAIL MouseEvent interface: attribute region assert_true: The prototype object must have a property "region" expected true got false
 FAIL Touch interface: attribute region assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL HTMLAllCollection interface: existence and properties of interface object assert_equals: prototype of HTMLAllCollection is not HTMLCollection expected function "function HTMLCollection() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS HTMLAllCollection interface: existence and properties of interface object 
 PASS HTMLAllCollection interface object length 
 PASS HTMLAllCollection interface object name 
-FAIL HTMLAllCollection interface: existence and properties of interface prototype object assert_equals: prototype of HTMLAllCollection.prototype is not HTMLCollection.prototype expected object "[object HTMLCollectionPrototype]" but got object "[object Object]"
+PASS HTMLAllCollection interface: existence and properties of interface prototype object 
 PASS HTMLAllCollection interface: existence and properties of interface prototype object's "constructor" property 
+PASS HTMLAllCollection interface: attribute length 
 FAIL HTMLAllCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLAllCollection interface: operation item(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS HTMLAllCollection interface: operation namedItem(DOMString) 
 FAIL HTMLAllCollection must be primary interface of document.all assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL Stringification of document.all assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLAllCollection interface: document.all must inherit property "item" with the proper type (0) assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLAllCollection interface: calling item(unsigned long) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
+FAIL HTMLAllCollection interface: document.all must inherit property "length" with the proper type (0) assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL HTMLAllCollection interface: document.all must inherit property "item" with the proper type (1) assert_equals: wrong typeof object expected "function" but got "undefined"
+FAIL HTMLAllCollection interface: calling item(unsigned long) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
+FAIL HTMLAllCollection interface: document.all must inherit property "item" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL HTMLAllCollection interface: calling item(DOMString) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLAllCollection interface: document.all must inherit property "namedItem" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "undefined"
+FAIL HTMLAllCollection interface: document.all must inherit property "namedItem" with the proper type (3) assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL HTMLAllCollection interface: calling namedItem(DOMString) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: document.all must inherit property "length" with the proper type (0) assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: document.all must inherit property "item" with the proper type (1) assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: calling item(unsigned long) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: document.all must inherit property "namedItem" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: calling namedItem(DOMString) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
 PASS HTMLFormControlsCollection interface: existence and properties of interface object 
 PASS HTMLFormControlsCollection interface object length 
 PASS HTMLFormControlsCollection interface object name 
@@ -1612,10 +1605,10 @@ PASS HTMLAnchorElement interface: attribute name
 PASS HTMLAnchorElement interface: attribute rev 
 PASS HTMLAnchorElement interface: attribute shape 
 PASS HTMLAnchorElement interface: attribute href 
-FAIL HTMLAnchorElement interface: attribute origin assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS HTMLAnchorElement interface: attribute origin 
 PASS HTMLAnchorElement interface: attribute protocol 
-FAIL HTMLAnchorElement interface: attribute username assert_true: The prototype object must have a property "username" expected true got false
-FAIL HTMLAnchorElement interface: attribute password assert_true: The prototype object must have a property "password" expected true got false
+PASS HTMLAnchorElement interface: attribute username 
+PASS HTMLAnchorElement interface: attribute password 
 PASS HTMLAnchorElement interface: attribute host 
 PASS HTMLAnchorElement interface: attribute hostname 
 PASS HTMLAnchorElement interface: attribute port 
@@ -1640,8 +1633,8 @@ PASS HTMLAnchorElement interface: document.createElement("a") must inherit prope
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "href" with the proper type (13) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "origin" with the proper type (14) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "protocol" with the proper type (15) 
-FAIL HTMLAnchorElement interface: document.createElement("a") must inherit property "username" with the proper type (16) assert_inherits: property "username" not found in prototype chain
-FAIL HTMLAnchorElement interface: document.createElement("a") must inherit property "password" with the proper type (17) assert_inherits: property "password" not found in prototype chain
+PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "username" with the proper type (16) 
+PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "password" with the proper type (17) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "host" with the proper type (18) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "hostname" with the proper type (19) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "port" with the proper type (20) 
@@ -1786,7 +1779,7 @@ FAIL HTMLIFrameElement interface: attribute seamless assert_true: The prototype 
 FAIL HTMLIFrameElement interface: attribute allowFullscreen assert_true: The prototype object must have a property "allowFullscreen" expected true got false
 PASS HTMLIFrameElement interface: attribute width 
 PASS HTMLIFrameElement interface: attribute height 
-FAIL HTMLIFrameElement interface: attribute contentDocument assert_true: The prototype object must have a property "contentDocument" expected true got false
+PASS HTMLIFrameElement interface: attribute contentDocument 
 PASS HTMLIFrameElement interface: attribute contentWindow 
 PASS HTMLIFrameElement interface: attribute align 
 PASS HTMLIFrameElement interface: attribute scrolling 
@@ -1828,7 +1821,7 @@ PASS HTMLObjectElement interface: attribute useMap
 PASS HTMLObjectElement interface: attribute form 
 PASS HTMLObjectElement interface: attribute width 
 PASS HTMLObjectElement interface: attribute height 
-FAIL HTMLObjectElement interface: attribute contentDocument assert_true: The prototype object must have a property "contentDocument" expected true got false
+PASS HTMLObjectElement interface: attribute contentDocument 
 FAIL HTMLObjectElement interface: attribute contentWindow assert_true: The prototype object must have a property "contentWindow" expected true got false
 PASS HTMLObjectElement interface: attribute willValidate 
 PASS HTMLObjectElement interface: attribute validity 
@@ -2483,16 +2476,16 @@ PASS HTMLAreaElement interface: attribute rel
 PASS HTMLAreaElement interface: attribute relList 
 PASS HTMLAreaElement interface: attribute noHref 
 PASS HTMLAreaElement interface: attribute href 
-FAIL HTMLAreaElement interface: attribute origin assert_true: The prototype object must have a property "origin" expected true got false
-FAIL HTMLAreaElement interface: attribute protocol assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute username assert_true: The prototype object must have a property "username" expected true got false
-FAIL HTMLAreaElement interface: attribute password assert_true: The prototype object must have a property "password" expected true got false
-FAIL HTMLAreaElement interface: attribute host assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute hostname assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute port assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute pathname assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute search assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute hash assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS HTMLAreaElement interface: attribute origin 
+PASS HTMLAreaElement interface: attribute protocol 
+PASS HTMLAreaElement interface: attribute username 
+PASS HTMLAreaElement interface: attribute password 
+PASS HTMLAreaElement interface: attribute host 
+PASS HTMLAreaElement interface: attribute hostname 
+PASS HTMLAreaElement interface: attribute port 
+PASS HTMLAreaElement interface: attribute pathname 
+PASS HTMLAreaElement interface: attribute search 
+PASS HTMLAreaElement interface: attribute hash 
 PASS HTMLAreaElement must be primary interface of document.createElement("area") 
 PASS Stringification of document.createElement("area") 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "alt" with the proper type (0) 
@@ -2505,10 +2498,10 @@ PASS HTMLAreaElement interface: document.createElement("area") must inherit prop
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "relList" with the proper type (7) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "noHref" with the proper type (8) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "href" with the proper type (9) 
-FAIL HTMLAreaElement interface: document.createElement("area") must inherit property "origin" with the proper type (10) assert_inherits: property "origin" not found in prototype chain
+PASS HTMLAreaElement interface: document.createElement("area") must inherit property "origin" with the proper type (10) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "protocol" with the proper type (11) 
-FAIL HTMLAreaElement interface: document.createElement("area") must inherit property "username" with the proper type (12) assert_inherits: property "username" not found in prototype chain
-FAIL HTMLAreaElement interface: document.createElement("area") must inherit property "password" with the proper type (13) assert_inherits: property "password" not found in prototype chain
+PASS HTMLAreaElement interface: document.createElement("area") must inherit property "username" with the proper type (12) 
+PASS HTMLAreaElement interface: document.createElement("area") must inherit property "password" with the proper type (13) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "host" with the proper type (14) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "hostname" with the proper type (15) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "port" with the proper type (16) 
@@ -4759,7 +4752,7 @@ PASS HTMLFrameElement interface: attribute src
 PASS HTMLFrameElement interface: attribute frameBorder 
 PASS HTMLFrameElement interface: attribute longDesc 
 PASS HTMLFrameElement interface: attribute noResize 
-FAIL HTMLFrameElement interface: attribute contentDocument assert_true: The prototype object must have a property "contentDocument" expected true got false
+PASS HTMLFrameElement interface: attribute contentDocument 
 PASS HTMLFrameElement interface: attribute contentWindow 
 PASS HTMLFrameElement interface: attribute marginHeight 
 PASS HTMLFrameElement interface: attribute marginWidth 
@@ -4771,7 +4764,7 @@ PASS HTMLFrameElement interface: document.createElement("frame") must inherit pr
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "frameBorder" with the proper type (3) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "longDesc" with the proper type (4) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "noResize" with the proper type (5) 
-FAIL HTMLFrameElement interface: document.createElement("frame") must inherit property "contentDocument" with the proper type (6) assert_inherits: property "contentDocument" found on object expected in prototype chain
+PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "contentDocument" with the proper type (6) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "contentWindow" with the proper type (7) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "marginHeight" with the proper type (8) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "marginWidth" with the proper type (9) 
