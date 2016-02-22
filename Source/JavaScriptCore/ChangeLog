@@ -1,5 +1,12 @@
 2016-02-22  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix stress test to not print on success.
+
+        * tests/stress/call-apply-builtin-functions-dont-use-iterators.js:
+        (catch): Deleted.
+
+2016-02-22  Keith Miller  <keith_miller@apple.com>
+
         Use Symbol.species in the builtin TypedArray.prototype functions
         https://bugs.webkit.org/show_bug.cgi?id=153384
 

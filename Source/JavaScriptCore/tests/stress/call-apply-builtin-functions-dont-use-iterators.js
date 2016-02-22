@@ -21,12 +21,7 @@
             result += args[i];
         return result;
     }
-    var sum;
+    if (applyFn(addAll, 3, [4, 5, 6]) !== 18)
+        throw "incorrect result";
 
-    try {
-        sum = applyFn(addAll, 3, [4, 5, 6]);
-    } catch (err) {
-        print('oops ', err);
-    }
-    print('sum ', sum);
 })();
