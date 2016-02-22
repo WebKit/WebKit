@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class Attribute;
 class CSSStyleDeclaration;
 class MutableStyleProperties;
 

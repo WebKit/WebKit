@@ -38,7 +38,6 @@
 #include "HTMLSlotElement.h"
 #include "HTMLTableRowsCollection.h"
 #include "InlineTextBox.h"
-#include "JSLazyEventListener.h"
 #include "JSNode.h"
 #include "LabelsNodeList.h"
 #include "MutationEvent.h"
@@ -826,11 +825,6 @@ void ContainerNode::updateTreeAfterInsertion(Node& child)
     child.setNeedsStyleRecalc(ReconstructRenderTree);
 
     dispatchChildInsertionEvents(child);
-}
-
-void ContainerNode::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
-{
-    setAttributeEventListener(eventType, JSLazyEventListener::createForNode(*this, attributeName, attributeValue));
 }
 
 Element* ContainerNode::querySelector(const String& selectors, ExceptionCode& ec)

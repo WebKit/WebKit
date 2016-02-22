@@ -41,49 +41,27 @@
 
 namespace WebCore {
 
-class Attribute;
-class ClassCollection;
 class ContainerNode;
-class DOMTokenList;
 class Document;
 class Element;
-class Event;
-class EventListener;
 class FloatPoint;
-class Frame;
-class HTMLInputElement;
 class HTMLQualifiedName;
 class HTMLSlotElement;
-class IntRect;
-class KeyboardEvent;
 class MathMLQualifiedName;
-class NSResolver;
-class NameNodeList;
 class NamedNodeMap;
 class NodeList;
 class NodeListsNodeData;
 class NodeOrString;
 class NodeRareData;
 class QualifiedName;
-class RadioNodeList;
-class RegisteredEventListener;
 class RenderBox;
 class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
-class TagCollection;
-
-#if ENABLE(INDIE_UI)
-class UIRequestEvent;
-#endif
-    
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 class TouchEvent;
-#endif
-
-typedef int ExceptionCode;
+class UIRequestEvent;
 
 const int nodeStyleChangeShift = 14;
 

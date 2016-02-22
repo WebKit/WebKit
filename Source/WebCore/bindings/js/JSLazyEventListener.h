@@ -26,32 +26,36 @@
 
 namespace WebCore {
 
-    class ContainerNode;
-    class Frame;
-    class QualifiedName;
+class ContainerNode;
+class DOMWindow;
+class Document;
+class Element;
+class QualifiedName;
 
-    class JSLazyEventListener final : public JSEventListener {
-    public:
-        static RefPtr<JSLazyEventListener> createForNode(ContainerNode&, const QualifiedName& attributeName, const AtomicString& attributeValue);
-        static RefPtr<JSLazyEventListener> createForDOMWindow(Frame&, const QualifiedName& attributeName, const AtomicString& attributeValue);
+class JSLazyEventListener final : public JSEventListener {
+public:
+    static RefPtr<JSLazyEventListener> create(Element&, const QualifiedName& attributeName, const AtomicString& attributeValue);
+    static RefPtr<JSLazyEventListener> create(Document&, const QualifiedName& attributeName, const AtomicString& attributeValue);
+    static RefPtr<JSLazyEventListener> create(DOMWindow&, const QualifiedName& attributeName, const AtomicString& attributeValue);
 
-        virtual ~JSLazyEventListener();
+    virtual ~JSLazyEventListener();
 
-    private:
-        JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode*, const String& sourceURL, const TextPosition&, JSC::JSObject* wrapper, DOMWrapperWorld& isolatedWorld);
+private:
+    struct CreationArguments;
+    static RefPtr<JSLazyEventListener> create(const CreationArguments&);
 
-        virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const override;
-        virtual bool wasCreatedFromMarkup() const override { return true; }
+    JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode*, const String& sourceURL, const TextPosition&, JSC::JSObject* wrapper, DOMWrapperWorld& isolatedWorld);
 
-        static void create() = delete;
+    virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const override;
+    virtual bool wasCreatedFromMarkup() const override { return true; }
 
-        mutable String m_functionName;
-        mutable String m_eventParameterName;
-        mutable String m_code;
-        mutable String m_sourceURL;
-        TextPosition m_position;
-        ContainerNode* m_originalNode;
-    };
+    mutable String m_functionName;
+    mutable String m_eventParameterName;
+    mutable String m_code;
+    mutable String m_sourceURL;
+    TextPosition m_position;
+    ContainerNode* m_originalNode;
+};
 
 } // namespace WebCore
 

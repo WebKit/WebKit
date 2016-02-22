@@ -1,3 +1,12 @@
+2016-02-21  Darin Adler  <darin@apple.com>
+
+        Refactor LazyEventListener creation to separate Element and Document cases
+        https://bugs.webkit.org/show_bug.cgi?id=154231
+
+        Reviewed by Andreas Kling.
+
+        * WebView.h: Forward declare KeyboardEvent.
+
 2016-02-16  Andreas Kling  <akling@apple.com>
 
         Drop StyleResolver and SelectorQueryCache when entering PageCache.

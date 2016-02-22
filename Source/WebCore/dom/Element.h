@@ -44,6 +44,7 @@ class DOMTokenList;
 class ElementRareData;
 class HTMLDocument;
 class IntSize;
+class KeyboardEvent;
 class Locale;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
@@ -51,7 +52,6 @@ class PlatformWheelEvent;
 class PseudoElement;
 class RenderNamedFlowFragment;
 class RenderTreePosition;
-class ShadowRoot;
 
 enum SpellcheckAttributeState {
     SpellcheckAttributeTrue,
@@ -498,6 +498,9 @@ public:
     Ref<RenderStyle> resolveStyle(RenderStyle* parentStyle);
 
     virtual void isVisibleInViewportChanged() { }
+
+    using ContainerNode::setAttributeEventListener;
+    void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

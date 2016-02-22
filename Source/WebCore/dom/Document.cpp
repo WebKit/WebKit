@@ -4078,6 +4078,11 @@ void Document::takeDOMWindowFrom(Document* document)
     ASSERT(m_domWindow->frame() == m_frame);
 }
 
+void Document::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
+{
+    setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue));
+}
+
 void Document::setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener)
 {
     if (!m_domWindow)
@@ -4087,9 +4092,9 @@ void Document::setWindowAttributeEventListener(const AtomicString& eventType, Pa
 
 void Document::setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
 {
-    if (!m_frame)
+    if (!m_domWindow)
         return;
-    setWindowAttributeEventListener(eventType, JSLazyEventListener::createForDOMWindow(*m_frame, attributeName, attributeValue));
+    setWindowAttributeEventListener(eventType, JSLazyEventListener::create(*m_domWindow, attributeName, attributeValue));
 }
 
 EventListener* Document::getWindowAttributeEventListener(const AtomicString& eventType)

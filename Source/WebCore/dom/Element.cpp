@@ -59,6 +59,7 @@
 #include "HTMLTemplateElement.h"
 #include "IdChangeInvalidation.h"
 #include "IdTargetObserverRegistry.h"
+#include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "MainFrame.h"
 #include "MutationObserverInterestGroup.h"
@@ -1828,6 +1829,11 @@ void Element::childrenChanged(const ChildChange& change)
         }
     }
 #endif
+}
+
+void Element::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
+{
+    setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue));
 }
 
 void Element::removeAllEventListeners()

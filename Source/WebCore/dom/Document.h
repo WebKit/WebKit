@@ -93,10 +93,7 @@ class DocumentMarkerController;
 class DocumentParser;
 class DocumentSharedObjectPool;
 class DocumentType;
-class Element;
 class EntityReference;
-class Event;
-class EventListener;
 class ExtensionStyleSheets;
 class FloatRect;
 class FloatQuad;
@@ -141,7 +138,6 @@ class PlatformMouseEvent;
 class ProcessingInstruction;
 class QualifiedName;
 class Range;
-class RegisteredEventListener;
 class RenderView;
 class RenderFullScreen;
 class ScriptableDocumentParser;
@@ -726,10 +722,6 @@ public:
 
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const LayoutPoint&, const PlatformMouseEvent&);
 
-    /* Newly proposed CSS3 mechanism for selecting alternate
-       stylesheets using the DOM. May be subject to change as
-       spec matures. - dwh
-    */
     String preferredStylesheetSet() const;
     String selectedStylesheetSet() const;
     void setSelectedStylesheetSet(const String&);
@@ -1321,6 +1313,9 @@ public:
     void setHasActiveMediaStreamTrack() { m_hasHadActiveMediaStreamTrack = true; }
     bool hasHadActiveMediaStreamTrack() const { return m_hasHadActiveMediaStreamTrack; }
 #endif
+
+    using ContainerNode::setAttributeEventListener;
+    void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };

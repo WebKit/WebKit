@@ -62,6 +62,7 @@ class EditorInternalCommand;
 class Frame;
 class HTMLElement;
 class HitTestResult;
+class KeyboardEvent;
 class KillRing;
 class Pasteboard;
 class SharedBuffer;

@@ -142,40 +142,53 @@ static const String& eventParameterName(bool isSVGEvent)
     return isSVGEvent ? evtString : eventString;
 }
 
-RefPtr<JSLazyEventListener> JSLazyEventListener::createForNode(ContainerNode& node, const QualifiedName& attributeName, const AtomicString& attributeValue)
-{
-    if (attributeValue.isNull())
-        return nullptr;
+struct JSLazyEventListener::CreationArguments {
+    const QualifiedName& attributeName;
+    const AtomicString& attributeValue;
+    Document& document;
+    ContainerNode* node;
+    JSC::JSObject* wrapper;
+    bool shouldUseSVGEventName;
+};
 
-    TextPosition position = TextPosition::minimumPosition();
-    String sourceURL;
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(const CreationArguments& arguments)
+{
+    if (arguments.attributeValue.isNull())
+        return nullptr;
 
     // FIXME: We should be able to provide source information for frameless documents too (e.g. for importing nodes from XMLHttpRequest.responseXML).
-    if (Frame* frame = node.document().frame()) {
+    TextPosition position;
+    String sourceURL;
+    if (Frame* frame = arguments.document.frame()) {
         if (!frame->script().canExecuteScripts(AboutToExecuteScript))
             return nullptr;
-
         position = frame->script().eventHandlerPosition();
-        sourceURL = node.document().url().string();
+        sourceURL = arguments.document.url().string();
     }
 
-    return adoptRef(*new JSLazyEventListener(attributeName.localName().string(),
-        eventParameterName(node.isSVGElement()), attributeValue,
-        &node, sourceURL, position, nullptr, mainThreadNormalWorld()));
+    return adoptRef(*new JSLazyEventListener(arguments.attributeName.localName().string(),
+        eventParameterName(arguments.shouldUseSVGEventName), arguments.attributeValue,
+        arguments.node, sourceURL, position, arguments.wrapper, mainThreadNormalWorld()));
 }
 
-RefPtr<JSLazyEventListener> JSLazyEventListener::createForDOMWindow(Frame& frame, const QualifiedName& attributeName, const AtomicString& attributeValue)
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(Element& element, const QualifiedName& attributeName, const AtomicString& attributeValue)
 {
-    if (attributeValue.isNull())
-        return nullptr;
+    return create({ attributeName, attributeValue, element.document(), &element, nullptr, element.isSVGElement() });
+}
 
-    if (!frame.script().canExecuteScripts(AboutToExecuteScript))
-        return nullptr;
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(Document& document, const QualifiedName& attributeName, const AtomicString& attributeValue)
+{
+    // FIXME: This always passes false for "shouldUseSVGEventName". Is that correct for events dispatched to SVG documents?
+    // This has been this way for a long time, but became more obvious when refactoring to separate the Element and Document code paths.
+    return create({ attributeName, attributeValue, document, &document, nullptr, false });
+}
 
-    return adoptRef(*new JSLazyEventListener(attributeName.localName().string(),
-        eventParameterName(frame.document()->isSVGDocument()), attributeValue,
-        nullptr, frame.document()->url().string(), frame.script().eventHandlerPosition(),
-        toJSDOMWindow(&frame, mainThreadNormalWorld()), mainThreadNormalWorld()));
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(DOMWindow& window, const QualifiedName& attributeName, const AtomicString& attributeValue)
+{
+    ASSERT(window.document());
+    auto& document = *window.document();
+    ASSERT(document.frame());
+    return create({ attributeName, attributeValue, document, nullptr, toJSDOMWindow(document.frame(), mainThreadNormalWorld()), document.isSVGDocument() });
 }
 
 } // namespace WebCore

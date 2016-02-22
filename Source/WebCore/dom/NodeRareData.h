@@ -43,6 +43,7 @@
 namespace WebCore {
 
 class LabelsNodeList;
+class NameNodeList;
 class RadioNodeList;
 class TreeScope;
 

@@ -59,10 +59,8 @@ namespace WebCore {
     struct GraphicsDeviceAdapter;
 #endif
     class HTMLVideoElement;
-}
-
-namespace WebCore {
     class HistoryItem;
+    class KeyboardEvent;
 }
 
 class FullscreenVideoController;

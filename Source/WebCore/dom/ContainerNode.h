@@ -31,9 +31,7 @@
 namespace WebCore {
 
 class HTMLCollection;
-class NodeList;
-class NodeOrString;
-class QualifiedName;
+class RadioNodeList;
 class RenderElement;
 
 class NoEventDispatchAssertion {
@@ -123,9 +121,6 @@ public:
     virtual void childrenChanged(const ChildChange&);
 
     void disconnectDescendantFrames();
-
-    using Node::setAttributeEventListener;
-    void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
 
     RenderElement* renderer() const;
 

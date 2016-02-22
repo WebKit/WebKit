@@ -1,3 +1,50 @@
+2016-02-21  Darin Adler  <darin@apple.com>
+
+        Refactor LazyEventListener creation to separate Element and Document cases
+        https://bugs.webkit.org/show_bug.cgi?id=154231
+
+        Reviewed by Andreas Kling.
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::create): Added. Newly factored to separate
+        Element, Document, and DOMWindow with overloading.
+        (WebCore::JSLazyEventListener::createForNode): Deleted.
+        (WebCore::JSLazyEventListener::createForDOMWindow): Deleted.
+
+        * bindings/js/JSLazyEventListener.h: Replaced the separate createForNode
+        and createForDOMWindow functions with a single overloaded function create,
+        which takes an Element, Document, or DOMWindow. Also changed indentation
+        to match the style guide.
+
+        * dom/Attr.h: Added newly needed forward class declaration.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::setAttributeEventListener): Deleted.
+        * dom/ContainerNode.h: Deleted setAttributeEventListener override; it's now
+        done separately by Element and Document.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setAttributeEventListener): Added. Makes the lazy event
+        listener and calls through to the base class's setAttributeEventListener.
+        (WebCore::Document::setWindowAttributeEventListener): Updated to call just
+        create instead of createForDOMWindow.
+
+        * dom/Document.h: Removed some unneeded forward declarations. Added the
+        overload for setAttributeEventListener. Removed a no longer useful comment.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeEventListener): Added. Makes the lazy event
+        listener and calls through to the base class's setAttributeEventListener.
+
+        * dom/Element.h: Removed some unneeded forward declarations. Added the
+        overload for setAttributeEventListener.
+
+        * dom/Node.h: Removed many unneeded forward declarations.
+
+        * dom/NodeRareData.h: Added one forward declaration.
+
+        * editing/Editor.h: Added one forward declaration.
+
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
         CSP: Violation report should include column number
