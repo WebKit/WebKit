@@ -161,7 +161,7 @@ public:
     bool shouldAppearChecked() const;
     virtual bool shouldAppearIndeterminate() const override final;
 
-    int size() const;
+    unsigned size() const;
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
     float decorationWidth() const;
 
@@ -421,7 +421,7 @@ private:
 
     AtomicString m_name;
     String m_valueIfDirty;
-    int m_size;
+    unsigned m_size;
     int m_maxLength;
     short m_maxResults;
     bool m_isChecked : 1;

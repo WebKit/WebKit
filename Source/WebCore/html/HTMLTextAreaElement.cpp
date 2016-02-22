@@ -170,14 +170,14 @@ void HTMLTextAreaElement::collectStyleForPresentationAttribute(const QualifiedNa
 void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == rowsAttr) {
-        unsigned rows = limitToOnlyNonNegativeNumbersGreaterThanZero(value.string().toUInt(), defaultRows);
+        unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultRows);
         if (m_rows != rows) {
             m_rows = rows;
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
     } else if (name == colsAttr) {
-        unsigned cols = limitToOnlyNonNegativeNumbersGreaterThanZero(value.string().toUInt(), defaultCols);
+        unsigned cols = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultCols);
         if (m_cols != cols) {
             m_cols = cols;
             if (renderer())
@@ -491,12 +491,12 @@ void HTMLTextAreaElement::accessKeyAction(bool)
 
 void HTMLTextAreaElement::setCols(unsigned cols)
 {
-    setUnsignedIntegralAttribute(colsAttr, limitToOnlyNonNegativeNumbersGreaterThanZero(cols, defaultCols));
+    setUnsignedIntegralAttribute(colsAttr, limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(cols, defaultCols));
 }
 
 void HTMLTextAreaElement::setRows(unsigned rows)
 {
-    setUnsignedIntegralAttribute(rowsAttr, limitToOnlyNonNegativeNumbersGreaterThanZero(rows, defaultRows));
+    setUnsignedIntegralAttribute(rowsAttr, limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(rows, defaultRows));
 }
 
 bool HTMLTextAreaElement::shouldUseInputMethod()

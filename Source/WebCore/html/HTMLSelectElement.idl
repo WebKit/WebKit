@@ -27,7 +27,12 @@
     attribute boolean multiple;
     [Reflect] attribute DOMString name;
     [Reflect] attribute boolean required;
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     attribute long size;
+#else
+    attribute unsigned long size;
+#endif
 
     readonly attribute DOMString type;
 

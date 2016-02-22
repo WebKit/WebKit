@@ -1,3 +1,29 @@
+2016-02-21  Chris Dumez  <cdumez@apple.com>
+
+        Make HTMLSelectElement.size behave as per the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154504
+
+        Reviewed by Darin Adler.
+
+        Update test that was covering the case of an HTMLSelectElement with an
+        invalid size attribute. The test was expecting the bad "size" attribute
+        value to get corrected so that the select element looks like a menu list.
+        This workaround was added back in 2007 to workaround a bug on
+        www.chainreaction.com (rdar://problem/4697438). This patch drops the
+        workaround in HTMLSelectElement::parseAttribute() because:
+        1. This is not standard behavior as per the HTML specification
+        2. This behavior does not match Firefox either
+        3. The workaround is no longer needed for www.chainreaction.com.
+
+        * fast/forms/select-size-expected.html: Added.
+        * fast/forms/select-size.html:
+        * platform/efl/fast/forms/select-size-expected.txt: Removed.
+        * platform/gtk/fast/forms/select-size-expected.txt: Removed.
+        * platform/ios-simulator/fast/forms/select-size-expected.txt: Removed.
+        * platform/mac/fast/forms/select-size-expected.png: Removed.
+        * platform/mac/fast/forms/select-size-expected.txt: Removed.
+        * platform/win/fast/forms/select-size-expected.txt: Removed.
+
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
         CSP: Enable form-action directive by default

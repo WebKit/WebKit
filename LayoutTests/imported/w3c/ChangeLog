@@ -1,5 +1,17 @@
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
+        Make HTMLSelectElement.size behave as per the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154504
+
+        Reviewed by Darin Adler.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt:
+
+2016-02-21  Chris Dumez  <cdumez@apple.com>
+
         Add username / password attributes to HTMLAnchorElement / HTMLAreaElement
         https://bugs.webkit.org/show_bug.cgi?id=154519
 

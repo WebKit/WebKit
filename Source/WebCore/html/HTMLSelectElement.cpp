@@ -44,6 +44,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
+#include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
@@ -302,17 +303,8 @@ bool HTMLSelectElement::isPresentationAttribute(const QualifiedName& name) const
 void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == sizeAttr) {
-        int oldSize = m_size;
-        // Set the attribute value to a number.
-        // This is important since the style rules for this attribute can determine the appearance property.
-        int size = value.toInt();
-        AtomicString attrSize = AtomicString::number(size);
-        if (attrSize != value) {
-            // FIXME: This is horribly factored.
-            if (Attribute* sizeAttribute = ensureUniqueElementData().findAttributeByName(sizeAttr))
-                sizeAttribute->setValue(attrSize);
-        }
-        size = std::max(size, 0);
+        unsigned oldSize = m_size;
+        unsigned size = limitToOnlyHTMLNonNegative(value);
 
         // Ensure that we've determined selectedness of the items at least once prior to changing the size.
         if (oldSize != size)
@@ -428,9 +420,9 @@ void HTMLSelectElement::setMultiple(bool multiple)
         setSelectedIndex(oldSelectedIndex);
 }
 
-void HTMLSelectElement::setSize(int size)
+void HTMLSelectElement::setSize(unsigned size)
 {
-    setIntegralAttribute(sizeAttr, size);
+    setUnsignedIntegralAttribute(sizeAttr, limitToOnlyHTMLNonNegative(size));
 }
 
 HTMLOptionElement* HTMLSelectElement::namedItem(const AtomicString& name)

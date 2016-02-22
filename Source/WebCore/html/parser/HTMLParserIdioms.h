@@ -107,9 +107,29 @@ inline bool isHTMLSpaceButNotLineBreak(UChar character)
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#limited-to-only-non-negative-numbers-greater-than-zero
-inline unsigned limitToOnlyNonNegativeNumbersGreaterThanZero(unsigned value, unsigned defaultValue = 1)
+inline unsigned limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(unsigned value, unsigned defaultValue = 1)
 {
     return (value > 0 && value <= 2147483647) ? value : defaultValue;
+}
+
+inline unsigned limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(const String& stringValue, unsigned defaultValue = 1)
+{
+    unsigned value = defaultValue;
+    parseHTMLNonNegativeInteger(stringValue, value);
+    return limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultValue);
+}
+
+// https://html.spec.whatwg.org/#reflecting-content-attributes-in-idl-attributes:idl-unsigned-long
+inline unsigned limitToOnlyHTMLNonNegative(unsigned value, unsigned defaultValue = 0)
+{
+    return value <= 2147483647 ? value : defaultValue;
+}
+
+inline unsigned limitToOnlyHTMLNonNegative(const String& stringValue, unsigned defaultValue = 0)
+{
+    unsigned value = defaultValue;
+    parseHTMLNonNegativeInteger(stringValue, value);
+    return limitToOnlyHTMLNonNegative(value, defaultValue);
 }
 
 }

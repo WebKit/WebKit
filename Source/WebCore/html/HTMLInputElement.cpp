@@ -684,8 +684,8 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == maxlengthAttr)
         parseMaxLengthAttribute(value);
     else if (name == sizeAttr) {
-        int oldSize = m_size;
-        m_size = limitToOnlyNonNegativeNumbersGreaterThanZero(value.string().toUInt(), defaultSize);
+        unsigned oldSize = m_size;
+        m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultSize);
         if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (name == altAttr)
@@ -896,7 +896,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
         renderer()->theme().stateChanged(*renderer(), ControlStates::CheckedState);
 }
 
-int HTMLInputElement::size() const
+unsigned HTMLInputElement::size() const
 {
     return m_size;
 }
@@ -1274,7 +1274,7 @@ bool HTMLInputElement::multiple() const
 
 void HTMLInputElement::setSize(unsigned size)
 {
-    setUnsignedIntegralAttribute(sizeAttr, limitToOnlyNonNegativeNumbersGreaterThanZero(size, defaultSize));
+    setUnsignedIntegralAttribute(sizeAttr, limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(size, defaultSize));
 }
 
 void HTMLInputElement::setSize(unsigned size, ExceptionCode& ec)

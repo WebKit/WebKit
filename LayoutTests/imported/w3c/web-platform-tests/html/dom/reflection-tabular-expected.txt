@@ -3004,7 +3004,7 @@ PASS colgroup.span: setAttribute() to "1" followed by IDL get
 PASS colgroup.span: setAttribute() to "\t7" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to "\t7" followed by IDL get 
 PASS colgroup.span: setAttribute() to "\v7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to "\v7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to "\v7" followed by IDL get 
 PASS colgroup.span: setAttribute() to "\f7" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to "\f7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
@@ -3018,39 +3018,39 @@ PASS colgroup.span: setAttribute() to "\n7" followed by IDL get
 PASS colgroup.span: setAttribute() to "\r7" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to "\r7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to "᠎7" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to "᠎7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " 7" followed by getAttribute() 
 PASS colgroup.span: setAttribute() to " 7" followed by IDL get 
 PASS colgroup.span: setAttribute() to "　7" followed by getAttribute() 
-FAIL colgroup.span: setAttribute() to "　7" followed by IDL get assert_equals: expected 1 but got 7
+PASS colgroup.span: setAttribute() to "　7" followed by IDL get 
 PASS colgroup.span: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS colgroup.span: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS colgroup.span: setAttribute() to undefined followed by getAttribute() 
@@ -4271,7 +4271,7 @@ PASS col.span: setAttribute() to "1" followed by IDL get
 PASS col.span: setAttribute() to "\t7" followed by getAttribute() 
 PASS col.span: setAttribute() to "\t7" followed by IDL get 
 PASS col.span: setAttribute() to "\v7" followed by getAttribute() 
-FAIL col.span: setAttribute() to "\v7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to "\v7" followed by IDL get 
 PASS col.span: setAttribute() to "\f7" followed by getAttribute() 
 PASS col.span: setAttribute() to "\f7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
@@ -4285,39 +4285,39 @@ PASS col.span: setAttribute() to "\n7" followed by IDL get
 PASS col.span: setAttribute() to "\r7" followed by getAttribute() 
 PASS col.span: setAttribute() to "\r7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
 PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to "᠎7" followed by getAttribute() 
 PASS col.span: setAttribute() to "᠎7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
-FAIL col.span: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to " 7" followed by getAttribute() 
 PASS col.span: setAttribute() to " 7" followed by IDL get 
 PASS col.span: setAttribute() to "　7" followed by getAttribute() 
-FAIL col.span: setAttribute() to "　7" followed by IDL get assert_equals: expected 1 but got 7
+PASS col.span: setAttribute() to "　7" followed by IDL get 
 PASS col.span: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS col.span: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS col.span: setAttribute() to undefined followed by getAttribute() 
