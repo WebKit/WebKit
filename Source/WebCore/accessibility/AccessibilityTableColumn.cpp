@@ -63,8 +63,14 @@ void AccessibilityTableColumn::setParent(AccessibilityObject* parent)
     
 LayoutRect AccessibilityTableColumn::elementRect() const
 {
-    // this will be filled in when addChildren is called
-    return m_columnRect;
+    // This used to be cached during the call to addChildren(), but calling elementRect()
+    // can invalidate elements, so its better to ask for this on demand.
+    LayoutRect columnRect;
+    AccessibilityChildrenVector childrenCopy = m_children;
+    for (const auto& cell : childrenCopy)
+        columnRect.unite(cell->elementRect());
+
+    return columnRect;
 }
 
 AccessibilityObject* AccessibilityTableColumn::headerObject()
@@ -191,7 +197,6 @@ void AccessibilityTableColumn::addChildren()
             continue;
             
         m_children.append(cell);
-        m_columnRect.unite(cell->elementRect());
     }
 }
     

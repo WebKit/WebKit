@@ -62,7 +62,6 @@ private:
     virtual bool isTableColumn() const override { return true; }
 
     unsigned m_columnIndex;
-    LayoutRect m_columnRect;
 };
 
 } // namespace WebCore 

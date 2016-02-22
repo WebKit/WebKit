@@ -515,7 +515,10 @@ void AccessibilityTable::columnHeaders(AccessibilityChildrenVector& headers)
     
     updateChildrenIfNecessary();
     
-    for (const auto& column : m_columns) {
+    // Sometimes m_columns can be reset during the iteration, we cache it here to be safe.
+    AccessibilityChildrenVector columnsCopy = m_columns;
+    
+    for (const auto& column : columnsCopy) {
         if (AccessibilityObject* header = downcast<AccessibilityTableColumn>(*column).headerObject())
             headers.append(header);
     }
@@ -528,7 +531,10 @@ void AccessibilityTable::rowHeaders(AccessibilityChildrenVector& headers)
     
     updateChildrenIfNecessary();
     
-    for (const auto& row : m_rows) {
+    // Sometimes m_rows can be reset during the iteration, we cache it here to be safe.
+    AccessibilityChildrenVector rowsCopy = m_rows;
+    
+    for (const auto& row : rowsCopy) {
         if (AccessibilityObject* header = downcast<AccessibilityTableRow>(*row).headerObject())
             headers.append(header);
     }
