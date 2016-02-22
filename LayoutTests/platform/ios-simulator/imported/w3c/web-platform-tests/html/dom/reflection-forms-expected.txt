@@ -6872,7 +6872,7 @@ PASS input.size: setAttribute() to "1" followed by IDL get
 PASS input.size: setAttribute() to "\t7" followed by getAttribute() 
 PASS input.size: setAttribute() to "\t7" followed by IDL get 
 PASS input.size: setAttribute() to "\v7" followed by getAttribute() 
-FAIL input.size: setAttribute() to "\v7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to "\v7" followed by IDL get 
 PASS input.size: setAttribute() to "\f7" followed by getAttribute() 
 PASS input.size: setAttribute() to "\f7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
@@ -6886,39 +6886,39 @@ PASS input.size: setAttribute() to "\n7" followed by IDL get
 PASS input.size: setAttribute() to "\r7" followed by getAttribute() 
 PASS input.size: setAttribute() to "\r7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
 PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to "᠎7" followed by getAttribute() 
 PASS input.size: setAttribute() to "᠎7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to " 7" followed by getAttribute() 
 PASS input.size: setAttribute() to " 7" followed by IDL get 
 PASS input.size: setAttribute() to "　7" followed by getAttribute() 
-FAIL input.size: setAttribute() to "　7" followed by IDL get assert_equals: expected 20 but got 7
+PASS input.size: setAttribute() to "　7" followed by IDL get 
 PASS input.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS input.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS input.size: setAttribute() to undefined followed by getAttribute() 
@@ -10847,7 +10847,7 @@ PASS select.required: IDL set to object "test-valueOf" followed by hasAttribute(
 PASS select.required: IDL set to object "test-valueOf" followed by IDL get 
 PASS select.size: typeof IDL attribute 
 PASS select.size: IDL get with DOM attribute unset 
-FAIL select.size: setAttribute() to -2147483649 followed by getAttribute() assert_equals: expected "-2147483649" but got "0"
+PASS select.size: setAttribute() to -2147483649 followed by getAttribute() 
 PASS select.size: setAttribute() to -2147483649 followed by IDL get 
 PASS select.size: setAttribute() to -2147483648 followed by getAttribute() 
 PASS select.size: setAttribute() to -2147483648 followed by IDL get 
@@ -10863,95 +10863,95 @@ PASS select.size: setAttribute() to 257 followed by getAttribute()
 PASS select.size: setAttribute() to 257 followed by IDL get 
 PASS select.size: setAttribute() to 2147483647 followed by getAttribute() 
 PASS select.size: setAttribute() to 2147483647 followed by IDL get 
-FAIL select.size: setAttribute() to 2147483648 followed by getAttribute() assert_equals: expected "2147483648" but got "0"
+PASS select.size: setAttribute() to 2147483648 followed by getAttribute() 
 PASS select.size: setAttribute() to 2147483648 followed by IDL get 
-FAIL select.size: setAttribute() to 4294967295 followed by getAttribute() assert_equals: expected "4294967295" but got "0"
+PASS select.size: setAttribute() to 4294967295 followed by getAttribute() 
 PASS select.size: setAttribute() to 4294967295 followed by IDL get 
-FAIL select.size: setAttribute() to 4294967296 followed by getAttribute() assert_equals: expected "4294967296" but got "0"
+PASS select.size: setAttribute() to 4294967296 followed by getAttribute() 
 PASS select.size: setAttribute() to 4294967296 followed by IDL get 
-FAIL select.size: setAttribute() to "" followed by getAttribute() assert_equals: expected "" but got "0"
+PASS select.size: setAttribute() to "" followed by getAttribute() 
 PASS select.size: setAttribute() to "" followed by IDL get 
 PASS select.size: setAttribute() to "-1" followed by getAttribute() 
 PASS select.size: setAttribute() to "-1" followed by IDL get 
-FAIL select.size: setAttribute() to "-0" followed by getAttribute() assert_equals: expected "-0" but got "0"
+PASS select.size: setAttribute() to "-0" followed by getAttribute() 
 PASS select.size: setAttribute() to "-0" followed by IDL get 
 PASS select.size: setAttribute() to "0" followed by getAttribute() 
 PASS select.size: setAttribute() to "0" followed by IDL get 
 PASS select.size: setAttribute() to "1" followed by getAttribute() 
 PASS select.size: setAttribute() to "1" followed by IDL get 
-FAIL select.size: setAttribute() to "\t7" followed by getAttribute() assert_equals: expected "\t7" but got "7"
+PASS select.size: setAttribute() to "\t7" followed by getAttribute() 
 PASS select.size: setAttribute() to "\t7" followed by IDL get 
-FAIL select.size: setAttribute() to "\v7" followed by getAttribute() assert_equals: expected "\v7" but got "7"
-FAIL select.size: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to "\f7" followed by getAttribute() assert_equals: expected "\f7" but got "7"
+PASS select.size: setAttribute() to "\v7" followed by getAttribute() 
+PASS select.size: setAttribute() to "\v7" followed by IDL get 
+PASS select.size: setAttribute() to "\f7" followed by getAttribute() 
 PASS select.size: setAttribute() to "\f7" followed by IDL get 
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
 PASS select.size: setAttribute() to " 7" followed by IDL get 
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "0"
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
 PASS select.size: setAttribute() to " 7" followed by IDL get 
-FAIL select.size: setAttribute() to "﻿7" followed by getAttribute() assert_equals: expected "﻿7" but got "0"
+PASS select.size: setAttribute() to "﻿7" followed by getAttribute() 
 PASS select.size: setAttribute() to "﻿7" followed by IDL get 
-FAIL select.size: setAttribute() to "\n7" followed by getAttribute() assert_equals: expected "\n7" but got "7"
+PASS select.size: setAttribute() to "\n7" followed by getAttribute() 
 PASS select.size: setAttribute() to "\n7" followed by IDL get 
-FAIL select.size: setAttribute() to "\r7" followed by getAttribute() assert_equals: expected "\r7" but got "7"
+PASS select.size: setAttribute() to "\r7" followed by getAttribute() 
 PASS select.size: setAttribute() to "\r7" followed by IDL get 
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "0"
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
 PASS select.size: setAttribute() to " 7" followed by IDL get 
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to "᠎7" followed by getAttribute() assert_equals: expected "᠎7" but got "0"
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to "᠎7" followed by getAttribute() 
 PASS select.size: setAttribute() to "᠎7" followed by IDL get 
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "7"
-FAIL select.size: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " 7" followed by getAttribute() assert_equals: expected " 7" but got "0"
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
+PASS select.size: setAttribute() to " 7" followed by IDL get 
+PASS select.size: setAttribute() to " 7" followed by getAttribute() 
 PASS select.size: setAttribute() to " 7" followed by IDL get 
-FAIL select.size: setAttribute() to "　7" followed by getAttribute() assert_equals: expected "　7" but got "7"
-FAIL select.size: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
-FAIL select.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() assert_equals: expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "0"
+PASS select.size: setAttribute() to "　7" followed by getAttribute() 
+PASS select.size: setAttribute() to "　7" followed by IDL get 
+PASS select.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS select.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
-FAIL select.size: setAttribute() to undefined followed by getAttribute() assert_equals: expected "undefined" but got "0"
+PASS select.size: setAttribute() to undefined followed by getAttribute() 
 PASS select.size: setAttribute() to undefined followed by IDL get 
-FAIL select.size: setAttribute() to 1.5 followed by getAttribute() assert_equals: expected "1.5" but got "1"
+PASS select.size: setAttribute() to 1.5 followed by getAttribute() 
 PASS select.size: setAttribute() to 1.5 followed by IDL get 
-FAIL select.size: setAttribute() to true followed by getAttribute() assert_equals: expected "true" but got "0"
+PASS select.size: setAttribute() to true followed by getAttribute() 
 PASS select.size: setAttribute() to true followed by IDL get 
-FAIL select.size: setAttribute() to false followed by getAttribute() assert_equals: expected "false" but got "0"
+PASS select.size: setAttribute() to false followed by getAttribute() 
 PASS select.size: setAttribute() to false followed by IDL get 
-FAIL select.size: setAttribute() to object "[object Object]" followed by getAttribute() assert_equals: expected "[object Object]" but got "0"
+PASS select.size: setAttribute() to object "[object Object]" followed by getAttribute() 
 PASS select.size: setAttribute() to object "[object Object]" followed by IDL get 
-FAIL select.size: setAttribute() to NaN followed by getAttribute() assert_equals: expected "NaN" but got "0"
+PASS select.size: setAttribute() to NaN followed by getAttribute() 
 PASS select.size: setAttribute() to NaN followed by IDL get 
-FAIL select.size: setAttribute() to Infinity followed by getAttribute() assert_equals: expected "Infinity" but got "0"
+PASS select.size: setAttribute() to Infinity followed by getAttribute() 
 PASS select.size: setAttribute() to Infinity followed by IDL get 
-FAIL select.size: setAttribute() to -Infinity followed by getAttribute() assert_equals: expected "-Infinity" but got "0"
+PASS select.size: setAttribute() to -Infinity followed by getAttribute() 
 PASS select.size: setAttribute() to -Infinity followed by IDL get 
-FAIL select.size: setAttribute() to "\0" followed by getAttribute() assert_equals: expected "\0" but got "0"
+PASS select.size: setAttribute() to "\0" followed by getAttribute() 
 PASS select.size: setAttribute() to "\0" followed by IDL get 
 PASS select.size: setAttribute() to object "2" followed by getAttribute() 
 PASS select.size: setAttribute() to object "2" followed by IDL get 
-FAIL select.size: setAttribute() to object "3" followed by getAttribute() assert_equals: expected "[object Object]" but got "0"
+PASS select.size: setAttribute() to object "3" followed by getAttribute() 
 PASS select.size: setAttribute() to object "3" followed by IDL get 
 PASS select.size: IDL set to 0 should not throw 
 PASS select.size: IDL set to 0 followed by getAttribute() 
@@ -10969,10 +10969,10 @@ PASS select.size: IDL set to "-0" should not throw
 PASS select.size: IDL set to "-0" followed by getAttribute() 
 PASS select.size: IDL set to "-0" followed by IDL get 
 PASS select.size: IDL set to 2147483648 should not throw 
-FAIL select.size: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "-2147483648"
+PASS select.size: IDL set to 2147483648 followed by getAttribute() 
 PASS select.size: IDL set to 2147483648 followed by IDL get 
 PASS select.size: IDL set to 4294967295 should not throw 
-FAIL select.size: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "-1"
+PASS select.size: IDL set to 4294967295 followed by getAttribute() 
 PASS select.size: IDL set to 4294967295 followed by IDL get 
 FAIL select.itemScope: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
 FAIL select.itemScope: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
@@ -14544,7 +14544,7 @@ PASS textarea.cols: setAttribute() to "1" followed by IDL get
 PASS textarea.cols: setAttribute() to "\t7" followed by getAttribute() 
 PASS textarea.cols: setAttribute() to "\t7" followed by IDL get 
 PASS textarea.cols: setAttribute() to "\v7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to "\v7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to "\v7" followed by IDL get 
 PASS textarea.cols: setAttribute() to "\f7" followed by getAttribute() 
 PASS textarea.cols: setAttribute() to "\f7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
@@ -14558,39 +14558,39 @@ PASS textarea.cols: setAttribute() to "\n7" followed by IDL get
 PASS textarea.cols: setAttribute() to "\r7" followed by getAttribute() 
 PASS textarea.cols: setAttribute() to "\r7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
 PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to "᠎7" followed by getAttribute() 
 PASS textarea.cols: setAttribute() to "᠎7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to " 7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " 7" followed by getAttribute() 
 PASS textarea.cols: setAttribute() to " 7" followed by IDL get 
 PASS textarea.cols: setAttribute() to "　7" followed by getAttribute() 
-FAIL textarea.cols: setAttribute() to "　7" followed by IDL get assert_equals: expected 20 but got 7
+PASS textarea.cols: setAttribute() to "　7" followed by IDL get 
 PASS textarea.cols: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS textarea.cols: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS textarea.cols: setAttribute() to undefined followed by getAttribute() 
@@ -15603,7 +15603,7 @@ PASS textarea.rows: setAttribute() to "1" followed by IDL get
 PASS textarea.rows: setAttribute() to "\t7" followed by getAttribute() 
 PASS textarea.rows: setAttribute() to "\t7" followed by IDL get 
 PASS textarea.rows: setAttribute() to "\v7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to "\v7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to "\v7" followed by IDL get 
 PASS textarea.rows: setAttribute() to "\f7" followed by getAttribute() 
 PASS textarea.rows: setAttribute() to "\f7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
@@ -15617,39 +15617,39 @@ PASS textarea.rows: setAttribute() to "\n7" followed by IDL get
 PASS textarea.rows: setAttribute() to "\r7" followed by getAttribute() 
 PASS textarea.rows: setAttribute() to "\r7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
 PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to "᠎7" followed by getAttribute() 
 PASS textarea.rows: setAttribute() to "᠎7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to " 7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " 7" followed by getAttribute() 
 PASS textarea.rows: setAttribute() to " 7" followed by IDL get 
 PASS textarea.rows: setAttribute() to "　7" followed by getAttribute() 
-FAIL textarea.rows: setAttribute() to "　7" followed by IDL get assert_equals: expected 2 but got 7
+PASS textarea.rows: setAttribute() to "　7" followed by IDL get 
 PASS textarea.rows: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS textarea.rows: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS textarea.rows: setAttribute() to undefined followed by getAttribute() 
