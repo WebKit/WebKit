@@ -1,3 +1,22 @@
+2016-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WKPluginSiteDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=154470
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetPluginSiteDataManager): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp: Removed.
+        (WKPluginSiteDataManagerGetTypeID): Deleted.
+        (WKPluginSiteDataManagerGetSitesWithData): Deleted.
+        (WKPluginSiteDataManagerClearSiteData): Deleted.
+        (WKPluginSiteDataManagerClearAllSiteData): Deleted.
+        * UIProcess/API/C/WKPluginSiteDataManager.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-02-21  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][Mac] Allow processes to set "fast-dev-casheable" bit

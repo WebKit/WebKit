@@ -437,8 +437,6 @@
 		1AC75380183BE50F0072CB15 /* DataReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC7537E183BE50F0072CB15 /* DataReference.h */; };
 		1AC75A1B1B3368270056745B /* HangDetectionDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */; };
 		1AC75A1E1B33695E0056745B /* HangDetectionDisablerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AC75A1C1B33695E0056745B /* HangDetectionDisablerMac.mm */; };
-		1AC86FF3130B46D3002C1257 /* WKPluginSiteDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC86FF1130B46D3002C1257 /* WKPluginSiteDataManager.cpp */; };
-		1AC86FF4130B46D3002C1257 /* WKPluginSiteDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC86FF2130B46D3002C1257 /* WKPluginSiteDataManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ACC87BA1981C341003D1AF4 /* WKNavigationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ACECD2417162DB1001FC9EF /* StorageAreaMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */; };
 		1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */; };
@@ -2397,8 +2395,6 @@
 		1AC7537E183BE50F0072CB15 /* DataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReference.h; sourceTree = "<group>"; };
 		1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HangDetectionDisabler.h; sourceTree = "<group>"; };
 		1AC75A1C1B33695E0056745B /* HangDetectionDisablerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HangDetectionDisablerMac.mm; sourceTree = "<group>"; };
-		1AC86FF1130B46D3002C1257 /* WKPluginSiteDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPluginSiteDataManager.cpp; sourceTree = "<group>"; };
-		1AC86FF2130B46D3002C1257 /* WKPluginSiteDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPluginSiteDataManager.h; sourceTree = "<group>"; };
 		1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationPrivate.h; sourceTree = "<group>"; };
 		1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMap.cpp; sourceTree = "<group>"; };
 		1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMap.h; sourceTree = "<group>"; };
@@ -6103,8 +6099,6 @@
 				2DABA7711A817B1700EF0F1A /* WKPageRenderingProgressEventsInternal.h */,
 				1AB8A1F118400B6200E9AE69 /* WKPageUIClient.h */,
 				2DABA7731A817EE600EF0F1A /* WKPluginLoadPolicy.h */,
-				1AC86FF1130B46D3002C1257 /* WKPluginSiteDataManager.cpp */,
-				1AC86FF2130B46D3002C1257 /* WKPluginSiteDataManager.h */,
 				BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */,
 				BCD597CE112B56AC00EC8C23 /* WKPreferencesRef.h */,
 				762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */,
@@ -7951,7 +7945,6 @@
 				2DA1E4FE18C02B6A00DBC929 /* WKPDFView.h in Headers */,
 				7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */,
 				2DABA7741A817EE600EF0F1A /* WKPluginLoadPolicy.h in Headers */,
-				1AC86FF4130B46D3002C1257 /* WKPluginSiteDataManager.h in Headers */,
 				1AFDD3171891C94700153970 /* WKPreferences.h in Headers */,
 				1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */,
 				7C8EB11718DB6A19007917C2 /* WKPreferencesPrivate.h in Headers */,
@@ -9376,7 +9369,6 @@
 				2D6AB542192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm in Sources */,
 				2DA1E4FF18C02B6A00DBC929 /* WKPDFView.mm in Sources */,
 				7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */,
-				1AC86FF3130B46D3002C1257 /* WKPluginSiteDataManager.cpp in Sources */,
 				BCD597D1112B56AC00EC8C23 /* WKPreferences.cpp in Sources */,
 				1AFDD3191891CA1200153970 /* WKPreferences.mm in Sources */,
 				0FCB4E6718BBE3D9000FCFC9 /* WKPrintingView.mm in Sources */,
