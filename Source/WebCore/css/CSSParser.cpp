@@ -5696,14 +5696,14 @@ bool CSSParser::parseGridShorthand(bool important)
     RefPtr<CSSValue> autoRowsValue;
 
     if (m_valueList->current()) {
-        autoColumnsValue = parseGridTrackSize(*m_valueList);
-        if (!autoColumnsValue)
+        autoRowsValue = parseGridTrackSize(*m_valueList);
+        if (!autoRowsValue)
             return false;
         if (m_valueList->current()) {
             if (!isForwardSlashOperator(*m_valueList->current()) || !m_valueList->next())
                 return false;
-            autoRowsValue = parseGridTrackSize(*m_valueList);
-            if (!autoRowsValue)
+            autoColumnsValue = parseGridTrackSize(*m_valueList);
+            if (!autoColumnsValue)
                 return false;
         }
         if (m_valueList->current())
@@ -5715,8 +5715,8 @@ bool CSSParser::parseGridShorthand(bool important)
     }
 
     // if <grid-auto-rows> value is omitted, it is set to the value specified for grid-auto-columns.
-    if (!autoRowsValue)
-        autoRowsValue = autoColumnsValue;
+    if (!autoColumnsValue)
+        autoColumnsValue = autoRowsValue;
 
     addProperty(CSSPropertyWebkitGridAutoColumns, autoColumnsValue.release(), important);
     addProperty(CSSPropertyWebkitGridAutoRows, autoRowsValue.release(), important);

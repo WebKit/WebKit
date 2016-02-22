@@ -1,3 +1,19 @@
+2016-02-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Swap columns and rows in grid shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=154449
+
+        Reviewed by Darin Adler.
+
+        The spec was modified past December to change the order of
+        columns and rows in the grid shorthand:
+        https://github.com/w3c/csswg-drafts/commit/7454c7c8c5857b61bbbe2ee5f07803c264bf37e4
+
+        Updated the parsing and modified the tests to follow the new syntax.
+
+        * fast/css-grid-layout/grid-shorthand-get-set-expected.txt:
+        * fast/css-grid-layout/grid-shorthand-get-set.html:
+
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
         Make HTMLSelectElement.size behave as per the specification
