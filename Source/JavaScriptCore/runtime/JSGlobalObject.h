@@ -293,6 +293,7 @@ protected:
 
     struct TypedArrayData {
         WriteBarrier<JSObject> prototype;
+        WriteBarrier<InternalFunction> constructor;
         WriteBarrier<Structure> structure;
     };
     
@@ -579,6 +580,11 @@ public:
         if (type == NotTypedArray)
             return false;
         return typedArrayStructure(type) == structure;
+    }
+
+    JSObject* typedArrayConstructor(TypedArrayType type) const
+    {
+        return m_typedArrays[toIndex(type)].constructor.get();
     }
 
     JSCell* actualPointerFor(Special::Pointer pointer)

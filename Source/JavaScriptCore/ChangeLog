@@ -1,5 +1,51 @@
 2016-02-22  Keith Miller  <keith_miller@apple.com>
 
+        Use Symbol.species in the builtin TypedArray.prototype functions
+        https://bugs.webkit.org/show_bug.cgi?id=153384
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds the use of species constructors to the TypedArray.prototype map and filter
+        functions. It also adds a new private function typedArrayGetOriginalConstructor that
+        returns the TypedArray constructor used to originally create a TypedArray instance.
+
+        There are no ES6 tests to update for this patch as species creation for these functions is
+        not tested in the compatibility table.
+
+        * builtins/TypedArrayPrototype.js:
+        (map):
+        (filter):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::typedArrayConstructor):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewPrivateFuncGetOriginalConstructor):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * tests/stress/typedarray-filter.js:
+        (subclasses.typedArrays.map):
+        (prototype.accept):
+        (testSpecies):
+        (accept):
+        (forEach):
+        (subclasses.forEach):
+        (testSpeciesRemoveConstructor):
+        * tests/stress/typedarray-map.js:
+        (subclasses.typedArrays.map):
+        (prototype.id):
+        (testSpecies):
+        (id):
+        (forEach):
+        (subclasses.forEach):
+        (testSpeciesRemoveConstructor):
+
+2016-02-22  Keith Miller  <keith_miller@apple.com>
+
         Builtins that should not rely on iteration do.
         https://bugs.webkit.org/show_bug.cgi?id=154475
 

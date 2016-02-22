@@ -48,6 +48,7 @@ public:
 
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(ExecState*);
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState*);
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncGetOriginalConstructor(ExecState*);
 
     
 } // namespace JSC

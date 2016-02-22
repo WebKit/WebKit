@@ -233,8 +233,23 @@ function map(callback /*, thisArg */)
         throw new @TypeError("TypedArray.prototype.map callback must be a function");
 
     var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
-    // FIXME: This should be a species constructor.
-    var result = new this.constructor(length);
+
+    // Do species construction
+    var constructor = this.constructor;
+    var result;
+    if (constructor === @undefined)
+        result = new (@typedArrayGetOriginalConstructor(this))(length);
+    else {
+        var speciesConstructor = @Object(constructor)[@symbolSpecies];
+        if (speciesConstructor === null || speciesConstructor === @undefined)
+            result = new (@typedArrayGetOriginalConstructor(this))(length);
+        else {
+            result = new speciesConstructor(length);
+            // typedArrayLength throws if it doesn't get a view.
+            @typedArrayLength(result);
+        }
+    }
+
     for (var i = 0; i < length; i++) {
         var mappedValue = callback.@call(thisArg, this[i], i, this);
         result[i] = mappedValue;
@@ -252,7 +267,6 @@ function filter(callback /*, thisArg */)
         throw new @TypeError("TypedArray.prototype.filter callback must be a function");
 
     var thisArg = arguments.length > 1 ? arguments[1] : @undefined;
-
     var kept = [];
 
     for (var i = 0; i < length; i++) {
@@ -261,8 +275,21 @@ function filter(callback /*, thisArg */)
             kept.@push(value);
     }
 
-    // FIXME: This should be a species constructor.
-    var result = new this.constructor(kept.length);
+    var constructor = this.constructor;
+    var result;
+    var resultLength = kept.length;
+    if (constructor === @undefined)
+        result = new (@typedArrayGetOriginalConstructor(this))(resultLength);
+    else {
+        var speciesConstructor = @Object(constructor)[@symbolSpecies];
+        if (speciesConstructor === null || speciesConstructor === @undefined)
+            result = new (@typedArrayGetOriginalConstructor(this))(resultLength);
+        else {
+            result = new speciesConstructor(resultLength);
+            // typedArrayLength throws if it doesn't get a view.
+            @typedArrayLength(result);
+        }
+    }
 
     for (var i = 0; i < kept.length; i++)
         result[i] = kept[i];

@@ -74,6 +74,14 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
     return JSValue::encode(jsNumber(thisObject->length()));
 }
 
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncGetOriginalConstructor(ExecState* exec)
+{
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    TypedArrayType type = exec->uncheckedArgument(0).getObject()->classInfo()->typedArrayStorageType;
+    ASSERT(isTypedView(type));
+    return JSValue::encode(globalObject->typedArrayConstructor(type));
+}
+
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(ExecState* exec)
 {
     JSValue thisValue = exec->argument(0);

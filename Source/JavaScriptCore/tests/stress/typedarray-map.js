@@ -48,4 +48,55 @@ shouldThrow("testPrototypeFunction('map', '(new Object())', [12, 15, 10, 13, 44]
 shouldThrow("testPrototypeFunction('map', '(null)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.map callback must be a function'");
 shouldThrow("testPrototypeFunction('map', '()', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.map callback must be a function'");
 debug("");
+
+debug("6.0 Symbol.species Test");
+subclasses = typedArrays.map(function(constructor) { return class extends constructor { } } );
+
+function id(x) { return x; }
+
+function testSpecies(array, constructor) {
+    let newArray = array.map(id);
+    return newArray instanceof constructor;
+}
+shouldBeTrue("forEachTypedArray(subclasses, testSpecies)");
+
+Foo = class extends Int32Array { }
+subclasses.forEach(function(constructor) { Object.defineProperty(constructor, Symbol.species, { value:Foo, writable:true }); });
+function testSpeciesWithFoo(array, constructor) {
+    let newArray = array.map(id);
+    return newArray instanceof Foo;
+}
+shouldBeTrue("forEachTypedArray(subclasses, testSpeciesWithFoo)");
+debug("");
+
+debug("6.1 Symbol.species Test throws");
+subclasses.forEach(function(constructor) { Object.defineProperty(constructor, Symbol.species, { value:1, writable:true }); });
+shouldThrow("forEachTypedArray(subclasses, testSpecies)");
+
+subclasses.forEach(function(constructor) { constructor[Symbol.species] = Array; });
+shouldThrow("forEachTypedArray(subclasses, testSpecies)");
+debug("");
+
+debug("6.2 Symbol.species Test with Defaults");
+subclasses.forEach(function(constructor) { constructor[Symbol.species] = null; });
+function testSpeciesIsDefault(array, constructor) {
+    let newArray = array.map(id);
+    let defaultConstructor = typedArrays[subclasses.indexOf(constructor)];
+    return newArray instanceof defaultConstructor;
+}
+
+shouldBeTrue("forEachTypedArray(subclasses, testSpeciesIsDefault)");
+
+subclasses.forEach(function(constructor) { constructor[Symbol.species] = undefined; });
+shouldBeTrue("forEachTypedArray(subclasses, testSpeciesIsDefault)");
+
+subclasses = typedArrays.map(function(constructor) { return class extends constructor { } } );
+function testSpeciesRemoveConstructor(array, constructor) {
+    array.constructor = undefined;
+    let newArray = array.map(id);
+    let defaultConstructor = typedArrays[subclasses.indexOf(constructor)];
+    return newArray instanceof defaultConstructor;
+}
+
+shouldBeTrue("forEachTypedArray(subclasses, testSpeciesRemoveConstructor)");
 finishJSTest();
