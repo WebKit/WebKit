@@ -1,3 +1,20 @@
+2016-02-22  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Fix build and implement functions to retrieve registers on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=152258
+
+        Reviewed by Michael Catanzaro.
+
+        * heap/MachineStackMarker.cpp:
+        (pthreadSignalHandlerSuspendResume):
+        struct ucontext is not specified in POSIX and it is not available on
+        FreeBSD. Replacing it with ucontext_t fixes the build problem.
+        (JSC::MachineThreads::Thread::Registers::stackPointer):
+        (JSC::MachineThreads::Thread::Registers::framePointer):
+        (JSC::MachineThreads::Thread::Registers::instructionPointer):
+        (JSC::MachineThreads::Thread::Registers::llintPC):
+        * heap/MachineStackMarker.h:
+
 2016-02-22  Saam barati  <sbarati@apple.com>
 
         JSValue::isConstructor and JSValue::isFunction should check getConstructData and getCallData
