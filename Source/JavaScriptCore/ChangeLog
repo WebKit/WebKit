@@ -1,3 +1,15 @@
+2016-02-21  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Remove arrowfunction test cases that rely on arguments variable in jsc
+        https://bugs.webkit.org/show_bug.cgi?id=154517
+
+        Reviewed by Yusuke Suzuki.
+
+        Allow to jsc has the same behavior in javascript as browser has
+
+        * tests/stress/arrowfunction-lexical-bind-arguments-non-strict-1.js:
+        * tests/stress/arrowfunction-lexical-bind-arguments-strict.js:
+
 2016-02-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: it should be possible to omit generated code guarded by INSPECTOR_ALTERNATE_DISPATCHERS
