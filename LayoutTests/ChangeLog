@@ -1,3 +1,16 @@
+2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [JSC shell] Don't put empty arguments array to VM.
+        https://bugs.webkit.org/show_bug.cgi?id=154516
+
+        Reviewed by Geoffrey Garen.
+
+        This allows arrowfunction-lexical-bind-arguments-top-level test to pass
+        in jsc as well as in browser.
+
+        * js/script-tests/arrowfunction-lexical-bind-arguments-top-level.js:
+        Removed @ skip annotation.
+
 2016-02-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline tests for ios-simulator after W3C HTML/DOM re-sync in r196883

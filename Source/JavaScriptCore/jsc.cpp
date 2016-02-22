@@ -752,11 +752,13 @@ protected:
         addFunction(vm, "samplingProfilerStackTraces", functionSamplingProfilerStackTraces, 0);
 #endif
 
-        JSArray* array = constructEmptyArray(globalExec(), 0);
-        for (size_t i = 0; i < arguments.size(); ++i)
-            array->putDirectIndex(globalExec(), i, jsString(globalExec(), arguments[i]));
-        putDirect(vm, Identifier::fromString(globalExec(), "arguments"), array);
-        
+        if (!arguments.isEmpty()) {
+            JSArray* array = constructEmptyArray(globalExec(), 0);
+            for (size_t i = 0; i < arguments.size(); ++i)
+                array->putDirectIndex(globalExec(), i, jsString(globalExec(), arguments[i]));
+            putDirect(vm, Identifier::fromString(globalExec(), "arguments"), array);
+        }
+
         putDirect(vm, Identifier::fromString(globalExec(), "console"), jsUndefined());
     }
 
