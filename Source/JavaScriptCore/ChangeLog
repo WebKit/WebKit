@@ -1,5 +1,48 @@
 2016-02-21  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: it should be possible to omit generated code guarded by INSPECTOR_ALTERNATE_DISPATCHERS
+        https://bugs.webkit.org/show_bug.cgi?id=154508
+        <rdar://problem/24759077>
+
+        Reviewed by Timothy Hatcher.
+
+        In preparation for being able to generate protocol files for WebKit2,
+        make it possible to not emit generated code that's guarded by
+        ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS). This code is not needed by
+        backend dispatchers generated outside of JavaScriptCore. We can't just
+        define it to 0 for WebKit2, since it's defined to 1 in <wtf/Platform.h>
+        in the configurations where the code is actually used.
+
+        Add a new opt-in Framework configuration option that turns on generating
+        this code. Adjust how the code is generated so that it can be easily excluded.
+
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        Make a separate template for the declarations that are guarded.
+        Add an initializer expression so the order of initalizers doesn't matter.
+
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator.generate_output): Add a setting check.
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        If the declarations are needed, they will be appended to the end of the
+        declarations list.
+
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.generate_output): Add a setting check.
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command): Add a setting check.
+
+        * inspector/scripts/codegen/models.py: Set the 'alternate_dispatchers' setting
+        to True for Framework.JavaScriptCore only. It's not needed elsewhere.
+
+        Rebaseline affected tests.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+
+2016-02-21  Brian Burg  <bburg@apple.com>
+
         Web Inspector: clean up generator selection in generate-inspector-protocol-bindings.py
         https://bugs.webkit.org/show_bug.cgi?id=154505
         <rdar://problem/24758042>

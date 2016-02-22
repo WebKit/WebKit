@@ -175,15 +175,15 @@ public:
 private:
     void executeAllOptionalParameters(long requestId, RefPtr<InspectorObject>&& parameters);
     void executeNoOptionalParameters(long requestId, RefPtr<InspectorObject>&& parameters);
-private:
-    DatabaseBackendDispatcher(BackendDispatcher&, DatabaseBackendDispatcherHandler*);
-    DatabaseBackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateDatabaseBackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
-    AlternateDatabaseBackendDispatcher* m_alternateDispatcher;
+    AlternateDatabaseBackendDispatcher* m_alternateDispatcher { nullptr };
 #endif
+private:
+    DatabaseBackendDispatcher(BackendDispatcher&, DatabaseBackendDispatcherHandler*);
+    DatabaseBackendDispatcherHandler* m_agent { nullptr };
 };
 
 } // namespace Inspector
@@ -246,9 +246,6 @@ Ref<DatabaseBackendDispatcher> DatabaseBackendDispatcher::create(BackendDispatch
 DatabaseBackendDispatcher::DatabaseBackendDispatcher(BackendDispatcher& backendDispatcher, DatabaseBackendDispatcherHandler* agent)
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
-#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    , m_alternateDispatcher(nullptr)
-#endif
 {
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Database"), this);
 }

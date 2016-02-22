@@ -173,15 +173,15 @@ public:
     virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
     void commandWithEnumReturnValue(long requestId, RefPtr<InspectorObject>&& parameters);
-private:
-    CommandDomainBackendDispatcher(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
-    CommandDomainBackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateCommandDomainBackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
-    AlternateCommandDomainBackendDispatcher* m_alternateDispatcher;
+    AlternateCommandDomainBackendDispatcher* m_alternateDispatcher { nullptr };
 #endif
+private:
+    CommandDomainBackendDispatcher(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
+    CommandDomainBackendDispatcherHandler* m_agent { nullptr };
 };
 
 } // namespace Inspector
@@ -244,9 +244,6 @@ Ref<CommandDomainBackendDispatcher> CommandDomainBackendDispatcher::create(Backe
 CommandDomainBackendDispatcher::CommandDomainBackendDispatcher(BackendDispatcher& backendDispatcher, CommandDomainBackendDispatcherHandler* agent)
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
-#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    , m_alternateDispatcher(nullptr)
-#endif
 {
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("CommandDomain"), this);
 }

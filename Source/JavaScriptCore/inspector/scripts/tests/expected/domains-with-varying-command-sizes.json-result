@@ -192,15 +192,15 @@ public:
     virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
     void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
-private:
-    Network1BackendDispatcher(BackendDispatcher&, Network1BackendDispatcherHandler*);
-    Network1BackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateNetwork1BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
-    AlternateNetwork1BackendDispatcher* m_alternateDispatcher;
+    AlternateNetwork1BackendDispatcher* m_alternateDispatcher { nullptr };
 #endif
+private:
+    Network1BackendDispatcher(BackendDispatcher&, Network1BackendDispatcherHandler*);
+    Network1BackendDispatcherHandler* m_agent { nullptr };
 };
 
 class Network3BackendDispatcher final : public SupplementalBackendDispatcher {
@@ -215,15 +215,15 @@ private:
     void loadResource5(long requestId, RefPtr<InspectorObject>&& parameters);
     void loadResource6(long requestId, RefPtr<InspectorObject>&& parameters);
     void loadResource7(long requestId, RefPtr<InspectorObject>&& parameters);
-private:
-    Network3BackendDispatcher(BackendDispatcher&, Network3BackendDispatcherHandler*);
-    Network3BackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateNetwork3BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
-    AlternateNetwork3BackendDispatcher* m_alternateDispatcher;
+    AlternateNetwork3BackendDispatcher* m_alternateDispatcher { nullptr };
 #endif
+private:
+    Network3BackendDispatcher(BackendDispatcher&, Network3BackendDispatcherHandler*);
+    Network3BackendDispatcherHandler* m_agent { nullptr };
 };
 
 } // namespace Inspector
@@ -287,9 +287,6 @@ Ref<Network1BackendDispatcher> Network1BackendDispatcher::create(BackendDispatch
 Network1BackendDispatcher::Network1BackendDispatcher(BackendDispatcher& backendDispatcher, Network1BackendDispatcherHandler* agent)
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
-#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    , m_alternateDispatcher(nullptr)
-#endif
 {
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network1"), this);
 }
@@ -334,9 +331,6 @@ Ref<Network3BackendDispatcher> Network3BackendDispatcher::create(BackendDispatch
 Network3BackendDispatcher::Network3BackendDispatcher(BackendDispatcher& backendDispatcher, Network3BackendDispatcherHandler* agent)
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
-#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    , m_alternateDispatcher(nullptr)
-#endif
 {
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network3"), this);
 }

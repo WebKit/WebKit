@@ -42,12 +42,14 @@ _FRAMEWORK_CONFIG_MAP = {
     "Global": {
     },
     "JavaScriptCore": {
-        "export_macro": "JS_EXPORT_PRIVATE"
+        "export_macro": "JS_EXPORT_PRIVATE",
+        "alternate_dispatchers": True,
     },
     "WebInspector": {
     },
     # Used for code generator tests.
     "Test": {
+        "alternate_dispatchers": True,
     }
 }
 

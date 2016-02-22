@@ -55,10 +55,12 @@ class CppBackendDispatcherImplementationGenerator(Generator):
             '<wtf/text/CString.h>']
 
         secondary_includes = ['#include %s' % header for header in secondary_headers]
-        secondary_includes.append('')
-        secondary_includes.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
-        secondary_includes.append('#include "InspectorAlternateBackendDispatchers.h"')
-        secondary_includes.append('#endif')
+
+        if self.model().framework.setting('alternate_dispatchers', False):
+            secondary_includes.append('')
+            secondary_includes.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
+            secondary_includes.append('#include "InspectorAlternateBackendDispatchers.h"')
+            secondary_includes.append('#endif')
 
         header_args = {
             'primaryInclude': '"InspectorBackendDispatchers.h"',
@@ -276,13 +278,14 @@ class CppBackendDispatcherImplementationGenerator(Generator):
         if len(command.call_parameters) > 0:
             lines.append(Template(CppTemplates.BackendDispatcherImplementationPrepareCommandArguments).substitute(None, **command_args))
 
-        lines.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
-        lines.append('    if (m_alternateDispatcher) {')
-        lines.append('        m_alternateDispatcher->%(commandName)s(%(alternateInvocationParameters)s);' % command_args)
-        lines.append('        return;')
-        lines.append('    }')
-        lines.append('#endif')
-        lines.append('')
+        if self.model().framework.setting('alternate_dispatchers', False):
+            lines.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
+            lines.append('    if (m_alternateDispatcher) {')
+            lines.append('        m_alternateDispatcher->%(commandName)s(%(alternateInvocationParameters)s);' % command_args)
+            lines.append('        return;')
+            lines.append('    }')
+            lines.append('#endif')
+            lines.append('')
 
         lines.append('    ErrorString error;')
         lines.append('    Ref<InspectorObject> result = InspectorObject::create();')
