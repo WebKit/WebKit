@@ -1,3 +1,17 @@
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
+        CSP: Enable form-action directive by default
+        https://bugs.webkit.org/show_bug.cgi?id=154520
+        <rdar://problem/24762029>
+
+        Reviewed by Sam Weinig.
+
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Move logic to parse the form-action
+        directive outside the ENABLE(CSP_NEXT) macro guarded section/experimental feature runtime flag.
+        (WebCore::isExperimentalDirectiveName): Remove form-action from the directives considered
+        experimental.
+
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
         Add username / password attributes to HTMLAnchorElement / HTMLAreaElement

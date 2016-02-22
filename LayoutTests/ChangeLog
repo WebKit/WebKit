@@ -1,3 +1,15 @@
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
+        CSP: Enable form-action directive by default
+        https://bugs.webkit.org/show_bug.cgi?id=154520
+        <rdar://problem/24762029>
+
+        Reviewed by Sam Weinig.
+
+        Mark form-action tests as Pass so that we run them.
+
+        * TestExpectations:
+
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
         Add username / password attributes to HTMLAnchorElement / HTMLAreaElement
