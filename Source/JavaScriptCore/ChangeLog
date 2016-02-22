@@ -1,3 +1,22 @@
+2016-02-22  Saam barati  <sbarati@apple.com>
+
+        JSValue::isConstructor and JSValue::isFunction should check getConstructData and getCallData
+        https://bugs.webkit.org/show_bug.cgi?id=154552
+
+        Reviewed by Mark Lam.
+
+        ES6 Proxy breaks our isFunction() and isConstructor() JSValue methods.
+        They return false on a Proxy with internal [[Call]] and [[Construct]]
+        properties. It seems safest, most forward looking, and most adherent
+        to the specification to check getCallData() and getConstructData() to
+        implement these functions.
+
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isFunction):
+        (JSC::JSValue::isConstructor):
+
 2016-02-22  Keith Miller  <keith_miller@apple.com>
 
         Bound functions should use the prototype of the function being bound
