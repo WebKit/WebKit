@@ -787,7 +787,7 @@
 - path: es6/Function_is_subclassable_Function.prototype.apply.js
   cmd: runES6 :normal
 - path: es6/Function_is_subclassable_Function.prototype.bind.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Function_is_subclassable_Function.prototype.call.js
   cmd: runES6 :normal
 - path: es6/function_name_property_accessor_properties.js
@@ -897,15 +897,15 @@
 - path: es6/proper_tail_calls_tail_call_optimisation_mutual_recursion.js
   cmd: runES6 :normal
 - path: es6/prototype_of_bound_functions_arrow_functions.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/prototype_of_bound_functions_basic_functions.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/prototype_of_bound_functions_classes.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/prototype_of_bound_functions_generator_functions.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/prototype_of_bound_functions_subclasses.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_apply_handler.js
   cmd: runES6 :normal
 - path: es6/Proxy_Array.isArray_support.js

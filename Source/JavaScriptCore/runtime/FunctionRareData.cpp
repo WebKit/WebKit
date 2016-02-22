@@ -56,6 +56,7 @@ void FunctionRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     rareData->m_objectAllocationProfile.visitAggregate(visitor);
     rareData->m_internalFunctionAllocationProfile.visitAggregate(visitor);
+    visitor.append(&rareData->m_boundFunctionStructure);
 }
 
 FunctionRareData::FunctionRareData(VM& vm)

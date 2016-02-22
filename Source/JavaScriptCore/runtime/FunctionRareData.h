@@ -90,6 +90,9 @@ public:
         return m_internalFunctionAllocationProfile.createAllocationStructureFromBase(vm, this, prototype, baseStructure);
     }
 
+    Structure* getBoundFunctionStructure() { return m_boundFunctionStructure.get(); }
+    void setBoundFunctionStructure(VM& vm, Structure* structure) { m_boundFunctionStructure.set(vm, this, structure); }
+
 protected:
     FunctionRareData(VM&);
     ~FunctionRareData();
@@ -114,6 +117,7 @@ private:
     ObjectAllocationProfile m_objectAllocationProfile;
     InlineWatchpointSet m_objectAllocationProfileWatchpoint;
     InternalFunctionAllocationProfile m_internalFunctionAllocationProfile;
+    WriteBarrier<Structure> m_boundFunctionStructure;
 };
 
 } // namespace JSC

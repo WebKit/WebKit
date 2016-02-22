@@ -1,4 +1,5 @@
 F = class extends Function { }
+N = class extends null { }
 
 function test(i) {
 
@@ -20,12 +21,15 @@ function test(i) {
         throw "function was not .callable";
 
     let g2 = g.bind({foo:1}, 1);
-    if (g2 instanceof F)
-        throw "the binding of a subclass should not inherit from the original function";
+    if (!(g2 instanceof F))
+        throw "the binding of a subclass should inherit from the bound function's class";
 
     if (g2(1) !== 3)
         throw "binding didn't work";
 
+    let bound = C.bind(null)
+    if (bound.__proto__ !== C.__proto__)
+        throw "binding with null as prototype didn't work";
 }
 noInline(test);
 

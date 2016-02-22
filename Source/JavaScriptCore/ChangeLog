@@ -1,5 +1,38 @@
 2016-02-22  Keith Miller  <keith_miller@apple.com>
 
+        Bound functions should use the prototype of the function being bound
+        https://bugs.webkit.org/show_bug.cgi?id=154195
+
+        Reviewed by Geoffrey Garen.
+
+        Per ES6, the result of Function.prototype.bind should have the same
+        prototype as the the function being bound. In order to avoid creating
+        a new structure each time a function is bound we store the new
+        structure in our structure map. However, we cannot currently store
+        structures that have a different GlobalObject than their prototype.
+        In the rare case that the GlobalObject differs or the prototype of
+        the bindee is null we create a new structure each time. To further
+        minimize new structures, as well as making structure lookup faster,
+        we also store the structure in the RareData of the function we
+        are binding.
+
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::visitChildren):
+        * runtime/FunctionRareData.h:
+        (JSC::FunctionRareData::getBoundFunctionStructure):
+        (JSC::FunctionRareData::setBoundFunctionStructure):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::getBoundFunctionStructure):
+        (JSC::JSBoundFunction::create):
+        * tests/es6.yaml:
+        * tests/stress/bound-function-uses-prototype.js: Added.
+        (testChangeProto.foo):
+        (testChangeProto):
+        (testBuiltins):
+        * tests/stress/class-subclassing-function.js:
+
+2016-02-22  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix stress test to not print on success.
 
         * tests/stress/call-apply-builtin-functions-dont-use-iterators.js:
