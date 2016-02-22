@@ -73,6 +73,12 @@ public:
     String host() const;
     void setHost(const String&);
 
+    String username() const;
+    void setUsername(const String&);
+
+    String password() const;
+    void setPassword(const String&);
+
     String hostname() const;
     void setHostname(const String&);
 

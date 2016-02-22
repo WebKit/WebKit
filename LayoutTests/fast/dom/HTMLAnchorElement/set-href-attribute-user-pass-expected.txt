@@ -1,0 +1,13 @@
+Test setting the username / password attributes of the URL in HTMLAnchorElement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a.href is 'https://user@www.mydomain.com:8080/path/testurl.html#middle'
+PASS a.href is 'https://user:password@www.mydomain.com:8080/path/testurl.html#middle'
+PASS a.href is 'https://null:password@www.mydomain.com:8080/path/testurl.html#middle'
+PASS a.href is 'https://null:null@www.mydomain.com:8080/path/testurl.html#middle'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

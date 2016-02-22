@@ -24,13 +24,10 @@ a.href = "https://www.my\"d(){}|~om?ain#com/path/testurl.html#middle";
 a.hash = "#hash#value";
 shouldBe("a.href", "'https://www.my\"d(){}|~om?ain#com/path/testurl.html#middle'");
 
-// IE8 converts null to "null", which is not the right thing to do.
-// Firefox 3.5.2 removes the '#' at the end, and it should per
-// http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes .
 debug("Set hash to null");
 a.href = "https://www.mydomain.com/path/testurl.html#middle";
 a.hash = null;
-shouldBe("a.href", "'https://www.mydomain.com/path/testurl.html#'");
+shouldBe("a.href", "'https://www.mydomain.com/path/testurl.html#null'");
 
 // Firefox 3.5.2 removes the '#' at the end, and it should per
 // http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes .

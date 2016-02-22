@@ -1,5 +1,34 @@
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
+        Add username / password attributes to HTMLAnchorElement / HTMLAreaElement
+        https://bugs.webkit.org/show_bug.cgi?id=154519
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-hash.js:
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-host.js:
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-hostname.js:
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-pathname.js:
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-protocol.js:
+        * fast/dom/HTMLAnchorElement/script-tests/set-href-attribute-search.js:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hostname-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-pathname-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-protocol-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-search-expected.txt:
+        Update / rebaseline tests now that we no longer treat null as the empty string.
+
+        * fast/dom/HTMLAnchorElement/set-href-attribute-user-pass-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/set-href-attribute-user-pass.html: Added.
+        Add test coverage for setting the username / password attributes.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        Rebaseline now that HTMLAnchorElement / HTMLAreaElement have 2 additional
+        attributes: username and password.
+
+2016-02-21  Chris Dumez  <cdumez@apple.com>
+
         iframe/frame/object.contentDocument should be on the prototype
         https://bugs.webkit.org/show_bug.cgi?id=154409
 

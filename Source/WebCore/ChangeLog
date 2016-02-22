@@ -1,5 +1,36 @@
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
+        Add username / password attributes to HTMLAnchorElement / HTMLAreaElement
+        https://bugs.webkit.org/show_bug.cgi?id=154519
+
+        Reviewed by Sam Weinig.
+
+        Add username / password attributes to HTMLAnchorElement / HTMLAreaElement as per:
+        https://html.spec.whatwg.org/#htmlhyperlinkelementutils
+
+        Firefox and Chrome already implement these.
+
+        Also stop treating null as the empty string for the HTMLHyperlinkElementUtils
+        attributes. This behavior does not match the specification or other browsers
+        (tested Firefox and Chrome).
+
+        Test: fast/dom/HTMLAnchorElement/set-href-attribute-user-pass.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::username):
+        (WebCore::HTMLAnchorElement::setUsername):
+        (WebCore::HTMLAnchorElement::password):
+        (WebCore::HTMLAnchorElement::setPassword):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLHyperlinkElementUtils.idl: Added.
+
+2016-02-21  Chris Dumez  <cdumez@apple.com>
+
         iframe/frame/object.contentDocument should be on the prototype
         https://bugs.webkit.org/show_bug.cgi?id=154409
 

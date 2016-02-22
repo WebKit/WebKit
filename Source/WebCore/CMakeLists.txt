@@ -462,6 +462,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLHeadElement.idl
     html/HTMLHeadingElement.idl
     html/HTMLHtmlElement.idl
+    html/HTMLHyperlinkElementUtils.idl
     html/HTMLIFrameElement.idl
     html/HTMLImageElement.idl
     html/HTMLInputElement.idl

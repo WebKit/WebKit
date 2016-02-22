@@ -1607,8 +1607,8 @@ PASS HTMLAnchorElement interface: attribute shape
 PASS HTMLAnchorElement interface: attribute href 
 PASS HTMLAnchorElement interface: attribute origin 
 PASS HTMLAnchorElement interface: attribute protocol 
-FAIL HTMLAnchorElement interface: attribute username assert_true: The prototype object must have a property "username" expected true got false
-FAIL HTMLAnchorElement interface: attribute password assert_true: The prototype object must have a property "password" expected true got false
+PASS HTMLAnchorElement interface: attribute username 
+PASS HTMLAnchorElement interface: attribute password 
 PASS HTMLAnchorElement interface: attribute host 
 PASS HTMLAnchorElement interface: attribute hostname 
 PASS HTMLAnchorElement interface: attribute port 
@@ -1633,8 +1633,8 @@ PASS HTMLAnchorElement interface: document.createElement("a") must inherit prope
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "href" with the proper type (13) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "origin" with the proper type (14) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "protocol" with the proper type (15) 
-FAIL HTMLAnchorElement interface: document.createElement("a") must inherit property "username" with the proper type (16) assert_inherits: property "username" not found in prototype chain
-FAIL HTMLAnchorElement interface: document.createElement("a") must inherit property "password" with the proper type (17) assert_inherits: property "password" not found in prototype chain
+PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "username" with the proper type (16) 
+PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "password" with the proper type (17) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "host" with the proper type (18) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "hostname" with the proper type (19) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "port" with the proper type (20) 
@@ -2476,16 +2476,16 @@ PASS HTMLAreaElement interface: attribute rel
 PASS HTMLAreaElement interface: attribute relList 
 PASS HTMLAreaElement interface: attribute noHref 
 PASS HTMLAreaElement interface: attribute href 
-FAIL HTMLAreaElement interface: attribute origin assert_true: The prototype object must have a property "origin" expected true got false
-FAIL HTMLAreaElement interface: attribute protocol assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute username assert_true: The prototype object must have a property "username" expected true got false
-FAIL HTMLAreaElement interface: attribute password assert_true: The prototype object must have a property "password" expected true got false
-FAIL HTMLAreaElement interface: attribute host assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute hostname assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute port assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute pathname assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute search assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL HTMLAreaElement interface: attribute hash assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+FAIL HTMLAreaElement interface: attribute origin assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS HTMLAreaElement interface: attribute protocol 
+PASS HTMLAreaElement interface: attribute username 
+PASS HTMLAreaElement interface: attribute password 
+PASS HTMLAreaElement interface: attribute host 
+PASS HTMLAreaElement interface: attribute hostname 
+PASS HTMLAreaElement interface: attribute port 
+PASS HTMLAreaElement interface: attribute pathname 
+PASS HTMLAreaElement interface: attribute search 
+PASS HTMLAreaElement interface: attribute hash 
 PASS HTMLAreaElement must be primary interface of document.createElement("area") 
 PASS Stringification of document.createElement("area") 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "alt" with the proper type (0) 
@@ -2498,10 +2498,10 @@ PASS HTMLAreaElement interface: document.createElement("area") must inherit prop
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "relList" with the proper type (7) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "noHref" with the proper type (8) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "href" with the proper type (9) 
-FAIL HTMLAreaElement interface: document.createElement("area") must inherit property "origin" with the proper type (10) assert_inherits: property "origin" not found in prototype chain
+PASS HTMLAreaElement interface: document.createElement("area") must inherit property "origin" with the proper type (10) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "protocol" with the proper type (11) 
-FAIL HTMLAreaElement interface: document.createElement("area") must inherit property "username" with the proper type (12) assert_inherits: property "username" not found in prototype chain
-FAIL HTMLAreaElement interface: document.createElement("area") must inherit property "password" with the proper type (13) assert_inherits: property "password" not found in prototype chain
+PASS HTMLAreaElement interface: document.createElement("area") must inherit property "username" with the proper type (12) 
+PASS HTMLAreaElement interface: document.createElement("area") must inherit property "password" with the proper type (13) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "host" with the proper type (14) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "hostname" with the proper type (15) 
 PASS HTMLAreaElement interface: document.createElement("area") must inherit property "port" with the proper type (16) 

@@ -32,11 +32,10 @@ a.href = "https://www.mydomain.com/path/testurl.html?key=value";
 a.pathname = "/it/../path";
 shouldBe("a.href", "'https://www.mydomain.com/path?key=value'");
 
-// IE8 converts null to "null", which is not the right thing to do.
 debug("Set pathname to null");
 a.href = "https://www.mydomain.com/path/testurl.html?key=value";
 a.pathname = null;
-shouldBe("a.href", "'https://www.mydomain.com/?key=value'");
+shouldBe("a.href", "'https://www.mydomain.com/null?key=value'");
 
 debug("Set pathname to empty string");
 a.href = "https://www.mydomain.com/?key=value";

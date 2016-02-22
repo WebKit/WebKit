@@ -23,13 +23,10 @@ a.href = "foo://www.mydomain.com/path/";
 a.hostname = "www.otherdomain.com";
 shouldBe("a.href", "'foo://www.otherdomain.com/path/'");
 
-// IE8 converts null to "null", which is not the right thing to do.
-// Firefox 3.5.2 allows setting the hostname to null, which is wrong per
-// http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes .
 debug("Set hostname to null");
 a.href = "https://www.mydomain.com:8080/path/";
 a.hostname = null;
-shouldBe("a.href", "'https://www.mydomain.com:8080/path/'");
+shouldBe("a.href", "'https://null:8080/path/'");
 
 // Both IE8 and Firefox 3.5.2 allow setting the host to empty string, against the spec at
 // http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes .

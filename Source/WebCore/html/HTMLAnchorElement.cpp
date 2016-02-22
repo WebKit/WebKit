@@ -391,6 +391,30 @@ void HTMLAnchorElement::setHost(const String& value)
     setHref(url.string());
 }
 
+String HTMLAnchorElement::username() const
+{
+    return href().encodedUser();
+}
+
+void HTMLAnchorElement::setUsername(const String& value)
+{
+    URL url = href();
+    url.setUser(value);
+    setHref(url.string());
+}
+
+String HTMLAnchorElement::password() const
+{
+    return href().encodedPass();
+}
+
+void HTMLAnchorElement::setPassword(const String& value)
+{
+    URL url = href();
+    url.setPass(value);
+    setHref(url.string());
+}
+
 String HTMLAnchorElement::hostname() const
 {
     return href().host();

@@ -33,11 +33,10 @@ a.href = "bad:/|/url";
 a.search = "?value=key";
 shouldBe("a.href", "'bad:/|/url?value=key'");
 
-// IE8 converts null to "null", which is not the right thing to do.
 debug("Set search to null");
 a.href = "https://www.mydomain.com/path/?key=value";
 a.search = null;
-shouldBe("a.href", "'https://www.mydomain.com/path/'");
+shouldBe("a.href", "'https://www.mydomain.com/path/?null'");
 
 // Firefox 3.5.2 Removes the '?', and it shouldn't, per
 // http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes .
