@@ -770,24 +770,15 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 GENERATE_WEBKIT2_MESSAGE_SOURCES(WebKit2_DERIVED_SOURCES "${WebKit2_MESSAGES_IN_FILES}")
 
-include_directories(${WebKit2_INCLUDE_DIRECTORIES})
-include_directories(SYSTEM ${WebKit2_SYSTEM_INCLUDE_DIRECTORIES})
-add_library(WebKit2 ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES} ${WebKit2_DERIVED_SOURCES})
-
+WEBKIT_FRAMEWORK(WebKit2)
 add_dependencies(WebKit2 WebCore ${WEBKIT2_EXTRA_DEPENDENCIES})
 add_webkit2_prefix_header(WebKit2)
-target_link_libraries(WebKit2 ${WebKit2_LIBRARIES})
-set_target_properties(WebKit2 PROPERTIES FOLDER "WebKit")
 
 # Suppress unused parameter warnings for sources in WebKit2.
 ADD_TARGET_PROPERTIES(WebKit2 COMPILE_FLAGS "-Wno-unused-parameter")
 
 if (WebKit2_VERSION_SCRIPT)
     ADD_TARGET_PROPERTIES(WebKit2 LINK_FLAGS "${WebKit2_VERSION_SCRIPT}")
-endif ()
-
-if (WebKit2_OUTPUT_NAME)
-    set_target_properties(WebKit2 PROPERTIES OUTPUT_NAME ${WebKit2_OUTPUT_NAME})
 endif ()
 
 add_executable(WebProcess ${WebProcess_SOURCES})
@@ -837,9 +828,7 @@ endif ()
 POPULATE_LIBRARY_VERSION(WEBKIT2)
 set_target_properties(WebKit2 PROPERTIES VERSION ${WEBKIT2_VERSION} SOVERSION ${WEBKIT2_VERSION_MAJOR})
 
-if (APPLE)
-    WEBKIT_FRAMEWORK(WebKit2)
-else ()
+if (NOT APPLE)
     install(TARGETS WebKit2 WebProcess NetworkProcess
         LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
         RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"

@@ -1,5 +1,16 @@
 2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
 
+        [cmake] Moved library setup code to WEBKIT_FRAMEWORK macro.
+        https://bugs.webkit.org/show_bug.cgi?id=154450
+
+        Reviewed by Alex Christensen.
+
+        No new tests needed.
+
+        * CMakeLists.txt:
+
+2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
+
         Workaround for ICE in GCC 4.8 appeared in r196846.
         https://bugs.webkit.org/show_bug.cgi?id=154535
 

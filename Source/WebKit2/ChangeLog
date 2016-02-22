@@ -1,3 +1,15 @@
+2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Moved library setup code to WEBKIT_FRAMEWORK macro.
+        https://bugs.webkit.org/show_bug.cgi?id=154450
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt: Used WebKit2_SOURCES variable instead of separate
+        WebKit2_DERIVED_SOURCES for compatibility with WEBKIT_FRAMEWORK macro.
+        There is no real need to separate derived sources from others.
+        * PlatformGTK.cmake: Ditto.
+
 2016-02-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Unreviewed build fix after r196942.

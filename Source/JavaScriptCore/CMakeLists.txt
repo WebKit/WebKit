@@ -1310,12 +1310,7 @@ WEBKIT_CREATE_FORWARDING_HEADERS(JavaScriptCore DIRECTORIES ${JavaScriptCore_FOR
 add_subdirectory(shell)
 
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
-include_directories(${JavaScriptCore_INCLUDE_DIRECTORIES})
-include_directories(SYSTEM ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
-add_library(JavaScriptCore ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
-target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
-set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_JavaScriptCore")
-set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
+WEBKIT_FRAMEWORK(JavaScriptCore)
 
 if (JavaScriptCore_PRE_BUILD_COMMAND)
     add_custom_command(TARGET JavaScriptCore PRE_BUILD COMMAND ${JavaScriptCore_PRE_BUILD_COMMAND} VERBATIM)
@@ -1323,10 +1318,6 @@ endif ()
 
 if (JavaScriptCore_POST_BUILD_COMMAND)
     add_custom_command(TARGET JavaScriptCore POST_BUILD COMMAND ${JavaScriptCore_POST_BUILD_COMMAND} VERBATIM)
-endif ()
-
-if (JavaScriptCore_OUTPUT_NAME)
-    set_target_properties(JavaScriptCore PROPERTIES OUTPUT_NAME ${JavaScriptCore_OUTPUT_NAME})
 endif ()
 
 if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")
@@ -1339,5 +1330,3 @@ endif ()
 
 add_custom_target(stageSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
 add_dependencies(JavaScriptCore stageSharedScripts)
-
-WEBKIT_FRAMEWORK(JavaScriptCore)
