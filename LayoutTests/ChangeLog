@@ -1,3 +1,16 @@
+2016-02-21  Chris Dumez  <cdumez@apple.com>
+
+        iframe/frame/object.contentDocument should be on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=154409
+
+        Reviewed by Sam Weinig.
+
+        Add test coverage for trying to access iframe.contentDocument cross origin
+        to make sure it still fails and logs a security error.
+
+        * http/tests/security/cross-origin-iframe-contentDocument-expected.txt: Added.
+        * http/tests/security/cross-origin-iframe-contentDocument.html: Added.
+
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
         CSP: sandbox directive should be ignored when contained in a policy defined via a meta element

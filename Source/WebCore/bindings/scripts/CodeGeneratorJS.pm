@@ -701,11 +701,6 @@ sub AttributeShouldBeOnInstance
     # https://heycam.github.io/webidl/#Unforgeable
     return 1 if IsUnforgeable($interface, $attribute);
 
-    # It becomes hard to reason about attributes that require security checks if we push
-    # them down the prototype chain, so before we do these we'll need to carefully consider
-    # the possible pitfalls.
-    return 1 if $attribute->signature->extendedAttributes->{"CheckSecurityForNode"};
-
     return 1 if AttributeShouldBeOnInstanceForCompatibility($interface, $attribute);
 
     if ($interface->extendedAttributes->{"CheckSecurity"}) {

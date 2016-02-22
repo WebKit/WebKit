@@ -1779,7 +1779,7 @@ FAIL HTMLIFrameElement interface: attribute seamless assert_true: The prototype 
 FAIL HTMLIFrameElement interface: attribute allowFullscreen assert_true: The prototype object must have a property "allowFullscreen" expected true got false
 PASS HTMLIFrameElement interface: attribute width 
 PASS HTMLIFrameElement interface: attribute height 
-FAIL HTMLIFrameElement interface: attribute contentDocument assert_true: The prototype object must have a property "contentDocument" expected true got false
+PASS HTMLIFrameElement interface: attribute contentDocument 
 PASS HTMLIFrameElement interface: attribute contentWindow 
 PASS HTMLIFrameElement interface: attribute align 
 PASS HTMLIFrameElement interface: attribute scrolling 
@@ -1821,7 +1821,7 @@ PASS HTMLObjectElement interface: attribute useMap
 PASS HTMLObjectElement interface: attribute form 
 PASS HTMLObjectElement interface: attribute width 
 PASS HTMLObjectElement interface: attribute height 
-FAIL HTMLObjectElement interface: attribute contentDocument assert_true: The prototype object must have a property "contentDocument" expected true got false
+PASS HTMLObjectElement interface: attribute contentDocument 
 FAIL HTMLObjectElement interface: attribute contentWindow assert_true: The prototype object must have a property "contentWindow" expected true got false
 PASS HTMLObjectElement interface: attribute willValidate 
 PASS HTMLObjectElement interface: attribute validity 
@@ -4752,7 +4752,7 @@ PASS HTMLFrameElement interface: attribute src
 PASS HTMLFrameElement interface: attribute frameBorder 
 PASS HTMLFrameElement interface: attribute longDesc 
 PASS HTMLFrameElement interface: attribute noResize 
-FAIL HTMLFrameElement interface: attribute contentDocument assert_true: The prototype object must have a property "contentDocument" expected true got false
+PASS HTMLFrameElement interface: attribute contentDocument 
 PASS HTMLFrameElement interface: attribute contentWindow 
 PASS HTMLFrameElement interface: attribute marginHeight 
 PASS HTMLFrameElement interface: attribute marginWidth 
@@ -4764,7 +4764,7 @@ PASS HTMLFrameElement interface: document.createElement("frame") must inherit pr
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "frameBorder" with the proper type (3) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "longDesc" with the proper type (4) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "noResize" with the proper type (5) 
-FAIL HTMLFrameElement interface: document.createElement("frame") must inherit property "contentDocument" with the proper type (6) assert_inherits: property "contentDocument" found on object expected in prototype chain
+PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "contentDocument" with the proper type (6) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "contentWindow" with the proper type (7) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "marginHeight" with the proper type (8) 
 PASS HTMLFrameElement interface: document.createElement("frame") must inherit property "marginWidth" with the proper type (9) 

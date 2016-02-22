@@ -1,5 +1,16 @@
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
+        iframe/frame/object.contentDocument should be on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=154409
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-02-21  Chris Dumez  <cdumez@apple.com>
+
         Re-sync W3C HTML/DOM web-platform-tests
         https://bugs.webkit.org/show_bug.cgi?id=154513
 

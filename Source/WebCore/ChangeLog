@@ -1,3 +1,23 @@
+2016-02-21  Chris Dumez  <cdumez@apple.com>
+
+        iframe/frame/object.contentDocument should be on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=154409
+
+        Reviewed by Sam Weinig.
+
+        Move iframe/frame/object.contentDocument to the prototype. They used
+        to be on the instance due to the [CheckSecurityForNode] IDL extended
+        attribute. This patch updates the bindings generator so that such
+        attributes are now on the prototype. While they are now on the
+        prototype, the security checks are still generated in the
+        corresponding getters and setters so cross origin access is still
+        prevented.
+
+        Test: http/tests/security/cross-origin-iframe-contentDocument.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AttributeShouldBeOnInstance): Deleted.
+
 2016-02-21  Darin Adler  <darin@apple.com>
 
         Refactor LazyEventListener creation to separate Element and Document cases

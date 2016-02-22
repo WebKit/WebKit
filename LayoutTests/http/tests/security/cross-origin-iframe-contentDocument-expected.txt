@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 16: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+Tests that iframe.contentDocument is not accessible cross-origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crossOriginFrame.contentDocument returned null.
+PASS Object.getOwnPropertyDescriptor(sameOriginFrame.__proto__, "contentDocument").get.call(crossOriginFrame) returned null.
+PASS Object.getOwnPropertyDescriptor(crossOriginFrame.__proto__, "contentDocument").get.call(crossOriginFrame) returned null.
+PASS Object.getOwnPropertyDescriptor(crossOriginFrame, "contentDocument") returned undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
