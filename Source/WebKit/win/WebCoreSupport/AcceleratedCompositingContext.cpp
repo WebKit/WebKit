@@ -360,7 +360,8 @@ bool AcceleratedCompositingContext::flushPendingLayerChanges()
     if (!frameView->flushCompositingStateIncludingSubframes())
         return false;
 
-    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers();
+    FloatRect visibleRect(core(&m_webView)->mainFrame().view()->scrollPosition(), getWebViewSize(m_webView));
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers(visibleRect);
     return true;
 }
 
