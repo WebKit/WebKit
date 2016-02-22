@@ -325,6 +325,8 @@ JSC::EncodedJSValue jsTestObjNullableBooleanAttribute(JSC::ExecState*, JSC::Enco
 JSC::EncodedJSValue jsTestObjNullableStringAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjNullableLongSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjNullableLongSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjNullableStringSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestObjNullableStringSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjNullableStringValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjNullableStringValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -587,6 +589,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "nullableBooleanAttribute", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableBooleanAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "nullableStringAttribute", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "nullableLongSettableAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableLongSettableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableLongSettableAttribute) } },
+    { "nullableStringSettableAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringSettableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableStringSettableAttribute) } },
     { "nullableStringValue", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableStringValue) } },
     { "attribute", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "attributeWithReservedEnumType", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithReservedEnumType), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithReservedEnumType) } },
@@ -1861,7 +1864,7 @@ EncodedJSValue jsTestObjNullableStringAttribute(ExecState* state, EncodedJSValue
         return throwGetterTypeError(*state, "TestObj", "nullableStringAttribute");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.nullableStringAttribute());
+    JSValue result = jsStringOrNull(state, impl.nullableStringAttribute());
     return JSValue::encode(result);
 }
 
@@ -1877,6 +1880,21 @@ EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* state, EncodedJ
     }
     auto& impl = castedThis->wrapped();
     JSValue result = toNullableJSNumber(impl.nullableLongSettableAttribute());
+    return JSValue::encode(result);
+}
+
+
+EncodedJSValue jsTestObjNullableStringSettableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestObj", "nullableStringSettableAttribute");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = jsStringOrNull(state, impl.nullableStringSettableAttribute());
     return JSValue::encode(result);
 }
 
@@ -2952,6 +2970,23 @@ void setJSTestObjNullableLongSettableAttribute(ExecState* state, EncodedJSValue 
     if (UNLIKELY(state->hadException()))
         return;
     impl.setNullableLongSettableAttribute(nativeValue);
+}
+
+
+void setJSTestObjNullableStringSettableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        throwSetterTypeError(*state, "TestObj", "nullableStringSettableAttribute");
+        return;
+    }
+    auto& impl = castedThis->wrapped();
+    String nativeValue = valueToStringWithUndefinedOrNullCheck(state, value);
+    if (UNLIKELY(state->hadException()))
+        return;
+    impl.setNullableStringSettableAttribute(nativeValue);
 }
 
 

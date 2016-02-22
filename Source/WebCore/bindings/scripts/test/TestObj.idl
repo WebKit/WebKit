@@ -304,6 +304,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     readonly attribute DOMString? nullableStringAttribute;
 
     attribute long? nullableLongSettableAttribute;
+    attribute DOMString? nullableStringSettableAttribute;
 
     [GetterRaisesException] attribute long? nullableStringValue;
 

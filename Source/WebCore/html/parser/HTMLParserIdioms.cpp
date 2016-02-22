@@ -30,6 +30,7 @@
 #include "URL.h"
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -288,6 +289,15 @@ static bool threadSafeEqual(const StringImpl& a, const StringImpl& b)
 bool threadSafeMatch(const QualifiedName& a, const QualifiedName& b)
 {
     return threadSafeEqual(*a.localName().impl(), *b.localName().impl());
+}
+
+String parseCORSSettingsAttribute(const AtomicString& value)
+{
+    if (value.isNull())
+        return String();
+    if (equalIgnoringASCIICase(value, "use-credentials"))
+        return ASCIILiteral("use-credentials");
+    return ASCIILiteral("anonymous");
 }
 
 }

@@ -567,6 +567,16 @@ bool HTMLImageElement::isServerMap() const
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
 }
 
+void HTMLImageElement::setCrossOrigin(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(crossoriginAttr, value);
+}
+
+String HTMLImageElement::crossOrigin() const
+{
+    return parseCORSSettingsAttribute(fastGetAttribute(crossoriginAttr));
+}
+
 #if ENABLE(SERVICE_CONTROLS)
 void HTMLImageElement::updateImageControls()
 {

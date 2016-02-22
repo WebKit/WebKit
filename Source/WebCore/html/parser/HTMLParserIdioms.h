@@ -62,6 +62,9 @@ bool parseHTMLInteger(const String&, int&);
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
 bool parseHTMLNonNegativeInteger(const String&, unsigned int&);
 
+// https://html.spec.whatwg.org/multipage/infrastructure.html#cors-settings-attribute
+String parseCORSSettingsAttribute(const AtomicString&);
+
 bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
 
 // Inline implementations of some of the functions declared above.

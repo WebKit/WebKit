@@ -25,7 +25,7 @@
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString alt;
     [Reflect] attribute DOMString border;
-    [Reflect] attribute DOMString crossOrigin;
+    attribute DOMString? crossOrigin;
     attribute long height;
     [Reflect] attribute long hspace;
     [Reflect] attribute boolean isMap;

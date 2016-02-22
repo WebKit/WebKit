@@ -137,6 +137,7 @@ enum {
     PROP_NULLABLE_BOOLEAN_ATTRIBUTE,
     PROP_NULLABLE_STRING_ATTRIBUTE,
     PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE,
+    PROP_NULLABLE_STRING_SETTABLE_ATTRIBUTE,
     PROP_NULLABLE_STRING_VALUE,
     PROP_ATTRIBUTE,
     PROP_PUT_FORWARDS_ATTRIBUTE,
@@ -250,6 +251,9 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     case PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE:
         webkit_dom_test_obj_set_nullable_long_settable_attribute(self, g_value_get_long(value));
+        break;
+    case PROP_NULLABLE_STRING_SETTABLE_ATTRIBUTE:
+        webkit_dom_test_obj_set_nullable_string_settable_attribute(self, g_value_get_string(value));
         break;
     case PROP_NULLABLE_STRING_VALUE:
         webkit_dom_test_obj_set_nullable_string_value(self, g_value_get_long(value));
@@ -441,6 +445,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE:
         g_value_set_long(value, webkit_dom_test_obj_get_nullable_long_settable_attribute(self));
+        break;
+    case PROP_NULLABLE_STRING_SETTABLE_ATTRIBUTE:
+        g_value_take_string(value, webkit_dom_test_obj_get_nullable_string_settable_attribute(self));
         break;
     case PROP_NULLABLE_STRING_VALUE:
         g_value_set_long(value, webkit_dom_test_obj_get_nullable_string_value(self, nullptr));
@@ -1068,6 +1075,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:nullable-long-settable-attribute",
             "read-write glong TestObj:nullable-long-settable-attribute",
             G_MINLONG, G_MAXLONG, 0,
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_NULLABLE_STRING_SETTABLE_ATTRIBUTE,
+        g_param_spec_string(
+            "nullable-string-settable-attribute",
+            "TestObj:nullable-string-settable-attribute",
+            "read-write gchar* TestObj:nullable-string-settable-attribute",
+            "",
             WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(
@@ -2602,6 +2619,25 @@ void webkit_dom_test_obj_set_nullable_long_settable_attribute(WebKitDOMTestObj* 
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
     WebCore::TestObj* item = WebKit::core(self);
     item->setNullableLongSettableAttribute(value);
+}
+
+gchar* webkit_dom_test_obj_get_nullable_string_settable_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->nullableStringSettableAttribute());
+    return result;
+}
+
+void webkit_dom_test_obj_set_nullable_string_settable_attribute(WebKitDOMTestObj* self, const gchar* value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(value);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setNullableStringSettableAttribute(convertedValue);
 }
 
 glong webkit_dom_test_obj_get_nullable_string_value(WebKitDOMTestObj* self, GError** error)

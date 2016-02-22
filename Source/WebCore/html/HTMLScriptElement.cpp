@@ -27,6 +27,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "Text.h"
 #include <wtf/Ref.h>
 
@@ -102,6 +103,16 @@ void HTMLScriptElement::setAsync(bool async)
 bool HTMLScriptElement::async() const
 {
     return fastHasAttribute(asyncAttr) || forceAsync();
+}
+
+void HTMLScriptElement::setCrossOrigin(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(crossoriginAttr, value);
+}
+
+String HTMLScriptElement::crossOrigin() const
+{
+    return parseCORSSettingsAttribute(fastGetAttribute(crossoriginAttr));
 }
 
 URL HTMLScriptElement::src() const

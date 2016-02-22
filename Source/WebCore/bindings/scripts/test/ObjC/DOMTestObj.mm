@@ -870,6 +870,18 @@
     IMPL->setNullableLongSettableAttribute(newNullableLongSettableAttribute);
 }
 
+- (NSString *)nullableStringSettableAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->nullableStringSettableAttribute();
+}
+
+- (void)setNullableStringSettableAttribute:(NSString *)newNullableStringSettableAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setNullableStringSettableAttribute(newNullableStringSettableAttribute);
+}
+
 - (int)nullableStringValue
 {
     WebCore::JSMainThreadNullState state;

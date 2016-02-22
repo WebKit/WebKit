@@ -41,6 +41,9 @@ public:
     void setAsync(bool);
     bool async() const;
 
+    void setCrossOrigin(const AtomicString&);
+    String crossOrigin() const;
+
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 

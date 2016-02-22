@@ -69,6 +69,9 @@ public:
     URL src() const;
     void setSrc(const String&);
 
+    void setCrossOrigin(const AtomicString&);
+    String crossOrigin() const;
+
     void setWidth(int);
 
     int x() const;

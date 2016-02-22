@@ -126,6 +126,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property (readonly) BOOL nullableBooleanAttribute;
 @property (readonly, copy) NSString *nullableStringAttribute;
 @property int nullableLongSettableAttribute;
+@property (copy) NSString *nullableStringSettableAttribute;
 @property int nullableStringValue;
 @property (readonly, copy) NSString *attribute;
 @property (readonly, strong) DOMTestNode *putForwardsAttribute;

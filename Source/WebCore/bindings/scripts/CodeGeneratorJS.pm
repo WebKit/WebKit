@@ -4075,6 +4075,9 @@ sub JSValueToNative
         if ($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") {
             return "valueToStringWithNullCheck(state, $value)"
         }
+        if ($signature->isNullable) {
+            return "valueToStringWithUndefinedOrNullCheck(state, $value)";
+        }
         if ($signature->extendedAttributes->{"AtomicString"}) {
             return "$value.toString(state)->toAtomicString(state)";
         }
@@ -4190,6 +4193,7 @@ sub NativeToJSValue
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
+        return "jsStringOrNull(state, $value)" if $signature->isNullable;
         AddToImplIncludes("<runtime/JSString.h>", $conditional);
         return "jsStringWithCache(state, $value)";
     }

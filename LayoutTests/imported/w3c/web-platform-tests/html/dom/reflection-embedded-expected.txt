@@ -850,133 +850,133 @@ PASS img.srcset: IDL set to object "test-toString" followed by IDL get
 PASS img.srcset: IDL set to object "test-valueOf" should not throw 
 PASS img.srcset: IDL set to object "test-valueOf" followed by getAttribute() 
 PASS img.srcset: IDL set to object "test-valueOf" followed by IDL get 
-FAIL img.crossOrigin: typeof IDL attribute assert_equals: expected "object" but got "string"
-FAIL img.crossOrigin: IDL get with DOM attribute unset assert_equals: expected (object) null but got (string) ""
+PASS img.crossOrigin: typeof IDL attribute 
+PASS img.crossOrigin: IDL get with DOM attribute unset 
 PASS img.crossOrigin: setAttribute() to "" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "" followed by IDL get assert_equals: expected "anonymous" but got ""
+PASS img.crossOrigin: setAttribute() to "" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "anonymous" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS img.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS img.crossOrigin: setAttribute() to undefined followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to undefined followed by IDL get assert_equals: expected "anonymous" but got "undefined"
+PASS img.crossOrigin: setAttribute() to undefined followed by IDL get 
 PASS img.crossOrigin: setAttribute() to 7 followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to 7 followed by IDL get assert_equals: expected "anonymous" but got "7"
+PASS img.crossOrigin: setAttribute() to 7 followed by IDL get 
 PASS img.crossOrigin: setAttribute() to 1.5 followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to 1.5 followed by IDL get assert_equals: expected "anonymous" but got "1.5"
+PASS img.crossOrigin: setAttribute() to 1.5 followed by IDL get 
 PASS img.crossOrigin: setAttribute() to true followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to true followed by IDL get assert_equals: expected "anonymous" but got "true"
+PASS img.crossOrigin: setAttribute() to true followed by IDL get 
 PASS img.crossOrigin: setAttribute() to false followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to false followed by IDL get assert_equals: expected "anonymous" but got "false"
+PASS img.crossOrigin: setAttribute() to false followed by IDL get 
 PASS img.crossOrigin: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected "anonymous" but got "[object Object]"
+PASS img.crossOrigin: setAttribute() to object "[object Object]" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to NaN followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to NaN followed by IDL get assert_equals: expected "anonymous" but got "NaN"
+PASS img.crossOrigin: setAttribute() to NaN followed by IDL get 
 PASS img.crossOrigin: setAttribute() to Infinity followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to Infinity followed by IDL get assert_equals: expected "anonymous" but got "Infinity"
+PASS img.crossOrigin: setAttribute() to Infinity followed by IDL get 
 PASS img.crossOrigin: setAttribute() to -Infinity followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to -Infinity followed by IDL get assert_equals: expected "anonymous" but got "-Infinity"
+PASS img.crossOrigin: setAttribute() to -Infinity followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "\0" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "\0" followed by IDL get assert_equals: expected "anonymous" but got "\0"
+PASS img.crossOrigin: setAttribute() to "\0" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to null followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to null followed by IDL get assert_equals: expected "anonymous" but got "null"
+PASS img.crossOrigin: setAttribute() to null followed by IDL get 
 PASS img.crossOrigin: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected "anonymous" but got "test-toString"
+PASS img.crossOrigin: setAttribute() to object "test-toString" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected "anonymous" but got "test-valueOf"
+PASS img.crossOrigin: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "anonymous" followed by getAttribute() 
 PASS img.crossOrigin: setAttribute() to "anonymous" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "xanonymous" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "xanonymous" followed by IDL get assert_equals: expected "anonymous" but got "xanonymous"
+PASS img.crossOrigin: setAttribute() to "xanonymous" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "anonymous\0" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "anonymous\0" followed by IDL get assert_equals: expected "anonymous" but got "anonymous\0"
+PASS img.crossOrigin: setAttribute() to "anonymous\0" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "nonymous" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "nonymous" followed by IDL get assert_equals: expected "anonymous" but got "nonymous"
+PASS img.crossOrigin: setAttribute() to "nonymous" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "ANONYMOUS" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "ANONYMOUS" followed by IDL get assert_equals: expected "anonymous" but got "ANONYMOUS"
+PASS img.crossOrigin: setAttribute() to "ANONYMOUS" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "use-credentials" followed by getAttribute() 
 PASS img.crossOrigin: setAttribute() to "use-credentials" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "xuse-credentials" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "xuse-credentials" followed by IDL get assert_equals: expected "anonymous" but got "xuse-credentials"
+PASS img.crossOrigin: setAttribute() to "xuse-credentials" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "use-credentials\0" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "use-credentials\0" followed by IDL get assert_equals: expected "anonymous" but got "use-credentials\0"
+PASS img.crossOrigin: setAttribute() to "use-credentials\0" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "se-credentials" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "se-credentials" followed by IDL get assert_equals: expected "anonymous" but got "se-credentials"
+PASS img.crossOrigin: setAttribute() to "se-credentials" followed by IDL get 
 PASS img.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by getAttribute() 
-FAIL img.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by IDL get assert_equals: expected "use-credentials" but got "USE-CREDENTIALS"
+PASS img.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by IDL get 
 PASS img.crossOrigin: IDL set to "" should not throw 
 PASS img.crossOrigin: IDL set to "" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "" followed by IDL get assert_equals: expected "anonymous" but got ""
+PASS img.crossOrigin: IDL set to "" followed by IDL get 
 PASS img.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " should not throw 
 PASS img.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "anonymous" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS img.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS img.crossOrigin: IDL set to undefined should not throw 
-FAIL img.crossOrigin: IDL set to undefined followed by getAttribute() assert_equals: expected (object) null but got (string) "undefined"
-FAIL img.crossOrigin: IDL set to undefined followed by IDL get assert_equals: expected (object) null but got (string) "undefined"
+PASS img.crossOrigin: IDL set to undefined followed by getAttribute() 
+PASS img.crossOrigin: IDL set to undefined followed by IDL get 
 PASS img.crossOrigin: IDL set to 7 should not throw 
 PASS img.crossOrigin: IDL set to 7 followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to 7 followed by IDL get assert_equals: expected "anonymous" but got "7"
+PASS img.crossOrigin: IDL set to 7 followed by IDL get 
 PASS img.crossOrigin: IDL set to 1.5 should not throw 
 PASS img.crossOrigin: IDL set to 1.5 followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to 1.5 followed by IDL get assert_equals: expected "anonymous" but got "1.5"
+PASS img.crossOrigin: IDL set to 1.5 followed by IDL get 
 PASS img.crossOrigin: IDL set to true should not throw 
 PASS img.crossOrigin: IDL set to true followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to true followed by IDL get assert_equals: expected "anonymous" but got "true"
+PASS img.crossOrigin: IDL set to true followed by IDL get 
 PASS img.crossOrigin: IDL set to false should not throw 
 PASS img.crossOrigin: IDL set to false followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to false followed by IDL get assert_equals: expected "anonymous" but got "false"
+PASS img.crossOrigin: IDL set to false followed by IDL get 
 PASS img.crossOrigin: IDL set to object "[object Object]" should not throw 
 PASS img.crossOrigin: IDL set to object "[object Object]" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to object "[object Object]" followed by IDL get assert_equals: expected "anonymous" but got "[object Object]"
+PASS img.crossOrigin: IDL set to object "[object Object]" followed by IDL get 
 PASS img.crossOrigin: IDL set to NaN should not throw 
 PASS img.crossOrigin: IDL set to NaN followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to NaN followed by IDL get assert_equals: expected "anonymous" but got "NaN"
+PASS img.crossOrigin: IDL set to NaN followed by IDL get 
 PASS img.crossOrigin: IDL set to Infinity should not throw 
 PASS img.crossOrigin: IDL set to Infinity followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to Infinity followed by IDL get assert_equals: expected "anonymous" but got "Infinity"
+PASS img.crossOrigin: IDL set to Infinity followed by IDL get 
 PASS img.crossOrigin: IDL set to -Infinity should not throw 
 PASS img.crossOrigin: IDL set to -Infinity followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to -Infinity followed by IDL get assert_equals: expected "anonymous" but got "-Infinity"
+PASS img.crossOrigin: IDL set to -Infinity followed by IDL get 
 PASS img.crossOrigin: IDL set to "\0" should not throw 
 PASS img.crossOrigin: IDL set to "\0" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "\0" followed by IDL get assert_equals: expected "anonymous" but got "\0"
+PASS img.crossOrigin: IDL set to "\0" followed by IDL get 
 PASS img.crossOrigin: IDL set to null should not throw 
-FAIL img.crossOrigin: IDL set to null followed by getAttribute() assert_equals: expected (object) null but got (string) "null"
-FAIL img.crossOrigin: IDL set to null followed by IDL get assert_equals: expected (object) null but got (string) "null"
+PASS img.crossOrigin: IDL set to null followed by getAttribute() 
+PASS img.crossOrigin: IDL set to null followed by IDL get 
 PASS img.crossOrigin: IDL set to object "test-toString" should not throw 
 PASS img.crossOrigin: IDL set to object "test-toString" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to object "test-toString" followed by IDL get assert_equals: expected "anonymous" but got "test-toString"
+PASS img.crossOrigin: IDL set to object "test-toString" followed by IDL get 
 PASS img.crossOrigin: IDL set to object "test-valueOf" should not throw 
 PASS img.crossOrigin: IDL set to object "test-valueOf" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected "anonymous" but got "test-valueOf"
+PASS img.crossOrigin: IDL set to object "test-valueOf" followed by IDL get 
 PASS img.crossOrigin: IDL set to "anonymous" should not throw 
 PASS img.crossOrigin: IDL set to "anonymous" followed by getAttribute() 
 PASS img.crossOrigin: IDL set to "anonymous" followed by IDL get 
 PASS img.crossOrigin: IDL set to "xanonymous" should not throw 
 PASS img.crossOrigin: IDL set to "xanonymous" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "xanonymous" followed by IDL get assert_equals: expected "anonymous" but got "xanonymous"
+PASS img.crossOrigin: IDL set to "xanonymous" followed by IDL get 
 PASS img.crossOrigin: IDL set to "anonymous\0" should not throw 
 PASS img.crossOrigin: IDL set to "anonymous\0" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "anonymous\0" followed by IDL get assert_equals: expected "anonymous" but got "anonymous\0"
+PASS img.crossOrigin: IDL set to "anonymous\0" followed by IDL get 
 PASS img.crossOrigin: IDL set to "nonymous" should not throw 
 PASS img.crossOrigin: IDL set to "nonymous" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "nonymous" followed by IDL get assert_equals: expected "anonymous" but got "nonymous"
+PASS img.crossOrigin: IDL set to "nonymous" followed by IDL get 
 PASS img.crossOrigin: IDL set to "ANONYMOUS" should not throw 
 PASS img.crossOrigin: IDL set to "ANONYMOUS" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "ANONYMOUS" followed by IDL get assert_equals: expected "anonymous" but got "ANONYMOUS"
+PASS img.crossOrigin: IDL set to "ANONYMOUS" followed by IDL get 
 PASS img.crossOrigin: IDL set to "use-credentials" should not throw 
 PASS img.crossOrigin: IDL set to "use-credentials" followed by getAttribute() 
 PASS img.crossOrigin: IDL set to "use-credentials" followed by IDL get 
 PASS img.crossOrigin: IDL set to "xuse-credentials" should not throw 
 PASS img.crossOrigin: IDL set to "xuse-credentials" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "xuse-credentials" followed by IDL get assert_equals: expected "anonymous" but got "xuse-credentials"
+PASS img.crossOrigin: IDL set to "xuse-credentials" followed by IDL get 
 PASS img.crossOrigin: IDL set to "use-credentials\0" should not throw 
 PASS img.crossOrigin: IDL set to "use-credentials\0" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "use-credentials\0" followed by IDL get assert_equals: expected "anonymous" but got "use-credentials\0"
+PASS img.crossOrigin: IDL set to "use-credentials\0" followed by IDL get 
 PASS img.crossOrigin: IDL set to "se-credentials" should not throw 
 PASS img.crossOrigin: IDL set to "se-credentials" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "se-credentials" followed by IDL get assert_equals: expected "anonymous" but got "se-credentials"
+PASS img.crossOrigin: IDL set to "se-credentials" followed by IDL get 
 PASS img.crossOrigin: IDL set to "USE-CREDENTIALS" should not throw 
 PASS img.crossOrigin: IDL set to "USE-CREDENTIALS" followed by getAttribute() 
-FAIL img.crossOrigin: IDL set to "USE-CREDENTIALS" followed by IDL get assert_equals: expected "use-credentials" but got "USE-CREDENTIALS"
+PASS img.crossOrigin: IDL set to "USE-CREDENTIALS" followed by IDL get 
 PASS img.useMap: typeof IDL attribute 
 PASS img.useMap: IDL get with DOM attribute unset 
 PASS img.useMap: setAttribute() to "" followed by getAttribute() 

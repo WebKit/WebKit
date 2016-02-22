@@ -1685,6 +1685,27 @@ WEBKIT_API void
 webkit_dom_test_obj_set_nullable_long_settable_attribute(WebKitDOMTestObj* self, glong value);
 
 /**
+ * webkit_dom_test_obj_get_nullable_string_settable_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_obj_get_nullable_string_settable_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_nullable_string_settable_attribute:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_nullable_string_settable_attribute(WebKitDOMTestObj* self, const gchar* value);
+
+/**
  * webkit_dom_test_obj_get_nullable_string_value:
  * @self: A #WebKitDOMTestObj
  * @error: #GError
