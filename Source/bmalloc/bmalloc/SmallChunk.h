@@ -48,7 +48,7 @@ public:
 private:
     std::array<SmallLine, smallChunkSize / smallLineSize> m_lines;
     std::array<SmallPage, smallChunkSize / vmPageSize> m_pages;
-    char m_memory[] __attribute__((aligned(smallLineSize)));
+    char m_memory[] __attribute__((aligned(smallLineSize+0)));
 };
 
 static_assert(!(vmPageSize % smallLineSize), "vmPageSize must be an even multiple of line size");

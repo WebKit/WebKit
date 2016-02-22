@@ -1,3 +1,15 @@
+2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed compilation of bmalloc with GCC 4.8 after r196873.
+        https://bugs.webkit.org/show_bug.cgi?id=154534
+
+        Reviewed by Mark Lam.
+
+        See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=55382.
+
+        * bmalloc/LargeChunk.h:
+        * bmalloc/SmallChunk.h:
+
 2016-02-21  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Don't use a whole page for metadata

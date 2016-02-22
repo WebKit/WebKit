@@ -65,7 +65,7 @@ private:
     // We use the X's for boundary tags and the O's for edge sentinels.
 
     std::array<BoundaryTag, boundaryTagCount> m_boundaryTags;
-    char m_memory[] __attribute__((aligned(largeAlignment)));
+    char m_memory[] __attribute__((aligned(largeAlignment+0)));
 };
 
 static_assert(largeChunkMetadataSize == sizeof(LargeChunk), "Our largeChunkMetadataSize math in Sizes.h is wrong");
