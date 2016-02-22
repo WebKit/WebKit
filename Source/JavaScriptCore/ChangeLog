@@ -1,3 +1,37 @@
+2016-02-15  Mark Lam  <mark.lam@apple.com>
+
+        [ARMv7] stress/op_rshift.js and stress/op_urshift.js are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=151514
+
+        Reviewed by Filip Pizlo.
+
+        The issue turns out to be trivial: on ARMv7 (and traditional ARM too), arithmetic
+        shift right (ASR) and logical shift right (LSR) takes an immediate shift amount
+        from 1-32.  See http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0204j/Cjacbgca.html.
+        An immediate shift amount of 0 is interpreted as a shift of 32 bits.
+
+        Meanwhile, our macro assembler is expecting the immediate shift value to be
+        between 0-31.  As a result, a shift amount of 0 is being wrongly encoded with 0
+        bits which means shift right by 32 bits.
+
+        The fix is to check if the shift amount is 0, and if so, emit a move.  Else,
+        emit the right shift as usual.
+
+        This issue does not affect left shifts, as the immediate shift amount for left
+        shifts is between 0-31 as our macro assembler expects.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::rshift32):
+        (JSC::MacroAssemblerARM::urshift32):
+        (JSC::MacroAssemblerARM::sub32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::rshift32):
+        (JSC::MacroAssemblerARMv7::urshift32):
+
+        * tests/stress/op_rshift.js:
+        * tests/stress/op_urshift.js:
+        - Un-skip these tests.  They should always pass now.
+
 2016-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         Parser::parseVariableDeclarationList should null check the node before attempting to create a new CommaExpr
