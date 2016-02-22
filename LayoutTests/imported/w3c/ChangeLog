@@ -1,3 +1,23 @@
+2016-02-21  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync W3C HTML/DOM web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=154513
+
+        Reviewed by Darin Adler.
+
+        Re-sync W3C HTML/DOM web-platform-tests after:
+        - https://github.com/w3c/web-platform-tests/pull/2597
+        - https://github.com/w3c/web-platform-tests/pull/2598
+        - https://github.com/w3c/web-platform-tests/pull/2599
+
+        * web-platform-tests/html/dom/elements-embedded.js:
+        * web-platform-tests/html/dom/elements-misc.js:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/dom/reflection-misc-expected.txt:
+        * web-platform-tests/html/dom/reflection.js:
+        (ReflectionTests.doReflects):
+
 2016-02-19  Chris Dumez  <cdumez@apple.com>
 
         HTMLFormElement.autocomplete should only return known values

@@ -751,31 +751,24 @@ PASS EventTarget interface: document.implementation.createDocument(null, "", nul
 PASS EventTarget interface: calling dispatchEvent(Event) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 FAIL MouseEvent interface: attribute region assert_true: The prototype object must have a property "region" expected true got false
 FAIL Touch interface: attribute region assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL HTMLAllCollection interface: existence and properties of interface object assert_equals: prototype of HTMLAllCollection is not HTMLCollection expected function "function HTMLCollection() {
-    [native code]
-}" but got function "function () {
-    [native code]
-}"
+PASS HTMLAllCollection interface: existence and properties of interface object 
 PASS HTMLAllCollection interface object length 
 PASS HTMLAllCollection interface object name 
-FAIL HTMLAllCollection interface: existence and properties of interface prototype object assert_equals: prototype of HTMLAllCollection.prototype is not HTMLCollection.prototype expected object "[object HTMLCollectionPrototype]" but got object "[object Object]"
+PASS HTMLAllCollection interface: existence and properties of interface prototype object 
 PASS HTMLAllCollection interface: existence and properties of interface prototype object's "constructor" property 
+PASS HTMLAllCollection interface: attribute length 
 FAIL HTMLAllCollection interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL HTMLAllCollection interface: operation item(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS HTMLAllCollection interface: operation namedItem(DOMString) 
 FAIL HTMLAllCollection must be primary interface of document.all assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL Stringification of document.all assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLAllCollection interface: document.all must inherit property "item" with the proper type (0) assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLAllCollection interface: calling item(unsigned long) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
+FAIL HTMLAllCollection interface: document.all must inherit property "length" with the proper type (0) assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL HTMLAllCollection interface: document.all must inherit property "item" with the proper type (1) assert_equals: wrong typeof object expected "function" but got "undefined"
+FAIL HTMLAllCollection interface: calling item(unsigned long) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
+FAIL HTMLAllCollection interface: document.all must inherit property "item" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL HTMLAllCollection interface: calling item(DOMString) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLAllCollection interface: document.all must inherit property "namedItem" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "undefined"
+FAIL HTMLAllCollection interface: document.all must inherit property "namedItem" with the proper type (3) assert_equals: wrong typeof object expected "function" but got "undefined"
 FAIL HTMLAllCollection interface: calling namedItem(DOMString) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: document.all must inherit property "length" with the proper type (0) assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: document.all must inherit property "item" with the proper type (1) assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: calling item(unsigned long) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: document.all must inherit property "namedItem" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "undefined"
-FAIL HTMLCollection interface: calling namedItem(DOMString) on document.all with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "undefined"
 PASS HTMLFormControlsCollection interface: existence and properties of interface object 
 PASS HTMLFormControlsCollection interface object length 
 PASS HTMLFormControlsCollection interface object name 
@@ -1612,7 +1605,7 @@ PASS HTMLAnchorElement interface: attribute name
 PASS HTMLAnchorElement interface: attribute rev 
 PASS HTMLAnchorElement interface: attribute shape 
 PASS HTMLAnchorElement interface: attribute href 
-FAIL HTMLAnchorElement interface: attribute origin assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS HTMLAnchorElement interface: attribute origin 
 PASS HTMLAnchorElement interface: attribute protocol 
 FAIL HTMLAnchorElement interface: attribute username assert_true: The prototype object must have a property "username" expected true got false
 FAIL HTMLAnchorElement interface: attribute password assert_true: The prototype object must have a property "password" expected true got false

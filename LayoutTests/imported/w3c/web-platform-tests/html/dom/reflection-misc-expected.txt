@@ -1760,8 +1760,8 @@ PASS script.defer: IDL set to object "test-toString" followed by IDL get
 PASS script.defer: IDL set to object "test-valueOf" should not throw 
 PASS script.defer: IDL set to object "test-valueOf" followed by hasAttribute() 
 PASS script.defer: IDL set to object "test-valueOf" followed by IDL get 
-PASS script.crossOrigin: typeof IDL attribute 
-PASS script.crossOrigin: IDL get with DOM attribute unset 
+FAIL script.crossOrigin: typeof IDL attribute assert_equals: expected "object" but got "string"
+FAIL script.crossOrigin: IDL get with DOM attribute unset assert_equals: expected (object) null but got (string) ""
 PASS script.crossOrigin: setAttribute() to "" followed by getAttribute() 
 FAIL script.crossOrigin: setAttribute() to "" followed by IDL get assert_equals: expected "anonymous" but got ""
 PASS script.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
@@ -1819,8 +1819,8 @@ PASS script.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS script.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 FAIL script.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "anonymous" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS script.crossOrigin: IDL set to undefined should not throw 
-PASS script.crossOrigin: IDL set to undefined followed by getAttribute() 
-FAIL script.crossOrigin: IDL set to undefined followed by IDL get assert_equals: expected "anonymous" but got "undefined"
+FAIL script.crossOrigin: IDL set to undefined followed by getAttribute() assert_equals: expected (object) null but got (string) "undefined"
+FAIL script.crossOrigin: IDL set to undefined followed by IDL get assert_equals: expected (object) null but got (string) "undefined"
 PASS script.crossOrigin: IDL set to 7 should not throw 
 PASS script.crossOrigin: IDL set to 7 followed by getAttribute() 
 FAIL script.crossOrigin: IDL set to 7 followed by IDL get assert_equals: expected "anonymous" but got "7"
@@ -1849,7 +1849,8 @@ PASS script.crossOrigin: IDL set to "\0" should not throw
 PASS script.crossOrigin: IDL set to "\0" followed by getAttribute() 
 FAIL script.crossOrigin: IDL set to "\0" followed by IDL get assert_equals: expected "anonymous" but got "\0"
 PASS script.crossOrigin: IDL set to null should not throw 
-FAIL script.crossOrigin: IDL set to null followed by IDL get assert_equals: expected "anonymous" but got "null"
+FAIL script.crossOrigin: IDL set to null followed by getAttribute() assert_equals: expected (object) null but got (string) "null"
+FAIL script.crossOrigin: IDL set to null followed by IDL get assert_equals: expected (object) null but got (string) "null"
 PASS script.crossOrigin: IDL set to object "test-toString" should not throw 
 PASS script.crossOrigin: IDL set to object "test-toString" followed by getAttribute() 
 FAIL script.crossOrigin: IDL set to object "test-toString" followed by IDL get assert_equals: expected "anonymous" but got "test-toString"
