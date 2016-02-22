@@ -1,5 +1,14 @@
 2016-02-21  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Adding ios-simulator baseline for js/number-toLocaleString.html
+        https://bugs.webkit.org/show_bug.cgi?id=154524
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/js/number-toLocaleString-expected.txt: Added.
+
+2016-02-21  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/html/dom/reflection-forms.html for ios-simulator after r196846
 
         Unreviewed test gardening.
