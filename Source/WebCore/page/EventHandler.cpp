@@ -2775,7 +2775,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     if (scrollableArea)
         scrollableArea->setScrolledProgrammatically(false);
 
-    bool handledEvent = platformCompleteWheelEvent(event, scrollableContainer.get(), scrollableArea);
+    bool handledEvent = platformCompleteWheelEvent(adjustedEvent, scrollableContainer.get(), scrollableArea);
     platformNotifyIfEndGesture(adjustedEvent, scrollableArea);
     return handledEvent;
 }
