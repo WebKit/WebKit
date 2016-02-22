@@ -1,3 +1,13 @@
+2016-02-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r196620): Web Inspector: Filter bar in the left sidebar is 1px shorter than the console prompt
+        https://bugs.webkit.org/show_bug.cgi?id=154529
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .overflow-shadow):
+
 2016-02-20  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Opacity slider thumb sometimes goes past the bar in Visual Styles sidebar
