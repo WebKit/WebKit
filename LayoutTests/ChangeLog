@@ -1,3 +1,11 @@
+2016-02-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/html/dom/reflection-forms.html for ios-simulator after r196846
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the Content Extension test failures following <https://trac.webkit.org/changeset/196875>
