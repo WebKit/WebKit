@@ -45,6 +45,8 @@ _FRAMEWORK_CONFIG_MAP = {
         "export_macro": "JS_EXPORT_PRIVATE",
         "alternate_dispatchers": True,
     },
+    "WebKit": {
+    },
     "WebInspector": {
     },
     # Used for code generator tests.
@@ -78,6 +80,9 @@ class Framework:
         if frameworkString == "JavaScriptCore":
             return Frameworks.JavaScriptCore
 
+        if frameworkString == "WebKit":
+            return Frameworks.WebKit
+
         if frameworkString == "WebInspector":
             return Frameworks.WebInspector
 
@@ -90,6 +95,7 @@ class Framework:
 class Frameworks:
     Global = Framework("Global")
     JavaScriptCore = Framework("JavaScriptCore")
+    WebKit = Framework("WebKit")
     WebInspector = Framework("WebInspector")
     Test = Framework("Test")
 

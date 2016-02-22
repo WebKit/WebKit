@@ -1,3 +1,49 @@
+2016-02-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add 'Automation' protocol domain and generate its backend classes separately in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=154509
+        <rdar://problem/24759098>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new 'Automation' domain which presents an RPC interface
+        for sending automation commands to an active WebAutomationSession
+        in the UIProcess via RemoteInspector. This is similar to how the
+        Inspector backend communicates bidirectionally with a remote
+        Inspector frontend.
+
+        Add build system logic to generate JSON-RPC protocol bindings
+        for the 'Automation' domain using the inspector code generators.
+
+        Move automation-related files that are not API or SPI into their
+        own directory.
+
+        * Configurations/BaseTarget.xcconfig: Tell where JavaScriptCore's
+        private headers are, since that's where the code generators live.
+
+        * CMakeLists.txt: Look in UIProcess/Automation directory.
+        * PlatformMac.cmake:
+        * DerivedSources.make: Generate protocol bindings for a single domain.
+        The names of the generated files will be improved in a follow-up patch
+        so that they do not clash with generated files in JavaScriptCore.
+
+        * UIProcess/Automation/Automation.json: Added.
+        * UIProcess/Automation/WebAutomationSession.cpp: Renamed from Source/WebKit2/UIProcess/WebAutomationSession.cpp.
+        (WebKit::WebAutomationSession::WebAutomationSession):
+        (WebKit::WebAutomationSession::~WebAutomationSession):
+        Set up a backend dispatcher and frontend router. They will be used later.
+
+        (WebKit::WebAutomationSession::dispatchMessageFromRemote):
+        Forward messages from the remote to the backend dispatcher. When
+        an agent / command handler is registered, it will receive the message.
+
+        (WebKit::WebAutomationSession::connect):
+        (WebKit::WebAutomationSession::disconnect):
+        Connenct and disconnect the frontend router to the remote channel.
+
+        * UIProcess/Automation/WebAutomationSession.h: Renamed from Source/WebKit2/UIProcess/WebAutomationSession.h.
+        * WebKit2.xcodeproj/project.pbxproj: Add and move files.
+
 2016-02-20  Olivier Blin  <olivier.blin@softathome.com>
 
         [cmake] Use ICU include dirs in WebKit2 and WebKitTestRunner

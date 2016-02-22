@@ -56,6 +56,7 @@ VPATH = \
     $(WebKit2)/WebProcess/ios \
     $(WebKit2)/WebProcess \
     $(WebKit2)/UIProcess \
+    $(WebKit2)/UIProcess/Automation \
     $(WebKit2)/UIProcess/Cocoa \
     $(WebKit2)/UIProcess/Databases \
     $(WebKit2)/UIProcess/Downloads \
@@ -192,3 +193,31 @@ all: $(SANDBOX_PROFILES)
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...
 	$(CC) $(SDK_FLAGS) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" $< > $@
+
+JSON_RPC_GENERATOR_SCRIPTS = \
+	$(JavaScriptCore_SCRIPTS_DIR)/cpp_generator_templates.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/cpp_generator.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_backend_dispatcher_header.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_backend_dispatcher_implementation.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_protocol_types_header.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_protocol_types_implementation.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generator_templates.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generator.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/models.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py \
+#
+
+JSON_RPC_INPUT_FILES = \
+    $(WebKit2)/UIProcess/Automation/Automation.json \
+#
+
+JSON_RPC_OUTPUT_FILES = \
+    InspectorBackendDispatchers.h \
+    InspectorBackendDispatchers.cpp \
+#
+
+# JSON-RPC Backend Dispatchers, Type Builders
+$(JSON_RPC_OUTPUT_FILES) : $(JSON_RPC_INPUT_FILES) $(JSON_RPC_GENERATOR_SCRIPTS)
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebKit --backend --outputDir . $(JSON_RPC_INPUT_FILES)
+
+all : $(JSON_RPC_OUTPUT_FILES)
