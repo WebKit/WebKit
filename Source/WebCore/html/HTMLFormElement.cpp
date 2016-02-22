@@ -870,7 +870,7 @@ const String& HTMLFormElement::autocomplete() const
     static NeverDestroyed<const String> on("on", String::ConstructFromLiteral);
     static NeverDestroyed<const String> off("off", String::ConstructFromLiteral);
 
-    return equalIgnoringASCIICase(fastGetAttribute(autocompleteAttr), off) ? off : on;
+    return equalIgnoringASCIICase(fastGetAttribute(autocompleteAttr), "off") ? off : on;
 }
 
 } // namespace

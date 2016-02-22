@@ -1,3 +1,15 @@
+2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Workaround for ICE in GCC 4.8 appeared in r196846.
+        https://bugs.webkit.org/show_bug.cgi?id=154535
+
+        Reviewed by Chris Dumez.
+
+        No new tests needed.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::autocomplete):
+
 2016-02-22  Jer Noble  <jer.noble@apple.com>
 
         Enable AVFoundationNSURLSessionEnabled by default
