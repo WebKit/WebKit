@@ -1,3 +1,17 @@
+2016-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Remove _mockCaptureDevicesEnabled getter and setter
+        https://bugs.webkit.org/show_bug.cgi?id=154550
+
+        Reviewed by Beth Dakin.
+
+        The _mockCaptureDevicesEnabled property isn't declared anywhere, and this
+        should be a WKWebViewConfiguration parameter if we ever want to expose it in the modern API.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _mockCaptureDevicesEnabled]): Deleted.
+        (-[WKPreferences _setMockCaptureDevicesEnabled:]): Deleted.
+
 2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Moved library setup code to WEBKIT_FRAMEWORK macro.
