@@ -75,7 +75,7 @@ static void invalidateAfterGenericFamilyChange(Page* page)
 
 #if USE(AVFOUNDATION)
 bool Settings::gAVFoundationEnabled = true;
-bool Settings::gAVFoundationNSURLSessionEnabled = false;
+bool Settings::gAVFoundationNSURLSessionEnabled = true;
 #endif
 
 #if PLATFORM(COCOA)

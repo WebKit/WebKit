@@ -1,3 +1,13 @@
+2016-02-22  Jer Noble  <jer.noble@apple.com>
+
+        Enable AVFoundationNSURLSessionEnabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=154469
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2016-02-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Gather some rudimentary statistics during resource load 
