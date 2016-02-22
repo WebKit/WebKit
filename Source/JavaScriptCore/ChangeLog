@@ -1,3 +1,22 @@
+2016-02-22  Keith Miller  <keith_miller@apple.com>
+
+        Builtins that should not rely on iteration do.
+        https://bugs.webkit.org/show_bug.cgi?id=154475
+
+        Reviewed by Geoffrey Garen.
+
+        When changing the behavior of varargs calls to use ES6 iterators the
+        call builtin function's use of a varargs call was overlooked. The use
+        of iterators is observable outside the scope of the the call function,
+        thus it must be reimplemented.
+
+        * builtins/FunctionPrototype.js:
+        (call):
+        * tests/stress/call-apply-builtin-functions-dont-use-iterators.js: Added.
+        (test):
+        (addAll):
+        (catch):
+
 2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
 
         [JSC shell] Don't put empty arguments array to VM.

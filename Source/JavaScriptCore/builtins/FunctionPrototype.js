@@ -27,7 +27,12 @@ function call(thisArgument)
 {
     "use strict";
 
-    return this.@call(...arguments);
+    let argumentValues = [];
+    // Start from 1 to ignore thisArgument
+    for (let i = 1; i < arguments.length; i++)
+        @putByValDirect(argumentValues, i-1, arguments[i]);
+
+    return this.@apply(thisArgument, argumentValues);
 }
 
 function apply(thisValue, argumentValues)
