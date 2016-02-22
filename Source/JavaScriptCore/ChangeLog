@@ -1,3 +1,14 @@
+2016-02-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        CodeBlock always visits its unlinked code twice
+        https://bugs.webkit.org/show_bug.cgi?id=154494
+
+        Reviewed by Saam Barati.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        The unlinked code is always visited in stronglyVisitStrongReferences.
+
 2016-02-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add 'Automation' protocol domain and generate its backend classes separately in WebKit2
