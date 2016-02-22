@@ -364,6 +364,7 @@ private:
 #endif
 
     ShouldAcknowledgeWhenReadyToSuspend m_shouldAcknowledgeWhenReadyToSuspend;
+    bool m_suppressMemoryPressureHandler { false };
 };
 
 } // namespace WebKit

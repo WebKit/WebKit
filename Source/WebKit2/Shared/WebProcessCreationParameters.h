@@ -105,6 +105,7 @@ struct WebProcessCreationParameters {
 
     bool shouldAlwaysUseComplexTextCodePath;
     bool shouldEnableMemoryPressureReliefLogging;
+    bool shouldSuppressMemoryPressureHandler { false };
     bool shouldUseFontSmoothing;
 
     Vector<String> fontWhitelist;

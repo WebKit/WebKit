@@ -84,6 +84,8 @@ static NSString * const WebKitNetworkCacheSpeculativeRevalidationEnabledDefaults
 #endif
 #endif
 
+static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
+
 #if PLATFORM(MAC)
 NSString *WebKitTabSuspension = @"WebKitTabSuspension";
 #endif
@@ -178,13 +180,16 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.accessibilityEnhancedUserInterfaceEnabled = false;
 #endif
 
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
 #if PLATFORM(MAC)
-    parameters.shouldEnableTabSuspension = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTabSuspension];
+    parameters.shouldEnableTabSuspension = [defaults boolForKey:WebKitTabSuspension];
 #endif
 
-    parameters.shouldEnableJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCJITEnabledDefaultsKey];
-    parameters.shouldEnableFTLJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];
-    parameters.shouldEnableMemoryPressureReliefLogging = [[NSUserDefaults standardUserDefaults] boolForKey:@"LogMemoryJetsamDetails"];
+    parameters.shouldEnableJIT = [defaults boolForKey:WebKitJSCJITEnabledDefaultsKey];
+    parameters.shouldEnableFTLJIT = [defaults boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];
+    parameters.shouldEnableMemoryPressureReliefLogging = [defaults boolForKey:@"LogMemoryJetsamDetails"];
+    parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
 
 #if PLATFORM(MAC)
     parameters.shouldRewriteConstAsVar = applicationIsIBooks();
@@ -259,6 +264,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.shouldEnableNetworkCacheSpeculativeRevalidation = [defaults boolForKey:WebKitNetworkCacheSpeculativeRevalidationEnabledDefaultsKey];
 #endif
 #endif
+
+    parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, [[NSHTTPCookieStorage sharedHTTPCookieStorage] _cookieStorage]));

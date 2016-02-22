@@ -175,6 +175,9 @@ AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
 
 void NetworkProcess::lowMemoryHandler(Critical critical)
 {
+    if (m_suppressMemoryPressureHandler)
+        return;
+
     platformLowMemoryHandler(critical);
     WTF::releaseFastMallocFreeMemory();
 }
@@ -185,11 +188,14 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 
     WTF::setCurrentThreadIsUserInitiated();
 
-    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous) {
-        lowMemoryHandler(critical);
-    });
-    memoryPressureHandler.install();
+    m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
+    if (!m_suppressMemoryPressureHandler) {
+        auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+        memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous) {
+            lowMemoryHandler(critical);
+        });
+        memoryPressureHandler.install();
+    }
 
     m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
 

@@ -97,6 +97,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(cacheModel);
     encoder << shouldAlwaysUseComplexTextCodePath;
     encoder << shouldEnableMemoryPressureReliefLogging;
+    encoder << shouldSuppressMemoryPressureHandler;
     encoder << shouldUseFontSmoothing;
     encoder << fontWhitelist;
     encoder << iconDatabaseEnabled;
@@ -214,6 +215,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.shouldAlwaysUseComplexTextCodePath))
         return false;
     if (!decoder.decode(parameters.shouldEnableMemoryPressureReliefLogging))
+        return false;
+    if (!decoder.decode(parameters.shouldSuppressMemoryPressureHandler))
         return false;
     if (!decoder.decode(parameters.shouldUseFontSmoothing))
         return false;

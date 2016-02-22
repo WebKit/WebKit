@@ -64,6 +64,7 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << containerCachesDirectoryExtensionHandle;
     encoder << parentBundleDirectoryExtensionHandle;
 #endif
+    encoder << shouldSuppressMemoryPressureHandler;
     encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegisteredForCustomProtocols;
 #if PLATFORM(COCOA)
@@ -126,6 +127,8 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decode(result.parentBundleDirectoryExtensionHandle))
         return false;
 #endif
+    if (!decoder.decode(result.shouldSuppressMemoryPressureHandler))
+        return false;
     if (!decoder.decode(result.shouldUseTestingNetworkSession))
         return false;
     if (!decoder.decode(result.urlSchemesRegisteredForCustomProtocols))

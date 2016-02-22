@@ -252,7 +252,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     WTF::setCurrentThreadIsUserInitiated();
 
-    MemoryPressureHandler::singleton().install();
+    m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
+    if (!m_suppressMemoryPressureHandler)
+        MemoryPressureHandler::singleton().install();
 
     if (!parameters.injectedBundlePath.isEmpty())
         m_injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object()).get());
@@ -1175,7 +1177,9 @@ void WebProcess::resetAllGeolocationPermissions()
 
 void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
-    MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
+    if (!m_suppressMemoryPressureHandler)
+        MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
+
     setAllLayerTreeStatesFrozen(true);
 
     if (markAllLayersVolatileIfPossible()) {

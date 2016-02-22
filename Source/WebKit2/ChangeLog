@@ -1,3 +1,71 @@
+2016-02-22  Keith Rollin  <krollin@apple.com>
+
+        Add mechanism to disable memory pressure handling
+        https://bugs.webkit.org/show_bug.cgi?id=154254
+        <rdar://problem/24662616>
+
+        Reviewed by Chris Dumez.
+
+        Add a mechanism to disable WebKit's response to memory pressure
+        triggers. This was asked for by another group for testing purposes.
+
+        In order to disable WebKit's memory pressure handling, execute the
+        following from the command line:
+
+            defaults write com.apple.Safari WebKitSuppressMemoryPressureHandler -bool true
+
+        To revert to standard behavior, delete the key or set it to False.
+
+        This flag is used when a new sub-process is being spawned. The value
+        is read and stored in an initialization parameter block, which is then
+        sent to the new sub-process.
+
+        In actuality, only the UI, WebContent, and Network processes heed the
+        flag. The Plugin process isn't instrumented to heed this flag for
+        three reasons. First, the Plugin process installs its memory pressure
+        handler in initializeProcess, not initializePluginProcess. This is
+        contrary to when the other processes install their handlers, which is
+        in initialize<PluginType>Process, not initializeProcess. So in order
+        to accomodate the Plugin process, we'd need to modify
+        ChildProcessInitializationParameters. Doing this is awkward at best,
+        but also seems to be opposed to what's supposed to be done in
+        initializeProcess and conveyed in
+        ChildProcessInitializationParameters. And even if we did add a boolean
+        to this structure and added support for conveying it through the XPC
+        port, it would end up being a Plugin process-only boolean in a general
+        parameter block, which seems asymmetric with the other processes.
+        Second, there's no convenient Cocoa function called in the flow that
+        spawns the Plugin process, meaning that there's no convenient place to
+        call NSUserDefaults to get the flag's value. And third, the Plugin
+        process doesn't elegantly respond to the memory pressure trigger
+        anyway. It might terminate itself, but that's it. As for the Database
+        process, it doesn't seem to support responding to memory pressure at
+        all, so we don't send it a flag telling it to ignore it.
+
+        Internally, the memory pressure handler is suppressed by not calling
+        MemoryPressureHandler::install() if the flag is set. In the case of
+        the Network process, the flag is saved so that it can be checked later
+        in other places that manually kick off the memory pressure handling
+        procedure.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::lowMemoryHandler):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2016-02-22  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WKPluginSiteDataManager
