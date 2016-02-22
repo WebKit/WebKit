@@ -2476,7 +2476,7 @@ PASS HTMLAreaElement interface: attribute rel
 PASS HTMLAreaElement interface: attribute relList 
 PASS HTMLAreaElement interface: attribute noHref 
 PASS HTMLAreaElement interface: attribute href 
-FAIL HTMLAreaElement interface: attribute origin assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS HTMLAreaElement interface: attribute origin 
 PASS HTMLAreaElement interface: attribute protocol 
 PASS HTMLAreaElement interface: attribute username 
 PASS HTMLAreaElement interface: attribute password 
