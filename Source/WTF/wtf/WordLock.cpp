@@ -77,7 +77,7 @@ ThreadData* myThreadData()
 
 } // anonymous namespace
 
-void WordLock::lockSlow()
+NEVER_INLINE void WordLock::lockSlow()
 {
     unsigned spinCount = 0;
 
@@ -178,7 +178,7 @@ void WordLock::lockSlow()
     }
 }
 
-void WordLock::unlockSlow()
+NEVER_INLINE void WordLock::unlockSlow()
 {
     // The fast path can fail either because of spurious weak CAS failure, or because someone put a
     // thread on the queue, or the queue lock is held. If the queue lock is held, it can only be
