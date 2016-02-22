@@ -1,3 +1,13 @@
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
+        CSP: sandbox directive should be ignored when contained in a policy defined via a meta element
+        https://bugs.webkit.org/show_bug.cgi?id=154299
+        <rdar://problem/24680433>
+
+        Add iOS Simulator-specific expected result for test http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe.html.
+
+        * platform/ios-simulator/http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe-expected.txt: Added.
+
 2016-02-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Adding ios-simulator baseline for js/number-toLocaleString.html
