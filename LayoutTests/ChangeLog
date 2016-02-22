@@ -1,3 +1,10 @@
+2016-02-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Rebaseline Mavericks expected results for emoji tests. rdar://problem/24724222
+
+        * platform/mac-mavericks/fast/text/emoji-expected.txt:
+        Rebaseline test results.
+
 2016-02-19  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes expectation for Mavericks. rdar://problem/24748489
