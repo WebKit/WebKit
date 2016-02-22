@@ -1,3 +1,9 @@
+2016-02-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Unreviewed build fix after r196942.
+
+        * CMakeLists.txt: WKPluginSiteDataManager.cpp is gone.
+
 2016-02-22  Keith Rollin  <krollin@apple.com>
 
         Add mechanism to disable memory pressure handling
