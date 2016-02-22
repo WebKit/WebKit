@@ -1,3 +1,31 @@
+2016-02-22  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r196563): Images not loading on https://klim.co.nz/blog/paypal-sans-design-information/
+        https://bugs.webkit.org/show_bug.cgi?id=154547
+        <rdar://problem/24772167>
+
+        Reviewed by Gavin Barraclough.
+
+        The Website was doing the following:
+        $ var e = window.addEventListener;
+        $ e("eventname", handler)
+
+        In such case, the jsEventTargetPrototypeFunctionDispatchEvent() bindings
+        implementation was caused with a thisValue which is a JSLexicalEnvironment
+        and the implementation did not know how to convert it into a global object.
+        The previous implementation on JSDOMWindow used to handle tis correctly
+        because it was always calling JSValue::toThis() on the thisValue before
+        trying to cast it to a JSDOMWindow, and JSLexicalEnvironment::toThis()
+        gets the globalThisValue. This patch updates the EventTarget bindings
+        code to call always call toThis() on the thisValue before trying to
+        cast it. This should correctly deal with JSLexicalEnvironment and be a
+        no-op in usual cases.
+
+        No new tests, extended existing test.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateFunctionCastedThis):
+
 2016-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         Repeated background images have the wrong position when using bottom/right-relative background-position

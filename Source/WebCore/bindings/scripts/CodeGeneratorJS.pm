@@ -3264,7 +3264,7 @@ sub GenerateFunctionCastedThis
         if ($interfaceName eq "EventTarget") {
             # We allow calling the EventTarget API without an explicit 'this' value and fall back to using the global object instead.
             # As of early 2016, this matches Firefox and Chrome's behavior.
-            push(@implContent, "    auto castedThis = thisValue.isUndefinedOrNull() ? $castingHelper(thisValue.toThis(state, NotStrictMode)) : $castingHelper(thisValue);\n");
+            push(@implContent, "    auto castedThis = $castingHelper(thisValue.toThis(state, NotStrictMode));\n");
         } else {
             push(@implContent, "    auto castedThis = $castingHelper(thisValue);\n");
         }

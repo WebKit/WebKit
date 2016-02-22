@@ -32,6 +32,12 @@ shouldBeTrue("xhrDispatchEventFunction.call(undefined, new Event('myevent'))");
 
 shouldBeTrue("wasWindowEventListenerCalled");
 
+wasWindowEventListenerCalled = false;
+shouldNotThrow("addEventListenerFunction('myevent2', function() { wasWindowEventListenerCalled = true; });");
+shouldBeTrue("window.dispatchEvent(new Event('myevent2'))");
+shouldBeTrue("wasWindowEventListenerCalled");
+
+
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
