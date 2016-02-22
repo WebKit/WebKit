@@ -5,13 +5,13 @@
 <script src="../../resources/check-layout.js"></script>
 <script src="../../resources/js-test.js"></script>
 <style>
-.gridMaxFlexContent { -webkit-grid-template: minmax(30px, 2fr) / 50px; }
-.gridTwoDoubleMaxFlexContent { -webkit-grid-template: minmax(10px, 0.5fr) minmax(10px, 2fr) / 50px; }
-.gridIgnoreSecondGridItem { -webkit-grid-template: minmax(300px, 3fr) minmax(150px, 1fr) / 50px; }
+.gridMaxFlexContent { -webkit-grid-template: 50px / minmax(30px, 2fr); }
+.gridTwoDoubleMaxFlexContent { -webkit-grid-template: 50px / minmax(10px, 0.5fr) minmax(10px, 2fr); }
+.gridIgnoreSecondGridItem { -webkit-grid-template: 50px / minmax(300px, 3fr) minmax(150px, 1fr); }
 
-.gridRowsMaxFlexContent { -webkit-grid-template: 50px / minmax(30px, 2fr); }
-.gridRowsTwoMaxFlexContent { -webkit-grid-template: 50px / minmax(10px, 1fr) minmax(10px, 2fr); }
-.gridRowsTwoDoubleMaxFlexContent { -webkit-grid-template: 50px / minmax(10px, 0.5fr) minmax(10px, 2fr); }
+.gridRowsMaxFlexContent { -webkit-grid-template: minmax(30px, 2fr) / 50px; }
+.gridRowsTwoMaxFlexContent { -webkit-grid-template: minmax(10px, 1fr) minmax(10px, 2fr) / 50px; }
+.gridRowsTwoDoubleMaxFlexContent { -webkit-grid-template: minmax(10px, 0.5fr) minmax(10px, 2fr) / 50px; }
 
 .gridMinMaxFlexFixedAndMinContentAndFixed { -webkit-grid-template-columns: minmax(0.5fr, 35px) -webkit-min-content 25px; }
 .gridMinContentAndMinMaxFixedMinContentAndFlex { -webkit-grid-template-columns: -webkit-min-content minmax(20px, -webkit-min-content) 2fr; }

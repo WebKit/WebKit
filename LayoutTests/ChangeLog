@@ -1,5 +1,44 @@
 2016-02-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [css-grid] Swap columns and rows in grid-template shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=154472
+
+        Reviewed by Darin Adler.
+
+        The spec was modified past December to change the order of
+        columns and rows in the grid-template shorthand:
+        https://github.com/w3c/csswg-drafts/commit/f6c7691679a519017a80ebae44fd86c3eae5c5f9
+
+        Updated the parsing and modified the tests to follow the new syntax.
+
+        * fast/css-grid-layout/absolute-positioning-definite-sizes.html:
+        * fast/css-grid-layout/flex-content-distribution.html:
+        * fast/css-grid-layout/grid-align-content-vertical-lr.html:
+        * fast/css-grid-layout/grid-align-content-vertical-rl.html:
+        * fast/css-grid-layout/grid-align-content.html:
+        * fast/css-grid-layout/grid-gutters-and-alignment.html:
+        * fast/css-grid-layout/grid-gutters-and-flex-content.html:
+        * fast/css-grid-layout/grid-gutters-and-tracks.html:
+        * fast/css-grid-layout/grid-justify-content-vertical-lr.html:
+        * fast/css-grid-layout/grid-justify-content-vertical-rl.html:
+        * fast/css-grid-layout/grid-justify-content.html:
+        * fast/css-grid-layout/grid-shorthand-get-set.html:
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html:
+        * fast/css-grid-layout/relayout-align-items-changed.html:
+        * fast/css-grid-layout/relayout-align-self-changed.html:
+        * fast/css-grid-layout/relayout-indefinite-heights.html:
+        * fast/css-grid-layout/relayout-justify-items-changed.html:
+        * fast/css-grid-layout/relayout-justify-self-changed.html:
+        * fast/repaint/align-items-overflow-change.html:
+        * fast/repaint/align-self-change.html:
+        * fast/repaint/align-self-overflow-change.html:
+        * fast/repaint/justify-items-change.html:
+        * fast/repaint/justify-items-overflow-change.html:
+        * fast/repaint/justify-self-change.html:
+        * fast/repaint/justify-self-overflow-change.html:
+
+2016-02-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [css-grid] Swap columns and rows in grid shorthand
         https://bugs.webkit.org/show_bug.cgi?id=154449
 

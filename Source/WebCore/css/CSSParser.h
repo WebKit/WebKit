@@ -210,7 +210,8 @@ public:
 #if ENABLE(CSS_GRID_LAYOUT)
     RefPtr<CSSValue> parseGridPosition();
     bool parseGridItemPositionShorthand(CSSPropertyID, bool important);
-    bool parseGridTemplateRowsAndAreas(PassRefPtr<CSSValue>, bool important);
+    RefPtr<CSSValue> parseGridTemplateColumns();
+    bool parseGridTemplateRowsAndAreasAndColumns(bool important);
     bool parseGridTemplateShorthand(bool important);
     bool parseGridShorthand(bool important);
     bool parseGridAreaShorthand(bool important);

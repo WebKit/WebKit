@@ -1,5 +1,26 @@
 2016-02-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [css-grid] Swap columns and rows in grid-template shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=154472
+
+        Reviewed by Darin Adler.
+
+        The spec was modified past December to change the order of
+        columns and rows in the grid-template shorthand:
+        https://github.com/w3c/csswg-drafts/commit/f6c7691679a519017a80ebae44fd86c3eae5c5f9
+
+        Updated the parsing and modified the tests to follow the new syntax.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateColumns):
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreasAndColumns):
+        (WebCore::CSSParser::parseGridTemplateShorthand):
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreas): Renamed to
+        parseGridTemplateRowsAndAreasAndColumns().
+        * css/CSSParser.h:
+
+2016-02-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [css-grid] Swap columns and rows in grid shorthand
         https://bugs.webkit.org/show_bug.cgi?id=154449
 
