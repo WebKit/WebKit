@@ -80,6 +80,7 @@ private:
 
     // This set keeps track of the open databases that have been used on this thread.
     typedef HashSet<RefPtr<Database>> DatabaseSet;
+    mutable Lock m_openDatabaseSetMutex;
     DatabaseSet m_openDatabaseSet;
 
     std::unique_ptr<SQLTransactionClient> m_transactionClient;
