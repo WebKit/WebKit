@@ -104,19 +104,20 @@ void RenderGeometryMap::mapToContainer(TransformState& transformState, const Ren
 FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLayerModelObject* container) const
 {
     FloatPoint result;
+#if !ASSERT_DISABLED
+    FloatPoint rendererMappedResult = m_mapping.last().m_renderer->localToAbsolute(p, m_mapCoordinatesFlags);
+#endif
     
-    if (!hasFixedPositionStep() && !hasTransformStep() && !hasNonUniformStep() && (!container || (m_mapping.size() && container == m_mapping[0].m_renderer)))
+    if (!hasFixedPositionStep() && !hasTransformStep() && !hasNonUniformStep() && (!container || (m_mapping.size() && container == m_mapping[0].m_renderer))) {
         result = p + roundedIntSize(m_accumulatedOffset);
-    else {
+        // Should convert to a LayoutPoint because of the uniqueness of LayoutUnit::round
+        ASSERT(roundedIntPoint(LayoutPoint(rendererMappedResult)) == result);
+    } else {
         TransformState transformState(TransformState::ApplyTransformDirection, p);
         mapToContainer(transformState, container);
         result = transformState.lastPlanarPoint();
+        ASSERT(rendererMappedResult == result);
     }
-
-#if !ASSERT_DISABLED
-    FloatPoint rendererMappedResult = m_mapping.last().m_renderer->localToAbsolute(p, m_mapCoordinatesFlags);
-    ASSERT(roundedIntPoint(rendererMappedResult) == roundedIntPoint(result));
-#endif
 
     return result;
 }
