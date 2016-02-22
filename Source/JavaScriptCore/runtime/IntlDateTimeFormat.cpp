@@ -39,7 +39,6 @@
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 #include <unicode/ucal.h>
-#include <unicode/udat.h>
 #include <unicode/udatpg.h>
 #include <unicode/uenum.h>
 
@@ -50,6 +49,12 @@ const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, 0, CREAT
 static const char* const relevantExtensionKeys[2] = { "ca", "nu" };
 static const size_t indexOfExtensionKeyCa = 0;
 static const size_t indexOfExtensionKeyNu = 1;
+
+void IntlDateTimeFormat::UDateFormatDeleter::operator()(UDateFormat* dateFormat) const
+{
+    if (dateFormat)
+        udat_close(dateFormat);
+}
 
 IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, IntlDateTimeFormatConstructor* constructor)
 {
@@ -66,12 +71,6 @@ Structure* IntlDateTimeFormat::createStructure(VM& vm, JSGlobalObject* globalObj
 IntlDateTimeFormat::IntlDateTimeFormat(VM& vm, Structure* structure)
     : JSDestructibleObject(vm, structure)
 {
-}
-
-IntlDateTimeFormat::~IntlDateTimeFormat()
-{
-    if (m_dateFormat)
-        udat_close(m_dateFormat);
 }
 
 void IntlDateTimeFormat::finishCreation(VM& vm)
@@ -107,21 +106,20 @@ static String defaultTimeZone()
 
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> buffer(32);
-    auto bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.capacity(), &status);
+    auto bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.size(), &status);
     if (status == U_BUFFER_OVERFLOW_ERROR) {
         status = U_ZERO_ERROR;
-        buffer = Vector<UChar, 32>(bufferLength);
+        buffer.grow(bufferLength);
         ucal_getDefaultTimeZone(buffer.data(), bufferLength, &status);
     }
     if (U_SUCCESS(status)) {
         status = U_ZERO_ERROR;
-        UBool isSystemID = false;
         Vector<UChar, 32> canonicalBuffer(32);
-        auto canonicalLength = ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalBuffer.capacity(), &isSystemID, &status);
+        auto canonicalLength = ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalBuffer.size(), nullptr, &status);
         if (status == U_BUFFER_OVERFLOW_ERROR) {
             status = U_ZERO_ERROR;
-            canonicalBuffer = Vector<UChar, 32>(canonicalLength);
-            ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalLength, &isSystemID, &status);
+            canonicalBuffer.grow(canonicalLength);
+            ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalLength, nullptr, &status);
         }
         if (U_SUCCESS(status))
             return String(canonicalBuffer.data(), canonicalLength);
@@ -160,14 +158,12 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
         // 2. If ianaTimeZone is a Link name, then let ianaTimeZone be the corresponding Zone name as specified in the “backward” file of the IANA Time Zone Database.
 
         Vector<UChar, 32> buffer(ianaTimeZoneLength);
-        UBool isSystemID = false;
         status = U_ZERO_ERROR;
-        auto canonicalLength = ucal_getCanonicalTimeZoneID(ianaTimeZone, ianaTimeZoneLength, buffer.data(), ianaTimeZoneLength, &isSystemID, &status);
+        auto canonicalLength = ucal_getCanonicalTimeZoneID(ianaTimeZone, ianaTimeZoneLength, buffer.data(), ianaTimeZoneLength, nullptr, &status);
         if (status == U_BUFFER_OVERFLOW_ERROR) {
-            buffer = Vector<UChar, 32>(canonicalLength);
-            isSystemID = false;
+            buffer.grow(canonicalLength);
             status = U_ZERO_ERROR;
-            ucal_getCanonicalTimeZoneID(ianaTimeZone, ianaTimeZoneLength, buffer.data(), canonicalLength, &isSystemID, &status);
+            ucal_getCanonicalTimeZoneID(ianaTimeZone, ianaTimeZoneLength, buffer.data(), canonicalLength, nullptr, &status);
         }
         ASSERT(U_SUCCESS(status));
         canonical = String(buffer.data(), canonicalLength);
@@ -191,11 +187,9 @@ static Vector<String> localeData(const String& locale, size_t keyIndex)
         UEnumeration* calendars = ucal_getKeywordValuesForLocale("calendar", locale.utf8().data(), false, &status);
         ASSERT(U_SUCCESS(status));
 
-        status = U_ZERO_ERROR;
         int32_t nameLength;
         while (const char* availableName = uenum_next(calendars, &nameLength, &status)) {
             ASSERT(U_SUCCESS(status));
-            status = U_ZERO_ERROR;
             String calendar = String(availableName, nameLength);
             keyLocaleData.append(calendar);
             // Ensure aliases used in language tag are allowed.
@@ -303,15 +297,17 @@ static JSObject* toDateTimeOptionsAnyDate(ExecState& exec, JSValue originalOptio
         // a. For each of the property names "year", "month", "day":
         // i. Let status be CreateDatePropertyOrThrow(options, prop, "numeric").
         // ii. ReturnIfAbrupt(status).
-        options->putDirect(vm, vm.propertyNames->year, jsNontrivialString(&exec, ASCIILiteral("numeric")));
+        JSString* numeric = jsNontrivialString(&exec, ASCIILiteral("numeric"));
+
+        options->putDirect(vm, vm.propertyNames->year, numeric);
         if (exec.hadException())
             return nullptr;
 
-        options->putDirect(vm, vm.propertyNames->month, jsNontrivialString(&exec, ASCIILiteral("numeric")));
+        options->putDirect(vm, vm.propertyNames->month, numeric);
         if (exec.hadException())
             return nullptr;
 
-        options->putDirect(vm, vm.propertyNames->day, jsNontrivialString(&exec, ASCIILiteral("numeric")));
+        options->putDirect(vm, vm.propertyNames->day, numeric);
         if (exec.hadException())
             return nullptr;
     }
@@ -449,7 +445,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     if (exec.hadException())
         return;
     // 10. Set opt.[[localeMatcher]] to matcher.
-    localeOpt.set(vm.propertyNames->localeMatcher.string(), localeMatcher);
+    localeOpt.add(vm.propertyNames->localeMatcher.string(), localeMatcher);
 
     // 11. Let localeData be the value of %DateTimeFormat%.[[localeData]].
     // 12. Let r be ResolveLocale( %DateTimeFormat%.[[availableLocales]], requestedLocales, opt, %DateTimeFormat%.[[relevantExtensionKeys]], localeData).
@@ -582,7 +578,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
 
     // We need hour12 to make the hour skeleton pattern decision, so do this early.
     // 32. Let hr12 be GetOption(options, "hour12", "boolean", undefined, undefined).
-    bool isHour12Undefined = true;
+    bool isHour12Undefined;
     bool hr12 = intlBooleanOption(exec, options, vm.propertyNames->hour12, isHour12Undefined);
     // 33. ReturnIfAbrupt(hr12).
     if (exec.hadException())
@@ -658,10 +654,10 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     StringView skeletonView(skeleton);
     Vector<UChar, 32> patternBuffer(32);
     status = U_ZERO_ERROR;
-    auto patternLength = udatpg_getBestPattern(generator, skeletonView.upconvertedCharacters(), skeletonView.length(), patternBuffer.data(), patternBuffer.capacity(), &status);
+    auto patternLength = udatpg_getBestPattern(generator, skeletonView.upconvertedCharacters(), skeletonView.length(), patternBuffer.data(), patternBuffer.size(), &status);
     if (status == U_BUFFER_OVERFLOW_ERROR) {
         status = U_ZERO_ERROR;
-        patternBuffer = Vector<UChar, 32>(patternLength);
+        patternBuffer.grow(patternLength);
         udatpg_getBestPattern(generator, skeletonView.upconvertedCharacters(), skeletonView.length(), patternBuffer.data(), patternLength, &status);
     }
     udatpg_close(generator);
@@ -675,7 +671,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
 
     status = U_ZERO_ERROR;
     StringView timeZoneView(m_timeZone);
-    m_dateFormat = udat_open(UDAT_IGNORE, UDAT_IGNORE, m_locale.utf8().data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), pattern.upconvertedCharacters(), pattern.length(), &status);
+    m_dateFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(UDAT_PATTERN, UDAT_PATTERN, m_locale.utf8().data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), pattern.upconvertedCharacters(), pattern.length(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(&exec, ASCIILiteral("failed to initialize DateTimeFormat"));
         return;
@@ -688,18 +684,17 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     m_initializedDateTimeFormat = true;
 
     // 39. Return dateTimeFormat.
-    return;
 }
 
 const char* IntlDateTimeFormat::weekdayString(Weekday weekday)
 {
     switch (weekday) {
     case Weekday::Narrow:
-        return ASCIILiteral("narrow");
+        return "narrow";
     case Weekday::Short:
-        return ASCIILiteral("short");
+        return "short";
     case Weekday::Long:
-        return ASCIILiteral("long");
+        return "long";
     case Weekday::None:
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -900,11 +895,11 @@ JSValue IntlDateTimeFormat::format(ExecState& exec, double value)
     // Delegate remaining steps to ICU.
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> result(32);
-    auto resultLength = udat_format(m_dateFormat, value, result.data(), result.capacity(), nullptr, &status);
+    auto resultLength = udat_format(m_dateFormat.get(), value, result.data(), result.size(), nullptr, &status);
     if (status == U_BUFFER_OVERFLOW_ERROR) {
         status = U_ZERO_ERROR;
-        result = Vector<UChar, 32>(resultLength);
-        udat_format(m_dateFormat, value, result.data(), resultLength, nullptr, &status);
+        result.grow(resultLength);
+        udat_format(m_dateFormat.get(), value, result.data(), resultLength, nullptr, &status);
     }
     if (U_FAILURE(status))
         return throwTypeError(&exec, ASCIILiteral("failed to format date value"));

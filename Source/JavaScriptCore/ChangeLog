@@ -1,3 +1,45 @@
+2016-02-21  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Improvements to Intl code
+        https://bugs.webkit.org/show_bug.cgi?id=154486
+
+        Reviewed by Darin Adler.
+
+        This patch does several things:
+        - Use std::unique_ptr to store ICU objects.
+        - Pass Vector::size() to ICU functions that take a buffer size instead
+          of Vector::capacity().
+        - If U_SUCCESS(status) is true, it means there is no error, but there
+          could be warnings. ICU functions ignore warnings. So, there is no need
+          to reset status to U_ZERO_ERROR.
+        - Remove the initialization of the String instance variables of
+          IntlDateTimeFormat. These values are never read and cause unnecessary
+          memory allocation.
+        - Fix coding style.
+        - Some small optimization.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::UCollatorDeleter::operator()):
+        (JSC::IntlCollator::createCollator):
+        (JSC::IntlCollator::compareStrings):
+        (JSC::IntlCollator::~IntlCollator): Deleted.
+        * runtime/IntlCollator.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::UDateFormatDeleter::operator()):
+        (JSC::defaultTimeZone):
+        (JSC::canonicalizeTimeZoneName):
+        (JSC::toDateTimeOptionsAnyDate):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::weekdayString):
+        (JSC::IntlDateTimeFormat::format):
+        (JSC::IntlDateTimeFormat::~IntlDateTimeFormat): Deleted.
+        (JSC::localeData): Deleted.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        * runtime/IntlObject.cpp:
+        (JSC::numberingSystemsForLocale):
+
 2016-02-21  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Remove arrowfunction test cases that rely on arguments variable in jsc

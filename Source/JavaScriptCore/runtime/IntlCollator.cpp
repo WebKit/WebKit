@@ -50,6 +50,12 @@ static const char* const relevantExtensionKeys[2] = { "co", "kn" };
 static const size_t indexOfExtensionKeyCo = 0;
 static const size_t indexOfExtensionKeyKn = 1;
 
+void IntlCollator::UCollatorDeleter::operator()(UCollator* collator) const
+{
+    if (collator)
+        ucol_close(collator);
+}
+
 IntlCollator* IntlCollator::create(VM& vm, IntlCollatorConstructor* constructor)
 {
     IntlCollator* format = new (NotNull, allocateCell<IntlCollator>(vm.heap)) IntlCollator(vm, constructor->collatorStructure());
@@ -65,12 +71,6 @@ Structure* IntlCollator::createStructure(VM& vm, JSGlobalObject* globalObject, J
 IntlCollator::IntlCollator(VM& vm, Structure* structure)
     : JSDestructibleObject(vm, structure)
 {
-}
-
-IntlCollator::~IntlCollator()
-{
-    if (m_collator)
-        ucol_close(m_collator);
 }
 
 void IntlCollator::finishCreation(VM& vm)
@@ -326,7 +326,7 @@ void IntlCollator::createCollator(ExecState& state)
     }
 
     UErrorCode status = U_ZERO_ERROR;
-    UCollator* collator = ucol_open(m_locale.utf8().data(), &status);
+    auto collator = std::unique_ptr<UCollator, UCollatorDeleter>(ucol_open(m_locale.utf8().data(), &status));
     if (U_FAILURE(status))
         return;
 
@@ -347,24 +347,22 @@ void IntlCollator::createCollator(ExecState& state)
     default:
         ASSERT_NOT_REACHED();
     }
-    ucol_setAttribute(collator, UCOL_STRENGTH, strength, &status);
-    ucol_setAttribute(collator, UCOL_CASE_LEVEL, caseLevel, &status);
+    ucol_setAttribute(collator.get(), UCOL_STRENGTH, strength, &status);
+    ucol_setAttribute(collator.get(), UCOL_CASE_LEVEL, caseLevel, &status);
 
-    ucol_setAttribute(collator, UCOL_NUMERIC_COLLATION, m_numeric ? UCOL_ON : UCOL_OFF, &status);
+    ucol_setAttribute(collator.get(), UCOL_NUMERIC_COLLATION, m_numeric ? UCOL_ON : UCOL_OFF, &status);
 
     // FIXME: Setting UCOL_ALTERNATE_HANDLING to UCOL_SHIFTED causes punctuation and whitespace to be
     // ignored. There is currently no way to ignore only punctuation.
-    ucol_setAttribute(collator, UCOL_ALTERNATE_HANDLING, m_ignorePunctuation ? UCOL_SHIFTED : UCOL_DEFAULT, &status);
+    ucol_setAttribute(collator.get(), UCOL_ALTERNATE_HANDLING, m_ignorePunctuation ? UCOL_SHIFTED : UCOL_DEFAULT, &status);
 
     // "The method is required to return 0 when comparing Strings that are considered canonically
     // equivalent by the Unicode standard."
-    ucol_setAttribute(collator, UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
-    if (U_FAILURE(status)) {
-        ucol_close(collator);
+    ucol_setAttribute(collator.get(), UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
+    if (U_FAILURE(status))
         return;
-    }
 
-    m_collator = collator;
+    m_collator = WTFMove(collator);
 }
 
 JSValue IntlCollator::compareStrings(ExecState& state, StringView x, StringView y)
@@ -379,7 +377,7 @@ JSValue IntlCollator::compareStrings(ExecState& state, StringView x, StringView 
     UErrorCode status = U_ZERO_ERROR;
     UCharIterator iteratorX = createIterator(x);
     UCharIterator iteratorY = createIterator(y);
-    auto result = ucol_strcollIter(m_collator, &iteratorX, &iteratorY, &status);
+    auto result = ucol_strcollIter(m_collator.get(), &iteratorX, &iteratorY, &status);
     if (U_FAILURE(status))
         return state.vm().throwException(&state, createError(&state, ASCIILiteral("Failed to compare strings.")));
     return jsNumber(result);

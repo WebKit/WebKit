@@ -54,7 +54,6 @@ public:
 
 protected:
     IntlDateTimeFormat(VM&, Structure*);
-    ~IntlDateTimeFormat();
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -70,6 +69,11 @@ private:
     enum class Second { None, TwoDigit, Numeric };
     enum class TimeZoneName { None, Short, Long };
 
+    struct UDateFormatDeleter {
+        void operator()(UDateFormat*) const;
+    };
+
+    void setFormatsFromPattern(const StringView&);
     static const char* weekdayString(Weekday);
     static const char* eraString(Era);
     static const char* yearString(Year);
@@ -81,14 +85,13 @@ private:
     static const char* timeZoneNameString(TimeZoneName);
 
     bool m_initializedDateTimeFormat { false };
-    void setFormatsFromPattern(const StringView&);
     WriteBarrier<JSBoundFunction> m_boundFormat;
-    UDateFormat* m_dateFormat { nullptr };
+    std::unique_ptr<UDateFormat, UDateFormatDeleter> m_dateFormat;
 
-    String m_locale { ASCIILiteral("en") };
-    String m_calendar { ASCIILiteral("gregorian") };
-    String m_numberingSystem { ASCIILiteral("latn") };
-    String m_timeZone { ASCIILiteral("UTC") };
+    String m_locale;
+    String m_calendar;
+    String m_numberingSystem;
+    String m_timeZone;
     bool m_hour12 { true };
     Weekday m_weekday { Weekday::None };
     Era m_era { Era::None };

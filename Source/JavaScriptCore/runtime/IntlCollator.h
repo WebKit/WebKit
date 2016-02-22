@@ -55,7 +55,6 @@ public:
 
 protected:
     IntlCollator(VM&, Structure*);
-    ~IntlCollator();
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -63,6 +62,10 @@ protected:
 private:
     enum class Usage { Sort, Search };
     enum class Sensitivity { Base, Accent, Case, Variant };
+
+    struct UCollatorDeleter {
+        void operator()(UCollator*) const;
+    };
 
     void createCollator(ExecState&);
     static const char* usageString(Usage);
@@ -73,7 +76,7 @@ private:
     String m_collation;
     Sensitivity m_sensitivity;
     WriteBarrier<JSBoundFunction> m_boundCompare;
-    UCollator* m_collator { nullptr };
+    std::unique_ptr<UCollator, UCollatorDeleter> m_collator;
     bool m_numeric;
     bool m_ignorePunctuation;
     bool m_initializedCollator { false };
