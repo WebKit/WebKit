@@ -203,6 +203,7 @@
 (allow file*
     ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
     (home-library-subpath "/Keychains"))
+(allow system-fsctl (fsctl-command (_IO "h" 47)))
 
 ;; IOKit user clients
 (allow iokit-open

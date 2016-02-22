@@ -229,6 +229,7 @@
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
 (allow ipc-posix-shm
     (ipc-posix-name-regex #"^CFPBS:")) ; <rdar://problem/13757475>
+(allow system-fsctl (fsctl-command (_IO "h" 47)))
 
 ;; Graphics
 (system-graphics)
