@@ -1,3 +1,37 @@
+2016-02-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: clean up generator selection in generate-inspector-protocol-bindings.py
+        https://bugs.webkit.org/show_bug.cgi?id=154505
+        <rdar://problem/24758042>
+
+        Reviewed by Timothy Hatcher.
+
+        It should be possible to generate code for a framework using some generators
+        that other frameworks also use. Right now the generator selection code assumes
+        that use of a generator is mutually exclusive among non-test frameworks.
+
+        Make this code explicitly switch on the framework. Reorder generators
+        alpabetically within each case.
+
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification):
+
+        Rebaseline tests that are affected by generator reorderings.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-02-19  Saam Barati  <sbarati@apple.com>
 
         [ES6] Implement Proxy.[[Construct]]
