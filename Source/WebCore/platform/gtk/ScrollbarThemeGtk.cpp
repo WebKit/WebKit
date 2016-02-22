@@ -217,8 +217,19 @@ static GRefPtr<GtkStyleContext> createChildStyleContext(GtkStyleContext* parent,
     return styleContext;
 }
 
+static void themeChangedCallback()
+{
+    ScrollbarTheme::theme()->themeChanged();
+}
+
 ScrollbarThemeGtk::ScrollbarThemeGtk()
 {
+    static bool themeMonitorInitialized = false;
+    if (!themeMonitorInitialized) {
+        g_signal_connect_swapped(gtk_settings_get_default(), "notify::gtk-theme-name", G_CALLBACK(themeChangedCallback), nullptr);
+        themeMonitorInitialized = true;
+    }
+
     updateThemeProperties();
 }
 
