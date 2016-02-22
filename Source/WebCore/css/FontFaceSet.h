@@ -38,6 +38,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+class ExecState;
+}
+
 namespace WebCore {
 
 class Document;
@@ -45,22 +49,18 @@ class FontFace;
 
 class FontFaceSet final : public RefCounted<FontFaceSet>, public CSSFontFaceSetClient, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static Ref<FontFaceSet> create(JSC::ExecState& execState, Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
-    {
-        Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(execState, document, initialFaces));
-        result->suspendIfNeeded();
-        return result;
-    }
+    static Ref<FontFaceSet> create(Document&, const Vector<RefPtr<FontFace>>& initialFaces);
+    static Ref<FontFaceSet> create(Document&, CSSFontFaceSet& backing);
     virtual ~FontFaceSet();
 
-    bool has(FontFace*) const;
+    bool has(RefPtr<WebCore::FontFace>) const;
     size_t size() const;
-    FontFaceSet& add(FontFace*);
-    bool remove(FontFace*);
+    FontFaceSet& add(RefPtr<WebCore::FontFace>);
+    bool remove(RefPtr<WebCore::FontFace>);
     void clear();
 
-    void load(const String& font, DeferredWrapper&& promise, ExceptionCode& ec) { load(font, String(" ", String::ConstructFromLiteral), WTFMove(promise), ec); }
-    void load(const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode&);
+    void load(JSC::ExecState& execState, const String& font, DeferredWrapper&& promise, ExceptionCode& ec) { load(execState, font, String(" ", String::ConstructFromLiteral), WTFMove(promise), ec); }
+    void load(JSC::ExecState&, const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode&);
     bool check(const String& font, ExceptionCode& ec) { return check(font, String(" ", String::ConstructFromLiteral), ec); }
     bool check(const String& font, const String& text, ExceptionCode&);
 
@@ -69,14 +69,16 @@ public:
     typedef DOMPromise<FontFaceSet&, DOMCoreException&> Promise;
     Promise& promise(JSC::ExecState&);
 
+    CSSFontFaceSet& backing() { return m_backing; }
+
     class Iterator {
     public:
         explicit Iterator(FontFaceSet&);
-        bool next(FontFace*& nextKey, FontFace*& nextValue);
+        bool next(JSC::ExecState&, RefPtr<FontFace>& nextKey, RefPtr<FontFace>& nextValue);
 
     private:
         Ref<FontFaceSet> m_target;
-        size_t m_index { 0 };
+        size_t m_index { 0 }; // FIXME: There needs to be a mechanism to handle when fonts are added or removed from the middle of the FontFaceSet.
     };
     Iterator createIterator() { return Iterator(*this); }
 
@@ -100,7 +102,8 @@ private:
         Promise promise;
     };
 
-    FontFaceSet(JSC::ExecState&, Document&, const Vector<RefPtr<FontFace>>&);
+    FontFaceSet(Document&, const Vector<RefPtr<FontFace>>&);
+    FontFaceSet(Document&, CSSFontFaceSet&);
 
     void fulfillPromise();
 
@@ -119,8 +122,8 @@ private:
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }
 
-    CSSFontFaceSet m_backing;
-    HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
+    Ref<CSSFontFaceSet> m_backing;
+    HashMap<RefPtr<CSSFontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     Optional<Promise> m_promise;
 };
 

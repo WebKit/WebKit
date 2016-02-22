@@ -129,7 +129,7 @@ JSC::EncodedJSValue keyValueIteratorForEach(JSC::ExecState& state, const char* p
     typename JSWrapper::IteratorKey nextKey;
     typename JSWrapper::IteratorValue nextValue;
     auto iterator = wrapper->wrapped().createIterator();
-    while (!iterator.next(nextKey, nextValue)) {
+    while (!iterator.next(state, nextKey, nextValue)) {
         JSC::MarkedArgumentBuffer arguments;
         arguments.append(toJS(&state, wrapper->globalObject(), nextValue));
         arguments.append(toJS(&state, wrapper->globalObject(), nextKey));
@@ -153,7 +153,7 @@ bool JSKeyValueIterator<JSWrapper>::next(JSC::ExecState& state, JSC::JSValue& va
 {
     typename JSWrapper::IteratorKey nextKey;
     typename JSWrapper::IteratorValue nextValue;
-    if (m_iterator.next(nextKey, nextValue)) {
+    if (m_iterator.next(state, nextKey, nextValue)) {
         value = JSC::jsUndefined();
         return true;
     }

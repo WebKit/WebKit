@@ -27,33 +27,45 @@
 #define CSSFontFaceSet_h
 
 #include "CSSFontFace.h"
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
+class CSSPrimitiveValue;
 class FontFaceSet;
 
 class CSSFontFaceSetClient {
 public:
     virtual ~CSSFontFaceSetClient() { }
-    virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) = 0;
-    virtual void startedLoading() = 0;
-    virtual void completedLoading() = 0;
+    virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) { };
+    virtual void fontModified() { };
+    virtual void startedLoading() { };
+    virtual void completedLoading() { };
 };
 
-class CSSFontFaceSet final : public CSSFontFace::Client {
+class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFace::Client {
 public:
-    CSSFontFaceSet(CSSFontFaceSetClient&);
+    static Ref<CSSFontFaceSet> create()
+    {
+        return adoptRef(*new CSSFontFaceSet());
+    }
     ~CSSFontFaceSet();
+
+    void addClient(CSSFontFaceSetClient&);
+    void removeClient(CSSFontFaceSetClient&);
 
     bool hasFace(const CSSFontFace&) const;
     size_t faceCount() const { return m_faces.size(); }
     void add(CSSFontFace&);
     void remove(const CSSFontFace&);
-    const CSSFontFace& operator[](size_t i) const { return m_faces[i]; }
+    void clear();
+    CSSFontFace& operator[](size_t i);
 
-    void load(const String& font, const String& text, ExceptionCode&);
     bool check(const String& font, const String& text, ExceptionCode&);
+
+    CSSSegmentedFontFace* getFontFace(FontTraitsMask, const AtomicString& family);
 
     enum class Status {
         Loading,
@@ -64,14 +76,29 @@ public:
     Vector<std::reference_wrapper<CSSFontFace>> matchingFaces(const String& font, const String& text, ExceptionCode&);
 
 private:
+    CSSFontFaceSet();
+
+    void removeFromFacesLookupTable(const CSSFontFace&, const CSSValueList& familiesToSearchFor);
+    void addToFacesLookupTable(CSSFontFace&);
+
     void incrementActiveCount();
     void decrementActiveCount();
 
-    virtual void stateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
+    virtual void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
+    virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) override;
 
-    Vector<Ref<CSSFontFace>> m_faces;
+    void registerLocalFontFacesForFamily(const String&);
+
+    static String familyNameFromPrimitive(const CSSPrimitiveValue&);
+
+    // m_faces should hold all the same fonts as the ones inside inside m_facesLookupTable.
+    Vector<Ref<CSSFontFace>> m_faces; // We should investigate moving m_faces to FontFaceSet and making it reference FontFaces. This may clean up the font loading design.
+    HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_facesLookupTable;
+    HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFacesLookupTable;
+    HashMap<String, HashMap<unsigned, std::unique_ptr<CSSSegmentedFontFace>>, ASCIICaseInsensitiveHash> m_cache;
+    size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
     Status m_status { Status::Loaded };
-    CSSFontFaceSetClient& m_client;
+    HashSet<CSSFontFaceSetClient*> m_clients;
     unsigned m_activeCount { 0 };
 };
 

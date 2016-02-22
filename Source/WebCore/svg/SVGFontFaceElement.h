@@ -50,7 +50,7 @@ public:
     SVGFontElement* associatedFontElement() const;
     void rebuildFontFace();
     
-    const StyleRuleFontFace& fontFaceRule() const { return m_fontFaceRule.get(); }
+    StyleRuleFontFace& fontFaceRule() { return m_fontFaceRule.get(); }
 
 private:
     SVGFontFaceElement(const QualifiedName&, Document&);

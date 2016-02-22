@@ -1,0 +1,24 @@
+PASS document.fonts.size is 2
+PASS object.done is false
+PASS object.value.family is "MyFont1"
+PASS object.done is false
+PASS object.value.family is "MyFont2"
+PASS object.done is true
+PASS fontFaceSet.size is 2
+PASS object.done is false
+PASS object.value.family is "MyFont1"
+PASS object.done is false
+PASS object.value.family is "MyFont2"
+PASS object.done is true
+PASS document.getElementById("testElement").offsetWidth is not originalWidth
+PASS document.getElementById("testElement").offsetWidth is originalWidth
+PASS object.length is 2
+PASS object[0].family is "MyFont3"
+PASS object[1].family is "MyFont3"
+PASS document.getElementById("testElement").offsetWidth is not originalWidth
+PASS document.getElementById("testElement").offsetWidth is originalWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+On Load Executed.
+l

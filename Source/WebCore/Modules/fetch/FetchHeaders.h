@@ -33,6 +33,10 @@
 
 #include "HTTPHeaderMap.h"
 
+namespace JSC {
+class ExecState;
+}
+
 namespace WebCore {
 
 typedef int ExceptionCode;
@@ -65,7 +69,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(FetchHeaders&);
-        bool next(String& nextKey, String& nextValue);
+        bool next(JSC::ExecState&, String& nextKey, String& nextValue);
 
     private:
         Ref<FetchHeaders> m_headers;

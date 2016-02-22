@@ -42,19 +42,18 @@ class FontDescription;
 class CSSSegmentedFontFace final : public CSSFontFace::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSSegmentedFontFace(CSSFontSelector&);
+    CSSSegmentedFontFace();
     ~CSSSegmentedFontFace();
-
-    CSSFontSelector& fontSelector() const { return m_fontSelector; }
 
     void appendFontFace(Ref<CSSFontFace>&&);
 
     FontRanges fontRanges(const FontDescription&);
 
+    Vector<Ref<CSSFontFace>, 1>& constituentFaces() { return m_fontFaces; }
+
 private:
     virtual void fontLoaded(CSSFontFace&) override;
 
-    CSSFontSelector& m_fontSelector;
     HashMap<FontDescriptionKey, FontRanges, FontDescriptionKeyHash, WTF::SimpleClassHashTraits<FontDescriptionKey>> m_cache;
     Vector<Ref<CSSFontFace>, 1> m_fontFaces;
 };

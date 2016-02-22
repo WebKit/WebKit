@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="styleElement">
+@font-face {
+    font-family: "MyFont1";
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+@font-face {
+    font-family: "MyFont2";
+    src: url("../../resources/Ahem.otf") format("opentype");
+}
+</style>
+</head>
+<body>
+<div id="onLoadElement"></div>
+<span id="testElement" style="font: 50px AppliedFont">l</span>
+<script>
+window.onload = function() {
+    document.getElementById("onLoadElement").innerText = "On Load Executed.";
+}
+var originalWidth = document.getElementById("testElement").offsetWidth;
+
+shouldBe("document.fonts.size", "2");
+var iterator = document.fonts.keys();
+var object = iterator.next();
+shouldBeFalse("object.done");
+shouldBeEqualToString("object.value.family", "MyFont1");
+object = iterator.next();
+shouldBeFalse("object.done");
+shouldBeEqualToString("object.value.family", "MyFont2");
+object = iterator.next();
+shouldBeTrue("object.done");
+
+var fontFaceSet = new FontFaceSet([]);
+fontFaceSet.add(new FontFace("MyFont2", "url(\"asdf\")", {}));
+fontFaceSet.add(document.fonts.keys().next().value);
+shouldBe("fontFaceSet.size", "2");
+iterator = fontFaceSet.keys();
+object = iterator.next();
+shouldBeFalse("object.done");
+shouldBeEqualToString("object.value.family", "MyFont1");
+object = iterator.next();
+shouldBeFalse("object.done");
+shouldBeEqualToString("object.value.family", "MyFont2");
+object = iterator.next();
+shouldBeTrue("object.done");
+
+iterator = undefined;
+object = undefined;
+
+self.jsTestIsAsync = true;
+function startLoading() {
+    var appliedFont = undefined;
+    document.fonts.keys().next().value.load().then(function() {
+        return document.fonts.keys().next().value.loaded;
+    }, function() {
+        testFailed("Loading should succeed.");
+        finishJSTest();
+    }).then(function() {
+        document.fonts.keys().next().value.family = "AppliedFont";
+        shouldNotBe("document.getElementById(\"testElement\").offsetWidth", "originalWidth");
+        document.fonts.keys().next().value.family = "MyFont1";
+        shouldBe("document.getElementById(\"testElement\").offsetWidth", "originalWidth");
+        document.fonts.add(new FontFace("MyFont3", "url(\"../../resources/Ahem.otf\")", {}));
+        return document.fonts.load("MyFont3");
+    }, function() {
+        testFailed("The same promise should not fail and then succeed.");
+        finishJSTest();
+    }).then(function() {
+        testFailed("Should not be able to parse as a font: property.");
+        finishJSTest();
+    }, function() {
+        document.fonts.add(new FontFace("MyFont3", "url(\"../../resources/Ahem.ttf\")", {'variant': 'small-caps'}));
+        return document.fonts.load("50px MyFont3");
+    }).then(function(x) {
+        object = x;
+        shouldBe("object.length", "2");
+        shouldBeEqualToString("object[0].family", "MyFont3");
+        shouldBeEqualToString("object[1].family", "MyFont3");
+        object = undefined;
+        appliedFont = new FontFace("AppliedFont", "url(\"../../resources/Ahem.otf\")", {});
+        document.fonts.add(appliedFont);
+        return appliedFont.loaded;
+    }, function() {
+        testFailed("Loading should succeed.");
+        finishJSTest();
+    }).then(function(x) {
+        shouldNotBe("document.getElementById(\"testElement\").offsetWidth", "originalWidth");
+        document.fonts.delete(appliedFont);
+        shouldBe("document.getElementById(\"testElement\").offsetWidth", "originalWidth");
+        finishJSTest();
+    }, function() {
+        testFailed("Loading should succeed.");
+        finishJSTest();
+    });
+}
+if (window.GCController)
+    window.GCController.collect();
+startLoading();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

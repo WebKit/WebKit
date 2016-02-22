@@ -33,6 +33,7 @@
 #include "JSDOMPromise.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Deprecated {
@@ -48,6 +49,7 @@ class Dictionary;
 class FontFace final : public RefCounted<FontFace>, public CSSFontFace::Client {
 public:
     static RefPtr<FontFace> create(JSC::ExecState&, ScriptExecutionContext&, const String& family, const Deprecated::ScriptValue& source, const Dictionary& descriptors, ExceptionCode&);
+    static Ref<FontFace> create(JSC::ExecState&, CSSFontFace&);
     virtual ~FontFace();
 
     void setFamily(const String&, ExceptionCode&);
@@ -76,14 +78,18 @@ public:
 
     static RefPtr<CSSValue> parseString(const String&, CSSPropertyID);
 
+    virtual void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
+
+    WeakPtr<FontFace> createWeakPtr() const;
+
 private:
     FontFace(JSC::ExecState&, CSSFontSelector&);
-
-    virtual void stateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
+    FontFace(JSC::ExecState&, CSSFontFace&);
 
     void fulfillPromise();
     void rejectPromise(ExceptionCode);
 
+    WeakPtrFactory<FontFace> m_weakPtrFactory;
     Ref<CSSFontFace> m_backing;
     Promise m_promise;
 };

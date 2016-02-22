@@ -27,7 +27,6 @@
 #define CSSFontFace_h
 
 #include "CSSFontFaceRule.h"
-#include "CSSFontFaceSource.h"
 #include "FontFeatureSettings.h"
 #include "TextFlags.h"
 #include <memory>
@@ -36,22 +35,29 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
+
+namespace JSC {
+class ExecState;
+}
 
 namespace WebCore {
 
+class CSSFontFaceSource;
+class CSSFontSelector;
 class CSSSegmentedFontFace;
 class CSSValue;
 class CSSValueList;
+class Document;
 class FontDescription;
 class Font;
 class FontFace;
 
-// FIXME: This class does not need to be reference counted.
 class CSSFontFace final : public RefCounted<CSSFontFace> {
 public:
-    static Ref<CSSFontFace> create(CSSFontSelector& fontSelector, FontFace* wrapper = nullptr, bool isLocalFallback = false)
+    static Ref<CSSFontFace> create(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection = nullptr, FontFace* wrapper = nullptr, bool isLocalFallback = false)
     {
-        return adoptRef(*new CSSFontFace(fontSelector, wrapper, isLocalFallback));
+        return adoptRef(*new CSSFontFace(fontSelector, cssConnection, wrapper, isLocalFallback));
     }
     virtual ~CSSFontFace();
 
@@ -78,6 +84,10 @@ public:
     void setTraitsMask(FontTraitsMask traitsMask) { m_traitsMask = traitsMask; }
     bool isLocalFallback() const { return m_isLocalFallback; }
     Status status() const { return m_status; }
+    StyleRuleFontFace* cssConnection() const { return m_cssConnection.get(); }
+
+    static Optional<FontTraitsMask> calculateStyleMask(CSSValue& style);
+    static Optional<FontTraitsMask> calculateWeightMask(CSSValue& weight);
 
     class Client;
     void addClient(Client&);
@@ -93,11 +103,14 @@ public:
     void load();
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
+    static void appendSources(CSSFontFace&, CSSValueList&, Document*, bool isInitiatingElementInUserAgentShadowTree);
+
     class Client {
     public:
         virtual ~Client() { }
         virtual void fontLoaded(CSSFontFace&) { };
-        virtual void stateChanged(CSSFontFace&, Status oldState, Status newState) { UNUSED_PARAM(oldState); UNUSED_PARAM(newState); };
+        virtual void fontStateChanged(CSSFontFace&, Status oldState, Status newState) { UNUSED_PARAM(oldState); UNUSED_PARAM(newState); };
+        virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) { UNUSED_PARAM(oldFamilies); };
     };
 
     // Pending => Loading  => TimedOut
@@ -132,27 +145,30 @@ public:
         UChar32 m_to;
     };
 
-    FontFace* wrapper() const { return m_wrapper; }
+    // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
+    Ref<FontFace> wrapper(JSC::ExecState&);
 
 #if ENABLE(SVG_FONTS)
     bool hasSVGFontFaceSource() const;
 #endif
 
 private:
-    CSSFontFace(CSSFontSelector&, FontFace*, bool isLocalFallback);
+    CSSFontFace(CSSFontSelector*, StyleRuleFontFace*, FontFace*, bool isLocalFallback);
 
     size_t pump();
     void setStatus(Status);
+    void notifyClientsOfFontPropertyChange();
 
     RefPtr<CSSValueList> m_families;
     FontTraitsMask m_traitsMask { static_cast<FontTraitsMask>(FontStyleNormalMask | FontWeight400Mask) };
     Vector<UnicodeRange> m_ranges;
-    HashSet<Client*> m_clients;
-    Ref<CSSFontSelector> m_fontSelector;
-    FontFace* m_wrapper;
     FontFeatureSettings m_featureSettings;
     FontVariantSettings m_variantSettings;
     Vector<std::unique_ptr<CSSFontFaceSource>> m_sources;
+    RefPtr<CSSFontSelector> m_fontSelector;
+    RefPtr<StyleRuleFontFace> m_cssConnection;
+    HashSet<Client*> m_clients;
+    WeakPtr<FontFace> m_wrapper;
     Status m_status { Status::Pending };
     bool m_isLocalFallback { false };
     bool m_sourcesPopulated { false };

@@ -4039,6 +4039,7 @@ sub GetNativeType
     my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
     return "${svgNativeType}*" if $svgNativeType;
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
+    return "RefPtr<FontFace>" if $type eq "FontFace";
     return "RefPtr<${type}>" if $codeGenerator->IsTypedArrayType($type) and not $type eq "ArrayBuffer";
     return $nativeType{$type} if exists $nativeType{$type};
 

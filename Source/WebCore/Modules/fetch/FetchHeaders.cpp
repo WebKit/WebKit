@@ -179,7 +179,7 @@ void FetchHeaders::fill(const FetchHeaders* headers)
     }
 }
 
-bool FetchHeaders::Iterator::next(String& nextKey, String& nextValue)
+bool FetchHeaders::Iterator::next(JSC::ExecState&, String& nextKey, String& nextValue)
 {
     while (m_currentIndex < m_keys.size()) {
         auto& key = m_keys[m_currentIndex++];

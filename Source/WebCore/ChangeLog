@@ -1,3 +1,160 @@
+2016-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Split CSSFontSelector into a FontFaceSet implementation and the rest of the class
+        https://bugs.webkit.org/show_bug.cgi?id=153347
+
+        Reviewed by Antti Koivisto.
+
+        This patch implements the document.fonts Javascript object. It does so by briding the
+        already-existing FontFaceSet Javascript object with the CSSFontSelector WebCore object.
+        CSSFontSelector used to hold internal objects for each @font-face object in the
+        Document. These objects have been moved into CSSFontFaceSet, so CSSFontSelector simply
+        just owns an instance of a CSSFontFaceSet.
+
+        The lifetime of the FontFace and FontFaceSet objects is a little interesting: because
+        all the ownership references are inside the WebCore CSSFontFace{,Set} objects, the
+        higher-level Javascript FontFace{,Set} objects are held through a WeakPtr. This means
+        that if all the references to these higher-level objects go away, and you re-query the
+        document for its FontFace objects, you may get a new object (albeit with the same
+        state as a previous object). However, this won't occur if there are any references to
+        the old object, which means it is almost not observable.
+
+        This patch doesn't implement the relationship between the CSSOM and the FontFace
+        objects. Changing one should result in a change in the other, but that will be
+        implemented in a forthcoming patch.
+
+        This patch also doesn't alter the lifetime of the CSSFontSelector, which means that all
+        the Document's fonts may be destroyed and recreated from CSS. There are a few things
+        which can trigger this. A subsequent patch will make the CSSFontSelector outlive the
+        Document.
+
+        This patch does implement (and test) the ability to add a new FontFace to the Document
+        to cause a relayout, as well as changing properties of existing FontFace objects already
+        in the Document to cause a relayout.
+
+        Test: fast/text/font-face-set-document.html
+
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::FetchHeaders::Iterator::next): Pass an extra argument.
+        * Modules/fetch/FetchHeaders.h:
+        * bindings/js/JSKeyValueIterator.h: The ExecState is necessary to build an external
+        wrapper from an existing CSSFontFace object.
+        (WebCore::JSKeyValueIterator<JSWrapper>::next):
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::appendSources): Moved from CSSFontSelector.
+        (WebCore::CSSFontFace::CSSFontFace):
+        (WebCore::CSSFontFace::notifyClientsOfFontPropertyChange):
+        (WebCore::CSSFontFace::setFamilies):
+        (WebCore::CSSFontFace::calculateStyle): Shared code between CSSFontFaceSet and
+        CSSFontFace.
+        (WebCore::CSSFontFace::setStyle): Update to use calculateStyle().
+        (WebCore::CSSFontFace::calculateWeight): Ditto.
+        (WebCore::CSSFontFace::setWeight): Update to use caculateWeight().
+        (WebCore::CSSFontFace::setUnicodeRange): Notify clients.
+        (WebCore::CSSFontFace::setVariantLigatures): Ditto.
+        (WebCore::CSSFontFace::setVariantPosition): Ditto.
+        (WebCore::CSSFontFace::setVariantCaps): Ditto.
+        (WebCore::CSSFontFace::setVariantNumeric): Ditto.
+        (WebCore::CSSFontFace::setVariantAlternates): Ditto.
+        (WebCore::CSSFontFace::setVariantEastAsian): Ditto.
+        (WebCore::CSSFontFace::setFeatureSettings): Ditto.
+        (WebCore::CSSFontFace::removeClient):
+        (WebCore::CSSFontFace::wrapper): Build a new wrapper if one doesn't already
+        exist. Note that this requires an ExecState to create a promise.
+        (WebCore::CSSFontFace::setStatus):
+        (WebCore::CSSFontFace::fontLoaded):
+        (WebCore::CSSFontFace::pump):
+        (WebCore::CSSFontFace::font):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::CSSFontFaceSet): Moved code from CSSFontSelector.
+        (WebCore::CSSFontFaceSet::~CSSFontFaceSet):
+        (WebCore::CSSFontFaceSet::addClient): This object can now have multiple
+        clients.
+        (WebCore::CSSFontFaceSet::removeClient):
+        (WebCore::CSSFontFaceSet::incrementActiveCount): Update for multiple clients.
+        (WebCore::CSSFontFaceSet::decrementActiveCount): Ditto.
+        (WebCore::CSSFontFaceSet::hasFace):
+        (WebCore::CSSFontFaceSet::registerLocalFontFacesForFamily): Moved from
+        CSSFontSelector.
+        (WebCore::CSSFontFaceSet::familyNameFromPrimitive): Ditto.
+        (WebCore::CSSFontFaceSet::addToFacesLookupTable): This helper function can
+        be used when a property of a FontFace is changed.
+        (WebCore::CSSFontFaceSet::add): Update to use addToFacesLookupTable().
+        (WebCore::CSSFontFaceSet::removeFromFacesLookupTable): Same as
+        addToFacesLookupTable().
+        (WebCore::CSSFontFaceSet::remove): Update to use removeFromFacesLookupTable().
+        (WebCore::CSSFontFaceSet::clear):
+        (WebCore::CSSFontFaceSet::operator[]):
+        (WebCore::computeFontTraitsMask): Moved from CSSFontSelector.
+        (WebCore::CSSFontFaceSet::matchingFaces): Update to use new data structures.
+        (WebCore::FontFaceComparator::FontFaceComparator): Moved from
+        CSSFontSelector.
+        (WebCore::FontFaceComparator::operator()):
+        (WebCore::CSSFontFaceSet::getFontFace): Update to use new data structures.
+        (WebCore::CSSFontFaceSet::fontStateChanged): Update to use multiple clients.
+        (WebCore::CSSFontFaceSet::fontPropertyChanged): We must update our internal
+        data structure if the family name changed.
+        (WebCore::extractFamilies): Deleted.
+        (WebCore::familiesIntersect): Deleted.
+        (WebCore::CSSFontFaceSet::load): Deleted.
+        (WebCore::CSSFontFaceSet::stateChanged): Deleted.
+        * css/CSSFontFaceSet.h: Now needs to be RefCounted. New data structures are
+        taken from CSSFontSelector.
+        (WebCore::CSSFontFaceSetClient::faceFinished):
+        (WebCore::CSSFontFaceSetClient::fontModified):
+        (WebCore::CSSFontFaceSetClient::startedLoading):
+        (WebCore::CSSFontFaceSetClient::completedLoading):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp: Move code into CSSFontFaceSet.
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        (WebCore::CSSFontSelector::fontFaceSet):
+        (WebCore::CSSFontSelector::isEmpty):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::fontModified):
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        (WebCore::CSSFontSelector::clearDocument):
+        (WebCore::CSSFontSelector::appendSources): Deleted.
+        (WebCore::CSSFontSelector::familyNameFromPrimitive): Deleted.
+        (WebCore::CSSFontSelector::registerLocalFontFacesForFamily): Deleted.
+        (WebCore::FontFaceComparator::FontFaceComparator): Deleted.
+        (WebCore::FontFaceComparator::operator()): Deleted.
+        (WebCore::CSSFontSelector::getFontFace): Deleted.
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::CSSSegmentedFontFace):
+        * css/CSSSegmentedFontFace.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        (WebCore::FontFace::FontFace):
+        (WebCore::FontFace::createWeakPtr):
+        (WebCore::FontFace::fontStateChanged):
+        (WebCore::FontFace::stateChanged): Deleted.
+        * css/FontFace.h:
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::create):
+        (WebCore::FontFaceSet::FontFaceSet):
+        (WebCore::FontFaceSet::~FontFaceSet):
+        (WebCore::FontFaceSet::Iterator::next):
+        (WebCore::FontFaceSet::has):
+        (WebCore::FontFaceSet::size):
+        (WebCore::FontFaceSet::add):
+        (WebCore::FontFaceSet::remove):
+        (WebCore::FontFaceSet::clear):
+        (WebCore::FontFaceSet::load):
+        (WebCore::FontFaceSet::check):
+        (WebCore::FontFaceSet::status):
+        (WebCore::FontFaceSet::canSuspendForDocumentSuspension):
+        (WebCore::FontFaceSet::faceFinished):
+        * css/FontFaceSet.h:
+        * css/FontFaceSet.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::fonts):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * svg/SVGFontFaceElement.h:
+
 2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Moved library setup code to WEBKIT_FRAMEWORK macro.

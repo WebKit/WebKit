@@ -75,7 +75,7 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionCont
         auto value = FontFace::parseString(sourceString, CSSPropertySrc);
         if (is<CSSValueList>(value.get())) {
             CSSValueList& srcList = downcast<CSSValueList>(*value);
-            CSSFontSelector::appendSources(result->backing(), srcList, &downcast<Document>(context), false);
+            CSSFontFace::appendSources(result->backing(), srcList, &downcast<Document>(context), false);
         } else {
             ec = SYNTAX_ERR;
             return nullptr;
@@ -110,8 +110,22 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionCont
     return result.ptr();
 }
 
+Ref<FontFace> FontFace::create(JSC::ExecState& execState, CSSFontFace& face)
+{
+    return adoptRef(*new FontFace(execState, face));
+}
+
 FontFace::FontFace(JSC::ExecState& execState, CSSFontSelector& fontSelector)
-    : m_backing(CSSFontFace::create(fontSelector, this))
+    : m_weakPtrFactory(this)
+    , m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
+    , m_promise(createPromise(execState))
+{
+    m_backing->addClient(*this);
+}
+
+FontFace::FontFace(JSC::ExecState& execState, CSSFontFace& face)
+    : m_weakPtrFactory(this)
+    , m_backing(face)
     , m_promise(createPromise(execState))
 {
     m_backing->addClient(*this);
@@ -120,6 +134,11 @@ FontFace::FontFace(JSC::ExecState& execState, CSSFontSelector& fontSelector)
 FontFace::~FontFace()
 {
     m_backing->removeClient(*this);
+}
+
+WeakPtr<FontFace> FontFace::createWeakPtr() const
+{
+    return m_weakPtrFactory.createWeakPtr();
 }
 
 RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID propertyID)
@@ -317,18 +336,25 @@ String FontFace::status() const
     return String("error", String::ConstructFromLiteral);
 }
 
-void FontFace::stateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontFace::Status newState)
+void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontFace::Status newState)
 {
     ASSERT_UNUSED(face, &face == m_backing.ptr());
     switch (newState) {
+    case CSSFontFace::Status::Loading:
+        // We still need to resolve promises when loading completes, even if all references to use have fallen out of scope.
+        ref();
+        break;
     case CSSFontFace::Status::TimedOut:
         rejectPromise(NETWORK_ERR);
+        deref();
         return;
     case CSSFontFace::Status::Success:
         fulfillPromise();
+        deref();
         return;
     case CSSFontFace::Status::Failure:
         rejectPromise(NETWORK_ERR);
+        deref();
         return;
     default:
         return;

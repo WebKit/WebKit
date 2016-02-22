@@ -45,6 +45,8 @@ class SharedBuffer;
 class CSSFontFaceSource final : public CachedFontClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CachedFont* = nullptr, SVGFontFaceElement* = nullptr);
+    virtual ~CSSFontFaceSource();
 
     //                      => Success
     //                    //
@@ -57,10 +59,6 @@ public:
         Success,
         Failure
     };
-
-    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CachedFont* = nullptr, SVGFontFaceElement* = nullptr);
-    virtual ~CSSFontFaceSource();
-
     Status status() const { return m_status; }
 
     const AtomicString& familyNameOrURI() const { return m_familyNameOrURI; }

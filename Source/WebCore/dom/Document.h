@@ -201,9 +201,7 @@ class TextAutosizer;
 class DOMSecurityPolicy;
 #endif
 
-#if ENABLE(FONT_LOAD_EVENTS)
-class FontLoader;
-#endif
+class FontFaceSet;
 
 typedef int ExceptionCode;
 
@@ -1267,9 +1265,7 @@ public:
 
     WEBCORE_EXPORT virtual SecurityOrigin* topOrigin() const override final;
 
-#if ENABLE(FONT_LOAD_EVENTS)
-    RefPtr<FontLoader> fonts();
-#endif
+    Ref<FontFaceSet> fonts();
 
     void ensurePlugInsInjectedScript(DOMWrapperWorld&);
 
@@ -1750,10 +1746,6 @@ private:
 #endif
 
     RefPtr<CSSFontSelector> m_fontSelector;
-
-#if ENABLE(FONT_LOAD_EVENTS)
-    RefPtr<FontLoader> m_fontloader;
-#endif
 
 #if ENABLE(WEB_REPLAY)
     RefPtr<JSC::InputCursor> m_inputCursor;

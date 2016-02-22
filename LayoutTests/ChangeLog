@@ -1,3 +1,14 @@
+2016-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] Split CSSFontSelector into a FontFaceSet implementation and the rest of the class
+        https://bugs.webkit.org/show_bug.cgi?id=153347
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/font-face-javascript.html:
+        * fast/text/font-face-set-document-expected.txt: Added.
+        * fast/text/font-face-set-document.html: Added.
+
 2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
 
         [JSC shell] Don't put empty arguments array to VM.

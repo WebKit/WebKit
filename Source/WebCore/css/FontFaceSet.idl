@@ -29,7 +29,7 @@ enum FontFaceSetLoadStatus {
 };
 
 [
-    ConstructorCallWith=ScriptState&Document,
+    ConstructorCallWith=Document,
     Constructor(sequence<FontFace> initialFaces)
 ] interface FontFaceSet : EventTarget {
     boolean has(FontFace font);
@@ -48,7 +48,7 @@ enum FontFaceSetLoadStatus {
     attribute EventHandler onloadingdone;
     attribute EventHandler onloadingerror;
 
-    [RaisesException] Promise load(DOMString font, optional DOMString text);
+    [RaisesException, CallWith=ScriptState] Promise load(DOMString font, optional DOMString text);
     [RaisesException] boolean check(DOMString font, optional DOMString text);
 
     [Custom] readonly attribute Promise ready;

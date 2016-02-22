@@ -42,17 +42,39 @@ static FontFaceSet::Promise createPromise(JSC::ExecState& exec)
     return FontFaceSet::Promise(DeferredWrapper(&exec, &globalObject, JSC::JSPromiseDeferred::create(&exec, &globalObject)));
 }
 
-FontFaceSet::FontFaceSet(JSC::ExecState& execState, Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
-    : ActiveDOMObject(&document)
-    , m_backing(*this)
-    , m_promise(createPromise(execState))
+Ref<FontFaceSet> FontFaceSet::create(Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
 {
+    Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(document, initialFaces));
+    result->suspendIfNeeded();
+    return result;
+}
+
+Ref<FontFaceSet> FontFaceSet::create(Document& document, CSSFontFaceSet& backing)
+{
+    Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(document, backing));
+    result->suspendIfNeeded();
+    return result;
+}
+
+FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
+    : ActiveDOMObject(&document)
+    , m_backing(CSSFontFaceSet::create())
+{
+    m_backing->addClient(*this);
     for (auto& face : initialFaces)
         add(face.get());
 }
 
+FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
+    : ActiveDOMObject(&document)
+    , m_backing(backing)
+{
+    m_backing->addClient(*this);
+}
+
 FontFaceSet::~FontFaceSet()
 {
+    m_backing->removeClient(*this);
 }
 
 FontFaceSet::Iterator::Iterator(FontFaceSet& set)
@@ -60,11 +82,11 @@ FontFaceSet::Iterator::Iterator(FontFaceSet& set)
 {
 }
 
-bool FontFaceSet::Iterator::next(FontFace*& key, FontFace*& value)
+bool FontFaceSet::Iterator::next(JSC::ExecState& execState, RefPtr<FontFace>& key, RefPtr<FontFace>& value)
 {
     if (m_index == m_target->size())
         return true;
-    key = m_target->m_backing[m_index++].wrapper();
+    key = m_target->backing()[m_index++].wrapper(execState);
     value = key;
     return false;
 }
@@ -78,45 +100,45 @@ FontFaceSet::PendingPromise::~PendingPromise()
 {
 }
 
-bool FontFaceSet::has(FontFace* face) const
+bool FontFaceSet::has(RefPtr<WebCore::FontFace> face) const
 {
     if (!face)
         return false;
-    return m_backing.hasFace(face->backing());
+    return m_backing->hasFace(face->backing());
 }
 
 size_t FontFaceSet::size() const
 {
-    return m_backing.faceCount();
+    return m_backing->faceCount();
 }
 
-FontFaceSet& FontFaceSet::add(FontFace* face)
+FontFaceSet& FontFaceSet::add(RefPtr<WebCore::FontFace> face)
 {
-    if (face && !m_backing.hasFace(face->backing()))
-        m_backing.add(face->backing());
+    if (face && !m_backing->hasFace(face->backing()))
+        m_backing->add(face->backing());
     return *this;
 }
 
-bool FontFaceSet::remove(FontFace* face)
+bool FontFaceSet::remove(RefPtr<WebCore::FontFace> face)
 {
     if (!face)
         return false;
 
-    bool result = m_backing.hasFace(face->backing());
+    bool result = m_backing->hasFace(face->backing());
     if (result)
-        m_backing.remove(face->backing());
+        m_backing->remove(face->backing());
     return result;
 }
 
 void FontFaceSet::clear()
 {
-    while (m_backing.faceCount())
-        m_backing.remove(m_backing[0]);
+    while (m_backing->faceCount())
+        m_backing->remove(m_backing.get()[0]);
 }
 
-void FontFaceSet::load(const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode& ec)
+void FontFaceSet::load(JSC::ExecState& execState, const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode& ec)
 {
-    auto matchingFaces = m_backing.matchingFaces(font, text, ec);
+    auto matchingFaces = m_backing->matchingFaces(font, text, ec);
     if (ec)
         return;
 
@@ -139,11 +161,11 @@ void FontFaceSet::load(const String& font, const String& text, DeferredWrapper&&
     }
 
     for (auto& face : matchingFaces) {
-        pendingPromise->faces.append(face.get().wrapper());
+        pendingPromise->faces.append(face.get().wrapper(execState));
         if (face.get().status() == CSSFontFace::Status::Success)
             continue;
         waiting = true;
-        auto& vector = m_pendingPromises.add(RefPtr<FontFace>(face.get().wrapper()), Vector<Ref<PendingPromise>>()).iterator->value;
+        auto& vector = m_pendingPromises.add(RefPtr<CSSFontFace>(&face.get()), Vector<Ref<PendingPromise>>()).iterator->value;
         vector.append(pendingPromise.copyRef());
     }
 
@@ -153,14 +175,14 @@ void FontFaceSet::load(const String& font, const String& text, DeferredWrapper&&
 
 bool FontFaceSet::check(const String& family, const String& text, ExceptionCode& ec)
 {
-    return m_backing.check(family, text, ec);
+    return m_backing->check(family, text, ec);
 }
 
 auto FontFaceSet::promise(JSC::ExecState& execState) -> Promise&
 {
     if (!m_promise) {
         m_promise = createPromise(execState);
-        if (m_backing.status() == CSSFontFaceSet::Status::Loaded)
+        if (m_backing->status() == CSSFontFaceSet::Status::Loaded)
             fulfillPromise();
     }
     return m_promise.value();
@@ -168,7 +190,7 @@ auto FontFaceSet::promise(JSC::ExecState& execState) -> Promise&
     
 String FontFaceSet::status() const
 {
-    switch (m_backing.status()) {
+    switch (m_backing->status()) {
     case CSSFontFaceSet::Status::Loading:
         return String("loading", String::ConstructFromLiteral);
     case CSSFontFaceSet::Status::Loaded:
@@ -180,7 +202,7 @@ String FontFaceSet::status() const
 
 bool FontFaceSet::canSuspendForDocumentSuspension() const
 {
-    return m_backing.status() == CSSFontFaceSet::Status::Loaded;
+    return m_backing->status() == CSSFontFaceSet::Status::Loaded;
 }
 
 void FontFaceSet::startedLoading()
@@ -209,7 +231,7 @@ void FontFaceSet::fulfillPromise()
 
 void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
 {
-    auto iterator = m_pendingPromises.find(face.wrapper());
+    auto iterator = m_pendingPromises.find(&face);
     if (iterator == m_pendingPromises.end())
         return;
 

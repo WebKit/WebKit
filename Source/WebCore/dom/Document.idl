@@ -265,7 +265,7 @@
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Conditional=FONT_LOAD_EVENTS] readonly attribute FontLoader fonts;
+    readonly attribute FontFaceSet fonts;
 #endif
 
 #if defined(ENABLE_IOS_TOUCH_EVENTS) && ENABLE_IOS_TOUCH_EVENTS
