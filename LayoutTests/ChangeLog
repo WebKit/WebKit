@@ -1,3 +1,20 @@
+2016-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Repeated background images have the wrong position when using bottom/right-relative background-position
+        https://bugs.webkit.org/show_bug.cgi?id=154478
+
+        Reviewed by Dave Hyatt.
+        
+        Enhanced background-position-serialize.html to test values that use right/bottom edge specifiers.
+        
+        Ref test for background-position.
+
+        * fast/css/background-position-serialize-expected.txt:
+        * fast/css/background-position-serialize.html:
+        * fast/images/background-position-expected.html: Added.
+        * fast/images/background-position.html: Added.
+        * fast/images/resources/checker.png: Added.
+
 2016-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Loading] Split CSSFontSelector into a FontFaceSet implementation and the rest of the class

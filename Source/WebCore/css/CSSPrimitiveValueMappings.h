@@ -902,45 +902,45 @@ template<> inline CSSPrimitiveValue::operator EBoxDecorationBreak() const
 }
 #endif
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BackgroundEdgeOrigin e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Edge e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (e) {
-    case TopEdge:
+    case Edge::Top:
         m_value.valueID = CSSValueTop;
         break;
-    case RightEdge:
+    case Edge::Right:
         m_value.valueID = CSSValueRight;
         break;
-    case BottomEdge:
+    case Edge::Bottom:
         m_value.valueID = CSSValueBottom;
         break;
-    case LeftEdge:
+    case Edge::Left:
         m_value.valueID = CSSValueLeft;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator BackgroundEdgeOrigin() const
+template<> inline CSSPrimitiveValue::operator Edge() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueTop:
-        return TopEdge;
+        return Edge::Top;
     case CSSValueRight:
-        return RightEdge;
+        return Edge::Right;
     case CSSValueBottom:
-        return BottomEdge;
+        return Edge::Bottom;
     case CSSValueLeft:
-        return LeftEdge;
+        return Edge::Left;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return TopEdge;
+    return Edge::Top;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxSizing e)

@@ -85,13 +85,13 @@ TextStream& operator<<(TextStream& ts, EMaskSourceType maskSource)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, BackgroundEdgeOrigin edge)
+TextStream& operator<<(TextStream& ts, Edge edge)
 {
     switch (edge) {
-    case TopEdge: ts << "top"; break;
-    case RightEdge: ts << "right"; break;
-    case BottomEdge: ts << "bottom"; break;
-    case LeftEdge: ts << "left"; break;
+    case Edge::Top: ts << "top"; break;
+    case Edge::Right: ts << "right"; break;
+    case Edge::Bottom: ts << "bottom"; break;
+    case Edge::Left: ts << "left"; break;
     }
     return ts;
 }

@@ -56,6 +56,19 @@ PASS: t.style.backgroundPosition should be 10px 15px, 20px 25px, 30px 35px and i
 PASS: t.style.backgroundPositionX should be 10px, 20px, 30px and is.
 PASS: t.style.backgroundPositionY should be 15px, 25px, 35px and is.
 PASS: t.style.cssText should be background-position: 10px 15px, 20px 25px, 30px 35px; and is.
+t.setAttribute('style', 'background-position: bottom 10px right 20px');
+PASS: t.style.backgroundPosition should be right 20px bottom 10px and is.
+PASS: window.getComputedStyle(t).backgroundPosition should be right 20px bottom 10px and is.
+t.setAttribute('style', 'background-position: top 10px right 20px');
+PASS: t.style.backgroundPosition should be right 20px top 10px and is.
+PASS: window.getComputedStyle(t).backgroundPosition should be right 20px top 10px and is.
+t.setAttribute('style', 'background-position: 50% left');
+PASS: t.style.backgroundPosition should be and is.
+t.setAttribute('style', 'background-position-x: right 20px');
+PASS: window.getComputedStyle(t).backgroundPositionX should be 0% and is.
+t.setAttribute('style', 'background-position: right 20px bottom 10px');
+PASS: window.getComputedStyle(t).backgroundPosition should be right 20px bottom 10px and is.
+PASS: window.getComputedStyle(t).backgroundPositionX should be 20px and is.
 t.setAttribute('style', 'background: url(about:blank) 80% 80%;');
 t.style.backgroundPositionY = '50px'
 style.cssText =
