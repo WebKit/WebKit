@@ -1,3 +1,58 @@
+2016-02-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Binding generator should support key value iterable
+        https://bugs.webkit.org/show_bug.cgi?id=154413
+
+        Reviewed by Darin Adler.
+
+        Covered by added layout and binding tests.
+
+        iterable<key, value> in a IDL file will trigger the generation of entries, keys, values, [Symbol.iterator] and forEach methods to the prototype.
+        Updated FetchHeaders and FontFaceSet to use it.
+
+        IDLParser.pm parses the iterable<> and adds an iterable field in the interface containing the iterable information and objects for the five operations.
+        IDLParser.pm is cleaned up a bit to remove previous Iterator support, which does not seem to be supported.
+
+        CodeGeneratorJS.pm is updated to generate the code for the five operations, using JSKeyValueIterator. Set iterators are not yet supported.
+        Moved definition of Iterator Key and Value Type to binding generated JSXX class based on iterable<> declaration in the IDL.
+
+        Added binding test and Fetch Headers tests.
+
+        * CMakeLists.txt:
+        * Modules/fetch/FetchHeaders.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSFetchHeadersCustom.cpp: Removed.
+        * bindings/js/JSFontFaceSetCustom.cpp:
+        (WebCore::JSFontFaceSet::ready): Removed iterable custom methods.
+        * bindings/js/JSKeyValueIterator.h:
+        (WebCore::createKeyValueIterator):
+        (WebCore::keyValueIteratorForEach):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetFunctionName):
+        (PrototypeFunctionCount):
+        (PrototypePropertyCount):
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        (GenerateImplementationFunctionCall):
+        (GenerateImplementationIterableFunctions):
+        * bindings/scripts/IDLParser.pm:
+        (parseOperationOrIterator):
+        (parseOperationOrIteratorRest):
+        (parseIterableRest):
+        (parseOptionalIterableInterface):
+        (applyMemberList):
+        (parseSpecial): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::jsTestObjPrototypeFunctionSymbolIterator):
+        (WebCore::jsTestObjPrototypeFunctionEntries):
+        (WebCore::jsTestObjPrototypeFunctionKeys):
+        (WebCore::jsTestObjPrototypeFunctionValues):
+        (WebCore::jsTestObjPrototypeFunctionForEach):
+        * bindings/scripts/test/TestObj.idl:
+        * css/FontFaceSet.idl:
+
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
         HTMLScriptElement.crossOrigin / HTMLImageElement.crossOrigin should only return known values

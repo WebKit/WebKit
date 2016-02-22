@@ -60,7 +60,7 @@ FontFaceSet::Iterator::Iterator(FontFaceSet& set)
 {
 }
 
-bool FontFaceSet::Iterator::next(RefPtr<FontFace>& key, RefPtr<FontFace>& value)
+bool FontFaceSet::Iterator::next(FontFace*& key, FontFace*& value)
 {
     if (m_index == m_target->size())
         return true;

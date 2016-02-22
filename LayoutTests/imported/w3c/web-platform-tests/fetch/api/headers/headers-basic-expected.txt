@@ -15,4 +15,6 @@ PASS Check get method
 PASS Check keys method 
 PASS Check values method 
 PASS Check entries method 
+PASS Check Symbol.iterator method 
+PASS Check forEach method 
 

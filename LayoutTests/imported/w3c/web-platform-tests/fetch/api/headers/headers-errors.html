@@ -78,6 +78,30 @@
           assert_throws(new TypeError() , function() { headers.append("name", value); });
         }, "Check headers append with an invalid value " + value);
       });
-    </script>
+
+      test(function() {
+        var headers = new Headers([["name", "value"]]);
+        assert_throws(new TypeError() , function() { headers.forEach(); });
+        assert_throws(new TypeError() , function() { headers.forEach(undefined); });
+        assert_throws(new TypeError() , function() { headers.forEach(1); });
+      }, "Headers forEach throws if argument is not callable");
+
+      test(function() {
+        var headers = new Headers([["name1", "value1"], ["name2", "value2"], ["name3", "value3"]]);
+        var counter = 0;
+        try {
+            headers.forEach(function(value, name) {
+                counter++;
+                if (name == "name2")
+                     throw "error";
+            });
+        } catch (e) {
+            assert_equals(counter, 2);
+            assert_equals(e, "error");
+            return;
+        }
+        assert_unreached();
+      }, "Headers forEach loop should stop if callback is throwing exception");
+   </script>
   </body>
 </html>

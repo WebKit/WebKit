@@ -65,11 +65,6 @@ public:
     class Iterator {
     public:
         explicit Iterator(FetchHeaders&);
-
-        // FIXME: Binding generator should be able to generate iterator key and value types.
-        using Key = String;
-        using Value = String;
-
         bool next(String& nextKey, String& nextValue);
 
     private:

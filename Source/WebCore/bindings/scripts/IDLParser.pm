@@ -55,6 +55,7 @@ struct( domInterface => {
     isException => '$', # Used for exception interfaces
     isCallback => '$', # Used for callback interfaces
     isPartial => '$', # Used for partial interfaces
+    iterable => '$', # Used for iterable interfaces
 });
 
 # Used to represent domInterface contents (name of method, signature)
@@ -84,6 +85,15 @@ struct( domSignature => {
     isOptional => '$', # Is variable optional (optional T)
     default => '$', # Default value for parameters
 });
+
+# Used to represent Iterable interfaces
+struct( domIterable => {
+    isKeyValue => '$',# Is map iterable or set iterable
+    keyType => '$',   # Key type for map iterables
+    valueType => '$', # Value type for map or set iterables
+    functions => '@', # Iterable functions (entries, keys, values, [Symbol.Iterator], forEach)
+});
+
 
 # Used to represent string constants
 struct( domConstant => {
@@ -325,9 +335,8 @@ my $nextPrimitiveType_2 = '^(double|float|unrestricted)$';
 my $nextArgumentList_1 = '^(\(|::|ByteString|DOMString|Date|\[|any|boolean|byte|double|float|in|int|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
 my $nextNonAnyType_1 = '^(boolean|byte|double|float|int|long|octet|short|unrestricted|unsigned)$';
 my $nextInterfaceMember_1 = '^(\(|::|ByteString|DOMString|Date|any|attribute|boolean|byte|creator|deleter|double|float|getter|inherit|int|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
-my $nextOptionalIteratorInterfaceOrObject_1 = '^(;|=)$';
-my $nextAttributeOrOperationOrIterator_1 = '^(static|stringifier)$';
-my $nextAttributeOrOperationOrIterator_2 = '^(\(|::|ByteString|DOMString|Date|any|boolean|byte|creator|deleter|double|float|getter|int|legacycaller|long|object|octet|sequence|setter|short|unrestricted|unsigned|void)$';
+my $nextAttributeOrOperation_1 = '^(static|stringifier)$';
+my $nextAttributeOrOperation_2 = '^(\(|::|ByteString|DOMString|Date|any|boolean|byte|creator|deleter|double|float|getter|int|legacycaller|long|object|octet|sequence|setter|short|unrestricted|unsigned|void)$';
 my $nextUnrestrictedFloatType_1 = '^(double|float)$';
 my $nextExtendedAttributeRest3_1 = '^(\,|::|\])$';
 my $nextExceptionField_1 = '^(\(|::|ByteString|DOMString|Date|any|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned)$';
@@ -961,7 +970,7 @@ sub parseAttributeOrOperationOrIterator
     if ($next->value() eq "serializer") {
         return $self->parseSerializer($extendedAttributeList);
     }
-    if ($next->value() =~ /$nextAttributeOrOperationOrIterator_1/) {
+    if ($next->value() =~ /$nextAttributeOrOperation_1/) {
         my $qualifier = $self->parseQualifier();
         my $newDataNode = $self->parseAttributeOrOperationRest($extendedAttributeList);
         if (defined($newDataNode) && $qualifier eq "static") {
@@ -972,7 +981,7 @@ sub parseAttributeOrOperationOrIterator
     if ($next->value() =~ /$nextAttribute_1/) {
         return $self->parseAttribute($extendedAttributeList);
     }
-    if ($next->type() == IdentifierToken || $next->value() =~ /$nextAttributeOrOperationOrIterator_2/) {
+    if ($next->type() == IdentifierToken || $next->value() =~ /$nextAttributeOrOperation_2/) {
         return $self->parseOperationOrIterator($extendedAttributeList);
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -1206,13 +1215,17 @@ sub parseOperationOrIterator
     if ($next->value() =~ /$nextSpecials_1/) {
         return $self->parseSpecialOperation($extendedAttributeList);
     }
+    if ($next->value() eq "iterable") {
+        return $self->parseIterableRest($extendedAttributeList);
+    }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextAttributeOrOperationRest_1/) {
         my $returnType = $self->parseReturnType();
-        my $interface = $self->parseOperationOrIteratorRest($extendedAttributeList);
-        if (defined ($interface)) {
-            $interface->signature->type($returnType);
+        my $next = $self->nextToken();
+        if ($next->type() == IdentifierToken || $next->value() eq "(") {
+            my $operation = $self->parseOperationRest($extendedAttributeList);
+            $operation->signature->type($returnType);
+            return $operation;
         }
-        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -1280,62 +1293,76 @@ sub parseSpecial
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 
-sub parseOperationOrIteratorRest
+sub parseIterableRest
 {
     my $self = shift;
     my $extendedAttributeList = shift;
 
     my $next = $self->nextToken();
-    if ($next->value() eq "iterator") {
-        return $self->parseIteratorRest($extendedAttributeList);
-    }
-    if ($next->type() == IdentifierToken || $next->value() eq "(") {
-        return $self->parseOperationRest($extendedAttributeList);
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseIteratorRest
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
-
-    my $next = $self->nextToken();
-    if ($next->value() eq "iterator") {
-        $self->assertTokenValue($self->getToken(), "iterator", __LINE__);
-        $self->parseOptionalIteratorInterfaceOrObject($extendedAttributeList);
+    if ($next->value() eq "iterable") {
+        $self->assertTokenValue($self->getToken(), "iterable", __LINE__);
+        my $iterableNode = $self->parseOptionalIterableInterface($extendedAttributeList);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return;
+        return $iterableNode;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 
-sub parseOptionalIteratorInterfaceOrObject
+sub parseOptionalIterableInterface
 {
     my $self = shift;
     my $extendedAttributeList = shift;
 
-    my $next = $self->nextToken();
-    if ($next->value() =~ /$nextOptionalIteratorInterfaceOrObject_1/) {
-        return $self->parseOptionalIteratorInterface($extendedAttributeList);
-    }
-    if ($next->value() eq "object") {
-        $self->assertTokenValue($self->getToken(), "object", __LINE__);
-        return;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
+    my $symbolIteratorFunction = domFunction->new();
+    $symbolIteratorFunction->signature(domSignature->new());
+    $symbolIteratorFunction->signature->extendedAttributes($extendedAttributeList);
+    $symbolIteratorFunction->signature->name("[Symbol.Iterator]");
 
-sub parseOptionalIteratorInterface
-{
-    my $self = shift;
-    my $extendedAttributeList = shift;
+    my $entriesFunction = domFunction->new();
+    $entriesFunction->signature(domSignature->new());
+    $entriesFunction->signature->extendedAttributes($extendedAttributeList);
+    $entriesFunction->signature->name("entries");
 
-    my $next = $self->nextToken();
-    if ($next->value() eq "=") {
-        $self->assertTokenValue($self->getToken(), "=", __LINE__);
-        $self->assertTokenType($self->getToken(), IdentifierToken);
+    my $keysFunction = domFunction->new();
+    $keysFunction->signature(domSignature->new());
+    $keysFunction->signature->extendedAttributes($extendedAttributeList);
+    $keysFunction->signature->name("keys");
+
+    my $valuesFunction = domFunction->new();
+    $valuesFunction->signature(domSignature->new());
+    $valuesFunction->signature->extendedAttributes($extendedAttributeList);
+    $valuesFunction->signature->name("values");
+
+    my $forEachFunction = domFunction->new();
+    $forEachFunction->signature(domSignature->new());
+    $forEachFunction->signature->extendedAttributes($extendedAttributeList);
+    $forEachFunction->signature->name("forEach");
+    my $forEachArgument = domSignature->new();
+    $forEachArgument->name("callback");
+    $forEachArgument->type("any");
+    push(@{$forEachFunction->parameters}, ($forEachArgument));
+
+    my $newDataNode = domIterable->new();
+    push(@{$newDataNode->functions}, $symbolIteratorFunction);
+    push(@{$newDataNode->functions}, $entriesFunction);
+    push(@{$newDataNode->functions}, $keysFunction);
+    push(@{$newDataNode->functions}, $valuesFunction);
+    push(@{$newDataNode->functions}, $forEachFunction);
+
+    $self->assertTokenValue($self->getToken(), "<", __LINE__);
+    my $type1 = $self->getToken()->value();
+    if ($self->nextToken()->value() eq ",") {
+        $self->assertTokenValue($self->getToken(), ",", __LINE__);
+        $newDataNode->isKeyValue(1);
+        $newDataNode->keyType($type1);
+        $newDataNode->valueType($self->getToken()->value());
+    } else {
+        $newDataNode->isKeyValue(0);
+        $newDataNode->valueType($type1);
     }
+    $self->assertTokenValue($self->getToken(), ">", __LINE__);
+
+    return $newDataNode;
 }
 
 sub parseOperationRest
@@ -2175,6 +2202,10 @@ sub applyMemberList
         }
         if (ref($item) eq "domConstant") {
             push(@{$interface->constants}, $item);
+            next;
+        }
+        if (ref($item) eq "domIterable") {
+            $interface->iterable($item);
             next;
         }
         if (ref($item) eq "domFunction") {

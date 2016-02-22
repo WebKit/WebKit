@@ -82,6 +82,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     // TypedArray attribute
     attribute Float32Array typedArrayAttr;
 
+    iterable<DOMString, TestObj>;
+
     // Methods
     void    voidMethod();
     void    voidMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);

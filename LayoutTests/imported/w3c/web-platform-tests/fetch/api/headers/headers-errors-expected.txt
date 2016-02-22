@@ -15,4 +15,6 @@ PASS Check headers set with an invalid value invalidĀ
 PASS Check headers append with an invalid name invalidĀ 
 PASS Check headers append with an invalid name [object Object] 
 PASS Check headers append with an invalid value invalidĀ 
+PASS Headers forEach throws if argument is not callable 
+PASS Headers forEach loop should stop if callback is throwing exception 
 

@@ -11,7 +11,7 @@
 # Copyright (C) 2012 Ericsson AB. All rights reserved.
 # Copyright (C) 2007, 2008, 2009, 2012 Google Inc.
 # Copyright (C) 2013 Samsung Electronics. All rights reserved.
-# Copyright (C) 2015 Canon Inc. All rights reserved.
+# Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -605,8 +605,11 @@ sub GetFunctionName
         return GetJSBuiltinFunctionName($className, $function);
     }
 
+    my $functionName = $function->signature->name;
+    $functionName = "SymbolIterator" if $functionName eq "[Symbol.Iterator]";
+
     my $kind = $function->isStatic ? "Constructor" : (OperationShouldBeOnInstance($interface, $function) ? "Instance" : "Prototype");
-    return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst($function->signature->name);
+    return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst($functionName);
 }
 
 sub GetSpecialAccessorFunctionForType
@@ -763,6 +766,8 @@ sub PrototypeFunctionCount
     foreach my $function (@{$interface->functions}) {
         $count++ if !$function->isStatic && !OperationShouldBeOnInstance($interface, $function);
     }
+
+    $count += scalar @{$interface->iterable->functions} if $interface->iterable;
 
     return $count;
 }
@@ -1043,6 +1048,16 @@ sub GenerateHeader
 
     if (!$hasParent) {
         push(@headerContent, "    static void destroy(JSC::JSCell*);\n");
+    }
+
+    if ($interface->iterable) {
+        push(@headerContent, "\n");
+        if ($interface->iterable->keyType) {
+            my $keyType = GetNativeType($interface->iterable->keyType);
+            push(@headerContent, "    using IteratorKey = $keyType;\n");
+        }
+        my $valueType = GetNativeType($interface->iterable->valueType);
+        push(@headerContent, "    using IteratorValue = $valueType;\n");
     }
 
     # Class info
@@ -1419,11 +1434,15 @@ sub GeneratePropertiesHashTable
         }
     }
 
-    foreach my $function (@{$interface->functions}) {
+    my @functions = @{$interface->functions};
+    push(@functions, @{$interface->iterable->functions}) if $interface->iterable;
+    foreach my $function (@functions) {
         next if ($function->signature->extendedAttributes->{"Private"});
         next if ($function->isStatic);
         next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
         next if OperationShouldBeOnInstance($interface, $function) != $isInstance;
+        next if $function->signature->name eq "[Symbol.Iterator]";
+
         my $name = $function->signature->name;
         push(@$hashKeys, $name);
 
@@ -1829,14 +1848,17 @@ sub GenerateImplementation
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
+    my @functions = @{$interface->functions};
+    push(@functions, @{$interface->iterable->functions}) if $interface->iterable;
+
     my $numConstants = @{$interface->constants};
-    my $numFunctions = @{$interface->functions};
+    my $numFunctions = @functions;
     my $numAttributes = @{$interface->attributes};
 
     if ($numFunctions > 0) {
         my $inAppleCopyright = 0;
         push(@implContent,"// Functions\n\n");
-        foreach my $function (@{$interface->functions}) {
+        foreach my $function (@functions) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             next if $function->signature->extendedAttributes->{"ForwardDeclareInHeader"};
             next if $function->signature->extendedAttributes->{"CustomBinding"};
@@ -2115,6 +2137,11 @@ sub GenerateImplementation
                 push(@implContent, "    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);\n") if $firstPrivateFunction;
                 $firstPrivateFunction = 0;
                 push(@implContent, "    putDirect(vm, clientData.builtinNames()." . $function->signature->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($interface, $className, $function) . "), ReadOnly | DontEnum);\n");
+            }
+
+            if ($interface->iterable) {
+                my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), ReadOnly | DontEnum);\n");
             }
 
             push(@implContent, "}\n\n");
@@ -2982,6 +3009,10 @@ sub GenerateImplementation
 
         push(@implContent, $endAppleCopyright) if $inAppleCopyright;
 
+    }
+
+    if ($interface->iterable) {
+        GenerateImplementationIterableFunctions($interface);
     }
 
     if ($needsVisitChildren) {
@@ -3913,6 +3944,59 @@ sub GenerateImplementationFunctionCall()
         }
 
         push(@implContent, $indent . "return JSValue::encode(result);\n");
+    }
+}
+
+sub GenerateImplementationIterableFunctions
+{
+    my $interface = shift;
+
+    if (not $interface->iterable->isKeyValue) {
+        die "No support yet for set iterators";
+    }
+
+    my $interfaceName = $interface->name;
+    my $className = "JS$interfaceName";
+    my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
+
+    AddToImplIncludes("JSKeyValueIterator.h");
+
+    push(@implContent,  <<END);
+using ${interfaceName}Iterator = JSKeyValueIterator<${className}>;
+using ${interfaceName}IteratorPrototype = JSKeyValueIteratorPrototype<${className}>;
+
+template<>
+const JSC::ClassInfo ${interfaceName}Iterator::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${interfaceName}Iterator) };
+
+template<>
+const JSC::ClassInfo ${interfaceName}IteratorPrototype::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${interfaceName}IteratorPrototype) };
+
+END
+
+    foreach my $function (@{$interface->iterable->functions}) {
+        my $propertyName = $function->signature->name;
+        my $functionName = GetFunctionName($interface, $className, $function);
+
+        if (not $propertyName eq "forEach") {
+            my $iterationKind = "KeyValue";
+            $iterationKind = "Key" if $propertyName eq "keys";
+            $iterationKind = "Value" if $propertyName eq "values";
+            push(@implContent,  <<END);
+JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
+{
+    return createKeyValueIterator<${className}>(*state, IterationKind::${iterationKind}, "${propertyName}");
+}
+
+END
+        } else {
+            push(@implContent,  <<END);
+JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
+{
+    return keyValueIteratorForEach<${className}>(*state, "${propertyName}");
+}
+
+END
+        }
     }
 }
 

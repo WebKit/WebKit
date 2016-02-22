@@ -105,9 +105,40 @@ private:
 };
 
 template<typename JSWrapper>
-JSKeyValueIterator<JSWrapper>* createIterator(JSDOMGlobalObject& globalObject, JSWrapper& wrapper, IterationKind kind)
+JSC::EncodedJSValue createKeyValueIterator(JSC::ExecState& state, IterationKind kind, const char* propertyName)
 {
-    return JSKeyValueIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSKeyValueIterator<JSWrapper>>(globalObject.vm(), globalObject), wrapper, kind);
+    auto wrapper = JSC::jsDynamicCast<JSWrapper*>(state.thisValue());
+    if (UNLIKELY(!wrapper))
+        return throwThisTypeError(state, JSWrapper::info()->className, propertyName);
+    JSDOMGlobalObject& globalObject = *wrapper->globalObject();
+    return JSC::JSValue::encode(JSKeyValueIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSKeyValueIterator<JSWrapper>>(globalObject.vm(), globalObject), *wrapper, kind));
+}
+
+template<typename JSWrapper>
+JSC::EncodedJSValue keyValueIteratorForEach(JSC::ExecState& state, const char* propertyName)
+{
+    auto wrapper = JSC::jsDynamicCast<JSWrapper*>(state.thisValue());
+    if (UNLIKELY(!wrapper))
+        return throwThisTypeError(state, JSWrapper::info()->className, propertyName);
+
+    JSC::CallData callData;
+    JSC::CallType callType = JSC::getCallData(state.argument(0), callData);
+    if (callType == JSC::CallTypeNone)
+        return throwVMTypeError(&state);
+
+    typename JSWrapper::IteratorKey nextKey;
+    typename JSWrapper::IteratorValue nextValue;
+    auto iterator = wrapper->wrapped().createIterator();
+    while (!iterator.next(nextKey, nextValue)) {
+        JSC::MarkedArgumentBuffer arguments;
+        arguments.append(toJS(&state, wrapper->globalObject(), nextValue));
+        arguments.append(toJS(&state, wrapper->globalObject(), nextKey));
+        arguments.append(wrapper);
+        JSC::call(&state, state.argument(0), callType, callData, wrapper, arguments);
+        if (state.hadException())
+            break;
+    } 
+    return JSC::JSValue::encode(JSC::jsUndefined());
 }
 
 template<typename JSWrapper>
@@ -120,8 +151,8 @@ void JSKeyValueIterator<JSWrapper>::destroy(JSCell* cell)
 template<typename JSWrapper>
 bool JSKeyValueIterator<JSWrapper>::next(JSC::ExecState& state, JSC::JSValue& value)
 {
-    typename DOMWrapped::Iterator::Key nextKey;
-    typename DOMWrapped::Iterator::Value nextValue;
+    typename JSWrapper::IteratorKey nextKey;
+    typename JSWrapper::IteratorValue nextValue;
     if (m_iterator.next(nextKey, nextValue)) {
         value = JSC::jsUndefined();
         return true;

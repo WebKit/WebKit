@@ -1,3 +1,13 @@
+2016-02-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Binding generator should support key value iterable
+        https://bugs.webkit.org/show_bug.cgi?id=154413
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/headers/headers-basic-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-basic.html:
+
 2016-02-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline html/dom/interfaces.html.

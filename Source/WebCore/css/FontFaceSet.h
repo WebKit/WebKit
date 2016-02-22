@@ -72,11 +72,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(FontFaceSet&);
-
-        using Key = RefPtr<FontFace>;
-        using Value = RefPtr<FontFace>;
-
-        bool next(Key& nextKey, Value& nextValue);
+        bool next(FontFace*& nextKey, FontFace*& nextValue);
 
     private:
         Ref<FontFaceSet> m_target;

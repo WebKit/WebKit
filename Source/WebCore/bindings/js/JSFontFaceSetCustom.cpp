@@ -32,34 +32,10 @@
 
 namespace WebCore {
 
-using FontFaceSetIterator = JSKeyValueIterator<JSFontFaceSet>;
-using FontFaceSetIteratorPrototype = JSKeyValueIteratorPrototype<JSFontFaceSet>;
-
-template<>
-const JSC::ClassInfo FontFaceSetIterator::s_info = { "Font Face Set Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(FontFaceSetIterator) };
-
-template<>
-const JSC::ClassInfo FontFaceSetIteratorPrototype::s_info = { "Font Face Set Iterator Prototype", &Base::s_info, 0, CREATE_METHOD_TABLE(FontFaceSetIteratorPrototype) };
-
 JSC::JSValue JSFontFaceSet::ready(JSC::ExecState& execState) const
 {
     auto& promise = wrapped().promise(execState);
     return promise.deferred().promise();
-}
-
-JSC::JSValue JSFontFaceSet::entries(JSC::ExecState&)
-{
-    return createIterator<JSFontFaceSet>(*globalObject(), *this, IterationKind::KeyValue);
-}
-
-JSC::JSValue JSFontFaceSet::keys(JSC::ExecState&)
-{
-    return createIterator<JSFontFaceSet>(*globalObject(), *this, IterationKind::Key);
-}
-
-JSC::JSValue JSFontFaceSet::values(JSC::ExecState&)
-{
-    return createIterator<JSFontFaceSet>(*globalObject(), *this, IterationKind::Value);
 }
 
 }

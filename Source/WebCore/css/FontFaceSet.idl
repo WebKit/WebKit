@@ -32,12 +32,12 @@ enum FontFaceSetLoadStatus {
     ConstructorCallWith=ScriptState&Document,
     Constructor(sequence<FontFace> initialFaces)
 ] interface FontFaceSet : EventTarget {
-    [Custom] Object entries();
-    // forEach(): Maybe implement this in Javascript on top of keys().
     boolean has(FontFace font);
-    [Custom] Object keys();
-    [Custom] Object values();
-    // @iterator
+
+    // FIXME: We should add support for the setlike declaration.
+    // As a first step this map iterable declaration should be changed to a set iterable.
+    iterable<FontFace, FontFace>;
+
     readonly attribute long size;
 
     FontFaceSet add(FontFace font);

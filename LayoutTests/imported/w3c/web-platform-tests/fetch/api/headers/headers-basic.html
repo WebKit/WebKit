@@ -163,6 +163,33 @@
         assert_true(actual.next().done);
         assert_true(actual.next().done);
       }, "Check entries method");
+
+      test(function() {
+        var headers = new Headers(headerEntriesDict);
+        var actual = headers[Symbol.iterator]();
+
+        sortedHeaderKeys.forEach(function(key) {
+            entry = actual.next();
+            assert_false(entry.done);
+            assert_equals(entry.value[0], key);
+            assert_equals(entry.value[1], sortedHeaderDict[key]);
+        });
+        assert_true(actual.next().done);
+        assert_true(actual.next().done);
+      }, "Check Symbol.iterator method");
+
+      test(function() {
+        var headers = new Headers(headerEntriesDict);
+        var reference = sortedHeaderKeys[Symbol.iterator]();
+        headers.forEach(function(value, key, container) {
+            assert_equals(headers, container);
+            entry = reference.next();
+            assert_false(entry.done);
+            assert_equals(key, entry.value);
+            assert_equals(value, sortedHeaderDict[entry.value]);
+        });
+        assert_true(reference.next().done);
+      }, "Check forEach method");
    </script>
   </body>
 </html>
