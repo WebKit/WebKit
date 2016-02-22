@@ -72,15 +72,20 @@ static inline WebMouseEvent::Button buttonForEvent(const GdkEvent* event)
     unsigned button = 0;
 
     switch (event->type) {
-    case GDK_MOTION_NOTIFY:
+    case GDK_ENTER_NOTIFY:
+    case GDK_LEAVE_NOTIFY:
+    case GDK_MOTION_NOTIFY: {
         button = WebMouseEvent::NoButton;
-        if (event->motion.state & GDK_BUTTON1_MASK)
+        GdkModifierType state;
+        gdk_event_get_state(event, &state);
+        if (state & GDK_BUTTON1_MASK)
             button = WebMouseEvent::LeftButton;
-        else if (event->motion.state & GDK_BUTTON2_MASK)
+        else if (state & GDK_BUTTON2_MASK)
             button = WebMouseEvent::MiddleButton;
-        else if (event->motion.state & GDK_BUTTON3_MASK)
+        else if (state & GDK_BUTTON3_MASK)
             button = WebMouseEvent::RightButton;
         break;
+    }
     case GDK_BUTTON_PRESS:
     case GDK_2BUTTON_PRESS:
     case GDK_3BUTTON_PRESS:
@@ -108,6 +113,8 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
     WebEvent::Type type = static_cast<WebEvent::Type>(0);
     switch (event->type) {
     case GDK_MOTION_NOTIFY:
+    case GDK_ENTER_NOTIFY:
+    case GDK_LEAVE_NOTIFY:
         type = WebEvent::MouseMove;
         break;
     case GDK_BUTTON_PRESS:
