@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<p>Pass if the timeline of audio in a media document is properly updated during playback.</p>
+<script src="media-file.js"></script>
+<script src="video-test.js"></script>
+<script src="media-controls.js"></script>
+<script>
+function timeLineValue()
+{
+    const timeline = mediaControlsElement(internals.shadowRoot(video).firstChild.firstChild, "-webkit-media-controls-timeline");
+    if (!timeline)
+        throw "Failed to find -webkit-media-controls-timeline";
+
+    return timeline.value;
+}
+
+function iframeLoaded()
+{
+    video = iframe.contentDocument.querySelector("video");
+    video.addEventListener("timeupdate", function() {
+        consoleWrite("EVENT(timeupdate)");
+        testAndEnd("timeLineValue() > 0");
+    });
+}
+
+var video;
+const iframe = document.createElement("iframe");
+iframe.onload = iframeLoaded;
+iframe.src = findMediaFile("audio", "content/test");
+
+document.body.appendChild(iframe);
+</script>
