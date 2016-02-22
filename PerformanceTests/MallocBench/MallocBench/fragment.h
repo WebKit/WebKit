@@ -26,7 +26,9 @@
 #ifndef fragment_h
 #define fragment_h
 
-void benchmark_fragment(bool isParallel);
-void benchmark_fragment_iterate(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_fragment(CommandLine&);
+void benchmark_fragment_iterate(CommandLine&);
 
 #endif // fragment_h

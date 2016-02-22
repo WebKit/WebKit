@@ -175,11 +175,11 @@ void churnTree(Node* tree, size_t stride)
 
 } // namespace
 
-void benchmark_tree_allocate(bool isParallel)
+void benchmark_tree_allocate(CommandLine& commandLine)
 {
     size_t times = 24;
     size_t depth = 16;
-    if (isParallel) {
+    if (commandLine.isParallel()) {
         times *= 4;
         depth = 13;
     }
@@ -190,11 +190,11 @@ void benchmark_tree_allocate(bool isParallel)
     }
 }
 
-void benchmark_tree_traverse(bool isParallel)
+void benchmark_tree_traverse(CommandLine& commandLine)
 {
     size_t times = 256;
     size_t depth = 15;
-    if (isParallel) {
+    if (commandLine.isParallel()) {
         times = 512;
         depth = 13;
     }
@@ -205,11 +205,11 @@ void benchmark_tree_traverse(bool isParallel)
     tree->deref();
 }
 
-void benchmark_tree_churn(bool isParallel)
+void benchmark_tree_churn(CommandLine& commandLine)
 {
     size_t times = 130;
     size_t depth = 15;
-    if (isParallel) {
+    if (commandLine.isParallel()) {
         times *= 4;
         depth = 12;
     }

@@ -42,16 +42,19 @@
 
 #include "mbmalloc.h"
 
-void benchmark_reddit(bool isParallel)
+void benchmark_reddit(CommandLine& commandLine)
 {
     size_t times = 6;
 
     Interpreter interpreter("reddit.ops");
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
+
+    if (commandLine.detailedReport())
+        interpreter.detailedReport();
 }
 
-void benchmark_reddit_memory_warning(bool isParallel)
+void benchmark_reddit_memory_warning(CommandLine& commandLine)
 {
     size_t times = 1;
 
@@ -59,4 +62,7 @@ void benchmark_reddit_memory_warning(bool isParallel)
     Interpreter interpreter("reddit_memory_warning.ops", shouldFreeAllObjects);
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
+
+    if (commandLine.detailedReport())
+        interpreter.detailedReport();
 }

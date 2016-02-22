@@ -26,6 +26,8 @@
 #ifndef stress_h
 #define stress_h
 
-void benchmark_stress(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_stress(CommandLine&);
 
 #endif // stress_h

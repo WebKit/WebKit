@@ -26,7 +26,9 @@
 #ifndef medium_h
 #define medium_h
 
-void benchmark_medium(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_medium(CommandLine&);
 
 #endif // medium_h
 

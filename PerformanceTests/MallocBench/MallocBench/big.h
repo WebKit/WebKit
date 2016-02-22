@@ -26,7 +26,9 @@
 #ifndef big_h
 #define big_h
 
-void benchmark_big(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_big(CommandLine&);
 
 #endif // big_h
 

@@ -26,10 +26,11 @@
 #ifndef Benchmark_h
 #define Benchmark_h
 
+#include "CommandLine.h"
 #include <map>
 #include <string>
 
-typedef void (*BenchmarkFunction)(bool isParallel);
+typedef void (*BenchmarkFunction)(CommandLine& commandLine);
 struct BenchmarkPair;
 
 class Benchmark {
@@ -59,7 +60,7 @@ public:
     static double currentTimeMS();
     static Memory currentMemoryBytes();
 
-    Benchmark(const std::string&, bool isParallel, size_t runs, size_t heapSize);
+    Benchmark(CommandLine&);
     
     bool isValid() { return m_benchmarkPair; }
     
@@ -75,9 +76,8 @@ private:
     MapType m_map;
 
     const BenchmarkPair* m_benchmarkPair;
-    bool m_isParallel;
-    size_t m_runs;
-    size_t m_heapSize;
+
+    CommandLine& m_commandLine;
 
     Memory m_memory;
     double m_elapsedTime;

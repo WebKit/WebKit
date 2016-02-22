@@ -26,7 +26,9 @@
 #ifndef churn_h
 #define churn_h
 
-void benchmark_churn(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_churn(CommandLine&);
 
 #endif // churn_h
 

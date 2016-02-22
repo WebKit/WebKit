@@ -26,7 +26,9 @@
 #ifndef facebook_h
 #define facebook_h
 
-void benchmark_facebook(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_facebook(CommandLine&);
 
 #endif // facebook_h
 

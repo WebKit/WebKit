@@ -26,7 +26,9 @@
 #ifndef list_h
 #define list_h
 
-void benchmark_list_allocate(bool isParallel);
-void benchmark_list_traverse(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_list_allocate(CommandLine&);
+void benchmark_list_traverse(CommandLine&);
 
 #endif // list_h

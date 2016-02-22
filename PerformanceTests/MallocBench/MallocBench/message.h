@@ -26,7 +26,9 @@
 #ifndef message_h
 #define message_h
 
-void benchmark_message_one(bool isParallel);
-void benchmark_message_many(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_message_one(CommandLine&);
+void benchmark_message_many(CommandLine&);
 
 #endif // message_h

@@ -26,23 +26,65 @@
 #ifndef Interpreter_h
 #define Interpreter_h
 
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 #include <vector>
 
 class Interpreter {
 public:
-    Interpreter(const char* fileName, bool shouldFreeAllObjects = true);
+    Interpreter(const char* fileName, bool shouldFreeAllObjects = true, bool useThreadId = false);
     ~Interpreter();
 
     void run();
+    void detailedReport();
 
 private:
-    enum Opcode { op_malloc, op_free, op_realloc };
-    struct Op { Opcode opcode; size_t slot; size_t size; };
+    typedef unsigned short ThreadId; // 0 is the main thread
+    typedef unsigned short Log2Alignment; // log2(alignment) or ~0 for non power of 2.
+    enum Opcode { op_malloc, op_free, op_realloc, op_align_malloc };
+    struct Op { Opcode opcode; ThreadId threadId; Log2Alignment alignLog2; size_t slot; size_t size; };
     struct Record { void* object; size_t size; };
 
+    class Thread
+    {
+    public:
+        Thread(Interpreter*, ThreadId);
+        ~Thread();
+
+        void runThread();
+
+        void waitToRun();
+        void switchTo();
+        void stop();
+        
+        bool isMainThread() { return m_threadId == 0; }
+
+    private:
+        ThreadId m_threadId;
+        Interpreter* m_myInterpreter;
+        std::condition_variable m_shouldRun;
+        std::thread m_thread;
+    };
+
+    bool readOps();
+    void doOnSameThread(ThreadId);
+    void switchToThread(ThreadId);
+
+    void doMallocOp(Op, ThreadId);
+    
     bool m_shouldFreeAllObjects;
+    bool m_useThreadId;
     int m_fd;
     size_t m_opCount;
+    size_t m_remaining;
+    size_t m_opsCursor;
+    size_t m_opsInBuffer;
+    ThreadId m_currentThreadId;
+    std::vector<Op> m_ops;
+    std::mutex m_threadMutex;
+    std::condition_variable m_shouldRun;
+    std::vector<Thread*> m_threads;
     std::vector<Record> m_objects;
 };
 

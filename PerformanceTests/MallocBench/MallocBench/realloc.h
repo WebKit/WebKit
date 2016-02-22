@@ -26,7 +26,9 @@
 #ifndef realloc_h
 #define realloc_h
 
-void benchmark_realloc(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_realloc(CommandLine&);
 
 #endif // realloc_h
 

@@ -26,6 +26,8 @@
 #ifndef stress_aligned_h
 #define stress_aligned_h
 
-void benchmark_stress_aligned(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_stress_aligned(CommandLine&);
 
 #endif // stress_aligned_h

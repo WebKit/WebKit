@@ -42,11 +42,14 @@
 
 #include "mbmalloc.h"
 
-void benchmark_facebook(bool isParallel)
+void benchmark_facebook(CommandLine& commandLine)
 {
     size_t times = 1;
 
     Interpreter interpreter("facebook.ops");
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
+
+    if (commandLine.detailedReport())
+        interpreter.detailedReport();
 }

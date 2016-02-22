@@ -96,12 +96,12 @@ struct Node {
 
 } // namespace
 
-void benchmark_list_allocate(bool isParallel)
+void benchmark_list_allocate(CommandLine& commandLine)
 {
     Node* head = 0;
     size_t times = 70;
     size_t nodes = 32 * 1024;
-    if (isParallel) {
+    if (commandLine.isParallel()) {
         nodes /= cpuCount();
         times *= 2;
     }
@@ -124,12 +124,12 @@ void benchmark_list_allocate(bool isParallel)
     }
 }
 
-void benchmark_list_traverse(bool isParallel)
+void benchmark_list_traverse(CommandLine& commandLine)
 {
     Node* head = 0;
     size_t times = 1 * 1024;
     size_t nodes = 32 * 1024;
-    if (isParallel) {
+    if (commandLine.isParallel()) {
         nodes /= cpuCount();
         times *= 4;
     }

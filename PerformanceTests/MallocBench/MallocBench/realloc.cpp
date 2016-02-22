@@ -29,6 +29,6 @@
 
 #include "mbmalloc.h"
 
-void benchmark_realloc(bool isParallel)
+void benchmark_realloc(CommandLine&)
 {
 }

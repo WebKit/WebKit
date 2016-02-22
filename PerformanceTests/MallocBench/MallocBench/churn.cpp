@@ -39,10 +39,10 @@ struct HeapDouble {
     double value;
 };
 
-void benchmark_churn(bool isParallel)
+void benchmark_churn(CommandLine& commandLine)
 {
     size_t times = 7000000;
-    if (isParallel)
+    if (commandLine.isParallel())
         times /= cpuCount();
 
     auto total = std::unique_ptr<HeapDouble>(new HeapDouble(0.0));

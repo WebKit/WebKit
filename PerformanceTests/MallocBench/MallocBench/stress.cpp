@@ -120,7 +120,7 @@ void deallocate(const Object& object)
     mbfree(object.pointer, object.size);
 }
 
-void benchmark_stress(bool isParallel)
+void benchmark_stress(CommandLine&)
 {
     const size_t heapSize = 100 * MB;
     const size_t churnSize = .05 * heapSize;

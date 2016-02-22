@@ -38,6 +38,8 @@
 		14D6322E1A69BE0B00A8F84F /* memalign.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D6322C1A69BE0B00A8F84F /* memalign.cpp */; };
 		14E11932177ECC8B003A8D15 /* CPUCount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E11930177ECC8B003A8D15 /* CPUCount.cpp */; };
 		14FCA36119A7C917001CFDA9 /* stress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FCA35F19A7C917001CFDA9 /* stress.cpp */; };
+		65E401A61C657A87003C6E9C /* nimlang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E401A41C657A87003C6E9C /* nimlang.cpp */; };
+		65E401AC1C73B068003C6E9C /* alloc_free.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E401AA1C73B068003C6E9C /* alloc_free.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -114,6 +116,11 @@
 		14E11934177F5219003A8D15 /* mbmalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mbmalloc.h; path = MallocBench/mbmalloc.h; sourceTree = "<group>"; };
 		14FCA35F19A7C917001CFDA9 /* stress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stress.cpp; path = MallocBench/stress.cpp; sourceTree = "<group>"; };
 		14FCA36019A7C917001CFDA9 /* stress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stress.h; path = MallocBench/stress.h; sourceTree = "<group>"; };
+		65E401A41C657A87003C6E9C /* nimlang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nimlang.cpp; path = MallocBench/nimlang.cpp; sourceTree = "<group>"; };
+		65E401A51C657A87003C6E9C /* nimlang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nimlang.h; path = MallocBench/nimlang.h; sourceTree = "<group>"; };
+		65E401AA1C73B068003C6E9C /* alloc_free.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = alloc_free.cpp; path = MallocBench/alloc_free.cpp; sourceTree = "<group>"; };
+		65E401AB1C73B068003C6E9C /* alloc_free.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = alloc_free.h; path = MallocBench/alloc_free.h; sourceTree = "<group>"; };
+		65E401AD1C77E7C8003C6E9C /* nimlang.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = nimlang.ops; path = MallocBench/nimlang.ops; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +199,8 @@
 		14E11933177F51AC003A8D15 /* Benchmarks */ = {
 			isa = PBXGroup;
 			children = (
+				65E401AA1C73B068003C6E9C /* alloc_free.cpp */,
+				65E401AB1C73B068003C6E9C /* alloc_free.h */,
 				14105E7D18DF7D73003A106E /* balloon.cpp */,
 				14105E7E18DF7D73003A106E /* balloon.h */,
 				14CE4A5E17BD355800288DAA /* big.cpp */,
@@ -216,6 +225,9 @@
 				1444AE94177E8DF200F8030A /* message.cpp */,
 				1444AE95177E8DF200F8030A /* message.h */,
 				14105E8018E13EEC003A106E /* realloc.cpp */,
+				65E401A41C657A87003C6E9C /* nimlang.cpp */,
+				65E401AD1C77E7C8003C6E9C /* nimlang.ops */,
+				65E401A51C657A87003C6E9C /* nimlang.h */,
 				14105E8118E13EEC003A106E /* realloc.h */,
 				1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */,
 				1447AE8A18FB584200B3D7FF /* reddit.cpp */,
@@ -317,6 +329,7 @@
 				14CE4A6017BD355800288DAA /* big.cpp in Sources */,
 				14976ED1177E4AF7006B819A /* tree.cpp in Sources */,
 				1444AE96177E8DF200F8030A /* message.cpp in Sources */,
+				65E401AC1C73B068003C6E9C /* alloc_free.cpp in Sources */,
 				14452CEF177D47110097E057 /* churn.cpp in Sources */,
 				14452CB0177D24460097E057 /* main.cpp in Sources */,
 				14FCA36119A7C917001CFDA9 /* stress.cpp in Sources */,
@@ -324,6 +337,7 @@
 				1447AE9018FB584200B3D7FF /* flickr.cpp in Sources */,
 				14976EC8177E3649006B819A /* list.cpp in Sources */,
 				14976ECC177E3C87006B819A /* CommandLine.cpp in Sources */,
+				65E401A61C657A87003C6E9C /* nimlang.cpp in Sources */,
 				1447AE9218FB584200B3D7FF /* theverge.cpp in Sources */,
 				14D0BFF31A6F4D3B00109F31 /* stress_aligned.cpp in Sources */,
 				1451FAED18B14B7100DB6D47 /* medium.cpp in Sources */,

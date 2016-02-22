@@ -1,3 +1,142 @@
+2016-02-19  Michael Saboff  <msaboff@apple.com>
+
+        MallocBench: Added recording for nimlang website, new recording details and added new options
+        https://bugs.webkit.org/show_bug.cgi?id=154485
+
+        Reviewed by Geoff Garen.
+
+        Added new capabilities to MallocBench.  These include:
+            Added a recording of http://nim-lang.org/docs/lib.html.
+            Added thread id to the recording and the ability to playback switching threads in MallocBench
+            Added aligned allocations to recordings and the ability to playback 
+            Added --use-thread-id option to honor recorded thread ids
+            Added --detailed-report to output remaining allocations by size after playback
+            Added --no-warmup to not run the warm up iteration
+
+        Changed the way that options are passed down to the benchmarks.  Instead of passing individual
+        boolean or numeric option values, just pass a reference the CommandLine itself.  Each benchmark
+        can access the options that are appropriate.  The Benchmark class also uses the options for
+        is parallel, run counts and warm up.
+
+        Added thread id and aligned malloc to the Op by noticing that structure padding and Opcode allowed
+        for another 32 bits of data.  Breaking that unused 32 bits into a 16 bit thread id value and a
+        16 bit log base 2 of the alignment for aligned malloc allowed for existing recordings to playback
+        without any incompatibilities.
+
+        Threaded operation is simulated by creating threads as needed.  As long as the next Op's thread id
+        is the same as the last, operation continues as normal.  When the next Op has a different thread id,
+        we switch to that thread using the shared Op stream to continue playing back.  There is a mutex to
+        assure that only one thread is really running at a time and a condition variable used to wait
+        that the current thread id matches each block thread's thread id.  This doesn't simulate true
+        concurrent threading, but is instead plays back Ops recorded for multiple thread faithfully.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MallocBench/MallocBench/Benchmark.cpp:
+        (deallocateHeap):
+        (Benchmark::Benchmark):
+        (Benchmark::runOnce):
+        (Benchmark::run):
+        * MallocBench/MallocBench/Benchmark.h:
+        (Benchmark::isValid):
+        * MallocBench/MallocBench/CommandLine.cpp:
+        (CommandLine::printUsage):
+        * MallocBench/MallocBench/CommandLine.h:
+        (CommandLine::isValid):
+        (CommandLine::benchmarkName):
+        (CommandLine::isParallel):
+        (CommandLine::useThreadID):
+        (CommandLine::detailedReport):
+        (CommandLine::warmUp):
+        (CommandLine::heapSize):
+        (CommandLine::runs):
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::Interpreter):
+        (Interpreter::run):
+        (Interpreter::readOps):
+        (Interpreter::doOnSameThread):
+        (Interpreter::switchToThread):
+        (Interpreter::detailedReport):
+        (compute2toPower):
+        (writeData):
+        (Interpreter::doMallocOp):
+        (Interpreter::Thread::Thread):
+        (Interpreter::Thread::stop):
+        (Interpreter::Thread::~Thread):
+        (Interpreter::Thread::runThread):
+        (Interpreter::Thread::waitToRun):
+        (Interpreter::Thread::switchTo):
+        * MallocBench/MallocBench/Interpreter.h:
+        (Interpreter::Thread::isMainThread):
+        * MallocBench/MallocBench/alloc_free.cpp: Added.
+        (benchmark_alloc_free):
+        * MallocBench/MallocBench/alloc_free.h: Added.
+        * MallocBench/MallocBench/balloon.cpp:
+        (benchmark_balloon):
+        * MallocBench/MallocBench/balloon.h:
+        * MallocBench/MallocBench/big.cpp:
+        (benchmark_big):
+        * MallocBench/MallocBench/big.h:
+        * MallocBench/MallocBench/churn.cpp:
+        (benchmark_churn):
+        * MallocBench/MallocBench/churn.h:
+        * MallocBench/MallocBench/facebook.cpp:
+        (benchmark_facebook):
+        * MallocBench/MallocBench/facebook.h:
+        * MallocBench/MallocBench/flickr.cpp:
+        (benchmark_flickr):
+        (benchmark_flickr_memory_warning):
+        * MallocBench/MallocBench/flickr.h:
+        * MallocBench/MallocBench/fragment.cpp:
+        (validate):
+        (benchmark_fragment):
+        (benchmark_fragment_iterate):
+        * MallocBench/MallocBench/fragment.h:
+        * MallocBench/MallocBench/list.cpp:
+        (benchmark_list_allocate):
+        (benchmark_list_traverse):
+        * MallocBench/MallocBench/list.h:
+        * MallocBench/MallocBench/main.cpp:
+        (main):
+        * MallocBench/MallocBench/medium.cpp:
+        (benchmark_medium):
+        * MallocBench/MallocBench/medium.h:
+        * MallocBench/MallocBench/memalign.cpp:
+        (test):
+        (benchmark_memalign):
+        * MallocBench/MallocBench/memalign.h:
+        * MallocBench/MallocBench/message.cpp:
+        (benchmark_message_one):
+        (benchmark_message_many):
+        * MallocBench/MallocBench/message.h:
+        * MallocBench/MallocBench/nimlang.cpp: Added.
+        (benchmark_nimlang):
+        * MallocBench/MallocBench/nimlang.h: Added.
+        * MallocBench/MallocBench/nimlang.ops: Added.
+        * MallocBench/MallocBench/realloc.cpp:
+        (benchmark_realloc):
+        * MallocBench/MallocBench/realloc.h:
+        * MallocBench/MallocBench/reddit.cpp:
+        (benchmark_reddit):
+        (benchmark_reddit_memory_warning):
+        * MallocBench/MallocBench/reddit.h:
+        * MallocBench/MallocBench/stress.cpp:
+        (deallocate):
+        (benchmark_stress):
+        * MallocBench/MallocBench/stress.h:
+        * MallocBench/MallocBench/stress_aligned.cpp:
+        (benchmark_stress_aligned):
+        * MallocBench/MallocBench/stress_aligned.h:
+        * MallocBench/MallocBench/theverge.cpp:
+        (benchmark_theverge):
+        (benchmark_theverge_memory_warning):
+        * MallocBench/MallocBench/theverge.h:
+        * MallocBench/MallocBench/tree.cpp:
+        (benchmark_tree_allocate):
+        (benchmark_tree_traverse):
+        (benchmark_tree_churn):
+        * MallocBench/MallocBench/tree.h:
+        * MallocBench/run-malloc-benchmarks:
+
 2016-02-11  Jon Lee  <jonlee@apple.com>
 
         Fix a missing refactoring.

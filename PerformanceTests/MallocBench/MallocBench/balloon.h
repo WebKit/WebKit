@@ -26,7 +26,9 @@
 #ifndef balloon_h
 #define balloon_h
 
-void benchmark_balloon(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_balloon(CommandLine&);
 
 #endif // balloon_h
 

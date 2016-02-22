@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef CommandLine_h
+#define CommandLine_h
+
 #include <string>
 
 class CommandLine {
@@ -32,6 +35,9 @@ public:
     bool isValid() { return m_benchmarkName.size(); }
     const std::string& benchmarkName() { return m_benchmarkName; }
     bool isParallel() { return m_isParallel; }
+    bool useThreadID() { return m_useThreadID; }
+    bool detailedReport() { return m_detailedReport; }
+    bool warmUp() { return m_warmUp; }
     size_t heapSize() { return m_heapSize; }
     size_t runs() { return m_runs; }
 
@@ -43,7 +49,12 @@ private:
     int m_argc;
     char** m_argv;
     std::string m_benchmarkName;
+    bool m_detailedReport;
     bool m_isParallel;
+    bool m_useThreadID;
+    bool m_warmUp;
     size_t m_heapSize;
     size_t m_runs;
 };
+
+#endif // CommandLine_h

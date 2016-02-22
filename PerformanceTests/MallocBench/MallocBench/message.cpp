@@ -110,9 +110,9 @@ private:
 
 } // namespace
 
-void benchmark_message_one(bool isParallel)
+void benchmark_message_one(CommandLine& commandLine)
 {
-    if (isParallel)
+    if (commandLine.isParallel())
         abort();
 
     const size_t times = 2048;
@@ -138,9 +138,9 @@ void benchmark_message_one(bool isParallel)
     dispatch_release(queue);
 }
 
-void benchmark_message_many(bool isParallel)
+void benchmark_message_many(CommandLine& commandLine)
 {
-    if (isParallel)
+    if (commandLine.isParallel())
         abort();
 
     const size_t times = 768;

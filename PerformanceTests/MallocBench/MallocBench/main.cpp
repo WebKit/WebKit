@@ -40,7 +40,7 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    Benchmark benchmark(commandLine.benchmarkName(), commandLine.isParallel(), commandLine.runs(), commandLine.heapSize());
+    Benchmark benchmark(commandLine);
     if (!benchmark.isValid()) {
         cout << "Invalid benchmark: " << commandLine.benchmarkName() << endl << endl;
         benchmark.printBenchmarks();
@@ -48,6 +48,7 @@ int main(int argc, char** argv)
     }
 
     string parallel = commandLine.isParallel() ? string(" [ parallel ]") : string(" [ not parallel ]");
+    string threaded = commandLine.useThreadID() ? string(" [ use-thread-id ]") : string(" [ don't use-thread-id ]");
 
     stringstream runs;
     runs << " [ runs: " << commandLine.runs() << " ]";
@@ -58,7 +59,7 @@ int main(int argc, char** argv)
     else
         heapSize << " [ heap: 0MB ]";
 
-    cout << "Running " << commandLine.benchmarkName() << parallel << heapSize.str() << runs.str() << "..." << endl;
+    cout << "Running " << commandLine.benchmarkName() << parallel << threaded << heapSize.str() << runs.str() << "..." << endl;
     benchmark.run();
     benchmark.printReport();
         

@@ -26,7 +26,9 @@
 #ifndef reddit_h
 #define reddit_h
 
-void benchmark_reddit(bool isParallel);
-void benchmark_reddit_memory_warning(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_reddit(CommandLine&);
+void benchmark_reddit_memory_warning(CommandLine&);
 
 #endif // reddit_h

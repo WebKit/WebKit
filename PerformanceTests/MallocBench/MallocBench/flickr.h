@@ -26,7 +26,9 @@
 #ifndef flickr_h
 #define flickr_h
 
-void benchmark_flickr(bool isParallel);
-void benchmark_flickr_memory_warning(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_flickr(CommandLine&);
+void benchmark_flickr_memory_warning(CommandLine&);
 
 #endif // flickr_h

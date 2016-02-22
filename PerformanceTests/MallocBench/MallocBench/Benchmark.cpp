@@ -25,6 +25,7 @@
 
 #include "Benchmark.h"
 #include "CPUCount.h"
+#include "alloc_free.h"
 #include "balloon.h"
 #include "big.h"
 #include "churn.h"
@@ -35,8 +36,10 @@
 #include "medium.h"
 #include "memalign.h"
 #include "message.h"
+#include "nimlang.h"
 #include "reddit.h"
 #include "realloc.h"
+#include "simple.h"
 #include "stress.h"
 #include "stress_aligned.h"
 #include "theverge.h"
@@ -61,6 +64,7 @@ struct BenchmarkPair {
 };
 
 static const BenchmarkPair benchmarkPairs[] = {
+    { "alloc_free", benchmark_alloc_free },
     { "balloon", benchmark_balloon },
     { "big", benchmark_big },
     { "churn", benchmark_churn },
@@ -75,6 +79,7 @@ static const BenchmarkPair benchmarkPairs[] = {
     { "memalign", benchmark_memalign },
     { "message_many", benchmark_message_many },
     { "message_one", benchmark_message_one },
+    { "nimlang", benchmark_nimlang },
     { "realloc", benchmark_realloc },
     { "reddit", benchmark_reddit },
     { "reddit_memory_warning", benchmark_reddit_memory_warning },
@@ -127,15 +132,13 @@ static void deallocateHeap(void*** chunks, size_t heapSize, size_t chunkSize, si
     mbfree(chunks, chunkCount * sizeof(void**));
 }
 
-Benchmark::Benchmark(const string& benchmarkName, bool isParallel, size_t runs, size_t heapSize)
+Benchmark::Benchmark(CommandLine& commandLine)
     : m_benchmarkPair()
     , m_elapsedTime()
-    , m_isParallel(isParallel)
-    , m_heapSize(heapSize)
-    , m_runs(runs)
+    , m_commandLine(commandLine)
 {
     const BenchmarkPair* benchmarkPair = std::find(
-        benchmarkPairs, benchmarkPairs + benchmarksPairsCount, benchmarkName);
+        benchmarkPairs, benchmarkPairs + benchmarksPairsCount, m_commandLine.benchmarkName());
     if (benchmarkPair == benchmarkPairs + benchmarksPairsCount)
         return;
     
@@ -151,8 +154,8 @@ void Benchmark::printBenchmarks()
 
 void Benchmark::runOnce()
 {
-    if (!m_isParallel) {
-        m_benchmarkPair->function(m_isParallel);
+    if (!m_commandLine.isParallel()) {
+        m_benchmarkPair->function(m_commandLine);
         return;
     }
 
@@ -160,7 +163,7 @@ void Benchmark::runOnce()
 
     for (size_t i = 0; i < cpuCount(); ++i) {
         dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            m_benchmarkPair->function(m_isParallel);
+            m_benchmarkPair->function(m_commandLine);
         });
     }
 
@@ -174,20 +177,23 @@ void Benchmark::run()
     static const size_t objectSize = 32;
     static const size_t chunkSize = 1024 * 1024;
     
-    void*** heap = allocateHeap(m_heapSize, chunkSize, objectSize);
+    void*** heap = allocateHeap(m_commandLine.heapSize(), chunkSize, objectSize);
 
-    runOnce(); // Warmup run.
+    if (m_commandLine.warmUp())
+        runOnce(); // Warmup run.
 
-    for (size_t i = 0; i < m_runs; ++i) {
+    size_t runs = m_commandLine.runs();
+
+    for (size_t i = 0; i < runs; ++i) {
         double start = currentTimeMS();
         runOnce();
         double end = currentTimeMS();
         double elapsed = end - start;
         m_elapsedTime += elapsed;
     }
-    m_elapsedTime /= m_runs;
+    m_elapsedTime /= runs;
 
-    deallocateHeap(heap, m_heapSize, chunkSize, objectSize);
+    deallocateHeap(heap, m_commandLine.heapSize(), chunkSize, objectSize);
     
     mbscavenge();
     m_memory = currentMemoryBytes();

@@ -42,16 +42,19 @@
 
 #include "mbmalloc.h"
 
-void benchmark_flickr(bool isParallel)
+void benchmark_flickr(CommandLine& commandLine)
 {
     size_t times = 3;
 
     Interpreter interpreter("flickr.ops");
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
+
+    if (commandLine.detailedReport())
+        interpreter.detailedReport();
 }
 
-void benchmark_flickr_memory_warning(bool isParallel)
+void benchmark_flickr_memory_warning(CommandLine& commandLine)
 {
     size_t times = 1;
 
@@ -59,4 +62,7 @@ void benchmark_flickr_memory_warning(bool isParallel)
     Interpreter interpreter("flickr_memory_warning.ops", shouldFreeAllObjects);
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
+
+    if (commandLine.detailedReport())
+        interpreter.detailedReport();
 }

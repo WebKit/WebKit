@@ -79,10 +79,10 @@ void validate(Node* head)
         node->validate();
 }
 
-void benchmark_fragment(bool isParallel)
+void benchmark_fragment(CommandLine& commandLine)
 {
     size_t nodeCount = 128 * 1024;
-    if (isParallel)
+    if (commandLine.isParallel())
         nodeCount /= cpuCount();
     size_t replaceCount = nodeCount / 4;
     size_t times = 25;
@@ -107,11 +107,11 @@ void benchmark_fragment(bool isParallel)
     }
 }
 
-void benchmark_fragment_iterate(bool isParallel)
+void benchmark_fragment_iterate(CommandLine& commandLine)
 {
     size_t nodeCount = 512 * 1024;
     size_t times = 20;
-    if (isParallel)
+    if (commandLine.isParallel())
         nodeCount /= cpuCount();
     size_t replaceCount = nodeCount / 4;
 

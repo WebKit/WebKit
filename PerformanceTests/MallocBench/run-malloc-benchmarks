@@ -22,6 +22,7 @@ $benchmarks = [
     "reddit",
     "flickr",
     "theverge",
+    "nimlang",
 
     # Multi-threaded benchmark variants.
     "message_one",
@@ -34,6 +35,7 @@ $benchmarks = [
     # "reddit --parallel",
     # "flickr --parallel",
     # "theverge --parallel",
+    # "nimlang --use-thread-id",
     "fragment --parallel",
     "fragment_iterate --parallel",
 

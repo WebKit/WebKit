@@ -26,7 +26,9 @@
 #ifndef memalign_h
 #define memalign_h
 
-void benchmark_memalign(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_memalign(CommandLine&);
 
 #endif // memalign_h
 

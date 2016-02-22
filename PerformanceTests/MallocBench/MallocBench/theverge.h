@@ -26,7 +26,9 @@
 #ifndef theverge_h
 #define theverge_h
 
-void benchmark_theverge(bool isParallel);
-void benchmark_theverge_memory_warning(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_theverge(CommandLine&);
+void benchmark_theverge_memory_warning(CommandLine&);
 
 #endif // theverge_h

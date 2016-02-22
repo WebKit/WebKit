@@ -137,7 +137,7 @@ size_t randomAlignment()
 
 }
 
-void benchmark_stress_aligned(bool isParallel)
+void benchmark_stress_aligned(CommandLine&)
 {
     const size_t heapSize = 100 * MB;
     const size_t churnSize = .05 * heapSize;

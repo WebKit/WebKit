@@ -33,7 +33,7 @@
 
 #include "mbmalloc.h"
 
-void benchmark_balloon(bool isParallel)
+void benchmark_balloon(CommandLine&)
 {
     const size_t chunkSize = 1 * 1024;
     const size_t balloonSize = 100 * 1024 * 1024;

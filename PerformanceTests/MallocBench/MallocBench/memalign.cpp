@@ -27,6 +27,7 @@
 #include "memalign.h"
 #include <memory>
 #include <stddef.h>
+#include "CommandLine.h"
 
 #include "mbmalloc.h"
 
@@ -40,7 +41,7 @@ void test(size_t alignment, size_t size)
     mbfree(result, size);
 }
 
-void benchmark_memalign(bool isParallel)
+void benchmark_memalign(CommandLine&)
 {
     for (size_t alignment = 2; alignment < 4096; alignment *= 2) {
         for (size_t size = 0; size < 4096; ++size)

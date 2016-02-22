@@ -42,16 +42,19 @@
 
 #include "mbmalloc.h"
 
-void benchmark_theverge(bool isParallel)
+void benchmark_theverge(CommandLine& commandLine)
 {
     size_t times = 3;
 
     Interpreter interpreter("theverge.ops");
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
+
+    if (commandLine.detailedReport())
+        interpreter.detailedReport();
 }
 
-void benchmark_theverge_memory_warning(bool isParallel)
+void benchmark_theverge_memory_warning(CommandLine& commandLine)
 {
     size_t times = 1;
 
@@ -59,4 +62,7 @@ void benchmark_theverge_memory_warning(bool isParallel)
     Interpreter interpreter("theverge_memory_warning.ops", shouldFreeAllObjects);
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
+
+    if (commandLine.detailedReport())
+        interpreter.detailedReport();
 }

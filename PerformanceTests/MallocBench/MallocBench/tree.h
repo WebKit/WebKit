@@ -26,8 +26,10 @@
 #ifndef tree_h
 #define tree_h
 
-void benchmark_tree_allocate(bool isParallel);
-void benchmark_tree_traverse(bool isParallel);
-void benchmark_tree_churn(bool isParallel);
+#include "CommandLine.h"
+
+void benchmark_tree_allocate(CommandLine&);
+void benchmark_tree_traverse(CommandLine&);
+void benchmark_tree_churn(CommandLine&);
 
 #endif // tree_h
