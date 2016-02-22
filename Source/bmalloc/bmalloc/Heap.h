@@ -83,7 +83,6 @@ private:
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
     void deallocateMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
 
-    void* allocateLarge(std::lock_guard<StaticMutex>&, LargeObject&, size_t);
     void deallocateLarge(std::lock_guard<StaticMutex>&, const LargeObject&);
 
     void splitLarge(BeginTag*, size_t, EndTag*&, Range&);

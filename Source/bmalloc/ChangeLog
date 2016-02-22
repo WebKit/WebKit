@@ -1,3 +1,60 @@
+2016-02-12  Michael Saboff  <msaboff@apple.com>
+
+        BASSERTs added in r196421 are causing debug test failures
+        https://bugs.webkit.org/show_bug.cgi?id=154113
+
+        Reviewed by Geoffrey Garen.
+
+        In VMHeap::deallocateLargeObject(), we drop the lock to deallocate the physical pages.
+        If the scavenger thread is running at the same time a synchronous call to scavenge()
+        comes in, we could call VMHeap::deallocateLargeObject() for an adjacent object while the
+        lock in the other thread is dropped.  We fix this by checking for adjacent objects we
+        can merge with and loop if we have one.
+
+        * bmalloc/FreeList.h:
+        (bmalloc::FreeList::push): Added BASSERT to catch adding unmerged free objects
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateLarge): Changed to use nextCanMerge().
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::prevCanMerge): Repurposed prevIsAllocated.
+        (bmalloc::LargeObject::nextCanMerge): Repurposed nextIsAllocated.
+        (bmalloc::LargeObject::prevIsAllocated): Deleted.
+        (bmalloc::LargeObject::nextIsAllocated): Deleted.
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateLargeObject): Moved adding the extra object back to the free list
+        to after we set the object we'll return as being allocated.
+        (bmalloc::VMHeap::deallocateLargeObject):
+
+2016-02-11  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix after r196421.
+
+        Removed BASSERTs that are firing to eliminate Debug build crashes.  I'll debug locally and
+        enable or alter after the issue is understood.
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::merge): Removed BASSERTs that are firing.
+
+2016-02-11  Michael Saboff  <msaboff@apple.com>
+
+        bmalloc: large aligned allocations will put 1 or 2 free object on free list without merging with free neighbors
+        https://bugs.webkit.org/show_bug.cgi?id=154091
+
+        Reviewed by Geoffrey Garen.
+
+        If we split off any unused free object in the aligned version of Heap::allocateLarge(), we merge them with
+        free neighbors before putting them back on the free list.  Added helpers to verify that when we
+        add LargeObjects to the free list their neighbors are allocated.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateLarge): Deleted private helper version and rolled it into the two the
+        two public versions of allocateLarge().
+        * bmalloc/Heap.h:
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::prevIsAllocated): New helper.
+        (bmalloc::LargeObject::nextIsAllocated): New helper.
+        (bmalloc::LargeObject::merge): Check that the merge object has allocated neighbors.
+
 2015-12-03  Michael Saboff  <msaboff@apple.com>
 
         bmalloc: extra large allocations could be more efficient

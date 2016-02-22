@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,10 @@ public:
 
     void setFree(bool) const;
     bool isFree() const;
-    
+
+    bool prevCanMerge() const;
+    bool nextCanMerge() const;
+
     Owner owner() const;
     void setOwner(Owner) const;
     
@@ -116,6 +119,20 @@ inline bool LargeObject::isFree() const
 {
     validate();
     return m_beginTag->isFree();
+}
+
+inline bool LargeObject::prevCanMerge() const
+{
+    EndTag* prev = m_beginTag->prev();
+
+    return prev->isFree() && prev->owner() == this->owner();
+}
+
+inline bool LargeObject::nextCanMerge() const
+{
+    BeginTag* next = m_endTag->next();
+
+    return next->isFree() && next->owner() == this->owner();
 }
 
 inline Owner LargeObject::owner() const
