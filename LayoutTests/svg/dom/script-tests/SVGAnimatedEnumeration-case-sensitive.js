@@ -1,0 +1,207 @@
+description("This test checks the case-sensitivity of SVGAnimatedEnumeration elements");
+
+var svgAnimatedEnumeration = {
+
+    "SVGComponentTransferFunctionElement" : {
+        "type" : [
+            {"id" : "identity", "val" : "SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY"},
+            {"id" : "table", "val" : "SVG_FECOMPONENTTRANSFER_TYPE_TABLE"},
+            {"id" : "discrete", "val" : "SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE"},
+            {"id" : "linear", "val" : "SVG_FECOMPONENTTRANSFER_TYPE_LINEAR"},
+            {"id" : "gamma", "val" : "SVG_FECOMPONENTTRANSFER_TYPE_GAMMA"}
+        ]
+    },
+    "SVGFEBlendElement" : {
+        "mode" : [
+            {"id" : "normal", "val" : "SVG_FEBLEND_MODE_NORMAL"},
+            {"id" : "multiply", "val" : "SVG_FEBLEND_MODE_MULTIPLY"},
+            {"id" : "screen", "val" : "SVG_FEBLEND_MODE_SCREEN"},
+            {"id" : "darken", "val" : "SVG_FEBLEND_MODE_DARKEN"},
+            {"id" : "lighten", "val" : "SVG_FEBLEND_MODE_LIGHTEN"}
+        ]
+    },
+    "SVGFEColorMatrixElement" : {
+        "type" : [
+            {"id" : "matrix", "val" : "SVG_FECOLORMATRIX_TYPE_MATRIX"},
+            {"id" : "saturate", "val" : "SVG_FECOLORMATRIX_TYPE_SATURATE"},
+            {"id" : "hueRotate", "val" : "SVG_FECOLORMATRIX_TYPE_HUEROTATE"},
+            {"id" : "luminanceToAlpha", "val" : "SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA"}
+        ]
+    },
+    "SVGFECompositeElement" : {
+        "operator" : [
+            {"id" : "over", "val" : "SVG_FECOMPOSITE_OPERATOR_OVER"},
+            {"id" : "in", "val" : "SVG_FECOMPOSITE_OPERATOR_IN"},
+            {"id" : "out", "val" : "SVG_FECOMPOSITE_OPERATOR_OUT"},
+            {"id" : "atop", "val" : "SVG_FECOMPOSITE_OPERATOR_ATOP"},
+            {"id" : "xor", "val" : "SVG_FECOMPOSITE_OPERATOR_XOR"},
+            {"id" : "arithmetic", "val" : "SVG_FECOMPOSITE_OPERATOR_ARITHMETIC"}
+        ]
+    },
+    "SVGFEConvolveMatrixElement" : {
+        "edgeMode" : [
+            {"id" : "duplicate", "val" : "SVG_EDGEMODE_DUPLICATE"},
+            {"id" : "wrap", "val" : "SVG_EDGEMODE_WRAP"},
+            {"id" : "none", "val" : "SVG_EDGEMODE_NONE"}
+        ]
+    },
+    "SVGFEDisplacementMapElement" : {
+        "xChannelSelector" : [
+            {"id" : "R", "val" : "SVG_CHANNEL_R"},
+            {"id" : "G", "val" : "SVG_CHANNEL_G"},
+            {"id" : "B", "val" : "SVG_CHANNEL_B"},
+            {"id" : "A", "val" : "SVG_CHANNEL_A"}
+        ]
+    },
+    "SVGFEMorphologyElement" : {
+        "operator" : [
+            {"id" : "erode", "val" : "SVG_MORPHOLOGY_OPERATOR_ERODE"},
+            {"id" : "dilate", "val" : "SVG_MORPHOLOGY_OPERATOR_DILATE"}
+        ]
+    },
+    "SVGFETurbulenceElement" : {
+        "type" : [
+            {"id" : "fractalNoise", "val" : "SVG_TURBULENCE_TYPE_FRACTALNOISE"},
+            {"id" : "turbulence", "val" : "SVG_TURBULENCE_TYPE_TURBULENCE"}
+        ],
+        "stitchTiles" : [
+            {"id" : "stitch", "val" : "SVG_STITCHTYPE_STITCH"},
+            {"id" : "noStitch", "val" : "SVG_STITCHTYPE_NOSTITCH"}
+        ]
+    },
+    "SVGGradientElement" : {
+        "spreadMethod" : [
+            {"id" : "pad", "val" : "SVG_SPREADMETHOD_PAD"},
+            {"id" : "reflect", "val" : "SVG_SPREADMETHOD_REFLECT"},
+            {"id" : "repeat", "val" : "SVG_SPREADMETHOD_REPEAT"}
+        ]
+    },
+    "SVGMarkerElement" : {
+        "markerUnits" : [
+            {"id" : "userSpaceOnUse", "val" : "SVG_MARKERUNITS_USERSPACEONUSE"},
+            {"id" : "strokeWidth", "val" : "SVG_MARKERUNITS_STROKEWIDTH"}
+        ]
+    },
+    "SVGTextContentElement" : {
+        "lengthAdjust" : [
+            {"id" : "spacing", "val" : "LENGTHADJUST_SPACING"},
+            {"id" : "spacingAndGlyphs", "val" : "LENGTHADJUST_SPACINGANDGLYPHS"}
+        ]
+    },
+    "SVGTextPathElement" : {
+        "method" : [
+            {"id" : "align", "val" : "TEXTPATH_METHODTYPE_ALIGN"},
+            {"id" : "stretch", "val" : "TEXTPATH_METHODTYPE_STRETCH"}
+        ],
+        "spacing" : [
+            {"id" : "auto", "val" : "TEXTPATH_SPACINGTYPE_AUTO"},
+            {"id" : "exact", "val" : "TEXTPATH_SPACINGTYPE_EXACT"}
+        ]
+    },
+    // All *Units attributes in SVG use SVGUnitTypes so we only need to test this once.
+    "SVGUnitTypes" : {
+        "gradientUnits" : [
+            {"id" : "userSpaceOnUse", "val" : "SVG_UNIT_TYPE_USERSPACEONUSE"},
+            {"id" : "objectBoundingBox", "val" : "SVG_UNIT_TYPE_OBJECTBOUNDINGBOX"}
+        ]
+    },
+};
+
+function testCaseSensitivity(elementType, element, enumType)
+{
+    debug("");
+    debug("Check valid " + element.tagName + " '" + enumType + "'");
+
+    var enumValues = svgAnimatedEnumeration[elementType][enumType];
+
+    for (var i = 0; i < enumValues.length; i++) {
+        debug("");
+        shouldBeUndefined(element.id + ".setAttribute('" + enumType + "', '" + enumValues[i].id + "')");
+        shouldBeEqualToString(element.id + ".getAttribute('" + enumType + "')", enumValues[i].id);
+        shouldBe(element.id + "." + enumType + ".baseVal", elementType + "." + enumValues[i].val);
+    } 
+
+    debug("");
+    debug("Check invalid case " + element.tagName + " '" + enumType + "'");
+    for (var i = 0; i < enumValues.length; i++) {
+        var val = enumValues[i].id;
+        var alt_val = enumValues[((i + 1) % enumValues.length)];
+    
+        debug("");
+       
+        debug(element.id + ".setAttribute('" + enumType + "', '" + alt_val.id + "')");
+        element.setAttribute(enumType, alt_val.id);
+
+        var val_check = (val.toUpperCase() == val) ? val.toLowerCase() : val.toUpperCase();
+        shouldBeUndefined(element.id + ".setAttribute('" + enumType + "', '" + val_check + "')");
+        shouldBeEqualToString(element.id + ".getAttribute('" + enumType + "')", val_check);
+        shouldBe(element.id + "." + enumType + ".baseVal", elementType + "." + alt_val.val);
+    } 
+}
+
+// SVGComponentTransferFunctionElement
+var transferFunctionElement = document.createElementNS("http://www.w3.org/2000/svg", "feFuncR");
+transferFunctionElement.id = "transferFunctionElement";
+testCaseSensitivity("SVGComponentTransferFunctionElement", transferFunctionElement, "type");
+
+// SVGFEBlendElement
+var feBlendElement = document.createElementNS("http://www.w3.org/2000/svg", "feBlend");
+feBlendElement.id = "feBlendElement";
+testCaseSensitivity("SVGFEBlendElement", feBlendElement, "mode");
+
+// SVGFEColorMatrixElement
+var feColorMatrixElement = document.createElementNS("http://www.w3.org/2000/svg", "feColorMatrix");
+feColorMatrixElement.id = "feColorMatrixElement";
+testCaseSensitivity("SVGFEColorMatrixElement", feColorMatrixElement, "type");
+
+// SVGFECompositeElement
+var feCompositeElement = document.createElementNS("http://www.w3.org/2000/svg", "feComposite");
+feCompositeElement.id = "feCompositeElement";
+testCaseSensitivity("SVGFECompositeElement", feCompositeElement, "operator");
+
+// SVGFEConvolveMatrixElement
+var feConvolveMatrixElement = document.createElementNS("http://www.w3.org/2000/svg", "feConvolveMatrix");
+feConvolveMatrixElement.id = "feConvolveMatrixElement";
+testCaseSensitivity("SVGFEConvolveMatrixElement", feConvolveMatrixElement, "edgeMode");
+
+// SVGFEDisplacementMapElement
+var feDisplacementMapElement = document.createElementNS("http://www.w3.org/2000/svg", "feDisplacementMap");
+feDisplacementMapElement.id = "feDisplacementMapElement";
+testCaseSensitivity("SVGFEDisplacementMapElement", feDisplacementMapElement, "xChannelSelector");
+
+// SVGFEMorphologyElement
+var feMorphologyElement = document.createElementNS("http://www.w3.org/2000/svg", "feMorphology");
+feMorphologyElement.id = "feMorphologyElement";
+testCaseSensitivity("SVGFEMorphologyElement", feMorphologyElement, "operator");
+
+// SVGFETurbulenceElement
+var feTurbulenceElement = document.createElementNS("http://www.w3.org/2000/svg", "feTurbulence");
+feTurbulenceElement.id = "feTurbulenceElement";
+testCaseSensitivity("SVGFETurbulenceElement", feTurbulenceElement, "type");
+testCaseSensitivity("SVGFETurbulenceElement", feTurbulenceElement, "stitchTiles");
+
+// SVGGradientElement
+var gradientElement = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+gradientElement.id = "gradientElement";
+testCaseSensitivity("SVGGradientElement", gradientElement, "spreadMethod");
+testCaseSensitivity("SVGUnitTypes", gradientElement, "gradientUnits");
+
+// SVGMarkerElement
+var markerElement = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+markerElement.id = "markerElement";
+testCaseSensitivity("SVGMarkerElement", markerElement, "markerUnits");
+
+// SVGTextContentElement
+var textContentElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+textContentElement.id = "textContentElement";
+testCaseSensitivity("SVGTextContentElement", textContentElement, "lengthAdjust");
+
+// SVGTextPathElement
+var textPathElement = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
+textPathElement.id = "textPathElement";
+testCaseSensitivity("SVGTextPathElement", textPathElement, "method");
+testCaseSensitivity("SVGTextPathElement", textPathElement, "spacing");
+
+debug("");
+
+successfullyParsed = true;

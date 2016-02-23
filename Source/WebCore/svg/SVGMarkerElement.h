@@ -58,9 +58,9 @@ struct SVGPropertyTraits<SVGMarkerUnitsType> {
         case SVGMarkerUnitsUnknown:
             return emptyString();
         case SVGMarkerUnitsUserSpaceOnUse:
-            return "userSpaceOnUse";
+            return ASCIILiteral("userSpaceOnUse");
         case SVGMarkerUnitsStrokeWidth:
-            return "strokeWidth";
+            return ASCIILiteral("strokeWidth");
         }
 
         ASSERT_NOT_REACHED();

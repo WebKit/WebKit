@@ -45,9 +45,9 @@ struct SVGPropertyTraits<SVGStitchOptions> {
         case SVG_STITCHTYPE_UNKNOWN:
             return emptyString();
         case SVG_STITCHTYPE_STITCH:
-            return "stitch";
+            return ASCIILiteral("stitch");
         case SVG_STITCHTYPE_NOSTITCH:
-            return "noStitch";
+            return ASCIILiteral("noStitch");
         }
 
         ASSERT_NOT_REACHED();
@@ -74,9 +74,9 @@ struct SVGPropertyTraits<TurbulenceType> {
         case FETURBULENCE_TYPE_UNKNOWN:
             return emptyString();
         case FETURBULENCE_TYPE_FRACTALNOISE:
-            return "fractalNoise";
+            return ASCIILiteral("fractalNoise");
         case FETURBULENCE_TYPE_TURBULENCE:
-            return "turbulence";
+            return ASCIILiteral("turbulence");
         }
 
         ASSERT_NOT_REACHED();

@@ -38,15 +38,15 @@ struct SVGPropertyTraits<ComponentTransferType> {
         case FECOMPONENTTRANSFER_TYPE_UNKNOWN:
             return emptyString();
         case FECOMPONENTTRANSFER_TYPE_IDENTITY:
-            return "identity";
+            return ASCIILiteral("identity");
         case FECOMPONENTTRANSFER_TYPE_TABLE:
-            return "table";
+            return ASCIILiteral("table");
         case FECOMPONENTTRANSFER_TYPE_DISCRETE:
-            return "discrete";
+            return ASCIILiteral("discrete");
         case FECOMPONENTTRANSFER_TYPE_LINEAR:
-            return "linear";
+            return ASCIILiteral("linear");
         case FECOMPONENTTRANSFER_TYPE_GAMMA:
-            return "gamma";
+            return ASCIILiteral("gamma");
         }
 
         ASSERT_NOT_REACHED();

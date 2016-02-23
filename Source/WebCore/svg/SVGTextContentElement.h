@@ -45,9 +45,9 @@ struct SVGPropertyTraits<SVGLengthAdjustType> {
         case SVGLengthAdjustUnknown:
             return emptyString();
         case SVGLengthAdjustSpacing:
-            return "spacing";
+            return ASCIILiteral("spacing");
         case SVGLengthAdjustSpacingAndGlyphs:
-            return "spacingAndGlyphs";
+            return ASCIILiteral("spacingAndGlyphs");
         }
 
         ASSERT_NOT_REACHED();

@@ -1,3 +1,44 @@
+2016-02-23  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [SVG] Update SVG source to return string literals as ASCIILiteral and add test cases for case sensitivity
+        https://bugs.webkit.org/show_bug.cgi?id=154373
+
+        Reviewed by Youenn Fablet.
+
+        Update SVGAnimatedEnumeration toString method to return ASCIILiteral for string literals and add test cases for
+        case-sensitivity for these elements.
+
+        Test: svg/dom/SVGAnimatedEnumeration-case-sensitive.html
+
+        * svg/SVGComponentTransferFunctionElement.h:
+        (WebCore::SVGPropertyTraits<ComponentTransferType>::toString):
+        * svg/SVGFEBlendElement.h:
+        (WebCore::SVGPropertyTraits<BlendMode>::toString):
+        * svg/SVGFEColorMatrixElement.h:
+        (WebCore::SVGPropertyTraits<ColorMatrixType>::toString):
+        * svg/SVGFECompositeElement.h:
+        (WebCore::SVGPropertyTraits<CompositeOperationType>::toString):
+        * svg/SVGFEConvolveMatrixElement.h:
+        (WebCore::SVGPropertyTraits<EdgeModeType>::toString):
+        * svg/SVGFEDisplacementMapElement.h:
+        (WebCore::SVGPropertyTraits<ChannelSelectorType>::toString):
+        * svg/SVGFEMorphologyElement.h:
+        (WebCore::SVGPropertyTraits<MorphologyOperatorType>::toString):
+        * svg/SVGFETurbulenceElement.h:
+        (WebCore::SVGPropertyTraits<SVGStitchOptions>::toString):
+        (WebCore::SVGPropertyTraits<TurbulenceType>::toString):
+        * svg/SVGGradientElement.h:
+        (WebCore::SVGPropertyTraits<SVGSpreadMethodType>::toString):
+        * svg/SVGMarkerElement.h:
+        (WebCore::SVGPropertyTraits<SVGMarkerUnitsType>::toString):
+        * svg/SVGTextContentElement.h:
+        (WebCore::SVGPropertyTraits<SVGLengthAdjustType>::toString):
+        * svg/SVGTextPathElement.h:
+        (WebCore::SVGPropertyTraits<SVGTextPathMethodType>::toString):
+        (WebCore::SVGPropertyTraits<SVGTextPathSpacingType>::toString):
+        * svg/SVGUnitTypes.h:
+        (WebCore::SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::toString):
+
 2016-02-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed speculative buildfix after r196779. Just for fun.
