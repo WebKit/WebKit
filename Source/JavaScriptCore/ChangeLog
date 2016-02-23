@@ -1,3 +1,11 @@
+2016-02-23  Alexey Proskuryakov  <ap@apple.com>
+
+        ASan build fix.
+
+        Let's not export a template function that is only used in InspectorBackendDispatcher.cpp.
+
+        * inspector/InspectorBackendDispatcher.h:
+
 2016-02-23  Brian Burg  <bburg@apple.com>
 
         Connect WebAutomationSession to its backend dispatcher as if it were an agent and add stub implementations

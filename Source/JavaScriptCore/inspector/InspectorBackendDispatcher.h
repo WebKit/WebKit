@@ -91,6 +91,7 @@ public:
     void reportProtocolError(Optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
 
     template<typename T>
+    WTF_HIDDEN_DECLARATION
     T getPropertyValue(InspectorObject*, const String& name, bool* out_optionalValueFound, T defaultValue, std::function<bool(InspectorValue&, T&)>, const char* typeName);
 
     int getInteger(InspectorObject*, const String& name, bool* valueFound);
