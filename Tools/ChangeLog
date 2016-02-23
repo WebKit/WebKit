@@ -1,3 +1,16 @@
+2016-02-23  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Missing configuration patch for openh264 compilation
+        https://bugs.webkit.org/show_bug.cgi?id=154455
+
+        This patch is required for the openh264 compilation with the
+        jhbuild-webrtc.modules. The code was implemented by Alessandro
+        Decina.
+
+        Reviewed by Philippe Normand.
+
+        * gtk/patches/openh264-configure.patch: Added.
+
 2016-02-20  Olivier Blin  <olivier.blin@softathome.com>
 
         [cmake] Use ICU include dirs in WebKit2 and WebKitTestRunner
