@@ -28,8 +28,8 @@
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "APIClient.h"
-#include "WKViewEfl.h"
-#include "WebView.h"
+#include <WebKit/WKViewEfl.h>
+#include <wtf/text/WTFString.h>
 
 namespace API {
 template<> struct ClientTraits<WKColorPickerClientBase> {
@@ -38,6 +38,8 @@ template<> struct ClientTraits<WKColorPickerClientBase> {
 }
 
 namespace WebKit {
+
+class WebView;
 
 class WebColorPickerClient: public API::Client<WKColorPickerClientBase> {
 public:

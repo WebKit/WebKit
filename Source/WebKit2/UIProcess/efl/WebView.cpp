@@ -32,25 +32,48 @@
 #include "CoordinatedDrawingAreaProxy.h"
 #include "CoordinatedGraphicsScene.h"
 #include "CoordinatedLayerTreeHostProxy.h"
+#include "DownloadManagerEfl.h"
+#include "DownloadProxy.h"
+#include "EwkView.h"
+#include "InputMethodContextEfl.h"
+#include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
 #include "ViewState.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
-#include "WebContextMenuProxy.h"
+#include "WebContextMenuProxyEfl.h"
 #include "WebPageGroup.h"
-#include "WebPageProxy.h"
+#include "WebPopupMenuListenerEfl.h"
+#include "ewk_context_private.h"
+#include <WebCore/PlatformContextCairo.h>
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+#include "EwkTouchEvent.h"
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+#include "WebColorPickerEfl.h"
+#endif
+
+using namespace EwkViewCallbacks;
 using namespace WebCore;
 
 namespace WebKit {
 
+Ref<WebView> WebView::create(WebProcessPool* processPool, API::PageConfiguration& pageConfiuration)
+{
+    return adoptRef(*new WebView(processPool, pageConfiuration));
+}
+
 WebView::WebView(WebProcessPool* context, API::PageConfiguration& pageConfiguration)
-    : m_focused(false)
+    : m_ewkView(0)
+    , m_focused(false)
     , m_visible(false)
+    , m_hasRequestedFullScreen(false)
     , m_opacity(1.0)
 {
     // Need to call createWebPage after other data members, specifically m_visible, are initialized.
@@ -72,6 +95,76 @@ WebView::~WebView()
         return;
 
     m_page->close();
+}
+
+void WebView::setEwkView(EwkView* ewkView)
+{
+    m_ewkView = ewkView;
+}
+
+void WebView::paintToCairoSurface(cairo_surface_t* surface)
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    PlatformContextCairo context(cairo_create(surface));
+
+    const FloatPoint& position = contentPosition();
+    double effectiveScale = m_page->deviceScaleFactor() * contentScaleFactor();
+
+    cairo_matrix_t transform = { effectiveScale, 0, 0, effectiveScale, - position.x() * m_page->deviceScaleFactor(), - position.y() * m_page->deviceScaleFactor() };
+    cairo_set_matrix(context.cr(), &transform);
+    scene->paintToGraphicsContext(&context, m_page->pageExtendedBackgroundColor(), m_page->drawsBackground());
+}
+
+void WebView::setThemePath(const String& theme)
+{
+    m_page->setThemePath(theme);
+}
+
+#if ENABLE(TOUCH_EVENTS)
+void WebView::sendTouchEvent(EwkTouchEvent* touchEvent)
+{
+    ASSERT(touchEvent);
+    m_page->handleTouchEvent(NativeWebTouchEvent(touchEvent, transformFromScene()));
+}
+#endif
+
+void WebView::sendMouseEvent(const Evas_Event_Mouse_Down* event)
+{
+    ASSERT(event);
+    m_page->handleMouseEvent(NativeWebMouseEvent(event, transformFromScene(), m_userViewportTransform.toAffineTransform()));
+}
+
+void WebView::sendMouseEvent(const Evas_Event_Mouse_Up* event)
+{
+    ASSERT(event);
+    m_page->handleMouseEvent(NativeWebMouseEvent(event, transformFromScene(), m_userViewportTransform.toAffineTransform()));
+}
+
+void WebView::sendMouseEvent(const Evas_Event_Mouse_Move* event)
+{
+    ASSERT(event);
+    m_page->handleMouseEvent(NativeWebMouseEvent(event, transformFromScene(), m_userViewportTransform.toAffineTransform()));
+}
+
+void WebView::setViewBackgroundColor(const WebCore::Color& color)
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    scene->setViewBackgroundColor(color);
+}
+
+WebCore::Color WebView::viewBackgroundColor()
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return Color();
+
+    return scene->viewBackgroundColor();
 }
 
 void WebView::setContentScaleFactor(float scaleFactor)
@@ -186,6 +279,40 @@ void WebView::resumeActiveDOMObjectsAndAnimations()
 WebFullScreenManagerProxyClient& WebView::fullScreenManagerProxyClient()
 {
     return *this;
+}
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+// WebFullScreenManagerProxyClient
+bool WebView::isFullScreen()
+{
+    return m_hasRequestedFullScreen;
+}
+
+void WebView::enterFullScreen()
+{
+    if (!m_ewkView || m_hasRequestedFullScreen)
+        return;
+
+    m_hasRequestedFullScreen = true;
+
+    WebFullScreenManagerProxy* manager = m_page->fullScreenManager();
+    manager->willEnterFullScreen();
+    m_ewkView->enterFullScreen();
+    manager->didEnterFullScreen();
+}
+
+void WebView::exitFullScreen()
+{
+    if (!m_ewkView || !m_hasRequestedFullScreen)
+        return;
+
+    m_hasRequestedFullScreen = false;
+
+    WebFullScreenManagerProxy* manager = m_page->fullScreenManager();
+    manager->willExitFullScreen();
+    m_ewkView->exitFullScreen();
+    manager->didExitFullScreen();
 }
 
 bool WebView::requestExitFullScreen()
@@ -369,9 +496,9 @@ void WebView::didCommitLoadForMainFrame(const String&, bool)
     m_contentsSize = IntSize();
 }
 
-void WebView::setCursor(const WebCore::Cursor&)
+void WebView::setCursor(const WebCore::Cursor& cursor)
 {
-    notImplemented();
+    m_ewkView->setCursor(cursor);
 }
 
 void WebView::setCursorHiddenUntilMouseMoves(bool)
@@ -423,23 +550,27 @@ void WebView::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEvent
 }
 #endif
 
-RefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy&)
+RefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy& page)
 {
-    notImplemented();
-    return nullptr;
+    return WebPopupMenuListenerEfl::create(&page);
 }
 
-std::unique_ptr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&)
+#if ENABLE(CONTEXT_MENUS)
+std::unique_ptr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
 {
-    notImplemented();
-    return nullptr;
+    return std::make_unique<WebContextMenuProxyEfl>(m_ewkView, page, context, userData);
 }
+#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-RefPtr<WebColorPicker> WebView::createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
+void WebView::initializeColorPickerClient(const WKColorPickerClientBase* client)
 {
-    notImplemented();
-    return nullptr;
+    m_colorPickerClient.initialize(client);
+}
+
+RefPtr<WebColorPicker> WebView::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect&)
+{
+    return WebColorPickerEfl::create(this, page, color);
 }
 #endif
 
@@ -460,12 +591,14 @@ void WebView::updateAcceleratedCompositingMode(const LayerTreeContext&)
 
 void WebView::updateTextInputState()
 {
-    notImplemented();
+    if (InputMethodContextEfl* inputMethodContext = m_ewkView->inputMethodContext())
+        inputMethodContext->updateTextInputState();
 }
 
-void WebView::handleDownloadRequest(DownloadProxy*)
+void WebView::handleDownloadRequest(DownloadProxy* download)
 {
-    notImplemented();
+    EwkContext* context = m_ewkView->ewkContext();
+    context->downloadManager()->registerDownloadJob(toAPI(download));
 }
 
 FloatRect WebView::convertToDeviceSpace(const FloatRect& userRect)

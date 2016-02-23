@@ -33,7 +33,6 @@
 #include "ewk_view.h"
 #include <WebKit/WKString.h>
 #include <WebKit/WKView.h>
-#include <WebKit/WKViewEfl.h>
 
 using namespace EwkViewCallbacks;
 using namespace WebCore;
@@ -198,7 +197,7 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     colorPickerClient.base.clientInfo = this;
     colorPickerClient.showColorPicker = showColorPicker;
     colorPickerClient.endColorPicker = endColorPicker;
-    static_cast<WebViewEfl*>(m_view->webView())->initializeColorPickerClient(&colorPickerClient.base);
+    m_view->webView()->initializeColorPickerClient(&colorPickerClient.base);
 #endif
 }
 
@@ -207,7 +206,7 @@ ViewClientEfl::~ViewClientEfl()
     m_view->webView()->initializeClient(nullptr);
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    static_cast<WebViewEfl*>(m_view->webView())->initializeColorPickerClient(nullptr);
+    m_view->webView()->initializeColorPickerClient(nullptr);
 #endif
 }
 

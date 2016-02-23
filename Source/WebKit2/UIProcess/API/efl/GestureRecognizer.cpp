@@ -31,7 +31,6 @@
 #include "EwkView.h"
 #include "NotImplemented.h"
 #include "WKSharedAPICast.h"
-#include "WKViewEfl.h"
 
 #if ENABLE(TOUCH_EVENTS)
 
@@ -135,7 +134,7 @@ void GestureHandler::handleSingleTap(const IntPoint& position)
     mouseMove.timestamp = ecore_loop_time_get();
     mouseMove.event_flags = EVAS_EVENT_FLAG_NONE;
     mouseMove.dev = 0;
-    static_cast<WebViewEfl*>(m_ewkView->webView())->sendMouseEvent(&mouseMove);
+    m_ewkView->webView()->sendMouseEvent(&mouseMove);
 
     Evas_Event_Mouse_Down mouseDown;
     mouseDown.button = 1;
@@ -148,7 +147,7 @@ void GestureHandler::handleSingleTap(const IntPoint& position)
     mouseDown.timestamp = ecore_loop_time_get();
     mouseDown.event_flags = EVAS_EVENT_FLAG_NONE;
     mouseDown.dev = 0;
-    static_cast<WebViewEfl*>(m_ewkView->webView())->sendMouseEvent(&mouseDown);
+    m_ewkView->webView()->sendMouseEvent(&mouseDown);
 
     Evas_Event_Mouse_Up mouseUp;
     mouseUp.button = 1;
@@ -161,7 +160,7 @@ void GestureHandler::handleSingleTap(const IntPoint& position)
     mouseUp.timestamp = ecore_loop_time_get();
     mouseUp.event_flags = EVAS_EVENT_FLAG_NONE;
     mouseUp.dev = 0;
-    static_cast<WebViewEfl*>(m_ewkView->webView())->sendMouseEvent(&mouseUp);
+    m_ewkView->webView()->sendMouseEvent(&mouseUp);
 }
 
 void GestureHandler::handleDoubleTap(const IntPoint&)

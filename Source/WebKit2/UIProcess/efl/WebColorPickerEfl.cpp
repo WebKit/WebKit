@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-WebColorPickerEfl::WebColorPickerEfl(WebViewEfl* webView, WebColorPicker::Client* client, const WebCore::Color&)
+WebColorPickerEfl::WebColorPickerEfl(WebView* webView, WebColorPicker::Client* client, const WebCore::Color&)
     : WebColorPicker(client)
     , m_webView(webView)
 {

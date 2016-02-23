@@ -32,19 +32,27 @@
 #include "APIObject.h"
 #include "DefaultUndoController.h"
 #include "PageClient.h"
+#include "WebColorPickerClient.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebViewClient.h"
 #include <WebCore/TransformationMatrix.h>
+#include <WebKit/WKViewEfl.h>
 
 namespace API {
 class PageConfiguration;
 }
 
+class EwkView;
+
 namespace WebKit {
 class CoordinatedGraphicsScene;
+
+#if ENABLE(TOUCH_EVENTS)
+class EwkTouchEvent;
+#endif
 
 class WebView : public API::ObjectImpl<API::Object::Type::View>, public PageClient
 #if ENABLE(FULLSCREEN_API)
@@ -102,12 +110,15 @@ public:
     // View client.
     void initializeClient(const WKViewClientBase*);
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    void initializeColorPickerClient(const WKColorPickerClientBase*);
+    WebColorPickerClient& colorPickerClient() { return m_colorPickerClient; }
+#endif
+
     WebPageProxy* page() { return m_page.get(); }
 
-    void didChangeContentSize(const WebCore::IntSize&) override;
     const WebCore::IntSize& contentsSize() const { return m_contentsSize; }
     WebCore::FloatSize visibleContentsSize() const;
-    void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&) override;
 
     // FIXME: Should become private when Web Events creation is moved to WebView.
     WebCore::AffineTransform transformFromScene() const;
@@ -116,12 +127,30 @@ public:
     void setOpacity(double opacity) { m_opacity = clampTo(opacity, 0.0, 1.0); }
     double opacity() const { return m_opacity; }
 
-protected:
+    void setEwkView(EwkView*);
+    EwkView* ewkView() { return m_ewkView; }
+
+    void paintToCairoSurface(cairo_surface_t*);
+    void setThemePath(const String&);
+
+#if ENABLE(TOUCH_EVENTS)
+    void sendTouchEvent(EwkTouchEvent*);
+#endif
+    void sendMouseEvent(const Evas_Event_Mouse_Down*);
+    void sendMouseEvent(const Evas_Event_Mouse_Up*);
+    void sendMouseEvent(const Evas_Event_Mouse_Move*);
+
+    void setViewBackgroundColor(const WebCore::Color&);
+    WebCore::Color viewBackgroundColor();
+
+private:
     WebView(WebProcessPool*, API::PageConfiguration&);
+
     CoordinatedGraphicsScene* coordinatedGraphicsScene();
 
     void updateViewportSize();
     WebCore::FloatSize dipSize() const;
+
     // PageClient
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
 
@@ -154,7 +183,14 @@ protected:
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) override;
     virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) override;
     virtual void pageTransitionViewportReady() override;
+    void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&) override;
 #endif
+
+    virtual void updateTextInputState() override;
+
+    virtual void handleDownloadRequest(DownloadProxy*) override;
+
+    void didChangeContentSize(const WebCore::IntSize&) override;
 
     virtual void setCursor(const WebCore::Cursor&) override;
     virtual void setCursorHiddenUntilMouseMoves(bool) override;
@@ -171,19 +207,18 @@ protected:
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
 
-    virtual void updateTextInputState() override;
-
-    virtual void handleDownloadRequest(DownloadProxy*) override;
-
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool) override;
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
 #endif
 
     virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
+#if ENABLE(CONTEXT_MENUS)
     virtual std::unique_ptr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) override;
+#endif
+
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) override;
+    virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&) override;
 #endif
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
@@ -193,15 +228,10 @@ protected:
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;
-
-    // WebFullScreenManagerProxyClient
-    virtual void closeFullScreenManager() override { }
-    virtual bool isFullScreen() override { return false; }
-    virtual void enterFullScreen() override { }
-    virtual void exitFullScreen() override { }
-    virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
-    virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
 #endif
+
+    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override final { }
+
     virtual void navigationGestureDidBegin() override { }
     virtual void navigationGestureWillEnd(bool, WebBackForwardListItem&) override { }
     virtual void navigationGestureDidEnd(bool, WebBackForwardListItem&) override { }
@@ -209,10 +239,33 @@ protected:
     virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override { }
     virtual void didRemoveNavigationGestureSnapshot() override { }
 
-    virtual void didChangeBackgroundColor() override { }
+    virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() override final { }
+    virtual void didFinishLoadForMainFrame() override final { }
     virtual void didFailLoadForMainFrame() override { }
+    virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override final { }
+
+    virtual void didChangeBackgroundColor() override { }
+
+    virtual void refView() override final { }
+    virtual void derefView() override final { }
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    virtual bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override final { return false; };
+#endif
 
     virtual void didRestoreScrollPosition() override { }
+
+#if ENABLE(FULLSCREEN_API)
+    // WebFullScreenManagerProxyClient
+    virtual void closeFullScreenManager() override { }
+    virtual bool isFullScreen() override final;
+    virtual void enterFullScreen() override final;
+    virtual void exitFullScreen() override final;
+    virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
+    virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
+#endif
+
+    EwkView* m_ewkView;
 
     WebViewClient m_client;
     RefPtr<WebPageProxy> m_page;
@@ -221,9 +274,14 @@ protected:
     WebCore::IntSize m_size; // Size in device units.
     bool m_focused;
     bool m_visible;
+    bool m_hasRequestedFullScreen;
     double m_opacity;
     WebCore::FloatPoint m_contentPosition; // Position in UI units.
     WebCore::IntSize m_contentsSize;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    WebColorPickerClient m_colorPickerClient;
+#endif
 };
 
 } // namespace WebKit

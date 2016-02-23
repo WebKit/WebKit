@@ -1,3 +1,29 @@
+2016-02-22  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Merge WebView and WebViewEfl
+        https://bugs.webkit.org/show_bug.cgi?id=154445
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake: Removed WebViewEfl.cpp from source list.
+        * UIProcess/API/C/efl/WKViewEfl.cpp: Removed type cast for WebViewEfl.
+        * UIProcess/API/efl/EwkView.cpp: Ditto.
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/GestureRecognizer.cpp: Removed type cast for WebViewEfl.
+        * UIProcess/API/efl/WebAccessibility.cpp: Removed unnecessary includes.
+        * UIProcess/API/efl/ewk_view.cpp: Ditto.
+        * UIProcess/efl/ViewClientEfl.cpp: Ditto.
+        * UIProcess/efl/WebColorPickerClient.cpp: Ditto.
+        * UIProcess/efl/WebColorPickerClient.h:
+        * UIProcess/efl/WebColorPickerEfl.cpp:
+        (WebKit::WebColorPickerEfl::WebColorPickerEfl):
+        * UIProcess/efl/WebColorPickerEfl.h:
+        (WebKit::WebColorPickerEfl::create):
+        * UIProcess/efl/WebView.cpp:
+        * UIProcess/efl/WebView.h:
+        * UIProcess/efl/WebViewEfl.cpp: Removed.
+        * UIProcess/efl/WebViewEfl.h: Ditto.
+
 2016-02-22  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add 'Automation' protocol domain and generate its backend classes separately in WebKit2

@@ -27,7 +27,7 @@
 #include "PageViewportControllerClientEfl.h"
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
-#include "WebViewEfl.h"
+#include "WebView.h"
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/TextFlags.h>
 #include <WebCore/Timer.h>

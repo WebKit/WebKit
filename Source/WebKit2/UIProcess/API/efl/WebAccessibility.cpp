@@ -29,7 +29,6 @@
 #if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
 
 #include "EwkView.h"
-#include "WKViewEfl.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {

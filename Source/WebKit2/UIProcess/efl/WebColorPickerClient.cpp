@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebColorPickerClient.h"
 
+#include "WebView.h"
+
 #if ENABLE(INPUT_TYPE_COLOR)
 namespace WebKit {
 

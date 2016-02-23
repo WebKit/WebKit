@@ -41,7 +41,6 @@
 #include <WebKit/WKString.h>
 #include <WebKit/WKURL.h>
 #include <WebKit/WKView.h>
-#include <WebKit/WKViewEfl.h>
 #include <wtf/text/CString.h>
 
 #if HAVE(ACCESSIBILITY)
