@@ -1,3 +1,21 @@
+2016-02-23  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Rows track sizes are optional in grid-template shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=154586
+
+        Reviewed by Sergio Villar Senin.
+
+        You can omit the size of the rows in grid-template shorthand,
+        even if you specify a named grid line for the end of the row,
+        due to a change in the spec back in 2014:
+        https://github.com/w3c/csswg-drafts/commit/9f660c4183c73c1f5279c46904dc6cb314f76194
+
+        Before if you want to specify a named grid line,
+        you need to set the row size.
+
+        Update parsing, so it nows accepts things like:
+            grid-template: 100px / "a" [bottom];
+
 2016-02-23  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [SVG] Update SVG source to return string literals as ASCIILiteral and add test cases for case sensitivity
