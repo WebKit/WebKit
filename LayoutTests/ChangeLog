@@ -1,3 +1,15 @@
+2016-02-23  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r192251): http/tests/navigation/page-cache-xhr.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=154589
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/navigation/page-cache-xhr.html: Load a file that exists. The content
+        doesn't matter, as we expect to navigate away before the load occurs.
+
+        * http/tests/resources/load-and-stall.cgi: Added cache control, just for a good measure.
+
 2016-02-23  Mark Lam  <mark.lam@apple.com>
 
         Debug assertion failure while loading http://kangax.github.io/compat-table/es6/.

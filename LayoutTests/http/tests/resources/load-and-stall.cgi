@@ -11,6 +11,7 @@ $stallFor = $query->param('stallFor');
 $mimeType = $query->param('mimeType');
 
 my $filesize = stat($name)->size;
+print "Cache-Control: no-store\n";
 print "Content-type: " . $mimeType . "\n"; 
 print "Content-Length: " . $filesize . "\n\n";
 
