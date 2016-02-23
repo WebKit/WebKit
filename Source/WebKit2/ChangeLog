@@ -1,5 +1,12 @@
 2016-02-23  Anders Carlsson  <andersca@apple.com>
 
+        Fix iOS build.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration initWithCoder:]):
+
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
         WKWebViewConfiguration should conform to NSCoding
         https://bugs.webkit.org/show_bug.cgi?id=154602
 
