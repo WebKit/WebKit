@@ -1,3 +1,22 @@
+2016-02-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Timelines sidebar and overview attempt to access undefined properties when FPS instrument is absent
+        https://bugs.webkit.org/show_bug.cgi?id=154567
+        <rdar://problem/24781536>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        The viewMode property should be in a valid state before attempting
+        to access the current view mode settings.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.get minimumWidth):
+        (WebInspector.TimelineSidebarPanel.prototype._updateViewModeIfNeeded):
+        (WebInspector.TimelineSidebarPanel):
+        Added missing checks for FPSInstrument support.
+
 2016-02-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r196620): Web Inspector: Filter bar in the left sidebar is 1px shorter than the console prompt

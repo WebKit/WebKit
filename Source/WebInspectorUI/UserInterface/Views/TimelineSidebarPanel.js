@@ -186,7 +186,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     get minimumWidth()
     {
-        if (this._viewModeNavigationBar)
+        if (WebInspector.FPSInstrument.supported())
             return Math.max(this._replayNavigationBar.minimumWidth, this._viewModeNavigationBar.minimumWidth);
         return this._replayNavigationBar.minimumWidth;
     }
@@ -899,6 +899,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     _refreshFrameSelectionChart()
     {
+        console.assert(WebInspector.FPSInstrument.supported());
+        if (!WebInspector.FPSInstrument.supported())
+            return;
+
         if (!this.visible)
             return;
 
@@ -1034,15 +1038,13 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._viewMode = newViewMode;
 
-        if (this._viewMode === WebInspector.TimelineOverview.ViewMode.Timelines) {
-            this._timelinesTreeOutline.hidden = false;
-            this._frameSelectionChartSection.collapsed = true;
-        } else {
-            this._timelinesTreeOutline.hidden = true;
-            this._frameSelectionChartSection.collapsed = false;
-        }
+        let isShowingTimelines = this._viewMode === WebInspector.TimelineOverview.ViewMode.Timelines;
+        this._timelinesTreeOutline.hidden = !isShowingTimelines;
 
-        this._viewModeNavigationBar.selectedNavigationItem = this._viewMode;
+        if (WebInspector.FPSInstrument.supported()) {
+            this._frameSelectionChartSection.collapsed = isShowingTimelines;
+            this._viewModeNavigationBar.selectedNavigationItem = this._viewMode;
+        }
     }
 };
 
