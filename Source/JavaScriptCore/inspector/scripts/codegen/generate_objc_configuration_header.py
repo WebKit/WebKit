@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,16 +36,16 @@ from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 log = logging.getLogger('global')
 
 
-class ObjCConfigurationHeaderGenerator(Generator):
+class ObjCConfigurationHeaderGenerator(ObjCGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sConfiguration.h' % ObjCGenerator.OBJC_PREFIX
+        return '%sConfiguration.h' % self.objc_prefix()
 
     def generate_output(self):
         headers = [
-            '<WebInspector/%s.h>' % ObjCGenerator.OBJC_PREFIX,
+            '<WebInspector/%s.h>' % self.objc_prefix(),
         ]
 
         header_args = {
@@ -66,7 +66,7 @@ class ObjCConfigurationHeaderGenerator(Generator):
     def _generate_configuration_interface_for_domains(self, domains):
         lines = []
         lines.append('__attribute__((visibility ("default")))')
-        lines.append('@interface %sConfiguration : NSObject' % ObjCGenerator.OBJC_PREFIX)
+        lines.append('@interface %sConfiguration : NSObject' % self.objc_prefix())
         for domain in domains:
             lines.extend(self._generate_properties_for_domain(domain))
         lines.append('@end')
@@ -74,7 +74,7 @@ class ObjCConfigurationHeaderGenerator(Generator):
 
     def _generate_properties_for_domain(self, domain):
         property_args = {
-            'objcPrefix': ObjCGenerator.OBJC_PREFIX,
+            'objcPrefix': self.objc_prefix(),
             'domainName': domain.domain_name,
             'variableNamePrefix': ObjCGenerator.variable_name_prefix_for_domain(domain),
         }

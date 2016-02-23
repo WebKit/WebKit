@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,17 +36,17 @@ from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 log = logging.getLogger('global')
 
 
-class ObjCBackendDispatcherImplementationGenerator(Generator):
+class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sConfiguration.mm' % ObjCGenerator.OBJC_PREFIX
+        return '%sConfiguration.mm' % self.objc_prefix()
 
     def generate_output(self):
         secondary_headers = [
-            '"%sInternal.h"' % ObjCGenerator.OBJC_PREFIX,
-            '"%sBackendDispatchers.h"' % ObjCGenerator.OBJC_PREFIX,
+            '"%sInternal.h"' % self.objc_prefix(),
+            '"%sBackendDispatchers.h"' % self.objc_prefix(),
             '<JavaScriptCore/AlternateDispatchableAgent.h>',
             '<JavaScriptCore/AugmentableInspectorController.h>',
             '<JavaScriptCore/InspectorAlternateBackendDispatchers.h>',
@@ -54,7 +54,7 @@ class ObjCBackendDispatcherImplementationGenerator(Generator):
         ]
 
         header_args = {
-            'primaryInclude': '"%sConfiguration.h"' % ObjCGenerator.OBJC_PREFIX,
+            'primaryInclude': '"%sConfiguration.h"' % self.objc_prefix(),
             'secondaryIncludes': '\n'.join(['#import %s' % header for header in secondary_headers]),
         }
 
@@ -71,7 +71,7 @@ class ObjCBackendDispatcherImplementationGenerator(Generator):
 
     def _generate_configuration_implementation_for_domains(self, domains):
         lines = []
-        lines.append('@implementation %sConfiguration' % ObjCGenerator.OBJC_PREFIX)
+        lines.append('@implementation %sConfiguration' % self.objc_prefix())
         lines.append('{')
         lines.append('    AugmentableInspectorController* _controller;')
         lines.extend(self._generate_ivars(domains))
@@ -103,11 +103,11 @@ class ObjCBackendDispatcherImplementationGenerator(Generator):
         lines = []
         for domain in domains:
             if domain.commands and self._command_filter(domain):
-                objc_class_name = '%s%sDomainHandler' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name)
+                objc_class_name = '%s%sDomainHandler' % (self.objc_prefix(), domain.domain_name)
                 ivar_name = '_%sHandler' % ObjCGenerator.variable_name_prefix_for_domain(domain)
                 lines.append('    id<%s> %s;' % (objc_class_name, ivar_name))
             if domain.events and self._event_filter(domain):
-                objc_class_name = '%s%sDomainEventDispatcher' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name)
+                objc_class_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
                 ivar_name = '_%sEventDispatcher' % ObjCGenerator.variable_name_prefix_for_domain(domain)
                 lines.append('    %s *%s;' % (objc_class_name, ivar_name))
         return lines
@@ -127,7 +127,7 @@ class ObjCBackendDispatcherImplementationGenerator(Generator):
 
     def _generate_handler_setter_for_domain(self, domain):
         setter_args = {
-            'objcPrefix': ObjCGenerator.OBJC_PREFIX,
+            'objcPrefix': self.objc_prefix(),
             'domainName': domain.domain_name,
             'variableNamePrefix': ObjCGenerator.variable_name_prefix_for_domain(domain),
         }
@@ -135,7 +135,7 @@ class ObjCBackendDispatcherImplementationGenerator(Generator):
 
     def _generate_event_dispatcher_getter_for_domain(self, domain):
         getter_args = {
-            'objcPrefix': ObjCGenerator.OBJC_PREFIX,
+            'objcPrefix': self.objc_prefix(),
             'domainName': domain.domain_name,
             'variableNamePrefix': ObjCGenerator.variable_name_prefix_for_domain(domain),
         }

@@ -46,12 +46,15 @@ _FRAMEWORK_CONFIG_MAP = {
         "alternate_dispatchers": True,
     },
     "WebKit": {
+        "objc_prefix": "Automation",
     },
     "WebInspector": {
+        "objc_prefix": "RWI",
     },
     # Used for code generator tests.
     "Test": {
         "alternate_dispatchers": True,
+        "objc_prefix": "Test",
     }
 }
 

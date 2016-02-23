@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,12 +39,12 @@ from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 log = logging.getLogger('global')
 
 
-class ObjCBackendDispatcherHeaderGenerator(Generator):
+class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sBackendDispatchers.h' % ObjCGenerator.OBJC_PREFIX
+        return '%sBackendDispatchers.h' % self.objc_prefix()
 
     def domains_to_generate(self):
         return filter(ObjCGenerator.should_generate_domain_command_handler_filter(self.model()), Generator.domains_to_generate(self))
@@ -73,7 +73,7 @@ class ObjCBackendDispatcherHeaderGenerator(Generator):
         lines = []
         for domain in self.domains_to_generate():
             if domain.commands:
-                lines.append('@protocol %s%sDomainHandler;' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name))
+                lines.append('@protocol %s%sDomainHandler;' % (self.objc_prefix(), domain.domain_name))
         return '\n'.join(lines)
 
     def _generate_objc_handler_declarations_for_domain(self, domain):
@@ -87,7 +87,7 @@ class ObjCBackendDispatcherHeaderGenerator(Generator):
         handler_args = {
             'domainName': domain.domain_name,
             'commandDeclarations': '\n'.join(command_declarations),
-            'objcPrefix': ObjCGenerator.OBJC_PREFIX,
+            'objcPrefix': self.objc_prefix(),
         }
 
         return self.wrap_with_guard_for_domain(domain, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerObjCDeclaration).substitute(None, **handler_args))

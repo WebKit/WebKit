@@ -1,3 +1,150 @@
+2016-02-23  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: the protocol generator's Objective-C name prefix should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=154596
+        <rdar://problem/24794962>
+
+        Reviewed by Timothy Hatcher.
+
+        In order to support different generated protocol sets that don't have conflicting
+        file and type names, allow the Objective-C prefix to be configurable based on the
+        target framework. Each name also has the implicit prefix 'Protocol' appended to the
+        per-target framework prefix.
+
+        For example, the existing protocol for remote inspection has the prefix 'RWI'
+        and is generated as 'RWIProtocol'. The WebKit framework has the 'Automation' prefix
+        and is generated as 'AutomationProtocol'.
+
+        To make this change, convert ObjCGenerator to be a subclass of Generator and use
+        the instance method model() to find the target framework and its setting for
+        'objc_prefix'. Make all ObjC generators subclass ObjCGenerator so they can use
+        these instance methods that used to be static methods. This is a large but
+        mechanical change to use self instead of ObjCGenerator.
+
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator):
+        (ObjCBackendDispatcherHeaderGenerator.__init__):
+        (ObjCBackendDispatcherHeaderGenerator.output_filename):
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_forward_declarations):
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_handler_declarations_for_domain):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCConfigurationImplementationGenerator):
+        (ObjCConfigurationImplementationGenerator.__init__):
+        (ObjCConfigurationImplementationGenerator.output_filename):
+        (ObjCConfigurationImplementationGenerator.generate_output):
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command):
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command.and):
+        (ObjCConfigurationImplementationGenerator._generate_conversions_for_command):
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        (ObjCConfigurationHeaderGenerator):
+        (ObjCConfigurationHeaderGenerator.__init__):
+        (ObjCConfigurationHeaderGenerator.output_filename):
+        (ObjCConfigurationHeaderGenerator.generate_output):
+        (ObjCConfigurationHeaderGenerator._generate_configuration_interface_for_domains):
+        (ObjCConfigurationHeaderGenerator._generate_properties_for_domain):
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator):
+        (ObjCBackendDispatcherImplementationGenerator.__init__):
+        (ObjCBackendDispatcherImplementationGenerator.output_filename):
+        (ObjCBackendDispatcherImplementationGenerator.generate_output):
+        (ObjCBackendDispatcherImplementationGenerator._generate_configuration_implementation_for_domains):
+        (ObjCBackendDispatcherImplementationGenerator._generate_ivars):
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_setter_for_domain):
+        (ObjCBackendDispatcherImplementationGenerator._generate_event_dispatcher_getter_for_domain):
+        * inspector/scripts/codegen/generate_objc_conversion_helpers.py:
+        (ObjCConversionHelpersGenerator):
+        (ObjCConversionHelpersGenerator.__init__):
+        (ObjCConversionHelpersGenerator.output_filename):
+        (ObjCConversionHelpersGenerator.generate_output):
+        (ObjCConversionHelpersGenerator._generate_anonymous_enum_conversion_for_declaration):
+        (ObjCConversionHelpersGenerator._generate_anonymous_enum_conversion_for_member):
+        (ObjCConversionHelpersGenerator._generate_anonymous_enum_conversion_for_parameter):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator):
+        (ObjCFrontendDispatcherImplementationGenerator.__init__):
+        (ObjCFrontendDispatcherImplementationGenerator.output_filename):
+        (ObjCFrontendDispatcherImplementationGenerator.generate_output):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_dispatcher_implementations):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event.and):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_signature):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_out_parameters):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator):
+        (ObjCHeaderGenerator.__init__):
+        (ObjCHeaderGenerator.output_filename):
+        (ObjCHeaderGenerator.generate_output):
+        (ObjCHeaderGenerator._generate_forward_declarations):
+        (ObjCHeaderGenerator._generate_anonymous_enum_for_declaration):
+        (ObjCHeaderGenerator._generate_anonymous_enum_for_member):
+        (ObjCHeaderGenerator._generate_anonymous_enum_for_parameter):
+        (ObjCHeaderGenerator._generate_type_interface):
+        (ObjCHeaderGenerator._generate_init_method_for_required_members):
+        (ObjCHeaderGenerator._generate_member_property):
+        (ObjCHeaderGenerator._generate_command_protocols):
+        (ObjCHeaderGenerator._generate_single_command_protocol):
+        (ObjCHeaderGenerator._callback_block_for_command):
+        (ObjCHeaderGenerator._generate_event_interfaces):
+        (ObjCHeaderGenerator._generate_single_event_interface):
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        (ObjCInternalHeaderGenerator):
+        (ObjCInternalHeaderGenerator.__init__):
+        (ObjCInternalHeaderGenerator.output_filename):
+        (ObjCInternalHeaderGenerator.generate_output):
+        (ObjCInternalHeaderGenerator._generate_event_dispatcher_private_interfaces):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator):
+        (ObjCProtocolTypesImplementationGenerator.__init__):
+        (ObjCProtocolTypesImplementationGenerator.output_filename):
+        (ObjCProtocolTypesImplementationGenerator.generate_output):
+        (ObjCProtocolTypesImplementationGenerator.generate_type_implementation):
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_required_members):
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_required_members.and):
+        (ObjCProtocolTypesImplementationGenerator._generate_setter_for_member):
+        (ObjCProtocolTypesImplementationGenerator._generate_setter_for_member.and):
+        (ObjCProtocolTypesImplementationGenerator._generate_getter_for_member):
+        * inspector/scripts/codegen/models.py:
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCTypeCategory.category_for_type):
+        (ObjCGenerator):
+        (ObjCGenerator.__init__):
+        (ObjCGenerator.objc_prefix):
+        (ObjCGenerator.objc_name_for_type):
+        (ObjCGenerator.objc_enum_name_for_anonymous_enum_declaration):
+        (ObjCGenerator.objc_enum_name_for_anonymous_enum_member):
+        (ObjCGenerator.objc_enum_name_for_anonymous_enum_parameter):
+        (ObjCGenerator.objc_enum_name_for_non_anonymous_enum):
+        (ObjCGenerator.objc_class_for_type):
+        (ObjCGenerator.objc_class_for_array_type):
+        (ObjCGenerator.objc_accessor_type_for_member):
+        (ObjCGenerator.objc_accessor_type_for_member_internal):
+        (ObjCGenerator.objc_type_for_member):
+        (ObjCGenerator.objc_type_for_member_internal):
+        (ObjCGenerator.objc_type_for_param):
+        (ObjCGenerator.objc_type_for_param_internal):
+        (ObjCGenerator.objc_protocol_export_expression_for_variable):
+        (ObjCGenerator.objc_protocol_import_expression_for_member):
+        (ObjCGenerator.objc_protocol_import_expression_for_parameter):
+        (ObjCGenerator.objc_protocol_import_expression_for_variable):
+        (ObjCGenerator.objc_to_protocol_expression_for_member):
+        (ObjCGenerator.protocol_to_objc_expression_for_member):
+
+        Change the prefix for the 'Test' target framework to be 'Test.' Rebaseline results.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-02-23  Mark Lam  <mark.lam@apple.com>
 
         Debug assertion failure while loading http://kangax.github.io/compat-table/es6/.

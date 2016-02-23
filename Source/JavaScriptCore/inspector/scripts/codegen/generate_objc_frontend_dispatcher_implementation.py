@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
+# Copyright (c) 2014-2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,24 +37,24 @@ from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 log = logging.getLogger('global')
 
 
-class ObjCFrontendDispatcherImplementationGenerator(Generator):
+class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sEventDispatchers.mm' % ObjCGenerator.OBJC_PREFIX
+        return '%sEventDispatchers.mm' % self.objc_prefix()
 
     def domains_to_generate(self):
         return filter(ObjCGenerator.should_generate_domain_event_dispatcher_filter(self.model()), Generator.domains_to_generate(self))
 
     def generate_output(self):
         secondary_headers = [
-            '"%sEnumConversionHelpers.h"' % ObjCGenerator.OBJC_PREFIX,
+            '"%sEnumConversionHelpers.h"' % self.objc_prefix(),
             '<JavaScriptCore/InspectorValues.h>',
         ]
 
         header_args = {
-            'primaryInclude': '"%sInternal.h"' % ObjCGenerator.OBJC_PREFIX,
+            'primaryInclude': '"%sInternal.h"' % self.objc_prefix(),
             'secondaryIncludes': '\n'.join(['#import %s' % header for header in secondary_headers]),
         }
 
@@ -71,7 +71,7 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
             return ''
 
         lines = []
-        objc_name = '%s%sDomainEventDispatcher' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name)
+        objc_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
         lines.append('@implementation %s' % objc_name)
         lines.append('{')
         lines.append('    AugmentableInspectorController* _controller;')
@@ -104,16 +104,16 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
         for parameter in required_pointer_parameters:
             var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
             lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(%s, @"%s");' % (var_name, var_name))
-            objc_array_class = ObjCGenerator.objc_class_for_array_type(parameter.type)
-            if objc_array_class and objc_array_class.startswith(ObjCGenerator.OBJC_PREFIX):
+            objc_array_class = self.objc_class_for_array_type(parameter.type)
+            if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
                 lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
 
         optional_pointer_parameters = filter(lambda parameter: parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), event.event_parameters)
         for parameter in optional_pointer_parameters:
             var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
             lines.append('    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(%s, @"%s");' % (var_name, var_name))
-            objc_array_class = ObjCGenerator.objc_class_for_array_type(parameter.type)
-            if objc_array_class and objc_array_class.startswith(ObjCGenerator.OBJC_PREFIX):
+            objc_array_class = self.objc_class_for_array_type(parameter.type)
+            if objc_array_class and objc_array_class.startswith(self.objc_prefix()):
                 lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_OPTIONAL_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
 
         if required_pointer_parameters or optional_pointer_parameters:
@@ -133,7 +133,7 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
         pairs = []
         for parameter in event.event_parameters:
             param_name = parameter.parameter_name
-            pairs.append('%s:(%s)%s' % (param_name, ObjCGenerator.objc_type_for_param(domain, event.event_name, parameter), param_name))
+            pairs.append('%s:(%s)%s' % (param_name, self.objc_type_for_param(domain, event.event_name, parameter), param_name))
         pairs[0] = ucfirst(pairs[0])
         return '- (void)%sWith%s' % (event.event_name, ' '.join(pairs))
 
@@ -144,7 +144,7 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
             keyed_set_method = CppGenerator.cpp_setter_method_for_type(parameter.type)
             var_name = parameter.parameter_name
             safe_var_name = '(*%s)' % var_name if parameter.is_optional else var_name
-            export_expression = ObjCGenerator.objc_protocol_export_expression_for_variable(parameter.type, safe_var_name)
+            export_expression = self.objc_protocol_export_expression_for_variable(parameter.type, safe_var_name)
             if not parameter.is_optional:
                 lines.append('    paramsObject->%s(ASCIILiteral("%s"), %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
             else:

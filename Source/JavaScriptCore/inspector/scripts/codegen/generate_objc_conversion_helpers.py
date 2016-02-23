@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -43,19 +43,19 @@ def add_newline(lines):
     lines.append('')
 
 
-class ObjCConversionHelpersGenerator(Generator):
+class ObjCConversionHelpersGenerator(ObjCGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sEnumConversionHelpers.h' % ObjCGenerator.OBJC_PREFIX
+        return '%sEnumConversionHelpers.h' % self.objc_prefix()
 
     def domains_to_generate(self):
         return filter(ObjCGenerator.should_generate_domain_types_filter(self.model()), Generator.domains_to_generate(self))
 
     def generate_output(self):
         headers = [
-            '"%sArrayConversionHelpers.h"' % ObjCGenerator.OBJC_PREFIX,
+            '"%sArrayConversionHelpers.h"' % self.objc_prefix(),
         ]
 
         header_args = {
@@ -106,7 +106,7 @@ class ObjCConversionHelpersGenerator(Generator):
         return '\n'.join(lines)
 
     def _generate_anonymous_enum_conversion_for_declaration(self, domain, declaration):
-        objc_enum_name = ObjCGenerator.objc_enum_name_for_anonymous_enum_declaration(declaration)
+        objc_enum_name = self.objc_enum_name_for_anonymous_enum_declaration(declaration)
         enum_values = declaration.type.enum_values()
         lines = []
         lines.append(self._generate_enum_objc_to_protocol_string(objc_enum_name, enum_values))
@@ -114,7 +114,7 @@ class ObjCConversionHelpersGenerator(Generator):
         return '\n\n'.join(lines)
 
     def _generate_anonymous_enum_conversion_for_member(self, domain, declaration, member):
-        objc_enum_name = ObjCGenerator.objc_enum_name_for_anonymous_enum_member(declaration, member)
+        objc_enum_name = self.objc_enum_name_for_anonymous_enum_member(declaration, member)
         enum_values = member.type.enum_values()
         lines = []
         lines.append(self._generate_enum_objc_to_protocol_string(objc_enum_name, enum_values))
@@ -122,7 +122,7 @@ class ObjCConversionHelpersGenerator(Generator):
         return '\n\n'.join(lines)
 
     def _generate_anonymous_enum_conversion_for_parameter(self, domain, event_or_command_name, parameter):
-        objc_enum_name = ObjCGenerator.objc_enum_name_for_anonymous_enum_parameter(domain, event_or_command_name, parameter)
+        objc_enum_name = self.objc_enum_name_for_anonymous_enum_parameter(domain, event_or_command_name, parameter)
         enum_values = parameter.type.enum_values()
         lines = []
         lines.append(self._generate_enum_objc_to_protocol_string(objc_enum_name, enum_values))

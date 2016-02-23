@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -43,16 +43,16 @@ def add_newline(lines):
     lines.append('')
 
 
-class ObjCHeaderGenerator(Generator):
+class ObjCHeaderGenerator(ObjCGenerator):
     def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+        ObjCGenerator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%s.h' % ObjCGenerator.OBJC_PREFIX
+        return '%s.h' % self.objc_prefix()
 
     def generate_output(self):
         headers = set([
-            '<WebInspector/%sJSONObject.h>' % ObjCGenerator.OBJC_PREFIX,
+            '<WebInspector/%sJSONObject.h>' % self.objc_prefix(),
         ])
 
         header_args = {
@@ -84,7 +84,7 @@ class ObjCHeaderGenerator(Generator):
         lines = []
         for declaration in domain.type_declarations:
             if (isinstance(declaration.type, ObjectType)):
-                objc_name = ObjCGenerator.objc_name_for_type(declaration.type)
+                objc_name = self.objc_name_for_type(declaration.type)
                 lines.append('@class %s;' % objc_name)
         return '\n'.join(lines)
 
@@ -132,15 +132,15 @@ class ObjCHeaderGenerator(Generator):
         return '\n'.join(lines)
 
     def _generate_anonymous_enum_for_declaration(self, domain, declaration):
-        objc_enum_name = ObjCGenerator.objc_enum_name_for_anonymous_enum_declaration(declaration)
+        objc_enum_name = self.objc_enum_name_for_anonymous_enum_declaration(declaration)
         return self._generate_enum(objc_enum_name, declaration.type.enum_values())
 
     def _generate_anonymous_enum_for_member(self, domain, declaration, member):
-        objc_enum_name = ObjCGenerator.objc_enum_name_for_anonymous_enum_member(declaration, member)
+        objc_enum_name = self.objc_enum_name_for_anonymous_enum_member(declaration, member)
         return self._generate_enum(objc_enum_name, member.type.enum_values())
 
     def _generate_anonymous_enum_for_parameter(self, domain, event_or_command_name, parameter):
-        objc_enum_name = ObjCGenerator.objc_enum_name_for_anonymous_enum_parameter(domain, event_or_command_name, parameter)
+        objc_enum_name = self.objc_enum_name_for_anonymous_enum_parameter(domain, event_or_command_name, parameter)
         return self._generate_enum(objc_enum_name, parameter.type.enum_values())
 
     def _generate_enum(self, enum_name, enum_values):
@@ -153,7 +153,7 @@ class ObjCHeaderGenerator(Generator):
 
     def _generate_type_interface(self, domain, declaration):
         lines = []
-        objc_name = ObjCGenerator.objc_name_for_type(declaration.type)
+        objc_name = self.objc_name_for_type(declaration.type)
         lines.append('__attribute__((visibility ("default")))')
         lines.append('@interface %s : %s' % (objc_name, ObjCGenerator.OBJC_JSON_OBJECT_BASE))
         required_members = filter(lambda member: not member.is_optional, declaration.type_members)
@@ -170,21 +170,21 @@ class ObjCHeaderGenerator(Generator):
     def _generate_init_method_for_required_members(self, domain, declaration, required_members):
         pairs = []
         for member in required_members:
-            objc_type = ObjCGenerator.objc_type_for_member(declaration, member)
+            objc_type = self.objc_type_for_member(declaration, member)
             var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
             pairs.append('%s:(%s)%s' % (var_name, objc_type, var_name))
         pairs[0] = ucfirst(pairs[0])
         return '- (instancetype)initWith%s;' % ' '.join(pairs)
 
     def _generate_member_property(self, declaration, member):
-        accessor_type = ObjCGenerator.objc_accessor_type_for_member(member)
-        objc_type = ObjCGenerator.objc_type_for_member(declaration, member)
+        accessor_type = self.objc_accessor_type_for_member(member)
+        objc_type = self.objc_type_for_member(declaration, member)
         return '@property (nonatomic, %s) %s;' % (accessor_type, join_type_and_name(objc_type, ObjCGenerator.identifier_to_objc_identifier(member.member_name)))
 
     def _generate_command_protocols(self, domain):
         lines = []
         if domain.commands:
-            objc_name = '%s%sDomainHandler' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name)
+            objc_name = '%s%sDomainHandler' % (self.objc_prefix(), domain.domain_name)
             lines.append('@protocol %s <NSObject>' % objc_name)
             lines.append('@required')
             for command in domain.commands:
@@ -198,19 +198,19 @@ class ObjCHeaderGenerator(Generator):
         pairs.append('successCallback:(%s)successCallback' % self._callback_block_for_command(domain, command))
         for parameter in command.call_parameters:
             param_name = parameter.parameter_name
-            pairs.append('%s:(%s)%s' % (param_name, ObjCGenerator.objc_type_for_param(domain, command.command_name, parameter), param_name))
+            pairs.append('%s:(%s)%s' % (param_name, self.objc_type_for_param(domain, command.command_name, parameter), param_name))
         return '- (void)%sWith%s;' % (command.command_name, ' '.join(pairs))
 
     def _callback_block_for_command(self, domain, command):
         pairs = []
         for parameter in command.return_parameters:
-            pairs.append(join_type_and_name(ObjCGenerator.objc_type_for_param(domain, command.command_name, parameter), parameter.parameter_name))
+            pairs.append(join_type_and_name(self.objc_type_for_param(domain, command.command_name, parameter), parameter.parameter_name))
         return 'void(^)(%s)' % ', '.join(pairs)
 
     def _generate_event_interfaces(self, domain):
         lines = []
         if domain.events:
-            objc_name = '%s%sDomainEventDispatcher' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name)
+            objc_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
             lines.append('__attribute__((visibility ("default")))')
             lines.append('@interface %s : NSObject' % objc_name)
             for event in domain.events:
@@ -224,6 +224,6 @@ class ObjCHeaderGenerator(Generator):
         pairs = []
         for parameter in event.event_parameters:
             param_name = parameter.parameter_name
-            pairs.append('%s:(%s)%s' % (param_name, ObjCGenerator.objc_type_for_param(domain, event.event_name, parameter), param_name))
+            pairs.append('%s:(%s)%s' % (param_name, self.objc_type_for_param(domain, event.event_name, parameter), param_name))
         pairs[0] = ucfirst(pairs[0])
         return '- (void)%sWith%s;' % (event.event_name, ' '.join(pairs))
