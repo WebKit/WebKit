@@ -1,3 +1,29 @@
+2016-02-22  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add 'Automation' protocol domain and generate its backend classes separately in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=154509
+        <rdar://problem/24759098>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new 'WebKit' framework, which is used to generate protocol code
+        in WebKit2.
+
+        Add --backend and --frontend flags to the main generator script.
+        These allow a framework to trigger two different sets of generators
+        so they can be separately generated and compiled.
+
+        * inspector/scripts/codegen/models.py:
+        (Framework.fromString):
+        (Frameworks): Add new framework.
+
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        If neither --backend or --frontend is specified, assume both are wanted.
+        This matches the behavior for JavaScriptCore and WebInspector frameworks.
+
+        (generate_from_specification):
+        Generate C++ files for the backend and Objective-C files for the frontend.
+
 2016-02-22  Saam barati  <sbarati@apple.com>
 
         JSGlobalObject doesn't visit ProxyObjectStructure during GC

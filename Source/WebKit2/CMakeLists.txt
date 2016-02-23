@@ -29,6 +29,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/C"
     "${WEBKIT2_DIR}/UIProcess/API/cpp"
     "${WEBKIT2_DIR}/UIProcess/Authentication"
+    "${WEBKIT2_DIR}/UIProcess/Automation"
     "${WEBKIT2_DIR}/UIProcess/Databases"
     "${WEBKIT2_DIR}/UIProcess/Downloads"
     "${WEBKIT2_DIR}/UIProcess/InspectorServer"
@@ -154,6 +155,8 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source"
     "${CMAKE_SOURCE_DIR}/WebKitLibraries"
 )
+
+set(PROTOCOL_GENERATOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
 set(WebKit2_SYSTEM_INCLUDE_DIRECTORIES
     ${ICU_INCLUDE_DIRS}
@@ -769,6 +772,40 @@ endmacro()
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 GENERATE_WEBKIT2_MESSAGE_SOURCES(WebKit2_DERIVED_SOURCES "${WebKit2_MESSAGES_IN_FILES}")
+
+set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/cpp_generator.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/cpp_generator_templates.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_backend_dispatcher_header.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_backend_dispatcher_implementation.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_protocol_types_header.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_protocol_types_implementation.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generator.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generator_templates.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/models.py
+)
+
+set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS
+    ${WEBKIT2_DIR}/UIProcess/Automation/Automation.json
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.h ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.cpp
+    MAIN_DEPENDENCY ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
+    DEPENDS ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS}
+    COMMAND ${PYTHON_EXECUTABLE} ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_WEBKIT2_DIR}" --framework WebKit --backend ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
+    VERBATIM)
+
+list(APPEND WebKit2_HEADERS
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.h
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.h
+)
+
+list(APPEND WebKit2_SOURCES
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorBackendDispatchers.cpp
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/InspectorProtocolObjects.cpp
+)
 
 WEBKIT_FRAMEWORK(WebKit2)
 add_dependencies(WebKit2 WebCore ${WEBKIT2_EXTRA_DEPENDENCIES})

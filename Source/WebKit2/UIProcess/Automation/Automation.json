@@ -1,0 +1,40 @@
+{
+    "domain": "Automation",
+    "description": "Automation domain exposes commands for automating user interactions with the browser.",
+    "types": [
+        {
+            "id": "OpaqueWindowHandle",
+            "type": "string",
+            "description": "An opaque identifier for a window."
+        },
+        {
+            "id": "BrowsingWindow",
+            "type": "object",
+            "description": "A handle representing an open window or tab in the automation session.",
+            "properties": [
+                { "name": "handle", "$ref": "OpaqueWindowHandle", "description": "Opaque handle for the window. Used as a key for window-related commands." },
+                { "name": "active", "type": "boolean", "description": "Whether the window is active at the time the command is handled." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "getWindows",
+            "returns": [
+                { "name": "windows", "type": "array", "items": { "$ref": "BrowsingWindow"}, "description": "All known windows and tabs in the browsing session." }
+            ],
+            "description": "Gets information about all open windows and tabs in the automation session."
+        },
+        {
+            "name": "openWindow",
+            "description": "Opens a new automation window in the current browsing context."
+        },
+        {
+            "name": "closeWindow",
+            "parameters": [
+                { "name": "handle", "$ref": "OpaqueWindowHandle", "description": "The handle for the window that should be closed." }
+            ],
+            "description": "Closes the specified window."
+        }
+    ]
+}

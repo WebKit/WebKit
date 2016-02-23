@@ -37,6 +37,11 @@ namespace API {
 class AutomationSessionClient;
 }
 
+namespace Inspector {
+class BackendDispatcher;
+class FrontendRouter;
+}
+
 namespace WebKit {
 
 class WebAutomationSessionClient;
@@ -66,6 +71,8 @@ public:
 private:
     std::unique_ptr<API::AutomationSessionClient> m_client;
     String m_sessionIdentifier { ASCIILiteral("Untitled Session") };
+    Ref<Inspector::FrontendRouter> m_frontendRouter;
+    Ref<Inspector::BackendDispatcher> m_backendDispatcher;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };
