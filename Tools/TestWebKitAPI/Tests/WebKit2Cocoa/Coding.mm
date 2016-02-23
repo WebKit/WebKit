@@ -65,4 +65,35 @@ TEST(Coding, WKPreferences)
 #endif
 }
 
+TEST(Coding, WKWebViewConfiguration)
+{
+    auto a = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    // Change all defaults to something else.
+    [a setSuppressesIncrementalRendering:YES];
+    [a setApplicationNameForUserAgent:@"Application Name"];
+    [a setAllowsAirPlayForMediaPlayback:NO];
+    [a setDataDetectorTypes:WKDataDetectorTypeAll];
+
+#if PLATFORM(IOS)
+    [a setAllowsInlineMediaPlayback:YES];
+    [a setRequiresUserActionForMediaPlayback:NO];
+    [a setSelectionGranularity:WKSelectionGranularityCharacter];
+    [a setAllowsPictureInPictureMediaPlayback:NO];
+#endif
+
+    auto b = encodeAndDecode(a.get());
+
+    EXPECT_EQ([a suppressesIncrementalRendering], [b suppressesIncrementalRendering]);
+    EXPECT_TRUE([[a applicationNameForUserAgent] isEqualToString:[b applicationNameForUserAgent]]);
+    EXPECT_EQ([a allowsAirPlayForMediaPlayback], [b allowsAirPlayForMediaPlayback]);
+    EXPECT_EQ([a dataDetectorTypes], [b dataDetectorTypes]);
+
+#if PLATFORM(IOS)
+    EXPECT_EQ([a allowsInlineMediaPlayback], [b allowsInlineMediaPlayback]);
+    EXPECT_EQ([a requiresUserActionForMediaPlayback], [b requiresUserActionForMediaPlayback]);
+    EXPECT_EQ([a selectionGranularity], [b selectionGranularity]);
+    EXPECT_EQ([a allowsPictureInPictureMediaPlayback], [b allowsPictureInPictureMediaPlayback]);
+#endif
+}
 #endif

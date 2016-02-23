@@ -1,5 +1,15 @@
 2016-02-23  Anders Carlsson  <andersca@apple.com>
 
+        WKWebViewConfiguration should conform to NSCoding
+        https://bugs.webkit.org/show_bug.cgi?id=154602
+
+        Reviewed by Beth Dakin.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Coding.mm:
+        (TEST):
+
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
         WKPreferences should conform to NSCoding
         https://bugs.webkit.org/show_bug.cgi?id=154597
 

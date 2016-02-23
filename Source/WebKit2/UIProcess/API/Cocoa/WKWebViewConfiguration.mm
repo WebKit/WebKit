@@ -156,6 +156,46 @@ private:
     return [NSString stringWithFormat:@"<%@: %p; processPool = %@; preferences = %@>", NSStringFromClass(self.class), self, self.processPool, self.preferences];
 }
 
+// FIXME: Encode the process pool, user content controller and website data store.
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:self.preferences forKey:@"preferences"];
+
+    [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
+    [coder encodeObject:self.applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
+    [coder encodeBool:self.allowsAirPlayForMediaPlayback forKey:@"allowsAirPlayForMediaPlayback"];
+    [coder encodeInteger:self.dataDetectorTypes forKey:@"dataDetectorTypes"];
+
+#if PLATFORM(IOS)
+    [coder encodeBool:self.allowsInlineMediaPlayback forKey:@"allowsInlineMediaPlayback"];
+    [coder encodeBool:self.requiresUserActionForMediaPlayback forKey:@"requiresUserActionForMediaPlayback"];
+    [coder encodeInteger:self.selectionGranularity forKey:@"selectionGranularity"];
+    [coder encodeBool:self.allowsPictureInPictureMediaPlayback forKey:@"allowsPictureInPictureMediaPlayback"];
+#endif
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [self init]))
+        return nil;
+
+    self.preferences = [coder decodeObjectForKey:@"preferences"];
+    self.suppressesIncrementalRendering = [coder decodeBoolForKey:@"suppressesIncrementalRendering"];
+    self.applicationNameForUserAgent = [coder decodeObjectForKey:@"applicationNameForUserAgent"];
+    self.allowsAirPlayForMediaPlayback = [coder decodeBoolForKey:@"allowsAirPlayForMediaPlayback"];
+    self.dataDetectorTypes = [coder decodeIntegerForKey:@"dataDetectorTypes"];
+
+#if PLATFORM(IOS)
+    self.allowsInlineMediaPlayback = [coder decodeBoolForKey:@"allowsInlineMediaPlayback"];
+    self.requiresUserActionForMediaPlayback = [coder decodeBoolForKey:@"requiresUserActionForMediaPlayback"];
+    self.selectionGranularity = [coder decodeIntegerForKey:@"selectionGranularity"];
+    self.allowsPictureInPictureMediaPlayback = [coder decodeBoolForKey:@"allowsPictureInPictureMediaPlayback"];
+#endif
+
+    return self;
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
     WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
