@@ -65,6 +65,18 @@ TEST(Coding, WKPreferences)
 #endif
 }
 
+TEST(Coding, WKWebsiteDataStore_Default)
+{
+    auto a = encodeAndDecode([WKWebsiteDataStore defaultDataStore]);
+    EXPECT_EQ([WKWebsiteDataStore defaultDataStore], a.get());
+}
+
+TEST(Coding, WKWebsiteDataStore_NonPersistent)
+{
+    auto a = encodeAndDecode([WKWebsiteDataStore nonPersistentDataStore]);
+    EXPECT_FALSE([a isPersistent]);
+}
+
 TEST(Coding, WKWebViewConfiguration)
 {
     auto a = adoptNS([[WKWebViewConfiguration alloc] init]);

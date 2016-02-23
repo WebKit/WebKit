@@ -51,6 +51,32 @@
     [super dealloc];
 }
 
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [super init]))
+        return nil;
+
+    RetainPtr<WKWebsiteDataStore> dataStore;
+    if ([coder decodeBoolForKey:@"isDefaultDataStore"])
+        dataStore = [WKWebsiteDataStore defaultDataStore];
+    else
+        dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+    [self release];
+
+    return dataStore.leakRef();
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    if (self == [WKWebsiteDataStore defaultDataStore]) {
+        [coder encodeBool:YES forKey:@"isDefaultDataStore"];
+        return;
+    }
+
+    ASSERT(!self.persistent);
+}
+
 - (BOOL)isPersistent
 {
     return _websiteDataStore->isPersistent();

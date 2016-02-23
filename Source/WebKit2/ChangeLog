@@ -1,5 +1,17 @@
 2016-02-23  Anders Carlsson  <andersca@apple.com>
 
+        WKWebsiteDataStore should conform to NSCoding
+        https://bugs.webkit.org/show_bug.cgi?id=154605
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore initWithCoder:]):
+        (-[WKWebsiteDataStore encodeWithCoder:]):
+
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
         Fix iOS build.
 
         * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:

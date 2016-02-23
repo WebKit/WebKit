@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  IndexedDB databases, and local storage.
  */
 WK_CLASS_AVAILABLE(10_11, 9_0)
-@interface WKWebsiteDataStore : NSObject
+@interface WKWebsiteDataStore : NSObject <NSCoding>
 
 /* @abstract Returns the default data store. */
 + (WKWebsiteDataStore *)defaultDataStore;
