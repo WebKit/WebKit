@@ -82,13 +82,12 @@ FontFaceSet::Iterator::Iterator(FontFaceSet& set)
 {
 }
 
-bool FontFaceSet::Iterator::next(JSC::ExecState& execState, RefPtr<FontFace>& key, RefPtr<FontFace>& value)
+Optional<WTF::KeyValuePair<RefPtr<FontFace>, RefPtr<FontFace>>> FontFaceSet::Iterator::next(JSC::ExecState& state)
 {
     if (m_index == m_target->size())
-        return true;
-    key = m_target->backing()[m_index++].wrapper(execState);
-    value = key;
-    return false;
+        return Nullopt;
+    RefPtr<FontFace> item = m_target->backing()[m_index++].wrapper(state);
+    return WTF::KeyValuePair<RefPtr<FontFace>, RefPtr<FontFace>>(item, item);
 }
 
 FontFaceSet::PendingPromise::PendingPromise(Promise&& promise)

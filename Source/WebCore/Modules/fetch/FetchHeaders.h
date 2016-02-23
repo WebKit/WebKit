@@ -32,6 +32,8 @@
 #if ENABLE(FETCH_API)
 
 #include "HTTPHeaderMap.h"
+#include <wtf/HashTraits.h>
+#include <wtf/Optional.h>
 
 namespace JSC {
 class ExecState;
@@ -69,7 +71,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(FetchHeaders&);
-        bool next(JSC::ExecState&, String& nextKey, String& nextValue);
+        Optional<WTF::KeyValuePair<String, String>> next(JSC::ExecState&);
 
     private:
         Ref<FetchHeaders> m_headers;

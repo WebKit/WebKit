@@ -1,3 +1,22 @@
+2016-02-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Refactor DOM Iterator next signature
+        https://bugs.webkit.org/show_bug.cgi?id=154531
+
+        Reviewed by Myles C. Maxfield.
+
+        Covered by existing tests.
+
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::FetchHeaders::Iterator::next): Using Optional<KeyValuePair> to return iterator value.
+        * Modules/fetch/FetchHeaders.h:
+        * bindings/js/JSKeyValueIterator.h: Using Optional<KeyValuePair> as returned iterator value.
+        (WebCore::keyValueIteratorForEach):
+        (WebCore::JSKeyValueIterator<JSWrapper>::next):
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::Iterator::next): Using Optional<KeyValuePair> to return iterator value.
+        * css/FontFaceSet.h:
+
 2016-02-22  Gavin Barraclough  <barraclough@apple.com>
 
         Some timer alignment cleanup.

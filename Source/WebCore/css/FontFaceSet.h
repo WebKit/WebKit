@@ -31,6 +31,7 @@
 #include "DOMCoreException.h"
 #include "EventTarget.h"
 #include "JSDOMPromise.h"
+#include <wtf/HashTraits.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -74,7 +75,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(FontFaceSet&);
-        bool next(JSC::ExecState&, RefPtr<FontFace>& nextKey, RefPtr<FontFace>& nextValue);
+        Optional<WTF::KeyValuePair<RefPtr<FontFace>, RefPtr<FontFace>>> next(JSC::ExecState&);
 
     private:
         Ref<FontFaceSet> m_target;
