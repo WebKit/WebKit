@@ -1,3 +1,17 @@
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
+        WKPreferences should conform to NSCoding
+        https://bugs.webkit.org/show_bug.cgi?id=154597
+
+        Reviewed by Sam Weinig.
+
+        Add NSCoding implementation.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences encodeWithCoder:]):
+        (-[WKPreferences initWithCoder:]):
+
 2016-02-23  Alex Christensen  <achristensen@webkit.org>
 
         Implement downloads with NetworkSession

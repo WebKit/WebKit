@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "config.h"
 
 #if WK_API_ENABLED
 
-#import <CoreGraphics/CoreGraphics.h>
-#import <Foundation/Foundation.h>
+#import <WebKit/WKPreferences.h>
+#import <wtf/RetainPtr.h>
 
-/*! A WKPreferences object encapsulates the preference settings for a web
- view. The preferences object associated with a web view is specified by
- its web view configuration.
- */
-WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKPreferences : NSObject <NSCoding>
+template<typename T>
+RetainPtr<T> encodeAndDecode(T* t)
+{
+    auto data = [NSKeyedArchiver archivedDataWithRootObject:t];
 
-/*! @abstract The minimum font size in points.
- @discussion The default value is 0.
- */
-@property (nonatomic) CGFloat minimumFontSize;
+    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+}
 
-/*! @abstract A Boolean value indicating whether JavaScript is enabled.
- @discussion The default value is YES.
- */
-@property (nonatomic) BOOL javaScriptEnabled;
+TEST(Coding, WKPreferences)
+{
+    auto a = adoptNS([[WKPreferences alloc] init]);
 
-/*! @abstract A Boolean value indicating whether JavaScript can open
- windows without user interaction.
- @discussion The default value is NO in iOS and YES in OS X.
- */
-@property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
-
-#if !TARGET_OS_IPHONE
-/*! @abstract A Boolean value indicating whether Java is enabled.
- @discussion The default value is NO.
- */
-@property (nonatomic) BOOL javaEnabled;
-
-/*! @abstract A Boolean value indicating whether plug-ins are enabled.
- @discussion The default value is NO.
- */
-@property (nonatomic) BOOL plugInsEnabled;
+    // Change all defaults to something else.
+    [a setMinimumFontSize:10];
+    [a setJavaScriptEnabled:NO];
+#if PLATFORM(IOS)
+    [a setJavaScriptCanOpenWindowsAutomatically:YES];
+#else
+    [a setJavaScriptCanOpenWindowsAutomatically:NO];
+    [a setJavaEnabled:YES];
+    [a setPlugInsEnabled:YES];
 #endif
 
-@end
+    auto b = encodeAndDecode(a.get());
+
+    EXPECT_EQ([a minimumFontSize], [b minimumFontSize]);
+    EXPECT_EQ([a javaScriptEnabled], [b javaScriptEnabled]);
+    EXPECT_EQ([a javaScriptCanOpenWindowsAutomatically], [b javaScriptCanOpenWindowsAutomatically]);
+
+#if PLATFORM(MAC)
+    EXPECT_EQ([a javaEnabled], [b javaEnabled]);
+    EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
+#endif
+}
 
 #endif
