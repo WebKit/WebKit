@@ -1,5 +1,33 @@
 2016-02-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [css-grid] Avoid duplicated calls to resolution code
+        https://bugs.webkit.org/show_bug.cgi?id=154336
+
+        Reviewed by Sergio Villar Senin.
+
+        We were calling GridResolvedPosition::resolveGridPositionsFromStyle()
+        several times per item.
+
+        We can store the GridCoordinates in
+        RenderGrid::populateExplicitGridAndOrderIterator()
+        and reuse them in the placement code.
+        Once RenderGrid::placeItemsOnGrid() is over,
+        all the items will have a definite position in both axis.
+
+        No new tests, no change of behavior.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::insertItemIntoGrid):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::cachedGridCoordinate):
+        (WebCore::RenderGrid::cachedGridSpan):
+        * rendering/RenderGrid.h:
+
+2016-02-23  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [css-grid] Rows track sizes are optional in grid-template shorthand
         https://bugs.webkit.org/show_bug.cgi?id=154586
 
