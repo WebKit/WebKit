@@ -86,10 +86,6 @@ static NSString * const WebKitNetworkCacheSpeculativeRevalidationEnabledDefaults
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 
-#if PLATFORM(MAC)
-NSString *WebKitTabSuspension = @"WebKitTabSuspension";
-#endif
-
 namespace WebKit {
 
 NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForCustomProtocolRegisteredNotification";
@@ -106,10 +102,6 @@ static void registerUserDefaultsIfNeeded()
     
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitJSCJITEnabledDefaultsKey];
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitJSCFTLJITEnabledDefaultsKey];
-
-#if PLATFORM(MAC)
-    [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitTabSuspension];
-#endif
 
 #if ENABLE(NETWORK_CACHE)
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitNetworkCacheEnabledDefaultsKey];
@@ -181,10 +173,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #endif
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-#if PLATFORM(MAC)
-    parameters.shouldEnableTabSuspension = [defaults boolForKey:WebKitTabSuspension];
-#endif
 
     parameters.shouldEnableJIT = [defaults boolForKey:WebKitJSCJITEnabledDefaultsKey];
     parameters.shouldEnableFTLJIT = [defaults boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];

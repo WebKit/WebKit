@@ -1,3 +1,30 @@
+2016-02-23  Antti Koivisto  <antti@apple.com>
+
+        Remove tab suspension code
+        https://bugs.webkit.org/show_bug.cgi?id=154585
+
+        Reviewed by Andreas Kling.
+
+        It causes too many problems.
+
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        (WebCore::Page::Page):
+        (WebCore::Page::setPageActivityState):
+        (WebCore::Page::setIsVisible):
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::setIsPrerender):
+        (WebCore::Page::setResourceUsageOverlayVisible):
+        (WebCore::Page::canTabSuspend): Deleted.
+        (WebCore::Page::setIsTabSuspended): Deleted.
+        (WebCore::Page::setTabSuspensionEnabled): Deleted.
+        (WebCore::Page::updateTabSuspensionState): Deleted.
+        (WebCore::Page::tabSuspensionTimerFired): Deleted.
+        * page/Page.h:
+        (WebCore::Page::setEditable):
+        (WebCore::Page::isEditable):
+        (WebCore::Page::setShowAllPlugins):
+
 2016-02-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Refactor DOM Iterator next signature
