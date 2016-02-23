@@ -1,3 +1,14 @@
+2016-02-23  Brian Burg  <bburg@apple.com>
+
+        Connect WebAutomationSession to its backend dispatcher as if it were an agent and add stub implementations
+        https://bugs.webkit.org/show_bug.cgi?id=154518
+        <rdar://problem/24761096>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorBackendDispatcher.h:
+        Export all the classes since they are used by WebKit::WebAutomationSession.
+
 2016-02-22  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add 'Automation' protocol domain and generate its backend classes separately in WebKit2

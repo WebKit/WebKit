@@ -27,6 +27,7 @@
 #define WebAutomationSession_h
 
 #include "APIObject.h"
+#include "InspectorBackendDispatchers.h"
 #include <wtf/Forward.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -50,6 +51,7 @@ class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::Aut
 #if ENABLE(REMOTE_INSPECTOR)
     , public Inspector::RemoteAutomationTarget
 #endif
+    , public Inspector::AutomationBackendDispatcherHandler
 {
 public:
     WebAutomationSession();
@@ -68,11 +70,17 @@ public:
     virtual void disconnect(Inspector::FrontendChannel*) override;
 #endif
 
+    // Inspector::AutomationBackendDispatcherHandler API
+    virtual void getWindows(Inspector::ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingWindow>>& out_windows) override;
+    virtual void openWindow(Inspector::ErrorString&) override;
+    virtual void closeWindow(Inspector::ErrorString&, const String& in_handle) override;
+
 private:
     std::unique_ptr<API::AutomationSessionClient> m_client;
     String m_sessionIdentifier { ASCIILiteral("Untitled Session") };
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+    Ref<Inspector::AutomationBackendDispatcher> m_domainDispatcher;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

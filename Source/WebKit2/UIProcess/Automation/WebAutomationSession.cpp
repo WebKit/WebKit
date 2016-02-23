@@ -27,10 +27,18 @@
 #include "WebAutomationSession.h"
 
 #include "APIAutomationSessionClient.h"
+#include "InspectorProtocolObjects.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
 using namespace Inspector;
+
+#define FAIL_WITH_PREDEFINED_ERROR_MESSAGE(messageName) \
+do { \
+    auto enumValue = Inspector::Protocol::Automation::ErrorMessage::messageName; \
+    errorString = Inspector::Protocol::getEnumConstantValue(enumValue); \
+    return; \
+} while (false)
 
 namespace WebKit {
 
@@ -38,9 +46,8 @@ WebAutomationSession::WebAutomationSession()
     : m_client(std::make_unique<API::AutomationSessionClient>())
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
+    , m_domainDispatcher(AutomationBackendDispatcher::create(m_backendDispatcher, this))
 {
-    // FIXME: to actually handle incoming commands, an agent needs to be created
-    // and registered with the backend dispatcher in the constructor.
 }
 
 WebAutomationSession::~WebAutomationSession()
@@ -89,5 +96,22 @@ void WebAutomationSession::disconnect(Inspector::FrontendChannel* channel)
 }
 
 #endif // ENABLE(REMOTE_INSPECTOR)
+
+// Inspector::AutomationBackendDispatcherHandler API
+
+void WebAutomationSession::getWindows(Inspector::ErrorString& errorString, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingWindow>>& out_windows)
+{
+    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+}
+
+void WebAutomationSession::openWindow(Inspector::ErrorString& errorString)
+{
+    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+}
+
+void WebAutomationSession::closeWindow(Inspector::ErrorString& errorString, const String& in_handle)
+{
+    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+}
 
 } // namespace WebKit

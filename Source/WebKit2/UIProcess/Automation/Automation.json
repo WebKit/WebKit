@@ -8,6 +8,14 @@
             "description": "An opaque identifier for a window."
         },
         {
+            "id": "ErrorMessage",
+            "type": "string",
+            "enum": [
+                "NotImplemented"
+            ],
+            "description": "This enum contains predefined error messages that can be used to signal a well-defined error condition, such as a missing implementation, unknown window handle, and so forth. The backend signals one of these errors by using it as a prefix of the commands's error message (the errorString argument in generated C++ backend dispatchers). This will be reported to the frontend as a protocol error with a JSON-RPC error code of 'ServerError'. It is up to the frontend whether and how to deal with errors."
+        },
+        {
             "id": "BrowsingWindow",
             "type": "object",
             "description": "A handle representing an open window or tab in the automation session.",
