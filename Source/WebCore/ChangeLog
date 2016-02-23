@@ -1,3 +1,9 @@
+2016-02-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] Unreviewed speculative buildfix after r196779. Just for fun.
+
+        * PlatformMac.cmake:
+
 2016-02-23  Antti Koivisto  <antti@apple.com>
 
         Remove tab suspension code

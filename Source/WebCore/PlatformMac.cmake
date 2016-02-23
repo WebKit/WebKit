@@ -588,6 +588,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     Modules/indexeddb/legacy
     Modules/indexeddb/shared
+    Modules/indexeddb/server
 
     bindings/generic
     bindings/js
