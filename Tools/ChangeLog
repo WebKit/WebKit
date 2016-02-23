@@ -1,3 +1,10 @@
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * TestWebKitAPI/mac/SyntheticBackingScaleFactorWindow.m:
+        (-[SyntheticBackingScaleFactorWindow initWithContentRect:styleMask:backing:defer:]):
+
 2016-02-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Allow to run the WebKitGTK+ MiniBrowser with the run-benchmark script.

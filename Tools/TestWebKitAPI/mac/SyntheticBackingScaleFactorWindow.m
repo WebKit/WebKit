@@ -28,7 +28,10 @@
 
 @implementation SyntheticBackingScaleFactorWindow
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmismatched-parameter-types"
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+#pragma clang diagnostic pop
 {
     self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
     if (!self)
