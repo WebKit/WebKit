@@ -21,7 +21,7 @@ function shouldThrow(func, errorMessage) {
 var executorCalled = false;
 shouldThrow(() => {
     Promise(function (resolve, reject) { executorCalled = true; });
-}, `TypeError: Type error`);
+}, `TypeError: calling Promise constructor without new is invalid`);
 shouldBe(executorCalled, false);
 
 // But should accept inheriting Promise.

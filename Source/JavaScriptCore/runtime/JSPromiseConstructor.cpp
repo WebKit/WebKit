@@ -114,7 +114,7 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL callPromise(ExecState* exec)
 {
-    return throwVMTypeError(exec);
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, "Promise"));
 }
 
 ConstructType JSPromiseConstructor::getConstructData(JSCell*, ConstructData& constructData)

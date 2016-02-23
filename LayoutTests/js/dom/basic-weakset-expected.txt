@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS WeakSet instanceof WeakSet is false
 PASS WeakSet.prototype instanceof WeakSet is false
 PASS new WeakSet() instanceof WeakSet is true
-PASS WeakSet() threw exception TypeError: WeakSet cannot be called as a function.
+PASS WeakSet() threw exception TypeError: calling WeakSet constructor without new is invalid.
 PASS set.add(0) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
 PASS set.add(0.5) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
 PASS set.add('foo') threw exception TypeError: Attempted to add a non-object key to a WeakSet.

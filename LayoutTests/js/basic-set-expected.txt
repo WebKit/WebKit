@@ -5,22 +5,22 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Set instanceof Set is false
 PASS Set.prototype instanceof Set is false
-PASS Set() instanceof Set threw exception TypeError: Set cannot be called as a function.
+PASS Set() instanceof Set threw exception TypeError: calling Set constructor without new is invalid.
 PASS new Set() instanceof Set is true
-PASS Set(null) instanceof Set threw exception TypeError: Set cannot be called as a function.
-PASS Set(undefined) instanceof Set threw exception TypeError: Set cannot be called as a function.
-PASS Set(undefined, undefined) instanceof Set threw exception TypeError: Set cannot be called as a function.
-PASS Set(null, undefined) instanceof Set threw exception TypeError: Set cannot be called as a function.
+PASS Set(null) instanceof Set threw exception TypeError: calling Set constructor without new is invalid.
+PASS Set(undefined) instanceof Set threw exception TypeError: calling Set constructor without new is invalid.
+PASS Set(undefined, undefined) instanceof Set threw exception TypeError: calling Set constructor without new is invalid.
+PASS Set(null, undefined) instanceof Set threw exception TypeError: calling Set constructor without new is invalid.
 PASS new Set(null) instanceof Set is true
 PASS new Set(undefined) instanceof Set is true
 PASS new Set(undefined, undefined) instanceof Set is true
 PASS new Set(null, undefined) instanceof Set is true
-PASS Set(1) threw exception TypeError: Set cannot be called as a function.
-PASS Set(true) threw exception TypeError: Set cannot be called as a function.
-PASS Set([]) threw exception TypeError: Set cannot be called as a function.
-PASS Set({}) threw exception TypeError: Set cannot be called as a function.
-PASS Set(undefined, null) threw exception TypeError: Set cannot be called as a function.
-PASS Set(undefined, {}) threw exception TypeError: Set cannot be called as a function.
+PASS Set(1) threw exception TypeError: calling Set constructor without new is invalid.
+PASS Set(true) threw exception TypeError: calling Set constructor without new is invalid.
+PASS Set([]) threw exception TypeError: calling Set constructor without new is invalid.
+PASS Set({}) threw exception TypeError: calling Set constructor without new is invalid.
+PASS Set(undefined, null) threw exception TypeError: calling Set constructor without new is invalid.
+PASS Set(undefined, {}) threw exception TypeError: calling Set constructor without new is invalid.
 PASS new Set(1) threw exception TypeError: Type error.
 PASS new Set(true) threw exception TypeError: Type error.
 PASS new Set([]) did not throw exception.

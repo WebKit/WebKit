@@ -209,6 +209,11 @@ bool hasErrorInfo(ExecState* exec, JSObject* error)
         || error->hasProperty(exec, Identifier::fromString(exec, sourceURLPropertyName));
 }
 
+JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState* exec, const char* constructorName)
+{
+    return exec->vm().throwException(exec, createTypeError(exec, makeString("calling ", constructorName, " constructor without new is invalid")));
+}
+
 JSObject* throwTypeError(ExecState* exec)
 {
     return exec->vm().throwException(exec, createTypeError(exec));

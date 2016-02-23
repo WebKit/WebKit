@@ -258,10 +258,16 @@ ConstructType JSGenericTypedArrayViewConstructor<ViewClass>::getConstructData(JS
 }
 
 template<typename ViewClass>
+static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(ExecState* exec)
+{
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, ViewClass::info()->className));
+}
+
+template<typename ViewClass>
 CallType JSGenericTypedArrayViewConstructor<ViewClass>::getCallData(JSCell*, CallData& callData)
 {
-    callData.native.function = constructGenericTypedArrayView<ViewClass>;
-    return CallTypeNone;
+    callData.native.function = callGenericTypedArrayView<ViewClass>;
+    return CallTypeHost;
 }
 
 } // namespace JSC

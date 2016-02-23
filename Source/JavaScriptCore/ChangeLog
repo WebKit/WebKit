@@ -1,3 +1,80 @@
+2016-02-23  Mark Lam  <mark.lam@apple.com>
+
+        Debug assertion failure while loading http://kangax.github.io/compat-table/es6/.
+        https://bugs.webkit.org/show_bug.cgi?id=154542
+
+        Reviewed by Saam Barati.
+
+        According to the spec, the constructors of the following types "are not intended
+        to be called as a function and will throw an exception".  These types are:
+            TypedArrays - https://tc39.github.io/ecma262/#sec-typedarray-constructors
+            Map - https://tc39.github.io/ecma262/#sec-map-constructor
+            Set - https://tc39.github.io/ecma262/#sec-set-constructor
+            WeakMap - https://tc39.github.io/ecma262/#sec-weakmap-constructor
+            WeakSet - https://tc39.github.io/ecma262/#sec-weakset-constructor
+            ArrayBuffer - https://tc39.github.io/ecma262/#sec-arraybuffer-constructor
+            DataView - https://tc39.github.io/ecma262/#sec-dataview-constructor
+            Promise - https://tc39.github.io/ecma262/#sec-promise-constructor
+            Proxy - https://tc39.github.io/ecma262/#sec-proxy-constructor
+
+        This patch does the foillowing:
+        1. Ensures that these constructors can be called but will throw a TypeError
+           when called.
+        2. Makes all these objects use throwConstructorCannotBeCalledAsFunctionTypeError()
+           in their implementation to be consistent.
+        3. Change the error message to "calling XXX constructor without new is invalid".
+           This is clearer because the error is likely due to the user forgetting to use
+           the new operator on these constructors.
+
+        * runtime/Error.h:
+        * runtime/Error.cpp:
+        (JSC::throwConstructorCannotBeCalledAsFunctionTypeError):
+        - Added a convenience function to throw the TypeError.
+
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        (JSC::callArrayBuffer):
+        (JSC::JSArrayBufferConstructor::getCallData):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::callGenericTypedArrayView):
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::getCallData):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::callPromise):
+        * runtime/MapConstructor.cpp:
+        (JSC::callMap):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::callProxy):
+        (JSC::ProxyConstructor::getCallData):
+        * runtime/SetConstructor.cpp:
+        (JSC::callSet):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::callWeakMap):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::callWeakSet):
+
+        * tests/es6.yaml:
+        - The typed_arrays_%TypedArray%[Symbol.species].js test now passes.
+
+        * tests/stress/call-non-calleable-constructors-as-function.js: Added.
+        (test):
+
+        * tests/stress/map-constructor.js:
+        (testCallTypeError):
+        * tests/stress/promise-cannot-be-called.js:
+        (shouldThrow):
+        * tests/stress/proxy-basic.js:
+        * tests/stress/set-constructor.js:
+        * tests/stress/throw-from-ftl-call-ic-slow-path-cells.js:
+        (i.catch):
+        * tests/stress/throw-from-ftl-call-ic-slow-path-undefined.js:
+        (i.catch):
+        * tests/stress/throw-from-ftl-call-ic-slow-path.js:
+        (i.catch):
+        * tests/stress/weak-map-constructor.js:
+        (testCallTypeError):
+        * tests/stress/weak-set-constructor.js:
+        - Updated error message string.
+
 2016-02-23  Alexey Proskuryakov  <ap@apple.com>
 
         ASan build fix.

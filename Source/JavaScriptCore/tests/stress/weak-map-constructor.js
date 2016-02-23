@@ -12,7 +12,7 @@ function testCallTypeError(item) {
     }
     if (!error)
         throw "Error: error not thrown";
-    if (String(error) !== "TypeError: WeakMap cannot be called as a function")
+    if (String(error) !== "TypeError: calling WeakMap constructor without new is invalid")
         throw "Error: bad error " + String(error);
 }
 var obj1 = {};

@@ -16,25 +16,25 @@ PASS aPromise.catch is defined.
 PASS aPromise.catch is an instance of Function
 PASS aPromise.catch.length is 1
 aPromise2 = Promise(...)
-PASS Promise(function(resolve, reject) { resolve(1); }) threw exception TypeError: Type error.
+PASS Promise(function(resolve, reject) { resolve(1); }) threw exception TypeError: calling Promise constructor without new is invalid.
 
 Promise constructor
 
 PASS Promise.length is 1
 PASS new Promise() threw exception TypeError: Promise constructor takes a function argument.
-PASS Promise() threw exception TypeError: Type error.
+PASS Promise() threw exception TypeError: calling Promise constructor without new is invalid.
 PASS new Promise(1) threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise('hello') threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise([]) threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise({}) threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise(null) threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise(undefined) threw exception TypeError: Promise constructor takes a function argument.
-PASS Promise(1) threw exception TypeError: Type error.
-PASS Promise('hello') threw exception TypeError: Type error.
-PASS Promise([]) threw exception TypeError: Type error.
-PASS Promise({}) threw exception TypeError: Type error.
-PASS Promise(null) threw exception TypeError: Type error.
-PASS Promise(undefined) threw exception TypeError: Type error.
+PASS Promise(1) threw exception TypeError: calling Promise constructor without new is invalid.
+PASS Promise('hello') threw exception TypeError: calling Promise constructor without new is invalid.
+PASS Promise([]) threw exception TypeError: calling Promise constructor without new is invalid.
+PASS Promise({}) threw exception TypeError: calling Promise constructor without new is invalid.
+PASS Promise(null) threw exception TypeError: calling Promise constructor without new is invalid.
+PASS Promise(undefined) threw exception TypeError: calling Promise constructor without new is invalid.
 
 Promise statics
 

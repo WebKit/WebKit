@@ -10,14 +10,14 @@ PASS new Map(null) instanceof Map is true
 PASS new Map(undefined) instanceof Map is true
 PASS new Map(undefined, undefined) instanceof Map is true
 PASS new Map(null, undefined) instanceof Map is true
-PASS Map() threw exception TypeError: Map cannot be called as a function.
-PASS Map(1) threw exception TypeError: Map cannot be called as a function.
-PASS Map(true) threw exception TypeError: Map cannot be called as a function.
-PASS Map('String') threw exception TypeError: Map cannot be called as a function.
-PASS Map([]) threw exception TypeError: Map cannot be called as a function.
-PASS Map({}) threw exception TypeError: Map cannot be called as a function.
-PASS Map(undefined) threw exception TypeError: Map cannot be called as a function.
-PASS Map(null) threw exception TypeError: Map cannot be called as a function.
+PASS Map() threw exception TypeError: calling Map constructor without new is invalid.
+PASS Map(1) threw exception TypeError: calling Map constructor without new is invalid.
+PASS Map(true) threw exception TypeError: calling Map constructor without new is invalid.
+PASS Map('String') threw exception TypeError: calling Map constructor without new is invalid.
+PASS Map([]) threw exception TypeError: calling Map constructor without new is invalid.
+PASS Map({}) threw exception TypeError: calling Map constructor without new is invalid.
+PASS Map(undefined) threw exception TypeError: calling Map constructor without new is invalid.
+PASS Map(null) threw exception TypeError: calling Map constructor without new is invalid.
 PASS new Map(1) threw exception TypeError: Type error.
 PASS new Map(true) threw exception TypeError: Type error.
 PASS new Map([]) did not throw exception.

@@ -72,6 +72,7 @@ JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&)
 // Methods to throw Errors.
 
 // Convenience wrappers, create an throw an exception with a default message.
+JS_EXPORT_PRIVATE JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState*, const char* constructorName);
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*);
 JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*);
 JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*, const String& errorMessage);
