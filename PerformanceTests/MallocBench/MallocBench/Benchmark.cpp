@@ -39,7 +39,6 @@
 #include "nimlang.h"
 #include "reddit.h"
 #include "realloc.h"
-#include "simple.h"
 #include "stress.h"
 #include "stress_aligned.h"
 #include "theverge.h"
