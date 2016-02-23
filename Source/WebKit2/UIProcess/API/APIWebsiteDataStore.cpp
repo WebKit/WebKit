@@ -26,12 +26,15 @@
 #include "config.h"
 #include "APIWebsiteDataStore.h"
 
+#include "WebKit2Initialize.h"
 #include "WebsiteDataStore.h"
 
 namespace API {
 
 RefPtr<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
 {
+    WebKit::InitializeWebKit2();
+
     static WebsiteDataStore* defaultDataStore = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration())).leakRef();
 
     return defaultDataStore;
