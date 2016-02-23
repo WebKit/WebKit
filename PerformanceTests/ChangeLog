@@ -1,3 +1,12 @@
+2016-02-23  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed change to revert extraneous changes made part of change set 196955.
+
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::doMallocOp):
+        (Interpreter::Thread::switchTo):
+        (writeData): Deleted.
+
 2016-02-19  Michael Saboff  <msaboff@apple.com>
 
         MallocBench: Added recording for nimlang website, new recording details and added new options

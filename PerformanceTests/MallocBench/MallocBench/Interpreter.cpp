@@ -94,7 +94,6 @@ void Interpreter::run()
     m_opsCursor = m_opsInBuffer = 0;
     doOnSameThread(0);
 
-    fprintf(stderr, "Done running\n");
     for (auto thread : m_threads)
         thread->stop();
 
@@ -223,30 +222,13 @@ static size_t compute2toPower(unsigned log2n)
     return result;
 }
 
-static void writeData(void* start, size_t size)
-{
-    char* writePtr = reinterpret_cast<char*>(start);
-
-    for (size_t sizeLeft = size; !!sizeLeft; ) {
-        size_t sizeThisIter = std::min(sizeLeft, 4096ul);
-        
-        writePtr[0] = random() & 0xff;
-        writePtr[1] = random() & 0xff;
-        writePtr[2] = random() & 0xff;
-        writePtr[3] = random() & 0xff;
-
-        writePtr += sizeThisIter;
-        sizeLeft -= sizeThisIter;
-    }
-}
-
 void Interpreter::doMallocOp(Op op, ThreadId threadId)
 {
     switch (op.opcode) {
         case op_malloc: {
             m_objects[op.slot] = { mbmalloc(op.size), op.size };
             assert(m_objects[op.slot].object);
-            writeData(m_objects[op.slot].object, op.size);
+            bzero(m_objects[op.slot].object, op.size);
             break;
         }
         case op_free: {
@@ -266,7 +248,7 @@ void Interpreter::doMallocOp(Op op, ThreadId threadId)
             size_t alignment = compute2toPower(op.alignLog2);
             m_objects[op.slot] = { mbmemalign(alignment, op.size), op.size };
             assert(m_objects[op.slot].object);
-            writeData(m_objects[op.slot].object, op.size);
+            bzero(m_objects[op.slot].object, op.size);
             break;
         }
         default: {
