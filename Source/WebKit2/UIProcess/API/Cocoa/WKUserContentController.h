@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  web view configuration.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKUserContentController : NSObject
+@interface WKUserContentController : NSObject <NSCoding>
 
 /*! @abstract The user scripts associated with this user content
  controller.

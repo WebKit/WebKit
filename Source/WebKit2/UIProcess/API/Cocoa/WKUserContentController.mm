@@ -62,6 +62,18 @@
     [super dealloc];
 }
 
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [super init]))
+        return nil;
+
+    return self;
+}
+
 - (NSArray *)userScripts
 {
     return wrapper(_userContentControllerProxy->userScripts());
