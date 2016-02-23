@@ -1,3 +1,29 @@
+2016-02-22  Dean Jackson  <dino@apple.com>
+
+        Add tests for fast click change in r196679
+        https://bugs.webkit.org/show_bug.cgi?id=154568
+        <rdar://problem/24782479>
+
+        Reviewed by Myles Maxfield.
+
+        Bug http://webkit.org/b/154318 made some changes to the fast
+        click behaviour, but didn't include any tests. Here they are!
+
+        * fast/events/ios/fast-click-double-tap-sends-click-expected.txt: Added.
+        * fast/events/ios/fast-click-double-tap-sends-click.html: Checks that a double tap on a clickable element sends a click.
+        * fast/events/ios/fast-click-double-tap-zooms-on-image-expected.txt: Added.
+        * fast/events/ios/fast-click-double-tap-zooms-on-image.html: Checks that a double tap on an image can trigger a zoom if there
+        isn't anything else listening.
+        * fast/events/ios/fast-click-double-tap-zooms-on-text-expected.txt: Added.
+        * fast/events/ios/fast-click-double-tap-zooms-on-text.html: Checks that a double tap on a block of text can trigger a zoom
+        if there isn't anything else listening.
+        * fast/events/ios/no-fast-click-double-tap-causes-zoom-expected.txt: Added.
+        * fast/events/ios/no-fast-click-double-tap-causes-zoom.html: When we are not in fast click mode, a double tap should
+        trigger a zoom. This is checking the inverse behaviour to fast-click-double-tap-sends-click.
+        * fast/events/ios/viewport-device-width-allows-double-tap-zoom-out.html: Removed some code that could never be called.
+        * fast/events/ios/viewport-zooms-from-element-to-initial-scale.html: Ditto.
+        * platform/ios-simulator/TestExpectations: Add the new tests.
+
 2016-02-23  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r192251): http/tests/navigation/page-cache-xhr.html is flaky

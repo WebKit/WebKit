@@ -5,10 +5,10 @@
 <head>
     <script id="ui-script" type="text/plain">
         (function() {
-            uiController.didEndZoomingCallback = function() {
-                uiController.uiScriptComplete(uiController.zoomScale);
-            };
-            uiController.doubleTapAtPoint(15, 15, function() {});
+            uiController.singleTapAtPoint(50, 50, function() {});
+            uiController.singleTapAtPoint(50, 50, function() {
+                uiController.uiScriptComplete();
+            });
         })();
     </script>
     <script>
@@ -17,6 +17,8 @@
             testRunner.waitUntilDone();
         }
 
+        var target;
+
         function getUIScript()
         {
             return document.getElementById("ui-script").text;
@@ -24,14 +26,19 @@
 
         function runTest()
         {
+            target = document.getElementById("target");
+            target.addEventListener("click", handleClick, false);
+
             if (!window.eventSender || !testRunner.runUIScript)
                 return;
 
-            eventSender.scalePageBy(3, 3);
-            testRunner.runUIScript(getUIScript(), function(result) {
-                document.getElementById("target").innerText = "The viewport zoomed to scale: " + result;
-                testRunner.notifyDone();
-            });
+            testRunner.runUIScript(getUIScript(), function() {});
+        }
+
+        function handleClick(event)
+        {
+            target.textContent = "PASS: Click fired on element with handler.";
+            testRunner.notifyDone();
         }
     </script>
     <style>
@@ -47,5 +54,8 @@
 </head>
 <body onload="runTest()">
 <div id="target"></div>
+<div id="description">This document is set up to enable fast clicks. Double
+tapping on the rectangle above should send a click event, not trigger a
+zoom.</div>
 </body>
 </html>

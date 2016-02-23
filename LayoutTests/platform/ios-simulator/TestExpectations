@@ -2839,6 +2839,10 @@ webkit.org/b/152134 fast/events/ios/single-tap-generates-click.html [ Pass Timeo
 webkit.org/b/152134 fast/events/ios/unscalable-viewport-clicks-on-doubletap.html [ Pass Timeout ]
 webkit.org/b/152134 fast/events/ios/viewport-device-width-at-initial-scale-fast-clicks.html  [ Pass Timeout ]
 webkit.org/b/152134 fast/events/ios/viewport-no-width-value-allows-double-tap.html  [ Pass Timeout ]
+webkit.org/b/152134 fast/events/ios/fast-click-double-tap-sends-click.html  [ Pass Timeout ]
+webkit.org/b/152134 fast/events/ios/fast-click-double-tap-zooms-on-text.html  [ Pass Timeout ]
+webkit.org/b/152134 fast/events/ios/fast-click-double-tap-zooms-on-image.html  [ Pass Timeout ]
+webkit.org/b/152134 fast/events/ios/no-fast-click-double-tap-causes-zoom.html  [ Pass Timeout ]
 
 # Failing tests related to picture element
 webkit.org/b/152141 fast/picture/image-picture-1x.html [ Skip ]

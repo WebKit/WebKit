@@ -1,14 +1,15 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 
 <html>
-<meta name="viewport" content="initial-scale=1.0, width=device-width">
+<meta name="viewport" content="initial-scale=1.0">
 <head>
     <script id="ui-script" type="text/plain">
         (function() {
             uiController.didEndZoomingCallback = function() {
-                uiController.uiScriptComplete(uiController.zoomScale);
+                uiController.uiScriptComplete();
             };
-            uiController.doubleTapAtPoint(15, 15, function() {});
+            uiController.singleTapAtPoint(50, 50, function() {});
+            uiController.singleTapAtPoint(50, 50, function() {});
         })();
     </script>
     <script>
@@ -17,6 +18,8 @@
             testRunner.waitUntilDone();
         }
 
+        var target;
+
         function getUIScript()
         {
             return document.getElementById("ui-script").text;
@@ -24,14 +27,22 @@
 
         function runTest()
         {
+            target = document.getElementById("target");
+            target.addEventListener("click", handleClick, false);
+
             if (!window.eventSender || !testRunner.runUIScript)
                 return;
 
-            eventSender.scalePageBy(3, 3);
-            testRunner.runUIScript(getUIScript(), function(result) {
-                document.getElementById("target").innerText = "The viewport zoomed to scale: " + result;
+            testRunner.runUIScript(getUIScript(), function() {
+                target.textContent = "PASS: Double tap caused zoom.";
                 testRunner.notifyDone();
             });
+        }
+
+        function handleClick(event)
+        {
+            target.textContent = "FAIL: Click fired on element with handler.";
+            testRunner.notifyDone();
         }
     </script>
     <style>
@@ -47,5 +58,7 @@
 </head>
 <body onload="runTest()">
 <div id="target"></div>
+<div id="description">This document is set up to disable fast clicks. Double
+tapping on the rectangle above should zoom, not send a click event.</div>
 </body>
 </html>
