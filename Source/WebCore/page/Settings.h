@@ -158,9 +158,6 @@ public:
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(double); // Initialized to DOMTimer::defaultMinimumInterval().
     double minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
 
-    void setDOMTimerAlignmentInterval(double);
-    double domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
-
     WEBCORE_EXPORT void setLayoutInterval(std::chrono::milliseconds);
     std::chrono::milliseconds layoutInterval() const { return m_layoutInterval; }
 
@@ -303,7 +300,6 @@ private:
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
     std::chrono::milliseconds m_layoutInterval;
     double m_minimumDOMTimerInterval;
-    double m_domTimerAlignmentInterval;
 
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingFontScaleFactor;
