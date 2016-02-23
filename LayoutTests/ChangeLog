@@ -1,3 +1,18 @@
+2016-02-23  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r196892): No longer emit error message when CSP form-action directive is used as a source expression
+        https://bugs.webkit.org/show_bug.cgi?id=154555
+        <rdar://problem/24776777>
+
+        Reviewed by Andy Estes.
+
+        Test that we emit a console error message when form-action is used as a source expression.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon.html: Use form-action as a
+        source expression. Also, use a double quoted (") string literal instead of a single quoted (') string
+        literal to represent the CSP policy so as to avoid the need to escape embedded single quote characters.
+
 2016-02-22  Dean Jackson  <dino@apple.com>
 
         Add tests for fast click change in r196679

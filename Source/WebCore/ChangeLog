@@ -1,3 +1,21 @@
+2016-02-23  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r196892): No longer emit error message when CSP form-action directive is used as a source expression
+        https://bugs.webkit.org/show_bug.cgi?id=154555
+        <rdar://problem/24776777>
+
+        Reviewed by Andy Estes.
+
+        Fixes an issue where an error message is not emitted when directive form-action is used as a
+        source expression. Prior to <http://trac.webkit.org/changeset/196892>, when directive form-action
+        was used as a source expression a console error message would be emitted with the form:
+
+            The Content Security Policy directive 'script-src' contains 'form-action' as a source expression.
+            Did you mean 'script-src ...; form-action...' (note the semicolon)?
+
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::isCSPDirectiveName): Return true if the specified directive name is "form-action".
+
 2016-02-23  Simon Fraser  <simon.fraser@apple.com>
 
         Lay the groundwork for more constness in StyleResolver-related code

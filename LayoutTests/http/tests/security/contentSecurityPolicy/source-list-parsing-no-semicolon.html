@@ -5,7 +5,7 @@
 <script>
 var tests = [
     ['yes', 'default-src \'self\' script-src example.com', 'resources/script.js'],
-    ['yes', 'script-src \'self\' object-src \'self\' style-src *', 'resources/script.js'],
+    ['yes', "script-src 'self' object-src 'self' style-src * form-action 'self'", 'resources/script.js'],
 ];
 </script>
 </head>
