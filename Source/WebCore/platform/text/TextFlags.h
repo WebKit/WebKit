@@ -212,7 +212,7 @@ struct FontVariantSettings {
             && eastAsianRuby == FontVariantEastAsianRuby::Normal;
     }
 
-    bool operator==(const FontVariantSettings& other)
+    bool operator==(const FontVariantSettings& other) const
     {
         return commonLigatures == other.commonLigatures
             && discretionaryLigatures == other.discretionaryLigatures
@@ -229,6 +229,27 @@ struct FontVariantSettings {
             && eastAsianVariant == other.eastAsianVariant
             && eastAsianWidth == other.eastAsianWidth
             && eastAsianRuby == other.eastAsianRuby;
+    }
+
+    bool operator!=(const FontVariantSettings& other) const { return !(*this == other); }
+
+    unsigned uniqueValue() const
+    {
+        return static_cast<unsigned>(commonLigatures) << 26
+            | static_cast<unsigned>(discretionaryLigatures) << 24
+            | static_cast<unsigned>(historicalLigatures) << 22
+            | static_cast<unsigned>(contextualAlternates) << 20
+            | static_cast<unsigned>(position) << 18
+            | static_cast<unsigned>(caps) << 15
+            | static_cast<unsigned>(numericFigure) << 13
+            | static_cast<unsigned>(numericSpacing) << 11
+            | static_cast<unsigned>(numericFraction) << 9
+            | static_cast<unsigned>(numericOrdinal) << 8
+            | static_cast<unsigned>(numericSlashedZero) << 7
+            | static_cast<unsigned>(alternates) << 6
+            | static_cast<unsigned>(eastAsianVariant) << 3
+            | static_cast<unsigned>(eastAsianWidth) << 1
+            | static_cast<unsigned>(eastAsianRuby) << 0;
     }
 
     FontVariantLigatures commonLigatures;

@@ -286,7 +286,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                         continue;
                     }
                     auto& fontCache = FontCache::singleton();
-                    runFont = fontCache.fontForFamily(m_font.fontDescription(), fontName.get(), false).get();
+                    runFont = fontCache.fontForFamily(m_font.fontDescription(), fontName.get()).get();
                     // Core Text may have used a font that our font lookup path cannot find. In that case, fall back on
                     // using the font as returned.
                     if (!runFont) {

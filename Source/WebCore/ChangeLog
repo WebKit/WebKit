@@ -1,3 +1,39 @@
+2016-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font features specified in @font-face blocks don't apply to local() families
+        https://bugs.webkit.org/show_bug.cgi?id=154554
+
+        Reviewed by Dean Jackson.
+
+        The correct variables just need to be wired up. In addition, our caches need to be sensitive
+        to the new data.
+
+        Test: css3/font-feature-font-face-local.html
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::FontPlatformDataCacheKeyHash::hash):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::fontForFamily):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontFeatureSettings.h:
+        (WebCore::FontFeature::operator!=):
+        (WebCore::FontFeatureSettings::operator!=):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::lastResortFallbackFont):
+        * platform/text/TextFlags.h:
+        (WebCore::FontVariantSettings::operator==):
+        (WebCore::FontVariantSettings::operator!=):
+        (WebCore::FontVariantSettings::uniqueValue):
+
 2016-02-22  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r196892): Crash in DocumentLoader::startLoadingMainResource()
