@@ -396,8 +396,8 @@ inline void StyleBuilderCustom::applyValueSize(StyleResolver& styleResolver, CSS
     auto& valueList = downcast<CSSValueList>(value);
     switch (valueList.length()) {
     case 2: {
-        CSSValue* firstValue = valueList.itemWithoutBoundsCheck(0);
-        CSSValue* secondValue = valueList.itemWithoutBoundsCheck(1);
+        auto firstValue = valueList.itemWithoutBoundsCheck(0);
+        auto secondValue = valueList.itemWithoutBoundsCheck(1);
         // <length>{2} | <page-size> <orientation>
         if (!is<CSSPrimitiveValue>(*firstValue) || !is<CSSPrimitiveValue>(*secondValue))
             return;
@@ -420,7 +420,7 @@ inline void StyleBuilderCustom::applyValueSize(StyleResolver& styleResolver, CSS
         break;
     }
     case 1: {
-        CSSValue* value = valueList.itemWithoutBoundsCheck(0);
+        auto value = valueList.itemWithoutBoundsCheck(0);
         // <length> | auto | <page-size> | [ portrait | landscape]
         if (!is<CSSPrimitiveValue>(*value))
             return;
@@ -1195,7 +1195,7 @@ inline void StyleBuilderCustom::applyInheritStroke(StyleResolver& styleResolver)
 inline void StyleBuilderCustom::applyValueStroke(StyleResolver& styleResolver, CSSValue& value)
 {
     SVGRenderStyle& svgStyle = styleResolver.style()->accessSVGStyle();
-    SVGPaint& svgPaint = downcast<SVGPaint>(value);
+    auto& svgPaint = downcast<SVGPaint>(value);
     svgStyle.setStrokePaint(svgPaint.paintType(), StyleBuilderConverter::convertSVGColor(styleResolver, svgPaint), svgPaint.uri(), styleResolver.applyPropertyToRegularStyle(), styleResolver.applyPropertyToVisitedLinkStyle());
 }
 

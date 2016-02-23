@@ -567,7 +567,7 @@ inline PassRefPtr<StyleReflection> StyleBuilderConverter::convertReflection(Styl
         return nullptr;
     }
 
-    CSSReflectValue& reflectValue = downcast<CSSReflectValue>(value);
+    auto& reflectValue = downcast<CSSReflectValue>(value);
 
     RefPtr<StyleReflection> reflection = StyleReflection::create();
     reflection->setDirection(*reflectValue.direction());
@@ -916,8 +916,8 @@ inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, C
     if (!list.length())
         return RenderStyle::initialGridAutoFlow();
 
-    CSSPrimitiveValue& first = downcast<CSSPrimitiveValue>(*list.item(0));
-    CSSPrimitiveValue* second = downcast<CSSPrimitiveValue>(list.item(1));
+    auto& first = downcast<CSSPrimitiveValue>(*list.item(0));
+    auto* second = downcast<CSSPrimitiveValue>(list.item(1));
 
     GridAutoFlow autoFlow = RenderStyle::initialGridAutoFlow();
     switch (first.getValueID()) {

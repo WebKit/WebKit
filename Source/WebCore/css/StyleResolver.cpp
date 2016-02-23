@@ -1790,7 +1790,7 @@ static Color colorForCSSValue(CSSValueID cssValueId)
     return RenderTheme::defaultTheme()->systemColor(cssValueId);
 }
 
-bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValue& value)
+bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue& value)
 {
     int ident = value.getValueID();
     switch (ident) {
@@ -1804,7 +1804,7 @@ bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValu
     }
 }
 
-Color StyleResolver::colorFromPrimitiveValue(CSSPrimitiveValue& value, bool forVisitedLink) const
+Color StyleResolver::colorFromPrimitiveValue(const CSSPrimitiveValue& value, bool forVisitedLink) const
 {
     if (value.isRGBColor())
         return Color(value.getRGBA32Value());
@@ -1897,13 +1897,13 @@ void StyleResolver::loadPendingSVGDocuments()
     state.filtersWithPendingSVGDocuments().clear();
 }
 
-bool StyleResolver::createFilterOperations(CSSValue& inValue, FilterOperations& outOperations)
+bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations)
 {
     State& state = m_state;
     ASSERT(outOperations.isEmpty());
     
     if (is<CSSPrimitiveValue>(inValue)) {
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(inValue);
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(inValue);
         if (primitiveValue.getValueID() == CSSValueNone)
             return true;
     }
@@ -1922,12 +1922,12 @@ bool StyleResolver::createFilterOperations(CSSValue& inValue, FilterOperations& 
         if (operationType == FilterOperation::REFERENCE) {
             if (filterValue.length() != 1)
                 continue;
-            CSSValue& argument = *filterValue.itemWithoutBoundsCheck(0);
+            auto& argument = *filterValue.itemWithoutBoundsCheck(0);
 
             if (!is<CSSPrimitiveValue>(argument))
                 continue;
 
-            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(argument);
+            auto& primitiveValue = downcast<CSSPrimitiveValue>(argument);
             String cssUrl = primitiveValue.getStringValue();
             URL url = m_state.document().completeURL(cssUrl);
 
@@ -1941,7 +1941,7 @@ bool StyleResolver::createFilterOperations(CSSValue& inValue, FilterOperations& 
 
         // Check that all parameters are primitive values, with the
         // exception of drop shadow which has a CSSShadowValue parameter.
-        CSSPrimitiveValue* firstValue = nullptr;
+        const CSSPrimitiveValue* firstValue = nullptr;
         if (operationType != FilterOperation::DROP_SHADOW) {
             bool haveNonPrimitiveValue = false;
             for (unsigned j = 0; j < filterValue.length(); ++j) {
@@ -2006,11 +2006,11 @@ bool StyleResolver::createFilterOperations(CSSValue& inValue, FilterOperations& 
             if (filterValue.length() != 1)
                 return false;
 
-            CSSValue& cssValue = *filterValue.itemWithoutBoundsCheck(0);
+            auto& cssValue = *filterValue.itemWithoutBoundsCheck(0);
             if (!is<CSSShadowValue>(cssValue))
                 continue;
 
-            CSSShadowValue& item = downcast<CSSShadowValue>(cssValue);
+            auto& item = downcast<CSSShadowValue>(cssValue);
             int x = item.x->computeLength<int>(state.cssToLengthConversionData());
             int y = item.y->computeLength<int>(state.cssToLengthConversionData());
             IntPoint location(x, y);

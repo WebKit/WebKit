@@ -98,7 +98,7 @@ public:
         return !m_valueInSpecifiedUnits;
     }
 
-    static SVGLength fromCSSPrimitiveValue(CSSPrimitiveValue&);
+    static SVGLength fromCSSPrimitiveValue(const CSSPrimitiveValue&);
     static Ref<CSSPrimitiveValue> toCSSPrimitiveValue(const SVGLength&);
     static SVGLengthMode lengthModeForAnimatedLengthAttribute(const QualifiedName&);
 

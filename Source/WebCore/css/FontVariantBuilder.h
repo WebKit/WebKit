@@ -36,9 +36,9 @@ struct FontVariantLigaturesValues;
 struct FontVariantNumericValues;
 struct FontVariantEastAsianValues;
 
-FontVariantLigaturesValues extractFontVariantLigatures(CSSValue&);
-FontVariantNumericValues extractFontVariantNumeric(CSSValue&);
-FontVariantEastAsianValues extractFontVariantEastAsian(CSSValue&);
+FontVariantLigaturesValues extractFontVariantLigatures(const CSSValue&);
+FontVariantNumericValues extractFontVariantNumeric(const CSSValue&);
+FontVariantEastAsianValues extractFontVariantEastAsian(const CSSValue&);
 
 Ref<CSSValue> computeFontVariant(const FontVariantSettings&);
 

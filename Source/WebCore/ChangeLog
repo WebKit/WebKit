@@ -1,3 +1,42 @@
+2016-02-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Lay the groundwork for more constness in StyleResolver-related code
+        https://bugs.webkit.org/show_bug.cgi?id=154598
+
+        Reviewed by Antti Koivisto.
+
+        Make some of the leaf functions that are used by the style resolver take 
+        const CSSValues, and use 'auto' more to automatically get const stack variables
+        when appropriate.
+
+        * css/CSSBorderImageSliceValue.h:
+        (WebCore::CSSBorderImageSliceValue::slices):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isQuirkValue):
+        * css/FontVariantBuilder.cpp:
+        (WebCore::extractFontVariantLigatures):
+        (WebCore::extractFontVariantNumeric):
+        (WebCore::extractFontVariantEastAsian):
+        * css/FontVariantBuilder.h:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertReflection):
+        (WebCore::StyleBuilderConverter::convertGridAutoFlow):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueSize):
+        (WebCore::StyleBuilderCustom::applyValueStroke):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::colorFromPrimitiveValueIsDerivedFromElement):
+        (WebCore::StyleResolver::colorFromPrimitiveValue):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/StyleResolver.h:
+        * css/TransformFunctions.cpp:
+        (WebCore::transformsForValue):
+        * css/TransformFunctions.h:
+        * rendering/style/StylePendingImage.h:
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::fromCSSPrimitiveValue):
+        * svg/SVGLength.h:
+
 2016-02-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Avoid duplicated calls to resolution code

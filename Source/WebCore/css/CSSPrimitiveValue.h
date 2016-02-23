@@ -369,7 +369,7 @@ public:
 
     String customCSSText() const;
 
-    bool isQuirkValue() { return m_isQuirkValue; }
+    bool isQuirkValue() const { return m_isQuirkValue; }
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 

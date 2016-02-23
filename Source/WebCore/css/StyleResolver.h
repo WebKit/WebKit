@@ -185,8 +185,8 @@ public:
     bool useSVGZoomRules();
     bool useSVGZoomRulesForLength();
 
-    static bool colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValue&);
-    Color colorFromPrimitiveValue(CSSPrimitiveValue&, bool forVisitedLink = false) const;
+    static bool colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue&);
+    Color colorFromPrimitiveValue(const CSSPrimitiveValue&, bool forVisitedLink = false) const;
 
     bool hasSelectorForId(const AtomicString&) const;
     bool hasSelectorForClass(const AtomicString&) const;
@@ -211,7 +211,7 @@ public:
 
     void clearCachedPropertiesAffectedByViewportUnits();
 
-    bool createFilterOperations(CSSValue& inValue, FilterOperations& outOperations);
+    bool createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations);
     void loadPendingSVGDocuments();
 
     void loadPendingResources();
