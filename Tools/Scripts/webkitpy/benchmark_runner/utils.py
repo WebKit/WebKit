@@ -18,11 +18,10 @@ def is_subclass(child, parent_name):
     return inspect.isclass(child) and parent_name in [cls.__name__ for cls in inspect.getmro(child)]
 
 
-def load_subclasses(dirname, base_class_name, loader):
-    for filename in os.listdir(dirname):
-        if not filename.endswith('.py') or filename in ['__init__.py']:
-            continue
-        module_name = filename[:-3]
+def load_subclasses(dirname, base_class_name, base_class_file, loader):
+    filelist = [base_class_file] + [f for f in os.listdir(dirname) if f.endswith('.py') and f not in ['__init__.py', base_class_file]]
+    for filename in filelist:
+        module_name = os.path.splitext(filename)[0]
         module = imp.load_source(module_name, os.path.join(dirname, filename))
         for item_name in dir(module):
             item = getattr(module, item_name)

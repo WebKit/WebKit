@@ -1,3 +1,40 @@
+2016-02-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Allow to run the WebKitGTK+ MiniBrowser with the run-benchmark script.
+        https://bugs.webkit.org/show_bug.cgi?id=153993
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/main.c:
+        (createBrowserWindow): Support --geometry argument for MiniBrowser.
+        We use this on the gtk_minibrowser_driver script to start the MiniBrowser maximized.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/__init__.py: Fix loading of subclasses:
+        The base class has to be loaded first, otherwise any subclase referencing it will give import error.
+        In OSX the ordering of os.listdir() causes the base class (browser_driver.py) to be first on the list, but not on Linux.
+        By specifiying the name of the base class file, we ensure it is always loaded first on any system despite the ordering of listdir.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver_factory.py:
+        (BrowserDriverFactory.create):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/gtk_browser_driver.py: Added.
+        (GTKBrowserDriver):
+        (GTKBrowserDriver.prepare_env):
+        (GTKBrowserDriver.restore_env):
+        (GTKBrowserDriver.close_browsers):
+        (GTKBrowserDriver._launch_process):
+        (GTKBrowserDriver._terminate_processes):
+        (GTKBrowserDriver._screen_size):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/gtk_minibrowser_driver.py: Added.
+        (GTKMiniBrowserDriver):
+        (GTKMiniBrowserDriver.prepare_env):
+        (GTKMiniBrowserDriver.launch_url):
+        (GTKMiniBrowserDriver.close_browsers):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/__init__.py: Fix loading of subclasses. See description above.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver):
+        (SimpleHTTPServerDriver.kill_server): Check if the server is still running before trying to terminate it.
+        Usually the server ends gracefully (no need to terminate it), so this was causing ugly errors on the log.
+        * Scripts/webkitpy/benchmark_runner/utils.py: Fix loading of subclasses. See description above.
+        (load_subclasses):
+
 2016-02-23  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Missing configuration patch for openh264 compilation

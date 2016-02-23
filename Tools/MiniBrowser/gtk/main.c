@@ -40,6 +40,7 @@ static const char *miniBrowserAboutScheme = "minibrowser-about";
 static GdkRGBA *backgroundColor;
 static gboolean editorMode;
 static const char *sessionFile;
+static char *geometry;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -67,6 +68,8 @@ static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings
     GtkWidget *mainWindow = browser_window_new(WEBKIT_WEB_VIEW(webView), NULL);
     if (backgroundColor)
         browser_window_set_background_color(BROWSER_WINDOW(mainWindow), backgroundColor);
+    if (geometry)
+        gtk_window_parse_geometry(BROWSER_WINDOW(mainWindow), geometry);
 
     if (webkitSettings)
         webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);
@@ -102,6 +105,7 @@ static const GOptionEntry commandLineOptions[] =
     { "bg-color", 0, 0, G_OPTION_ARG_CALLBACK, parseBackgroundColor, "Background color", NULL },
     { "editor-mode", 'e', 0, G_OPTION_ARG_NONE, &editorMode, "Run in editor mode", NULL },
     { "session-file", 's', 0, G_OPTION_ARG_FILENAME, &sessionFile, "Session file", "FILE" },
+    { "geometry", 'g', 0, G_OPTION_ARG_STRING, &geometry, "Set the size and position of the window (WIDTHxHEIGHT+X+Y)", "GEOMETRY" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };

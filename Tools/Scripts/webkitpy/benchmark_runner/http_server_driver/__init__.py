@@ -26,4 +26,5 @@ def http_server_driver_loader(http_server_driver_class):
 load_subclasses(
     dirname=os.path.dirname(os.path.abspath(__file__)),
     base_class_name='HTTPServerDriver',
+    base_class_file='http_server_driver.py',
     loader=http_server_driver_loader)
