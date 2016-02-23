@@ -36,7 +36,7 @@
  with the same process pool end up sharing web content processes.
  */
 WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKProcessPool : NSObject
+@interface WKProcessPool : NSObject <NSCoding>
 @end
 
 #endif

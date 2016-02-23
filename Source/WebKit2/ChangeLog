@@ -1,5 +1,21 @@
 2016-02-23  Anders Carlsson  <andersca@apple.com>
 
+        WKProcessPool should conform to NSCoding
+        https://bugs.webkit.org/show_bug.cgi?id=154608
+
+        Reviewed by Sam Weinig.
+
+        Add +[WKProcessPool _sharedProcessPool] and encode/decode whether the process pool is shared.
+
+        * UIProcess/API/Cocoa/WKProcessPool.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool encodeWithCoder:]):
+        (-[WKProcessPool initWithCoder:]):
+        (+[WKProcessPool _sharedProcessPool]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
         WKWebsiteDataStore should conform to NSCoding
         https://bugs.webkit.org/show_bug.cgi?id=154605
 

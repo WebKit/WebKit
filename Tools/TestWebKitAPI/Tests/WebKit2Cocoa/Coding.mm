@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED
 
-#import <WebKit/WKPreferences.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <wtf/RetainPtr.h>
 
 template<typename T>
@@ -63,6 +63,18 @@ TEST(Coding, WKPreferences)
     EXPECT_EQ([a javaEnabled], [b javaEnabled]);
     EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
 #endif
+}
+
+TEST(Coding, WKProcessPool_Shared)
+{
+    auto a = encodeAndDecode([WKProcessPool _sharedProcessPool]);
+    EXPECT_EQ([WKProcessPool _sharedProcessPool], a.get());
+}
+
+TEST(Coding, WKProcessPool)
+{
+    auto a = encodeAndDecode(adoptNS([[WKProcessPool alloc] init]).get());
+    EXPECT_NE([WKProcessPool _sharedProcessPool], a.get());
 }
 
 TEST(Coding, WKWebsiteDataStore_Default)

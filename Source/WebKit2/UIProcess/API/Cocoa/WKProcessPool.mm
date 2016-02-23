@@ -51,6 +51,8 @@
 #import "WKGeolocationProviderIOS.h"
 #endif
 
+static WKProcessPool *sharedProcessPool;
+
 @implementation WKProcessPool {
     WebKit::WeakObjCPtr<id <_WKAutomationDelegate>> _automationDelegate;
     WebKit::WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
@@ -88,6 +90,28 @@
     [super dealloc];
 }
 
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    if (self == sharedProcessPool) {
+        [coder encodeBool:YES forKey:@"isSharedProcessPool"];
+        return;
+    }
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [self init]))
+        return nil;
+
+    if ([coder decodeBoolForKey:@"isSharedProcessPool"]) {
+        [self release];
+
+        return [[WKProcessPool _sharedProcessPool] retain];
+    }
+
+    return self;
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; configuration = %@>", NSStringFromClass(self.class), self, wrapper(_processPool->configuration())];
@@ -115,6 +139,16 @@
 @end
 
 @implementation WKProcessPool (WKPrivate)
+
++ (WKProcessPool *)_sharedProcessPool
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedProcessPool = [[WKProcessPool alloc] init];
+    });
+
+    return sharedProcessPool;
+}
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL
 {

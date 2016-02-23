@@ -38,6 +38,8 @@
 
 @interface WKProcessPool (WKPrivate)
 
++ (WKProcessPool *)_sharedProcessPool;
+
 @property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
