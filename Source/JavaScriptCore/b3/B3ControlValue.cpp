@@ -57,7 +57,7 @@ void ControlValue::convertToJump(BasicBlock* destination)
     Origin origin = this->origin();
     BasicBlock* owner = this->owner;
 
-    this->ControlValue::~ControlValue();
+    this->~ControlValue();
 
     new (this) ControlValue(Jump, origin, FrequentedBlock(destination));
 
@@ -71,7 +71,7 @@ void ControlValue::convertToOops()
     Origin origin = this->origin();
     BasicBlock* owner = this->owner;
 
-    this->ControlValue::~ControlValue();
+    this->~ControlValue();
 
     new (this) ControlValue(Oops, origin);
 
