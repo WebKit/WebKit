@@ -249,9 +249,8 @@ void setRegExpConstructorMultiline(ExecState* exec, EncodedJSValue thisValue, En
 inline Structure* getRegExpStructure(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget)
 {
     Structure* structure = globalObject->regExpStructure();
-    if (newTarget != jsUndefined()) {
+    if (newTarget != jsUndefined())
         structure = InternalFunction::createSubclassStructure(exec, newTarget, structure);
-    }
     return structure;
 }
 
@@ -267,8 +266,11 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         // If called as a function, this just returns the first argument (see 15.10.3.1).
         if (newTarget != jsUndefined()) {
             RegExp* regExp = static_cast<RegExpObject*>(asObject(arg0))->regExp();
+            Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
+            if (exec->hadException())
+                return nullptr;
 
-            return RegExpObject::create(exec->vm(), getRegExpStructure(exec, globalObject, newTarget), regExp);
+            return RegExpObject::create(exec->vm(), structure, regExp);
         }
         return asObject(arg0);
     }
@@ -291,7 +293,10 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
     if (!regExp->isValid())
         return vm.throwException(exec, createSyntaxError(exec, regExp->errorMessage()));
 
-    return RegExpObject::create(vm, getRegExpStructure(exec, globalObject, newTarget), regExp);
+    Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
+    if (exec->hadException())
+        return nullptr;
+    return RegExpObject::create(vm, structure, regExp);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* exec)

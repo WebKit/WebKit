@@ -219,6 +219,8 @@ template<typename ViewClass>
 static EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
 {
     Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType));
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
 
     size_t argCount = exec->argumentCount();
 

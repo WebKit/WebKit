@@ -81,8 +81,11 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* exec)
 {
     double n = exec->argumentCount() ? exec->uncheckedArgument(0).toNumber(exec) : 0;
-    NumberObject* object = NumberObject::create(exec->vm(), InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->numberObjectStructure()));
+    Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->numberObjectStructure());
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
 
+    NumberObject* object = NumberObject::create(exec->vm(), structure);
     object->setInternalValue(exec->vm(), jsNumber(n));
     return JSValue::encode(object);
 }

@@ -731,6 +731,8 @@ inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* pro
         structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(exec, ArrayWithArrayStorage, newTarget);
     else
         structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
+    if (exec->hadException())
+        return nullptr;
 
     return ArrayAllocationProfile::updateLastAllocationFor(profile, JSArray::create(exec->vm(), structure, initialLength));
 }
@@ -742,7 +744,10 @@ inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* pro
  
 inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const ArgList& values, JSValue newTarget = JSValue())
 {
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget), values));
+    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
+    if (exec->hadException())
+        return nullptr;
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, structure, values));
 }
 
 inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const ArgList& values, JSValue newTarget = JSValue())
@@ -752,7 +757,10 @@ inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile,
 
 inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget), values, length));
+    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
+    if (exec->hadException())
+        return nullptr;
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, structure, values, length));
 }
 
 inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
@@ -762,7 +770,10 @@ inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile,
 
 inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(exec, globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget), values, length));
+    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
+    if (exec->hadException())
+        return nullptr;
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(exec, structure, values, length));
 }
 
 inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())

@@ -97,6 +97,8 @@ static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
         return throwVMError(exec, createOutOfMemoryError(exec));
 
     Structure* arrayBufferStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), constructor->globalObject()->arrayBufferStructure());
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
     JSArrayBuffer* result = JSArrayBuffer::create(exec->vm(), arrayBufferStructure, buffer.release());
     
     return JSValue::encode(result);

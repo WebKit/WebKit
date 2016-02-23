@@ -50,6 +50,8 @@ static EncodedJSValue JSC_HOST_CALL constructWithBooleanConstructor(ExecState* e
 {
     JSValue boolean = jsBoolean(exec->argument(0).toBoolean(exec));
     Structure* booleanStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->booleanObjectStructure());
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
     BooleanObject* obj = BooleanObject::create(exec->vm(), booleanStructure);
     obj->setInternalValue(exec->vm(), boolean);
     return JSValue::encode(obj);

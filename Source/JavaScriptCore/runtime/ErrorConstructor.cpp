@@ -52,6 +52,8 @@ EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecStat
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
     Structure* errorStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->errorStructure());
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }
 

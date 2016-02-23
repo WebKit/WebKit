@@ -172,6 +172,8 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
         value = millisecondsFromComponents(exec, args, WTF::LocalTime);
 
     Structure* dateStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->dateStructure());
+    if (exec->hadException())
+        return nullptr;
 
     return DateInstance::create(vm, dateStructure, value);
 }

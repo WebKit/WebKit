@@ -124,8 +124,11 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         return exec->vm().throwException(exec, exception);
     }
 
+    Structure* subclassStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->functionStructure());
+    if (exec->hadException())
+        return nullptr;
 
-    return JSFunction::create(exec->vm(), function, globalObject, InternalFunction::createSubclassStructure(exec, newTarget, globalObject->functionStructure()));
+    return JSFunction::create(exec->vm(), function, globalObject, subclassStructure);
 }
 
 // ECMA 15.3.2 The Function Constructor

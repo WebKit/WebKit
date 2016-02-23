@@ -57,6 +57,8 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
     Structure* mapStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->mapStructure());
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
     JSMap* map = JSMap::create(exec, mapStructure);
     JSValue iterable = exec->argument(0);
     if (iterable.isUndefinedOrNull())

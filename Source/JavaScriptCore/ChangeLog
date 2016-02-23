@@ -1,3 +1,57 @@
+2016-02-22  Saam barati  <sbarati@apple.com>
+
+        InternalFunction::createSubclassStructure doesn't take into account that get() might throw
+        https://bugs.webkit.org/show_bug.cgi?id=154548
+
+        Reviewed by Mark Lam and Geoffrey Garen and Andreas Kling.
+
+        InternalFunction::createSubclassStructure calls newTarget.get(...) which can throw 
+        an exception. Neither the function nor the call sites of the function took this into
+        account. This patch audits the call sites of the function to make it work in
+        the event that an exception is thrown.
+
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructWithBooleanConstructor):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithErrorConstructor):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray):
+        (JSC::constructArray):
+        (JSC::constructArrayNegativeIndexed):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithNativeErrorConstructor):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::getRegExpStructure):
+        (JSC::constructRegExp):
+        (JSC::constructWithRegExpConstructor):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/StringConstructor.cpp:
+        (JSC::constructWithStringConstructor):
+        (JSC::StringConstructor::getConstructData):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        * tests/stress/create-subclass-structure-might-throw.js: Added.
+        (assert):
+
 2016-02-22  Ting-Wei Lan  <lantw44@gmail.com>
 
         Fix build and implement functions to retrieve registers on FreeBSD
