@@ -1,3 +1,22 @@
+2016-02-22  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r196892): Crash in DocumentLoader::startLoadingMainResource()
+        https://bugs.webkit.org/show_bug.cgi?id=154563
+        <rdar://problem/24780678>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes an issue where the provisional loader may be deallocated when starting
+        a load. One example where this can occur is when cancelling the provisional load
+        as part of a form submission because the Content Security Policy of the page
+        blocks the submission (it violates the directive form-action).
+
+        This crash is covered by the test http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource): Take a ref before calling
+        DocumentLoader::willSendRequest().
+
 2016-02-16  Ada Chan  <adachan@apple.com>
 
         Implement basic functionality in WebVideoFullscreenInterfaceMac.

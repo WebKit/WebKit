@@ -1464,6 +1464,8 @@ void DocumentLoader::startLoadingMainResource()
     ASSERT(timing().navigationStart());
     ASSERT(!timing().fetchStart());
     timing().markFetchStart();
+
+    Ref<DocumentLoader> protect(*this); // willSendRequest() may deallocate the provisional loader (which may be us) if it cancels the load.
     willSendRequest(m_request, ResourceResponse());
 
     // willSendRequest() may lead to our Frame being detached or cancelling the load via nulling the ResourceRequest.
