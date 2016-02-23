@@ -902,6 +902,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_consoleStructure);
     visitor.append(&thisObject->m_dollarVMStructure);
     visitor.append(&thisObject->m_internalFunctionStructure);
+    visitor.append(&thisObject->m_proxyObjectStructure);
 #if ENABLE(WEBASSEMBLY)
     visitor.append(&thisObject->m_wasmModuleStructure);
 #endif
