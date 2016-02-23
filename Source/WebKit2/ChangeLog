@@ -1,5 +1,16 @@
 2016-02-23  Anders Carlsson  <andersca@apple.com>
 
+        WKWebViewConfiguration should encode more of its properties
+        https://bugs.webkit.org/show_bug.cgi?id=154611
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
         WKUserContentController should conform to NSCoding
         https://bugs.webkit.org/show_bug.cgi?id=154609
 

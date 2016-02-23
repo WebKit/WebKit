@@ -160,7 +160,10 @@ private:
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
+    [coder encodeObject:self.processPool forKey:@"processPool"];
     [coder encodeObject:self.preferences forKey:@"preferences"];
+    [coder encodeObject:self.userContentController forKey:@"userContentController"];
+    [coder encodeObject:self.websiteDataStore forKey:@"websiteDataStore"];
 
     [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
     [coder encodeObject:self.applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
@@ -180,7 +183,11 @@ private:
     if (!(self = [self init]))
         return nil;
 
+    self.processPool = [coder decodeObjectForKey:@"processPool"];
     self.preferences = [coder decodeObjectForKey:@"preferences"];
+    self.userContentController = [coder decodeObjectForKey:@"userContentController"];
+    self.websiteDataStore = [coder decodeObjectForKey:@"websiteDataStore"];
+
     self.suppressesIncrementalRendering = [coder decodeBoolForKey:@"suppressesIncrementalRendering"];
     self.applicationNameForUserAgent = [coder decodeObjectForKey:@"applicationNameForUserAgent"];
     self.allowsAirPlayForMediaPlayback = [coder decodeBoolForKey:@"allowsAirPlayForMediaPlayback"];
