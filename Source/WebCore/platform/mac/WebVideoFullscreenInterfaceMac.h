@@ -34,6 +34,12 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSWindow;
+
+#if USE(APPLE_INTERNAL_SDK)
+OBJC_CLASS WebVideoFullscreenInterfaceMacObjC;
+#endif
+
 namespace WebCore {
 class IntRect;
 class WebVideoFullscreenChangeObserver;
@@ -49,7 +55,9 @@ public:
         return adoptRef(*new WebVideoFullscreenInterfaceMac());
     }
     virtual ~WebVideoFullscreenInterfaceMac();
+    WebVideoFullscreenModel* webVideoFullscreenModel() const { return m_videoFullscreenModel; }
     WEBCORE_EXPORT void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
+    WebVideoFullscreenChangeObserver* webVideoFullscreenChangeObserver() const { return m_fullscreenChangeObserver; }
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
 
     WEBCORE_EXPORT void resetMediaState() override { }
@@ -65,13 +73,13 @@ public:
     WEBCORE_EXPORT void setExternalPlayback(bool /*enabled*/, ExternalPlaybackTargetType, WTF::String /*localizedDeviceName*/) override { }
     WEBCORE_EXPORT void setWirelessVideoPlaybackDisabled(bool) override { }
 
-    WEBCORE_EXPORT void setupFullscreen(NSView& /*layerHostedView*/, const IntRect& /*initialRect*/, HTMLMediaElementEnums::VideoFullscreenMode, bool /*allowsPictureInPicturePlayback*/) { }
-    WEBCORE_EXPORT void enterFullscreen() { }
-    WEBCORE_EXPORT void exitFullscreen(const IntRect& /*finalRect*/) { }
-    WEBCORE_EXPORT void cleanupFullscreen() { }
-    WEBCORE_EXPORT void invalidate() { }
+    WEBCORE_EXPORT void setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
+    WEBCORE_EXPORT void enterFullscreen();
+    WEBCORE_EXPORT void exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow);
+    WEBCORE_EXPORT void cleanupFullscreen();
+    WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void requestHideAndExitFullscreen() { }
-    WEBCORE_EXPORT void preparedToReturnToInline(bool /*visible*/, const IntRect& /*inlineRect*/) { }
+    WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect, NSWindow *parentWindow);
 
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_mode; }
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_mode & mode; }
@@ -82,10 +90,14 @@ public:
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const { return false; }
     void applicationDidBecomeActive() { }
 
-protected:
+private:
     WebVideoFullscreenModel* m_videoFullscreenModel { nullptr };
     WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
+
+#if USE(APPLE_INTERNAL_SDK)
+    RetainPtr<WebVideoFullscreenInterfaceMacObjC> m_webVideoFullscreenInterfaceObjC;
+#endif
 };
 
 }

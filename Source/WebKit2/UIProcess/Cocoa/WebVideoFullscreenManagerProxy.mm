@@ -368,7 +368,9 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
     UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
     interface->setupFullscreen(*model->layerHostView(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture);
 #else
-    interface->setupFullscreen(*model->layerHostView(), initialRect, videoFullscreenMode, allowsPictureInPicture);
+    IntRect initialWindowRect;
+    m_page->rootViewToWindow(initialRect, initialWindowRect);
+    interface->setupFullscreen(*model->layerHostView(), initialWindowRect, m_page->platformWindow(), videoFullscreenMode, allowsPictureInPicture);
 #endif
 }
 
@@ -462,7 +464,13 @@ void WebVideoFullscreenManagerProxy::enterFullscreen(uint64_t contextId)
 
 void WebVideoFullscreenManagerProxy::exitFullscreen(uint64_t contextId, WebCore::IntRect finalRect)
 {
+#if PLATFORM(IOS)
     ensureInterface(contextId).exitFullscreen(finalRect);
+#else
+    IntRect finalWindowRect;
+    m_page->rootViewToWindow(finalRect, finalWindowRect);
+    ensureInterface(contextId).exitFullscreen(finalWindowRect, m_page->platformWindow());
+#endif
 }
 
 void WebVideoFullscreenManagerProxy::cleanupFullscreen(uint64_t contextId)
@@ -474,7 +482,13 @@ void WebVideoFullscreenManagerProxy::preparedToReturnToInline(uint64_t contextId
 {
     m_page->fullscreenMayReturnToInline();
 
+#if PLATFORM(IOS)
     ensureInterface(contextId).preparedToReturnToInline(visible, inlineRect);
+#else
+    IntRect inlineWindowRect;
+    m_page->rootViewToWindow(inlineRect, inlineWindowRect);
+    ensureInterface(contextId).preparedToReturnToInline(visible, inlineWindowRect, m_page->platformWindow());
+#endif
 }
 
 #pragma mark Messages to WebVideoFullscreenManager

@@ -581,6 +581,7 @@ public:
 
     void startWindowDrag();
     NSWindow *platformWindow();
+    void rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect);
 
 #if WK_API_ENABLED
     NSView *inspectorAttachmentView();

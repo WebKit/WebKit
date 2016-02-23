@@ -32,6 +32,10 @@
 #import "WebVideoFullscreenChangeObserver.h"
 #import "WebVideoFullscreenModel.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebVideoFullscreenInterfaceMacAdditions.mm>
+#endif
+
 namespace WebCore {
 
 WebVideoFullscreenInterfaceMac::~WebVideoFullscreenInterfaceMac()
@@ -70,10 +74,36 @@ void WebVideoFullscreenInterfaceMac::clearMode(HTMLMediaElementEnums::VideoFulls
         m_videoFullscreenModel->fullscreenModeChanged(m_mode);
 }
 
+#if !USE(APPLE_INTERNAL_SDK)
+void WebVideoFullscreenInterfaceMac::setupFullscreen(NSView&, const IntRect&, NSWindow *, HTMLMediaElementEnums::VideoFullscreenMode, bool)
+{
+}
+
+void WebVideoFullscreenInterfaceMac::enterFullscreen()
+{
+}
+
+void WebVideoFullscreenInterfaceMac::exitFullscreen(const IntRect&, NSWindow *)
+{
+}
+
+void WebVideoFullscreenInterfaceMac::cleanupFullscreen()
+{
+}
+
+void WebVideoFullscreenInterfaceMac::invalidate()
+{
+}
+
+void WebVideoFullscreenInterfaceMac::preparedToReturnToInline(bool, const IntRect&, NSWindow *)
+{
+}
+
 bool supportsPictureInPicture()
 {
     return false;
 }
+#endif
 
 }
 

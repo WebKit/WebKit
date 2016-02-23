@@ -36,7 +36,7 @@ class String;
 
 namespace WebCore {
 
-bool supportsPictureInPicture();
+WEBCORE_EXPORT bool supportsPictureInPicture();
 
 class TimeRanges;
 

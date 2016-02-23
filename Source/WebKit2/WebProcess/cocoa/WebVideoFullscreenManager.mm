@@ -217,12 +217,14 @@ WebVideoFullscreenInterfaceContext& WebVideoFullscreenManager::ensureInterface(u
 
 #pragma mark Interface to ChromeClient:
 
-bool WebVideoFullscreenManager::supportsVideoFullscreen() const
+bool WebVideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode) const
 {
 #if PLATFORM(IOS)
+    UNUSED_PARAM(mode);
     return Settings::avKitEnabled();
+#elif USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebVideoFullscreenManagerSupportsVideoFullscreenMac.mm>
 #else
-    // FIXME 153241: Return false until more of WebVideoFullscreenInterfaceMac has been implemented.
     return false;
 #endif
 }

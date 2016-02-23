@@ -1,3 +1,27 @@
+2016-02-16  Ada Chan  <adachan@apple.com>
+
+        Implement basic functionality in WebVideoFullscreenInterfaceMac.
+        https://bugs.webkit.org/show_bug.cgi?id=153241
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::WebVideoFullscreenManagerProxy::exitFullscreen):
+        (WebKit::WebVideoFullscreenManagerProxy::preparedToReturnToInline):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::rootViewToWindow):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::rootViewToWindow):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::supportsVideoFullscreen):
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::supportsVideoFullscreen):
+
 2016-02-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r196935.

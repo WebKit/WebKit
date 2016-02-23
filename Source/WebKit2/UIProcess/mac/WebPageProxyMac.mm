@@ -584,6 +584,11 @@ NSWindow *WebPageProxy::platformWindow()
     return m_pageClient.platformWindow();
 }
 
+void WebPageProxy::rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect)
+{
+    windowRect = m_pageClient.rootViewToWindow(viewRect);
+}
+
 #if WK_API_ENABLED
 NSView *WebPageProxy::inspectorAttachmentView()
 {

@@ -113,6 +113,9 @@ private:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
+#if PLATFORM(MAC)
+    virtual WebCore::IntRect rootViewToWindow(const WebCore::IntRect&) override;
+#endif
 #if PLATFORM(IOS)
     virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
