@@ -1,3 +1,21 @@
+2016-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Calling importNode on shadow root causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=154570
+
+        Reviewed by Anders Carlsson.
+
+        Added W3C-style testharness tests for calling cloneNode on a shadow root.
+
+        Also added tests for adoptNode and importNode.
+
+        * fast/shadow-dom/Document-prototype-adoptNode-expected.txt: Added.
+        * fast/shadow-dom/Document-prototype-adoptNode.html: Added.
+        * fast/shadow-dom/Document-prototype-importNode-expected.txt: Added.
+        * fast/shadow-dom/Document-prototype-importNode.html: Added.
+        * fast/shadow-dom/Node-prototype-cloneNode-expected.txt: Added.
+        * fast/shadow-dom/Node-prototype-cloneNode.html: Added.
+
 2016-02-23  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r196892): No longer emit error message when CSP form-action directive is used as a source expression

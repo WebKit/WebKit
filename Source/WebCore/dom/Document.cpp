@@ -985,12 +985,15 @@ RefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& 
     }
 
     switch (importedNode->nodeType()) {
+    case DOCUMENT_FRAGMENT_NODE:
+        if (importedNode->isShadowRoot())
+            break;
+        FALLTHROUGH;
     case ELEMENT_NODE:
     case TEXT_NODE:
     case CDATA_SECTION_NODE:
     case PROCESSING_INSTRUCTION_NODE:
     case COMMENT_NODE:
-    case DOCUMENT_FRAGMENT_NODE:
         return importedNode->cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf);
 
     case ATTRIBUTE_NODE:

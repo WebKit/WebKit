@@ -1,0 +1,5 @@
+
+PASS cloneNode on a shadow root in open mode must throw a NotSupportedError 
+PASS cloneNode on a shadow root in closed mode must throw a NotSupportedError 
+PASS cloneNode on an open shadow root must throw a NotSupportedError 
+

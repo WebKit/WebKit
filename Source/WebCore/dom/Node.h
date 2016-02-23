@@ -181,6 +181,7 @@ public:
     };
     virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) = 0;
     Ref<Node> cloneNode(bool deep) { return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf); }
+    RefPtr<Node> cloneNodeForBindings(bool deep, ExceptionCode&);
 
     virtual const AtomicString& localName() const;
     virtual const AtomicString& namespaceURI() const;

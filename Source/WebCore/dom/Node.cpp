@@ -602,6 +602,15 @@ void Node::normalize()
     }
 }
 
+RefPtr<Node> Node::cloneNodeForBindings(bool deep, ExceptionCode& ec)
+{
+    if (UNLIKELY(isShadowRoot())) {
+        ec = NOT_SUPPORTED_ERR;
+        return nullptr;
+    }
+    return cloneNode(deep);
+}
+
 const AtomicString& Node::prefix() const
 {
     // For nodes other than elements and attributes, the prefix is always null
