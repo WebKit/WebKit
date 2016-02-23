@@ -28,17 +28,25 @@
 
 #if USE(NETWORK_SESSION)
 
+#import "Download.h"
+#import "DownloadProxyMessages.h"
+#import "NetworkProcess.h"
+#import "WebCoreArgumentCoders.h"
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/ResourceRequest.h>
 #import <wtf/MainThread.h>
+
+@interface NSURLSessionTask ()
+@property (readwrite, copy) NSString *_pathToDownloadTaskFile;
+@end
 
 namespace WebKit {
 
 NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentials storedCredentials, WebCore::ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     : m_failureTimer(*this, &NetworkDataTask::failureTimerFired)
     , m_session(session)
-    , m_client(client)
+    , m_client(&client)
     , m_lastHTTPMethod(requestWithCredentials.httpMethod())
     , m_firstRequest(requestWithCredentials)
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
@@ -86,6 +94,42 @@ NetworkDataTask::~NetworkDataTask()
     }
 }
 
+void NetworkDataTask::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
+{
+    if (m_client)
+        m_client->didSendData(totalBytesSent, totalBytesExpectedToSend);
+}
+
+void NetworkDataTask::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler completionHandler)
+{
+    if (m_client)
+        m_client->didReceiveChallenge(challenge, completionHandler);
+}
+
+void NetworkDataTask::didCompleteWithError(const WebCore::ResourceError& error)
+{
+    if (m_client)
+        m_client->didCompleteWithError(error);
+}
+
+void NetworkDataTask::didReceiveResponse(const WebCore::ResourceResponse& response, ResponseCompletionHandler completionHandler)
+{
+    if (m_client)
+        m_client->didReceiveResponseNetworkSession(response, completionHandler);
+}
+
+void NetworkDataTask::didReceiveData(RefPtr<WebCore::SharedBuffer>&& data)
+{
+    if (m_client)
+        m_client->didReceiveData(WTFMove(data));
+}
+
+void NetworkDataTask::didBecomeDownload()
+{
+    if (m_client)
+        m_client->didBecomeDownload();
+}
+
 void NetworkDataTask::willPerformHTTPRedirection(const WebCore::ResourceResponse& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler completionHandler)
 {
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
@@ -116,7 +160,8 @@ void NetworkDataTask::willPerformHTTPRedirection(const WebCore::ResourceResponse
         request.clearHTTPOrigin();
     }
     
-    client().willPerformHTTPRedirection(redirectResponse, request, completionHandler);
+    if (m_client)
+        m_client->willPerformHTTPRedirection(redirectResponse, request, completionHandler);
 }
     
 void NetworkDataTask::scheduleFailure(FailureType type)
@@ -133,17 +178,35 @@ void NetworkDataTask::failureTimerFired()
     switch (m_scheduledFailureType) {
     case BlockedFailure:
         m_scheduledFailureType = NoFailure;
-        client().wasBlocked();
+        if (m_client)
+            m_client->wasBlocked();
         return;
     case InvalidURLFailure:
         m_scheduledFailureType = NoFailure;
-        client().cannotShowURL();
+        if (m_client)
+            m_client->cannotShowURL();
         return;
     case NoFailure:
         ASSERT_NOT_REACHED();
         break;
     }
     ASSERT_NOT_REACHED();
+}
+
+void NetworkDataTask::findPendingDownloadLocation(ResponseCompletionHandler completionHandler)
+{
+    NetworkProcess::singleton().findPendingDownloadLocation(*this, m_task.get().response.suggestedFilename, completionHandler);
+}
+
+void NetworkDataTask::setPendingDownloadLocation(const WTF::String& filename, const SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    ASSERT(!m_sandboxExtension);
+    m_sandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
+    if (m_sandboxExtension)
+        m_sandboxExtension->consume();
+
+    m_pendingDownloadLocation = filename;
+    m_task.get()._pathToDownloadTaskFile = filename;
 }
 
 bool NetworkDataTask::tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler completionHandler)
@@ -164,6 +227,16 @@ bool NetworkDataTask::tryPasswordBasedAuthentication(const WebCore::Authenticati
     }
     
     return false;
+}
+
+void NetworkDataTask::transferSandboxExtensionToDownload(Download& download)
+{
+    download.setSandboxExtension(WTFMove(m_sandboxExtension));
+}
+
+WebCore::ResourceRequest NetworkDataTask::currentRequest()
+{
+    return [m_task currentRequest];
 }
 
 void NetworkDataTask::cancel()

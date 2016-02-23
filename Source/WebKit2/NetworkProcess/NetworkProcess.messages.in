@@ -47,6 +47,7 @@ messages -> NetworkProcess LegacyReceiver {
 #if USE(NETWORK_SESSION)
     ContinueCanAuthenticateAgainstProtectionSpace(WebKit::DownloadID downloadID, bool canAuthenticate)
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
+    ContinueDecidePendingDownloadDestination(WebKit::DownloadID downloadID, String destination, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 #endif
 
     SetProcessSuppressionEnabled(bool flag)

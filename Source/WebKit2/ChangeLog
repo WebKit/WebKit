@@ -1,3 +1,100 @@
+2016-02-23  Alex Christensen  <achristensen@webkit.org>
+
+        Implement downloads with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154473
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::~Download):
+        (WebKit::Download::didStart):
+        (WebKit::Download::shouldDecodeSourceDataOfMIMEType):
+        (WebKit::Download::decideDestinationWithSuggestedFilename):
+        (WebKit::Download::didCreateDestination):
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::downloadID):
+        (WebKit::Download::setSandboxExtension):
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        (WebKit::DownloadManager::dataTaskBecameDownloadTask):
+        (WebKit::DownloadManager::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadManager::continueWillSendRequest):
+        (WebKit::DownloadManager::willDecidePendingDownloadDestination):
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
+        (WebKit::DownloadManager::convertHandleToDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::clearClient):
+
+        NetworkDataTasks can now outlive their client, so we need to make client a pointer
+        with the ability to be nulled from the client's destructor.
+
+        (WebKit::NetworkDataTask::pendingDownloadID):
+        (WebKit::NetworkDataTask::pendingDownload):
+        (WebKit::NetworkDataTask::setPendingDownload):
+        (WebKit::NetworkDataTask::pendingDownloadLocation):
+        (WebKit::NetworkDataTask::client): Deleted.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::setPendingDownloadID):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+
+        Don't call the didReceiveResponse completion handler immediately when we know we are
+        going to turn the load into a download.  Instead, save the completion handler until
+        after we have determined the download destination and set it in the NetworkDataTask.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::continueWillSendRequest):
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        (WebKit::NetworkProcess::continueDecidePendingDownloadDestination):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        (WebKit::NetworkDataTask::didSendData):
+        (WebKit::NetworkDataTask::didReceiveChallenge):
+        (WebKit::NetworkDataTask::didCompleteWithError):
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        (WebKit::NetworkDataTask::didReceiveData):
+        (WebKit::NetworkDataTask::didBecomeDownload):
+        (WebKit::NetworkDataTask::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTask::scheduleFailure):
+        (WebKit::NetworkDataTask::failureTimerFired):
+        (WebKit::NetworkDataTask::findPendingDownloadLocation):
+        (WebKit::NetworkDataTask::setPendingDownloadLocation):
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        (WebKit::NetworkDataTask::transferSandboxExtensionToDownload):
+        (WebKit::NetworkDataTask::currentRequest):
+        (WebKit::NetworkDataTask::cancel):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:]):
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        
+        This delegate callback is used for downloads, too.
+
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveData:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didFinishDownloadingToURL:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        
+        Call didCreateDestination now, which is after the file has been opened on the disk.
+        A DownloadProxy::DidStart message is now sent from NetworkProcess::findPendingDownloadLocation before
+        we ask the UIProcess where the download should end up on disk.
+        Null check the NetworkDataTask's client before using it because it is now a pointer that could be null. 
+        
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::shouldDecodeSourceDataOfMIMEType):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadProxy::didCreateDestination):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+
 2016-02-23  Brian Burg  <bburg@apple.com>
 
         Connect WebAutomationSession to its backend dispatcher as if it were an agent and add stub implementations

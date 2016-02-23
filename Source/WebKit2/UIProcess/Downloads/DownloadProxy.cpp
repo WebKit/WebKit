@@ -36,6 +36,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProtectionSpace.h"
+#include <WebCore/FileSystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -170,6 +171,24 @@ void DownloadProxy::shouldDecodeSourceDataOfMIMEType(const String& mimeType, boo
     result = m_processPool->downloadClient().shouldDecodeSourceDataOfMIMEType(m_processPool.get(), this, mimeType);
 }
 
+#if USE(NETWORK_SESSION)
+void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downloadID, const String& suggestedFilename)
+{
+    bool allowOverwrite = false;
+    
+    if (!m_processPool)
+        return;
+    
+    String destination = m_processPool->downloadClient().decideDestinationWithSuggestedFilename(m_processPool.get(), this, suggestedFilename, allowOverwrite);
+    
+    SandboxExtension::Handle sandboxExtensionHandle;
+    if (!destination.isNull())
+        SandboxExtension::createHandle(destination, SandboxExtension::ReadWrite, sandboxExtensionHandle);
+    
+    if (NetworkProcessProxy* networkProcess = m_processPool->networkProcess())
+        networkProcess->connection()->send(Messages::NetworkProcess::ContinueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle), 0);
+}
+#else
 void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite, SandboxExtension::Handle& sandboxExtensionHandle)
 {
     allowOverwrite = false;
@@ -182,6 +201,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filenam
     if (!destination.isNull())
         SandboxExtension::createHandle(destination, SandboxExtension::ReadWrite, sandboxExtensionHandle);
 }
+#endif
 
 void DownloadProxy::didCreateDestination(const String& path)
 {

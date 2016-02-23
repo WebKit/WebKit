@@ -66,12 +66,7 @@ Download::~Download()
     m_downloadManager.didDestroyDownload();
 }
 
-#if USE(NETWORK_SESSION)
-void Download::didStart(const ResourceRequest& request)
-{
-    send(Messages::DownloadProxy::DidStart(request));
-}
-#else
+#if !USE(NETWORK_SESSION)
 void Download::didStart()
 {
     send(Messages::DownloadProxy::DidStart(m_request));
@@ -104,6 +99,7 @@ bool Download::shouldDecodeSourceDataOfMIMEType(const String& mimeType)
     return result;
 }
 
+#if !USE(NETWORK_SESSION)
 String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
 {
     String destination;
@@ -117,6 +113,7 @@ String Download::decideDestinationWithSuggestedFilename(const String& filename, 
 
     return destination;
 }
+#endif
 
 void Download::didCreateDestination(const String& path)
 {

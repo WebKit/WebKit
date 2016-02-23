@@ -71,6 +71,8 @@ NetworkLoad::~NetworkLoad()
 #if USE(NETWORK_SESSION)
     if (m_responseCompletionHandler)
         m_responseCompletionHandler(PolicyIgnore);
+    if (m_task)
+        m_task->clearClient();
 #endif
     if (m_handle)
         m_handle->clearClient();
@@ -163,13 +165,14 @@ void NetworkLoad::sharedWillSendRedirectedRequest(const ResourceRequest& request
 
 void NetworkLoad::convertTaskToDownload(DownloadID downloadID)
 {
+    if (!m_task)
+        return;
+
     m_task->setPendingDownloadID(downloadID);
     
     ASSERT(m_responseCompletionHandler);
-    if (m_responseCompletionHandler) {
-        m_responseCompletionHandler(PolicyDownload);
-        m_responseCompletionHandler = nullptr;
-    }
+    if (m_responseCompletionHandler)
+        m_task->findPendingDownloadLocation(WTFMove(m_responseCompletionHandler));
 }
 
 void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
@@ -218,7 +221,7 @@ void NetworkLoad::didReceiveResponseNetworkSession(const ResourceResponse& respo
 {
     ASSERT(isMainThread());
     if (m_task && m_task->pendingDownloadID().downloadID())
-        completionHandler(PolicyDownload);
+        m_task->findPendingDownloadLocation(completionHandler);
     else if (sharedDidReceiveResponse(response) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
         completionHandler(PolicyUse);
     else

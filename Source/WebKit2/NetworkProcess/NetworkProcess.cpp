@@ -31,6 +31,7 @@
 #include "AuthenticationManager.h"
 #include "ChildProcessMessages.h"
 #include "CustomProtocolManager.h"
+#include "DownloadProxyMessages.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcessCreationParameters.h"
@@ -41,6 +42,7 @@
 #include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "WebCookieManager.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcessPoolMessages.h"
 #include "WebsiteData.h"
 #include <WebCore/DNS.h>
@@ -467,6 +469,20 @@ void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(DownloadID do
 void NetworkProcess::continueWillSendRequest(DownloadID downloadID, const WebCore::ResourceRequest& request)
 {
     downloadManager().continueWillSendRequest(downloadID, request);
+}
+
+void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, String suggestedFilename, ResponseCompletionHandler completionHandler)
+{
+    uint64_t destinationID = networkDataTask.pendingDownloadID().downloadID();
+    downloadProxyConnection()->send(Messages::DownloadProxy::DidStart(networkDataTask.currentRequest()), destinationID);
+    
+    downloadManager().willDecidePendingDownloadDestination(networkDataTask, completionHandler);
+    downloadProxyConnection()->send(Messages::DownloadProxy::DecideDestinationWithSuggestedFilenameAsync(networkDataTask.pendingDownloadID(), suggestedFilename), destinationID);
+}
+    
+void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle);
 }
 #endif
 
