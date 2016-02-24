@@ -1,3 +1,30 @@
+2016-02-24  Zalan Bujtas  <zalan@apple.com>
+
+        Background of an absolutely positioned inline element inside text-indented parent is positioned statically.
+        https://bugs.webkit.org/show_bug.cgi?id=154019
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that statically positioned out-of-flow renderers are also text-aligned
+        even when none of the renderers on the first line generate a linebox (so we end up with no bidi runs at all).
+        The fix is to pass IndentTextOrNot information to startAlignedOffsetForLine through updateStaticInlinePositionForChild
+        so that we can compute the left position for this statically positioned out of flow renderer.
+
+        Test: fast/css3-text/css3-text-indent/text-indent-with-absolute-pos-child.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustPositionedBlock):
+        (WebCore::RenderBlockFlow::updateStaticInlinePositionForChild):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipTrailingWhitespace):
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        * rendering/line/LineInlineHeaders.h: webkit.org/b/154628 fixes the bool vs IndentTextOrNot issue.
+        (WebCore::setStaticPositions):
+
 2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove IteratorKey and IteratorValue declarations from JSXX class declarations.

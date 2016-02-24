@@ -48,7 +48,7 @@ void LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, const LineInf
     while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace)) {
         RenderObject& object = *iterator.renderer();
         if (object.isOutOfFlowPositioned())
-            setStaticPositions(m_block, downcast<RenderBox>(object));
+            setStaticPositions(m_block, downcast<RenderBox>(object), DoNotIndentText);
         else if (object.isFloating())
             m_block.insertFloatingObject(downcast<RenderBox>(object));
         iterator.increment();
@@ -60,7 +60,7 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
         RenderObject& object = *resolver.position().renderer();
         if (object.isOutOfFlowPositioned()) {
-            setStaticPositions(m_block, downcast<RenderBox>(object));
+            setStaticPositions(m_block, downcast<RenderBox>(object), width.shouldIndentText() ? IndentText : DoNotIndentText);
             if (object.style().isOriginalDisplayInlineType()) {
                 resolver.runs().addRun(new BidiRun(0, 1, object, resolver.context(), resolver.dir()));
                 lineInfo.incrementRunsFromLeadingWhitespace();

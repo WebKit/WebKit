@@ -120,7 +120,7 @@ inline bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo =
     return notJustWhitespace || rendererIsEmptyInline;
 }
 
-inline void setStaticPositions(RenderBlockFlow& block, RenderBox& child)
+inline void setStaticPositions(RenderBlockFlow& block, RenderBox& child, IndentTextOrNot shouldIndentText)
 {
     // FIXME: The math here is actually not really right. It's a best-guess approximation that
     // will work for the common cases
@@ -130,10 +130,10 @@ inline void setStaticPositions(RenderBlockFlow& block, RenderBox& child)
         // A relative positioned inline encloses us. In this case, we also have to determine our
         // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
         // inline so that we can obtain the value later.
-        downcast<RenderInline>(*containerBlock).layer()->setStaticInlinePosition(block.startAlignedOffsetForLine(blockHeight, false));
+        downcast<RenderInline>(*containerBlock).layer()->setStaticInlinePosition(block.startAlignedOffsetForLine(blockHeight, DoNotIndentText));
         downcast<RenderInline>(*containerBlock).layer()->setStaticBlockPosition(blockHeight);
     }
-    block.updateStaticInlinePositionForChild(child, blockHeight);
+    block.updateStaticInlinePositionForChild(child, blockHeight, shouldIndentText);
     child.layer()->setStaticBlockPosition(blockHeight);
 }
 
