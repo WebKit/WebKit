@@ -555,7 +555,7 @@ PASS head.tabIndex: setAttribute() to 1 followed by IDL get
 PASS head.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL head.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS head.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL head.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL head.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS head.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS head.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS head.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -595,7 +595,7 @@ PASS head.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL head.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS head.tabIndex: IDL set to -2147483648 should not throw 
 PASS head.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL head.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL head.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 FAIL head.itemScope: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
 FAIL head.itemScope: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
 PASS head.itemScope: setAttribute() to "" followed by getAttribute() 
@@ -1317,7 +1317,7 @@ PASS title.tabIndex: setAttribute() to 1 followed by IDL get
 PASS title.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL title.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS title.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL title.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL title.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS title.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS title.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS title.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -1357,7 +1357,7 @@ PASS title.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL title.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS title.tabIndex: IDL set to -2147483648 should not throw 
 PASS title.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL title.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL title.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 FAIL title.itemScope: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
 FAIL title.itemScope: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
 PASS title.itemScope: setAttribute() to "" followed by getAttribute() 
@@ -2079,7 +2079,7 @@ PASS base.tabIndex: setAttribute() to 1 followed by IDL get
 PASS base.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL base.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS base.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL base.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL base.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS base.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS base.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS base.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -2119,7 +2119,7 @@ PASS base.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL base.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS base.tabIndex: IDL set to -2147483648 should not throw 
 PASS base.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL base.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL base.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS base.target: typeof IDL attribute 
 PASS base.target: IDL get with DOM attribute unset 
 PASS base.target: setAttribute() to "" followed by getAttribute() 
@@ -2918,7 +2918,7 @@ PASS link.tabIndex: setAttribute() to 1 followed by IDL get
 PASS link.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL link.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS link.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL link.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL link.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS link.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS link.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS link.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -2958,7 +2958,7 @@ PASS link.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL link.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS link.tabIndex: IDL set to -2147483648 should not throw 
 PASS link.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL link.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL link.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS link.href: typeof IDL attribute 
 PASS link.href: IDL get with DOM attribute unset 
 PASS link.href: setAttribute() to "" followed by getAttribute() 
@@ -4437,7 +4437,7 @@ PASS meta.tabIndex: setAttribute() to 1 followed by IDL get
 PASS meta.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL meta.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS meta.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL meta.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL meta.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS meta.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS meta.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS meta.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -4477,7 +4477,7 @@ PASS meta.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL meta.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS meta.tabIndex: IDL set to -2147483648 should not throw 
 PASS meta.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL meta.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL meta.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS meta.name: typeof IDL attribute 
 PASS meta.name: IDL get with DOM attribute unset 
 PASS meta.name: setAttribute() to "" followed by getAttribute() 
@@ -5507,7 +5507,7 @@ PASS style.tabIndex: setAttribute() to 1 followed by IDL get
 PASS style.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL style.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS style.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL style.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL style.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS style.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS style.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS style.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -5547,7 +5547,7 @@ PASS style.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL style.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS style.tabIndex: IDL set to -2147483648 should not throw 
 PASS style.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL style.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL style.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS style.media: typeof IDL attribute 
 PASS style.media: IDL get with DOM attribute unset 
 PASS style.media: setAttribute() to "" followed by getAttribute() 

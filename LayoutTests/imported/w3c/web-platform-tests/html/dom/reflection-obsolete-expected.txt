@@ -555,7 +555,7 @@ PASS applet.tabIndex: setAttribute() to 1 followed by IDL get
 PASS applet.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL applet.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS applet.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL applet.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL applet.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS applet.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS applet.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS applet.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -595,7 +595,7 @@ PASS applet.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL applet.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS applet.tabIndex: IDL set to -2147483648 should not throw 
 PASS applet.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL applet.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL applet.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS applet.align: typeof IDL attribute 
 PASS applet.align: IDL get with DOM attribute unset 
 PASS applet.align: setAttribute() to "" followed by getAttribute() 
@@ -2298,7 +2298,7 @@ PASS marquee.tabIndex: setAttribute() to 1 followed by IDL get
 PASS marquee.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL marquee.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS marquee.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL marquee.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL marquee.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS marquee.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS marquee.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS marquee.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -2338,7 +2338,7 @@ PASS marquee.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL marquee.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS marquee.tabIndex: IDL set to -2147483648 should not throw 
 PASS marquee.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL marquee.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL marquee.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS marquee.behavior: typeof IDL attribute 
 PASS marquee.behavior: IDL get with DOM attribute unset 
 PASS marquee.behavior: setAttribute() to "" followed by getAttribute() 
@@ -2684,7 +2684,7 @@ PASS marquee.hspace: setAttribute() to "1" followed by IDL get
 PASS marquee.hspace: setAttribute() to "\t7" followed by getAttribute() 
 PASS marquee.hspace: setAttribute() to "\t7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to "\v7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to "\v7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to "\f7" followed by getAttribute() 
 PASS marquee.hspace: setAttribute() to "\f7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
@@ -2698,39 +2698,39 @@ PASS marquee.hspace: setAttribute() to "\n7" followed by IDL get
 PASS marquee.hspace: setAttribute() to "\r7" followed by getAttribute() 
 PASS marquee.hspace: setAttribute() to "\r7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
 PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to "᠎7" followed by getAttribute() 
 PASS marquee.hspace: setAttribute() to "᠎7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " 7" followed by getAttribute() 
 PASS marquee.hspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to "　7" followed by getAttribute() 
-FAIL marquee.hspace: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.hspace: setAttribute() to "　7" followed by IDL get 
 PASS marquee.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS marquee.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS marquee.hspace: setAttribute() to undefined followed by getAttribute() 
@@ -3142,7 +3142,7 @@ PASS marquee.vspace: setAttribute() to "1" followed by IDL get
 PASS marquee.vspace: setAttribute() to "\t7" followed by getAttribute() 
 PASS marquee.vspace: setAttribute() to "\t7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to "\v7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to "\v7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to "\f7" followed by getAttribute() 
 PASS marquee.vspace: setAttribute() to "\f7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
@@ -3156,39 +3156,39 @@ PASS marquee.vspace: setAttribute() to "\n7" followed by IDL get
 PASS marquee.vspace: setAttribute() to "\r7" followed by getAttribute() 
 PASS marquee.vspace: setAttribute() to "\r7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
 PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to "᠎7" followed by getAttribute() 
 PASS marquee.vspace: setAttribute() to "᠎7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " 7" followed by getAttribute() 
 PASS marquee.vspace: setAttribute() to " 7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to "　7" followed by getAttribute() 
-FAIL marquee.vspace: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
+PASS marquee.vspace: setAttribute() to "　7" followed by IDL get 
 PASS marquee.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS marquee.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS marquee.vspace: setAttribute() to undefined followed by getAttribute() 
@@ -4032,7 +4032,7 @@ PASS frameset.tabIndex: setAttribute() to 1 followed by IDL get
 PASS frameset.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL frameset.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS frameset.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL frameset.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL frameset.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS frameset.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS frameset.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS frameset.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -4072,7 +4072,7 @@ PASS frameset.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL frameset.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS frameset.tabIndex: IDL set to -2147483648 should not throw 
 PASS frameset.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL frameset.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL frameset.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS frameset.cols: typeof IDL attribute 
 PASS frameset.cols: IDL get with DOM attribute unset 
 PASS frameset.cols: setAttribute() to "" followed by getAttribute() 
@@ -4948,7 +4948,7 @@ PASS frame.tabIndex: setAttribute() to 1 followed by IDL get
 PASS frame.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL frame.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS frame.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL frame.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL frame.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS frame.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS frame.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS frame.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -4988,7 +4988,7 @@ PASS frame.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL frame.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS frame.tabIndex: IDL set to -2147483648 should not throw 
 PASS frame.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL frame.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL frame.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS frame.name: typeof IDL attribute 
 PASS frame.name: IDL get with DOM attribute unset 
 PASS frame.name: setAttribute() to "" followed by getAttribute() 
@@ -6358,7 +6358,7 @@ PASS dir.tabIndex: setAttribute() to 1 followed by IDL get
 PASS dir.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL dir.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS dir.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL dir.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL dir.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS dir.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS dir.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS dir.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -6398,7 +6398,7 @@ PASS dir.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL dir.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS dir.tabIndex: IDL set to -2147483648 should not throw 
 PASS dir.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL dir.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL dir.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS dir.compact: typeof IDL attribute 
 PASS dir.compact: IDL get with DOM attribute unset 
 PASS dir.compact: setAttribute() to "" followed by getAttribute() 
@@ -7199,7 +7199,7 @@ PASS font.tabIndex: setAttribute() to 1 followed by IDL get
 PASS font.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL font.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS font.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL font.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL font.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS font.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS font.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS font.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -7239,7 +7239,7 @@ PASS font.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL font.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS font.tabIndex: IDL set to -2147483648 should not throw 
 PASS font.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL font.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL font.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS font.color: typeof IDL attribute 
 PASS font.color: IDL get with DOM attribute unset 
 PASS font.color: setAttribute() to "" followed by getAttribute() 

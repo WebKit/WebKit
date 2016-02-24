@@ -156,7 +156,7 @@ template <typename CharacterType>
 static bool parseHTMLIntegerInternal(const CharacterType* position, const CharacterType* end, int& value)
 {
     // Step 3
-    int sign = 1;
+    bool isPositive = true;
 
     // Step 4
     while (position < end) {
@@ -172,7 +172,7 @@ static bool parseHTMLIntegerInternal(const CharacterType* position, const Charac
 
     // Step 6
     if (*position == '-') {
-        sign = -1;
+        isPositive = false;
         ++position;
     } else if (*position == '+')
         ++position;
@@ -185,19 +185,21 @@ static bool parseHTMLIntegerInternal(const CharacterType* position, const Charac
         return false;
 
     // Step 8
-    StringBuilder digits;
+    StringBuilder cleanCharacters;
+    if (!isPositive)
+        cleanCharacters.append('-');
     while (position < end) {
         if (!isASCIIDigit(*position))
             break;
-        digits.append(*position++);
+        cleanCharacters.append(*position++);
     }
 
     // Step 9
     bool ok;
-    if (digits.is8Bit())
-        value = sign * charactersToIntStrict(digits.characters8(), digits.length(), &ok);
+    if (cleanCharacters.is8Bit())
+        value = charactersToIntStrict(cleanCharacters.characters8(), cleanCharacters.length(), &ok);
     else
-        value = sign * charactersToIntStrict(digits.characters16(), digits.length(), &ok);
+        value = charactersToIntStrict(cleanCharacters.characters16(), cleanCharacters.length(), &ok);
     return ok;
 }
 

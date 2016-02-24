@@ -563,7 +563,7 @@ PASS img.tabIndex: setAttribute() to 1 followed by IDL get
 PASS img.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL img.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS img.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL img.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL img.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS img.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS img.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS img.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -603,7 +603,7 @@ PASS img.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL img.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS img.tabIndex: IDL set to -2147483648 should not throw 
 PASS img.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL img.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL img.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS img.alt: typeof IDL attribute 
 PASS img.alt: IDL get with DOM attribute unset 
 PASS img.alt: setAttribute() to "" followed by getAttribute() 
@@ -1462,7 +1462,7 @@ PASS img.hspace: setAttribute() to "1" followed by IDL get
 PASS img.hspace: setAttribute() to "\t7" followed by getAttribute() 
 PASS img.hspace: setAttribute() to "\t7" followed by IDL get 
 PASS img.hspace: setAttribute() to "\v7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to "\v7" followed by IDL get 
 PASS img.hspace: setAttribute() to "\f7" followed by getAttribute() 
 PASS img.hspace: setAttribute() to "\f7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
@@ -1476,39 +1476,39 @@ PASS img.hspace: setAttribute() to "\n7" followed by IDL get
 PASS img.hspace: setAttribute() to "\r7" followed by getAttribute() 
 PASS img.hspace: setAttribute() to "\r7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
 PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to "᠎7" followed by getAttribute() 
 PASS img.hspace: setAttribute() to "᠎7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to " 7" followed by getAttribute() 
 PASS img.hspace: setAttribute() to " 7" followed by IDL get 
 PASS img.hspace: setAttribute() to "　7" followed by getAttribute() 
-FAIL img.hspace: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.hspace: setAttribute() to "　7" followed by IDL get 
 PASS img.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS img.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS img.hspace: setAttribute() to undefined followed by getAttribute() 
@@ -1591,7 +1591,7 @@ PASS img.vspace: setAttribute() to "1" followed by IDL get
 PASS img.vspace: setAttribute() to "\t7" followed by getAttribute() 
 PASS img.vspace: setAttribute() to "\t7" followed by IDL get 
 PASS img.vspace: setAttribute() to "\v7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to "\v7" followed by IDL get 
 PASS img.vspace: setAttribute() to "\f7" followed by getAttribute() 
 PASS img.vspace: setAttribute() to "\f7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
@@ -1605,39 +1605,39 @@ PASS img.vspace: setAttribute() to "\n7" followed by IDL get
 PASS img.vspace: setAttribute() to "\r7" followed by getAttribute() 
 PASS img.vspace: setAttribute() to "\r7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
 PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to "᠎7" followed by getAttribute() 
 PASS img.vspace: setAttribute() to "᠎7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to " 7" followed by getAttribute() 
 PASS img.vspace: setAttribute() to " 7" followed by IDL get 
 PASS img.vspace: setAttribute() to "　7" followed by getAttribute() 
-FAIL img.vspace: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
+PASS img.vspace: setAttribute() to "　7" followed by IDL get 
 PASS img.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS img.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS img.vspace: setAttribute() to undefined followed by getAttribute() 
@@ -2573,7 +2573,7 @@ PASS iframe.tabIndex: setAttribute() to 1 followed by IDL get
 PASS iframe.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL iframe.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS iframe.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL iframe.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL iframe.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS iframe.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS iframe.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS iframe.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -2613,7 +2613,7 @@ PASS iframe.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL iframe.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS iframe.tabIndex: IDL set to -2147483648 should not throw 
 PASS iframe.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL iframe.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL iframe.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS iframe.src: typeof IDL attribute 
 PASS iframe.src: IDL get with DOM attribute unset 
 PASS iframe.src: setAttribute() to "" followed by getAttribute() 
@@ -4370,7 +4370,7 @@ PASS embed.tabIndex: setAttribute() to 1 followed by IDL get
 PASS embed.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL embed.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS embed.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL embed.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL embed.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS embed.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS embed.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS embed.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -4410,7 +4410,7 @@ PASS embed.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL embed.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS embed.tabIndex: IDL set to -2147483648 should not throw 
 PASS embed.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL embed.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL embed.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS embed.src: typeof IDL attribute 
 PASS embed.src: IDL get with DOM attribute unset 
 PASS embed.src: setAttribute() to "" followed by getAttribute() 
@@ -5609,7 +5609,7 @@ PASS object.tabIndex: setAttribute() to 1 followed by IDL get
 PASS object.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL object.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS object.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL object.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL object.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS object.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS object.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS object.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -5649,7 +5649,7 @@ PASS object.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL object.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS object.tabIndex: IDL set to -2147483648 should not throw 
 PASS object.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL object.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL object.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS object.data: typeof IDL attribute 
 PASS object.data: IDL get with DOM attribute unset 
 PASS object.data: setAttribute() to "" followed by getAttribute() 
@@ -6553,7 +6553,7 @@ PASS object.hspace: setAttribute() to "1" followed by IDL get
 PASS object.hspace: setAttribute() to "\t7" followed by getAttribute() 
 PASS object.hspace: setAttribute() to "\t7" followed by IDL get 
 PASS object.hspace: setAttribute() to "\v7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to "\v7" followed by IDL get 
 PASS object.hspace: setAttribute() to "\f7" followed by getAttribute() 
 PASS object.hspace: setAttribute() to "\f7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
@@ -6567,39 +6567,39 @@ PASS object.hspace: setAttribute() to "\n7" followed by IDL get
 PASS object.hspace: setAttribute() to "\r7" followed by getAttribute() 
 PASS object.hspace: setAttribute() to "\r7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
 PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to "᠎7" followed by getAttribute() 
 PASS object.hspace: setAttribute() to "᠎7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to " 7" followed by getAttribute() 
 PASS object.hspace: setAttribute() to " 7" followed by IDL get 
 PASS object.hspace: setAttribute() to "　7" followed by getAttribute() 
-FAIL object.hspace: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.hspace: setAttribute() to "　7" followed by IDL get 
 PASS object.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS object.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS object.hspace: setAttribute() to undefined followed by getAttribute() 
@@ -6759,7 +6759,7 @@ PASS object.vspace: setAttribute() to "1" followed by IDL get
 PASS object.vspace: setAttribute() to "\t7" followed by getAttribute() 
 PASS object.vspace: setAttribute() to "\t7" followed by IDL get 
 PASS object.vspace: setAttribute() to "\v7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to "\v7" followed by IDL get 
 PASS object.vspace: setAttribute() to "\f7" followed by getAttribute() 
 PASS object.vspace: setAttribute() to "\f7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
@@ -6773,39 +6773,39 @@ PASS object.vspace: setAttribute() to "\n7" followed by IDL get
 PASS object.vspace: setAttribute() to "\r7" followed by getAttribute() 
 PASS object.vspace: setAttribute() to "\r7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
 PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to "᠎7" followed by getAttribute() 
 PASS object.vspace: setAttribute() to "᠎7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to " 7" followed by getAttribute() 
 PASS object.vspace: setAttribute() to " 7" followed by IDL get 
 PASS object.vspace: setAttribute() to "　7" followed by getAttribute() 
-FAIL object.vspace: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
+PASS object.vspace: setAttribute() to "　7" followed by IDL get 
 PASS object.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS object.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS object.vspace: setAttribute() to undefined followed by getAttribute() 
@@ -7818,7 +7818,7 @@ PASS param.tabIndex: setAttribute() to 1 followed by IDL get
 PASS param.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL param.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS param.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL param.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL param.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS param.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS param.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS param.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -7858,7 +7858,7 @@ PASS param.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL param.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS param.tabIndex: IDL set to -2147483648 should not throw 
 PASS param.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL param.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL param.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS param.name: typeof IDL attribute 
 PASS param.name: IDL get with DOM attribute unset 
 PASS param.name: setAttribute() to "" followed by getAttribute() 
@@ -8888,7 +8888,7 @@ PASS video.tabIndex: setAttribute() to 1 followed by IDL get
 PASS video.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL video.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS video.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL video.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL video.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS video.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS video.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS video.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -8928,7 +8928,7 @@ PASS video.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL video.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS video.tabIndex: IDL set to -2147483648 should not throw 
 PASS video.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL video.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL video.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS video.src: typeof IDL attribute 
 PASS video.src: IDL get with DOM attribute unset 
 PASS video.src: setAttribute() to "" followed by getAttribute() 
@@ -9656,7 +9656,7 @@ PASS video.width: setAttribute() to "1" followed by IDL get
 PASS video.width: setAttribute() to "\t7" followed by getAttribute() 
 PASS video.width: setAttribute() to "\t7" followed by IDL get 
 PASS video.width: setAttribute() to "\v7" followed by getAttribute() 
-FAIL video.width: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to "\v7" followed by IDL get 
 PASS video.width: setAttribute() to "\f7" followed by getAttribute() 
 PASS video.width: setAttribute() to "\f7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
@@ -9670,39 +9670,39 @@ PASS video.width: setAttribute() to "\n7" followed by IDL get
 PASS video.width: setAttribute() to "\r7" followed by getAttribute() 
 PASS video.width: setAttribute() to "\r7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
 PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to "᠎7" followed by getAttribute() 
 PASS video.width: setAttribute() to "᠎7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.width: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to " 7" followed by getAttribute() 
 PASS video.width: setAttribute() to " 7" followed by IDL get 
 PASS video.width: setAttribute() to "　7" followed by getAttribute() 
-FAIL video.width: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.width: setAttribute() to "　7" followed by IDL get 
 PASS video.width: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS video.width: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS video.width: setAttribute() to undefined followed by getAttribute() 
@@ -9785,7 +9785,7 @@ PASS video.height: setAttribute() to "1" followed by IDL get
 PASS video.height: setAttribute() to "\t7" followed by getAttribute() 
 PASS video.height: setAttribute() to "\t7" followed by IDL get 
 PASS video.height: setAttribute() to "\v7" followed by getAttribute() 
-FAIL video.height: setAttribute() to "\v7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to "\v7" followed by IDL get 
 PASS video.height: setAttribute() to "\f7" followed by getAttribute() 
 PASS video.height: setAttribute() to "\f7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
@@ -9799,39 +9799,39 @@ PASS video.height: setAttribute() to "\n7" followed by IDL get
 PASS video.height: setAttribute() to "\r7" followed by getAttribute() 
 PASS video.height: setAttribute() to "\r7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
 PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to "᠎7" followed by getAttribute() 
 PASS video.height: setAttribute() to "᠎7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
-FAIL video.height: setAttribute() to " 7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to " 7" followed by getAttribute() 
 PASS video.height: setAttribute() to " 7" followed by IDL get 
 PASS video.height: setAttribute() to "　7" followed by getAttribute() 
-FAIL video.height: setAttribute() to "　7" followed by IDL get assert_equals: expected 0 but got 7
+PASS video.height: setAttribute() to "　7" followed by IDL get 
 PASS video.height: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS video.height: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS video.height: setAttribute() to undefined followed by getAttribute() 
@@ -10690,7 +10690,7 @@ PASS audio.tabIndex: setAttribute() to 1 followed by IDL get
 PASS audio.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL audio.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS audio.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL audio.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL audio.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS audio.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS audio.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS audio.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -10730,7 +10730,7 @@ PASS audio.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL audio.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS audio.tabIndex: IDL set to -2147483648 should not throw 
 PASS audio.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL audio.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL audio.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS audio.src: typeof IDL attribute 
 PASS audio.src: IDL get with DOM attribute unset 
 PASS audio.src: setAttribute() to "" followed by getAttribute() 
@@ -12142,7 +12142,7 @@ PASS source.tabIndex: setAttribute() to 1 followed by IDL get
 PASS source.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL source.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS source.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL source.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL source.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS source.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS source.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS source.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -12182,7 +12182,7 @@ PASS source.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL source.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS source.tabIndex: IDL set to -2147483648 should not throw 
 PASS source.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL source.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL source.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS source.src: typeof IDL attribute 
 PASS source.src: IDL get with DOM attribute unset 
 PASS source.src: setAttribute() to "" followed by getAttribute() 
@@ -13150,7 +13150,7 @@ PASS track.tabIndex: setAttribute() to 1 followed by IDL get
 PASS track.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL track.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS track.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL track.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL track.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS track.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS track.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS track.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -13190,7 +13190,7 @@ PASS track.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL track.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS track.tabIndex: IDL set to -2147483648 should not throw 
 PASS track.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL track.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL track.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS track.kind: typeof IDL attribute 
 FAIL track.kind: IDL get with DOM attribute unset assert_equals: expected "captions" but got "subtitles"
 PASS track.kind: setAttribute() to "" followed by getAttribute() 
@@ -14438,7 +14438,7 @@ PASS canvas.tabIndex: setAttribute() to 1 followed by IDL get
 PASS canvas.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL canvas.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS canvas.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL canvas.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL canvas.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS canvas.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS canvas.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS canvas.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -14478,7 +14478,7 @@ PASS canvas.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL canvas.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS canvas.tabIndex: IDL set to -2147483648 should not throw 
 PASS canvas.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL canvas.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL canvas.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS canvas.width: typeof IDL attribute 
 PASS canvas.width: IDL get with DOM attribute unset 
 PASS canvas.width: setAttribute() to -2147483649 followed by getAttribute() 
@@ -15448,7 +15448,7 @@ PASS map.tabIndex: setAttribute() to 1 followed by IDL get
 PASS map.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL map.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS map.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL map.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL map.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS map.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS map.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS map.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -15488,7 +15488,7 @@ PASS map.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL map.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS map.tabIndex: IDL set to -2147483648 should not throw 
 PASS map.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL map.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL map.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS map.name: typeof IDL attribute 
 PASS map.name: IDL get with DOM attribute unset 
 PASS map.name: setAttribute() to "" followed by getAttribute() 
@@ -16287,7 +16287,7 @@ PASS area.tabIndex: setAttribute() to 1 followed by IDL get
 PASS area.tabIndex: setAttribute() to 2147483647 followed by getAttribute() 
 FAIL area.tabIndex: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS area.tabIndex: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL area.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL area.tabIndex: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS area.tabIndex: setAttribute() to "-1" followed by getAttribute() 
 PASS area.tabIndex: setAttribute() to "-1" followed by IDL get 
 PASS area.tabIndex: setAttribute() to "-0" followed by getAttribute() 
@@ -16327,7 +16327,7 @@ PASS area.tabIndex: IDL set to 2147483647 followed by getAttribute()
 FAIL area.tabIndex: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 32767
 PASS area.tabIndex: IDL set to -2147483648 should not throw 
 PASS area.tabIndex: IDL set to -2147483648 followed by getAttribute() 
-FAIL area.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got 32767
+FAIL area.tabIndex: IDL set to -2147483648 followed by IDL get assert_equals: expected -2147483648 but got -32768
 PASS area.alt: typeof IDL attribute 
 PASS area.alt: IDL get with DOM attribute unset 
 PASS area.alt: setAttribute() to "" followed by getAttribute() 

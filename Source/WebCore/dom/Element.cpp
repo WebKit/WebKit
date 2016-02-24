@@ -2765,7 +2765,9 @@ URL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
 
 int Element::getIntegralAttribute(const QualifiedName& attributeName) const
 {
-    return getAttribute(attributeName).string().toInt();
+    int value = 0;
+    parseHTMLInteger(getAttribute(attributeName), value);
+    return value;
 }
 
 void Element::setIntegralAttribute(const QualifiedName& attributeName, int value)
@@ -2775,7 +2777,9 @@ void Element::setIntegralAttribute(const QualifiedName& attributeName, int value
 
 unsigned Element::getUnsignedIntegralAttribute(const QualifiedName& attributeName) const
 {
-    return getAttribute(attributeName).string().toUInt();
+    unsigned value = 0;
+    parseHTMLNonNegativeInteger(getAttribute(attributeName), value);
+    return value;
 }
 
 void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value)
