@@ -122,6 +122,14 @@ public:
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
     bool isClassContext() const { return m_isClassContext; }
+    ArrowFunctionCodeFeatures arrowFunctionCodeFeatures() const { return m_arrowFunctionCodeFeatures; }
+    
+    bool doAnyInnerArrowFunctionsUseArguments() { return m_arrowFunctionCodeFeatures & ArgumentsArrowFunctionFeature; }
+    bool doAnyInnerArrowFunctionsUseSuperCall() { return m_arrowFunctionCodeFeatures & SuperCallArrowFunctionFeature; }
+    bool doAnyInnerArrowFunctionsUseSuperProperty() { return m_arrowFunctionCodeFeatures & SuperPropertyArrowFunctionFeature; }
+    bool doAnyInnerArrowFunctionsUseEval() { return m_arrowFunctionCodeFeatures & EvalArrowFunctionFeature; }
+    bool doAnyInnerArrowFunctionsUseThis() { return m_arrowFunctionCodeFeatures & ThisArrowFunctionFeature; }
+    bool doAnyInnerArrowFunctionsUseNewTarget() { return m_arrowFunctionCodeFeatures & NewTargetArrowFunctionFeature; }
 
     void addExpressionInfo(unsigned instructionOffset, int divot,
         int startOffset, int endOffset, unsigned line, unsigned column);
@@ -391,7 +399,8 @@ private:
     unsigned m_firstLine;
     unsigned m_lineCount;
     unsigned m_endColumn;
-
+    
+    ArrowFunctionCodeFeatures m_arrowFunctionCodeFeatures;
     SourceParseMode m_parseMode;
     CodeFeatures m_features;
     CodeType m_codeType;

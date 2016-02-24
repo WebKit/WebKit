@@ -44,6 +44,7 @@ struct SourceProviderCacheItemCreationParameters {
     bool needsFullActivation;
     bool usesEval;
     bool strictMode;
+    ArrowFunctionCodeFeatures innerArrowFunctionFeatures;
     Vector<RefPtr<UniquedStringImpl>> usedVariables;
     Vector<RefPtr<UniquedStringImpl>> writtenVariables;
     bool isBodyArrowExpression { false };
@@ -87,6 +88,8 @@ public:
     bool usesEval : 1;
 
     bool strictMode : 1;
+    
+    ArrowFunctionCodeFeatures innerArrowFunctionFeatures;
 
     unsigned lastTockenLineStartOffset;
     unsigned usedVariablesCount;
@@ -127,6 +130,7 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , parameterCount(parameters.parameterCount)
     , usesEval(parameters.usesEval)
     , strictMode(parameters.strictMode)
+    , innerArrowFunctionFeatures(parameters.innerArrowFunctionFeatures)
     , lastTockenLineStartOffset(parameters.lastTockenLineStartOffset)
     , usedVariablesCount(parameters.usedVariables.size())
     , writtenVariablesCount(parameters.writtenVariables.size())

@@ -146,7 +146,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext())
+    if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext() && generator.isThisUsedInInnerArrowFunction())
         generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
 
     if (m_shouldAlwaysEmitTDZCheck || generator.constructorKind() == ConstructorKind::Derived || generator.isDerivedConstructorContext())
@@ -723,7 +723,7 @@ RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, Reg
     //       eval("this.id = 'B'");
     //    }
     // }
-    if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext())
+    if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext() && generator.isThisUsedInInnerArrowFunction())
         generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
 
     Variable var = generator.variable(generator.propertyNames().eval);
@@ -762,7 +762,7 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
         bool isConstructorKindDerived = generator.constructorKind() == ConstructorKind::Derived;
         if (generator.isDerivedConstructorContext() || (isConstructorKindDerived && generator.needsToUpdateArrowFunctionContext()))
             generator.emitPutThisToArrowFunctionContextScope();
-        
+
         return ret;
     }
     generator.emitLoad(callArguments.thisRegister(), jsUndefined());
@@ -3138,7 +3138,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
         // If there is no return we must automatically insert one.
         if (!returnNode) {
-            if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext())
+            if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext() && generator.isThisUsedInInnerArrowFunction())
                 generator.emitLoadThisFromArrowFunctionLexicalEnvironment(); // Arrow function can invoke 'super' in constructor and before leave constructor we need load 'this' from lexical arrow function environment
             
             RegisterID* r0 = generator.isConstructor() ? generator.thisRegister() : generator.emitLoad(0, jsUndefined());

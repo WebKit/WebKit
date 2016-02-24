@@ -161,6 +161,17 @@ const CodeFeatures ArrowFunctionContextFeature = 1 << 9;
 
 const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ModifiedParameterFeature | ArrowFunctionFeature | ArrowFunctionContextFeature;
 
+typedef uint8_t ArrowFunctionCodeFeatures;
+    
+const ArrowFunctionCodeFeatures NoArrowFunctionFeatures =                0;
+const ArrowFunctionCodeFeatures EvalArrowFunctionFeature =          1 << 0;
+const ArrowFunctionCodeFeatures ArgumentsArrowFunctionFeature =     1 << 1;
+const ArrowFunctionCodeFeatures ThisArrowFunctionFeature =          1 << 2;
+const ArrowFunctionCodeFeatures SuperCallArrowFunctionFeature =     1 << 3;
+const ArrowFunctionCodeFeatures SuperPropertyArrowFunctionFeature = 1 << 4;
+const ArrowFunctionCodeFeatures NewTargetArrowFunctionFeature =     1 << 5;
+    
+const ArrowFunctionCodeFeatures AllArrowFunctionCodeFeatures = EvalArrowFunctionFeature | ArgumentsArrowFunctionFeature | ThisArrowFunctionFeature | SuperCallArrowFunctionFeature | SuperPropertyArrowFunctionFeature | NewTargetArrowFunctionFeature;
 } // namespace JSC
 
 #endif // ParserModes_h
