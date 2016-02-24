@@ -1,5 +1,19 @@
 2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Remove IteratorKey and IteratorValue declarations from JSXX class declarations.
+        https://bugs.webkit.org/show_bug.cgi?id=154577
+
+        Reviewed by Myles C. Maxfield.
+
+        No change of behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Deleted declaration of IteratorKey and IteratorValue.
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::createStructure): Rebasing of binding test expectation.
+
+2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Fetch API] Refactor FetchHeaders initialization with iterators
         https://bugs.webkit.org/show_bug.cgi?id=154537
 
