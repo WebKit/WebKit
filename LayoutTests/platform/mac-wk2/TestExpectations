@@ -499,6 +499,7 @@ storage/indexeddb/keypath-basics.html [ Skip ]
 
 webkit.org/b/153849 [ Yosemite Release ] imported/w3c/indexeddb/idbcursor-direction-index-keyrange.htm [ Skip ]
 webkit.org/b/153848 [ Yosemite Release ] imported/w3c/indexeddb/idbcursor-advance-invalid.htm [ Skip ]
+webkit.org/b/154618 [ Yosemite Release ] imported/w3c/indexeddb/idbcursor-advance.htm [ Pass Timeout ]
 
 ### END OF (5) IndexedDB related failures
 ########################################
