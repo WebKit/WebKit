@@ -1,3 +1,19 @@
+2016-02-24  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Remove unused Profile.png images
+
+        https://bugs.webkit.org/show_bug.cgi?id=154647
+        rdar://problem/24820825
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Images/Profile.png: Removed.
+        * UserInterface/Images/Profile@2x.png: Removed.
+        * UserInterface/Images/gtk/Profile.png: Removed.
+        * UserInterface/Images/gtk/Profile@2x.png: Removed.
+        * UserInterface/Views/TimelineIcons.css:
+        (.profile-icon .icon): Deleted.
+
 2016-02-24  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TimelineViews should use the recording's end time when entire ruler range is selected

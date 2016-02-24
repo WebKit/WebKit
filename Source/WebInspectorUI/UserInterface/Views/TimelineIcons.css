@@ -81,10 +81,6 @@ body:not(.mac-platform, .windows-platform) .stopwatch-icon .icon {
     content: -webkit-image-set(url(../Images/Stopwatch.png) 1x, url(../Images/Stopwatch@2x.png) 2x);
 }
 
-.profile-icon .icon {
-    content: -webkit-image-set(url(../Images/Profile.png) 1x, url(../Images/Profile@2x.png) 2x);
-}
-
 .style-record .icon {
     content: url(../Images/TimelineRecordStyle.svg);
 }
