@@ -1,3 +1,28 @@
+2016-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use more references in FocusNavigationScope
+        https://bugs.webkit.org/show_bug.cgi?id=154637
+
+        Reviewed by Chris Dumez.
+
+        Use references in various functions of FocusNavigationScope as well as m_treeScope.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::FocusNavigationScope): Takes TreeScope& instead of TreeScope*.
+        (WebCore::FocusNavigationScope::rootNode): Returns ContainerNode& instead of ContainerNode*.
+        (WebCore::FocusNavigationScope::owner):
+        (WebCore::FocusNavigationScope::scopeOf): Takes Node& instead of Node*. Renamed from focusNavigationScopeOf.
+        (WebCore::FocusNavigationScope::scopeOwnedByShadowHost): Ditto. Renamed from focusNavigationScopeOwnedByShadowHost.
+        (WebCore::FocusNavigationScope::scopeOwnedByIFrame): Ditto. Renamed from focusNavigationScopeOwnedByIFrame.
+        (WebCore::FocusController::findFocusableElementDescendingDownIntoFrameDocument):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::FocusController::findFocusableElementAcrossFocusScope): Define currentScope inside the loop now that
+        the copy constructor of FocusNavigationScope no longer exists (since m_treeScope is a reference).
+        (WebCore::FocusController::findFocusableElementRecursively):
+        (WebCore::nextElementWithGreaterTabIndex):
+        (WebCore::FocusController::nextFocusableElement):
+        (WebCore::FocusController::previousFocusableElement):
+
 2016-02-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add MediaEndpoint interface (WebRTC backend abstraction)
