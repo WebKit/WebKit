@@ -64,8 +64,10 @@ public:
 #endif
 
 private:
+#if !UCONFIG_NO_FORMATTING
     String decimalSymbol(UNumberFormatSymbol);
     String decimalTextAttribute(UNumberFormatTextAttribute);
+#endif
     virtual void initializeLocaleData() override;
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
@@ -77,8 +79,11 @@ private:
 #endif
 
     CString m_locale;
+
+#if !UCONFIG_NO_FORMATTING
     UNumberFormat* m_numberFormat;
     bool m_didCreateDecimalFormat;
+#endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     std::unique_ptr<Vector<String>> m_monthLabels;

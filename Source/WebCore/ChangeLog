@@ -1,3 +1,20 @@
+2016-02-23  Olivier Blin  <olivier.blin@softathome.com>
+
+        Support building LocaleICU with light ICU (UCONFIG_NO_FORMATTING)
+        https://bugs.webkit.org/show_bug.cgi?id=154484
+
+        Reviewed by Darin Adler.
+
+        In this mode, this makes LocaleICU with UCONFIG_NO_FORMATTING
+        essentially the same as LocaleNone, but allows to keep using ICU for
+        other features.
+
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::LocaleICU):
+        (WebCore::LocaleICU::~LocaleICU):
+        (WebCore::LocaleICU::initializeLocaleData):
+        * platform/text/LocaleICU.h:
+
 2016-02-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove dead FontLoader code
