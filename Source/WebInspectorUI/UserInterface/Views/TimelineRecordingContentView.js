@@ -336,8 +336,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
             this._timelineSidebarPanel.contentTreeOutlineLabel = timelineView.navigationSidebarTreeOutlineLabel;
             this._timelineSidebarPanel.contentTreeOutlineScopeBar = timelineView.navigationSidebarTreeOutlineScopeBar;
 
-            timelineView.startTime = this._timelineOverview.selectionStartTime;
-            timelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+            this._updateTimelineViewSelection(timelineView);
             timelineView.currentTime = this._currentTime;
         }
 
@@ -418,6 +417,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._timelineOverview.currentTime = currentTime;
         if (this.currentTimelineView)
             this.currentTimelineView.currentTime = currentTime;
+
+        if (this._timelineOverview.timelineRuler.entireRangeSelected)
+            this._updateTimelineViewSelection(this._overviewTimelineView);
 
         this._timelineSidebarPanel.updateFilter();
 
@@ -622,8 +624,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     _timeRangeSelectionChanged(event)
     {
         if (this.currentTimelineView) {
-            this.currentTimelineView.startTime = this._timelineOverview.selectionStartTime;
-            this.currentTimelineView.endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+            this._updateTimelineViewSelection(this.currentTimelineView);
 
             if (this.currentTimelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
                 this._updateFrameSelection();
@@ -676,6 +677,25 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         let startIndex = this._timelineOverview.selectionStartTime;
         let endIndex = startIndex + this._timelineOverview.selectionDuration - 1;
         this._timelineSidebarPanel.updateFrameSelection(startIndex, endIndex);
+    }
+
+    _updateTimelineViewSelection(timelineView)
+    {
+        let timelineRuler = this._timelineOverview.timelineRuler;
+        let entireRangeSelected = timelineRuler.entireRangeSelected;
+        let endTime = this._timelineOverview.selectionStartTime + this._timelineOverview.selectionDuration;
+
+        if (entireRangeSelected) {
+            // Clamp selection to the end of the recording (with padding), so that OverviewTimelineView
+            // displays an autosized graph without a lot of horizontal white space or tiny graph bars.
+            if (isNaN(this._recording.endTime))
+                endTime = this._currentTime;
+            else
+                endTime = Math.min(endTime, this._recording.endTime + timelineRuler.minimumSelectionDuration);
+        }
+
+        timelineView.startTime = this._timelineOverview.selectionStartTime;
+        timelineView.endTime = endTime;
     }
 };
 

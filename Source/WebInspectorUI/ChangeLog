@@ -1,3 +1,24 @@
+2016-02-24  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TimelineViews should use the recording's end time when entire ruler range is selected
+        https://bugs.webkit.org/show_bug.cgi?id=154644
+        <rdar://problem/24818442>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        Update current timeline view when entire range selected.
+
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        Live-update the OverviewTimelineView during recording when entire range selected.
+        
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineViewSelection):
+        Update timeline view start and end times. When entire range selected, use the recording
+        end time or current time (while capturing).
+
 2016-02-24  Timothy Hatcher  <timothy@apple.com>
 
         Follow up fix for the TimelineRuler "select all" mode to fix zeroTime.
