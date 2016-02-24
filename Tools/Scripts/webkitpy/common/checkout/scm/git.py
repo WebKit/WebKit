@@ -480,6 +480,18 @@ class Git(SCM, SVNRepository):
         return self._run_git(['svn', 'blame', path])
 
     # Git-specific methods:
+    def origin_url(self):
+        return self._run_git(['config', '--get', 'remote.origin.url']).strip()
+
+    def init_submodules(self):
+        return self._run_git(['submodule', 'update', '--init', '--recursive'])
+
+    def submodules_status(self):
+        return self._run_git(['submodule', 'status', '--recursive'])
+
+    def deinit_submodules(self):
+        return self._run_git(['submodule', 'deinit', '-f', '.'])
+
     def _branch_ref_exists(self, branch_ref):
         return self._run_git(['show-ref', '--quiet', '--verify', branch_ref], return_exit_code=True) == 0
 

@@ -1,3 +1,26 @@
+2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C importer should generate all web-platform-tests submodules descriptions
+        https://bugs.webkit.org/show_bug.cgi?id=154587
+
+        Reviewed by Darin Adler.
+
+        Updated submodules description format (removing submodule name as it is the last string of the path really).
+        Added git subroutines.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.origin_url):
+        (Git):
+        (Git.init_submodules):
+        (Git.submodules_status):
+        (Git.deinit_submodules):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer._install_modules): Updated to submodule name removal.
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader._git_submodules_description): Updated to cope with recursive submodules (use of submodule init/deinit).
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_submodules_generation): Reactivated partially this test.
+
 2016-02-23  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Linker errors display mangled names, but no longer should

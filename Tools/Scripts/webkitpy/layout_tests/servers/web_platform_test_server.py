@@ -85,7 +85,9 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
             return
         modules = json.loads(self._filesystem.read_text_file(modules_file_path))
         for module in modules:
-            AutoInstaller(target_dir=self._filesystem.join(self._doc_root, self._filesystem.sep.join(module["path"]))).install(url=module["url"], url_subpath=module["url_subpath"], target_name=module["name"])
+            path = module["path"]
+            name = path.pop()
+            AutoInstaller(target_dir=self._filesystem.join(self._doc_root, self._filesystem.sep.join(path))).install(url=module["url"], url_subpath=module["url_subpath"], target_name=name)
 
     def _copy_webkit_test_files(self):
         _log.debug('Copying WebKit resources files')

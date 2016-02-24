@@ -63,7 +63,7 @@ FAKE_REPOSITORY = {
         "revision": "dd553279c3",
         "paths_to_skip": [],
         "paths_to_import": [],
-        "import_options": []
+        "import_options": ["generate_git_submodules_description"]
     }
 ]
 ''' }
@@ -159,9 +159,9 @@ class TestImporterTest(unittest.TestCase):
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
 
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/resources/csswg-tests-modules.json'))
-        # Disabling git modules json tests since wpt uses a module of modules for its tools, which are not supported yet by the import script.
-        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
-        # self.assertFalse('https://github.com/w3c/testharness.js/archive/db4d391a69877d4a1eaaf51d1725c99a5b8ed84.tar.gz' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
+        # FIXME: Mock-up of git cannot use submodule command, hence the json file is empty, but still it should be created
+        #self.assertTrue('https://github.com/w3c/testharness.js/archive/db4d391a69877d4a1eaaf51d1725c99a5b8ed84.tar.gz' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
 
     def test_tests_directory(self):
         FAKE_FILES = {

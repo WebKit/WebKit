@@ -1,56 +1,75 @@
 [
     {
-        "name": "resources", 
         "path": [
-            "."
+            "resources"
         ], 
-        "url": "https://github.com/w3c/testharness.js/archive/698441212391d5177b2f1806d97c7fd15cc46715.tar.gz",
+        "url": "https://github.com/w3c/testharness.js/archive/698441212391d5177b2f1806d97c7fd15cc46715.tar.gz", 
         "url_subpath": "testharness.js-698441212391d5177b2f1806d97c7fd15cc46715"
     }, 
     {
-        "name": "webidl2",
         "path": [
-            "resources"
-        ],
-        "url": "https://github.com/darobin/webidl2.js/archive/bd216bcd5596d60734450adc938155deab1e1a80.tar.gz",
+            "resources", 
+            "webidl2"
+        ], 
+        "url": "https://github.com/darobin/webidl2.js/archive/bd216bcd5596d60734450adc938155deab1e1a80.tar.gz", 
         "url_subpath": "webidl2.js-bd216bcd5596d60734450adc938155deab1e1a80"
-    },
+    }, 
     {
-        "name": "tools", 
         "path": [
-            "."
+            "resources", 
+            "webidl2", 
+            "test", 
+            "widlproc"
+        ], 
+        "url": "https://github.com/dontcallmedom/widlproc/archive/4ef8dde69c0ba3d0167bccfa2775eea7f0d6c7fe.tar.gz", 
+        "url_subpath": "widlproc-4ef8dde69c0ba3d0167bccfa2775eea7f0d6c7fe"
+    }, 
+    {
+        "path": [
+            "tools"
         ], 
         "url": "https://github.com/w3c/wpt-tools/archive/80bc792988aff1422f43b9e1d5909673eca960a2.tar.gz", 
         "url_subpath": "wpt-tools-80bc792988aff1422f43b9e1d5909673eca960a2"
-    },
+    }, 
     {
-        "name": "html5lib", 
         "path": [
-            "tools"
+            "tools", 
+            "html5lib"
         ], 
         "url": "https://github.com/html5lib/html5lib-python/archive/7cce65bbaa78411f98b8b37eeefc9db03c580097.tar.gz", 
         "url_subpath": "html5lib-python-7cce65bbaa78411f98b8b37eeefc9db03c580097"
     }, 
     {
-        "name": "pywebsocket", 
         "path": [
-            "tools"
+            "tools", 
+            "html5lib", 
+            "html5lib", 
+            "tests", 
+            "testdata"
+        ], 
+        "url": "https://github.com/html5lib/html5lib-tests/archive/a9badff0cd2fe337170769d42ca2df5e96d30f97.tar.gz", 
+        "url_subpath": "html5lib-tests-a9badff0cd2fe337170769d42ca2df5e96d30f97"
+    }, 
+    {
+        "path": [
+            "tools", 
+            "pywebsocket"
         ], 
         "url": "https://github.com/w3c/pywebsocket/archive/8c285d9015121e8c1c40be852439fc03b4a18112.tar.gz", 
         "url_subpath": "pywebsocket-8c285d9015121e8c1c40be852439fc03b4a18112"
     }, 
     {
-        "name": "six", 
         "path": [
-            "tools"
+            "tools", 
+            "six"
         ], 
         "url": "https://github.com/jgraham/six/archive/3b6173c833d217ab0186c355804f5925cbcfca47.tar.gz", 
         "url_subpath": "six-3b6173c833d217ab0186c355804f5925cbcfca47"
-    },
+    }, 
     {
-        "name": "wptserve", 
         "path": [
-            "tools"
+            "tools", 
+            "wptserve"
         ], 
         "url": "https://github.com/w3c/wptserve/archive/b12d799c0be4fab1055df9a1e4dd5e45646b46ea.tar.gz", 
         "url_subpath": "wptserve-b12d799c0be4fab1055df9a1e4dd5e45646b46ea"

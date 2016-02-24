@@ -30,6 +30,6 @@
             "config.default.json",
             "serve.py"
         ],
-        "import_options": []
+        "import_options": ["generate_git_submodules_description"]
     }
 ]

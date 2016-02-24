@@ -1,3 +1,13 @@
+2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C importer should generate all web-platform-tests submodules descriptions
+        https://bugs.webkit.org/show_bug.cgi?id=154587
+
+        Reviewed by Darin Adler.
+
+        * resources/TestRepositories: Reactivated submodules description generation.
+        * resources/web-platform-tests-modules.json: Updated according modified scripts.
+
 2016-02-23  Chris Dumez  <cdumez@apple.com>
 
         [Reflected] IDL attributes of integer types should use HTML rules for parsing integers
