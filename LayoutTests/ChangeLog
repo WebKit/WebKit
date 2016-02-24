@@ -1,5 +1,11 @@
 2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline fast/writing-mode/broken-ideograph-small-caps.html for Mavericks. rdar://problem/24748658
+
+        * platform/mac-mavericks/fast/writing-mode/broken-ideograph-small-caps-expected.txt:
+
+2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline fast/text/small-caps-web-font.html for Mavericks. rdar://problem/24748533
 
         * platform/mac-mavericks/fast/text/small-caps-web-font-expected.png: Added.
