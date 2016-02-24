@@ -494,7 +494,7 @@ namespace JSC {
 
         void emitProfileControlFlow(int);
         
-        RegisterID* emitLoadArrowFunctionLexicalEnvironment(const Identifier&);
+        RegisterID* emitLoadArrowFunctionLexicalEnvironment();
         void emitLoadThisFromArrowFunctionLexicalEnvironment();
         RegisterID* emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
 
@@ -717,13 +717,8 @@ namespace JSC {
         RegisterID* emitGetParentScope(RegisterID* dst, RegisterID* scope);
         void emitPushFunctionNameScope(const Identifier& property, RegisterID* value, bool isCaptured);
         void emitNewFunctionExpressionCommon(RegisterID*, BaseFuncExprNode*);
-        
-        bool isNewTargetUsedInInnerArrowFunction();
-        bool isSuperUsedInInnerArrowFunction();
-        bool isArgumentsUsedInInnerArrowFunction();
 
     public:
-        bool isThisUsedInInnerArrowFunction();
         void pushLexicalScope(VariableEnvironmentNode*, TDZCheckOptimization, NestedScopeType = NestedScopeType::IsNotNested, RegisterID** constantSymbolTableResult = nullptr);
         void popLexicalScope(VariableEnvironmentNode*);
         void prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode*, RegisterID* loopSymbolTable);

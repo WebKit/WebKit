@@ -158,7 +158,7 @@ private:
 };
 
 struct Scope {
-    Scope(const VM* vm, bool isFunction, bool isGenerator, bool strictMode, bool isArrowFunction)
+    Scope(const VM* vm, bool isFunction, bool isGenerator, bool strictMode)
         : m_vm(vm)
         , m_shadowsArguments(false)
         , m_usesEval(false)
@@ -170,8 +170,7 @@ struct Scope {
         , m_strictMode(strictMode)
         , m_isFunction(isFunction)
         , m_isGenerator(isGenerator)
-        , m_isArrowFunction(isArrowFunction)
-        , m_isArrowFunctionBoundary(false)
+        , m_isArrowFunction(false)
         , m_isLexicalScope(false)
         , m_isFunctionBoundary(false)
         , m_isValidStrictMode(true)
@@ -180,7 +179,6 @@ struct Scope {
         , m_expectedSuperBinding(static_cast<unsigned>(SuperBinding::NotNeeded))
         , m_loopDepth(0)
         , m_switchDepth(0)
-        , m_innerArrowFunctionFeatures(0)
     {
     }
 
@@ -197,7 +195,6 @@ struct Scope {
         , m_isFunction(rhs.m_isFunction)
         , m_isGenerator(rhs.m_isGenerator)
         , m_isArrowFunction(rhs.m_isArrowFunction)
-        , m_isArrowFunctionBoundary(rhs.m_isArrowFunctionBoundary)
         , m_isLexicalScope(rhs.m_isLexicalScope)
         , m_isFunctionBoundary(rhs.m_isFunctionBoundary)
         , m_isValidStrictMode(rhs.m_isValidStrictMode)
@@ -206,7 +203,6 @@ struct Scope {
         , m_expectedSuperBinding(rhs.m_expectedSuperBinding)
         , m_loopDepth(rhs.m_loopDepth)
         , m_switchDepth(rhs.m_switchDepth)
-        , m_innerArrowFunctionFeatures(rhs.m_innerArrowFunctionFeatures)
         , m_moduleScopeData(rhs.m_moduleScopeData)
     {
         if (rhs.m_labels) {
@@ -469,7 +465,6 @@ struct Scope {
 
     void setNeedsFullActivation() { m_needsFullActivation = true; }
     bool needsFullActivation() const { return m_needsFullActivation; }
-    bool isArrowFunctionBoundary() { return m_isArrowFunctionBoundary; }
     bool isArrowFunction() { return m_isArrowFunction; }
 
     bool hasDirectSuper() { return m_hasDirectSuper; }
@@ -478,31 +473,11 @@ struct Scope {
     bool needsSuperBinding() { return m_needsSuperBinding; }
     void setNeedsSuperBinding() { m_needsSuperBinding = true; }
     
-    ArrowFunctionCodeFeatures innerArrowFunctionFeatures() { return m_innerArrowFunctionFeatures; }
-    
     void setExpectedSuperBinding(SuperBinding superBinding) { m_expectedSuperBinding = static_cast<unsigned>(superBinding); }
     SuperBinding expectedSuperBinding() const { return static_cast<SuperBinding>(m_expectedSuperBinding); }
     void setConstructorKind(ConstructorKind constructorKind) { m_constructorKind = static_cast<unsigned>(constructorKind); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
 
-    void setInnerArrowFunctionUseSuperCall() { m_innerArrowFunctionFeatures |= SuperCallArrowFunctionFeature; }
-    void setInnerArrowFunctionUseSuperProperty() { m_innerArrowFunctionFeatures |= SuperPropertyArrowFunctionFeature; }
-    void setInnerArrowFunctionUseEval() { m_innerArrowFunctionFeatures |= EvalArrowFunctionFeature; }
-    void setInnerArrowFunctionUseThis() { m_innerArrowFunctionFeatures |= ThisArrowFunctionFeature; }
-    void setInnerArrowFunctionUseNewTarget() { m_innerArrowFunctionFeatures |= NewTargetArrowFunctionFeature; }
-    void setInnerArrowFunctionUseArguments() { m_innerArrowFunctionFeatures |= ArgumentsArrowFunctionFeature; }
-
-    void setInnerArrowFunctionUseEvalAndUseArgumentsIfNeeded()
-    {
-        ASSERT(m_isArrowFunction);
-
-        if (m_usesEval)
-            setInnerArrowFunctionUseEval();
-        
-        if (m_usedVariables.contains(m_vm->propertyNames->arguments.impl()))
-            setInnerArrowFunctionUseArguments();
-    }
-    
     void collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
     {
         if (nestedScope->m_usesEval)
@@ -514,7 +489,7 @@ struct Scope {
                     continue;
 
                 // "arguments" reference should be resolved at function boudary.
-                if (nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && impl == m_vm->propertyNames->arguments.impl() && !nestedScope->isArrowFunctionBoundary())
+                if (nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && impl == m_vm->propertyNames->arguments.impl() && !nestedScope->isArrowFunction())
                     continue;
 
                 m_usedVariables.add(impl);
@@ -541,11 +516,6 @@ struct Scope {
                 m_writtenVariables.add(*ptr);
             }
         }
-    }
-    
-    void mergeInnerArrowFunctionFeatures(ArrowFunctionCodeFeatures arrowFunctionCodeFeatures)
-    {
-        m_innerArrowFunctionFeatures = m_innerArrowFunctionFeatures | arrowFunctionCodeFeatures;
     }
     
     void getCapturedVars(IdentifierSet& capturedVariables, bool& modifiedParameter, bool& modifiedArguments)
@@ -598,7 +568,6 @@ struct Scope {
         parameters.usesEval = m_usesEval;
         parameters.strictMode = m_strictMode;
         parameters.needsFullActivation = m_needsFullActivation;
-        parameters.innerArrowFunctionFeatures = m_innerArrowFunctionFeatures;
         copyCapturedVariablesToVector(m_writtenVariables, parameters.writtenVariables);
         copyCapturedVariablesToVector(m_usedVariables, parameters.usedVariables);
     }
@@ -608,7 +577,6 @@ struct Scope {
         ASSERT(m_isFunction);
         m_usesEval = info->usesEval;
         m_strictMode = info->strictMode;
-        m_innerArrowFunctionFeatures = info->innerArrowFunctionFeatures;
         m_needsFullActivation = info->needsFullActivation;
         for (unsigned i = 0; i < info->usedVariablesCount; ++i)
             m_usedVariables.add(info->usedVariables()[i]);
@@ -624,8 +592,6 @@ private:
         m_hasArguments = true;
         setIsLexicalScope();
         m_isGenerator = false;
-        m_isArrowFunctionBoundary = false;
-        m_isArrowFunction = false;
     }
 
     void setIsGeneratorFunction()
@@ -644,7 +610,6 @@ private:
     void setIsArrowFunction()
     {
         setIsFunction();
-        m_isArrowFunctionBoundary = true;
         m_isArrowFunction = true;
     }
 
@@ -665,7 +630,6 @@ private:
     bool m_isFunction : 1;
     bool m_isGenerator : 1;
     bool m_isArrowFunction : 1;
-    bool m_isArrowFunctionBoundary : 1;
     bool m_isLexicalScope : 1;
     bool m_isFunctionBoundary : 1;
     bool m_isValidStrictMode : 1;
@@ -674,7 +638,6 @@ private:
     unsigned m_expectedSuperBinding : 2;
     int m_loopDepth;
     int m_switchDepth;
-    ArrowFunctionCodeFeatures m_innerArrowFunctionFeatures;
 
     typedef Vector<ScopeLabelInfo, 2> LabelStack;
     std::unique_ptr<LabelStack> m_labels;
@@ -933,8 +896,9 @@ private:
     {
         unsigned i = m_scopeStack.size() - 1;
         ASSERT(i < m_scopeStack.size() && m_scopeStack.size());
-        while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isArrowFunctionBoundary()))
+        while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isArrowFunction()))
             i--;
+        // When reaching the top level scope (it can be non function scope), we return it.
         return ScopeRef(&m_scopeStack, i);
     }
     
@@ -943,14 +907,12 @@ private:
         bool isFunction = false;
         bool isStrict = false;
         bool isGenerator = false;
-        bool isArrowFunction = false;
         if (!m_scopeStack.isEmpty()) {
             isStrict = m_scopeStack.last().strictMode();
             isFunction = m_scopeStack.last().isFunction();
             isGenerator = m_scopeStack.last().isGenerator();
-            isArrowFunction = m_scopeStack.last().isArrowFunction();
         }
-        m_scopeStack.append(Scope(m_vm, isFunction, isGenerator, isStrict, isArrowFunction));
+        m_scopeStack.append(Scope(m_vm, isFunction, isGenerator, isStrict));
         return currentScope();
     }
     
@@ -959,13 +921,6 @@ private:
         ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
         ASSERT(m_scopeStack.size() > 1);
         m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackClosedVariables);
-        
-        if (m_scopeStack.last().isArrowFunction())
-            m_scopeStack.last().setInnerArrowFunctionUseEvalAndUseArgumentsIfNeeded();
-        
-        if (!(m_scopeStack.last().isFunctionBoundary() && !m_scopeStack.last().isArrowFunctionBoundary()))
-            m_scopeStack[m_scopeStack.size() - 2].mergeInnerArrowFunctionFeatures(m_scopeStack.last().innerArrowFunctionFeatures());
-
         if (!m_scopeStack.last().isFunctionBoundary() && m_scopeStack.last().needsFullActivation())
             m_scopeStack[m_scopeStack.size() - 2].setNeedsFullActivation();
         m_scopeStack.removeLast();

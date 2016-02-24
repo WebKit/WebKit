@@ -243,7 +243,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     bool shouldCaptureSomeOfTheThings = m_shouldEmitDebugHooks || functionNode->needsActivation() || containsArrowOrEvalButNotInArrowBlock;
 
     bool shouldCaptureAllOfTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
-    bool needsArguments = (functionNode->usesArguments() || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction()));
+    bool needsArguments = (functionNode->usesArguments() || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction()));
 
     // Generator never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
     if (parseMode == SourceParseMode::GeneratorBodyMode)
@@ -572,7 +572,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // Loading |this| inside an arrow function must be done after initializeDefaultParameterValuesAndSetupFunctionScopeStack()
     // because that function sets up the SymbolTable stack and emitLoadThisFromArrowFunctionLexicalEnvironment()
     // consults the SymbolTable stack
-    if (SourceParseMode::ArrowFunctionMode == parseMode && (functionNode->usesThis() || isThisUsedInInnerArrowFunction()))
+    if (SourceParseMode::ArrowFunctionMode == parseMode && (functionNode->usesThis() || isDerivedClassContext() || isDerivedConstructorContext()))
         emitLoadThisFromArrowFunctionLexicalEnvironment();
     
     if (needsToUpdateArrowFunctionContext() && !codeBlock->isArrowFunction()) {
@@ -888,18 +888,16 @@ void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable*
         
         if (!m_codeBlock->isArrowFunction()) {
             ScopeOffset offset;
-            
-            if (isThisUsedInInnerArrowFunction()) {
-                offset = symbolTable->takeNextScopeOffset();
-                symbolTable->set(propertyNames().thisIdentifier.impl(), SymbolTableEntry(VarOffset(offset)));
-            }
 
-            if (m_codeType == FunctionCode && isNewTargetUsedInInnerArrowFunction()) {
+            offset = symbolTable->takeNextScopeOffset();
+            symbolTable->set(propertyNames().thisIdentifier.impl(), SymbolTableEntry(VarOffset(offset)));
+
+            if (m_codeType == FunctionCode) {
                 offset = symbolTable->takeNextScopeOffset();
                 symbolTable->set(propertyNames().newTargetLocalPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
             }
             
-            if (isConstructor() && constructorKind() == ConstructorKind::Derived && isSuperUsedInInnerArrowFunction()) {
+            if (isConstructor() && constructorKind() == ConstructorKind::Derived) {
                 offset = symbolTable->takeNextScopeOffset();
                 symbolTable->set(propertyNames().derivedConstructorPrivateName.impl(), SymbolTableEntry(VarOffset(offset)));
             }
@@ -909,33 +907,28 @@ void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable*
     }
 
     VariableEnvironment environment;
-
-    if (isThisUsedInInnerArrowFunction()) {
-        auto addResult = environment.add(propertyNames().thisIdentifier);
-        addResult.iterator->value.setIsCaptured();
-        addResult.iterator->value.setIsConst();
-    }
+    auto addResult = environment.add(propertyNames().thisIdentifier);
+    addResult.iterator->value.setIsCaptured();
+    addResult.iterator->value.setIsConst();
     
-    if (m_codeType == FunctionCode && isNewTargetUsedInInnerArrowFunction()) {
+    if (m_codeType == FunctionCode)  {
         auto addTarget = environment.add(propertyNames().newTargetLocalPrivateName);
         addTarget.iterator->value.setIsCaptured();
         addTarget.iterator->value.setIsLet();
     }
 
-    if (isConstructor() && constructorKind() == ConstructorKind::Derived && isSuperUsedInInnerArrowFunction()) {
+    if (isConstructor() && constructorKind() == ConstructorKind::Derived) {
         auto derivedConstructor = environment.add(propertyNames().derivedConstructorPrivateName);
         derivedConstructor.iterator->value.setIsCaptured();
         derivedConstructor.iterator->value.setIsLet();
     }
 
-    if (environment.size() > 0) {
-        size_t size = m_symbolTableStack.size();
-        pushLexicalScopeInternal(environment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
+    size_t size = m_symbolTableStack.size();
+    pushLexicalScopeInternal(environment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
 
-        ASSERT_UNUSED(size, m_symbolTableStack.size() == size + 1);
+    ASSERT_UNUSED(size, m_symbolTableStack.size() == size + 1);
 
-        m_arrowFunctionContextLexicalEnvironmentRegister = m_symbolTableStack.last().m_scope;
-    }
+    m_arrowFunctionContextLexicalEnvironmentRegister = m_symbolTableStack.last().m_scope;
 }
 
 RegisterID* BytecodeGenerator::initializeNextParameter()
@@ -4007,16 +4000,16 @@ void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
     m_forInContextStack.removeLast();
 }
 
-RegisterID* BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment(const Identifier& identifier)
+RegisterID* BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment()
 {
     ASSERT(m_codeBlock->isArrowFunction() || m_codeBlock->isArrowFunctionContext() || constructorKind() == ConstructorKind::Derived);
 
-    return emitResolveScope(nullptr, variable(identifier, ThisResolutionType::Scoped));
+    return emitResolveScope(nullptr, variable(propertyNames().thisIdentifier, ThisResolutionType::Scoped));
 }
 
 void BytecodeGenerator::emitLoadThisFromArrowFunctionLexicalEnvironment()
 {
-    emitGetFromScope(thisRegister(), emitLoadArrowFunctionLexicalEnvironment(propertyNames().thisIdentifier), variable(propertyNames().thisIdentifier, ThisResolutionType::Scoped), DoNotThrowIfNotFound);
+    emitGetFromScope(thisRegister(), emitLoadArrowFunctionLexicalEnvironment(), variable(propertyNames().thisIdentifier, ThisResolutionType::Scoped), DoNotThrowIfNotFound);
 }
     
 RegisterID* BytecodeGenerator::emitLoadNewTargetFromArrowFunctionLexicalEnvironment()
@@ -4024,7 +4017,7 @@ RegisterID* BytecodeGenerator::emitLoadNewTargetFromArrowFunctionLexicalEnvironm
     m_isNewTargetLoadedInArrowFunction = true;
 
     Variable newTargetVar = variable(propertyNames().newTargetLocalPrivateName);
-    emitMove(m_newTargetRegister, emitGetFromScope(newTemporary(), emitLoadArrowFunctionLexicalEnvironment(propertyNames().newTargetLocalPrivateName), newTargetVar, ThrowIfNotFound));
+    emitMove(m_newTargetRegister, emitGetFromScope(newTemporary(), emitLoadArrowFunctionLexicalEnvironment(), newTargetVar, ThrowIfNotFound));
     
     return m_newTargetRegister;
 }
@@ -4032,61 +4025,35 @@ RegisterID* BytecodeGenerator::emitLoadNewTargetFromArrowFunctionLexicalEnvironm
 RegisterID* BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment()
 {
     Variable protoScopeVar = variable(propertyNames().derivedConstructorPrivateName);
-    return emitGetFromScope(newTemporary(), emitLoadArrowFunctionLexicalEnvironment(propertyNames().derivedConstructorPrivateName), protoScopeVar, ThrowIfNotFound);
+    return emitGetFromScope(newTemporary(), emitLoadArrowFunctionLexicalEnvironment(), protoScopeVar, ThrowIfNotFound);
 }
     
-bool BytecodeGenerator::isThisUsedInInnerArrowFunction() 
-{
-    return m_codeBlock->doAnyInnerArrowFunctionsUseThis() || m_codeBlock->doAnyInnerArrowFunctionsUseSuperProperty() || m_codeBlock->doAnyInnerArrowFunctionsUseSuperCall() || m_codeBlock->doAnyInnerArrowFunctionsUseEval() || m_codeBlock->usesEval();
-}
-    
-bool BytecodeGenerator::isArgumentsUsedInInnerArrowFunction()
-{
-    return m_codeBlock->doAnyInnerArrowFunctionsUseArguments() || m_codeBlock->doAnyInnerArrowFunctionsUseEval();
-}
-
-bool BytecodeGenerator::isNewTargetUsedInInnerArrowFunction()
-{
-    return m_codeBlock->doAnyInnerArrowFunctionsUseNewTarget() || m_codeBlock->doAnyInnerArrowFunctionsUseSuperCall();
-}
-
-bool BytecodeGenerator::isSuperUsedInInnerArrowFunction()
-{
-    return m_codeBlock->doAnyInnerArrowFunctionsUseSuperCall() || m_codeBlock->doAnyInnerArrowFunctionsUseSuperProperty();
-}
-
 void BytecodeGenerator::emitPutNewTargetToArrowFunctionContextScope()
 {
-    if (isNewTargetUsedInInnerArrowFunction()) {
-        ASSERT(m_arrowFunctionContextLexicalEnvironmentRegister);
+    ASSERT(m_arrowFunctionContextLexicalEnvironmentRegister != nullptr);
         
-        Variable newTargetVar = variable(propertyNames().newTargetLocalPrivateName);
-        emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, newTargetVar, newTarget(), DoNotThrowIfNotFound, Initialization);
-    }
+    Variable newTargetVar = variable(propertyNames().newTargetLocalPrivateName);
+    emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, newTargetVar, newTarget(), DoNotThrowIfNotFound, Initialization);
 }
     
 void BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope()
 {
     if ((isConstructor() && constructorKind() == ConstructorKind::Derived) || m_codeBlock->isClassContext()) {
-        if (isSuperUsedInInnerArrowFunction()) {
-            ASSERT(m_arrowFunctionContextLexicalEnvironmentRegister);
+        ASSERT(m_arrowFunctionContextLexicalEnvironmentRegister);
             
-            Variable protoScope = variable(propertyNames().derivedConstructorPrivateName);
-            emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, protoScope, &m_calleeRegister, DoNotThrowIfNotFound, Initialization);
-        }
+        Variable protoScope = variable(propertyNames().derivedConstructorPrivateName);
+        emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, protoScope, &m_calleeRegister, DoNotThrowIfNotFound, Initialization);
     }
 }
-    
+
 void BytecodeGenerator::emitPutThisToArrowFunctionContextScope()
 {
-    if (isThisUsedInInnerArrowFunction()) {
-        ASSERT(isDerivedConstructorContext() || m_arrowFunctionContextLexicalEnvironmentRegister != nullptr);
+    ASSERT(isDerivedConstructorContext() || m_arrowFunctionContextLexicalEnvironmentRegister != nullptr);
 
-        Variable thisVar = variable(propertyNames().thisIdentifier, ThisResolutionType::Scoped);
-        RegisterID* scope = isDerivedConstructorContext() ? emitLoadArrowFunctionLexicalEnvironment(propertyNames().thisIdentifier) : m_arrowFunctionContextLexicalEnvironmentRegister;
+    Variable thisVar = variable(propertyNames().thisIdentifier, ThisResolutionType::Scoped);
+    RegisterID* scope = isDerivedConstructorContext() ? emitLoadArrowFunctionLexicalEnvironment() : m_arrowFunctionContextLexicalEnvironmentRegister;
     
-        emitPutToScope(scope, thisVar, thisRegister(), ThrowIfNotFound, NotInitialization);
-    }
+    emitPutToScope(scope, thisVar, thisRegister(), DoNotThrowIfNotFound, NotInitialization);
 }
 
 void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)

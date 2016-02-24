@@ -1824,7 +1824,7 @@ namespace JSC {
             ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, 
             unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
             int functionNameStart, int parametersStart, bool isInStrictContext, 
-            ConstructorKind, SuperBinding, unsigned, SourceParseMode, bool isArrowFunctionBodyExpression, ArrowFunctionCodeFeatures = NoArrowFunctionFeatures);
+            ConstructorKind, SuperBinding, unsigned, SourceParseMode, bool isArrowFunctionBodyExpression);
 
         void finishParsing(const SourceCode&, const Identifier&, FunctionMode);
         
@@ -1852,7 +1852,6 @@ namespace JSC {
         SuperBinding superBinding() { return static_cast<SuperBinding>(m_superBinding); }
         ConstructorKind constructorKind() { return static_cast<ConstructorKind>(m_constructorKind); }
         bool isArrowFunctionBodyExpression() const { return m_isArrowFunctionBodyExpression; }
-        ArrowFunctionCodeFeatures arrowFunctionCodeFeatures() const { return m_arrowFunctionCodeFeatures;}
 
         void setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset)
         {
@@ -1880,7 +1879,6 @@ namespace JSC {
         unsigned m_superBinding : 1;
         unsigned m_constructorKind : 2;
         unsigned m_isArrowFunctionBodyExpression : 1;
-        ArrowFunctionCodeFeatures m_arrowFunctionCodeFeatures;
     };
 
     class FunctionNode final : public ScopeNode {

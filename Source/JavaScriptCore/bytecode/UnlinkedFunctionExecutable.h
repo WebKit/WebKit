@@ -84,7 +84,6 @@ public:
     FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
-    ArrowFunctionCodeFeatures arrowFunctionCodeFeatures() const { return m_arrowFunctionCodeFeatures; }
 
     unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
     unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
@@ -157,7 +156,6 @@ private:
     unsigned m_superBinding : 1;
     unsigned m_derivedContextType: 2;
     unsigned m_sourceParseMode : 4; // SourceParseMode
-    ArrowFunctionCodeFeatures m_arrowFunctionCodeFeatures;
 
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;

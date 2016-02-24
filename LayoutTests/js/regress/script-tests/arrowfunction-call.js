@@ -8,8 +8,8 @@ function bar(a, b) {
 
 noInline(bar);
 
-for (let i = 0; i < 1000000; ++i) {
-    let result = bar(1, 2);
+for (var i = 0; i < 1000000; ++i) {
+    var result = bar(1, 2);
     if (result != 3)
         throw "Error: bad result: " + result;
 }
