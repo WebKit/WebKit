@@ -1,3 +1,25 @@
+2016-02-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Add WKPreference for HiddenPageDOMTimerThrottlingAutoIncreases
+        https://bugs.webkit.org/show_bug.cgi?id=154655
+
+        Reviewed by Geoff Garen.
+
+        Just plumbing WebCore.settings.setHiddenPageDOMTimerThrottlingAutoIncreases through as
+        WKPreferencesSetHiddenPageDOMTimerThrottlingAutoIncreases.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetHiddenPageDOMTimerThrottlingAutoIncreases):
+        (WKPreferencesGetHiddenPageDOMTimerThrottlingAutoIncreases):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _hiddenPageDOMTimerThrottlingAutoIncreases]):
+        (-[WKPreferences _setHiddenPageDOMTimerThrottlingAutoIncreases:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-02-24  Alex Christensen  <achristensen@webkit.org>
 
         Fix downloads when using NetworkSession

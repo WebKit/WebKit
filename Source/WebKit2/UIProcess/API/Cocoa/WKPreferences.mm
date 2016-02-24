@@ -329,6 +329,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setHiddenPageDOMTimerThrottlingEnabled(hiddenPageDOMTimerThrottlingEnabled);
 }
 
+- (BOOL)_hiddenPageDOMTimerThrottlingAutoIncreases
+{
+    return _preferences->hiddenPageDOMTimerThrottlingAutoIncreases();
+}
+
+- (void)_setHiddenPageDOMTimerThrottlingAutoIncreases:(BOOL)hiddenPageDOMTimerThrottlingAutoIncreases
+{
+    _preferences->setHiddenPageDOMTimerThrottlingAutoIncreases(hiddenPageDOMTimerThrottlingAutoIncreases);
+}
+
 - (BOOL)_pageVisibilityBasedProcessSuppressionEnabled
 {
     return _preferences->pageVisibilityBasedProcessSuppressionEnabled();

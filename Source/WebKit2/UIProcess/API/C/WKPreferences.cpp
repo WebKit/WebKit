@@ -1172,9 +1172,19 @@ void WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(WKPreferencesRef prefer
     toImpl(preferencesRef)->setHiddenPageDOMTimerThrottlingEnabled(enabled);
 }
 
+void WKPreferencesSetHiddenPageDOMTimerThrottlingAutoIncreases(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setHiddenPageDOMTimerThrottlingAutoIncreases(enabled);
+}
+
 bool WKPreferencesGetHiddenPageDOMTimerThrottlingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->hiddenPageDOMTimerThrottlingEnabled();
+}
+
+bool WKPreferencesGetHiddenPageDOMTimerThrottlingAutoIncreases(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->hiddenPageDOMTimerThrottlingAutoIncreases();
 }
 
 void WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(WKPreferencesRef preferencesRef, bool enabled)
