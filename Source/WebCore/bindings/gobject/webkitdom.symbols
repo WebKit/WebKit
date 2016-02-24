@@ -230,6 +230,7 @@ WebKitDOMNode* webkit_dom_node_replace_child(WebKitDOMNode*, WebKitDOMNode*, Web
 WebKitDOMNode* webkit_dom_node_remove_child(WebKitDOMNode*, WebKitDOMNode*, GError**)
 WebKitDOMNode* webkit_dom_node_insert_before(WebKitDOMNode*, WebKitDOMNode*, WebKitDOMNode*, GError**)
 WebKitDOMNode* webkit_dom_node_clone_node(WebKitDOMNode*, gboolean)
+WebKitDOMNode* webkit_dom_node_clone_node_with_error(WebKitDOMNode*, gboolean, GError**)@2.14
 gboolean webkit_dom_node_contains(WebKitDOMNode*, WebKitDOMNode*)
 gboolean webkit_dom_node_is_default_namespace(WebKitDOMNode*, const gchar*)
 gboolean webkit_dom_node_is_supported(WebKitDOMNode*, const gchar*, const gchar*)

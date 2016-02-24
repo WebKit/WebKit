@@ -1046,6 +1046,12 @@ sub FunctionUsedToRaiseException {
         || $functionName eq "webkit_dom_range_to_string";
 }
 
+sub FunctionUsedToNotRaiseException {
+    my $functionName = shift;
+
+    return $functionName eq "webkit_dom_node_clone_node";
+}
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
@@ -1067,6 +1073,13 @@ sub GenerateFunction {
     # In this case, it's better to keep the GError parameter even if it's unused to keep
     # the API compatibility.
     my $usedToRaiseException = FunctionUsedToRaiseException($functionName);
+
+    # If a method didn't raise an exception but was changed to raise exceptions, the API
+    # changes because we use a explicit GError parameter to handle the exceptions.
+    # In this case, we add _with_error suffix and the previous version simply ignores the error.
+    if (FunctionUsedToNotRaiseException($functionName)) {
+        $functionName = $functionName . "_with_error";
+    }
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     my $parentConditionalString = $codeGenerator->GenerateConditionalString($parentNode);

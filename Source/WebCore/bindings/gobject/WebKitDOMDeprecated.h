@@ -159,6 +159,18 @@ webkit_dom_element_get_elements_by_tag_name_ns(WebKitDOMElement* self, const gch
 WEBKIT_DEPRECATED_FOR(webkit_dom_element_get_elements_by_class_name_as_html_collection) WebKitDOMNodeList*
 webkit_dom_element_get_elements_by_class_name(WebKitDOMElement* self, const gchar* class_name);
 
+/**
+ * webkit_dom_node_clone_node:
+ * @self: A #WebKitDOMNode
+ * @deep: A #gboolean
+ *
+ * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.14: Use webkit_dom_node_clone_node_with_error() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_node_clone_node_with_error) WebKitDOMNode*
+webkit_dom_node_clone_node(WebKitDOMNode* self, gboolean deep, GError** error);
+
 
 #define WEBKIT_DOM_TYPE_ENTITY_REFERENCE            (webkit_dom_entity_reference_get_type())
 #define WEBKIT_DOM_ENTITY_REFERENCE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_ENTITY_REFERENCE, WebKitDOMEntityReference))

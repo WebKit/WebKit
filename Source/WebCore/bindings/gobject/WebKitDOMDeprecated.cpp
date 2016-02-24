@@ -127,6 +127,11 @@ WebKitDOMNodeList* webkit_dom_element_get_elements_by_class_name(WebKitDOMElemen
     return WebKit::kit(nodeList.get());
 }
 
+WebKitDOMNode* webkit_dom_node_clone_node(WebKitDOMNode* self, gboolean deep)
+{
+    return webkit_dom_node_clone_node_with_error(self, deep, nullptr);
+}
+
 G_DEFINE_TYPE(WebKitDOMEntityReference, webkit_dom_entity_reference, WEBKIT_DOM_TYPE_NODE)
 
 static void webkit_dom_entity_reference_init(WebKitDOMEntityReference*)
