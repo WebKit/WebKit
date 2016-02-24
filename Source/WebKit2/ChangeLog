@@ -1,3 +1,14 @@
+2016-02-23  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: don't run the protocol generator once per output file
+        https://bugs.webkit.org/show_bug.cgi?id=154635
+
+        Reviewed by Myles C. Maxfield.
+
+        * DerivedSources.make: Use $(firstword, ...) to take just one file as
+        the target to be built so that the generator runs only once. Make isn't
+        really designed to coalesce multiple file outputs to one production rule.
+
 2016-02-23  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Linker errors display mangled names, but no longer should
