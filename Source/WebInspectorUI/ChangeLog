@@ -1,3 +1,40 @@
+2016-02-24  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TimelineRuler should have a "select all" mode
+        https://bugs.webkit.org/show_bug.cgi?id=154561
+        <rdar://problem/24779872>
+
+        Reviewed by Timothy Hatcher.
+
+        TimelineRuler is initialized with a selected range of [0, Number.MAX_VALUE),
+        indicating the entire timeline is selected. This patch makes it possible to
+        return the ruler to this state, after being overwritten by a custom selection.
+        When no custom selection exists, the selection handles are hidden.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler.selection-hidden > :matches(.selection-drag, .selection-handle, .shaded-area)):
+        Style for hiding selection controls as needed.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        Represent unbounded selection interval as [0, Number.MAX_VALUE).
+
+        (WebInspector.TimelineRuler.prototype.set allowsTimeRangeSelection):
+        Register double-click event listener.
+
+        (WebInspector.TimelineRuler.prototype.set zeroTime):
+        (WebInspector.TimelineRuler.prototype.get entireRangeSelected):
+        (WebInspector.TimelineRuler.prototype.selectEntireRange):
+        Let clients check and set the selection of the entire range without needing
+        to use the internal sentinel values 0 and Number.MAX_VALUE.
+
+        (WebInspector.TimelineRuler.prototype._updateSelection):
+        Update ruler styles and dispatch selection change event when entire
+        range is selected.
+
+        (WebInspector.TimelineRuler.prototype._handleDoubleClick):
+        If a user-defined selection exists, select the entire range.
+
 2016-02-24  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dim selected items when docked Inspector window is inactive

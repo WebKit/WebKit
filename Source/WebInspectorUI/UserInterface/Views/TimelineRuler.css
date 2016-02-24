@@ -178,6 +178,10 @@ body.window-inactive .timeline-ruler > .header > .divider {
     z-index: 15;
 }
 
+.timeline-ruler.selection-hidden > :matches(.selection-drag, .selection-handle, .shaded-area) {
+    display: none;
+}
+
 .timeline-ruler > .selection-handle.clamped {
     border-color: hsl(0, 0%, 64%);
     background-color: white;
