@@ -1,3 +1,18 @@
+2016-02-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add addReceiver() function to PeerConnectionBackendClient interface
+        https://bugs.webkit.org/show_bug.cgi?id=154583
+
+        Reviewed by Eric Carlson.
+
+        The addRecevier() notifies the PeerConnectionBackendClient that a new RTCRtpReceiver,
+        representing an MediaStreamTrack received from a remote peer, is added.
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addReceiver):
+        * Modules/mediastream/RTCPeerConnection.h:
+
 2016-02-23  Olivier Blin  <olivier.blin@softathome.com>
 
         Support building LocaleICU with light ICU (UCONFIG_NO_FORMATTING)
