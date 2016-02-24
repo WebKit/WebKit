@@ -520,7 +520,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
     // FIXME: using KeyboardEvent::createForDummy() here should be deprecated,
     // should use one that is not for bindings.
-    return kit(page->focusController().nextFocusableElement(*core(self));
+    return kit(page->focusController().nextFocusableElement(*core(self)));
 }
 
 - (DOMNode *)previousFocusNode
@@ -531,7 +531,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
     // FIXME: using KeyboardEvent::createForDummy() here should be deprecated,
     // should use one that is not for bindings.
-    return kit(page->focusController().previousFocusableElement(*core(self));
+    return kit(page->focusController().previousFocusableElement(*core(self)));
 }
 
 #endif // PLATFORM(IOS)

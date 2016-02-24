@@ -1,3 +1,13 @@
+2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Speculative fix for ios build.
+
+        Unreviewed build fix.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode nextFocusNode]):
+        (-[DOMNode previousFocusNode]):
+
 2016-02-24  Zalan Bujtas  <zalan@apple.com>
 
         Background of an absolutely positioned inline element inside text-indented parent is positioned statically.
