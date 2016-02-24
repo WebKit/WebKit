@@ -1,3 +1,14 @@
+2016-02-24  Timothy Hatcher  <timothy@apple.com>
+
+        Follow up fix for the TimelineRuler "select all" mode to fix zeroTime.
+
+        https://bugs.webkit.org/show_bug.cgi?id=154561
+        rdar://problem/24779872
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.set zeroTime): Change selectionStartTime
+        before _zeroTime so the check for entireRangeSelected still works.
+
 2016-02-24  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TimelineRuler should have a "select all" mode

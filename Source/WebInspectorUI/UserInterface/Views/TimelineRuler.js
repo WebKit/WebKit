@@ -174,9 +174,10 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         if (this._zeroTime === x)
             return;
 
-        this._zeroTime = x;
         if (this.entireRangeSelected)
-            this.selectionStartTime = this._zeroTime;
+            this.selectionStartTime = x;
+
+        this._zeroTime = x;
 
         this.needsLayout();
     }
