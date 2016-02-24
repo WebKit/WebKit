@@ -1,3 +1,16 @@
+2016-02-24  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Mark layer as non composited.
+        https://bugs.webkit.org/show_bug.cgi?id=154640
+
+        Reviewed by Alex Christensen.
+
+        We need to mark the non composited layer as being non composited.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+        (AcceleratedCompositingContext::flushPendingLayerChanges):
+
 2016-02-22  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Compile fix.
