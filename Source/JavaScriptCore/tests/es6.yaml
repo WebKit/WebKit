@@ -917,7 +917,7 @@
 - path: es6/Proxy_defineProperty_handler.js
   cmd: runES6 :fail
 - path: es6/Proxy_deleteProperty_handler.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_enumerate_handler.js
   cmd: runES6 :fail
 - path: es6/Proxy_get_handler.js
@@ -937,9 +937,9 @@
 - path: es6/Proxy_internal_defineProperty_calls_SetIntegrityLevel.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.copyWithin.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.pop.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.reverse.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.shift.js

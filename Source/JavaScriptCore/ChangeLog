@@ -1,3 +1,27 @@
+2016-02-24  Saam Barati  <sbarati@apple.com>
+
+        [ES6] Implement Proxy.[[Delete]]
+        https://bugs.webkit.org/show_bug.cgi?id=154607
+
+        Reviewed by Mark Lam.
+
+        This patch implements Proxy.[[Delete]] with respect to section 9.5.10 of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-delete-p
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::getConstructData):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::deleteProperty):
+        (JSC::ProxyObject::deletePropertyByIndex):
+        * runtime/ProxyObject.h:
+        * tests/es6.yaml:
+        * tests/stress/proxy-delete.js: Added.
+        (assert):
+        (throw.new.Error.let.handler.get deleteProperty):
+        (throw.new.Error):
+        (assert.let.handler.deleteProperty):
+        (let.handler.deleteProperty):
+
 2016-02-24  Filip Pizlo  <fpizlo@apple.com>
 
         Stackmaps have problems with double register constraints

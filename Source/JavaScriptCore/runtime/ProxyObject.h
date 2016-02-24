@@ -63,11 +63,15 @@ private:
     static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
     static CallType getCallData(JSCell*, CallData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);
+    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     bool getOwnPropertySlotCommon(ExecState*, PropertyName, PropertySlot&);
     bool performInternalMethodGetOwnProperty(ExecState*, PropertyName, PropertySlot&);
     bool performHasProperty(ExecState*, PropertyName, PropertySlot&);
+    template <typename DefaultDeleteFunction>
+    bool performDelete(ExecState*, PropertyName, DefaultDeleteFunction);
 
     WriteBarrier<JSObject> m_target;
     WriteBarrier<Unknown> m_handler;

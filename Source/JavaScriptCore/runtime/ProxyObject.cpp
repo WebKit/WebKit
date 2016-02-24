@@ -405,4 +405,75 @@ ConstructType ProxyObject::getConstructData(JSCell* cell, ConstructData& constru
     return ConstructTypeHost;
 }
 
+template <typename DefaultDeleteFunction>
+bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, DefaultDeleteFunction defaultDeleteFunction)
+{
+    VM& vm = exec->vm();
+    JSValue handlerValue = this->handler();
+    if (handlerValue.isNull()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+        return false;
+    }
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue deletePropertyMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "deleteProperty"), ASCIILiteral("'deleteProperty' property of a Proxy's handler should be callable."));
+    if (exec->hadException())
+        return false;
+    JSObject* target = this->target();
+    if (deletePropertyMethod.isUndefined())
+        return defaultDeleteFunction();
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    JSValue trapResult = call(exec, deletePropertyMethod, callType, callData, handler, arguments);
+    if (exec->hadException())
+        return false;
+
+    bool trapResultAsBool = trapResult.toBoolean(exec);
+    if (exec->hadException())
+        return false;
+
+    if (!trapResultAsBool)
+        return false;
+
+    PropertyDescriptor descriptor;
+    if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
+        if (!descriptor.configurable()) {
+            throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable."));
+            return false;
+        }
+    }
+
+    if (exec->hadException())
+        return false;
+
+    return true;
+}
+
+bool ProxyObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+{
+    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    auto defaultDelete = [&] () -> bool {
+        JSObject* target = jsCast<JSObject*>(thisObject->target());
+        return target->methodTable(exec->vm())->deleteProperty(target, exec, propertyName);
+    };
+    return thisObject->performDelete(exec, propertyName, defaultDelete);
+}
+
+bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
+{
+    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    Identifier ident = Identifier::from(exec, propertyName); 
+    if (exec->hadException())
+        return false;
+    auto defaultDelete = [&] () -> bool {
+        JSObject* target = jsCast<JSObject*>(thisObject->target());
+        return target->methodTable(exec->vm())->deletePropertyByIndex(target, exec, propertyName);
+    };
+    return thisObject->performDelete(exec, ident.impl(), defaultDelete);
+}
+
 } // namespace JSC
