@@ -169,6 +169,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty(
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Request').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Response').value is Response
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Response').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Response').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Response').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Response').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Set').value is Set
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Set').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Set').hasOwnProperty('set') is false

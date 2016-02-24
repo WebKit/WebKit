@@ -70,6 +70,7 @@ public:
 
     static FetchBody fromJSValue(JSC::ExecState&, JSC::JSValue);
     static FetchBody fromRequestBody(FetchBody*);
+    static FetchBody empty() { return FetchBody(); }
 
 private:
     template<typename T> bool processIfEmptyOrDisturbed(DOMPromise<T, ExceptionCode>&);

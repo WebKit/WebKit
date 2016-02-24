@@ -1,0 +1,4 @@
+
+PASS Check response returned by static method redirect() 
+FAIL Check error returned when giving invalid parameters to redirect() assert_throws: Expect RangeError exception function "function () { Response.redirect("", invalidStatus); }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
+

@@ -29,6 +29,7 @@
 #include "ByteLengthQueuingStrategyBuiltins.cpp"
 #include "CountQueuingStrategyBuiltins.cpp"
 #include "FetchHeadersBuiltins.cpp"
+#include "FetchResponseBuiltins.cpp"
 #include "MediaDevicesBuiltins.cpp"
 #include "NavigatorUserMediaBuiltins.cpp"
 #include "RTCPeerConnectionBuiltins.cpp"

@@ -1,5 +1,31 @@
 2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Fetch API] Implement Fetch API Response
+        https://bugs.webkit.org/show_bug.cgi?id=154536
+
+        Reviewed by Alex Christensen.
+
+        New tests covering fetch API.
+
+        * web-platform-tests/fetch/api/response/response-clone-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-clone.html: Added.
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-consume.html: Added.
+        * web-platform-tests/fetch/api/response/response-error-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-error.html: Added.
+        * web-platform-tests/fetch/api/response/response-idl-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-idl.html: Added.
+        * web-platform-tests/fetch/api/response/response-init-001-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-init-001.html: Added.
+        * web-platform-tests/fetch/api/response/response-init-002-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-init-002.html: Added.
+        * web-platform-tests/fetch/api/response/response-static-error-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-static-error.html: Added.
+        * web-platform-tests/fetch/api/response/response-static-redirect-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-static-redirect.html: Added.
+
+2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         W3C importer should generate all web-platform-tests submodules descriptions
         https://bugs.webkit.org/show_bug.cgi?id=154587
 

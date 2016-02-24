@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Response: redirect static method</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#response">
+    <meta name="help" href="https://fetch.spec.whatwg.org/#redirect-status">
+    <meta name="author" title="Canon Research France" href="https://www.crf.canon.fr">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+      test(function() {
+        var redirectStatus = [301, 302, 303, 307, 308];
+        var url = "http://test.url:1234/";
+        redirectResponse = Response.redirect(url);
+        assert_equals(redirectResponse.status, 302, "Default redictect status is 302");
+        assert_equals(redirectResponse.headers.get("Location"), url,
+          "redirected response has Location header with the correct url");
+        for (var i in redirectStatus) {
+          var status = redirectStatus[i];
+          redirectResponse = Response.redirect(url, status);
+          assert_equals(redirectResponse.status, status, "Redictect status is " + status);
+        }
+      }, "Check response returned by static method redirect()");
+
+      test(function() {
+        var invalidRedirectStatus = [200, 309, 400, 500];
+        var invalidUrl = "This is not an url";
+        for (var i in invalidRedirectStatus) {
+          var invalidStatus = invalidRedirectStatus[i];
+          assert_throws(new RangeError() , function() { Response.redirect("", invalidStatus); },
+            "Expect RangeError exception");
+        }
+        assert_throws(new TypeError(), function() { Response.redirect(invalidUrl); },
+          "Expect TypeError exception");
+      }, "Check error returned when giving invalid parameters to redirect()");
+    </script>
+  </body>
+</html>

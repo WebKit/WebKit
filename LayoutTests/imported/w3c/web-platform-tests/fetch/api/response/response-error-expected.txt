@@ -1,0 +1,6 @@
+
+PASS Throws RangeError when responseInit's status is invalid 
+FAIL Throws TypeError when responseInit's statusText is invalid assert_throws: Expect TypeError exception 
+ function "function () { new Response("", { "statusText" : statusTex..." did not throw
+PASS Throws TypeError when building a response with body and a null body status 
+

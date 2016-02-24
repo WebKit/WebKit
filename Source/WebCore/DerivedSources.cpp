@@ -156,6 +156,7 @@
 #include "JSFetchBody.cpp"
 #include "JSFetchHeaders.cpp"
 #include "JSFetchRequest.cpp"
+#include "JSFetchResponse.cpp"
 #include "JSFile.cpp"
 #include "JSFileError.cpp"
 #include "JSFileException.cpp"

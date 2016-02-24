@@ -1073,6 +1073,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('get') is
 PASS Object.getOwnPropertyDescriptor(global, 'Request').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Request').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Request').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'Response').value is Response
+PASS Object.getOwnPropertyDescriptor(global, 'Response').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Response').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Response').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'Response').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SQLException').value is SQLException
 PASS Object.getOwnPropertyDescriptor(global, 'SQLException').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SQLException').hasOwnProperty('set') is false

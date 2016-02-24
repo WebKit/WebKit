@@ -1,3 +1,61 @@
+2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement Fetch API Response
+        https://bugs.webkit.org/show_bug.cgi?id=154536
+
+        Reviewed by Alex Christensen.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/response/response-clone.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-consume.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-error.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-idl.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-init-001.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-init-002.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-static-error.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-static-redirect.html
+
+        Adding Fetch Response as FetchResponse class.
+        Constructor uses a built-in to pre-process the parameters.
+        Support of body as ReadableStream is missing.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::empty):
+        * Modules/fetch/FetchResponse.cpp: Added.
+        (WebCore::JSFetchResponse::body):
+        (WebCore::isRedirectStatus):
+        (WebCore::isNullBodyStatus):
+        (WebCore::FetchResponse::error):
+        (WebCore::FetchResponse::redirect):
+        (WebCore::FetchResponse::initializeWith):
+        (WebCore::FetchResponse::FetchResponse):
+        (WebCore::FetchResponse::clone):
+        (WebCore::FetchResponse::type):
+        * Modules/fetch/FetchResponse.h: Added.
+        (WebCore::FetchResponse::create):
+        (WebCore::FetchResponse::redirect):
+        (WebCore::FetchResponse::url):
+        (WebCore::FetchResponse::redirected):
+        (WebCore::FetchResponse::status):
+        (WebCore::FetchResponse::ok):
+        (WebCore::FetchResponse::statusText):
+        (WebCore::FetchResponse::headers):
+        (WebCore::FetchResponse::isDisturbed):
+        (WebCore::FetchResponse::arrayBuffer):
+        (WebCore::FetchResponse::formData):
+        (WebCore::FetchResponse::blob):
+        (WebCore::FetchResponse::json):
+        (WebCore::FetchResponse::text):
+        * Modules/fetch/FetchResponse.idl: Added.
+        * Modules/fetch/FetchResponse.js: Added.
+        (initializeFetchResponse):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreJSBuiltins.cpp:
+        * bindings/js/WebCoreJSBuiltins.h:
+        (WebCore::JSBuiltinFunctions::JSBuiltinFunctions):
+        (WebCore::JSBuiltinFunctions::fetchResponseBuiltins):
+
 2016-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         A function named canTakeNextToken executing blocking scripts is misleading

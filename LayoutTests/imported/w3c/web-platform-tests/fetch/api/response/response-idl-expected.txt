@@ -1,0 +1,47 @@
+
+PASS Response interface: existence and properties of interface object 
+PASS Response interface object length 
+PASS Response interface object name 
+PASS Response interface: existence and properties of interface prototype object 
+PASS Response interface: existence and properties of interface prototype object's "constructor" property 
+PASS Response interface: operation error() 
+PASS Response interface: operation redirect(USVString,unsigned short) 
+PASS Response interface: attribute type 
+PASS Response interface: attribute url 
+PASS Response interface: attribute status 
+PASS Response interface: attribute ok 
+PASS Response interface: attribute statusText 
+PASS Response interface: attribute headers 
+PASS Response interface: attribute body 
+PASS Response interface: operation clone() 
+PASS Response interface: attribute bodyUsed 
+FAIL Response interface: operation arrayBuffer() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
+                memberHolderObject[member.n..." did not throw
+FAIL Response interface: operation blob() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
+                memberHolderObject[member.n..." did not throw
+FAIL Response interface: operation formData() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
+                memberHolderObject[member.n..." did not throw
+FAIL Response interface: operation json() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
+                memberHolderObject[member.n..." did not throw
+FAIL Response interface: operation text() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
+                memberHolderObject[member.n..." did not throw
+PASS Response must be primary interface of new Response() 
+PASS Stringification of new Response() 
+PASS Response interface: new Response() must inherit property "error" with the proper type (0) 
+PASS Response interface: new Response() must inherit property "redirect" with the proper type (1) 
+PASS Response interface: calling redirect(USVString,unsigned short) on new Response() with too few arguments must throw TypeError 
+PASS Response interface: new Response() must inherit property "type" with the proper type (2) 
+PASS Response interface: new Response() must inherit property "url" with the proper type (3) 
+PASS Response interface: new Response() must inherit property "status" with the proper type (4) 
+PASS Response interface: new Response() must inherit property "ok" with the proper type (5) 
+PASS Response interface: new Response() must inherit property "statusText" with the proper type (6) 
+PASS Response interface: new Response() must inherit property "headers" with the proper type (7) 
+PASS Response interface: new Response() must inherit property "body" with the proper type (8) 
+PASS Response interface: new Response() must inherit property "clone" with the proper type (9) 
+PASS Response interface: new Response() must inherit property "bodyUsed" with the proper type (10) 
+PASS Response interface: new Response() must inherit property "arrayBuffer" with the proper type (11) 
+PASS Response interface: new Response() must inherit property "blob" with the proper type (12) 
+PASS Response interface: new Response() must inherit property "formData" with the proper type (13) 
+PASS Response interface: new Response() must inherit property "json" with the proper type (14) 
+PASS Response interface: new Response() must inherit property "text" with the proper type (15) 
+
