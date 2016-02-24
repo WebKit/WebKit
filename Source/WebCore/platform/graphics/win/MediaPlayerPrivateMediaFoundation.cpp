@@ -288,6 +288,35 @@ bool MediaPlayerPrivateMediaFoundation::paused() const
     return m_paused;
 }
 
+void MediaPlayerPrivateMediaFoundation::setVolume(float volume)
+{
+    if (!MFGetServicePtr())
+        return;
+
+    COMPtr<IMFSimpleAudioVolume> audioVolume;
+    if (SUCCEEDED(MFGetServicePtr()(m_mediaSession.get(), MR_POLICY_VOLUME_SERVICE, __uuidof(IMFSimpleAudioVolume), (void **)&audioVolume))) {
+        HRESULT hr = audioVolume->SetMasterVolume(volume);
+        ASSERT(SUCCEEDED(hr));
+    }
+}
+
+bool MediaPlayerPrivateMediaFoundation::supportsMuting() const
+{
+    return true;
+}
+
+void MediaPlayerPrivateMediaFoundation::setMuted(bool muted)
+{
+    if (!MFGetServicePtr())
+        return;
+
+    COMPtr<IMFSimpleAudioVolume> audioVolume;
+    if (SUCCEEDED(MFGetServicePtr()(m_mediaSession.get(), MR_POLICY_VOLUME_SERVICE, __uuidof(IMFSimpleAudioVolume), (void **)&audioVolume))) {
+        HRESULT hr = audioVolume->SetMute(muted ? TRUE : FALSE);
+        ASSERT(SUCCEEDED(hr));
+    }
+}
+
 MediaPlayer::NetworkState MediaPlayerPrivateMediaFoundation::networkState() const
 { 
     notImplemented();

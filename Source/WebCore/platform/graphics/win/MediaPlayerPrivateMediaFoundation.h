@@ -83,6 +83,11 @@ public:
 
     virtual bool paused() const;
 
+    virtual void setVolume(float) override;
+
+    virtual bool supportsMuting() const override;
+    virtual void setMuted(bool) override;
+
     virtual MediaPlayer::NetworkState networkState() const;
     virtual MediaPlayer::ReadyState readyState() const;
 

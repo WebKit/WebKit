@@ -1,3 +1,18 @@
+2016-02-23  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Implement methods to set volume.
+        https://bugs.webkit.org/show_bug.cgi?id=154580
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::paused):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setVolume):
+        (WebCore::MediaPlayerPrivateMediaFoundation::supportsMuting):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setMuted):
+        (WebCore::MediaPlayerPrivateMediaFoundation::networkState):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2016-02-23  Chris Dumez  <cdumez@apple.com>
 
         [Reflected] IDL attributes of integer types should use HTML rules for parsing integers
