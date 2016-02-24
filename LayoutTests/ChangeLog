@@ -1,3 +1,9 @@
+2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/text/small-caps-web-font.html for Mavericks. rdar://problem/24748533
+
+        * platform/mac-mavericks/fast/text/small-caps-web-font-expected.png: Added.
+
 2016-02-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rebaseline Mavericks expected results for emoji tests. rdar://problem/24724222
