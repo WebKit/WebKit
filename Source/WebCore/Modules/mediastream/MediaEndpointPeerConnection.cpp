@@ -35,6 +35,7 @@
 
 #include "DOMError.h"
 #include "JSDOMError.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -171,6 +172,45 @@ void MediaEndpointPeerConnection::stop()
 
 void MediaEndpointPeerConnection::markAsNeedingNegotiation()
 {
+    notImplemented();
+}
+
+void MediaEndpointPeerConnection::gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction)
+{
+    ASSERT(isMainThread());
+
+    UNUSED_PARAM(fingerprint);
+    UNUSED_PARAM(fingerprintFunction);
+
+    notImplemented();
+}
+
+void MediaEndpointPeerConnection::gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&& candidate)
+{
+    ASSERT(isMainThread());
+
+    UNUSED_PARAM(mdescIndex);
+    UNUSED_PARAM(candidate);
+
+    notImplemented();
+}
+
+void MediaEndpointPeerConnection::doneGatheringCandidates(unsigned mdescIndex)
+{
+    ASSERT(isMainThread());
+
+    UNUSED_PARAM(mdescIndex);
+
+    notImplemented();
+}
+
+void MediaEndpointPeerConnection::gotRemoteSource(unsigned mdescIndex, RefPtr<RealtimeMediaSource>&& source)
+{
+    ASSERT(isMainThread());
+
+    UNUSED_PARAM(mdescIndex);
+    UNUSED_PARAM(source);
+
     notImplemented();
 }
 

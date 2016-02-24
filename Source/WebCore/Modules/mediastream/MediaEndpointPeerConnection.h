@@ -33,6 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaEndpoint.h"
 #include "NotImplemented.h"
 #include "PeerConnectionBackend.h"
 #include "RTCSessionDescription.h"
@@ -42,7 +43,7 @@ namespace WebCore {
 
 class MediaStreamTrack;
 
-class MediaEndpointPeerConnection : public PeerConnectionBackend {
+class MediaEndpointPeerConnection : public PeerConnectionBackend, public MediaEndpointClient {
 public:
     MediaEndpointPeerConnection(PeerConnectionBackendClient*);
 
@@ -71,6 +72,13 @@ public:
     bool isNegotiationNeeded() const override { return false; };
     void markAsNeedingNegotiation() override;
     void clearNegotiationNeededState() override { notImplemented(); };
+
+private:
+    // MediaEndpointClient
+    virtual void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) override;
+    virtual void gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&&) override;
+    virtual void doneGatheringCandidates(unsigned mdescIndex) override;
+    virtual void gotRemoteSource(unsigned mdescIndex, RefPtr<RealtimeMediaSource>&&) override;
 };
 
 } // namespace WebCore

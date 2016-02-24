@@ -2427,6 +2427,14 @@
 		5EA725D31ACABD4700EAD17B /* MediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA725CE1ACABCD900EAD17B /* MediaDevices.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5EA725D51ACABD5700EAD17B /* NavigatorMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA725CA1ACABCB500EAD17B /* NavigatorMediaDevices.cpp */; };
 		5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA725CB1ACABCB500EAD17B /* NavigatorMediaDevices.h */; };
+		5EBB89311C7777FF00C65D41 /* MediaPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EBB892F1C7777D000C65D41 /* MediaPayload.h */; };
+		5EBB89321C77782300C65D41 /* MediaEndpointSessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EBB892E1C7777D000C65D41 /* MediaEndpointSessionConfiguration.h */; };
+		5EBB89331C77782900C65D41 /* IceCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EBB89301C7777E100C65D41 /* IceCandidate.h */; };
+		5EBB89341C77782900C65D41 /* MediaEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EBB892A1C7777D000C65D41 /* MediaEndpoint.cpp */; };
+		5EBB89351C77782900C65D41 /* MediaEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EBB892B1C7777D000C65D41 /* MediaEndpoint.h */; };
+		5EBB89361C77782900C65D41 /* MediaEndpointConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EBB892C1C7777D000C65D41 /* MediaEndpointConfiguration.cpp */; };
+		5EBB89371C77782900C65D41 /* MediaEndpointConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EBB892D1C7777D000C65D41 /* MediaEndpointConfiguration.h */; };
+		5EBB89391C77C39900C65D41 /* PeerMediaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EBB89381C77BDA400C65D41 /* PeerMediaDescription.h */; };
 		5F2DBBE9178E3C8100141486 /* CertificateInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5F2DBBE7178E332D00141486 /* CertificateInfoMac.mm */; };
 		5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2DBBE8178E336900141486 /* CertificateInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5FC7DC26CFE2563200B85AE4 /* JSEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10003,6 +10011,14 @@
 		5EA725CD1ACABCD900EAD17B /* MediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDevices.cpp; sourceTree = "<group>"; };
 		5EA725CE1ACABCD900EAD17B /* MediaDevices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevices.h; sourceTree = "<group>"; };
 		5EA725CF1ACABCD900EAD17B /* MediaDevices.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaDevices.idl; sourceTree = "<group>"; };
+		5EBB892A1C7777D000C65D41 /* MediaEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEndpoint.cpp; sourceTree = "<group>"; };
+		5EBB892B1C7777D000C65D41 /* MediaEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEndpoint.h; sourceTree = "<group>"; };
+		5EBB892C1C7777D000C65D41 /* MediaEndpointConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEndpointConfiguration.cpp; sourceTree = "<group>"; };
+		5EBB892D1C7777D000C65D41 /* MediaEndpointConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEndpointConfiguration.h; sourceTree = "<group>"; };
+		5EBB892E1C7777D000C65D41 /* MediaEndpointSessionConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEndpointSessionConfiguration.h; sourceTree = "<group>"; };
+		5EBB892F1C7777D000C65D41 /* MediaPayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPayload.h; sourceTree = "<group>"; };
+		5EBB89301C7777E100C65D41 /* IceCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IceCandidate.h; sourceTree = "<group>"; };
+		5EBB89381C77BDA400C65D41 /* PeerMediaDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeerMediaDescription.h; sourceTree = "<group>"; };
 		5F2DBBE7178E332D00141486 /* CertificateInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CertificateInfoMac.mm; sourceTree = "<group>"; };
 		5F2DBBE8178E336900141486 /* CertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CertificateInfo.h; sourceTree = "<group>"; };
 		5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEventTarget.h; sourceTree = "<group>"; };
@@ -15459,7 +15475,14 @@
 			children = (
 				0729B14D17CFCCA0004F1D60 /* mac */,
 				07D6A4F61BF2307D00174146 /* AudioTrackPrivateMediaStream.h */,
+				5EBB89301C7777E100C65D41 /* IceCandidate.h */,
 				07221B9917CF0AD400848E51 /* MediaConstraints.h */,
+				5EBB892A1C7777D000C65D41 /* MediaEndpoint.cpp */,
+				5EBB892B1C7777D000C65D41 /* MediaEndpoint.h */,
+				5EBB892C1C7777D000C65D41 /* MediaEndpointConfiguration.cpp */,
+				5EBB892D1C7777D000C65D41 /* MediaEndpointConfiguration.h */,
+				5EBB892E1C7777D000C65D41 /* MediaEndpointSessionConfiguration.h */,
+				5EBB892F1C7777D000C65D41 /* MediaPayload.h */,
 				070F549717F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h */,
 				07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */,
 				0711588F17DF633700EDFE2B /* MediaStreamPrivate.cpp */,
@@ -15467,6 +15490,7 @@
 				07FFDE66181AED420072D409 /* MediaStreamTrackPrivate.cpp */,
 				07FFDE67181AED420072D409 /* MediaStreamTrackPrivate.h */,
 				076306E217E22A43005A7C4E /* MediaStreamTrackSourcesRequestClient.h */,
+				5EBB89381C77BDA400C65D41 /* PeerMediaDescription.h */,
 				4A4F656B1AA997F100E38CDD /* RealtimeMediaSource.cpp */,
 				4A4F656C1AA997F100E38CDD /* RealtimeMediaSource.h */,
 				4A4F656D1AA997F100E38CDD /* RealtimeMediaSourceCapabilities.h */,
@@ -25251,6 +25275,7 @@
 				BC5EB9510E82056B00B25965 /* CounterDirectives.h in Headers */,
 				9392F14C0AD1861B00691BD4 /* CounterNode.h in Headers */,
 				D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */,
+				5EBB89321C77782300C65D41 /* MediaEndpointSessionConfiguration.h in Headers */,
 				514C766E0CE923A1007EF3CD /* Credential.h in Headers */,
 				3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */,
 				3792917E1987678F00F4B661 /* CredentialCocoa.h in Headers */,
@@ -26031,6 +26056,7 @@
 				CD62FB961AF018E70012ED7D /* GenericTaskQueue.h in Headers */,
 				9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */,
 				9746AF2514F4DDE6003E7A71 /* GeolocationClient.h in Headers */,
+				5EBB89391C77C39900C65D41 /* PeerMediaDescription.h in Headers */,
 				9746AF2714F4DDE6003E7A70 /* GeolocationController.h in Headers */,
 				9746AF2814F4DDE6003E7A70 /* GeolocationError.h in Headers */,
 				9746AF2914F4DDE6003E7A70 /* GeolocationPosition.h in Headers */,
@@ -26259,6 +26285,7 @@
 				5185FC971BB4C4E80012898F /* IDBKeyData.h in Headers */,
 				5185FC991BB4C4E80012898F /* IDBKeyPath.h in Headers */,
 				5185FC9B1BB4C4E80012898F /* IDBKeyRange.h in Headers */,
+				5EBB89351C77782900C65D41 /* MediaEndpoint.h in Headers */,
 				5185FC9E1BB4C4E80012898F /* IDBKeyRangeData.h in Headers */,
 				5185FCA01BB4C4E80012898F /* IDBObjectStore.h in Headers */,
 				516071311BD8308600DBC4F2 /* IDBObjectStoreImpl.h in Headers */,
@@ -27001,6 +27028,7 @@
 				2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */,
 				E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */,
 				580371641A66F1D300BAF519 /* LayerFragment.h in Headers */,
+				5EBB89331C77782900C65D41 /* IceCandidate.h in Headers */,
 				7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */,
 				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
 				141DC051164834B900371E5A /* LayoutPoint.h in Headers */,
@@ -28048,6 +28076,7 @@
 				B237C8A80D344D110013F707 /* SVGFontData.h in Headers */,
 				B2A1F2AB0CEF0ABF00442F6A /* SVGFontElement.h in Headers */,
 				B2227A150D00BF220071B782 /* SVGFontFaceElement.h in Headers */,
+				5EBB89311C7777FF00C65D41 /* MediaPayload.h in Headers */,
 				B2227A180D00BF220071B782 /* SVGFontFaceFormatElement.h in Headers */,
 				B2227A1B0D00BF220071B782 /* SVGFontFaceNameElement.h in Headers */,
 				B2227A1E0D00BF220071B782 /* SVGFontFaceSrcElement.h in Headers */,
@@ -28358,6 +28387,7 @@
 				7CE68345192143A800F4D928 /* UserMessageHandlerDescriptor.h in Headers */,
 				7CE683471921821500F4D928 /* UserMessageHandlerDescriptorTypes.h in Headers */,
 				7C73FB08191EF417007DE061 /* UserMessageHandlersNamespace.h in Headers */,
+				5EBB89371C77782900C65D41 /* MediaEndpointConfiguration.h in Headers */,
 				BCA2B061105047600043BD1C /* UserScript.h in Headers */,
 				BCA2B08B10505BCD0043BD1C /* UserScriptTypes.h in Headers */,
 				BC8BF151105813BF00A40A07 /* UserStyleSheet.h in Headers */,
@@ -31366,6 +31396,7 @@
 				0FB8890E167D30160010CDA5 /* ScrollingStateStickyNode.cpp in Sources */,
 				931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */,
 				1AF62F2514DAFE9E0041556C /* ScrollingThread.cpp in Sources */,
+				5EBB89361C77782900C65D41 /* MediaEndpointConfiguration.cpp in Sources */,
 				1AF62F2414DAFE910041556C /* ScrollingThreadMac.mm in Sources */,
 				1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */,
 				93C38C04164473DD00091EB2 /* ScrollingTreeFixedNode.mm in Sources */,
@@ -31535,6 +31566,7 @@
 				7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */,
 				7E8FADC4199A95B100714968 /* SubresourceLoaderCocoa.mm in Sources */,
 				E1FF8F5F1807442100132674 /* SubtleCrypto.cpp in Sources */,
+				5EBB89341C77782900C65D41 /* MediaEndpoint.cpp in Sources */,
 				93B2D8180F9920EE006AE6B2 /* SuddenTermination.mm in Sources */,
 				572A7F231C6E5A66009C6149 /* SimulatedClick.cpp in Sources */,
 				087558C513B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp in Sources */,

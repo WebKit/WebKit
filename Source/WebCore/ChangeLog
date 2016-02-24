@@ -1,3 +1,158 @@
+2016-02-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add MediaEndpoint interface (WebRTC backend abstraction)
+        https://bugs.webkit.org/show_bug.cgi?id=150165
+
+        Reviewed by Eric Carlson.
+
+        Add the MediaEndpoint interface along with its companion objects.
+
+        MediaEndpoint interface: A WebRTC platform abstraction that is used to
+        configure how the the WebRTC backend sends and receives. It also abstracts
+        ICE functionality such as generating local candidates and doing
+        checking on remote candidates. The RTCPeerConnection API, and other API
+        objects such as RTCRtpSender/Receiver, live above MediaEndpoint.
+
+        MediaEndpointConfiguration: A settings object used to configure a
+        MediaEndpoint with, for example, ICE helper servers and other polices.
+        A MediaEndpointConfiguration is used to initialize a MediaEndpoint, but
+        can also be used to update settings.
+
+        MediaEndpointSessionConfiguration: An object that describes how the
+        MediaEndpoint should send and receive. Contains PeerMediaDescription,
+        MediaPayload and IceCandidate objects.
+
+        Tests: The MediaEndpoint platform interface has no implementations yet.
+
+        * CMakeLists.txt:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::gotDtlsFingerprint):
+        (WebCore::MediaEndpointPeerConnection::gotIceCandidate):
+        (WebCore::MediaEndpointPeerConnection::doneGatheringCandidates):
+        (WebCore::MediaEndpointPeerConnection::gotRemoteSource):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/IceCandidate.h: Added.
+        (WebCore::IceCandidate::create):
+        (WebCore::IceCandidate::~IceCandidate):
+        (WebCore::IceCandidate::type):
+        (WebCore::IceCandidate::setType):
+        (WebCore::IceCandidate::foundation):
+        (WebCore::IceCandidate::setFoundation):
+        (WebCore::IceCandidate::componentId):
+        (WebCore::IceCandidate::setComponentId):
+        (WebCore::IceCandidate::transport):
+        (WebCore::IceCandidate::setTransport):
+        (WebCore::IceCandidate::priority):
+        (WebCore::IceCandidate::setPriority):
+        (WebCore::IceCandidate::address):
+        (WebCore::IceCandidate::setAddress):
+        (WebCore::IceCandidate::port):
+        (WebCore::IceCandidate::setPort):
+        (WebCore::IceCandidate::tcpType):
+        (WebCore::IceCandidate::setTcpType):
+        (WebCore::IceCandidate::relatedAddress):
+        (WebCore::IceCandidate::setRelatedAddress):
+        (WebCore::IceCandidate::relatedPort):
+        (WebCore::IceCandidate::setRelatedPort):
+        (WebCore::IceCandidate::clone):
+        (WebCore::IceCandidate::IceCandidate):
+        * platform/mediastream/MediaEndpoint.cpp: Added.
+        (WebCore::createMediaEndpoint):
+        * platform/mediastream/MediaEndpoint.h: Added.
+        (WebCore::MediaEndpointClient::~MediaEndpointClient):
+        (WebCore::MediaEndpoint::~MediaEndpoint):
+        * platform/mediastream/MediaEndpointConfiguration.cpp: Added.
+        (WebCore::IceServerInfo::IceServerInfo):
+        (WebCore::MediaEndpointConfiguration::MediaEndpointConfiguration):
+        * platform/mediastream/MediaEndpointConfiguration.h: Added.
+        (WebCore::IceServerInfo::create):
+        (WebCore::IceServerInfo::~IceServerInfo):
+        (WebCore::IceServerInfo::urls):
+        (WebCore::IceServerInfo::credential):
+        (WebCore::IceServerInfo::username):
+        (WebCore::MediaEndpointConfiguration::create):
+        (WebCore::MediaEndpointConfiguration::iceServers):
+        (WebCore::MediaEndpointConfiguration::iceTransportPolicy):
+        (WebCore::MediaEndpointConfiguration::bundlePolicy):
+        * platform/mediastream/MediaEndpointSessionConfiguration.h: Added.
+        (WebCore::MediaEndpointSessionConfiguration::create):
+        (WebCore::MediaEndpointSessionConfiguration::~MediaEndpointSessionConfiguration):
+        (WebCore::MediaEndpointSessionConfiguration::sessionId):
+        (WebCore::MediaEndpointSessionConfiguration::setSessionId):
+        (WebCore::MediaEndpointSessionConfiguration::sessionVersion):
+        (WebCore::MediaEndpointSessionConfiguration::setSessionVersion):
+        (WebCore::MediaEndpointSessionConfiguration::mediaDescriptions):
+        (WebCore::MediaEndpointSessionConfiguration::addMediaDescription):
+        (WebCore::MediaEndpointSessionConfiguration::clone):
+        (WebCore::MediaEndpointSessionConfiguration::MediaEndpointSessionConfiguration):
+        * platform/mediastream/MediaPayload.h: Added.
+        (WebCore::MediaPayload::create):
+        (WebCore::MediaPayload::~MediaPayload):
+        (WebCore::MediaPayload::type):
+        (WebCore::MediaPayload::setType):
+        (WebCore::MediaPayload::encodingName):
+        (WebCore::MediaPayload::setEncodingName):
+        (WebCore::MediaPayload::clockRate):
+        (WebCore::MediaPayload::setClockRate):
+        (WebCore::MediaPayload::channels):
+        (WebCore::MediaPayload::setChannels):
+        (WebCore::MediaPayload::ccmfir):
+        (WebCore::MediaPayload::setCcmfir):
+        (WebCore::MediaPayload::nackpli):
+        (WebCore::MediaPayload::setNackpli):
+        (WebCore::MediaPayload::nack):
+        (WebCore::MediaPayload::setNack):
+        (WebCore::MediaPayload::parameters):
+        (WebCore::MediaPayload::addParameter):
+        (WebCore::MediaPayload::clone):
+        (WebCore::MediaPayload::MediaPayload):
+        * platform/mediastream/PeerMediaDescription.h: Added.
+        (WebCore::PeerMediaDescription::create):
+        (WebCore::PeerMediaDescription::~PeerMediaDescription):
+        (WebCore::PeerMediaDescription::type):
+        (WebCore::PeerMediaDescription::setType):
+        (WebCore::PeerMediaDescription::port):
+        (WebCore::PeerMediaDescription::setPort):
+        (WebCore::PeerMediaDescription::address):
+        (WebCore::PeerMediaDescription::setAddress):
+        (WebCore::PeerMediaDescription::mode):
+        (WebCore::PeerMediaDescription::setMode):
+        (WebCore::PeerMediaDescription::payloads):
+        (WebCore::PeerMediaDescription::addPayload):
+        (WebCore::PeerMediaDescription::setPayloads):
+        (WebCore::PeerMediaDescription::rtcpMux):
+        (WebCore::PeerMediaDescription::setRtcpMux):
+        (WebCore::PeerMediaDescription::rtcpAddress):
+        (WebCore::PeerMediaDescription::setRtcpAddress):
+        (WebCore::PeerMediaDescription::rtcpPort):
+        (WebCore::PeerMediaDescription::setRtcpPort):
+        (WebCore::PeerMediaDescription::mediaStreamId):
+        (WebCore::PeerMediaDescription::setMediaStreamId):
+        (WebCore::PeerMediaDescription::mediaStreamTrackId):
+        (WebCore::PeerMediaDescription::setMediaStreamTrackId):
+        (WebCore::PeerMediaDescription::dtlsSetup):
+        (WebCore::PeerMediaDescription::setDtlsSetup):
+        (WebCore::PeerMediaDescription::dtlsFingerprintHashFunction):
+        (WebCore::PeerMediaDescription::setDtlsFingerprintHashFunction):
+        (WebCore::PeerMediaDescription::dtlsFingerprint):
+        (WebCore::PeerMediaDescription::setDtlsFingerprint):
+        (WebCore::PeerMediaDescription::cname):
+        (WebCore::PeerMediaDescription::setCname):
+        (WebCore::PeerMediaDescription::ssrcs):
+        (WebCore::PeerMediaDescription::addSsrc):
+        (WebCore::PeerMediaDescription::clearSsrcs):
+        (WebCore::PeerMediaDescription::iceUfrag):
+        (WebCore::PeerMediaDescription::setIceUfrag):
+        (WebCore::PeerMediaDescription::icePassword):
+        (WebCore::PeerMediaDescription::setIcePassword):
+        (WebCore::PeerMediaDescription::iceCandidates):
+        (WebCore::PeerMediaDescription::addIceCandidate):
+        (WebCore::PeerMediaDescription::source):
+        (WebCore::PeerMediaDescription::setSource):
+        (WebCore::PeerMediaDescription::clone):
+        (WebCore::PeerMediaDescription::PeerMediaDescription):
+
 2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement Fetch API Response
