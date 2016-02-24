@@ -1,5 +1,26 @@
 2016-02-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
+        WebRTC: RTCPeerConnection: Sort out responsibilities of close() and stop()
+        https://bugs.webkit.org/show_bug.cgi?id=154581
+
+        Reviewed by Eric Carlson.
+
+        Let RTCPeerConnection::close() contain all teardown logic be called by stop().
+        close() is also responisble for stopping the PeerConnectionBackend and stopping
+        all RTCRtpSender objects.
+
+        Test coverage:
+        fast/mediastream/RTCRtpSender-replaceTrack.html (updated)
+        fast/mediastream/RTCPeerConnection-closed-state.html
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::close):
+        (WebCore::RTCPeerConnection::stop):
+        (WebCore::RTCPeerConnection::RTCPeerConnection): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+
+2016-02-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
         WebRTC: Add addReceiver() function to PeerConnectionBackendClient interface
         https://bugs.webkit.org/show_bug.cgi?id=154583
 

@@ -1,3 +1,16 @@
+2016-02-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: RTCPeerConnection: Sort out responsibilities of close() and stop()
+        https://bugs.webkit.org/show_bug.cgi?id=154581
+
+        Reviewed by Eric Carlson.
+
+        Updated test with replaceTrack() call after the RTCPeerConnection object, that
+        created the RTCRtpSender, is closed.
+
+        * fast/mediastream/RTCRtpSender-replaceTrack-expected.txt:
+        * fast/mediastream/RTCRtpSender-replaceTrack.html:
+
 2016-02-23  Chris Dumez  <cdumez@apple.com>
 
         Align our implementation of Range.createContextualFragment with the specification

@@ -147,8 +147,6 @@ private:
     std::unique_ptr<PeerConnectionBackend> m_backend;
 
     RefPtr<RTCConfiguration> m_configuration;
-
-    bool m_stopped;
 };
 
 } // namespace WebCore

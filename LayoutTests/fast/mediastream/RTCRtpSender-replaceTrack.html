@@ -29,6 +29,7 @@
                 videoTrack = stream.getVideoTracks()[0];
 
                 audioTrack2 = audioTrack.clone();
+                audioTrack3 = audioTrack.clone();
 
                 shouldBe("pc.getSenders().length", "0");
 
@@ -55,6 +56,13 @@
                     debug("Stop sender, and try replacing the track");
                     pc.removeTrack(sender);
                     return promiseShouldReject("sender.replaceTrack(audioTrack2)");
+                })
+                .catch(function () {
+                    debug("Create a new sender");
+                    shouldNotThrow("sender = pc.addTrack(audioTrack2, stream)");
+                    debug("Close pc and try replacing the track");
+                    pc.close();
+                    return promiseShouldReject("sender.replaceTrack(audioTrack3)");
                 })
                 .catch(function () {
                     debug("End of promise chain");
