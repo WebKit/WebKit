@@ -5537,30 +5537,30 @@ bool CSSParser::parseGridGapShorthand(bool important)
     if (!value)
         return false;
 
-    ValueWithCalculation columnValueWithCalculation(*value);
-    if (!validateUnit(columnValueWithCalculation, FLength | FNonNeg))
+    ValueWithCalculation rowValueWithCalculation(*value);
+    if (!validateUnit(rowValueWithCalculation, FLength | FNonNeg))
         return false;
 
-    RefPtr<CSSPrimitiveValue> columnGap = createPrimitiveNumericValue(columnValueWithCalculation);
+    RefPtr<CSSPrimitiveValue> rowGap = createPrimitiveNumericValue(rowValueWithCalculation);
 
     value = m_valueList->next();
     if (!value) {
-        addProperty(CSSPropertyWebkitGridColumnGap, columnGap, important);
-        addProperty(CSSPropertyWebkitGridRowGap, columnGap, important);
+        addProperty(CSSPropertyWebkitGridColumnGap, rowGap, important);
+        addProperty(CSSPropertyWebkitGridRowGap, rowGap, important);
         return true;
     }
 
-    ValueWithCalculation rowValueWithCalculation(*value);
-    if (!validateUnit(rowValueWithCalculation, FLength | FNonNeg))
+    ValueWithCalculation columnValueWithCalculation(*value);
+    if (!validateUnit(columnValueWithCalculation, FLength | FNonNeg))
         return false;
 
     if (m_valueList->next())
         return false;
 
-    RefPtr<CSSPrimitiveValue> rowGap = createPrimitiveNumericValue(rowValueWithCalculation);
+    RefPtr<CSSPrimitiveValue> columnGap = createPrimitiveNumericValue(columnValueWithCalculation);
 
-    addProperty(CSSPropertyWebkitGridColumnGap, columnGap, important);
     addProperty(CSSPropertyWebkitGridRowGap, rowGap, important);
+    addProperty(CSSPropertyWebkitGridColumnGap, columnGap, important);
 
     return true;
 }

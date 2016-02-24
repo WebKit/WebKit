@@ -1,3 +1,17 @@
+2016-02-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Swap the order of columns/rows in grid-gap shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=154584
+
+        The latest editor's draft have just changed the order. Now it
+        should be <grid-row-gap> <grid-column-gap>?.
+
+        Reviewed by Darin Adler.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridGapShorthand):
+        * css/CSSPropertyNames.in:
+
 2016-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move FocusNavigationScope into FocusController.cpp

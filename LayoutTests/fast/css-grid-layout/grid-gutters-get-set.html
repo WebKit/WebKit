@@ -3,7 +3,8 @@
 <head>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
-.gridGap { -webkit-grid-gap: 25px; }
+.gridGap { -webkit-grid-gap: 20px 15px; }
+.gridSimpleGap { -webkit-grid-gap: 25px; }
 .gridColumnGap { -webkit-grid-column-gap: 2vw; }
 .gridRowGap { -webkit-grid-row-gap: 2em; }
 .gridRowColumnGaps {
@@ -43,14 +44,15 @@
 
 <div class="grid" id="defaultGrid"></div>
 <div class="grid gridGap" id="gridGap"></div>
+<div class="grid gridSimpleGap" id="gridSimpleGap"></div>
 <div class="grid gridColumnGap" id="gridColumnGap"></div>
 <div class="grid gridRowGap" id="gridRowGap"></div>
 <div class="grid gridCalcGaps" id="gridCalcGaps"></div>
 <div class="grid gridRowColumnGaps" id="gridRowColumnGaps"></div>
-<div class="grid gridGap">
+<div class="grid gridSimpleGap">
     <div class="grid gridRowColumnInheritGaps" id="gridRowColumnInheritGaps"></div>
 </div>
-<div class="grid gridGap">
+<div class="grid gridSimpleGap">
     <div class="grid gridRowColumnInitialGaps" id="gridRowColumnInitialGaps"></div>
 </div>
 <div class="grid gridInvalidRowGap" id="gridInvalidRowGap"></div>
@@ -69,7 +71,8 @@ description('Test that setting and getting grid-column-gap and grid-row-gap work
 debug("Test getting grid-column-gap and grid-row-gap set through CSS");
 
 testGridGapDefinitionsValues("defaultGrid", "0px", "0px");
-testGridGapDefinitionsValues("gridGap", "25px", "25px");
+testGridGapDefinitionsValues("gridGap", "20px", "15px");
+testGridGapDefinitionsValues("gridSimpleGap", "25px", "25px");
 testGridGapDefinitionsValues("gridColumnGap", "0px", "16px");
 testGridGapDefinitionsValues("gridRowGap", "32px", "0px");
 testGridGapDefinitionsValues("gridCalcGaps", "13px", "10px");

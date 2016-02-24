@@ -509,7 +509,7 @@ justify-items [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentDat
 -webkit-grid-row-gap [Initial=initialZeroLength, Converter=Length]
 -webkit-grid-row-start [ConditionalConverter=GridPosition, NameForMethods=GridItemRowStart]
 -webkit-grid-column [Longhands=-webkit-grid-column-start|-webkit-grid-column-end]
--webkit-grid-gap [Longhands=-webkit-grid-column-gap|-webkit-grid-row-gap]
+-webkit-grid-gap [Longhands=-webkit-grid-row-gap|-webkit-grid-column-gap]
 -webkit-grid-row [Longhands=-webkit-grid-row-start|-webkit-grid-row-end]
 -webkit-grid-template-areas [Custom=All]
 -webkit-grid-auto-flow [Converter=GridAutoFlow]

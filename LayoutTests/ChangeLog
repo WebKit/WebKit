@@ -1,3 +1,13 @@
+2016-02-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Swap the order of columns/rows in grid-gap shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=154584
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/grid-gutters-get-set-expected.txt:
+        * fast/css-grid-layout/grid-gutters-get-set.html:
+
 2016-02-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: RTCPeerConnection: Sort out responsibilities of close() and stop()

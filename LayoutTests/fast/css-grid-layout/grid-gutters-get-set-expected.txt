@@ -6,8 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Test getting grid-column-gap and grid-row-gap set through CSS
 PASS window.getComputedStyle(defaultGrid, '').getPropertyValue('-webkit-grid-row-gap') is "0px"
 PASS window.getComputedStyle(defaultGrid, '').getPropertyValue('-webkit-grid-column-gap') is "0px"
-PASS window.getComputedStyle(gridGap, '').getPropertyValue('-webkit-grid-row-gap') is "25px"
-PASS window.getComputedStyle(gridGap, '').getPropertyValue('-webkit-grid-column-gap') is "25px"
+PASS window.getComputedStyle(gridGap, '').getPropertyValue('-webkit-grid-row-gap') is "20px"
+PASS window.getComputedStyle(gridGap, '').getPropertyValue('-webkit-grid-column-gap') is "15px"
+PASS window.getComputedStyle(gridSimpleGap, '').getPropertyValue('-webkit-grid-row-gap') is "25px"
+PASS window.getComputedStyle(gridSimpleGap, '').getPropertyValue('-webkit-grid-column-gap') is "25px"
 PASS window.getComputedStyle(gridColumnGap, '').getPropertyValue('-webkit-grid-row-gap') is "0px"
 PASS window.getComputedStyle(gridColumnGap, '').getPropertyValue('-webkit-grid-column-gap') is "16px"
 PASS window.getComputedStyle(gridRowGap, '').getPropertyValue('-webkit-grid-row-gap') is "32px"
