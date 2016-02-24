@@ -40,6 +40,7 @@ struct FocusCandidate;
 class ContainerNode;
 class Document;
 class Element;
+class FocusNavigationScope;
 class Frame;
 class HTMLFrameOwnerElement;
 class IntRect;
@@ -47,19 +48,6 @@ class KeyboardEvent;
 class Node;
 class Page;
 class TreeScope;
-
-class FocusNavigationScope {
-public:
-    ContainerNode* rootNode() const;
-    Element* owner() const;
-    WEBCORE_EXPORT static FocusNavigationScope focusNavigationScopeOf(Node*);
-    static FocusNavigationScope focusNavigationScopeOwnedByShadowHost(Node*);
-    static FocusNavigationScope focusNavigationScopeOwnedByIFrame(HTMLFrameOwnerElement*);
-
-private:
-    explicit FocusNavigationScope(TreeScope*);
-    TreeScope* m_rootTreeScope;
-};
 
 class FocusController {
     WTF_MAKE_NONCOPYABLE(FocusController); WTF_MAKE_FAST_ALLOCATED;
@@ -86,8 +74,8 @@ public:
     bool contentIsVisible() const { return m_viewState & ViewState::IsVisible; }
 
     // These methods are used in WebCore/bindings/objc/DOM.mm.
-    WEBCORE_EXPORT Element* nextFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
-    WEBCORE_EXPORT Element* previousFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
+    WEBCORE_EXPORT Element* nextFocusableElement(Node&);
+    WEBCORE_EXPORT Element* previousFocusableElement(Node&);
 
     void setFocusedElementNeedsRepaint();
     double timeSinceFocusWasSet() const;
@@ -100,8 +88,8 @@ private:
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
-    Element* findFocusableElementAcrossFocusScope(FocusDirection, FocusNavigationScope startScope, Node* start, KeyboardEvent*);
-    Element* findFocusableElementRecursively(FocusDirection, FocusNavigationScope, Node* start, KeyboardEvent*);
+    Element* findFocusableElementAcrossFocusScope(FocusDirection, const FocusNavigationScope& startScope, Node* start, KeyboardEvent*);
+    Element* findFocusableElementRecursively(FocusDirection, const FocusNavigationScope&, Node* start, KeyboardEvent*);
     Element* findFocusableElementDescendingDownIntoFrameDocument(FocusDirection, Element*, KeyboardEvent*);
 
     // Searches through the given tree scope, starting from start node, for the next/previous selectable element that comes after/before start node.
@@ -113,9 +101,12 @@ private:
     // @return The focus node that comes after/before start node.
     //
     // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    Element* findFocusableElement(FocusDirection, FocusNavigationScope, Node* start, KeyboardEvent*);
+    Element* findFocusableElement(FocusDirection, const FocusNavigationScope&, Node* start, KeyboardEvent*);
 
-    Element* findElementWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent*, FocusDirection);
+    Element* findElementWithExactTabIndex(const FocusNavigationScope&, Node* start, int tabIndex, KeyboardEvent*, FocusDirection);
+    
+    Element* nextFocusableElement(const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    Element* previousFocusableElement(const FocusNavigationScope&, Node* start, KeyboardEvent*);
 
     bool advanceFocusDirectionallyInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*);
     void findFocusCandidateInContainer(Node& container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);

@@ -2324,13 +2324,11 @@ static inline Element* nextAssistableElement(Node* startNode, Page& page, bool i
     if (!is<Element>(startNode))
         return nullptr;
 
-    RefPtr<KeyboardEvent> key = KeyboardEvent::createForBindings();
-
     Element* nextElement = downcast<Element>(startNode);
     do {
         nextElement = isForward
-            ? page.focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get())
-            : page.focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get());
+            ? page.focusController().nextFocusableElement(*nextElement)
+            : page.focusController().previousFocusableElement(*nextElement);
     } while (nextElement && !isAssistableElement(*nextElement));
 
     return nextElement;

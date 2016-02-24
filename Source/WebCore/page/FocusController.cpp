@@ -67,8 +67,27 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+class FocusNavigationScope {
+public:
+    ContainerNode* rootNode() const;
+    Element* owner() const;
+    WEBCORE_EXPORT static FocusNavigationScope focusNavigationScopeOf(Node*);
+    static FocusNavigationScope focusNavigationScopeOwnedByShadowHost(Node*);
+    static FocusNavigationScope focusNavigationScopeOwnedByIFrame(HTMLFrameOwnerElement*);
+
+    Node* nextInScope(const Node*) const;
+    Node* previousInScope(const Node*) const;
+    Node* lastChildInScope(const Node*) const;
+
+private:
+    Node* firstChildInScope(const Node*) const;
+
+    explicit FocusNavigationScope(TreeScope*);
+    TreeScope* m_rootTreeScope;
+};
+
 // FIXME: Focus navigation should work with shadow trees that have slots.
-static Node* firstChildInScope(const Node* node)
+Node* FocusNavigationScope::firstChildInScope(const Node* node) const
 {
     ASSERT(node);
     if (node->shadowRoot())
@@ -76,7 +95,7 @@ static Node* firstChildInScope(const Node* node)
     return node->firstChild();
 }
 
-static Node* lastChildInScope(const Node* node)
+Node* FocusNavigationScope::lastChildInScope(const Node* node) const
 {
     ASSERT(node);
     if (node->shadowRoot())
@@ -96,7 +115,7 @@ static Node* parentInScope(const Node* node)
     return parent;
 }
 
-static Node* nextInScope(const Node* node)
+Node* FocusNavigationScope::nextInScope(const Node* node) const
 {
     if (Node* next = firstChildInScope(node))
         return next;
@@ -108,7 +127,7 @@ static Node* nextInScope(const Node* node)
     return current ? current->nextSibling() : nullptr;
 }
 
-static Node* previousInScope(const Node* node)
+Node* FocusNavigationScope::previousInScope(const Node* node) const
 {
     if (Node* current = node->previousSibling()) {
         while (Node* child = lastChildInScope(current))
@@ -400,7 +419,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     return true;
 }
 
-Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection direction, FocusNavigationScope scope, Node* currentNode, KeyboardEvent* event)
+Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection direction, const FocusNavigationScope& scope, Node* currentNode, KeyboardEvent* event)
 {
     ASSERT(!is<Element>(currentNode) || !isNonFocusableShadowHost(*downcast<Element>(currentNode), *event));
     Element* found;
@@ -411,22 +430,23 @@ Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection di
         found = findFocusableElementRecursively(direction, scope, currentNode, event);
 
     // If there's no focusable node to advance to, move up the focus scopes until we find one.
+    FocusNavigationScope currentScope = scope;
     while (!found) {
-        Element* owner = scope.owner();
+        Element* owner = currentScope.owner();
         if (!owner)
             break;
-        scope = FocusNavigationScope::focusNavigationScopeOf(owner);
+        currentScope = FocusNavigationScope::focusNavigationScopeOf(owner);
         if (direction == FocusDirectionBackward && isFocusableShadowHost(*owner, *event)) {
             found = owner;
             break;
         }
-        found = findFocusableElementRecursively(direction, scope, owner, event);
+        found = findFocusableElementRecursively(direction, currentScope, owner, event);
     }
     found = findFocusableElementDescendingDownIntoFrameDocument(direction, found, event);
     return found;
 }
 
-Element* FocusController::findFocusableElementRecursively(FocusDirection direction, FocusNavigationScope scope, Node* start, KeyboardEvent* event)
+Element* FocusController::findFocusableElementRecursively(FocusDirection direction, const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
     // Starting node is exclusive.
     Element* found = findFocusableElement(direction, scope, start, event);
@@ -450,17 +470,17 @@ Element* FocusController::findFocusableElementRecursively(FocusDirection directi
     return found;
 }
 
-Element* FocusController::findFocusableElement(FocusDirection direction, FocusNavigationScope scope, Node* node, KeyboardEvent* event)
+Element* FocusController::findFocusableElement(FocusDirection direction, const FocusNavigationScope& scope, Node* node, KeyboardEvent* event)
 {
     return (direction == FocusDirectionForward)
         ? nextFocusableElement(scope, node, event)
         : previousFocusableElement(scope, node, event);
 }
 
-Element* FocusController::findElementWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event, FocusDirection direction)
+Element* FocusController::findElementWithExactTabIndex(const FocusNavigationScope& scope, Node* start, int tabIndex, KeyboardEvent* event, FocusDirection direction)
 {
     // Search is inclusive of start
-    for (Node* node = start; node; node = direction == FocusDirectionForward ? nextInScope(node) : previousInScope(node)) {
+    for (Node* node = start; node; node = direction == FocusDirectionForward ? scope.nextInScope(node) : scope.previousInScope(node)) {
         if (!is<Element>(*node))
             continue;
         Element& element = downcast<Element>(*node);
@@ -470,12 +490,12 @@ Element* FocusController::findElementWithExactTabIndex(Node* start, int tabIndex
     return nullptr;
 }
 
-static Element* nextElementWithGreaterTabIndex(Node* start, int tabIndex, KeyboardEvent& event)
+static Element* nextElementWithGreaterTabIndex(const FocusNavigationScope& scope, int tabIndex, KeyboardEvent& event)
 {
     // Search is inclusive of start
     int winningTabIndex = std::numeric_limits<short>::max() + 1;
     Element* winner = nullptr;
-    for (Node* node = start; node; node = nextInScope(node)) {
+    for (Node* node = scope.rootNode(); node; node = scope.nextInScope(node)) {
         if (!is<Element>(*node))
             continue;
         Element& element = downcast<Element>(*node);
@@ -488,12 +508,12 @@ static Element* nextElementWithGreaterTabIndex(Node* start, int tabIndex, Keyboa
     return winner;
 }
 
-static Element* previousElementWithLowerTabIndex(Node* start, int tabIndex, KeyboardEvent& event)
+static Element* previousElementWithLowerTabIndex(const FocusNavigationScope& scope, Node* start, int tabIndex, KeyboardEvent& event)
 {
     // Search is inclusive of start
     int winningTabIndex = 0;
     Element* winner = nullptr;
-    for (Node* node = start; node; node = previousInScope(node)) {
+    for (Node* node = start; node; node = scope.previousInScope(node)) {
         if (!is<Element>(*node))
             continue;
         Element& element = downcast<Element>(*node);
@@ -506,13 +526,25 @@ static Element* previousElementWithLowerTabIndex(Node* start, int tabIndex, Keyb
     return winner;
 }
 
-Element* FocusController::nextFocusableElement(FocusNavigationScope scope, Node* start, KeyboardEvent* event)
+Element* FocusController::nextFocusableElement(Node& start)
+{
+    Ref<KeyboardEvent> keyEvent = KeyboardEvent::createForDummy();
+    return nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&start), &start, keyEvent.ptr());
+}
+
+Element* FocusController::previousFocusableElement(Node& start)
+{
+    Ref<KeyboardEvent> keyEvent = KeyboardEvent::createForDummy();
+    return previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&start), &start, keyEvent.ptr());
+}
+
+Element* FocusController::nextFocusableElement(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
     if (start) {
         int tabIndex = adjustedTabIndex(*start, *event);
         // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
         if (tabIndex < 0) {
-            for (Node* node = nextInScope(start); node; node = nextInScope(node)) {
+            for (Node* node = scope.nextInScope(start); node; node = scope.nextInScope(node)) {
                 if (!is<Element>(*node))
                     continue;
                 Element& element = downcast<Element>(*node);
@@ -522,7 +554,7 @@ Element* FocusController::nextFocusableElement(FocusNavigationScope scope, Node*
         }
 
         // First try to find a node with the same tabindex as start that comes after start in the scope.
-        if (Element* winner = findElementWithExactTabIndex(nextInScope(start), tabIndex, event, FocusDirectionForward))
+        if (Element* winner = findElementWithExactTabIndex(scope, scope.nextInScope(start), tabIndex, event, FocusDirectionForward))
             return winner;
 
         if (!tabIndex)
@@ -533,18 +565,18 @@ Element* FocusController::nextFocusableElement(FocusNavigationScope scope, Node*
     // Look for the first Element in the scope that:
     // 1) has the lowest tabindex that is higher than start's tabindex (or 0, if start is null), and
     // 2) comes first in the scope, if there's a tie.
-    if (Element* winner = nextElementWithGreaterTabIndex(scope.rootNode(), start ? adjustedTabIndex(*start, *event) : 0, *event))
+    if (Element* winner = nextElementWithGreaterTabIndex(scope, start ? adjustedTabIndex(*start, *event) : 0, *event))
         return winner;
 
     // There are no nodes with a tabindex greater than start's tabindex,
     // so find the first node with a tabindex of 0.
-    return findElementWithExactTabIndex(scope.rootNode(), 0, event, FocusDirectionForward);
+    return findElementWithExactTabIndex(scope, scope.rootNode(), 0, event, FocusDirectionForward);
 }
 
-Element* FocusController::previousFocusableElement(FocusNavigationScope scope, Node* start, KeyboardEvent* event)
+Element* FocusController::previousFocusableElement(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
     Node* last = nullptr;
-    for (Node* node = scope.rootNode(); node; node = lastChildInScope(node))
+    for (Node* node = scope.rootNode(); node; node = scope.lastChildInScope(node))
         last = node;
     ASSERT(last);
 
@@ -553,7 +585,7 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
     Node* startingNode;
     int startingTabIndex;
     if (start) {
-        startingNode = previousInScope(start);
+        startingNode = scope.previousInScope(start);
         startingTabIndex = adjustedTabIndex(*start, *event);
     } else {
         startingNode = last;
@@ -562,7 +594,7 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
 
     // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
     if (startingTabIndex < 0) {
-        for (Node* node = startingNode; node; node = previousInScope(node)) {
+        for (Node* node = startingNode; node; node = scope.previousInScope(node)) {
             if (!is<Element>(*node))
                 continue;
             Element& element = downcast<Element>(*node);
@@ -571,14 +603,14 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
         }
     }
 
-    if (Element* winner = findElementWithExactTabIndex(startingNode, startingTabIndex, event, FocusDirectionBackward))
+    if (Element* winner = findElementWithExactTabIndex(scope, startingNode, startingTabIndex, event, FocusDirectionBackward))
         return winner;
 
     // There are no nodes before start with the same tabindex as start, so look for a node that:
     // 1) has the highest non-zero tabindex (that is less than start's tabindex), and
     // 2) comes last in the scope, if there's a tie.
     startingTabIndex = (start && startingTabIndex) ? startingTabIndex : std::numeric_limits<short>::max();
-    return previousElementWithLowerTabIndex(last, startingTabIndex, *event);
+    return previousElementWithLowerTabIndex(scope, last, startingTabIndex, *event);
 }
 
 static bool relinquishesEditingFocus(Node *node)

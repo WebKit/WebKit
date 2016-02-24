@@ -1,3 +1,32 @@
+2016-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move FocusNavigationScope into FocusController.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=154630
+
+        Reviewed by Darin Adler.
+
+        Moved FocusNavigationScope from FocusController.h to FocusController.cpp.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode nextFocusNode]):
+        (-[DOMNode previousFocusNode]):
+        * page/FocusController.cpp:
+        (WebCore::parentInScope):
+        (WebCore::FocusNavigationScope::firstChildInScope): Moved into FocusNavigationScope.
+        (WebCore::FocusNavigationScope::lastChildInScope): Ditto.
+        (WebCore::FocusNavigationScope::nextInScope): Ditto.
+        (WebCore::FocusNavigationScope::previousInScope): Ditto.
+        (WebCore::FocusController::findFocusableElementAcrossFocusScope):
+        (WebCore::FocusController::findFocusableElementRecursively):
+        (WebCore::FocusController::findFocusableElement):
+        (WebCore::nextElementWithGreaterTabIndex):
+        (WebCore::previousElementWithLowerTabIndex):
+        (WebCore::FocusController::nextFocusableElement): Added a variant for DOM.mm and WebPageIOS.mm.
+        (WebCore::FocusController::previousFocusableElement): Ditto.
+        (WebCore::FocusController::nextFocusableElement):
+        (WebCore::FocusController::previousFocusableElement): Use if instead of for loop for clarity.
+        * page/FocusController.h:
+
 2016-02-24  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: RTCPeerConnection: Sort out responsibilities of close() and stop()

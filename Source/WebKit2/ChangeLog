@@ -1,3 +1,13 @@
+2016-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move FocusNavigationScope into FocusController.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=154630
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::nextAssistableElement):
+
 2016-02-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: don't run the protocol generator once per output file
