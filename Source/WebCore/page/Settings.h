@@ -165,6 +165,8 @@ public:
     bool hiddenPageDOMTimerThrottlingEnabled() const { return m_hiddenPageDOMTimerThrottlingEnabled; }
     WEBCORE_EXPORT void setHiddenPageDOMTimerThrottlingEnabled(bool);
 #endif
+    bool hiddenPageDOMTimerThrottlingAutoIncreases() const { return m_hiddenPageDOMTimerThrottlingAutoIncreases; }
+    WEBCORE_EXPORT void setHiddenPageDOMTimerThrottlingAutoIncreases(bool);
 
     WEBCORE_EXPORT void setUsesPageCache(bool);
     bool usesPageCache() const { return m_usesPageCache; }
@@ -344,6 +346,8 @@ private:
 #if ENABLE(RESOURCE_USAGE)
     bool m_resourceUsageOverlayVisible { false };
 #endif
+
+    bool m_hiddenPageDOMTimerThrottlingAutoIncreases { false };
 
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static bool gAVFoundationEnabled;

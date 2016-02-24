@@ -681,6 +681,15 @@ void Settings::setHiddenPageDOMTimerThrottlingEnabled(bool flag)
 }
 #endif
 
+void Settings::setHiddenPageDOMTimerThrottlingAutoIncreases(bool flag)
+{
+    if (m_hiddenPageDOMTimerThrottlingAutoIncreases == flag)
+        return;
+    m_hiddenPageDOMTimerThrottlingAutoIncreases = flag;
+    if (m_page)
+        m_page->hiddenPageDOMTimerThrottlingStateChanged();
+}
+
 void Settings::setHiddenPageCSSAnimationSuspensionEnabled(bool flag)
 {
     if (m_hiddenPageCSSAnimationSuspensionEnabled == flag)

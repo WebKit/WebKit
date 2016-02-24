@@ -1,3 +1,40 @@
+2016-02-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Add a mechanism to automatically ramp up timer alignment.
+        https://bugs.webkit.org/show_bug.cgi?id=154578
+
+        Reviewed by Antti Koivisto & Chris Dumez.
+
+        Allow timer alignment duration to be proportional to the time the page
+        has been hidden. This implementation does so by scaling up the throttle
+        in exponential steps, spaced exponentially far apart.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+            - initialize timer.
+        (WebCore::Page::hiddenPageDOMTimerThrottlingStateChanged):
+            - if setting are changed fully disable/reenable to ensure new setting are read.
+        (WebCore::Page::setTimerThrottlingEnabled):
+            - enebled bool flag converted to an Optional<double>, tracking time throttling
+              is enabled.
+        (WebCore::Page::setDOMTimerAlignmentInterval):
+            - when new mechanism is enabled schedule a timer to step up alignment.
+        (WebCore::Page::timerAlignmentIntervalIncreaseTimerFired):
+            - when timer fires increase alignment.
+        * page/Page.h:
+            - added new member.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+            - initialize new member.
+        (WebCore::Settings::setHiddenPageDOMTimerThrottlingAutoIncreaseLimit):
+            - added, update new setting. Setting to zero disabled. A non-zero value is a
+              duration in seconds for timer throttling to ramp up to.
+        * page/Settings.h:
+        (WebCore::Settings::hiddenPageDOMTimerThrottlingAutoIncreases):
+            - read as boolean whether throttle increasing is enabled.
+        (WebCore::Settings::hiddenPageDOMTimerThrottlingAutoIncreaseLimit):
+            - read throttle increasing limit.
+
 2016-02-22  Ada Chan  <adachan@apple.com>
 
         Refactor script that updates fullscreen buttons.

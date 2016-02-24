@@ -204,8 +204,8 @@ Page::Page(PageConfiguration& pageConfiguration)
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_viewMode(ViewModeWindowed)
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
-    , m_timerThrottlingEnabled(false)
     , m_timerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
+    , m_timerAlignmentIntervalIncreaseTimer(*this, &Page::timerAlignmentIntervalIncreaseTimerFired)
     , m_isEditable(false)
     , m_isPrerender(false)
     , m_viewState(PageInitialViewState)
@@ -1157,6 +1157,8 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
 
 void Page::hiddenPageDOMTimerThrottlingStateChanged()
 {
+    // Disable & reengage to ensure state is updated.
+    setTimerThrottlingEnabled(false);
     setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
 }
 
@@ -1167,21 +1169,48 @@ void Page::setTimerThrottlingEnabled(bool enabled)
         enabled = false;
 #endif
 
-    if (enabled == m_timerThrottlingEnabled)
+    if (enabled == !!m_timerThrottlingEnabledTime)
         return;
 
-    m_timerThrottlingEnabled = enabled;
+    m_timerThrottlingEnabledTime = enabled ? monotonicallyIncreasingTime() : Optional<double>();
     setDOMTimerAlignmentInterval(enabled ? DOMTimer::hiddenPageAlignmentInterval() : DOMTimer::defaultAlignmentInterval());
 }
 
 void Page::setDOMTimerAlignmentInterval(double alignmentInterval)
 {
+    // If the new alignmentInterval is shorter than the one presently in effect we need to update
+    // existing timers (e.g. when a hidden page becomes visible throttled timers must be unthrottled).
+    // However when lengthening the alignment interval, no need to update existing timers. Not doing
+    // so means that timers scheduled while the page is visible get to fire accurately (repeating
+    // timers will be throttled on the next timer fire).
+    bool shouldRescheduleExistingTimers = alignmentInterval < m_timerAlignmentInterval;
+
     m_timerAlignmentInterval = alignmentInterval;
-    
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            frame->document()->didChangeTimerAlignmentInterval();
+
+    if (shouldRescheduleExistingTimers) {
+        for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            if (auto* document = frame->document())
+                document->didChangeTimerAlignmentInterval();
+        }
     }
+
+    // If throttling is enabled and auto-increasing of throttling is enabled then arm the timer to
+    // consider an increase. Time to wait between increases is equal to the current throttle time.
+    // Since alinment interval increases exponentially, time between steps is exponential too.
+    if (m_timerThrottlingEnabledTime && m_settings->hiddenPageDOMTimerThrottlingAutoIncreases())
+        m_timerAlignmentIntervalIncreaseTimer.startOneShot(m_timerAlignmentInterval);
+    else
+        m_timerAlignmentIntervalIncreaseTimer.stop();
+}
+
+void Page::timerAlignmentIntervalIncreaseTimerFired()
+{
+    ASSERT(m_timerThrottlingEnabledTime && m_settings->hiddenPageDOMTimerThrottlingAutoIncreases());
+        
+    // Alignment interval is increased to equal the time the page has been throttled.
+    double throttledDuration = monotonicallyIncreasingTime() - m_timerThrottlingEnabledTime.value();
+    double alignmentInterval = std::max(m_timerAlignmentInterval, throttledDuration);
+    setDOMTimerAlignmentInterval(alignmentInterval);
 }
 
 void Page::dnsPrefetchingStateChanged()
