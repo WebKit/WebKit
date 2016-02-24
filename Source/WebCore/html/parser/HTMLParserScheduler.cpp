@@ -32,11 +32,6 @@
 #include "HTMLDocumentParser.h"
 #include "Page.h"
 
-// defaultParserChunkSize is used to define how many tokens the parser will
-// process before checking against parserTimeLimit and possibly yielding.
-// This is a performance optimization to prevent checking after every token.
-static const int defaultParserChunkSize = 4096;
-
 // defaultParserTimeLimit is the seconds the parser will run in one write() call
 // before yielding. Inline <script> execution can cause it to exceed the limit.
 // FIXME: We would like this value to be 0.2.
@@ -75,7 +70,6 @@ PumpSession::PumpSession(unsigned& nestingLevel, Document* document)
     // At that time we'll initialize startTime.
     , processedTokens(INT_MAX)
     , startTime(0)
-    , needsYield(false)
     , didSeeScript(false)
 {
 }
@@ -87,7 +81,6 @@ PumpSession::~PumpSession()
 HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
     : m_parser(parser)
     , m_parserTimeLimit(parserTimeLimit(m_parser.document()->page()))
-    , m_parserChunkSize(defaultParserChunkSize)
     , m_continueNextChunkTimer(*this, &HTMLParserScheduler::continueNextChunkTimerFired)
     , m_isSuspendedWithActiveTimer(false)
 #if !ASSERT_DISABLED
@@ -114,15 +107,14 @@ void HTMLParserScheduler::continueNextChunkTimerFired()
     m_parser.resumeParsingAfterYield();
 }
 
-void HTMLParserScheduler::checkForYieldBeforeScript(PumpSession& session)
+bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(PumpSession& session)
 {
     // If we've never painted before and a layout is pending, yield prior to running
     // scripts to give the page a chance to paint earlier.
     Document* document = m_parser.document();
     bool needsFirstPaint = document->view() && !document->view()->hasEverPainted();
-    if (needsFirstPaint && document->isLayoutTimerActive())
-        session.needsYield = true;
     session.didSeeScript = true;
+    return needsFirstPaint && document->isLayoutTimerActive();
 }
 
 void HTMLParserScheduler::scheduleForResume()

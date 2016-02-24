@@ -196,38 +196,6 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
     }
 }
 
-bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& session)
-{
-    if (isStopped())
-        return false;
-
-    if (isWaitingForScripts()) {
-        if (mode == AllowYield)
-            m_parserScheduler->checkForYieldBeforeScript(session);
-
-        // If we don't run the script, we cannot allow the next token to be taken.
-        if (session.needsYield)
-            return false;
-
-        // If we're paused waiting for a script, we try to execute scripts before continuing.
-        runScriptsForPausedTreeBuilder();
-        if (isWaitingForScripts() || isStopped())
-            return false;
-    }
-
-    // FIXME: It's wrong for the HTMLDocumentParser to reach back to the Frame, but this approach is
-    // how the parser has always handled stopping when the page assigns window.location. What should
-    // happen instead  is that assigning window.location causes the parser to stop parsing cleanly.
-    // The problem is we're not prepared to do that at every point where we run JavaScript.
-    if (!isParsingFragment() && document()->frame() && document()->frame()->navigationScheduler().locationChangePending())
-        return false;
-
-    if (mode == AllowYield)
-        m_parserScheduler->checkForYieldBeforeToken(session);
-
-    return true;
-}
-
 Document* HTMLDocumentParser::contextForParsingSession()
 {
     // The parsing session should interact with the document only when parsing
@@ -235,6 +203,50 @@ Document* HTMLDocumentParser::contextForParsingSession()
     if (isParsingFragment())
         return nullptr;
     return document();
+}
+
+bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFragment, PumpSession& session)
+{
+    do {
+        if (UNLIKELY(isWaitingForScripts())) {
+            if (mode == AllowYield && m_parserScheduler->shouldYieldBeforeExecutingScript(session))
+                return true;
+            runScriptsForPausedTreeBuilder();
+            // If we're paused waiting for a script, we try to execute scripts before continuing.
+            if (isWaitingForScripts() || isStopped())
+                return false;
+        }
+
+        // FIXME: It's wrong for the HTMLDocumentParser to reach back to the Frame, but this approach is
+        // how the parser has always handled stopping when the page assigns window.location. What should
+        // happen instead is that assigning window.location causes the parser to stop parsing cleanly.
+        // The problem is we're not prepared to do that at every point where we run JavaScript.
+        if (UNLIKELY(!parsingFragment && document()->frame() && document()->frame()->navigationScheduler().locationChangePending()))
+            return false;
+
+        if (UNLIKELY(mode == AllowYield && m_parserScheduler->shouldYieldBeforeToken(session)))
+            return true;
+
+        if (!parsingFragment)
+            m_sourceTracker.startToken(m_input.current(), m_tokenizer);
+
+        auto token = m_tokenizer.nextToken(m_input.current());
+        if (!token)
+            return false;
+
+        if (!parsingFragment) {
+            m_sourceTracker.endToken(m_input.current(), m_tokenizer);
+
+            // We do not XSS filter innerHTML, which means we (intentionally) fail
+            // http/tests/security/xssAuditor/dom-write-innerHTML.html
+            if (auto xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(*token, m_sourceTracker, m_tokenizer.shouldAllowCDATA())))
+                m_xssAuditorDelegate.didBlockScript(*xssInfo);
+        }
+
+        constructTreeFromHTMLToken(token);
+    } while (!isStopped());
+
+    return false;
 }
 
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
@@ -249,25 +261,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     m_xssAuditor.init(document(), &m_xssAuditorDelegate);
 
-    while (canTakeNextToken(mode, session) && !session.needsYield) {
-        if (!isParsingFragment())
-            m_sourceTracker.startToken(m_input.current(), m_tokenizer);
-
-        auto token = m_tokenizer.nextToken(m_input.current());
-        if (!token)
-            break;
-
-        if (!isParsingFragment()) {
-            m_sourceTracker.endToken(m_input.current(), m_tokenizer);
-
-            // We do not XSS filter innerHTML, which means we (intentionally) fail
-            // http/tests/security/xssAuditor/dom-write-innerHTML.html
-            if (auto xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(*token, m_sourceTracker, m_tokenizer.shouldAllowCDATA())))
-                m_xssAuditorDelegate.didBlockScript(*xssInfo);
-        }
-
-        constructTreeFromHTMLToken(token);
-    }
+    bool shouldResume = pumpTokenizerLoop(mode, isParsingFragment(), session);
 
     // Ensure we haven't been totally deref'ed after pumping. Any caller of this
     // function should be holding a RefPtr to this to ensure we weren't deleted.
@@ -276,7 +270,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isStopped())
         return;
 
-    if (session.needsYield)
+    if (shouldResume)
         m_parserScheduler->scheduleForResume();
 
     if (isWaitingForScripts()) {

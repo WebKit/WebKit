@@ -54,9 +54,8 @@ public:
     PumpSession(unsigned& nestingLevel, Document*);
     ~PumpSession();
 
-    int processedTokens;
+    unsigned processedTokens;
     double startTime;
-    bool needsYield;
     bool didSeeScript;
 };
 
@@ -66,29 +65,19 @@ public:
     explicit HTMLParserScheduler(HTMLDocumentParser&);
     ~HTMLParserScheduler();
 
-    // Inline as this is called after every token in the parser.
-    void checkForYieldBeforeToken(PumpSession& session)
+    bool shouldYieldBeforeToken(PumpSession& session)
     {
 #if PLATFORM(IOS)
         if (WebThreadShouldYield())
-            session.needsYield = true;
+            return true;
 #endif
-        if (session.processedTokens > m_parserChunkSize || session.didSeeScript) {
-            // monotonicallyIncreasingTime() can be expensive. By delaying, we avoided calling
-            // monotonicallyIncreasingTime() when constructing non-yielding PumpSessions.
-            if (!session.startTime)
-                session.startTime = monotonicallyIncreasingTime();
+        if (UNLIKELY(session.processedTokens > numberOfTokensBeforeCheckingForYield || session.didSeeScript))
+            return checkForYield(session);
 
-            session.processedTokens = 0;
-            session.didSeeScript = false;
-
-            double elapsedTime = monotonicallyIncreasingTime() - session.startTime;
-            if (elapsedTime > m_parserTimeLimit)
-                session.needsYield = true;
-        }
         ++session.processedTokens;
+        return false;
     }
-    void checkForYieldBeforeScript(PumpSession&);
+    bool shouldYieldBeforeExecutingScript(PumpSession&);
 
     void scheduleForResume();
     bool isScheduledForResume() const { return m_isSuspendedWithActiveTimer || m_continueNextChunkTimer.isActive(); }
@@ -97,12 +86,29 @@ public:
     void resume();
 
 private:
+    static const unsigned numberOfTokensBeforeCheckingForYield = 4096; // Performance optimization
+
     void continueNextChunkTimerFired();
+
+    bool checkForYield(PumpSession& session)
+    {
+        session.processedTokens = 1;
+        session.didSeeScript = false;
+
+        // monotonicallyIncreasingTime() can be expensive. By delaying, we avoided calling
+        // monotonicallyIncreasingTime() when constructing non-yielding PumpSessions.
+        if (!session.startTime) {
+            session.startTime = monotonicallyIncreasingTime();
+            return false;
+        }
+
+        double elapsedTime = monotonicallyIncreasingTime() - session.startTime;
+        return elapsedTime > m_parserTimeLimit;
+    }
 
     HTMLDocumentParser& m_parser;
 
     double m_parserTimeLimit;
-    int m_parserChunkSize;
     Timer m_continueNextChunkTimer;
     bool m_isSuspendedWithActiveTimer;
 #if !ASSERT_DISABLED

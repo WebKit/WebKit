@@ -102,8 +102,8 @@ private:
     Document* contextForParsingSession();
 
     enum SynchronousMode { AllowYield, ForceSynchronous };
-    bool canTakeNextToken(SynchronousMode, PumpSession&);
     void pumpTokenizer(SynchronousMode);
+    bool pumpTokenizerLoop(SynchronousMode, bool parsingFragment, PumpSession&);
     void pumpTokenizerIfPossible(SynchronousMode);
     void constructTreeFromHTMLToken(HTMLTokenizer::TokenPtr&);
 
