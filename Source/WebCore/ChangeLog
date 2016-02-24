@@ -1,3 +1,16 @@
+2016-02-22  Ada Chan  <adachan@apple.com>
+
+        Refactor script that updates fullscreen buttons.
+        https://bugs.webkit.org/show_bug.cgi?id=154562
+
+        Reviewed by Dean Jackson.
+
+        Also expose extra property and element in getCurrentControlsStatus() for future testing.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updatePictureInPictureButton):
+        (Controller.prototype.updateFullscreenButtons):
+
 2016-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Calling importNode on shadow root causes a crash

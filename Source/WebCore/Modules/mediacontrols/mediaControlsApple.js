@@ -818,9 +818,14 @@ Controller.prototype = {
 
     updatePictureInPictureButton: function()
     {
-        var shouldShowPictureInPictureButton = Controller.gSimulatePictureInPictureAvailable || ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('picture-in-picture'));
+        var shouldShowPictureInPictureButton = (Controller.gSimulatePictureInPictureAvailable || ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('picture-in-picture'))) && this.hasVideo();
         if (shouldShowPictureInPictureButton) {
-            this.controls.panel.appendChild(this.controls.pictureInPictureButton);
+            if (!this.controls.pictureInPictureButton.parentElement) {
+                if (this.controls.fullscreenButton.parentElement == this.controls.panel)
+                    this.controls.panel.insertBefore(this.controls.pictureInPictureButton, this.controls.fullscreenButton);
+                else
+                    this.controls.panel.appendChild(this.controls.pictureInPictureButton);
+            }
             this.controls.pictureInPictureButton.classList.remove(this.ClassNames.hidden);
         } else
             this.controls.pictureInPictureButton.classList.add(this.ClassNames.hidden);
@@ -1138,7 +1143,7 @@ Controller.prototype = {
     {
         var shouldBeHidden = !this.video.webkitSupportsFullscreen || !this.hasVideo();
         this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden && !this.isFullScreen());
-        this.controls.pictureInPictureButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
+        this.updatePictureInPictureButton();
         this.setNeedsUpdateForDisplayedWidth();
         this.updateLayoutForDisplayedWidth();
     },
@@ -2248,11 +2253,16 @@ Controller.prototype = {
             },
             {
                 name: "Picture-in-picture Button",
-                object: this.controls.pictureInPictureButton
+                object: this.controls.pictureInPictureButton,
+                extraProperties: ["parentElement"],
             },
             {
                 name: "Track Menu",
                 object: this.captionMenu
+            },
+            {
+                name: "Inline playback placeholder",
+                object: this.controls.inlinePlaybackPlaceholder,
             },
         ];
 
