@@ -1,3 +1,44 @@
+2016-02-24  Alejandro G. Castro  <alex@igalia.com>
+
+        [Gstreamer] Mediaplayer should observe the tracks and not the source
+        https://bugs.webkit.org/show_bug.cgi?id=154582
+
+        Reviewed by Philippe Normand.
+
+        We have to observe the track objects that define the
+        mediastream. Replace the source attributes with the new tracks and
+        use them properly in the class.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerOwr::~MediaPlayerPrivateGStreamerOwr):
+        Make sure we are not observing anymore the tracks after
+        destruction.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::hasVideo): Used the track
+        instead of the source.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::hasAudio): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::currentTime): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::internalLoad): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::stop): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackEnded): Added, new
+        track observer API, make sure we disable the ended tracks.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackMutedChanged):
+        Added, new track observer API.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackSettingsChanged):
+        Added, new track observer API.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackEnabledChanged):
+        Added, new track observer API.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::sourceStopped): Deleted,
+        source observer API.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::sourceMutedChanged):
+        Deleted, source observer API.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::sourceSettingsChanged):
+        Deleted, source observer API.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::preventSourceFromStopping):
+        Deleted, source observer API.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.h:
+        Replaced the attributes representing the source with the tracks
+        and added the new track observer functions.
+
 2016-02-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Swap the order of columns/rows in grid-gap shorthand
