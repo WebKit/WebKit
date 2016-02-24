@@ -59,7 +59,7 @@ static const char reflectedXSS[] = "reflected-xss";
 
 static inline bool isExperimentalDirectiveName(const String& name)
 {
-    return equalLettersIgnoringASCIICase(name, pluginTypes) || equalLettersIgnoringASCIICase(name, reflectedXSS);
+    return equalLettersIgnoringASCIICase(name, reflectedXSS);
 }
 
 #else
@@ -82,6 +82,7 @@ bool isCSPDirectiveName(const String& name)
         || equalLettersIgnoringASCIICase(name, imgSrc)
         || equalLettersIgnoringASCIICase(name, mediaSrc)
         || equalLettersIgnoringASCIICase(name, objectSrc)
+        || equalLettersIgnoringASCIICase(name, pluginTypes)
         || equalLettersIgnoringASCIICase(name, reportURI)
         || equalLettersIgnoringASCIICase(name, sandbox)
         || equalLettersIgnoringASCIICase(name, scriptSrc)
@@ -602,15 +603,15 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_formAction);
     else if (equalLettersIgnoringASCIICase(name, baseURI))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_baseURI);
+    else if (equalLettersIgnoringASCIICase(name, pluginTypes))
+        setCSPDirective<ContentSecurityPolicyMediaListDirective>(name, value, m_pluginTypes);
     else if (equalLettersIgnoringASCIICase(name, sandbox))
         applySandboxPolicy(name, value);
     else if (equalLettersIgnoringASCIICase(name, reportURI))
         parseReportURI(name, value);
 #if ENABLE(CSP_NEXT)
     else if (m_policy.experimentalFeaturesEnabled()) {
-        if (equalLettersIgnoringASCIICase(name, pluginTypes))
-            setCSPDirective<ContentSecurityPolicyMediaListDirective>(name, value, m_pluginTypes);
-        else if (equalLettersIgnoringASCIICase(name, reflectedXSS))
+        if (equalLettersIgnoringASCIICase(name, reflectedXSS))
             parseReflectedXSS(name, value);
         else
             m_policy.reportUnsupportedDirective(name);

@@ -1,3 +1,18 @@
+2016-02-24  Daniel Bates  <dabates@apple.com>
+
+        CSP: Enable plugin-types directive by default
+        https://bugs.webkit.org/show_bug.cgi?id=154420
+        <rdar://problem/24730322>
+
+        Reviewed by Brent Fulgham.
+
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::isExperimentalDirectiveName): Move plugin-types from the directives considered
+        experimental to...
+        (WebCore::isCSPDirectiveName): ...the list of standard directives.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Move logic to parse the plugin-types
+        directive outside the ENABLE(CSP_NEXT) macro guarded section/experimental feature runtime flag.
+
 2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Speculative fix for ios build.

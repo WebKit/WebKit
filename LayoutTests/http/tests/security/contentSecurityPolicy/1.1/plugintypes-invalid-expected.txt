@@ -6,6 +6,10 @@ CONSOLE MESSAGE: 'plugin-types' Content Security Policy directive is empty; all 
 
 CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types '.
 
+CONSOLE MESSAGE: Invalid plugin type in 'plugin-types' Content Security Policy directive: ''none''.
+
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types 'none''.
+
 CONSOLE MESSAGE: Invalid plugin type in 'plugin-types' Content Security Policy directive: 'text'.
 
 CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types text'.
@@ -69,6 +73,11 @@ Frame: '<!--framePath //<!--frame6-->-->'
 
 --------
 Frame: '<!--framePath //<!--frame7-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame8-->-->'
 --------
 PASS.
 

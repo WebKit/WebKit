@@ -1,3 +1,43 @@
+2016-02-24  Daniel Bates  <dabates@apple.com>
+
+        CSP: Enable plugin-types directive by default
+        https://bugs.webkit.org/show_bug.cgi?id=154420
+        <rdar://problem/24730322>
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations: Mark http/tests/security/contentSecurityPolicy/1.1/plugintypes*.html tests as PASS so that we run them.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid-expected.txt: Update expected result.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html: Call runTests() following changes to multiple-iframe-plugin-test.js.
+        Also add closing tags for <body> and <html> to make the document well-formed.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html: Substitute "Content-Security-Policy" for "X-WebKit-CSP";
+        no behavior change.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url-expected.txt: Update expected result.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html: Substitute "Content-Security-Policy" for "X-WebKit-CSP";
+        no behavior change.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html: Call runTests() following changes to multiple-iframe-plugin-test.js.
+        Also add closing tags for <body> and <html> to make the document well-formed.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/resources/echo-object-data.pl: Remove logic to support Content Security Policy header X-WebKit-CSP
+        as it is sufficient to make use of the standardized header Content-Security-Policy.
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-plugin-test.js: Simplify code now that we do not pass query string parameter
+        experimental to script echo-object-data.pl.
+        (runTests): Runs all the sub-tests.
+        (runNextTest.iframe.onload): Formerly named testImpl.iframe.onload.
+        (runNextTest): Formerly named testImpl. Runs the next sub-test.
+        (testExperimentalPolicy): Deleted.
+        (test): Deleted.
+        (testImpl.iframe.onload): Deleted.
+        (testImpl): Deleted.
+        (finishTesting): Deleted.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon-expected.txt: Update expected result based on change to test (below).
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon.html: Modified to test that we emit
+        a console warning when plugin-types is used as a source expression.
+
 2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline two W3C tests for ios-simulator after r197014
