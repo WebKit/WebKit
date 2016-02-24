@@ -53,7 +53,6 @@ CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 GCC_WARN_UNDECLARED_SELECTOR = YES;
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
-LINKER_DISPLAYS_MANGLED_NAMES = YES;
 GCC_NO_COMMON_BLOCKS = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
