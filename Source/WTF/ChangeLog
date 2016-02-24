@@ -1,3 +1,14 @@
+2016-02-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove HIDDEN_PAGE_DOM_TIMER_THROTTLING feature define
+        https://bugs.webkit.org/show_bug.cgi?id=112323
+
+        Reviewed by Chris Dumez.
+
+        This feature is controlled by a runtime switch, and defaults off.
+
+        * wtf/FeatureDefines.h:
+
 2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Moved library setup code to WEBKIT_FRAMEWORK macro.

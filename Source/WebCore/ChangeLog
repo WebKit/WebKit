@@ -42,6 +42,28 @@
 
 2016-02-23  Gavin Barraclough  <barraclough@apple.com>
 
+        Remove HIDDEN_PAGE_DOM_TIMER_THROTTLING feature define
+        https://bugs.webkit.org/show_bug.cgi?id=112323
+
+        Reviewed by Chris Dumez.
+
+        This feature is controlled by a runtime switch, and defaults off.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * page/Page.cpp:
+        (WebCore::Page::setTimerThrottlingEnabled):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::shouldRespectPriorityInCSSAttributeSetters):
+        (WebCore::Settings::setHiddenPageDOMTimerThrottlingEnabled):
+        (WebCore::Settings::setHiddenPageDOMTimerThrottlingAutoIncreases):
+        * page/Settings.h:
+        (WebCore::Settings::layoutInterval):
+        (WebCore::Settings::hiddenPageDOMTimerThrottlingEnabled):
+        (WebCore::Settings::hiddenPageDOMTimerThrottlingAutoIncreases):
+
+2016-02-23  Gavin Barraclough  <barraclough@apple.com>
+
         Add a mechanism to automatically ramp up timer alignment.
         https://bugs.webkit.org/show_bug.cgi?id=154578
 

@@ -2468,9 +2468,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
 
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     settings.setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
-#endif
 
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
 

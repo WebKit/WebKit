@@ -1,3 +1,14 @@
+2016-02-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove HIDDEN_PAGE_DOM_TIMER_THROTTLING feature define
+        https://bugs.webkit.org/show_bug.cgi?id=112323
+
+        Reviewed by Chris Dumez.
+
+        This feature is controlled by a runtime switch, and defaults off.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-02-23  Keith Miller  <keith_miller@apple.com>
 
         JSC stress tests' standalone-pre.js should exit on the first failure by default

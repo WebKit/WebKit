@@ -1164,10 +1164,8 @@ void Page::hiddenPageDOMTimerThrottlingStateChanged()
 
 void Page::setTimerThrottlingEnabled(bool enabled)
 {
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     if (!m_settings->hiddenPageDOMTimerThrottlingEnabled())
         enabled = false;
-#endif
 
     if (enabled == !!m_timerThrottlingEnabledTime)
         return;
