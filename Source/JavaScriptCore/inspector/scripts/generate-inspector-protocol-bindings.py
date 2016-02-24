@@ -170,7 +170,7 @@ def generate_from_specification(primary_specification_filepath=None,
     elif protocol.framework is Frameworks.WebKit and generate_frontend:
         # FIXME <rdar://problem/23466925>: This list of generators for the frontend is a placeholder.
         generators.append(ObjCConversionHelpersGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
         generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
 
     elif protocol.framework is Frameworks.WebInspector:
@@ -187,6 +187,13 @@ def generate_from_specification(primary_specification_filepath=None,
     single_output_file_contents = []
 
     for generator in generators:
+        # Only some generators care whether frontend or backend was specified, but it is
+        # set on all of them to avoid adding more constructor arguments or thinking too hard.
+        if generate_backend:
+            generator.set_generator_setting('generate_backend', True)
+        if generate_frontend:
+            generator.set_generator_setting('generate_frontend', True)
+
         output = generator.generate_output()
         if concatenate_output:
             single_output_file_contents.append('### Begin File: %s' % generator.output_filename())

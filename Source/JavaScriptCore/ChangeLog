@@ -1,3 +1,78 @@
+2016-02-23  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: teach the Objective-C protocol generators about --frontend and --backend directives
+        https://bugs.webkit.org/show_bug.cgi?id=154615
+        <rdar://problem/24804330>
+
+        Reviewed by Timothy Hatcher.
+
+        Some of the generated Objective-C bindings are only relevant to code acting as the
+        protocol backend. Add a per-generator setting mechanism and propagate --frontend and
+        --backend to all generators. Use the setting in a few generators to omit code that's
+        not needed.
+
+        Also fix a few places where the code emits the wrong Objective-C class prefix.
+        There is some common non-generated code that must always have the RWIProtocol prefix.
+
+        Lastly, change includes to use RWIProtocolJSONObjectPrivate.h instead of *Internal.h. The
+        macros defined in the internal header now need to be used outside of the framework.
+
+        * inspector/scripts/codegen/generate_objc_conversion_helpers.py:
+        Use OBJC_STATIC_PREFIX along with the file name and use different include syntax
+        depending on the target framework.
+
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator.generate_output):
+        For now, omit generating command protocol and event dispatchers when generating for --frontend.
+
+        (ObjCHeaderGenerator._generate_type_interface):
+        Use OBJC_STATIC_PREFIX along with the unprefixed file name.
+
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        Use RWIProtocolJSONObjectPrivate.h instead.
+
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.generate_output):
+        Include the Internal header if it's being generated (only for --backend).
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.__init__):
+        (Generator.set_generator_setting):
+        (Generator):
+        (Generator.get_generator_setting):
+        Crib a simple setting system from the Framework class. Make the names more obnoxious.
+
+        (Generator.string_for_file_include):
+        Inspired by the replay input generator, this is a function that uses the proper syntax
+        for a file include depending on the file's framework and target framework.
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.and):
+        (ObjCGenerator.and.objc_prefix):
+        (ObjCGenerator):
+        (ObjCGenerator.objc_type_for_raw_name):
+        (ObjCGenerator.objc_class_for_raw_name):
+        Whitelist the 'Automation' domain for the ObjC generators. Revise use of OBJC_STATIC_PREFIX.
+
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification):
+        Change the generators to use for the frontend. Propagate --frontend and --backend.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        Rebaseline tests. They now correctly include RWIProtocolJSONObject.h and the like.
+
 2016-02-23  Saam barati  <sbarati@apple.com>
 
         arrayProtoFuncConcat doesn't check for an exception after allocating an array

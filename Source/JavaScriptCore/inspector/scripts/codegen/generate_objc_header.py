@@ -52,7 +52,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
 
     def generate_output(self):
         headers = set([
-            '<WebInspector/%sJSONObject.h>' % self.objc_prefix(),
+            '<WebInspector/%sJSONObject.h>' % ObjCGenerator.OBJC_STATIC_PREFIX,
         ])
 
         header_args = {
@@ -75,8 +75,11 @@ class ObjCHeaderGenerator(ObjCGenerator):
         sections.append('\n'.join(filter(None, map(self._generate_forward_declarations, type_domains))))
         sections.append('\n'.join(filter(None, map(self._generate_enums, type_domains))))
         sections.append('\n'.join(filter(None, map(self._generate_types, type_domains))))
-        sections.append('\n\n'.join(filter(None, map(self._generate_command_protocols, command_domains))))
-        sections.append('\n\n'.join(filter(None, map(self._generate_event_interfaces, event_domains))))
+
+        if self.get_generator_setting('generate_backend', False):
+            sections.append('\n\n'.join(filter(None, map(self._generate_command_protocols, command_domains))))
+            sections.append('\n\n'.join(filter(None, map(self._generate_event_interfaces, event_domains))))
+
         sections.append(Template(ObjCTemplates.HeaderPostlude).substitute(None))
         return '\n\n'.join(sections)
 
@@ -155,7 +158,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
         lines = []
         objc_name = self.objc_name_for_type(declaration.type)
         lines.append('__attribute__((visibility ("default")))')
-        lines.append('@interface %s : %s' % (objc_name, ObjCGenerator.OBJC_JSON_OBJECT_BASE))
+        lines.append('@interface %s : %sJSONObject' % (objc_name, ObjCGenerator.OBJC_STATIC_PREFIX))
         required_members = filter(lambda member: not member.is_optional, declaration.type_members)
         optional_members = filter(lambda member: member.is_optional, declaration.type_members)
         if required_members:

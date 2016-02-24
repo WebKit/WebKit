@@ -30,7 +30,7 @@ import string
 from string import Template
 
 from generator import Generator, ucfirst
-from models import ObjectType
+from models import ObjectType, Frameworks
 from objc_generator import ObjCGenerator
 from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -56,12 +56,18 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
     def generate_output(self):
         secondary_headers = [
             '"%sEnumConversionHelpers.h"' % self.objc_prefix(),
+            Generator.string_for_file_include('%sJSONObjectPrivate.h' % ObjCGenerator.OBJC_STATIC_PREFIX, Frameworks.WebInspector, self.model().framework),
             '<JavaScriptCore/InspectorValues.h>',
             '<wtf/Assertions.h>',
         ]
 
+        # The FooProtocolInternal.h header is only needed to declare the backend-side event dispatcher bindings.
+        primaryIncludeName = self.objc_prefix()
+        if self.get_generator_setting('generate_backend', False):
+            primaryIncludeName += 'Internal'
+
         header_args = {
-            'primaryInclude': '"%sInternal.h"' % self.objc_prefix(),
+            'primaryInclude': '"%s.h"' % primaryIncludeName,
             'secondaryIncludes': '\n'.join(['#import %s' % header for header in secondary_headers]),
         }
 

@@ -46,7 +46,7 @@ class ObjCInternalHeaderGenerator(ObjCGenerator):
     def generate_output(self):
         headers = set([
             '"%s.h"' % self.objc_prefix(),
-            '"%sJSONObjectInternal.h"' % self.objc_prefix(),
+            '"%sJSONObjectPrivate.h"' % self.objc_prefix(),
             '<JavaScriptCore/InspectorValues.h>',
             '<JavaScriptCore/AugmentableInspectorController.h>',
         ])

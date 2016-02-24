@@ -55,7 +55,7 @@ class ObjCConversionHelpersGenerator(ObjCGenerator):
 
     def generate_output(self):
         headers = [
-            '"%sArrayConversionHelpers.h"' % self.objc_prefix(),
+            '"%sArrayConversionHelpers.h"' % ObjCGenerator.OBJC_STATIC_PREFIX
         ]
 
         header_args = {

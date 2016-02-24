@@ -86,15 +86,15 @@ class ObjCGenerator(Generator):
     # Do not use a dynamic prefix for RWIProtocolJSONObject since it's used as a common
     # base class and needs a consistent Objective-C prefix to be in a reusable framework.
     OBJC_HELPER_PREFIX = 'RWI'
-    OBJC_COMMON_PREFIX = 'Protocol'
-    OBJC_JSON_OBJECT_BASE = '%s%sJSONObject' % (OBJC_HELPER_PREFIX, OBJC_COMMON_PREFIX)
+    OBJC_SHARED_PREFIX = 'Protocol'
+    OBJC_STATIC_PREFIX = '%s%s' % (OBJC_HELPER_PREFIX, OBJC_SHARED_PREFIX)
 
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
     def objc_prefix(self):
         framework_prefix = self.model().framework.setting('objc_prefix', '')
-        return '%s%s' % (framework_prefix, ObjCGenerator.OBJC_COMMON_PREFIX)
+        return '%s%s' % (framework_prefix, ObjCGenerator.OBJC_SHARED_PREFIX)
 
     # Adjust identifier names that collide with ObjC keywords.
 
@@ -108,7 +108,7 @@ class ObjCGenerator(Generator):
 
     # Generate ObjC types, command handlers, and event dispatchers for a subset of domains.
 
-    DOMAINS_TO_GENERATE = ['CSS', 'DOM', 'DOMStorage', 'Network', 'Page', 'GenericTypes']
+    DOMAINS_TO_GENERATE = ['CSS', 'DOM', 'DOMStorage', 'Network', 'Page', 'Automation', 'GenericTypes']
 
     @staticmethod
     def should_generate_domain_types_filter(model):
@@ -206,7 +206,7 @@ class ObjCGenerator(Generator):
         if raw_name is 'boolean':
             return 'BOOL'
         if raw_name in ['any', 'object']:
-            return '%s *' % ObjCGenerator.OBJC_JSON_OBJECT_BASE
+            return '%sJSONObject *' % ObjCGenerator.OBJC_STATIC_PREFIX
         return None
 
     @staticmethod
@@ -218,7 +218,7 @@ class ObjCGenerator(Generator):
         if raw_name in ['integer', 'number', 'boolean']:
             return 'NSNumber'
         if raw_name in ['any', 'object']:
-            return ObjCGenerator.OBJC_JSON_OBJECT_BASE
+            return '%sJSONObject' % ObjCGenerator.OBJC_STATIC_PREFIX
         return None
 
     # FIXME: Can these protocol_type functions be removed in favor of C++ generators functions?
