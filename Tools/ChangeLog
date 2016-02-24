@@ -1,5 +1,17 @@
 2016-02-23  Anders Carlsson  <andersca@apple.com>
 
+        WKWebView should implement NSCoding
+        https://bugs.webkit.org/show_bug.cgi?id=137160
+
+        Reviewed by Dan Bernstein.
+
+        Add tests.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Coding.mm:
+        (TEST):
+
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
         WKProcessPool should conform to NSCoding
         https://bugs.webkit.org/show_bug.cgi?id=154608
 

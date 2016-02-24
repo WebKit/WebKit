@@ -68,7 +68,7 @@
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    if (!(self = [super init]))
+    if (!(self = [self init]))
         return nil;
 
     return self;

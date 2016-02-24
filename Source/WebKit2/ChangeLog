@@ -1,5 +1,33 @@
 2016-02-23  Anders Carlsson  <andersca@apple.com>
 
+        WKWebView should implement NSCoding
+        https://bugs.webkit.org/show_bug.cgi?id=137160
+        rdar://problem/17380562
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController initWithCoder:]):
+        We need to call [self init] here, so that the wrapper will be initialized.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        -initWithCoder: shouldn't be unavailable, it should be a designated initializer.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        Move initialization out into a common method.
+
+        (-[WKWebView initWithFrame:configuration:]):
+        Call -initializeWithConfiguration: here.
+
+        (-[WKWebView initWithCoder:]):
+        Decode everything.
+
+        (-[WKWebView encodeWithCoder:]):
+        Encode everything.
+
+2016-02-23  Anders Carlsson  <andersca@apple.com>
+
         Fix an API test.
 
         * UIProcess/API/APIWebsiteDataStore.cpp:

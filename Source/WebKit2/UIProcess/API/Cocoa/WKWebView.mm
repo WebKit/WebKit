@@ -338,11 +338,8 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
 }
 #endif
 
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+- (void)_initializeWithConfiguration:(WKWebViewConfiguration *)configuration
 {
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
     if (!configuration)
         [NSException raise:NSInvalidArgumentException format:@"Configuration cannot be nil"];
 
@@ -358,7 +355,6 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
     }
 
     [_configuration _validate];
-
 
     WebKit::WebProcessPool& processPool = *[_configuration processPool]->_processPool;
     
@@ -469,14 +465,50 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
     _page->setDiagnosticLoggingClient(std::make_unique<WebKit::DiagnosticLoggingClient>(self));
 
     pageToViewMap().add(_page.get(), self);
+}
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    [self _initializeWithConfiguration:configuration];
 
     return self;
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    [self release];
-    return nil;
+    if (!(self = [super initWithCoder:coder]))
+        return nil;
+
+    WKWebViewConfiguration *configuration = [coder decodeObjectForKey:@"configuration"];
+    [self _initializeWithConfiguration:configuration];
+
+    self.allowsBackForwardNavigationGestures = [coder decodeBoolForKey:@"allowsBackForwardNavigationGestures"];
+    self.customUserAgent = [coder decodeObjectForKey:@"customUserAgent"];
+    self.allowsLinkPreview = [coder decodeBoolForKey:@"allowsLinkPreview"];
+
+#if PLATFORM(MAC)
+    self.allowsMagnification = [coder decodeBoolForKey:@"allowsMagnification"];
+    self.magnification = [coder decodeDoubleForKey:@"magnification"];
+#endif
+
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:_configuration.get() forKey:@"configuration"];
+
+    [coder encodeBool:self.allowsBackForwardNavigationGestures forKey:@"allowsBackForwardNavigationGestures"];
+    [coder encodeObject:self.customUserAgent forKey:@"customUserAgent"];
+    [coder encodeBool:self.allowsLinkPreview forKey:@"allowsLinkPreview"];
+
+#if PLATFORM(MAC)
+    [coder encodeBool:self.allowsMagnification forKey:@"allowsMagnification"];
+    [coder encodeDouble:self.magnification forKey:@"magnification"];
+#endif
 }
 
 - (void)dealloc
