@@ -51,7 +51,7 @@
     height: 7px;
     margin: 4px 6px;
     border-radius: 50%;
-    background-color: hsl(212, 92%, 54%);
+    background-color: var(--selected-background-color);
     opacity: 0.5;
     content: "";
 }

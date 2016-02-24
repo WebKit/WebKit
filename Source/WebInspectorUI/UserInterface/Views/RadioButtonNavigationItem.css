@@ -32,20 +32,20 @@
 }
 
 .navigation-bar .item.radio.button.text-only:hover {
-    color: white;
-    background-color: hsla(212, 92%, 54%, 0.5);
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color-hover);
 }
 
 .navigation-bar .item.radio.button.text-only.selected {
-    color: white;
-    background-color: hsl(212, 92%, 54%);
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
 }
 
 .navigation-bar .item.radio.button.text-only:active {
-    color: white;
+    color: var(--selected-foreground-color);
     background-color: hsla(212, 92%, 54%, 0.55);
 }
 
 .navigation-bar .item.radio.button.text-only.selected:active {
-    background-color: hsl(218, 85%, 52%);
+    background-color: var(--selected-background-color-active);
 }

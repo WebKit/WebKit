@@ -38,7 +38,7 @@
 .bezier-editor > .bezier-preview > div {
     width: 20px;
     height: 20px;
-    background-color: hsl(212, 92%, 54%);
+    background-color: var(--selected-background-color);
     border-radius: 50%;
 }
 

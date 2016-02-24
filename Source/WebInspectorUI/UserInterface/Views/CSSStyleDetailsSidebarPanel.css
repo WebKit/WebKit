@@ -107,13 +107,13 @@
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected {
-    color: white;
-    background-color: hsl(212, 92%, 54%);
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:not(.selected):hover {
-    color: white;
-    background-color: hsla(212, 92%, 54%, 0.5);
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color-hover);
 }
 
 .sidebar > .panel.details.css-style > .content:not(.supports-new-rule) ~ .options-container > .new-rule,

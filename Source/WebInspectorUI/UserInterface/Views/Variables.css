@@ -32,6 +32,17 @@
     --z-index-glass-pane-for-drag: 2048;
     --z-index-uncaught-exception-sheet: 4096;
 
+    --selected-foreground-color: white;
+    --selected-background-color: hsl(212, 92%, 54%);
+    --selected-background-color-active: hsl(218, 85%, 52%);
+    --selected-background-color-hover: hsla(212, 92%, 54%, 0.5);
+
+    --glyph-color: hsl(0, 0%, 30%);
+    --glyph-color-pressed: hsl(0, 0%, 15%);
+    --glyph-color-disabled: hsla(0, 0%, 30%, 0.55);
+    --glyph-color-active: hsl(212, 92%, 54%);
+    --glyph-color-active-pressed: hsl(218, 85%, 52%);
+
     --border-color: hsl(0, 0%, 70%);
     --panel-background-color: hsl(0, 0%, 94%);
 
@@ -54,6 +65,15 @@
     --memory-page-stroke-color: hsl(22, 40%, 50%);
     --memory-max-comparison-fill-color: hsl(220, 10%, 75%);
     --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
+}
+
+body.window-inactive {
+    /* FIXME: Use CSS4 color blend functions once they're available. */
+    --selected-background-color: hsla(212, 92%, 54%, 0.5);
+
+    --glyph-color-active: hsla(212, 92%, 54%, 0.5);
+    --glyph-color: hsla(0, 0%, 30%, 0.65);
+    --glyph-color-disabled: hsla(0, 0%, 30%, 0.35);
 }
 
 body.window-inactive * {

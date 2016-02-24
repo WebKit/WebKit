@@ -1,3 +1,53 @@
+2016-02-24  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dim selected items when docked Inspector window is inactive
+        https://bugs.webkit.org/show_bug.cgi?id=154526
+        <rdar://problem/24764365>
+
+        Abstract selected item and SVG glyph colors into CSS variables.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/BezierEditor.css:
+        (.bezier-editor > .bezier-preview > div):
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button > .glyph):
+        (.navigation-bar .item.button:not(.disabled):active > .glyph):
+        (.navigation-bar .item.button:not(.disabled):matches(:focus, .activate.activated, .radio.selected) > .glyph):
+        (.navigation-bar .item.button:not(.disabled):active:matches(:focus, .activate.activated, .radio.selected) > .glyph):
+        (.navigation-bar .item.button.disabled > .glyph):
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) > .glyph):
+        (.toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated) > .glyph):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:not(.selected):hover):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-user-command.special-user-log > .console-message-text):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li.pseudo-class-enabled > .selection::before):
+        * UserInterface/Views/Main.css:
+        (input[type=range]::-webkit-slider-runnable-track::before):
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button.text-only:hover):
+        (.navigation-bar .item.radio.button.text-only.selected):
+        (.navigation-bar .item.radio.button.text-only:active):
+        (.navigation-bar .item.radio.button.text-only.selected:active):
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows):
+        (.scope-bar > li:hover):
+        (.scope-bar > li.selected):
+        (.scope-bar > li:active):
+        (.scope-bar > li.selected:active):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (body.window-inactive):
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section.has-set-property > .header > span::after):
+        * UserInterface/Views/VisualStyleKeywordIconList.css:
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:matches(.computed, .selected)):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected):
+
 2016-02-23  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Linker errors display mangled names, but no longer should

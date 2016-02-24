@@ -112,7 +112,7 @@ input[type=range] {
 input[type=range]::-webkit-slider-runnable-track::before {
     content: "";
     display: block;
-    background: hsl(212, 92%, 54%);
+    background: var(--selected-background-color);
     height: 1px;
     margin: 8px 2px -8px 2px;
 }

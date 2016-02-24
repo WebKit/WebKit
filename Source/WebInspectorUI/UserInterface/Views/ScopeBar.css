@@ -72,7 +72,7 @@
 }
 
 .scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows {
-    color: white;
+    color: var(--selected-foreground-color);
 }
 
 .scope-bar > li:matches(.selected, :active) {
@@ -80,20 +80,20 @@
 }
 
 .scope-bar > li:hover {
-    color: white;
-    background-color: hsla(212, 92%, 54%, 0.5);
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color-hover);
 }
 
 .scope-bar > li.selected {
-    color: white;
-    background-color: hsl(212, 92%, 54%);
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
 }
 
 .scope-bar > li:active {
-    color: white;
+    color: var(--selected-foreground-color);
     background-color: hsla(212, 92%, 54%, 0.55);
 }
 
 .scope-bar > li.selected:active {
-    background-color: hsl(218, 85%, 52%);
+    background-color: var(--selected-background-color-active);
 }

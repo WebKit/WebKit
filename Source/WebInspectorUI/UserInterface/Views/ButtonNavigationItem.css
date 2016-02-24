@@ -42,29 +42,21 @@
 }
 
 .navigation-bar .item.button > .glyph {
-    color: hsl(0, 0%, 30%);
+    color: var(--glyph-color);
 }
 
 .navigation-bar .item.button:not(.disabled):active > .glyph {
-    color: hsl(0, 0%, 15%);
+    color: var(--glyph-color-pressed);
 }
 
 .navigation-bar .item.button:not(.disabled):matches(:focus, .activate.activated, .radio.selected) > .glyph {
-    color: hsl(212, 92%, 54%);
+    color: var(--glyph-color-active);
 }
 
 .navigation-bar .item.button:not(.disabled):active:matches(:focus, .activate.activated, .radio.selected) > .glyph {
-    color: hsl(218, 85%, 52%);
-}
-
-body.window-inactive .navigation-bar .item.button > .glyph {
-    opacity: 0.65;
+    color: var(--glyph-color-active-pressed);
 }
 
 .navigation-bar .item.button.disabled > .glyph {
-    opacity: 0.55 !important;
-}
-
-body.window-inactive .navigation-bar .item.button.disabled > .glyph {
-    opacity: 0.35 !important;
+    color: var(--glyph-color-disabled);
 }

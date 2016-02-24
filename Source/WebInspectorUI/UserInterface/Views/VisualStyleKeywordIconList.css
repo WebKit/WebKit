@@ -55,11 +55,11 @@
 .visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:matches(.computed, .selected) {
     width: 27px;
     border-right: 1px solid;
-    border-color: hsl(212, 92%, 54%);
+    border-color: var(--selected-background-color);
 }
 
 .visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected {
-    background-color: hsl(212, 92%, 54%);
+    background-color: var(--selected-background-color);
     color: hsl(0, 100%, 100%);
 }
 

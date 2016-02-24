@@ -51,11 +51,11 @@
 }
 
 .toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) > .glyph {
-    color: hsl(212, 92%, 54%);
+    color: var(--selected-background-color);
 }
 
 .toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated) > .glyph {
-    color: hsl(218, 85%, 52%);
+    color: var(--selected-background-color-active);
 }
 
 .toolbar.small-size .item.button > .glyph {
