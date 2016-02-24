@@ -1,3 +1,20 @@
+2016-02-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Stackmaps have problems with double register constraints
+        https://bugs.webkit.org/show_bug.cgi?id=154643
+
+        Reviewed by Geoffrey Garen.
+
+        This is currently a benign bug. I found it while playing.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        * b3/testb3.cpp:
+        (JSC::B3::testURShiftSelf64):
+        (JSC::B3::testPatchpointDoubleRegs):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+
 2016-02-24  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Emit loading&putting this/super only if they are used in arrow function
