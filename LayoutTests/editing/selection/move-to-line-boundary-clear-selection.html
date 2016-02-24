@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<pre id="console"></pre>
+<script>
+function log(s) {
+    document.getElementById("console").innerHTML += s + "\n";
+}
+
+</script>
+<div contenteditable><span id="span">webkit</span></div>
+<script>
+var span = document.getElementById("span");
+getSelection().setPosition(span, 0);
+getSelection().modify("extend", "forward", "line");
+if (window.testRunner)
+    testRunner.execCommand("MoveToEndOfLine");
+shouldBe('getSelection().toString()', "''");
+getSelection().empty();
+getSelection().setPosition(span, 5);
+getSelection().modify("extend", "backward", "line");
+if (window.testRunner)
+    testRunner.execCommand("MoveToBeginningOfLine");
+shouldBe('getSelection().toString()', "''");
+</script>
+</body>

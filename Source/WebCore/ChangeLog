@@ -1,3 +1,19 @@
+2016-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r195949): [GTK] Test /webkit2/WebKitWebView/insert/link is failing since r195949
+        https://bugs.webkit.org/show_bug.cgi?id=153747
+
+        Reviewed by Michael Catanzaro.
+
+        Do not return early when reaching a boundary if there's a range
+        selection. In that case, the selection will be cleared and
+        accessibility will be notified.
+
+        Test: editing/selection/move-to-line-boundary-clear-selection.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modify):
+
 2016-02-24  Alejandro G. Castro  <alex@igalia.com>
 
         [Gstreamer] Mediaplayer should observe the tracks and not the source
