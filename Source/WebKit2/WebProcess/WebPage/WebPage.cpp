@@ -3007,6 +3007,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setShouldDispatchJavaScriptWindowOnErrorEvents(true);
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPagePreferences.cpp>
+#endif
+
 #if PLATFORM(IOS)
     settings.setUseImageDocumentForSubframePDF(true);
 #endif

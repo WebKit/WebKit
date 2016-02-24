@@ -112,6 +112,10 @@ private:
     BOOL _serviceControlsEnabled;
     BOOL _imageControlsEnabled;
 #endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewConfigurationIvars.mm>
+#endif
 }
 
 - (instancetype)init
@@ -250,6 +254,10 @@ private:
 #endif
 #if ENABLE(WIRELESS_TARGET_PLAYBACK)
     configuration->_allowsAirPlayForMediaPlayback = self->_allowsAirPlayForMediaPlayback;
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewConfigurationCopy.mm>
 #endif
 
     return configuration;
@@ -572,6 +580,10 @@ static NSString *defaultApplicationNameForUserAgent()
     _imageControlsEnabled = imageControlsEnabled;
 }
 #endif // PLATFORM(MAC)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewConfigurationPrivateMethods.mm>
+#endif
 
 @end
 

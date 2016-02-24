@@ -26,6 +26,14 @@
 #ifndef WebPreferencesDefinitions_h
 #define WebPreferencesDefinitions_h
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPreferencesDefinitionsAdditions.h>
+#endif
+
+#if !defined(FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE)
+#define FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE(macro)
+#endif
+
 #if PLATFORM(GTK)
 #define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED true
 #else
@@ -216,6 +224,8 @@
     macro(AntialiasedFontDilationEnabled, antialiasedFontDilationEnabled, Bool, bool, false) \
     macro(HTTPEquivEnabled, httpEquivEnabled, Bool, bool, true) \
     macro(MockCaptureDevicesEnabled, mockCaptureDevicesEnabled, Bool, bool, false) \
+    FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE(macro) \
+    \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     macro(IncrementalRenderingSuppressionTimeout, incrementalRenderingSuppressionTimeout, Double, double, 5) \

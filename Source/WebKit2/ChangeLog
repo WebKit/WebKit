@@ -1,3 +1,19 @@
+2016-02-24  Anders Carlsson  <andersca@apple.com>
+
+        Add more WebKitAdditions extension points
+        https://bugs.webkit.org/show_bug.cgi?id=154648
+        rdar://problem/24820040
+
+        Reviewed by Beth Dakin.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move FocusNavigationScope into FocusController.cpp

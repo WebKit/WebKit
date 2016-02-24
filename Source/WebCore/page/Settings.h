@@ -287,6 +287,10 @@ public:
     WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SettingsGettersAndSetters.h>
+#endif
+
 private:
     explicit Settings(Page*);
 
@@ -381,6 +385,10 @@ private:
 
     static bool gLowPowerVideoAudioBufferSizeEnabled;
     static bool gResourceLoadStatisticsEnabledEnabled;
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SettingsMembers.h>
+#endif
 };
 
 } // namespace WebCore
