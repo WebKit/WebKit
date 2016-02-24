@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<head>
+<meta name="viewport" content="width=device-width">
+<style>
+body {
+    margin: 0;
+    background-size: 100px 100px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="0.5" height="0.5" fill="blue"/><rect x="0.5" y="0.5" width="0.5" height="0.5" fill="orange"/><rect x="0" y="0.5" width="0.5" height="0.5" fill="yellow"/><rect x="0.5" y="0" width="0.5" height="0.5" fill="pink"/></svg>');
+}
+canvas {
+    width: 200px;
+    height: 200px;
+}
+</style>
+</head>
+<script id="vertexShaderSource" type="text/glsl">
+attribute vec4 position;
+void main() {
+  gl_Position = position;
+}
+</script>
+<script id="fragmentShaderSource1" type="text/glsl">
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+void main() {
+  gl_FragColor = vec4(1.0, 0.0, 0.0, 0.5);
+}
+</script>
+<script id="fragmentShaderSource2" type="text/glsl">
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+void main() {
+  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+</script>
+<script>
+
+function drawTriangle(canvas, alpha) {
+    canvas.width = 200;
+    canvas.height = 200;
+    var gl = canvas.getContext("webgl", { alpha: true });
+    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, document.getElementById("vertexShaderSource").textContent);
+    gl.compileShader(vertexShader);
+    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        console.error("Vertex Shader failed to compile.");
+        console.log(gl.getShaderInfoLog(vertexShader));
+        return;
+    }
+    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    var fragmentShaderSourceID = "fragmentShaderSource" + (alpha ? "1" : "2");
+    gl.shaderSource(fragmentShader, document.getElementById(fragmentShaderSourceID).textContent);
+    gl.compileShader(fragmentShader);
+    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        console.error("Fragment Shader failed to compile.");
+        console.log(gl.getShaderInfoLog(fragmentShader));
+        return;
+    }
+    var program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("Unable to link shaders into program.");
+        return;
+    }
+    gl.useProgram(program);
+    var positionAttribute = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(positionAttribute);
+    var vertices = new Float32Array([
+       -0.5, -0.5,
+       0.5, -0.5,
+       0, 0.5
+    ]);
+    var triangleBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+    gl.clearColor(0, 1, 0, alpha ? 0.5 : 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer);
+    gl.vertexAttribPointer(positionAttribute, 2, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+window.addEventListener("load", function () {
+    var canvases = document.querySelectorAll("canvas");
+    drawTriangle(canvases[0], true);
+    drawTriangle(canvases[1], false);
+}, false);
+</script>
+<body>
+    <canvas></canvas><canvas></canvas>
+</body>

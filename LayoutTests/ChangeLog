@@ -1,3 +1,17 @@
+2016-02-23  Dean Jackson  <dino@apple.com>
+
+        [WebGL] iOS doesn't respect the alpha:false context creation attribute
+        https://bugs.webkit.org/show_bug.cgi?id=154617
+        <rdar://problem/13417023>
+
+        Reviewed by Sam Weinig.
+
+        Add a test that draws contexts with and without alpha, and then a reference
+        version that hard-codes the non-alpha colors.
+
+        * fast/canvas/webgl/context-attributes-alpha-expected.html: Added.
+        * fast/canvas/webgl/context-attributes-alpha.html: Added.
+
 2016-02-23  Daniel Bates  <dabates@apple.com>
 
         CSP: Enable base-uri directive by default

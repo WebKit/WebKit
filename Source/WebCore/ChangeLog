@@ -1,3 +1,27 @@
+2016-02-23  Dean Jackson  <dino@apple.com>
+
+        [WebGL] iOS doesn't respect the alpha:false context creation attribute
+        https://bugs.webkit.org/show_bug.cgi?id=154617
+        <rdar://problem/13417023>
+
+        Reviewed by Sam Weinig.
+
+        On iOS we were not respecting the alpha:false context creation
+        attribute, which meant you always got output that could
+        have an alpha channel.
+
+        The good news is that now we're setting the opaque flag on
+        the CALayer, there should be a performance improvement when
+        compositing WebGL into the page.
+
+        Test: fast/canvas/webgl/context-attributes-alpha.html
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Don't tell the layer
+        to be transparent.
+        (WebCore::GraphicsContext3D::setRenderbufferStorageFromDrawable): Do it
+        here instead, but based on the value of the alpha attribute.
+
 2016-02-23  Daniel Bates  <dabates@apple.com>
 
         CSP: Enable base-uri directive by default
