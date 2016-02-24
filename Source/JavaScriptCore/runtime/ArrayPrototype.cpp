@@ -632,6 +632,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     else {
         // We add the newTarget because the compiler gets confused between 0 being a number and a pointer.
         result = constructEmptyArray(exec, nullptr, 0, JSValue());
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
     }
 
     curArg = thisValue.toObject(exec);

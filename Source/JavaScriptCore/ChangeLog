@@ -1,3 +1,13 @@
+2016-02-23  Saam barati  <sbarati@apple.com>
+
+        arrayProtoFuncConcat doesn't check for an exception after allocating an array
+        https://bugs.webkit.org/show_bug.cgi?id=154621
+
+        Reviewed by Michael Saboff.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat):
+
 2016-02-23  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Linker errors display mangled names, but no longer should
