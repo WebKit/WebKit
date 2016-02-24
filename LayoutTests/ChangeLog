@@ -1,3 +1,37 @@
+2016-02-23  Daniel Bates  <dabates@apple.com>
+
+        CSP: Enable base-uri directive by default
+        https://bugs.webkit.org/show_bug.cgi?id=154521
+        <rdar://problem/24762032>
+
+        Reviewed by Brent Fulgham.
+
+        Copy test http/tests/security/contentSecurityPolicy/1.1/base-uri-deny.html to
+        http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html,
+        making some minor stylistic changes, and update TestExpectations to skip it because it depends
+        on the firing of event SecurityPolicyViolationEvent, which is disabled as of the time of writing.
+        We will enable the firing of this event in <https://bugs.webkit.org/show_bug.cgi?id=154522>.
+        Repurpose test name base-uri-deny.html to test that the base-uri directive prevents the use of
+        document base URL without depending on the firing of event SecurityPolicyViolationEvent.
+
+        Additionally, add test http/tests/security/contentSecurityPolicy/1.1/base-uri-default-ignored.html
+        to ensure that we do not fall back to enforcing the default-src directive in absence of
+        a base-uri directive as per section base-uri of the Content Security Policy 2.0 spec.,
+        <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/base-uri-default-ignored-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/base-uri-default-ignored.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/base-uri-deny-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/base-uri-deny.html: Repurpose test.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/base-href/resources/safe-script.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/safe-script.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny-expected.txt: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/1.1/base-uri-deny-expected.txt.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/1.1/base-uri-deny.html.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon-expected.txt: Update expected result based on change to test (below).
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon.html: Modified to test that we emit
+        a console warning when base-uri is used as a source expression.
+
 2016-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Calling importNode on shadow root causes a crash
