@@ -1,3 +1,90 @@
+2016-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        Fix downloads when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154620
+
+        Reviewed by Brady Eidson.
+
+        This fixes all the _WKDownload API tests when using NetworkSession.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::willDecidePendingDownloadDestination):
+        When we store the NetworkDataTask in m_downloadsWaitingForDestination, we want to remove its owner
+        from m_pendingDownloads to prevent memory leaks.
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
+        If a file exists and the UIProcess has told us to overwrite the file, delete the file
+        before starting a new download in its place.  This used to be done by CFNetwork in
+        NSURLDownload's setDestination:allowOverwrite:, but the NSURLSession equivalent (setting
+        NSURLSessionDataTask's _pathToDownloadTaskFile attribute) does not overwrite the file for us.
+        (WebKit::DownloadManager::cancelDownload):
+        If a download is canceled while it is waiting for its destination from the UIProcess, the Download
+        object does not exist yet.  Instead, we have a completion handler stored in m_downloadsWaitingForDestination.
+        In this case, we want to send the UIProcess a DownloadProxy::DidCancel message, which I did through
+        NetworkProcess::pendingDownloadCanceled because the DownloadManager is not a MessageSender, and then
+        call the completion handler with PolicyIgnore to cancel the download.
+        (WebKit::DownloadManager::downloadFinished):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::PendingDownload::didBecomeDownload):
+        (WebKit::PendingDownload::didFailLoading):
+        (WebKit::PendingDownload::messageSenderConnection):
+        (WebKit::PendingDownload::didConvertToDownload): Deleted.
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::cancel):
+        Send a didCancel message to the UIProcess when a download was cancelled.
+        Use cancelByProducingResumeData so we can resume canceled downloads.
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        didConvertToDownload is needed when using NetworkSession to tell the NetworkResourceLoader
+        not to call cancel on the NetworkLoad after converting it to a download.
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::setPendingDownload):
+        (WebKit::NetworkDataTask::pendingDownloadLocation):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::setPendingDownloadID):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        Don't call findPendingDownloadLocation as a method on the NetworkDataTask to avoid memory leaks
+        in DownloadManager.m_pendingDownloads.
+        (WebKit::NetworkLoad::didBecomeDownload):
+        Call m_client.didBecomeDownload which is being separated from didConvertToDownload.  The former is
+        called after the NetworkDataTask becomes a Download, the latter is called as soon as 
+        convertMainResourceLoadToDownload is called.
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::continueWillSendRequest):
+        (WebKit::NetworkProcess::pendingDownloadCanceled):
+        Send a DownloadProxy::DidCancel message when a pending download is canceled.
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        (WebKit::NetworkProcess::continueDecidePendingDownloadDestination):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didConvertToDownload):
+        (WebKit::NetworkResourceLoader::didBecomeDownload):
+        Separate setting m_didConvertToDownload, which needs to happen before the didReceiveResponse completion
+        handler is called to tell the NetworkResourceLoader not to call cancel in NetworkResourceLoader::abort,
+        from deleting the NetworkLoad, which can be done after the NSURLSessionDataTask has been converted to a
+        NSURLSessionDownloadTask.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::failureTimerFired):
+        (WebKit::NetworkDataTask::setPendingDownloadLocation):
+        (WebKit::NetworkDataTask::transferSandboxExtensionToDownload):
+        (WebKit::NetworkDataTask::suggestedFilename):
+        (WebKit::NetworkDataTask::currentRequest):
+        (WebKit::NetworkDataTask::findPendingDownloadLocation): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        Take the downloadID if it failed because we will report that download as failed and not use it again.
+        (WebKit::NetworkSession::takeDownloadID):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+
 2016-02-24  Anders Carlsson  <andersca@apple.com>
 
         Add more WebKitAdditions extension points

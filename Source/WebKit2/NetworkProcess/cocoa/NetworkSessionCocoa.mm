@@ -134,9 +134,12 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 {
     if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier))
         networkDataTask->didCompleteWithError(error);
-    else if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(_session->downloadID(task.taskIdentifier))) {
-        if (error)
-            download->didFail(error, { }); // FIXME: Give some actual data here for resuming.
+    else if (error) {
+        auto downloadID = _session->takeDownloadID(task.taskIdentifier);
+        if (downloadID.downloadID()) {
+            if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
+                download->didFail(error, { });
+        }
     }
 }
 
@@ -275,7 +278,6 @@ DownloadID NetworkSession::downloadID(NetworkDataTask::TaskIdentifier taskIdenti
 DownloadID NetworkSession::takeDownloadID(NetworkDataTask::TaskIdentifier taskIdentifier)
 {
     auto downloadID = m_downloadMap.take(taskIdentifier);
-    ASSERT(downloadID.downloadID());
     return downloadID;
 }
 

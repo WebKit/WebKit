@@ -31,6 +31,7 @@
 #include "AuthenticationManager.h"
 #include "ChildProcessMessages.h"
 #include "CustomProtocolManager.h"
+#include "DataReference.h"
 #include "DownloadProxyMessages.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
@@ -471,18 +472,23 @@ void NetworkProcess::continueWillSendRequest(DownloadID downloadID, const WebCor
     downloadManager().continueWillSendRequest(downloadID, request);
 }
 
-void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, String suggestedFilename, ResponseCompletionHandler completionHandler)
+void NetworkProcess::pendingDownloadCanceled(DownloadID downloadID)
+{
+    downloadProxyConnection()->send(Messages::DownloadProxy::DidCancel({ }), downloadID.downloadID());
+}
+
+void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler completionHandler)
 {
     uint64_t destinationID = networkDataTask.pendingDownloadID().downloadID();
     downloadProxyConnection()->send(Messages::DownloadProxy::DidStart(networkDataTask.currentRequest()), destinationID);
     
     downloadManager().willDecidePendingDownloadDestination(networkDataTask, completionHandler);
-    downloadProxyConnection()->send(Messages::DownloadProxy::DecideDestinationWithSuggestedFilenameAsync(networkDataTask.pendingDownloadID(), suggestedFilename), destinationID);
+    downloadProxyConnection()->send(Messages::DownloadProxy::DecideDestinationWithSuggestedFilenameAsync(networkDataTask.pendingDownloadID(), networkDataTask.suggestedFilename()), destinationID);
 }
     
-void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle)
+void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
 {
-    downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle);
+    downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite);
 }
 #endif
 

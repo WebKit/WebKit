@@ -101,7 +101,7 @@ public:
 #endif
 
 #if USE(NETWORK_SESSION)
-    void findPendingDownloadLocation(NetworkDataTask&, String suggestedFilename, ResponseCompletionHandler);
+    void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler);
 #endif
     
     void prefetchDNS(const String&);
@@ -138,6 +138,9 @@ private:
     virtual void didDestroyDownload() override;
     virtual IPC::Connection* downloadProxyConnection() override;
     virtual AuthenticationManager& downloadsAuthenticationManager() override;
+#if USE(NETWORK_SESSION)
+    virtual void pendingDownloadCanceled(DownloadID) override;
+#endif
 
     // Message Handlers
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
@@ -162,7 +165,7 @@ private:
 #if USE(NETWORK_SESSION)
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
     void continueWillSendRequest(DownloadID, const WebCore::ResourceRequest&);
-    void continueDecidePendingDownloadDestination(DownloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle);
+    void continueDecidePendingDownloadDestination(DownloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite);
 #endif
     void setCacheModel(uint32_t);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);

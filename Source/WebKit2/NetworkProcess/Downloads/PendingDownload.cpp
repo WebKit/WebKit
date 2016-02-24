@@ -28,6 +28,7 @@
 
 #if USE(NETWORK_SESSION)
 
+#include "DataReference.h"
 #include "DownloadProxyMessages.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
@@ -64,9 +65,14 @@ void PendingDownload::continueCanAuthenticateAgainstProtectionSpace(bool canAuth
     m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
 }
 
-void PendingDownload::didConvertToDownload()
+void PendingDownload::didBecomeDownload()
 {
     m_networkLoad = nullptr;
+}
+    
+void PendingDownload::didFailLoading(const WebCore::ResourceError& error)
+{
+    send(Messages::DownloadProxy::DidFail(error, { }));
 }
     
 IPC::Connection* PendingDownload::messageSenderConnection()

@@ -102,7 +102,11 @@ public:
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     virtual void didFinishLoading(double finishTime) override;
     virtual void didFailLoading(const WebCore::ResourceError&) override;
-    virtual void didConvertToDownload() override;
+#if USE(NETWORK_SESSION)
+    virtual void didBecomeDownload() override;
+#endif
+    
+    void didConvertToDownload();
 
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess&, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);

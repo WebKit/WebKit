@@ -172,7 +172,7 @@ void NetworkLoad::convertTaskToDownload(DownloadID downloadID)
     
     ASSERT(m_responseCompletionHandler);
     if (m_responseCompletionHandler)
-        m_task->findPendingDownloadLocation(WTFMove(m_responseCompletionHandler));
+        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), WTFMove(m_responseCompletionHandler));
 }
 
 void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
@@ -221,7 +221,7 @@ void NetworkLoad::didReceiveResponseNetworkSession(const ResourceResponse& respo
 {
     ASSERT(isMainThread());
     if (m_task && m_task->pendingDownloadID().downloadID())
-        m_task->findPendingDownloadLocation(completionHandler);
+        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), completionHandler);
     else if (sharedDidReceiveResponse(response) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
         completionHandler(PolicyUse);
     else
@@ -245,7 +245,7 @@ void NetworkLoad::didCompleteWithError(const ResourceError& error)
 
 void NetworkLoad::didBecomeDownload()
 {
-    m_client.didConvertToDownload();
+    m_client.didBecomeDownload();
 }
 
 void NetworkLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)

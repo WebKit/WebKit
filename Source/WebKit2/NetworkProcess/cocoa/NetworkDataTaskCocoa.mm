@@ -193,11 +193,6 @@ void NetworkDataTask::failureTimerFired()
     ASSERT_NOT_REACHED();
 }
 
-void NetworkDataTask::findPendingDownloadLocation(ResponseCompletionHandler completionHandler)
-{
-    NetworkProcess::singleton().findPendingDownloadLocation(*this, m_task.get().response.suggestedFilename, completionHandler);
-}
-
 void NetworkDataTask::setPendingDownloadLocation(const WTF::String& filename, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     ASSERT(!m_sandboxExtension);
@@ -232,6 +227,11 @@ bool NetworkDataTask::tryPasswordBasedAuthentication(const WebCore::Authenticati
 void NetworkDataTask::transferSandboxExtensionToDownload(Download& download)
 {
     download.setSandboxExtension(WTFMove(m_sandboxExtension));
+}
+
+String NetworkDataTask::suggestedFilename()
+{
+    return m_task.get().response.suggestedFilename;
 }
 
 WebCore::ResourceRequest NetworkDataTask::currentRequest()

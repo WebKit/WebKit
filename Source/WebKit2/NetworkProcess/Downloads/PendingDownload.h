@@ -57,8 +57,8 @@ private:
     virtual ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override { return ShouldContinueDidReceiveResponse::No; };
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override { };
     virtual void didFinishLoading(double finishTime) override { };
-    virtual void didFailLoading(const WebCore::ResourceError&) override { };
-    virtual void didConvertToDownload() override;
+    virtual void didFailLoading(const WebCore::ResourceError&) override;
+    virtual void didBecomeDownload() override;
 #if PLATFORM(COCOA)
     virtual void willCacheResponseAsync(CFCachedURLResponseRef) override { }
 #endif

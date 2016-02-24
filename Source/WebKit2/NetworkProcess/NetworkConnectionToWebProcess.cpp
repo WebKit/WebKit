@@ -204,8 +204,8 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(SessionID 
     // Unblock the URL connection operation queue.
     loader->networkLoad()->handle()->continueDidReceiveResponse();
     
-    loader->didConvertToDownload();
 #endif
+    loader->didConvertToDownload();
 }
 
 void NetworkConnectionToWebProcess::cookiesForDOM(SessionID sessionID, const URL& firstParty, const URL& url, String& result)

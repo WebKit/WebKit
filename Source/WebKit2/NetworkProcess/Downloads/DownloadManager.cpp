@@ -97,20 +97,26 @@ void DownloadManager::continueWillSendRequest(DownloadID downloadID, const WebCo
 
 void DownloadManager::willDecidePendingDownloadDestination(NetworkDataTask& networkDataTask, ResponseCompletionHandler completionHandler)
 {
-    auto addResult = m_downloadsWaitingForDestination.set(networkDataTask.pendingDownloadID(), std::make_pair<RefPtr<NetworkDataTask>, ResponseCompletionHandler>(&networkDataTask, WTFMove(completionHandler)));
+    auto downloadID = networkDataTask.pendingDownloadID();
+    auto pendingDownload = m_pendingDownloads.take(downloadID);
+    ASSERT(networkDataTask.pendingDownload() == pendingDownload.get());
+    auto addResult = m_downloadsWaitingForDestination.set(downloadID, std::make_pair<RefPtr<NetworkDataTask>, ResponseCompletionHandler>(&networkDataTask, WTFMove(completionHandler)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle)
+void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
 {
     auto pair = m_downloadsWaitingForDestination.take(downloadID);
     auto networkDataTask = pair.first;
     auto completionHandler = pair.second;
-    if (!networkDataTask || !completionHandler) {
-        ASSERT_NOT_REACHED();
+    if (!networkDataTask || !completionHandler)
         return;
-    }
+
     networkDataTask->setPendingDownloadLocation(destination, sandboxExtensionHandle);
+    
+    if (allowOverwrite && fileExists(destination))
+        deleteFile(destination);
+
     completionHandler(PolicyDownload);
     
     ASSERT(!m_downloadsAfterDestinationDecided.contains(downloadID));
@@ -143,11 +149,17 @@ void DownloadManager::resumeDownload(SessionID, DownloadID downloadID, const IPC
 
 void DownloadManager::cancelDownload(DownloadID downloadID)
 {
-    Download* download = m_downloads.get(downloadID);
-    if (!download)
+    if (Download* download = m_downloads.get(downloadID)) {
+        download->cancel();
         return;
-
-    download->cancel();
+    }
+#if USE(NETWORK_SESSION)
+    if (auto completionHandler = m_downloadsWaitingForDestination.take(downloadID).second) {
+        m_client.pendingDownloadCanceled(downloadID);
+        completionHandler(PolicyIgnore);
+        return;
+    }
+#endif
 }
 
 void DownloadManager::downloadFinished(Download* download)
