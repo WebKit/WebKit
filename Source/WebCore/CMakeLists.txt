@@ -332,7 +332,6 @@ set(WebCore_NON_SVG_IDL_FILES
     css/DOMWindowCSS.idl
     css/FontFace.idl
     css/FontFaceSet.idl
-    css/FontLoader.idl
     css/MediaList.idl
     css/MediaQueryList.idl
     css/MediaQueryListListener.idl
@@ -1362,7 +1361,6 @@ set(WebCore_SOURCES
     css/DOMWindowCSS.cpp
     css/DocumentRuleSets.cpp
     css/ElementRuleCollector.cpp
-    css/FontLoader.cpp
     css/FontVariantBuilder.cpp
     css/InspectorCSSOMWrappers.cpp
     css/LengthFunctions.cpp

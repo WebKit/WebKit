@@ -2234,9 +2234,6 @@
     <ClCompile Include="..\css\FontVariantBuilder.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\FontLoader.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\LengthFunctions.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -5290,9 +5287,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontFace.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontLoader.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGeolocation.cpp">
@@ -9247,9 +9241,6 @@
     <ClInclude Include="..\css\DashboardRegion.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="..\css\FontLoader.h">
-      <Filter>css</Filter>
-    </ClInclude>
     <ClInclude Include="..\css\LengthFunctions.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -12727,9 +12718,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontFace.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontLoader.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGeolocation.h">

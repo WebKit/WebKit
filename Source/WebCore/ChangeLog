@@ -1,3 +1,54 @@
+2016-02-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove dead FontLoader code
+        https://bugs.webkit.org/show_bug.cgi?id=154625
+
+        Reviewed by Darin Adler.
+
+        This code has been replaced by FontFaceSet.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/FontLoader.cpp: Removed.
+        (WebCore::LoadFontCallback::create): Deleted.
+        (WebCore::LoadFontCallback::createFromParams): Deleted.
+        (WebCore::LoadFontCallback::~LoadFontCallback): Deleted.
+        (WebCore::LoadFontCallback::familyCount): Deleted.
+        (WebCore::LoadFontCallback::LoadFontCallback): Deleted.
+        (WebCore::LoadFontCallback::notifyLoaded): Deleted.
+        (WebCore::LoadFontCallback::notifyError): Deleted.
+        (WebCore::FontLoader::loadFontDone): Deleted.
+        (WebCore::FontLoader::FontLoader): Deleted.
+        (WebCore::FontLoader::~FontLoader): Deleted.
+        (WebCore::FontLoader::eventTargetData): Deleted.
+        (WebCore::FontLoader::ensureEventTargetData): Deleted.
+        (WebCore::FontLoader::eventTargetInterface): Deleted.
+        (WebCore::FontLoader::scriptExecutionContext): Deleted.
+        (WebCore::FontLoader::didLayout): Deleted.
+        (WebCore::FontLoader::activeDOMObjectName): Deleted.
+        (WebCore::FontLoader::canSuspendForDocumentSuspension): Deleted.
+        (WebCore::FontLoader::scheduleEvent): Deleted.
+        (WebCore::FontLoader::firePendingEvents): Deleted.
+        (WebCore::FontLoader::beginFontLoading): Deleted.
+        (WebCore::FontLoader::fontLoaded): Deleted.
+        (WebCore::FontLoader::loadError): Deleted.
+        (WebCore::FontLoader::notifyWhenFontsReady): Deleted.
+        (WebCore::FontLoader::loadingDone): Deleted.
+        (WebCore::FontLoader::loadFont): Deleted.
+        (WebCore::FontLoader::checkFont): Deleted.
+        (WebCore::applyPropertyToCurrentStyle): Deleted.
+        (WebCore::FontLoader::resolveFontStyle): Deleted.
+        * css/FontLoader.h: Removed.
+        * css/FontLoader.idl: Removed.
+        * page/FrameView.cpp:
+
 2016-02-23  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Implement methods to set volume.

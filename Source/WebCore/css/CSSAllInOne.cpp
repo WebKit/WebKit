@@ -95,7 +95,6 @@
 #include "DocumentRuleSets.cpp"
 #include "ElementRuleCollector.cpp"
 #include "FontFace.cpp"
-#include "FontLoader.cpp"
 #include "FontVariantBuilder.cpp"
 #include "InspectorCSSOMWrappers.cpp"
 #include "LengthFunctions.cpp"

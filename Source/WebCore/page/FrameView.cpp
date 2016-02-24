@@ -40,7 +40,6 @@
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "FocusController.h"
-#include "FontLoader.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
