@@ -8,6 +8,6 @@ PASS document.contains
 PASS contains with a button 
 PASS contains with a text node 
 PASS contains with a processing instruction 
-FAIL contains with a document fragment NotSupportedError: DOM Exception 9
+PASS contains with a document fragment 
 PASS contaibs with another document 
 

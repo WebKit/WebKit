@@ -1,3 +1,31 @@
+2016-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Align our implementation of Range.createContextualFragment with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154627
+
+        Reviewed by Ryosuke Niwa.
+
+        Align our implementation of Range.createContextualFragment with the
+        specification:
+        - https://w3c.github.io/DOM-Parsing/#widl-Range-createContextualFragment-DocumentFragment-DOMString-fragment
+
+        In particular, if the Range's start node is a Document / DocumentFragment,
+        we now create a new HTMLBodyElement and use it as context element, instead
+        of throwing an exception.
+
+        This also aligns our behavior with Firefox and Chrome.
+
+        Tests: imported/blink/fast/dom/Range/create-contextual-fragment-from-bodyless-document-range.html
+               imported/blink/fast/dom/Range/create-contextual-fragment-from-detached-text-node-range.html
+               imported/blink/fast/dom/Range/create-contextual-fragment-from-document-fragment-range.html
+               imported/blink/fast/dom/Range/create-contextual-fragment-from-document-range.html
+               imported/blink/fast/dom/Range/create-contextual-fragment-from-xhtml-document-range.xhtml
+               imported/blink/fast/dom/Range/create-contextual-fragment-script-not-ran.html
+               imported/blink/fast/dom/Range/create-contextual-fragment-script-unmark-already-started.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::createContextualFragment):
+
 2016-02-23  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Linker errors display mangled names, but no longer should

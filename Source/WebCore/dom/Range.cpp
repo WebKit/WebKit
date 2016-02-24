@@ -31,7 +31,10 @@
 #include "Event.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLBodyElement.h"
+#include "HTMLDocument.h"
 #include "HTMLElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
 #include "NodeWithIndex.h"
@@ -919,15 +922,26 @@ String Range::text() const
     return plainText(this);
 }
 
+// https://w3c.github.io/DOM-Parsing/#widl-Range-createContextualFragment-DocumentFragment-DOMString-fragment
 RefPtr<DocumentFragment> Range::createContextualFragment(const String& markup, ExceptionCode& ec)
 {
-    Node* element = startContainer().isElementNode() ? &startContainer() : startContainer().parentNode();
-    if (!element || !element->isHTMLElement()) {
+    Node& node = startContainer();
+    RefPtr<Element> element;
+    if (is<Document>(node) || is<DocumentFragment>(node))
+        element = nullptr;
+    else if (is<Element>(node))
+        element = &downcast<Element>(node);
+    else
+        element = node.parentElement();
+
+    if (!element || (is<HTMLDocument>(element->document()) && is<HTMLHtmlElement>(*element)))
+        element = HTMLBodyElement::create(node.document());
+    else if (!is<HTMLElement>(*element)) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
 
-    return WebCore::createContextualFragment(markup, downcast<HTMLElement>(element), AllowScriptingContentAndDoNotMarkAlreadyStarted, ec);
+    return WebCore::createContextualFragment(markup, downcast<HTMLElement>(element.get()), AllowScriptingContentAndDoNotMarkAlreadyStarted, ec);
 }
 
 

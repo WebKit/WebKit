@@ -1,3 +1,28 @@
+2016-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Align our implementation of Range.createContextualFragment with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154627
+
+        Reviewed by Ryosuke Niwa.
+
+        Import some more layout tests from blink to improve coverage for
+        Range.createContextualFragment().
+
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-bodyless-document-range-expected.txt: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-bodyless-document-range.html: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-detached-text-node-range-expected.txt: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-detached-text-node-range.html: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-document-fragment-range-expected.txt: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-document-fragment-range.html: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-document-range-expected.txt: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-document-range.html: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-xhtml-document-range-expected.txt: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-from-xhtml-document-range.xhtml: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-script-not-ran-expected.txt: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-script-not-ran.html: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-script-unmark-already-started-expected.txt: Added.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-script-unmark-already-started.html: Added.
+
 2016-02-23  Dean Jackson  <dino@apple.com>
 
         [WebGL] iOS doesn't respect the alpha:false context creation attribute
