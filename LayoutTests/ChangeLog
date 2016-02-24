@@ -1,5 +1,14 @@
 2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking storage/indexeddb/odd-strings.html as flaky on mac-wk1
+        https://bugs.webkit.org/show_bug.cgi?id=154619
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking imported/w3c/indexeddb/idbcursor-advance.htm as flaky on Yosemite Release WK2
         https://bugs.webkit.org/show_bug.cgi?id=154618
 

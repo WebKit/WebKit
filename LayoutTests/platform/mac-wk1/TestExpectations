@@ -66,6 +66,8 @@ webkit.org/b/153460 [ Debug ] inspector/codemirror/prettyprinting-css-rules.html
 
 webkit.org/b/154297 [ Debug ] fast/events/keydown-1.html [ Pass Failure ]
 
+webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Pass Timeout ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
