@@ -36,8 +36,9 @@ function initializeFetchHeaders(headersInit)
         throw new @TypeError("headersInit must be an object");
 
     if (this.constructor === headersInit.constructor) {
-         // FIXME: Use iterators when available?
-         this.@initializeWith(headersInit);
+         headersInit.forEach((value, name) => {
+             this.@appendFromJS(name, value);
+         });
     }
 
     if (headersInit instanceof @Array) {

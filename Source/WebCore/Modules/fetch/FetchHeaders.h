@@ -62,7 +62,6 @@ public:
     bool has(const String&, ExceptionCode&) const;
     void set(const String& name, const String& value, ExceptionCode&);
 
-    void initializeWith(const FetchHeaders*, ExceptionCode&);
     void fill(const FetchHeaders*);
 
     String fastGet(HTTPHeaderName name) const { return m_headers.get(name); }

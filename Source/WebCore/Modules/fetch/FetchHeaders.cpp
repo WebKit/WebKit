@@ -36,13 +36,6 @@
 
 namespace WebCore {
 
-void FetchHeaders::initializeWith(const FetchHeaders* headers, ExceptionCode&)
-{
-    if (!headers)
-        return;
-    m_headers = headers->m_headers;
-}
-
 // FIXME: Optimize these routines for HTTPHeaderMap keys and/or refactor them with XMLHttpRequest code.
 static bool isForbiddenHeaderName(const String& name)
 {
