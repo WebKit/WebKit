@@ -81,7 +81,7 @@ Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSTo
     return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(Undefined);
 }
 
-bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conversionData, TransformOperations& outOperations)
+bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& conversionData, TransformOperations& outOperations)
 {
     if (!is<CSSValueList>(value)) {
         outOperations.clear();
@@ -107,7 +107,7 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
         if (haveNonPrimitiveValue)
             continue;
 
-        CSSPrimitiveValue& firstValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(0));
+        auto& firstValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(0));
 
         switch (transformValue.operationType()) {
         case WebKitCSSTransformValue::ScaleTransformOperation:
@@ -121,7 +121,7 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
                 sx = firstValue.getDoubleValue();
                 if (transformValue.operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
                     if (transformValue.length() > 1) {
-                        CSSPrimitiveValue& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
+                        auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         sy = secondValue.getDoubleValue();
                     } else
                         sy = sx;
@@ -143,11 +143,11 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
                 sx = firstValue.getDoubleValue();
                 if (transformValue.operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
                     if (transformValue.length() > 2) {
-                        CSSPrimitiveValue& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
+                        auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
                         sz = thirdValue.getDoubleValue();
                     }
                     if (transformValue.length() > 1) {
-                        CSSPrimitiveValue& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
+                        auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         sy = secondValue.getDoubleValue();
                     } else
                         sy = sx;
@@ -167,7 +167,7 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
                 tx = convertToFloatLength(&firstValue, conversionData);
                 if (transformValue.operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                     if (transformValue.length() > 1) {
-                        CSSPrimitiveValue& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
+                        auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         ty = convertToFloatLength(&secondValue, conversionData);
                     }
                 }
@@ -192,11 +192,11 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
                 tx = convertToFloatLength(&firstValue, conversionData);
                 if (transformValue.operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                     if (transformValue.length() > 2) {
-                        CSSPrimitiveValue& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
+                        auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
                         tz = convertToFloatLength(&thirdValue, conversionData);
                     }
                     if (transformValue.length() > 1) {
-                        CSSPrimitiveValue& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
+                        auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         ty = convertToFloatLength(&secondValue, conversionData);
                     }
                 }
@@ -233,9 +233,9 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
         case WebKitCSSTransformValue::Rotate3DTransformOperation: {
             if (transformValue.length() < 4)
                 break;
-            CSSPrimitiveValue& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-            CSSPrimitiveValue& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
-            CSSPrimitiveValue& fourthValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(3));
+            auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
+            auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
+            auto& fourthValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(3));
             double x = firstValue.getDoubleValue();
             double y = secondValue.getDoubleValue();
             double z = thirdValue.getDoubleValue();
@@ -255,7 +255,7 @@ bool transformsForValue(CSSValue& value, const CSSToLengthConversionData& conver
                 angleX = angle;
                 if (transformValue.operationType() == WebKitCSSTransformValue::SkewTransformOperation) {
                     if (transformValue.length() > 1) {
-                        CSSPrimitiveValue& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
+                        auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         angleY = secondValue.computeDegrees();
                     }
                 }

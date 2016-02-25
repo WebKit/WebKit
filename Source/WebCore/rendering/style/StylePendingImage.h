@@ -46,7 +46,7 @@ public:
     static Ref<StylePendingImage> create(CSSValue* value) { return adoptRef(*new StylePendingImage(value)); }
 
     CSSImageValue* cssImageValue() const { return is<CSSImageValue>(m_value) ? downcast<CSSImageValue>(m_value) : nullptr; }
-    CSSImageGeneratorValue* cssImageGeneratorValue() const { return m_value && m_value->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_value) : nullptr; }
+    CSSImageGeneratorValue* cssImageGeneratorValue() const { return is<CSSImageGeneratorValue>(m_value) ? static_cast<CSSImageGeneratorValue*>(m_value) : nullptr; }
     CSSCursorImageValue* cssCursorImageValue() const { return is<CSSCursorImageValue>(m_value) ? downcast<CSSCursorImageValue>(m_value) : nullptr; }
 
 #if ENABLE(CSS_IMAGE_SET)
