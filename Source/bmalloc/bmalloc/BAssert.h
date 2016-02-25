@@ -31,11 +31,11 @@
 #if defined(NDEBUG) && BOS(DARWIN)
 
 #if BCPU(X86_64) || BCPU(X86)
-#define BBreakpointTrap()  asm volatile ("int3")
+#define BBreakpointTrap()  __asm__ volatile ("int3")
 #elif BCPU(ARM_THUMB2)
-#define BBreakpointTrap()  asm volatile ("bkpt #0")
+#define BBreakpointTrap()  __asm__ volatile ("bkpt #0")
 #elif BCPU(ARM64)
-#define BBreakpointTrap()  asm volatile ("brk #0")
+#define BBreakpointTrap()  __asm__ volatile ("brk #0")
 #else
 #error "Unsupported CPU".
 #endif

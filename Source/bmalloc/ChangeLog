@@ -1,3 +1,12 @@
+2016-02-20  Mark Lam  <mark.lam@apple.com>
+
+        Use of inlined asm statements causes problems for -std=c99 builds.
+        https://bugs.webkit.org/show_bug.cgi?id=154507
+
+        Reviewed by Dan Bernstein.
+
+        * bmalloc/BAssert.h:
+
 2016-02-19  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Fix debug build error since r196847
