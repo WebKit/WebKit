@@ -37,15 +37,15 @@ class FreeList {
 public:
     FreeList();
 
-    void push(Owner, const LargeObject&);
+    void push(VMState::HasPhysical, const LargeObject&);
 
-    LargeObject take(Owner, size_t);
-    LargeObject take(Owner, size_t alignment, size_t, size_t unalignedSize);
-    
-    LargeObject takeGreedy(Owner);
+    LargeObject take(VMState::HasPhysical, size_t);
+    LargeObject take(VMState::HasPhysical, size_t alignment, size_t, size_t unalignedSize);
 
-    void removeInvalidAndDuplicateEntries(Owner);
-    
+    LargeObject takeGreedy(VMState::HasPhysical);
+
+    void removeInvalidAndDuplicateEntries(VMState::HasPhysical);
+
 private:
     Vector<Range> m_vector;
     size_t m_limit;
@@ -57,13 +57,14 @@ inline FreeList::FreeList()
 {
 }
 
-inline void FreeList::push(Owner owner, const LargeObject& largeObject)
+inline void FreeList::push(VMState::HasPhysical hasPhysical, const LargeObject& largeObject)
 {
     BASSERT(largeObject.isFree());
+    BASSERT(largeObject.vmState().hasPhysical() == static_cast<bool>(hasPhysical));
     BASSERT(!largeObject.prevCanMerge());
     BASSERT(!largeObject.nextCanMerge());
     if (m_vector.size() == m_limit) {
-        removeInvalidAndDuplicateEntries(owner);
+        removeInvalidAndDuplicateEntries(hasPhysical);
         m_limit = std::max(m_vector.size() * freeListGrowFactor, freeListSearchDepth);
     }
     m_vector.push(largeObject.range());

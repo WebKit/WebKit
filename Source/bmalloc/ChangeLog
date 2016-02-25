@@ -1,3 +1,105 @@
+2016-02-19  Michael Saboff  <msaboff@apple.com>
+
+        bmalloc: Unify VMHeap and Heap LargeObjects free lists to reduce fragmentation
+        https://bugs.webkit.org/show_bug.cgi?id=154192
+
+        Reviewed by Geoffrey Garen.
+
+        Change the operation of Heap and VMHeap LargeObject free lists.
+        Renamed Owner to VMState to track the state of each LargeObject.
+            Physical - The pages have been allocated.
+            Virtual - The pages have not been allocated.
+            Mixed - The object contains a mixture of Physical and Virtual pages.
+        VMState uses one bit each for Physical and Virtual to simplify merging states
+        when merging two adjacent blocks.  This change enforces the rule that objects in
+        the Heap free list must have have the Physical bit set in their VMState while objects
+        in the VMHeap free list must have the Physical bit clear.  Thie means that the Heap
+        can have LargeObjects in Physical or Mixed VMState, but the VMHeap's free list can
+        only contain Virtual LargeObjects.
+        
+        In both Heap::allocateLarge(), we now allocate physical pages if the LargeObject we
+        pull from the free list has any Virtual pages before we possilby split the 
+        object.  When we merge objects, the result might be made up of Mixed page allocations.
+        When allocating a Mixed LargeObject, we need to allocate memory for them as well.
+        The scavenger deallocates both Physical and Mixed LargeObjects, placing them back into
+        the VMHeap's free list.
+
+        When we allocate or deallocate Mixed LargeObjects, there are pages that within these
+        objects that will be redundantly modified.  It would require additional metadata to
+        eliminate this redundancy.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::vmState): New helper.
+        (bmalloc::BoundaryTag::setVMState): New helper.
+        (bmalloc::BoundaryTag::owner): Deleted.
+        (bmalloc::BoundaryTag::setOwner): Deleted.
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::splitAndAllocate): New helpers.
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::vmState): New helper.
+        (bmalloc::LargeObject::setVMState): New helper.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::splitAndAllocate): New helpers.
+        (bmalloc::Heap::allocateLarge): 
+        (bmalloc::Heap::deallocatePhysicalPages): Refactored from VMHeap::deallocateLargeObjectMemory.
+
+        * bmalloc/FreeList.cpp:
+        (bmalloc::FreeList::takeGreedy):
+        (bmalloc::FreeList::take):
+        (bmalloc::FreeList::removeInvalidAndDuplicateEntries):
+        * bmalloc/FreeList.h:
+        (bmalloc::FreeList::FreeList):
+        (bmalloc::FreeList::push):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::scavengeLargeObjects):
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::isValidAndFree):
+        (bmalloc::LargeObject::validateSelf):
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::SegregatedFreeList): Changed to initialize our required Physical state.
+        * bmalloc/SegregatedFreeList.h:
+        (bmalloc::SegregatedFreeList::SegregatedFreeList):
+        (bmalloc::SegregatedFreeList::insert):
+        (bmalloc::SegregatedFreeList::takeGreedy):
+        (bmalloc::SegregatedFreeList::take):
+        Replaced Owner parameters and checks with VMState::HasPhysical.
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::prevCanMerge): Removed owner from tests.
+        (bmalloc::LargeObject::nextCanMerge): Removed owner from tests.
+        (bmalloc::LargeObject::merge): Removed owner from tests.  Updated to merge VMStates andset the
+        VMState after the merge.
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::owner): Deleted.
+        (bmalloc::LargeObject::setOwner): Deleted.
+
+        * bmalloc/Owner.h: Removed.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmAllocatePhysicalPagesSloppy): Changed to round begin down to eliminate the left to right
+        allocation constraint.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::grow): Large space managed like small or medium as a vector of LargeChunks.
+        (bmalloc::VMHeap::VMHeap): Changed to initialize our required Physical state.
+
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateLargeObject): These no longer allocate memory.
+        (bmalloc::VMHeap::deallocateLargeObject): Removed setOwner.  Now we set the VMState after any merges.
+
+        * bmalloc/VMState.h: Copied from Source/bmalloc/bmalloc/Owner.h.
+        (bmalloc::VMState::VMState):
+        (bmalloc::VMState::hasPhysical):
+        (bmalloc::VMState::hasVirtual):
+        (bmalloc::VMState::merge):
+        (bmalloc::VMState::operator ==):
+        (bmalloc::VMState::operator unsigned):
+        New class with various helpers.
+
 2016-02-12  Michael Saboff  <msaboff@apple.com>
 
         BASSERTs added in r196421 are causing debug test failures

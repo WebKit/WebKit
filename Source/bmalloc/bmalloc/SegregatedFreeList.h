@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ namespace bmalloc {
 
 class SegregatedFreeList {
 public:
-    SegregatedFreeList(Owner);
+    SegregatedFreeList(VMState::HasPhysical);
 
     void insert(const LargeObject&);
 
@@ -56,10 +56,11 @@ public:
     // the returned object from the free list.
     LargeObject takeGreedy();
 
+    VMState::HasPhysical hasPhysical() const { return m_hasPhysical; }
 private:
     FreeList& select(size_t);
 
-    Owner m_owner;
+    VMState::HasPhysical m_hasPhysical;
     std::array<FreeList, 15> m_freeLists;
 };
 
