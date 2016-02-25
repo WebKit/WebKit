@@ -1,5 +1,7 @@
+<?php
+    header("Content-Security-Policy: img-src 'self'; report-uri http://localhost:8000/contentextensions/resources/save-ping.php?test=contentextensions-hide-on-csp-report");
+?>
 <head>
-<meta http-equiv="Content-Security-Policy" content="img-src 'self'; report-uri http://localhost:8000/contentextensions/resources/save-ping.php?test=contentextensions-hide-on-csp-report">
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
