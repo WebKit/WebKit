@@ -66,6 +66,14 @@ bool UniqueIDBDatabaseConnection::hasNonFinishedTransactions() const
     return !m_transactionMap.isEmpty();
 }
 
+void UniqueIDBDatabaseConnection::abortTransactionWithoutCallback(UniqueIDBDatabaseTransaction& transaction)
+{
+    ASSERT(m_transactionMap.contains(transaction.info().identifier()));
+    auto takenTransaction = m_transactionMap.take(transaction.info().identifier());
+
+    m_database.abortTransaction(*takenTransaction, [](const IDBError&) { });
+}
+
 void UniqueIDBDatabaseConnection::connectionClosedFromClient()
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::connectionClosedFromClient - %" PRIu64, m_identifier);
