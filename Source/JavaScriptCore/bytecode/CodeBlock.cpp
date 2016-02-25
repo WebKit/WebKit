@@ -2486,8 +2486,6 @@ void CodeBlock::visitChildren(SlotVisitor& visitor)
     if (m_instructions.size())
         visitor.reportExtraMemoryVisited(m_instructions.size() * sizeof(Instruction) / m_instructions.refCount());
 
-    visitor.append(&m_unlinkedCode);
-
     stronglyVisitStrongReferences(visitor);
     stronglyVisitWeakReferences(visitor);
 
