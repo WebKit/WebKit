@@ -125,6 +125,7 @@ void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t si
         // In a fragmented page, some free ranges might not fit in the cache.
         if (rangeCache.size() == rangeCache.capacity()) {
             m_smallPagesWithFreeLines[sizeClass].push(page);
+            BASSERT(allocator.canAllocate());
             return;
         }
 
@@ -153,6 +154,7 @@ void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t si
             rangeCache.push({ begin, objectCount });
     }
 
+    BASSERT(allocator.canAllocate());
     page->setHasFreeLines(lock, false);
 }
 
@@ -304,7 +306,7 @@ inline LargeObject& Heap::splitAndAllocate(LargeObject& largeObject, size_t alig
     return largeObject;
 }
 
-void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t size)
 {
     BASSERT(size <= largeMax);
     BASSERT(size >= largeMin);
@@ -312,7 +314,7 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)
 
     LargeObject largeObject = m_largeObjects.take(size);
     if (!largeObject)
-        largeObject = m_vmHeap.allocateLargeObject(size);
+        largeObject = m_vmHeap.allocateLargeObject(lock, size);
 
     if (largeObject.vmState().hasVirtual()) {
         m_isAllocatingPages = true;
@@ -326,7 +328,7 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)
     return largeObject.begin();
 }
 
-void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size, size_t unalignedSize)
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size, size_t unalignedSize)
 {
     BASSERT(size <= largeMax);
     BASSERT(size >= largeMin);
@@ -340,7 +342,7 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_
 
     LargeObject largeObject = m_largeObjects.take(alignment, size, unalignedSize);
     if (!largeObject)
-        largeObject = m_vmHeap.allocateLargeObject(alignment, size, unalignedSize);
+        largeObject = m_vmHeap.allocateLargeObject(lock, alignment, size, unalignedSize);
 
     if (largeObject.vmState().hasVirtual()) {
         m_isAllocatingPages = true;

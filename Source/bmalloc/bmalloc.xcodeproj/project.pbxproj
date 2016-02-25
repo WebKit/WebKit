@@ -165,7 +165,7 @@
 				1448C2FD18F3752B00502839 /* api */,
 				14D9DB4D17F2865C00EAAB79 /* cache */,
 				147AAA9C18CE6010002201E4 /* heap: large */,
-				147AAA9A18CE5FD3002201E4 /* heap: small | medium */,
+				147AAA9A18CE5FD3002201E4 /* heap: small */,
 				14D9DB4E17F2866E00EAAB79 /* heap */,
 				14D9DB4F17F2868900EAAB79 /* stdlib */,
 				14B650C418F39F4800751968 /* Configurations */,
@@ -182,14 +182,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		147AAA9A18CE5FD3002201E4 /* heap: small | medium */ = {
+		147AAA9A18CE5FD3002201E4 /* heap: small */ = {
 			isa = PBXGroup;
 			children = (
 				147AAA8C18CD36A7002201E4 /* SmallChunk.h */,
 				1452478618BC757C00F80098 /* SmallLine.h */,
 				143E29ED18CAE90500FE8A0F /* SmallPage.h */,
 			);
-			name = "heap: small | medium";
+			name = "heap: small";
 			sourceTree = "<group>";
 		};
 		147AAA9C18CE6010002201E4 /* heap: large */ = {

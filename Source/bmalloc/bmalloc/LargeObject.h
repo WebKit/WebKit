@@ -35,8 +35,6 @@ namespace bmalloc {
 
 class LargeObject {
 public:
-    static Range init(LargeChunk*);
-
     LargeObject();
     LargeObject(void*);
 
@@ -269,33 +267,6 @@ inline void LargeObject::validate() const
         LargeObject next(DoNotValidate, begin() + size());
         next.validateSelf();
     }
-}
-
-inline Range LargeObject::init(LargeChunk* chunk)
-{
-    Range range(chunk->begin(), chunk->end() - chunk->begin());
-
-    BeginTag* beginTag = LargeChunk::beginTag(range.begin());
-    beginTag->setRange(range);
-    beginTag->setFree(true);
-    beginTag->setVMState(VMState::Virtual);
-
-    EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
-    endTag->init(beginTag);
-
-    // Mark the left and right edges of our chunk as allocated. This naturally
-    // prevents merging logic from overflowing beyond our chunk, without requiring
-    // special-case checks.
-    
-    EndTag* leftSentinel = beginTag->prev();
-    BASSERT(leftSentinel >= static_cast<void*>(chunk));
-    leftSentinel->initSentinel();
-
-    BeginTag* rightSentinel = endTag->next();
-    BASSERT(rightSentinel < static_cast<void*>(range.begin()));
-    rightSentinel->initSentinel();
-    
-    return range;
 }
 
 } // namespace bmalloc
