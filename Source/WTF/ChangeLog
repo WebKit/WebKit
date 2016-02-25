@@ -1,3 +1,18 @@
+2016-02-25  Sam Weinig  <sam@webkit.org>
+
+        HashMap::ensure() should return an AddResult like all the other add-like functions.
+        https://bugs.webkit.org/show_bug.cgi?id=154680
+
+        Reviewed by Anders Carlsson.
+
+        While adopting HashMap::ensure(), I found it was useful in some circumstances to know
+        if the value was added or not. While I could discern this information by setting a bool
+        in the passed in lambda, it seemed clearer and more idiomatic to just have ensure return
+        an AddResult like all the other add-like functions do.
+
+        * wtf/HashMap.h:
+        Change return type of HashMap::ensure() to be an AddResult.
+
 2016-02-24  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [web-animations] Add AnimationTimeline, DocumentTimeline and add extensions to Document interface
