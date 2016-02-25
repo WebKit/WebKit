@@ -272,7 +272,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
             }
 
             // Native DOM constructor or on native objects that are not functions.
-            if (parentDescription.endsWith("Constructor") || parentDescription === "Math" || parentDescription === "JSON") {
+            if (parentDescription.endsWith("Constructor") || parentDescription === "Math" || parentDescription === "JSON" || parentDescription === "Reflect") {
                 var name = parentDescription;
                 if (WebInspector.NativeConstructorFunctionParameters[name]) {
                     var params = WebInspector.NativeConstructorFunctionParameters[name][this._property.name];

@@ -168,6 +168,9 @@ function test()
         {expression: "Promise.resolve()"},
         {expression: "Promise.resolve({result:1})"},
 
+        // Proxy
+        {expression: "new Proxy({x:1, y:1}, {handler: true})"},
+
     // Classes
 
         {expression: "Person = class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }; Person"}, // Constructor => class type

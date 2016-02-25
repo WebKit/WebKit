@@ -48,6 +48,7 @@
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"
 #include "ObjectConstructor.h"
+#include "ProxyObject.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "SourceCode.h"
@@ -257,6 +258,14 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "targetFunction", boundFunction->targetFunction()));
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundThis", boundFunction->boundThis()));
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundArgs", boundFunction->boundArgs()));
+        return array;
+    }
+
+    if (ProxyObject* proxy = jsDynamicCast<ProxyObject*>(value)) {
+        unsigned index = 0;
+        JSArray* array = constructEmptyArray(exec, nullptr, 2);
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("target"), proxy->target()));
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("handler"), proxy->handler()));
         return array;
     }
 

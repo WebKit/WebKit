@@ -1,3 +1,16 @@
+2016-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Expose Proxy target and handler internal properties to Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=154663
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._functionParameterString):
+        Improve the native parameter list for the global Reflect object methods.
+        Include "enumerate" even though it is deprecated, because we implement it.
+
 2016-02-24  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Visual Styles sidebar should support multiple animations

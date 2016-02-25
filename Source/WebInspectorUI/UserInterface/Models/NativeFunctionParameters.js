@@ -129,6 +129,24 @@ WebInspector.NativeConstructorFunctionParameters = {
         __proto__: null,
     },
 
+    Reflect: {
+        apply: "target, thisArgument, argumentsList",
+        construct: "target, argumentsList, [newTarget=target]",
+        defineProperty: "target, propertyKey, attributes",
+        deleteProperty: "target, propertyKey",
+        enumerate: "target",
+        get: "target, propertyKey, [receiver]",
+        getOwnPropertyDescriptor: "target, propertyKey",
+        getPrototypeOf: "target",
+        has: "target, propertyKey",
+        isExtensible: "target",
+        ownKeys: "target",
+        preventExtensions: "target",
+        set: "target, propertyKey, value, [receiver]",
+        setPrototypeOf: "target, prototype",
+        __proto__: null,
+    },
+
     String: {
         fromCharCode: "...codeUnits",
         fromCodePoint: "...codePoints",

@@ -1,3 +1,14 @@
+2016-02-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Expose Proxy target and handler internal properties to Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=154663
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object.html:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        Test that a Proxy object includes the internal properties.
+
 2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/indexeddb/odd-strings.html as flaky on mac-wk1
