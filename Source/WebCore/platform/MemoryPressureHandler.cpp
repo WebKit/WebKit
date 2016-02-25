@@ -96,11 +96,6 @@ void MemoryPressureHandler::releaseNoncriticalMemory()
     }
 
     {
-        ReliefLogger log("Clearing JS string cache");
-        JSDOMWindow::commonVM().stringCache.clear();
-    }
-
-    {
         ReliefLogger log("Prune MemoryCache dead resources");
         MemoryCache::singleton().pruneDeadResourcesToSize(0);
     }

@@ -1,3 +1,16 @@
+2016-02-25  Andreas Kling  <akling@apple.com>
+
+        Don't clear the weak JSString cache on memory pressure.
+        <https://webkit.org/b/154693>
+
+        Reviewed by Antti Koivisto.
+
+        This was stupid. The cache is a WeakGCMap, so all the JSStrings pointed to are
+        still alive anyway. This way we keep the ability to deduplicate common strings.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseNoncriticalMemory): Deleted.
+
 2016-02-25  Chris Dumez  <cdumez@apple.com>
 
         Drop [TreatReturnedNullStringAs=Undefined] WebKit-specific IDL attribute
