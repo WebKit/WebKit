@@ -31,7 +31,7 @@
 ] interface DOMSettableTokenList : DOMTokenList {
     attribute DOMString value;
 
-    [TreatReturnedNullStringAs=Null] getter DOMString (unsigned long index);
+    getter DOMString? (unsigned long index);
 };
 
 #endif

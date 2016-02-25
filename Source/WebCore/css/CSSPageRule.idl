@@ -20,10 +20,8 @@
 
 // Introduced in DOM Level 2:
 interface CSSPageRule : CSSRule {
-
-             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString selectorText;
+    attribute DOMString? selectorText;
 
     readonly attribute CSSStyleDeclaration style;
-
 };
 

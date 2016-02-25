@@ -97,6 +97,11 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     TestObj objMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     [Unforgeable] long unforgeableMethod();
 
+    // Nullable String return values.
+    DOMString? nullableStringMethod();
+    static DOMString? nullableStringStaticMethod();
+    getter DOMString? nullableStringSpecialMethod(unsigned long index);
+
     void methodWithSequenceArg(sequence<ScriptProfile> sequenceArg);
     sequence<ScriptProfile> methodReturningSequence(long longArg);
 
@@ -256,8 +261,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [CheckSecurityForNode] readonly attribute Document contentDocument;
     [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
 
-    void convert1([TreatReturnedNullStringAs=Null] TestNode value);
-    void convert2([TreatReturnedNullStringAs=Undefined] TestNode value);
+    void convert1(TestNode value);
     void convert4([TreatNullAs=NullString] TestNode value);
     void convert5([TreatNullAs=NullString, TreatUndefinedAs=NullString] TestNode value);
 

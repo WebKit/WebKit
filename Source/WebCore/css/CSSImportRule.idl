@@ -20,7 +20,7 @@
 
 // Introduced in DOM Level 2:
 interface CSSImportRule : CSSRule {
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString href;
+    readonly attribute DOMString? href;
     readonly attribute MediaList media;
     readonly attribute CSSStyleSheet styleSheet;
 };

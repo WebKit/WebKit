@@ -27,8 +27,7 @@
  */
 
 interface CSSKeyframesRule : CSSRule {
-
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString name;
+    attribute DOMString? name;
     readonly attribute CSSRuleList cssRules;
     
     void insertRule([Default=Undefined] optional DOMString rule);

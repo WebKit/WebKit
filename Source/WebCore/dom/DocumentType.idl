@@ -35,7 +35,7 @@
 
     readonly attribute DOMString publicId;
     readonly attribute DOMString systemId;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString internalSubset;
+    readonly attribute DOMString? internalSubset;
 };
 
 DocumentType implements ChildNode;

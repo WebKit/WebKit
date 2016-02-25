@@ -26,12 +26,12 @@
     CustomToJSObject,
     ObjCPolymorphic,
 ] interface StyleSheet {
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        type;
+    readonly attribute DOMString?       type;
              attribute boolean          disabled;
     readonly attribute Node             ownerNode;
     readonly attribute StyleSheet       parentStyleSheet;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        href;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        title;
+    readonly attribute DOMString?       href;
+    readonly attribute DOMString?       title;
     readonly attribute MediaList        media;
 };
 

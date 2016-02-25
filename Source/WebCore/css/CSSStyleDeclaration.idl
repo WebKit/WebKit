@@ -28,12 +28,12 @@
     CustomEnumerateProperty,
     SkipVTableValidation,
 ] interface CSSStyleDeclaration {
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString cssText;
+    [SetterRaisesException] attribute DOMString? cssText;
 
     DOMString getPropertyValue([Default=Undefined] DOMString propertyName);
     [Custom] CSSValue           getPropertyCSSValue([Default=Undefined] optional DOMString propertyName);
-    [TreatReturnedNullStringAs=Null, RaisesException] DOMString          removeProperty([Default=Undefined] optional DOMString propertyName);
-    [TreatReturnedNullStringAs=Null] DOMString          getPropertyPriority([Default=Undefined] optional DOMString propertyName);
+    [RaisesException] DOMString          removeProperty([Default=Undefined] optional DOMString propertyName);
+    DOMString?          getPropertyPriority([Default=Undefined] optional DOMString propertyName);
     [ObjCLegacyUnnamedParameters, RaisesException] void setProperty([Default=Undefined] optional DOMString propertyName, 
                                     [TreatNullAs=NullString, Default=Undefined] optional DOMString value, 
                                     [Default=Undefined] optional DOMString priority);
@@ -43,7 +43,7 @@
     readonly attribute CSSRule          parentRule;
 
     // Extensions
-    [TreatReturnedNullStringAs=Null] DOMString          getPropertyShorthand([Default=Undefined] optional DOMString propertyName);
+    DOMString?          getPropertyShorthand([Default=Undefined] optional DOMString propertyName);
     boolean            isPropertyImplicit([Default=Undefined] optional DOMString propertyName);
 };
 

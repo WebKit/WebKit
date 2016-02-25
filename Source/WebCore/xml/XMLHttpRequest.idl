@@ -70,8 +70,8 @@ enum XMLHttpRequestResponseType {
 
     // response
     [TreatReturnedNullStringAs=Undefined] DOMString getAllResponseHeaders();
-    [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(DOMString header);
-    [GetterRaisesException, CustomGetter] readonly attribute DOMString responseText; // The custom getter implements TreatReturnedNullStringAs=Null
+    DOMString? getResponseHeader(DOMString header);
+    [GetterRaisesException, CustomGetter] readonly attribute DOMString? responseText;
     [GetterRaisesException] readonly attribute Document responseXML;
 
     [SetterRaisesException] attribute XMLHttpRequestResponseType responseType;

@@ -21,9 +21,9 @@
 // Introduced in DOM Level 2:
 interface CSSCharsetRule : CSSRule {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString encoding;
+    readonly attribute DOMString? encoding;
 #else
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString encoding;
+    [SetterRaisesException] attribute DOMString? encoding;
 #endif
 };
 

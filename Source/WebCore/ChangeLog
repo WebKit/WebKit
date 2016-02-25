@@ -1,3 +1,91 @@
+2016-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop [TreatReturnedNullStringAs=Null] WebKit-specific IDL attribute
+        https://bugs.webkit.org/show_bug.cgi?id=154659
+
+        Reviewed by Sam Weinig.
+
+        Drop [TreatReturnedNullStringAs=Null] WebKit-specific IDL attribute and
+        use nullable DOMString types instead:
+        http://heycam.github.io/webidl/#idl-nullable-type
+
+        This is the standard way of doing things. We already had support
+        in the bindings generator for nullable DOMString attributes so
+        we now just leverage this support. However, our IDL parser did
+        not correctly parse nullable DOMString return values for operations.
+        This patch fixes this.
+
+        This patch also drops [TreatNullAs=NullString] and
+        [TreatUndefinedAs=NullString] for writable DOMString attributes that
+        are now marked as nullable because they are implied.
+
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/mediasource/DOMURLMediaSource.idl:
+        * Modules/mediastream/DOMURLMediaStream.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Deleted.
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/IDLParser.pm:
+        (parseAttributeOrOperationRest):
+        (parseOperationOrIterator):
+        (parseSpecialOperation):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_nullable_string_method):
+        (webkit_dom_test_obj_nullable_string_special_method):
+        (webkit_dom_test_obj_conditional_method3): Deleted.
+        (webkit_dom_test_obj_convert1): Deleted.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::getOwnPropertySlot):
+        (WebCore::JSTestObj::getOwnPropertySlotByIndex):
+        (WebCore::JSTestObj::getOwnPropertyNames):
+        (WebCore::jsTestObjPrototypeFunctionNullableStringMethod):
+        (WebCore::jsTestObjConstructorFunctionNullableStringStaticMethod):
+        (WebCore::jsTestObjPrototypeFunctionNullableStringSpecialMethod):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence2): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj nullableStringMethod]):
+        (-[DOMTestObj nullableStringStaticMethod]):
+        (-[DOMTestObj nullableStringSpecialMethod:]):
+        (-[DOMTestObj overloadedMethod1:]): Deleted.
+        (-[DOMTestObj getSVGDocument]): Deleted.
+        * bindings/scripts/test/TestObj.idl:
+        * css/CSSCharsetRule.idl:
+        * css/CSSImportRule.idl:
+        * css/CSSKeyframesRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleRule.idl:
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+        * css/StyleSheet.idl:
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMStringList.idl:
+        * dom/Document.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/Entity.idl:
+        * dom/MutationRecord.idl:
+        * dom/Node.idl:
+        * dom/ProcessingInstruction.idl:
+        * html/DOMSettableTokenList.idl:
+        * html/DOMTokenList.idl:
+        * html/DOMURL.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * page/DOMWindow.idl:
+        * storage/Storage.idl:
+        * storage/StorageEvent.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XPathNSResolver.idl:
+
 2016-02-24  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [web-animations] Add AnimationTimeline, DocumentTimeline and add extensions to Document interface

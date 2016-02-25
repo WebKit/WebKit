@@ -36,7 +36,7 @@
 interface FetchHeaders {
     [RaisesException] void append(DOMString name, DOMString value);
     [RaisesException, ImplementedAs=remove] void delete(DOMString name);
-    [RaisesException, TreatReturnedNullStringAs=Null] DOMString get(DOMString name);
+    [RaisesException] DOMString? get(DOMString name);
     [RaisesException] boolean has(DOMString name);
     [RaisesException] void set(DOMString name, DOMString value);
 

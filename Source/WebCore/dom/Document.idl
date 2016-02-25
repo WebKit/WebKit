@@ -69,8 +69,8 @@
 
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString inputEncoding;
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString xmlEncoding;
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString xmlVersion;
+    readonly attribute DOMString? xmlEncoding;
+    [SetterRaisesException] attribute DOMString? xmlVersion;
     [SetterRaisesException] attribute boolean xmlStandalone;
 
     [RaisesException] Node               adoptNode([Default=Undefined] optional Node source);
@@ -80,7 +80,7 @@
     // (see http://www.w3.org/TR/2011/WD-dom-20110915/#document). We need to keep
     // the writable version around for Objective C clients, but are moving to
     // read-only for other clients.
-             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString documentURI;
+    attribute DOMString? documentURI;
 #else
     [ImplementedAs=urlForBindings] readonly attribute DOMString documentURI;
 #endif
@@ -208,8 +208,8 @@
 
     // WebKit extensions
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString preferredStylesheetSet;
-             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString selectedStylesheetSet;
+    readonly attribute DOMString? preferredStylesheetSet;
+    attribute DOMString? selectedStylesheetSet;
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     CSSStyleDeclaration createCSSStyleDeclaration();

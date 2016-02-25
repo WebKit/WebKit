@@ -121,7 +121,7 @@ StrictTypeChecking
 SuppressToJSObject
 TreatNullAs=NullString
 TreatReturnedNaNDateAs=Null|NaN
-TreatReturnedNullStringAs=Null|Undefined
+TreatReturnedNullStringAs=Undefined
 TreatUndefinedAs=NullString
 TypedArray=*
 URL

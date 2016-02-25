@@ -4262,7 +4262,6 @@ sub NativeToJSValue
         AddToImplIncludes("URL.h", $conditional);
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
         if (defined $conv) {
-            return "jsStringOrNull(state, $value)" if $conv eq "Null";
             return "jsStringOrUndefined(state, $value)" if $conv eq "Undefined";
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";

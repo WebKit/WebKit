@@ -26,11 +26,11 @@
 
     // DOM Level 1
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString name;
+    readonly attribute DOMString? name;
 
     readonly attribute boolean specified;
 
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString value;
+    [SetterRaisesException] attribute DOMString? value;
 
     // DOM Level 2
 

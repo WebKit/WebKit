@@ -30,7 +30,7 @@
     JSCustomMarkFunction,
     GenerateIsReachable=Impl,
 ] interface IDBObjectStore {
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString name;
+    readonly attribute DOMString? name;
     [ImplementedAs=keyPathAny] readonly attribute IDBAny keyPath;
     readonly attribute DOMStringList indexNames;
     readonly attribute IDBTransaction transaction;

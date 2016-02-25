@@ -25,9 +25,9 @@
 
     // DOM Level 1 Core
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString tagName;
+    readonly attribute DOMString? tagName;
 
-    [TreatReturnedNullStringAs=Null] DOMString getAttribute([Default=Undefined] optional DOMString name);
+    DOMString? getAttribute([Default=Undefined] optional DOMString name);
     [ObjCLegacyUnnamedParameters, RaisesException] void setAttribute([Default=Undefined] optional DOMString name,
                                      [Default=Undefined] optional DOMString value);
     void removeAttribute([Default=Undefined] optional DOMString name);
@@ -49,7 +49,7 @@
 
     // DOM Level 2 Core
 
-    [ObjCLegacyUnnamedParameters, TreatReturnedNullStringAs=Null] DOMString getAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters] DOMString? getAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
                                             [Default=Undefined] optional DOMString localName);
     [ObjCLegacyUnnamedParameters, RaisesException] void setAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
                                        [Default=Undefined] optional DOMString qualifiedName, 

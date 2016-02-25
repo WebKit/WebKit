@@ -35,7 +35,7 @@
     InterfaceName=URL,
     ImplementationLacksVTable,
 ] interface DOMURL {
-    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(Blob? blob);
+    [CallWith=ScriptExecutionContext] static DOMString? createObjectURL(Blob? blob);
     [CallWith=ScriptExecutionContext] static void revokeObjectURL(DOMString url);
 };
 

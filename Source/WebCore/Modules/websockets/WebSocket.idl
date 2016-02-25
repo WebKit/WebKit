@@ -57,8 +57,8 @@
     attribute EventHandler onerror;
     attribute EventHandler onclose;
 
-    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString protocol;
-    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString extensions;
+    readonly attribute DOMString? protocol;
+    readonly attribute DOMString? extensions;
 
     attribute DOMString binaryType;
 

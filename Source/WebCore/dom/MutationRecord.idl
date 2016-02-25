@@ -39,8 +39,8 @@
     readonly attribute Node previousSibling;
     readonly attribute Node nextSibling;
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString attributeName;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString attributeNamespace;
+    readonly attribute DOMString? attributeName;
+    readonly attribute DOMString? attributeNamespace;
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString oldValue;
+    readonly attribute DOMString? oldValue;
 };

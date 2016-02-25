@@ -554,15 +554,15 @@ DoNotCheckConstants,
     [StrictTypeChecking, Custom, RaisesException] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
     [StrictTypeChecking, Custom, RaisesException] any getParameter(GLenum pname);
     [StrictTypeChecking, Custom, RaisesException] any getProgramParameter(WebGLProgram program, GLenum pname);
-    [StrictTypeChecking, TreatReturnedNullStringAs=Null, RaisesException] DOMString getProgramInfoLog(WebGLProgram program);
+    [StrictTypeChecking, RaisesException] DOMString? getProgramInfoLog(WebGLProgram program);
     [StrictTypeChecking, Custom, RaisesException] any getRenderbufferParameter(GLenum target, GLenum pname);
     [StrictTypeChecking, Custom, RaisesException] any getShaderParameter(WebGLShader shader, GLenum pname);
 
-    [StrictTypeChecking, TreatReturnedNullStringAs=Null, RaisesException] DOMString    getShaderInfoLog(WebGLShader shader);
+    [StrictTypeChecking, RaisesException] DOMString?    getShaderInfoLog(WebGLShader shader);
 
     [StrictTypeChecking, RaisesException] WebGLShaderPrecisionFormat getShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype);
 
-    [StrictTypeChecking, TreatReturnedNullStringAs=Null, RaisesException] DOMString    getShaderSource(WebGLShader shader);
+    [StrictTypeChecking, RaisesException] DOMString?    getShaderSource(WebGLShader shader);
 
     [StrictTypeChecking, Custom] sequence<DOMString> getSupportedExtensions();
 

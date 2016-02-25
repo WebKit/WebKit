@@ -23,9 +23,9 @@
     NoInterfaceObject,
     ImplementationLacksVTable
 ] interface Entity : Node {
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString publicId;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString systemId;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString notationName;
+    readonly attribute DOMString? publicId;
+    readonly attribute DOMString? systemId;
+    readonly attribute DOMString? notationName;
 };
 
 #endif

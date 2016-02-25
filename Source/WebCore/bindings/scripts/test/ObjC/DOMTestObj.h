@@ -143,6 +143,9 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (DOMTestObj *)objMethod;
 - (DOMTestObj *)objMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (int)unforgeableMethod;
+- (NSString *)nullableStringMethod;
+- (NSString *)nullableStringStaticMethod;
+- (NSString *)nullableStringSpecialMethod:(unsigned)index;
 - (void)methodWithEnumArg:(DOMTestEnumType *)enumArg;
 - (void)methodWithOptionalEnumArgAndDefaultValue:(DOMTestEnumType *)enumArg;
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg;
@@ -176,7 +179,6 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)classMethod2:(int)arg;
 - (DOMSVGDocument *)getSVGDocument;
 - (void)convert1:(DOMTestNode *)value;
-- (void)convert2:(DOMTestNode *)value;
 - (void)convert4:(DOMTestNode *)value;
 - (void)convert5:(DOMTestNode *)value;
 - (DOMSVGPoint *)mutablePointFunction;

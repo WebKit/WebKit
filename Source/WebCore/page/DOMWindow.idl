@@ -74,7 +74,7 @@
 
     void alert([Default=Undefined] optional DOMString message);
     boolean confirm([Default=Undefined] optional DOMString message);
-    [TreatReturnedNullStringAs=Null] DOMString prompt([Default=Undefined] optional DOMString message,
+    DOMString? prompt([Default=Undefined] optional DOMString message,
                                                 [TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString defaultValue);
 
     boolean find([Default=Undefined] optional DOMString string,

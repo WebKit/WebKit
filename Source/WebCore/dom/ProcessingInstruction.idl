@@ -25,7 +25,7 @@
 
     // DOM Level 1
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString target;
+    readonly attribute DOMString? target;
 
     // interface LinkStyle from DOM Level 2 Style Sheets
     readonly attribute StyleSheet sheet;

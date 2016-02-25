@@ -1125,7 +1125,12 @@ sub parseAttributeOrOperationRest
         my $returnType = $self->parseReturnType();
         my $interface = $self->parseOperationRest($extendedAttributeList);
         if (defined ($interface)) {
-            $interface->signature->type($returnType);
+            if (typeHasNullableSuffix($returnType)) {
+                $interface->signature->isNullable(1);
+            } else {
+                $interface->signature->isNullable(0);
+            }
+            $interface->signature->type(typeRemoveNullableSuffix($returnType));
         }
         return $interface;
     }
@@ -1223,7 +1228,13 @@ sub parseOperationOrIterator
         my $next = $self->nextToken();
         if ($next->type() == IdentifierToken || $next->value() eq "(") {
             my $operation = $self->parseOperationRest($extendedAttributeList);
-            $operation->signature->type($returnType);
+            if (typeHasNullableSuffix($returnType)) {
+                $operation->signature->isNullable(1);
+            } else {
+                $operation->signature->isNullable(0);
+            }
+            $operation->signature->type(typeRemoveNullableSuffix($returnType));
+
             return $operation;
         }
     }
@@ -1242,8 +1253,14 @@ sub parseSpecialOperation
         my $returnType = $self->parseReturnType();
         my $interface = $self->parseOperationRest($extendedAttributeList);
         if (defined ($interface)) {
-            $interface->signature->type($returnType);
-             $interface->signature->specials(\@specials);
+            if (typeHasNullableSuffix($returnType)) {
+                $interface->signature->isNullable(1);
+            } else {
+                $interface->signature->isNullable(0);
+            }
+            $interface->signature->type(typeRemoveNullableSuffix($returnType));
+
+            $interface->signature->specials(\@specials);
         }
         return $interface;
     }

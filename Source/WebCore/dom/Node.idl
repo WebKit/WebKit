@@ -46,10 +46,10 @@
     const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
     const unsigned short      NOTATION_NODE                  = 12;
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        nodeName;
+    readonly attribute DOMString?        nodeName;
 
     // FIXME: the spec says this can also raise on retrieval.
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString nodeValue;
+    [SetterRaisesException] attribute DOMString? nodeValue;
 
     readonly attribute unsigned short   nodeType;
     readonly attribute Node             parentNode;
@@ -80,9 +80,9 @@
                                        [TreatNullAs=NullString,Default=Undefined] optional DOMString version);
 #endif
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        namespaceURI;
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString prefix;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        localName;
+    readonly attribute DOMString?        namespaceURI;
+    [SetterRaisesException] attribute DOMString? prefix;
+    readonly attribute DOMString?        localName;
 
 #if defined(LANGUAGE_OBJECTIVE_C)
     readonly attribute NamedNodeMap     attributes;
@@ -92,16 +92,16 @@
 
     // Introduced in DOM Level 3:
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString       baseURI;
+    readonly attribute DOMString?       baseURI;
 
     // FIXME: the spec says this can also raise on retrieval.
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, TreatUndefinedAs=NullString, SetterRaisesException] attribute DOMString textContent;
+    [SetterRaisesException] attribute DOMString? textContent;
 
     boolean            isSameNode([Default=Undefined] optional Node other);
     boolean            isEqualNode([Default=Undefined] optional Node other);
-    [TreatReturnedNullStringAs=Null] DOMString          lookupPrefix([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
+    DOMString?         lookupPrefix([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
     boolean            isDefaultNamespace([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
-    [TreatReturnedNullStringAs=Null] DOMString          lookupNamespaceURI([TreatNullAs=NullString,Default=Undefined] optional DOMString prefix);
+    DOMString?         lookupNamespaceURI([TreatNullAs=NullString,Default=Undefined] optional DOMString prefix);
 
     // DocumentPosition
     const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
