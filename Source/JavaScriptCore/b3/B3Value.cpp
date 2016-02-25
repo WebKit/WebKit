@@ -71,7 +71,7 @@ void Value::replaceWithIdentity(Value* value)
 
     RELEASE_ASSERT(type == value->type());
 
-    this->Value::~Value();
+    this->~Value();
 
     new (this) Value(Identity, type, origin, value);
 
@@ -85,7 +85,7 @@ void Value::replaceWithNop()
     Origin origin = m_origin;
     BasicBlock* owner = this->owner;
 
-    this->Value::~Value();
+    this->~Value();
 
     new (this) Value(Nop, Void, origin);
 
@@ -105,7 +105,7 @@ void Value::replaceWithPhi()
     BasicBlock* owner = this->owner;
     Type type = m_type;
 
-    this->Value::~Value();
+    this->~Value();
 
     new (this) Value(Phi, type, origin);
 
