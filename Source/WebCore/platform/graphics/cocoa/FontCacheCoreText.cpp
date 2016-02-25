@@ -671,7 +671,7 @@ static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& fam
 }
 #endif
 
-static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const TextRenderingMode& textRenderingMode, float size)
+static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size)
 {
     if (family.isEmpty())
         return nullptr;
@@ -684,7 +684,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSym
         foundFont = platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
 #endif
     }
-    return preparePlatformFont(foundFont.get(), textRenderingMode, nullptr, nullptr, featureSettings, variantSettings);
+    return preparePlatformFont(foundFont.get(), textRenderingMode, fontFaceFeatures, fontFaceVariantSettings, featureSettings, variantSettings);
 }
 
 #if PLATFORM(MAC)
@@ -719,12 +719,12 @@ static void autoActivateFont(const String& name, CGFloat size)
 }
 #endif
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings)
 {
     CTFontSymbolicTraits traits = computeTraits(fontDescription);
     float size = fontDescription.computedPixelSize();
 
-    RetainPtr<CTFontRef> font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.textRenderingMode(), size);
+    RetainPtr<CTFontRef> font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
 
 #if PLATFORM(MAC)
     if (!font) {
@@ -735,7 +735,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         autoActivateFont(family.string(), size);
 
-        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.textRenderingMode(), size);
+        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontFaceFeatures, fontFaceVariantSettings, fontDescription.textRenderingMode(), size);
     }
 #endif
 

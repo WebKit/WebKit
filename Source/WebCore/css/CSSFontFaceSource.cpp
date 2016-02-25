@@ -137,7 +137,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     if (!m_font && !fontFaceElement) {
         // We're local. Just return a Font from the normal cache.
         // We don't want to check alternate font family names here, so pass true as the checkingAlternateName parameter.
-        return FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, true);
+        return FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, &fontFaceFeatures, &fontFaceVariantSettings, true);
     }
 
     if (m_font) {

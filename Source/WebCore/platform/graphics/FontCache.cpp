@@ -100,9 +100,11 @@ struct FontPlatformDataCacheKey {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FontPlatformDataCacheKey() { }
-    FontPlatformDataCacheKey(const AtomicString& family, const FontDescription& description)
+    FontPlatformDataCacheKey(const AtomicString& family, const FontDescription& description, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings)
         : m_fontDescriptionKey(description)
         , m_family(family)
+        , m_fontFaceFeatures(fontFaceFeatures ? *fontFaceFeatures : FontFeatureSettings())
+        , m_fontFaceVariantSettings(fontFaceVariantSettings ? *fontFaceVariantSettings : FontVariantSettings())
     { }
 
     explicit FontPlatformDataCacheKey(HashTableDeletedValueType t)
@@ -113,7 +115,9 @@ public:
 
     bool operator==(const FontPlatformDataCacheKey& other) const
     {
-        if (m_fontDescriptionKey != other.m_fontDescriptionKey)
+        if (m_fontDescriptionKey != other.m_fontDescriptionKey
+            || m_fontFaceFeatures != other.m_fontFaceFeatures
+            || m_fontFaceVariantSettings != other.m_fontFaceVariantSettings)
             return false;
         if (m_family.impl() == other.m_family.impl())
             return true;
@@ -124,12 +128,19 @@ public:
 
     FontDescriptionKey m_fontDescriptionKey;
     AtomicString m_family;
+    FontFeatureSettings m_fontFaceFeatures;
+    FontVariantSettings m_fontFaceVariantSettings;
 };
 
 struct FontPlatformDataCacheKeyHash {
     static unsigned hash(const FontPlatformDataCacheKey& fontKey)
     {
-        return pairIntHash(ASCIICaseInsensitiveHash::hash(fontKey.m_family), fontKey.m_fontDescriptionKey.computeHash());
+        IntegerHasher hasher;
+        hasher.add(ASCIICaseInsensitiveHash::hash(fontKey.m_family));
+        hasher.add(fontKey.m_fontDescriptionKey.computeHash());
+        hasher.add(fontKey.m_fontFaceFeatures.hash());
+        hasher.add(fontKey.m_fontFaceVariantSettings.uniqueValue());
+        return hasher.hash();
     }
          
     static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
@@ -207,9 +218,8 @@ static AtomicString alternateFamilyName(const AtomicString& familyName)
     return nullAtom;
 }
 
-FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription,
-                                                       const AtomicString& passedFamilyName,
-                                                       bool checkingAlternateName)
+FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const AtomicString& passedFamilyName,
+    const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, bool checkingAlternateName)
 {
 #if PLATFORM(IOS)
     FontLocker fontLocker;
@@ -231,19 +241,19 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
         initialized = true;
     }
 
-    FontPlatformDataCacheKey key(familyName, fontDescription);
+    FontPlatformDataCacheKey key(familyName, fontDescription, fontFaceFeatures, fontFaceVariantSettings);
 
     auto addResult = fontPlatformDataCache().add(key, nullptr);
     FontPlatformDataCache::iterator it = addResult.iterator;
     if (addResult.isNewEntry) {
-        it->value = createFontPlatformData(fontDescription, familyName);
+        it->value = createFontPlatformData(fontDescription, familyName, fontFaceFeatures, fontFaceVariantSettings);
 
         if (!it->value && !checkingAlternateName) {
             // We were unable to find a font.  We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
             const AtomicString alternateName = alternateFamilyName(familyName);
             if (!alternateName.isNull()) {
-                FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, true);
+                FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, fontFaceFeatures, fontFaceVariantSettings, true);
                 // Lookup the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to getCachedFontPlatformData().
                 it = fontPlatformDataCache().find(key);
@@ -364,12 +374,12 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomicString& family, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, bool checkingAlternateName)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(std::chrono::milliseconds::zero());
 
-    FontPlatformData* platformData = getCachedFontPlatformData(fontDescription, family, checkingAlternateName);
+    FontPlatformData* platformData = getCachedFontPlatformData(fontDescription, family, fontFaceFeatures, fontFaceVariantSettings, checkingAlternateName);
     if (!platformData)
         return nullptr;
 

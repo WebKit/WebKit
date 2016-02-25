@@ -1,3 +1,13 @@
+2016-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font features specified in @font-face blocks don't apply to local() families
+        https://bugs.webkit.org/show_bug.cgi?id=154554
+
+        Reviewed by Dean Jackson.
+
+        * css3/font-feature-font-face-local-expected.html: Added.
+        * css3/font-feature-font-face-local.html: Added.
+
 2016-02-22  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r196563): Images not loading on https://klim.co.nz/blog/paypal-sans-design-information/
