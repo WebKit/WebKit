@@ -230,8 +230,8 @@ enum EFillLayerType {
 // CSS3 Background Values
 enum EFillSizeType { Contain, Cover, SizeLength, SizeNone };
 
-// CSS3 Background Position
-enum BackgroundEdgeOrigin { TopEdge, RightEdge, BottomEdge, LeftEdge };
+// CSS3 <position>
+enum class Edge { Top, Right, Bottom, Left };
 
 // CSS3 Mask Source Types
 enum EMaskSourceType { MaskAlpha, MaskLuminance };
@@ -694,7 +694,7 @@ TextStream& operator<<(TextStream&, EFillAttachment);
 TextStream& operator<<(TextStream&, EFillBox);
 TextStream& operator<<(TextStream&, EFillRepeat);
 TextStream& operator<<(TextStream&, EMaskSourceType);
-TextStream& operator<<(TextStream&, BackgroundEdgeOrigin);
+TextStream& operator<<(TextStream&, Edge);
 
 } // namespace WebCore
 
