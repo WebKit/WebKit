@@ -810,6 +810,9 @@ http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html [
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/base-uri-allow.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/base-uri-default-ignored.html [ Pass ]
+http/tests/security/contentSecurityPolicy/1.1/base-uri-deny.html [ Pass ]
 http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive.php [ Pass ]
 webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html
 webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src.html
@@ -836,6 +839,7 @@ webkit.org/b/153160 http/tests/security/contentSecurityPolicy/plugin-in-iframe-w
 webkit.org/b/153161 http/tests/security/contentSecurityPolicy/register-bypassing-scheme-partial.html [ Failure ]
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-01.html [ Failure ]
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-02.html [ Failure ]
+webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
 http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html [ Pass Failure ]
 
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.
