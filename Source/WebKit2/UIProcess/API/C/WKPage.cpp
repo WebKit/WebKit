@@ -1735,6 +1735,14 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.showPage(toAPI(page), m_client.base.clientInfo);
         }
 
+        virtual void fullscreenMayReturnToInline(WebPageProxy* page) override
+        {
+            if (!m_client.fullscreenMayReturnToInline)
+                return;
+
+            m_client.fullscreenMayReturnToInline(toAPI(page), m_client.base.clientInfo);
+        }
+
         virtual void close(WebPageProxy* page) override
         {
             if (!m_client.close)
