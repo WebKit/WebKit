@@ -1,6 +1,6 @@
 CSP report received:
 CONTENT_TYPE: application/csp-report
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.html
+HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.php
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.html","referrer":"","violated-directive":"img-src 'none'","original-policy":"img-src 'none'; report-uri /security/contentSecurityPolicy/resources/save-report.php","blocked-uri":"http://127.0.0.1:8000/security/resources/abe.png"}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.php","referrer":"","violated-directive":"img-src 'none'","original-policy":"img-src 'none'; report-uri /security/contentSecurityPolicy/resources/save-report.php","blocked-uri":"http://127.0.0.1:8000/security/resources/abe.png"}}

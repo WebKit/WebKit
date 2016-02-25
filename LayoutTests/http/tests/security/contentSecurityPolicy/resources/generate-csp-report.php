@@ -1,4 +1,6 @@
-<meta http-equiv="Content-Security-Policy" content="script-src 'self'; report-uri save-report.php?test=<?php echo $_GET['test']; ?>">
+<?php
+    header("Content-Security-Policy: script-src 'self'; report-uri save-report.php?test=" . $_GET['test']);
+?>
 <script>
 // This script block will trigger a violation report.
 alert('FAIL');

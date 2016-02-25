@@ -5,7 +5,7 @@ CONSOLE MESSAGE: line 11: [Report Only] Refused to execute inline script because
 ALERT: PASS
 CSP report received:
 CONTENT_TYPE: application/csp-report
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-and-enforce.html
+HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-and-enforce.php
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-and-enforce.html","referrer":"","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri resources/save-report.php","blocked-uri":"","status-code":200}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-and-enforce.php","referrer":"","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri resources/save-report.php","blocked-uri":"","status-code":200}}

@@ -1,5 +1,62 @@
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
+        CSP: report-url directive should be ignored when contained in a policy defined via a meta element
+        https://bugs.webkit.org/show_bug.cgi?id=154307
+        <rdar://problem/24684817>
+
+        Reviewed by Brent Fulgham.
+
+        Add new test http/tests/security/contentSecurityPolicy/report-uri-in-meta-tag-ignored.html and rename and modify
+        existing tests to make them PHP scripts that emit a Content Security Policy HTTP header.
+
+        In addition, remove file http/tests/security/contentSecurityPolicy/resources/generate-csp-report.html that
+        is no longer meaningful now that we do not honor the report-uri directive defined in a policy via a meta
+        element. Moreover, we have not made use of this file since <http://trac.webkit.org/changeset/176413>.
+
+        * TestExpectations: Update entries for renames.
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-and-enforce.html.
+        * http/tests/security/contentSecurityPolicy/report-blocked-data-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-data-uri.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-blocked-data-uri.html.
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-blocked-file-uri.html.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin.html.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-blocked-uri.html.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.html.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.html.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.html.
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-only.html.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.html.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.html.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies.html.
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript.html.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html.
+        * http/tests/security/contentSecurityPolicy/report-uri-in-meta-tag-ignored-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-in-meta-tag-ignored.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.html: Removed.
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.php: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-uri.html.
+        * http/tests/security/contentSecurityPolicy/resources/generate-csp-report.html: Removed. For completeness, we have
+        not made use of this file since <http://trac.webkit.org/changeset/176413>.
+        * http/tests/security/contentSecurityPolicy/resources/generate-csp-report.php:
+        * http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher.html.
+        * platform/wk2/TestExpectations: Update entries for renames.
+
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
         CSP: sandbox directive should be ignored when contained in a policy defined via a meta element
         https://bugs.webkit.org/show_bug.cgi?id=154299
         <rdar://problem/24680433>

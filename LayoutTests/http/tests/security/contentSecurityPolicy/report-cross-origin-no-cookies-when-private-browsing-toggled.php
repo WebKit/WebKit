@@ -1,14 +1,18 @@
+<?php
+    header("Content-Security-Policy: img-src 'none'; report-uri http://localhost:8080/security/contentSecurityPolicy/resources/save-report.php");
+?>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="Content-Security-Policy" content="img-src 'none'; report-uri http://localhost:8080/security/contentSecurityPolicy/resources/save-report.php">
-</head>
 <body>
 <script>
+    // Normal browsing mode
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "http://localhost:8080/cookies/resources/setCookies.cgi", false);
     xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");
     xhr.send(null);
+
+    if (window.testRunner)
+        testRunner.setPrivateBrowsingEnabled(true);
 </script>
 
 <!-- This image will generate a CSP violation report. -->

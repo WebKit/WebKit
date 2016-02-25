@@ -2,7 +2,7 @@ CONSOLE MESSAGE: line 3: Refused to execute inline script because it violates th
 
 CSP report received:
 CONTENT_TYPE: application/csp-report
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri-scheme-relative.html
+HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri-scheme-relative.php
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri-scheme-relative.html","referrer":"","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri //127.0.0.1:8080/security/contentSecurityPolicy/resources/save-report.php","blocked-uri":"","status-code":200}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri-scheme-relative.php","referrer":"","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri //127.0.0.1:8080/security/contentSecurityPolicy/resources/save-report.php","blocked-uri":"","status-code":200}}

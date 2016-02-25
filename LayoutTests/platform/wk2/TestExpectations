@@ -714,10 +714,10 @@ storage/indexeddb/properties-disabled-at-runtime.html [ Skip ]
 # WebKitTestRunner testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess.
 # We explicitly Skip the following tests instead of marking them as Failure because some of these tests will naturally pass
 # as a consequence of testRunner.setPrivateBrowsingEnabled() effectively being a no-op as of the time of writing (07/08/2015).
-webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.html [ Skip ]
-webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.html [ Skip ]
-webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.html [ Skip ]
-webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.html [ Skip ]
+webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.php [ Skip ]
+webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.php [ Skip ]
+webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.php [ Skip ]
+webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.php [ Skip ]
 
 # Legacy IndexedDB will never properly support IDB in private browsing
 imported/w3c/indexeddb/abort-in-initial-upgradeneeded-private.html [ Skip ]

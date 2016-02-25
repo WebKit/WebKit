@@ -1,4 +1,6 @@
-<meta http-equiv="Content-Security-Policy-Report-Only" content="img-src 'none'; report-uri resources/save-report.php">
+<?php
+    header("Content-Security-Policy-Report-Only: img-src 'none'; report-uri resources/save-report.php");
+?>
 The URI of this image should show up in the violation report.
 <img src="../resources/abe.png#the-fragment-should-not-be-in-report">
 <script src="resources/go-to-echo-report.js"></script>

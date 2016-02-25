@@ -808,9 +808,9 @@ webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/scripthash-def
 webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/stylehash-default-src.html
 webkit.org/b/111869 http/tests/security/contentSecurityPolicy/eval-blocked-and-sends-report.html
 webkit.org/b/115700 http/tests/security/contentSecurityPolicy/inline-event-handler-blocked-after-injecting-meta.html [ Failure ]
-webkit.org/b/115702 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.html [ Failure ]
-webkit.org/b/115702 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies.html [ Failure ]
-webkit.org/b/115707 http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.html [ Failure ]
+webkit.org/b/115702 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.php [ Failure ]
+webkit.org/b/115702 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies.php [ Failure ]
+webkit.org/b/115707 http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.php [ Failure ]
 webkit.org/b/153148 http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.html
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html
@@ -831,17 +831,17 @@ webkit.org/b/153160 http/tests/security/contentSecurityPolicy/plugin-in-iframe-w
 webkit.org/b/153161 http/tests/security/contentSecurityPolicy/register-bypassing-scheme-partial.html [ Failure ]
 webkit.org/b/153162 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-multiple-violations-01.html [ Failure ]
 webkit.org/b/153162 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-multiple-violations-02.html [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-blocked-file-uri.html [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin.html [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-blocked-uri.html [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-blocked-file-uri.php [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin.php [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-blocked-uri.php [ Failure ]
 webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-only-from-header.php [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-only.html [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-only.php [ Failure ]
 webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript.html [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-uri.html [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-and-enforce.html [ Failure ]
-webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-blocked-data-uri.html [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript.php [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-uri-from-javascript.php [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-uri.php [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-and-enforce.php [ Failure ]
+webkit.org/b/153242 webkit.org/b/154288 http/tests/security/contentSecurityPolicy/report-blocked-data-uri.php [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html [ Pass Failure ]
 
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.

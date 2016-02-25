@@ -408,8 +408,7 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
             ASSERT(!name.isEmpty());
             switch (policyFrom) {
             case ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta:
-                // FIXME: We also need to ignore directive report-uri (https://bugs.webkit.org/show_bug.cgi?id=154307).
-                if (equalLettersIgnoringASCIICase(name, sandbox)) {
+                if (equalLettersIgnoringASCIICase(name, sandbox) || equalLettersIgnoringASCIICase(name, reportURI)) {
                     m_policy.reportInvalidDirectiveInHTTPEquivMeta(name);
                     break;
                 }
