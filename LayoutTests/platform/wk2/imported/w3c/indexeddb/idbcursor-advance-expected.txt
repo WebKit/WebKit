@@ -1,8 +1,0 @@
-
-FAIL IDBCursor.advance() - advances assert_unreached: unexpected error (UnknownError) Reached unreachable code
-FAIL IDBCursor.advance() - advances backwards assert_unreached: unexpected error (UnknownError) Reached unreachable code
-FAIL IDBCursor.advance() - skip far forward assert_unreached: unexpected error (UnknownError) Reached unreachable code
-PASS IDBCursor.advance() - within range 
-PASS IDBCursor.advance() - within single key range 
-PASS IDBCursor.advance() - within single key range, with several results 
-

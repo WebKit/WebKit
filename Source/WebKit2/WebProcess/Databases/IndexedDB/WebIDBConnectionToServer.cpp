@@ -141,7 +141,7 @@ void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, IDBKe
 {
     IDBKeyData keyData(key);
     IPC::DataReference valueData(value.data());
-    send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, valueData, mode != IndexedDB::ObjectStoreOverwriteMode::NoOverwrite));
+    send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, valueData, static_cast<unsigned>(mode)));
 }
 
 void WebIDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range)

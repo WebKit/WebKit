@@ -27,9 +27,8 @@ fast/harness/concurrent-ui-side-scripts.html [ Pass ]
 ### (2) Classified failures without bug reports (yet)
 ### (3) Unclassified failures
 ### (4) Features that are not supported in WebKit2 and likely never will be
-### (5) IndexedDB related failures
-### (6) Features that are not supported in WebKit2, on Mavericks
-### (7) New WebKit2-only failures in Yosemite
+### (5) Features that are not supported in WebKit2, on Mavericks
+### (6) New WebKit2-only failures in Yosemite
 
 ########################################
 ### START OF (1) Classified failures with bug reports
@@ -375,137 +374,7 @@ webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Skip ]
 ########################################
 
 ########################################
-### START OF (5) IndexedDB related failures
-
-# Mozilla test failures.
-storage/indexeddb/mozilla/global-data.html [ Skip ]
-storage/indexeddb/mozilla/cursor-update-updates-indexes.html [ Pass Failure ]
-
-# Blink tests with unexplained timeouts
-storage/indexeddb/exceptions.html [ Skip ]
-storage/indexeddb/transaction-basics.html [ Skip ]
-
-# Blink tests with non-trivial text failures.
-storage/indexeddb/create-object-store-options.html [ Skip ]
-storage/indexeddb/cursor-advance.html [ Skip ]
-storage/indexeddb/cursor-basics.html [ Skip ]
-storage/indexeddb/cursor-continue-validity.html [ Skip ]
-storage/indexeddb/cursor-index-delete.html [ Skip ]
-storage/indexeddb/cursor-key-order.html [ Skip ]
-storage/indexeddb/cursor-leak.html [ Skip ] # Missing needed WKTR feature?
-storage/indexeddb/cursor-overloads.html [ Skip ]
-storage/indexeddb/cursor-primary-key-order.html [ Skip ]
-storage/indexeddb/cursor-request-cycle.html [ Skip ] # Missing needed WKTR feature?
-storage/indexeddb/cursor-update.html [ Skip ]
-storage/indexeddb/database-close.html [ Skip ]
-storage/indexeddb/database-quota.html [ Skip ]
-storage/indexeddb/duplicates.html [ Skip ] # Difference between null + undefined
-storage/indexeddb/events.html [ Skip ]
-storage/indexeddb/factory-cmp.html [ Skip ]
-storage/indexeddb/get-keyrange.html [ Skip ]
-storage/indexeddb/index-basics.html [ Skip ] # Difference between null + undefined
-storage/indexeddb/index-duplicate-keypaths.html [ Skip ]
-storage/indexeddb/index-multientry.html [ Skip ]
-storage/indexeddb/index-population.html [ Skip ]
-storage/indexeddb/index-unique.html [ Skip ]
-storage/indexeddb/intversion-close-between-events.html [ Skip ]
-storage/indexeddb/intversion-open-with-version.html [ Skip ] # INTMAX exposed to script as database version
-storage/indexeddb/intversion-two-opens-no-versions.html [ Skip ] # INTMAX exposed to script as database version
-storage/indexeddb/key-generator.html [ Skip ]
-storage/indexeddb/key-type-binary.html [ Skip ]
-storage/indexeddb/lazy-index-population.html [ Skip ]
-storage/indexeddb/noblobs.html [ Skip ] # Missing DRT file/blob support
-storage/indexeddb/objectstore-autoincrement.html [ Skip ]
-storage/indexeddb/optional-arguments.html [ Skip ]
-storage/indexeddb/request-leak.html [ Skip ] # Missing WKTR support? GC?
-storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Skip ]
-storage/indexeddb/structured-clone.html [ Skip ] # Missing DRT file/blob support
-storage/indexeddb/transaction-and-objectstore-calls.html [ Skip ]
-storage/indexeddb/transaction-error.html [ Skip ]
-storage/indexeddb/transaction-scope-sequencing.html [ Skip ]
-
-# Blink tests that crash the WebProcess.
-storage/indexeddb/cursor-cast.html [ Skip ]
-storage/indexeddb/deleted-objects.html [ Skip ] # Crashes under WebCore::GetOperation::GetOperation
-storage/indexeddb/metadata.html [ Skip ] # Crashes under IDBDatabaseBackend::createIndex
-storage/indexeddb/persistence.html [ Skip ] # Crash under IDBDatabaseBackend::createObjectStore
-webkit.org/b/137314 storage/indexeddb/database-basics.html [ Pass Crash Timeout ] # IDBDatabaseBackend::createObjectStore()
-
-# Blink tests that crash the WebProcess under IDBDatabase::dispatchEvent or IDBRequest::dispatchEvent (possibly all related).
-storage/indexeddb/database-deletepending-flag.html [ Skip ]	  
-storage/indexeddb/database-wrapper.html [ Skip ]
-storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html [ Skip ]
-storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html [ Skip ]
-storage/indexeddb/deletedatabase-blocked.html [ Skip ]
-storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html [ Skip ]
-storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
-storage/indexeddb/deletedatabase-not-blocked.html [ Skip ]
-storage/indexeddb/factory-deletedatabase.html [ Skip ]
-storage/indexeddb/intversion-blocked.html [ Skip ]
-storage/indexeddb/intversion-gated-on-delete.html [ Skip ]
-storage/indexeddb/intversion-long-queue.html [ Skip ]
-storage/indexeddb/intversion-open-in-upgradeneeded.html [ Skip ]
-storage/indexeddb/intversion-pending-version-changes-ascending.html [ Skip ]
-storage/indexeddb/intversion-pending-version-changes-descending.html [ Skip ]
-storage/indexeddb/intversion-pending-version-changes-same.html [ Skip ]
-storage/indexeddb/intversion-upgrades.html [ Skip ]
-storage/indexeddb/objectstore-basics.html [ Skip ]
-storage/indexeddb/set_version_blocked.html [ Skip ]
-storage/indexeddb/setversion-not-blocked.html [ Skip ]
-
-# Blink tests that crash the DatabaseProcess.
-storage/indexeddb/createIndex-after-failure.html [ Skip ]
-storage/indexeddb/database-odd-names.html [ Skip ] # Crashes under WebKit::DatabaseProcess::ensurePathExists
-storage/indexeddb/deleteIndex.html [ Skip ] # Crashes under WebKit::UniqueIDBDatabase::deleteIndex
-storage/indexeddb/index-cursor.html [ Skip ] # Flaky crash under UniqueIDBDatabase::unregisterConnection
-storage/indexeddb/open-ordering.html [ Skip ] # DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata
-storage/indexeddb/transaction-coordination-within-database.html [ Skip ] # SQLiteTransaction::begin
-
-# Blink tests that crash the DatabaseProcess under DatabaseProcessIDBConnection::deleteDatabase.
-storage/indexeddb/database-closepending-flag.html [ Skip ]
-storage/indexeddb/key-sort-order-date.html [ Skip ]
-storage/indexeddb/key-type-infinity.html [ Skip ]
-storage/indexeddb/keypath-fetch-key.html [ Skip ]
-storage/indexeddb/odd-strings.html [ Skip ]
-storage/indexeddb/prefetch-invalidation.html [ Skip ]
-storage/indexeddb/queued-commands.html [ Skip ]
-
-# Blink tests that pass once, but are known to cause trouble downstream.
-storage/indexeddb/clone-exception.html [ Skip ]
-storage/indexeddb/connection-leak.html [ Skip ]
-storage/indexeddb/dont-wedge.html [ Skip ]
-storage/indexeddb/key-sort-order-across-types.html [ Skip ]
-
-# We don't currently support indexeddb in workers
-storage/indexeddb/basics-workers.html [ Skip ]
-storage/indexeddb/cursor-advance-workers.html [ Skip ]
-storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Skip ]
-storage/indexeddb/dont-commit-on-blocked.html [ Skip ]
-storage/indexeddb/factory-basics-workers.html [ Skip ]
-storage/indexeddb/index-basics-workers.html [ Skip ]
-storage/indexeddb/objectstore-basics-workers.html [ Skip ]
-storage/indexeddb/open-twice-workers.html [ Skip ]
-storage/indexeddb/pending-activity-workers.html [ Skip ]
-storage/indexeddb/pending-version-change-on-exit.html [ Skip ]
-storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Skip ]
-storage/indexeddb/pending-version-change-stuck.html [ Skip ]
-storage/indexeddb/transaction-complete-workers.html [ Skip ]
-storage/indexeddb/unprefix-workers.html [ Skip ]
-http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
-http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
-
-# Bindings changes in https://bugs.webkit.org/show_bug.cgi?id=150868 cause this to fail, but this test is probably wrong
-storage/indexeddb/keypath-basics.html [ Skip ]
-
-webkit.org/b/153849 [ Yosemite Release ] imported/w3c/indexeddb/idbcursor-direction-index-keyrange.htm [ Skip ]
-webkit.org/b/153848 [ Yosemite Release ] imported/w3c/indexeddb/idbcursor-advance-invalid.htm [ Skip ]
-webkit.org/b/154618 [ Yosemite Release ] imported/w3c/indexeddb/idbcursor-advance.htm [ Pass Timeout ]
-
-### END OF (5) IndexedDB related failures
-########################################
-
-########################################
-### START OF (6) Features that are not supported when NetworkProcess is enabled (i.e. they only work on Mountain Lion, and not on newer OS versions).
+### START OF (5) Features that are not supported when NetworkProcess is enabled (i.e. they only work on Mountain Lion, and not on newer OS versions).
 
 # https://bugs.webkit.org/show_bug.cgi?id=115274
 # PPT: testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess
@@ -536,11 +405,11 @@ webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure ]
 # This test times out, likely because appcache still loads in WebProcess, not NetworkProcess
 webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 
-### END OF (6) Features that are not supported in WebKit2, on Mavericks
+### END OF (5) Features that are not supported in WebKit2, on Mavericks
 ########################################
 
 ########################################
-### START OF (7) New WebKit2-only failures in Yosemite
+### START OF (6) New WebKit2-only failures in Yosemite
 
 media/video-background-tab-playback.html [ Pass Failure ]
 
@@ -554,7 +423,7 @@ webkit.org/b/141085 http/tests/media/video-query-url.html [ Pass Timeout ]
 
 webkit.org/b/145702 [ Debug Yosemite ] http/tests/misc/acid3.html [ Pass Timeout ]
 
-### END OF (7) New WebKit2-only failures in Yosemite
+### END OF (6) New WebKit2-only failures in Yosemite
 ########################################
 
 # Content Extensions tests must be enabled explicitly on mac-wk2.

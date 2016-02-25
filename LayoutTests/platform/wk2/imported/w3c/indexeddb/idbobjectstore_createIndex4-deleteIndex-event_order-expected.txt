@@ -1,3 +1,0 @@
-
-TIMEOUT IDBObjectStore.createIndex() - Event ordering for a later deleted index Test timed out
-

@@ -203,6 +203,8 @@ void IDBKeyData::encode(Encoder& encoder) const
 
     switch (m_type) {
     case KeyType::Invalid:
+    case KeyType::Max:
+    case KeyType::Min:
         break;
     case KeyType::Array:
         encoder << m_arrayValue;
@@ -213,12 +215,6 @@ void IDBKeyData::encode(Encoder& encoder) const
     case KeyType::Date:
     case KeyType::Number:
         encoder << m_numberValue;
-        break;
-    case KeyType::Max:
-    case KeyType::Min:
-        // MaxType and MinType are only used for comparison to other keys.
-        // They should never be encoded/decoded.
-        ASSERT_NOT_REACHED();
         break;
     }
 }
@@ -237,6 +233,8 @@ bool IDBKeyData::decode(Decoder& decoder, IDBKeyData& keyData)
 
     switch (keyData.m_type) {
     case KeyType::Invalid:
+    case KeyType::Max:
+    case KeyType::Min:
         break;
     case KeyType::Array:
         if (!decoder.decode(keyData.m_arrayValue))
@@ -251,13 +249,6 @@ bool IDBKeyData::decode(Decoder& decoder, IDBKeyData& keyData)
         if (!decoder.decode(keyData.m_numberValue))
             return false;
         break;
-    case KeyType::Max:
-    case KeyType::Min:
-        // MaxType and MinType are only used for comparison to other keys.
-        // They should never be encoded/decoded.
-        ASSERT_NOT_REACHED();
-        decoder.markInvalid();
-        return false;
     }
 
     return true;

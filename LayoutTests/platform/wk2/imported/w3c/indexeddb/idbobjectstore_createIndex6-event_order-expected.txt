@@ -1,3 +1,0 @@
-
-FAIL IDBObjectStore.createIndex() - event order when unique constraint is triggered assert_unreached: unexpected open.success event Reached unreachable code
-

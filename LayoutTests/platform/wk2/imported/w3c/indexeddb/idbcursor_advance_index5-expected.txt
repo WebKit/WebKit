@@ -1,3 +1,0 @@
-
-FAIL IDBCursor.advance() - index - iterate to the next record assert_unreached: unexpected db.error (UnknownError) Reached unreachable code
-

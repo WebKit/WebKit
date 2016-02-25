@@ -1,5 +1,0 @@
-
-FAIL IDBCursor.delete() - index - throw InvalidStateError caused by object store been deleted assert_throws: If the cursor's source or effective object store has been deleted, the implementation MUST throw a DOMException of type InvalidStateError function "function () {
-                cursor.delete();
-            }" did not throw
-

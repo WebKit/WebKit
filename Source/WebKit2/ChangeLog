@@ -1,3 +1,18 @@
+2016-02-25  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: WebKit 2 IPC layer.
+        https://bugs.webkit.org/show_bug.cgi?id=153808
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad): This ASSERT fires on most WK2 tests. Alex said remove it.
+        
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::putOrAdd): Properly encode the overwrite flag.
+        
+        * WebProcess/Databases/WebDatabaseProvider.h: Enable Modern IDB.
+
 2016-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] MediaDeviceInfo deviceId and groupId must be unique to the page's origin

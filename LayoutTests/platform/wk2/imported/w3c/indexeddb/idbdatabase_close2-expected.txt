@@ -1,3 +1,0 @@
-
-FAIL IDBDatabase.close() - unblock the delete database request assert_unreached: Unexpected database deletion error (UnknownError) Reached unreachable code
-
