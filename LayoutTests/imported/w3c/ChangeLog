@@ -1,3 +1,61 @@
+2016-02-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Move streams tests from web-platform-tests/streams-api to web-platform-tests/streams
+        https://bugs.webkit.org/show_bug.cgi?id=154671
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This will allow preparing resyncing web-platform-tests.
+
+        * web-platform-tests/streams/README.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/README.txt.
+        * web-platform-tests/streams/byte-length-queuing-strategy-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/byte-length-queuing-strategy-expected.txt.
+        * web-platform-tests/streams/byte-length-queuing-strategy.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/byte-length-queuing-strategy.html.
+        * web-platform-tests/streams/byte-length-queuing-strategy.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/byte-length-queuing-strategy.js.
+        * web-platform-tests/streams/count-queuing-strategy-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/count-queuing-strategy-expected.txt.
+        * web-platform-tests/streams/count-queuing-strategy.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/count-queuing-strategy.html.
+        * web-platform-tests/streams/count-queuing-strategy.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/count-queuing-strategy.js.
+        * web-platform-tests/streams/readable-streams/bad-strategies-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/bad-strategies-expected.txt.
+        * web-platform-tests/streams/readable-streams/bad-strategies.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/bad-strategies.html.
+        * web-platform-tests/streams/readable-streams/bad-strategies.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/bad-strategies.js.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/bad-underlying-sources-expected.txt.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/bad-underlying-sources.html.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/bad-underlying-sources.js.
+        * web-platform-tests/streams/readable-streams/brand-checks-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/brand-checks-expected.txt.
+        * web-platform-tests/streams/readable-streams/brand-checks.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/brand-checks.html.
+        * web-platform-tests/streams/readable-streams/brand-checks.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/brand-checks.js.
+        * web-platform-tests/streams/readable-streams/cancel-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/cancel-expected.txt.
+        * web-platform-tests/streams/readable-streams/cancel.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/cancel.html.
+        * web-platform-tests/streams/readable-streams/cancel.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/cancel.js.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/count-queuing-strategy-integration-expected.txt.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/count-queuing-strategy-integration.html.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/count-queuing-strategy-integration.js.
+        * web-platform-tests/streams/readable-streams/garbage-collection-1-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection-1-expected.txt.
+        * web-platform-tests/streams/readable-streams/garbage-collection-1.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection-1.html.
+        * web-platform-tests/streams/readable-streams/garbage-collection-2-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection-2-expected.txt.
+        * web-platform-tests/streams/readable-streams/garbage-collection-2.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection-2.html.
+        * web-platform-tests/streams/readable-streams/garbage-collection-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection-expected.txt.
+        * web-platform-tests/streams/readable-streams/garbage-collection.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection.html.
+        * web-platform-tests/streams/readable-streams/garbage-collection.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection.js.
+        * web-platform-tests/streams/readable-streams/general-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/general-expected.txt.
+        * web-platform-tests/streams/readable-streams/general.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/general.html.
+        * web-platform-tests/streams/readable-streams/general.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/general.js.
+        * web-platform-tests/streams/readable-streams/pipe-through-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/pipe-through-expected.txt.
+        * web-platform-tests/streams/readable-streams/pipe-through.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/pipe-through.html.
+        * web-platform-tests/streams/readable-streams/pipe-through.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/pipe-through.js.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/readable-stream-reader-expected.txt.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/readable-stream-reader.html.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/readable-stream-reader.js.
+        * web-platform-tests/streams/readable-streams/tee-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/tee-expected.txt.
+        * web-platform-tests/streams/readable-streams/tee.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/tee.html.
+        * web-platform-tests/streams/readable-streams/tee.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/tee.js.
+        * web-platform-tests/streams/readable-streams/templated-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/templated-expected.txt.
+        * web-platform-tests/streams/readable-streams/templated.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/templated.html.
+        * web-platform-tests/streams/readable-streams/templated.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/readable-streams/templated.js.
+        * web-platform-tests/streams/resources/rs-test-templates.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/resources/rs-test-templates.js.
+        * web-platform-tests/streams/resources/rs-utils.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/resources/rs-utils.js.
+        * web-platform-tests/streams/resources/test-initializer.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/resources/test-initializer.js.
+        * web-platform-tests/streams/resources/test-utils.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams-api/resources/test-utils.js.
+
 2016-02-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement Fetch API Response
