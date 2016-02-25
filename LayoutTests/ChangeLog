@@ -1,5 +1,60 @@
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
+        CSP: Violation report should include HTTP status code and effective-directive of protected resource
+        https://bugs.webkit.org/show_bug.cgi?id=154288
+        <rdar://problem/24674982>
+        And
+        https://bugs.webkit.org/show_bug.cgi?id=115707
+        <rdar://problem/24383128>
+
+        Reviewed by Brent Fulgham.
+
+        Add new test http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html to ensure
+        that the CSP report property status-code is 0 when the protected document is delivered over HTTPS. Fix a
+        correctness issue in the result for test http/tests/security/contentSecurityPolicy/report-blocked-file-uri.html
+        and update the expected results for the following tests now that the CSP violation report includes properties
+        status-code and effective-directive:
+            http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.php
+            http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.php
+            http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.php
+            http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.php
+
+        The rest of the changes to the expected results are cosmetic and reflect the difference in wording for inline
+        script violations between WebKit and Blink. We will consider adopting wording similar to Blink in
+        <https://bugs.webkit.org/show_bug.cgi?id=153242>.
+
+        * TestExpectations: Remove entries for tests that now pass. Add test http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive.php.
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive.html. The report-uri
+        directive is only honored when defined in a policy delivered via an HTTP header. We convert this
+        HTML file to a PHP script to be able to deliver a Content-Security-Policy HTTP header.
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-data-uri-expected.txt: Cosmetic change.
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled-expected.txt: Update expected result now
+        that the report includes properties status-code and effective-directive.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt: Cosmetic change.
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled-expected.txt: Update expected result now
+        that the report includes properties status-code and effective-directive.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-expected.txt: Cosmetic change.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled-expected.txt: Update expected result now
+        that the report includes properties status-code and effective-directive.
+        * http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt: Cosmetic change.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt: Cosmetic change.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html: Fix ill-formed markup; substitute </iframe> for </script>.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt: Cosmetic change.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative-expected.txt: Ditto.
+
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
         CSP: report-url directive should be ignored when contained in a policy defined via a meta element
         https://bugs.webkit.org/show_bug.cgi?id=154307
         <rdar://problem/24684817>

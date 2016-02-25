@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: line 7: Refused to execute inline script because it violates the following Content Security Policy directive: "default-src 'self'". Either the 'unsafe-inline' keyword, a hash ('sha256-L3uuqigJSGd8GNknRL52DwyzzMGSUwfFRHXvGFby0oM='), or a nonce ('nonce-...') is required to enable inline execution. Note also that 'script-src' was not explicitly set, so 'default-src' is used as a fallback.
+CONSOLE MESSAGE: line 4: Refused to execute inline script because it violates the following Content Security Policy directive: "default-src 'self'". Note that 'script-src' was not explicitly set, so 'default-src' is used as a fallback.
 
 CSP report received:
 CONTENT_TYPE: application/csp-report
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/report-uri-effective-directive.html
+HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/report-uri-effective-directive.php
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/report-uri-effective-directive.html","referrer":"","violated-directive":"default-src 'self'","effective-directive":"script-src","original-policy":"default-src 'self'; report-uri ../resources/save-report.php","blocked-uri":"","status-code":200}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/report-uri-effective-directive.php","referrer":"","violated-directive":"default-src 'self'","effective-directive":"script-src","original-policy":"default-src 'self'; report-uri ../resources/save-report.php","blocked-uri":"","status-code":200}}

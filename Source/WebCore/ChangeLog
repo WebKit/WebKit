@@ -1,5 +1,28 @@
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
+        CSP: Violation report should include HTTP status code and effective-directive of protected resource
+        https://bugs.webkit.org/show_bug.cgi?id=154288
+        <rdar://problem/24674982>
+        And
+        https://bugs.webkit.org/show_bug.cgi?id=115707
+        <rdar://problem/24383128>
+
+        Reviewed by Brent Fulgham.
+
+        Include status-code and effective-directive in the Content Security Policy violation report for
+        the HTTP status code of the protected resource and name of the policy directive that was violated,
+        respectively, as per section Reporting of the Content Security Policy 2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        Test: http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation): Add key status-code to the report with value
+        equal to the HTTP response code for the document or 0 depending on whether the document was
+        delivered over HTTP or not. Additionally, remove ENABLE(CSP_NEXT)-guard/experimentalFeaturesEnabled()-condition
+        around code to include the effective-directive property in the report.
+
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
         CSP: report-url directive should be ignored when contained in a policy defined via a meta element
         https://bugs.webkit.org/show_bug.cgi?id=154307
         <rdar://problem/24684817>

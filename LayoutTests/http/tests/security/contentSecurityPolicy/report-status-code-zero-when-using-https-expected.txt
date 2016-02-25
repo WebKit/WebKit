@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 1: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
+
+This tests that the status-code is 0 in the Content Security Policy violation report for a protected resource delivered over HTTPS.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+CSP report received:
+CONTENT_TYPE: application/csp-report
+HTTP_REFERER: https://127.0.0.1:8443/security/contentSecurityPolicy/resources/generate-csp-report.php?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html
+REQUEST_METHOD: POST
+=== POST DATA ===
+{"csp-report":{"document-uri":"https://127.0.0.1:8443/security/contentSecurityPolicy/resources/generate-csp-report.php?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html","referrer":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri save-report.php?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html","blocked-uri":"","status-code":0}}

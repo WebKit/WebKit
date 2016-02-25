@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 18: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
 
 CSP report received:
 CONTENT_TYPE: application/csp-report

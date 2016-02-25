@@ -33,6 +33,7 @@
 #include "ContentSecurityPolicySourceList.h"
 #include "DOMStringList.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -381,14 +382,12 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     cspReport->setString(ASCIILiteral("document-uri"), document.url().strippedForUseAsReferrer());
     cspReport->setString(ASCIILiteral("referrer"), document.referrer());
     cspReport->setString(ASCIILiteral("violated-directive"), directiveText);
-#if ENABLE(CSP_NEXT)
-    if (experimentalFeaturesEnabled())
-        cspReport->setString(ASCIILiteral("effective-directive"), effectiveDirective);
-#else
-    UNUSED_PARAM(effectiveDirective);
-#endif
+    cspReport->setString(ASCIILiteral("effective-directive"), effectiveDirective);
     cspReport->setString(ASCIILiteral("original-policy"), header);
     cspReport->setString(ASCIILiteral("blocked-uri"), stripURLForUseInReport(document, blockedURL));
+
+    ASSERT(document.loader());
+    cspReport->setInteger(ASCIILiteral("status-code"), document.url().protocolIs("http") && document.loader() ? document.loader()->response().httpStatusCode() : 0);
 
     RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
     const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
