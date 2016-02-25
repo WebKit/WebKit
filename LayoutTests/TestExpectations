@@ -955,5 +955,8 @@ storage/indexeddb/modern/transaction-scheduler-5.html [ Skip ]
 storage/indexeddb/modern/transaction-scheduler-6.html [ Skip ]
 storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 
+# Inspector doesn't support modern IDB yet
+webkit.org/b/154686 inspector/indexeddb/requestDatabaseNames.html [ Skip ]
+
 ### END OF IndexedDB failures
 ########################################
