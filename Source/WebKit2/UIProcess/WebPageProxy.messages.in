@@ -264,8 +264,8 @@ messages -> WebPageProxy {
     
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages
-    RequestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String originIdentifier, Vector<String> audioDeviceUIDs, Vector<String> videoDeviceUIDs)
-    CheckUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String originIdentifier)
+    RequestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, Vector<String> audioDeviceUIDs, Vector<String> videoDeviceUIDs)
+    CheckUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier)
 #endif
 
     # Notification messages

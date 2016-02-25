@@ -35,7 +35,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKUserMediaPermissionCheckGetTypeID();
 
-WK_EXPORT void WKUserMediaPermissionCheckSetHasPersistentPermission(WKUserMediaPermissionCheckRef, bool);
+WK_EXPORT void WKUserMediaPermissionCheckSetUserMediaAccessInfo(WKUserMediaPermissionCheckRef, WKStringRef, bool);
 
 #ifdef __cplusplus
 }

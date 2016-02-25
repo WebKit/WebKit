@@ -38,7 +38,7 @@ public:
 
 
     Ref<UserMediaPermissionCheckProxy> createUserMediaPermissionCheck(uint64_t userMediaID);
-    void didCompleteUserMediaPermissionCheck(uint64_t, bool allow);
+    void didCompleteUserMediaPermissionCheck(uint64_t, const String&, bool allow);
 
 private:
     HashMap<uint64_t, RefPtr<UserMediaPermissionRequestProxy>> m_pendingUserMediaRequests;

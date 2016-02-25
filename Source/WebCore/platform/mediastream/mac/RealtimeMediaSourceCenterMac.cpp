@@ -167,7 +167,7 @@ bool RealtimeMediaSourceCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaSt
     TrackSourceInfoVector sources = AVCaptureDeviceManager::singleton().getSourcesInfo(requestClient->requestOrigin());
 
     callOnMainThread([this, requestClient, sources] {
-        requestClient->didCompleteRequest(sources);
+        requestClient->didCompleteTrackSourceInfoRequest(sources);
     });
 
     return true;

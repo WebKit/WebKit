@@ -34,12 +34,14 @@
 #include <vector>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 OBJC_CLASS WKWebViewConfiguration;
 
 namespace WTR {
 
 class TestInvocation;
+class OriginSettings;
 class PlatformWebView;
 class EventSenderProxy;
 struct TestOptions;
@@ -95,10 +97,13 @@ public:
     bool isGeolocationProviderActive() const;
 
     // MediaStream.
+    String saltForOrigin(WKFrameRef, String);
+    void getUserMediaInfoForOrigin(WKFrameRef, WKStringRef originKey, bool&, WKRetainPtr<WKStringRef>&);
+    WKStringRef getUserMediaSaltForOrigin(WKFrameRef, WKStringRef originKey);
     void setUserMediaPermission(bool);
-    void setUserMediaPermissionForOrigin(bool permission, WKStringRef url);
-    void handleUserMediaPermissionRequest(WKSecurityOriginRef, WKUserMediaPermissionRequestRef);
-    void handleCheckOfUserMediaPermissionForOrigin(WKSecurityOriginRef, const WKUserMediaPermissionCheckRef&);
+    void setUserMediaPermissionForOrigin(bool, WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
+    void handleUserMediaPermissionRequest(WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef);
+    void handleCheckOfUserMediaPermissionForOrigin(WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, const WKUserMediaPermissionCheckRef&);
 
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
@@ -288,9 +293,9 @@ private:
     bool m_isGeolocationPermissionSet;
     bool m_isGeolocationPermissionAllowed;
 
-    WKRetainPtr<WKMutableDictionaryRef> m_userMediaOriginPermissions;
+    HashMap<String, RefPtr<OriginSettings>> m_cahcedUserMediaPermissions;
 
-    typedef Vector<std::pair<WKRetainPtr<WKSecurityOriginRef>, WKRetainPtr<WKUserMediaPermissionRequestRef>>> PermissionRequestList;
+    typedef Vector<std::pair<String, WKRetainPtr<WKUserMediaPermissionRequestRef>>> PermissionRequestList;
     PermissionRequestList m_userMediaPermissionRequests;
 
     bool m_isUserMediaPermissionSet;

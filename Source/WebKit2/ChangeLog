@@ -1,3 +1,81 @@
+2016-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] MediaDeviceInfo deviceId and groupId must be unique to the page's origin
+        https://bugs.webkit.org/show_bug.cgi?id=153163
+        <rdar://problem/24334526>
+
+        Reviewed by Tim Horton.
+
+        * CMakeLists.txt: Add WKFrameHandleRef.cpp.
+
+        * Shared/API/c/WKBase.h: Add WKFrameHandleRef.
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::decidePolicyForUserMediaPermissionRequest): Add parameter top level document
+          security context.
+        (API::UIClient::checkUserMediaPermissionForOrigin): Ditto.
+
+        * UIProcess/API/C/WKAPICast.h: Add FrameHandle.
+
+        * UIProcess/API/C/WKFrameHandleRef.cpp: Added.
+        * UIProcess/API/C/WKFrameHandleRef.h: Added.
+
+        * UIProcess/API/C/WKFrameInfoRef.cpp:
+        (WKFrameInfoGetFrameHandleRef): Added.
+        * UIProcess/API/C/WKFrameInfoRef.h:
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient): Add parameters to decidePolicyForUserMediaPermissionRequest and
+          checkUserMediaPermissionForOrigin for top level document security context.
+
+        * UIProcess/API/C/WKPageUIClient.h: Ditto.
+
+        * UIProcess/API/C/WKUserMediaPermissionCheck.cpp:
+        (WKUserMediaPermissionCheckSetUserMediaAccessInfo): Renamed from WKUserMediaPermissionCheckSetHasPersistentPermission,
+          add parameter for top level document security context.
+        (WKUserMediaPermissionCheckSetHasPersistentPermission): Deleted.
+        * UIProcess/API/C/WKUserMediaPermissionCheck.h:
+
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp:
+        (webkitUserMediaPermissionRequestCreate): Add top level document origin.
+
+        * UIProcess/UserMediaPermissionCheckProxy.cpp:
+        (WebKit::UserMediaPermissionCheckProxy::setUserMediaAccessInfo): Renamed from setHasPersistentPermission.
+        (WebKit::UserMediaPermissionCheckProxy::setHasPersistentPermission): Deleted.
+        * UIProcess/UserMediaPermissionCheckProxy.h:
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::didCompleteUserMediaPermissionCheck): Add parameter
+         for device id hash salt.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::requiresAudio): Deleted, unused.
+        (WebKit::UserMediaPermissionRequestProxy::requiresVideo): Ditto.
+        (WebKit::UserMediaPermissionRequestProxy::firstVideoDeviceUID): Ditto.
+        (WebKit::UserMediaPermissionRequestProxy::firstAudioDeviceUID): Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame): Pass through parameter for top
+          level document security context.
+        (WebKit::WebPageProxy::checkUserMediaPermissionForFrame): Ditto.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebKit2.xcodeproj/project.pbxproj: Add WKFrameHandleRef.cpp|.h.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaRequest): Pass through parameter for top
+          level document security context.
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaPermissionCheck): Ditto.
+        (WebKit::UserMediaPermissionRequestManager::didCompleteUserMediaPermissionCheck): Pass through
+          device id hash salt.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompleteUserMediaPermissionCheck): Ditto.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Tearing when entering AC mode

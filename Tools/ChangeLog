@@ -1,3 +1,41 @@
+2016-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] MediaDeviceInfo deviceId and groupId must be unique to the page's origin
+        https://bugs.webkit.org/show_bug.cgi?id=153163
+        <rdar://problem/24334526>
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setUserMediaPermissionForOrigin): Take top level document origin.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setUserMediaPermissionForOrigin): Ditto.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::decidePolicyForUserMediaPermissionRequest): Pass through top level document origin.
+        (WTR::checkUserMediaPermissionForOrigin): Ditto.
+        (WTR::TestController::resetStateToConsistentValues): m_userMediaOriginPermissions -> m_cahcedUserMediaPermissions.
+        (WTR::originUserVisibleName): Return a String.
+        (WTR::userMediaOriginHash): Create a hash of the origin plus top level document origin.
+        (WTR::TestController::saltForOrigin): Return salt for an origin.
+        (WTR::TestController::setUserMediaPermissionForOrigin): Return permission for an origin.
+        (WTR::TestController::handleCheckOfUserMediaPermissionForOrigin):
+        (WTR::TestController::handleUserMediaPermissionRequest):
+        (WTR::TestController::decidePolicyForUserMediaPermissionRequestIfPossible):
+        (WTR::OriginSettings::OriginSettings): New, class to cache settings for an origin.
+        (WTR::OriginSettings::persistentPermission): Persistent permissions for origin.
+        (WTR::OriginSettings::setPersistentPermission): Set permissions for origin.
+        (WTR::OriginSettings::persistentSalt): Return the persistent salt for the origin, if any.
+        (WTR::OriginSettings::setPersistentSalt): Set the persistent salt for the origin
+        (WTR::OriginSettings::ephemeralSalts): Return hashmap used to store per-frame salts.
+        * WebKitTestRunner/TestController.h:
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2016-02-24  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [web-animations] Add AnimationTimeline, DocumentTimeline and add extensions to Document interface

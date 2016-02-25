@@ -1,3 +1,59 @@
+2016-02-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] MediaDeviceInfo deviceId and groupId must be unique to the page's origin
+        https://bugs.webkit.org/show_bug.cgi?id=153163
+        <rdar://problem/24334526>
+
+        Reviewed by Tim Horton.
+
+        Tests: http/tests/media/media-stream/enumerate-devices-source-id-persistent.html
+               http/tests/media/media-stream/enumerate-devices-source-id.html
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::start): Don't check document.hasHadActiveMediaStreamTrack, do it
+          in didCompleteTrackSourceInfoRequest where we need the information.
+        (WebCore::MediaDevicesRequest::didCompletePermissionCheck): Renamed from didCompleteCheck, save
+          device ID hash string.
+        (WebCore::hashString): Hash a string with SHA1.
+        (WebCore::MediaDevicesRequest::hashID): Hash and ID.
+        (WebCore::MediaDevicesRequest::didCompleteTrackSourceInfoRequest): Hash deviceId and groupId.
+        (WebCore::MediaDevicesRequest::didCompleteCheck): Deleted.
+        (WebCore::MediaDevicesRequest::getTrackSources): Deleted.
+        (WebCore::MediaDevicesRequest::didCompleteRequest): Deleted.
+        * Modules/mediastream/MediaDevicesRequest.h:
+
+        * Modules/mediastream/UserMediaPermissionCheck.cpp:
+        (WebCore::UserMediaPermissionCheck::userMediaDocumentOrigin): Renamed from securityOrigin.
+        (WebCore::UserMediaPermissionCheck::topLevelDocumentOrigin): New, return the top level document origin.
+        (WebCore::UserMediaPermissionCheck::setUserMediaAccessInfo): Renamed from setHasPersistentPermission.
+        (WebCore::UserMediaPermissionCheck::securityOrigin): Deleted.
+        (WebCore::UserMediaPermissionCheck::setHasPersistentPermission): Deleted.
+        * Modules/mediastream/UserMediaPermissionCheck.h:
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::userMediaDocumentOrigin): Renamed from securityOrigin.
+        (WebCore::UserMediaRequest::topLevelDocumentOrigin): New, return the top level document origin.
+        (WebCore::UserMediaRequest::securityOrigin): Deleted.
+        * Modules/mediastream/UserMediaRequest.h:
+        (WebCore::UserMediaRequest::requiresAudio): Deleted, unused.
+        (WebCore::UserMediaRequest::requiresVideo): Ditto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerMediaDeviceIdentifierStorageDirectory): Deleted, unused.
+        * html/HTMLMediaElement.h:
+
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerMediaDeviceIdentifierStorageDirectory): Deleted.
+
+        * platform/mediastream/MediaStreamTrackSourcesRequestClient.h:
+        (WebCore::MediaStreamTrackSourcesRequestClient::didCompleteTrackSourceInfoRequest): Renamed from didCompleteRequest.
+
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::getMediaStreamTrackSources): Ditto.
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::getMediaStreamTrackSources): Ditto.
+
 2016-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Tearing when entering AC mode

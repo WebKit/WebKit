@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,14 +60,12 @@ public:
 
     ~UserMediaRequest();
 
-    WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
+    WEBCORE_EXPORT SecurityOrigin* userMediaDocumentOrigin() const;
+    WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
 
     void start();
     WEBCORE_EXPORT void userMediaAccessGranted(const String& audioDeviceUID, const String& videoDeviceUID);
     WEBCORE_EXPORT void userMediaAccessDenied();
-
-    bool requiresAudio() const { return m_audioDeviceUIDs.size(); }
-    bool requiresVideo() const { return m_videoDeviceUIDs.size(); }
 
     const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
     const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }

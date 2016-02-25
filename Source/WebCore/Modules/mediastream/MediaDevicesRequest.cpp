@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,9 @@
 #include "JSMediaDeviceInfo.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "SecurityOrigin.h"
+#include "UserMediaController.h"
 #include <wtf/MainThread.h>
+#include <wtf/SHA1.h>
 
 namespace WebCore {
 
@@ -77,54 +79,88 @@ void MediaDevicesRequest::contextDestroyed()
 void MediaDevicesRequest::start()
 {
     m_protector = this;
-
-    if (Document* document = downcast<Document>(scriptExecutionContext())) {
-        m_canShowLabels = document->hasHadActiveMediaStreamTrack();
-        if (m_canShowLabels) {
-            getTrackSources();
-            return;
-        }
-    }
-
     m_permissionCheck = UserMediaPermissionCheck::create(*downcast<Document>(scriptExecutionContext()), *this);
     m_permissionCheck->start();
 }
 
-void MediaDevicesRequest::didCompleteCheck(bool canAccess)
+void MediaDevicesRequest::didCompletePermissionCheck(const String& salt, bool canAccess)
 {
     m_permissionCheck->setClient(nullptr);
     m_permissionCheck = nullptr;
 
-    m_canShowLabels = canAccess;
-    getTrackSources();
-}
+    m_idHashSalt = salt;
+    m_havePersistentPermission = canAccess;
 
-void MediaDevicesRequest::getTrackSources()
-{
     callOnMainThread([this] {
         RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(this);
     });
 }
 
-void MediaDevicesRequest::didCompleteRequest(const TrackSourceInfoVector& capturedDevices)
+static void hashString(SHA1& sha1, const String& string)
 {
-    if (!m_scriptExecutionContext) {
+    if (string.isEmpty())
+        return;
+
+    if (string.is8Bit() && string.containsOnlyASCII()) {
+        const uint8_t nullByte = 0;
+        sha1.addBytes(string.characters8(), string.length());
+        sha1.addBytes(&nullByte, 1);
+        return;
+    }
+
+    auto utf8 = string.utf8();
+    sha1.addBytes(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() + 1); // Include terminating null byte.
+}
+
+String MediaDevicesRequest::hashID(const String& id)
+{
+    if (id.isEmpty() || m_idHashSalt.isEmpty())
+        return emptyString();
+
+    SHA1 sha1;
+
+    hashString(sha1, id);
+    hashString(sha1, m_idHashSalt);
+
+    SHA1::Digest digest;
+    sha1.computeHash(digest);
+
+    return SHA1::hexDigest(digest).data();
+}
+
+void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInfoVector& captureDevices)
+{
+    if (!scriptExecutionContext()) {
         m_protector = nullptr;
         return;
     }
 
-    Vector<RefPtr<MediaDeviceInfo>> deviceInfo;
-    for (auto device : capturedDevices) {
-        TrackSourceInfo* trackInfo = device.get();
-        String deviceType = trackInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::audioInputType() : MediaDeviceInfo::videoInputType();
+    Document& document = downcast<Document>(*scriptExecutionContext());
+    UserMediaController* controller = UserMediaController::from(document.page());
+    if (!controller) {
+        m_protector = nullptr;
+        return;
+    }
 
-        AtomicString label = m_canShowLabels ? trackInfo->label() : emptyAtom;
-        deviceInfo.append(MediaDeviceInfo::create(m_scriptExecutionContext, label, trackInfo->id(), trackInfo->groupId(), deviceType));
+    Vector<RefPtr<MediaDeviceInfo>> devices;
+    for (auto deviceInfo : captureDevices) {
+        String deviceType = deviceInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::audioInputType() : MediaDeviceInfo::videoInputType();
+        AtomicString label = emptyAtom;
+        if (m_havePersistentPermission || document.hasHadActiveMediaStreamTrack())
+            label = deviceInfo->label();
+
+        String id = hashID(deviceInfo->persistentId());
+        if (id.isEmpty())
+            continue;
+
+        String groupId = hashID(deviceInfo->groupId());
+
+        devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
     }
 
     RefPtr<MediaDevicesRequest> protectedThis(this);
-    callOnMainThread([protectedThis, deviceInfo] {
-        protectedThis->m_promise.resolve(deviceInfo);
+    callOnMainThread([protectedThis, devices] {
+        protectedThis->m_promise.resolve(devices);
     });
     m_protector = nullptr;
 

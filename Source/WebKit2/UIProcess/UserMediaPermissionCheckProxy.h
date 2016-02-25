@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #define UserMediaPermissionCheckProxy_h
 
 #include "APIObject.h"
-#include <WebCore/RealtimeMediaSource.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,11 +41,11 @@ public:
         return adoptRef(*new UserMediaPermissionCheckProxy(manager, userMediaID));
     }
 
-    void setHasPersistentPermission(bool allowed);
+    void setUserMediaAccessInfo(const String&, bool allowed);
     void invalidate();
 
 private:
-    UserMediaPermissionCheckProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID);
+    UserMediaPermissionCheckProxy(UserMediaPermissionRequestManagerProxy&, uint64_t);
 
     UserMediaPermissionRequestManagerProxy* m_manager;
     uint64_t m_userMediaID;

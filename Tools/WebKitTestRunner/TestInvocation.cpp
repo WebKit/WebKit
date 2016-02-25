@@ -477,10 +477,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKBooleanRef permissionWK = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, permissionKeyWK.get()));
         bool permission = WKBooleanGetValue(permissionWK);
 
-        WKRetainPtr<WKStringRef> urlKey(AdoptWK, WKStringCreateWithUTF8CString("url"));
-        WKStringRef urlWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, urlKey.get()));
+        WKRetainPtr<WKStringRef> originKey(AdoptWK, WKStringCreateWithUTF8CString("origin"));
+        WKStringRef originWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, originKey.get()));
 
-        TestController::singleton().setUserMediaPermissionForOrigin(permission, urlWK);
+        WKRetainPtr<WKStringRef> parentOriginKey(AdoptWK, WKStringCreateWithUTF8CString("parentOrigin"));
+        WKStringRef parentOriginWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, parentOriginKey.get()));
+
+        TestController::singleton().setUserMediaPermissionForOrigin(permission, originWK, parentOriginWK);
         return;
     }
 

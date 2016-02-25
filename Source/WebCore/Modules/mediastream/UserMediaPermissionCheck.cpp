@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,10 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSMediaDeviceInfo.h"
+#include "MainFrame.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "SecurityOrigin.h"
 #include "UserMediaController.h"
-#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -55,12 +55,25 @@ UserMediaPermissionCheck::~UserMediaPermissionCheck()
 {
 }
 
-SecurityOrigin* UserMediaPermissionCheck::securityOrigin() const
+SecurityOrigin* UserMediaPermissionCheck::userMediaDocumentOrigin() const
 {
-    if (scriptExecutionContext())
-        return scriptExecutionContext()->securityOrigin();
+    if (m_scriptExecutionContext)
+        return m_scriptExecutionContext->securityOrigin();
 
     return nullptr;
+}
+
+SecurityOrigin* UserMediaPermissionCheck::topLevelDocumentOrigin() const
+{
+    if (!m_scriptExecutionContext)
+        return nullptr;
+
+    if (Frame* frame = downcast<Document>(*scriptExecutionContext()).frame()) {
+        if (frame->isMainFrame())
+            return nullptr;
+    }
+
+    return m_scriptExecutionContext->topOrigin();
 }
 
 void UserMediaPermissionCheck::contextDestroyed()
@@ -80,12 +93,13 @@ void UserMediaPermissionCheck::start()
     controller->checkUserMediaPermission(*this);
 }
 
-void UserMediaPermissionCheck::setHasPersistentPermission(bool mode)
+void UserMediaPermissionCheck::setUserMediaAccessInfo(const String& mediaDeviceIdentifierHashSalt, bool hasPersistentPermission)
 {
-    m_hasPersistentPermission = mode;
+    m_hasPersistentPermission = hasPersistentPermission;
+    m_mediaDeviceIdentifierHashSalt = mediaDeviceIdentifierHashSalt;
 
     if (m_client)
-        m_client->didCompleteCheck(m_hasPersistentPermission);
+        m_client->didCompletePermissionCheck(m_mediaDeviceIdentifierHashSalt, m_hasPersistentPermission);
 }
 
 } // namespace WebCore

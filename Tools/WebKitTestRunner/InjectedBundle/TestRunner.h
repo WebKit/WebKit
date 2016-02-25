@@ -268,7 +268,7 @@ public:
 
     // MediaStream
     void setUserMediaPermission(bool);
-    void setUserMediaPermissionForOrigin(bool permission, JSStringRef url);
+    void setUserMediaPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin);
 
     void setPageVisibility(JSStringRef state);
     void resetPageVisibility();

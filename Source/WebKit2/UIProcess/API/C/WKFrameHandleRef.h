@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKFrameInfoRef.h"
+#ifndef WKFrameHandleRef_h
+#define WKFrameHandleRef_h
 
-#include "APIFrameHandle.h"
-#include "APIFrameInfo.h"
-#include "WKAPICast.h"
+#include <WebKit/WKBase.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-WKTypeID WKFrameInfoGetTypeID()
-{
-    return toAPI(API::FrameInfo::APIType);
+WK_EXPORT WKTypeID WKFrameHandleGetTypeID();
+
+WK_EXPORT uint64_t WKFrameHandleGetFrameID(WKFrameHandleRef);
+
+#ifdef __cplusplus
 }
+#endif
 
-WKFrameHandleRef WKFrameInfoGetFrameHandleRef(WKFrameInfoRef frameInfoRef)
-{
-    return toAPI(&toImpl(frameInfoRef)->handle());
-}
+#endif // WKFrameHandleRef_h

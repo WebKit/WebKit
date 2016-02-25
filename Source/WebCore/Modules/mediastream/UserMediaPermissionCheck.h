@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ class UserMediaPermissionCheckClient {
 public:
     virtual ~UserMediaPermissionCheckClient() { }
 
-    virtual void didCompleteCheck(bool) = 0;
+    virtual void didCompletePermissionCheck(const String&, bool) = 0;
 };
 
 class UserMediaPermissionCheck final : public ContextDestructionObserver, public RefCounted<UserMediaPermissionCheck> {
@@ -55,9 +55,12 @@ public:
     void start();
     void setClient(UserMediaPermissionCheckClient* client) { m_client = client; }
 
-    WEBCORE_EXPORT void setHasPersistentPermission(bool);
+    WEBCORE_EXPORT SecurityOrigin* userMediaDocumentOrigin() const;
+    WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
 
-    WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
+    WEBCORE_EXPORT void setUserMediaAccessInfo(const String&, bool);
+
+    WEBCORE_EXPORT String mediaDeviceIdentifierHashSalt() const { return m_mediaDeviceIdentifierHashSalt; }
 
 private:
     UserMediaPermissionCheck(ScriptExecutionContext&, UserMediaPermissionCheckClient&);
@@ -66,6 +69,7 @@ private:
     virtual void contextDestroyed() override final;
 
     UserMediaPermissionCheckClient* m_client;
+    String m_mediaDeviceIdentifierHashSalt;
     bool m_hasPersistentPermission { false };
 };
 

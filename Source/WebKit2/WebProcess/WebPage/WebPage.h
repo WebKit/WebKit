@@ -1111,7 +1111,7 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& audioDeviceUID, const String& videoDeviceUID);
-    void didCompleteUserMediaPermissionCheck(uint64_t userMediaID, bool allowed);
+    void didCompleteUserMediaPermissionCheck(uint64_t userMediaID, const String&, bool allowed);
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection);

@@ -31,6 +31,7 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestInvocation.h"
+#include <WebCore/UUID.h>
 #include <WebKit/WKArray.h>
 #include <WebKit/WKAuthenticationChallenge.h>
 #include <WebKit/WKAuthenticationDecisionListener.h>
@@ -38,6 +39,8 @@
 #include <WebKit/WKContextPrivate.h>
 #include <WebKit/WKCookieManager.h>
 #include <WebKit/WKCredential.h>
+#include <WebKit/WKFrameHandleRef.h>
+#include <WebKit/WKFrameInfoRef.h>
 #include <WebKit/WKIconDatabase.h>
 #include <WebKit/WKNavigationResponseRef.h>
 #include <WebKit/WKNotification.h>
@@ -61,7 +64,10 @@
 #include <stdlib.h>
 #include <string>
 #include <unistd.h>
+#include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/HexNumber.h>
 #include <wtf/MainThread.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
@@ -203,14 +209,14 @@ static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, W
     TestController::singleton().handleGeolocationPermissionRequest(permissionRequest);
 }
 
-static void decidePolicyForUserMediaPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef origin, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo)
+static void decidePolicyForUserMediaPermissionRequest(WKPageRef, WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo)
 {
-    TestController::singleton().handleUserMediaPermissionRequest(origin, permissionRequest);
+    TestController::singleton().handleUserMediaPermissionRequest(frame, userMediaDocumentOrigin, topLevelDocumentOrigin, permissionRequest);
 }
 
-static void checkUserMediaPermissionForOrigin(WKPageRef, WKFrameRef, WKSecurityOriginRef origin, WKUserMediaPermissionCheckRef checkRequest, const void*)
+static void checkUserMediaPermissionForOrigin(WKPageRef, WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionCheckRef checkRequest, const void*)
 {
-    TestController::singleton().handleCheckOfUserMediaPermissionForOrigin(origin, checkRequest);
+    TestController::singleton().handleCheckOfUserMediaPermissionForOrigin(frame, userMediaDocumentOrigin, topLevelDocumentOrigin, checkRequest);
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
@@ -756,7 +762,7 @@ bool TestController::resetStateToConsistentValues()
 
     // Reset UserMedia permissions.
     m_userMediaPermissionRequests.clear();
-    m_userMediaOriginPermissions = nullptr;
+    m_cahcedUserMediaPermissions.clear();
     m_isUserMediaPermissionSet = false;
     m_isUserMediaPermissionAllowed = false;
 
@@ -1676,19 +1682,43 @@ bool TestController::isGeolocationProviderActive() const
     return m_geolocationProvider->isActive();
 }
 
-static WKStringRef originUserVisibleName(WKSecurityOriginRef origin)
+static String originUserVisibleName(WKSecurityOriginRef origin)
 {
+    if (!origin)
+        return emptyString();
+
     std::string host = toSTD(adoptWK(WKSecurityOriginCopyHost(origin))).c_str();
     std::string protocol = toSTD(adoptWK(WKSecurityOriginCopyProtocol(origin))).c_str();
+
+    if (!host.length() || !protocol.length())
+        return emptyString();
+
     unsigned short port = WKSecurityOriginGetPort(origin);
-
-    String userVisibleName;
     if (port)
-        userVisibleName = String::format("%s://%s:%d", protocol.c_str(), host.c_str(), port);
-    else
-        userVisibleName = String::format("%s://%s", protocol.c_str(), host.c_str());
+        return String::format("%s://%s:%d", protocol.c_str(), host.c_str(), port);
 
-    return WKStringCreateWithUTF8CString(userVisibleName.utf8().data());
+    return String::format("%s://%s", protocol.c_str(), host.c_str());
+}
+
+static String userMediaOriginHash(WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin)
+{
+    String userMediaDocumentOriginString = originUserVisibleName(userMediaDocumentOrigin);
+    String topLevelDocumentOriginString = originUserVisibleName(topLevelDocumentOrigin);
+
+    if (topLevelDocumentOriginString.isEmpty())
+        return userMediaDocumentOriginString;
+
+    return String::format("%s-%s", userMediaDocumentOriginString.utf8().data(), topLevelDocumentOriginString.utf8().data());
+}
+
+static String userMediaOriginHash(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString)
+{
+    auto userMediaDocumentOrigin = adoptWK(WKSecurityOriginCreateFromString(userMediaDocumentOriginString));
+    if (!WKStringGetLength(topLevelDocumentOriginString))
+        return userMediaOriginHash(userMediaDocumentOrigin.get(), nullptr);
+
+    auto topLevelDocumentOrigin = adoptWK(WKSecurityOriginCreateFromString(topLevelDocumentOriginString));
+    return userMediaOriginHash(userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get());
 }
 
 void TestController::setUserMediaPermission(bool enabled)
@@ -1698,32 +1728,82 @@ void TestController::setUserMediaPermission(bool enabled)
     decidePolicyForUserMediaPermissionRequestIfPossible();
 }
 
-void TestController::setUserMediaPermissionForOrigin(bool permission, WKStringRef originString)
-{
-    if (!m_userMediaOriginPermissions)
-        m_userMediaOriginPermissions = adoptWK(WKMutableDictionaryCreate());
-    WKRetainPtr<WKBooleanRef> allowed = adoptWK(WKBooleanCreate(permission));
-    WKRetainPtr<WKSecurityOriginRef> origin = adoptWK(WKSecurityOriginCreateFromString(originString));
-    WKDictionarySetItem(m_userMediaOriginPermissions.get(), originUserVisibleName(origin.get()), allowed.get());
-}
-
-void TestController::handleCheckOfUserMediaPermissionForOrigin(WKSecurityOriginRef origin, const WKUserMediaPermissionCheckRef& checkRequest)
-{
-    bool allowed = false;
-
-    if (m_userMediaOriginPermissions) {
-        WKRetainPtr<WKStringRef> originString = originUserVisibleName(origin);
-        WKBooleanRef value = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(m_userMediaOriginPermissions.get(), originString.get()));
-        if (value && WKGetTypeID(value) == WKBooleanGetTypeID())
-            allowed = WKBooleanGetValue(value);
+class OriginSettings : public RefCounted<OriginSettings> {
+public:
+    explicit OriginSettings()
+    {
     }
 
-    WKUserMediaPermissionCheckSetHasPersistentPermission(checkRequest, allowed);
+    bool persistentPermission() const { return m_persistentPermission; }
+    void setPersistentPermission(bool permission) { m_persistentPermission = permission; }
+
+    String persistentSalt() const { return m_persistentSalt; }
+    void setPersistentSalt(const String& salt) { m_persistentSalt = salt; }
+
+    HashMap<uint64_t, String>& ephemeralSalts() { return m_ephemeralSalts; }
+
+private:
+    HashMap<uint64_t, String> m_ephemeralSalts;
+    String m_persistentSalt;
+    bool m_persistentPermission { false };
+};
+
+String TestController::saltForOrigin(WKFrameRef frame, String originHash)
+{
+    RefPtr<OriginSettings> settings = m_cahcedUserMediaPermissions.get(originHash);
+    if (!settings) {
+        settings = adoptRef(*new OriginSettings());
+        m_cahcedUserMediaPermissions.add(originHash, settings);
+    }
+
+    auto& ephemeralSalts = settings->ephemeralSalts();
+    auto frameInfo = adoptWK(WKFrameCreateFrameInfo(frame));
+    auto frameHandle = WKFrameInfoGetFrameHandleRef(frameInfo.get());
+    uint64_t frameIdentifier = WKFrameHandleGetFrameID(frameHandle);
+    String frameSalt = ephemeralSalts.get(frameIdentifier);
+
+    if (settings->persistentPermission()) {
+        if (frameSalt.length())
+            return frameSalt;
+
+        if (!settings->persistentSalt().length())
+            settings->setPersistentSalt(WebCore::createCanonicalUUIDString());
+
+        return settings->persistentSalt();
+    }
+
+    if (!frameSalt.length()) {
+        frameSalt = WebCore::createCanonicalUUIDString();
+        ephemeralSalts.add(frameIdentifier, frameSalt);
+    }
+
+    return frameSalt;
 }
 
-void TestController::handleUserMediaPermissionRequest(WKSecurityOriginRef origin, WKUserMediaPermissionRequestRef request)
+void TestController::setUserMediaPermissionForOrigin(bool permission, WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString)
 {
-    m_userMediaPermissionRequests.append(std::make_pair(origin, request));
+    auto originHash = userMediaOriginHash(userMediaDocumentOriginString, topLevelDocumentOriginString);
+    RefPtr<OriginSettings> settings = m_cahcedUserMediaPermissions.get(originHash);
+    if (!settings) {
+        settings = adoptRef(*new OriginSettings());
+        m_cahcedUserMediaPermissions.add(originHash, settings);
+    }
+
+    settings->setPersistentPermission(permission);
+}
+
+void TestController::handleCheckOfUserMediaPermissionForOrigin(WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, const WKUserMediaPermissionCheckRef& checkRequest)
+{
+    auto originHash = userMediaOriginHash(userMediaDocumentOrigin, topLevelDocumentOrigin);
+    auto salt = saltForOrigin(frame, originHash);
+
+    WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, WKStringCreateWithUTF8CString(salt.utf8().data()), m_cahcedUserMediaPermissions.get(originHash)->persistentPermission());
+}
+
+void TestController::handleUserMediaPermissionRequest(WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionRequestRef request)
+{
+    auto originHash = userMediaOriginHash(userMediaDocumentOrigin, topLevelDocumentOrigin);
+    m_userMediaPermissionRequests.append(std::make_pair(originHash, request));
     decidePolicyForUserMediaPermissionRequestIfPossible();
 }
 
@@ -1733,11 +1813,18 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         return;
 
     for (auto& pair : m_userMediaPermissionRequests) {
+        auto originHash = pair.first;
         auto request = pair.second.get();
+
+        bool persistentPermission = false;
+        RefPtr<OriginSettings> settings = m_cahcedUserMediaPermissions.get(originHash);
+        if (settings)
+            persistentPermission = settings->persistentPermission();
+
         WKRetainPtr<WKArrayRef> audioDeviceUIDs = WKUserMediaPermissionRequestAudioDeviceUIDs(request);
         WKRetainPtr<WKArrayRef> videoDeviceUIDs = WKUserMediaPermissionRequestVideoDeviceUIDs(request);
 
-        if (m_isUserMediaPermissionAllowed && (WKArrayGetSize(videoDeviceUIDs.get()) || WKArrayGetSize(audioDeviceUIDs.get()))) {
+        if ((m_isUserMediaPermissionAllowed || persistentPermission) && (WKArrayGetSize(videoDeviceUIDs.get()) || WKArrayGetSize(audioDeviceUIDs.get()))) {
             WKRetainPtr<WKStringRef> videoDeviceUID;
             if (WKArrayGetSize(videoDeviceUIDs.get()))
                 videoDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(videoDeviceUIDs.get(), 0));

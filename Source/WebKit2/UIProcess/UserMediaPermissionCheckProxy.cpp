@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,13 +36,13 @@ UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(UserMediaPermission
 {
 }
 
-void UserMediaPermissionCheckProxy::setHasPersistentPermission(bool allowed)
+void UserMediaPermissionCheckProxy::setUserMediaAccessInfo(const String& mediaDeviceIdentifierHashSalt, bool allowed)
 {
     ASSERT(m_manager);
     if (!m_manager)
         return;
 
-    m_manager->didCompleteUserMediaPermissionCheck(m_userMediaID, allowed);
+    m_manager->didCompleteUserMediaPermissionCheck(m_userMediaID, mediaDeviceIdentifierHashSalt, allowed);
     m_manager = nullptr;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,23 +59,24 @@ public:
 private:
     MediaDevicesRequest(ScriptExecutionContext*, MediaDevices::EnumerateDevicesPromise&&);
 
-    void getTrackSources();
-
     // MediaStreamTrackSourcesRequestClient
     const String& requestOrigin() const final;
-    void didCompleteRequest(const TrackSourceInfoVector&) final;
+    void didCompleteTrackSourceInfoRequest(const TrackSourceInfoVector&) final;
 
     // ContextDestructionObserver
     void contextDestroyed() override final;
 
     // UserMediaPermissionCheckClient
-    void didCompleteCheck(bool) override final;
+    void didCompletePermissionCheck(const String&, bool) override final;
+
+    String hashID(const String&);
 
     MediaDevices::EnumerateDevicesPromise m_promise;
     RefPtr<MediaDevicesRequest> m_protector;
     RefPtr<UserMediaPermissionCheck> m_permissionCheck;
 
-    bool m_canShowLabels { false };
+    String m_idHashSalt;
+    bool m_havePersistentPermission { false };
 };
 
 } // namespace WebCore

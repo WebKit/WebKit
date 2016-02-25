@@ -45,9 +45,6 @@ public:
 
     const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
     const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
-    
-    const String& firstVideoDeviceUID() const { return !videoDeviceUIDs().isEmpty() ? videoDeviceUIDs().at(0) : emptyString(); }
-    const String& firstAudioDeviceUID() const { return !audioDeviceUIDs().isEmpty() ? audioDeviceUIDs().at(0) : emptyString(); }
 
 private:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, const Vector<String>& videoDeviceUIDs, const Vector<String>& audioDeviceUIDs);

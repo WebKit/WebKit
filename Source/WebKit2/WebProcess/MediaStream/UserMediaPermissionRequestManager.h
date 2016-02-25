@@ -41,7 +41,7 @@ public:
 
     void startUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck&);
     void cancelUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck&);
-    void didCompleteUserMediaPermissionCheck(uint64_t requestID, bool allowed);
+    void didCompleteUserMediaPermissionCheck(uint64_t requestID, const String&, bool allowed);
 
 private:
     WebPage& m_page;

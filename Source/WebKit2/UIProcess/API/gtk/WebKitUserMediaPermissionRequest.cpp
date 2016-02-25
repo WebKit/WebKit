@@ -184,12 +184,13 @@ static void webkit_user_media_permission_request_class_init(WebKitUserMediaPermi
             WEBKIT_PARAM_READABLE));
 }
 
-WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(UserMediaPermissionRequestProxy& request, API::SecurityOrigin& securityOrigin)
+WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(UserMediaPermissionRequestProxy& request, API::SecurityOrigin& userMediaDocumentOrigin, API::SecurityOrigin& topLevelDocumentOrigin)
 {
     WebKitUserMediaPermissionRequest* usermediaPermissionRequest = WEBKIT_USER_MEDIA_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_USER_MEDIA_PERMISSION_REQUEST, nullptr));
 
-    // FIXME: store SecurityOrigin
-    UNUSED_PARAM(securityOrigin);
+    // FIXME: store SecurityOrigins
+    UNUSED_PARAM(userMediaDocumentOrigin);
+    UNUSED_PARAM(topLevelDocumentOrigin);
 
     usermediaPermissionRequest->priv->request = &request;
     return usermediaPermissionRequest;

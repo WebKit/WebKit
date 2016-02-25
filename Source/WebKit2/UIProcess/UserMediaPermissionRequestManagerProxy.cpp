@@ -67,7 +67,7 @@ Ref<UserMediaPermissionCheckProxy> UserMediaPermissionRequestManagerProxy::creat
     return request;
 }
 
-void UserMediaPermissionRequestManagerProxy::didCompleteUserMediaPermissionCheck(uint64_t userMediaID, bool allowed)
+void UserMediaPermissionRequestManagerProxy::didCompleteUserMediaPermissionCheck(uint64_t userMediaID, const String& mediaDeviceIdentifierHashSalt, bool allowed)
 {
     if (!m_page.isValid())
         return;
@@ -76,7 +76,7 @@ void UserMediaPermissionRequestManagerProxy::didCompleteUserMediaPermissionCheck
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    m_page.process().send(Messages::WebPage::DidCompleteUserMediaPermissionCheck(userMediaID, allowed), m_page.pageID());
+    m_page.process().send(Messages::WebPage::DidCompleteUserMediaPermissionCheck(userMediaID, mediaDeviceIdentifierHashSalt, allowed), m_page.pageID());
 #else
     UNUSED_PARAM(allowed);
 #endif

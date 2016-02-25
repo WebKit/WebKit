@@ -10,6 +10,7 @@
             var captureDevices;
             var captureDevice;
             var havePermission;
+            var deviceIds = [];
 
             description("Tests MediaDevices.enumerateDevices()");
             window.jsTestIsAsync = true;
@@ -35,6 +36,12 @@
                             else
                                 shouldBeEmptyString("captureDevice.label");
                             shouldBeNonNull("captureDevice.groupId");
+                            
+                            if (deviceIds.length < 2)
+                                deviceIds.push(captureDevice.deviceId);
+                            else
+                                shouldNotBe("deviceIds.indexOf(captureDevice.deviceId)", "-1");
+
                             debug("");
                         });
                         if (next)
@@ -51,7 +58,7 @@
             {
                 if (window.testRunner) {
                     testRunner.setUserMediaPermission(true);
-                    testRunner.setUserMediaPermissionForOrigin(false, document.location.href);
+                    testRunner.setUserMediaPermissionForOrigin(false, document.location.href, "");
                 }
 
                 navigator.mediaDevices
@@ -63,15 +70,16 @@
                     })
                     .catch(function(err) {
                         testFailed(`mediaDevices.getUserMedia() failed with ${err.name}: ${err.message}`);
+                        finishJSTest();
                     });
             }
             
             function grantPermission()
             {
                 if (window.testRunner)
-                    testRunner.setUserMediaPermissionForOrigin(true, document.location.href);
+                    testRunner.setUserMediaPermissionForOrigin(true, document.location.href, "");
 
-                debug(`<br>*** Calling mediaDevices.enumerateDevices without persistent access, and without a media stream track<br>`);
+                debug(`<br>*** Calling mediaDevices.enumerateDevices with persistent access, and without a media stream track<br>`);
                 havePermission = true;
                 enumerate(createStream);
             }

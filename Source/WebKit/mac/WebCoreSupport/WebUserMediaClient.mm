@@ -141,7 +141,7 @@ void WebUserMediaClient::requestUserMediaAccess(UserMediaRequest& request)
     }
 
     WebUserMediaPolicyListener *listener = [[WebUserMediaPolicyListener alloc] initWithUserMediaRequest:&request];
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request.securityOrigin()];
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request.userMediaDocumentOrigin()];
 
     AddRequestToRequestMap(&request, listener);
     CallUIDelegate(m_webView, selector, webOrigin, listener);
@@ -169,12 +169,12 @@ void WebUserMediaClient::checkUserMediaPermission(UserMediaPermissionCheck& requ
 
     SEL selector = @selector(webView:checkPolicyForUserMediaRequestFromOrigin:listener:);
     if (![[m_webView UIDelegate] respondsToSelector:selector]) {
-        request.setHasPersistentPermission(false);
+        request.setUserMediaAccessInfo(emptyString(), false);
         return;
     }
 
     WebUserMediaPolicyCheckerListener *listener = [[WebUserMediaPolicyCheckerListener alloc] initWithUserMediaPermissionCheck:&request];
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request.securityOrigin()];
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request.userMediaDocumentOrigin()];
 
     AddPermissionCheckToMap(&request, listener);
     CallUIDelegate(m_webView, selector, webOrigin, listener);
@@ -288,7 +288,7 @@ void WebUserMediaClient::cancelUserMediaPermissionCheck(WebCore::UserMediaPermis
     if (!_request)
         return;
 
-    _request->setHasPersistentPermission(true);
+    _request->setUserMediaAccessInfo(_request->mediaDeviceIdentifierHashSalt(), true);
     RemovePermissionCheckFromMap(_request.get());
 #endif
 }
@@ -299,7 +299,7 @@ void WebUserMediaClient::cancelUserMediaPermissionCheck(WebCore::UserMediaPermis
     if (!_request)
         return;
 
-    _request->setHasPersistentPermission(true);
+    _request->setUserMediaAccessInfo(emptyString(), true);
     RemovePermissionCheckFromMap(_request.get());
 #endif
 }

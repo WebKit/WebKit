@@ -62,8 +62,9 @@ void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    SecurityOrigin* origin = request.securityOrigin();
-    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), origin->databaseIdentifier(), request.audioDeviceUIDs(), request.videoDeviceUIDs()));
+    SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
+    String topLevelDocumentOriginString = topLevelDocumentOrigin ? topLevelDocumentOrigin->databaseIdentifier() : emptyString();
+    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), request.userMediaDocumentOrigin()->databaseIdentifier(), topLevelDocumentOriginString, request.audioDeviceUIDs(), request.videoDeviceUIDs()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)
@@ -93,7 +94,7 @@ void UserMediaPermissionRequestManager::startUserMediaPermissionCheck(WebCore::U
     Frame* frame = document ? document->frame() : nullptr;
 
     if (!frame) {
-        request.setHasPersistentPermission(false);
+        request.setUserMediaAccessInfo(emptyString(), false);
         return;
     }
 
@@ -104,8 +105,9 @@ void UserMediaPermissionRequestManager::startUserMediaPermissionCheck(WebCore::U
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    SecurityOrigin* origin = request.securityOrigin();
-    m_page.send(Messages::WebPageProxy::CheckUserMediaPermissionForFrame(requestID, webFrame->frameID(), origin->databaseIdentifier()));
+    SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
+    String topLevelDocumentOriginString = topLevelDocumentOrigin ? topLevelDocumentOrigin->databaseIdentifier() : emptyString();
+    m_page.send(Messages::WebPageProxy::CheckUserMediaPermissionForFrame(requestID, webFrame->frameID(), request.userMediaDocumentOrigin()->databaseIdentifier(), topLevelDocumentOriginString));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck& request)
@@ -116,14 +118,14 @@ void UserMediaPermissionRequestManager::cancelUserMediaPermissionCheck(WebCore::
     m_idToUserMediaPermissionCheckMap.remove(requestID);
 }
 
-void UserMediaPermissionRequestManager::didCompleteUserMediaPermissionCheck(uint64_t requestID, bool allowed)
+void UserMediaPermissionRequestManager::didCompleteUserMediaPermissionCheck(uint64_t requestID, const String& mediaDeviceIdentifierHashSalt, bool allowed)
 {
     RefPtr<UserMediaPermissionCheck> request = m_idToUserMediaPermissionCheckMap.take(requestID);
     if (!request)
         return;
     m_userMediaPermissionCheckToIDMap.remove(request);
     
-    request->setHasPersistentPermission(allowed);
+    request->setUserMediaAccessInfo(mediaDeviceIdentifierHashSalt, allowed);
 }
 
 } // namespace WebKit

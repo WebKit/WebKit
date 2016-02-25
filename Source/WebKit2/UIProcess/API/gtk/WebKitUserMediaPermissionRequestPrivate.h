@@ -24,6 +24,6 @@
 
 class SecurityOrigin;
 
-WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(WebKit::UserMediaPermissionRequestProxy&, API::SecurityOrigin&);
+WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(WebKit::UserMediaPermissionRequestProxy&, API::SecurityOrigin&, API::SecurityOrigin&);
 
 #endif // WebKitUserMediaPermissionRequestPrivate_h

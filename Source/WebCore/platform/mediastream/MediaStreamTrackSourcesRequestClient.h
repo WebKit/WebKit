@@ -87,7 +87,7 @@ public:
     virtual ~MediaStreamTrackSourcesRequestClient() { }
 
     virtual const String& requestOrigin() const = 0;
-    virtual void didCompleteRequest(const TrackSourceInfoVector&) = 0;
+    virtual void didCompleteTrackSourceInfoRequest(const TrackSourceInfoVector&) = 0;
 };
 
 
