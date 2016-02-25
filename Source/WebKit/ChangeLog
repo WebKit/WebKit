@@ -1,3 +1,14 @@
+2016-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][CMake] Don't use incremental linking
+        https://bugs.webkit.org/show_bug.cgi?id=154684
+        <rdar://problem/24747822>
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWin.cmake: Make sure the "/INCREMENTAL:NO" flag is used
+        (overriding "/INCREMENTAL:YES").
+
 2016-02-22  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Moved library setup code to WEBKIT_FRAMEWORK macro.
