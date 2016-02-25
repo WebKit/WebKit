@@ -102,6 +102,8 @@ class MacPort(ApplePort):
             if self.get_option('leaks'):
                 env['MallocStackLogging'] = '1'
                 env['__XPC_MallocStackLogging'] = '1'
+                env['MallocScribble'] = '1'
+                env['__XPC_MallocScribble'] = '1'
             if self.get_option('guard_malloc'):
                 self._append_value_colon_separated(env, 'DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
                 self._append_value_colon_separated(env, '__XPC_DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')

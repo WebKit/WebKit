@@ -1,3 +1,17 @@
+2016-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Enable MallocScribble when detecting leaks
+        https://bugs.webkit.org/show_bug.cgi?id=154679
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_setup_environ_for_server):
+
 2016-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, fix iOS builds after r197114.
