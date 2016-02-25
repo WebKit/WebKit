@@ -1,3 +1,49 @@
+2016-02-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r196268): Many assertion failures and crashes on SVG path animation tests when JS garbage collection happens quickly
+        https://bugs.webkit.org/show_bug.cgi?id=154331
+
+        Reviewed by Darin Adler.
+
+        This is not an actual regression. The bug did exist before r196268 but
+        the whole document was leaking once an SVGAnimatedProperty was created
+        so there was no way to produce this bug. After fixing the leak, one crash
+        and one assert got uncovered. Both of them happen because of the fact:
+        "if an SVGAnimatedProperty is not referenced it will be deleted."
+
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper):
+        The code in this function was assuming that the wrapper will be created
+        only once which happens when SVGAnimatedProperty::lookupOrCreateWrapper()
+        is called. Before making this single call, lookupOrCreateDWrapper() was
+        building an initial SVGPathSegList from byte stream. But now
+        SVGAnimatedProperty::lookupWrapper() can return false even after creating
+        the SVGAnimatedProperty because it was deleted later. Calling
+        buildSVGPathSegListFromByteStream() more than once was causing
+        SVGAnimatedListPropertyTearOff::animationStarted() to fire the assertion
+        ASSERT(m_values.size() == m_wrappers.size()) because the path segments were
+        appended twice to m_values which is in fact SVGPathElement::m_pathSegList.value.
+        The fix is to build the initial SVGPathSegList only once which should happen
+        when m_pathSegList.value.isEmpty().
+        
+        (WebCore::SVGPathElement::animatedPropertyWillBeDeleted):
+        * svg/SVGPathElement.h:
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::~SVGAnimatedPathSegListPropertyTearOff):
+        SVGPathElement is assuming the following equivalence relation:
+        m_pathSegList.shouldSynchronize ~ SVGAnimatedProperty_is_created_and_not_null.
+        SVGPathElement::animatedPathSegList() and animatedNormalizedPathSegList()
+        set m_pathSegList.shouldSynchronize to true when SVGAnimatedProperty is
+        created but nothing sets m_pathSegList.shouldSynchronize back to false.
+        This was not a problem when the SVGAnimatedProperty was leaking but after
+        ensuring it is deleted when it is not referenced this equivalence relation
+        becomes untrue sometimes. This caused SVGPathElement::svgAttributeChanged()
+        to crash when we check m_pathSegList.shouldSynchronize and if it is true we
+        assume that SVGAnimatedProperty::lookupWrapper() will return a non-null pointer
+        and therefore we deference this pointer and call SVGAnimatedProperty::isAnimating().
+        To fix this crash we need to set m_pathSegList.shouldSynchronize back to false
+        when the associated SVGAnimatedProperty is deleted.
+
 2016-02-25  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: WebKit 2 IPC layer.
