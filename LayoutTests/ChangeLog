@@ -1,3 +1,11 @@
+2016-02-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Removing a pass expectation for inspector/indexeddb/requestDatabaseNames.html that overrides the skip r197122
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-02-25  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: WebKit 2 IPC layer.
