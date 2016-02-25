@@ -991,7 +991,7 @@ private:
             case ValueRep::Register:
                 stackmap->earlyClobbered().clear(value.rep().reg());
                 arg = Tmp(value.rep().reg());
-                append(Move, immOrTmp(value.value()), arg);
+                append(relaxedMoveForType(value.value()->type()), immOrTmp(value.value()), arg);
                 break;
             case ValueRep::StackArgument:
                 arg = Arg::callArg(value.rep().offsetFromSP());
