@@ -1,3 +1,30 @@
+2016-02-24  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Some w3c objectstore tests crash under GuardMalloc.
+        https://bugs.webkit.org/show_bug.cgi?id=154460
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by existing tests).
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):  Don't delete the UniqueIDBDatabase yet 
+          if there are still any connections pending close.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCommitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::inProgressTransactionCompleted): It's possible that with this
+          transaction completing, and a connection finished its close process, that the UniqueIDBDatabase is
+          now ready to be deleted.
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::abortTransactionWithoutCallback):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::abortWithoutCallback):
+
 2016-02-24  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Moved PRE/POST_BUILD_COMMAND to WEBKIT_FRAMEWORK.
