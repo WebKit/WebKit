@@ -136,11 +136,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         if (!id || !displayName)
             return;
 
-        function replaceDashWithCapital(match) {
-            return match.replace("-", "").toUpperCase();
-        }
-
-        let camelCaseId = id.replace(/-\b\w/g, replaceDashWithCapital);
+        let camelCaseId = id.toCamelCase();
 
         function createOptionsElement() {
             let container = document.createElement("div");
@@ -178,12 +174,13 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
                 let section = this._sections[key];
                 let oneSectionExpanded = false;
                 for (let group of section.groups) {
-                    if (!group.collapsed) {
+                    let camelCaseId = group.identifier.toCamelCase();
+                    group.collapsed = !group.expandedByUser && !this._groupHasSetProperty(this._groups[camelCaseId]);
+                    if (!group.collapsed)
                         oneSectionExpanded = true;
-                        break;
-                    }
                 }
-                section.collapsed = !oneSectionExpanded;
+                if (oneSectionExpanded)
+                    section.collapsed = false;
             }
         }
     }
@@ -216,9 +213,6 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         if (initialPropertyTextMissing)
             initialTextList.set(group, initialPropertyText);
 
-        let groupHasSetProperty = this._groupHasSetProperty(group);
-        group.section.collapsed = !groupHasSetProperty && !group.section.expandedByUser;
-        group.section.element.classList.toggle("has-set-property", groupHasSetProperty);
         this._sectionModified(group);
 
         if (group.autocompleteCompatibleProperties) {
