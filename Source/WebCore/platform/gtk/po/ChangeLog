@@ -1,3 +1,12 @@
+2016-02-22  Piotr Drąg <piotrdrag@gmail.com>
+
+        [l10n] Updated Polish translation of WebKitGTK+ for 2.12
+        https://bugs.webkit.org/show_bug.cgi?id=154549
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * pl.po:
+
 2016-01-12  Sam Friedmann <sfriedma@redhat.com>
 
         [l10n] Updated French translation for WebKitGTK+
