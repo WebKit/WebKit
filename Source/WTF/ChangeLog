@@ -1,5 +1,23 @@
 2016-02-25  Gavin Barraclough  <barraclough@apple.com>
 
+        Replace RefCounter::Token implementation with RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=154698
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RefCounter.h:
+        (WTF::RefCounter::RefCounter):
+        (WTF::RefCounter::count):
+        (WTF::RefCounter::value):
+        (WTF::RefCounter<T>::~RefCounter):
+        (WTF::RefCounter::Token::Token): Deleted.
+        (WTF::RefCounter::Token::operator bool): Deleted.
+        (WTF::RefCounter<T>::Token::Token): Deleted.
+        (WTF::=): Deleted.
+            - Delete.
+
+2016-02-25  Gavin Barraclough  <barraclough@apple.com>
+
         Should template RefCounter instead of RefCounter::Token
         https://bugs.webkit.org/show_bug.cgi?id=154691
 
