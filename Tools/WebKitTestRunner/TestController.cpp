@@ -1728,6 +1728,28 @@ void TestController::setUserMediaPermission(bool enabled)
     decidePolicyForUserMediaPermissionRequestIfPossible();
 }
 
+static String createCanonicalUUIDString()
+{
+    unsigned randomData[4];
+    cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(randomData), sizeof(randomData));
+
+    // Format as Version 4 UUID.
+    StringBuilder builder;
+    builder.reserveCapacity(36);
+    appendUnsignedAsHexFixedSize(randomData[0], builder, 8, Lowercase);
+    builder.append('-');
+    appendUnsignedAsHexFixedSize(randomData[1] >> 16, builder, 4, Lowercase);
+    builder.appendLiteral("-4");
+    appendUnsignedAsHexFixedSize(randomData[1] & 0x00000fff, builder, 3, Lowercase);
+    builder.append('-');
+    appendUnsignedAsHexFixedSize((randomData[2] >> 30) | 0x8, builder, 1, Lowercase);
+    appendUnsignedAsHexFixedSize((randomData[2] >> 16) & 0x00000fff, builder, 3, Lowercase);
+    builder.append('-');
+    appendUnsignedAsHexFixedSize(randomData[2] & 0x0000ffff, builder, 4, Lowercase);
+    appendUnsignedAsHexFixedSize(randomData[3], builder, 8, Lowercase);
+    return builder.toString();
+}
+
 class OriginSettings : public RefCounted<OriginSettings> {
 public:
     explicit OriginSettings()
@@ -1767,13 +1789,13 @@ String TestController::saltForOrigin(WKFrameRef frame, String originHash)
             return frameSalt;
 
         if (!settings->persistentSalt().length())
-            settings->setPersistentSalt(WebCore::createCanonicalUUIDString());
+            settings->setPersistentSalt(createCanonicalUUIDString());
 
         return settings->persistentSalt();
     }
 
     if (!frameSalt.length()) {
-        frameSalt = WebCore::createCanonicalUUIDString();
+        frameSalt = createCanonicalUUIDString();
         ephemeralSalts.add(frameIdentifier, frameSalt);
     }
 
