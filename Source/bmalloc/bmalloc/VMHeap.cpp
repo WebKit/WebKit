@@ -24,7 +24,6 @@
  */
 
 #include "LargeObject.h"
-#include "Line.h"
 #include "PerProcess.h"
 #include "SuperChunk.h"
 #include "VMHeap.h"
@@ -47,10 +46,6 @@ void VMHeap::grow()
     SmallChunk* smallChunk = superChunk->smallChunk();
     for (auto* it = smallChunk->begin(); it != smallChunk->end(); ++it)
         m_smallPages.push(it);
-
-    MediumChunk* mediumChunk = superChunk->mediumChunk();
-    for (auto* it = mediumChunk->begin(); it != mediumChunk->end(); ++it)
-        m_mediumPages.push(it);
 
     LargeChunk* largeChunk = superChunk->largeChunk();
     LargeObject result(LargeObject::init(largeChunk).begin());

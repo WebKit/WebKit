@@ -54,11 +54,15 @@ public:
     size_t sizeClass() { return m_sizeClass; }
     void setSizeClass(size_t sizeClass) { m_sizeClass = sizeClass; }
     
+    bool hasFreeLines(std::lock_guard<StaticMutex>&) const { return m_hasFreeLines; }
+    void setHasFreeLines(std::lock_guard<StaticMutex>&, bool hasFreeLines) { m_hasFreeLines = hasFreeLines; }
+    
     Line* begin();
     Line* end();
 
 private:
-    unsigned char m_refCount;
+    unsigned char m_hasFreeLines: 1;
+    unsigned char m_refCount: 7;
     unsigned char m_sizeClass;
 };
 

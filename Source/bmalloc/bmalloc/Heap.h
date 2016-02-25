@@ -29,9 +29,6 @@
 #include "BumpRange.h"
 #include "Environment.h"
 #include "LineMetadata.h"
-#include "MediumChunk.h"
-#include "MediumLine.h"
-#include "MediumPage.h"
 #include "Mutex.h"
 #include "SegregatedFreeList.h"
 #include "SmallChunk.h"
@@ -57,9 +54,6 @@ public:
     void allocateSmallBumpRanges(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpAllocator&, BumpRangeCache&);
     void derefSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
 
-    void allocateMediumBumpRanges(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpAllocator&, BumpRangeCache&);
-    void derefMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
-
     void* allocateLarge(std::lock_guard<StaticMutex>&, size_t);
     void* allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t, size_t unalignedSize);
     void deallocateLarge(std::lock_guard<StaticMutex>&, void*);
@@ -78,11 +72,8 @@ private:
     void initializeLineMetadata();
 
     SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t sizeClass);
-    MediumPage* allocateMediumPage(std::lock_guard<StaticMutex>&, size_t sizeClass);
 
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
-    void deallocateMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
-
     void deallocateLarge(std::lock_guard<StaticMutex>&, const LargeObject&);
 
     LargeObject& splitAndAllocate(LargeObject&, size_t);
@@ -93,17 +84,13 @@ private:
     
     void concurrentScavenge();
     void scavengeSmallPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
-    void scavengeMediumPages(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
 
     std::array<std::array<LineMetadata, SmallPage::lineCount>, smallMax / alignment> m_smallLineMetadata;
-    std::array<std::array<LineMetadata, MediumPage::lineCount>, mediumMax / alignment> m_mediumLineMetadata;
 
     std::array<Vector<SmallPage*>, smallMax / alignment> m_smallPagesWithFreeLines;
-    std::array<Vector<MediumPage*>, mediumMax / alignment> m_mediumPagesWithFreeLines;
 
     Vector<SmallPage*> m_smallPages;
-    Vector<MediumPage*> m_mediumPages;
 
     SegregatedFreeList m_largeObjects;
     Vector<Range> m_xLargeObjects;
@@ -121,13 +108,6 @@ inline void Heap::derefSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* 
     if (!line->deref(lock))
         return;
     deallocateSmallLine(lock, line);
-}
-
-inline void Heap::derefMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* line)
-{
-    if (!line->deref(lock))
-        return;
-    deallocateMediumLine(lock, line);
 }
 
 } // namespace bmalloc

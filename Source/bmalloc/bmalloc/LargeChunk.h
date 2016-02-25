@@ -83,7 +83,7 @@ static_assert(largeChunkMetadataSize + largeMax <= largeChunkSize, "We will thin
 
 inline LargeChunk* LargeChunk::get(void* object)
 {
-    BASSERT(!isSmallOrMedium(object));
+    BASSERT(!isSmall(object));
     return static_cast<LargeChunk*>(mask(object, largeChunkMask));
 }
 
@@ -96,7 +96,7 @@ inline BeginTag* LargeChunk::beginTag(void* object)
 
 inline EndTag* LargeChunk::endTag(void* object, size_t size)
 {
-    BASSERT(!isSmallOrMedium(object));
+    BASSERT(!isSmall(object));
 
     LargeChunk* chunk = get(object);
     char* end = static_cast<char*>(object) + size;
