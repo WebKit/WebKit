@@ -1,3 +1,9 @@
+2016-02-25  Skachkov Aleksandr  <gskachkov@gmail.com>
+
+        Unreviewed: Add Aleksandr Skachkov as a commiter
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-02-25  Sam Weinig  <sam@webkit.org>
 
         HashMap::ensure() should return an AddResult like all the other add-like functions

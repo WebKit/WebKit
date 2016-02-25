@@ -109,6 +109,14 @@
             "alecf"
          ]
       },
+      "Aleksandr Skachkov" : {
+         "emails" : [
+            "gskachkov@gmail.com"
+         ],
+         "nicks" : [
+            "gskachkov"
+         ]
+      },
       "Alexander F\u00e6r\u00f8y" : {
          "emails" : [
             "ahf@0x90.dk",
@@ -3158,14 +3166,6 @@
       "Alejandro Pineiro" : {
          "emails" : [
             "apinheiro@igalia.com"
-         ]
-      },
-      "Aleksandr Skachkov" : {
-         "emails" : [
-            "gskachkov@gmail.com"
-         ],
-         "nicks" : [
-            "gskachkov"
          ]
       },
       "Alexey Marinichev" : {
