@@ -2697,8 +2697,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyTransformOriginX:
     case CSSPropertyTransformOriginY:
     case CSSPropertyTransformOriginZ: {
-        RefPtr<CSSValue> val1;
-        RefPtr<CSSValue> val2;
+        RefPtr<CSSPrimitiveValue> val1;
+        RefPtr<CSSPrimitiveValue> val2;
         RefPtr<CSSValue> val3;
         CSSPropertyID propId1, propId2, propId3;
         if (parseTransformOrigin(propId, propId1, propId2, propId3, val1, val2, val3)) {
@@ -2729,8 +2729,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyPerspectiveOrigin:
     case CSSPropertyPerspectiveOriginX:
     case CSSPropertyPerspectiveOriginY: {
-        RefPtr<CSSValue> val1;
-        RefPtr<CSSValue> val2;
+        RefPtr<CSSPrimitiveValue> val1;
+        RefPtr<CSSPrimitiveValue> val2;
         CSSPropertyID propId1, propId2;
         if (parsePerspectiveOrigin(propId, propId1, propId2, val1, val2)) {
             addProperty(propId1, val1.release(), important);
@@ -4384,7 +4384,7 @@ bool CSSParser::parseFillImage(CSSParserValueList& valueList, RefPtr<CSSValue>& 
     return false;
 }
 
-RefPtr<CSSValue> CSSParser::parsePositionX(CSSParserValueList& valueList)
+RefPtr<CSSPrimitiveValue> CSSParser::parsePositionX(CSSParserValueList& valueList)
 {
     int id = valueList.current()->id;
     if (id == CSSValueLeft || id == CSSValueRight || id == CSSValueCenter) {
@@ -4401,7 +4401,7 @@ RefPtr<CSSValue> CSSParser::parsePositionX(CSSParserValueList& valueList)
     return nullptr;
 }
 
-RefPtr<CSSValue> CSSParser::parsePositionY(CSSParserValueList& valueList)
+RefPtr<CSSPrimitiveValue> CSSParser::parsePositionY(CSSParserValueList& valueList)
 {
     int id = valueList.current()->id;
     if (id == CSSValueTop || id == CSSValueBottom || id == CSSValueCenter) {
@@ -4481,7 +4481,7 @@ static bool isFillPositionKeyword(CSSValueID value)
     return value == CSSValueLeft || value == CSSValueTop || value == CSSValueBottom || value == CSSValueRight || value == CSSValueCenter;
 }
 
-void CSSParser::parse4ValuesFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, RefPtr<CSSPrimitiveValue>&& parsedValue1, RefPtr<CSSPrimitiveValue>&& parsedValue2)
+void CSSParser::parse4ValuesFillPosition(CSSParserValueList& valueList, RefPtr<CSSPrimitiveValue>& value1, RefPtr<CSSPrimitiveValue>& value2, RefPtr<CSSPrimitiveValue>&& parsedValue1, RefPtr<CSSPrimitiveValue>&& parsedValue2)
 {
     // [ left | right ] [ <percentage] | <length> ] && [ top | bottom ] [ <percentage> | <length> ]
     // In the case of 4 values <position> requires the second value to be a length or a percentage.
@@ -4529,7 +4529,7 @@ void CSSParser::parse4ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
 
     valueList.next();
 }
-void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, RefPtr<CSSPrimitiveValue>&& parsedValue1, RefPtr<CSSPrimitiveValue>&& parsedValue2)
+void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<CSSPrimitiveValue>& value1, RefPtr<CSSPrimitiveValue>& value2, RefPtr<CSSPrimitiveValue>&& parsedValue1, RefPtr<CSSPrimitiveValue>&& parsedValue2)
 {
     unsigned cumulativeFlags = 0;
     FillPositionFlag value3Flag = InvalidFillPosition;
@@ -4612,8 +4612,8 @@ void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
         value1.swap(value2);
 
 #ifndef NDEBUG
-    CSSPrimitiveValue& first = downcast<CSSPrimitiveValue>(*value1);
-    CSSPrimitiveValue& second = downcast<CSSPrimitiveValue>(*value2);
+    CSSPrimitiveValue& first = *value1;
+    CSSPrimitiveValue& second = *value2;
     ident1 = first.getPairValue()->first()->getValueID();
     ident2 = second.getPairValue()->first()->getValueID();
     ASSERT(ident1 == CSSValueLeft || ident1 == CSSValueRight);
@@ -4629,7 +4629,7 @@ inline bool CSSParser::isPotentialPositionValue(CSSParserValue& value)
     return validateUnit(valueWithCalculation, FPercent | FLength);
 }
 
-void CSSParser::parseFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
+void CSSParser::parseFillPosition(CSSParserValueList& valueList, RefPtr<CSSPrimitiveValue>& value1, RefPtr<CSSPrimitiveValue>& value2)
 {
     unsigned numberOfValues = 0;
     for (unsigned i = valueList.currentIndex(); i < valueList.size(); ++i, ++numberOfValues) {
@@ -4676,8 +4676,8 @@ void CSSParser::parseFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue
         return;
     }
 
-    RefPtr<CSSPrimitiveValue> parsedValue1 = downcast<CSSPrimitiveValue>(value1.get());
-    RefPtr<CSSPrimitiveValue> parsedValue2 = downcast<CSSPrimitiveValue>(value2.get());
+    RefPtr<CSSPrimitiveValue> parsedValue1 = value1;
+    RefPtr<CSSPrimitiveValue> parsedValue2 = value2;
 
     value1 = nullptr;
     value2 = nullptr;
@@ -4692,7 +4692,7 @@ void CSSParser::parseFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue
         parse4ValuesFillPosition(valueList, value1, value2, WTFMove(parsedValue1), WTFMove(parsedValue2));
 }
 
-void CSSParser::parse2ValuesFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
+void CSSParser::parse2ValuesFillPosition(CSSParserValueList& valueList, RefPtr<CSSPrimitiveValue>& value1, RefPtr<CSSPrimitiveValue>& value2)
 {
     CSSParserValue* value = valueList.current();
 
@@ -4903,10 +4903,15 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     }
                     break;
                 case CSSPropertyBackgroundPosition:
-                case CSSPropertyWebkitMaskPosition:
-                    parseFillPosition(*m_valueList, currValue, currValue2);
+                case CSSPropertyWebkitMaskPosition: {
+                    RefPtr<CSSPrimitiveValue> value1;
+                    RefPtr<CSSPrimitiveValue> value2;
+                    parseFillPosition(*m_valueList, value1, value2);
+                    currValue = value1;
+                    currValue2 = value2;
                     // parseFillPosition advances the m_valueList pointer.
                     break;
+                }
                 case CSSPropertyBackgroundPositionX:
                 case CSSPropertyWebkitMaskPositionX: {
                     currValue = parsePositionX(*m_valueList);
@@ -5165,7 +5170,7 @@ Vector<double> CSSParser::parseKeyframeSelector(const String& selector) {
     return keys;
 }
 
-bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)
+bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSPrimitiveValue>& value1, RefPtr<CSSPrimitiveValue>& value2, RefPtr<CSSValue>& value3)
 {
     parse2ValuesFillPosition(*m_valueList, value1, value2);
 
@@ -6530,12 +6535,12 @@ RefPtr<CSSBasicShape> CSSParser::parseBasicShapeCircle(CSSParserValueList& args)
         }
 
         if (argument->id == CSSValueAt && args.next()) {
-            RefPtr<CSSValue> centerX;
-            RefPtr<CSSValue> centerY;
+            RefPtr<CSSPrimitiveValue> centerX;
+            RefPtr<CSSPrimitiveValue> centerY;
             parseFillPosition(args, centerX, centerY);
             if (centerX && centerY && !args.current()) {
-                shape->setCenterX(downcast<CSSPrimitiveValue>(centerX.get()));
-                shape->setCenterY(downcast<CSSPrimitiveValue>(centerY.get()));
+                shape->setCenterX(centerX);
+                shape->setCenterY(centerY);
             } else
                 return nullptr;
         } else
@@ -6577,14 +6582,14 @@ RefPtr<CSSBasicShape> CSSParser::parseBasicShapeEllipse(CSSParserValueList& args
         if (argument->id != CSSValueAt || !args.next()) // expecting ellipse(.. at <position>)
             return nullptr;
 
-        RefPtr<CSSValue> centerX;
-        RefPtr<CSSValue> centerY;
+        RefPtr<CSSPrimitiveValue> centerX;
+        RefPtr<CSSPrimitiveValue> centerY;
         parseFillPosition(args, centerX, centerY);
         if (!centerX || !centerY || args.current())
             return nullptr;
 
-        shape->setCenterX(downcast<CSSPrimitiveValue>(centerX.get()));
-        shape->setCenterY(downcast<CSSPrimitiveValue>(centerY.get()));
+        shape->setCenterX(centerX);
+        shape->setCenterY(centerY);
     }
 
     return shape;
@@ -8965,8 +8970,8 @@ bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList& valueList, Ref
     bool expectComma = false;
 
     // Optional background-position
-    RefPtr<CSSValue> centerX;
-    RefPtr<CSSValue> centerY;
+    RefPtr<CSSPrimitiveValue> centerX;
+    RefPtr<CSSPrimitiveValue> centerY;
     // parse2ValuesFillPosition advances the args next pointer.
     parse2ValuesFillPosition(*args, centerX, centerY);
     argument = args->current();
@@ -8983,11 +8988,11 @@ bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList& valueList, Ref
             return false;
     }
 
-    result->setFirstX(downcast<CSSPrimitiveValue>(centerX.get()));
-    result->setSecondX(downcast<CSSPrimitiveValue>(centerX.get()));
+    result->setFirstX(centerX);
+    result->setSecondX(centerX);
     // CSS3 radial gradients always share the same start and end point.
-    result->setFirstY(downcast<CSSPrimitiveValue>(centerY.get()));
-    result->setSecondY(downcast<CSSPrimitiveValue>(centerY.get()));
+    result->setFirstY(centerY);
+    result->setSecondY(centerY);
 
     RefPtr<CSSPrimitiveValue> shapeValue;
     RefPtr<CSSPrimitiveValue> sizeValue;
@@ -9236,8 +9241,8 @@ bool CSSParser::parseRadialGradient(CSSParserValueList& valueList, RefPtr<CSSVal
 
     // Second part of grammar, the center-position clause:
     // at <position>
-    RefPtr<CSSValue> centerX;
-    RefPtr<CSSValue> centerY;
+    RefPtr<CSSPrimitiveValue> centerX;
+    RefPtr<CSSPrimitiveValue> centerY;
     if (argument->unit == CSSPrimitiveValue::CSS_IDENT && equalLettersIgnoringASCIICase(*argument, "at")) {
         argument = args->next();
         if (!argument)
@@ -9251,11 +9256,11 @@ bool CSSParser::parseRadialGradient(CSSParserValueList& valueList, RefPtr<CSSVal
         if (!argument)
             return false;
 
-        result->setFirstX(downcast<CSSPrimitiveValue>(centerX.get()));
-        result->setFirstY(downcast<CSSPrimitiveValue>(centerY.get()));
+        result->setFirstX(centerX);
+        result->setFirstY(centerY);
         // Right now, CSS radial gradients have the same start and end centers.
-        result->setSecondX(downcast<CSSPrimitiveValue>(centerX.get()));
-        result->setSecondY(downcast<CSSPrimitiveValue>(centerY.get()));
+        result->setSecondX(centerX);
+        result->setSecondY(centerY);
     }
 
     if (shapeValue || sizeValue || horizontalSize || centerX || centerY)
@@ -10199,7 +10204,7 @@ bool CSSParser::parseRegionThread(CSSPropertyID propId, bool important)
 }
 #endif
 
-bool CSSParser::parseTransformOrigin(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, CSSPropertyID& propId3, RefPtr<CSSValue>& value, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)
+bool CSSParser::parseTransformOrigin(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, CSSPropertyID& propId3, RefPtr<CSSPrimitiveValue>& value, RefPtr<CSSPrimitiveValue>& value2, RefPtr<CSSValue>& value3)
 {
     propId1 = propId;
     propId2 = propId;
@@ -10244,7 +10249,7 @@ bool CSSParser::parseTransformOrigin(CSSPropertyID propId, CSSPropertyID& propId
     return value;
 }
 
-bool CSSParser::parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, RefPtr<CSSValue>& value, RefPtr<CSSValue>& value2)
+bool CSSParser::parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, RefPtr<CSSPrimitiveValue>& value, RefPtr<CSSPrimitiveValue>& value2)
 {
     propId1 = propId;
     propId2 = propId;
