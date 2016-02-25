@@ -48,7 +48,7 @@ void WeakMapConstructor::finishCreation(VM& vm, WeakMapPrototype* prototype)
 
 static EncodedJSValue JSC_HOST_CALL callWeakMap(ExecState* exec)
 {
-    return JSValue::encode(throwTypeError(exec, ASCIILiteral("WeakMap cannot be called as a function")));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, "WeakMap"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState* exec)

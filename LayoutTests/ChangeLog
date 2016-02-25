@@ -1,3 +1,19 @@
+2016-02-23  Mark Lam  <mark.lam@apple.com>
+
+        Debug assertion failure while loading http://kangax.github.io/compat-table/es6/.
+        https://bugs.webkit.org/show_bug.cgi?id=154542
+
+        Reviewed by Saam Barati.
+
+        * js/Promise-types-expected.txt:
+        * js/basic-map-expected.txt:
+        * js/basic-set-expected.txt:
+        * js/dom/basic-weakmap-expected.txt:
+        * js/dom/basic-weakset-expected.txt:
+        * js/script-tests/Promise-types.js:
+        * js/typedarray-constructors-expected.txt:
+        - Updated error message string.
+
 2016-02-23  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [SVG] Update SVG source to return string literals as ASCIILiteral and add test cases for case sensitivity

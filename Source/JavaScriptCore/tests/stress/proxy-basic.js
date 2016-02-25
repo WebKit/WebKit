@@ -72,7 +72,7 @@ assert(Proxy.prototype === undefined);
             Proxy({}, {});
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy is not a function. (In 'Proxy({}, {})', 'Proxy' is an instance of Function)");
+            assert(e.toString() === "TypeError: calling Proxy constructor without new is invalid");
         }
         assert(threw === true);
     }

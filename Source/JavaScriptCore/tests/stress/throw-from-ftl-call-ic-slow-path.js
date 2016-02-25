@@ -172,7 +172,7 @@ for (var i = 0; i < 100; ++i) {
     try {
         ftlFunction(array, Int8Array);
     } catch (e) {
-        if (e.message.indexOf("not a function") < 0)
+        if (e.message.indexOf("constructor without new is invalid") < 0)
             throw "Error: bad exception message: " + e.message;
         var result = notACell.f;
         if (result !== void 0) {

@@ -1175,7 +1175,7 @@
 - path: es6/typed_arrays_%TypedArray%.prototype[Symbol.iterator].js
   cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%[Symbol.species].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_ArrayBuffer[Symbol.species].js
   cmd: runES6 :normal
 - path: es6/typed_arrays_correct_prototype_chains.js

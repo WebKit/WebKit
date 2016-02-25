@@ -50,7 +50,7 @@ void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype, GetterSe
 
 static EncodedJSValue JSC_HOST_CALL callMap(ExecState* exec)
 {
-    return JSValue::encode(throwTypeError(exec, ASCIILiteral("Map cannot be called as a function")));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, "Map"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)

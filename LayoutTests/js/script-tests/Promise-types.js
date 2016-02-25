@@ -41,12 +41,12 @@ shouldThrow("new Promise({})", "'TypeError: Promise constructor takes a function
 shouldThrow("new Promise(null)", "'TypeError: Promise constructor takes a function argument'");
 shouldThrow("new Promise(undefined)", "'TypeError: Promise constructor takes a function argument'");
 
-shouldThrow("Promise(1)", "'TypeError: Type error'");
-shouldThrow("Promise('hello')", "'TypeError: Type error'");
-shouldThrow("Promise([])", "'TypeError: Type error'");
-shouldThrow("Promise({})", "'TypeError: Type error'");
-shouldThrow("Promise(null)", "'TypeError: Type error'");
-shouldThrow("Promise(undefined)", "'TypeError: Type error'");
+shouldThrow("Promise(1)", "'TypeError: calling Promise constructor without new is invalid'");
+shouldThrow("Promise('hello')", "'TypeError: calling Promise constructor without new is invalid'");
+shouldThrow("Promise([])", "'TypeError: calling Promise constructor without new is invalid'");
+shouldThrow("Promise({})", "'TypeError: calling Promise constructor without new is invalid'");
+shouldThrow("Promise(null)", "'TypeError: calling Promise constructor without new is invalid'");
+shouldThrow("Promise(undefined)", "'TypeError: calling Promise constructor without new is invalid'");
 
 // Promise statics
 debug("");
