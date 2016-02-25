@@ -294,9 +294,6 @@
     readonly attribute DOMString visibilityState;
     readonly attribute boolean hidden;
 
-    // Security Policy API: http://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#script-interfaces
-    [Conditional=CSP_NEXT] readonly attribute DOMSecurityPolicy securityPolicy;
-
     // currentscript API: http://www.whatwg.org/specs/web-apps/current-work/multipage/dom.html#dom-document-currentscript
     readonly attribute HTMLScriptElement currentScript;
 

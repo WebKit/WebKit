@@ -509,7 +509,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/page/AbstractView.idl \
     $(WebCore)/page/BarProp.idl \
     $(WebCore)/page/Crypto.idl \
-    $(WebCore)/page/DOMSecurityPolicy.idl \
     $(WebCore)/page/DOMSelection.idl \
     $(WebCore)/page/DOMWindow.idl \
     $(WebCore)/page/EventSource.idl \

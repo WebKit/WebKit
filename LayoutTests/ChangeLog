@@ -1,3 +1,47 @@
+2016-02-25  Daniel Bates  <dabates@apple.com>
+
+        CSP: Remove SecurityPolicy script interface
+        https://bugs.webkit.org/show_bug.cgi?id=154694
+        <rdar://problem/24846482>
+
+        Reviewed by Andy Estes.
+
+        Remove SecurityPolicy tests and update platform-specific expected results as needed.
+
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowconnectionto-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowconnectionto.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-alloweval-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-alloweval.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowfontfrom-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowfontfrom.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowformaction-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowformaction.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowframefrom-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowframefrom.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowimagefrom-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowimagefrom.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinescript-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinescript.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinestyle-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinestyle.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowmediafrom-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowmediafrom.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowobjectfrom-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowobjectfrom.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowplugintype-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowplugintype.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowscriptfrom-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowscriptfrom.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowstylefrom-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowstylefrom.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-isactive-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-isactive.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-reporturi-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-reporturi.html: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/securitypolicy-tests-base.js: Removed.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt: Update expected result as needed.
+        * platform/win/js/dom/global-constructors-attributes-expected.txt: Ditto.
+
 2016-02-25  Chris Dumez  <cdumez@apple.com>
 
         Drop [TreatReturnedNullStringAs=Undefined] WebKit-specific IDL attribute

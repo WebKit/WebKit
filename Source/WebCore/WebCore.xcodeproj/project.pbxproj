@@ -1190,12 +1190,6 @@
 		2D93AEE419DF5641002A86C3 /* ServicesOverlayController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */; };
 		2D97F04719DD413C001EE9C3 /* MockPageOverlayClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */; };
 		2D97F04819DD4140001EE9C3 /* MockPageOverlayClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */; };
-		2D9A246E15B9BD0000D34527 /* DOMSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9A246B15B9BBDD00D34527 /* DOMSecurityPolicy.h */; };
-		2D9A246F15B9BD2F00D34527 /* DOMSecurityPolicy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9A246A15B9BBDD00D34527 /* DOMSecurityPolicy.cpp */; };
-		2D9A247315B9C2D100D34527 /* DOMDOMSecurityPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D9A247215B9C2C700D34527 /* DOMDOMSecurityPolicy.mm */; };
-		2D9A247415B9C2E300D34527 /* DOMDOMSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9A247015B9C29500D34527 /* DOMDOMSecurityPolicy.h */; };
-		2D9A247515B9C2E300D34527 /* DOMDOMSecurityPolicyInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9A247115B9C29500D34527 /* DOMDOMSecurityPolicyInternal.h */; };
-		2D9A247615B9C2F400D34527 /* DOMDOMSecurityPolicy.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 2D9A247015B9C29500D34527 /* DOMDOMSecurityPolicy.h */; };
 		2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */; };
 		2DB9C4AA1B3231F40070F27F /* NSEventSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB9C4A91B3231F40070F27F /* NSEventSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DCB837919F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7203,7 +7197,6 @@
 				44311CD812E4E24B000A8D19 /* DOMDocumentPrivate.h in Copy Generated Headers */,
 				1C11CCC00AA6093700DADB20 /* DOMDocumentType.h in Copy Generated Headers */,
 				1C11CCC10AA6093700DADB20 /* DOMDOMImplementation.h in Copy Generated Headers */,
-				2D9A247615B9C2F400D34527 /* DOMDOMSecurityPolicy.h in Copy Generated Headers */,
 				1C11CCC40AA6093700DADB20 /* DOMElement.h in Copy Generated Headers */,
 				1CB4214B0AF2B2CA0085AD91 /* DOMElementInternal.h in Copy Generated Headers */,
 				1C11CCBF0AA6093700DADB20 /* DOMEntity.h in Copy Generated Headers */,
@@ -8632,11 +8625,6 @@
 		2D90660C0665D937006B6F1A /* DataTransferMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataTransferMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D93AEE119DF5641002A86C3 /* ServicesOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServicesOverlayController.h; sourceTree = "<group>"; };
 		2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesOverlayController.mm; sourceTree = "<group>"; };
-		2D9A246A15B9BBDD00D34527 /* DOMSecurityPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMSecurityPolicy.cpp; sourceTree = "<group>"; };
-		2D9A246B15B9BBDD00D34527 /* DOMSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSecurityPolicy.h; sourceTree = "<group>"; };
-		2D9A247015B9C29500D34527 /* DOMDOMSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMSecurityPolicy.h; sourceTree = "<group>"; };
-		2D9A247115B9C29500D34527 /* DOMDOMSecurityPolicyInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMSecurityPolicyInternal.h; sourceTree = "<group>"; };
-		2D9A247215B9C2C700D34527 /* DOMDOMSecurityPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMDOMSecurityPolicy.mm; sourceTree = "<group>"; };
 		2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */ = {isa = PBXFileReference; lastKnownFileType = file; path = linearSRGB.icc; sourceTree = "<group>"; };
 		2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockPageOverlayClient.cpp; sourceTree = "<group>"; };
 		2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPageOverlayClient.h; sourceTree = "<group>"; };
@@ -17892,8 +17880,6 @@
 				CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */,
 				CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */,
 				8372DB301A6780A800C697C5 /* DiagnosticLoggingResultType.h */,
-				2D9A246A15B9BBDD00D34527 /* DOMSecurityPolicy.cpp */,
-				2D9A246B15B9BBDD00D34527 /* DOMSecurityPolicy.h */,
 				BC5A86810C33676000EEA649 /* DOMSelection.cpp */,
 				BC5A86820C33676000EEA649 /* DOMSelection.h */,
 				BC5A86830C33676000EEA649 /* DOMSelection.idl */,
@@ -18221,9 +18207,6 @@
 				52CCA9E515E3F64C0053C77F /* DOMDOMNamedFlowCollection.h */,
 				52CCA9E615E3F64C0053C77F /* DOMDOMNamedFlowCollection.mm */,
 				52CCA9E715E3F64C0053C77F /* DOMDOMNamedFlowCollectionInternal.h */,
-				2D9A247015B9C29500D34527 /* DOMDOMSecurityPolicy.h */,
-				2D9A247215B9C2C700D34527 /* DOMDOMSecurityPolicy.mm */,
-				2D9A247115B9C29500D34527 /* DOMDOMSecurityPolicyInternal.h */,
 				85ACA9BE0A9B5FA500671E90 /* DOMElement.h */,
 				85ACA9BF0A9B5FA500671E90 /* DOMElement.mm */,
 				85CA96B60A9621A600690CCF /* DOMEntity.h */,
@@ -25500,8 +25483,6 @@
 				85E711970AC5D5350053270F /* DOMDOMImplementationInternal.h in Headers */,
 				52CCA9E815E3F64C0053C77F /* DOMDOMNamedFlowCollection.h in Headers */,
 				52CCA9EA15E3F64C0053C77F /* DOMDOMNamedFlowCollectionInternal.h in Headers */,
-				2D9A247415B9C2E300D34527 /* DOMDOMSecurityPolicy.h in Headers */,
-				2D9A247515B9C2E300D34527 /* DOMDOMSecurityPolicyInternal.h in Headers */,
 				9B3A8872145632F9003AE8F5 /* DOMDOMSettableTokenList.h in Headers */,
 				7694565B1214DB630007CBAE /* DOMDOMTokenList.h in Headers */,
 				7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */,
@@ -25707,7 +25688,6 @@
 				8367587F1C56E99B008A1087 /* JSHTMLDataElement.h in Headers */,
 				855D358A0AD707310019AAC7 /* DOMRGBColor.h in Headers */,
 				BCD0FC4F0DBD720B00B2F630 /* DOMRGBColorInternal.h in Headers */,
-				2D9A246E15B9BD0000D34527 /* DOMSecurityPolicy.h in Headers */,
 				BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */,
 				4ACBC0C412713CCA0094F9B2 /* DOMSettableTokenList.h in Headers */,
 				C544274B11A57E7A0063A749 /* DOMStringList.h in Headers */,
@@ -29334,7 +29314,6 @@
 				85CA975D0A962E5400690CCF /* DOMDocumentType.mm in Sources */,
 				8518DCEA0A9CC80D0091B7A6 /* DOMDOMImplementation.mm in Sources */,
 				52CCA9E915E3F64C0053C77F /* DOMDOMNamedFlowCollection.mm in Sources */,
-				2D9A247315B9C2D100D34527 /* DOMDOMSecurityPolicy.mm in Sources */,
 				7694565C1214DB630007CBAE /* DOMDOMTokenList.mm in Sources */,
 				7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */,
 				85ACA9C10A9B5FA500671E90 /* DOMElement.mm in Sources */,
@@ -29440,7 +29419,6 @@
 				8538F05C0AD722F1006A81D1 /* DOMRange.mm in Sources */,
 				858C38A80AA8F20400B187A4 /* DOMRect.mm in Sources */,
 				BCAEFCAE1016CE4A0040D34E /* DOMRGBColor.mm in Sources */,
-				2D9A246F15B9BD2F00D34527 /* DOMSecurityPolicy.cpp in Sources */,
 				BC5A86840C33676000EEA649 /* DOMSelection.cpp in Sources */,
 				C55610F111A704EB00B82D27 /* DOMStringList.cpp in Sources */,
 				0FF5025C102BA9010066F39A /* DOMStyleMedia.mm in Sources */,

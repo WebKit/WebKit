@@ -1633,11 +1633,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'Screen').hasOwnProperty('get') is 
 PASS Object.getOwnPropertyDescriptor(global, 'Screen').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Screen').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Screen').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicy').value is SecurityPolicy
-PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicy').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicy').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicy').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicy').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicyViolationEvent').value is SecurityPolicyViolationEvent
 PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicyViolationEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicyViolationEvent').hasOwnProperty('set') is false

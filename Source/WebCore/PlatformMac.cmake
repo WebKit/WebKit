@@ -856,7 +856,6 @@ set(ObjC_Bindings_IDL_FILES
     html/ValidityState.idl
 
     page/AbstractView.idl
-    page/DOMSecurityPolicy.idl
 
     xml/XPathExpression.idl
     xml/XPathNSResolver.idl

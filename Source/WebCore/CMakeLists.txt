@@ -595,7 +595,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/AbstractView.idl
     page/BarProp.idl
     page/Crypto.idl
-    page/DOMSecurityPolicy.idl
     page/DOMSelection.idl
     page/DOMWindow.idl
     page/EventSource.idl
@@ -1986,7 +1985,6 @@ set(WebCore_SOURCES
     page/ContextMenuContext.cpp
     page/ContextMenuController.cpp
     page/Crypto.cpp
-    page/DOMSecurityPolicy.cpp
     page/DOMSelection.cpp
     page/DOMTimer.cpp
     page/DOMWindow.cpp

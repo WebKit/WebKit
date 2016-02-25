@@ -189,10 +189,6 @@
 #include <wtf/text/StringBuffer.h>
 #include <yarr/RegularExpression.h>
 
-#if ENABLE(CSP_NEXT)
-#include "DOMSecurityPolicy.h"
-#endif
-
 #if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionEvent.h"
 #include "DeviceOrientationEvent.h"
@@ -1684,15 +1680,6 @@ void Document::allowsMediaDocumentInlinePlaybackChanged()
 {
     for (auto* element : m_allowsMediaDocumentInlinePlaybackElements)
         element->allowsMediaDocumentInlinePlaybackChanged();
-}
-#endif
-
-#if ENABLE(CSP_NEXT)
-DOMSecurityPolicy& Document::securityPolicy()
-{
-    if (!m_domSecurityPolicy)
-        m_domSecurityPolicy = DOMSecurityPolicy::create(this);
-    return *m_domSecurityPolicy;
 }
 #endif
 

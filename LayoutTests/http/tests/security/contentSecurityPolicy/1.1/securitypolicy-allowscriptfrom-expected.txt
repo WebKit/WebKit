@@ -1,3 +1,0 @@
-PASS script is allowed when no policy exists.
-PASS script is not allowed when policy exists.
-

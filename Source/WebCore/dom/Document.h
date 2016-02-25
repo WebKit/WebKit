@@ -198,10 +198,6 @@ class ScriptedAnimationController;
 class TextAutosizer;
 #endif
 
-#if ENABLE(CSP_NEXT)
-class DOMSecurityPolicy;
-#endif
-
 class FontFaceSet;
 
 typedef int ExceptionCode;
@@ -461,10 +457,6 @@ public:
 
     void setTimerThrottlingEnabled(bool);
     bool isTimerThrottlingEnabled() const { return m_isTimerThrottlingEnabled; }
-
-#if ENABLE(CSP_NEXT)
-    DOMSecurityPolicy& securityPolicy();
-#endif
 
     RefPtr<Node> adoptNode(Node* source, ExceptionCode&);
 
@@ -1725,10 +1717,6 @@ private:
     Timer m_visualUpdatesSuppressionTimer;
 
     RefPtr<NamedFlowCollection> m_namedFlows;
-
-#if ENABLE(CSP_NEXT)
-    RefPtr<DOMSecurityPolicy> m_domSecurityPolicy;
-#endif
 
     void sharedObjectPoolClearTimerFired();
     Timer m_sharedObjectPoolClearTimer;

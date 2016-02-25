@@ -1,3 +1,0 @@
-PASS frame is allowed when no policy exists.
-PASS frame is not allowed when policy exists.
-

@@ -58,7 +58,7 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
 my %transferFullTypeHash = ("AudioTrack" => 1, "AudioTrackList" => 1, "BarProp" => 1, "BatteryManager" => 1,
     "CSSRuleList" => 1, "CSSStyleDeclaration" => 1, "CSSStyleSheet" => 1, "DocumentTimeline" => 1,
     "DOMApplicationCache" => 1, "DOMMimeType" => 1, "DOMMimeTypeArray" => 1, "DOMNamedFlowCollection" => 1,
-    "DOMPlugin" => 1, "DOMPluginArray" => 1, "DOMSecurityPolicy" => 1,
+    "DOMPlugin" => 1, "DOMPluginArray" => 1,
     "DOMSelection" => 1, "DOMSettableTokenList" => 1, "DOMStringList" => 1,
     "DOMWindow" => 1, "DOMWindowCSS" => 1, "EventTarget" => 1,
     "File" => 1, "FileList" => 1, "Gamepad" => 1, "GamepadList" => 1,

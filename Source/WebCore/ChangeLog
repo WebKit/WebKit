@@ -1,3 +1,32 @@
+2016-02-25  Daniel Bates  <dabates@apple.com>
+
+        CSP: Remove SecurityPolicy script interface
+        https://bugs.webkit.org/show_bug.cgi?id=154694
+        <rdar://problem/24846482>
+
+        Reviewed by Andy Estes.
+
+        Remove the Content Security Policy script interface, SecurityPolicy. This interface was only
+        enabled when building with ENABLE(CSP_NEXT) (disabled by default).
+
+        For completeness, the SecurityPolicy interface was removed from the Content Security Policy 1.1 spec.
+        in <https://github.com/w3c/webappsec/commit/18882953ce2d8afca25f685557fef0e0471b2c9a> (12/26/2013).
+
+        * CMakeLists.txt: Remove files to DOMSecurityPolicy.{cpp, idl}.
+        * DerivedSources.cpp: Remove file JSDOMSecurityPolicy.cpp.
+        * DerivedSources.make: Remove file DOMSecurityPolicy.idl.
+        * PlatformGTK.cmake: Ditto.
+        * PlatformMac.cmake: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Remove files DOMSecurityPolicy files.
+        * bindings/scripts/CodeGeneratorGObject.pm: Remove reference to DOMSecurityPolicy.
+        * dom/Document.cpp:
+        (WebCore::Document::securityPolicy): Deleted.
+        * dom/Document.h:
+        * dom/Document.idl: Remove attribute securityPolicy.
+        * page/DOMSecurityPolicy.cpp: Removed.
+        * page/DOMSecurityPolicy.h: Removed.
+        * page/DOMSecurityPolicy.idl: Removed.
+
 2016-02-25  Andreas Kling  <akling@apple.com>
 
         Don't clear the weak JSString cache on memory pressure.
