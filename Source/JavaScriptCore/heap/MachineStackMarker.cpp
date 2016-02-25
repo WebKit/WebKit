@@ -85,7 +85,7 @@ static void pthreadSignalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
         return;
     }
 
-    struct ucontext* userContext = static_cast<struct ucontext*>(ucontext);
+    ucontext_t* userContext = static_cast<ucontext_t*>(ucontext);
     thread->suspendedMachineContext = userContext->uc_mcontext;
 
     // Allow suspend caller to see that this thread is suspended.
@@ -562,6 +562,22 @@ void* MachineThreads::Thread::Registers::stackPointer() const
 #error Unknown Architecture
 #endif
 
+#elif OS(FREEBSD) && ENABLE(JIT)
+
+#if CPU(X86)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_esp);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_rsp);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.__gregs[_REG_SP]);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_gpregs.gp_sp);
+#elif CPU(MIPS)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_regs[29]);
+#else
+#error Unknown Architecture
+#endif
+
 #else
     void* stackBase = 0;
     size_t stackSize = 0;
@@ -646,6 +662,22 @@ void* MachineThreads::Thread::Registers::framePointer() const
 #error Unknown Architecture
 #endif
 
+#elif OS(FREEBSD)
+
+#if CPU(X86)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_ebp);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_rbp);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.__gregs[_REG_FP]);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_gpregs.gp_x[29]);
+#elif CPU(MIPS)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_regs[30]);
+#else
+#error Unknown Architecture
+#endif
+
 #else
 #error Need a way to get the frame pointer for another thread on this platform
 #endif
@@ -708,6 +740,22 @@ void* MachineThreads::Thread::Registers::instructionPointer() const
     return reinterpret_cast<void*>((uintptr_t) regs.machineContext.pc);
 #elif CPU(MIPS)
     return reinterpret_cast<void*>((uintptr_t) regs.machineContext.pc);
+#else
+#error Unknown Architecture
+#endif
+
+#elif OS(FREEBSD)
+
+#if CPU(X86)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_eip);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_rip);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.__gregs[_REG_PC]);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_gpregs.gp_elr);
+#elif CPU(MIPS)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_pc);
 #else
 #error Unknown Architecture
 #endif
@@ -783,6 +831,22 @@ void* MachineThreads::Thread::Registers::llintPC() const
     return reinterpret_cast<void*>((uintptr_t) regs.machineContext.regs[4]);
 #elif CPU(MIPS)
     return reinterpret_cast<void*>((uintptr_t) regs.machineContext.gregs[12]);
+#else
+#error Unknown Architecture
+#endif
+
+#elif OS(FREEBSD)
+
+#if CPU(X86)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_esi);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_r8);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.__gregs[_REG_R8]);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_gpregs.gp_x[4]);
+#elif CPU(MIPS)
+    return reinterpret_cast<void*>((uintptr_t) regs.machineContext.mc_regs[12]);
 #else
 #error Unknown Architecture
 #endif

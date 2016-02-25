@@ -34,6 +34,13 @@
 #if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
 #include <semaphore.h>
 #include <signal.h>
+// Using signal.h didn't make mcontext_t and ucontext_t available on FreeBSD.
+// This bug has been fixed in FreeBSD 11.0-CURRENT, so this workaround can be
+// removed after FreeBSD 10.x goes EOL.
+// https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=207079
+#if OS(FREEBSD)
+#include <ucontext.h>
+#endif
 #endif
 
 #if OS(DARWIN)
