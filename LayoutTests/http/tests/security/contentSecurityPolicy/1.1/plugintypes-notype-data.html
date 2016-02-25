@@ -11,7 +11,7 @@
     runAfterPluginLoad(null, NotifyDone);
 </script>
 <script src="/plugins/resources/mock-plugin-logger.js"></script>
-<meta http-equiv="X-WebKit-CSP" content="plugin-types application/x-invalid-type">
+<meta http-equiv="Content-Security-Policy" content="plugin-types application/x-invalid-type">
 </head>
 <body>
     Given a `plugin-types` directive, plugins have to declare a type explicitly.
