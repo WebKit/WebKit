@@ -1,3 +1,93 @@
+2016-02-25  Brady Eidson  <beidson@apple.com>
+
+        Remove LegacyIDB.
+        https://bugs.webkit.org/show_bug.cgi?id=150854
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior).
+
+        * CMakeLists.txt:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::indexedDB):
+        * Modules/indexeddb/IDBDatabaseMetadata.cpp: Removed.
+        * Modules/indexeddb/IDBDatabaseMetadata.h: Removed.
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBIndexMetadata.h: Removed.
+        * Modules/indexeddb/IDBObjectStoreMetadata.h: Removed.
+        * Modules/indexeddb/IDBOperation.h: Removed.
+        * Modules/indexeddb/IDBServerConnection.h: Removed.
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp:
+        (WebCore::WorkerGlobalScopeIndexedDatabase::indexedDB):
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h:
+        * Modules/indexeddb/legacy/IDBCallbacks.h: Removed.
+        * Modules/indexeddb/legacy/IDBCursorBackend.cpp: Removed.
+        * Modules/indexeddb/legacy/IDBCursorBackend.h: Removed.
+        * Modules/indexeddb/legacy/IDBCursorBackendOperations.cpp: Removed.
+        * Modules/indexeddb/legacy/IDBCursorBackendOperations.h: Removed.
+        * Modules/indexeddb/legacy/IDBDatabaseBackend.cpp: Removed.
+        * Modules/indexeddb/legacy/IDBDatabaseBackend.h: Removed.
+        * Modules/indexeddb/legacy/IDBDatabaseCallbacks.h: Removed.
+        * Modules/indexeddb/legacy/IDBDatabaseCallbacksImpl.cpp: Removed.
+        * Modules/indexeddb/legacy/IDBDatabaseCallbacksImpl.h: Removed.
+        * Modules/indexeddb/legacy/IDBFactoryBackendInterface.h: Removed.
+        * Modules/indexeddb/legacy/IDBPendingDeleteCall.h: Removed.
+        * Modules/indexeddb/legacy/IDBPendingOpenCall.h: Removed.
+        * Modules/indexeddb/legacy/IDBPendingTransactionMonitor.cpp: Removed.
+        * Modules/indexeddb/legacy/IDBPendingTransactionMonitor.h: Removed.
+        * Modules/indexeddb/legacy/IDBTransactionBackend.cpp: Removed.
+        * Modules/indexeddb/legacy/IDBTransactionBackend.h: Removed.
+        * Modules/indexeddb/legacy/IDBTransactionBackendOperations.cpp: Removed.
+        * Modules/indexeddb/legacy/IDBTransactionBackendOperations.h: Removed.
+        * Modules/indexeddb/legacy/IDBTransactionCoordinator.cpp: Removed.
+        * Modules/indexeddb/legacy/IDBTransactionCoordinator.h: Removed.
+        * Modules/indexeddb/legacy/LegacyAny.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyAny.h: Removed.
+        * Modules/indexeddb/legacy/LegacyCursor.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyCursor.h: Removed.
+        * Modules/indexeddb/legacy/LegacyCursorWithValue.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyCursorWithValue.h: Removed.
+        * Modules/indexeddb/legacy/LegacyDatabase.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyDatabase.h: Removed.
+        * Modules/indexeddb/legacy/LegacyFactory.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyFactory.h: Removed.
+        * Modules/indexeddb/legacy/LegacyIndex.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyIndex.h: Removed.
+        * Modules/indexeddb/legacy/LegacyObjectStore.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyObjectStore.h: Removed.
+        * Modules/indexeddb/legacy/LegacyOpenDBRequest.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyOpenDBRequest.h: Removed.
+        * Modules/indexeddb/legacy/LegacyRequest.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyRequest.h: Removed.
+        * Modules/indexeddb/legacy/LegacyTransaction.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyTransaction.h: Removed.
+        * Modules/indexeddb/legacy/LegacyVersionChangeEvent.cpp: Removed.
+        * Modules/indexeddb/legacy/LegacyVersionChangeEvent.h: Removed.
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::SQLiteIDBCursor):
+        (WebCore::IDBServer::SQLiteIDBCursor::establishStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::generateIndexKeysForValue): Deleted.
+        * bindings/js/IDBBindingUtilities.h:
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::JSMainThreadExecState::didLeaveScriptContext): Deleted.
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * loader/EmptyClients.cpp:
+        * page/DatabaseProvider.cpp:
+        (WebCore::DatabaseProvider::idbFactoryBackend): Deleted.
+        * page/DatabaseProvider.h:
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::IDBDatabaseMetadata>::copy): Deleted.
+        (WebCore::IDBIndexMetadata>::copy): Deleted.
+        (WebCore::IDBObjectStoreMetadata>::copy): Deleted.
+        * platform/CrossThreadCopier.h:
+
 2016-02-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r196268): Many assertion failures and crashes on SVG path animation tests when JS garbage collection happens quickly

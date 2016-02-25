@@ -36,9 +36,6 @@ struct SecurityOriginData;
 }
 
 namespace WebKit {
-class IDBIdentifier;
-class LegacyUniqueIDBDatabaseIdentifier;
-
 enum class LegacyUniqueIDBDatabaseShutdownType;
 }
 
@@ -47,15 +44,6 @@ class ASCIILiteral;
 }
 
 namespace WebCore {
-
-template<> struct CrossThreadCopierBase<false, false, WebKit::LegacyUniqueIDBDatabaseIdentifier> {
-    static WebKit::LegacyUniqueIDBDatabaseIdentifier copy(const WebKit::LegacyUniqueIDBDatabaseIdentifier&);
-};
-
-template<> struct CrossThreadCopierBase<false, false, WebKit::IDBIdentifier> {
-    static WebKit::IDBIdentifier copy(const WebKit::IDBIdentifier&);
-};
-
 
 template<> struct CrossThreadCopierBase<false, false, WebKit::LegacyUniqueIDBDatabaseShutdownType> {
     static WebKit::LegacyUniqueIDBDatabaseShutdownType copy(const WebKit::LegacyUniqueIDBDatabaseShutdownType& type)

@@ -31,7 +31,6 @@
 
 #include "DOMRequestState.h"
 #include "IDBIndexInfo.h"
-#include "IDBIndexMetadata.h"
 #include "IDBKey.h"
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
@@ -527,31 +526,6 @@ Deprecated::ScriptValue idbKeyDataToScriptValue(ScriptExecutionContext* context,
     RefPtr<IDBKey> key = keyData.maybeCreateIDBKey();
     DOMRequestState requestState(context);
     return idbKeyToScriptValue(&requestState, key.get());
-}
-
-void generateIndexKeysForValue(ExecState* exec, const IDBIndexMetadata& indexMetadata, const Deprecated::ScriptValue& objectValue, Vector<IDBKeyData>& indexKeys)
-{
-    RefPtr<IDBKey> indexKey = createIDBKeyFromScriptValueAndKeyPath(exec, objectValue, indexMetadata.keyPath);
-
-    if (!indexKey)
-        return;
-
-    if (!indexMetadata.multiEntry || indexKey->type() != KeyType::Array) {
-        if (!indexKey->isValid())
-            return;
-
-        indexKeys.append(IDBKeyData(indexKey.get()));
-    } else {
-        ASSERT(indexMetadata.multiEntry);
-        ASSERT(indexKey->type() == KeyType::Array);
-        indexKey = IDBKey::createMultiEntryArray(indexKey->array());
-
-        if (!indexKey->isValid())
-            return;
-
-        for (auto& i : indexKey->array())
-            indexKeys.append(IDBKeyData(i.get()));
-    }
 }
 
 static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, const IDBIndexInfo& info)

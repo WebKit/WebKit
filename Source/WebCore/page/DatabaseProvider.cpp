@@ -26,24 +26,10 @@
 #include "config.h"
 #include "DatabaseProvider.h"
 
-#include "IDBFactoryBackendInterface.h"
-
 namespace WebCore {
 
 DatabaseProvider::~DatabaseProvider()
 {
 }
-
-#if ENABLE(INDEXED_DATABASE)
-IDBFactoryBackendInterface* DatabaseProvider::idbFactoryBackend()
-{
-    if (!m_didCreateIDBFactoryBackendInterface) {
-        m_backendInterface = createIDBFactoryBackend();
-        m_didCreateIDBFactoryBackendInterface = true;
-    }
-
-    return m_backendInterface.get();
-}
-#endif
 
 }

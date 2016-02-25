@@ -27,7 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBDatabaseBackend.h"
+#include "IDBIndexInfo.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBResourceIdentifier.h"
@@ -93,7 +93,7 @@ private:
     SQLiteIDBTransaction* m_transaction;
     IDBResourceIdentifier m_cursorIdentifier;
     int64_t m_objectStoreID;
-    int64_t m_indexID { IDBIndexMetadata::InvalidId };
+    int64_t m_indexID { IDBIndexInfo::InvalidId };
     IndexedDB::CursorDirection m_cursorDirection { IndexedDB::CursorDirection::Next };
     IDBKeyRangeData m_keyRange;
 

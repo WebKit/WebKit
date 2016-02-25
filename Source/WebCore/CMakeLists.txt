@@ -10,7 +10,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
-    "${WEBCORE_DIR}/Modules/indexeddb/legacy"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
     "${WEBCORE_DIR}/Modules/indexeddb/shared"
     "${WEBCORE_DIR}/Modules/indieui"
@@ -831,7 +830,6 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBDatabase.cpp
     Modules/indexeddb/IDBDatabaseException.cpp
     Modules/indexeddb/IDBDatabaseIdentifier.cpp
-    Modules/indexeddb/IDBDatabaseMetadata.cpp
     Modules/indexeddb/IDBEventDispatcher.cpp
     Modules/indexeddb/IDBFactory.cpp
     Modules/indexeddb/IDBGetResult.cpp
@@ -862,26 +860,6 @@ set(WebCore_SOURCES
     Modules/indexeddb/client/IDBTransactionImpl.cpp
     Modules/indexeddb/client/IDBVersionChangeEventImpl.cpp
     Modules/indexeddb/client/TransactionOperation.cpp
-
-    Modules/indexeddb/legacy/IDBCursorBackend.cpp
-    Modules/indexeddb/legacy/IDBCursorBackendOperations.cpp
-    Modules/indexeddb/legacy/IDBDatabaseBackend.cpp
-    Modules/indexeddb/legacy/IDBDatabaseCallbacksImpl.cpp
-    Modules/indexeddb/legacy/IDBPendingTransactionMonitor.cpp
-    Modules/indexeddb/legacy/IDBTransactionBackend.cpp
-    Modules/indexeddb/legacy/IDBTransactionBackendOperations.cpp
-    Modules/indexeddb/legacy/IDBTransactionCoordinator.cpp
-    Modules/indexeddb/legacy/LegacyAny.cpp
-    Modules/indexeddb/legacy/LegacyCursor.cpp
-    Modules/indexeddb/legacy/LegacyCursorWithValue.cpp
-    Modules/indexeddb/legacy/LegacyDatabase.cpp
-    Modules/indexeddb/legacy/LegacyFactory.cpp
-    Modules/indexeddb/legacy/LegacyIndex.cpp
-    Modules/indexeddb/legacy/LegacyObjectStore.cpp
-    Modules/indexeddb/legacy/LegacyOpenDBRequest.cpp
-    Modules/indexeddb/legacy/LegacyRequest.cpp
-    Modules/indexeddb/legacy/LegacyTransaction.cpp
-    Modules/indexeddb/legacy/LegacyVersionChangeEvent.cpp
 
     Modules/indexeddb/server/IDBConnectionToClient.cpp
     Modules/indexeddb/server/IDBSerialization.cpp

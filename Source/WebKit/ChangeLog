@@ -1,3 +1,14 @@
+2016-02-25  Brady Eidson  <beidson@apple.com>
+
+        Remove LegacyIDB.
+        https://bugs.webkit.org/show_bug.cgi?id=150854
+
+        Reviewed by Alex Christensen.
+
+        * Storage/WebDatabaseProvider.cpp:
+        (WebDatabaseProvider::createIDBFactoryBackend): Deleted.
+        * Storage/WebDatabaseProvider.h:
+
 2016-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][CMake] Don't use incremental linking
