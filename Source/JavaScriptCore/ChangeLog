@@ -1,3 +1,22 @@
+2016-02-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove a useless "Move" in the lowering of Select
+        https://bugs.webkit.org/show_bug.cgi?id=154670
+
+        Reviewed by Geoffrey Garen.
+
+        I left the Move instruction when creating the aliasing form
+        of Select.
+
+        On ARM64, that meant a useless move for any case that can't
+        be coalesced.
+
+        On x86, that meant an extra constraint on child2, making it
+        stupidly hard to alias child1.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createSelect): Deleted.
+
 2016-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expose Proxy target and handler internal properties to Inspector
