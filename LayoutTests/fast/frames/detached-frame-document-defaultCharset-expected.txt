@@ -1,0 +1,13 @@
+Tests the value returned by document.defaultCharset before and after its frame is detached.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS childDocument.defaultCharset is "ISO-8859-1"
+Detaching frame.
+PASS childDocument.defaultCharset is "UTF-8"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -188,12 +188,12 @@
     // IE extensions
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    [TreatReturnedNullStringAs=Undefined, TreatNullAs=NullString] attribute DOMString charset;
+    attribute DOMString charset;
 #else
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString charset;
 #endif
-    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString defaultCharset;
-    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString readyState;
+    readonly attribute DOMString defaultCharset;
+    readonly attribute DOMString readyState;
 
     Element            elementFromPoint([Default=Undefined] optional long x, 
                                         [Default=Undefined] optional long y);

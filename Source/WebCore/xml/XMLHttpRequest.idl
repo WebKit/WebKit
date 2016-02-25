@@ -69,7 +69,7 @@ enum XMLHttpRequestResponseType {
     readonly attribute XMLHttpRequestUpload upload;
 
     // response
-    [TreatReturnedNullStringAs=Undefined] DOMString getAllResponseHeaders();
+    DOMString getAllResponseHeaders();
     DOMString? getResponseHeader(DOMString header);
     [GetterRaisesException, CustomGetter] readonly attribute DOMString? responseText;
     [GetterRaisesException] readonly attribute Document responseXML;

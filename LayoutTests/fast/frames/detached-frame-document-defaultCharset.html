@@ -1,0 +1,18 @@
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests the value returned by document.defaultCharset before and after its frame is detached.");
+jsTestIsAsync = true;
+
+onload = function()
+{
+    childDocument = frames[0].document;
+    shouldBeEqualToString("childDocument.defaultCharset", "ISO-8859-1");
+    debug("Detaching frame.");
+    document.body.removeChild(document.getElementsByTagName("iframe")[0]);
+    shouldBeEqualToString("childDocument.defaultCharset", "UTF-8");
+    debug("");
+    finishJSTest();
+}
+</script>
+<iframe src="about:blank"></iframe>
+<script src="../../resources/js-test-post.js"></script>

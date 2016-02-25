@@ -1,3 +1,16 @@
+2016-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Drop [TreatReturnedNullStringAs=Undefined] WebKit-specific IDL attribute
+        https://bugs.webkit.org/show_bug.cgi?id=154662
+
+        Reviewed by Darin Adler.
+
+        Add layout test to cover the return value of document.defaultCharset before
+        and after its frame is detached.
+
+        * fast/frames/detached-frame-document-defaultCharset-expected.txt: Added.
+        * fast/frames/detached-frame-document-defaultCharset.html: Added.
+
 2016-02-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Removing failure expectation for 26 editing tests that now pass on ios-simulator

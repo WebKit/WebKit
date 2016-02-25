@@ -1,3 +1,49 @@
+2016-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Drop [TreatReturnedNullStringAs=Undefined] WebKit-specific IDL attribute
+        https://bugs.webkit.org/show_bug.cgi?id=154662
+
+        Reviewed by Darin Adler.
+
+        Drop [TreatReturnedNullStringAs=Undefined] WebKit-specific IDL attribute.
+        This has no standard equivalent and all uses in WebKit are either useless
+        or wrong.
+
+        Test: fast/frames/detached-frame-document-defaultCharset.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Deleted.
+        * bindings/scripts/IDLAttributes.txt:
+        Drop support for [TreatReturnedNullStringAs=X] entirely.
+
+        * dom/Document.cpp:
+        (WebCore::Document::defaultCharset):
+        Fall back to return "UTF-8" instead of the null string, similarly to
+        what is done in for Document.characterSet. Note that this attribute
+        is non-standard and is an IE extension. Firefox never supported it
+        and Chrome dropped it last year.
+
+        * dom/Document.idl:
+        - Drop extended attribute for Document.defaultCharset as the
+          implementation has been updated to never return a null String.
+        - Drop extended attribute for Document.readyState. It was useless
+          because the implementation could never return a null String.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        Update implementation to return emptyString() instead of "" in case
+        of error.
+
+        * xml/XMLHttpRequest.idl:
+        Drop extended attribute from XMLHttpRequest.getAllResponseHeaders().
+        It was useless because the implementation could never return a
+        null String.
+
+        * xml/XSLTProcessor.idl:
+        Drop extended attribute from XSLTProcessor.getParameter(). The
+        operation is already marked as [Custom] so the extended attribute
+        had no effect.
+
 2016-02-25  Gavin Barraclough  <barraclough@apple.com>
 
         Should template RefCounter instead of RefCounter::Token
