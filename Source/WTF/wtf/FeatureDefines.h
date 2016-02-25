@@ -792,7 +792,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_WEB_ANIMATIONS)
-#define ENABLE_WEB_ANIMATIONS 0
+#define ENABLE_WEB_ANIMATIONS 1
 #endif
 
 #if !defined(ENABLE_WEB_ARCHIVE)

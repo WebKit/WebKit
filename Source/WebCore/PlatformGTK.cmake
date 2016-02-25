@@ -581,6 +581,14 @@ list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
     storage/Storage.idl
 )
 
+if (ENABLE_WEB_ANIMATIONS)
+    list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
+        animation/AnimationTimeline.idl
+        animation/DocumentAnimation.idl
+        animation/DocumentTimeline.idl
+    )
+endif ()
+
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
         html/HTMLAudioElement.idl

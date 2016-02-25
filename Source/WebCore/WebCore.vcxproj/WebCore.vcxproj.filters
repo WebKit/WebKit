@@ -51,6 +51,9 @@
     <Filter Include="accessibility\win">
       <UniqueIdentifier>{ba6a9615-8a72-46b3-8dad-fb37827a6c2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="animation">
+      <UniqueIdentifier>{5b830fd2-1abd-47b4-a60b-c2f60d6ac69a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="page">
       <UniqueIdentifier>{d529e33b-38d5-469a-a6d6-20de67cd030e}</UniqueIdentifier>
     </Filter>
@@ -670,6 +673,15 @@
     </ClCompile>
     <ClCompile Include="..\accessibility\win\AXObjectCacheWin.cpp">
       <Filter>accessibility\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\animation\AnimationTimeline.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\animation\DocumentAnimation.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\animation\DocumentTimeline.cpp">
+      <Filter>animation</Filter>
     </ClCompile>
     <ClCompile Include="..\page\animation\AnimationBase.cpp">
       <Filter>page</Filter>
@@ -4241,6 +4253,9 @@
     <ClCompile Include="..\bindings\js\IDBBindingUtilities.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSAnimationTimelineCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSAttrCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -7674,6 +7689,15 @@
     </ClInclude>
     <ClInclude Include="..\accessibility\win\AccessibilityObjectWrapperWin.h">
       <Filter>accessibility\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\animation\AnimationTimeline.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\animation\DocumentAnimation.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\animation\DocumentTimeline.h">
+      <Filter>animation</Filter>
     </ClInclude>
     <ClInclude Include="..\page\AdjustViewSizeOrNot.h">
       <Filter>page</Filter>
@@ -12490,6 +12514,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAnimationEvent.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAnimationTimeline.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAttr.h">

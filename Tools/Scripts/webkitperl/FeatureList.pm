@@ -446,7 +446,7 @@ my @features = (
       define => "ENABLE_WEBASSEMBLY", default => 0, value => \$webAssemblySupport },
 
     { option => "web-animations", desc => "Toggle Web Animations support",
-      define => "ENABLE_WEB_ANIMATIONS", default => 0, value => \$webAnimationsSupport },
+      define => "ENABLE_WEB_ANIMATIONS", default => 1, value => \$webAnimationsSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => (isEfl() || isGtk()), value => \$webAudioSupport },

@@ -47,6 +47,7 @@ VPATH = \
     $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
+    $(WebCore)/animation \
     $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
     $(WebCore)/bindings/objc \
@@ -221,6 +222,9 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
+    $(WebCore)/animation/AnimationTimeline.idl \
+    $(WebCore)/animation/DocumentAnimation.idl \
+    $(WebCore)/animation/DocumentTimeline.idl \
     $(WebCore)/crypto/CryptoKey.idl \
     $(WebCore)/crypto/CryptoKeyPair.idl \
     $(WebCore)/crypto/SubtleCrypto.idl \
@@ -1187,6 +1191,7 @@ preprocess_idls_script = $(PERL) $(addprefix -I $(WebCore)/, $(sort $(dir $(1)))
 
 IDL_INCLUDES = \
     $(WebCore)/Modules \
+    $(WebCore)/animation \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/fileapi \

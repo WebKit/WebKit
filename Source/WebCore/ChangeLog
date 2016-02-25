@@ -1,3 +1,57 @@
+2016-02-24  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [web-animations] Add AnimationTimeline, DocumentTimeline and add extensions to Document interface
+        https://bugs.webkit.org/show_bug.cgi?id=151688
+
+        Reviewed by Dean Jackson.
+
+        - Adds DocumentTimeline interface and class implementation
+        - Implements the DocumentAnimation extension to the Document Interface that contains a default DocumentTimeline
+        - Add AnimationTimeline interface stub (i.e. without getAnimations and currentTime)
+        - Adds AnimationTimeline class implementation for AnimationTimeline interface stub
+        - Adds Javascript bindings for the above classes and interfaces
+        - Enables the WEB_ANIMATIONS compiler switch
+
+        No tests yet.  Tests will be added as class functionality is added incrementally.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/WebCoreIncludeCommon.props:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationTimeline.cpp: Added.
+        (WebCore::AnimationTimeline::AnimationTimeline):
+        (WebCore::AnimationTimeline::~AnimationTimeline):
+        (WebCore::AnimationTimeline::destroy):
+        * animation/AnimationTimeline.h: Added.
+        (WebCore::AnimationTimeline::deref):
+        (WebCore::AnimationTimeline::isDocumentTimeline):
+        (WebCore::AnimationTimeline::classType):
+        * animation/AnimationTimeline.idl: Added.
+        * animation/DocumentAnimation.cpp: Added.
+        (WebCore::DocumentAnimation::DocumentAnimation):
+        (WebCore::DocumentAnimation::~DocumentAnimation):
+        (WebCore::DocumentAnimation::timeline):
+        (WebCore::DocumentAnimation::supplementName):
+        (WebCore::DocumentAnimation::from):
+        * animation/DocumentAnimation.h: Added.
+        * animation/DocumentAnimation.idl: Added.
+        * animation/DocumentTimeline.cpp: Added.
+        (WebCore::DocumentTimeline::create):
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        (WebCore::DocumentTimeline::~DocumentTimeline):
+        * animation/DocumentTimeline.h: Added.
+        * animation/DocumentTimeline.idl: Added.
+        * bindings/js/JSAnimationTimelineCustom.cpp: Added.
+        (WebCore::toJS):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * dom/Document.h:
+
 2016-02-24  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Some w3c objectstore tests crash under GuardMalloc.

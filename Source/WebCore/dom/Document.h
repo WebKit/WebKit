@@ -46,6 +46,7 @@
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
 #include "StyleChange.h"
+#include "Supplementable.h"
 #include "TextResourceDecoder.h"
 #include "Timer.h"
 #include "TreeScope.h"
@@ -290,7 +291,12 @@ enum class HttpEquivPolicy {
     DisabledByContentDispositionAttachmentSandbox
 };
 
-class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext, public FontSelectorClient {
+class Document
+    : public ContainerNode
+    , public TreeScope
+    , public ScriptExecutionContext
+    , public FontSelectorClient
+    , public Supplementable<Document> {
 public:
     static Ref<Document> create(Frame* frame, const URL& url)
     {

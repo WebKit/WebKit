@@ -30,6 +30,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/accessibility"
+    "${WEBCORE_DIR}/animation"
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bindings/generic"
     "${WEBCORE_DIR}/bindings/js"
@@ -116,6 +117,7 @@ set(WebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 set(WebCore_IDL_INCLUDES
+    animation
     css
     dom
     fileapi
@@ -1102,6 +1104,7 @@ set(WebCore_SOURCES
     bindings/js/Dictionary.cpp
     bindings/js/GCController.cpp
     bindings/js/IDBBindingUtilities.cpp
+    bindings/js/JSAnimationTimelineCustom.cpp
     bindings/js/JSAttrCustom.cpp
     bindings/js/JSAudioBufferSourceNodeCustom.cpp
     bindings/js/JSAudioContextCustom.cpp
@@ -3017,6 +3020,20 @@ endif ()
 list(APPEND WebCore_CSS_VALUE_KEYWORDS
     ${WEBCORE_DIR}/css/SVGCSSValueKeywords.in
 )
+
+if (ENABLE_WEB_ANIMATIONS)
+    list(APPEND WebCore_IDL_FILES
+        "animation/AnimationTimeline.idl"
+        "animation/DocumentAnimation.idl"
+        "animation/DocumentTimeline.idl"
+    )
+
+    list(APPEND WebCore_SOURCES
+        "animation/AnimationTimeline.cpp"
+        "animation/DocumentAnimation.cpp"
+        "animation/DocumentTimeline.cpp"
+    )
+endif ()
 
 if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES

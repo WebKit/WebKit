@@ -47,7 +47,7 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
                     "Event" => 1, "CSSRule" => 1, "CSSValue" => 1, "StyleSheet" => 1, "MediaList" => 1,
                     "Counter" => 1, "Rect" => 1, "RGBColor" => 1, "XPathExpression" => 1, "XPathResult" => 1,
                     "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "Blob" => 1, "DOMTokenList" => 1,
-                    "HTMLCollection" => 1, "TextTrackCue" => 1);
+                    "HTMLCollection" => 1, "TextTrackCue" => 1, "AnimationTimeline" => 1);
 
 # Only objects derived from Node are released by the DOM object cache and can be
 # transfer none. Ideally we could use GetBaseClass with the parent type to check
@@ -56,7 +56,7 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
 # API that are not derived from Node, we will list them here to decide the
 # transfer type.
 my %transferFullTypeHash = ("AudioTrack" => 1, "AudioTrackList" => 1, "BarProp" => 1, "BatteryManager" => 1,
-    "CSSRuleList" => 1, "CSSStyleDeclaration" => 1, "CSSStyleSheet" => 1,
+    "CSSRuleList" => 1, "CSSStyleDeclaration" => 1, "CSSStyleSheet" => 1, "DocumentTimeline" => 1,
     "DOMApplicationCache" => 1, "DOMMimeType" => 1, "DOMMimeTypeArray" => 1, "DOMNamedFlowCollection" => 1,
     "DOMPlugin" => 1, "DOMPluginArray" => 1, "DOMSecurityPolicy" => 1,
     "DOMSelection" => 1, "DOMSettableTokenList" => 1, "DOMStringList" => 1,

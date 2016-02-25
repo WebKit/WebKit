@@ -32,6 +32,7 @@ echo Copying Forwarding Headers...
 @xcopy /y /d "%ProjectDir%..\Modules\websockets\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\accessibility\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\accessibility\win\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
+@xcopy /y /d "%ProjectDir%..\animation\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\inspector\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\loader\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul
 @xcopy /y /d "%ProjectDir%..\loader\appcache\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore" >nul 2>nul

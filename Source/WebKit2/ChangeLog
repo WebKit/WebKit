@@ -1,3 +1,14 @@
+2016-02-24  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [web-animations] Add AnimationTimeline, DocumentTimeline and add extensions to Document interface
+        https://bugs.webkit.org/show_bug.cgi?id=151688
+
+        Reviewed by Dean Jackson.
+
+        Enables the WEB_ANIMATIONS compiler switch.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-02-24  Gavin Barraclough  <barraclough@apple.com>
 
         Add WKPreference for HiddenPageDOMTimerThrottlingAutoIncreases

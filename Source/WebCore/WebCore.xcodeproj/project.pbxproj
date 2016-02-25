@@ -580,6 +580,19 @@
 		0FFD4D6018651FA300512F6E /* AsyncScrollingCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFD4D5E18651FA300512F6E /* AsyncScrollingCoordinator.cpp */; };
 		0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */; };
+		1221E0471BFC3D2C006A1A00 /* DocumentAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0411BFC3D2C006A1A00 /* DocumentAnimation.cpp */; };
+		1221E0481BFC3D2C006A1A00 /* DocumentAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E0421BFC3D2C006A1A00 /* DocumentAnimation.h */; };
+		1221E04A1BFC3D2C006A1A00 /* DocumentTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0441BFC3D2C006A1A00 /* DocumentTimeline.cpp */; };
+		1221E04B1BFC3D2C006A1A00 /* DocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E0451BFC3D2C006A1A00 /* DocumentTimeline.h */; };
+		1221E05D1C02B444006A1A00 /* JSDocumentAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0591C02B444006A1A00 /* JSDocumentAnimation.cpp */; };
+		1221E05E1C02B444006A1A00 /* JSDocumentAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E05A1C02B444006A1A00 /* JSDocumentAnimation.h */; };
+		1221E05F1C02B444006A1A00 /* JSDocumentTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E05B1C02B444006A1A00 /* JSDocumentTimeline.cpp */; };
+		1221E0601C02B444006A1A00 /* JSDocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E05C1C02B444006A1A00 /* JSDocumentTimeline.h */; };
+		1221E0631C02D623006A1A00 /* AnimationTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0611C02D623006A1A00 /* AnimationTimeline.cpp */; };
+		1221E0641C02D623006A1A00 /* AnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E0621C02D623006A1A00 /* AnimationTimeline.h */; };
+		1221E06C1C03D224006A1A00 /* JSAnimationTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E06A1C03D224006A1A00 /* JSAnimationTimeline.cpp */; };
+		1221E06D1C03D224006A1A00 /* JSAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E06B1C03D224006A1A00 /* JSAnimationTimeline.h */; };
+		1221E0731C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */; };
 		1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7984,6 +7997,22 @@
 		0FFD4D5E18651FA300512F6E /* AsyncScrollingCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncScrollingCoordinator.cpp; sourceTree = "<group>"; };
 		0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncScrollingCoordinator.h; sourceTree = "<group>"; };
 		10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicURLManager.h; sourceTree = "<group>"; };
+		1221E0411BFC3D2C006A1A00 /* DocumentAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentAnimation.cpp; sourceTree = "<group>"; };
+		1221E0421BFC3D2C006A1A00 /* DocumentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentAnimation.h; sourceTree = "<group>"; };
+		1221E0431BFC3D2C006A1A00 /* DocumentAnimation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentAnimation.idl; sourceTree = "<group>"; };
+		1221E0441BFC3D2C006A1A00 /* DocumentTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentTimeline.cpp; sourceTree = "<group>"; };
+		1221E0451BFC3D2C006A1A00 /* DocumentTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentTimeline.h; sourceTree = "<group>"; };
+		1221E0461BFC3D2C006A1A00 /* DocumentTimeline.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentTimeline.idl; sourceTree = "<group>"; };
+		1221E0591C02B444006A1A00 /* JSDocumentAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentAnimation.cpp; sourceTree = "<group>"; };
+		1221E05A1C02B444006A1A00 /* JSDocumentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDocumentAnimation.h; sourceTree = "<group>"; };
+		1221E05B1C02B444006A1A00 /* JSDocumentTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentTimeline.cpp; sourceTree = "<group>"; };
+		1221E05C1C02B444006A1A00 /* JSDocumentTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDocumentTimeline.h; sourceTree = "<group>"; };
+		1221E0611C02D623006A1A00 /* AnimationTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationTimeline.cpp; sourceTree = "<group>"; };
+		1221E0621C02D623006A1A00 /* AnimationTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationTimeline.h; sourceTree = "<group>"; };
+		1221E0651C02D636006A1A00 /* AnimationTimeline.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AnimationTimeline.idl; sourceTree = "<group>"; };
+		1221E06A1C03D224006A1A00 /* JSAnimationTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationTimeline.cpp; sourceTree = "<group>"; };
+		1221E06B1C03D224006A1A00 /* JSAnimationTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnimationTimeline.h; sourceTree = "<group>"; };
+		1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationTimelineCustom.cpp; sourceTree = "<group>"; };
 		1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappableInlines.h; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
@@ -15696,6 +15725,7 @@
 				93F19B1908245E59001E9ABC /* Info.plist */,
 				971145FE14EF006E00674FD9 /* Modules */,
 				29A812040FBB9B4100510293 /* accessibility */,
+				1221E0401BFC3CF2006A1A00 /* animation */,
 				BC1A3790097C6F970019F3D8 /* bindings */,
 				1A569CC40D7E2B60007C3983 /* bridge */,
 				26F0C8901A2D79CB002794F8 /* contentextensions */,
@@ -15920,9 +15950,39 @@
 			name = displaylists;
 			sourceTree = "<group>";
 		};
+		1221E0401BFC3CF2006A1A00 /* animation */ = {
+			isa = PBXGroup;
+			children = (
+				1221E0651C02D636006A1A00 /* AnimationTimeline.idl */,
+				1221E0611C02D623006A1A00 /* AnimationTimeline.cpp */,
+				1221E0621C02D623006A1A00 /* AnimationTimeline.h */,
+				1221E0411BFC3D2C006A1A00 /* DocumentAnimation.cpp */,
+				1221E0421BFC3D2C006A1A00 /* DocumentAnimation.h */,
+				1221E0431BFC3D2C006A1A00 /* DocumentAnimation.idl */,
+				1221E0441BFC3D2C006A1A00 /* DocumentTimeline.cpp */,
+				1221E0451BFC3D2C006A1A00 /* DocumentTimeline.h */,
+				1221E0461BFC3D2C006A1A00 /* DocumentTimeline.idl */,
+			);
+			path = animation;
+			sourceTree = "<group>";
+		};
+		1221E0581C02B409006A1A00 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				1221E06A1C03D224006A1A00 /* JSAnimationTimeline.cpp */,
+				1221E06B1C03D224006A1A00 /* JSAnimationTimeline.h */,
+				1221E0591C02B444006A1A00 /* JSDocumentAnimation.cpp */,
+				1221E05A1C02B444006A1A00 /* JSDocumentAnimation.h */,
+				1221E05B1C02B444006A1A00 /* JSDocumentTimeline.cpp */,
+				1221E05C1C02B444006A1A00 /* JSDocumentTimeline.h */,
+			);
+			name = Animation;
+			sourceTree = "<group>";
+		};
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1221E0581C02B409006A1A00 /* Animation */,
 				A83B79100CCB001B000B0825 /* Core */,
 				E1FF8F61180745C600132674 /* Crypto */,
 				A83B790E0CCAFF97000B0825 /* CSS */,
@@ -22395,6 +22455,7 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */,
 				FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */,
@@ -25344,6 +25405,7 @@
 				A80E6CFD0A1989CA007FB8C5 /* CSSFontFaceRule.h in Headers */,
 				BC64B4D80CB4298A005F2B62 /* CSSFontFaceSource.h in Headers */,
 				BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */,
+				1221E0481BFC3D2C006A1A00 /* DocumentAnimation.h in Headers */,
 				83520C7E1A71BFCC006BD2AA /* CSSFontFamily.h in Headers */,
 				4A6E9FC413C17D1D0046A7F8 /* CSSFontFeatureValue.h in Headers */,
 				BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */,
@@ -26155,6 +26217,7 @@
 				A871DE2D0A152AC800B12A68 /* HTMLHeadElement.h in Headers */,
 				A8EA7CB80A192B9C00A8EF5F /* HTMLHeadingElement.h in Headers */,
 				A8EA7CAF0A192B9C00A8EF5F /* HTMLHRElement.h in Headers */,
+				1221E06D1C03D224006A1A00 /* JSAnimationTimeline.h in Headers */,
 				A871DE270A152AC800B12A68 /* HTMLHtmlElement.h in Headers */,
 				A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */,
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
@@ -27776,6 +27839,7 @@
 				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
 				93C38BFF164473C700091EB2 /* ScrollingStateFixedNode.h in Headers */,
 				0FEA3E7B191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h in Headers */,
+				1221E04B1BFC3D2C006A1A00 /* DocumentTimeline.h in Headers */,
 				931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */,
 				0FEA3E84191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h in Headers */,
 				931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */,
@@ -27863,6 +27927,7 @@
 				510D4A37103165EE0049EA54 /* SocketStreamHandleBase.h in Headers */,
 				510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */,
 				0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */,
+				1221E0601C02B444006A1A00 /* JSDocumentTimeline.h in Headers */,
 				4B3043C70AE0370300A82647 /* Sound.h in Headers */,
 				84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */,
 				CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */,
@@ -27968,6 +28033,7 @@
 				A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */,
 				E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */,
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,
+				1221E05E1C02B444006A1A00 /* JSDocumentAnimation.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
 				BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */,
 				BC5EB69A0E81DA6300B25965 /* StyleVisualData.h in Headers */,
@@ -29071,6 +29137,7 @@
 				6ED8C379183BFF8C009E53BD /* BoxShape.cpp in Sources */,
 				BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */,
 				93309DDA099E64920056E581 /* BreakBlockquoteCommand.cpp in Sources */,
+				1221E0631C02D623006A1A00 /* AnimationTimeline.cpp in Sources */,
 				59B597731108656B007159E8 /* BridgeJSC.cpp in Sources */,
 				7A45032F18DB717200377B34 /* BufferedLineReader.cpp in Sources */,
 				F55B3DAF1251F12D003EF269 /* ButtonInputType.cpp in Sources */,
@@ -29566,6 +29633,7 @@
 				E145349816A9BB6A000F6FD2 /* DOMTransitionEvent.mm in Sources */,
 				85526CD30AB0B7DA000302EA /* DOMTreeWalker.mm in Sources */,
 				85C7F4920AAF79DC004014DD /* DOMUIEvent.mm in Sources */,
+				1221E0471BFC3D2C006A1A00 /* DocumentAnimation.cpp in Sources */,
 				FED13D2B0CEA91DF00D89466 /* DOMUIKitExtensions.mm in Sources */,
 				C28083401C6DC275001451B6 /* JSFontFace.cpp in Sources */,
 				2E37DFDA12DBAFB800A6B233 /* DOMURL.cpp in Sources */,
@@ -30120,6 +30188,7 @@
 				93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */,
 				79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */,
 				FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */,
+				1221E04A1BFC3D2C006A1A00 /* DocumentTimeline.cpp in Sources */,
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,
 				930705D809E0C9B700B17FE4 /* JSCounter.cpp in Sources */,
 				14DCF3B21B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp in Sources */,
@@ -30572,6 +30641,7 @@
 				B2FA3D6A0AB75A6F000E5AC4 /* JSSVGFEBlendElement.cpp in Sources */,
 				B2FA3D6C0AB75A6F000E5AC4 /* JSSVGFEColorMatrixElement.cpp in Sources */,
 				B2FA3D6E0AB75A6F000E5AC4 /* JSSVGFEComponentTransferElement.cpp in Sources */,
+				1221E05D1C02B444006A1A00 /* JSDocumentAnimation.cpp in Sources */,
 				B2FA3D700AB75A6F000E5AC4 /* JSSVGFECompositeElement.cpp in Sources */,
 				19BFF64E11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp in Sources */,
 				B2FA3D720AB75A6F000E5AC4 /* JSSVGFEDiffuseLightingElement.cpp in Sources */,
@@ -30778,6 +30848,7 @@
 				1ACE53F60A8D19470022947D /* JSXMLSerializer.cpp in Sources */,
 				1A762C730A074F2600989F5B /* JSXPathEvaluator.cpp in Sources */,
 				BC60DB490D2A3D1E00B9918F /* JSXPathException.cpp in Sources */,
+				1221E06C1C03D224006A1A00 /* JSAnimationTimeline.cpp in Sources */,
 				1A762C750A074F2600989F5B /* JSXPathExpression.cpp in Sources */,
 				1A762C770A074F2600989F5B /* JSXPathNSResolver.cpp in Sources */,
 				1A762C790A074F2600989F5B /* JSXPathResult.cpp in Sources */,
@@ -31008,6 +31079,7 @@
 				854FE7340A2297BE0058D7AD /* NodeIterator.cpp in Sources */,
 				7CEAC1091B483D7F00334482 /* NodeOrString.cpp in Sources */,
 				4FFC022B1643B710004E1638 /* NodeRareData.cpp in Sources */,
+				1221E05F1C02B444006A1A00 /* JSDocumentTimeline.cpp in Sources */,
 				E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */,
 				33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */,
 				3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */,
@@ -31140,6 +31212,7 @@
 				442AF7AA102CDDEA008FD4D3 /* QuickLook.mm in Sources */,
 				443917FF1A91B2F8006E04F2 /* QuickLookSoftLink.mm in Sources */,
 				072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.mm in Sources */,
+				1221E0731C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp in Sources */,
 				379E371613736A6600B9E919 /* QuotedPrintable.cpp in Sources */,
 				5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */,
 				F55B3DCB1251F12D003EF269 /* RadioInputType.cpp in Sources */,
