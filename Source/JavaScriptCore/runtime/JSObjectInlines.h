@@ -30,6 +30,28 @@
 
 namespace JSC {
 
+ALWAYS_INLINE bool JSObject::canPerformFastPutInline(ExecState* exec, VM& vm, PropertyName propertyName)
+{
+    if (UNLIKELY(propertyName == exec->propertyNames().underscoreProto))
+        return false;
+
+    // Check if there are any setters or getters in the prototype chain
+    JSValue prototype;
+    JSObject* obj = this;
+    while (true) {
+        if (obj->structure(vm)->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || obj->type() == ProxyObjectType)
+            return false;
+
+        prototype = obj->prototype();
+        if (prototype.isNull())
+            return true;
+
+        obj = asObject(prototype);
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 // ECMA 8.6.2.2
 ALWAYS_INLINE void JSObject::putInline(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
@@ -44,23 +66,14 @@ ALWAYS_INLINE void JSObject::putInline(JSCell* cell, ExecState* exec, PropertyNa
         putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
         return;
     }
-    
-    // Check if there are any setters or getters in the prototype chain
-    JSValue prototype;
-    if (propertyName != exec->propertyNames().underscoreProto) {
-        for (JSObject* obj = thisObject; !obj->structure(vm)->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
-            prototype = obj->prototype();
-            if (prototype.isNull()) {
-                ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName));
-                if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot)
-                    && slot.isStrictMode())
-                    throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
-                return;
-            }
-        }
-    }
 
-    thisObject->putInlineSlow(exec, propertyName, value, slot);
+    if (thisObject->canPerformFastPutInline(exec, vm, propertyName)) {
+        ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName));
+        if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot)
+            && slot.isStrictMode())
+            throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+    } else
+        thisObject->putInlineSlow(exec, propertyName, value, slot);
 }
 
 } // namespace JSC

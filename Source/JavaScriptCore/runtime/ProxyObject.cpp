@@ -300,6 +300,88 @@ bool ProxyObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     return thisObject->getOwnPropertySlotCommon(exec, ident.impl(), slot);
 }
 
+template <typename PerformDefaultPutFunction>
+void ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPutFunction)
+{
+    VM& vm = exec->vm();
+    JSValue handlerValue = this->handler();
+    if (handlerValue.isNull()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+        return;
+    }
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue setMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->set, ASCIILiteral("'set' property of a Proxy's handler should be callable."));
+    if (exec->hadException())
+        return;
+    JSObject* target = this->target();
+    if (setMethod.isUndefined()) {
+        performDefaultPutFunction();
+        return;
+    }
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    arguments.append(putValue);
+    arguments.append(thisValue);
+    JSValue trapResult = call(exec, setMethod, callType, callData, handler, arguments);
+    if (exec->hadException())
+        return;
+    bool trapResultAsBool = trapResult.toBoolean(exec);
+    if (exec->hadException())
+        return;
+    if (!trapResultAsBool)
+        return;
+
+    PropertyDescriptor descriptor;
+    if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
+        if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
+            if (!sameValue(exec, descriptor.value(), putValue)) {
+                throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'."));
+                return;
+            }
+        } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.setter().isUndefined()) {
+            throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false."));
+            return;
+        }
+    }
+}
+
+void ProxyObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    VM& vm = exec->vm();
+    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    auto performDefaultPut = [&] () {
+        JSObject* target = jsCast<JSObject*>(thisObject->target());
+        target->methodTable(vm)->put(target, exec, propertyName, value, slot);
+    };
+    thisObject->performPut(exec, value, slot.thisValue(), propertyName, performDefaultPut);
+}
+
+void ProxyObject::putByIndexCommon(ExecState* exec, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow)
+{
+    VM& vm = exec->vm();
+    Identifier ident = Identifier::from(exec, propertyName); 
+    if (exec->hadException())
+        return;
+    auto performDefaultPut = [&] () {
+        JSObject* target = this->target();
+        bool isStrictMode = shouldThrow;
+        PutPropertySlot slot(thisValue, isStrictMode); // We must preserve the "this" target of the putByIndex.
+        target->methodTable(vm)->put(target, exec, ident.impl(), putValue, slot);
+    };
+    performPut(exec, putValue, thisValue, ident.impl(), performDefaultPut);
+}
+
+void ProxyObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+{
+    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    thisObject->putByIndexCommon(exec, thisObject, propertyName, value, shouldThrow);
+}
+
 static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -343,16 +425,6 @@ CallType ProxyObject::getCallData(JSCell* cell, CallData& callData)
 
     callData.native.function = performProxyCall;
     return CallTypeHost;
-}
-
-void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-
-    visitor.append(&thisObject->m_target);
-    visitor.append(&thisObject->m_handler);
 }
 
 static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
@@ -474,6 +546,16 @@ bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
         return target->methodTable(exec->vm())->deletePropertyByIndex(target, exec, propertyName);
     };
     return thisObject->performDelete(exec, ident.impl(), defaultDelete);
+}
+
+void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+
+    visitor.append(&thisObject->m_target);
+    visitor.append(&thisObject->m_handler);
 }
 
 } // namespace JSC

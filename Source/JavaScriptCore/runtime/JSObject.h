@@ -855,6 +855,7 @@ private:
         
     template<PutMode>
     bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
+    bool canPerformFastPutInline(ExecState* exec, VM&, PropertyName);
 
     JS_EXPORT_PRIVATE NEVER_INLINE void putInlineSlow(ExecState*, PropertyName, JSValue, PutPropertySlot&);
 

@@ -1,3 +1,52 @@
+2016-02-25  Saam barati  <sbarati@apple.com>
+
+        [ES6] Implement Proxy.[[Set]]
+        https://bugs.webkit.org/show_bug.cgi?id=154511
+
+        Reviewed by Filip Pizlo.
+
+        This patch is mostly an implementation of
+        Proxy.[[Set]] with respect to section 9.5.9
+        of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-set-p-v-receiver
+
+        This patch also changes JSObject::putInline and JSObject::putByIndex
+        to be aware that a Proxy in the prototype chain will intercept
+        property accesses.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInline):
+        (JSC::JSObject::putInline):
+        * runtime/JSType.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::getOwnPropertySlotByIndex):
+        (JSC::ProxyObject::performPut):
+        (JSC::ProxyObject::put):
+        (JSC::ProxyObject::putByIndexCommon):
+        (JSC::ProxyObject::putByIndex):
+        (JSC::performProxyCall):
+        (JSC::ProxyObject::getCallData):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::deletePropertyByIndex):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        (JSC::ProxyObject::create):
+        (JSC::ProxyObject::createStructure):
+        (JSC::ProxyObject::target):
+        (JSC::ProxyObject::handler):
+        * tests/es6.yaml:
+        * tests/stress/proxy-set.js: Added.
+        (assert):
+        (throw.new.Error.let.handler.set 45):
+        (throw.new.Error):
+        (let.target.set x):
+        (let.target.get x):
+        (set let):
+
 2016-02-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove a useless "Move" in the lowering of Select

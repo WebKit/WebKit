@@ -35,7 +35,7 @@ class ProxyObject : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | TypeOfShouldCallGetCallData;
+    const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | TypeOfShouldCallGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
     static ProxyObject* create(ExecState* exec, Structure* structure, JSValue target, JSValue handler)
     {
@@ -47,13 +47,17 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ProxyObjectType, StructureFlags), info(), NonArray | MayHaveIndexedAccessors);
     }
 
     DECLARE_EXPORT_INFO;
 
     JSObject* target() { return m_target.get(); }
     JSValue handler() { return m_handler.get(); }
+
+    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    void putByIndexCommon(ExecState*, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow);
 
 private:
     ProxyObject(VM&, Structure*);
@@ -72,6 +76,8 @@ private:
     bool performHasProperty(ExecState*, PropertyName, PropertySlot&);
     template <typename DefaultDeleteFunction>
     bool performDelete(ExecState*, PropertyName, DefaultDeleteFunction);
+    template <typename PerformDefaultPutFunction>
+    void performPut(ExecState*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction);
 
     WriteBarrier<JSObject> m_target;
     WriteBarrier<Unknown> m_handler;

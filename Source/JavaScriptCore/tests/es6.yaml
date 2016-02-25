@@ -963,7 +963,7 @@
 - path: es6/Proxy_internal_get_calls_Array.prototype.toString.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_Array.prototype_iteration_methods.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_ClassDefinitionEvaluation.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_CreateDynamicFunction.js
@@ -1033,27 +1033,27 @@
 - path: es6/Proxy_internal_ownKeys_calls_TestIntegrityLevel.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_set_calls_Array.from.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.of.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.copyWithin.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.fill.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.pop.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.push.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.reverse.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_set_calls_Array.prototype.shift.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_set_calls_Array.prototype.splice.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.prototype.unshift.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_set_calls_Object.assign.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_isExtensible_handler.js
   cmd: runES6 :fail
 - path: es6/Proxy_JSON.stringify_support.js
@@ -1065,9 +1065,9 @@
 - path: es6/Proxy_Proxy.revocable.js
   cmd: runES6 :fail
 - path: es6/Proxy_set_handler.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_set_handler_instances_of_proxies.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_setPrototypeOf_handler.js
   cmd: runES6 :fail
 - path: es6/Reflect_Reflect.construct.js
