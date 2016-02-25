@@ -1923,6 +1923,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'ScriptProcessorNode').hasOwnProper
 PASS Object.getOwnPropertyDescriptor(global, 'ScriptProcessorNode').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ScriptProcessorNode').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ScriptProcessorNode').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicyViolationEvent').value is SecurityPolicyViolationEvent
+PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicyViolationEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicyViolationEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicyViolationEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'SecurityPolicyViolationEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').value is Selection
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').hasOwnProperty('set') is false

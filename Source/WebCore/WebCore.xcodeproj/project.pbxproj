@@ -6255,6 +6255,8 @@
 		CECADFCD1537791D00E37068 /* TextInsertionBaseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFCB1537791D00E37068 /* TextInsertionBaseCommand.cpp */; };
 		CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFCC1537791D00E37068 /* TextInsertionBaseCommand.h */; };
 		CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */ = {isa = PBXBuildFile; fileRef = CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */; };
+		CED06AD01C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CED06ACE1C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.cpp */; };
+		CED06AD11C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CED06ACF1C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h */; };
 		CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEE27ACB1BBB53A20072400A /* pthreadSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEE27ACA1BBB53A20072400A /* pthreadSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEEFCD7919DB31F7003876D7 /* MediaResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEEFCD7719DB31F7003876D7 /* MediaResourceLoader.cpp */; };
@@ -14278,6 +14280,8 @@
 		CECADFCB1537791D00E37068 /* TextInsertionBaseCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextInsertionBaseCommand.cpp; sourceTree = "<group>"; };
 		CECADFCC1537791D00E37068 /* TextInsertionBaseCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInsertionBaseCommand.h; sourceTree = "<group>"; };
 		CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodeEscapeSequences.h; sourceTree = "<group>"; };
+		CED06ACE1C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSecurityPolicyViolationEvent.cpp; sourceTree = "<group>"; };
+		CED06ACF1C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSecurityPolicyViolationEvent.h; sourceTree = "<group>"; };
 		CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextClient.h; sourceTree = "<group>"; };
 		CEE27ACA1BBB53A20072400A /* pthreadSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pthreadSPI.h; sourceTree = "<group>"; };
 		CEEC6034187DD962003E43BB /* TextTrackRepresentationIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationIOS.h; sourceTree = "<group>"; };
@@ -20986,6 +20990,8 @@
 				E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */,
 				5189F01B10B37BD900F3C739 /* JSPopStateEvent.cpp */,
 				5189F01C10B37BD900F3C739 /* JSPopStateEvent.h */,
+				CED06ACE1C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.cpp */,
+				CED06ACF1C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h */,
 				933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */,
 				933A14B70B7D1D5200A53FFD /* JSTextEvent.h */,
 				0FDA7C10188322EB00C954B5 /* JSTouch.cpp */,
@@ -26817,6 +26823,7 @@
 				FDA15ECE12B03F61003A583A /* JSScriptProcessorNode.h in Headers */,
 				9FA37EFB1172FDA600C4CD55 /* JSScriptProfile.h in Headers */,
 				9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */,
+				CED06AD11C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h in Headers */,
 				9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */,
 				CD9DE17B17AAC75B00EA386D /* JSSourceBuffer.h in Headers */,
 				CD9DE17D17AAC75B00EA386D /* JSSourceBufferList.h in Headers */,
@@ -30572,6 +30579,7 @@
 				FDA15ECD12B03F61003A583A /* JSScriptProcessorNode.cpp in Sources */,
 				9FA37EFA1172FDA600C4CD55 /* JSScriptProfile.cpp in Sources */,
 				9FA37EFC1172FDA600C4CD55 /* JSScriptProfileNode.cpp in Sources */,
+				CED06AD01C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.cpp in Sources */,
 				9BDA64D71B975CE5009C4387 /* JSShadowRoot.cpp in Sources */,
 				CD9DE17A17AAC75B00EA386D /* JSSourceBuffer.cpp in Sources */,
 				CD9DE17C17AAC75B00EA386D /* JSSourceBufferList.cpp in Sources */,

@@ -342,29 +342,31 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     if (!frame)
         return;
 
-#if ENABLE(CSP_NEXT)
-    if (experimentalFeaturesEnabled()) {
-        // FIXME: This code means that we're gathering information like line numbers twice. Once we can bring this out from behind the flag, we should reuse the data gathered here when generating the JSON report below.
-        String documentURI = document.url().string();
-        String referrer = document.referrer();
-        String blockedURI = stripURLForUseInReport(document, blockedURL);
-        String violatedDirective = directiveText;
-        String originalPolicy = header;
-        String sourceFile = String();
-        int lineNumber = 0;
-        
-        Ref<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
-        const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
-        if (callFrame && callFrame->lineNumber()) {
-            URL source = URL(URL(), callFrame->sourceURL());
-            sourceFile = stripURLForUseInReport(document, source);
-            lineNumber = callFrame->lineNumber();
-        }
+    String documentURI = document.url().strippedForUseAsReferrer();
+    String referrer = document.referrer();
+    String blockedURI = stripURLForUseInReport(document, blockedURL);
+    String violatedDirective = directiveText;
+    String originalPolicy = header;
+    ASSERT(document.loader());
+    unsigned short statusCode = document.url().protocolIs("http") && document.loader() ? document.loader()->response().httpStatusCode() : 0;
 
-        document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, false, false, documentURI, referrer, blockedURI, violatedDirective, effectiveDirective, originalPolicy, sourceFile, lineNumber));
+    String sourceFile;
+    int lineNumber = 0;
+    int columnNumber = 0;
+    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
+    const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
+    if (callFrame && callFrame->lineNumber()) {
+        sourceFile = stripURLForUseInReport(document, URL(URL(), callFrame->sourceURL()));
+        lineNumber = callFrame->lineNumber();
+        columnNumber = callFrame->columnNumber();
     }
-#endif
 
+    // 1. Dispatch violation event.
+    bool canBubble = false;
+    bool cancelable = false;
+    document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, canBubble, cancelable, documentURI, referrer, blockedURI, violatedDirective, effectiveDirective, originalPolicy, sourceFile, statusCode, lineNumber, columnNumber));
+
+    // 2. Send violation report (if applicable).
     if (reportURIs.isEmpty())
         return;
 
@@ -379,30 +381,23 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     // harmless information.
 
     RefPtr<InspectorObject> cspReport = InspectorObject::create();
-    cspReport->setString(ASCIILiteral("document-uri"), document.url().strippedForUseAsReferrer());
-    cspReport->setString(ASCIILiteral("referrer"), document.referrer());
+    cspReport->setString(ASCIILiteral("document-uri"), documentURI);
+    cspReport->setString(ASCIILiteral("referrer"), referrer);
     cspReport->setString(ASCIILiteral("violated-directive"), directiveText);
     cspReport->setString(ASCIILiteral("effective-directive"), effectiveDirective);
-    cspReport->setString(ASCIILiteral("original-policy"), header);
-    cspReport->setString(ASCIILiteral("blocked-uri"), stripURLForUseInReport(document, blockedURL));
-
-    ASSERT(document.loader());
-    cspReport->setInteger(ASCIILiteral("status-code"), document.url().protocolIs("http") && document.loader() ? document.loader()->response().httpStatusCode() : 0);
-
-    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
-    const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
-    if (callFrame && callFrame->lineNumber()) {
-        URL source = URL(URL(), callFrame->sourceURL());
-        cspReport->setString(ASCIILiteral("source-file"), stripURLForUseInReport(document, source));
-        cspReport->setInteger(ASCIILiteral("line-number"), callFrame->lineNumber());
-        cspReport->setInteger(ASCIILiteral("column-number"), callFrame->columnNumber());
+    cspReport->setString(ASCIILiteral("original-policy"), originalPolicy);
+    cspReport->setString(ASCIILiteral("blocked-uri"), blockedURI);
+    cspReport->setInteger(ASCIILiteral("status-code"), statusCode);
+    if (!sourceFile.isNull()) {
+        cspReport->setString(ASCIILiteral("source-file"), sourceFile);
+        cspReport->setInteger(ASCIILiteral("line-number"), lineNumber);
+        cspReport->setInteger(ASCIILiteral("column-number"), columnNumber);
     }
 
     RefPtr<InspectorObject> reportObject = InspectorObject::create();
     reportObject->setObject(ASCIILiteral("csp-report"), cspReport.release());
 
     RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8());
-
     for (const auto& url : reportURIs)
         PingLoader::sendViolationReport(*frame, document.completeURL(url), report.copyRef(), ViolationReportType::ContentSecurityPolicy);
 }

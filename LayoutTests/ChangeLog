@@ -1,3 +1,37 @@
+2016-02-25  Daniel Bates  <dabates@apple.com>
+
+        CSP: Make SecurityPolicyViolationEvent more closely conform to CSP spec and enable it by default
+        https://bugs.webkit.org/show_bug.cgi?id=154522
+        <rdar://problem/24762078>
+
+        Reviewed by Brent Fulgham.
+
+        Add new test http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html
+        to ensure that SecurityPolicyViolationEvent.statusCode is 0 when dispatched for a violation on an HTTPS-served
+        document per section Reporting of the Content Security Policy 2.0 spec, <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+        Update existing test results and mark more tests as PASS in file LayoutTests/TestExpectations.
+
+        * TestExpectations: Mark tests http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation*.html as PASS
+        so that we run them.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics-expected.txt: Update expected result to
+        reflect failing sub-test. We do not support the experimental JavaScript event listener onsecuritypolicyviolation when
+        building with ENABLE(CSP_NEXT) disabled.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-expected.txt: Update line and column numbers.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-from-script-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-from-script.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-from-script-expected.txt: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-from-script.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html: Update line and column numbers.
+        * js/dom/global-constructors-attributes-expected.txt: Update expected results now that we expose SecurityPolicyViolationEvent.
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt: Ditto.
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt: Ditto.
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt: Ditto.
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt: Ditto.
+
 2016-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] MediaDeviceInfo deviceId and groupId must be unique to the page's origin

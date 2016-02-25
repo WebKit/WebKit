@@ -1,3 +1,29 @@
+2016-02-25  Daniel Bates  <dabates@apple.com>
+
+        CSP: Make SecurityPolicyViolationEvent more closely conform to CSP spec and enable it by default
+        https://bugs.webkit.org/show_bug.cgi?id=154522
+        <rdar://problem/24762078>
+
+        Reviewed by Brent Fulgham.
+
+        Include attributes statusCode and columnNumber in a dispatched SecurityPolicyViolationEvent and
+        as part of the SecurityPolicyViolationEventInit dictionary as per section Violation DOM Events
+        of the Content Security Policy Level 3 spec., <https://w3c.github.io/webappsec-csp/> (24 February 2016).
+        Additionally, enable dispatching of this event when a Content Security Policy violation occurs regardless
+        of whether ENABLE(CSP_NEXT) is enabled.
+
+        Test: http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html
+
+        * WebCore.xcodeproj/project.pbxproj: Add files JSSecurityPolicyViolationEvent.{cpp, h}.
+        * dom/EventNames.in: Enable support for SecurityPolicyViolationEvent unconditionally.
+        * dom/SecurityPolicyViolationEvent.h: Remove ENABLE(CSP_NEXT)-guard so that we compile this
+        code unconditionally. Modified SecurityPolicyViolationEventInit and SecurityPolicyViolationEvent
+        to support attributes statusCode and columnNumebr.
+        * dom/SecurityPolicyViolationEvent.idl: Add attributes statusCode and columnNumber.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation): Modified to both dispatch a SecurityPolicyViolationEvent
+        and send a violation report (if applicable).
+
 2016-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] MediaDeviceInfo deviceId and groupId must be unique to the page's origin
