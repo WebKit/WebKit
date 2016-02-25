@@ -51,7 +51,7 @@ IntPoint convertWidgetPointToScreenPoint(GtkWidget* widget, const IntPoint& poin
 
 bool widgetIsOnscreenToplevelWindow(GtkWidget* widget)
 {
-    return gtk_widget_is_toplevel(widget) && GTK_IS_WINDOW(widget) && !GTK_IS_OFFSCREEN_WINDOW(widget);
+    return widget && gtk_widget_is_toplevel(widget) && GTK_IS_WINDOW(widget) && !GTK_IS_OFFSCREEN_WINDOW(widget);
 }
 
 #if ENABLE(DEVELOPER_MODE)
