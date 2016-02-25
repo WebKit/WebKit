@@ -180,7 +180,6 @@ Settings::Settings(Page* page)
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
     , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
-    , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)
 #if HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP
@@ -483,11 +482,6 @@ void Settings::setMinimumDOMTimerInterval(double interval)
         if (frame->document())
             frame->document()->adjustMinimumTimerInterval(oldTimerInterval);
     }
-}
-
-void Settings::setDOMTimerAlignmentInterval(double alignmentInterval)
-{
-    m_domTimerAlignmentInterval = alignmentInterval;
 }
 
 void Settings::setLayoutInterval(std::chrono::milliseconds layoutInterval)

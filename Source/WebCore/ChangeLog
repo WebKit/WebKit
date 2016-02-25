@@ -1,3 +1,32 @@
+2016-02-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Some timer alignment cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=154559
+
+        Reviewed by Chris Dumez.
+
+        Document shouldn't override Page's timer alignment policy with a lower alignment,
+        and m_domTimerAlignmentInterval isn't really a Settings, it's just the current state
+        for the page.
+
+        * dom/Document.cpp:
+        (WebCore::Document::timerAlignmentInterval):
+            - take the max of the possible intervals.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setTimerThrottlingEnabled):
+        (WebCore::Page::setDOMTimerAlignmentInterval):
+            - moved here from Settings.
+        * page/Page.h:
+        (WebCore::Page::domTimerAlignmentInterval):
+            - moved here from Settings.
+        * page/Settings.cpp:
+        (WebCore::Settings::setDOMTimerAlignmentInterval): Deleted.
+            - moved to Page.
+        * page/Settings.h:
+        (WebCore::Settings::domTimerAlignmentInterval): Deleted.
+            - moved to Page.
+
 2016-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font features specified in @font-face blocks don't apply to local() families

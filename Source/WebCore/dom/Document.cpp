@@ -2908,7 +2908,7 @@ void Document::writeln(const String& text, Document* ownerDocument)
 
 double Document::minimumTimerInterval() const
 {
-    Page* page = this->page();
+    auto* page = this->page();
     if (!page)
         return ScriptExecutionContext::minimumTimerInterval();
     return page->settings().minimumDOMTimerInterval();
@@ -2925,14 +2925,16 @@ void Document::setTimerThrottlingEnabled(bool shouldThrottle)
 
 double Document::timerAlignmentInterval(bool hasReachedMaxNestingLevel) const
 {
+    double alignmentInterval = ScriptExecutionContext::timerAlignmentInterval(hasReachedMaxNestingLevel);
+
     // Apply Document-level DOMTimer throttling only if timers have reached their maximum nesting level as the Page may still be visible.
     if (m_isTimerThrottlingEnabled && hasReachedMaxNestingLevel)
-        return DOMTimer::hiddenPageAlignmentInterval();
+        alignmentInterval = std::max(alignmentInterval, DOMTimer::hiddenPageAlignmentInterval());
 
-    Page* page = this->page();
-    if (!page)
-        return ScriptExecutionContext::timerAlignmentInterval(hasReachedMaxNestingLevel);
-    return page->settings().domTimerAlignmentInterval();
+    if (Page* page = this->page())
+        alignmentInterval = std::max(alignmentInterval, page->domTimerAlignmentInterval());
+
+    return alignmentInterval;
 }
 
 EventTarget* Document::errorEventTarget()
