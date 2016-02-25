@@ -2468,7 +2468,6 @@ editing/style/style-text-node-without-editable-parent.html
 editing/selection/minimal-user-select-crash.html
 
 # Editing tests that fail:
-editing/deleting/delete-emoji.html [ Failure ]
 editing/inserting/typing-at-end-of-line.html [ Failure ]
 editing/undo/undo-combined-delete-boundary.html [ Failure ]
 editing/undo/undo-combined-delete.html [ Failure ]
