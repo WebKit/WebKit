@@ -60,7 +60,6 @@ static const char reflectedXSS[] = "reflected-xss";
 static inline bool isExperimentalDirectiveName(const String& name)
 {
     return equalLettersIgnoringASCIICase(name, baseURI)
-        || equalLettersIgnoringASCIICase(name, formAction)
         || equalLettersIgnoringASCIICase(name, pluginTypes)
         || equalLettersIgnoringASCIICase(name, reflectedXSS);
 }
@@ -599,6 +598,8 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_connectSrc);
     else if (equalLettersIgnoringASCIICase(name, childSrc))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_childSrc);
+    else if (equalLettersIgnoringASCIICase(name, formAction))
+        setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_formAction);
     else if (equalLettersIgnoringASCIICase(name, sandbox))
         applySandboxPolicy(name, value);
     else if (equalLettersIgnoringASCIICase(name, reportURI))
@@ -607,8 +608,6 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
     else if (m_policy.experimentalFeaturesEnabled()) {
         if (equalLettersIgnoringASCIICase(name, baseURI))
             setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_baseURI);
-        else if (equalLettersIgnoringASCIICase(name, formAction))
-            setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_formAction);
         else if (equalLettersIgnoringASCIICase(name, pluginTypes))
             setCSPDirective<ContentSecurityPolicyMediaListDirective>(name, value, m_pluginTypes);
         else if (equalLettersIgnoringASCIICase(name, reflectedXSS))
