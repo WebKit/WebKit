@@ -41,8 +41,8 @@
 }
 
 .visual-style-tabbed-properties-row > .visual-style-tabbed-properties-row-container > button.selected {
-    color: white;
-    background-color: hsl(213, 92%, 55%);
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
 }
 
 .visual-style-tabbed-properties-row > .visual-style-tabbed-properties-row-container > button:not(.selected):hover {

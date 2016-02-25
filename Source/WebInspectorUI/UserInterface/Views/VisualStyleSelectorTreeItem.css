@@ -34,8 +34,8 @@
 }
 
 .item.visual-style-selector-item.selected {
-    background-color: hsl(213, 92%, 55%) !important;
-    color: white;
+    background-color: var(--selected-background-color) !important;
+    color: var(--selected-foreground-color);
 }
 
 .item.visual-style-selector-item > .disclosure-button {

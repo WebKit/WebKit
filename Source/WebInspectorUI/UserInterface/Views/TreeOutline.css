@@ -153,8 +153,8 @@
 }
 
 .tree-outline:matches(:focus, .force-focus) .item.selected {
-    color: white;
-    background-color: hsl(209, 100%, 49%);
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
 }
 
 body.window-inactive .tree-outline .item.selected {

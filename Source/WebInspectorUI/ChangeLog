@@ -1,3 +1,22 @@
+2016-02-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Unify selected item colors
+        https://bugs.webkit.org/show_bug.cgi?id=154668
+        <rdar://problem/24832178>
+
+        Reviewed by Timothy Hatcher.
+
+        Use the same CSS variable color for all selected items.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline:matches(:focus, .force-focus) .item.selected):
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.selected):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css:
+        (.item.visual-style-selector-item.selected):
+        * UserInterface/Views/VisualStyleTabbedPropertiesRow.css:
+        (.visual-style-tabbed-properties-row > .visual-style-tabbed-properties-row-container > button.selected):
+
 2016-02-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expose Proxy target and handler internal properties to Inspector
