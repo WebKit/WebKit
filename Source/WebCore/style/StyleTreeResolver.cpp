@@ -112,8 +112,6 @@ TreeResolver::TreeResolver(Document& document)
     : m_document(document)
 {
     ensurePlaceholderStyle(document);
-
-    m_scopeStack.append(adoptRef(*new Scope(document)));
 }
 
 TreeResolver::Scope::Scope(Document& document)
@@ -127,6 +125,22 @@ TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
     , sharingResolver(shadowRoot.documentScope(), styleResolver.ruleSets(), selectorFilter)
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
+{
+}
+
+TreeResolver::Parent::Parent(Document& document, Change change)
+    : element(nullptr)
+    , style(*document.renderStyle())
+    , renderTreePosition(*document.renderView())
+    , change(change)
+{
+}
+
+TreeResolver::Parent::Parent(Element& element, RenderStyle& style, RenderTreePosition renderTreePosition, Change change)
+    : element(&element)
+    , style(style)
+    , renderTreePosition(renderTreePosition)
+    , change(change)
 {
 }
 
@@ -425,20 +439,18 @@ static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
 
 static void resetStyleForNonRenderedDescendants(Element& current)
 {
+    // FIXME: This is not correct with shadow trees. This should be done with ComposedTreeIterator.
     ASSERT(!current.renderer());
     bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle = false;
     for (auto& child : childrenOfType<Element>(current)) {
         ASSERT(!child.renderer());
-        if (elementNeedingStyleRecalcAffectsNextSiblingElementStyle) {
-            if (child.styleIsAffectedByPreviousSibling())
-                child.setNeedsStyleRecalc();
+        bool affectedByPreviousSibling = child.styleIsAffectedByPreviousSibling() && elementNeedingStyleRecalcAffectsNextSiblingElementStyle;
+        if (child.needsStyleRecalc() || elementNeedingStyleRecalcAffectsNextSiblingElementStyle)
             elementNeedingStyleRecalcAffectsNextSiblingElementStyle = child.affectsNextSiblingElementStyle();
-        }
 
-        if (child.needsStyleRecalc()) {
+        if (child.needsStyleRecalc() || affectedByPreviousSibling) {
             child.resetComputedStyle();
             child.clearNeedsStyleRecalc();
-            elementNeedingStyleRecalcAffectsNextSiblingElementStyle = child.affectsNextSiblingElementStyle();
         }
 
         if (child.childNeedsStyleRecalc()) {
@@ -652,28 +664,32 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
     return false;
 }
 
-Change TreeResolver::resolveLocally(Element& current, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Change inheritedChange)
+Change TreeResolver::resolveElement(Element& current)
 {
     Change localChange = Detach;
     RefPtr<RenderStyle> newStyle;
     RefPtr<RenderStyle> currentStyle = current.renderStyle();
 
     if (currentStyle && current.styleChangeType() != ReconstructRenderTree) {
-        Ref<RenderStyle> style(styleForElement(current, inheritedStyle));
+        Ref<RenderStyle> style(styleForElement(current, parent().style));
         newStyle = style.ptr();
         localChange = determineChange(*currentStyle, style);
     }
     if (localChange == Detach) {
         if (current.renderer() || current.isNamedFlowContentNode())
             detachRenderTree(current, ReattachDetach);
-        createRenderTreeRecursively(current, inheritedStyle, renderTreePosition, newStyle.release());
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
+        else if (is<HTMLSlotElement>(current))
+            detachRenderTree(current, ReattachDetach);
+#endif
+        createRenderTreeRecursively(current, parent().style, parent().renderTreePosition, newStyle.release());
         invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(current);
 
         return Detach;
     }
 
     if (RenderElement* renderer = current.renderer()) {
-        if (localChange != NoChange || pseudoStyleCacheIsInvalid(renderer, newStyle.get()) || (inheritedChange == Force && renderer->requiresForcedStyleRecalcPropagation()) || current.styleChangeType() == SyntheticStyleChange)
+        if (localChange != NoChange || pseudoStyleCacheIsInvalid(renderer, newStyle.get()) || (parent().change == Force && renderer->requiresForcedStyleRecalcPropagation()) || current.styleChangeType() == SyntheticStyleChange)
             renderer->setAnimatableStyle(*newStyle, current.styleChangeType() == SyntheticStyleChange ? StyleDifferenceRecompositeLayer : StyleDifferenceEqual);
         else if (current.needsStyleRecalc()) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
@@ -689,9 +705,7 @@ Change TreeResolver::resolveLocally(Element& current, RenderStyle& inheritedStyl
         scope().styleResolver.invalidateMatchedPropertiesCache();
         return Force;
     }
-    if (inheritedChange == Force)
-        return Force;
-    if (current.styleChangeType() >= FullStyleChange)
+    if (parent().change == Force || current.styleChangeType() >= FullStyleChange)
         return Force;
 
     return localChange;
@@ -716,48 +730,28 @@ void resolveTextNode(Text& text, RenderTreePosition& renderTreePosition)
     invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(text);
 }
 
-void TreeResolver::resolveChildAtShadowBoundary(Node& child, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Style::Change change)
-{
-    if (auto* renderer = child.renderer())
-        renderTreePosition.invalidateNextSibling(*renderer);
-
-    if (is<Text>(child) && child.needsStyleRecalc()) {
-        resolveTextNode(downcast<Text>(child), renderTreePosition);
-        return;
-    }
-    if (is<Element>(child))
-        resolveRecursively(downcast<Element>(child), inheritedStyle, renderTreePosition, change);
-}
-
-void TreeResolver::resolveShadowTree(Style::Change change, RenderStyle& inheritedStyle)
-{
-    ASSERT(scope().shadowRoot);
-    auto& host = *scope().shadowRoot->host();
-    ASSERT(host.renderer());
-    if (scope().shadowRoot->styleChangeType() >= FullStyleChange)
-        change = Force;
-    RenderTreePosition renderTreePosition(*host.renderer());
-    for (auto* child = scope().shadowRoot->firstChild(); child; child = child->nextSibling())
-        resolveChildAtShadowBoundary(*child, inheritedStyle, renderTreePosition, change);
-
-    scope().shadowRoot->clearNeedsStyleRecalc();
-    scope().shadowRoot->clearChildNeedsStyleRecalc();
-}
-
 void TreeResolver::resolveBeforeOrAfterPseudoElement(Element& current, Change change, PseudoId pseudoId, RenderTreePosition& renderTreePosition)
 {
-    ASSERT(current.renderer());
-    if (PseudoElement* existingPseudoElement = beforeOrAfterPseudoElement(current, pseudoId)) {
-        if (existingPseudoElement->renderer())
-            renderTreePosition.invalidateNextSibling(*existingPseudoElement->renderer());
-
-        if (needsPseudoElement(current, pseudoId))
-            resolveRecursively(*existingPseudoElement, current.renderer()->style(), renderTreePosition, current.needsStyleRecalc() ? Force : change);
-        else
-            clearBeforeOrAfterPseudoElement(current, pseudoId);
+    if (!current.renderer())
+        return;
+    PseudoElement* existingPseudoElement = beforeOrAfterPseudoElement(current, pseudoId);
+    if (!existingPseudoElement) {
+        createRenderTreeForBeforeOrAfterPseudoElement(current, pseudoId, renderTreePosition);
         return;
     }
-    createRenderTreeForBeforeOrAfterPseudoElement(current, pseudoId, renderTreePosition);
+
+    if (existingPseudoElement->renderer())
+        renderTreePosition.invalidateNextSibling(*existingPseudoElement->renderer());
+
+    if (change == NoChange && !existingPseudoElement->needsStyleRecalc())
+        return;
+
+    if (needsPseudoElement(current, pseudoId)) {
+        auto change = resolveElement(*existingPseudoElement);
+        existingPseudoElement->didRecalcStyle(change);
+        existingPseudoElement->clearNeedsStyleRecalc();
+    } else
+        clearBeforeOrAfterPseudoElement(current, pseudoId);
 }
 
 #if PLATFORM(IOS)
@@ -814,112 +808,155 @@ private:
 };
 #endif // PLATFORM(IOS)
 
-void TreeResolver::resolveChildren(Element& current, RenderStyle& inheritedStyle, Change change, RenderTreePosition& childRenderTreePosition)
+void TreeResolver::pushParent(Element& element, RenderStyle& style, RenderTreePosition renderTreePosition, Change change)
 {
-    SelectorFilterPusher selectorFilterPusher(scope().selectorFilter, current, SelectorFilterPusher::NoPush);
+    scope().selectorFilter.pushParent(&element);
 
-    bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle = false;
-    for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-        if (RenderObject* childRenderer = child->renderer())
-            childRenderTreePosition.invalidateNextSibling(*childRenderer);
-        if (is<Text>(*child) && child->needsStyleRecalc()) {
-            resolveTextNode(downcast<Text>(*child), childRenderTreePosition);
-            continue;
-        }
-        if (!is<Element>(*child))
-            continue;
+    Parent parent(element, style, renderTreePosition, change);
 
-        Element& childElement = downcast<Element>(*child);
-        if (elementNeedingStyleRecalcAffectsNextSiblingElementStyle) {
-            if (childElement.styleIsAffectedByPreviousSibling())
-                childElement.setNeedsStyleRecalc();
-            elementNeedingStyleRecalcAffectsNextSiblingElementStyle = childElement.affectsNextSiblingElementStyle();
-        } else if (childElement.needsStyleRecalc())
-            elementNeedingStyleRecalcAffectsNextSiblingElementStyle = childElement.affectsNextSiblingElementStyle();
-        if (change >= Inherit || childElement.childNeedsStyleRecalc() || childElement.needsStyleRecalc()) {
-            selectorFilterPusher.push();
-            resolveRecursively(childElement, inheritedStyle, childRenderTreePosition, change);
-        }
+    if (auto* shadowRoot = element.shadowRoot()) {
+        pushScope(*shadowRoot);
+        parent.didPushScope = true;
     }
-}
-
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-void TreeResolver::resolveSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Change change)
-{
-    if (auto* assignedNodes = slot.assignedNodes()) {
+    else if (is<HTMLSlotElement>(element) && downcast<HTMLSlotElement>(element).assignedNodes()) {
         pushEnclosingScope();
-        for (auto* child : *assignedNodes)
-            resolveChildAtShadowBoundary(*child, inheritedStyle, renderTreePosition, change);
-        popScope();
-    } else
-        resolveChildren(slot, inheritedStyle, change, renderTreePosition);
+        parent.didPushScope = true;
+    }
+#endif
 
-    slot.clearNeedsStyleRecalc();
-    slot.clearChildNeedsStyleRecalc();
+    m_parentStack.append(WTFMove(parent));
+
+    resolveBeforeOrAfterPseudoElement(element, change, BEFORE, renderTreePosition);
 }
-#endif
 
-void TreeResolver::resolveRecursively(Element& current, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Change change)
+void TreeResolver::popParent()
 {
-    ASSERT(change != Detach);
+    auto& parentElement = *parent().element;
 
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-    if (is<HTMLSlotElement>(current)) {
-        resolveSlotAssignees(downcast<HTMLSlotElement>(current), inheritedStyle, renderTreePosition, change);
-        return;
-    }
-#endif
+    resolveBeforeOrAfterPseudoElement(parentElement, parent().change, AFTER, parent().renderTreePosition);
 
-    if (current.hasCustomStyleResolveCallbacks()) {
-        if (!current.willRecalcStyle(change))
-            return;
-    }
+    parentElement.clearNeedsStyleRecalc();
+    parentElement.clearChildNeedsStyleRecalc();
 
-#if PLATFORM(IOS)
-    CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(&current, current.renderStyle());
-#endif
+    if (parent().didPushScope)
+        popScope();
 
-    if (change > NoChange || current.needsStyleRecalc())
-        current.resetComputedStyle();
+    scope().selectorFilter.popParent();
 
-    if (change >= Inherit || current.needsStyleRecalc())
-        change = resolveLocally(current, inheritedStyle, renderTreePosition, change);
+    m_parentStack.removeLast();
+}
 
-    auto* renderer = current.renderer();
+void TreeResolver::popParentsToDepth(unsigned depth)
+{
+    ASSERT(depth);
+    ASSERT(m_parentStack.size() >= depth);
 
-    if (change != Detach && renderer) {
-        auto* shadowRoot = current.shadowRoot();
-        if (shadowRoot && (change >= Inherit || shadowRoot->childNeedsStyleRecalc() || shadowRoot->needsStyleRecalc())) {
-            SelectorFilterPusher selectorFilterPusher(scope().selectorFilter, current);
+    while (m_parentStack.size() > depth)
+        popParent();
+}
 
-            pushScope(*shadowRoot);
-            resolveShadowTree(change, renderer->style());
-            popScope();
+void TreeResolver::resolveComposedTree()
+{
+    ASSERT(m_parentStack.size() == 1);
+    ASSERT(m_scopeStack.size() == 1);
+
+    auto descendants = composedTreeDescendants(m_document);
+    auto it = descendants.begin();
+    auto end = descendants.end();
+
+    // FIXME: SVG <use> element may cause tree mutations during style recalc.
+    it.dropAssertions();
+
+    while (it != end) {
+        popParentsToDepth(it.depth());
+
+        auto& node = *it;
+        auto& parent = this->parent();
+
+        ASSERT(node.containingShadowRoot() == scope().shadowRoot);
+        ASSERT(node.parentElement() == parent.element || is<ShadowRoot>(node.parentNode()) || node.parentElement()->shadowRoot());
+
+        if (auto* existingRenderer = node.renderer())
+            parent.renderTreePosition.invalidateNextSibling(*existingRenderer);
+
+        if (is<Text>(node)) {
+            if (node.needsStyleRecalc())
+                resolveTextNode(downcast<Text>(node), parent.renderTreePosition);
+            it.traverseNextSkippingChildren();
+            continue;
         }
 
-        RenderTreePosition childRenderTreePosition(*renderer);
-        resolveBeforeOrAfterPseudoElement(current, change, BEFORE, childRenderTreePosition);
+        auto& element = downcast<Element>(node);
 
-        bool skipChildren = shadowRoot;
-        if (!skipChildren)
-            resolveChildren(current, renderer->style(), change, childRenderTreePosition);
+        // FIXME: We should deal with this during style invalidation.
+        bool affectedByPreviousSibling = element.styleIsAffectedByPreviousSibling() && parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle;
+        if (element.needsStyleRecalc() || parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle)
+            parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle = element.affectsNextSiblingElementStyle();
 
-        resolveBeforeOrAfterPseudoElement(current, change, AFTER, childRenderTreePosition);
+        Change change = NoChange;
+
+        bool shouldResolve = parent.change >= Inherit || element.needsStyleRecalc() || affectedByPreviousSibling;
+        if (shouldResolve) {
+#if PLATFORM(IOS)
+            CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(&element, element.renderStyle());
+#endif
+            element.resetComputedStyle();
+
+            if (element.hasCustomStyleResolveCallbacks()) {
+                if (!element.willRecalcStyle(parent.change)) {
+                    it.traverseNextSkippingChildren();
+                    continue;
+                }
+            }
+            change = resolveElement(element);
+
+            element.clearNeedsStyleRecalc();
+
+            if (element.hasCustomStyleResolveCallbacks())
+                element.didRecalcStyle(change);
+
+            if (change == Detach) {
+                it.traverseNextSkippingChildren();
+                continue;
+            }
+
+            if (affectedByPreviousSibling)
+                change = Force;
+        }
+
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
+        if (is<HTMLSlotElement>(element)) {
+            // FIXME: We should compute style for the slot and use it as parent style.
+            // FIXME: This should be display:contents check.
+            // Duplicate the style and render tree position from the current context.
+            pushParent(element, parent.style.get(), parent.renderTreePosition, change);
+            it.traverseNext();
+            continue;
+        }
+#endif
+        auto* renderer = element.renderer();
+        if (!renderer) {
+            resetStyleForNonRenderedDescendants(element);
+            element.clearChildNeedsStyleRecalc();
+        }
+
+        bool shouldIterateChildren = renderer && (element.childNeedsStyleRecalc() || change != NoChange);
+        if (!shouldIterateChildren) {
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+
+        pushParent(element, renderer->style(), RenderTreePosition(*renderer), change);
+
+        it.traverseNext();
     }
-    if (change != Detach && !renderer)
-        resetStyleForNonRenderedDescendants(current);
 
-    current.clearNeedsStyleRecalc();
-    current.clearChildNeedsStyleRecalc();
-    
-    if (current.hasCustomStyleResolveCallbacks())
-        current.didRecalcStyle(change);
+    popParentsToDepth(1);
 }
 
 void TreeResolver::resolve(Change change)
 {
-    ASSERT(!scope().shadowRoot);
-
     auto& renderView = *m_document.renderView();
 
     Element* documentElement = m_document.documentElement();
@@ -928,15 +965,21 @@ void TreeResolver::resolve(Change change)
     if (change != Force && !documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return;
 
+    m_scopeStack.append(adoptRef(*new Scope(m_document)));
+
     // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
     renderView.setUsesFirstLineRules(renderView.usesFirstLineRules() || scope().styleResolver.usesFirstLineRules());
     renderView.setUsesFirstLetterRules(renderView.usesFirstLetterRules() || scope().styleResolver.usesFirstLetterRules());
 
-    RenderTreePosition renderTreePosition(renderView);
-    resolveRecursively(*documentElement, *m_document.renderStyle(), renderTreePosition, change);
+    m_parentStack.append(Parent(m_document, change));
+
+    resolveComposedTree();
 
     renderView.setUsesFirstLineRules(scope().styleResolver.usesFirstLineRules());
     renderView.setUsesFirstLetterRules(scope().styleResolver.usesFirstLetterRules());
+
+    m_parentStack.clear();
+    m_scopeStack.clear();
 }
 
 void detachRenderTree(Element& element)

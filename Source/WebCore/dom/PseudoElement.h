@@ -47,6 +47,7 @@ public:
 
     virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle) override;
     virtual void didAttachRenderers() override;
+    virtual void didRecalcStyle(Style::Change) override;
     virtual bool rendererIsNeeded(const RenderStyle&) override;
 
     // As per http://dev.w3.org/csswg/css3-regions/#flow-into, pseudo-elements such as ::first-line, ::first-letter, ::before or ::after
@@ -63,7 +64,6 @@ public:
 private:
     PseudoElement(Element&, PseudoId);
 
-    virtual void didRecalcStyle(Style::Change) override;
     virtual PseudoId customPseudoId() const override { return m_pseudoId; }
 
     Element* m_hostElement;
