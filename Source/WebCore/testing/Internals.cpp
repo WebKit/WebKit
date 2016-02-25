@@ -39,6 +39,7 @@
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
+#include "ComposedTreeIterator.h"
 #include "Cursor.h"
 #include "DOMPath.h"
 #include "DOMStringList.h"
@@ -3485,6 +3486,13 @@ String Internals::resourceLoadStatisticsForOrigin(String origin)
 void Internals::setResourceLoadStatisticsEnabled(bool enable)
 {
     Settings::setResourceLoadStatisticsEnabled(enable);
+}
+
+String Internals::composedTreeAsText(Node* node)
+{
+    if (!is<ContainerNode>(node))
+        return "";
+    return WebCore::composedTreeAsText(downcast<ContainerNode>(*node));
 }
 
 }

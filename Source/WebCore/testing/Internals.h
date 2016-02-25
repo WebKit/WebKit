@@ -471,6 +471,8 @@ public:
     bool isReadableStreamDisturbed(ScriptState&, JSC::JSValue);
 #endif
 
+    String composedTreeAsText(Node*);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

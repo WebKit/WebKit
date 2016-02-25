@@ -58,7 +58,7 @@ private:
     void initializeContextStack(ContainerNode& root, Node& current);
     void traverseNextInShadowTree();
     void traverseNextLeavingContext();
-    bool pushContext(ShadowRoot&);
+    void traverseShadowRoot(ShadowRoot&);
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     bool advanceInSlot(int direction);
     void traverseSiblingInSlot(int direction);
@@ -92,8 +92,8 @@ inline ComposedTreeIterator::ComposedTreeIterator()
 inline ComposedTreeIterator& ComposedTreeIterator::traverseNext()
 {
     if (auto* shadowRoot = context().iterator->shadowRoot()) {
-        if (pushContext(*shadowRoot))
-            return *this;
+        traverseShadowRoot(*shadowRoot);
+        return *this;
     }
 
     if (m_contextStack.size() > 1) {
@@ -199,6 +199,8 @@ inline ComposedTreeChildAdapter composedTreeChildren(ContainerNode& parent)
 {
     return ComposedTreeChildAdapter(parent);
 }
+
+WEBCORE_EXPORT String composedTreeAsText(ContainerNode& root);
 
 }
 
