@@ -1,3 +1,20 @@
+2016-02-23  Keith Miller  <keith_miller@apple.com>
+
+        JSC stress tests' standalone-pre.js should exit on the first failure by default
+        https://bugs.webkit.org/show_bug.cgi?id=154565
+
+        Reviewed by Mark Lam.
+
+        Currently, if a test writer does not call finishJSTest() at the end of
+        any test using stress/resources/standalone-pre.js then the test can fail
+        without actually reporting an error to the harness. By default, we
+        should throw on the first error so, in the event someone does not call
+        finishJSTest() the harness will still notice the error.
+
+        * tests/stress/regress-151324.js:
+        * tests/stress/resources/standalone-pre.js:
+        (testFailed):
+
 2016-02-23  Saam barati  <sbarati@apple.com>
 
         Make JSObject::getMethod have fewer branches
