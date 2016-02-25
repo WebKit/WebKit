@@ -10,6 +10,9 @@ PASS bodyDispatchEventFunction.call(undefined, new Event('myevent')) is true
 PASS wasWindowEventListenerCalled is true
 PASS xhrDispatchEventFunction.call(undefined, new Event('myevent')) is true
 PASS wasWindowEventListenerCalled is true
+PASS addEventListenerFunction('myevent2', function() { wasWindowEventListenerCalled = true; }); did not throw exception.
+PASS window.dispatchEvent(new Event('myevent2')) is true
+PASS wasWindowEventListenerCalled is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

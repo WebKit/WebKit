@@ -1,3 +1,16 @@
+2016-02-22  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r196563): Images not loading on https://klim.co.nz/blog/paypal-sans-design-information/
+        https://bugs.webkit.org/show_bug.cgi?id=154547
+        <rdar://problem/24772167>
+
+        Reviewed by Gavin Barraclough.
+
+        Add regression test for <rdar://problem/24772167>.
+
+        * fast/dom/Window/addEventListener-implicit-this-expected.txt:
+        * fast/dom/Window/addEventListener-implicit-this.html:
+
 2016-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         Repeated background images have the wrong position when using bottom/right-relative background-position
