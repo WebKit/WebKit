@@ -1,3 +1,14 @@
+2016-02-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Placeholder text in Visual Styles sidebar table row should be white
+        https://bugs.webkit.org/show_bug.cgi?id=154488
+        <rdar://problem/24754715>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles > .subtitle):
+
 2016-02-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Inherited selector rows have text too low
