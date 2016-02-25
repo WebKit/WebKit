@@ -27,10 +27,10 @@
 #include "BumpAllocator.h"
 #include "LargeChunk.h"
 #include "LargeObject.h"
-#include "Line.h"
-#include "Page.h"
 #include "PerProcess.h"
 #include "SmallChunk.h"
+#include "SmallLine.h"
+#include "SmallPage.h"
 #include <thread>
 
 namespace bmalloc {
@@ -54,12 +54,12 @@ void Heap::initializeLineMetadata()
         size_t object = 0;
         size_t line = 0;
         while (object < vmPageSize) {
-            line = object / SmallPage::lineSize;
-            size_t leftover = object % SmallPage::lineSize;
+            line = object / smallLineSize;
+            size_t leftover = object % smallLineSize;
 
             size_t objectCount;
             size_t remainder;
-            divideRoundingUp(SmallPage::lineSize - leftover, size, objectCount, remainder);
+            divideRoundingUp(smallLineSize - leftover, size, objectCount, remainder);
 
             metadata[line] = { static_cast<unsigned short>(leftover), static_cast<unsigned short>(objectCount) };
 
@@ -114,7 +114,7 @@ void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t si
     BASSERT(page->hasFreeLines(lock));
 
     // Find a free line.
-    for (size_t lineNumber = 0; lineNumber < SmallPage::lineCount; ++lineNumber) {
+    for (size_t lineNumber = 0; lineNumber < smallLineCount; ++lineNumber) {
         if (lines[lineNumber].refCount(lock))
             continue;
 
@@ -134,7 +134,7 @@ void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t si
         page->ref(lock);
 
         // Merge with subsequent free lines.
-        while (++lineNumber < SmallPage::lineCount) {
+        while (++lineNumber < smallLineCount) {
             if (lines[lineNumber].refCount(lock))
                 break;
 
