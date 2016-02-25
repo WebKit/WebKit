@@ -2947,10 +2947,10 @@ JSValue JSObject::getMethod(ExecState* exec, CallData& callData, CallType& callT
     if (exec->hadException())
         return jsUndefined();
 
-    if (method.isUndefined() || method.isNull())
-        return jsUndefined();
-
     if (!method.isCell()) {
+        if (method.isUndefinedOrNull())
+            return jsUndefined();
+
         throwVMTypeError(exec, errorMessage);
         return jsUndefined();
     }

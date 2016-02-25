@@ -1,3 +1,15 @@
+2016-02-23  Saam barati  <sbarati@apple.com>
+
+        Make JSObject::getMethod have fewer branches
+        https://bugs.webkit.org/show_bug.cgi?id=154603
+
+        Reviewed by Mark Lam.
+
+        Writing code with fewer branches is almost always better.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getMethod):
+
 2016-02-23  Filip Pizlo  <fpizlo@apple.com>
 
         B3::Value doesn't self-destruct virtually enough (Causes many leaks in LowerDFGToB3::appendOSRExit)
