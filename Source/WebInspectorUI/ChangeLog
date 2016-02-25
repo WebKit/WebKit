@@ -1,3 +1,20 @@
+2016-02-24  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Visual Styles sidebar should support multiple animations
+        https://bugs.webkit.org/show_bug.cgi?id=154546
+        <rdar://problem/24773861>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection):
+        Set additional flags on the optional properties of transition to ensure
+        that the initial value of a new row is not considered invalid.
+
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateAnimationSection):
+        Added a comma-separated keyword list to provide support for multiple
+        animations per rule.
+
 2016-02-24  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Remove unused Profile.png images
