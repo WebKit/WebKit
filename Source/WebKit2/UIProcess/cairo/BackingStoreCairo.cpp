@@ -67,9 +67,7 @@ std::unique_ptr<BackingStoreBackendCairo> BackingStore::createBackend()
     scaledSize.scale(m_deviceScaleFactor);
 
 #if PLATFORM(GTK)
-    GtkWidget* viewWidget = m_webPageProxy.viewWidget();
-    gtk_widget_realize(viewWidget);
-    RefPtr<cairo_surface_t> surface = adoptRef(gdk_window_create_similar_surface(gtk_widget_get_window(viewWidget),
+    RefPtr<cairo_surface_t> surface = adoptRef(gdk_window_create_similar_surface(gtk_widget_get_window(m_webPageProxy.viewWidget()),
         CAIRO_CONTENT_COLOR_ALPHA, scaledSize.width(), scaledSize.height()));
 #else
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, scaledSize.width(), scaledSize.height()));
@@ -83,10 +81,12 @@ void BackingStore::paint(cairo_t* context, const IntRect& rect)
 {
     ASSERT(m_backend);
 
+    cairo_save(context);
     cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
     cairo_set_source_surface(context, m_backend->surface(), 0, 0);
     cairo_rectangle(context, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill(context);
+    cairo_restore(context);
 }
 
 void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)

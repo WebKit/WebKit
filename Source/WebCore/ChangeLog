@@ -1,3 +1,13 @@
+2016-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Tearing when entering AC mode
+        https://bugs.webkit.org/show_bug.cgi?id=150955
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::widgetIsOnscreenToplevelWindow): Allow passing nullptr.
+
 2016-02-24  Chris Dumez  <cdumez@apple.com>
 
         Drop [TreatReturnedNullStringAs=Null] WebKit-specific IDL attribute

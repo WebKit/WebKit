@@ -1,3 +1,63 @@
+2016-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Tearing when entering AC mode
+        https://bugs.webkit.org/show_bug.cgi?id=150955
+
+        Reviewed by Michael Catanzaro.
+
+        When entering accelerated compositing mode, we keep rendering the
+        non accelerated contents until we have the first frame of
+        accelerated compositing contents. When the view is created hidden,
+        for example when the browser opens a link in a new tab, the view
+        is not realized until it is mapped. The native surface handle for
+        compositing, needed by the web process to render accelerated
+        compositing contents, is not available until the view is realized,
+        because it depends on the properties of the parent. When a web
+        view is mapped for the first time, and then realized, we send the
+        native surface handle for compositing to the web process, and keep
+        rendering the non composited contents until we get the first
+        frame, but in this case we never had non composited contents and
+        we end up rendering an untinitalized surface. This sometimes just
+        produces flickering and sometimes rendering artifacts.
+        We can prevent this from happening by realizing the web view as
+        soon as possible. A GtkWidget can't be realized until it has been
+        added to a toplevel, so we can realize our view right after it is
+        added to a toplevel window, and wait until the view is actually
+        mapped to notify the web process that it has been added to a
+        window. This way can we enter accelerated compositing mode before
+        the web view is mapped, so that when mapped we don't try to paint
+        the previous contents and don't need to wait for the first frame.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (toplevelWindowFocusInEvent): Handle the case of the window being
+        hidden when receiving focus in. According to
+        gtk_window_focus_in_event, this can happen.
+        (webkitWebViewBaseSetToplevelOnScreenWindow): When the web view is
+        removed from its toplevel parent, update the IsInWindow and
+        WindowIsActive flags accordingly. When the view is added to a
+        toplevel, realize it and don't update the window flags, they will be
+        updated when the view is mapped the first time.
+        (webkitWebViewBaseMap): Also update IsInWindow and WindowIsActive
+        flags if needed. This way, if for example you open a youtube video
+        in a new tab, the video won't start playing until you visit the
+        tab, like we did when the view was realized on map.
+        (webkitWebViewBaseHierarchyChanged): Use hierarchy-changed signal
+        instead of parent-set to be notified when the view is added to or
+        removed from a toplevel.
+        (webkit_web_view_base_class_init): Implement hierarchy-changed
+        instead of parent-set.
+        (webkitWebViewBaseRealize): Do not call
+        webkitWebViewBaseSetToplevelOnScreenWindow on realize, it's now
+        webkitWebViewBaseSetToplevelOnScreenWindow the one realizing the view.
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::createBackend): Do not realize the view
+        here, it should be realized already at this point. If it's not
+        realized at this point is because it hasn't been added to a
+        toplevel and gtk_widget_realize will not work anyway.
+        (WebKit::BackingStore::paint): This is changing the cairo source
+        operator, so save/restore the cairo context to ensure it doesn't
+        affect other drawing done after this.
+
 2016-02-24  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [web-animations] Add AnimationTimeline, DocumentTimeline and add extensions to Document interface
