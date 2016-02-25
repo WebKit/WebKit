@@ -1,7 +1,3 @@
-// jsc always has arguments, but in browser we do not have arguments, so
-// ignore this test in run-jsc-stress-tests, but run in run-webkit-tests.
-//@ skip
-
 description('Tests for ES6 arrow function lexical bind of arguments on top level');
 
 let foo = () => arguments;
