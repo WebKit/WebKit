@@ -1,5 +1,25 @@
 2016-02-21  Daniel Bates  <dabates@apple.com>
 
+        CSP: Violation report should include column number
+        https://bugs.webkit.org/show_bug.cgi?id=154418
+        <rdar://problem/24729525>
+
+        Reviewed by Brent Fulgham.
+
+        Include column-number in the Content Security Policy violation report for the column number
+        in the source script where the violation occurred (for a script violation) as per section
+        Reporting of the Content Security Policy 2.0 spec., <https://www.w3.org/TR/2015/CR-CSP2-20150721/>.
+
+        When a CSP report is created for a script violation the source file and line number of the
+        source code line where the violation occurred are included in the report. We now include
+        the column number in the source file where the violation occurred so as to help narrow
+        down the operation that triggered the violation in a complicated source code line.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation):
+
+2016-02-21  Daniel Bates  <dabates@apple.com>
+
         CSP: Violation report should include HTTP status code and effective-directive of protected resource
         https://bugs.webkit.org/show_bug.cgi?id=154288
         <rdar://problem/24674982>
