@@ -49,7 +49,7 @@ window.addEventListener('load', function() {
     xhr.onload = xhrLoaded;
     xhr.onerror = xhrError;
     // Slow loading XHR (3-second stall).
-    xhr.open("GET", "/resources/load-and-stall.cgi?name=../../../http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout.js&stallFor=3&stallAt=0&mimeType=text/plain", true);
+    xhr.open("GET", "/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain", true);
     xhr.send();
 
     // This needs to happen in a setTimeout because a navigation inside the onload handler would
