@@ -56,14 +56,32 @@ class RefCounter {
     };
 
 public:
-    using Token = RefPtr<Count>;
+    class Token  {
+    public:
+        Token() { }
+        Token(std::nullptr_t) { }
+        inline Token(const Token&);
+        inline Token(Token&&);
+
+        inline Token& operator=(std::nullptr_t);
+        inline Token& operator=(const Token&);
+        inline Token& operator=(Token&&);
+
+        explicit operator bool() const { return m_ptr; }
+
+    private:
+        friend class RefCounter;
+        inline Token(Count* count);
+
+        RefPtr<Count> m_ptr;
+    };
 
     WTF_EXPORT_PRIVATE RefCounter(std::function<void(bool)> = [](bool) { });
     WTF_EXPORT_PRIVATE ~RefCounter();
 
     Token count() const
     {
-        return m_count;
+        return Token(m_count);
     }
 
     unsigned value() const
@@ -123,6 +141,45 @@ inline RefCounter<T>::~RefCounter()
         m_count->m_refCounter = nullptr;
     else
         delete m_count;
+}
+
+template<class T>
+inline RefCounter<T>::Token::Token(Count* count)
+    : m_ptr(count)
+{
+}
+
+template<class T>
+inline RefCounter<T>::Token::Token(const RefCounter::Token& token)
+    : m_ptr(token.m_ptr)
+{
+}
+
+template<class T>
+inline RefCounter<T>::Token::Token(RefCounter::Token&& token)
+    : m_ptr(token.m_ptr)
+{
+}
+
+template<class T>
+inline typename RefCounter<T>::Token& RefCounter<T>::Token::operator=(std::nullptr_t)
+{
+    m_ptr = nullptr;
+    return *this;
+}
+
+template<class T>
+inline typename RefCounter<T>::Token& RefCounter<T>::Token::operator=(const RefCounter<T>::Token& token)
+{
+    m_ptr = token.m_ptr;
+    return *this;
+}
+
+template<class T>
+inline typename RefCounter<T>::Token& RefCounter<T>::Token::operator=(RefCounter<T>::Token&& token)
+{
+    m_ptr = token.m_ptr;
+    return *this;
 }
 
 } // namespace WTF
