@@ -36,15 +36,15 @@ struct SVGPropertyTraits<BlendMode> {
     {
         switch (type) {
         case BlendModeNormal:
-            return "normal";
+            return ASCIILiteral("normal");
         case BlendModeMultiply:
-            return "multiply";
+            return ASCIILiteral("multiply");
         case BlendModeScreen:
-            return "screen";
+            return ASCIILiteral("screen");
         case BlendModeDarken:
-            return "darken";
+            return ASCIILiteral("darken");
         case BlendModeLighten:
-            return "lighten";
+            return ASCIILiteral("lighten");
         default:
             return emptyString();
         }

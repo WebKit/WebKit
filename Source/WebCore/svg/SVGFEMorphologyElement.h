@@ -37,9 +37,9 @@ struct SVGPropertyTraits<MorphologyOperatorType> {
         case FEMORPHOLOGY_OPERATOR_UNKNOWN:
             return emptyString();
         case FEMORPHOLOGY_OPERATOR_ERODE:
-            return "erode";
+            return ASCIILiteral("erode");
         case FEMORPHOLOGY_OPERATOR_DILATE:
-            return "dilate";
+            return ASCIILiteral("dilate");
         }
 
         ASSERT_NOT_REACHED();

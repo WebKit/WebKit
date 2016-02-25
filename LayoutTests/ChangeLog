@@ -1,3 +1,17 @@
+2016-02-23  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [SVG] Update SVG source to return string literals as ASCIILiteral and add test cases for case sensitivity
+        https://bugs.webkit.org/show_bug.cgi?id=154373
+
+        Reviewed by Youenn Fablet.
+
+        Add test cases for case-sensitivity for SVGAnimatedEnumeration elements.
+
+        * svg/dom/SVGAnimatedEnumeration-case-sensitive-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-case-sensitive.html: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-case-sensitive.js: Added.
+        (testCaseSensitivity):
+
 2016-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font features specified in @font-face blocks don't apply to local() families
