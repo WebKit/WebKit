@@ -36,8 +36,9 @@ namespace WebCore {
 
 class Page;
 
-enum PageActivityAssertionTokenType { };
-typedef RefCounter::Token<PageActivityAssertionTokenType> PageActivityAssertionToken;
+enum PageActivityCounterType { };
+typedef RefCounter<PageActivityCounterType> PageActivityCounter;
+typedef PageActivityCounter::Token PageActivityAssertionToken;
 
 struct PageActivityState {
     enum {
@@ -71,8 +72,8 @@ private:
     PageActivityState::Flags m_activityState { PageActivityState::NoFlags };
     HysteresisActivity m_userInputHysteresis;
     HysteresisActivity m_audiblePluginHysteresis;
-    RefCounter m_mediaActivityCounter;
-    RefCounter m_pageLoadActivityCounter;
+    PageActivityCounter m_mediaActivityCounter;
+    PageActivityCounter m_pageLoadActivityCounter;
 };
 
 }

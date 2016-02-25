@@ -1,3 +1,15 @@
+2016-02-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Should template RefCounter instead of RefCounter::Token
+        https://bugs.webkit.org/show_bug.cgi?id=154691
+
+        Reviewed by Anders Carlsson.
+
+        Mechanical update per RefCounter interface change.
+
+        * TestWebKitAPI/Tests/WTF/RefCounter.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-02-25  Skachkov Aleksandr  <gskachkov@gmail.com>
 
         Unreviewed: Add Aleksandr Skachkov as a commiter

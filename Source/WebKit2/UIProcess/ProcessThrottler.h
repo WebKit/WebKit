@@ -34,19 +34,23 @@
 
 namespace WebKit {
     
-enum UserObservablePageTokenType { };
-typedef RefCounter::Token<UserObservablePageTokenType> UserObservablePageToken;
-enum ProcessSuppressionDisabledTokenType { };
-typedef RefCounter::Token<ProcessSuppressionDisabledTokenType> ProcessSuppressionDisabledToken;
+enum UserObservablePageCounterType { };
+typedef RefCounter<UserObservablePageCounterType> UserObservablePageCounter;
+typedef UserObservablePageCounter::Token UserObservablePageToken;
+enum ProcessSuppressionDisabledCounterType { };
+typedef RefCounter<ProcessSuppressionDisabledCounterType> ProcessSuppressionDisabledCounter;
+typedef ProcessSuppressionDisabledCounter::Token ProcessSuppressionDisabledToken;
 
 class ProcessThrottlerClient;
 
 class ProcessThrottler : private ProcessAssertionClient {
 public:
-    enum ForegroundActivityTokenType { };
-    typedef RefCounter::Token<ForegroundActivityTokenType> ForegroundActivityToken;
-    enum BackgroundActivityTokenType { };
-    typedef RefCounter::Token<BackgroundActivityTokenType> BackgroundActivityToken;
+    enum ForegroundActivityCounterType { };
+    typedef RefCounter<ForegroundActivityCounterType> ForegroundActivityCounter;
+    typedef ForegroundActivityCounter::Token ForegroundActivityToken;
+    enum BackgroundActivityCounterType { };
+    typedef RefCounter<BackgroundActivityCounterType> BackgroundActivityCounter;
+    typedef BackgroundActivityCounter::Token BackgroundActivityToken;
 
     ProcessThrottler(ProcessThrottlerClient&);
 
@@ -69,19 +73,19 @@ private:
     ProcessThrottlerClient& m_process;
     std::unique_ptr<ProcessAndUIAssertion> m_assertion;
     RunLoop::Timer<ProcessThrottler> m_suspendTimer;
-    RefCounter m_foregroundCounter;
-    RefCounter m_backgroundCounter;
+    ForegroundActivityCounter m_foregroundCounter;
+    BackgroundActivityCounter m_backgroundCounter;
     int m_suspendMessageCount;
 };
 
 inline ProcessThrottler::ForegroundActivityToken ProcessThrottler::foregroundActivityToken() const
 {
-    return ForegroundActivityToken(m_foregroundCounter.token<ForegroundActivityTokenType>());
+    return ForegroundActivityToken(m_foregroundCounter.count());
 }
 
 inline ProcessThrottler::BackgroundActivityToken ProcessThrottler::backgroundActivityToken() const
 {
-    return BackgroundActivityToken(m_backgroundCounter.token<BackgroundActivityTokenType>());
+    return BackgroundActivityToken(m_backgroundCounter.count());
 }
     
 }

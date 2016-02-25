@@ -1,3 +1,39 @@
+2016-02-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Should template RefCounter instead of RefCounter::Token
+        https://bugs.webkit.org/show_bug.cgi?id=154691
+
+        Reviewed by Anders Carlsson.
+
+        My real goal here is to make the counter accurate. Currently returning a Token from token<>()
+        results in ref-count churn. Fixing this either means changing the return value, or improving
+        Token (which will probably mean replacing it with RefPtr). Either way would break the current
+        type checking. Move type tag to RefCount so this can still be enforced.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/RefCounter.cpp: Removed.
+            - Removed RefCounter.cpp.
+        * wtf/RefCounter.h:
+        (WTF::RefCounter::Token::Token):
+        (WTF::RefCounter::Token::operator bool):
+        (WTF::RefCounter::RefCounter):
+        (WTF::RefCounter::count):
+        (WTF::RefCounter::value):
+        (WTF::RefCounter<T>::Count::ref):
+        (WTF::RefCounter<T>::Count::deref):
+        (WTF::RefCounter<T>::RefCounter):
+        (WTF::RefCounter<T>::~RefCounter):
+        (WTF::RefCounter<T>::Token::Token):
+        (WTF::=):
+        (WTF::RefCounter::token): Deleted.
+        (WTF::RefCounter::Token<T>::Token): Deleted.
+            - RefCounter -> RefCounter<T>,
+            - Token<T> -> Token,
+            - renamed token<>() -> count().
+
 2016-02-25  Sam Weinig  <sam@webkit.org>
 
         HashMap::ensure() should return an AddResult like all the other add-like functions.

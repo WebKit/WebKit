@@ -1,3 +1,20 @@
+2016-02-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Should template RefCounter instead of RefCounter::Token
+        https://bugs.webkit.org/show_bug.cgi?id=154691
+
+        Reviewed by Anders Carlsson.
+
+        Mechanical update per RefCounter interface change.
+
+        * UIProcess/Plugins/PluginProcessManager.h:
+        (WebKit::PluginProcessManager::processSuppressionDisabledToken):
+        (WebKit::PluginProcessManager::processSuppressionDisabled):
+        * UIProcess/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::foregroundActivityToken):
+        (WebKit::ProcessThrottler::backgroundActivityToken):
+        * UIProcess/WebProcessPool.h:
+
 2016-02-25  Brady Eidson  <beidson@apple.com>
 
         Remove LegacyIDB.

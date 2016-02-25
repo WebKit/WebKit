@@ -111,7 +111,6 @@
     <ClCompile Include="..\wtf\RAMSize.cpp" />
     <ClCompile Include="..\wtf\RandomNumber.cpp" />
     <ClCompile Include="..\wtf\RefCountedLeakCounter.cpp" />
-    <ClCompile Include="..\wtf\RefCounter.cpp" />
     <ClCompile Include="..\wtf\RunLoop.cpp" />
     <ClCompile Include="..\wtf\SHA1.cpp" />
     <ClCompile Include="..\wtf\SixCharacterHash.cpp" />

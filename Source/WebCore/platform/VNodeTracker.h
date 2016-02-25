@@ -39,8 +39,9 @@ class VNodeTracker {
 public:
     using PressureHandler = std::function<void(Critical)>;
 
-    enum TokenType { };
-    using Token = RefCounter::Token<TokenType>;
+    enum VNodeCounterType { };
+    using VNodeCounter = RefCounter<VNodeCounterType>;
+    using Token = VNodeCounter::Token;
 
     WEBCORE_EXPORT static VNodeTracker& singleton();
 
@@ -59,7 +60,7 @@ private:
     unsigned m_hardVNodeLimit { 400 };
     unsigned m_softVNodeLimit { 300 };
     PressureHandler m_pressureHandler;
-    RefCounter m_vnodeCounter;
+    VNodeCounter m_vnodeCounter;
     Timer m_pressureWarningTimer;
     std::chrono::steady_clock::time_point m_lastWarningTime;
 };
@@ -74,7 +75,7 @@ inline auto VNodeTracker::token() -> Token
     if (!m_pressureHandler)
         return Token();
 
-    Token token(m_vnodeCounter.token<TokenType>());
+    Token token(m_vnodeCounter.count());
     checkPressureState();
     return token;
 }

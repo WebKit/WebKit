@@ -82,14 +82,14 @@ private:
     Vector<RefPtr<PluginProcessProxy>> m_pluginProcesses;
 
 #if PLATFORM(COCOA)
-    RefCounter m_processSuppressionDisabledForPageCounter;
+    ProcessSuppressionDisabledCounter m_processSuppressionDisabledForPageCounter;
 #endif
 };
 
 #if PLATFORM(COCOA)
 inline ProcessSuppressionDisabledToken PluginProcessManager::processSuppressionDisabledToken()
 {
-    return m_processSuppressionDisabledForPageCounter.token<ProcessSuppressionDisabledTokenType>();
+    return m_processSuppressionDisabledForPageCounter.count();
 }
 
 inline bool PluginProcessManager::processSuppressionDisabled() const

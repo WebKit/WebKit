@@ -41,12 +41,12 @@ PageThrottler::PageThrottler(Page& page)
 
 PageActivityAssertionToken PageThrottler::mediaActivityToken()
 {
-    return m_mediaActivityCounter.token<PageActivityAssertionTokenType>();
+    return m_mediaActivityCounter.count();
 }
 
 PageActivityAssertionToken PageThrottler::pageLoadActivityToken()
 {
-    return m_pageLoadActivityCounter.token<PageActivityAssertionTokenType>();
+    return m_pageLoadActivityCounter.count();
 }
 
 void PageThrottler::setActivityFlag(PageActivityState::Flags flag, bool value)

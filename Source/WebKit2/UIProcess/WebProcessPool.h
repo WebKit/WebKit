@@ -338,12 +338,12 @@ public:
 
     UserObservablePageToken userObservablePageCount()
     {
-        return m_userObservablePageCounter.token<UserObservablePageTokenType>();
+        return m_userObservablePageCounter.count();
     }
 
     ProcessSuppressionDisabledToken processSuppressionDisabledForPageCount()
     {
-        return m_processSuppressionDisabledForPageCounter.token<ProcessSuppressionDisabledTokenType>();
+        return m_processSuppressionDisabledForPageCounter.count();
     }
 
     // FIXME: Move these to API::WebsiteDataStore.
@@ -507,8 +507,8 @@ private:
 
     bool m_memoryCacheDisabled;
 
-    RefCounter m_userObservablePageCounter;
-    RefCounter m_processSuppressionDisabledForPageCounter;
+    UserObservablePageCounter m_userObservablePageCounter;
+    ProcessSuppressionDisabledCounter m_processSuppressionDisabledForPageCounter;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;
