@@ -1,3 +1,15 @@
+2016-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Reduce direct callers of Structure::findStructuresAndMapForMaterialization
+        https://bugs.webkit.org/show_bug.cgi?id=154751
+
+        Reviewed by Mark Lam.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::toStructureShape):
+        This property name iteration is identical to Structure::forEachPropertyConcurrently.
+        Share the code and reduce callers to the subtle findStructuresAndMapForMaterialization.
+
 2016-02-26  Mark Lam  <mark.lam@apple.com>
 
         Function.name and Function.length should be configurable.
