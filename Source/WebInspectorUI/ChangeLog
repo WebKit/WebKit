@@ -1,3 +1,21 @@
+2016-02-26  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Option-clicking on the a CSS property sometimes doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=154384
+        <rdar://problem/24714755>
+
+        Reviewed by Timothy Hatcher.
+
+        It seems as though there were race conditions between CodeMirror's event
+        and the native mousemove such that if CodeMirror fired second, the current
+        candidate was cleared, and would not reset itself until the cursor was
+        moved, at which point the same issue could happen. To fix this, the current
+        candidate is no longer cleared by CodeMirror's event and is instead only
+        modified by the native mouse-events.
+
+        * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._hidePopover):
+
 2016-02-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Unify selected item colors
