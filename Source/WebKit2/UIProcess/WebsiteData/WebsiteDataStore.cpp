@@ -121,36 +121,36 @@ enum class ProcessAccessType {
     Launch,
 };
 
-static ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+static ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
-    if (dataTypes & WebsiteDataTypeCookies) {
+    if (dataTypes.contains(WebsiteDataType::Cookies)) {
         if (isNonPersistentStore)
             processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
         else
             processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
     }
 
-    if (dataTypes & WebsiteDataTypeDiskCache && !isNonPersistentStore)
+    if (dataTypes.contains(WebsiteDataType::DiskCache) && !isNonPersistentStore)
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
     return processAccessType;
 }
 
-static ProcessAccessType computeWebProcessAccessTypeForDataFetch(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+static ProcessAccessType computeWebProcessAccessTypeForDataFetch(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     UNUSED_PARAM(isNonPersistentStore);
 
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
-    if (dataTypes & WebsiteDataTypeMemoryCache)
+    if (dataTypes.contains(WebsiteDataType::MemoryCache))
         return ProcessAccessType::OnlyIfLaunched;
 
     return processAccessType;
 }
 
-void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
+void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
 {
     struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
@@ -289,33 +289,33 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
         }
     }
 
-    if (dataTypes & WebsiteDataTypeSessionStorage && m_storageManager) {
+    if (dataTypes.contains(WebsiteDataType::SessionStorage) && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
         m_storageManager->getSessionStorageOrigins([callbackAggregator](HashSet<RefPtr<WebCore::SecurityOrigin>>&& origins) {
             WebsiteData websiteData;
 
             while (!origins.isEmpty())
-                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataTypeSessionStorage });
+                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::SessionStorage });
 
             callbackAggregator->removePendingCallback(WTFMove(websiteData));
         });
     }
 
-    if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
+    if (dataTypes.contains(WebsiteDataType::LocalStorage) && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
         m_storageManager->getLocalStorageOrigins([callbackAggregator](HashSet<RefPtr<WebCore::SecurityOrigin>>&& origins) {
             WebsiteData websiteData;
 
             while (!origins.isEmpty())
-                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataTypeLocalStorage });
+                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::LocalStorage });
 
             callbackAggregator->removePendingCallback(WTFMove(websiteData));
         });
     }
 
-    if (dataTypes & WebsiteDataTypeOfflineWebApplicationCache && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
         StringCapture applicationCacheDirectory { m_applicationCacheDirectory };
 
         callbackAggregator->addPendingCallback();
@@ -330,14 +330,14 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
                 WebsiteData websiteData;
 
                 for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataTypeOfflineWebApplicationCache });
+                    websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::OfflineWebApplicationCache });
 
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
     }
 
-    if (dataTypes & WebsiteDataTypeWebSQLDatabases && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::WebSQLDatabases) && isPersistent()) {
         StringCapture webSQLDatabaseDirectory { m_webSQLDatabaseDirectory };
 
         callbackAggregator->addPendingCallback();
@@ -349,7 +349,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataTypeWebSQLDatabases });
+                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::WebSQLDatabases });
 
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
@@ -357,7 +357,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
     }
 
 #if ENABLE(DATABASE_PROCESS)
-    if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
@@ -369,7 +369,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
     }
 #endif
 
-    if (dataTypes & WebsiteDataTypeMediaKeys && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         StringCapture mediaKeysStorageDirectory { m_mediaKeysStorageDirectory };
 
         callbackAggregator->addPendingCallback();
@@ -380,7 +380,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataTypeMediaKeys });
+                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::MediaKeys });
 
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
@@ -388,7 +388,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
     }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if (dataTypes & WebsiteDataTypePlugInData && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
         class State {
         public:
             static void fetchData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins)
@@ -443,39 +443,39 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
     callbackAggregator->callIfNeeded();
 }
 
-static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
-    if (dataTypes & WebsiteDataTypeCookies) {
+    if (dataTypes.contains(WebsiteDataType::Cookies)) {
         if (isNonPersistentStore)
             processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
         else
             processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
     }
 
-    if (dataTypes & WebsiteDataTypeDiskCache && !isNonPersistentStore)
+    if (dataTypes.contains(WebsiteDataType::DiskCache) && !isNonPersistentStore)
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
-    if (dataTypes & WebsiteDataTypeHSTSCache)
+    if (dataTypes.contains(WebsiteDataType::HSTSCache))
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
     return processAccessType;
 }
 
-static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(WebsiteDataTypes dataTypes, bool isNonPersistentStore)
+static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     UNUSED_PARAM(isNonPersistentStore);
 
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
-    if (dataTypes & WebsiteDataTypeMemoryCache)
+    if (dataTypes.contains(WebsiteDataType::MemoryCache))
         processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
 
     return processAccessType;
 }
 
-void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
+void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
 {
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator (std::function<void ()> completionHandler)
@@ -557,7 +557,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         }
     }
 
-    if (dataTypes & WebsiteDataTypeSessionStorage && m_storageManager) {
+    if (dataTypes.contains(WebsiteDataType::SessionStorage) && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
         m_storageManager->deleteSessionStorageOrigins([callbackAggregator] {
@@ -565,7 +565,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         });
     }
 
-    if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
+    if (dataTypes.contains(WebsiteDataType::LocalStorage) && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
         m_storageManager->deleteLocalStorageOriginsModifiedSince(modifiedSince, [callbackAggregator] {
@@ -573,7 +573,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         });
     }
 
-    if (dataTypes & WebsiteDataTypeOfflineWebApplicationCache && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
         StringCapture applicationCacheDirectory { m_applicationCacheDirectory };
 
         callbackAggregator->addPendingCallback();
@@ -589,7 +589,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         });
     }
 
-    if (dataTypes & WebsiteDataTypeWebSQLDatabases && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::WebSQLDatabases) && isPersistent()) {
         StringCapture webSQLDatabaseDirectory { m_webSQLDatabaseDirectory };
 
         callbackAggregator->addPendingCallback();
@@ -604,7 +604,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
     }
 
 #if ENABLE(DATABASE_PROCESS)
-    if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
@@ -616,7 +616,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
     }
 #endif
 
-    if (dataTypes & WebsiteDataTypeMediaKeys && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         StringCapture mediaKeysStorageDirectory { m_mediaKeysStorageDirectory };
 
         callbackAggregator->addPendingCallback();
@@ -630,7 +630,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         });
     }
 
-    if (dataTypes & WebsiteDataTypeSearchFieldRecentSearches && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::SearchFieldRecentSearches) && isPersistent()) {
         callbackAggregator->addPendingCallback();
 
         m_queue->dispatch([modifiedSince, callbackAggregator] {
@@ -643,7 +643,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
     }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if (dataTypes & WebsiteDataTypePlugInData && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
         class State {
         public:
             static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, std::chrono::system_clock::time_point modifiedSince)
@@ -695,7 +695,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<WebsiteDataRecord>& dataRecords, std::function<void ()> completionHandler)
+void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Vector<WebsiteDataRecord>& dataRecords, std::function<void ()> completionHandler)
 {
     Vector<RefPtr<WebCore::SecurityOrigin>> origins;
 
@@ -791,7 +791,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
         }
     }
 
-    if (dataTypes & WebsiteDataTypeSessionStorage && m_storageManager) {
+    if (dataTypes.contains(WebsiteDataType::SessionStorage) && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
         m_storageManager->deleteSessionStorageEntriesForOrigins(origins, [callbackAggregator] {
@@ -799,7 +799,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
         });
     }
 
-    if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
+    if (dataTypes.contains(WebsiteDataType::LocalStorage) && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
         m_storageManager->deleteLocalStorageEntriesForOrigins(origins, [callbackAggregator] {
@@ -807,7 +807,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
         });
     }
 
-    if (dataTypes & WebsiteDataTypeOfflineWebApplicationCache && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
         StringCapture applicationCacheDirectory { m_applicationCacheDirectory };
 
         HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
@@ -829,7 +829,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
         });
     }
 
-    if (dataTypes & WebsiteDataTypeWebSQLDatabases && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::WebSQLDatabases) && isPersistent()) {
         StringCapture webSQLDatabaseDirectory { m_webSQLDatabaseDirectory };
 
         HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
@@ -852,7 +852,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
     }
 
 #if ENABLE(DATABASE_PROCESS)
-    if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
@@ -864,7 +864,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
     }
 #endif
 
-    if (dataTypes & WebsiteDataTypeMediaKeys && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         StringCapture mediaKeysStorageDirectory { m_mediaKeysStorageDirectory };
         HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
         for (const auto& dataRecord : dataRecords) {
@@ -884,7 +884,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
     }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if (dataTypes & WebsiteDataTypePlugInData && isPersistent()) {
+    if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
         Vector<String> hostNames;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& hostName : dataRecord.pluginDataHostNames)

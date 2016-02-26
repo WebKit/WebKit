@@ -1,3 +1,21 @@
+2016-02-26  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::OptionSet and use it for the website data types enum
+        https://bugs.webkit.org/show_bug.cgi?id=154733
+
+        Reviewed by Geoffrey Garen.
+
+        Add WTF::OptionSet which makes it easier to use strong enums as flags.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Forward.h:
+        * wtf/OptionSet.h: Copied from Source/WebKit2/Shared/WebsiteData/WebsiteData.h.
+        (WTF::OptionSet::fromRaw):
+        (WTF::OptionSet::OptionSet):
+        (WTF::OptionSet::toRaw):
+        (WTF::OptionSet::contains):
+        (WTF::OptionSet::operator|=):
+
 2016-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197168.

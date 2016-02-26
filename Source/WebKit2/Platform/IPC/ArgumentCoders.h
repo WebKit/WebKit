@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
@@ -51,6 +52,23 @@ template<typename T> struct SimpleArgumentCoder {
     static bool decode(ArgumentDecoder& decoder, T& t)
     {
         return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&t), sizeof(T), alignof(T));
+    }
+};
+
+template<typename T> struct ArgumentCoder<OptionSet<T>> {
+    static void encode(ArgumentEncoder& encoder, const OptionSet<T>& optionSet)
+    {
+        encoder << (static_cast<uint64_t>(optionSet.toRaw()));
+    }
+
+    static bool decode(ArgumentDecoder& decoder, OptionSet<T>& optionSet)
+    {
+        uint64_t value;
+        if (!decoder.decode(value))
+            return false;
+
+        optionSet = OptionSet<T>::fromRaw(value);
+        return true;
     }
 };
 

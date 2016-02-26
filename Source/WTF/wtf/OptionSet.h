@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebsiteDataTypes_h
-#define WebsiteDataTypes_h
+#ifndef OptionSet_h
+#define OptionSet_h
 
-namespace WebKit {
+#include <type_traits>
 
-enum WebsiteDataTypes {
-    WebsiteDataTypeCookies = 1 << 0,
-    WebsiteDataTypeDiskCache = 1 << 1,
-    WebsiteDataTypeMemoryCache = 1 << 2,
-    WebsiteDataTypeOfflineWebApplicationCache = 1 << 3,
-    WebsiteDataTypeSessionStorage = 1 << 4,
-    WebsiteDataTypeLocalStorage = 1 << 5,
-    WebsiteDataTypeWebSQLDatabases = 1 << 6,
-    WebsiteDataTypeIndexedDBDatabases = 1 << 7,
-    WebsiteDataTypeMediaKeys = 1 << 8,
-    WebsiteDataTypeHSTSCache = 1 << 9,
-    WebsiteDataTypeSearchFieldRecentSearches = 1 << 10,
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WebsiteDataTypePlugInData = 1 << 11,
-#endif
-#if ENABLE(MEDIA_STREAM)
-    WebsiteDataTypeMediaDeviceIdentifier = 1 << 12,
-#endif
+namespace WTF {
+
+template<typename T> class OptionSet {
+    static_assert(std::is_enum<T>::value, "T is not an enum type");
+    typedef typename std::make_unsigned<typename std::underlying_type<T>::type>::type StorageType;
+
+public:
+    static OptionSet fromRaw(StorageType storageType)
+    {
+        return static_cast<T>(storageType);
+    }
+
+    constexpr OptionSet()
+        : m_storage(0)
+    {
+    }
+
+    constexpr OptionSet(T t)
+        : m_storage(static_cast<StorageType>(t))
+    {
+    }
+
+    constexpr StorageType toRaw() const { return m_storage; }
+
+    constexpr bool contains(OptionSet optionSet) const
+    {
+        return m_storage & optionSet.m_storage;
+    }
+
+    friend OptionSet& operator|=(OptionSet& lhs, OptionSet rhs)
+    {
+        lhs.m_storage |= rhs.m_storage;
+
+        return lhs;
+    }
+
+private:
+    StorageType m_storage;
 };
 
-};
+}
 
-#endif // WebsiteDataTypes_h
+using WTF::OptionSet;
+
+#endif // OptionSet_h

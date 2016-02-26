@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebsiteData_h
-#define WebsiteData_h
-
-#include <WebCore/SecurityOrigin.h>
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
-
-namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
-}
+#ifndef WebsiteDataType_h
+#define WebsiteDataType_h
 
 namespace WebKit {
 
-enum class WebsiteDataType;
-
-struct WebsiteData {
-    struct Entry {
-        RefPtr<WebCore::SecurityOrigin> origin;
-        WebsiteDataType type;
-
-        void encode(IPC::ArgumentEncoder&) const;
-        static bool decode(IPC::ArgumentDecoder&, WebsiteData::Entry&);
-    };
-
-    Vector<Entry> entries;
-    HashSet<String> hostNamesWithCookies;
-
+enum class WebsiteDataType {
+    Cookies = 1 << 0,
+    DiskCache = 1 << 1,
+    MemoryCache = 1 << 2,
+    OfflineWebApplicationCache = 1 << 3,
+    SessionStorage = 1 << 4,
+    LocalStorage = 1 << 5,
+    WebSQLDatabases = 1 << 6,
+    IndexedDBDatabases = 1 << 7,
+    MediaKeys = 1 << 8,
+    HSTSCache = 1 << 9,
+    SearchFieldRecentSearches = 1 << 10,
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    HashSet<String> hostNamesWithPluginData;
+    PlugInData = 1 << 11,
 #endif
-
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, WebsiteData&);
+#if ENABLE(MEDIA_STREAM)
+    MediaDeviceIdentifier = 1 << 12,
+#endif
 };
 
-}
+};
 
-#endif // WebsiteData_h
+#endif // WebsiteDataType_h

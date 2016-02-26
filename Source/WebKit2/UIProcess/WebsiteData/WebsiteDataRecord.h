@@ -26,9 +26,10 @@
 #ifndef WebsiteDataRecord_h
 #define WebsiteDataRecord_h
 
-#include "WebsiteDataTypes.h"
+#include "WebsiteDataType.h"
 #include <WebCore/SecurityOriginHash.h>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,14 +46,14 @@ struct WebsiteDataRecord {
 #endif
     static String displayNameForOrigin(const WebCore::SecurityOrigin&);
 
-    void add(WebsiteDataTypes, RefPtr<WebCore::SecurityOrigin>&&);
+    void add(WebsiteDataType, RefPtr<WebCore::SecurityOrigin>&&);
     void addCookieHostName(const String& hostName);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void addPluginDataHostName(const String& hostName);
 #endif
 
     String displayName;
-    unsigned types { 0 };
+    OptionSet<WebsiteDataType> types;
     HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
     HashSet<String> cookieHostNames;
 #if ENABLE(NETSCAPE_PLUGIN_API)

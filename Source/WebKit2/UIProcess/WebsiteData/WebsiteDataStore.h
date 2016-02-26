@@ -27,11 +27,11 @@
 #define WebsiteDataStore_h
 
 #include "WebProcessLifetimeObserver.h"
-#include "WebsiteDataTypes.h"
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SessionID.h>
 #include <functional>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WorkQueue.h>
@@ -46,6 +46,7 @@ namespace WebKit {
 class StorageManager;
 class WebPageProxy;
 class WebProcessPool;
+enum class WebsiteDataType;
 struct WebsiteDataRecord;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -73,9 +74,9 @@ public:
 
     static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
 
-    void fetchData(WebsiteDataTypes, std::function<void (Vector<WebsiteDataRecord>)> completionHandler);
-    void removeData(WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
-    void removeData(WebsiteDataTypes, const Vector<WebsiteDataRecord>&, std::function<void ()> completionHandler);
+    void fetchData(OptionSet<WebsiteDataType>, std::function<void (Vector<WebsiteDataRecord>)> completionHandler);
+    void removeData(OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
+    void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, std::function<void ()> completionHandler);
 
     StorageManager* storageManager() { return m_storageManager.get(); }
 

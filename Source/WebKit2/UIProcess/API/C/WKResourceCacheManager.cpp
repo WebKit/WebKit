@@ -37,16 +37,16 @@ WKTypeID WKResourceCacheManagerGetTypeID()
     return toAPI(API::WebsiteDataStore::APIType);
 }
 
-static WebsiteDataTypes toWebsiteDataTypes(WKResourceCachesToClear cachesToClear)
+static OptionSet<WebsiteDataType> toWebsiteDataTypes(WKResourceCachesToClear cachesToClear)
 {
-    using WebsiteDataTypes = WebKit::WebsiteDataTypes;
+    OptionSet<WebsiteDataType> websiteDataTypes;
 
-    int websiteDataTypes = WebsiteDataTypeMemoryCache;
+    websiteDataTypes |= WebsiteDataType::MemoryCache;
 
     if (cachesToClear == WKResourceCachesToClearAll)
-        websiteDataTypes |= WebsiteDataTypeDiskCache;
+        websiteDataTypes |= WebsiteDataType::DiskCache;
 
-    return static_cast<WebsiteDataTypes>(websiteDataTypes);
+    return websiteDataTypes;
 }
 
 void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef cacheManager, void* context, WKResourceCacheManagerGetCacheOriginsFunction callback)
@@ -71,14 +71,14 @@ void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheMa
 
     {
         WebsiteDataRecord dataRecord;
-        dataRecord.add(WebsiteDataTypes::WebsiteDataTypeMemoryCache, &toImpl(origin)->securityOrigin());
+        dataRecord.add(WebsiteDataType::MemoryCache, &toImpl(origin)->securityOrigin());
 
         dataRecords.append(dataRecord);
     }
 
     if (cachesToClear == WKResourceCachesToClearAll) {
         WebsiteDataRecord dataRecord;
-        dataRecord.add(WebsiteDataTypes::WebsiteDataTypeDiskCache, &toImpl(origin)->securityOrigin());
+        dataRecord.add(WebsiteDataType::DiskCache, &toImpl(origin)->securityOrigin());
 
         dataRecords.append(dataRecord);
     }

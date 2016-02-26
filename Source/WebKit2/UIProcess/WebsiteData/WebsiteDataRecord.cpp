@@ -81,7 +81,7 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOrigin& se
     return String();
 }
 
-void WebsiteDataRecord::add(WebsiteDataTypes type, RefPtr<WebCore::SecurityOrigin>&& origin)
+void WebsiteDataRecord::add(WebsiteDataType type, RefPtr<WebCore::SecurityOrigin>&& origin)
 {
     types |= type;
 
@@ -90,7 +90,7 @@ void WebsiteDataRecord::add(WebsiteDataTypes type, RefPtr<WebCore::SecurityOrigi
 
 void WebsiteDataRecord::addCookieHostName(const String& hostName)
 {
-    types |= WebsiteDataTypeCookies;
+    types |= WebsiteDataType::Cookies;
 
     cookieHostNames.add(hostName);
 }
@@ -98,7 +98,7 @@ void WebsiteDataRecord::addCookieHostName(const String& hostName)
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebsiteDataRecord::addPluginDataHostName(const String& hostName)
 {
-    types |= WebsiteDataTypePlugInData;
+    types |= WebsiteDataType::PlugInData;
 
     pluginDataHostNames.add(hostName);
 }

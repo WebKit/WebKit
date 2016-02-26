@@ -28,10 +28,11 @@ namespace WTF {
 template<typename T> class Function;
 template<typename T> class LazyNeverDestroyed;
 template<typename T> class NeverDestroyed;
+template<typename T> class OptionSet;
 template<typename T> class Optional;
 template<typename T> class PassRefPtr;
-template<typename T> class RefPtr;
 template<typename T> class Ref;
+template<typename T> class RefPtr;
 template<typename T> class StringBuffer;
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> class Vector;
@@ -63,6 +64,7 @@ using WTF::Function;
 using WTF::FunctionDispatcher;
 using WTF::LazyNeverDestroyed;
 using WTF::NeverDestroyed;
+using WTF::OptionSet;
 using WTF::Optional;
 using WTF::OrdinalNumber;
 using WTF::PassRefPtr;
