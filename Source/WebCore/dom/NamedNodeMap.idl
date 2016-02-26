@@ -36,13 +36,10 @@
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters] Node getNamedItemNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, 
-                                       [Default=Undefined] optional DOMString localName);
+    [ObjCLegacyUnnamedParameters] Node getNamedItemNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
 
     [RaisesException] Node setNamedItemNS([Default=Undefined] optional Node node);
 
-    [ObjCLegacyUnnamedParameters, RaisesException] Node removeNamedItemNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, 
-                                          [Default=Undefined] optional DOMString localName);
-
+    [ObjCLegacyUnnamedParameters, RaisesException] Node removeNamedItemNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
 };
 

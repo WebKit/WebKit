@@ -4141,21 +4141,12 @@ sub JSValueToNative
     return "valueToDate(state, $value)" if $type eq "Date";
 
     if ($type eq "DOMString") {
-        # FIXME: This implements [TreatNullAs=NullString] and [TreatUndefinedAs=NullString],
-        # but the Web IDL spec requires [TreatNullAs=EmptyString] and [TreatUndefinedAs=EmptyString].
-        if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") and ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString")) {
-            return "valueToStringWithUndefinedOrNullCheck(state, $value)"
-        }
         if ($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") {
             return "valueToStringWithNullCheck(state, $value)"
         }
-        if ($signature->isNullable) {
-            return "valueToStringWithUndefinedOrNullCheck(state, $value)";
-        }
-        if ($signature->extendedAttributes->{"AtomicString"}) {
-            return "$value.toString(state)->toAtomicString(state)";
-        }
-        # FIXME: Add the case for 'if ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString"))'.
+        return "valueToStringWithUndefinedOrNullCheck(state, $value)" if $signature->isNullable;
+        return "$value.toString(state)->toAtomicString(state)" if $signature->extendedAttributes->{"AtomicString"};
+
         return "$value.toString(state)->value(state)";
     }
 

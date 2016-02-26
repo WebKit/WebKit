@@ -32,7 +32,7 @@
     attribute long width;
     attribute long height;
 
-    [Custom, RaisesException] DOMString toDataURL([TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString type);
+    [Custom, RaisesException] DOMString toDataURL(optional DOMString? type);
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     // The custom binding is needed to handle context creation attributes.

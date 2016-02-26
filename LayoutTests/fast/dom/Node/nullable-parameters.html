@@ -1,0 +1,35 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+function loadXML(url)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, false);
+    xhr.send();
+    return xhr.responseXML;
+}
+
+description("Tests the behavior of a few Node API parameters that should be nullable");
+
+var xmlDoc = loadXML("resources/testDoc.xml");
+
+shouldBeEqualToString("xmlDoc.documentElement.lookupPrefix('undefined')", "c");
+shouldBeNull("xmlDoc.documentElement.lookupPrefix(null)");
+shouldBeNull("xmlDoc.documentElement.lookupPrefix(undefined)");
+
+debug("");
+xmlDoc = loadXML("resources/testDoc2.xml");
+shouldBeEqualToString("xmlDoc.documentElement.lookupNamespaceURI('undefined')", "test");
+shouldBeNull("xmlDoc.documentElement.lookupNamespaceURI(null)");
+shouldBeNull("xmlDoc.documentElement.lookupNamespaceURI(undefined)");
+
+debug("");
+var element = document.createElementNS("undefined", "test");
+shouldBeTrue("element.isDefaultNamespace('undefined')");
+shouldBeFalse("element.isDefaultNamespace(undefined)");
+
+element = document.createElementNS("null", "test");
+shouldBeTrue("element.isDefaultNamespace('null')");
+shouldBeFalse("element.isDefaultNamespace(null)");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>

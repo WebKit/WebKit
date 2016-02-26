@@ -74,8 +74,7 @@
 
     void alert([Default=Undefined] optional DOMString message);
     boolean confirm([Default=Undefined] optional DOMString message);
-    DOMString? prompt([Default=Undefined] optional DOMString message,
-                                                [TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString defaultValue);
+    DOMString? prompt([Default=Undefined] optional DOMString message, [Default=Undefined] optional DOMString? defaultValue);
 
     boolean find([Default=Undefined] optional DOMString string,
                  [Default=Undefined] optional boolean caseSensitive,
@@ -140,13 +139,11 @@
     readonly attribute StyleMedia styleMedia;
 
     // DOM Level 2 Style Interface
-    CSSStyleDeclaration getComputedStyle([Default=Undefined] optional Element element,
-                                                              [TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString pseudoElement);
+    CSSStyleDeclaration getComputedStyle([Default=Undefined] optional Element element, [Default=Undefined] optional DOMString? pseudoElement);
 
     // WebKit extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    CSSRuleList getMatchedCSSRules([Default=Undefined] optional Element element,
-                                   [TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString pseudoElement);
+    CSSRuleList getMatchedCSSRules([Default=Undefined] optional Element element, [Default=Undefined] optional DOMString? pseudoElement);
 #endif
 
     [Replaceable] readonly attribute unrestricted double devicePixelRatio;

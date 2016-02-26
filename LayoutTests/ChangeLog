@@ -1,3 +1,21 @@
+2016-02-25  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Mark DOMString parameters as nullable when they should be
+        https://bugs.webkit.org/show_bug.cgi?id=154666
+
+        Reviewed by Darin Adler.
+
+        Add test coverage for minor behavioral changes in this patch.
+
+        * fast/dom/Element/getElementsByTagNameNS-nullable-expected.txt: Added.
+        * fast/dom/Element/getElementsByTagNameNS-nullable.html: Added.
+        * fast/dom/Node/nullable-parameters-expected.txt: Added.
+        * fast/dom/Node/nullable-parameters.html: Added.
+        * fast/dom/Node/resources/testdoc.xml: Added.
+        * fast/dom/Node/resources/testdoc2.xml: Added.
+        * fast/events/storageevent-initStorageEvent-nullable-expected.txt: Added.
+        * fast/events/storageevent-initStorageEvent-nullable.html: Added.
+
 2016-02-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping flaky test storage/indexeddb/intversion-open-in-upgradeneeded.html on mac-wk2

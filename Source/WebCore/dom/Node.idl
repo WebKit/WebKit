@@ -76,8 +76,7 @@
     // Introduced in DOM Level 2:
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-    [ObjCLegacyUnnamedParameters, ImplementedAs=isSupportedForBindings] boolean isSupported([Default=Undefined] optional DOMString feature,
-                                       [TreatNullAs=NullString,Default=Undefined] optional DOMString version);
+    [ObjCLegacyUnnamedParameters, ImplementedAs=isSupportedForBindings] boolean isSupported(optional DOMString feature, optional DOMString version);
 #endif
 
     readonly attribute DOMString?        namespaceURI;
@@ -99,9 +98,9 @@
 
     boolean            isSameNode([Default=Undefined] optional Node other);
     boolean            isEqualNode([Default=Undefined] optional Node other);
-    DOMString?         lookupPrefix([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
-    boolean            isDefaultNamespace([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI);
-    DOMString?         lookupNamespaceURI([TreatNullAs=NullString,Default=Undefined] optional DOMString prefix);
+    DOMString?         lookupPrefix([Default=Undefined] optional DOMString? namespaceURI);
+    boolean            isDefaultNamespace([Default=Undefined] optional DOMString? namespaceURI);
+    DOMString?         lookupNamespaceURI([Default=Undefined] optional DOMString? prefix);
 
     // DocumentPosition
     const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;

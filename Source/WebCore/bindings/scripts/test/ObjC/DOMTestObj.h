@@ -179,8 +179,9 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)classMethod2:(int)arg;
 - (DOMSVGDocument *)getSVGDocument;
 - (void)convert1:(DOMTestNode *)value;
-- (void)convert4:(DOMTestNode *)value;
-- (void)convert5:(DOMTestNode *)value;
+- (void)convert2:(DOMTestNode *)value;
+- (void)convert3:(NSString *)value;
+- (void)convert4:(NSString *)value;
 - (DOMSVGPoint *)mutablePointFunction;
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)orange;

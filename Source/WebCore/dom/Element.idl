@@ -49,25 +49,21 @@
 
     // DOM Level 2 Core
 
-    [ObjCLegacyUnnamedParameters] DOMString? getAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
-                                            [Default=Undefined] optional DOMString localName);
-    [ObjCLegacyUnnamedParameters, RaisesException] void setAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
-                                       [Default=Undefined] optional DOMString qualifiedName, 
-                                       [Default=Undefined] optional DOMString value);
-    [ObjCLegacyUnnamedParameters] void removeAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString namespaceURI,
-                                          DOMString localName);
+    [ObjCLegacyUnnamedParameters] DOMString? getAttributeNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setAttributeNS([Default=Undefined] optional DOMString? namespaceURI,
+        [Default=Undefined] optional DOMString qualifiedName,
+        [Default=Undefined] optional DOMString value);
+    [ObjCLegacyUnnamedParameters] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, [Default=Undefined] optional DOMString localName);
+    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(optional DOMString namespaceURI, optional DOMString localName);
 #else
-    HTMLCollection getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, [Default=Undefined] optional DOMString localName);
+    HTMLCollection getElementsByTagNameNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
 #endif
-    [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
-                                           [Default=Undefined] optional DOMString localName);
+    [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
     [RaisesException] Attr setAttributeNodeNS([Default=Undefined] optional Attr newAttr);
     boolean hasAttribute(DOMString name);
-    [ObjCLegacyUnnamedParameters] boolean hasAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
-                                          [Default=Undefined] optional DOMString localName);
+    [ObjCLegacyUnnamedParameters] boolean hasAttributeNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
 
     [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style;
 

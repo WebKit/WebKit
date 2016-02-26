@@ -1,3 +1,108 @@
+2016-02-25  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Mark DOMString parameters as nullable when they should be
+        https://bugs.webkit.org/show_bug.cgi?id=154666
+
+        Reviewed by Darin Adler.
+
+        Mark DOMString parameters as nullable when they should be. We previously
+        emulated nullable DOMString attributes by using:
+        [TreatNullAs=NullString, TreatUndefinedAs=NullString]
+        However, this was non-standard and very verbose. Also, developers would
+        sometimes forget the [TreatUndefinedAs=NullString] part and the behavior
+        would end up being wrong for undefined.
+
+        After this clean up, the non-standard [TreatUndefinedAs=NullString] is
+        no longer used so this patch drops support for it. Only
+        [TreatNullAs=NullString] remains and this one will be renamed to
+        [TreatNullAs=EmptyString] via Bug 154654 to match Web IDL standard.
+
+        Tests: fast/dom/Element/getElementsByTagNameNS-nullable.html
+               fast/dom/Node/nullable-parameters.html
+               fast/events/storageevent-initStorageEvent-nullable.html
+
+        * Modules/mediastream/RTCPeerConnection.idl:
+        Drop [TreatUndefinedAs=NullString] from createDataChannel()'s first
+        parameter instead of marking it as nullable. This matches the
+        specification:
+        - http://w3c.github.io/webrtc-pc/#rtcpeerconnection-interface-extensions-1
+        This means there is a slight behavior change when undefined is passed, it
+        now becomes the string "undefined" instead of a null String.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        Drop handling of [TreatUndefinedAs=] as it is no longer used.
+
+        * bindings/scripts/IDLAttributes.txt:
+        Drop support for [TreatUndefinedAs=] as it is no longer used.
+
+        * bindings/scripts/test/TestObj.idl:
+
+        * dom/DOMImplementation.idl:
+        Make a few parameters nullable and drop [TreatNullAs=NullString,
+        TreatUndefinedAs=NullString]. There is no web-exposed behavior
+        change.
+
+        * dom/Document.idl:
+        - Make a few parameters nullable and drop [TreatNullAs=NullString,
+          TreatUndefinedAs=NullString]. There is no web-exposed behavior
+          change from this.
+        - Drop these attributes from ObjC-specific bindings as they only
+          matter to JS bindings.
+        - The namespaceURI parameter to getElementsByTagNameNS() is now marked
+          as nullable even though it only treated null as a null String, not
+          undefined. This was a bug and did not match the specification:
+          https://dom.spec.whatwg.org/#document
+
+        * dom/Element.idl:
+        - Make a few parameters nullable and drop [TreatNullAs=NullString,
+          TreatUndefinedAs=NullString]. There is no web-exposed behavior
+          change from this.
+        - Drop these attributes from ObjC-specific bindings as they only
+          matter to JS bindings.
+        - The namespaceURI parameter to getElementsByTagNameNS() is now marked
+          as nullable even though it only treated null as a null String, not
+          undefined. This was a bug and did not match the specification:
+          https://dom.spec.whatwg.org/#interface-element
+
+        * dom/NamedNodeMap.idl:
+        Make a few parameters nullable and drop [TreatNullAs=NullString,
+        TreatUndefinedAs=NullString]. There is no web-exposed behavior
+        change from this.
+
+        * dom/Node.idl:
+        - Drop these attributes from isSupported() as this is not exposed
+          to JS (only native bindings) and these attributes only matter to
+          JS bindings.
+        - Make the first parameter to lookupPrefix() / isDefaultNamespace()
+          and lookupNamespaceURI() nullable. Previously, we treated null
+          as a null string but not undefined. There is therefore a slight
+          behavior change but this matches the specification:
+          https://dom.spec.whatwg.org/#node
+
+        * fileapi/Blob.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLKeygenElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * page/DOMWindow.idl:
+        Make a few parameters nullable and drop [TreatNullAs=NullString,
+        TreatUndefinedAs=NullString]. There is no web-exposed behavior
+        change from this.
+
+        * storage/StorageEvent.idl:
+        Mark oldValueArg / newValueArg parameters to initStorageEvent()
+        as nullable. Previously, we only treated null as a null string,
+        not undefined. This is therefore a slight behavior change but
+        it matches the specification:
+        https://www.w3.org/TR/webstorage/#storageeventinit
+
 2016-02-25  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r196744): NetworkExtension.framework and NEFilterSource class are not available on Recovery partition

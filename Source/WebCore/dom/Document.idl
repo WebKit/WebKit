@@ -54,15 +54,15 @@
 
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode([Default=Undefined] optional Node importedNode,
                     optional boolean deep);
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS([TreatNullAs=NullString,TreatUndefinedAs=NullString,Default=Undefined] optional DOMString namespaceURI,
-                            [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS([TreatNullAs=NullString,TreatUndefinedAs=NullString,Default=Undefined] optional DOMString namespaceURI,
-                                                                          [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS([Default=Undefined] optional DOMString? namespaceURI,
+        [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName);
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS([Default=Undefined] optional DOMString? namespaceURI,
+        [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, [Default=Undefined] optional DOMString localName);
+    [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(optional DOMString namespaceURI, optional DOMString localName);
 #else
-    HTMLCollection getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, [Default=Undefined] optional DOMString localName);
+    HTMLCollection getElementsByTagNameNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
 #endif
 
     // DOM Level 3 Core
@@ -141,7 +141,7 @@
     // Common extensions
     boolean            execCommand([Default=Undefined] optional DOMString command,
                                    [Default=Undefined] optional boolean userInterface,
-                                   [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString value);
+                                   optional DOMString? value);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // FIXME: remove the these two versions once optional is implemented for Objective-C.

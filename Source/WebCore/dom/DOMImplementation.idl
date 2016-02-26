@@ -25,22 +25,20 @@
 
     // DOM Level 1
 
-    [ObjCLegacyUnnamedParameters] boolean hasFeature([Default=Undefined] optional DOMString feature, 
-                                      [TreatNullAs=NullString, Default=Undefined] optional DOMString version);
+    [ObjCLegacyUnnamedParameters] boolean hasFeature([Default=Undefined] optional DOMString feature,
+        [TreatNullAs=NullString, Default=Undefined] optional DOMString version);
 
     // DOM Level 2
 
-    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString qualifiedName,
-                                                   [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString publicId,
-                                                   [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString systemId);
+    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType([Default=Undefined] optional DOMString? qualifiedName,
+        [Default=Undefined] optional DOMString? publicId, [Default=Undefined] optional DOMString? systemId);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     [ObjCLegacyUnnamedParameters, RaisesException] Document createDocument(optional DOMString namespaceURI, optional DOMString qualifiedName,
         optional DocumentType doctype);
 #else
-    [RaisesException, NewObject] XMLDocument createDocument([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
-        [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName,
-        [TreatNullAs=NullString, Default=Undefined] optional DocumentType doctype);
+    [RaisesException, NewObject] XMLDocument createDocument([Default=Undefined] optional DOMString? namespaceURI,
+        [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName, [Default=Undefined] optional DocumentType? doctype);
 #endif
 
     // DOMImplementationCSS interface from DOM Level 2 CSS

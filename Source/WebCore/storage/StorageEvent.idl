@@ -36,8 +36,8 @@
                           [Default=Undefined] optional boolean canBubbleArg, 
                           [Default=Undefined] optional boolean cancelableArg, 
                           [Default=Undefined] optional DOMString keyArg, 
-                          [Default=Undefined,TreatNullAs=NullString] optional DOMString oldValueArg, 
-                          [Default=Undefined,TreatNullAs=NullString] optional DOMString newValueArg, 
+                          [Default=Undefined] optional DOMString? oldValueArg,
+                          [Default=Undefined] optional DOMString? newValueArg,
                           [Default=Undefined] optional DOMString urlArg, 
                           [Default=Undefined] optional Storage storageAreaArg);
 

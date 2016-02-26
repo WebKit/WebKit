@@ -1567,24 +1567,34 @@ void webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMTestNode* val
     item->convert1(convertedValue);
 }
 
-void webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
+void webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
     g_return_if_fail(WEBKIT_DOM_IS_TEST_NODE(value));
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::TestNode* convertedValue = WebKit::core(value);
-    item->convert4(convertedValue);
+    item->convert2(convertedValue);
 }
 
-void webkit_dom_test_obj_convert5(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
+void webkit_dom_test_obj_convert3(WebKitDOMTestObj* self, const gchar* value)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_NODE(value));
+    g_return_if_fail(value);
     WebCore::TestObj* item = WebKit::core(self);
-    WebCore::TestNode* convertedValue = WebKit::core(value);
-    item->convert5(convertedValue);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->convert3(convertedValue);
+}
+
+void webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, const gchar* value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(value);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->convert4(convertedValue);
 }
 
 WebKitDOMSVGPoint* webkit_dom_test_obj_mutable_point_function(WebKitDOMTestObj* self)

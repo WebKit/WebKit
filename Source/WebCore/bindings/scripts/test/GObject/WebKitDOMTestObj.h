@@ -549,24 +549,34 @@ WEBKIT_API void
 webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
 
 /**
- * webkit_dom_test_obj_convert4:
+ * webkit_dom_test_obj_convert2:
  * @self: A #WebKitDOMTestObj
  * @value: A #WebKitDOMTestNode
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
+webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
 
 /**
- * webkit_dom_test_obj_convert5:
+ * webkit_dom_test_obj_convert3:
  * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMTestNode
+ * @value: A #gchar
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_obj_convert5(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
+webkit_dom_test_obj_convert3(WebKitDOMTestObj* self, const gchar* value);
+
+/**
+ * webkit_dom_test_obj_convert4:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, const gchar* value);
 
 /**
  * webkit_dom_test_obj_mutable_point_function:

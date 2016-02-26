@@ -46,9 +46,9 @@
     readonly attribute TimeRanges buffered;
     void load();
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
-    DOMString canPlayType([Default=Undefined] optional DOMString type, [Default=Undefined, TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString keySystem);
+    DOMString canPlayType([Default=Undefined] optional DOMString type, optional DOMString? keySystem);
 #elif defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2
-    DOMString canPlayType([Default=Undefined] optional DOMString type, [Default=Undefined, TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString keySystem);
+    DOMString canPlayType([Default=Undefined] optional DOMString type, optional DOMString? keySystem);
 #else
     DOMString canPlayType([Default=Undefined] optional DOMString type);
 #endif
@@ -95,9 +95,9 @@
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
-    [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitGenerateKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, optional Uint8Array initData);
-    [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitAddKey([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, Uint8Array key, optional Uint8Array initData, [Default=NullString] optional DOMString sessionId);
-    [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitCancelKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, [Default=NullString] optional DOMString sessionId);
+    [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitGenerateKeyRequest(DOMString? keySystem, optional Uint8Array initData);
+    [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitAddKey(DOMString? keySystem, Uint8Array key, optional Uint8Array initData, [Default=NullString] optional DOMString sessionId);
+    [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitCancelKeyRequest(DOMString? keySystem, [Default=NullString] optional DOMString sessionId);
 
     [Conditional=ENCRYPTED_MEDIA_V2, ImplementedAs=keys] readonly attribute MediaKeys webkitKeys;
     [Conditional=ENCRYPTED_MEDIA_V2, ImplementedAs=setMediaKeys] void webkitSetMediaKeys(MediaKeys mediaKeys);

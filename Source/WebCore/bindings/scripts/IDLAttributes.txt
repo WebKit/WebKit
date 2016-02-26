@@ -121,7 +121,6 @@ StrictTypeChecking
 SuppressToJSObject
 TreatNullAs=NullString
 TreatReturnedNaNDateAs=Null|NaN
-TreatUndefinedAs=NullString
 TypedArray=*
 URL
 Unforgeable

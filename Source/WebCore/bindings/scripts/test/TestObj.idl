@@ -262,8 +262,9 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
 
     void convert1(TestNode value);
-    void convert4([TreatNullAs=NullString] TestNode value);
-    void convert5([TreatNullAs=NullString, TreatUndefinedAs=NullString] TestNode value);
+    void convert2(TestNode? value);
+    void convert3(DOMString value);
+    void convert4(DOMString? value);
 
     attribute SVGPoint mutablePoint;
     [Immutable] attribute SVGPoint immutablePoint;
