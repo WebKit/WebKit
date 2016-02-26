@@ -16,12 +16,12 @@ layer at (0,0) size 800x137
           text run at (0,0) width 629: "If the test passes, you will see a text entry field containing \"default text\" inside the grey div below."
       RenderBlock {DIV} at (0,68) size 163x45 [bgcolor=#888888]
         RenderTextControl {INPUT} at (11,9) size 133x19 [bgcolor=#00FF00] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,0) size 127x19
-            RenderBlock {DIV} at (0,4) size 8x11
-            RenderBlock {DIV} at (8,3) size 100x13
-            RenderBlock {DIV} at (108,0) size 19x19
+          RenderFlexibleBox {DIV} at (3,3) size 127x13
+            RenderBlock {DIV} at (0,1) size 8x11
+            RenderBlock {DIV} at (8,0) size 106x13
+            RenderBlock {DIV} at (114,1) size 13x11
         RenderText {#text} at (0,0) size 0x0
-layer at (30,96) size 100x13
-  RenderBlock {DIV} at (0,0) size 100x13
+layer at (30,96) size 106x13
+  RenderBlock {DIV} at (0,0) size 106x13
     RenderText {#text} at (0,0) size 60x13
       text run at (0,0) width 60: "default text"

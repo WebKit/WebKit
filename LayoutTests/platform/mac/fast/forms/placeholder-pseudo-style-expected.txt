@@ -9,24 +9,24 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (2,20) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (140,20) size 5x18
         text run at (140,20) width 5: " "
-      RenderTextControl {INPUT} at (146,20) size 164x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderFlexibleBox {DIV} at (3,0) size 158x19
-          RenderBlock {DIV} at (0,4) size 8x11
-          RenderBlock {DIV} at (8,3) size 131x13
-          RenderBlock {DIV} at (138,0) size 20x19
-      RenderText {#text} at (311,20) size 5x18
-        text run at (311,20) width 5: " "
-      RenderTextControl {INPUT} at (317,20) size 138x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (146,20) size 158x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (3,3) size 152x13
+          RenderBlock {DIV} at (0,1) size 8x11
+          RenderBlock {DIV} at (8,0) size 131x13
+          RenderBlock {DIV} at (138,1) size 14x11
+      RenderText {#text} at (305,20) size 5x18
+        text run at (305,20) width 5: " "
+      RenderTextControl {INPUT} at (311,20) size 138x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderFlexibleBox {DIV} at (3,3) size 131x13
           RenderBlock {DIV} at (0,0) size 131x13
-      RenderText {#text} at (456,20) size 5x18
-        text run at (456,20) width 5: " "
-      RenderTextControl {INPUT} at (462,20) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (600,20) size 5x18
-        text run at (600,20) width 5: " "
-      RenderTextControl {INPUT} at (606,20) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (744,20) size 5x18
-        text run at (744,20) width 5: " "
+      RenderText {#text} at (450,20) size 5x18
+        text run at (450,20) width 5: " "
+      RenderTextControl {INPUT} at (456,20) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (594,20) size 5x18
+        text run at (594,20) width 5: " "
+      RenderTextControl {INPUT} at (600,20) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (738,20) size 5x18
+        text run at (738,20) width 5: " "
       RenderTextControl {INPUT} at (2,43) size 137x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (0,0) size 0x0
 layer at (13,31) size 130x13
@@ -41,23 +41,23 @@ layer at (165,31) size 130x13
       text run at (0,0) width 36: "search"
 layer at (165,31) size 130x13
   RenderBlock {DIV} at (0,0) size 131x13
-layer at (329,31) size 130x13
+layer at (323,31) size 130x13
   RenderBlock {DIV} at (3,3) size 131x13 [color=#640000]
     RenderText {#text} at (0,0) size 52x13
       text run at (0,0) width 52: "password"
-layer at (329,31) size 130x13
+layer at (323,31) size 130x13
   RenderBlock {DIV} at (0,0) size 131x13
-layer at (473,31) size 130x13
+layer at (467,31) size 130x13
   RenderBlock {DIV} at (3,3) size 131x13 [color=#640000]
     RenderText {#text} at (0,0) size 69x13
       text run at (0,0) width 69: "disabled text"
-layer at (473,31) size 130x13
+layer at (467,31) size 130x13
   RenderBlock {DIV} at (3,3) size 131x13 [color=#545454]
-layer at (617,31) size 130x13
+layer at (611,31) size 130x13
   RenderBlock {DIV} at (3,3) size 131x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 37x13
       text run at (0,0) width 37: "default"
-layer at (617,31) size 130x13
+layer at (611,31) size 130x13
   RenderBlock {DIV} at (3,3) size 131x13
 layer at (13,54) size 130x13
   RenderBlock {DIV} at (3,3) size 131x13 [color=#A9A9A9]
