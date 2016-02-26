@@ -26,6 +26,7 @@
 #ifndef Range_h
 #define Range_h
 
+#include <algorithm>
 #include <cstddef>
 
 namespace bmalloc {
@@ -49,12 +50,23 @@ public:
     size_t size() const { return m_size; }
     
     bool operator!() const { return !m_size; }
+    explicit operator bool() const { return !!*this; }
     bool operator<(const Range& other) const { return m_begin < other.m_begin; }
 
 private:
     char* m_begin;
     size_t m_size;
 };
+
+inline bool canMerge(const Range& a, const Range& b)
+{
+    return a.begin() == b.end() || a.end() == b.begin();
+}
+
+inline Range merge(const Range& a, const Range& b)
+{
+    return Range(std::min(a.begin(), b.begin()), a.size() + b.size());
+}
 
 } // namespace bmalloc
 

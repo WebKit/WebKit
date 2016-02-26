@@ -1,3 +1,197 @@
+2016-02-25  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Added a fast XLarge allocator
+        https://bugs.webkit.org/show_bug.cgi?id=154720
+
+        Reviewed by Andreas Kling.
+
+        This is a big speedup for XLarge allocations because it avoids mmap
+        and page fault churn. It also enables future design changes to handle
+        a smaller size range on the fast path.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::roundUpToMultipleOf):
+        (bmalloc::roundDownToMultipleOf): Added a non-constant round down.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::tryAllocate): XLarge no longer requires the caller
+        to align things.
+
+        (bmalloc::Allocator::allocate): Tweaked the alignment calculation for
+        clarity. When alignment and largeAlignment are equal, no adjustment
+        is necessary since all allocations guarantee largeAlignment.
+
+        (bmalloc::Allocator::reallocate): Updated for interface change.
+
+        Note that the new interface fixes some concurrency bugs. The old code
+        kept an iterator into the XLarge allocator across lock drop and acquisition,
+        which is not cool.
+
+        (bmalloc::Allocator::allocateXLarge): XLarge no longer requires the caller
+        to align things.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::scavengeXLargeObjects): Added scavenging for XLarge.
+
+        (bmalloc::Heap::allocateXLarge):
+
+        (bmalloc::Heap::splitAndAllocate): Split XLarge objects to xLargeAlignment.
+
+        (bmalloc::Heap::tryAllocateXLarge):
+        (bmalloc::Heap::xLargeSize):
+        (bmalloc::Heap::shrinkXLarge):
+        (bmalloc::Heap::deallocateXLarge): Allocate from our map before going
+        to the OS.
+
+        (bmalloc::Heap::findXLarge): Deleted.
+
+        * bmalloc/Heap.h:
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::split):
+
+        * bmalloc/ObjectType.h:
+        (bmalloc::isXLarge): Give XLarge objects an explicit alignment for clarity.
+
+        * bmalloc/Range.h:
+        (bmalloc::Range::size):
+        (bmalloc::Range::operator!):
+        (bmalloc::Range::operator bool):
+        (bmalloc::Range::operator<):
+        (bmalloc::canMerge):
+        (bmalloc::merge): Some helpers that were useful in writing this patch.
+
+        * bmalloc/Sizes.h:
+
+        * bmalloc/SortedVector.h: Added.
+        (bmalloc::SortedVector::Bucket::Bucket):
+        (bmalloc::SortedVector::Bucket::operator<):
+        (bmalloc::SortedVector::iterator::iterator):
+        (bmalloc::SortedVector::iterator::operator++):
+        (bmalloc::SortedVector::iterator::operator!=):
+        (bmalloc::SortedVector::iterator::operator*):
+        (bmalloc::SortedVector::iterator::operator->):
+        (bmalloc::SortedVector::iterator::skipDeletedBuckets):
+        (bmalloc::SortedVector::begin):
+        (bmalloc::SortedVector::end):
+        (bmalloc::SortedVector<T>::insert):
+        (bmalloc::SortedVector<T>::find):
+        (bmalloc::SortedVector<T>::get):
+        (bmalloc::SortedVector<T>::take):
+        (bmalloc::SortedVector<T>::shrinkToFit): A simple abstraction for keeping
+        a sorted vector. Insertion is average amortized log(n) because we keep
+        deleted buckets that we can reuse.
+
+        This is better than a tree because we get better locality, less memory
+        use, and simpler code. Also, trees require a node memory allocator, and
+        implementing a memory allocator in a memory allocator is no fun.
+
+        Arguably we should use a hash table instead. But that's more code, and
+        sorted vector has other nice properties that we might want to take
+        adavantage of in the future.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate): Fixed an inaccuracy in the alignment calculation
+        here. This code was sort of trying to enforce the alignment that the
+        XLarge allocator enforces -- but it's better to enforce that alignment
+        there.
+
+        The right calculation is:
+
+            vmAlignment - vmPageSize + vmSize
+
+        because the worst case is when you are aligned to 0 + vmPageSize, and
+        you must walk forward vmAlignment - vmPageSize to reach the next
+        vmAlignment.
+
+        (bmalloc::tryVMExtend): Deleted. No need to go back to the OS for VM
+        since we manage our own.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateLargeChunk): Updated for clarity. When we
+        grow the large heap we know that grown region is where the next allocation
+        will take place, so we return it directly instead of pushing it to the
+        free list.
+
+        This fixes a subtle bug where an overly conservative aligned allocation
+        algorithm can fail to allocate at all when it grows the heap.
+
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateLargeObject): Ditto.
+        (bmalloc::VMHeap::allocateLargeObject): Ditto.
+
+        * bmalloc/VMState.h:
+        (bmalloc::merge): Added a helper.
+
+        * bmalloc/Vector.h:
+        (bmalloc::Vector::begin):
+        (bmalloc::Vector::end):
+        (bmalloc::Vector::size):
+        (bmalloc::Vector::capacity):
+        (bmalloc::Vector::last):
+        (bmalloc::Vector::pop):
+        (bmalloc::Vector<T>::push):
+        (bmalloc::Vector<T>::pop):
+        (bmalloc::Vector<T>::shrink): Use a proper iterator API to play nice
+        with std algorithms.
+
+        (bmalloc::Vector<T>::insert): New function required by SortedVector.
+
+        (bmalloc::Vector<T>::reallocateBuffer):
+        (bmalloc::Vector<T>::shrinkCapacity): Allow for shrinking back all the way
+        to 0 because that's what shrinkToFit wants.
+        (bmalloc::Vector<T>::growCapacity):
+        (bmalloc::Vector<T>::shrinkToFit):
+
+        * bmalloc/XLargeMap.cpp: Added. Helper data structure for managing XLarge
+        objects. We have enough granularity in our metadata to represent any
+        kind of address range.
+
+        We store free ranges in a flat vector because most programs have very
+        few individual free XLarge ranges. (They usually merge.)
+
+        We store allocated ranges in a sorted vector because programs might
+        allocate lots of XLarge ranges. For example, if the XLarge minimum is
+        128kB, and you have a 1GB process, that's 8192 ranges. Linear scan would
+        examine 8192 items but binary search only 13.
+
+        Empirically, this is 1.5X faster than our current large allocator if you
+        modify MallocBench/big to allocate XLarge objects and not to initialize
+        objects and you allocate 128kB-256kB objects in a 1GB address space.
+
+        (bmalloc::XLargeMap::takeFree): Be careful about overflow in this function
+        because we support super huge pointers, alignments, and sizes.
+
+        (bmalloc::XLargeMap::addFree): Merge eagerly on free because the cost
+        of missing an XLarge opportunity is catastrophic. Also, I discovered
+        by experiment that any allocator that doesn't merge eagerly can create
+        lots of subtle opportunities for snowballing fragmentation, as
+        fragmentation in range A forces you to chop up range B, and so on.
+
+        We allocate "first fit" (allocating the lowest address) because someone
+        wrote a paper once that said that it's the best algorithm to combat
+        fragmentation (even though worst case fragmentation is unavoidable
+        regardless of algorithm).
+
+        (bmalloc::XLargeMap::addAllocated):
+        (bmalloc::XLargeMap::getAllocated):
+        (bmalloc::XLargeMap::takeAllocated):
+        (bmalloc::XLargeMap::shrinkToFit):
+        (bmalloc::XLargeMap::takePhysical):
+        (bmalloc::XLargeMap::addVirtual):
+        * bmalloc/XLargeMap.h: Added.
+        (bmalloc::XLargeMap::Allocation::operator<):
+
+        * bmalloc/XLargeRange.h: Added.
+        (bmalloc::XLargeRange::XLargeRange):
+        (bmalloc::XLargeRange::vmState):
+        (bmalloc::XLargeRange::setVMState):
+        (bmalloc::canMerge):
+        (bmalloc::merge):
+        (bmalloc::XLargeRange::split): Helper for tracking VMState in a range.
+
 2016-02-23  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Linker errors display mangled names, but no longer should

@@ -75,10 +75,16 @@ template<size_t divisor, typename T> inline constexpr T roundUpToMultipleOf(T x)
     return roundUpToMultipleOf(divisor, x);
 }
 
+template<typename T> inline T roundDownToMultipleOf(size_t divisor, T x)
+{
+    BASSERT(isPowerOfTwo(divisor));
+    return reinterpret_cast<T>(mask(reinterpret_cast<uintptr_t>(x), ~(divisor - 1ul)));
+}
+
 template<size_t divisor, typename T> inline constexpr T roundDownToMultipleOf(T x)
 {
     static_assert(isPowerOfTwo(divisor), "'divisor' must be a power of two.");
-    return reinterpret_cast<T>(mask(reinterpret_cast<uintptr_t>(x), ~(divisor - 1ul)));
+    return roundDownToMultipleOf(divisor, x);
 }
 
 template<typename T> void divideRoundingUp(T numerator, T denominator, T& quotient, T& remainder)

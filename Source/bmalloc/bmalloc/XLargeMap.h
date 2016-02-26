@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "LargeObject.h"
-#include "PerProcess.h"
-#include "SuperChunk.h"
-#include "VMHeap.h"
-#include <thread>
+#ifndef XLargeMap_h
+#define XLargeMap_h
+
+#include "SortedVector.h"
+#include "Vector.h"
+#include "XLargeRange.h"
+#include <algorithm>
 
 namespace bmalloc {
 
-VMHeap::VMHeap()
-    : m_largeObjects(VMState::HasPhysical::False)
-{
-}
+class XLargeMap {
+public:
+    void addFree(const XLargeRange&);
+    XLargeRange takeFree(size_t alignment, size_t);
 
-void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock)
-{
-    if (!m_smallChunks.size())
-        allocateSuperChunk(lock);
+    void addAllocated(const XLargeRange& prev, const std::pair<XLargeRange, XLargeRange>&, const XLargeRange& next);
+    XLargeRange getAllocated(void*);
+    XLargeRange takeAllocated(void*);
 
-    // We initialize chunks lazily to avoid dirtying their metadata pages.
-    SmallChunk* smallChunk = new (m_smallChunks.pop()->smallChunk()) SmallChunk(lock);
-    for (auto* it = smallChunk->begin(); it < smallChunk->end(); ++it)
-        m_smallPages.push(it);
-}
+    XLargeRange takePhysical();
+    void addVirtual(const XLargeRange&);
+    
+    void shrinkToFit();
 
-LargeObject VMHeap::allocateLargeChunk(std::lock_guard<StaticMutex>& lock)
-{
-    if (!m_largeChunks.size())
-        allocateSuperChunk(lock);
+private:
+    struct Allocation {
+        bool operator<(const Allocation& other) const { return object < other.object; }
+        bool operator<(void* ptr) const { return object.begin() < ptr; }
 
-    // We initialize chunks lazily to avoid dirtying their metadata pages.
-    LargeChunk* largeChunk = new (m_largeChunks.pop()->largeChunk()) LargeChunk;
-    return LargeObject(largeChunk->begin());
-}
+        XLargeRange object;
+        XLargeRange unused;
+    };
 
-void VMHeap::allocateSuperChunk(std::lock_guard<StaticMutex>&)
-{
-    SuperChunk* superChunk =
-        new (vmAllocate(superChunkSize, superChunkSize)) SuperChunk;
-    m_smallChunks.push(superChunk);
-    m_largeChunks.push(superChunk);
-#if BOS(DARWIN)
-    m_zone.addSuperChunk(superChunk);
-#endif
-}
+    Vector<XLargeRange> m_free;
+    SortedVector<Allocation> m_allocated;
+};
 
 } // namespace bmalloc
+
+#endif // XLargeMap_h
