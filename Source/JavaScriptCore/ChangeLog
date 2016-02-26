@@ -1,3 +1,39 @@
+2016-02-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Be aggressive with OSR Entry to FTL if the DFG function was only used for OSR Entry itself
+        https://bugs.webkit.org/show_bug.cgi?id=154575
+
+        Reviewed by Filip Pizlo.
+
+        I noticed that imaging-gaussian-blur spends most of its
+        samples in DFG code despite executing most of the loop
+        iterations in FTL.
+
+        On this particular test, the main function is only entered
+        once and have a very heavy loop there. What happens is DFG
+        starts by compiling the full function in FTL. That takes about
+        8 to 10 milliseconds during which the DFG code makes very little
+        progress. The calls to triggerOSREntryNow() try to OSR Enter
+        for a while then finally start compiling something. By the time
+        the function is ready, we have wasted a lot of time in DFG code.
+
+        What this patch does is set a flag when a DFG function is entered.
+        If we try to triggerOSREntryNow() and the flag was never set,
+        we start compiling both the full function and the one for OSR Entry.
+
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntryExecutionFlag):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan): Deleted.
+        * dfg/DFGPlan.h:
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+
 2016-02-25  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Temporal Dead Zone checks on "this" are eliminated when doing OSR Entry to FTL

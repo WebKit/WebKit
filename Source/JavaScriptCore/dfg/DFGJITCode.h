@@ -139,6 +139,7 @@ public:
     DFG::MinifiedGraph minifiedDFG;
 #if ENABLE(FTL_JIT)
     uint8_t nestedTriggerIsSet { 0 };
+    uint8_t neverExecutedEntry { 1 };
     UpperTierExecutionCounter tierUpCounter;
     WriteBarrier<CodeBlock> m_osrEntryBlock;
     unsigned osrEntryRetry;

@@ -144,7 +144,6 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     , inlineCallFrames(adoptRef(new InlineCallFrameSet()))
     , identifiers(codeBlock)
     , weakReferences(codeBlock)
-    , willTryToTierUp(false)
     , stage(Preparing)
 {
 }

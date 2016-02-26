@@ -111,6 +111,14 @@ void JITCompiler::compileSetupRegistersForEntry()
     emitMaterializeTagCheckRegisters();    
 }
 
+void JITCompiler::compileEntryExecutionFlag()
+{
+#if ENABLE(FTL_JIT)
+    if (m_graph.m_plan.canTierUpAndOSREnter)
+        store8(TrustedImm32(0), &m_jitCode->neverExecutedEntry);
+#endif // ENABLE(FTL_JIT)
+}
+
 void JITCompiler::compileBody()
 {
     // We generate the speculative code path, followed by OSR exit code to return
@@ -326,6 +334,7 @@ void JITCompiler::compile()
     addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
     compileSetupRegistersForEntry();
+    compileEntryExecutionFlag();
     compileBody();
     setEndOfMainPath();
 
@@ -392,6 +401,7 @@ void JITCompiler::compileFunction()
     checkStackPointerAlignment();
 
     compileSetupRegistersForEntry();
+    compileEntryExecutionFlag();
 
     // === Function body code generation ===
     m_speculative = std::make_unique<SpeculativeJIT>(*this);

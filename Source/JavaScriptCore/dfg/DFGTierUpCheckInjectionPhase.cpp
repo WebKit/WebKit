@@ -71,6 +71,8 @@ public:
         NaturalLoops& naturalLoops = *m_graph.m_naturalLoops;
 
         HashSet<const NaturalLoop*> loopsContainingLoopHintWithoutOSREnter = findLoopsContainingLoopHintWithoutOSREnter(naturalLoops, level);
+
+        bool canTierUpAndOSREnter = false;
         
         InsertionSet insertionSet(m_graph);
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
@@ -85,6 +87,7 @@ public:
 
                 NodeOrigin origin = node->origin;
                 if (canOSREnterAtLoopHint(level, block, nodeIndex)) {
+                    canTierUpAndOSREnter = true;
                     const NaturalLoop* loop = naturalLoops.innerMostLoopOf(block);
                     if (loop && loopsContainingLoopHintWithoutOSREnter.contains(loop))
                         insertionSet.insertNode(nodeIndex + 1, SpecNone, CheckTierUpWithNestedTriggerAndOSREnter, origin);
@@ -103,7 +106,8 @@ public:
             
             insertionSet.execute(block);
         }
-        
+
+        m_graph.m_plan.canTierUpAndOSREnter = canTierUpAndOSREnter;
         m_graph.m_plan.willTryToTierUp = true;
         return true;
 #else // ENABLE(FTL_JIT)

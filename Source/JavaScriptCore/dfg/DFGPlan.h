@@ -98,7 +98,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     DesiredWeakReferences weakReferences;
     DesiredTransitions transitions;
     
-    bool willTryToTierUp;
+    bool willTryToTierUp { false };
+    bool canTierUpAndOSREnter { false };
 
     enum Stage { Preparing, Compiling, Compiled, Ready, Cancelled };
     Stage stage;
