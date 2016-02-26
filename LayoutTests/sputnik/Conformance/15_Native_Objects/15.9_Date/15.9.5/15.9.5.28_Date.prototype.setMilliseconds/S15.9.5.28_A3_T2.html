@@ -68,16 +68,16 @@ try {
 /**
  * @name: S15.9.5.28_A3_T2;
  * @section: 15.9.5.28;
- * @assertion: The Date.prototype.setMilliseconds property "length" has { ReadOnly, DontDelete, DontEnum } attributes;
- * @description: Checking DontDelete attribute;
+ * @assertion: The Date.prototype.setMilliseconds property "length" has { [[Writable]]:false, [[Enumerable]]:false, [[Configurable]]:true } attributes;
+ * @description: Checking [[Configurable]] attribute;
  */
 
-if (delete Date.prototype.setMilliseconds.length  !== false) {
-  testFailed('#1: The Date.prototype.setMilliseconds.length property has the attributes DontDelete');
+if (delete Date.prototype.setMilliseconds.length  !== true) {
+  testFailed('#1: The Date.prototype.setMilliseconds.length property has the attribute [[Configurable]]:true');
 }
 
-if (!Date.prototype.setMilliseconds.hasOwnProperty('length')) {
-  testFailed('#2: The Date.prototype.setMilliseconds.length property has the attributes DontDelete');
+if (Date.prototype.setMilliseconds.hasOwnProperty('length')) {
+  testFailed('#2: The Date.prototype.setMilliseconds.length property has the attribute [[Configurable]]:true');
 }
 
 

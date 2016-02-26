@@ -1,3 +1,118 @@
+2016-02-26  Mark Lam  <mark.lam@apple.com>
+
+        Function.name and Function.length should be configurable.
+        https://bugs.webkit.org/show_bug.cgi?id=154604
+
+        Reviewed by Saam Barati.
+
+        * ietestcenter/Javascript/TestCases/15.2.3.3-4-187.js:
+        (ES5Harness.registerTest.test):
+        * ietestcenter/Javascript/TestCases/15.3.4.5-15-2.js:
+        (ES5Harness.registerTest.test):
+        * js/dom/function-name-expected.txt:
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/dom/script-tests/function-name.js:
+        * js/mozilla/strict/15.3.5.1-expected.txt:
+        * js/mozilla/strict/function-name-arity-expected.txt:
+        * js/mozilla/strict/script-tests/15.3.5.1.js:
+        * js/mozilla/strict/script-tests/function-name-arity.js:
+        * js/resources/getOwnPropertyDescriptor.js:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/15.10.6.2_RegExp.prototype.exec/S15.10.6.2_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/15.10.6.3_RegExp.prototype.test/S15.10.6.3_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.6/15.10.6.4_RegExp.prototype.toString/S15.10.6.4_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.1_eval/S15.1.2.1_A4.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.2_parseInt/S15.1.2.2_A9.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.3_parseFloat/S15.1.2.3_A7.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.4_isNaN/S15.1.2.4_A2.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.2/15.1.2.5_isFinite/S15.1.2.5_A2.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.3_encodeURI/S15.1.3.3_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.4_encodeURIComponent/S15.1.3.4_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.2_Object.prototype.toString/S15.2.4.2_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.3_Object.prototype.toLocaleString/S15.2.4.3_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.4_Object.prototype.valueOf/S15.2.4.4_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.5_Object.prototype.hasOwnProperty/S15.2.4.5_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.6_Object.prototype.isPrototypeOf/S15.2.4.6_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.7_Object.prototype.propertyIsEnumerable/S15.2.4.7_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.2_Function.prototype.toString/S15.3.4.2_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.4_Function.prototype.call/S15.3.4.4_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.1_A2_T1.html:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.1_A2_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.1_A2_T3.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.10_Array_prototype_slice/S15.4.4.10_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.11_Array_prototype_sort/S15.4.4.11_A7.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.13_Array_prototype_unshift/S15.4.4.13_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.2_Array_prototype_toString/S15.4.4.2_A4.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.3_Array_prototype_toLocaleString/S15.4.4.3_A4.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.4_Array_prototype_concat/S15.4.4.4_A4.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.5_Array_prototype_join/S15.4.4.5_A6.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.6_Array_prototype_pop/S15.4.4.6_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.7_Array_prototype_push/S15.4.4.7_A6.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.8_Array_prototype_reverse/S15.4.4.8_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.9_Array_prototype_shift/S15.4.4.9_A5.2.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.10_String.prototype.match/S15.5.4.10_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.11_String.prototype.replace/S15.5.4.11_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.12_String.prototype.search/S15.5.4.12_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.13_String.prototype.slice/S15.5.4.13_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.15_String.prototype.substring/S15.5.4.15_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.16_String.prototype.toLowerCase/S15.5.4.16_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.17_String.prototype.toLocaleLowerCase/S15.5.4.17_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.18_String.prototype.toUpperCase/S15.5.4.18_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.19_String.prototype.toLocaleUpperCase/S15.5.4.19_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.4_String.prototype.charAt/S15.5.4.4_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.5_String.prototype.charCodeAt/S15.5.4.5_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.6_String.prototype.concat/S15.5.4.6_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.7_String.prototype.indexOf/S15.5.4.7_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.8_String.prototype.lastIndexOf/S15.5.4.8_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.9_String.prototype.localeCompare/S15.5.4.9_A9.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.4/15.9.4.2_Date.parse/S15.9.4.2_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.4/15.9.4.3_Date.UTC/S15.9.4.3_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.10_Date.prototype.getFullYear/S15.9.5.10_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.11_Date.prototype.getUTCFullYear/S15.9.5.11_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.12_Date.prototype.getMonth/S15.9.5.12_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.13_Date.prototype.getUTCMonth/S15.9.5.13_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.14_Date.prototype.getDate/S15.9.5.14_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.15_Date.prototype.getUTCDate/S15.9.5.15_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.16_Date.prototype.getDay/S15.9.5.16_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.17_Date.prototype.getUTCDay/S15.9.5.17_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.18_Date.prototype.getHours/S15.9.5.18_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.19_Date.prototype.getUTCHours/S15.9.5.19_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.20_Date.prototype.getMinutes/S15.9.5.20_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.21_Date.prototype.getUTCMinutes/S15.9.5.21_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.22_Date.prototype.getSeconds/S15.9.5.22_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.23_Date.prototype.getUTCSeconds/S15.9.5.23_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.24_Date.prototype.getMilliseconds/S15.9.5.24_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.25_Date.prototype.getUTCMilliseconds/S15.9.5.25_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.26_Date.prototype.getTimezoneOffset/S15.9.5.26_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.27_Date.prototype.setTime/S15.9.5.27_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.28_Date.prototype.setMilliseconds/S15.9.5.28_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.29_Date.prototype.setUTCMilliseconds/S15.9.5.29_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.2_Date.prototype.toString/S15.9.5.2_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.30_Date.prototype.setSeconds/S15.9.5.30_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.31_Date.prototype.setUTCSeconds/S15.9.5.31_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.32_Date.prototype.setMinutes/S15.9.5.32_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.33_Date.prototype.setUTCMinutes/S15.9.5.33_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.34_Date.prototype.setHours/S15.9.5.34_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.35_Date.prototype.setUTCHours/S15.9.5.35_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.36_Date.prototype.setDate/S15.9.5.36_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.37_Date.prototype.setUTCDate/S15.9.5.37_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.38_Date.prototype.setMonth/S15.9.5.38_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.39_Date.prototype.setUTCMonth/S15.9.5.39_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.3_Date.prototype.toDateString/S15.9.5.3_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.40_Date.prototype.setFullYear/S15.9.5.40_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.41_Date.prototype.setUTCFullYear/S15.9.5.41_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.42_Date.prototype.toUTCString/S15.9.5.42_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.4_Date.prototype.toTimeString/S15.9.5.4_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.5_Date.prototype.toLocaleString/S15.9.5.5_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.6_Date.prototype.toLocaleDateString/S15.9.5.6_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.7_Date.prototype.toLocaleTimeString/S15.9.5.7_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.8_Date.prototype.valueOf/S15.9.5.8_A3_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.5/15.9.5.9_Date.prototype.getTime/S15.9.5.9_A3_T2.html:
+
 2016-02-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix flaky test introduced in r197156.

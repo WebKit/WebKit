@@ -35,7 +35,7 @@ test: function testcase() {
   if (desc.value === 0 &&
       desc.enumerable === false &&
       desc.writable === false &&
-      desc.configurable == false) {
+      desc.configurable == true) {
     return true;
   }
  },

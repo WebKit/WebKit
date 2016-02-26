@@ -68,7 +68,7 @@ try {
 /**
  * @name: S15.1.2.2_A9.2;
  * @section: 15.1.2.2, 15.2.4.5, 11.4.1;
- * @assertion: The length property of parseInt has the attribute DontDelete;
+ * @assertion: The length property of parseInt has the attribute [[Configurable]]:true;
  * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (parseInt.hasOwnProperty('length') !== true) {
 delete parseInt.length;
 
 //CHECK#2
-if (parseInt.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete parseInt.length; parseInt.hasOwnProperty(\'length\') === true. Actual: ' + (parseInt.hasOwnProperty('length')));
+if (parseInt.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete parseInt.length; parseInt.hasOwnProperty(\'length\') === false. Actual: ' + (parseInt.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (parseInt.length === undefined) {
-  testFailed('#3: delete parseInt.length; parseInt.length !== undefined');
+if (parseInt.length !== 0) {
+  testFailed('#3: delete parseInt.length; parseInt.length === 0');
 }
 
 } catch (ex) {

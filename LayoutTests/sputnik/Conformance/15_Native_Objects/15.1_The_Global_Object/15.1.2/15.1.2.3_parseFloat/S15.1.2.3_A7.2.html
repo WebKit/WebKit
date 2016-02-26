@@ -68,7 +68,7 @@ try {
 /**
  * @name: S15.1.2.3_A7.2;
  * @section: 15.1.2.3, 15.2.4.5, 11.4.1;
- * @assertion: The length property of parseFloat has the attribute DontDelete;
+ * @assertion: The length property of parseFloat has the attribute [[Configurable]]:true;
  * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (parseFloat.hasOwnProperty('length') !== true) {
 delete parseFloat.length;
 
 //CHECK#2
-if (parseFloat.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete parseFloat.length; parseFloat.hasOwnProperty(\'length\') === true. Actual: ' + (parseFloat.hasOwnProperty('length')));
+if (parseFloat.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete parseFloat.length; parseFloat.hasOwnProperty(\'length\') === false. Actual: ' + (parseFloat.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (parseFloat.length === undefined) {
-  testFailed('#3: delete parseFloat.length; parseFloat.length !== undefined');
+if (parseFloat.length !== 0) {
+  testFailed('#3: delete parseFloat.length; parseFloat.length === 0');
 }
 
 } catch (ex) {

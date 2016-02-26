@@ -68,7 +68,7 @@ try {
 /**
 * @name: S15.4.4.3_A4.2;
 * @section: 15.4.4.3, 15.2.4.5, 11.4.1;
-* @assertion: The length property of toLocaleString has the attribute DontDelete;
+* @assertion: The length property of toLocaleString has the attribute [[Configurable]]:true;
 * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (Array.prototype.toLocaleString.hasOwnProperty('length') !== true) {
 delete Array.prototype.toLocaleString.length;
 
 //CHECK#2
-if (Array.prototype.toLocaleString.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete Array.prototype.toLocaleString.length; Array.prototype.toLocaleString.hasOwnProperty(\'length\') === true. Actual: ' + (Array.prototype.toLocaleString.hasOwnProperty('length')));
+if (Array.prototype.toLocaleString.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete Array.prototype.toLocaleString.length; Array.prototype.toLocaleString.hasOwnProperty(\'length\') === false. Actual: ' + (Array.prototype.toLocaleString.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (Array.prototype.toLocaleString.length === undefined) {
-  testFailed('#3: delete Array.prototype.toLocaleString.length; Array.prototype.toLocaleString.length !== undefined');
+if (Array.prototype.toLocaleString.length !== 0) {
+  testFailed('#3: delete Array.prototype.toLocaleString.length; Array.prototype.toLocaleString.length === 0');
 }
 
 

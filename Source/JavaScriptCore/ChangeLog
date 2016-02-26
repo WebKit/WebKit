@@ -1,3 +1,88 @@
+2016-02-26  Mark Lam  <mark.lam@apple.com>
+
+        Function.name and Function.length should be configurable.
+        https://bugs.webkit.org/show_bug.cgi?id=154604
+
+        Reviewed by Saam Barati.
+
+        According to https://tc39.github.io/ecma262/#sec-ecmascript-language-functions-and-classes,
+        "Unless otherwise specified, the name property of a built-in Function object,
+        if it exists, has the attributes { [[Writable]]: false, [[Enumerable]]: false,
+        [[Configurable]]: true }."
+
+        Similarly, "the length property of a built-in Function object has the attributes
+        { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }."
+
+        This patch makes Function.name and Function.length configurable.
+
+        We do this by lazily reifying the JSFunction name and length properties on first
+        access.  We track whether each of these properties have been reified using flags
+        in the FunctionRareData.  On first access, if not already reified, we will put
+        the property into the object with its default value and attributes and set the
+        reified flag.  Thereafter, we rely on the base JSObject to handle access to the
+        property.
+
+        Also, lots of test results have to be re-baselined because the old Function.length
+        has attribute DontDelete, which is in conflict with the ES6 requirement that it
+        is configurable.
+
+        * runtime/FunctionRareData.h:
+        (JSC::FunctionRareData::hasReifiedLength):
+        (JSC::FunctionRareData::setHasReifiedLength):
+        (JSC::FunctionRareData::hasReifiedName):
+        (JSC::FunctionRareData::setHasReifiedName):
+        - Flags for tracking whether each property has been reified.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        (JSC::JSFunction::createBuiltinFunction):
+        - Host and builtin functions currently always reify their name and length
+          properties.  Currently, for builtins, the default names that are used may
+          differ from the executable name.  For now, we'll stay with keeping this
+          alternate approach to getting the name and length properties for host and
+          builtin functions.
+          However, we need their default attribute to be configurable as well.
+
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::JSFunction::reifyLength):
+        (JSC::JSFunction::reifyName):
+        (JSC::JSFunction::reifyLazyPropertyIfNeeded):
+        (JSC::JSFunction::lengthGetter): Deleted.
+        (JSC::JSFunction::nameGetter): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::hasReifiedLength):
+        (JSC::JSFunction::hasReifiedName):
+
+        * tests/es6.yaml:
+        - 4 new passing tests.
+
+        * tests/mozilla/ecma/Array/15.4.4.3-1.js:
+        * tests/mozilla/ecma/Array/15.4.4.4-1.js:
+        * tests/mozilla/ecma/Array/15.4.4.4-2.js:
+        * tests/mozilla/ecma/GlobalObject/15.1.2.1-1.js:
+        * tests/mozilla/ecma/GlobalObject/15.1.2.2-1.js:
+        * tests/mozilla/ecma/GlobalObject/15.1.2.3-1.js:
+        * tests/mozilla/ecma/GlobalObject/15.1.2.4.js:
+        * tests/mozilla/ecma/GlobalObject/15.1.2.5-1.js:
+        * tests/mozilla/ecma/GlobalObject/15.1.2.6.js:
+        * tests/mozilla/ecma/GlobalObject/15.1.2.7.js:
+        * tests/mozilla/ecma/String/15.5.4.10-1.js:
+        * tests/mozilla/ecma/String/15.5.4.11-1.js:
+        * tests/mozilla/ecma/String/15.5.4.11-5.js:
+        * tests/mozilla/ecma/String/15.5.4.12-1.js:
+        * tests/mozilla/ecma/String/15.5.4.6-2.js:
+        * tests/mozilla/ecma/String/15.5.4.7-2.js:
+        * tests/mozilla/ecma/String/15.5.4.8-1.js:
+        * tests/mozilla/ecma/String/15.5.4.9-1.js:
+        - Rebase expected test results.
+
+        * tests/stress/function-configurable-properties.js: Added.
+
 2016-02-26  Keith Miller  <keith_miller@apple.com>
 
         Folding of OverridesHasInstance DFG nodes shoud happen in constant folding not fixup

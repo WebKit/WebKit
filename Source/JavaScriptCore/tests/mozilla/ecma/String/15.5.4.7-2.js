@@ -75,8 +75,8 @@ function getTestCases() {
     var item = 0;
 
     array[item++] = new TestCase( SECTION, "String.prototype.lastIndexOf.length",           1,          String.prototype.lastIndexOf.length );
-    array[item++] = new TestCase( SECTION, "delete String.prototype.lastIndexOf.length",    false,      delete String.prototype.lastIndexOf.length );
-    array[item++] = new TestCase( SECTION, "delete String.prototype.lastIndexOf.length; String.prototype.lastIndexOf.length",   1,  eval("delete String.prototype.lastIndexOf.length; String.prototype.lastIndexOf.length" ) );
+    array[item++] = new TestCase( SECTION, "delete String.prototype.lastIndexOf.length",    true,       delete String.prototype.lastIndexOf.length );
+    array[item++] = new TestCase( SECTION, "String.prototype.lastIndexOf.length",           0,          String.prototype.lastIndexOf.length );
 
     array[item++] = new TestCase( SECTION, "var s = new String(''); s.lastIndexOf('', 0)",          LastIndexOf("","",0),  eval("var s = new String(''); s.lastIndexOf('', 0)") );
     array[item++] = new TestCase( SECTION, "var s = new String(''); s.lastIndexOf('')",             LastIndexOf("",""),  eval("var s = new String(''); s.lastIndexOf('')") );

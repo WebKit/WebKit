@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.5_A9;
 * @section: 15.5.4.5;
-* @assertion: The String.prototype.charCodeAt.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.charCodeAt.length property fails;
+* @assertion: The String.prototype.charCodeAt.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.charCodeAt.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.charCodeAt.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.charCodeAt.length) {
-  testFailed('#1: delete String.prototype.charCodeAt.length return false');
+if (!(delete String.prototype.charCodeAt.length)) {
+  testFailed('#1: delete String.prototype.charCodeAt.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.charCodeAt.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.charCodeAt.length; String.prototype.charCodeAt.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.charCodeAt.hasOwnProperty('length')); 
+if (String.prototype.charCodeAt.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.charCodeAt.length; String.prototype.charCodeAt.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.charCodeAt.hasOwnProperty('length')); 
 }
 //
 //////////////////////////////////////////////////////////////////////////////

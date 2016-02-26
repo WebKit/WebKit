@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.2.4.5_A9;
 * @section: 15.2.4.5;
-* @assertion: The Object.prototype.hasOwnProperty.length property has the attribute DontDelete;
-* @description: Checking if deleting the Object.prototype.hasOwnProperty.length property fails;
+* @assertion: The Object.prototype.hasOwnProperty.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the Object.prototype.hasOwnProperty.length property succeeds;
 */
 
 //CHECK#0
@@ -78,13 +78,13 @@ if (!(Object.prototype.hasOwnProperty.hasOwnProperty('length'))) {
 }
 
 //CHECK#1
-if (delete Object.prototype.hasOwnProperty.length) {
-  testFailed('#1: The Object.prototype.hasOwnProperty.length property has the attributes DontDelete');
+if (!(delete Object.prototype.hasOwnProperty.length)) {
+  testFailed('#1: The Object.prototype.hasOwnProperty.length property has the attribute [[Configurable]]:true');
 }
 
 //CHECK#2
-if (!(Object.prototype.hasOwnProperty.hasOwnProperty('length'))) {
-  testFailed('#2: The Object.prototype.hasOwnProperty.length property has the attributes DontDelete');
+if (Object.prototype.hasOwnProperty.hasOwnProperty('length')) {
+  testFailed('#2: The Object.prototype.hasOwnProperty.length property has the attribute [[Configurable]]:true');
 }
 
 } catch (ex) {

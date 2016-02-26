@@ -93,6 +93,11 @@ public:
     Structure* getBoundFunctionStructure() { return m_boundFunctionStructure.get(); }
     void setBoundFunctionStructure(VM& vm, Structure* structure) { m_boundFunctionStructure.set(vm, this, structure); }
 
+    bool hasReifiedLength() const { return m_hasReifiedLength; }
+    void setHasReifiedLength() { m_hasReifiedLength = true; }
+    bool hasReifiedName() const { return m_hasReifiedName; }
+    void setHasReifiedName() { m_hasReifiedName = true; }
+
 protected:
     FunctionRareData(VM&);
     ~FunctionRareData();
@@ -118,6 +123,8 @@ private:
     InlineWatchpointSet m_objectAllocationProfileWatchpoint;
     InternalFunctionAllocationProfile m_internalFunctionAllocationProfile;
     WriteBarrier<Structure> m_boundFunctionStructure;
+    bool m_hasReifiedLength { false };
+    bool m_hasReifiedName { false };
 };
 
 } // namespace JSC

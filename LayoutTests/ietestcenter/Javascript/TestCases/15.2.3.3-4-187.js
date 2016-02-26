@@ -33,7 +33,7 @@ test: function testcase() {
 
   if (desc.writable === false &&
       desc.enumerable === false &&
-      desc.configurable === false &&
+      desc.configurable === true &&
       desc.hasOwnProperty('get') === false &&
       desc.hasOwnProperty('set') === false) {
     return true;

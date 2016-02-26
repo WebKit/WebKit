@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.12_A9;
 * @section: 15.5.4.12;
-* @assertion: The String.prototype.search.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.search.length property fails;
+* @assertion: The String.prototype.search.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.search.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.search.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.search.length) {
-  testFailed('#1: delete String.prototype.search.length return false');
+if (!(delete String.prototype.search.length)) {
+  testFailed('#1: delete String.prototype.search.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.search.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.search.length; String.prototype.search.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.search.hasOwnProperty('length'));
+if (String.prototype.search.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.search.length; String.prototype.search.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.search.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

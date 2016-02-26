@@ -68,7 +68,7 @@ try {
 /**
  * @name: S15.1.3.4_A5.2;
  * @section: 15.1.3.4, 15.2.4.5, 11.4.1;
- * @assertion: The length property of encodeURIComponent has the attribute DontDelete;
+ * @assertion: The length property of encodeURIComponent has the attribute [[Configurable]]:true;
  * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (encodeURIComponent.hasOwnProperty('length') !== true) {
 delete encodeURIComponent.length;
 
 //CHECK#2
-if (encodeURIComponent.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete encodeURIComponent.length; encodeURIComponent.hasOwnProperty(\'length\') === true. Actual: ' + (encodeURIComponent.hasOwnProperty('length')));
+if (encodeURIComponent.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete encodeURIComponent.length; encodeURIComponent.hasOwnProperty(\'length\') === false. Actual: ' + (encodeURIComponent.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (encodeURIComponent.length === undefined) {
-  testFailed('#3: delete encodeURIComponent.length; encodeURIComponent.length !== undefined');
+if (encodeURIComponent.length !== 0) {
+  testFailed('#3: delete encodeURIComponent.length; encodeURIComponent.length === 0');
 }
 
 

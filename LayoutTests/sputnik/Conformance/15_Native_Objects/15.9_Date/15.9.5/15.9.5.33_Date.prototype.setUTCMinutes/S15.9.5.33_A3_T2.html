@@ -68,16 +68,16 @@ try {
 /**
  * @name: S15.9.5.33_A3_T2;
  * @section: 15.9.5.33;
- * @assertion: The Date.prototype.setUTCMinutes property "length" has { ReadOnly, DontDelete, DontEnum } attributes;
- * @description: Checking DontDelete attribute;
+ * @assertion: The Date.prototype.setUTCMinutes property "length" has { [[Writable]]:false, [[Enumerable]]:false, [[Configurable]]:true } attributes;
+ * @description: Checking [[Configurable]] attribute;
  */
 
-if (delete Date.prototype.setUTCMinutes.length  !== false) {
-  testFailed('#1: The Date.prototype.setUTCMinutes.length property has the attributes DontDelete');
+if (delete Date.prototype.setUTCMinutes.length  !== true) {
+  testFailed('#1: The Date.prototype.setUTCMinutes.length property has the attribute [[Configurable]]:true');
 }
 
-if (!Date.prototype.setUTCMinutes.hasOwnProperty('length')) {
-  testFailed('#2: The Date.prototype.setUTCMinutes.length property has the attributes DontDelete');
+if (Date.prototype.setUTCMinutes.hasOwnProperty('length')) {
+  testFailed('#2: The Date.prototype.setUTCMinutes.length property has the attribute [[Configurable]]:true');
 }
 
 

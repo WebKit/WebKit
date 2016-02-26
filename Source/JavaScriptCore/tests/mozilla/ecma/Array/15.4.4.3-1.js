@@ -52,8 +52,8 @@ function getTestCases() {
     var ARR_PROTOTYPE = Array.prototype;
 
     array[item++] = new TestCase( SECTION, "Array.prototype.join.length",           1,      Array.prototype.join.length );
-    array[item++] = new TestCase( SECTION, "delete Array.prototype.join.length",    false,  delete Array.prototype.join.length );
-    array[item++] = new TestCase( SECTION, "delete Array.prototype.join.length; Array.prototype.join.length",    1, eval("delete Array.prototype.join.length; Array.prototype.join.length") );
+    array[item++] = new TestCase( SECTION, "delete Array.prototype.join.length",    true,   delete Array.prototype.join.length );
+    array[item++] = new TestCase( SECTION, "Array.prototype.join.length",           0,      Array.prototype.join.length );
 
     // case where array length is 0
 

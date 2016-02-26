@@ -795,11 +795,11 @@
 - path: es6/function_name_property_bound_functions.js
   cmd: runES6 :normal
 - path: es6/function_name_property_class_expressions.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/function_name_property_class_statements.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/function_name_property_isnt_writable_is_configurable.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/function_name_property_object_methods_class.js
   cmd: runES6 :fail
 - path: es6/function_name_property_object_methods_function.js
@@ -869,7 +869,7 @@
 - path: es6/miscellaneous_built-in_prototypes_are_not_instances.js
   cmd: runES6 :fail
 - path: es6/miscellaneous_function_length_is_configurable.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/miscellaneous_no_assignments_allowed_in_for-in_head.js
   cmd: runES6 :fail
 - path: es6/miscellaneous_RegExp_constructor_can_alter_flags.js

@@ -55,8 +55,8 @@ function getTestCases() {
     var item = 0;
 
     array[item++] = new TestCase( SECTION,  "String.prototype.toLowerCase.length",        0,          String.prototype.toLowerCase.length );
-    array[item++] = new TestCase( SECTION,  "delete String.prototype.toLowerCase.length", false,      delete String.prototype.toLowerCase.length );
-    array[item++] = new TestCase( SECTION,  "delete String.prototype.toLowerCase.length; String.prototype.toLowerCase.length", 0,      eval("delete String.prototype.toLowerCase.length; String.prototype.toLowerCase.length") );
+    array[item++] = new TestCase( SECTION,  "delete String.prototype.toLowerCase.length", true,       delete String.prototype.toLowerCase.length );
+    array[item++] = new TestCase( SECTION,  "String.prototype.toLowerCase.length",        0,          String.prototype.toLowerCase.length );
 
     // Cyrillic (part)
     // Range: U+0400 to U+04FF

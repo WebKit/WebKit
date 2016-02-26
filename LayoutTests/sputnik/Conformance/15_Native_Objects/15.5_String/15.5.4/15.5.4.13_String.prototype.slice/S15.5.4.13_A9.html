@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.13_A9;
 * @section: 15.5.4.13;
-* @assertion: The String.prototype.slice.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.slice.length property fails;
+* @assertion: The String.prototype.slice.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.slice.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.slice.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.slice.length) {
-  testFailed('#1: delete String.prototype.slice.length return false');
+if (!(delete String.prototype.slice.length)) {
+  testFailed('#1: delete String.prototype.slice.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.slice.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.slice.length; String.prototype.slice.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.slice.hasOwnProperty('length'));
+if (String.prototype.slice.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.slice.length; String.prototype.slice.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.slice.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

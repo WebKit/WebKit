@@ -13,7 +13,7 @@ assertEq(testLenientAndStrict('var f = fn(); f.name = "g"; f.name',
                               returns("f"), raisesException(TypeError)),
          true);
 assertEq(testLenientAndStrict('var f = fn(); delete f.name',
-                              returns(false), raisesException(TypeError)),
+                              returns(true), returns(true)),
          true);
 
 // arity is not a spec defined property of Function.

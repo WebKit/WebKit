@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.18_A9;
 * @section: 15.5.4.18;
-* @assertion: The String.prototype.toUpperCase.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.toUpperCase.length property fails;
+* @assertion: The String.prototype.toUpperCase.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.toUpperCase.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.toUpperCase.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.toUpperCase.length) {
-  testFailed('#1: delete String.prototype.toUpperCase.length return false');
+if (!(delete String.prototype.toUpperCase.length)) {
+  testFailed('#1: delete String.prototype.toUpperCase.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.toUpperCase.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.toUpperCase.length; String.prototype.toUpperCase.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.toUpperCase.hasOwnProperty('length'));
+if (String.prototype.toUpperCase.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.toUpperCase.length; String.prototype.toUpperCase.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.toUpperCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.16_A9;
 * @section: 15.5.4.16;
-* @assertion: The String.prototype.toLowerCase.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.toLowerCase.length property fails;
+* @assertion: The String.prototype.toLowerCase.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.toLowerCase.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.toLowerCase.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.toLowerCase.length) {
-  testFailed('#1: delete String.prototype.toLowerCase.length return false');
+if (!(delete String.prototype.toLowerCase.length)) {
+  testFailed('#1: delete String.prototype.toLowerCase.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.toLowerCase.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.toLowerCase.length; String.prototype.toLowerCase.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.toLowerCase.hasOwnProperty('length'));
+if (String.prototype.toLowerCase.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.toLowerCase.length; String.prototype.toLowerCase.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.toLowerCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

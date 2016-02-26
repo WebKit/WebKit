@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.14_A9;
 * @section: 15.5.4.14;
-* @assertion: The String.prototype.split.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.split.length property fails;
+* @assertion: The String.prototype.split.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.split.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.split.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.split.length) {
-  testFailed('#1: delete String.prototype.split.length return false');
+if (!(delete String.prototype.split.length)) {
+  testFailed('#1: delete String.prototype.split.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.split.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.split.length; String.prototype.split.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.split.hasOwnProperty('length'));
+if (String.prototype.split.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.split.length; String.prototype.split.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.split.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -64,8 +64,8 @@ function getTestCases() {
     var item = 0;
 
     array[item++] = new TestCase( SECTION,  "String.prototype.substring.length",        2,          String.prototype.substring.length );
-    array[item++] = new TestCase( SECTION,  "delete String.prototype.substring.length", false,      delete String.prototype.substring.length );
-    array[item++] = new TestCase( SECTION,  "delete String.prototype.substring.length; String.prototype.substring.length", 2,      eval("delete String.prototype.substring.length; String.prototype.substring.length") );
+    array[item++] = new TestCase( SECTION,  "delete String.prototype.substring.length", true,       delete String.prototype.substring.length );
+    array[item++] = new TestCase( SECTION,  "String.prototype.substring.length",        0,          String.prototype.substring.length );
 
     // test cases for when substring is called with no arguments.
 

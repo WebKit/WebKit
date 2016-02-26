@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.11_A9;
 * @section: 15.5.4.11;
-* @assertion: The String.prototype.replace.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.replace.length property fails;
+* @assertion: The String.prototype.replace.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.replace.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.replace.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.replace.length) {
-  testFailed('#1: delete String.prototype.replace.length return false');
+if (!(delete String.prototype.replace.length)) {
+  testFailed('#1: delete String.prototype.replace.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.replace.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.replace.length; String.prototype.replace.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.replace.hasOwnProperty('length'));
+if (String.prototype.replace.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.replace.length; String.prototype.replace.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.replace.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

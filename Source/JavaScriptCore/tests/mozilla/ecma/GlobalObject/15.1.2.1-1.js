@@ -46,9 +46,10 @@ function getTestCases() {
     var item = 0;
 
     array[item++] = new TestCase( SECTION,      "eval.length",              1,              eval.length );
-    array[item++] = new TestCase( SECTION,      "delete eval.length",       false,          delete eval.length );
+    array[item++] = new TestCase( SECTION,      "delete eval.length",       true,           delete eval.length );
+    array[item++] = new TestCase( SECTION,      "eval.length",              0,              eval.length );
     array[item++] = new TestCase( SECTION,      "var PROPS = ''; for ( p in eval ) { PROPS += p }; PROPS",  "", eval("var PROPS = ''; for ( p in eval ) { PROPS += p }; PROPS") );
-    array[item++] = new TestCase( SECTION,      "eval.length = null; eval.length",       1, eval( "eval.length = null; eval.length") );
+    array[item++] = new TestCase( SECTION,      "eval.length = null; eval.length",       0, eval( "eval.length = null; eval.length") );
 //    array[item++] = new TestCase( SECTION,     "eval.__proto__",                       Function.prototype,            eval.__proto__ );
 
     // test cases where argument is not a string.  should return the argument.

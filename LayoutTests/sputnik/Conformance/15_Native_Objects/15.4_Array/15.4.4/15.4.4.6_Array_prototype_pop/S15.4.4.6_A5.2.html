@@ -68,7 +68,7 @@ try {
 /**
 * @name: S15.4.4.6_A5.2;
 * @section: 15.4.4.6, 15.2.4.5, 11.4.1;
-* @assertion: The length property of pop has the attribute DontDelete;
+* @assertion: The length property of pop has the attribute [[Configurable]]:true;
 * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (Array.prototype.pop.hasOwnProperty('length') !== true) {
 delete Array.prototype.pop.length;
 
 //CHECK#2
-if (Array.prototype.pop.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete Array.prototype.pop.length; Array.prototype.pop.hasOwnProperty(\'length\') === true. Actual: ' + (Array.prototype.pop.hasOwnProperty('length')));
+if (Array.prototype.pop.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete Array.prototype.pop.length; Array.prototype.pop.hasOwnProperty(\'length\') === false. Actual: ' + (Array.prototype.pop.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (Array.prototype.pop.length === undefined) {
-  testFailed('#3: delete Array.prototype.pop.length; Array.prototype.pop.length !== undefined');
+if (Array.prototype.pop.length !== 0) {
+  testFailed('#3: delete Array.prototype.pop.length; Array.prototype.pop.length === 0');
 }
 
 

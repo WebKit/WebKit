@@ -68,7 +68,7 @@ try {
 /**
 * @name: S15.4.4.10_A5.2;
 * @section: 15.4.4.10, 15.2.4.5, 11.4.1;
-* @assertion: The length property of slice has the attribute DontDelete;
+* @assertion: The length property of slice has the attribute [[Configurable]]:true;
 * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (Array.prototype.slice.hasOwnProperty('length') !== true) {
 delete Array.prototype.slice.length;
 
 //CHECK#2
-if (Array.prototype.slice.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete Array.prototype.slice.length; Array.prototype.slice.hasOwnProperty(\'length\') === true. Actual: ' + (Array.prototype.slice.hasOwnProperty('length')));
+if (Array.prototype.slice.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete Array.prototype.slice.length; Array.prototype.slice.hasOwnProperty(\'length\') === false. Actual: ' + (Array.prototype.slice.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (Array.prototype.slice.length === undefined) {
-  testFailed('#3: delete Array.prototype.slice.length; Array.prototype.slice.length !== undefined');
+if (Array.prototype.slice.length !== 0) {
+  testFailed('#3: delete Array.prototype.slice.length; Array.prototype.slice.length === 0');
 }
 
 

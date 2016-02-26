@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.19_A9;
 * @section: 15.5.4.19;
-* @assertion: The String.prototype.toLocaleUpperCase.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.toLocaleUpperCase.length property fails;
+* @assertion: The String.prototype.toLocaleUpperCase.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.toLocaleUpperCase.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.toLocaleUpperCase.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.toLocaleUpperCase.length) {
-  testFailed('#1: delete String.prototype.toLocaleUpperCase.length return false');
+if (!(delete String.prototype.toLocaleUpperCase.length)) {
+  testFailed('#1: delete String.prototype.toLocaleUpperCase.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.toLocaleUpperCase.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.toLocaleUpperCase.length; String.prototype.toLocaleUpperCase.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.toLocaleUpperCase.hasOwnProperty('length'));
+if (String.prototype.toLocaleUpperCase.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.toLocaleUpperCase.length; String.prototype.toLocaleUpperCase.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.toLocaleUpperCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

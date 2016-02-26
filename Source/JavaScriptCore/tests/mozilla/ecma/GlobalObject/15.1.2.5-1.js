@@ -81,8 +81,8 @@ function getTestCases() {
 
     array[item++] = new TestCase( SECTION, "unescape.length",       1,               unescape.length );
     array[item++] = new TestCase( SECTION, "unescape.length = null; unescape.length",   1,      eval("unescape.length=null; unescape.length") );
-    array[item++] = new TestCase( SECTION, "delete unescape.length",                    false,  delete unescape.length );
-    array[item++] = new TestCase( SECTION, "delete unescape.length; unescape.length",   1,      eval("delete unescape.length; unescape.length") );
+    array[item++] = new TestCase( SECTION, "delete unescape.length",                    true,  delete unescape.length );
+    array[item++] = new TestCase( SECTION, "unescape.length",       0,               unescape.length );
     array[item++] = new TestCase( SECTION, "var MYPROPS=''; for ( var p in unescape ) { MYPROPS+= p }; MYPROPS",    "", eval("var MYPROPS=''; for ( var p in unescape ) { MYPROPS+= p }; MYPROPS") );
 
     array[item++] = new TestCase( SECTION, "unescape()",              "undefined",    unescape() );

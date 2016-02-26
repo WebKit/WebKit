@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.8_A9;
 * @section: 15.5.4.8;
-* @assertion: The String.prototype.lastIndexOf.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.lastIndexOf.length property fails;
+* @assertion: The String.prototype.lastIndexOf.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.lastIndexOf.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.lastIndexOf.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.lastIndexOf.length) {
-  testFailed('#1: delete String.prototype.lastIndexOf.length return false');
+if (!(delete String.prototype.lastIndexOf.length)) {
+  testFailed('#1: delete String.prototype.lastIndexOf.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.lastIndexOf.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.lastIndexOf.length; String.prototype.lastIndexOf.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.lastIndexOf.hasOwnProperty('length'));
+if (String.prototype.lastIndexOf.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.lastIndexOf.length; String.prototype.lastIndexOf.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.lastIndexOf.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -50,8 +50,8 @@ function getTestCases() {
 
     array[item++] = new TestCase( SECTION, "isFinite.length",      1,                  isFinite.length );
     array[item++] = new TestCase( SECTION, "isFinite.length = null; isFinite.length",   1,      eval("isFinite.length=null; isFinite.length") );
-    array[item++] = new TestCase( SECTION, "delete isFinite.length",                    false,  delete isFinite.length );
-    array[item++] = new TestCase( SECTION, "delete isFinite.length; isFinite.length",   1,      eval("delete isFinite.length; isFinite.length") );
+    array[item++] = new TestCase( SECTION, "delete isFinite.length",                    true,   delete isFinite.length );
+    array[item++] = new TestCase( SECTION, "isFinite.length",      0,                  isFinite.length );
     array[item++] = new TestCase( SECTION, "var MYPROPS=''; for ( p in isFinite ) { MYPROPS+= p }; MYPROPS",    "", eval("var MYPROPS=''; for ( p in isFinite ) { MYPROPS += p }; MYPROPS") );
 
     array[item++] = new TestCase( SECTION,  "isFinite()",           false,              isFinite() );

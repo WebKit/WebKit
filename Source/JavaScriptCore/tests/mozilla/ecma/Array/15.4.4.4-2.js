@@ -84,8 +84,8 @@ function getTestCases() {
     var ARR_PROTOTYPE = Array.prototype;
 
     testcases[testcases.length] = new TestCase( SECTION, "Array.prototype.reverse.length",           0,      Array.prototype.reverse.length );
-    testcases[testcases.length] = new TestCase( SECTION, "delete Array.prototype.reverse.length",    false,  delete Array.prototype.reverse.length );
-    testcases[testcases.length] = new TestCase( SECTION, "delete Array.prototype.reverse.length; Array.prototype.reverse.length",    0, eval("delete Array.prototype.reverse.length; Array.prototype.reverse.length") );
+    testcases[testcases.length] = new TestCase( SECTION, "delete Array.prototype.reverse.length",    true,   delete Array.prototype.reverse.length );
+    testcases[testcases.length] = new TestCase( SECTION, "Array.prototype.reverse.length",           0,      Array.prototype.reverse.length );
 
     // length of array is 0
     testcases[testcases.length] = new TestCase(   SECTION,

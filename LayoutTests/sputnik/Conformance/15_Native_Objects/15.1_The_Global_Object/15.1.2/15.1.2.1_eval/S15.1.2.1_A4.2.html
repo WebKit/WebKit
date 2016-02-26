@@ -68,7 +68,7 @@ try {
 /**
  * @name: S15.1.2.1_A4.2;
  * @section: 15.1.2.1, 15.2.4.5, 11.4.1;
- * @assertion: The length property of eval has the attribute DontDelete;
+ * @assertion: The length property of eval has the attribute [[Configurable]]:true;
  * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (eval.hasOwnProperty('length') !== true) {
 delete eval.length;
 
 //CHECK#2
-if (eval.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete eval.length; eval.hasOwnProperty(\'length\') === true. Actual: ' + (eval.hasOwnProperty('length')));
+if (eval.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete eval.length; eval.hasOwnProperty(\'length\') === false. Actual: ' + (eval.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (eval.length === undefined) {
-  testFailed('#3: delete eval.length; eval.length !== undefined');
+if (eval.length !== 0) {
+  testFailed('#3: delete eval.length; eval.length === 0');
 }
 
 

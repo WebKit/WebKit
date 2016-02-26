@@ -186,7 +186,13 @@ private:
         function->finishCreation(vm);
         return function;
     }
-    
+
+    bool hasReifiedLength() const;
+    bool hasReifiedName() const;
+    void reifyLength(ExecState*);
+    void reifyName(ExecState*);
+    void reifyLazyPropertyIfNeeded(ExecState*, PropertyName propertyName);
+
     friend class LLIntOffsetsExtractor;
 
     static EncodedJSValue argumentsGetter(ExecState*, EncodedJSValue, PropertyName);

@@ -110,9 +110,9 @@ function getTestCases() {
     array[item++] = new TestCase( SECTION,  "parseInt.length",      2,      parseInt.length );
     array[item++] = new TestCase( SECTION,  "parseInt.length = 0; parseInt.length",     2,      eval("parseInt.length = 0; parseInt.length") );
     array[item++] = new TestCase( SECTION,  "var PROPS=''; for ( var p in parseInt ) { PROPS += p; }; PROPS",   "", eval("var PROPS=''; for ( var p in parseInt ) { PROPS += p; }; PROPS") );
-    array[item++] = new TestCase( SECTION,  "delete parseInt.length",   false,  delete parseInt.length );
-    array[item++] = new TestCase( SECTION,  "delete parseInt.length; parseInt.length",  2,  eval("delete parseInt.length; parseInt.length") );
-    array[item++] = new TestCase( SECTION,  "parseInt.length = null; parseInt.length",  2,  eval("parseInt.length = null; parseInt.length") );
+    array[item++] = new TestCase( SECTION,  "delete parseInt.length",   true,  delete parseInt.length );
+    array[item++] = new TestCase( SECTION,  "parseInt.length",      0,      parseInt.length );
+    array[item++] = new TestCase( SECTION,  "parseInt.length = null; parseInt.length",  0,  eval("parseInt.length = null; parseInt.length") );
 
     array[item++] = new TestCase( SECTION,  "parseInt()",       NaN,    parseInt() );
     array[item++] = new TestCase( SECTION,  "parseInt('')",     NaN,    parseInt("") );

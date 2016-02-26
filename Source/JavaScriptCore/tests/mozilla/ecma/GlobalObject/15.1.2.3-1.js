@@ -78,8 +78,8 @@ function getTestCases() {
     array[item++] = new TestCase( SECTION, "parseFloat.length",     1,              parseFloat.length );
 
     array[item++] = new TestCase( SECTION, "parseFloat.length = null; parseFloat.length",   1,      eval("parseFloat.length = null; parseFloat.length") );
-    array[item++] = new TestCase( SECTION, "delete parseFloat.length",                      false,  delete parseFloat.length );
-    array[item++] = new TestCase( SECTION, "delete parseFloat.length; parseFloat.length",   1,      eval("delete parseFloat.length; parseFloat.length") );
+    array[item++] = new TestCase( SECTION, "delete parseFloat.length",                      true,   delete parseFloat.length );
+    array[item++] = new TestCase( SECTION, "parseFloat.length",     0,              parseFloat.length );
     array[item++] = new TestCase( SECTION, "var MYPROPS=''; for ( var p in parseFloat ) { MYPROPS += p }; MYPROPS", "", eval("var MYPROPS=''; for ( var p in parseFloat ) { MYPROPS += p }; MYPROPS") );
 
     array[item++] = new TestCase( SECTION, "parseFloat()",          Number.NaN,     parseFloat() );

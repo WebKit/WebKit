@@ -3,7 +3,7 @@ description(
 );
 
 shouldBe("(function f() {}).name", "'f'");
-shouldBe("delete (function f() {}).name", "false");
+shouldBe("delete (function f() {}).name", "true");
 shouldBe("(function() {}).name", "''");
 shouldBe("Math.name", "undefined");
 shouldBe("Error.name", "'Error'");

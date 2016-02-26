@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.2.4.7_A9;
 * @section: 15.2.4.7;
-* @assertion: The Object.prototype.propertyIsEnumerable.length property has the attribute DontDelete;
-* @description: Checking if deleting the Object.prototype.propertyIsEnumerable.length property fails;
+* @assertion: The Object.prototype.propertyIsEnumerable.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the Object.prototype.propertyIsEnumerable.length property succeeds;
 */
 
 //CHECK#0
@@ -78,8 +78,8 @@ if (!(Object.prototype.propertyIsEnumerable.hasOwnProperty('length'))) {
 }
 
 //CHECK#1
-if (delete Object.prototype.propertyIsEnumerable.length) {
-  testFailed('#1: The Object.prototype.propertyIsEnumerable.length property has the attributes DontDelete');
+if (!(delete Object.prototype.propertyIsEnumerable.length)) {
+  testFailed('#1: The Object.prototype.propertyIsEnumerable.length property has the attribute [[Configurable]]:true');
 }
 //
 

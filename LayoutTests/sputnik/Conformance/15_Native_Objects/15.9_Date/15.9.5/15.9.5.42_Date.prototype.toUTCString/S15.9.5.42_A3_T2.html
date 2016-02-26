@@ -68,16 +68,16 @@ try {
 /**
  * @name: S15.9.5.42_A3_T2;
  * @section: 15.9.5.42;
- * @assertion: The Date.prototype.toUTCString property "length" has { ReadOnly, DontDelete, DontEnum } attributes;
- * @description: Checking DontDelete attribute;
+ * @assertion: The Date.prototype.toUTCString property "length" has { [[Writable]]:false, [[Enumerable]]:false, [[Configurable]]:true } attributes;
+ * @description: Checking [[Configurable]] attribute;
  */
 
-if (delete Date.prototype.toUTCString.length  !== false) {
-  testFailed('#1: The Date.prototype.toUTCString.length property has the attributes DontDelete');
+if (delete Date.prototype.toUTCString.length  !== true) {
+  testFailed('#1: The Date.prototype.toUTCString.length property has the attribute [[Configurable]]:true');
 }
 
-if (!Date.prototype.toUTCString.hasOwnProperty('length')) {
-  testFailed('#2: The Date.prototype.toUTCString.length property has the attributes DontDelete');
+if (Date.prototype.toUTCString.hasOwnProperty('length')) {
+  testFailed('#2: The Date.prototype.toUTCString.length property has the attribute [[Configurable]]:true');
 }
 
 

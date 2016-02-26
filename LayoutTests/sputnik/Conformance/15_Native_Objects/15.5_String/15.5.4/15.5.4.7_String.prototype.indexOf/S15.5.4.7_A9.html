@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.7_A9;
 * @section: 15.5.4.7;
-* @assertion: The String.prototype.indexOf.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.indexOf.length property fails;
+* @assertion: The String.prototype.indexOf.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.indexOf.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.indexOf.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.indexOf.length) {
-  testFailed('#1: delete String.prototype.indexOf.length raturn false');
+if (!(delete String.prototype.indexOf.length)) {
+  testFailed('#1: delete String.prototype.indexOf.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.indexOf.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.indexOf.length; String.prototype.indexOf.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.indexOf.hasOwnProperty('length')); 
+if (String.prototype.indexOf.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.indexOf.length; String.prototype.indexOf.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.indexOf.hasOwnProperty('length')); 
 }
 //
 //////////////////////////////////////////////////////////////////////////////

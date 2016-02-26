@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.3.5.1_A2_T2;
 * @section: 15.3.5.1;
-* @assertion: the length property has the attributes { DontDelete };
-* @description: Checking if deleting the length property of Function("arg1,arg2,arg3","arg4,arg5", null) fails;
+* @assertion: the length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the length property of Function("arg1,arg2,arg3","arg4,arg5", null) succeeds;
 */
 
 f =  Function("arg1,arg2,arg3","arg4,arg5", null);
@@ -82,13 +82,13 @@ if (!(f.hasOwnProperty('length'))) {
 delete f.length;
 
 //CHECK#2
-if (!(f.hasOwnProperty('length'))) {
-  testFailed('#2: the function.length property has the attributes DontDelete.');
+if (f.hasOwnProperty('length')) {
+  testFailed('#2: the function.length property has the attribute [[Configurable]]:true.');
 }
 
 //CHECK#3
-if (f.length !== 5) {
-  testFailed('#3: the length property has the attributes { DontDelete }');
+if (f.length !== 0) {
+  testFailed('#3: the length property has the attribute [[Configurable]]:true');
 }
 
 } catch (ex) {

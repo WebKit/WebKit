@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.10_A9;
 * @section: 15.5.4.10;
-* @assertion: The String.prototype.match.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.match.length property fails;
+* @assertion: The String.prototype.match.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.match.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.match.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.match.length) {
-  testFailed('#1: delete String.prototype.match.length return false');
+if (!(delete String.prototype.match.length)) {
+  testFailed('#1: delete String.prototype.match.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.match.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.match.length; String.prototype.match.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.match.hasOwnProperty('length'));
+if (String.prototype.match.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.match.length; String.prototype.match.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.match.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

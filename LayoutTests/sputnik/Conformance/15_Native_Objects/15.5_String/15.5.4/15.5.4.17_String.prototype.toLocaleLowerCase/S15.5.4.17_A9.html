@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.17_A9;
 * @section: 15.5.4.17;
-* @assertion: The String.prototype.toLocaleLowerCase.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.toLocaleLowerCase.length property fails;
+* @assertion: The String.prototype.toLocaleLowerCase.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.toLocaleLowerCase.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.toLocaleLowerCase.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.toLocaleLowerCase.length) {
-  testFailed('#1: delete String.prototype.toLocaleLowerCase.length return false');
+if (!(delete String.prototype.toLocaleLowerCase.length)) {
+  testFailed('#1: delete String.prototype.toLocaleLowerCase.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.toLocaleLowerCase.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.toLocaleLowerCase.length; String.prototype.toLocaleLowerCase.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.toLocaleLowerCase.hasOwnProperty('length'));
+if (String.prototype.toLocaleLowerCase.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.toLocaleLowerCase.length; String.prototype.toLocaleLowerCase.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.toLocaleLowerCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

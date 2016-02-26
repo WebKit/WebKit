@@ -51,8 +51,8 @@ function getTestCases() {
     array[item++] = new TestCase( SECTION, "isNaN.length",      1,                  isNaN.length );
     array[item++] = new TestCase( SECTION, "var MYPROPS=''; for ( var p in isNaN ) { MYPROPS+= p }; MYPROPS", "", eval("var MYPROPS=''; for ( var p in isNaN ) { MYPROPS+= p }; MYPROPS") );
     array[item++] = new TestCase( SECTION, "isNaN.length = null; isNaN.length", 1,      eval("isNaN.length=null; isNaN.length") );
-    array[item++] = new TestCase( SECTION, "delete isNaN.length",               false,  delete isNaN.length );
-    array[item++] = new TestCase( SECTION, "delete isNaN.length; isNaN.length", 1,      eval("delete isNaN.length; isNaN.length") );
+    array[item++] = new TestCase( SECTION, "delete isNaN.length",               true,   delete isNaN.length );
+    array[item++] = new TestCase( SECTION, "isNaN.length",      0,                  isNaN.length );
 
 //    array[item++] = new TestCase( SECTION, "isNaN.__proto__",   Function.prototype, isNaN.__proto__ );
 

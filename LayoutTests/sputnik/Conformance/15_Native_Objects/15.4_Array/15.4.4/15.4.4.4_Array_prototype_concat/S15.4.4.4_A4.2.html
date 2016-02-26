@@ -68,7 +68,7 @@ try {
 /**
 * @name: S15.4.4.4_A4.2;
 * @section: 15.4.4.4, 15.2.4.5, 11.4.1;
-* @assertion: The length property of concat has the attribute DontDelete;
+* @assertion: The length property of concat has the attribute [[Configurable]]:true;
 * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (Array.prototype.concat.hasOwnProperty('length') !== true) {
 delete Array.prototype.concat.length;
 
 //CHECK#2
-if (Array.prototype.concat.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete Array.prototype.concat.length; Array.prototype.concat.hasOwnProperty(\'length\') === true. Actual: ' + (Array.prototype.concat.hasOwnProperty('length')));
+if (Array.prototype.concat.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete Array.prototype.concat.length; Array.prototype.concat.hasOwnProperty(\'length\') === false. Actual: ' + (Array.prototype.concat.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (Array.prototype.concat.length === undefined) {
-  testFailed('#3: delete Array.prototype.concat.length; Array.prototype.concat.length !== undefined');
+if (Array.prototype.concat.length !== 0) {
+  testFailed('#3: delete Array.prototype.concat.length; Array.prototype.concat.length === 0');
 }
 
 

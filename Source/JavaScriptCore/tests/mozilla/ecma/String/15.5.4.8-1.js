@@ -61,8 +61,8 @@ function getTestCases() {
     var item = 0;
 
     array[item++] = new TestCase( SECTION,  "String.prototype.split.length",        2,          String.prototype.split.length );
-    array[item++] = new TestCase( SECTION,  "delete String.prototype.split.length", false,      delete String.prototype.split.length );
-    array[item++] = new TestCase( SECTION,  "delete String.prototype.split.length; String.prototype.split.length", 2,      eval("delete String.prototype.split.length; String.prototype.split.length") );
+    array[item++] = new TestCase( SECTION,  "delete String.prototype.split.length", true,       delete String.prototype.split.length );
+    array[item++] = new TestCase( SECTION,  "String.prototype.split.length",        0,          String.prototype.split.length );
 
     // test cases for when split is called with no arguments.
 

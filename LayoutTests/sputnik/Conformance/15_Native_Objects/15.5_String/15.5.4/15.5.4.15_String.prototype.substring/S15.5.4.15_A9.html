@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.15_A9;
 * @section: 15.5.4.15;
-* @assertion: The String.prototype.substring.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.substring.length property fails;
+* @assertion: The String.prototype.substring.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.substring.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.substring.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.substring.length) {
-  testFailed('#1: delete String.prototype.substring.length return false');
+if (!(delete String.prototype.substring.length)) {
+  testFailed('#1: delete String.prototype.substring.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.substring.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.substring.length; String.prototype.substring.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.substring.hasOwnProperty('length'));
+if (String.prototype.substring.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.substring.length; String.prototype.substring.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.substring.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

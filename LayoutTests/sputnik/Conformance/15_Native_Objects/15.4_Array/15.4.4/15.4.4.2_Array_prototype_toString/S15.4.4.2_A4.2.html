@@ -68,7 +68,7 @@ try {
 /**
 * @name: S15.4.4.2_A4.2;
 * @section: 15.4.4.2, 15.2.4.5, 11.4.1;
-* @assertion: The length property of toString has the attribute DontDelete;
+* @assertion: The length property of toString has the attribute [[Configurable]]:true;
 * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (Array.prototype.toString.hasOwnProperty('length') !== true) {
 delete Array.prototype.toString.length;
 
 //CHECK#2
-if (Array.prototype.toString.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete Array.prototype.toString.length; Array.prototype.toString.hasOwnProperty(\'length\') === true. Actual: ' + (Array.prototype.toString.hasOwnProperty('length')));
+if (Array.prototype.toString.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete Array.prototype.toString.length; Array.prototype.toString.hasOwnProperty(\'length\') === false. Actual: ' + (Array.prototype.toString.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (Array.prototype.toString.length === undefined) {
-  testFailed('#3: delete Array.prototype.toString.length; Array.prototype.toString.length !== undefined');
+if (Array.prototype.toString.length !== 0) {
+  testFailed('#3: delete Array.prototype.toString.length; Array.prototype.toString.length === 0');
 }
 
 

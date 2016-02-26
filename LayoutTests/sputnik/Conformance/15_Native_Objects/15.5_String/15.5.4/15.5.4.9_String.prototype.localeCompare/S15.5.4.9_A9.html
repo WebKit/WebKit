@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.5.4.9_A9;
 * @section: 15.5.4.9;
-* @assertion: The String.prototype.localeCompare.length property has the attribute DontDelete;
-* @description: Checking if deleting the String.prototype.localeCompare.length property fails;
+* @assertion: The String.prototype.localeCompare.length property has the attribute [[Configurable]]:true;
+* @description: Checking if deleting the String.prototype.localeCompare.length property succeeds;
 */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ if (!(String.prototype.localeCompare.hasOwnProperty('length'))) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (delete String.prototype.localeCompare.length) {
-  testFailed('#1: delete String.prototype.localeCompare.length return false');
+if (!(delete String.prototype.localeCompare.length)) {
+  testFailed('#1: delete String.prototype.localeCompare.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (!(String.prototype.localeCompare.hasOwnProperty('length'))) {
-  testFailed('#2: delete String.prototype.localeCompare.length; String.prototype.localeCompare.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.localeCompare.hasOwnProperty('length'));
+if (String.prototype.localeCompare.hasOwnProperty('length')) {
+  testFailed('#2: delete String.prototype.localeCompare.length; String.prototype.localeCompare.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.localeCompare.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

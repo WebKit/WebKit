@@ -68,7 +68,7 @@ try {
 /**
 * @name: S15.4.4.11_A7.2;
 * @section: 15.4.4.11, 15.2.4.5, 11.4.1;
-* @assertion: The length property of sort has the attribute DontDelete;
+* @assertion: The length property of sort has the attribute [[Configurable]]:true;
 * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (Array.prototype.sort.hasOwnProperty('length') !== true) {
 delete Array.prototype.sort.length;
 
 //CHECK#2
-if (Array.prototype.sort.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete Array.prototype.sort.length; Array.prototype.sort.hasOwnProperty(\'length\') === true. Actual: ' + (Array.prototype.sort.hasOwnProperty('length')));
+if (Array.prototype.sort.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete Array.prototype.sort.length; Array.prototype.sort.hasOwnProperty(\'length\') === false. Actual: ' + (Array.prototype.sort.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (Array.prototype.sort.length === undefined) {
-  testFailed('#3: delete Array.prototype.sort.length; Array.prototype.sort.length !== undefined');
+if (Array.prototype.sort.length !== 0) {
+  testFailed('#3: delete Array.prototype.sort.length; Array.prototype.sort.length === 0');
 }
 
 

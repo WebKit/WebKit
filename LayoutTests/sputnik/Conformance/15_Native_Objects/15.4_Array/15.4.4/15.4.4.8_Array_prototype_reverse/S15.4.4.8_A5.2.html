@@ -68,7 +68,7 @@ try {
 /**
 * @name: S15.4.4.8_A5.2;
 * @section: 15.4.4.8, 15.2.4.5, 11.4.1;
-* @assertion: The length property of reverse has the attribute DontDelete;
+* @assertion: The length property of reverse has the attribute [[Configurable]]:true;
 * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (Array.prototype.reverse.hasOwnProperty('length') !== true) {
 delete Array.prototype.reverse.length;
 
 //CHECK#2
-if (Array.prototype.reverse.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete Array.prototype.reverse.length; Array.prototype.reverse.hasOwnProperty(\'length\') === true. Actual: ' + (Array.prototype.reverse.hasOwnProperty('length')));
+if (Array.prototype.reverse.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete Array.prototype.reverse.length; Array.prototype.reverse.hasOwnProperty(\'length\') === false. Actual: ' + (Array.prototype.reverse.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (Array.prototype.reverse.length === undefined) {
-  testFailed('#3: delete Array.prototype.reverse.length; Array.prototype.reverse.length !== undefined');
+if (Array.prototype.reverse.length !== 0) {
+  testFailed('#3: delete Array.prototype.reverse.length; Array.prototype.reverse.length === 0');
 }
 
 

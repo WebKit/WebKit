@@ -68,8 +68,8 @@ try {
 /**
 * @name: S15.2.4.3_A9;
 * @section: 15.2.4.3;
-* @assertion: The Object.prototype.toLocaleString.length property has the attribute DontDelete;
-* @description: Checknig if deleting of the Object.prototype.toLocaleString.length property fails;
+* @assertion: The Object.prototype.toLocaleString.length property has the attribute [[Configurable]]:true;
+* @description: Checknig if deleting of the Object.prototype.toLocaleString.length property succeeds;
 */
 
 //CHECK#0
@@ -78,13 +78,13 @@ if (!(Object.prototype.toLocaleString.hasOwnProperty('length'))) {
 }
 
 //CHECK#1
-if (delete Object.prototype.toLocaleString.length) {
-  testFailed('#1: The Object.prototype.toLocaleString.length property has the attributes DontDelete');
+if (!(delete Object.prototype.toLocaleString.length)) {
+  testFailed('#1: The Object.prototype.toLocaleString.length property has the attribute [[Configurable]]:true');
 }
 
 //CHECK#2
-if (!(Object.prototype.toLocaleString.hasOwnProperty('length'))) {
-  testFailed('#2: The Object.prototype.toLocaleString.length property has the attributes DontDelete');
+if (Object.prototype.toLocaleString.hasOwnProperty('length')) {
+  testFailed('#2: The Object.prototype.toLocaleString.length property has the attribute [[Configurable]]:true');
 }
 
 } catch (ex) {

@@ -55,8 +55,8 @@ function getTestCases() {
     var item = 0;
 
     array[item++] = new TestCase( SECTION,  "String.prototype.toUpperCase.length",        0,          String.prototype.toUpperCase.length );
-    array[item++] = new TestCase( SECTION,  "delete String.prototype.toUpperCase.length", false,      delete String.prototype.toUpperCase.length );
-    array[item++] = new TestCase( SECTION,  "delete String.prototype.toupperCase.length; String.prototype.toupperCase.length", 0,      eval("delete String.prototype.toUpperCase.length; String.prototype.toUpperCase.length") );
+    array[item++] = new TestCase( SECTION,  "delete String.prototype.toUpperCase.length", true,       delete String.prototype.toUpperCase.length );
+    array[item++] = new TestCase( SECTION,  "String.prototype.toUpperCase.length",        0,          String.prototype.toUpperCase.length );
 
     // Basic Latin, Latin-1 Supplement, Latin Extended A
     for ( var i = 0; i <= 0x017f; i++ ) {

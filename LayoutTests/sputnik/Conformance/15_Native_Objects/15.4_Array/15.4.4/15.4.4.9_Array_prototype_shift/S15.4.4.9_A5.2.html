@@ -68,7 +68,7 @@ try {
 /**
 * @name: S15.4.4.9_A5.2;
 * @section: 15.4.4.9, 15.2.4.5, 11.4.1;
-* @assertion: The length property of shift has the attribute DontDelete;
+* @assertion: The length property of shift has the attribute [[Configurable]]:true;
 * @description: Checking use hasOwnProperty, delete;
 */
 
@@ -80,13 +80,13 @@ if (Array.prototype.shift.hasOwnProperty('length') !== true) {
 delete Array.prototype.shift.length;
 
 //CHECK#2
-if (Array.prototype.shift.hasOwnProperty('length') !== true) {
-  testFailed('#2: delete Array.prototype.shift.length; Array.prototype.shift.hasOwnProperty(\'length\') === true. Actual: ' + (Array.prototype.shift.hasOwnProperty('length')));
+if (Array.prototype.shift.hasOwnProperty('length') !== false) {
+  testFailed('#2: delete Array.prototype.shift.length; Array.prototype.shift.hasOwnProperty(\'length\') === false. Actual: ' + (Array.prototype.shift.hasOwnProperty('length')));
 }
 
 //CHECK#3
-if (Array.prototype.shift.length === undefined) {
-  testFailed('#3: delete Array.prototype.shift.length; Array.prototype.shift.length !== undefined');
+if (Array.prototype.shift.length !== 0) {
+  testFailed('#3: delete Array.prototype.shift.length; Array.prototype.shift.length === 0');
 }
 
 
