@@ -1,3 +1,35 @@
+2016-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        <g> wrapping <symbol> causes display of hidden <symbol>
+        https://bugs.webkit.org/show_bug.cgi?id=154576
+
+        Reviewed by Darin Adler.
+        
+        The SVGSymbolElement is allowed in the shadow tree of an SVGUseElement
+        only if it subtree root element. Any descendant SVGSymbolElement should
+        be removed from the subtree because it is a hidden container. If the cloned
+        subtree includes an SVGUseElement which references an SVGSymbolElement,
+        the same rule will be applied to the descendant SVGUseElement. The goal
+        is to remove all the descendant SVGSymbolElements from the cloned target
+        because these SVGSymbolElements will be expanded to SVGSVGElements and
+        hence become visible.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::disassociateAndRemoveClones): A helper function which removes
+        cloned SVGElements and their subtrees from their parents and disassociate
+        them from their originals.
+        
+        (WebCore::removeDisallowedElementsFromSubtree): Use disassociateAndRemoveClones().
+        
+        (WebCore::removeSymbolElementsFromSubtree): Removes all the descendant
+        SVGSymbolElements from the cloned subtree. It does not remove the root
+        element itself if it is an SVGSymbolElement because this one will be
+        expanded to an SVGSVGElement which is exactly what we need.
+        
+        (WebCore::SVGUseElement::cloneTarget): Call removeSymbolElementsFromSubtree()
+        to remove the descendant SVGSymbolElements from the cloned subtree before
+        appending it to the container shadow root.
+
 2016-02-26  Olivier Blin  <olivier.blin@softathome.com>
 
         Initialize LocaleICU data members in header

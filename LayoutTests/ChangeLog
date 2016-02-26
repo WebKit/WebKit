@@ -1,3 +1,30 @@
+2016-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        <g> wrapping <symbol> causes display of hidden <symbol>
+        https://bugs.webkit.org/show_bug.cgi?id=154576
+
+        Reviewed by Darin Adler.
+
+        Ensure the <symbol> element is not displayed when it's wrapped in a <g>
+        element and this <g> element is referenced by a <use> element.
+
+        * platform/gtk/svg/custom/use-on-g-containing-symbol-expected.png: Removed.
+        * platform/gtk/svg/custom/use-on-g-containing-symbol-expected.txt: Removed.
+        * platform/ios-simulator/svg/custom/use-on-g-containing-symbol-expected.txt: Removed.
+        * platform/mac/svg/custom/use-on-g-containing-symbol-expected.png: Removed.
+        * platform/mac/svg/custom/use-on-g-containing-symbol-expected.txt: Removed.
+        * platform/win/svg/custom/use-on-g-containing-symbol-expected.txt: Removed.
+        * svg/custom/use-on-g-containing-symbol-expected.svg: Added.
+        * svg/custom/use-on-g-containing-symbol.svg:
+        The original test was wrong. It had the following definition:
+            "<g id='symbol'><symbol>...</symbol></g>"
+        And it was expecting to have the symbol drawn if the <g> element was
+        referenced like that
+            "<use xlink:href='#symbol'/>"
+        FireFox does not render anything for this <use> element which is correct.
+        With this patch, this test failed so it had to be modified to test the right
+        behavior. Also it is now converted to a ref test.
+
 2016-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197167.
