@@ -1,3 +1,32 @@
+2016-02-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should have an option to clean the destination directory
+        https://bugs.webkit.org/show_bug.cgi?id=152685
+
+        Reviewed by Darin Adler.
+
+        Adding --clean-dest-dir option to W3C test importer.
+        When this option is set, all files in the destination directory will be deleted
+        except for WebKit specific files (test expectations, .gitignore...) before new tests import.
+        Dangling test expectations are removed after tests import.'
+
+        Adding unit test and minor refactoring for the other tests.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (parse_args): Add '--clean-dest-dir' option.
+        (TestImporter.do_import):
+        (TestImporter._is_baseline): helper routine to capture -expected.txt files.
+        (TestImporter):
+        (TestImporter._should_not_keep_when_importing): helper routine to filter files that should not be cleaned before importing.
+        (TestImporter.clean_destination_directory):
+        (TestImporter.remove_dangling_expectations):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest._parse_options):
+        (TestImporterTest.test_import_dir_with_no_tests_and_no_hg):
+        (TestImporterTest.test_import_dir_with_no_tests):
+        (TestImporterTest.test_import_dir_with_empty_init_py):
+        (test_clean_directory_option):
+
 2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r195795): [WK2] fast/text/crash-complex-text-surrogate.html is flakey
