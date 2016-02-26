@@ -1,3 +1,26 @@
+2016-02-26  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Using existing database info from SQLite backing store is busted.
+        <rdar://problem/24848143> and https://bugs.webkit.org/show_bug.cgi?id=154735
+
+        Reviewed by Alex Christensen.
+
+        No new tests.
+        
+        Reproducing the bug requires having a known database on disk *before* launching the DatabaseProcess to
+        read in the existing IDBDatabaseInfo.
+        
+        Our automated infrastructure currently has no way of testing this.
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::openDatabase):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo): Do the optional migrate on
+          the IndexRecords table here; *every* time we open a SQLite backing store.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createAndPopulateInitialDatabaseInfo): Deleted.
+        * Modules/indexeddb/shared/IDBDatabaseInfo.cpp:
+        (WebCore::IDBDatabaseInfo::isolatedCopy): Copy the entire object, not just name/version.
+
 2016-02-25  Gavin Barraclough  <barraclough@apple.com>
 
         RefCounter value changed callback should be called on all changes (not just zero edge).
