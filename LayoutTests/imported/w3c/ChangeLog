@@ -1,3 +1,212 @@
+2016-02-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Sync web-platform-tests up to revision 5ca8b46
+        https://bugs.webkit.org/show_bug.cgi?id=154678
+
+        Reviewed by Chris Dumez.
+
+        * resources/ImportExpectations: Unskipped some tests (already imported tests) and skipped new tests added to WPT repo.
+        * resources/TestRepositories: Update revision to 5ca8b46.
+        * resources/web-platform-tests-modules.json:
+        * web-platform-tests/XMLHttpRequest/FormData-append-expected.txt:
+        * web-platform-tests/XMLHttpRequest/FormData-append.html:
+        * web-platform-tests/XMLHttpRequest/OWNERS: Added.
+        * web-platform-tests/XMLHttpRequest/event-readystate-sync-open-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-readystate-sync-open.htm: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-delete-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-delete.htm: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-get-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-get.htm: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-has-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-has.htm: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-set-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-set.htm: Added.
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-method-responsetype-set-sync-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-method-responsetype-set-sync.htm:
+        * web-platform-tests/XMLHttpRequest/open-url-encoding-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-url-encoding.htm:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm:
+        * web-platform-tests/XMLHttpRequest/responsexml-get-twice-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-get-twice.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/common/OWNERS: Added.
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/dom/OWNERS: Added.
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.html:
+        * web-platform-tests/dom/nodes/MutationObserver-childList-expected.txt:
+        * web-platform-tests/dom/nodes/Node-isEqualNode-expected.txt:
+        * web-platform-tests/dom/w3c-import.log:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html-expected.txt:
+        * web-platform-tests/domparsing/OWNERS: Added.
+        * web-platform-tests/domparsing/w3c-import.log:
+        * web-platform-tests/fetch/OWNERS: Added.
+        * web-platform-tests/fetch/api/headers/headers-combine-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-nameshake-expected.txt.
+        * web-platform-tests/fetch/api/headers/headers-combine.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-nameshake.html.
+        * web-platform-tests/fetch/api/headers/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/domparsing/w3c-import.log.
+        * web-platform-tests/fetch/api/request/request-clone.sub.html:
+        * web-platform-tests/fetch/api/request/request-consume.html:
+        * web-platform-tests/fetch/api/request/request-error-expected.txt:
+        * web-platform-tests/fetch/api/request/request-error.html:
+        * web-platform-tests/fetch/api/request/request-idl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-001.sub-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-001.sub.html:
+        * web-platform-tests/fetch/api/request/request-init-003.sub.html:
+        * web-platform-tests/fetch/api/request/w3c-import.log: Added.
+        * web-platform-tests/fetch/api/resources/method.py:
+        (main):
+        * web-platform-tests/fetch/api/resources/utils.js:
+        (checkRequest):
+        (readTextStream):
+        * web-platform-tests/fetch/api/resources/w3c-import.log: Added.
+        * web-platform-tests/fetch/api/response/response-clone.html:
+        * web-platform-tests/fetch/api/response/response-consume.html:
+        * web-platform-tests/fetch/api/response/response-error-expected.txt:
+        * web-platform-tests/fetch/api/response/response-error.html:
+        * web-platform-tests/fetch/api/response/response-idl-expected.txt:
+        * web-platform-tests/fetch/api/response/response-idl.html:
+        * web-platform-tests/fetch/api/response/response-init-002.html:
+        * web-platform-tests/fetch/api/response/response-static-error.html:
+        * web-platform-tests/fetch/api/response/response-static-redirect-expected.txt:
+        * web-platform-tests/fetch/api/response/response-static-redirect.html:
+        * web-platform-tests/fetch/api/response/w3c-import.log: Added.
+        * web-platform-tests/fetch/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/w3c-import.log.
+        * web-platform-tests/html/OWNERS: Added.
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_multiple.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/historical-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/historical.html:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-iframe-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/update-media-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/update-media.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/textfieldselection/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/radio.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio-expected.txt: Added.
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio.html: Added.
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/w3c-import.log:
+        * web-platform-tests/html/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/w3c-import.log.
+        * web-platform-tests/images/OWNERS: Added.
+        * web-platform-tests/images/w3c-import.log:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/media/OWNERS: Added.
+        * web-platform-tests/media/w3c-import.log:
+        * web-platform-tests/service-workers/OWNERS: Added.
+        * web-platform-tests/service-workers/cache-storage/OWNERS: Added.
+        * web-platform-tests/service-workers/cache-storage/resources/credentials-iframe.html: Added.
+        * web-platform-tests/service-workers/cache-storage/resources/credentials-worker.js: Added.
+        (assert_equals):
+        (self.onfetch):
+        (self.onmessage):
+        * web-platform-tests/service-workers/cache-storage/resources/test-helpers.js:
+        (response.new.Response):
+        (assert_response_equals):
+        (assert_response_array_equivalent):
+        (assert_response_array_equals):
+        (assert_response_in_array):
+        * web-platform-tests/service-workers/cache-storage/resources/testharness-helpers.js:
+        * web-platform-tests/service-workers/cache-storage/resources/w3c-import.log:
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-add.js:
+        (cache_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-match.js:
+        (request.new.Request.entries.a.request.clone):
+        (return.cache.match.entries.non_2xx_response.request.url.then):
+        (return.cache.match.entries.error_response.request.url.then):
+        (return.cache.match.string_appeared_here.then): Deleted.
+        (return.cache.match.entries.a.request.url.then): Deleted.
+        (return.cache.match.entries.a.request.then): Deleted.
+        (return.cache.match.new.Request.entries.a.request.url.then): Deleted.
+        (then): Deleted.
+        (return.cache.match.entries.cat.request.url.string_appeared_here.then): Deleted.
+        (cache_test): Deleted.
+        (return.cache.match.request.then): Deleted.
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-matchAll.js: Added.
+        (return.cache.matchAll.string_appeared_here.then):
+        (return.cache.matchAll.entries.a.request.url.then):
+        (return.cache.matchAll.entries.a.request.then):
+        (return.cache.matchAll.new.Request.entries.a.request.url.then):
+        (then):
+        (return.cache.matchAll.entries.cat.request.url.string_appeared_here.then):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-put.js:
+        (cache_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-storage.js:
+        (promise_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/w3c-import.log:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-matchAll.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/credentials.html: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/w3c-import.log:
+        * web-platform-tests/service-workers/cache-storage/w3c-import.log:
+        * web-platform-tests/service-workers/cache-storage/window/cache-match.https.html:
+        * web-platform-tests/service-workers/cache-storage/window/cache-matchAll.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-match.https.html.
+        * web-platform-tests/service-workers/cache-storage/window/w3c-import.log:
+        * web-platform-tests/service-workers/cache-storage/worker/cache-match.https.html:
+        * web-platform-tests/service-workers/cache-storage/worker/cache-matchAll.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-match.https.html.
+        * web-platform-tests/service-workers/cache-storage/worker/w3c-import.log:
+        * web-platform-tests/service-workers/w3c-import.log:
+        * web-platform-tests/streams/README.txt: Removed.
+        * web-platform-tests/streams/byte-length-queuing-strategy.https-expected.txt: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/byte-length-queuing-strategy.html.
+        * web-platform-tests/streams/byte-length-queuing-strategy.js:
+        (test):
+        * web-platform-tests/streams/count-queuing-strategy.https-expected.txt: Added.
+        * web-platform-tests/streams/count-queuing-strategy.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/count-queuing-strategy.html.
+        * web-platform-tests/streams/count-queuing-strategy.js:
+        (test):
+        * web-platform-tests/streams/readable-streams/bad-strategies.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/bad-strategies.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.html.
+        * web-platform-tests/streams/readable-streams/bad-strategies.js:
+        (get string_appeared_here):
+        (test):
+        (promise_test):
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.html.
+        * web-platform-tests/streams/readable-streams/brand-checks.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/brand-checks.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/brand-checks.html.
+        * web-platform-tests/streams/readable-streams/cancel.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/cancel.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.html.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.html.
+        * web-platform-tests/streams/readable-streams/garbage-collection.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/garbage-collection.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.html.
+        * web-platform-tests/streams/readable-streams/general.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/general.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.html.
+        * web-platform-tests/streams/readable-streams/general.js:
+        (test):
+        (promise_test):
+        * web-platform-tests/streams/readable-streams/pipe-through.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/pipe-through.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.html.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/readable-stream-reader.html.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.js:
+        (test):
+        * web-platform-tests/streams/readable-streams/tee.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/tee.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.html.
+        * web-platform-tests/streams/readable-streams/templated.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/templated.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/templated.html.
+        * web-platform-tests/streams/readable-streams/w3c-import.log: Added.
+        * web-platform-tests/streams/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/domparsing/w3c-import.log.
+        * web-platform-tests/streams/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/w3c-import.log.
+
 2016-02-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Move streams tests from web-platform-tests/streams-api to web-platform-tests/streams

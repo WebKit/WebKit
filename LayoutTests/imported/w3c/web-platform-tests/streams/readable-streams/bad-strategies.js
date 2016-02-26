@@ -19,10 +19,9 @@ test(() => {
 
 }, 'Readable stream: throwing strategy.size getter');
 
-promise_test(t => {
+test(() => {
 
-  const controllerError = { name: 'controller error' };
-  const thrownError = { name: 'thrown error' };
+  const theError = new Error('a unique string');
 
   let controller;
   const rs = new ReadableStream(
@@ -33,22 +32,22 @@ promise_test(t => {
     },
     {
       size() {
-        controller.error(controllerError);
-        throw thrownError;
+        controller.error(theError);
+        throw theError;
       },
       highWaterMark: 5
     }
   );
 
-  assert_throws(thrownError, () => controller.enqueue('a'), 'enqueue should re-throw the error');
-
-  return promise_rejects(t, controllerError, rs.getReader().closed);
+  assert_throws(theError, () => {
+    controller.enqueue('a');
+  }, 'enqueue should re-throw the error');
 
 }, 'Readable stream: strategy.size errors the stream and then throws');
 
-promise_test(t => {
+test(() => {
 
-  const theError = { name: 'my error' };
+  const theError = new Error('a unique string');
 
   let controller;
   const rs = new ReadableStream(
@@ -66,9 +65,11 @@ promise_test(t => {
     }
   );
 
-  assert_throws(new RangeError(), () => controller.enqueue('a'), 'enqueue should throw a RangeError');
-
-  return promise_rejects(t, theError, rs.getReader().closed, 'closed should reject with the error');
+  try {
+    controller.enqueue('a');
+  } catch (error) {
+    assert_equals(error.name, 'RangeError', 'enqueue should throw a RangeError');
+  }
 
 }, 'Readable stream: strategy.size errors the stream and then returns Infinity');
 
@@ -114,7 +115,7 @@ test(() => {
 
 test(() => {
 
-  for (const highWaterMark of [-1, -Infinity]) {
+  for (let highWaterMark of [-1, -Infinity]) {
     assert_throws(new RangeError(), () => {
       new ReadableStream({}, {
         size() {
@@ -125,7 +126,7 @@ test(() => {
     }, 'construction should throw a RangeError for ' + highWaterMark);
   }
 
-  for (const highWaterMark of [NaN, 'foo', {}]) {
+  for (let highWaterMark of [NaN, 'foo', {}]) {
     assert_throws(new TypeError(), () => {
       new ReadableStream({}, {
         size() {
@@ -141,7 +142,7 @@ test(() => {
 promise_test(() => {
 
   const promises = [];
-  for (const size of [NaN, -Infinity, Infinity, -1]) {
+  for (let size of [NaN, -Infinity, Infinity, -1]) {
     let theError;
     const rs = new ReadableStream(
       {

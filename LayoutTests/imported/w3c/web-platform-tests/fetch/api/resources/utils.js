@@ -15,9 +15,10 @@ function checkRequest(request, ExpectedValuesDict) {
   for (var attribute in ExpectedValuesDict) {
     switch(attribute) {
       case "headers":
-          for (var key in ExpectedValuesDict["headers"].keys())
-            assert_equals(request["headers"].get(key), ExpectedValuesDict["headers"].get(key),
-              "Check headers attribute has " + key + ":" + ExpectedValuesDict["headers"].get(key));
+        for (var key in ExpectedValuesDict["headers"].keys()) {
+          assert_equals(request["headers"].get(key), ExpectedValuesDict["headers"].get(key),
+            "Check headers attribute has " + key + ":" + ExpectedValuesDict["headers"].get(key));
+        }
         break;
 
       case "body":
@@ -52,6 +53,7 @@ function readTextStream(reader, asyncTest, expectedValue, retrievedText) {
       var decoder = new TextDecoder();
       retrievedText += decoder.decode(data.value);
       readTextStream(reader, asyncTest, expectedValue, retrievedText);
+      return;
     }
     asyncTest.step(function() {
       assert_equals(retrievedText, expectedValue, "Retrieve and verify stream");

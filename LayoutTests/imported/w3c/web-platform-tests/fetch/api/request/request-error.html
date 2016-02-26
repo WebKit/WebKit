@@ -12,7 +12,7 @@
   <body>
     <script>
       test(function() {
-        assert_throws(new TypeError() , function() { new Request("", {"window" : "whatever"}); },
+        assert_throws(new TypeError() , function() { new Request("", {"window" : "http://test.url"}); },
           "Expect TypeError exception");
       },"RequestInit's window is not null");
 
@@ -62,12 +62,41 @@
                       "Expect TypeError exception");
       },"RequestInit's mode is no-cors and integrity is not empty");
 
+      test(function() {
+        var initialHeaders = new Headers([["Content-Type", "potato"]]);
+        var initialRequest = new Request("", {"headers" : initialHeaders});
+        var request = new Request(initialRequest);
+        assert_equals(request.headers.get("Content-Type"), "potato");
+      }, "Request should get its content-type from the init request");
+
+      test(function() {
+        var initialHeaders = new Headers([["Content-Type", "potato"]]);
+        var initialRequest = new Request("", {"headers" : initialHeaders});
+        var headers = new Headers([]);
+        var request = new Request(initialRequest, {"headers" : headers});
+        assert_false(request.headers.has("Content-Type"));
+      }, "Request should not get its content-type from the init request if init headers are provided");
+
+      test(function() {
+        var initialHeaders = new Headers([["Content-Type-Extra", "potato"]]);
+        var initialRequest = new Request("", {"headers" : initialHeaders, "body" : "this is my plate", "method" : "POST"});
+        var request = new Request(initialRequest);
+        assert_equals(request.headers.get("Content-Type"), "text/plain;charset=UTF-8");
+      }, "Request should get its content-type from the body if none is provided");
+
+      test(function() {
+        var initialHeaders = new Headers([["Content-Type", "potato"]]);
+        var initialRequest = new Request("", {"headers" : initialHeaders, "body" : "this is my plate", "method" : "POST"});
+        var request = new Request(initialRequest);
+        assert_equals(request.headers.get("Content-Type"), "potato");
+      }, "Request should get its content-type from init headers if one is provided");
+
       var parameters = ["referrerPolicy", "mode", "credentials", "cache", "redirect"];
       parameters.forEach(function(parameter) {
         test(function() {
           var options = { };
           options[parameter] = "BAD";
-          assert_throws(new TypeError(), () => new Request("", options));
+          assert_throws(new TypeError(), function() { new Request("", options); });
         },"Bad " + parameter +" init parameter value");
       });
     </script>

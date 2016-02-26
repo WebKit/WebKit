@@ -33,7 +33,7 @@ test(() => {
 
   assert_array_equals(Object.getOwnPropertyNames(proto).sort(), properties, 'should have all the correct methods');
 
-  for (const m of methods) {
+  for (let m of methods) {
     const propDesc = Object.getOwnPropertyDescriptor(proto, m);
     assert_false(propDesc.enumerable, 'method should be non-enumerable');
     assert_true(propDesc.configurable, 'method should be configurable');
@@ -92,7 +92,7 @@ test(() => {
       assert_array_equals(Object.getOwnPropertyNames(proto).sort(), properties,
         'the controller should have the right properties');
 
-      for (const m of methods) {
+      for (let m of methods) {
         const propDesc = Object.getOwnPropertyDescriptor(proto, m);
         assert_equals(typeof controller[m], 'function', `should have a ${m} method`);
         assert_false(propDesc.enumerable, m + ' should be non-enumerable');
@@ -205,7 +205,7 @@ promise_test(() => {
 
   const rs = new ReadableStream({
     start(c) {
-      for (const o of objects) {
+      for (let o of objects) {
         c.enqueue(o);
       }
       c.close();
@@ -799,7 +799,7 @@ promise_test(t => {
 
   return readableStreamToArray(rs).then(chunks => {
     assert_equals(chunks.length, 8, '8 chunks should be read');
-    for (const chunk of chunks) {
+    for (let chunk of chunks) {
       assert_equals(chunk.length, 128, 'chunk should have 128 bytes');
     }
   });

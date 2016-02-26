@@ -72,4 +72,19 @@ PASS createEvent('uievents') should be initialized correctly.
 PASS UIEVENTS should be an alias for UIEvent. 
 PASS createEvent('UIEVENTS') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for unrecognized arguments 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "AnimationEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "AnimationEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "DragEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "DragEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ErrorEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "ErrorEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "FocusEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "FocusEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "PointerEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "PointerEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TransitionEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "TransitionEvent" 
+FAIL Should throw NOT_SUPPORTED_ERR for non-legacy event interface "WheelEvent" assert_throws: function "function () {
+      var evt = document.createEvent(eventI..." did not throw
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "WheelEvent" 
 

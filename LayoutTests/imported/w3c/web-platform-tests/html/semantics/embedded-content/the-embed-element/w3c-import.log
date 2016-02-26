@@ -16,6 +16,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-dimension.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02-expected.html

@@ -41,7 +41,7 @@
           "Expect response.status is " + responseInit["status"]);
         assert_equals(clonedResponse.statusText, responseInit["statusText"],
           "Expect response.statusText is " + responseInit["statusText"]);
-        assert_equals(response.headers.get("name"), "value",
+        assert_equals(clonedResponse.headers.get("name"), "value",
           "Expect response.headers has name:value header");
       }, "Check Response's clone has the expected attribute values");
 

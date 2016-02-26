@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 198: callback not yet supported
+CONSOLE MESSAGE: line 226: callback not yet supported
 XMLHttpRequest IDL tests
 
 
@@ -30,12 +30,12 @@ PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inh
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onloadend" with the proper type (6) 
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+            fn.apply(obj, args);
+        }" did not throw
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "removeEventListener" with the proper type (1) 
 FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+            fn.apply(obj, args);
+        }" did not throw
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError 
 PASS XMLHttpRequest interface: existence and properties of interface object 
@@ -115,12 +115,12 @@ PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit prop
 PASS XMLHttpRequestEventTarget interface: new XMLHttpRequest() must inherit property "onloadend" with the proper type (6) 
 PASS EventTarget interface: new XMLHttpRequest() must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new XMLHttpRequest() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+            fn.apply(obj, args);
+        }" did not throw
 PASS EventTarget interface: new XMLHttpRequest() must inherit property "removeEventListener" with the proper type (1) 
 FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new XMLHttpRequest() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+            fn.apply(obj, args);
+        }" did not throw
 PASS EventTarget interface: new XMLHttpRequest() must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on new XMLHttpRequest() with too few arguments must throw TypeError 
 PASS FormData interface: existence and properties of interface object 
@@ -140,12 +140,12 @@ PASS FormData must be primary interface of new FormData()
 PASS Stringification of new FormData() 
 PASS FormData interface: new FormData() must inherit property "append" with the proper type (0) 
 FAIL FormData interface: calling append(USVString,Blob,USVString) on new FormData() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+            fn.apply(obj, args);
+        }" did not throw
 PASS FormData interface: new FormData() must inherit property "append" with the proper type (1) 
 FAIL FormData interface: calling append(USVString,USVString) on new FormData() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+            fn.apply(obj, args);
+        }" did not throw
 FAIL FormData interface: new FormData() must inherit property "delete" with the proper type (2) assert_inherits: property "delete" not found in prototype chain
 FAIL FormData interface: calling delete(USVString) on new FormData() with too few arguments must throw TypeError assert_inherits: property "delete" not found in prototype chain
 FAIL FormData interface: new FormData() must inherit property "get" with the proper type (3) assert_inherits: property "get" not found in prototype chain
@@ -162,12 +162,12 @@ PASS FormData must be primary interface of new FormData(form)
 PASS Stringification of new FormData(form) 
 PASS FormData interface: new FormData(form) must inherit property "append" with the proper type (0) 
 FAIL FormData interface: calling append(USVString,Blob,USVString) on new FormData(form) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+            fn.apply(obj, args);
+        }" did not throw
 PASS FormData interface: new FormData(form) must inherit property "append" with the proper type (1) 
 FAIL FormData interface: calling append(USVString,USVString) on new FormData(form) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-    [native code]
-}" did not throw
+            fn.apply(obj, args);
+        }" did not throw
 FAIL FormData interface: new FormData(form) must inherit property "delete" with the proper type (2) assert_inherits: property "delete" not found in prototype chain
 FAIL FormData interface: calling delete(USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "delete" not found in prototype chain
 FAIL FormData interface: new FormData(form) must inherit property "get" with the proper type (3) assert_inherits: property "get" not found in prototype chain

@@ -15,7 +15,7 @@ FAIL forms assert_equals: expected (undefined) undefined but got (object) object
 PASS all 
 FAIL links assert_equals: expected (undefined) undefined but got (object) object "[object HTMLCollection]"
 PASS cookie 
-FAIL lastModified set according to HTTP header assert_true: responseXML.lastModified time shoud be equal to time in response Last-Modified header expected true got false
+FAIL lastModified set according to HTTP header assert_true: responseXML.lastModified time should be equal to time in response Last-Modified header expected true got false
 PASS cookie (after setting it) 
 PASS styleSheets 
 PASS implementation 

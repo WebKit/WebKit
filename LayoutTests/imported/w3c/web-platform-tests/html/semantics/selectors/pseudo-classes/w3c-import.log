@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/enabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/link.html

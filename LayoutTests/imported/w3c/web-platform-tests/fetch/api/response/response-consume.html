@@ -14,7 +14,7 @@
     function checkBodyText(response, expectedBody) {
       return response.text().then( function(bodyAsText) {
         assert_equals(bodyAsText, expectedBody, "Retrieve and verify response's body");
-        assert_true(response.bodyUsed === true, "body as text: bodyUsed turned true");
+        assert_true(response.bodyUsed, "body as text: bodyUsed turned true");
       });
     }
 
@@ -32,7 +32,7 @@
         });
         return promise.then(function(body) {
           assert_equals(body, expectedBody, "Retrieve and verify response's body");
-          assert_true(response.bodyUsed === true, "body as blob: bodyUsed turned true");
+          assert_true(response.bodyUsed, "body as blob: bodyUsed turned true");
         });
       });
     }
@@ -42,7 +42,7 @@
         var decoder = new TextDecoder("utf-8");
         var strBody = decoder.decode(bodyAsArrayBuffer);
         assert_equals(strBody, expectedBody, "Retrieve and verify response's body");
-        assert_true(response.bodyUsed === true, "body as arrayBuffer: bodyUsed turned true");
+        assert_true(response.bodyUsed, "body as arrayBuffer: bodyUsed turned true");
       });
     }
 
@@ -50,22 +50,21 @@
       return response.json().then(function(bodyAsJson) {
         var strBody = JSON.stringify(bodyAsJson)
         assert_equals(strBody, expectedBody, "Retrieve and verify response's body");
-        assert_true(response.bodyUsed === true, "body as json: bodyUsed turned true");
+        assert_true(response.bodyUsed, "body as json: bodyUsed turned true");
       });
     }
 
     function checkBodyFormData(response, expectedBody) {
       return response.formData().then(function(bodyAsFormData) {
-        for (var name of expectedBody.keys())
-          assert_equals(bodyAsFormData.get(name), expectedBody.get(name) , "Retrieve and verify response's body" );
-        assert_true(response.bodyUsed === true, "body as formData: bodyUsed turned true");
+        assert_true(bodyAsFormData instanceof FormData, "Should receive a FormData");
+        assert_true(response.bodyUsed, "body as formData: bodyUsed turned true");
      });
     }
 
     function checkResponseBody(body, bodyType, checkFunction) {
       promise_test(function(test) {
         var response = new Response(body);
-        assert_true(response.bodyUsed === false, "bodyUsed is false at init");
+        assert_false(response.bodyUsed, "bodyUsed is false at init");
         return checkFunction(response, body);
       }, "Consume response's body as " + bodyType);
     }

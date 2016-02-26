@@ -1,0 +1,15 @@
+
+
+PASS COMMA: "2,2,10,10" (rect) 
+PASS SEMICOLON: "2;2;10;10" (rect) 
+PASS SPACE: "2 2 10 10" (rect) 
+PASS TAB: "2\t2\t10\t10" (rect) 
+PASS FORM FEED: "2\f2\f10\f10" (rect) 
+PASS LINE FEED: "2\n2\n10\n10" (rect) 
+PASS CARRIGAGE RETURN: "2\r2\r10\r10" (rect) 
+FAIL LINE TABULATION: "2\v2\v10\v10" (rect) assert_equals: elementFromPoint(3, 3) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="rect" coords="221010"></area>
+FAIL LINE NEXT: "221010" (rect) assert_equals: elementFromPoint(3, 3) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="rect" coords="221010"></area>
+FAIL EN QUAD: "2 2 10 10" (rect) assert_equals: elementFromPoint(3, 3) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="rect" coords="2 2 10 10"></area>
+FAIL abc between numbers: "2a2b20c20,2,10,10" (rect) assert_equals: elementFromPoint(11, 9) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="rect" coords="2a2b20c20,2,10,10"><...
+FAIL COLON between numbers: "2:2:20:20,2,10,10" (rect) assert_equals: elementFromPoint(11, 9) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="rect" coords="2:2:20:20,2,10,10"><...
+FAIL U+0000 between numbers: "2\02\020\020,2,10,10" (rect) assert_equals: elementFromPoint(11, 9) expected Element node <img src="/images/threecolors.png" usemap="#x" id="img" w... but got Element node <area id="area" shape="rect" coords="2

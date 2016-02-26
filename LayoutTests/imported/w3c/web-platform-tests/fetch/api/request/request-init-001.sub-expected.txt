@@ -9,6 +9,7 @@ PASS Check method init value of head and associated getter
 PASS Check referrer init value of /relative/ressource and associated getter 
 PASS Check referrer init value of http://localhost:8800/relative/ressource?query=true#fragment and associated getter 
 PASS Check referrer init value of http://localhost:8800/ and associated getter 
+PASS Check referrer init value of about:client and associated getter 
 PASS Check referrer init value of  and associated getter 
 PASS Check referrerPolicy init value of  and associated getter 
 PASS Check referrerPolicy init value of no-referrer and associated getter 

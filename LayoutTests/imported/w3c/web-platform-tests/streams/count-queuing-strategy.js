@@ -12,7 +12,7 @@ test(() => {
 
 test(() => {
 
-  for (const highWaterMark of [-Infinity, NaN, 'foo', {}, () => {}]) {
+  for (let highWaterMark of [-Infinity, NaN, 'foo', {}, () => {}]) {
     const strategy = new CountQueuingStrategy({ highWaterMark });
     assert_equals(strategy.highWaterMark, highWaterMark, `${highWaterMark} gets set correctly`);
   }

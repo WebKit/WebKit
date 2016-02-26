@@ -1277,8 +1277,8 @@ imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ 
 webkit.org/b/150806 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm [ Pass Failure ]
 webkit.org/b/150823 imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm [ Pass Failure ]
 
-webkit.org/b/152436 [ Debug ] imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection.html [ Pass Crash ]
-webkit.org/b/153781 [ Debug ] imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection-1.html [ Pass Crash ]
+webkit.org/b/152436 [ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.https.html [ Pass Crash ]
+webkit.org/b/153781 [ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection-1.html [ Pass Crash ]
 
 # WOFF2 is only supported on certain Operating Systems.
 webkit.org/b/150830 [ Yosemite ElCapitan ] fast/text/woff2.html [ ImageOnlyFailure ]

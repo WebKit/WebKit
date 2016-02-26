@@ -32,7 +32,7 @@ test(() => {
 
   assert_array_equals(Object.getOwnPropertyNames(proto).sort(), properties);
 
-  for (const m of methods) {
+  for (let m of methods) {
     const propDesc = Object.getOwnPropertyDescriptor(proto, m);
     assert_equals(propDesc.enumerable, false, 'method should be non-enumerable');
     assert_equals(propDesc.configurable, true, 'method should be configurable');

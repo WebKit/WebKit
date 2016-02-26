@@ -1,4 +1,13 @@
 
-PASS Check response returned by static method redirect() 
-FAIL Check error returned when giving invalid parameters to redirect() assert_throws: Expect RangeError exception function "function () { Response.redirect("", invalidStatus); }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
+PASS Check default redirect response 
+PASS Check response returned by static method redirect(), status = 301 
+PASS Check response returned by static method redirect(), status = 302 
+PASS Check response returned by static method redirect(), status = 303 
+PASS Check response returned by static method redirect(), status = 307 
+PASS Check response returned by static method redirect(), status = 308 
+PASS Check error returned when giving invalid url to redirect() 
+FAIL Check error returned when giving invalid status to redirect(), status = 200 assert_throws: Expect RangeError exception function "function () { Response.redirect(url, invalidStatus); }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Check error returned when giving invalid status to redirect(), status = 309 assert_throws: Expect RangeError exception function "function () { Response.redirect(url, invalidStatus); }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Check error returned when giving invalid status to redirect(), status = 400 assert_throws: Expect RangeError exception function "function () { Response.redirect(url, invalidStatus); }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
+FAIL Check error returned when giving invalid status to redirect(), status = 500 assert_throws: Expect RangeError exception function "function () { Response.redirect(url, invalidStatus); }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
 

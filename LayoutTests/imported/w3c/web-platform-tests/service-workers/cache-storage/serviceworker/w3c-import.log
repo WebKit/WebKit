@@ -18,7 +18,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-delete.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-matchAll.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-put.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-keys.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/credentials.html

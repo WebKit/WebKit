@@ -15,16 +15,11 @@ PASS Response interface: attribute headers
 PASS Response interface: attribute body 
 PASS Response interface: operation clone() 
 PASS Response interface: attribute bodyUsed 
-FAIL Response interface: operation arrayBuffer() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
-FAIL Response interface: operation blob() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
-FAIL Response interface: operation formData() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
-FAIL Response interface: operation json() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
-FAIL Response interface: operation text() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
+PASS Response interface: operation arrayBuffer() 
+PASS Response interface: operation blob() 
+PASS Response interface: operation formData() 
+PASS Response interface: operation json() 
+PASS Response interface: operation text() 
 PASS Response must be primary interface of new Response() 
 PASS Stringification of new Response() 
 PASS Response interface: new Response() must inherit property "error" with the proper type (0) 

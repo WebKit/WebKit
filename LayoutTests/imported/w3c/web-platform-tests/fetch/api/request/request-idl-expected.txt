@@ -18,16 +18,11 @@ PASS Request interface: attribute redirect
 PASS Request interface: attribute integrity 
 PASS Request interface: operation clone() 
 PASS Request interface: attribute bodyUsed 
-FAIL Request interface: operation arrayBuffer() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
-FAIL Request interface: operation blob() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
-FAIL Request interface: operation formData() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
-FAIL Request interface: operation json() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
-FAIL Request interface: operation text() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-                memberHolderObject[member.n..." did not throw
+PASS Request interface: operation arrayBuffer() 
+PASS Request interface: operation blob() 
+PASS Request interface: operation formData() 
+PASS Request interface: operation json() 
+PASS Request interface: operation text() 
 PASS Request must be primary interface of new Request("") 
 PASS Stringification of new Request("") 
 PASS Request interface: new Request("") must inherit property "method" with the proper type (0) 

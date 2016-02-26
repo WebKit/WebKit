@@ -40,7 +40,7 @@
       };
 
       var expectedDefault = {"method" : "GET",
-                             "url" : location.ref,
+                             "url" : location.href,
                              "referrer" : "http://{{host}}:{{ports[http][0]}}/",
                              "referrerPolicy" : "",
                              "mode" : "cors",
@@ -51,16 +51,16 @@
                              "headers" : emptyHeaders
       };
 
-      var RequestDefault = new Request("");
-      var RequestInitialized = new Request("", initValuesDict);
+      var requestDefault = new Request("");
+      var requestInitialized = new Request("", initValuesDict);
 
       test(function() {
-        var requestToCheck = new Request(RequestInitialized);
+        var requestToCheck = new Request(requestInitialized);
         checkRequest(requestToCheck, expectedInitialized);
       }, "Check request values when initialized from Request");
 
       test(function() {
-        var requestToCheck = new Request(RequestDefault, initValuesDict);
+        var requestToCheck = new Request(requestDefault, initValuesDict);
         checkRequest(requestToCheck, expectedInitialized);
       }, "Check request values when initialized from Request and init values");
 

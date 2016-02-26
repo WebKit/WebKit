@@ -1,0 +1,8 @@
+
+FAIL testFormDataHas create_formdata(['key', 'value1'], ['key', 'value2']).has is not a function. (In 'create_formdata(['key', 'value1'], ['key', 'value2']).has('key')', 'create_formdata(['key', 'value1'], ['key', 'value2']).has' is undefined)
+FAIL testFormDataHasFromForm new FormData(document.getElementById('form')).has is not a function. (In 'new FormData(document.getElementById('form')).has('key')', 'new FormData(document.getElementById('form')).has' is undefined)
+FAIL testFormDataHasFromFormNull new FormData(document.getElementById('form')).has is not a function. (In 'new FormData(document.getElementById('form')).has('nil')', 'new FormData(document.getElementById('form')).has' is undefined)
+FAIL testFormDataHasFromEmptyForm new FormData(document.getElementById('empty-form')).has is not a function. (In 'new FormData(document.getElementById('empty-form')).has('key')', 'new FormData(document.getElementById('empty-form')).has' is undefined)
+FAIL testFormDataHasEmpty1 create_formdata(['key', 'value1'], ['key', 'value2']).has is not a function. (In 'create_formdata(['key', 'value1'], ['key', 'value2']).has('nil')', 'create_formdata(['key', 'value1'], ['key', 'value2']).has' is undefined)
+FAIL testFormDataHasEmpty2 create_formdata().has is not a function. (In 'create_formdata().has('key')', 'create_formdata().has' is undefined)
+

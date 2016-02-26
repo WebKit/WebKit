@@ -15,4 +15,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.html

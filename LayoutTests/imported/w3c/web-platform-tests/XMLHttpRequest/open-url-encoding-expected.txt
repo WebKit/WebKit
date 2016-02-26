@@ -1,3 +1,4 @@
 
-FAIL XMLHttpRequest: open() - URL encoding assert_equals: expected "%C3%9F" but got "%DF"
+FAIL percent encode characters assert_equals: expected "%C3%9F" but got "%DF"
+FAIL lone surrogate should return U+FFFD assert_equals: expected "%EF%BF%BD" but got "%26%2355357%3B"
 

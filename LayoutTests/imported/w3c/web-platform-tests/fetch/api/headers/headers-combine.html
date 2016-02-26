@@ -10,12 +10,12 @@
   </head>
   <body>
     <script>
-      var headerSeqNameshake = [["single", "singleValue"],
-                                ["double", "doubleValue1"],
-                                ["double", "doubleValue2"],
-                                ["triple", "tripleValue1"],
-                                ["triple", "tripleValue2"],
-                                ["triple", "tripleValue3"]
+      var headerSeqCombine = [["single", "singleValue"],
+                              ["double", "doubleValue1"],
+                              ["double", "doubleValue2"],
+                              ["triple", "tripleValue1"],
+                              ["triple", "tripleValue2"],
+                              ["triple", "tripleValue3"]
       ];
       var expectedDict = {"single": "singleValue",
                           "double": "doubleValue1, doubleValue2",
@@ -23,14 +23,14 @@
       };
 
       test(function() {
-        var headers = new Headers(headerSeqNameshake);
+        var headers = new Headers(headerSeqCombine);
         for (name in expectedDict)
           assert_equals(headers.get(name), expectedDict[name],
               "name: " + name + " has value: " + expectedDict[name]);
       }, "Create headers using same name for different values");
 
       test(function() {
-        var headers = new Headers(headerSeqNameshake);
+        var headers = new Headers(headerSeqCombine);
         for (name in expectedDict) {
           assert_true(headers.has(name), "name: " + name + " has value(s)");
           headers.delete(name);
@@ -39,7 +39,7 @@
       }, "Check delete and has methods when using same name for different values");
 
       test(function() {
-        var headers = new Headers(headerSeqNameshake);
+        var headers = new Headers(headerSeqCombine);
         for (name in expectedDict) {
           headers.set(name,"newSingleValue");
           assert_equals(headers.get(name), "newSingleValue", "name: " + name + " has value: newSingleValue");
@@ -47,7 +47,7 @@
       }, "Check set methods when called with already used name");
 
       test(function() {
-        var headers = new Headers(headerSeqNameshake);
+        var headers = new Headers(headerSeqCombine);
         for (name in expectedDict) {
           var value = headers.get(name);
           headers.append(name,"newSingleValue");

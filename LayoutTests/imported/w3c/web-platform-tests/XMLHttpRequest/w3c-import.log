@@ -16,6 +16,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/FormData-append.html
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.worker.js
@@ -40,11 +41,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-loadend.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-loadstart.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-progress.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-readystate-sync-open.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-timeout.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/folder.txt
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-blob.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-delete.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-get.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-has.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-set.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-cookies.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-status.htm
@@ -107,6 +113,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsetype.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-basic.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-get-twice.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-media-type.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-non-document-types.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-non-well-formed.htm

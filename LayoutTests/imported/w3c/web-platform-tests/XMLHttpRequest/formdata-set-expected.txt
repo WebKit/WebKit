@@ -1,0 +1,16 @@
+
+FAIL Passing a String object to FormData.set should work fd.set is not a function. (In 'fd.set("name", new String("value"))', 'fd.set' is undefined)
+FAIL testFormDataSet1 undefined is not an object (evaluating 'fd.set.apply')
+FAIL testFormDataSet2 undefined is not an object (evaluating 'fd.set.apply')
+FAIL testFormDataSetUndefined1 undefined is not an object (evaluating 'fd.set.apply')
+FAIL testFormDataSetUndefined2 undefined is not an object (evaluating 'fd.set.apply')
+FAIL testFormDataSetNull1 undefined is not an object (evaluating 'fd.set.apply')
+FAIL testFormDataSetNull2 undefined is not an object (evaluating 'fd.set.apply')
+FAIL testFormDataSetToForm1 fd.set is not a function. (In 'fd.set('key', 'value1')', 'fd.set' is undefined)
+FAIL testFormDataSetToForm2 fd.set is not a function. (In 'fd.set('key', 'value2')', 'fd.set' is undefined)
+FAIL testFormDataSetToFormUndefined1 fd.set is not a function. (In 'fd.set('key', undefined)', 'fd.set' is undefined)
+FAIL testFormDataSetToFormUndefined2 fd.set is not a function. (In 'fd.set('key', undefined)', 'fd.set' is undefined)
+FAIL testFormDataSetToFormNull1 fd.set is not a function. (In 'fd.set('key', null)', 'fd.set' is undefined)
+FAIL testFormDataSetToFormNull2 fd.set is not a function. (In 'fd.set('key', null)', 'fd.set' is undefined)
+FAIL testFormDataSetEmptyBlob undefined is not an object (evaluating 'fd.set.apply')
+

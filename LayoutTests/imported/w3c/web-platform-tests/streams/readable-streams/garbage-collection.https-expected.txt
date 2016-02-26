@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 37: Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.
+CONSOLE MESSAGE: line 37: Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.
+CONSOLE MESSAGE: line 37: Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.
+CONSOLE MESSAGE: line 37: Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.
+
+PASS ReadableStreamController methods should continue working properly when scripts lose their reference to the readable stream 
+PASS ReadableStream closed promise should fulfill even if the stream and reader JS references are lost 
+PASS ReadableStream closed promise should reject even if stream and reader JS references are lost 
+PASS Garbage-collecting a ReadableStreamReader should not unlock its stream 
+FAIL Load garbage-collection.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
+FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+PASS ReadableStreamController methods should continue working properly when scripts lose their reference to the readable stream 
+PASS ReadableStream closed promise should fulfill even if the stream and reader JS references are lost 
+PASS ReadableStream closed promise should reject even if stream and reader JS references are lost 
+PASS Garbage-collecting a ReadableStreamReader should not unlock its stream 
+

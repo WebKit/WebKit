@@ -9,6 +9,10 @@ PASS RequestInit's method is invalid
 PASS RequestInit's method is forbidden 
 PASS RequestInit's mode is no-cors and method is not simple 
 PASS RequestInit's mode is no-cors and integrity is not empty 
+PASS Request should get its content-type from the init request 
+PASS Request should not get its content-type from the init request if init headers are provided 
+PASS Request should get its content-type from the body if none is provided 
+PASS Request should get its content-type from init headers if one is provided 
 PASS Bad referrerPolicy init parameter value 
 PASS Bad mode init parameter value 
 PASS Bad credentials init parameter value 

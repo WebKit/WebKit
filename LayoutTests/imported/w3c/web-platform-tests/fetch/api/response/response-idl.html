@@ -40,7 +40,7 @@
         readonly attribute boolean ok;
         readonly attribute ByteString statusText;
         [SameObject] readonly attribute Headers headers;
-        [SameObject] readonly attribute ReadableStream body;
+        readonly attribute ReadableStream? body;
 
         [NewObject] Response clone();
       };

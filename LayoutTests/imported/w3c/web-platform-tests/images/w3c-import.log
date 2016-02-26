@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/images/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-gr.gif
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-gr.png
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-poster-gr.png

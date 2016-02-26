@@ -1,3 +1,12 @@
+2016-02-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Sync web-platform-tests up to revision 5ca8b46
+        https://bugs.webkit.org/show_bug.cgi?id=154678
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac/TestExpectations: Renaming test filenames, and adding test expectation to area-coords.html.
+
 2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font size computed style is innaccurate

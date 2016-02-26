@@ -16,11 +16,13 @@
       var referrers = {"givenValues" : ["/relative/ressource",
                                         "http://{{host}}:{{ports[http][0]}}/relative/ressource?query=true#fragment",
                                         "http://{{host}}:{{ports[http][0]}}/",
+                                        "about:client",
                                         ""
                                        ],
                        "expectedValues" : ["http://{{host}}:{{ports[http][0]}}/relative/ressource",
                                            "http://{{host}}:{{ports[http][0]}}/relative/ressource?query=true#fragment",
                                            "http://{{host}}:{{ports[http][0]}}/",
+                                           "about:client",
                                            ""
                                           ]
       };

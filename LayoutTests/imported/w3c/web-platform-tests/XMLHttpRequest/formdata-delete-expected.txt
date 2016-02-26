@@ -1,0 +1,9 @@
+
+FAIL testFormDataDelete fd.delete is not a function. (In 'fd.delete('key')', 'fd.delete' is undefined)
+FAIL testFormDataDeleteFromForm fd.delete is not a function. (In 'fd.delete('key')', 'fd.delete' is undefined)
+FAIL testFormDataDeleteFromFormNonExistentKey fd.delete is not a function. (In 'fd.delete('nil')', 'fd.delete' is undefined)
+FAIL testFormDataDeleteFromFormOtherKey fd.delete is not a function. (In 'fd.delete('key1')', 'fd.delete' is undefined)
+FAIL testFormDataDeleteFromEmptyForm fd.delete is not a function. (In 'fd.delete('key')', 'fd.delete' is undefined)
+FAIL testFormDataDeleteNonExistentKey fd.delete is not a function. (In 'fd.delete('nil')', 'fd.delete' is undefined)
+FAIL testFormDataDeleteOtherKey fd.delete is not a function. (In 'fd.delete('key1')', 'fd.delete' is undefined)
+

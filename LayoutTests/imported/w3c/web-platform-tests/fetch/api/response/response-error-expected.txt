@@ -1,6 +1,14 @@
 
-PASS Throws RangeError when responseInit's status is invalid 
-FAIL Throws TypeError when responseInit's statusText is invalid assert_throws: Expect TypeError exception 
+PASS Throws RangeError when responseInit's status is 0 
+PASS Throws RangeError when responseInit's status is 100 
+PASS Throws RangeError when responseInit's status is 199 
+PASS Throws RangeError when responseInit's status is 600 
+PASS Throws RangeError when responseInit's status is 1000 
+FAIL Throws TypeError when responseInit's statusText is 
+ assert_throws: Expect TypeError exception 
  function "function () { new Response("", { "statusText" : statusTex..." did not throw
-PASS Throws TypeError when building a response with body and a null body status 
+FAIL Throws TypeError when responseInit's statusText is Ā assert_throws: Expect TypeError exception Ā function "function () { new Response("", { "statusText" : statusTex..." did not throw
+PASS Throws TypeError when building a response with body and a body status of 204 
+PASS Throws TypeError when building a response with body and a body status of 205 
+PASS Throws TypeError when building a response with body and a body status of 304 
 

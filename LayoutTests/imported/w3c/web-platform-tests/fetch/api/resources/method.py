@@ -8,4 +8,4 @@ def main(request, response):
         headers.append(("Access-Control-Expose-Headers", "x-request-method"))
 
     headers.append(("x-request-method", request.method))
-    return headers, ""
+    return headers, request.body

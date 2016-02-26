@@ -1,0 +1,18 @@
+
+PASS Readable stream: throwing strategy.size getter 
+PASS Readable stream: strategy.size errors the stream and then throws 
+PASS Readable stream: strategy.size errors the stream and then returns Infinity 
+PASS Readable stream: throwing strategy.size method 
+PASS Readable stream: throwing strategy.highWaterMark getter 
+PASS Readable stream: invalid strategy.highWaterMark 
+PASS Readable stream: invalid strategy.size return value 
+FAIL Load bad-strategies.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
+FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+PASS Readable stream: throwing strategy.size getter 
+PASS Readable stream: strategy.size errors the stream and then throws 
+PASS Readable stream: strategy.size errors the stream and then returns Infinity 
+PASS Readable stream: throwing strategy.size method 
+PASS Readable stream: throwing strategy.highWaterMark getter 
+PASS Readable stream: invalid strategy.highWaterMark 
+PASS Readable stream: invalid strategy.size return value 
+

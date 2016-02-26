@@ -1,0 +1,14 @@
+
+FAIL testFormDataGet create_formdata(['key', 'value1'], ['key', 'value2']).get is not a function. (In 'create_formdata(['key', 'value1'], ['key', 'value2']).get('key')', 'create_formdata(['key', 'value1'], ['key', 'value2']).get' is undefined)
+FAIL testFormDataGetFromForm new FormData(document.getElementById('form')).get is not a function. (In 'new FormData(document.getElementById('form')).get('key')', 'new FormData(document.getElementById('form')).get' is undefined)
+FAIL testFormDataGetFromFormNull new FormData(document.getElementById('form')).get is not a function. (In 'new FormData(document.getElementById('form')).get('nil')', 'new FormData(document.getElementById('form')).get' is undefined)
+FAIL testFormDataGetFromEmptyForm new FormData(document.getElementById('empty-form')).get is not a function. (In 'new FormData(document.getElementById('empty-form')).get('key')', 'new FormData(document.getElementById('empty-form')).get' is undefined)
+FAIL testFormDataGetNull1 create_formdata(['key', 'value1'], ['key', 'value2']).get is not a function. (In 'create_formdata(['key', 'value1'], ['key', 'value2']).get('nil')', 'create_formdata(['key', 'value1'], ['key', 'value2']).get' is undefined)
+FAIL testFormDataGetNull2 create_formdata().get is not a function. (In 'create_formdata().get('key')', 'create_formdata().get' is undefined)
+FAIL testFormDataGetAll create_formdata(['key', 'value1'], ['key', 'value2']).getAll is not a function. (In 'create_formdata(['key', 'value1'], ['key', 'value2']).getAll('key')', 'create_formdata(['key', 'value1'], ['key', 'value2']).getAll' is undefined)
+FAIL testFormDataGetAllEmpty1 create_formdata(['key', 'value1'], ['key', 'value2']).getAll is not a function. (In 'create_formdata(['key', 'value1'], ['key', 'value2']).getAll('nil')', 'create_formdata(['key', 'value1'], ['key', 'value2']).getAll' is undefined)
+FAIL testFormDataGetAllEmpty2 create_formdata().getAll is not a function. (In 'create_formdata().getAll('key')', 'create_formdata().getAll' is undefined)
+FAIL testFormDataGetAllFromForm new FormData(document.getElementById('form')).getAll is not a function. (In 'new FormData(document.getElementById('form')).getAll('key')', 'new FormData(document.getElementById('form')).getAll' is undefined)
+FAIL testFormDataGetAllFromFormNull new FormData(document.getElementById('form')).getAll is not a function. (In 'new FormData(document.getElementById('form')).getAll('nil')', 'new FormData(document.getElementById('form')).getAll' is undefined)
+FAIL testFormDataGetAllFromEmptyForm new FormData(document.getElementById('empty-form')).getAll is not a function. (In 'new FormData(document.getElementById('empty-form')).getAll('key')', 'new FormData(document.getElementById('empty-form')).getAll' is undefined)
+

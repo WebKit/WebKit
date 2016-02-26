@@ -11,31 +11,35 @@
   </head>
   <body>
     <script>
+      var url = "http://test.url:1234/";
       test(function() {
-        var redirectStatus = [301, 302, 303, 307, 308];
-        var url = "http://test.url:1234/";
         redirectResponse = Response.redirect(url);
         assert_equals(redirectResponse.status, 302, "Default redictect status is 302");
         assert_equals(redirectResponse.headers.get("Location"), url,
           "redirected response has Location header with the correct url");
-        for (var i in redirectStatus) {
-          var status = redirectStatus[i];
+      }, "Check default redirect response");
+
+      var redirectStatus = [301, 302, 303, 307, 308];
+      redirectStatus.forEach(function(status) {
+        test(function() {
           redirectResponse = Response.redirect(url, status);
           assert_equals(redirectResponse.status, status, "Redictect status is " + status);
-        }
-      }, "Check response returned by static method redirect()");
+        }, "Check response returned by static method redirect(), status = " + status);
+      });
 
       test(function() {
-        var invalidRedirectStatus = [200, 309, 400, 500];
-        var invalidUrl = "This is not an url";
-        for (var i in invalidRedirectStatus) {
-          var invalidStatus = invalidRedirectStatus[i];
-          assert_throws(new RangeError() , function() { Response.redirect("", invalidStatus); },
-            "Expect RangeError exception");
-        }
+        var invalidUrl = "http://:This is not an url";
         assert_throws(new TypeError(), function() { Response.redirect(invalidUrl); },
           "Expect TypeError exception");
-      }, "Check error returned when giving invalid parameters to redirect()");
+      }, "Check error returned when giving invalid url to redirect()");
+
+      var invalidRedirectStatus = [200, 309, 400, 500];
+      invalidRedirectStatus.forEach(function(invalidStatus) {
+        test(function() {
+          assert_throws(new RangeError() , function() { Response.redirect(url, invalidStatus); },
+              "Expect RangeError exception");
+        }, "Check error returned when giving invalid status to redirect(), status = " + invalidStatus);
+      });
     </script>
   </body>
 </html>

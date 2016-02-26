@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/script-tests/cache-add.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/script-tests/cache-delete.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/script-tests/cache-match.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/script-tests/cache-matchAll.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/script-tests/cache-put.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/script-tests/cache-storage-keys.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/script-tests/cache-storage-match.js

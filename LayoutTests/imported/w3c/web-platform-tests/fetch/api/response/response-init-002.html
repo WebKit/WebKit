@@ -33,7 +33,7 @@
           assert_true(mime && mime.search(bodyType) > -1, "Content-Type header should be \"" + bodyType + "\" ");
           return response.text().then(function(bodyAsText) {
             //not equals: cannot guess formData exact value
-            assert_true( bodyAsText.search(expectedTextBody) > -1, "Retrieve and verify response body");
+            assert_true(bodyAsText.search(expectedTextBody) > -1, "Retrieve and verify response body");
           });
         }, "Initialize Response's body with " + bodyType);
       }

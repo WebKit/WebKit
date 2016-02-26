@@ -1,3 +1,16 @@
 
 PASS Passing a String object to FormData.append should work. 
+FAIL testFormDataAppend1 create_formdata(['key', 'value1']).get is not a function. (In 'create_formdata(['key', 'value1']).get('key')', 'create_formdata(['key', 'value1']).get' is undefined)
+FAIL testFormDataAppend2 create_formdata(['key', 'value2'], ['key', 'value1']).get is not a function. (In 'create_formdata(['key', 'value2'], ['key', 'value1']).get('key')', 'create_formdata(['key', 'value2'], ['key', 'value1']).get' is undefined)
+FAIL testFormDataAppendUndefined1 create_formdata(['key', undefined]).get is not a function. (In 'create_formdata(['key', undefined]).get('key')', 'create_formdata(['key', undefined]).get' is undefined)
+FAIL testFormDataAppendUndefined2 create_formdata(['key', undefined], ['key', 'value1']).get is not a function. (In 'create_formdata(['key', undefined], ['key', 'value1']).get('key')', 'create_formdata(['key', undefined], ['key', 'value1']).get' is undefined)
+FAIL testFormDataAppendNull1 create_formdata(['key', null]).get is not a function. (In 'create_formdata(['key', null]).get('key')', 'create_formdata(['key', null]).get' is undefined)
+FAIL testFormDataAppendNull2 create_formdata(['key', null], ['key', 'value1']).get is not a function. (In 'create_formdata(['key', null], ['key', 'value1']).get('key')', 'create_formdata(['key', null], ['key', 'value1']).get' is undefined)
+FAIL testFormDataAppendToForm1 fd.get is not a function. (In 'fd.get('key')', 'fd.get' is undefined)
+FAIL testFormDataAppendToForm2 fd.get is not a function. (In 'fd.get('key')', 'fd.get' is undefined)
+FAIL testFormDataAppendToFormUndefined1 fd.get is not a function. (In 'fd.get('key')', 'fd.get' is undefined)
+FAIL testFormDataAppendToFormUndefined2 fd.get is not a function. (In 'fd.get('key')', 'fd.get' is undefined)
+FAIL testFormDataAppendToFormNull1 fd.get is not a function. (In 'fd.get('key')', 'fd.get' is undefined)
+FAIL testFormDataAppendToFormNull2 fd.get is not a function. (In 'fd.get('key')', 'fd.get' is undefined)
+FAIL testFormDataAppendEmptyBlob create_formdata(['key', new Blob(), 'blank.txt']).get is not a function. (In 'create_formdata(['key', new Blob(), 'blank.txt']).get('key')', 'create_formdata(['key', new Blob(), 'blank.txt']).get' is undefined)
 

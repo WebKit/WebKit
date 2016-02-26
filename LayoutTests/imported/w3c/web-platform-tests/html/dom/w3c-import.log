@@ -28,4 +28,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/interfaces.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/new-harness.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/original-harness.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-embedded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-forms.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-grouping.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-metadata.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-obsolete.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-original.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-sections.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-tabular.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection.js

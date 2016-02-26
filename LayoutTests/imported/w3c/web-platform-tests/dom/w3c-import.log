@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/dom/common.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/constants.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/historical.html
