@@ -35,7 +35,6 @@
 #include <mach/mach_error.h>
 #include <mach/mach_port.h>
 #include <mach/vm_map.h>
-#include <wtf/PageBlock.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
@@ -218,7 +217,7 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
 
 unsigned SharedMemory::systemPageSize()
 {
-    return WTF::pageSize();
+    return vm_page_size;
 }
 
 WebCore::MachSendRight SharedMemory::createSendRight(Protection protection) const
