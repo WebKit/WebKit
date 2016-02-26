@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKUserScriptRef.h"
+#import <WebKit/WKFoundation.h>
 
-#include "APIUserScript.h"
-#include "WKAPICast.h"
+#if WK_API_ENABLED
 
-using namespace WebKit;
+NS_ASSUME_NONNULL_BEGIN
 
-WKTypeID WKUserScriptGetTypeID()
-{
-    return toAPI(API::UserScript::APIType);
-}
+WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+@interface _WKUserContentWorld : NSObject
 
-WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
-{
-    return toAPI(&API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), API::UserScript::generateUniqueURL(), { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }, API::UserContentWorld::normalWorld()).leakRef());
-}
++ (_WKUserContentWorld *)worldWithName:(NSString *)name;
++ (_WKUserContentWorld *)normalWorld;
 
-WKStringRef WKUserScriptCopySource(WKUserScriptRef userScriptRef)
-{
-    return toCopiedAPI(toImpl(userScriptRef)->userScript().source());
-}
+@property (nullable, nonatomic, readonly, copy) NSString *name;
 
-_WKUserScriptInjectionTime WKUserScriptGetInjectionTime(WKUserScriptRef userScriptRef)
-{
-    return toWKUserScriptInjectionTime(toImpl(userScriptRef)->userScript().injectionTime());
-}
+@end
 
-bool WKUserScriptGetMainFrameOnly(WKUserScriptRef userScriptRef)
-{
-    return toImpl(userScriptRef)->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
-}
+NS_ASSUME_NONNULL_END
+
+#endif // WK_API_ENABLED

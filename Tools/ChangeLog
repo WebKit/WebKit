@@ -1,3 +1,20 @@
+2016-02-25  Sam Weinig  <sam@webkit.org>
+
+        Allow WKUserScripts to be run in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=154701
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentWorld.mm: Added.
+        (-[SimpleDelegate webView:didFinishNavigation:]):
+        (-[UserContentWorldRemoteObject didObserveNormalWorld]):
+        (-[UserContentWorldRemoteObject didObserveWorldWithName:]):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentWorldPlugIn.mm: Added.
+        (-[_WKUserContentWorldPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[_WKUserContentWorldPlugIn webProcessPlugInBrowserContextController:globalObjectIsAvailableForFrame:inScriptWorld:]):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/_WKUserContentWorldProtocol.h: Added.
+
 2016-02-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should have an option to clean the destination directory

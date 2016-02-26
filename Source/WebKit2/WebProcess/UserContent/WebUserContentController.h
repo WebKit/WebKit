@@ -34,6 +34,7 @@
 
 namespace WebKit {
 
+class InjectedBundleScriptWorld;
 class WebCompiledContentExtensionData;
 class WebUserMessageHandlerDescriptorProxy;
 
@@ -52,9 +53,12 @@ private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
-    void addUserScripts(const Vector<WebCore::UserScript>&);
-    void removeUserScript(const String& urlString);
-    void removeAllUserScripts();
+    void addUserContentWorlds(const Vector<std::pair<uint64_t, String>>&);
+    void removeUserContentWorld(uint64_t);
+
+    void addUserScripts(const Vector<std::pair<uint64_t, WebCore::UserScript>>&);
+    void removeUserScript(uint64_t worldIdentifier, const String& urlString);
+    void removeAllUserScripts(uint64_t worldIdentifier);
 
     void addUserStyleSheets(const Vector<WebCore::UserStyleSheet>&);
     void removeUserStyleSheet(const String& urlString);

@@ -57,3 +57,8 @@ void WKBundleScriptWorldMakeAllShadowRootsOpen(WKBundleScriptWorldRef scriptWorl
 {
     toImpl(scriptWorldRef)->makeAllShadowRootsOpen();
 }
+
+WKStringRef WKBundleScriptWorldCopyName(WKBundleScriptWorldRef scriptWorldRef)
+{
+    return toCopiedAPI(toImpl(scriptWorldRef)->name());
+}

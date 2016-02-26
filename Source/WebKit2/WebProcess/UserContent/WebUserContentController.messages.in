@@ -24,9 +24,12 @@
  */
 
 messages -> WebUserContentController {
-    AddUserScripts(Vector<WebCore::UserScript> userScripts);
-    RemoveUserScript(String url);
-    RemoveAllUserScripts();
+    AddUserContentWorlds(Vector<std::pair<uint64_t, String>> worlds);
+    RemoveUserContentWorld(uint64_t worldIdentifier);
+
+    AddUserScripts(Vector<std::pair<uint64_t, WebCore::UserScript>> userScripts);
+    RemoveUserScript(uint64_t worldIdentifier, String url);
+    RemoveAllUserScripts(uint64_t worldIdentifier);
 
     AddUserStyleSheets(Vector<WebCore::UserStyleSheet> userStyleSheets);
     RemoveUserStyleSheet(String url);

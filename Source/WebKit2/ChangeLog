@@ -1,3 +1,110 @@
+2016-02-25  Sam Weinig  <sam@webkit.org>
+
+        Allow WKUserScripts to be run in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=154701
+
+        Reviewed by Anders Carlsson.
+
+        Adds support for using isolated worlds, called _WKUserContentWorlds in the SPI,
+        from the UIProcess.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        * UIProcess/API/APIUserContentWorld.cpp: Added.
+        (API::generateIdentifier):
+        (API::UserContentWorld::worldWithName):
+        (API::UserContentWorld::normalWorld):
+        (API::UserContentWorld::UserContentWorld):
+        (API::UserContentWorld::~UserContentWorld):
+        * UIProcess/API/APIUserContentWorld.h: Added.
+        Add new UserContentWorld type.
+
+        * UIProcess/API/APIUserScript.h:
+        Bind each user script to a particular _WKUserContentWorld.
+
+        * UIProcess/API/C/WKUserScriptRef.cpp:
+        (WKUserScriptCreateWithSource):
+        (WKUserScriptCopySource):
+        Existing APIs create user scripts for the normal world, preserving existing behavior.
+
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript initWithSource:injectionTime:forMainFrameOnly:]):
+        Existing APIs create user scripts for the normal world, preserving existing behavior.
+
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]):
+        Add a new initializer which takes a world to bind to.  Also add support for the legacy whitelist/blacklist mechanism
+        while we are here, as the expected client needs these as well.
+
+        (-[WKUserScript _userContentWorld]):
+        Add accessor for the bound world.
+
+        * UIProcess/API/Cocoa/WKUserScriptInternal.h:
+        * UIProcess/API/Cocoa/WKUserScriptPrivate.h: Added.
+        Add new private header.
+
+        * UIProcess/API/Cocoa/_WKUserContentWorld.h: Added.
+        * UIProcess/API/Cocoa/_WKUserContentWorld.mm: Added.
+        (+[_WKUserContentWorld worldWithName:]):
+        (+[_WKUserContentWorld normalWorld]):
+        (-[_WKUserContentWorld dealloc]):
+        (-[_WKUserContentWorld name]):
+        (-[_WKUserContentWorld _apiObject]):
+        * UIProcess/API/Cocoa/_WKUserContentWorldInternal.h: Added.
+        Add SPI wrapper.
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::userScripts):
+        (WebKit::WebUserContentControllerProxy::userStyleSheets):
+        Add support for registering the worlds with the associated WebContentProcesses and then using
+        their identifiers to map user scripts to the correct world.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        (-[WKWebProcessPlugInScriptWorld name]):
+        Expose the name property.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        (WKBundleScriptWorldCopyName):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h:
+        Expose the name property.
+
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::allWorlds):
+        (WebKit::InjectedBundleScriptWorld::create):
+        (WebKit::InjectedBundleScriptWorld::getOrCreate):
+        (WebKit::InjectedBundleScriptWorld::normalWorld):
+        (WebKit::InjectedBundleScriptWorld::InjectedBundleScriptWorld):
+        (WebKit::InjectedBundleScriptWorld::~InjectedBundleScriptWorld):
+        (WebKit::InjectedBundleScriptWorld::coreWorld):
+        (WebKit::InjectedBundleScriptWorld::clearWrappers):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+        (WebKit::InjectedBundleScriptWorld::name):
+        Add the name property and do some drive-by RefPtr -> Ref conversions.
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::userContentControllers):
+        (WebKit::worldMap):
+        (WebKit::WebUserContentController::getOrCreate):
+        (WebKit::WebUserContentController::~WebUserContentController):
+        (WebKit::WebUserContentController::addUserContentWorlds):
+        (WebKit::WebUserContentController::removeUserContentWorld):
+        (WebKit::WebUserContentController::addUserScripts):
+        (WebKit::WebUserContentController::removeUserScript):
+        (WebKit::WebUserContentController::removeAllUserScripts):
+        (WebKit::WebUserContentController::addUserStyleSheets):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        Track and use worlds passed from the UIProcess.
+
 2016-02-26  Andreas Kling  <akling@apple.com>
 
         [Darwin] Use vm_kernel_page_size for WTF::pageSize().

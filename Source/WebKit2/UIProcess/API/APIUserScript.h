@@ -27,6 +27,7 @@
 #define APIUserScript_h
 
 #include "APIObject.h"
+#include "APIUserContentWorld.h"
 #include <WebCore/UserScript.h>
 
 namespace API {
@@ -35,20 +36,25 @@ class UserScript final : public ObjectImpl<Object::Type::UserScript> {
 public:
     static WebCore::URL generateUniqueURL();
 
-    static Ref<UserScript> create(WebCore::UserScript userScript)
+    static Ref<UserScript> create(WebCore::UserScript userScript, API::UserContentWorld& world)
     {
-        return adoptRef(*new UserScript(WTFMove(userScript)));
+        return adoptRef(*new UserScript(WTFMove(userScript), world));
     }
 
-    UserScript(WebCore::UserScript userScript)
+    UserScript(WebCore::UserScript userScript, API::UserContentWorld& world)
         : m_userScript(userScript)
+        , m_world(world)
     {
     }
 
     const WebCore::UserScript& userScript() const { return m_userScript; }
-
+    
+    UserContentWorld& userContentWorld() { return m_world; }
+    const UserContentWorld& userContentWorld() const { return m_world; }
+    
 private:
     WebCore::UserScript m_userScript;
+    Ref<UserContentWorld> m_world;
 };
 
 } // namespace API

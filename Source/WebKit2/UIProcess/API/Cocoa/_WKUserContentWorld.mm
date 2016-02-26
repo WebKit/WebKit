@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKUserScriptRef.h"
+#import "config.h"
+#import "_WKUserContentWorldInternal.h"
 
-#include "APIUserScript.h"
-#include "WKAPICast.h"
+#if WK_API_ENABLED
 
-using namespace WebKit;
+@implementation _WKUserContentWorld
 
-WKTypeID WKUserScriptGetTypeID()
++ (_WKUserContentWorld *)worldWithName:(NSString *)name
 {
-    return toAPI(API::UserScript::APIType);
+    return [wrapper(API::UserContentWorld::worldWithName(name).leakRef()) autorelease];
 }
 
-WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
++ (_WKUserContentWorld *)normalWorld
 {
-    return toAPI(&API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), API::UserScript::generateUniqueURL(), { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }, API::UserContentWorld::normalWorld()).leakRef());
+    return wrapper(API::UserContentWorld::normalWorld());
 }
 
-WKStringRef WKUserScriptCopySource(WKUserScriptRef userScriptRef)
+- (void)dealloc
 {
-    return toCopiedAPI(toImpl(userScriptRef)->userScript().source());
+    _userContentWorld->~UserContentWorld();
+
+    [super dealloc];
 }
 
-_WKUserScriptInjectionTime WKUserScriptGetInjectionTime(WKUserScriptRef userScriptRef)
+- (NSString *)name
 {
-    return toWKUserScriptInjectionTime(toImpl(userScriptRef)->userScript().injectionTime());
+    if (_userContentWorld.get() == &API::UserContentWorld::normalWorld())
+        return nil;
+    return _userContentWorld->name();
 }
 
-bool WKUserScriptGetMainFrameOnly(WKUserScriptRef userScriptRef)
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
 {
-    return toImpl(userScriptRef)->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
+    return *_userContentWorld;
 }
+
+@end
+
+#endif

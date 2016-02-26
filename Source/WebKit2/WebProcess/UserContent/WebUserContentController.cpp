@@ -27,6 +27,7 @@
 #include "WebUserContentController.h"
 
 #include "DataReference.h"
+#include "InjectedBundleScriptWorld.h"
 #include "WebCompiledContentExtension.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -54,6 +55,15 @@ static HashMap<uint64_t, WebUserContentController*>& userContentControllers()
     static NeverDestroyed<HashMap<uint64_t, WebUserContentController*>> userContentControllers;
 
     return userContentControllers;
+}
+
+typedef HashMap<uint64_t, std::pair<RefPtr<InjectedBundleScriptWorld>, unsigned>> WorldMap;
+
+static WorldMap& worldMap()
+{
+    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { 1, std::make_pair(InjectedBundleScriptWorld::normalWorld(), 1) } });
+
+    return map;
 }
 
 PassRefPtr<WebUserContentController> WebUserContentController::getOrCreate(uint64_t identifier)
@@ -84,20 +94,67 @@ WebUserContentController::~WebUserContentController()
     userContentControllers().remove(m_identifier);
 }
 
-void WebUserContentController::addUserScripts(const Vector<WebCore::UserScript>& userScripts)
+
+void WebUserContentController::addUserContentWorlds(const Vector<std::pair<uint64_t, String>>& worlds)
 {
-    for (const auto& userScript : userScripts)
-        m_userContentController->addUserScript(mainThreadNormalWorld(), std::make_unique<WebCore::UserScript>(userScript));
+    for (auto& world : worlds) {
+        ASSERT(world.first);
+        ASSERT(world.first != 1);
+
+        worldMap().ensure(world.first, [&] { return std::make_pair(InjectedBundleScriptWorld::create(world.second), 1); });
+    }
 }
 
-void WebUserContentController::removeUserScript(const String& urlString)
+void WebUserContentController::removeUserContentWorld(uint64_t worldIdentifier)
 {
-    m_userContentController->removeUserScript(mainThreadNormalWorld(), URL(URL(), urlString));
+    ASSERT(worldIdentifier);
+    ASSERT(worldIdentifier != 1);
+
+    auto it = worldMap().find(worldIdentifier);
+    if (it == worldMap().end()) {
+        WTFLogAlways("Trying to remove a UserContentWorld (id=%llu) that is does not exist.", worldIdentifier);
+        return;
+    }
+
+    it->value.second--;
+    
+    if (!it->value.second)
+        worldMap().remove(it);
 }
 
-void WebUserContentController::removeAllUserScripts()
+void WebUserContentController::addUserScripts(const Vector<std::pair<uint64_t, WebCore::UserScript>>& userScripts)
 {
-    m_userContentController->removeUserScripts(mainThreadNormalWorld());
+    for (const auto& userScriptWorldPair : userScripts) {
+        auto it = worldMap().find(userScriptWorldPair.first);
+        if (it == worldMap().end()) {
+            WTFLogAlways("Trying to add a UserScript to a UserContentWorld (id=%llu) that does not exist.", userScriptWorldPair.first);
+            continue;
+        }
+
+        m_userContentController->addUserScript(it->value.first->coreWorld(), std::make_unique<WebCore::UserScript>(userScriptWorldPair.second));
+    }
+}
+
+void WebUserContentController::removeUserScript(uint64_t worldIdentifier, const String& urlString)
+{
+    auto it = worldMap().find(worldIdentifier);
+    if (it == worldMap().end()) {
+        WTFLogAlways("Trying to remove a UserScript from a UserContentWorld (id=%llu) that does not exist.", worldIdentifier);
+        return;
+    }
+
+    m_userContentController->removeUserScript(it->value.first->coreWorld(), URL(URL(), urlString));
+}
+
+void WebUserContentController::removeAllUserScripts(uint64_t worldIdentifier)
+{
+    auto it = worldMap().find(worldIdentifier);
+    if (it == worldMap().end()) {
+        WTFLogAlways("Trying to remove all UserScripts from a UserContentWorld (id=%llu) that does not exist.", worldIdentifier);
+        return;
+    }
+
+    m_userContentController->removeUserScripts(it->value.first->coreWorld());
 }
 
 void WebUserContentController::addUserStyleSheets(const Vector<WebCore::UserStyleSheet>& userStyleSheets)

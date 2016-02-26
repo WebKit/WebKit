@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKUserScriptRef.h"
+#ifndef APIUserContentWorld_h
+#define APIUserContentWorld_h
 
-#include "APIUserScript.h"
-#include "WKAPICast.h"
+#include "APIObject.h"
+#include <wtf/text/WTFString.h>
 
-using namespace WebKit;
+namespace API {
 
-WKTypeID WKUserScriptGetTypeID()
-{
-    return toAPI(API::UserScript::APIType);
-}
+class UserContentWorld final : public API::ObjectImpl<API::Object::Type::UserContentWorld> {
+public:
+    static Ref<UserContentWorld> worldWithName(const WTF::String&);
+    static UserContentWorld& normalWorld();
 
-WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
-{
-    return toAPI(&API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), API::UserScript::generateUniqueURL(), { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }, API::UserContentWorld::normalWorld()).leakRef());
-}
+    virtual ~UserContentWorld();
 
-WKStringRef WKUserScriptCopySource(WKUserScriptRef userScriptRef)
-{
-    return toCopiedAPI(toImpl(userScriptRef)->userScript().source());
-}
+    const WTF::String& name() const { return m_name; }
+    uint64_t identifier() const { return m_identifier; }
 
-_WKUserScriptInjectionTime WKUserScriptGetInjectionTime(WKUserScriptRef userScriptRef)
-{
-    return toWKUserScriptInjectionTime(toImpl(userScriptRef)->userScript().injectionTime());
-}
+private:
+    UserContentWorld(const WTF::String&);
 
-bool WKUserScriptGetMainFrameOnly(WKUserScriptRef userScriptRef)
-{
-    return toImpl(userScriptRef)->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
-}
+    enum class ForNormalWorldOnly { NormalWorld };
+    UserContentWorld(ForNormalWorldOnly);
+
+    uint64_t m_identifier;
+    WTF::String m_name;
+};
+
+} // namespace API
+
+#endif // APIUserContentWorld_h

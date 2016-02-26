@@ -35,6 +35,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 + (WKWebProcessPlugInScriptWorld *)world;
 + (WKWebProcessPlugInScriptWorld *)normalWorld;
 
+@property (nonatomic, readonly, copy) NSString *name;
+
 - (void)clearWrappers;
 
 @end

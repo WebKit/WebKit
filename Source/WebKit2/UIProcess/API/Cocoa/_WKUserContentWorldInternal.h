@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKUserScriptRef.h"
+#import "_WKUserContentWorld.h"
 
-#include "APIUserScript.h"
-#include "WKAPICast.h"
+#if WK_API_ENABLED
 
-using namespace WebKit;
+#import "APIUserContentWorld.h"
+#import "WKObject.h"
 
-WKTypeID WKUserScriptGetTypeID()
+namespace API {
+
+inline _WKUserContentWorld *wrapper(UserContentWorld& userContentWorld)
 {
-    return toAPI(API::UserScript::APIType);
+    ASSERT([userContentWorld.wrapper() isKindOfClass:[_WKUserContentWorld class]]);
+    return (_WKUserContentWorld *)userContentWorld.wrapper();
 }
 
-WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
-{
-    return toAPI(&API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), API::UserScript::generateUniqueURL(), { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }, API::UserContentWorld::normalWorld()).leakRef());
 }
 
-WKStringRef WKUserScriptCopySource(WKUserScriptRef userScriptRef)
-{
-    return toCopiedAPI(toImpl(userScriptRef)->userScript().source());
+@interface _WKUserContentWorld () <WKObject> {
+@package
+    API::ObjectStorage<API::UserContentWorld> _userContentWorld;
 }
+@end
 
-_WKUserScriptInjectionTime WKUserScriptGetInjectionTime(WKUserScriptRef userScriptRef)
-{
-    return toWKUserScriptInjectionTime(toImpl(userScriptRef)->userScript().injectionTime());
-}
-
-bool WKUserScriptGetMainFrameOnly(WKUserScriptRef userScriptRef)
-{
-    return toImpl(userScriptRef)->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
-}
+#endif

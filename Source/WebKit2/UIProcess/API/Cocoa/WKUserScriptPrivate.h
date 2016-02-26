@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKUserScriptRef.h"
+#import <WebKit/WKUserScript.h>
 
-#include "APIUserScript.h"
-#include "WKAPICast.h"
+#if WK_API_ENABLED
 
-using namespace WebKit;
+NS_ASSUME_NONNULL_BEGIN
 
-WKTypeID WKUserScriptGetTypeID()
-{
-    return toAPI(API::UserScript::APIType);
-}
+@class _WKUserContentWorld;
 
-WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
-{
-    return toAPI(&API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), API::UserScript::generateUniqueURL(), { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }, API::UserContentWorld::normalWorld()).leakRef());
-}
+@interface WKUserScript (WKPrivate)
 
-WKStringRef WKUserScriptCopySource(WKUserScriptRef userScriptRef)
-{
-    return toCopiedAPI(toImpl(userScriptRef)->userScript().source());
-}
+- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-_WKUserScriptInjectionTime WKUserScriptGetInjectionTime(WKUserScriptRef userScriptRef)
-{
-    return toWKUserScriptInjectionTime(toImpl(userScriptRef)->userScript().injectionTime());
-}
+@property (nonatomic, readonly) _WKUserContentWorld *_userContentWorld WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-bool WKUserScriptGetMainFrameOnly(WKUserScriptRef userScriptRef)
-{
-    return toImpl(userScriptRef)->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
-}
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif

@@ -56,6 +56,11 @@ using namespace WebKit;
     _world->clearWrappers();
 }
 
+- (NSString *)name
+{
+    return _world->name();
+}
+
 - (InjectedBundleScriptWorld&)_scriptWorld
 {
     return *_world;

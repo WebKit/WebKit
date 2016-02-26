@@ -91,6 +91,8 @@
 		7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C486BA01AA1254B003F6F9B /* bundle-file.html */; };
 		7C54A4BE1AA11CCA00380F78 /* WKBundleFileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C54A4BC1AA11CCA00380F78 /* WKBundleFileHandle.cpp */; };
 		7C54A4C11AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C54A4BF1AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp */; };
+		7C882E091C80C630006BF731 /* UserContentWorldPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C882E041C80C624006BF731 /* UserContentWorldPlugIn.mm */; };
+		7C882E0A1C80C764006BF731 /* UserContentWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C882E031C80C624006BF731 /* UserContentWorld.mm */; };
 		7C89D2AC1A69B80D003A5FDE /* WKPageConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C89D2AA1A69B80D003A5FDE /* WKPageConfiguration.cpp */; };
 		7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */; };
 		7CB184C61AA3F2100066EDFD /* ContentExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */; };
@@ -630,6 +632,9 @@
 		7C6BBD8A19CEA54300C1F5E0 /* Counters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Counters.h; sourceTree = "<group>"; };
 		7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Counters.cpp; sourceTree = "<group>"; };
 		7C74D42D188228F300E5ED57 /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
+		7C882E031C80C624006BF731 /* UserContentWorld.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserContentWorld.mm; sourceTree = "<group>"; };
+		7C882E041C80C624006BF731 /* UserContentWorldPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserContentWorldPlugIn.mm; sourceTree = "<group>"; };
+		7C882E051C80C624006BF731 /* UserContentWorldProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentWorldProtocol.h; sourceTree = "<group>"; };
 		7C89D2AA1A69B80D003A5FDE /* WKPageConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageConfiguration.cpp; sourceTree = "<group>"; };
 		7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CloseThenTerminate.cpp; sourceTree = "<group>"; };
 		7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributedStringStrikethrough.html; sourceTree = "<group>"; };
@@ -978,6 +983,9 @@
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
 				7CC3E1FA197E234100BE6252 /* UserContentController.mm */,
+				7C882E031C80C624006BF731 /* UserContentWorld.mm */,
+				7C882E041C80C624006BF731 /* UserContentWorldPlugIn.mm */,
+				7C882E051C80C624006BF731 /* UserContentWorldProtocol.h */,
 				2D00065D1C1F58940088E6A7 /* WKPDFViewResizeCrash.mm */,
 				0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */,
 			);
@@ -1822,6 +1830,7 @@
 				7CCE7ED31A411A7E00447C4C /* TypingStyleCrash.mm in Sources */,
 				7CCE7EDE1A411A9200447C4C /* URL.cpp in Sources */,
 				7CCE7EB01A411A4400447C4C /* URLExtras.mm in Sources */,
+				7C882E0A1C80C764006BF731 /* UserContentWorld.mm in Sources */,
 				7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */,
 				7CCE7F2D1A411B1000447C4C /* UserContentTest.mm in Sources */,
 				7CCE7F171A411AE600447C4C /* UserMedia.cpp in Sources */,
@@ -1892,6 +1901,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C882E091C80C630006BF731 /* UserContentWorldPlugIn.mm in Sources */,
 				A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */,
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
