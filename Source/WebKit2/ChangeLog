@@ -1,3 +1,29 @@
+2016-02-26  Andreas Kling  <akling@apple.com>
+
+        Remove unused CFNetwork disk cache mmap optimization in WebKit2.
+        <https://webkit.org/b/154727>
+
+        Reviewed by Darin Adler.
+
+        Nuke all the code related to the mmap optimization we had for CFNetwork's disk cache.
+        This code has not been used since we moved to the WebKit2 network cache.
+
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendBufferMaybeAborting): Deleted.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformLowMemoryHandler): Deleted.
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa): Deleted.
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.h: Removed.
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.mm: Removed.
+        * NetworkProcess/mac/NetworkLoadMac.mm:
+        (WebKit::NetworkLoad::willCacheResponseAsync): Deleted.
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197168.

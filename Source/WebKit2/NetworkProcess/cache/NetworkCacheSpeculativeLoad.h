@@ -62,9 +62,6 @@ private:
 #if USE(NETWORK_SESSION)
     virtual void didBecomeDownload() override { ASSERT_NOT_REACHED(); }
 #endif
-#if PLATFORM(COCOA)
-    virtual void willCacheResponseAsync(CFCachedURLResponseRef) override { }
-#endif
 
     void didComplete();
 

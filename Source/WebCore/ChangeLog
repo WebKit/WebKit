@@ -1,3 +1,14 @@
+2016-02-26  Andreas Kling  <akling@apple.com>
+
+        Remove unused CFNetwork disk cache mmap optimization in WebKit2.
+        <https://webkit.org/b/154727>
+
+        Reviewed by Darin Adler.
+
+        Remove some now-unused SPI.
+
+        * platform/spi/cf/CFNetworkSPI.h:
+
 2016-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197167.

@@ -44,7 +44,6 @@ namespace WebKit {
 void NetworkProcess::platformLowMemoryHandler(WebCore::Critical)
 {
     CFURLConnectionInvalidateConnectionCache();
-    _CFURLCachePurgeMemoryCache(adoptCF(CFURLCacheCopySharedURLCache()).get());
 }
 
 static void initializeNetworkSettings()
@@ -120,12 +119,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
             diskCapacity:parameters.nsURLCacheDiskCapacity
             diskPath:nsURLCacheDirectory]).get()];
     }
-
-    RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
-    if (!cache)
-        return;
-
-    _CFURLCacheSetMinSizeForVMCachedResource(cache.get(), NetworkResourceLoader::fileBackedResourceMinimumSize());
 }
 
 static uint64_t volumeFreeSize(const String& path)

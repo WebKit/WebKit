@@ -479,16 +479,6 @@ bool NetworkResourceLoader::sendBufferMaybeAborting(SharedBuffer& buffer, size_t
 {
     ASSERT(!isSynchronous());
 
-#if PLATFORM(COCOA)
-    ShareableResource::Handle shareableResourceHandle;
-    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer);
-    if (!shareableResourceHandle.isNull()) {
-        send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
-        abort();
-        return false;
-    }
-#endif
-
     IPC::SharedBufferDataReference dataReference(&buffer);
     return sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }

@@ -111,11 +111,7 @@ EXTERN_C void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
 
 EXTERN_C CFURLCacheRef CFURLCacheCopySharedURLCache();
 EXTERN_C void CFURLCacheSetMemoryCapacity(CFURLCacheRef, CFIndex memoryCapacity);
-EXTERN_C void _CFURLCachePurgeMemoryCache(CFURLCacheRef);
 #if PLATFORM(COCOA)
-EXTERN_C CFBooleanRef _CFURLCacheIsResponseDataMemMapped(CFURLCacheRef, CFDataRef);
-EXTERN_C void _CFURLCacheSetMinSizeForVMCachedResource(CFURLCacheRef, CFIndex);
-
 EXTERN_C Boolean _CFNetworkIsKnownHSTSHostWithSession(CFURLRef, CFURLStorageSessionRef);
 EXTERN_C void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef);
 #endif

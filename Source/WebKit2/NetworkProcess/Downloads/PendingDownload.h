@@ -59,9 +59,6 @@ private:
     virtual void didFinishLoading(double finishTime) override { };
     virtual void didFailLoading(const WebCore::ResourceError&) override;
     virtual void didBecomeDownload() override;
-#if PLATFORM(COCOA)
-    virtual void willCacheResponseAsync(CFCachedURLResponseRef) override { }
-#endif
     
     // MessageSender.
     virtual IPC::Connection* messageSenderConnection() override;

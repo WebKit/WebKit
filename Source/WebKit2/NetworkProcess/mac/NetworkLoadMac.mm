@@ -40,8 +40,6 @@ void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResp
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    m_client.willCacheResponseAsync(cfResponse);
-
     m_handle->continueWillCacheResponse(cfResponse);
 }
 
@@ -50,8 +48,6 @@ void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResp
 void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
-
-    m_client.willCacheResponseAsync([nsResponse _CFCachedURLResponse]);
 
     m_handle->continueWillCacheResponse(nsResponse);
 }

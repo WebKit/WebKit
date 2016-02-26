@@ -59,10 +59,6 @@ public:
 #if USE(NETWORK_SESSION)
     virtual void didBecomeDownload() = 0;
 #endif
-
-#if PLATFORM(COCOA)
-    virtual void willCacheResponseAsync(CFCachedURLResponseRef) = 0;
-#endif
 };
 
 } // namespace WebKit
