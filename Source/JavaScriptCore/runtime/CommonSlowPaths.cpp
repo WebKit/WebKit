@@ -602,7 +602,7 @@ SLOW_PATH_DECL(slow_path_has_indexed_property)
     JSValue property = OP(3).jsValue();
     pc[4].u.arrayProfile->observeStructure(base->structure(vm));
     ASSERT(property.isUInt32());
-    RETURN(jsBoolean(base->hasProperty(exec, property.asUInt32())));
+    RETURN(jsBoolean(base->hasPropertyGeneric(exec, property.asUInt32(), PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
 SLOW_PATH_DECL(slow_path_has_structure_property)
@@ -614,7 +614,7 @@ SLOW_PATH_DECL(slow_path_has_structure_property)
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(OP(4).jsValue().asCell());
     if (base->structure(vm)->id() == enumerator->cachedStructureID())
         RETURN(jsBoolean(true));
-    RETURN(jsBoolean(base->hasProperty(exec, asString(property.asCell())->toIdentifier(exec))));
+    RETURN(jsBoolean(base->hasPropertyGeneric(exec, asString(property.asCell())->toIdentifier(exec), PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
 SLOW_PATH_DECL(slow_path_has_generic_property)
@@ -624,10 +624,10 @@ SLOW_PATH_DECL(slow_path_has_generic_property)
     JSValue property = OP(3).jsValue();
     bool result;
     if (property.isString())
-        result = base->hasProperty(exec, asString(property.asCell())->toIdentifier(exec));
+        result = base->hasPropertyGeneric(exec, asString(property.asCell())->toIdentifier(exec), PropertySlot::InternalMethodType::GetOwnProperty);
     else {
         ASSERT(property.isUInt32());
-        result = base->hasProperty(exec, property.asUInt32());
+        result = base->hasPropertyGeneric(exec, property.asUInt32(), PropertySlot::InternalMethodType::GetOwnProperty);
     }
     RETURN(jsBoolean(result));
 }

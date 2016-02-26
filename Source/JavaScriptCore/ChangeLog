@@ -1,5 +1,35 @@
 2016-02-25  Saam barati  <sbarati@apple.com>
 
+        [ES6] for...in iteration doesn't comply with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154665
+
+        Reviewed by Michael Saboff.
+
+        If you read ForIn/OfHeadEvaluation inside the spec:
+        https://tc39.github.io/ecma262/#sec-runtime-semantics-forin-div-ofheadevaluation-tdznames-expr-iterationkind
+        It calls EnumerateObjectProperties(obj) to get a set of properties
+        to enumerate over (it models this "set" as en ES6 generator function).
+        EnumerateObjectProperties is defined in section 13.7.5.15:
+        https://tc39.github.io/ecma262/#sec-enumerate-object-properties
+        The implementation calls Reflect.getOwnPropertyDescriptor(.) on the
+        properties it sees. We must do the same by modeling the operation as
+        a [[GetOwnProperty]] instead of a [[HasProperty]] internal method call.
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasProperty):
+        (JSC::JSObject::hasPropertyGeneric):
+        * runtime/JSObject.h:
+        * tests/stress/proxy-get-own-property.js:
+        (assert):
+        (let.handler.getOwnPropertyDescriptor):
+        (i.set assert):
+
+2016-02-25  Saam barati  <sbarati@apple.com>
+
         [ES6] Implement Proxy.[[Set]]
         https://bugs.webkit.org/show_bug.cgi?id=154511
 

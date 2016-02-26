@@ -210,3 +210,56 @@ function assert(b) {
         assert(threw);
     }
 }
+
+
+
+Object.prototype.fooBarBaz = 20; // Make for-in go over the prototype chain to the top.
+
+{
+    let target = {};
+    let called = false;
+    let handler = {
+        getOwnPropertyDescriptor: function() {
+            called = true;
+            return undefined;
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 1000; i++) {
+        let set = new Set();
+        for (let p in proxy) {
+            set.add(p);
+        }
+        assert(set.has("fooBarBaz"));
+        assert(called);
+        called = false;
+    }
+}
+
+{
+    let target = {};
+    let called = false;
+    let handler = {
+        getOwnPropertyDescriptor: function() {
+            called = true;
+            return undefined;
+        }
+    };
+
+    let proxy = new Proxy(target, handler);
+    let proxyish = Object.create(proxy, {
+        x: {value: 20, enumerable: true},
+        y: {value: 20, enumerable: true}
+    });
+    for (let i = 0; i < 1000; i++) {
+        let set = new Set;
+        for (let p in proxyish) {
+            set.add(p);
+        }
+        assert(set.has("x"));
+        assert(set.has("y"));
+        assert(set.has("fooBarBaz"));
+        assert(called);
+        called = false;
+    }
+}
