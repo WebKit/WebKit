@@ -1,3 +1,21 @@
+2016-02-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Restrict information passed with navigation action which is triggered by untrusted event
+        https://bugs.webkit.org/show_bug.cgi?id=154571
+        <rdar://problem/15967937>
+
+        Reviewed by Andy Estes.
+
+        When navigation action is triggered by an untrusted event, we should be more restricted of
+        what information should be passed to the clients to lower the risk that clients could
+        be fooled by the untrusted event.
+
+        In this patch, we drop the modifiers for key state events and set the mouse button to NoButton
+        for mouse events.
+
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::modifiersForNavigationAction):
+
 2016-02-25  Ada Chan  <adachan@apple.com>
 
         Hook up fullscreenMayReturnToInline() in WKPageUIClient

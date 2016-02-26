@@ -1,3 +1,18 @@
+2016-02-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Restrict information passed with navigation action which is triggered by untrusted event
+        https://bugs.webkit.org/show_bug.cgi?id=154571
+        <rdar://problem/15967937>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/IsNavigationActionTrusted.mm: Added.
+        (-[WKNavigationActionDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TestWebKitAPI::TEST):
+        (-[NavigationActionDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        * TestWebKitAPI/Tests/mac/IsNavigationActionTrusted.html: Added.
+
 2016-02-25  Gavin Barraclough  <barraclough@apple.com>
 
         Should template RefCounter instead of RefCounter::Token

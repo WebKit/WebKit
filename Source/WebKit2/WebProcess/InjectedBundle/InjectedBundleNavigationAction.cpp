@@ -52,7 +52,7 @@ static WebMouseEvent::Button mouseButtonForMouseEvent(const MouseEvent* mouseEve
     if (!mouseEvent)
         return WebMouseEvent::NoButton;
 
-    if (!mouseEvent->buttonDown())
+    if (!mouseEvent->buttonDown() || !mouseEvent->isTrusted())
         return WebMouseEvent::NoButton;
 
     return static_cast<WebMouseEvent::Button>(mouseEvent->button());
@@ -61,7 +61,8 @@ static WebMouseEvent::Button mouseButtonForMouseEvent(const MouseEvent* mouseEve
 WebEvent::Modifiers InjectedBundleNavigationAction::modifiersForNavigationAction(const NavigationAction& navigationAction)
 {
     uint32_t modifiers = 0;
-    if (const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(navigationAction.event()))) {
+    const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(navigationAction.event()));
+    if (keyStateEvent && keyStateEvent->isTrusted()) {
         if (keyStateEvent->shiftKey())
             modifiers |= WebEvent::ShiftKey;
         if (keyStateEvent->ctrlKey())

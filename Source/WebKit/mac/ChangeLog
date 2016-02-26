@@ -1,3 +1,14 @@
+2016-02-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Restrict information passed with navigation action which is triggered by untrusted event
+        https://bugs.webkit.org/show_bug.cgi?id=154571
+        <rdar://problem/15967937>
+
+        Reviewed by Andy Estes.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary):
+
 2016-02-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] MediaDeviceInfo deviceId and groupId must be unique to the page's origin
