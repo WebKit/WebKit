@@ -73,7 +73,7 @@
 
 @implementation WKUserScript (WKPrivate)
 
-static Vector<WTF::String> toStringVector(NSArray<NSString *> *input)
+static Vector<WTF::String> toStringVector(NSArray *input)
 {
     Vector<WTF::String> vector;
 
@@ -82,12 +82,14 @@ static Vector<WTF::String> toStringVector(NSArray<NSString *> *input)
         return vector;
 
     vector.reserveInitialCapacity(size);
-    for (NSString *string : input)
-        vector.uncheckedAppend(string);
+    for (id string : input) {
+        if ([string isKindOfClass:[NSString class]])
+            vector.uncheckedAppend(string);
+    }
     return vector;
 }
 
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
+- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray *)legacyWhitelist legacyBlacklist:(NSArray *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     if (!(self = [super init]))
         return nil;

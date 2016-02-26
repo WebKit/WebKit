@@ -1,5 +1,13 @@
 2016-02-26  Sam Weinig  <sam@webkit.org>
 
+        Try to fix the Yosemite build again.
+
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (toStringVector):
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]):
+
+2016-02-26  Sam Weinig  <sam@webkit.org>
+
         Try to fix the Yosemite build.
 
         * UIProcess/API/Cocoa/WKUserScriptPrivate.h:
