@@ -1578,7 +1578,7 @@ RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringK
     if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier())
         return CSSValuePool::singleton().createIdentifierValue(sizeIdentifier);
 
-    return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), *style);
+    return zoomAdjustedPixelValue(style->fontDescription().computedSize(), *style);
 }
 
 bool ComputedStyleExtractor::useFixedFontDefaultSize() const
@@ -1830,7 +1830,7 @@ static Ref<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle& style)
 
 static Ref<CSSPrimitiveValue> fontSizeFromStyle(RenderStyle& style)
 {
-    return zoomAdjustedPixelValue(style.fontDescription().computedPixelSize(), style);
+    return zoomAdjustedPixelValue(style.fontDescription().computedSize(), style);
 }
 
 static Ref<CSSPrimitiveValue> fontStyleFromStyle(RenderStyle* style)
