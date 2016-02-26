@@ -1,3 +1,13 @@
+2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r195795): [WK2] fast/text/crash-complex-text-surrogate.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=154709
+        <rdar://problem/24483596>
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-02-25  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Mark DOMString parameters as nullable when they should be

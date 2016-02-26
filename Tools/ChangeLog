@@ -1,3 +1,16 @@
+2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r195795): [WK2] fast/text/crash-complex-text-surrogate.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=154709
+        <rdar://problem/24483596>
+
+        Reviewed by Dan Bernstein.
+
+        Force auto-activation rules to a consistent state.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
 2016-02-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreivewed build fix for r197150.
