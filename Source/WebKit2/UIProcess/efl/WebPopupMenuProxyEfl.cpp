@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2016 Naver Corp. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +24,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPopupMenuListenerEfl_h
-#define WebPopupMenuListenerEfl_h
+#include "config.h"
+#include "WebPopupMenuProxyEfl.h"
 
-#include "WebPopupMenuProxy.h"
+#include "EwkView.h"
 
 namespace WebKit {
 
-class WebPopupMenuListenerEfl : public WebPopupMenuProxy {
-public:
-    static Ref<WebPopupMenuListenerEfl> create(WebPopupMenuProxy::Client* client)
-    {
-        return adoptRef(*new WebPopupMenuListenerEfl(client));
-    }
+WebPopupMenuProxyEfl::WebPopupMenuProxyEfl(EwkView& ewkView, WebPopupMenuProxy::Client& client)
+    : WebPopupMenuProxy(client)
+    , m_ewkView(ewkView)
+{
+}
 
-    void valueChanged(int newSelectedIndex);
+void WebPopupMenuProxyEfl::valueChanged(int newSelectedIndex)
+{
+    if (!m_client)
+        return;
 
-private:
-    WebPopupMenuListenerEfl(WebPopupMenuProxy::Client*);
-};
+    m_client->valueChangedForPopupMenu(this, newSelectedIndex);
+    invalidate();
+}
+
+void WebPopupMenuProxyEfl::showPopupMenu(const WebCore::IntRect& rect, WebCore::TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
+{
+    m_ewkView.requestPopupMenu(this, rect, textDirection, pageScaleFactor, items, selectedIndex);
+}
+
+void WebPopupMenuProxyEfl::hidePopupMenu()
+{
+    m_ewkView.closePopupMenu();
+}
 
 } // namespace WebKit
 
-#endif // WebPopupMenuListenerEfl_h

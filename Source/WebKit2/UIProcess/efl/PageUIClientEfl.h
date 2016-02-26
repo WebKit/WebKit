@@ -28,7 +28,6 @@
 #define PageUIClientEfl_h
 
 #include "WKPage.h"
-#include "WKPopupItem.h"
 #include <WebKit/WKBase.h>
 
 class EwkView;
@@ -61,9 +60,6 @@ private:
     static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, const void*);
     static void runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef, const void*);
     static WKPageRef createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);
-
-    static void showPopupMenu(WKPageRef, WKPopupMenuListenerRef, WKRect, WKPopupItemTextDirection, double pageScaleFactor, WKArrayRef itemsRef, int32_t selectedIndex, const void* clientInfo);
-    static void hidePopupMenu(WKPageRef, const void* clientInfo);
 
     EwkView* m_view;
 };

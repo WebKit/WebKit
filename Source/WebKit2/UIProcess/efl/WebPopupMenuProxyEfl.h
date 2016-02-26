@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2016 Naver Corp. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +24,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPopupMenuListenerEfl.h"
+#ifndef WebPopupMenuProxyEfl_h
+#define WebPopupMenuProxyEfl_h
+
+#include "WebPopupMenuProxy.h"
+
+class EwkView;
 
 namespace WebKit {
 
-WebPopupMenuListenerEfl::WebPopupMenuListenerEfl(WebPopupMenuProxy::Client* client)
-    : WebPopupMenuProxy(*client)
-{
-}
+class WebPopupMenuProxyEfl : public WebPopupMenuProxy {
+public:
+    static Ref<WebPopupMenuProxyEfl> create(EwkView& ewkView, WebPopupMenuProxy::Client& client)
+    {
+        return adoptRef(*new WebPopupMenuProxyEfl(ewkView, client));
+    }
 
-void WebPopupMenuListenerEfl::valueChanged(int newSelectedIndex)
-{
-    if (!m_client)
-        return;
+    void valueChanged(int newSelectedIndex);
 
-    m_client->valueChangedForPopupMenu(this, newSelectedIndex);
-    invalidate();
-}
+    void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex) override;
+    void hidePopupMenu() override;
+
+private:
+    explicit WebPopupMenuProxyEfl(EwkView&, WebPopupMenuProxy::Client&);
+
+    EwkView& m_ewkView;
+};
 
 } // namespace WebKit
+
+#endif // WebPopupMenuProxyEfl_h
+

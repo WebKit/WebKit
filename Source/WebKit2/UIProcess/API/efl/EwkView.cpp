@@ -43,7 +43,6 @@
 #include "WKGeometry.h"
 #include "WKNumber.h"
 #include "WKPageGroup.h"
-#include "WKPopupItem.h"
 #include "WKString.h"
 #include "WKView.h"
 #include "WebImage.h"
@@ -967,12 +966,12 @@ void EwkView::hideContextMenu()
     m_contextMenu = nullptr;
 }
 
-void EwkView::requestPopupMenu(WKPopupMenuListenerRef popupMenuListener, const WKRect& rect, WKPopupItemTextDirection textDirection, double pageScaleFactor, WKArrayRef items, int32_t selectedIndex)
+void EwkView::requestPopupMenu(WebPopupMenuProxyEfl* popupMenuProxy, const WebCore::IntRect& rect, WebCore::TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, int32_t selectedIndex)
 {
     Ewk_View_Smart_Data* sd = smartData();
     ASSERT(sd->api);
 
-    ASSERT(popupMenuListener);
+    ASSERT(popupMenuProxy);
 
     if (!sd->api->popup_menu_show)
         return;
@@ -980,18 +979,18 @@ void EwkView::requestPopupMenu(WKPopupMenuListenerRef popupMenuListener, const W
     if (m_popupMenu)
         closePopupMenu();
 
-    m_popupMenu = std::make_unique<EwkPopupMenu>(this, popupMenuListener, items, selectedIndex);
+    m_popupMenu = std::make_unique<EwkPopupMenu>(popupMenuProxy, items, selectedIndex);
 
-    IntPoint popupMenuPosition = m_webView->contentsToUserViewport(toIntPoint(rect.origin));
+    IntPoint popupMenuPosition = m_webView->contentsToUserViewport(rect.location());
 
     Eina_Rectangle einaRect;
-    EINA_RECTANGLE_SET(&einaRect, popupMenuPosition.x(), popupMenuPosition.y(), rect.size.width, rect.size.height);
+    EINA_RECTANGLE_SET(&einaRect, popupMenuPosition.x(), popupMenuPosition.y(), rect.width(), rect.height());
 
     switch (textDirection) {
-    case kWKPopupItemTextDirectionRTL:
+    case WebCore::TextDirection::RTL:
         sd->api->popup_menu_show(sd, einaRect, EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, pageScaleFactor, m_popupMenu.get());
         break;
-    case kWKPopupItemTextDirectionLTR:
+    case WebCore::TextDirection::LTR:
         sd->api->popup_menu_show(sd, einaRect, EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, pageScaleFactor, m_popupMenu.get());
         break;
     }

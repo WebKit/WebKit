@@ -28,13 +28,17 @@
 #define ewk_popup_menu_private_h
 
 #include "EflTypedefs.h"
-#include <WebKit/WKBase.h>
+
+namespace WebKit {
+class WebPopupItem;
+class WebPopupMenuProxyEfl;
+}
 
 class EwkView;
 
 class EwkPopupMenu {
 public:
-    EwkPopupMenu(EwkView* viewImpl, WKPopupMenuListenerRef, WKArrayRef items, unsigned selectedIndex);
+    EwkPopupMenu(WebKit::WebPopupMenuProxyEfl*, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex);
     ~EwkPopupMenu();
 
     void close();
@@ -45,7 +49,7 @@ public:
     unsigned selectedIndex() const;
 
 private:
-    WKRetainPtr<WKPopupMenuListenerRef> m_popupMenuListener;
+    RefPtr<WebKit::WebPopupMenuProxyEfl> m_popupMenuProxy;
     Eina_List* m_popupMenuItems;
     unsigned m_selectedIndex;
 };

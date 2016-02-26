@@ -1,3 +1,57 @@
+2016-02-25  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Remove WebUIPopupMenuClient
+        https://bugs.webkit.org/show_bug.cgi?id=154717
+
+        Reviewed by Gyuyoung Kim.
+
+        WebUIPopupMenuClient is only for EFL to expose WebPopupMenuProxy and WebPopupItem to WK C APIs.
+        This patch removes it and related code.
+
+        * PlatformEfl.cmake: Removed WKPopupItem related files from source list.
+        * UIProcess/API/C/efl/WKAPICastEfl.h: Removed WKPopupMenu related code.
+        * UIProcess/API/C/efl/WKPageEfl.cpp: Removed.
+        * UIProcess/API/C/efl/WKPageEfl.h: Removed.
+        * UIProcess/API/C/efl/WKPopupItem.cpp: Removed.
+        * UIProcess/API/C/efl/WKPopupItem.h: Removed.
+        * UIProcess/API/C/efl/WKPopupMenuListener.cpp: Removed.
+        * UIProcess/API/C/efl/WKPopupMenuListener.h: Removed.
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::requestPopupMenu):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_popup_menu.cpp:
+        (EwkPopupMenu::EwkPopupMenu):
+        (EwkPopupMenu::close):
+        (EwkPopupMenu::setSelectedIndex):
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp: Used WebPopupItem and others instead of WK C APIs.
+        * UIProcess/API/efl/ewk_popup_menu_item_private.h: Ditto.
+        * UIProcess/API/efl/ewk_popup_menu_private.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Removed unnecessary EFL guards.
+        (WebKit::WebPageProxy::showPopupMenu): Ditto.
+        (WebKit::WebPageProxy::hidePopupMenu): Ditto.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPopupMenuProxy.h:
+        * UIProcess/efl/PageUIClientEfl.cpp: Removed WKPopupMenuListener related code.
+        (WebKit::PageUIClientEfl::PageUIClientEfl): Deleted.
+        (WebKit::PageUIClientEfl::showPopupMenu): Deleted.
+        (WebKit::PageUIClientEfl::hidePopupMenu): Deleted.
+        * UIProcess/efl/PageUIClientEfl.h:
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::initializeUIPopupMenuClient): Deleted.
+        * UIProcess/efl/WebPopupMenuListenerEfl.cpp:
+        (WebKit::WebPopupMenuListenerEfl::WebPopupMenuListenerEfl): Deleted.
+        (WebKit::WebPopupMenuListenerEfl::valueChanged): Deleted.
+        * UIProcess/efl/WebPopupMenuListenerEfl.h:
+        (WebKit::WebPopupMenuListenerEfl::create): Deleted.
+        * UIProcess/efl/WebPopupMenuProxyEfl.cpp: Used WebPopupItem and others instead of WK C APIs.
+        * UIProcess/efl/WebPopupMenuProxyEfl.h: Ditto.
+        (WebKit::WebPopupMenuProxyEfl::create):
+        * UIProcess/efl/WebUIPopupMenuClient.cpp: Removed.
+        * UIProcess/efl/WebUIPopupMenuClient.h: Removed.
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::createPopupMenuProxy): Used WebPopupItem and others instead of WK C APIs.
+
 2016-02-25  Andreas Kling  <akling@apple.com>
 
         [iOS] Enable PageCache backing store clearing optimization for WebKit2.

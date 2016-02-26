@@ -28,22 +28,20 @@
 #include "ewk_popup_menu.h"
 
 #include "EwkView.h"
-#include "WKAPICast.h"
-#include "WKArray.h"
-#include "WKPopupMenuListener.h"
+#include "WebPopupItem.h"
+#include "WebPopupMenuProxyEfl.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_popup_menu_private.h"
 
-EwkPopupMenu::EwkPopupMenu(EwkView*, WKPopupMenuListenerRef popupMenuListener, WKArrayRef items, unsigned selectedIndex)
-    : m_popupMenuListener(popupMenuListener)
+using namespace WebKit;
+
+EwkPopupMenu::EwkPopupMenu(WebPopupMenuProxyEfl* popupMenuProxy, const Vector<WebPopupItem>& items, unsigned selectedIndex)
+    : m_popupMenuProxy(popupMenuProxy)
     , m_popupMenuItems(0)
     , m_selectedIndex(selectedIndex)
 {
-    size_t size = WKArrayGetSize(items);
-    for (size_t i = 0; i < size; ++i) {
-        WKPopupItemRef wkItem = static_cast<WKPopupItemRef>(WKArrayGetItemAtIndex(items, i));
-        m_popupMenuItems = eina_list_append(m_popupMenuItems, std::make_unique<EwkPopupMenuItem>(wkItem).release());
-    }
+    for (const auto& item : items)
+        m_popupMenuItems = eina_list_append(m_popupMenuItems, std::make_unique<EwkPopupMenuItem>(item).release());
 }
 
 EwkPopupMenu::~EwkPopupMenu()
@@ -56,7 +54,7 @@ EwkPopupMenu::~EwkPopupMenu()
 void EwkPopupMenu::close()
 {
     // Setting selected item will cause the popup menu to close.
-    WKPopupMenuListenerSetSelection(m_popupMenuListener.get(), m_selectedIndex);
+    m_popupMenuProxy->valueChanged(m_selectedIndex);
 }
 
 const Eina_List* EwkPopupMenu::items() const
@@ -71,7 +69,7 @@ unsigned EwkPopupMenu::selectedIndex() const
 
 bool EwkPopupMenu::setSelectedIndex(unsigned selectedIndex)
 {
-    if (!m_popupMenuListener)
+    if (!m_popupMenuProxy)
         return false;
 
     if (selectedIndex >= eina_list_count(m_popupMenuItems))
@@ -81,7 +79,7 @@ bool EwkPopupMenu::setSelectedIndex(unsigned selectedIndex)
         return true;
 
     m_selectedIndex = selectedIndex;
-    WKPopupMenuListenerSetSelection(m_popupMenuListener.get(), selectedIndex);
+    m_popupMenuProxy->valueChanged(m_selectedIndex);
 
     return true;
 }

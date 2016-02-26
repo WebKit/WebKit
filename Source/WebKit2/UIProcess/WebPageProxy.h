@@ -94,12 +94,6 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include "NativeWebTouchEvent.h"
 #endif
 
-#if PLATFORM(EFL)
-#include "WKPageEfl.h"
-#include "WebUIPopupMenuClient.h"
-#include <Evas.h>
-#endif
-
 #if PLATFORM(COCOA)
 #include "LayerRepresentation.h"
 #endif
@@ -356,9 +350,6 @@ public:
 
     API::UIClient& uiClient() { return *m_uiClient; }
     void setUIClient(std::unique_ptr<API::UIClient>);
-#if PLATFORM(EFL)
-    void initializeUIPopupMenuClient(const WKPageUIPopupMenuClientBase*);
-#endif
 
     void initializeWebPage();
 
@@ -1494,9 +1485,6 @@ private:
     std::unique_ptr<API::HistoryClient> m_historyClient;
     std::unique_ptr<API::FormClient> m_formClient;
     std::unique_ptr<API::UIClient> m_uiClient;
-#if PLATFORM(EFL)
-    WebUIPopupMenuClient m_uiPopupMenuClient;
-#endif
     std::unique_ptr<API::FindClient> m_findClient;
     std::unique_ptr<API::FindMatchesClient> m_findMatchesClient;
     std::unique_ptr<API::DiagnosticLoggingClient> m_diagnosticLoggingClient;

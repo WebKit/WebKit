@@ -73,9 +73,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/efl/WKColorPickerResultListener.cpp
     UIProcess/API/C/efl/WKEventEfl.cpp
-    UIProcess/API/C/efl/WKPageEfl.cpp
-    UIProcess/API/C/efl/WKPopupItem.cpp
-    UIProcess/API/C/efl/WKPopupMenuListener.cpp
     UIProcess/API/C/efl/WKViewEfl.cpp
 
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
@@ -177,11 +174,10 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebInspectorProxyEfl.cpp
     UIProcess/efl/WebPageProxyEfl.cpp
     UIProcess/efl/WebPopupItemEfl.cpp
-    UIProcess/efl/WebPopupMenuListenerEfl.cpp
+    UIProcess/efl/WebPopupMenuProxyEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp
     UIProcess/efl/WebProcessPoolEfl.cpp
     UIProcess/efl/WebProcessProxyEfl.cpp
-    UIProcess/efl/WebUIPopupMenuClient.cpp
     UIProcess/efl/WebView.cpp
     UIProcess/efl/WebViewClient.cpp
 

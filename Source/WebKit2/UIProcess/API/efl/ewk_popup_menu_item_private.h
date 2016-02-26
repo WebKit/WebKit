@@ -31,13 +31,17 @@
 #include "ewk_popup_menu_item.h"
 #include <WebKit/WKBase.h>
 
+namespace WebKit {
+class WebPopupItem;
+}
+
 /**
  * \struct  Ewk_Popup_Menu_Item
  * @brief   Contains the popup menu data.
  */
 class EwkPopupMenuItem {
 public:
-    explicit EwkPopupMenuItem(WKPopupItemRef item);
+    explicit EwkPopupMenuItem(const WebKit::WebPopupItem& item);
 
     Ewk_Popup_Menu_Item_Type type() const;
     Ewk_Text_Direction textDirection() const;
@@ -52,7 +56,7 @@ public:
     const char* accessibilityText() const;
 
 private:
-    WKRetainPtr<WKPopupItemRef> m_wkItem;
+    WebKit::WebPopupItem m_item;
 
     // Lazily initialized.
     mutable WKEinaSharedString m_text;

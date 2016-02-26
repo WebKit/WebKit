@@ -25,7 +25,6 @@
 #endif
 
 #include <WebCore/WritingMode.h>
-#include <WebKit/WKPopupItem.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "WebEvent.h"
@@ -35,12 +34,8 @@
 namespace WebKit {
 
 class WebView;
-class WebPopupItemEfl;
-class WebPopupMenuListenerEfl;
 
 WK_ADD_API_MAPPING(WKViewRef, WebView)
-WK_ADD_API_MAPPING(WKPopupItemRef, WebPopupItemEfl)
-WK_ADD_API_MAPPING(WKPopupMenuListenerRef, WebPopupMenuListenerEfl)
 
 #if ENABLE(TOUCH_EVENTS)
 class EwkTouchEvent;
@@ -51,22 +46,6 @@ WK_ADD_API_MAPPING(WKTouchPointRef, EwkTouchPoint)
 #endif
 
 // Enum conversions.
-inline WKPopupItemTextDirection toAPI(WebCore::TextDirection direction)
-{
-    WKPopupItemTextDirection wkDirection = kWKPopupItemTextDirectionLTR;
-
-    switch (direction) {
-    case WebCore::RTL:
-        wkDirection = kWKPopupItemTextDirectionRTL;
-        break;
-    case WebCore::LTR:
-        wkDirection = kWKPopupItemTextDirectionLTR;
-        break;
-    }
-
-    return wkDirection;
-}
-
 #if ENABLE(TOUCH_EVENTS)
 inline WKEventType toAPI(WebEvent::Type type)
 {
@@ -103,18 +82,6 @@ inline WKTouchPointState toAPI(WebPlatformTouchPoint::TouchPointState state)
     return kWKTouchPointStateTouchCancelled;
 }
 #endif
-
-template<>
-inline WKPopupMenuListenerRef toAPI(WebPopupMenuListenerEfl* popup)
-{
-    return static_cast<WKPopupMenuListenerRef>(static_cast<void*>(popup));
-}
-
-template<>
-inline WebPopupMenuListenerEfl* toImpl(WKPopupMenuListenerRef popupRef)
-{
-    return static_cast<WebPopupMenuListenerEfl*>(static_cast<void*>(const_cast<OpaqueWKPopupMenuListener*>(popupRef)));
-}
 
 }
 

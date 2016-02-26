@@ -127,11 +127,6 @@ void WebPageProxy::cancelComposition()
     process().send(Messages::WebPage::CancelComposition(), m_pageID, 0);
 }
 
-void WebPageProxy::initializeUIPopupMenuClient(const WKPageUIPopupMenuClientBase* client)
-{
-    m_uiPopupMenuClient.initialize(client);
-}
-
 #if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
 
 bool WebPageProxy::accessibilityObjectReadByPoint(const WebCore::IntPoint& point)

@@ -43,7 +43,7 @@
 #include "WebBackForwardListItem.h"
 #include "WebContextMenuProxyEfl.h"
 #include "WebPageGroup.h"
-#include "WebPopupMenuListenerEfl.h"
+#include "WebPopupMenuProxyEfl.h"
 #include "ewk_context_private.h"
 #include <WebCore/PlatformContextCairo.h>
 
@@ -552,7 +552,7 @@ void WebView::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEvent
 
 RefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy& page)
 {
-    return WebPopupMenuListenerEfl::create(&page);
+    return WebPopupMenuProxyEfl::create(*m_ewkView, page);
 }
 
 #if ENABLE(CONTEXT_MENUS)

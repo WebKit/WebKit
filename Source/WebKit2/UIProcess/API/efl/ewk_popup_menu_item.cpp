@@ -26,19 +26,22 @@
 #include "config.h"
 #include "ewk_popup_menu_item.h"
 
-#include "WKPopupItem.h"
+#include "WebPopupItem.h"
 #include "ewk_popup_menu_item_private.h"
 
-EwkPopupMenuItem::EwkPopupMenuItem(WKPopupItemRef item)
-    : m_wkItem(item)
-{ }
+using namespace WebKit;
+
+EwkPopupMenuItem::EwkPopupMenuItem(const WebPopupItem& item)
+    : m_item(item)
+{
+}
 
 Ewk_Popup_Menu_Item_Type EwkPopupMenuItem::type() const
 {
-    switch (WKPopupItemGetType(m_wkItem.get())) {
-    case kWKPopupItemTypeSeparator:
+    switch (m_item.m_type) {
+    case WebPopupItem::Separator:
         return EWK_POPUP_MENU_SEPARATOR;
-    case kWKPopupItemTypeItem:
+    case WebPopupItem::Item:
         return EWK_POPUP_MENU_ITEM;
     }
     ASSERT_NOT_REACHED();
@@ -48,11 +51,11 @@ Ewk_Popup_Menu_Item_Type EwkPopupMenuItem::type() const
 
 Ewk_Text_Direction EwkPopupMenuItem::textDirection() const
 {
-    switch (WKPopupItemGetTextDirection(m_wkItem.get())) {
-    case kWKPopupItemTextDirectionRTL:
-        return EWK_TEXT_DIRECTION_RIGHT_TO_LEFT;
-    case kWKPopupItemTextDirectionLTR:
+    switch (m_item.m_textDirection) {
+    case WebCore::TextDirection::LTR:
         return EWK_TEXT_DIRECTION_LEFT_TO_RIGHT;
+    case WebCore::TextDirection::RTL:
+        return EWK_TEXT_DIRECTION_RIGHT_TO_LEFT;
     }
     ASSERT_NOT_REACHED();
 
@@ -62,7 +65,7 @@ Ewk_Text_Direction EwkPopupMenuItem::textDirection() const
 const char* EwkPopupMenuItem::text() const
 {
     if (!m_text)
-        m_text = WKEinaSharedString(AdoptWK, WKPopupItemCopyText(m_wkItem.get()));
+        m_text = WKEinaSharedString(m_item.m_text.utf8().data());
 
     return m_text;
 }
@@ -70,7 +73,7 @@ const char* EwkPopupMenuItem::text() const
 const char* EwkPopupMenuItem::tooltipText() const
 {
     if (!m_tooltipText)
-        m_tooltipText = WKEinaSharedString(AdoptWK, WKPopupItemCopyToolTipText(m_wkItem.get()));
+        m_tooltipText = WKEinaSharedString(m_item.m_toolTip.utf8().data());
 
     return m_tooltipText;
 }
@@ -78,29 +81,29 @@ const char* EwkPopupMenuItem::tooltipText() const
 const char* EwkPopupMenuItem::accessibilityText() const
 {
     if (!m_accessibilityText)
-        m_accessibilityText = WKEinaSharedString(AdoptWK, WKPopupItemCopyAccessibilityText(m_wkItem.get()));
+        m_accessibilityText = WKEinaSharedString(m_item.m_accessibilityText.utf8().data());
 
     return m_accessibilityText;
 }
 
 bool EwkPopupMenuItem::hasTextDirectionOverride() const
 {
-    return WKPopupItemHasTextDirectionOverride(m_wkItem.get());
+    return m_item.m_hasTextDirectionOverride;
 }
 
 bool EwkPopupMenuItem::isEnabled() const
 {
-    return WKPopupItemIsEnabled(m_wkItem.get());
+    return m_item.m_isEnabled;
 }
 
 bool EwkPopupMenuItem::isLabel() const
 {
-    return WKPopupItemIsLabel(m_wkItem.get());
+    return m_item.m_isLabel;
 }
 
 bool EwkPopupMenuItem::isSelected() const
 {
-    return WKPopupItemIsSelected(m_wkItem.get());
+    return m_item.m_isSelected;
 }
 
 Ewk_Popup_Menu_Item_Type ewk_popup_menu_item_type_get(const Ewk_Popup_Menu_Item* item)
