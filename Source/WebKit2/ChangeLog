@@ -1,3 +1,17 @@
+2016-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Cache::traverse should pass the record info to its traversal handler
+        https://bugs.webkit.org/show_bug.cgi?id=154695
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::clearDiskCacheEntries):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::traverse):
+        * NetworkProcess/cache/NetworkCache.h:
+
 2016-02-25  Gavin Barraclough  <barraclough@apple.com>
 
         RefCounter value changed callback should be called on all changes (not just zero edge).
