@@ -78,7 +78,7 @@ JSDataView* JSDataView::create(ExecState*, Structure*, unsigned)
     return 0;
 }
 
-bool JSDataView::set(ExecState*, JSObject*, unsigned, unsigned)
+bool JSDataView::set(ExecState*, unsigned, JSObject*, unsigned, unsigned)
 {
     UNREACHABLE_FOR_PLATFORM();
     return false;

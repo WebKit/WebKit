@@ -138,8 +138,8 @@ bool JSGenericTypedArrayView<Adaptor>::validateRange(
 template<typename Adaptor>
 template<typename OtherAdaptor>
 bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
-    ExecState* exec, JSGenericTypedArrayView<OtherAdaptor>* other,
-    unsigned offset, unsigned length)
+    ExecState* exec, unsigned offset, JSGenericTypedArrayView<OtherAdaptor>* other,
+    unsigned otherOffset, unsigned length, CopyType type)
 {
     // Handle the hilarious case: the act of getting the length could have resulted
     // in neutering. Well, no. That'll never happen because there cannot be
@@ -148,14 +148,10 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     // check. Worst case, if we're wrong, people start seeing less things get copied
     // but we won't have a security vulnerability.
     length = std::min(length, other->length());
-    
+
+    RELEASE_ASSERT(other->canAccessRangeQuickly(otherOffset, length));
     if (!validateRange(exec, offset, length))
         return false;
-    
-    if (other->length() != length) {
-        exec->vm().throwException(exec, createRangeError(exec, "Length of incoming array changed unexpectedly."));
-        return false;
-    }
     
     // This method doesn't support copying between the same array. Note that
     // set() will only call this if the types differ, which implicitly guarantees
@@ -185,25 +181,26 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     // specialization.
 
     unsigned otherElementSize = sizeof(typename OtherAdaptor::Type);
-    
-    // Handle cases (1) and (2B).
+
+    // Handle cases (1) and (2A).
     if (!hasArrayBuffer() || !other->hasArrayBuffer()
         || existingBuffer() != other->existingBuffer()
-        || (elementSize == otherElementSize && vector() > other->vector())) {
-        for (unsigned i = length; i--;) {
-            setIndexQuicklyToNativeValue(
-                offset + i, OtherAdaptor::template convertTo<Adaptor>(
-                    other->getIndexQuicklyAsNativeValue(i)));
-        }
-        return true;
-    }
-    
-    // Now we either have (2A) or (3) - so first we try to cover (2A).
-    if (elementSize == otherElementSize) {
+        || (elementSize == otherElementSize && vector() <= other->vector())
+        || type == CopyType::LeftToRight) {
         for (unsigned i = 0; i < length; ++i) {
             setIndexQuicklyToNativeValue(
                 offset + i, OtherAdaptor::template convertTo<Adaptor>(
-                    other->getIndexQuicklyAsNativeValue(i)));
+                    other->getIndexQuicklyAsNativeValue(i + otherOffset)));
+        }
+        return true;
+    }
+
+    // Now we either have (2B) or (3) - so first we try to cover (2B).
+    if (elementSize == otherElementSize) {
+        for (unsigned i = length; i--;) {
+            setIndexQuicklyToNativeValue(
+                offset + i, OtherAdaptor::template convertTo<Adaptor>(
+                    other->getIndexQuicklyAsNativeValue(i + otherOffset)));
         }
         return true;
     }
@@ -212,7 +209,7 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     Vector<typename Adaptor::Type, 32> transferBuffer(length);
     for (unsigned i = length; i--;) {
         transferBuffer[i] = OtherAdaptor::template convertTo<Adaptor>(
-            other->getIndexQuicklyAsNativeValue(i));
+            other->getIndexQuicklyAsNativeValue(i + otherOffset));
     }
     for (unsigned i = length; i--;)
         setIndexQuicklyToNativeValue(offset + i, transferBuffer[i]);
@@ -222,7 +219,7 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
 
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::set(
-    ExecState* exec, JSObject* object, unsigned offset, unsigned length)
+    ExecState* exec, unsigned offset, JSObject* object, unsigned objectOffset, unsigned length, CopyType type)
 {
     const ClassInfo* ci = object->classInfo();
     if (ci->typedArrayStorageType == Adaptor::typeValue) {
@@ -230,48 +227,50 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         JSGenericTypedArrayView* other = jsCast<JSGenericTypedArrayView*>(object);
         length = std::min(length, other->length());
         
+        RELEASE_ASSERT(other->canAccessRangeQuickly(objectOffset, length));
         if (!validateRange(exec, offset, length))
             return false;
-        
-        memmove(typedVector() + offset, other->typedVector(), other->byteLength());
+
+        memmove(typedVector() + offset, other->typedVector() + objectOffset, other->byteLength());
         return true;
     }
     
     switch (ci->typedArrayStorageType) {
     case TypeInt8:
         return setWithSpecificType<Int8Adaptor>(
-            exec, jsCast<JSInt8Array*>(object), offset, length);
+            exec, offset, jsCast<JSInt8Array*>(object), objectOffset, length, type);
     case TypeInt16:
         return setWithSpecificType<Int16Adaptor>(
-            exec, jsCast<JSInt16Array*>(object), offset, length);
+            exec, offset, jsCast<JSInt16Array*>(object), objectOffset, length, type);
     case TypeInt32:
         return setWithSpecificType<Int32Adaptor>(
-            exec, jsCast<JSInt32Array*>(object), offset, length);
+            exec, offset, jsCast<JSInt32Array*>(object), objectOffset, length, type);
     case TypeUint8:
         return setWithSpecificType<Uint8Adaptor>(
-            exec, jsCast<JSUint8Array*>(object), offset, length);
+            exec, offset, jsCast<JSUint8Array*>(object), objectOffset, length, type);
     case TypeUint8Clamped:
         return setWithSpecificType<Uint8ClampedAdaptor>(
-            exec, jsCast<JSUint8ClampedArray*>(object), offset, length);
+            exec, offset, jsCast<JSUint8ClampedArray*>(object), objectOffset, length, type);
     case TypeUint16:
         return setWithSpecificType<Uint16Adaptor>(
-            exec, jsCast<JSUint16Array*>(object), offset, length);
+            exec, offset, jsCast<JSUint16Array*>(object), objectOffset, length, type);
     case TypeUint32:
         return setWithSpecificType<Uint32Adaptor>(
-            exec, jsCast<JSUint32Array*>(object), offset, length);
+            exec, offset, jsCast<JSUint32Array*>(object), objectOffset, length, type);
     case TypeFloat32:
         return setWithSpecificType<Float32Adaptor>(
-            exec, jsCast<JSFloat32Array*>(object), offset, length);
+            exec, offset, jsCast<JSFloat32Array*>(object), objectOffset, length, type);
     case TypeFloat64:
         return setWithSpecificType<Float64Adaptor>(
-            exec, jsCast<JSFloat64Array*>(object), offset, length);
+            exec, offset, jsCast<JSFloat64Array*>(object), objectOffset, length, type);
     case NotTypedArray:
     case TypeDataView: {
         if (!validateRange(exec, offset, length))
             return false;
+
         // We could optimize this case. But right now, we don't.
         for (unsigned i = 0; i < length; ++i) {
-            JSValue value = object->get(exec, i);
+            JSValue value = object->get(exec, i + objectOffset);
             if (!setIndex(exec, offset + i, value))
                 return false;
         }

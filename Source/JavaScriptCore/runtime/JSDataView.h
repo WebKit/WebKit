@@ -48,7 +48,7 @@ public:
     // placate some template specialization we do elsewhere.
     static JSDataView* createUninitialized(ExecState*, Structure*, unsigned length);
     static JSDataView* create(ExecState*, Structure*, unsigned length);
-    bool set(ExecState*, JSObject*, unsigned offset, unsigned length);
+    bool set(ExecState*, unsigned, JSObject*, unsigned, unsigned length);
     bool setIndex(ExecState*, unsigned, JSValue);
     
     ArrayBuffer* buffer() const { return m_buffer; }

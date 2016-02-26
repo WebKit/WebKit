@@ -1,3 +1,45 @@
+2016-02-26  Keith Miller  <keith_miller@apple.com>
+
+        Native Typed Array functions should use Symbol.species
+        https://bugs.webkit.org/show_bug.cgi?id=154569
+
+        Reviewed by Michael Saboff.
+
+        This patch adds support for Symbol.species in the native Typed Array prototype
+        functions. Additionally, now that other types of typedarrays are creatable inside
+        the slice we use the JSGenericTypedArrayView::set function, which has been beefed
+        up, to put everything into the correct place.
+
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::set):
+        * runtime/JSDataView.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewFromIterator):
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::setWithSpecificType):
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewProtoFuncSubarray):
+        * tests/stress/typedarray-slice.js:
+        (subclasses.typedArrays.map):
+        (testSpecies):
+        (forEach):
+        (subclasses.forEach):
+        (testSpeciesRemoveConstructor):
+        (testSpeciesWithSameBuffer):
+        * tests/stress/typedarray-subarray.js: Added.
+        (subclasses.typedArrays.map):
+        (testSpecies):
+        (forEach):
+        (subclasses.forEach):
+        (testSpeciesRemoveConstructor):
+
 2016-02-26  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add32(Imm, Tmp, Tmp) does not ZDef the destination if Imm is zero

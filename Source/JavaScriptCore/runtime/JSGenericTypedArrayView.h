@@ -83,6 +83,11 @@ JS_EXPORT_PRIVATE const ClassInfo* getFloat64ArrayClassInfo();
 //     template<T> static T::Type convertTo(uint8_t);
 // };
 
+enum class CopyType {
+    LeftToRight,
+    Unobservable,
+};
+
 template<typename Adaptor>
 class JSGenericTypedArrayView : public JSArrayBufferView {
 public:
@@ -217,10 +222,10 @@ public:
     // Like canSetQuickly, except: if it returns false, it will throw the
     // appropriate exception.
     bool validateRange(ExecState*, unsigned offset, unsigned length);
-    
+
     // Returns true if successful, and false on error; if it returns false
     // then it will have thrown an exception.
-    bool set(ExecState*, JSObject*, unsigned offset, unsigned length);
+    bool set(ExecState*, unsigned offset, JSObject*, unsigned objectOffset, unsigned length, CopyType type = CopyType::Unobservable);
     
     PassRefPtr<typename Adaptor::ViewType> typedImpl()
     {
@@ -291,8 +296,8 @@ private:
     // Returns true if successful, and false on error; it will throw on error.
     template<typename OtherAdaptor>
     bool setWithSpecificType(
-        ExecState*, JSGenericTypedArrayView<OtherAdaptor>*,
-        unsigned offset, unsigned length);
+        ExecState*, unsigned offset, JSGenericTypedArrayView<OtherAdaptor>*,
+        unsigned objectOffset, unsigned length, CopyType);
 
     // The ECMA 6 spec states that floating point Typed Arrays should have the following ordering:
     //
