@@ -1,3 +1,29 @@
+2016-02-26  Keith Rollin  <krollin@apple.com>
+
+        Enhance logging: Add "always on" macros
+        https://bugs.webkit.org/show_bug.cgi?id=154498
+        <rdar://problem/24757759>
+
+        Reviewed by Chris Dumez.
+
+        Add support for efficient always-on logging (logging that is available
+        in both debug and release builds). This is implemented in the form of
+        some new macros:
+
+        - LOG_ALWAYS: Always log information-level statements.
+        - LOG_ALWAYS_ERROR: Always log error-level statements. These can be
+          filtered out of the normal logging so that they can be found more
+          easily.
+
+        In cases where there is no efficient underlying facility for it to
+        utilize, LOG_ALWAYS_ERROR is redirected to WTFReportError as a backup
+        mechanism. LOG_ALWAYS is not given a similar treatment so that we
+        don't overwhelm other logging systems that aren't prepared for "always
+        on" logging.
+
+        * wtf/Assertions.h:
+        * wtf/Platform.h:
+
 2016-02-26  Anders Carlsson  <andersca@apple.com>
 
         Add WTF::OptionSet and use it for the website data types enum
