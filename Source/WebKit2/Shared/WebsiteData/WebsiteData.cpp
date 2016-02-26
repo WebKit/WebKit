@@ -36,6 +36,7 @@ void WebsiteData::Entry::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << WebCore::SecurityOriginData::fromSecurityOrigin(*origin);
     encoder.encodeEnum(type);
+    encoder << size;
 }
 
 bool WebsiteData::Entry::decode(IPC::ArgumentDecoder& decoder, WebsiteData::Entry& result)
@@ -45,6 +46,9 @@ bool WebsiteData::Entry::decode(IPC::ArgumentDecoder& decoder, WebsiteData::Entr
         return false;
 
     if (!decoder.decodeEnum(result.type))
+        return false;
+
+    if (!decoder.decode(result.size))
         return false;
 
     result.origin = securityOriginData.securityOrigin();

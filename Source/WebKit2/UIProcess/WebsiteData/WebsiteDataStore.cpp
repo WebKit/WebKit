@@ -150,11 +150,12 @@ static ProcessAccessType computeWebProcessAccessTypeForDataFetch(OptionSet<Websi
     return processAccessType;
 }
 
-void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
+void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
 {
     struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
-            : completionHandler(WTFMove(completionHandler))
+        explicit CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
+            : fetchOptions(fetchOptions)
+            , completionHandler(WTFMove(completionHandler))
         {
         }
 
@@ -183,6 +184,14 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::func
                     record.displayName = WTFMove(displayName);
 
                 record.add(entry.type, WTFMove(entry.origin));
+
+                if (fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes)) {
+                    if (!record.size)
+                        record.size = WebsiteDataRecord::Size { 0, { } };
+
+                    record.size->totalSize += entry.size;
+                    record.size->typeSizes.add(static_cast<unsigned>(entry.type), 0).iterator->value += entry.size;
+                }
             }
 
             for (auto& hostName : websiteData.hostNamesWithCookies) {
@@ -232,13 +241,15 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::func
             });
         }
 
+        const OptionSet<WebsiteDataFetchOption> fetchOptions;
+
         unsigned pendingCallbacks = 0;
         std::function<void (Vector<WebsiteDataRecord>)> completionHandler;
 
         HashMap<String, WebsiteDataRecord> m_websiteDataRecords;
     };
 
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(fetchOptions, WTFMove(completionHandler)));
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataFetch(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
@@ -258,7 +269,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::func
             }
 
             callbackAggregator->addPendingCallback();
-            processPool->networkProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
+            processPool->networkProcess()->fetchWebsiteData(m_sessionID, dataTypes, fetchOptions, [callbackAggregator, processPool](WebsiteData websiteData) {
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         }
@@ -296,7 +307,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::func
             WebsiteData websiteData;
 
             while (!origins.isEmpty())
-                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::SessionStorage });
+                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::SessionStorage, 0 });
 
             callbackAggregator->removePendingCallback(WTFMove(websiteData));
         });
@@ -309,7 +320,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::func
             WebsiteData websiteData;
 
             while (!origins.isEmpty())
-                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::LocalStorage });
+                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::LocalStorage, 0 });
 
             callbackAggregator->removePendingCallback(WTFMove(websiteData));
         });
@@ -320,19 +331,25 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::func
 
         callbackAggregator->addPendingCallback();
 
-        m_queue->dispatch([applicationCacheDirectory, callbackAggregator] {
+        m_queue->dispatch([fetchOptions, applicationCacheDirectory, callbackAggregator] {
             auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+
+            WebsiteData* websiteData = new WebsiteData;
 
             HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
             storage->getOriginsWithCache(origins);
 
-            WTF::RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
-                WebsiteData websiteData;
+            for (auto& origin : origins) {
+                uint64_t size = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? storage->diskUsageForOrigin(*origin) : 0;
+                WebsiteData::Entry entry { origin, WebsiteDataType::OfflineWebApplicationCache, size };
 
-                for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::OfflineWebApplicationCache });
+                websiteData->entries.append(WTFMove(entry));
+            }
 
-                callbackAggregator->removePendingCallback(WTFMove(websiteData));
+            WTF::RunLoop::main().dispatch([callbackAggregator, origins, websiteData]() mutable {
+                callbackAggregator->removePendingCallback(WTFMove(*websiteData));
+
+                delete websiteData;
             });
         });
     }
@@ -349,7 +366,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::func
             RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::WebSQLDatabases });
+                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::WebSQLDatabases, 0 });
 
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
@@ -380,7 +397,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, std::func
             RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::MediaKeys });
+                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::MediaKeys, 0 });
 
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });

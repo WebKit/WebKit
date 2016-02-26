@@ -1117,7 +1117,7 @@ void WebProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType
 
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
         for (auto& origin : MemoryCache::singleton().originsWithCache(sessionID))
-            websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::MemoryCache });
+            websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::MemoryCache, 0 });
     }
 
     parentProcessConnection()->send(Messages::WebProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);

@@ -35,6 +35,7 @@
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
@@ -479,7 +480,7 @@ static NSSet *dataTypes()
 
 - (IBAction)fetchWebsiteData:(id)sender
 {
-    [_configuration.websiteDataStore fetchDataRecordsOfTypes:dataTypes() completionHandler:^(NSArray *websiteDataRecords) {
+    [_configuration.websiteDataStore _fetchDataRecordsOfTypes:dataTypes() withOptions:_WKWebsiteDataStoreFetchOptionComputeSizes completionHandler:^(NSArray *websiteDataRecords) {
         NSLog(@"did fetch website data %@.", websiteDataRecords);
     }];
 }

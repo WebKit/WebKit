@@ -52,7 +52,7 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WKResourceCachesToClear cac
 void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef cacheManager, void* context, WKResourceCacheManagerGetCacheOriginsFunction callback)
 {
     auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(cacheManager))->websiteDataStore();
-    websiteDataStore.fetchData(toWebsiteDataTypes(WKResourceCachesToClearAll), [context, callback](Vector<WebsiteDataRecord> dataRecords) {
+    websiteDataStore.fetchData(toWebsiteDataTypes(WKResourceCachesToClearAll), { }, [context, callback](Vector<WebsiteDataRecord> dataRecords) {
         Vector<RefPtr<API::Object>> securityOrigins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)

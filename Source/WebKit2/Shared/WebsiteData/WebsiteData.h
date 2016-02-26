@@ -27,6 +27,7 @@
 #define WebsiteData_h
 
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -43,6 +44,7 @@ struct WebsiteData {
     struct Entry {
         RefPtr<WebCore::SecurityOrigin> origin;
         WebsiteDataType type;
+        uint64_t size;
 
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, WebsiteData::Entry&);

@@ -1,5 +1,100 @@
 2016-02-26  Anders Carlsson  <andersca@apple.com>
 
+        WKWebsiteDataStore/WKWebsiteDataRecord needs to provide size information about each type of data
+        https://bugs.webkit.org/show_bug.cgi?id=154750
+
+        Reviewed by Tim Horton.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::fetchWebsiteData):
+        WebsiteData::Entry now takes a size.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        If necessary, compute sizes.
+
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        Just pass 0 for the CF cache for now.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        FetchWebsiteData now takes a OptionSet<WebsiteDataFetchOption>.
+
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::Entry::encode):
+        (WebKit::WebsiteData::Entry::decode):
+        Encode and decode the size.
+
+        * Shared/WebsiteData/WebsiteData.h:
+        Add size.
+
+        * Shared/WebsiteData/WebsiteDataFetchOption.h:
+        Add new enum.
+
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerGetApplicationCacheOrigins):
+        Pass an empty OptionSet<WebsiteDataFetchOption>.
+
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerGetCacheOrigins):
+        Pass an empty OptionSet<WebsiteDataFetchOption>.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (-[WKWebsiteDataRecord description]):
+        If we have a size, print it out as well.
+
+        (-[WKWebsiteDataRecord _dataSize]):
+        Return a size if we have one.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:]):
+        Call through to the SPI.
+
+        (-[WKWebsiteDataStore _fetchDataRecordsOfTypes:withOptions:completionHandler:]):
+        Compute the right options.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStoreInternal.h:
+        Import WKWebsiteDataStorePrivate.h.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        Add SPI.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataSize.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataSize.mm:
+        (-[_WKWebsiteDataSize initWithSize:]):
+        (-[_WKWebsiteDataSize totalSize]):
+        (-[_WKWebsiteDataSize sizeOfDataTypes:]):
+        Add _WKWebsiteDataSize header.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataSizeInternal.h: Add IPI header.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        This now takes a OptionSet<WebsiteDataFetchOption>.
+
+        * UIProcess/Network/NetworkProcessProxy.h:
+        Update members.
+
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        Add a hash map from types to sizes.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        This now takes a OptionSet<WebsiteDataFetchOption>.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Update member functions.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::fetchWebsiteData):
+        This now takes a OptionSet<WebsiteDataFetchOption>.
+
+2016-02-26  Anders Carlsson  <andersca@apple.com>
+
         Add a toWebsiteDataType and reimplement toWebsiteDataTypes using it
         https://bugs.webkit.org/show_bug.cgi?id=154746
 

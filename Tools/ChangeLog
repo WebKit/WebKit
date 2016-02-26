@@ -1,3 +1,15 @@
+2016-02-26  Anders Carlsson  <andersca@apple.com>
+
+        WKWebsiteDataStore/WKWebsiteDataRecord needs to provide size information about each type of data
+        https://bugs.webkit.org/show_bug.cgi?id=154750
+        rdar://problem/23861395
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController fetchWebsiteData:]):
+        Use the new WKWebsiteDataStore SPI to compute data sizes.
+
 2016-02-25  Gavin Barraclough  <barraclough@apple.com>
 
         RefCounter value changed callback should be called on all changes (not just zero edge).

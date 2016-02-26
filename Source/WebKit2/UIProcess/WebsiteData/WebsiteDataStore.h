@@ -46,6 +46,7 @@ namespace WebKit {
 class StorageManager;
 class WebPageProxy;
 class WebProcessPool;
+enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct WebsiteDataRecord;
 
@@ -74,7 +75,7 @@ public:
 
     static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
 
-    void fetchData(OptionSet<WebsiteDataType>, std::function<void (Vector<WebsiteDataRecord>)> completionHandler);
+    void fetchData(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, std::function<void (Vector<WebsiteDataRecord>)> completionHandler);
     void removeData(OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, std::function<void ()> completionHandler);
 

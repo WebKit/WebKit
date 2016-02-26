@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebsiteDataRecord.h>
+#import "config.h"
+#import "_WKWebsiteDataSizeInternal.h"
 
 #if WK_API_ENABLED
 
-NS_ASSUME_NONNULL_BEGIN
+#import "WKWebsiteDataRecordInternal.h"
 
-@class _WKWebsiteDataSize;
+@implementation _WKWebsiteDataSize
 
-WK_EXTERN NSString * const _WKWebsiteDataTypeHSTSCache WK_AVAILABLE(10_11, 9_0);
-WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_AVAILABLE(10_11, 9_0);
-WK_EXTERN NSString * const _WKWebsiteDataTypeSearchFieldRecentSearches WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (instancetype)initWithSize:(const WebKit::WebsiteDataRecord::Size&)size
+{
+    if (!(self = [super init]))
+        return nil;
 
-#if !TARGET_OS_IPHONE
-WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_AVAILABLE(10_11, NA);
-#endif
+    _size = size;
 
-@interface WKWebsiteDataRecord (WKPrivate)
+    return self;
+}
 
-@property (nullable, nonatomic, readonly) _WKWebsiteDataSize *_dataSize;
+- (unsigned long long)totalSize
+{
+    return _size.totalSize;
+}
+
+- (unsigned long long)sizeOfDataTypes:(NSSet<NSString *> *)dataTypes
+{
+    unsigned long long size = 0;
+
+    for (NSString *dataType in dataTypes) {
+        if (auto websiteDataType = WebKit::toWebsiteDataType(dataType))
+            size += _size.typeSizes.get(static_cast<unsigned>(*websiteDataType));
+    }
+    
+    return size;
+}
 
 @end
-
-NS_ASSUME_NONNULL_END
 
 #endif

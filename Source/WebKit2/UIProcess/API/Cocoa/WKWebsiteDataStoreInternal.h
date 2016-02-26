@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebsiteDataStore.h"
+#import "WKWebsiteDataStorePrivate.h"
 
 #if WK_API_ENABLED
 

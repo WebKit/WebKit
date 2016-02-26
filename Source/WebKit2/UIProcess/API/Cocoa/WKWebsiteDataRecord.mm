@@ -28,6 +28,8 @@
 
 #if WK_API_ENABLED
 
+#import "_WKWebsiteDataSizeInternal.h"
+
 NSString * const WKWebsiteDataTypeDiskCache = @"WKWebsiteDataTypeDiskCache";
 NSString * const WKWebsiteDataTypeMemoryCache = @"WKWebsiteDataTypeMemoryCache";
 NSString * const WKWebsiteDataTypeOfflineWebApplicationCache = @"WKWebsiteDataTypeOfflineWebApplicationCache";
@@ -92,7 +94,13 @@ static NSString *dataTypesToString(NSSet *dataTypes)
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; displayName = %@; dataTypes = { %@ }>", NSStringFromClass(self.class), self, self.displayName, dataTypesToString(self.dataTypes)];
+    auto result = adoptNS([[NSMutableString alloc] initWithFormat:@"<%@: %p; displayName = %@; dataTypes = { %@ }", NSStringFromClass(self.class), self, self.displayName, dataTypesToString(self.dataTypes)]);
+
+    if (auto* dataSize = self._dataSize)
+        [result appendFormat:@"; _dataSize = { %llu bytes }", dataSize.totalSize];
+
+    [result appendString:@">"];
+    return result.autorelease();
 }
 
 - (NSString *)displayName
@@ -110,6 +118,20 @@ static NSString *dataTypesToString(NSSet *dataTypes)
 - (API::Object&)_apiObject
 {
     return *_websiteDataRecord;
+}
+
+@end
+
+@implementation WKWebsiteDataRecord (WKPrivate)
+
+- (_WKWebsiteDataSize *)_dataSize
+{
+    auto& size = _websiteDataRecord->websiteDataRecord().size;
+
+    if (!size)
+        return nil;
+
+    return [[[_WKWebsiteDataSize alloc] initWithSize:*size] autorelease];
 }
 
 @end

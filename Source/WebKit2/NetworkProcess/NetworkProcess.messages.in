@@ -37,7 +37,7 @@ messages -> NetworkProcess LegacyReceiver {
     EnsurePrivateBrowsingSession(WebCore::SessionID sessionID)
     DestroyPrivateBrowsingSession(WebCore::SessionID sessionID)
 
-    FetchWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, uint64_t callbackID)
+    FetchWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions, uint64_t callbackID)
     DeleteWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
     DeleteWebsiteDataForOrigins(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins, Vector<String> cookieHostNames, uint64_t callbackID)
 

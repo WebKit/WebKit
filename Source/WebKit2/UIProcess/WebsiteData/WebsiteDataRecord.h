@@ -30,6 +30,7 @@
 #include <WebCore/SecurityOriginHash.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Optional.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -54,6 +55,13 @@ struct WebsiteDataRecord {
 
     String displayName;
     OptionSet<WebsiteDataType> types;
+
+    struct Size {
+        uint64_t totalSize;
+        HashMap<unsigned, uint64_t> typeSizes;
+    };
+    Optional<Size> size;
+
     HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
     HashSet<String> cookieHostNames;
 #if ENABLE(NETSCAPE_PLUGIN_API)

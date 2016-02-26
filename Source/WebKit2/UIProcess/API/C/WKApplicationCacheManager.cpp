@@ -40,7 +40,7 @@ WKTypeID WKApplicationCacheManagerGetTypeID()
 void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManager, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction callback)
 {
     auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
-    websiteDataStore.fetchData(WebsiteDataType::OfflineWebApplicationCache, [context, callback](Vector<WebsiteDataRecord> dataRecords) {
+    websiteDataStore.fetchData(WebsiteDataType::OfflineWebApplicationCache, { }, [context, callback](Vector<WebsiteDataRecord> dataRecords) {
         Vector<RefPtr<API::Object>> securityOrigins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)

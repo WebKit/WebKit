@@ -228,7 +228,7 @@ void DatabaseProcess::fetchWebsiteData(SessionID, OptionSet<WebsiteDataType> web
 
             RunLoop::main().dispatch([callbackAggregator, securityOrigins] {
                 for (const auto& securityOrigin : securityOrigins)
-                    callbackAggregator->m_websiteData.entries.append(WebsiteData::Entry { securityOrigin, WebsiteDataType::IndexedDBDatabases });
+                    callbackAggregator->m_websiteData.entries.append(WebsiteData::Entry { securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
             });
         }));
     }
