@@ -1,5 +1,17 @@
 2016-02-26  Anders Carlsson  <andersca@apple.com>
 
+        Add a toWebsiteDataType and reimplement toWebsiteDataTypes using it
+        https://bugs.webkit.org/show_bug.cgi?id=154746
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType):
+        (WebKit::toWebsiteDataTypes):
+        (WebKit::toWKWebsiteDataTypes):
+
+2016-02-26  Anders Carlsson  <andersca@apple.com>
+
         Add WTF::OptionSet and use it for the website data types enum
         https://bugs.webkit.org/show_bug.cgi?id=154733
 

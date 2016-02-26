@@ -30,6 +30,7 @@
 #import "APIWebsiteDataRecord.h"
 #import "WKObject.h"
 #import <wtf/OptionSet.h>
+#import <wtf/Optional.h>
 
 namespace WebKit {
 
@@ -39,46 +40,52 @@ inline WKWebsiteDataRecord *wrapper(API::WebsiteDataRecord& websiteDataRecord)
     return (WKWebsiteDataRecord *)websiteDataRecord.wrapper();
 }
 
-static inline OptionSet<WebKit::WebsiteDataType> toWebsiteDataTypes(NSSet *wkWebsiteDataTypes)
+static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataType)
 {
-    using WebsiteDataType = WebKit::WebsiteDataType;
-
-    OptionSet<WebKit::WebsiteDataType> websiteDataTypes;
-
-    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeCookies])
-        websiteDataTypes |= WebsiteDataType::Cookies;
-    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeDiskCache])
-        websiteDataTypes |= WebsiteDataType::DiskCache;
-    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeMemoryCache])
-        websiteDataTypes |= WebsiteDataType::MemoryCache;
-    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeOfflineWebApplicationCache])
-        websiteDataTypes |= WebsiteDataType::OfflineWebApplicationCache;
-    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeSessionStorage])
-        websiteDataTypes |= WebsiteDataType::SessionStorage;
-    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeLocalStorage])
-        websiteDataTypes |= WebsiteDataType::LocalStorage;
-    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeWebSQLDatabases])
-        websiteDataTypes |= WebsiteDataType::WebSQLDatabases;
-    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeIndexedDBDatabases])
-        websiteDataTypes |= WebsiteDataType::IndexedDBDatabases;
-    if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypeHSTSCache])
-        websiteDataTypes |= WebsiteDataType::HSTSCache;
-    if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypeMediaKeys])
-        websiteDataTypes |= WebsiteDataType::MediaKeys;
-    if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypeSearchFieldRecentSearches])
-        websiteDataTypes |= WebsiteDataType::SearchFieldRecentSearches;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeCookies])
+        return WebsiteDataType::Cookies;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeDiskCache])
+        return WebsiteDataType::DiskCache;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeMemoryCache])
+        return WebsiteDataType::MemoryCache;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeOfflineWebApplicationCache])
+        return WebsiteDataType::OfflineWebApplicationCache;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeSessionStorage])
+        return WebsiteDataType::SessionStorage;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeLocalStorage])
+        return WebsiteDataType::LocalStorage;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeWebSQLDatabases])
+        return WebsiteDataType::WebSQLDatabases;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeIndexedDBDatabases])
+        return WebsiteDataType::IndexedDBDatabases;
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeHSTSCache])
+        return WebsiteDataType::HSTSCache;
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeMediaKeys])
+        return WebsiteDataType::MediaKeys;
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeSearchFieldRecentSearches])
+        return WebsiteDataType::SearchFieldRecentSearches;
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypePlugInData])
-        websiteDataTypes |= WebsiteDataType::PlugInData;
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypePlugInData])
+        return WebsiteDataType::PlugInData;
 #endif
 
-    return websiteDataTypes;
+    return Nullopt;
+}
+
+static inline OptionSet<WebKit::WebsiteDataType> toWebsiteDataTypes(NSSet *websiteDataTypes)
+{
+    OptionSet<WebKit::WebsiteDataType> result;
+
+    for (NSString *websiteDataType in websiteDataTypes) {
+        if (auto dataType = toWebsiteDataType(websiteDataType))
+            result |= *dataType;
+    }
+
+    return result;
 }
 
 static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDataType> websiteDataTypes)
 {
-//    using WebsiteDataTypes = WebKit::WebsiteDataType;
-
     auto wkWebsiteDataTypes = adoptNS([[NSMutableSet alloc] init]);
 
     if (websiteDataTypes.contains(WebsiteDataType::Cookies))
