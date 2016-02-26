@@ -1315,8 +1315,9 @@ webkit.org/b/153883 webgl/1.0.3/conformance/extensions/oes-texture-half-float-li
 
 webkit.org/b/153871 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Pass Failure ]
 
-# This test is already run with run-jsc-stress-tests
+# These tests are already run with run-jsc-stress-tests
 webkit.org/b/153879 js/basic-set.html [ Skip ]
+webkit.org/b/154753 js/basic-map.html [ Skip ]
 
 # outline: auto -focusring.
 accessibility/mac/selection-element-tabbing-to-link.html [ Pass Failure ]

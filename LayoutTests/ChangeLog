@@ -1,3 +1,12 @@
+2016-02-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip js/basic-map.html on Mac since it is already run in JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=154753
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-02-26  Mark Lam  <mark.lam@apple.com>
 
         Function.name and Function.length should be configurable.
