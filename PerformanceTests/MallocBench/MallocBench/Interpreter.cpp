@@ -48,9 +48,12 @@ Interpreter::Interpreter(const char* fileName, bool shouldFreeAllObjects, bool u
     , m_currentThreadId(0)
     , m_ops(1024)
 {
-    m_fd = open(fileName, O_RDWR, S_IRUSR | S_IWUSR);
-    if (m_fd == -1)
-        fprintf(stderr, "failed to open\n");
+    m_fd = open(fileName, O_RDONLY);
+    if (m_fd == -1) {
+        fprintf(stderr, "Failed to open op file %s: ", fileName);
+        perror("");
+        exit(-1);
+    }
 
     struct stat buf;
     fstat(m_fd, &buf);
@@ -81,8 +84,10 @@ Interpreter::Interpreter(const char* fileName, bool shouldFreeAllObjects, bool u
 Interpreter::~Interpreter()
 {
     int result = close(m_fd);
-    if (result == -1)
-        fprintf(stderr, "failed to close\n");
+    if (result == -1) {
+        perror("Failed to close op file");
+        exit(-1);
+    }
 }
 
 void Interpreter::run()

@@ -24,6 +24,7 @@
 		1447AE9A18FB59E300B3D7FF /* reddit_memory_warning.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */; };
 		1447AE9B18FB59E600B3D7FF /* theverge_memory_warning.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */; };
 		1451FAED18B14B7100DB6D47 /* medium.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1451FAEB18B14B7100DB6D47 /* medium.cpp */; };
+		1486502A1C7CF1CC008AABFE /* nimlang.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 148650291C7CF182008AABFE /* nimlang.ops */; };
 		14976EC8177E3649006B819A /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976EC6177E3649006B819A /* list.cpp */; };
 		14976ECC177E3C87006B819A /* CommandLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECB177E3C87006B819A /* CommandLine.cpp */; };
 		14976ECE177E3D67006B819A /* Benchmark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECD177E3D67006B819A /* Benchmark.cpp */; };
@@ -49,6 +50,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
+				1486502A1C7CF1CC008AABFE /* nimlang.ops in Copy Files */,
 				1447AE9418FB589400B3D7FF /* reddit.ops in Copy Files */,
 				1447AE9918FB59E000B3D7FF /* flickr_memory_warning.ops in Copy Files */,
 				1447AE9B18FB59E600B3D7FF /* theverge_memory_warning.ops in Copy Files */,
@@ -90,6 +92,7 @@
 		1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = theverge_memory_warning.ops; path = MallocBench/theverge_memory_warning.ops; sourceTree = "<group>"; };
 		1451FAEB18B14B7100DB6D47 /* medium.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = medium.cpp; path = MallocBench/medium.cpp; sourceTree = "<group>"; };
 		1451FAEC18B14B7100DB6D47 /* medium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = medium.h; path = MallocBench/medium.h; sourceTree = "<group>"; };
+		148650291C7CF182008AABFE /* nimlang.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = nimlang.ops; path = MallocBench/nimlang.ops; sourceTree = "<group>"; };
 		14976EC6177E3649006B819A /* list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = list.cpp; path = MallocBench/list.cpp; sourceTree = "<group>"; };
 		14976EC7177E3649006B819A /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = list.h; path = MallocBench/list.h; sourceTree = "<group>"; };
 		14976EC9177E3B4A006B819A /* Benchmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Benchmark.h; sourceTree = "<group>"; };
@@ -120,7 +123,6 @@
 		65E401A51C657A87003C6E9C /* nimlang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nimlang.h; path = MallocBench/nimlang.h; sourceTree = "<group>"; };
 		65E401AA1C73B068003C6E9C /* alloc_free.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = alloc_free.cpp; path = MallocBench/alloc_free.cpp; sourceTree = "<group>"; };
 		65E401AB1C73B068003C6E9C /* alloc_free.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = alloc_free.h; path = MallocBench/alloc_free.h; sourceTree = "<group>"; };
-		65E401AD1C77E7C8003C6E9C /* nimlang.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = nimlang.ops; path = MallocBench/nimlang.ops; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -226,8 +228,8 @@
 				1444AE95177E8DF200F8030A /* message.h */,
 				14105E8018E13EEC003A106E /* realloc.cpp */,
 				65E401A41C657A87003C6E9C /* nimlang.cpp */,
-				65E401AD1C77E7C8003C6E9C /* nimlang.ops */,
 				65E401A51C657A87003C6E9C /* nimlang.h */,
+				148650291C7CF182008AABFE /* nimlang.ops */,
 				14105E8118E13EEC003A106E /* realloc.h */,
 				1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */,
 				1447AE8A18FB584200B3D7FF /* reddit.cpp */,

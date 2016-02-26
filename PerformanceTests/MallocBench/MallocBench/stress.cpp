@@ -124,7 +124,7 @@ void benchmark_stress(CommandLine&)
 {
     const size_t heapSize = 100 * MB;
     const size_t churnSize = .05 * heapSize;
-    const size_t churnCount = 10000;
+    const size_t churnCount = 1000;
     
     srandom(1); // For consistency between runs.
 
