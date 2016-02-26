@@ -1,3 +1,18 @@
+2016-02-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r197158.
+        https://bugs.webkit.org/show_bug.cgi?id=154758
+
+        This change did not fix the failing test (Requested by
+        ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION(r195795): [WK2] fast/text/crash-complex-text-
+        surrogate.html is flakey"
+        https://bugs.webkit.org/show_bug.cgi?id=154709
+        http://trac.webkit.org/changeset/197158
+
 2016-02-26  Anders Carlsson  <andersca@apple.com>
 
         WKWebsiteDataStore/WKWebsiteDataRecord needs to provide size information about each type of data
