@@ -1,3 +1,11 @@
+2016-02-26  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Mavericks build.
+
+        * wtf/FeatureDefines.h:
+        This feature flag is fully covered by FeatureDefines.xcconfig,
+        no need for it here.
+
 2016-01-27  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r194559. rdar://problem/24269083

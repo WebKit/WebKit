@@ -258,10 +258,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
 #endif
 
-#if !defined(ENABLE_MAC_GESTURE_EVENTS) && USE(APPLE_INTERNAL_SDK)
-#define ENABLE_MAC_GESTURE_EVENTS 1
-#endif
-
 #endif /* PLATFORM(MAC) */
 
 /* --------- Apple Windows port --------- */
