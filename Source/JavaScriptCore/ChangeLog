@@ -1,3 +1,23 @@
+2016-02-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Temporal Dead Zone checks on "this" are eliminated when doing OSR Entry to FTL
+        https://bugs.webkit.org/show_bug.cgi?id=154664
+
+        Reviewed by Saam Barati.
+
+        When doing OSR Enter into a constructor, we lose the information
+        that this may have been set to empty by a previously executed block.
+
+        All the code just assumed the type for a FlushedJS value and thus
+        not an empty value. It was then okay to eliminate the TDZ checks.
+
+        In this patch, the values on root entry now assume they may be empty.
+        As a result, the SetArgument() for "this" has "empty" as possible
+        type and the TDZ checks are no longer eliminated.
+
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+
 2016-02-25  Ada Chan  <adachan@apple.com>
 
         Update the definition of ENABLE_VIDEO_PRESENTATION_MODE for Mac platform
