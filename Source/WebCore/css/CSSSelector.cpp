@@ -299,6 +299,9 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
 #if ENABLE(VIDEO_TRACK)
     case PseudoElementCue:
 #endif
+#if ENABLE(SHADOW_DOM)
+    case PseudoElementSlotted:
+#endif
     case PseudoElementUnknown:
     case PseudoElementUserAgentCustom:
     case PseudoElementWebKitCustom:
@@ -644,8 +647,18 @@ String CSSSelector::selectorText(const String& rightSide) const
                 ASSERT_NOT_REACHED();
             }
         } else if (cs->match() == CSSSelector::PseudoElement) {
-            str.appendLiteral("::");
-            str.append(cs->value());
+            switch (cs->pseudoElementType()) {
+#if ENABLE(SHADOW_DOM)
+            case CSSSelector::PseudoElementSlotted:
+                str.appendLiteral("::slotted(");
+                cs->selectorList()->buildSelectorsText(str);
+                str.append(')');
+                break;
+#endif
+            default:
+                str.appendLiteral("::");
+                str.append(cs->value());
+            }
         } else if (cs->isAttributeSelector()) {
             str.append('[');
             const AtomicString& prefix = cs->attribute().prefix();

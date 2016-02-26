@@ -181,6 +181,9 @@ namespace WebCore {
             PseudoElementScrollbarTrack,
             PseudoElementScrollbarTrackPiece,
             PseudoElementSelection,
+#if ENABLE(SHADOW_DOM)
+            PseudoElementSlotted,
+#endif
             PseudoElementUserAgentCustom,
             PseudoElementWebKitCustom,
         };

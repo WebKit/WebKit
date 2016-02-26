@@ -36,6 +36,7 @@
 #include "CSSSelectorList.h"
 #include "CSSValueKeywords.h"
 #include "HTMLElement.h"
+#include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "RenderRegion.h"
@@ -206,6 +207,10 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 #if ENABLE(SHADOW_DOM)
     if (m_element.shadowRoot())
         matchHostPseudoClassRules(includeEmptyRules);
+
+    auto* parent = m_element.parentNode();
+    if (parent && parent->shadowRoot())
+        matchSlottedPseudoElementRules(includeEmptyRules);
 #endif
 
     clearMatchedRules();
@@ -240,6 +245,62 @@ void ElementRuleCollector::matchHostPseudoClassRules(bool includeEmptyRules)
     // but is not necessarily exactly what is needed.
     // FIXME: Match the spec when it is finalized.
     sortAndTransferMatchedRules();
+}
+
+void ElementRuleCollector::matchSlottedPseudoElementRules(bool includeEmptyRules)
+{
+    auto* hostShadowRoot = m_element.parentNode()->shadowRoot();
+    ASSERT(hostShadowRoot);
+    auto* slot = hostShadowRoot->findAssignedSlot(m_element);
+    if (!slot)
+        return;
+    auto* shadowAuthorStyle = hostShadowRoot->styleResolver().ruleSets().authorStyle();
+    if (!shadowAuthorStyle)
+        return;
+    // Find out if there are any ::slotted rules in the shadow tree matching the current slot.
+    // FIXME: This is really part of the slot style and could be cached when resolving it.
+    ElementRuleCollector collector(*slot, *shadowAuthorStyle, nullptr);
+    auto slottedPseudoElementRules = collector.collectSlottedPseudoElementRulesForSlot(includeEmptyRules);
+    if (slottedPseudoElementRules.isEmpty())
+        return;
+
+    clearMatchedRules();
+    m_result.ranges.lastAuthorRule = m_result.matchedProperties().size() - 1;
+
+    {
+        // Match in the current scope.
+        TemporaryChange<bool> change(m_isMatchingSlottedPseudoElements, true);
+
+        MatchRequest matchRequest(nullptr, includeEmptyRules);
+        auto ruleRange = m_result.ranges.authorRuleRange();
+        collectMatchingRulesForList(&slottedPseudoElementRules, matchRequest, ruleRange);
+    }
+
+    // FIXME: What is the correct order?
+    sortAndTransferMatchedRules();
+}
+
+RuleSet::RuleDataVector ElementRuleCollector::collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules)
+{
+    ASSERT(is<HTMLSlotElement>(m_element));
+
+    clearMatchedRules();
+
+    m_mode = SelectorChecker::Mode::CollectingRules;
+
+    // Match global author rules.
+    MatchRequest matchRequest(&m_authorStyle, includeEmptyRules);
+    StyleResolver::RuleRange ruleRange = m_result.ranges.authorRuleRange();
+    collectMatchingRulesForList(&m_authorStyle.slottedPseudoElementRules(), matchRequest, ruleRange);
+
+    if (m_matchedRules.isEmpty())
+        return { };
+
+    RuleSet::RuleDataVector ruleDataVector;
+    ruleDataVector.reserveInitialCapacity(m_matchedRules.size());
+    for (auto& matchedRule : m_matchedRules)
+        ruleDataVector.uncheckedAppend(*matchedRule.ruleData);
+    return ruleDataVector;
 }
 #endif
 
@@ -283,6 +344,20 @@ void ElementRuleCollector::matchUARules(RuleSet* rules)
 
     sortAndTransferMatchedRules();
 }
+
+#if ENABLE(SHADOW_DOM)
+static const CSSSelector* findSlottedPseudoElementSelector(const CSSSelector* selector)
+{
+    for (; selector; selector = selector->tagHistory()) {
+        if (selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementSlotted) {
+            if (auto* list = selector->selectorList())
+                return list->first();
+            break;
+        }
+    };
+    return nullptr;
+}
+#endif
 
 inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned& specificity)
 {
@@ -356,9 +431,17 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     } else
 #endif // ENABLE(CSS_SELECTOR_JIT)
     {
+        auto* selector = ruleData.selector();
+#if ENABLE(SHADOW_DOM)
+        if (m_isMatchingSlottedPseudoElements) {
+            selector = findSlottedPseudoElementSelector(ruleData.selector());
+            if (!selector)
+                return false;
+        }
+#endif
         // Slow path.
         SelectorChecker selectorChecker(m_element.document());
-        selectorMatches = selectorChecker.match(*ruleData.selector(), m_element, context, specificity);
+        selectorMatches = selectorChecker.match(*selector, m_element, context, specificity);
     }
 
     commitStyleRelations(context.styleRelations);

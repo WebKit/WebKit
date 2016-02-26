@@ -1,3 +1,23 @@
+2016-02-26  Antti Koivisto  <antti@apple.com>
+
+        Implement ::slotted pseudo element
+        https://bugs.webkit.org/show_bug.cgi?id=149441
+        <rdar://problem/22731987>
+
+        Reviewed by Andreas Kling.
+
+        * fast/shadow-dom/css-scoping-shadow-slotted-rule.html:
+
+            Enable the test, fix it and update it to the current spec.
+
+        * fast/shadow-dom/slotted-pseudo-element-css-text-expected.txt: Added.
+        * fast/shadow-dom/slotted-pseudo-element-css-text.html: Added.
+
+            Add parsing/cssText test based on a Blink test.
+            There are a few failures due to * not roundtripping and the parser being too lenient with pseudo elements.
+
+        * platform/mac/TestExpectations:
+
 2016-02-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Sync web-platform-tests up to revision 5ca8b46

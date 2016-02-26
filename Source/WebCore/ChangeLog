@@ -1,3 +1,65 @@
+2016-02-25  Antti Koivisto  <antti@apple.com>
+
+        Implement ::slotted pseudo element
+        https://bugs.webkit.org/show_bug.cgi?id=149441
+        <rdar://problem/22731987>
+
+        Reviewed by Andreas Kling.
+
+        Based on latest in https://github.com/w3c/webcomponents/issues/331
+
+        * css/CSSGrammar.y.in:
+
+            Parse ::slotted.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoElementCueFunctionSelector):
+        (WebCore::CSSParserSelector::parsePseudoElementSlottedFunctionSelector):
+
+            Tokenize ::slotted.
+
+        (WebCore::CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector):
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        * css/CSSSelector.h:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchHostPseudoClassRules):
+        (WebCore::ElementRuleCollector::matchSlottedPseudoElementRules):
+
+            Match ::slotted selector.
+
+        (WebCore::ElementRuleCollector::collectSlottedPseudoElementRulesForSlot):
+
+            Collect ::slotted rules that may apply to an element in a slot.
+
+        (WebCore::ElementRuleCollector::matchUserRules):
+        (WebCore::ElementRuleCollector::matchUARules):
+        (WebCore::findSlottedPseudoElementSelector):
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/ElementRuleCollector.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+
+            Collect ::slotted rules.
+
+        (WebCore::RuleSet::shrinkToFit):
+        * css/RuleSet.h:
+        (WebCore::RuleSet::hostPseudoClassRules):
+        (WebCore::RuleSet::slottedPseudoElementRules):
+        (WebCore::RuleSet::focusPseudoClassRules):
+        (WebCore::RuleSet::universalRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::resolve):
+
+            Disable style sharing for children of shadow host. They may be affected by the shadow tree style
+            which is not considered in style sharing checks.
+
 2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font size computed style is innaccurate

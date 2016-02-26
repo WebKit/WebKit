@@ -365,6 +365,12 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 #endif
 
+#if ENABLE_SHADOW_DOM
+
+%token <string> SLOTTEDFUNCTION
+
+#endif
+
 %%
 
 stylesheet:
@@ -1355,6 +1361,11 @@ pseudo:
     // used by ::cue(:past/:future)
     | ':' ':' CUEFUNCTION maybe_space simple_selector_list maybe_space ')' {
         $$ = CSSParserSelector::parsePseudoElementCueFunctionSelector($3, $5);
+    }
+#endif
+#if ENABLE_SHADOW_DOM
+    | ':' ':' SLOTTEDFUNCTION maybe_space compound_selector maybe_space ')' {
+        $$ = CSSParserSelector::parsePseudoElementSlottedFunctionSelector($3, $5);
     }
 #endif
     // use by :-webkit-any.

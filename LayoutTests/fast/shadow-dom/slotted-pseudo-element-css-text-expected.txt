@@ -1,0 +1,27 @@
+
+PASS ::slotted { display: block; } 
+PASS ::slotted() { display: block; } 
+PASS ::slotted(*) { display: block; } 
+FAIL *::slotted(*) { display: block; } assert_equals: expected "*::slotted(*) { display: block; }" but got "::slotted(*) { display: block; }"
+PASS ::slotted(div) { display: block; } 
+PASS ::slotted( div) { display: block; } 
+PASS ::slotted(div ) { display: block; } 
+PASS ::slotted(div::before) { display: block; } 
+PASS .foo::slotted(div) { color: blue; } 
+PASS #id::slotted(*) { color: blue; } 
+PASS [attr=foo]::slotted(*) { color: blue; } 
+PASS .foo .bar::slotted(div) { color: blue; } 
+FAIL .foo::before .bar::slotted(div) { color: blue; } assert_equals: expected "" but got ".foo::before .bar::slotted(div) { color: blue; }"
+FAIL .foo::slotted(div) .bar { color: blue; } assert_equals: expected "" but got ".foo::slotted(div) .bar { color: blue; }"
+PASS ::slotted(div, div) { color: blue; } 
+PASS ::slotted(div div) { color: blue; } 
+PASS slot::slotted(.green) { color: green; } 
+PASS slot::slotted(#green) { color: green; } 
+PASS slot::slotted([green=green]) { color: green; } 
+PASS slot::slotted(div.green) { color: green; } 
+PASS div ::slotted(div) { color: red; } 
+PASS div + slot::slotted(div) { color: red; } 
+PASS span::slotted(*) { color: red; } 
+FAIL ::slotted(span)::slotted(span) { color: red; } assert_equals: expected "" but got "::slotted(span)::slotted(span) { color: red; }"
+PASS ::slotted(::slotted(div)) { color: red; } 
+

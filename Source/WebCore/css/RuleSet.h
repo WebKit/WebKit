@@ -184,6 +184,7 @@ public:
 #endif
 #if ENABLE(SHADOW_DOM)
     const RuleDataVector& hostPseudoClassRules() const { return m_hostPseudoClassRules; }
+    const RuleDataVector& slottedPseudoElementRules() const { return m_slottedPseudoElementRules; }
 #endif
     const RuleDataVector* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
     const RuleDataVector* universalRules() const { return &m_universalRules; }
@@ -210,6 +211,7 @@ private:
 #endif
 #if ENABLE(SHADOW_DOM)
     RuleDataVector m_hostPseudoClassRules;
+    RuleDataVector m_slottedPseudoElementRules;
 #endif
     RuleDataVector m_focusPseudoClassRules;
     RuleDataVector m_universalRules;

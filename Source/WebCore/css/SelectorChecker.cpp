@@ -44,6 +44,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLProgressElement.h"
+#include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
@@ -1038,7 +1039,13 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         return false;
     }
 #endif
-    // ### add the rest of the checks...
+#if ENABLE(SHADOW_DOM)
+    if (selector.match() == CSSSelector::PseudoElement && selector.pseudoElementType() == CSSSelector::PseudoElementSlotted) {
+        // We see ::slotted() pseudo elements when collecting slotted rules from the slot shadow tree only.
+        ASSERT(checkingContext.resolvingMode == Mode::CollectingRules);
+        return is<HTMLSlotElement>(element);
+    }
+#endif
     return true;
 }
 

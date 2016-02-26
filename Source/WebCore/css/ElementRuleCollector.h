@@ -73,6 +73,8 @@ private:
     void matchUARules(RuleSet*);
 #if ENABLE(SHADOW_DOM)
     void matchHostPseudoClassRules(bool includeEmptyRules);
+    void matchSlottedPseudoElementRules(bool includeEmptyRules);
+    RuleSet::RuleDataVector collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
 #endif
 
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
@@ -98,6 +100,9 @@ private:
     PseudoStyleRequest m_pseudoStyleRequest { NOPSEUDO };
     bool m_sameOriginOnly { false };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
+#if ENABLE(SHADOW_DOM)
+    bool m_isMatchingSlottedPseudoElements { false };
+#endif
 
     Vector<MatchedRule, 64> m_matchedRules;
 
