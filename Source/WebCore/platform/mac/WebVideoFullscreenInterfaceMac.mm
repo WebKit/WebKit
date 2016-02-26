@@ -72,6 +72,14 @@ using namespace WebCore;
 
 @implementation WebPlaybackControlsManager
 
+@synthesize contentDuration;
+@synthesize timing;
+@synthesize seekToTime;
+@synthesize seekableTimeRanges;
+@synthesize hasEnabledAudio;
+@synthesize hasEnabledVideo;
+@synthesize rate;
+
 - (instancetype)initWithWebVideoFullscreenInterfaceMac:(WebCore::WebVideoFullscreenInterfaceMac*)webVideoFullscreenInterfaceMac
 {
     if (!(self = [super init]))
