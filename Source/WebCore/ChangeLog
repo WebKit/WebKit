@@ -1,3 +1,17 @@
+2016-02-25  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r196744): NetworkExtension.framework and NEFilterSource class are not available on Recovery partition
+        <http://webkit.org/b/154703>
+
+        Reviewed by Andy Estes.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm: Make
+        soft-linking of NetworkExtension.framework and NEFilterSource
+        class optional since they are not available on the Recovery
+        partition.  Note that NetworkExtensionContentFilter::enabled()
+        does not need to change since it already had the correct
+        behavior when getNEFilterSourceClass() returned nullptr.
+
 2016-02-25  Ada Chan  <adachan@apple.com>
 
         Update the definition of ENABLE_VIDEO_PRESENTATION_MODE for Mac platform

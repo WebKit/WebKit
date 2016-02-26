@@ -38,8 +38,8 @@
 #import "URL.h"
 #import <objc/runtime.h>
 
-SOFT_LINK_FRAMEWORK(NetworkExtension);
-SOFT_LINK_CLASS(NetworkExtension, NEFilterSource);
+SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
+SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
 
 #if HAVE(MODERN_NE_FILTER_SOURCE)
 static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo)
