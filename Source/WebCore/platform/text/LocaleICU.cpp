@@ -50,17 +50,6 @@ std::unique_ptr<Locale> Locale::create(const AtomicString& locale)
 
 LocaleICU::LocaleICU(const char* locale)
     : m_locale(locale)
-#if !UCONFIG_NO_FORMATTING
-    , m_numberFormat(0)
-    , m_didCreateDecimalFormat(false)
-#endif
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    , m_shortDateFormat(0)
-    , m_mediumTimeFormat(0)
-    , m_shortTimeFormat(0)
-    , m_didCreateShortDateFormat(false)
-    , m_didCreateTimeFormat(false)
-#endif
 {
 }
 

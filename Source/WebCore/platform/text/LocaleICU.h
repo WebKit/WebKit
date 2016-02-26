@@ -81,8 +81,8 @@ private:
     CString m_locale;
 
 #if !UCONFIG_NO_FORMATTING
-    UNumberFormat* m_numberFormat;
-    bool m_didCreateDecimalFormat;
+    UNumberFormat* m_numberFormat { nullptr };
+    bool m_didCreateDecimalFormat { false };
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
@@ -94,15 +94,15 @@ private:
     String m_timeFormatWithoutSeconds;
     String m_dateTimeFormatWithSeconds;
     String m_dateTimeFormatWithoutSeconds;
-    UDateFormat* m_shortDateFormat;
-    UDateFormat* m_mediumTimeFormat;
-    UDateFormat* m_shortTimeFormat;
+    UDateFormat* m_shortDateFormat { nullptr };
+    UDateFormat* m_mediumTimeFormat { nullptr };
+    UDateFormat* m_shortTimeFormat { nullptr };
     Vector<String> m_shortMonthLabels;
     Vector<String> m_standAloneMonthLabels;
     Vector<String> m_shortStandAloneMonthLabels;
     Vector<String> m_timeAMPMLabels;
-    bool m_didCreateShortDateFormat;
-    bool m_didCreateTimeFormat;
+    bool m_didCreateShortDateFormat { false };
+    bool m_didCreateTimeFormat { false };
 #endif
 };
 
