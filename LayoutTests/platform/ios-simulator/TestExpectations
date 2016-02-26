@@ -77,6 +77,16 @@ compositing/plugins
 http/tests/plugins
 fast/frames/sandboxed-iframe-plugins.html
 fast/loader/reload-zero-byte-plugin.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html
+http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html
 
 # Pointer-lock not supported on iOS
 pointer-lock

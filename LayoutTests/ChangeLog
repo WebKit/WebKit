@@ -1,3 +1,13 @@
+2016-02-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS Simulator] http/tests/security/contentSecurityPolicy/1.1/plugintypes tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=154652
+
+        Skip Content Security Policy plugin-types tests when run in the iOS simulator app because
+        plugins are not supported on iOS.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] [SVG -> OTF Converter] Support the SVG -> OTF Font Converter
