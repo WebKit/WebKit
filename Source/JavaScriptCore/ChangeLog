@@ -1,3 +1,17 @@
+2016-02-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add32(Imm, Tmp, Tmp) does not ZDef the destination if Imm is zero
+        https://bugs.webkit.org/show_bug.cgi?id=154704
+
+        Reviewed by Geoffrey Garen.
+
+        If the Imm is zero, we should still zero the top bits
+        to match the definition in AirOpcodes.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        * b3/testb3.cpp:
+
 2016-02-26  Oliver Hunt  <oliver@apple.com>
 
         Make testRegExp not crash when given an invalid regexp

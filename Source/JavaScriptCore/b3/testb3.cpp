@@ -412,6 +412,25 @@ void testAddImmMem32(int32_t a, int32_t b)
     CHECK(inputOutput == a + b);
 }
 
+void testAddArgZeroImmZDef()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* constZero = root->appendNew<Const32Value>(proc, Origin(), 0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            arg,
+            constZero));
+
+    auto code = compile(proc, 0);
+    CHECK(invoke<int64_t>(*code, 0x0123456789abcdef) == 0x89abcdef);
+}
+
 void testAddLoadTwice()
 {
     auto test = [&] (unsigned optLevel) {
@@ -10615,6 +10634,7 @@ void run(const char* filter)
     RUN_BINARY(testAddArgMem32, int32Operands(), int32Operands());
     RUN_BINARY(testAddMemArg32, int32Operands(), int32Operands());
     RUN_BINARY(testAddImmMem32, int32Operands(), int32Operands());
+    RUN(testAddArgZeroImmZDef());
     RUN(testAddLoadTwice());
 
     RUN(testAddArgDouble(M_PI));
