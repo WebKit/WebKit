@@ -34,9 +34,6 @@
 #if USE(WEBP)
 
 #include "webp/decode.h"
-#if USE(QCMSLIB) && (WEBP_DECODER_ABI_VERSION > 0x200)
-#define QCMS_WEBP_COLOR_CORRECTION
-#endif
 
 namespace WebCore {
 
@@ -56,18 +53,7 @@ private:
     bool m_hasAlpha;
     int m_formatFlags;
 
-#ifdef QCMS_WEBP_COLOR_CORRECTION
-    qcms_transform* colorTransform() const { return m_transform; }
-    void createColorTransform(const char* data, size_t);
-    void readColorProfile(const uint8_t* data, size_t);
-    void applyColorProfile(const uint8_t* data, size_t, ImageFrame&);
-
-    bool m_haveReadProfile;
-    qcms_transform* m_transform;
-    int m_decodedHeight;
-#else
     void applyColorProfile(const uint8_t*, size_t, ImageFrame&) { };
-#endif
     void clear();
 };
 

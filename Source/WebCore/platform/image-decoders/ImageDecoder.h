@@ -38,15 +38,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(QCMSLIB)
-#include "qcms.h"
-#if OS(DARWIN)
-#include "GraphicsContextCG.h"
-#include <ApplicationServices/ApplicationServices.h>
-#include <wtf/RetainPtr.h>
-#endif
-#endif
-
 namespace WebCore {
 
     // ImageFrame represents the decoded image data.  This buffer is what all
@@ -345,38 +336,6 @@ namespace WebCore {
 
             return !memcmp(&profileData[12], "mntr", 4) || !memcmp(&profileData[12], "scnr", 4);
         }
-
-#if USE(QCMSLIB)
-        static qcms_profile* qcmsOutputDeviceProfile()
-        {
-            static qcms_profile* outputDeviceProfile = 0;
-
-            static bool qcmsInitialized = false;
-            if (!qcmsInitialized) {
-                qcmsInitialized = true;
-                // FIXME: Add optional ICCv4 support.
-#if OS(DARWIN)
-                RetainPtr<CGColorSpaceRef> monitorColorSpace = adoptCF(CGDisplayCopyColorSpace(CGMainDisplayID()));
-                CFDataRef iccProfile(CGColorSpaceCopyICCProfile(monitorColorSpace.get()));
-                if (iccProfile) {
-                    size_t length = CFDataGetLength(iccProfile);
-                    const unsigned char* systemProfile = CFDataGetBytePtr(iccProfile);
-                    outputDeviceProfile = qcms_profile_from_memory(systemProfile, length);
-                    CFRelease(iccProfile);
-                }
-#endif
-                if (outputDeviceProfile && qcms_profile_is_bogus(outputDeviceProfile)) {
-                    qcms_profile_release(outputDeviceProfile);
-                    outputDeviceProfile = 0;
-                }
-                if (!outputDeviceProfile)
-                    outputDeviceProfile = qcms_profile_sRGB();
-                if (outputDeviceProfile)
-                    qcms_profile_precache_output_transform(outputDeviceProfile);
-            }
-            return outputDeviceProfile;
-        }
-#endif
 
         // Sets the "decode failure" flag.  For caller convenience (since so
         // many callers want to return false after calling this), returns false

@@ -1,3 +1,41 @@
+2016-02-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove libqcms support
+        https://bugs.webkit.org/show_bug.cgi?id=154707
+
+        Reviewed by Žan Doberšek.
+
+        No new tests. This change simply removes dead code.
+
+        * platform/image-decoders/ImageDecoder.h: Remove QCMS support.
+        (WebCore::ImageDecoder::qcmsOutputDeviceProfile): Deleted.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp: Remove QCMS support.
+        (WebCore::JPEGImageReader::JPEGImageReader): Deleted.
+        (WebCore::JPEGImageReader::close): Deleted.
+        (WebCore::JPEGImageReader::decode): Deleted.
+        (WebCore::JPEGImageReader::colorTransform): Deleted.
+        (WebCore::JPEGImageReader::createColorTransform): Deleted.
+        (WebCore::JPEGImageDecoder::outputScanlines): Deleted.
+        * platform/image-decoders/png/PNGImageDecoder.cpp: Remove QCMS support.
+        (WebCore::PNGImageReader::PNGImageReader): Deleted.
+        (WebCore::PNGImageReader::close): Deleted.
+        (WebCore::PNGImageReader::rowBuffer): Deleted.
+        (WebCore::PNGImageReader::createRowBuffer): Deleted.
+        (WebCore::PNGImageReader::colorTransform): Deleted.
+        (WebCore::PNGImageReader::createColorTransform): Deleted.
+        (WebCore::PNGImageDecoder::headerAvailable): Deleted.
+        (WebCore::PNGImageDecoder::rowAvailable): Deleted.
+        (WebCore::PNGImageDecoder::frameComplete): Deleted.
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp: Remove QCMS support.
+        (WebCore::WEBPImageDecoder::decode): Remove QCMS support.
+        (WebCore::WEBPImageDecoder::WEBPImageDecoder): Deleted.
+        (WebCore::WEBPImageDecoder::clear): Deleted.
+        (WebCore::WEBPImageDecoder::createColorTransform): Deleted.
+        (WebCore::WEBPImageDecoder::readColorProfile): Deleted.
+        (WebCore::WEBPImageDecoder::applyColorProfile): Deleted.
+        * platform/image-decoders/webp/WEBPImageDecoder.h: Remove QCMS support.
+        (WebCore::WEBPImageDecoder::colorTransform): Deleted.
+
 2016-02-26  Zalan Bujtas  <zalan@apple.com>
 
         RenderTheme::controlSize* methods should take const RenderStyle&.
