@@ -85,7 +85,7 @@ PassRefPtr<Font> FontCache::getSystemFontFallbackForCharacters(const FontDescrip
     if (!substituteFont)
         return nullptr;
 
-    substituteFont = applyFontFeatureSettings(substituteFont.get(), description.textRenderingMode(), nullptr, nullptr, description.featureSettings(), description.variantSettings());
+    substituteFont = applyFontFeatureSettings(substituteFont.get(), nullptr, nullptr, description.featureSettings(), description.variantSettings());
 
     CTFontSymbolicTraits originalTraits = CTFontGetSymbolicTraits(ctFont);
     CTFontSymbolicTraits actualTraits = 0;
@@ -700,7 +700,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (!ctFont)
         return nullptr;
 
-    ctFont = applyFontFeatureSettings(ctFont.get(), fontDescription.textRenderingMode(), nullptr, nullptr, fontDescription.featureSettings(), fontDescription.variantSettings());
+    ctFont = applyFontFeatureSettings(ctFont.get(), nullptr, nullptr, fontDescription.featureSettings(), fontDescription.variantSettings());
 
     CTFontSymbolicTraits actualTraits = 0;
     if (isFontWeightBold(fontDescription.weight()) || fontDescription.italic())

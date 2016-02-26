@@ -1,5 +1,9 @@
 2016-02-26  Babak Shafiei  <bshafiei@apple.com>
 
+        Roll out r196637. rdar://problem/24494562
+
+2016-02-26  Babak Shafiei  <bshafiei@apple.com>
+
         Merge patch for rdar://problem/24826901.
 
 2016-02-19  Matthew Hanson  <matthew_hanson@apple.com>
