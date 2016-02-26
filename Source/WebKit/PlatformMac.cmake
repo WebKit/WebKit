@@ -57,20 +57,10 @@ list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
     mac/WebCoreSupport
     mac/WebInspector
     mac/WebView
-    Storage
 )
 
 list(APPEND WebKit_SOURCES
     cf/WebCoreSupport/WebInspectorClientCF.cpp
-
-    Storage/StorageAreaImpl.cpp
-    Storage/StorageAreaSync.cpp
-    Storage/StorageNamespaceImpl.cpp
-    Storage/StorageSyncManager.cpp
-    Storage/StorageThread.cpp
-    Storage/StorageTracker.cpp
-    Storage/WebDatabaseProvider.cpp
-    Storage/WebStorageNamespaceProvider.cpp
 
     mac/Carbon/CarbonUtils.m
     mac/Carbon/CarbonWindowAdapter.mm

@@ -48,7 +48,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}/../include/private"
     "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
     "${CMAKE_BINARY_DIR}/../include/private/WebCore"
-    Storage
     win
     win/plugins
     win/WebCoreSupport
@@ -135,15 +134,6 @@ list(APPEND WebKit_INCLUDES
 )
 
 list(APPEND WebKit_SOURCES_Classes
-    Storage/StorageAreaImpl.cpp
-    Storage/StorageAreaSync.cpp
-    Storage/StorageNamespaceImpl.cpp
-    Storage/StorageSyncManager.cpp
-    Storage/StorageThread.cpp
-    Storage/StorageTracker.cpp
-    Storage/WebDatabaseProvider.cpp
-    Storage/WebStorageNamespaceProvider.cpp
-
     cf/WebCoreSupport/WebInspectorClientCF.cpp
 
     win/AccessibleBase.cpp

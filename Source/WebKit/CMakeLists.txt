@@ -2,12 +2,23 @@ cmake_minimum_required(VERSION 2.8.12)
 include(WebKitCommon)
 
 set(WebKit_SOURCES
+    Storage/StorageAreaImpl.cpp
+    Storage/StorageAreaSync.cpp
+    Storage/StorageNamespaceImpl.cpp
+    Storage/StorageSyncManager.cpp
+    Storage/StorageThread.cpp
+    Storage/StorageTracker.cpp
+    Storage/WebDatabaseProvider.cpp
+    Storage/WebStorageNamespaceProvider.cpp
+
     WebCoreSupport/WebResourceLoadScheduler.cpp
     WebCoreSupport/WebViewGroup.cpp
 )
 
 set(WebKit_INCLUDE_DIRECTORIES
+    Storage
     WebCoreSupport
+
     "${CMAKE_BINARY_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
     "${DERIVED_SOURCES_DIR}"
