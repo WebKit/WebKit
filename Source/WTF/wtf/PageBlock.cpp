@@ -26,6 +26,10 @@
 #include "config.h"
 #include "PageBlock.h"
 
+#if OS(DARWIN)
+#include <mach/vm_page_size.h>
+#endif
+
 #if OS(UNIX)
 #include <unistd.h>
 #endif
@@ -40,7 +44,14 @@ namespace WTF {
 static size_t s_pageSize;
 static size_t s_pageMask;
 
-#if OS(UNIX)
+#if OS(DARWIN)
+
+inline size_t systemPageSize()
+{
+    return vm_kernel_page_size;
+}
+
+#elif OS(UNIX)
 
 inline size_t systemPageSize()
 {

@@ -1,3 +1,17 @@
+2016-02-26  Andreas Kling  <akling@apple.com>
+
+        [Darwin] Use vm_kernel_page_size for WTF::pageSize().
+        <https://webkit.org/b/154726>
+
+        Reviewed by Antti Koivisto.
+
+        Make sure we use the right VM page size on Darwin systems.
+        On devices where the native page size is 4 KB, it's both
+        possible and profitable to madvise in smaller chunks.
+
+        * wtf/PageBlock.cpp:
+        (WTF::systemPageSize):
+
 2016-02-25  Gavin Barraclough  <barraclough@apple.com>
 
         Replace RefCounter::Token implementation with RefPtr
