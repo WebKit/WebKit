@@ -3,13 +3,13 @@ Tests the behavior of a few Node API parameters that should be nullable
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS xmlDoc.documentElement.lookupPrefix('undefined') is "c"
-PASS xmlDoc.documentElement.lookupPrefix(null) is null
-PASS xmlDoc.documentElement.lookupPrefix(undefined) is null
+PASS element.lookupPrefix('undefined') is "c"
+PASS element.lookupPrefix(null) is null
+PASS element.lookupPrefix(undefined) is null
 
-PASS xmlDoc.documentElement.lookupNamespaceURI('undefined') is "test"
-PASS xmlDoc.documentElement.lookupNamespaceURI(null) is null
-PASS xmlDoc.documentElement.lookupNamespaceURI(undefined) is null
+PASS element.lookupNamespaceURI('undefined') is "test"
+PASS element.lookupNamespaceURI(null) is "http://www.w3.org/1999/xhtml"
+PASS element.lookupNamespaceURI(undefined) is "http://www.w3.org/1999/xhtml"
 
 PASS element.isDefaultNamespace('undefined') is true
 PASS element.isDefaultNamespace(undefined) is false

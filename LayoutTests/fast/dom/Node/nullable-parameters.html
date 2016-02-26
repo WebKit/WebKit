@@ -1,26 +1,19 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script>
-function loadXML(url)
-{
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, false);
-    xhr.send();
-    return xhr.responseXML;
-}
-
 description("Tests the behavior of a few Node API parameters that should be nullable");
 
-var xmlDoc = loadXML("resources/testDoc.xml");
-
-shouldBeEqualToString("xmlDoc.documentElement.lookupPrefix('undefined')", "c");
-shouldBeNull("xmlDoc.documentElement.lookupPrefix(null)");
-shouldBeNull("xmlDoc.documentElement.lookupPrefix(undefined)");
+var element = document.createElement("test");
+element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:c", "undefined");
+shouldBeEqualToString("element.lookupPrefix('undefined')", "c");
+shouldBeNull("element.lookupPrefix(null)");
+shouldBeNull("element.lookupPrefix(undefined)");
 
 debug("");
-xmlDoc = loadXML("resources/testDoc2.xml");
-shouldBeEqualToString("xmlDoc.documentElement.lookupNamespaceURI('undefined')", "test");
-shouldBeNull("xmlDoc.documentElement.lookupNamespaceURI(null)");
-shouldBeNull("xmlDoc.documentElement.lookupNamespaceURI(undefined)");
+element = document.createElement("test");
+element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:undefined", "test");
+shouldBeEqualToString("element.lookupNamespaceURI('undefined')", "test");
+shouldBeEqualToString("element.lookupNamespaceURI(null)", "http://www.w3.org/1999/xhtml");
+shouldBeEqualToString("element.lookupNamespaceURI(undefined)", "http://www.w3.org/1999/xhtml");
 
 debug("");
 var element = document.createElementNS("undefined", "test");
