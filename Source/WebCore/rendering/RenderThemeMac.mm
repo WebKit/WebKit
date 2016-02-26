@@ -1659,6 +1659,19 @@ void RenderThemeMac::adjustSearchFieldStyle(StyleResolver& styleResolver, Render
 
 bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& r)
 {
+    auto adjustedCancelButtonRect = [this, &box] (const FloatRect& localBoundsForCancelButton)
+    {
+        IntSize cancelButtonSizeBasedOnFontSize = sizeForSystemFont(box.style(), cancelButtonSizes());
+        FloatSize diff = localBoundsForCancelButton.size() - FloatSize(cancelButtonSizeBasedOnFontSize);
+        if (!diff.width() && !diff.height())
+            return localBoundsForCancelButton;
+        // Vertically centered and right aligned.
+        FloatRect adjustedLocalBoundsForCancelButton = localBoundsForCancelButton;
+        adjustedLocalBoundsForCancelButton.move(diff.width(), floorToDevicePixel(diff.height() / 2, box.document().deviceScaleFactor()));
+        adjustedLocalBoundsForCancelButton.setSize(cancelButtonSizeBasedOnFontSize);
+        return adjustedLocalBoundsForCancelButton;
+    };
+
     if (!box.element())
         return false;
     Element* input = box.element()->shadowHost();
@@ -1683,7 +1696,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
 
     float zoomLevel = box.style().effectiveZoom();
 
-    FloatRect localBounds = [search cancelButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))];
+    FloatRect localBounds = adjustedCancelButtonRect([search cancelButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
     FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
 
     FloatRect unzoomedRect(paintingPos, localBounds.size());
@@ -1694,7 +1707,6 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
         paintInfo.context().scale(FloatSize(zoomLevel, zoomLevel));
         paintInfo.context().translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
-
     [[search cancelButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(box)];
     [[search cancelButtonCell] setControlView:nil];
     return false;
@@ -1702,7 +1714,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
 
 const IntSize* RenderThemeMac::cancelButtonSizes() const
 {
-    static const IntSize sizes[3] = { IntSize(16, 13), IntSize(13, 11), IntSize(13, 9) };
+    static const IntSize sizes[3] = { IntSize(22, 22), IntSize(19, 19), IntSize(15, 15) };
     return sizes;
 }
 
