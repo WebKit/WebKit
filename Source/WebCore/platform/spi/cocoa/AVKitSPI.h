@@ -26,7 +26,7 @@
 #import "SoftLinking.h"
 #import <objc/runtime.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
 
 #import <AVKit/AVValueTiming.h>
 

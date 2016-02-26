@@ -1,5 +1,11 @@
 2016-02-26  Beth Dakin  <bdakin@apple.com>
 
+        Attempted build fix.
+
+        * platform/spi/cocoa/AVKitSPI.h:
+
+2016-02-26  Beth Dakin  <bdakin@apple.com>
+
         Add support for playbackControlsManager
         https://bugs.webkit.org/show_bug.cgi?id=154742
         -and corresponding-
