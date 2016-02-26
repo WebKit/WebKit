@@ -176,6 +176,8 @@ public:
 
     void updateActivePages();
 
+    void setHiddenPageTimerThrottlingIncreaseLimit(int milliseconds);
+
     void processWillSuspendImminently(bool& handled);
     void prepareToSuspend();
     void cancelPrepareToSuspend();

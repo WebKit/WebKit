@@ -499,6 +499,8 @@ public:
     void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
     bool showAllPlugins() const;
 
+    WEBCORE_EXPORT void setTimerAlignmentIntervalIncreaseLimit(std::chrono::milliseconds);
+
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -525,6 +527,7 @@ private:
     void setTimerThrottlingEnabled(bool);
     void setDOMTimerAlignmentInterval(double);
     void timerAlignmentIntervalIncreaseTimerFired();
+    bool timerThrottlingEnabled() const { return !!m_timerThrottlingEnabledTime; }
 
     const std::unique_ptr<Chrome> m_chrome;
     const std::unique_ptr<DragCaretController> m_dragCaretController;
@@ -613,6 +616,7 @@ private:
     Optional<double> m_timerThrottlingEnabledTime;
     double m_timerAlignmentInterval;
     Timer m_timerAlignmentIntervalIncreaseTimer;
+    double m_timerAlignmentIntervalIncreaseLimit { 0 };
 
     bool m_isEditable;
     bool m_isPrerender;

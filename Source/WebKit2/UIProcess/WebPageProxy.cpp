@@ -448,6 +448,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     updateViewState();
     updateActivityToken();
     updateProccessSuppressionState();
+    updateHiddenPageThrottlingAutoIncreases();
     
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     m_layerHostingMode = m_viewState & ViewState::IsInWindow ? m_pageClient.viewLayerHostingMode() : LayerHostingMode::OutOfProcess;
@@ -1489,6 +1490,14 @@ void WebPageProxy::updateProccessSuppressionState()
         m_preventProcessSuppressionCount = nullptr;
     else if (!m_preventProcessSuppressionCount)
         m_preventProcessSuppressionCount = m_process->processPool().processSuppressionDisabledForPageCount();
+}
+
+void WebPageProxy::updateHiddenPageThrottlingAutoIncreases()
+{
+    if (!m_preferences->hiddenPageDOMTimerThrottlingAutoIncreases())
+        m_hiddenPageDOMTimerThrottlingAutoIncreasesCount = nullptr;
+    else if (!m_hiddenPageDOMTimerThrottlingAutoIncreasesCount)
+        m_hiddenPageDOMTimerThrottlingAutoIncreasesCount = m_process->processPool().hiddenPageThrottlingAutoIncreasesCount();
 }
 
 void WebPageProxy::layerHostingModeDidChange()
@@ -2782,6 +2791,7 @@ void WebPageProxy::preferencesDidChange()
 #endif
 
     updateProccessSuppressionState();
+    updateHiddenPageThrottlingAutoIncreases();
 
     m_pageClient.preferencesDidChange();
 

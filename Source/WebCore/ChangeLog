@@ -1,3 +1,29 @@
+2016-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Page TimerAlignmentIntervalIncrease mechanism should have upper limit
+        https://bugs.webkit.org/show_bug.cgi?id=154744
+
+        Reviewed by Geoff Garen.
+
+        There would be diminishing returns from throttling timers in background pages infinitely.
+        Add a heuristic to limit appropriately.
+
+        Keep track of the current limit, and make the increase time take this into account.
+
+        * page/Page.cpp:
+        (WebCore::Page::setTimerThrottlingEnabled):
+            - When timer throttling is disabled visit all timers to resume.
+        (WebCore::Page::setTimerAlignmentIntervalIncreaseLimit):
+            - Track the maximum alignment interval, and call setDOMTimerAlignmentInterval
+              to ensure m_timerAlignmentInterval is updated in accordance with the new limit.
+        (WebCore::Page::setDOMTimerAlignmentInterval):
+            - When the timer alignemnt interval changes update the increase timer.
+        (WebCore::Page::timerAlignmentIntervalIncreaseTimerFired):
+            - Apply limit.
+        * page/Page.h:
+        (WebCore::Page::timerThrottlingEnabled):
+            - Accessor for readability.
+
 2016-02-26  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix.

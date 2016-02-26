@@ -1,3 +1,41 @@
+2016-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Page TimerAlignmentIntervalIncrease mechanism should have upper limit
+        https://bugs.webkit.org/show_bug.cgi?id=154744
+
+        Reviewed by Geoff Garen.
+
+        There would be diminishing returns from throttling timers in background pages infinitely.
+        Add a heuristic to limit appropriately.
+
+        The flow of data here is WebPageProxy informs WebProcessPool of the number of pages
+        participating in this mechanism, WebProcessPool computes an apropriate limit and pushes
+        this out to the WebProcesses, which in turn update each of their pages.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - Call updateHidenPageThrottingAutoIncreases on creation.
+        (WebKit::WebPageProxy::updateHidenPageThrottingAutoIncreases):
+            - If increasing timer throttling is enabled increment the counter on WebProcessPool.
+        (WebKit::WebPageProxy::preferencesDidChange):
+            - Call updateHidenPageThrottingAutoIncreases on preferences change.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+            - initialize new RefCounter.
+        (WebKit::WebProcessPool::updateHidenPageThrottingAutoIncreaseLimit):
+            - When count of participating pages changes, update the limit.
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setHiddenPageTimerThrottlingIncreaseLimit):
+            - Propagate limit to WebCore::Page.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setHiddenPageTimerThrottlingIncreaseLimit):
+            - Propagate limit to WebPages.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+            - Added new message.
+
 2016-02-26  Beth Dakin  <bdakin@apple.com>
 
         Attempted build fix.
