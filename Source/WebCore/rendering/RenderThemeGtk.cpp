@@ -741,7 +741,7 @@ void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver& styleResolver, Ren
     adjustMenuListStyle(styleResolver, style, e);
 }
 
-static void getComboBoxMetrics(RenderStyle& style, GtkBorder& border, int& focus)
+static void getComboBoxMetrics(const RenderStyle& style, GtkBorder& border, int& focus)
 {
     // If this menu list button isn't drawn using the native theme, we
     // don't add any extra padding beyond what WebCore already uses.
@@ -760,7 +760,7 @@ static void getComboBoxMetrics(RenderStyle& style, GtkBorder& border, int& focus
     focus = interiorFocus ? focusWidth + focusPad : 0;
 }
 
-int RenderThemeGtk::popupInternalPaddingLeft(RenderStyle& style) const
+int RenderThemeGtk::popupInternalPaddingLeft(const RenderStyle& style) const
 {
     GtkBorder borderWidth = { 0, 0, 0, 0 };
     int focusWidth = 0;
@@ -771,7 +771,7 @@ int RenderThemeGtk::popupInternalPaddingLeft(RenderStyle& style) const
     return left;
 }
 
-int RenderThemeGtk::popupInternalPaddingRight(RenderStyle& style) const
+int RenderThemeGtk::popupInternalPaddingRight(const RenderStyle& style) const
 {
     GtkBorder borderWidth = { 0, 0, 0, 0 };
     int focusWidth = 0;
@@ -782,7 +782,7 @@ int RenderThemeGtk::popupInternalPaddingRight(RenderStyle& style) const
     return right;
 }
 
-int RenderThemeGtk::popupInternalPaddingTop(RenderStyle& style) const
+int RenderThemeGtk::popupInternalPaddingTop(const RenderStyle& style) const
 {
     GtkBorder borderWidth = { 0, 0, 0, 0 };
     int focusWidth = 0;
@@ -790,7 +790,7 @@ int RenderThemeGtk::popupInternalPaddingTop(RenderStyle& style) const
     return borderWidth.top + focusWidth;
 }
 
-int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle& style) const
+int RenderThemeGtk::popupInternalPaddingBottom(const RenderStyle& style) const
 {
     GtkBorder borderWidth = { 0, 0, 0, 0 };
     int focusWidth = 0;

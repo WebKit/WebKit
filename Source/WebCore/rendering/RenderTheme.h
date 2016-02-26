@@ -180,14 +180,14 @@ public:
     void systemFont(CSSValueID, FontCascadeDescription&) const;
     virtual Color systemColor(CSSValueID) const;
 
-    virtual int minimumMenuListSize(RenderStyle&) const { return 0; }
+    virtual int minimumMenuListSize(const RenderStyle&) const { return 0; }
 
     virtual void adjustSliderThumbSize(RenderStyle&, Element*) const;
 
-    virtual int popupInternalPaddingLeft(RenderStyle&) const { return 0; }
-    virtual int popupInternalPaddingRight(RenderStyle&) const { return 0; }
-    virtual int popupInternalPaddingTop(RenderStyle&) const { return 0; }
-    virtual int popupInternalPaddingBottom(RenderStyle&) const { return 0; }
+    virtual int popupInternalPaddingLeft(const RenderStyle&) const { return 0; }
+    virtual int popupInternalPaddingRight(const RenderStyle&) const { return 0; }
+    virtual int popupInternalPaddingTop(const RenderStyle&) const { return 0; }
+    virtual int popupInternalPaddingBottom(const RenderStyle&) const { return 0; }
     virtual bool popupOptionSupportsTextIndent() const { return false; }
     virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const { return PopupMenuStyle::PopupMenuSizeNormal; }
 

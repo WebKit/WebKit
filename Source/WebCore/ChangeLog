@@ -1,5 +1,33 @@
 2016-02-26  Zalan Bujtas  <zalan@apple.com>
 
+        RenderTheme::controlSize* methods should take const RenderStyle&.
+        https://bugs.webkit.org/show_bug.cgi?id=154708
+
+        Reviewed by Darin Adler.
+
+        No change in functionality.
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::minimumMenuListSize):
+        (WebCore::RenderTheme::popupInternalPaddingLeft):
+        (WebCore::RenderTheme::popupInternalPaddingRight):
+        (WebCore::RenderTheme::popupInternalPaddingTop):
+        (WebCore::RenderTheme::popupInternalPaddingBottom):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::controlSizeForFont):
+        (WebCore::RenderThemeMac::sizeForFont):
+        (WebCore::RenderThemeMac::sizeForSystemFont):
+        (WebCore::RenderThemeMac::controlSizeForSystemFont):
+        (WebCore::RenderThemeMac::minimumProgressBarHeight):
+        (WebCore::RenderThemeMac::popupInternalPaddingLeft):
+        (WebCore::RenderThemeMac::popupInternalPaddingRight):
+        (WebCore::RenderThemeMac::popupInternalPaddingTop):
+        (WebCore::RenderThemeMac::popupInternalPaddingBottom):
+        (WebCore::RenderThemeMac::minimumMenuListSize):
+
+2016-02-26  Zalan Bujtas  <zalan@apple.com>
+
         REGRESSION (188611): Search field Cancel button should not overlap search text on extensions page.
         https://bugs.webkit.org/show_bug.cgi?id=154692
         <rdar://problem/22840453>

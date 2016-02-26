@@ -737,7 +737,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
     return true;
 }
 
-NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle& style) const
+NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
 {
     int fontSize = style.fontSize();
     if (fontSize >= 16)
@@ -767,7 +767,7 @@ void RenderThemeMac::setControlSize(NSCell* cell, const IntSize* sizes, const In
         [cell setControlSize:size];
 }
 
-IntSize RenderThemeMac::sizeForFont(RenderStyle& style, const IntSize* sizes) const
+IntSize RenderThemeMac::sizeForFont(const RenderStyle& style, const IntSize* sizes) const
 {
     if (style.effectiveZoom() != 1.0f) {
         IntSize result = sizes[controlSizeForFont(style)];
@@ -776,7 +776,7 @@ IntSize RenderThemeMac::sizeForFont(RenderStyle& style, const IntSize* sizes) co
     return sizes[controlSizeForFont(style)];
 }
 
-IntSize RenderThemeMac::sizeForSystemFont(RenderStyle& style, const IntSize* sizes) const
+IntSize RenderThemeMac::sizeForSystemFont(const RenderStyle& style, const IntSize* sizes) const
 {
     if (style.effectiveZoom() != 1.0f) {
         IntSize result = sizes[controlSizeForSystemFont(style)];
@@ -812,7 +812,7 @@ void RenderThemeMac::setFontFromControlSize(StyleResolver&, RenderStyle& style, 
         style.fontCascade().update(0);
 }
 
-NSControlSize RenderThemeMac::controlSizeForSystemFont(RenderStyle& style) const
+NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style) const
 {
     int fontSize = style.fontSize();
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSRegularControlSize])
@@ -1065,7 +1065,7 @@ IntRect RenderThemeMac::progressBarRectForBounds(const RenderObject& renderObjec
     return inflatedRect;
 }
 
-int RenderThemeMac::minimumProgressBarHeight(RenderStyle& style) const
+int RenderThemeMac::minimumProgressBarHeight(const RenderStyle& style) const
 {
     return sizeForSystemFont(style, progressBarSizes()).height();
 }
@@ -1344,7 +1344,7 @@ void RenderThemeMac::adjustMenuListStyle(StyleResolver& styleResolver, RenderSty
     style.setBoxShadow(nullptr);
 }
 
-int RenderThemeMac::popupInternalPaddingLeft(RenderStyle& style) const
+int RenderThemeMac::popupInternalPaddingLeft(const RenderStyle& style) const
 {
     if (style.appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[leftPadding] * style.effectiveZoom();
@@ -1353,7 +1353,7 @@ int RenderThemeMac::popupInternalPaddingLeft(RenderStyle& style) const
     return 0;
 }
 
-int RenderThemeMac::popupInternalPaddingRight(RenderStyle& style) const
+int RenderThemeMac::popupInternalPaddingRight(const RenderStyle& style) const
 {
     if (style.appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[rightPadding] * style.effectiveZoom();
@@ -1365,7 +1365,7 @@ int RenderThemeMac::popupInternalPaddingRight(RenderStyle& style) const
     return 0;
 }
 
-int RenderThemeMac::popupInternalPaddingTop(RenderStyle& style) const
+int RenderThemeMac::popupInternalPaddingTop(const RenderStyle& style) const
 {
     if (style.appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[topPadding] * style.effectiveZoom();
@@ -1374,7 +1374,7 @@ int RenderThemeMac::popupInternalPaddingTop(RenderStyle& style) const
     return 0;
 }
 
-int RenderThemeMac::popupInternalPaddingBottom(RenderStyle& style) const
+int RenderThemeMac::popupInternalPaddingBottom(const RenderStyle& style) const
 {
     if (style.appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[bottomPadding] * style.effectiveZoom();
@@ -1441,7 +1441,7 @@ const IntSize* RenderThemeMac::menuListSizes() const
     return sizes;
 }
 
-int RenderThemeMac::minimumMenuListSize(RenderStyle& style) const
+int RenderThemeMac::minimumMenuListSize(const RenderStyle& style) const
 {
     return sizeForSystemFont(style, menuListSizes()).width();
 }
