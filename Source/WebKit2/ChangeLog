@@ -1,3 +1,19 @@
+2016-02-25  Andreas Kling  <akling@apple.com>
+
+        [iOS] Enable PageCache backing store clearing optimization for WebKit2.
+        <https://webkit.org/b/154712>
+
+        Reviewed by Anders Carlsson.
+
+        We had an optimization for iOS where we'd tear down the compositing tree for
+        pages in the page cache, to save memory, but we were only enabling it when
+        instantiating a WebKit1 web view.
+
+        This patch enables the optimization for WebKit2 as well.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
 2016-02-25  Ada Chan  <adachan@apple.com>
 
         Update the definition of ENABLE_VIDEO_PRESENTATION_MODE for Mac platform
