@@ -1,3 +1,9 @@
+2016-02-26  Dan Bernstein  <mitz@apple.com>
+
+        Build fix for when WK_OVERRIDE_FRAMEWORKS_DIR contains spaces.
+
+        * Configurations/WebKitLegacy.xcconfig: Added quotes.
+
 2016-02-25  Ada Chan  <adachan@apple.com>
 
         Update the definition of ENABLE_VIDEO_PRESENTATION_MODE for Mac platform
