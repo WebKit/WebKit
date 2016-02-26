@@ -47,7 +47,7 @@
     return _size.totalSize;
 }
 
-- (unsigned long long)sizeOfDataTypes:(NSSet<NSString *> *)dataTypes
+- (unsigned long long)sizeOfDataTypes:(NSSet *)dataTypes
 {
     unsigned long long size = 0;
 
