@@ -1,3 +1,11 @@
+2016-02-26  Beth Dakin  <bdakin@apple.com>
+
+        Attempted build fix.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setUpVideoControlsManagerWithID):
+        (WebKit::WebVideoFullscreenManagerProxy::resetMediaState):
+
 2016-02-26  Anders Carlsson  <andersca@apple.com>
 
         Fix Yosemite build.

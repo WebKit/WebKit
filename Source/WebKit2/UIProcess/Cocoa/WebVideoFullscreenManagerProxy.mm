@@ -376,12 +376,16 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
 
 void WebVideoFullscreenManagerProxy::setUpVideoControlsManagerWithID(uint64_t contextId)
 {
+#if PLATFORM(MAC)
     RefPtr<WebVideoFullscreenModelContext> model;
     RefPtr<PlatformWebVideoFullscreenInterface> interface;
 
     std::tie(model, interface) = ensureModelAndInterface(contextId);
     m_controlsManagerContextId = contextId;
     interface->ensureControlsManager();
+#else
+    UNUSED_PARAM(contextId);
+#endif
 }
 
 void WebVideoFullscreenManagerProxy::resetMediaState(uint64_t contextId)
