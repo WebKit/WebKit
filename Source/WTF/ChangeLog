@@ -27,6 +27,28 @@
 
 2016-02-25  Gavin Barraclough  <barraclough@apple.com>
 
+        RefCounter value changed callback should be called on all changes (not just zero edge).
+        https://bugs.webkit.org/show_bug.cgi?id=154699
+
+        Reviewed by Anders Carlsson.
+
+        RefCounter currently only triggers a callback when the count goes from zero
+        to non-zero and vice-versa. Change that, to be useful to more clients.
+
+        * wtf/RefCounter.h:
+        (WTF::RefCounter::Count::Count):
+        (WTF::RefCounter::RefCounter):
+            - Removed superfluous WTF_EXPORT_PRIVATE.
+        (WTF::RefCounter::value):
+            - Changed value() to a size_t.
+        (WTF::RefCounter<T>::Count::ref):
+        (WTF::RefCounter<T>::Count::deref):
+            - Trigger the callback on all increments/decrements.
+        (WTF::RefCounter<T>::RefCounter):
+            - Changed siganture of callback.
+
+2016-02-25  Gavin Barraclough  <barraclough@apple.com>
+
         Replace RefCounter::Token implementation with RefPtr
         https://bugs.webkit.org/show_bug.cgi?id=154698
 

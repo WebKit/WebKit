@@ -72,12 +72,7 @@ inline void VNodeTracker::setPressureHandler(PressureHandler handler)
 
 inline auto VNodeTracker::token() -> Token
 {
-    if (!m_pressureHandler)
-        return Token();
-
-    Token token(m_vnodeCounter.count());
-    checkPressureState();
-    return token;
+    return m_pressureHandler ? m_vnodeCounter.count() : Token();
 }
 
 } // namespace WebCore

@@ -52,13 +52,15 @@ class RefCounter {
         }
 
         RefCounter* m_refCounter;
-        unsigned m_value;
+        size_t m_value;
     };
 
 public:
     using Token = RefPtr<Count>;
+    enum class Event { Decrement, Increment };
+    using ValueChangeFunction = std::function<void (Event)>;
 
-    RefCounter(std::function<void(bool)> = [](bool) { });
+    RefCounter(ValueChangeFunction = nullptr);
     ~RefCounter();
 
     Token count() const
@@ -66,47 +68,43 @@ public:
         return m_count;
     }
 
-    unsigned value() const
+    size_t value() const
     {
         return m_count->m_value;
     }
 
 private:
-    std::function<void(bool)> m_valueDidChange;
+    ValueChangeFunction m_valueDidChange;
     Count* m_count;
 };
 
 template<typename T>
 inline void RefCounter<T>::Count::ref()
 {
-    bool valueWasZero = !m_value;
     ++m_value;
-    
-    if (valueWasZero && m_refCounter)
-        m_refCounter->m_valueDidChange(true);
+    if (m_refCounter && m_refCounter->m_valueDidChange)
+        m_refCounter->m_valueDidChange(Event::Increment);
 }
 
 template<typename T>
 inline void RefCounter<T>::Count::deref()
 {
     ASSERT(m_value);
-    --m_value;
 
-    if (m_value)
-        return;
+    --m_value;
+    if (m_refCounter && m_refCounter->m_valueDidChange)
+        m_refCounter->m_valueDidChange(Event::Decrement);
 
     // The Count object is kept alive so long as either the RefCounter that created it remains
     // allocated, or so long as its reference count is non-zero.
     // If the RefCounter has already been deallocted then delete the Count when its reference
     // count reaches zero.
-    if (m_refCounter)
-        m_refCounter->m_valueDidChange(false);
-    else
+    if (!m_refCounter && !m_value)
         delete this;
 }
 
 template<typename T>
-inline RefCounter<T>::RefCounter(std::function<void(bool)> valueDidChange)
+inline RefCounter<T>::RefCounter(ValueChangeFunction valueDidChange)
     : m_valueDidChange(valueDidChange)
     , m_count(new Count(*this))
 {

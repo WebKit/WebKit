@@ -158,8 +158,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_canHandleHTTPSServerTrustEvaluation(true)
     , m_didNetworkProcessCrash(false)
     , m_memoryCacheDisabled(false)
-    , m_userObservablePageCounter([this](bool) { updateProcessSuppressionState(); })
-    , m_processSuppressionDisabledForPageCounter([this](bool) { updateProcessSuppressionState(); })
+    , m_userObservablePageCounter([this](UserObservablePageCounter::Event) { updateProcessSuppressionState(); })
+    , m_processSuppressionDisabledForPageCounter([this](ProcessSuppressionDisabledCounter::Event) { updateProcessSuppressionState(); })
 {
     for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())
         m_schemesToRegisterAsAlwaysRevalidated.add(scheme);

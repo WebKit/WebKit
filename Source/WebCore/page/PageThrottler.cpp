@@ -34,8 +34,8 @@ PageThrottler::PageThrottler(Page& page)
     : m_page(page)
     , m_userInputHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::UserInputActivity, state == HysteresisState::Started); })
     , m_audiblePluginHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::AudiblePlugin, state == HysteresisState::Started); })
-    , m_mediaActivityCounter([this](bool value) { setActivityFlag(PageActivityState::MediaActivity, value); })
-    , m_pageLoadActivityCounter([this](bool value) { setActivityFlag(PageActivityState::PageLoadActivity, value); })
+    , m_mediaActivityCounter([this](PageActivityCounter::Event) { setActivityFlag(PageActivityState::MediaActivity, m_mediaActivityCounter.value()); })
+    , m_pageLoadActivityCounter([this](PageActivityCounter::Event) { setActivityFlag(PageActivityState::PageLoadActivity, m_pageLoadActivityCounter.value()); })
 {
 }
 

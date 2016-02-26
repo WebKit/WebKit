@@ -1,3 +1,28 @@
+2016-02-25  Gavin Barraclough  <barraclough@apple.com>
+
+        RefCounter value changed callback should be called on all changes (not just zero edge).
+        https://bugs.webkit.org/show_bug.cgi?id=154699
+
+        Reviewed by Anders Carlsson.
+
+        RefCounter currently only triggers a callback when the count goes from zero
+        to non-zero and vice-versa. Change that, to be useful to more clients.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::PluginProcessManager):
+            - Updated for change in RefCounter callback siganture.
+        * UIProcess/Plugins/PluginProcessManager.h:
+            - Updated for change in RefCounter callback siganture.
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        (WebKit::PluginProcessManager::updateProcessSuppressionDisabled):
+            - updated logic for enabling process supression.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::ProcessThrottler):
+            - Updated for change in RefCounter callback siganture.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+            - Updated for change in RefCounter callback siganture.
+
 2016-02-26  Andreas Kling  <akling@apple.com>
 
         Remove unused CFNetwork disk cache mmap optimization in WebKit2.

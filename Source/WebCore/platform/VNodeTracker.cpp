@@ -39,7 +39,8 @@ VNodeTracker& VNodeTracker::singleton()
 }
 
 VNodeTracker::VNodeTracker()
-    : m_pressureWarningTimer(*this, &VNodeTracker::pressureWarningTimerFired)
+    : m_vnodeCounter([this](VNodeCounter::Event event) { if (event == VNodeCounter::Event::Increment) checkPressureState(); })
+    , m_pressureWarningTimer(*this, &VNodeTracker::pressureWarningTimerFired)
     , m_lastWarningTime(std::chrono::steady_clock::now())
 {
     platformInitialize();
@@ -67,7 +68,7 @@ void VNodeTracker::pressureWarningTimerFired()
     unsigned vnodeCount = m_vnodeCounter.value();
     auto critical = vnodeCount > m_hardVNodeLimit ? Critical::Yes : Critical::No;
     m_pressureHandler(critical);
-    LOG(MemoryPressure, "vnode pressure handler freed %d vnodes out of %u (critical pressure: %s)", vnodeCount - m_vnodeCounter.value(), vnodeCount, critical == Critical::Yes ? "Yes" : "No");
+    LOG(MemoryPressure, "vnode pressure handler freed %lu vnodes out of %u (critical pressure: %s)", vnodeCount - m_vnodeCounter.value(), vnodeCount, critical == Critical::Yes ? "Yes" : "No");
 }
 
 std::chrono::milliseconds VNodeTracker::nextPressureWarningInterval() const
