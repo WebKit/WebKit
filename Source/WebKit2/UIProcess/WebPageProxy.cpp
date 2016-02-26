@@ -5985,7 +5985,15 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     if ((oldState & MediaProducer::IsPlayingAudio) == (m_mediaState & MediaProducer::IsPlayingAudio))
         return;
 
+#if PLATFORM(MAC)
+    m_pageClient.isPlayingMediaDidChange();
+#endif
     m_uiClient->isPlayingAudioDidChange(*this);
+}
+
+bool WebPageProxy::isPlayingVideoWithAudio() const
+{
+    return m_mediaState & MediaProducer::IsPlayingAudio && m_mediaState & MediaProducer::IsPlayingVideo;
 }
 
 #if ENABLE(MEDIA_SESSION)

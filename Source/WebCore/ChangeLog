@@ -1,3 +1,60 @@
+2016-02-26  Beth Dakin  <bdakin@apple.com>
+
+        Add support for playbackControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=154742
+        -and corresponding-
+        rdar://problem/23833753
+
+        Reviewed by Jer Noble.
+
+        Make AVKitSPI.h private so that it can be used from other projects.
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Right now, set up a controls manager for a video when it starts playing. In 
+        the future, this is something that should be handled by the 
+        PlatformMediaSessionManager since we only want a controls for the 
+        currentSession.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playInternal):
+
+        New function setUpVideoControlsManager.
+        * page/ChromeClient.h:
+
+        Make these CoreMedia functions available on Mac and iOS instead of just iOS.
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+
+        This patch fleshes out an implementation for a bunch of these interface 
+        functions since they need to communicate to the playbackControlsManager. This 
+        is also where the playbackControlsManager lives.
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+
+        Define an interface and implementation for WebPlaybackControlsManager.
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (-[WebPlaybackControlsManager initWithWebVideoFullscreenInterfaceMac:]):
+        (-[WebPlaybackControlsManager isSeeking]):
+        (-[WebPlaybackControlsManager seekToTime:toleranceBefore:toleranceAfter:]):
+        (-[WebPlaybackControlsManager audioMediaSelectionOptions]):
+        (-[WebPlaybackControlsManager currentAudioMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentAudioMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager legibleMediaSelectionOptions]):
+        (-[WebPlaybackControlsManager currentLegibleMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentLegibleMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager cancelThumbnailAndAudioAmplitudeSampleGeneration]):
+
+        Relay this information to the playbackControlsManager.
+        (WebCore::WebVideoFullscreenInterfaceMac::setDuration):
+        (WebCore::WebVideoFullscreenInterfaceMac::setCurrentTime):
+        (WebCore::WebVideoFullscreenInterfaceMac::setRate):
+        (WebCore::WebVideoFullscreenInterfaceMac::setSeekableRanges):
+        (WebCore::WebVideoFullscreenInterfaceMac::ensureControlsManager):
+        (WebCore::WebVideoFullscreenInterfaceMac::playBackControlsManager):
+        (WebCore::WebVideoFullscreenInterfaceMac::setupFullscreen):
+
+        New SPI needed.
+        * platform/spi/cocoa/AVKitSPI.h:
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2016-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         <g> wrapping <symbol> causes display of hidden <symbol>

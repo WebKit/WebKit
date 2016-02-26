@@ -26,6 +26,22 @@
 #import "SoftLinking.h"
 #import <objc/runtime.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <AVKit/AVValueTiming.h>
+
+#else
+
+@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
+@end
+
+@interface AVValueTiming ()
++ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
+@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
 #if PLATFORM(IOS)
 #import <AVKit/AVKit.h>
 #import <QuartzCore/QuartzCore.h>
@@ -101,15 +117,6 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
-@end
-
-@interface AVValueTiming ()
-+ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
-@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
-@end
-
 #endif // PLATFORM(IOS)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
