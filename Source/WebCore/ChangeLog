@@ -1,3 +1,17 @@
+2016-02-25  David Kilzer  <ddkilzer@apple.com>
+
+        Change ASSERT to RELEASE_ASSERT in SOFT_LINK_CLASS() macro
+
+        Follow-up fix noted by Andy Estes for:
+
+            [Cocoa] Always check the return value of dlopen() and dlsym() in Release builds
+            <http://webkit.org/b/154364>
+
+        * platform/mac/SoftLinking.h:
+        (SOFT_LINK_CLASS): Change ASSERT to RELEASE_ASSERT to check the
+        return value of objc_getClass().  This matches what we do for
+        SOFT_LINK_CLASS_FOR_SOURCE().
+
 2016-02-25  Daniel Bates  <dabates@apple.com>
 
         CSP: Remove SecurityPolicy script interface

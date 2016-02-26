@@ -174,7 +174,7 @@
     { \
         framework##Library(); \
         class##className = objc_getClass(#className); \
-        ASSERT(class##className); \
+        RELEASE_ASSERT(class##className); \
         get##className##Class = className##Function; \
         return class##className; \
     } \
