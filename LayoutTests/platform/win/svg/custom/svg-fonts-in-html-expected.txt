@@ -27,14 +27,14 @@ layer at (173,47) size 454x188
         text run at (56,93) width 341: "GARDEN"
 layer at (173,119) size 454x21
   RenderBlock (positioned) {H2} at (0,87) size 454x22 [color=#EEFF00]
-    RenderInline {SPAN} at (0,0) size 149x19
-      RenderText {#text} at (152,1) size 88x19
-        text run at (152,1) width 88: "The Beauty of "
-      RenderInline {ACRONYM} at (0,0) size 22x19
-        RenderText {#text} at (239,1) size 22x19
-          text run at (239,1) width 22: "CSS"
-      RenderText {#text} at (260,1) size 41x19
-        text run at (260,1) width 41: " Design"
+    RenderInline {SPAN} at (0,0) size 155x19
+      RenderText {#text} at (149,1) size 92x19
+        text run at (149,1) width 92: "The Beauty of "
+      RenderInline {ACRONYM} at (0,0) size 23x19
+        RenderText {#text} at (240,1) size 23x19
+          text run at (240,1) width 23: "CSS"
+      RenderText {#text} at (262,1) size 42x19
+        text run at (262,1) width 42: " Design"
 layer at (173,351) size 454x135
   RenderBlock (positioned) {DIV} at (0,319) size 454x135
     RenderInline {P} at (0,0) size 431x29

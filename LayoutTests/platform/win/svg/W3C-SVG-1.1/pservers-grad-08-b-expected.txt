@@ -9,10 +9,10 @@ layer at (0,0) size 480x360
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
       RenderSVGText {text} at (20,22) size 448x57 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 448x57
-          chunk 1 text run 1 at (20.00,70.00) startOffset 0 endOffset 16 width 447.91: "Gradient on fill"
-      RenderSVGText {text} at (20,121) size 430x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 430x46
-          chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 18 width 429.20: "Gradient on stroke"
+          chunk 1 text run 1 at (20.00,70.00) startOffset 0 endOffset 16 width 447.14: "Gradient on fill"
+      RenderSVGText {text} at (20,121) size 428x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 428x46
+          chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 18 width 427.53: "Gradient on stroke"
     RenderSVGText {text} at (40,117) size 342x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 342x35
         chunk 1 text run 1 at (40.00,145.00) startOffset 0 endOffset 30 width 342.00: "Linear gradient on filled text"

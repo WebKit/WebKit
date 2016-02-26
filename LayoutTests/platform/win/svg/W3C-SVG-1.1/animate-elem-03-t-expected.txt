@@ -6,15 +6,15 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (20,48) size 322x210
       RenderSVGContainer {g} at (20,48) size 322x210
         RenderSVGContainer {g} at (20,48) size 322x210
-          RenderSVGText {text} at (20,48) size 215x40 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 215x40
-              chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 10 width 214.44: "Sample 123"
+          RenderSVGText {text} at (20,48) size 213x40 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 213x40
+              chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 10 width 213.00: "Sample 123"
           RenderSVGText {text} at (20,107) size 322x60 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 322x60
-              chunk 1 text run 1 at (20.00,155.00) startOffset 0 endOffset 10 width 321.66: "Sample 123"
-          RenderSVGText {text} at (20,218) size 215x40 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 215x40
-              chunk 1 text run 1 at (20.00,250.00) startOffset 0 endOffset 10 width 214.44: "Sample 123"
+              chunk 1 text run 1 at (20.00,155.00) startOffset 0 endOffset 10 width 322.00: "Sample 123"
+          RenderSVGText {text} at (20,218) size 213x40 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 213x40
+              chunk 1 text run 1 at (20.00,250.00) startOffset 0 endOffset 10 width 213.00: "Sample 123"
     RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 284x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 284.00: "$Revision: 1.10 $"

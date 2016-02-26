@@ -5,12 +5,9 @@ layer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (15,19) size 433x259
       RenderSVGContainer {g} at (15,19) size 433x259
-        RenderSVGText {text} at (163,19) size 154x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 154x20
-            chunk 1 (middle anchor) text run 1 at (163.04,35.00) startOffset 0 endOffset 10 width 98.92: "CSS select"
-            chunk 1 (middle anchor) text run 2 at (261.72,35.00) startOffset 10 endOffset 14 width 28.90: "or t"
-            chunk 1 (middle anchor) text run 3 at (290.34,35.00) startOffset 14 endOffset 16 width 21.12: "es"
-            chunk 1 (middle anchor) text run 4 at (311.40,35.00) startOffset 16 endOffset 17 width 5.56: "t"
+        RenderSVGText {text} at (162,19) size 156x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 155x20
+            chunk 1 (middle anchor) text run 1 at (162.50,35.00) startOffset 0 endOffset 17 width 155.00: "CSS selector test"
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (29,69) size 209x69
           RenderSVGRect {rect} at (29,69) size 69x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=70.00] [width=67.50] [height=67.50]
@@ -77,11 +74,8 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (15,238) size 10x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 9x18
               chunk 1 (middle anchor) text run 1 at (15.50,253.00) startOffset 0 endOffset 1 width 9.00: "3"
-    RenderSVGContainer {g} at (10,314) size 227x33
-      RenderSVGText {text} at (10,314) size 227x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 227x32
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
-          chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
-          chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
-          chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".8 $"
+    RenderSVGContainer {g} at (10,314) size 231x33
+      RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

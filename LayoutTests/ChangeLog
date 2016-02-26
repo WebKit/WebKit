@@ -1,3 +1,87 @@
+2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] [SVG -> OTF Converter] Support the SVG -> OTF Font Converter
+        https://bugs.webkit.org/show_bug.cgi?id=143402
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline many tests.
+
+        There are some known bugs (which are marked in platform/win/TestExpecations):
+        webkit.org/b/137204 The SVG -> OTF Font converter outputs 'kern' tables instead of 'GPOS' tables
+        webkit.org/b/154690 SVG Fonts don't draw multibyte characters
+        webkit.org/b/137096 The SVG -> OTF Font Converter does not work with SVG's "altglyph" facility
+        webkit.org/b/137093 Same thing with the "lang" attribute
+
+        * platform/win/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/text-text-06-t-expected.txt: Added.
+        * platform/win/TestExpectations:
+        * platform/win/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/text-fonts-03-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/text-intro-02-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/text-intro-03-b-expected.txt:
+        * platform/win/svg/batik/text/textEffect-expected.txt:
+        * platform/win/svg/batik/text/textEffect3-expected.txt:
+        * platform/win/svg/custom/glyph-selection-arabic-forms-expected.txt:
+        * platform/win/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/win/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/win/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/win/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/win/svg/hixie/intrinsic/003-expected.txt:
+        * platform/win/svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures-expected.txt:
+        * platform/win/svg/text/text-text-04-t-expected.txt:
+        * platform/win/svg/text/text-text-05-t-expected.txt:
+        * platform/win/svg/text/text-text-06-t-expected.txt:
+        * platform/win/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+
 2016-02-25  Daniel Bates  <dabates@apple.com>
 
         CSP: Remove SecurityPolicy script interface

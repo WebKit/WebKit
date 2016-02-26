@@ -20,9 +20,9 @@ layer at (0,0) size 785x848
                 RenderSVGRect {rect} at (0,0) size 295x295 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGEllipse {circle} at (0,0) size 295x295 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (39,88) size 217x121
-                  RenderSVGText {text} at (26,60) size 148x82 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 147x82
-                      chunk 1 (middle anchor) text run 1 at (26.90,125.00) startOffset 0 endOffset 3 width 146.21: "SVG"
+                  RenderSVGText {text} at (27,60) size 146x82 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 146x82
+                      chunk 1 (middle anchor) text run 1 at (27.12,125.00) startOffset 0 endOffset 3 width 145.76: "SVG"
           RenderText {#text} at (295,281) size 5x17
             text run at (295,281) width 5: " "
           RenderEmbeddedObject {object} at (299,147) size 148x148 [bgcolor=#FF0000]
@@ -36,7 +36,7 @@ layer at (0,0) size 785x848
                 RenderSVGContainer {g} at (19,44) size 110x61
                   RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
                     RenderSVGInlineText {#text} at (0,0) size 148x82
-                      chunk 1 (middle anchor) text run 1 at (26.44,125.00) startOffset 0 endOffset 3 width 147.13: "SVG"
+                      chunk 1 (middle anchor) text run 1 at (26.35,125.00) startOffset 0 endOffset 3 width 147.30: "SVG"
           RenderText {#text} at (446,281) size 5x17
             text run at (446,281) width 5: " "
           RenderEmbeddedObject {object} at (450,221) size 75x74 [bgcolor=#FF0000]
@@ -48,9 +48,9 @@ layer at (0,0) size 785x848
                 RenderSVGRect {rect} at (0,0) size 74x74 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGEllipse {circle} at (0,0) size 74x74 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (9,22) size 56x31
-                  RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 148x82
-                      chunk 1 (middle anchor) text run 1 at (26.44,125.00) startOffset 0 endOffset 3 width 147.13: "SVG"
+                  RenderSVGText {text} at (27,59) size 146x83 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 146x82
+                      chunk 1 (middle anchor) text run 1 at (27.03,125.00) startOffset 0 endOffset 3 width 145.95: "SVG"
           RenderText {#text} at (524,281) size 5x17
             text run at (524,281) width 5: " "
           RenderEmbeddedObject {object} at (528,258) size 38x37 [bgcolor=#FF0000]
@@ -62,9 +62,9 @@ layer at (0,0) size 785x848
                 RenderSVGRect {rect} at (0,0) size 37x37 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
                 RenderSVGEllipse {circle} at (0,0) size 37x37 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
                 RenderSVGContainer {g} at (4,11) size 29x16
-                  RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
-                    RenderSVGInlineText {#text} at (0,0) size 148x82
-                      chunk 1 (middle anchor) text run 1 at (26.44,125.00) startOffset 0 endOffset 3 width 147.13: "SVG"
+                  RenderSVGText {text} at (27,59) size 146x83 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 146x82
+                      chunk 1 (middle anchor) text run 1 at (27.03,125.00) startOffset 0 endOffset 3 width 145.95: "SVG"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {p} at (0,368) size 679x65
           RenderText {#text} at (0,0) size 672x32

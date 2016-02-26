@@ -21,14 +21,14 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (165,73) size 210x85 [transform={m=((1.00,0.00)(0.00,1.00)) t=(165.00,140.00)}]
         RenderSVGText {text} at (0,-67) size 210x85 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 210x84
-            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 209.71: "Ay\x{D6}@\x{E7}"
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 210.00: "Ay\x{D6}@\x{E7}"
       RenderSVGText {text} at (7,193) size 130x22 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 130x21
           chunk 1 text run 1 at (7.00,210.00) startOffset 0 endOffset 15 width 130.00: "Glyphs over SVG"
       RenderSVGContainer {g} at (165,143) size 210x85 [transform={m=((1.00,0.00)(0.00,1.00)) t=(165.00,210.00)}]
         RenderSVGText {text} at (0,-67) size 210x85 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 210x84
-            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 209.71: "Ay\x{D6}@\x{E7}"
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 210.00: "Ay\x{D6}@\x{E7}"
       RenderSVGContainer {g} at (168,155) size 205x72 [transform={m=((1.00,0.00)(0.00,-1.00)) t=(165.00,210.00)}]
         RenderSVGContainer {g} at (168,155) size 205x72 [transform={m=((0.03,0.00)(0.00,0.03)) t=(0.00,0.00)}]
           RenderSVGPath {path} at (168,166) size 37x45 [fill={[type=SOLID] [color=#000000]}] [data="M 1250 -30 C 1188.67 -30 1135.33 48.6667 1090 206 C 1072.67 266 1051 371 1025 521 C 957 511.667 868 495 758 471 L 492 416 C 458.667 328.667 401.667 201 321 33 C 299.667 -4.33333 270.667 -23 234 -23 C 207.333 -23 183.667 -13.3333 163 6 C 142.333 25.3333 131.667 49.3333 131 78 C 131 110 181.333 231.667 282 443 C 270.667 460.333 265 480.333 265 503 C 265 557 297.667 591.667 363 607 C 439 749.667 535 913.667 651 1099 C 809 1351.67 907.333 1478 946 1478 C 998.667 1478 1034.67 1441.33 1054 1368 L 1117 1032 L 1266 337 L 1323 179 C 1342.33 125 1352 89 1352 71 C 1352 42.3333 1341.67 18.3333 1321 -1 C 1300.33 -20.3333 1276.67 -30 1250 -30 Z M 897 1113 L 611 652 C 691.667 672.667 814 697.667 978 727 L 897 1113 Z"]

@@ -1,3 +1,17 @@
+2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] [SVG -> OTF Converter] Support the SVG -> OTF Font Converter
+        https://bugs.webkit.org/show_bug.cgi?id=143402
+
+        Reviewed by Alex Christensen.
+
+        Turn on by default, and turn on for Windows.
+
+        EFL and GTK already explicitly disable it in OptionsEfl.cmake and OptionsGTK.cmake.
+
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2016-02-24  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [web-animations] Add AnimationTimeline, DocumentTimeline and add extensions to Document interface
