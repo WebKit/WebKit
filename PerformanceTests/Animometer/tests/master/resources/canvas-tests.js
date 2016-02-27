@@ -12,9 +12,9 @@ CanvasLineSegment = Utilities.createClass(
         var theta = Stage.randomAngle();
         this._cosTheta = Math.cos(theta);
         this._sinTheta = Math.sin(theta);
-        this._startX = stage.circleRadius * this._cosTheta + (0.5 + circle) / 3 * stage.size.x;
-        this._startY = stage.circleRadius * this._sinTheta + stage.size.y / 2;
-        this._length = Math.pow(Pseudo.random(), 8) * 40 + 20;
+        this._startX = stage.circleRadius * this._cosTheta + stage.circleX[circle];
+        this._startY = stage.circleRadius * this._sinTheta + stage.circleY[circle];
+        this._length = Math.pow(Pseudo.random(), 8) * stage.lineLengthMaximum + stage.lineMinimum;
         this._segmentDirection = Pseudo.random() > 0.5 ? -1 : 1;
     }, {
 
@@ -131,7 +131,19 @@ CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
     {
         SimpleCanvasStage.prototype.initialize.call(this, benchmark, options);
         this.context.lineCap = options["lineCap"] || "butt";
-        this.circleRadius = this.size.x / 3 / 2 - 20;
+        this.lineMinimum = 20;
+        this.lineLengthMaximum = 40;
+        this.circleRadius = this.size.x / 3 / 2 - .8 * (this.lineMinimum + this.lineLengthMaximum);
+        this.circleX = [
+            .55 / 3 * this.size.x,
+            1.5 / 3 * this.size.x,
+            2.45 / 3 * this.size.x
+        ];
+        this.circleY = [
+            .6 * this.size.y,
+            .4 * this.size.y,
+            .6 * this.size.y
+        ];
     },
 
     animate: function()
@@ -144,7 +156,7 @@ CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
             context.strokeStyle = ["#e01040", "#10c030", "#e05010"][i];
             context.fillStyle = ["#70051d", "#016112", "#702701"][i];
             context.beginPath();
-                context.arc((0.5 + i) / 3 * this.size.x, this.size.y/2, this.circleRadius, 0, Math.PI*2);
+                context.arc(this.circleX[i], this.circleY[i], this.circleRadius, 0, Math.PI*2);
             context.stroke();
             context.fill();
         }

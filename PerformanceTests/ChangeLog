@@ -1,3 +1,22 @@
+2016-02-25  Jon Lee  <jonlee@apple.com>
+
+        Update animation benchmark and tests
+        https://bugs.webkit.org/show_bug.cgi?id=154673
+
+        Reviewed by Dean Jackson.
+
+        Update test visuals.
+
+        * Animometer/tests/master/resources/canvas-tests.js:
+        (CanvasLineSegment.Utilities.createClass): Line segments near the edge of the stage get clipped.
+        Update circle position and radius to minimize impact.
+        * Animometer/tests/master/resources/particles.js: Get rid of rotating gradient background, and
+        have 3 locations for emitting particles.
+        * Animometer/tests/master/resources/multiply.js: Update distance metric so that fringe tiles get
+        more color.
+        (initialize): Fix some of the math for laying out the tiles.
+        (animate): When a tile isn't used, set visibility: hidden.
+
 2016-02-24  Jon Lee  <jonlee@apple.com>
 
         Update animation benchmark and tests

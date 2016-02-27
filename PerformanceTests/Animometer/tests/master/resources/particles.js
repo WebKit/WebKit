@@ -10,14 +10,16 @@ Particle.prototype =
 {
     reset: function()
     {
-        var randSize = Math.pow(Pseudo.random(), 4) * 25 + 15;
+        var randSize = Math.pow(Pseudo.random(), 4) * 10 + 40;
         this.size = new Point(randSize, randSize);
         this.maxPosition = this.stage.size.subtract(this.size);
-        this.position = new Point(this.stage.size.x / 2, this.stage.size.y / 4);
 
-        var angle = Stage.randomInt(0, this.stage.emitSteps) / this.stage.emitSteps * Math.PI * 2 + Stage.dateCounterValue(1000) * this.stage.emissionSpin;
+        var emitLocation = this.stage.emitLocation[Stage.randomInt(0, this.stage.emitLocation.length - 1)];
+        this.position = new Point(emitLocation.x, emitLocation.y);
+
+        var angle = Stage.randomInt(0, this.stage.emitSteps) / this.stage.emitSteps * Math.PI * 2 + Stage.dateCounterValue(100) * this.stage.emissionSpin;
         this._velocity = new Point(Math.sin(angle), Math.cos(angle))
-            .multiply(Stage.random(.8, 1.2));
+            .multiply(Stage.random(.5, 2.5));
     },
 
     animate: function(timeDelta)
@@ -28,7 +30,6 @@ Particle.prototype =
         this._velocity.y += 0.03;
 
         // If particle is going to move off right side
-        var maxX = this.stage.size.x - this.size.x;
         if (this.position.x > this.maxPosition.x) {
             if (this._velocity.x > 0)
                 this._velocity.x *= -1;
@@ -83,21 +84,16 @@ ParticlesStage = Utilities.createSubclass(Stage,
         Stage.prototype.initialize.call(this, benchmark, options);
         this.emissionSpin = Stage.random(0, 3);
         this.emitSteps = Stage.randomInt(4, 6);
+        this.emitLocation = [
+            new Point(this.size.x * .25, this.size.y * .333),
+            new Point(this.size.x * .5, this.size.y * .25),
+            new Point(this.size.x * .75, this.size.y * .333)
+        ];
     },
 
     animate: function(timeDelta)
     {
         var offset = Stage.dateFractionalValue();
-        this.element.style.background = [
-            "linear-gradient(",
-            offset * 360,
-            "deg, hsl(",
-            offset * 360,
-            ", 50%, 80%), hsl(",
-            (offset + .1) * 360,
-            ", 50%, 80%))"
-        ].join("");
-
         timeDelta /= 4;
         this.particles.forEach(function(particle) {
             particle.animate(timeDelta);

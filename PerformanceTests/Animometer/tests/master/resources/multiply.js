@@ -20,7 +20,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         var direction = 0;
         var spiralCounter = 2;
         var nextIndex = 1;
-        var maxSide = Math.floor(this.size.height / tileStride);
+        var maxSide = Math.floor(y / tileStride) * 2 + 1;
         var centerSpiralCount = maxSide * maxSide;
         for (var i = 0; i < centerSpiralCount; ++i) {
             this._addTile(x, y, tileSize, i % 360);
@@ -40,13 +40,13 @@ var MultiplyStage = Utilities.createSubclass(Stage,
                 y += tileStride;
         }
 
-        centerSpiralCount = maxSide * (maxSide + (maxSide & 1));
+        centerSpiralCount = maxSide * Math.floor((this.size.width - x) / tileStride) * 2;
         for (var i = 0; i < centerSpiralCount; ++i) {
             var sideX = x + Math.floor(Math.floor(i / maxSide) / 2) * tileStride;
             var sideY = y - tileStride * (i % maxSide);
 
             if (Math.floor(i / maxSide) % 2 == 1)
-                sideX = this.width - sideX - tileSize + 1;
+                sideX = this.size.width - sideX - tileSize + 1;
             this._addTile(sideX, sideY, tileSize, (6 * i) % 360);
         }
     },
@@ -59,8 +59,9 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         tile.style.top = y + 'px';
         tile.style.width = tileSize + 'px';
         tile.style.height = tileSize + 'px';
+        tile.style.visibility = "hidden";
 
-        var distance = 1.5 / tileSize * this.size.multiply(0.5).subtract(new Point(x + halfTileSize, y + halfTileSize)).length();
+        var distance = 1.3 / tileSize * this.size.multiply(0.5).subtract(new Point(x + halfTileSize, y + halfTileSize)).length();
 
         this.tiles.push({
             element: tile,
@@ -93,6 +94,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         for (var i = 0; i < this._offsetIndex; ++i) {
             var tile = this.tiles[i];
             tile.active = true;
+            tile.element.style.visibility = "";
             tile.rotate += tile.step;
             tile.element.style.transform = "rotate(" + tile.rotate + "deg)";
 
@@ -102,7 +104,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
 
         for (var i = this._offsetIndex; i < this.tiles.length && this.tiles[i].active; ++i) {
             this.tiles[i].active = false;
-            this.tiles[i].element.style.backgroundColor = "";
+            this.tiles[i].element.style.visibility = "hidden";
         }
     }
 });
