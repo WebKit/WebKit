@@ -1086,6 +1086,16 @@ void WebProcessPool::clearCachedCredentials()
         m_networkProcess->send(Messages::NetworkProcess::ClearCachedCredentials(), 0);
 }
 
+void WebProcessPool::terminateDatabaseProcess()
+{
+    ASSERT(m_processes.isEmpty());
+    if (!m_databaseProcess)
+        return;
+
+    m_databaseProcess->terminate();
+    m_databaseProcess = nullptr;
+}
+
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
     if (m_networkProcess)

@@ -285,6 +285,11 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     _processPool->setAutomationSession(automationSession ? automationSession->_session.get() : nullptr);
 }
 
+- (void)_terminateDatabaseProcess
+{
+    _processPool->terminateDatabaseProcess();
+}
+
 @end
 
 #endif // WK_API_ENABLED

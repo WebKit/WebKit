@@ -125,7 +125,7 @@ private:
     void inProgressTransactionCompleted(const IDBResourceIdentifier&);
 
     // Database thread operations
-    void deleteBackingStore();
+    void deleteBackingStore(const IDBDatabaseIdentifier&);
     void openBackingStore(const IDBDatabaseIdentifier&);
     void performCommitTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void performAbortTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
@@ -145,7 +145,7 @@ private:
     void performActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBTransactionInfo&);
 
     // Main thread callbacks
-    void didDeleteBackingStore();
+    void didDeleteBackingStore(uint64_t deletedVersion);
     void didOpenBackingStore(const IDBDatabaseInfo&);
     void didPerformCreateObjectStore(uint64_t callbackIdentifier, const IDBError&, const IDBObjectStoreInfo&);
     void didPerformDeleteObjectStore(uint64_t callbackIdentifier, const IDBError&, uint64_t objectStoreIdentifier);

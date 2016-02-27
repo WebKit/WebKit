@@ -1,3 +1,30 @@
+2016-02-26  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: New database versions are never committed to SQLite.
+        <rdar://problem/24860952> and https://bugs.webkit.org/show_bug.cgi?id=154741
+        
+        Modern IDB: If a database handle is not open, files are not actually deleted from disk
+        https://bugs.webkit.org/show_bug.cgi?id=154756
+
+        Reviewed by Alex Christensen.
+
+        Tested by API test "IndexedDBPersistence"
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::deleteDatabase): If there's not an open handle to the database, create one.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction): If a version change transaction, actually
+          set the new version on disk.
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore): If there is no open backing store, create one.
+          This is necessary to both read the current database version, and to actually delete the file on disk.
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore): If necessary, manufacture a "most recently
+          deleted database info" from the version returned by deleteBackingStore.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2016-02-26  Chris Dumez  <cdumez@apple.com>
 
         Add API test coverage for parseHTMLInteger / parseHTMLNonNegativeInteger

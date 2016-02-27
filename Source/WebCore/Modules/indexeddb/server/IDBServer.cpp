@@ -151,10 +151,8 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
     }
 
     auto* database = m_uniqueIDBDatabaseMap.get(requestData.databaseIdentifier());
-    if (!database) {
-        connection->didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(requestData.requestIdentifier(), IDBDatabaseInfo(requestData.databaseIdentifier().databaseName(), 0)));
-        return;
-    }
+    if (!database)
+        database = &getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
 
     database->handleDelete(*connection, requestData);
 }

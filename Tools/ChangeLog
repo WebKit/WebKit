@@ -1,3 +1,23 @@
+2016-02-26  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: New database versions are never committed to SQLite.
+        <rdar://problem/24860952> and https://bugs.webkit.org/show_bug.cgi?id=154741
+        
+        Modern IDB: If a database handle is not open, files are not actually deleted from disk
+        https://bugs.webkit.org/show_bug.cgi?id=154756
+
+        Reviewed by Alex Christensen.
+
+        This also happens to test the previously untested fix for http://trac.webkit.org/changeset/197190
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBPersistence-1.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBPersistence-2.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBPersistence.mm: Added.
+        (-[IndexedDBNavigationDelegate webView:didFinishNavigation:]):
+        (-[IndexedDBMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TEST):
+
 2016-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197216.

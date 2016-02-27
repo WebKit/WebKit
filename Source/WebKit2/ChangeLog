@@ -1,3 +1,22 @@
+2016-02-26  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: New database versions are never committed to SQLite.
+        <rdar://problem/24860952> and https://bugs.webkit.org/show_bug.cgi?id=154741
+        
+        Modern IDB: If a database handle is not open, files are not actually deleted from disk
+        https://bugs.webkit.org/show_bug.cgi?id=154756
+
+        Reviewed by Alex Christensen.
+
+        Add WK2 SPI to force termination of the database process.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateDatabaseProcess]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::terminateDatabaseProcess):
+        * UIProcess/WebProcessPool.h:
+
 2016-02-26  Alex Christensen  <achristensen@webkit.org>
 
         Clear credentials and prevent unauthorized credential storage when using NetworkSession
