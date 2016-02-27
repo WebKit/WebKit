@@ -3336,9 +3336,17 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
             break;
         case FrameLoadType::Back:
         case FrameLoadType::Forward:
-        case FrameLoadType::IndexedBackForward:
-            request.setCachePolicy(ReturnCacheDataElseLoad);
+        case FrameLoadType::IndexedBackForward: {
+#if PLATFORM(IOS)
+            bool allowStaleData = true;
+#else
+            bool allowStaleData = !item.wasRestoredFromSession();
+#endif
+            if (allowStaleData)
+                request.setCachePolicy(ReturnCacheDataElseLoad);
+            item.setWasRestoredFromSession(false);
             break;
+        }
         case FrameLoadType::Standard:
         case FrameLoadType::RedirectWithLockedBackForwardList:
             break;

@@ -1,3 +1,34 @@
+2016-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Network cache: old pages returned by disk cache on history navigation after session is restored
+        https://bugs.webkit.org/show_bug.cgi?id=153230
+
+        Reviewed by Chris Dumez.
+
+        Since r181734, the network cache never revalidates resources for
+        history navigation. This is good for the memory cache, but in the
+        case of disk cache, we might end up with outdated pages when
+        restoring the session. When restoring the session happens because
+        of an API request (we also restore the session when recovering
+        from a web process crash), we should revalidate back forward list
+        requests in the disk cache if needed. This will only happen the
+        first time they are loaded after a session restore. After a web process
+        crash, resources will be used uncondionally from the disk cache.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItemFromUIProcess): Use Ref&&
+        instead of PassRefPtr.
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WePage::WebPage): Call restoreSessionInternal passing
+        No as restoredByAPIRequest parameter.
+        (WebKit::WebPage::restoreSessionInternal): Set restoredFromSession
+        flag to the created HistoryItem if the item was restored from
+        session by an API request.
+        (WebKit::WebPage::restoreSession): Call restoreSessionInternal
+        passing Yes as restoredByAPIRequest parameter.
+        * WebProcess/WebPage/WebPage.h:
+
 2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix a typo.

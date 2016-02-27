@@ -205,6 +205,9 @@ public:
 
     void notifyChanged();
 
+    void setWasRestoredFromSession(bool wasRestoredFromSession) { m_wasRestoredFromSession = wasRestoredFromSession; }
+    bool wasRestoredFromSession() const { return m_wasRestoredFromSession; }
+
 private:
     WEBCORE_EXPORT HistoryItem();
     WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title);
@@ -231,6 +234,7 @@ private:
     
     bool m_lastVisitWasFailure;
     bool m_isTargetItem;
+    bool m_wasRestoredFromSession { false };
 
     std::unique_ptr<Vector<String>> m_redirectURLs;
 

@@ -1,3 +1,21 @@
+2016-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Network cache: old pages returned by disk cache on history navigation after session is restored
+        https://bugs.webkit.org/show_bug.cgi?id=153230
+
+        Reviewed by Chris Dumez.
+
+        Add a flag to HistoryItem to mark them as restored from session
+        and use it from the FrameLoader to not change the policy request
+        when navigating to a history item that was restored from session,
+        except for iOS port.
+
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::setWasRestoredFromSession):
+        (WebCore::HistoryItem::wasRestoredFromSession):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+
 2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove unused private field from WEBPImageDecoder
