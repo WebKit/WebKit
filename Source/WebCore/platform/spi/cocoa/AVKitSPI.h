@@ -26,22 +26,6 @@
 #import "SoftLinking.h"
 #import <objc/runtime.h>
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
-
-#import <AVKit/AVValueTiming.h>
-
-#else
-
-@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
-@end
-
-@interface AVValueTiming ()
-+ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
-@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
-@end
-
-#endif // USE(APPLE_INTERNAL_SDK)
-
 #if PLATFORM(IOS)
 #import <AVKit/AVKit.h>
 #import <QuartzCore/QuartzCore.h>
@@ -147,3 +131,11 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 #endif
 
 #endif
+
+@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
+@end
+
+@interface AVValueTiming ()
++ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
+@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
+@end
