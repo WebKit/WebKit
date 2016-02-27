@@ -108,8 +108,6 @@ public:
     GtkWidget* gtkVScrollbar() const;
     GtkWidget* gtkHScrollbar() const;
     static void getIndicatorMetrics(ControlPart, int& indicatorSize, int& indicatorSpacing);
-#else
-    GtkStyleContext* gtkScrollbarStyle();
 #endif
 
 protected:

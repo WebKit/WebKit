@@ -56,15 +56,20 @@ public:
     // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.
     virtual double initialAutoscrollTimerDelay() { return 0.20; }
     virtual double autoscrollTimerDelay() { return 0.02; }
+#ifdef GTK_API_VERSION_2
     void updateThemeProperties();
+#else
+    void themeChanged();
+#endif
     void updateScrollbarsFrameThickness();
     void registerScrollbar(ScrollbarThemeClient*);
     void unregisterScrollbar(ScrollbarThemeClient*);
 
 protected:
 #ifndef GTK_API_VERSION_2
-    GtkStyleContext* m_context;
+    void updateThemeProperties();
 #endif
+
     int m_thumbFatness;
     int m_troughBorderWidth;
     int m_stepperSize;
