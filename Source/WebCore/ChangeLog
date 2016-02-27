@@ -1,5 +1,12 @@
 2016-02-26  Beth Dakin  <bdakin@apple.com>
 
+        32-bit!!!
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (-[WebPlaybackControlsManager initWithWebVideoFullscreenInterfaceMac:]):
+
+2016-02-26  Beth Dakin  <bdakin@apple.com>
+
         Another 32-bit build fix.
 
         * platform/spi/cocoa/AVKitSPI.h:
