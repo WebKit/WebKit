@@ -1,5 +1,11 @@
 2016-02-26  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update TestExpectations for css3/font-variant-* tests. rdar://problem/24190682
+
+        * platform/mac/TestExpectations:
+
+2016-02-26  Ryan Haddad  <ryanhaddad@apple.com>
+
         Remove unnecessary test file and skip fast/text/small-caps-web-font.html on Mavericks. rdar://problem/24748533
 
         * platform/mac-mavericks/fast/text/small-caps-web-font-expected.png: Removed.
