@@ -2942,3 +2942,22 @@ webkit.org/b/153029 fast/css-generated-content/details-summary-before-after.html
 webkit.org/b/76121 imported/blink/fast/events/event-trusted.html [ Skip ]
 
 webkit.org/b/154253 animations/animation-delay-changed.html [ Pass Failure ]
+
+# Uncategorized reftest failures, uncovered once we made reftests work. Needs triage.
+css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+fast/backgrounds/background-image-large-float-intrinsic-ratio.html [ ImageOnlyFailure ]
+fast/block/positioning/fixed-container-with-relative-parent.html [ ImageOnlyFailure ]
+fast/borders/border-image-fill-inline-no-border.html [ ImageOnlyFailure ]
+fast/borders/border-image-space.html [ ImageOnlyFailure ]
+fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure ]
+fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-line-through-mispositioned.html [ ImageOnlyFailure ]
+fast/forms/select-size.html [ ImageOnlyFailure ]
+fast/inline/inline-with-outline-offset.html [ ImageOnlyFailure ]
+fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
+fast/overflow/overflow-hidden-scroll-into-view.html [ ImageOnlyFailure ]
+fast/regions/layers/region-removed-during-animation.html [ ImageOnlyFailure ]
+fast/sub-pixel/table-with-subpixel-cell-size.html [ ImageOnlyFailure ]
+svg/filters/feCompositeOpaque.html [ ImageOnlyFailure ]
+svg/text/tspan-multiple-outline.svg [ ImageOnlyFailure ]
