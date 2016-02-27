@@ -69,7 +69,7 @@ static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings
     if (backgroundColor)
         browser_window_set_background_color(BROWSER_WINDOW(mainWindow), backgroundColor);
     if (geometry)
-        gtk_window_parse_geometry(BROWSER_WINDOW(mainWindow), geometry);
+        gtk_window_parse_geometry(GTK_WINDOW(mainWindow), geometry);
 
     if (webkitSettings)
         webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);

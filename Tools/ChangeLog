@@ -1,3 +1,12 @@
+2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Fix incorrect cast
+
+        Unreviewed.
+
+        * MiniBrowser/gtk/main.c:
+        (createBrowserWindow):
+
 2016-02-26  Chris Dumez  <cdumez@apple.com>
 
         Fix the behavior of reflecting IDL attributes of type unsigned long
