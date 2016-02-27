@@ -2371,13 +2371,6 @@ void WebViewImpl::didHandleAcceptedCandidate()
     m_isHandlingAcceptedCandidate = false;
 }
 
-void WebViewImpl::isPlayingMediaDidChange()
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    updateWebViewImplAdditions();
-#endif
-}
-
 void WebViewImpl::setIgnoresNonWheelEvents(bool ignoresNonWheelEvents)
 {
     if (m_ignoresNonWheelEvents == ignoresNonWheelEvents)

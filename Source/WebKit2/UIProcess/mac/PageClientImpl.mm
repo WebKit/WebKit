@@ -794,11 +794,6 @@ void PageClientImpl::didHandleAcceptedCandidate()
     m_impl->didHandleAcceptedCandidate();
 }
 
-void PageClientImpl::isPlayingMediaDidChange()
-{
-    m_impl->isPlayingMediaDidChange();
-}
-
 void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)
 {
     [menu popUpMenuPositioningItem:nil atLocation:location inView:m_view];

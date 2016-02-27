@@ -39,6 +39,5 @@ messages -> WebVideoFullscreenManagerProxy {
     ExitFullscreen(uint64_t contextId, WebCore::IntRect finalRect)
     CleanupFullscreen(uint64_t contextId)
     PreparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect)
-    SetUpVideoControlsManagerWithID(uint64_t contextId)
 }
 #endif

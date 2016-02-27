@@ -214,8 +214,6 @@ private:
 
     virtual void didHandleAcceptedCandidate() override;
 
-    void isPlayingMediaDidChange() override;
-
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) override;
 
     virtual void didChangeBackgroundColor() override;
