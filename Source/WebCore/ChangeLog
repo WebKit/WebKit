@@ -1,3 +1,36 @@
+2015-11-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Warning spam from GtkStyleContext
+        https://bugs.webkit.org/show_bug.cgi?id=151520
+
+        Reviewed by Carlos Garcia Campos.
+
+        Audit every use of gtk_style_context_get_* to fix compatibility with GTK+ 3.19. Some of
+        these were already fine and are only changed for clarity.
+
+        Company:  gtk_style_context_get() (and _get_padding/border/color()) should only ever be
+                  called with the same state as gtk_style_context_get_state()
+        Company:  usually that's a simple replacing of the old state (like in the trace you posted)
+        Company:  sometimes it requires calling gtk_style_context_set_sate() with the right state
+                  first
+        Company:  and in very rare cases it needs a gtk_style_context_save() before the set_state(),
+                  too
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::adjustRectAccordingToMargin):
+        * rendering/RenderThemeGtk.cpp:
+        (gtk_css_section_print):
+        (WebCore::getStyleContext):
+        (WebCore::RenderThemeGtk::initMediaColors):
+        (WebCore::renderButton):
+        (WebCore::getComboBoxMetrics):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        (WebCore::spinButtonArrowSize):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::styleColor):
+
 2015-10-07  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Progress bar is broken on recent GTK+
