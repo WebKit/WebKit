@@ -38,7 +38,7 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
         this._controlHandleRadius = 7;
         this._bezierWidth = editorWidth - (this._controlHandleRadius * 2);
         this._bezierHeight = editorHeight - (this._controlHandleRadius * 2) - (this._padding * 2);
-        this._bezierPreviewAnimationStyleText = "bezierPreview 2s 250ms forwards ";
+        this._bezierPreviewAnimationStyleText = "bezierPreview 2.5s 250ms infinite ";
 
         var bezierPreviewContainer = document.createElement("div");
         bezierPreviewContainer.id = "bezierPreview";

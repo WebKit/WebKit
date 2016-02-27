@@ -52,11 +52,13 @@
 }
 
 .bezier-editor > .bezier-preview-timing.animate {
-    animation: bezierPreview 2s linear 250ms forwards;
+    animation: bezierPreview 2.5s linear 250ms infinite;
 }
 
 @keyframes bezierPreview {
     from { transform: translate(0, 0); }
+    10% { transform: translate(0, 0); }
+    90% { transform: translate(170px, 0); }
     to { transform: translate(170px, 0); }
 }
 

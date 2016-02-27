@@ -1,5 +1,21 @@
 2016-02-26  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Custom transition bezier curve editor preview should loop when not editing curve
+        https://bugs.webkit.org/show_bug.cgi?id=154738
+        <rdar://problem/24861563>
+
+        Reviewed by Timothy Hatcher.
+
+        Added extra frames to bezier preview animation to allow it to infinitely
+        repeat without being jarring to watch.
+
+        * UserInterface/Views/BezierEditor.css:
+        (.bezier-editor > .bezier-preview-timing.animate):
+        (@keyframes bezierPreview):
+        * UserInterface/Views/BezierEditor.js:
+
+2016-02-26  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Keyboard controls to nudge control points in custom transition bezier curve editor would be nice
         https://bugs.webkit.org/show_bug.cgi?id=154739
         <rdar://problem/24861498>
