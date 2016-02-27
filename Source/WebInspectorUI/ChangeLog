@@ -1,3 +1,15 @@
+2016-02-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r196741): Web Inspector: Bottom section of Layers sidebar is 1px shorter than the console prompt
+        https://bugs.webkit.org/show_bug.cgi?id=154773
+        <rdar://problem/24873345>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.layer-tree > .content):
+        (.panel.details.layer-tree .bottom-bar):
+
 2016-02-26  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Custom transition bezier curve editor preview should loop when not editing curve
