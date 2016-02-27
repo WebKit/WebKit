@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: line 35: TypeError: undefined is not an object (evaluating 'document.forms[0].outerHTML')
-layer at (0,0) size 785x693
+layer at (0,0) size 785x696
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x693
-  RenderBlock {HTML} at (0,0) size 785x693
-    RenderBody {BODY} at (8,8) size 78x677
+layer at (0,0) size 785x696
+  RenderBlock {HTML} at (0,0) size 785x696
+    RenderBody {BODY} at (8,8) size 78x680
       RenderText {#text} at (0,0) size 71x120
         text run at (0,0) width 36: "This"
         text run at (0,15) width 36: "test"
@@ -35,26 +35,26 @@ layer at (0,0) size 785x693
       RenderBR {BR} at (0,0) size 0x0
       RenderInline {ACRONYM} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,422) size 122x45
+      RenderText {#text} at (0,422) size 118x47
         text run at (0,422) width 45: "s is:"
         text run at (0,437) width 27: "{,}"
-        text run at (0,452) width 122: "\x{A888}{0}P{P}\\7H\\8"
+        text run at (0,454) width 118: "\x{A888}{0}P{P}\\7H\\8"
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,467) size 71x15
-        text run at (0,467) width 71: "f is: gi"
-      RenderBR {BR} at (70,467) size 1x15
-      RenderText {#text} at (0,482) size 361x195
-        text run at (0,482) width 53: "Errlog"
-        text run at (0,497) width 115: "webtest_fn_4:"
-        text run at (0,512) width 89: "TypeError:"
-        text run at (0,527) width 62: "null is"
-        text run at (0,542) width 53: "not an"
-        text run at (0,557) width 53: "object"
-        text run at (0,572) width 97: "(evaluating"
-        text run at (0,587) width 361: "'document.querySelector(\"plaintext:first-"
-        text run at (0,602) width 62: "of-type"
-        text run at (0,617) width 9: "~"
-        text run at (0,632) width 62: "*|:out-"
-        text run at (0,647) width 27: "of-"
-        text run at (0,662) width 194: "range\").insertBefore')"
+      RenderText {#text} at (0,470) size 71x15
+        text run at (0,470) width 71: "f is: gi"
+      RenderBR {BR} at (70,470) size 1x15
+      RenderText {#text} at (0,485) size 361x195
+        text run at (0,485) width 53: "Errlog"
+        text run at (0,500) width 115: "webtest_fn_4:"
+        text run at (0,515) width 89: "TypeError:"
+        text run at (0,530) width 62: "null is"
+        text run at (0,545) width 53: "not an"
+        text run at (0,560) width 53: "object"
+        text run at (0,575) width 97: "(evaluating"
+        text run at (0,590) width 361: "'document.querySelector(\"plaintext:first-"
+        text run at (0,605) width 62: "of-type"
+        text run at (0,620) width 9: "~"
+        text run at (0,635) width 62: "*|:out-"
+        text run at (0,650) width 27: "of-"
+        text run at (0,665) width 194: "range\").insertBefore')"
       RenderBR {BR} at (0,0) size 0x0
