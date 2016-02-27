@@ -38,6 +38,7 @@
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
+#include "PlatformContextCairo.h"
 #include "RenderElement.h"
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"
@@ -52,6 +53,34 @@ static const int minSpinButtonArrowSize = 6;
 
 // This is not a static method, because we want to avoid having GTK+ headers in RenderThemeGtk.h.
 extern GtkTextDirection gtkTextDirection(TextDirection);
+
+#if ENABLE(VIDEO)
+static void initMediaButtons()
+{
+    static bool iconsInitialized = false;
+
+    if (iconsInitialized)
+        return;
+
+    GRefPtr<GtkIconFactory> iconFactory = adoptGRef(gtk_icon_factory_new());
+    GtkIconSource* iconSource = gtk_icon_source_new();
+    const char* icons[] = { "audio-volume-high", "audio-volume-muted" };
+
+    gtk_icon_factory_add_default(iconFactory.get());
+
+    for (size_t i = 0; i < G_N_ELEMENTS(icons); ++i) {
+        gtk_icon_source_set_icon_name(iconSource, icons[i]);
+        GtkIconSet* iconSet = gtk_icon_set_new();
+        gtk_icon_set_add_source(iconSet, iconSource);
+        gtk_icon_factory_add(iconFactory.get(), icons[i], iconSet);
+        gtk_icon_set_unref(iconSet);
+    }
+
+    gtk_icon_source_free(iconSource);
+
+    iconsInitialized = true;
+}
+#endif
 
 void RenderThemeGtk::platformInit()
 {
@@ -79,6 +108,9 @@ void RenderThemeGtk::platformInit()
         m_themePartsHaveRGBAColormap = false;
         m_colormap = gdk_screen_get_default_colormap(gdk_screen_get_default());
     }
+#if ENABLE(VIDEO)
+    initMediaButtons();
+#endif
 }
 
 RenderThemeGtk::~RenderThemeGtk()
@@ -86,16 +118,6 @@ RenderThemeGtk::~RenderThemeGtk()
     if (m_gtkWindow)
         gtk_widget_destroy(m_gtkWindow);
 }
-
-#if ENABLE(VIDEO)
-void RenderThemeGtk::initMediaColors()
-{
-    GtkStyle* style = gtk_widget_get_style(GTK_WIDGET(gtkContainer()));
-    m_panelColor = style->bg[GTK_STATE_NORMAL];
-    m_sliderColor = style->bg[GTK_STATE_ACTIVE];
-    m_sliderThumbColor = style->bg[GTK_STATE_SELECTED];
-}
-#endif
 
 static void adjustRectForFocus(GtkWidget* widget, IntRect& rect, bool ignoreInteriorFocusProperty = false)
 {
@@ -465,6 +487,176 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
     return false;
 }
 
+static void paintGdkPixbuf(GraphicsContext* context, const GdkPixbuf* icon, const IntRect& iconRect)
+{
+    IntSize iconSize(gdk_pixbuf_get_width(icon), gdk_pixbuf_get_height(icon));
+    GRefPtr<GdkPixbuf> scaledIcon;
+    if (iconRect.size() != iconSize) {
+        // We could use cairo_scale() here but cairo/pixman downscale quality is quite bad.
+        scaledIcon = adoptGRef(gdk_pixbuf_scale_simple(icon, iconRect.width(), iconRect.height(),
+                                                       GDK_INTERP_BILINEAR));
+        icon = scaledIcon.get();
+    }
+
+    cairo_t* cr = context->platformContext()->cr();
+    cairo_save(cr);
+    gdk_cairo_set_source_pixbuf(cr, icon, iconRect.x(), iconRect.y());
+    cairo_paint(cr);
+    cairo_restore(cr);
+}
+
+// Defined in GTK+ (gtk/gtkiconfactory.c)
+static const gint gtkIconSizeMenu = 16;
+static const gint gtkIconSizeSmallToolbar = 18;
+static const gint gtkIconSizeButton = 20;
+static const gint gtkIconSizeLargeToolbar = 24;
+static const gint gtkIconSizeDnd = 32;
+static const gint gtkIconSizeDialog = 48;
+
+static GtkIconSize getIconSizeForPixelSize(gint pixelSize)
+{
+    if (pixelSize < gtkIconSizeSmallToolbar)
+        return GTK_ICON_SIZE_MENU;
+    if (pixelSize >= gtkIconSizeSmallToolbar && pixelSize < gtkIconSizeButton)
+        return GTK_ICON_SIZE_SMALL_TOOLBAR;
+    if (pixelSize >= gtkIconSizeButton && pixelSize < gtkIconSizeLargeToolbar)
+        return GTK_ICON_SIZE_BUTTON;
+    if (pixelSize >= gtkIconSizeLargeToolbar && pixelSize < gtkIconSizeDnd)
+        return GTK_ICON_SIZE_LARGE_TOOLBAR;
+    if (pixelSize >= gtkIconSizeDnd && pixelSize < gtkIconSizeDialog)
+        return GTK_ICON_SIZE_DND;
+
+    return GTK_ICON_SIZE_DIALOG;
+}
+
+static void adjustSearchFieldIconStyle(RenderStyle* style)
+{
+    style->resetBorder();
+    style->resetPadding();
+
+    // Get the icon size based on the font size.
+    int fontSize = style->fontSize();
+    if (fontSize < gtkIconSizeMenu) {
+        style->setWidth(Length(fontSize, Fixed));
+        style->setHeight(Length(fontSize, Fixed));
+        return;
+    }
+    gint width = 0, height = 0;
+    gtk_icon_size_lookup(getIconSizeForPixelSize(fontSize), &width, &height);
+    style->setWidth(Length(width, Fixed));
+    style->setHeight(Length(height, Fixed));
+}
+
+void RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle* style, Element*) const
+{
+    adjustSearchFieldIconStyle(style);
+}
+
+static IntRect centerRectVerticallyInParentInputElement(RenderObject* renderObject, const IntRect& rect)
+{
+    // Get the renderer of <input> element.
+    Node* input = renderObject->node()->shadowHost();
+    if (!input)
+        input = renderObject->node();
+    if (!input->renderer()->isBox())
+        return IntRect();
+
+    // If possible center the y-coordinate of the rect vertically in the parent input element.
+    // We also add one pixel here to ensure that the y coordinate is rounded up for box heights
+    // that are even, which looks in relation to the box text.
+    IntRect inputContentBox = toRenderBox(input->renderer())->absoluteContentBox();
+
+    // Make sure the scaled decoration stays square and will fit in its parent's box.
+    int iconSize = std::min(inputContentBox.width(), std::min(inputContentBox.height(), rect.height()));
+    IntRect scaledRect(rect.x(), inputContentBox.y() + (inputContentBox.height() - iconSize + 1) / 2, iconSize, iconSize);
+    return scaledRect;
+}
+
+GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
+{
+    ASSERT(widgetType == GTK_TYPE_CONTAINER || widgetType == GTK_TYPE_ENTRY);
+
+    RenderThemeGtk* theme = static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get());
+    GtkWidget* widget = widgetType == GTK_TYPE_CONTAINER ? GTK_WIDGET(theme->gtkContainer()) : theme->gtkEntry();
+
+    GtkStyle* style = gtk_widget_get_style(widget);
+    GtkIconSet* iconSet = gtk_style_lookup_icon_set(style, iconName);
+    return adoptGRef(gtk_icon_set_render_icon(iconSet, style,
+                                              static_cast<GtkTextDirection>(direction),
+                                              static_cast<GtkStateType>(state),
+                                              static_cast<GtkIconSize>(iconSize), 0, 0));
+}
+
+static GtkStateType gtkIconState(RenderTheme* theme, RenderObject* renderObject)
+{
+    if (!theme->isEnabled(renderObject))
+        return GTK_STATE_INSENSITIVE;
+    if (theme->isPressed(renderObject))
+        return GTK_STATE_ACTIVE;
+    if (theme->isHovered(renderObject))
+        return GTK_STATE_PRELIGHT;
+
+    return GTK_STATE_NORMAL;
+}
+
+bool RenderThemeGtk::paintSearchFieldResultsDecorationPart(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
+    if (iconRect.isEmpty())
+        return false;
+
+    GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_FIND,
+                                                        gtkTextDirection(renderObject->style().direction()),
+                                                        gtkIconState(this, renderObject),
+                                                        getIconSizeForPixelSize(rect.height()));
+    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
+    return false;
+}
+
+void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
+{
+    adjustSearchFieldIconStyle(style);
+}
+
+bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
+    if (iconRect.isEmpty())
+        return false;
+
+    GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_CLEAR,
+                                                        gtkTextDirection(renderObject->style().direction()),
+                                                        gtkIconState(this, renderObject),
+                                                        getIconSizeForPixelSize(rect.height()));
+    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
+    return false;
+}
+
+bool RenderThemeGtk::paintCapsLockIndicator(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    // The other paint methods don't need to check whether painting is disabled because RenderTheme already checks it
+    // before calling them, but paintCapsLockIndicator() is called by RenderTextControlSingleLine which doesn't check it.
+    if (paintInfo.context->paintingDisabled())
+        return true;
+
+    int iconSize = std::min(rect.width(), rect.height());
+    GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_CAPS_LOCK_WARNING,
+                                                        gtkTextDirection(renderObject->style().direction()),
+                                                        0, getIconSizeForPixelSize(iconSize));
+
+    // Only re-scale the icon when it's smaller than the minimum icon size.
+    if (iconSize >= gtkIconSizeMenu)
+        iconSize = gdk_pixbuf_get_height(icon.get());
+
+    // GTK+ locates the icon right aligned in the entry. The given rectangle is already
+    // centered vertically by RenderTextControlSingleLine.
+    IntRect iconRect(rect.x() + rect.width() - iconSize,
+                     rect.y() + (rect.height() - iconSize) / 2,
+                     iconSize, iconSize);
+    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
+    return true;
+}
+
 bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     if (info.context->paintingDisabled())
@@ -651,22 +843,7 @@ bool RenderThemeGtk::paintInnerSpinButton(RenderObject* renderObject, const Pain
     return false;
 }
 
-GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
-{
-    ASSERT(widgetType == GTK_TYPE_CONTAINER || widgetType == GTK_TYPE_ENTRY);
-
-    RenderThemeGtk* theme = static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get());
-    GtkWidget* widget = widgetType == GTK_TYPE_CONTAINER ? GTK_WIDGET(theme->gtkContainer()) : theme->gtkEntry();
-
-    GtkStyle* style = gtk_widget_get_style(widget);
-    GtkIconSet* iconSet = gtk_style_lookup_icon_set(style, iconName);
-    return adoptGRef(gtk_icon_set_render_icon(iconSet, style,
-                                              static_cast<GtkTextDirection>(direction),
-                                              static_cast<GtkStateType>(state),
-                                              static_cast<GtkIconSize>(iconSize), 0, 0));
-}
-
-GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char *fallbackStockIconName, gint direction, gint state, gint iconSize)
+static GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char *fallbackStockIconName, gint direction, gint state, gint iconSize)
 {
     return getStockIconForWidgetType(widgetType, fallbackStockIconName, direction, state, iconSize);
 }
@@ -729,6 +906,18 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
     default:
         return RenderTheme::systemColor(cssValueId);
     }
+}
+
+bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, const char* symbolicIconName, const char* fallbackStockIconName)
+{
+    static const unsigned mediaIconSize = 16;
+    IntRect iconRect(rect.x() + (rect.width() - mediaIconSize) / 2,
+                     rect.y() + (rect.height() - mediaIconSize) / 2,
+                     mediaIconSize, mediaIconSize);
+    GRefPtr<GdkPixbuf> icon = getStockSymbolicIconForWidgetType(GTK_TYPE_CONTAINER, symbolicIconName, fallbackStockIconName,
+        gtkTextDirection(renderObject->style().direction()), gtkIconState(this, renderObject), iconRect.width());
+    paintGdkPixbuf(context, icon.get(), iconRect);
+    return false;
 }
 
 static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, RenderTheme* renderTheme)
