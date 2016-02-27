@@ -54,6 +54,7 @@ public:
     ~NetworkSession();
 
     static NetworkSession& defaultSession();
+    void clearCredentials();
 
     NetworkDataTask* dataTaskForIdentifier(NetworkDataTask::TaskIdentifier);
 

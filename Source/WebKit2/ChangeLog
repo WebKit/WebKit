@@ -1,3 +1,27 @@
+2016-02-26  Alex Christensen  <achristensen@webkit.org>
+
+        Clear credentials and prevent unauthorized credential storage when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154755
+
+        Reviewed by Brady Eidson.
+
+        Credentials from previous tests were being used sometimes, notably in 
+        http/tests/misc/401-alternative-content.php when running multiple credential-based
+        tests with the same WebKitTestRunner.
+
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::clearCachedCredentials):
+        (WebKit::NetworkProcess::ensurePrivateBrowsingSession):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::tryPasswordBasedAuthentication):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::clearCredentials):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+
 2016-02-26  Gavin Barraclough  <barraclough@apple.com>
 
         Page TimerAlignmentIntervalIncrease mechanism should have upper limit

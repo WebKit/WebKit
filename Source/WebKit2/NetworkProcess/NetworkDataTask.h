@@ -146,6 +146,7 @@ private:
     DownloadID m_pendingDownloadID;
     String m_user;
     String m_password;
+    WebCore::StoredCredentials m_storedCredentials;
     String m_lastHTTPMethod;
     String m_pendingDownloadLocation;
     WebCore::ResourceRequest m_firstRequest;

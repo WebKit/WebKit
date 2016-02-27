@@ -253,6 +253,18 @@ NetworkSession::~NetworkSession()
     [m_sessionWithoutCredentialStorage invalidateAndCancel];
 }
 
+void NetworkSession::clearCredentials()
+{
+    NSURLCredentialStorage *credentialStorage = m_sessionWithCredentialStorage.get().configuration.URLCredentialStorage;
+    NSDictionary<NSURLProtectionSpace *, NSDictionary<NSString *, NSURLCredential *> *> *credentials = credentialStorage.allCredentials;
+    
+    for (NSURLProtectionSpace *protectionSpace in credentials) {
+        NSDictionary<NSString *, NSURLCredential *> *credentialsDict = [credentials objectForKey:protectionSpace];
+        for (NSString *user in credentialsDict)
+            [credentialStorage removeCredential:[credentialsDict objectForKey:user] forProtectionSpace:protectionSpace];
+    }
+}
+
 NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier)
 {
     ASSERT(isMainThread());
