@@ -13,7 +13,6 @@ set(bmalloc_SOURCES
     bmalloc/SegregatedFreeList.cpp
     bmalloc/StaticMutex.cpp
     bmalloc/VMHeap.cpp
-    bmalloc/XLargeMap.cpp
     bmalloc/mbmalloc.cpp
 )
 

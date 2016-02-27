@@ -59,7 +59,7 @@ public:
     
 private:
     void allocateSmallChunk(std::lock_guard<StaticMutex>&);
-    LargeObject allocateLargeChunk(std::lock_guard<StaticMutex>&);
+    void allocateLargeChunk(std::lock_guard<StaticMutex>&);
     void allocateSuperChunk(std::lock_guard<StaticMutex>&);
 
     Vector<SmallPage*> m_smallPages;
@@ -85,20 +85,26 @@ inline SmallPage* VMHeap::allocateSmallPage(std::lock_guard<StaticMutex>& lock)
 
 inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& lock, size_t size)
 {
-    if (LargeObject largeObject = m_largeObjects.take(size))
-        return largeObject;
+    LargeObject largeObject = m_largeObjects.take(size);
+    if (!largeObject) {
+        allocateLargeChunk(lock);
+        largeObject = m_largeObjects.take(size);
+        BASSERT(largeObject);
+    }
 
-    BASSERT(size <= largeMax);
-    return allocateLargeChunk(lock);
+    return largeObject;
 }
 
 inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size, size_t unalignedSize)
 {
-    if (LargeObject largeObject = m_largeObjects.take(alignment, size, unalignedSize))
-        return largeObject;
+    LargeObject largeObject = m_largeObjects.take(alignment, size, unalignedSize);
+    if (!largeObject) {
+        allocateLargeChunk(lock);
+        largeObject = m_largeObjects.take(alignment, size, unalignedSize);
+        BASSERT(largeObject);
+    }
 
-    BASSERT(unalignedSize <= largeMax);
-    return allocateLargeChunk(lock);
+    return largeObject;
 }
 
 inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, SmallPage* page)

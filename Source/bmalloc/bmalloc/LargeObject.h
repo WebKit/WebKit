@@ -219,7 +219,6 @@ inline LargeObject LargeObject::merge() const
 
 inline std::pair<LargeObject, LargeObject> LargeObject::split(size_t size) const
 {
-    BASSERT(size <= this->size());
     Range split(begin(), size);
     Range leftover = Range(split.end(), this->size() - size);
     BASSERT(leftover.size() >= largeMin);

@@ -73,8 +73,7 @@ namespace Sizes {
     static const size_t largeChunkMetadataSize = 4 * kB; // sizeof(LargeChunk)
     static const size_t largeMax = largeChunkSize - largeChunkMetadataSize;
 
-    static const size_t xLargeAlignment = superChunkSize;
-    static const size_t xLargeMask = ~(xLargeAlignment - 1);
+    static const size_t xLargeAlignment = vmPageSize;
     static const size_t xLargeMax = std::numeric_limits<size_t>::max() - xLargeAlignment; // Make sure that rounding up to xLargeAlignment does not overflow.
 
     static const size_t freeListSearchDepth = 16;
