@@ -72,6 +72,22 @@ template <> void derefGPtr(GdkCursor* ptr)
     if (ptr)
         gdk_cursor_unref(ptr);
 }
+
+#else
+
+template <> GtkWidgetPath* refGPtr(GtkWidgetPath* ptr)
+{
+    if (ptr)
+        gtk_widget_path_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GtkWidgetPath* ptr)
+{
+    if (ptr)
+        gtk_widget_path_unref(ptr);
+}
+
 #endif
 
 }

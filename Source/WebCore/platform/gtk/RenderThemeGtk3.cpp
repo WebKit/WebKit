@@ -30,6 +30,7 @@
 #include "CSSValueKeywords.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
+#include "GRefPtrGtk.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "Page.h"
@@ -66,35 +67,64 @@ static GRefPtr<GtkStyleContext> createStyleContext(GType widgetType)
         initialized = true;
     }
 
-    GtkWidgetPath* path = gtk_widget_path_new();
-    gtk_widget_path_append_type(path, widgetType);
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
+    gtk_widget_path_append_type(path.get(), widgetType);
 
+#if GTK_CHECK_VERSION(3, 19, 2)
+    // Pick a good default object path for the style context based on the widget type. This will
+    // usually need to be overridden manually, but it doesn't hurt to have a good default.
     if (widgetType == GTK_TYPE_ENTRY)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_ENTRY);
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "entry");
     else if (widgetType == GTK_TYPE_ARROW)
-        gtk_widget_path_iter_add_class(path, 0, "arrow");
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "button"); // Note: not a typo.
     else if (widgetType == GTK_TYPE_BUTTON) {
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_BUTTON);
-        gtk_widget_path_iter_add_class(path, 0, "text-button");
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "button");
+        gtk_widget_path_iter_add_class(path.get(), 0, "text-button");
     }
     else if (widgetType == GTK_TYPE_SCALE)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SCALE);
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "scale");
     else if (widgetType == GTK_TYPE_SEPARATOR)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SEPARATOR);
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "separator");
     else if (widgetType == GTK_TYPE_PROGRESS_BAR)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_PROGRESSBAR);
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "progressbar");
     else if (widgetType == GTK_TYPE_SPIN_BUTTON)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SPINBUTTON);
-    else if (widgetType == GTK_TYPE_TREE_VIEW)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_VIEW);
-    else if (widgetType == GTK_TYPE_CHECK_BUTTON)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_CHECK);
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "spinbutton");
+    else if (widgetType == GTK_TYPE_TREE_VIEW) {
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "treeview");
+        gtk_widget_path_iter_add_class(path.get(), 0, "view");
+    } else if (widgetType == GTK_TYPE_CHECK_BUTTON)
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "checkbutton");
     else if (widgetType == GTK_TYPE_RADIO_BUTTON)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_RADIO);
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "radiobutton");
+    else if (widgetType == GTK_TYPE_COMBO_BOX)
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "combobox");
+#else
+    if (widgetType == GTK_TYPE_ENTRY)
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_ENTRY);
+    else if (widgetType == GTK_TYPE_ARROW)
+        gtk_widget_path_iter_add_class(path.get(), 0, "arrow");
+    else if (widgetType == GTK_TYPE_BUTTON) {
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_BUTTON);
+        gtk_widget_path_iter_add_class(path.get(), 0, "text-button");
+    }
+    else if (widgetType == GTK_TYPE_SCALE)
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_SCALE);
+    else if (widgetType == GTK_TYPE_SEPARATOR)
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_SEPARATOR);
+    else if (widgetType == GTK_TYPE_PROGRESS_BAR)
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_PROGRESSBAR);
+    else if (widgetType == GTK_TYPE_SPIN_BUTTON)
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_SPINBUTTON);
+    else if (widgetType == GTK_TYPE_TREE_VIEW)
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_VIEW);
+    else if (widgetType == GTK_TYPE_CHECK_BUTTON)
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_CHECK);
+    else if (widgetType == GTK_TYPE_RADIO_BUTTON)
+        gtk_widget_path_iter_add_class(path.get(), 0, GTK_STYLE_CLASS_RADIO);
+#endif
 
     GRefPtr<GtkStyleContext> context = adoptGRef(gtk_style_context_new());
-    gtk_style_context_set_path(context.get(), path);
-    gtk_widget_path_free(path);
+    gtk_style_context_set_path(context.get(), path.get());
 
     return context;
 }
@@ -181,7 +211,7 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect
     adjustRectForFocus(context.get(), rect);
 }
 
-static void setToggleSize(GType widgetType, RenderStyle& style)
+static void setToggleSize(GType widgetType, RenderStyle* style)
 {
     GRefPtr<GtkStyleContext> context = createStyleContext(widgetType);
 
@@ -189,9 +219,7 @@ static void setToggleSize(GType widgetType, RenderStyle& style)
     if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
         return;
 
-    // Other ports hard-code this to 13 which is also the default value defined by GTK+.
-    // GTK+ users tend to demand the native look.
-    // It could be made a configuration option values other than 13 actually break site compatibility.
+    // Other ports hard-code this to 13. GTK+ users tend to demand the native look.
     gint indicatorSize;
     gtk_style_context_get_style(context.get(), "indicator-size", &indicatorSize, nullptr);
 
@@ -205,6 +233,37 @@ static void setToggleSize(GType widgetType, RenderStyle& style)
 static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& fullRect)
 {
     GRefPtr<GtkStyleContext> context = createStyleContext(widgetType);
+#if GTK_CHECK_VERSION(3, 19, 2)
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
+
+    if (widgetType == GTK_TYPE_CHECK_BUTTON) {
+        if (theme->isChecked(renderObject) || theme->isIndeterminate(renderObject)) {
+            gtk_widget_path_append_type(path.get(), GTK_TYPE_CHECK_BUTTON);
+            gtk_widget_path_iter_set_object_name(path.get(), 0, "checkbutton");
+        } else {
+            gtk_widget_path_append_type(path.get(), GTK_TYPE_CHECK_BUTTON);
+            gtk_widget_path_iter_set_object_name(path.get(), 0, "button");
+            gtk_widget_path_iter_add_class(path.get(), 0, "check");
+        }
+
+        gtk_widget_path_append_type(path.get(), GTK_TYPE_CHECK_BUTTON);
+        gtk_widget_path_iter_set_object_name(path.get(), 1, "check");
+    } else if (widgetType == GTK_TYPE_RADIO_BUTTON) {
+        if (theme->isChecked(renderObject) || theme->isIndeterminate(renderObject)) {
+            gtk_widget_path_append_type(path.get(), GTK_TYPE_RADIO_BUTTON);
+            gtk_widget_path_iter_set_object_name(path.get(), 0, "radiobutton");
+        } else {
+            gtk_widget_path_append_type(path.get(), GTK_TYPE_RADIO_BUTTON);
+            gtk_widget_path_iter_set_object_name(path.get(), 0, "button");
+            gtk_widget_path_iter_add_class(path.get(), 0, "radio");
+        }
+
+        gtk_widget_path_append_type(path.get(), GTK_TYPE_RADIO_BUTTON);
+        gtk_widget_path_iter_set_object_name(path.get(), 1, "radio");
+    }
+
+    gtk_style_context_set_path(context.get(), path.get());
+#endif
 
     // Some themes do not render large toggle buttons properly, so we simply
     // shrink the rectangle back down to the default size and then center it
@@ -224,7 +283,12 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObj
     }
 
     gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
+
+#if GTK_CHECK_VERSION(3, 19, 2)
+    gtk_style_context_add_class(context.get(), "toggle");
+#else
     gtk_style_context_add_class(context.get(), widgetType == GTK_TYPE_CHECK_BUTTON ? GTK_STYLE_CLASS_CHECK : GTK_STYLE_CLASS_RADIO);
+#endif
 
     guint flags = 0;
     if (!theme->isEnabled(renderObject) || theme->isReadOnlyControl(renderObject))
@@ -351,7 +415,9 @@ bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& pa
     GRefPtr<GtkStyleContext> context = createStyleContext(GTK_TYPE_BUTTON);
 
     gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
+#if !GTK_CHECK_VERSION(3, 19, 2)
     gtk_style_context_add_class(context.get(), GTK_STYLE_CLASS_BUTTON);
+#endif
 
     renderButton(this, context.get(), renderObject, paintInfo, rect);
 
@@ -366,8 +432,20 @@ static void getComboBoxMetrics(RenderStyle* style, GtkBorder& border, int& focus
         return;
 
     GRefPtr<GtkStyleContext> context = createStyleContext(GTK_TYPE_COMBO_BOX);
+#if GTK_CHECK_VERSION(3, 19, 2)
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
 
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_COMBO_BOX);
+    gtk_widget_path_iter_set_object_name(path.get(), 0, "combobox");
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_COMBO_BOX);
+    gtk_widget_path_iter_set_object_name(path.get(), 1, "button");
+    gtk_widget_path_iter_add_class(path.get(), 1, "combo");
+
+    gtk_style_context_set_path(context.get(), path.get());
+#else
     gtk_style_context_add_class(context.get(), GTK_STYLE_CLASS_BUTTON);
+#endif
     gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(style->direction())));
 
     gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(0));
@@ -382,7 +460,9 @@ static void getComboBoxMetrics(RenderStyle* style, GtkBorder& border, int& focus
 
     GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(style->direction()));
     gtk_style_context_set_direction(context.get(), direction);
+#if !GTK_CHECK_VERSION(3, 19, 2)
     gtk_style_context_add_class(context.get(), "separator");
+#endif
 
     gboolean wideSeparators;
     gint separatorWidth;
@@ -441,7 +521,9 @@ bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& 
     // Paint the button.
     GRefPtr<GtkStyleContext> buttonStyleContext = createStyleContext(GTK_TYPE_BUTTON);
     gtk_style_context_set_direction(buttonStyleContext.get(), direction);
+#if !GTK_CHECK_VERSION(3, 19, 2)
     gtk_style_context_add_class(buttonStyleContext.get(), GTK_STYLE_CLASS_BUTTON);
+#endif
     renderButton(this, buttonStyleContext.get(), renderObject, paintInfo, rect);
 
     // Get the inner rectangle.
@@ -477,8 +559,10 @@ bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& 
     GRefPtr<GtkStyleContext> arrowStyleContext = createStyleContext(GTK_TYPE_ARROW);
 
     gtk_style_context_set_direction(arrowStyleContext.get(), direction);
+#if !GTK_CHECK_VERSION(3, 19, 2)
     gtk_style_context_add_class(arrowStyleContext.get(), "arrow");
     gtk_style_context_add_class(arrowStyleContext.get(), GTK_STYLE_CLASS_BUTTON);
+#endif
 
     gfloat arrowScaling;
     gtk_style_context_get_style(arrowStyleContext.get(), "arrow-scaling", &arrowScaling, nullptr);
@@ -498,9 +582,18 @@ bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& 
 
     // Paint the separator if needed.
     GRefPtr<GtkStyleContext> separatorStyleContext = createStyleContext(GTK_TYPE_COMBO_BOX);
+#if GTK_CHECK_VERSION(3, 19, 2)
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_SEPARATOR);
+    gtk_widget_path_iter_set_object_name(path.get(), 0, "separator");
+
+    gtk_style_context_set_path(separatorStyleContext.get(), path.get());
+#else
+    gtk_style_context_add_class(separatorStyleContext.get(), "separator");
+#endif
 
     gtk_style_context_set_direction(separatorStyleContext.get(), direction);
-    gtk_style_context_add_class(separatorStyleContext.get(), "separator");
 
     gboolean wideSeparators;
     gint separatorWidth;
@@ -545,7 +638,9 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
     GRefPtr<GtkStyleContext> context = createStyleContext(GTK_TYPE_ENTRY);
 
     gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
+#if !GTK_CHECK_VERSION(3, 19, 2)
     gtk_style_context_add_class(context.get(), GTK_STYLE_CLASS_ENTRY);
+#endif
 
     guint flags = 0;
     if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
@@ -573,7 +668,9 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
 
 static void applySliderStyleContextClasses(GtkStyleContext* context, ControlPart part)
 {
+#if !GTK_CHECK_VERSION(3, 19, 2)
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCALE);
+#endif
     if (part == SliderHorizontalPart || part == SliderThumbHorizontalPart)
         gtk_style_context_add_class(context, GTK_STYLE_CLASS_HORIZONTAL);
     else if (part == SliderVerticalPart || part == SliderThumbVerticalPart)
@@ -586,10 +683,23 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInf
     ASSERT_UNUSED(part, part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
 
     GRefPtr<GtkStyleContext> context = createStyleContext(GTK_TYPE_SCALE);
+#if GTK_CHECK_VERSION(3, 19, 2)
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
+    gtk_widget_path_iter_set_object_name(path.get(), 0, "scale");
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
+    gtk_widget_path_iter_set_object_name(path.get(), 1, "trough");
+
+    gtk_style_context_set_path(context.get(), path.get());
+#endif
 
     gtk_style_context_set_direction(context.get(), gtkTextDirection(renderObject->style().direction()));
     applySliderStyleContextClasses(context.get(), part);
+#if !GTK_CHECK_VERSION(3, 19, 2)
     gtk_style_context_add_class(context.get(), GTK_STYLE_CLASS_TROUGH);
+#endif
 
     if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
         gtk_style_context_set_state(context.get(), GTK_STATE_FLAG_INSENSITIVE);
@@ -614,10 +724,24 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInf
     ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
 
     GRefPtr<GtkStyleContext> context = createStyleContext(GTK_TYPE_SCALE);
+#if GTK_CHECK_VERSION(3, 19, 2)
+    // FIXME: The entire slider is too wide, stretching the thumb into an oval rather than a circle.
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
+    gtk_widget_path_iter_set_object_name(path.get(), 0, "scale");
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
+    gtk_widget_path_iter_set_object_name(path.get(), 1, "trough");
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_SCALE);
+    gtk_widget_path_iter_set_object_name(path.get(), 2, "slider");
+
+    gtk_style_context_set_path(context.get(), path.get());
+#endif
 
     gtk_style_context_set_direction(context.get(), gtkTextDirection(renderObject->style().direction()));
     applySliderStyleContextClasses(context.get(), part);
-    gtk_style_context_add_class(context.get(), GTK_STYLE_CLASS_SLIDER);
 
     guint flags = 0;
     if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
@@ -660,16 +784,42 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
         return true;
 
     GRefPtr<GtkStyleContext> context = createStyleContext(GTK_TYPE_PROGRESS_BAR);
-    gtk_style_context_save(context.get());
+#if GTK_CHECK_VERSION(3, 19, 2)
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
 
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_PROGRESS_BAR);
+    gtk_widget_path_iter_set_object_name(path.get(), 0, "progressbar");
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_PROGRESS_BAR);
+    gtk_widget_path_iter_set_object_name(path.get(), 1, "trough");
+
+    gtk_style_context_set_path(context.get(), path.get());
+#else
+    gtk_style_context_save(context.get());
     gtk_style_context_add_class(context.get(), GTK_STYLE_CLASS_TROUGH);
+#endif
 
     gtk_render_background(context.get(), paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
     gtk_render_frame(context.get(), paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
 
-    gtk_style_context_restore(context.get());
+#if GTK_CHECK_VERSION(3, 19, 2)
+    path = adoptGRef(gtk_widget_path_new());
 
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_PROGRESS_BAR);
+    gtk_widget_path_iter_set_object_name(path.get(), 0, "progressbar");
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_PROGRESS_BAR);
+    gtk_widget_path_iter_set_object_name(path.get(), 1, "trough");
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_PROGRESS_BAR);
+    gtk_widget_path_iter_set_object_name(path.get(), 2, "progress");
+
+    gtk_style_context_set_path(context.get(), path.get());
+#else
+    gtk_style_context_restore(context.get());
     gtk_style_context_add_class(context.get(), GTK_STYLE_CLASS_PROGRESSBAR);
+#endif
+
     gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(0));
 
     GtkBorder padding;
@@ -720,7 +870,21 @@ static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, R
     ASSERT(arrowType == GTK_ARROW_UP || arrowType == GTK_ARROW_DOWN);
 
     gtk_style_context_save(context);
+
+#if GTK_CHECK_VERSION(3, 19, 2)
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_SPIN_BUTTON);
+    gtk_widget_path_iter_set_object_name(path.get(), 0, "spinbutton");
+
+    gtk_widget_path_append_type(path.get(), GTK_TYPE_SPIN_BUTTON);
+    gtk_widget_path_iter_set_object_name(path.get(), 1, "button");
+    gtk_widget_path_iter_add_class(path.get(), 1, arrowType == GTK_ARROW_UP ? "up" : "down");
+
+    gtk_style_context_set_path(context, path.get());
+#else
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
+#endif
 
     GtkTextDirection direction = gtk_style_context_get_direction(context);
     guint state = static_cast<guint>(gtk_style_context_get_state(context));
@@ -851,14 +1015,27 @@ enum StyleColorType { StyleColorBackground, StyleColorForeground };
 static Color styleColor(GType widgetType, GtkStateFlags state, StyleColorType colorType)
 {
     GRefPtr<GtkStyleContext> context = createStyleContext(widgetType);
-    // Recent GTK+ versions (> 3.14) require to explicitly set the state before getting the color.
+#if GTK_CHECK_VERSION(3, 19, 2)
+    if (widgetType == GTK_TYPE_ENTRY) {
+        GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_new());
+
+        gtk_widget_path_append_type(path.get(), GTK_TYPE_ENTRY);
+        gtk_widget_path_iter_set_object_name(path.get(), 0, "entry");
+
+        gtk_widget_path_append_type(path.get(), GTK_TYPE_ENTRY);
+        gtk_widget_path_iter_set_object_name(path.get(), 1, "selection");
+
+        gtk_style_context_set_path(context.get(), path.get());
+    }
+#endif
+
     gtk_style_context_set_state(context.get(), state);
 
     GdkRGBA gdkRGBAColor;
     if (colorType == StyleColorBackground)
-        gtk_style_context_get_background_color(context.get(), gtk_style_context_get_state(context.get()), &gdkRGBAColor);
+        gtk_style_context_get_background_color(context.get(), state, &gdkRGBAColor);
     else
-        gtk_style_context_get_color(context.get(), gtk_style_context_get_state(context.get()), &gdkRGBAColor);
+        gtk_style_context_get_color(context.get(), state, &gdkRGBAColor);
     return gdkRGBAColor;
 }
 
