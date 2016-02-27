@@ -155,66 +155,54 @@ double parseToDoubleForNumberType(const String& string)
 template <typename CharacterType>
 static bool parseHTMLIntegerInternal(const CharacterType* position, const CharacterType* end, int& value)
 {
-    // Step 3
-    bool isPositive = true;
-
-    // Step 4
-    while (position < end) {
-        if (!isHTMLSpace(*position))
-            break;
+    while (position < end && isHTMLSpace(*position))
         ++position;
-    }
 
-    // Step 5
     if (position == end)
         return false;
-    ASSERT_WITH_SECURITY_IMPLICATION(position < end);
 
-    // Step 6
+    bool isNegative = false;
     if (*position == '-') {
-        isPositive = false;
+        isNegative = true;
         ++position;
     } else if (*position == '+')
         ++position;
-    if (position == end)
-        return false;
-    ASSERT_WITH_SECURITY_IMPLICATION(position < end);
 
-    // Step 7
-    if (!isASCIIDigit(*position))
+    if (position == end || !isASCIIDigit(*position))
         return false;
 
-    // Step 8
-    StringBuilder cleanCharacters;
-    if (!isPositive)
-        cleanCharacters.append('-');
-    while (position < end) {
-        if (!isASCIIDigit(*position))
-            break;
-        cleanCharacters.append(*position++);
-    }
+    constexpr int intMax = std::numeric_limits<int>::max();
+    constexpr int base = 10;
+    constexpr int maxMultiplier = intMax / base;
 
-    // Step 9
-    bool ok;
-    if (cleanCharacters.is8Bit())
-        value = charactersToIntStrict(cleanCharacters.characters8(), cleanCharacters.length(), &ok);
-    else
-        value = charactersToIntStrict(cleanCharacters.characters16(), cleanCharacters.length(), &ok);
-    return ok;
+    unsigned result = 0;
+    do {
+        int digitValue = *position - '0';
+
+        if (result > maxMultiplier || (result == maxMultiplier && digitValue > (intMax % base) + isNegative))
+            return false;
+
+        result = base * result + digitValue;
+        ++position;
+    } while (position < end && isASCIIDigit(*position));
+
+    value = isNegative ? -result : result;
+    return true;
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-integers
 bool parseHTMLInteger(const String& input, int& value)
 {
-    // Step 1
-    // Step 2
     unsigned length = input.length();
-    if (!length || input.is8Bit()) {
-        const LChar* start = input.characters8();
+    if (!length)
+        return false;
+
+    if (LIKELY(input.is8Bit())) {
+        auto* start = input.characters8();
         return parseHTMLIntegerInternal(start, start + length, value);
     }
 
-    const UChar* start = input.characters16();
+    auto* start = input.characters16();
     return parseHTMLIntegerInternal(start, start + length, value);
 }
 

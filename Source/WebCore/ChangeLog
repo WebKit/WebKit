@@ -1,3 +1,21 @@
+2016-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Optimize parseHTMLInteger()
+        https://bugs.webkit.org/show_bug.cgi?id=154772
+
+        Reviewed by Ryosuke Niwa.
+
+        Optimize parseHTMLInteger() a bit now that it is used a lot more and
+        that it has decent API test coverage. In particular, we now:
+        - Avoid using a StringBuilder for the digits.
+        - Get rid of a is8Bit() branch.
+        - Only traverse the input string once.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLIntegerInternal):
+        (WebCore::parseHTMLInteger):
+        (WebCore::parseHTMLNonNegativeInteger): Deleted.
+
 2016-02-27  Andreas Kling  <akling@apple.com>
 
         [iOS] Discard decoded image data on top-level navigation.
