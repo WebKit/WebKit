@@ -1,5 +1,14 @@
 2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Fix a typo.
+
+        Unreviewed. Shame I didn't notice in the previous commit.
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::removeUserContentWorld):
+
+2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Fix GTK and maybe EFL build after r197172.
 
         Unreviewed.

@@ -112,7 +112,7 @@ void WebUserContentController::removeUserContentWorld(uint64_t worldIdentifier)
 
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove a UserContentWorld (id=%" PRIu64 ") that is does not exist.", worldIdentifier);
+        WTFLogAlways("Trying to remove a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
         return;
     }
 
