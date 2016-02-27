@@ -1,3 +1,25 @@
+2016-02-27  Andreas Kling  <akling@apple.com>
+
+        [iOS] Discard decoded image data on top-level navigation.
+        <https://webkit.org/b/154776>
+
+        Reviewed by Anders Carlsson.
+
+        Add a mechanism that destroys decoded data for all CachedImages and invoke it
+        when performing a top-level navigation on iOS.
+
+        This substantially reduces the ImageIO contribution to our peak memory footprint.
+
+        It would be even better if we could mark these images volatile during the transition
+        but we currently don't have framework support for such machinations.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::forEachResource):
+        (WebCore::MemoryCache::destroyDecodedDataForAllImages):
+        * loader/cache/MemoryCache.h:
+
 2016-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Network cache: old pages returned by disk cache on history navigation after session is restored

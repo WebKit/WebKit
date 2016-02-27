@@ -1766,6 +1766,10 @@ void FrameLoader::commitProvisionalLoad()
         // For top-level navigations, have JSC throw away linked code. The immediate memory savings far
         // outweigh the cost of recompiling in the case of a future backwards navigation.
         GCController::singleton().deleteAllLinkedCode();
+
+        // Throw out decoded data for CachedImages when we are switching pages. The majority of it
+        // will not be used by the next page.
+        MemoryCache::singleton().destroyDecodedDataForAllImages();
 #endif
     }
 

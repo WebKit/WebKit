@@ -101,6 +101,9 @@ public:
     
     void revalidationSucceeded(CachedResource& revalidatingResource, const ResourceResponse&);
     void revalidationFailed(CachedResource& revalidatingResource);
+
+    void forEachResource(const std::function<void(CachedResource&)>&);
+    void destroyDecodedDataForAllImages();
     
     // Sets the cache's memory capacities, in bytes. These will hold only approximately, 
     // since the decoded cost of resources like scripts and stylesheets is not known.
