@@ -39,6 +39,7 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         this._frameIdentifierToExecutionContextPathComponentMap = {};
 
         this.element.classList.add("quick-console");
+        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
 
         this.prompt = new WebInspector.ConsolePrompt(null, "text/javascript");
         this.prompt.element.classList.add("text-prompt");
@@ -103,6 +104,15 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
     }
 
     // Private
+
+    _handleMouseDown(event)
+    {
+        if (event.target !== this.element)
+            return;
+
+        event.preventDefault();
+        this.prompt.focus();
+    }
 
     _executionContextPathComponentsToDisplay()
     {
