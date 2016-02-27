@@ -1,5 +1,30 @@
 2015-11-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Off-by-one error in getStyleContext()
+        https://bugs.webkit.org/show_bug.cgi?id=151524
+
+        Reviewed by Carlos Garcia Campos.
+
+        GtkWidgetPath* path = gtk_widget_path_new();
+        gtk_widget_path_append_type(path, widgetType);
+        // ...
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_BUTTON);
+        gtk_widget_path_iter_add_class(path, 1, "text-button");
+
+        Only one widget type was appended to the widget path, so the maximum valid index is 0. This
+        code means to add both style classes to the first widget type in the widget path, so the
+        second call should use index 0 rather than index 1.
+
+        This caused no bug in practice, because when the index is invalid,
+        gtk_widget_path_iter_add_class() automatically changes the index to the last valid position
+        in the widget path -- in this case, 0. This is routinely done with -1 as a convention for
+        specifying the last position in the widget path.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::getStyleContext):
+
+2015-11-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Warning spam from GtkStyleContext
         https://bugs.webkit.org/show_bug.cgi?id=151520
 
