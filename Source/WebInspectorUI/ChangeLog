@@ -1,5 +1,25 @@
 2016-02-26  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Keyboard controls to nudge control points in custom transition bezier curve editor would be nice
+        https://bugs.webkit.org/show_bug.cgi?id=154739
+        <rdar://problem/24861498>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds ability for user to nudge the most recently selected bezier control
+        handle by using the arrow keys. Also makes the currently selected bezier
+        control line snap to an axis, which is defined when the user mouses down,
+        whenever the mouse is dragged while the shift key is pressed.
+
+
+        * UserInterface/Views/BezierEditor.js:
+        (WebInspector.BezierEditor):
+        (WebInspector.BezierEditor.prototype.handleKeydownEvent):
+        (WebInspector.BezierEditor.prototype._handleMouseup):
+        (WebInspector.BezierEditor.prototype._updateControlPointsForMouseEvent):
+
+2016-02-26  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Option-clicking on the a CSS property sometimes doesn't work
         https://bugs.webkit.org/show_bug.cgi?id=154384
         <rdar://problem/24714755>

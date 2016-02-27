@@ -103,7 +103,10 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
         this._element.appendChild(this._bezierPreviewTiming);
 
         this._selectedControl = null;
+        this._mouseDownPosition = null;
         this._bezierContainer.addEventListener("mousedown", this);
+
+        WebInspector.addWindowKeydownListener(this);
     }
 
     // Public
@@ -153,6 +156,47 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
         }
     }
 
+    handleKeydownEvent(event)
+    {
+        if (!this._selectedControl || !this._element.parentNode)
+            return false;
+
+
+        let horizontal = 0;
+        let vertical = 0;
+        switch (event.keyCode) {
+        case WebInspector.KeyboardShortcut.Key.Up.keyCode:
+            vertical = -1;
+            break;
+        case WebInspector.KeyboardShortcut.Key.Right.keyCode:
+            horizontal = 1;
+            break;
+        case WebInspector.KeyboardShortcut.Key.Down.keyCode:
+            vertical = 1;
+            break;
+        case WebInspector.KeyboardShortcut.Key.Left.keyCode:
+            horizontal = -1;
+            break;
+        default:
+            return false;
+        }
+
+        if (event.shiftKey) {
+            horizontal *= 10;
+            vertical *= 10;
+        }
+
+        vertical *= this._bezierWidth / 100;
+        horizontal *= this._bezierHeight / 100;
+
+        this._selectedControl.point.x = Number.constrain(this._selectedControl.point.x + horizontal, 0, this._bezierWidth);
+        this._selectedControl.point.y += vertical;
+        this._updateControl(this._selectedControl);
+        this._updateValue();
+
+        return true;
+    }
+
     // Private
 
     _handleMousedown(event)
@@ -177,7 +221,7 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
     _handleMouseup(event)
     {
         this._selectedControl.handle.classList.remove("selected");
-        this._selectedControl = null;
+        this._mouseDownPosition = null;
         this._triggerPreviewAnimation();
 
         window.removeEventListener("mousemove", this, true);
@@ -191,10 +235,19 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
         point.y -= this._controlHandleRadius + this._padding;
 
         if (calculateSelectedControlPoint) {
+            this._mouseDownPosition = point;
+
             if (this._inControl.point.distance(point) < this._outControl.point.distance(point))
                 this._selectedControl = this._inControl;
             else
                 this._selectedControl = this._outControl;
+        }
+
+        if (event.shiftKey && this._mouseDownPosition) {
+            if (Math.abs(this._mouseDownPosition.x - point.x) > Math.abs(this._mouseDownPosition.y - point.y))
+                point.y = this._mouseDownPosition.y;
+            else
+                point.x = this._mouseDownPosition.x;
         }
 
         this._selectedControl.point = point;
