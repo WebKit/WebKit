@@ -3454,8 +3454,8 @@ static inline uint64_t generateSnapshotCallbackID()
 /**
  * webkit_web_view_get_snapshot:
  * @web_view: a #WebKitWebView
- * @options: #WebKitSnapshotOptions for the snapshot
  * @region: the #WebKitSnapshotRegion for this snapshot
+ * @options: #WebKitSnapshotOptions for the snapshot
  * @cancellable: (allow-none): a #GCancellable
  * @callback: (scope async): a #GAsyncReadyCallback
  * @user_data: (closure): user data

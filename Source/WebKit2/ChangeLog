@@ -1,3 +1,11 @@
+2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Fix order of parameters in gtkdoc for webkit_web_view_get_snapshot
+
+        Unreviewed.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+
 2016-02-26  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: New database versions are never committed to SQLite.
