@@ -1,0 +1,5 @@
+
+
+
+FAIL :indeterminate and input type=radio assert_equals: The indeterminate IDL attribute should not cause the :indeterminate pseudo-class to match on input type=radio expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

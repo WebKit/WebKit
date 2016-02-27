@@ -1,3 +1,13 @@
+2016-02-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline tests for ios-simulator after r197162
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio-expected.txt: Added.
+
 2016-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197158.
