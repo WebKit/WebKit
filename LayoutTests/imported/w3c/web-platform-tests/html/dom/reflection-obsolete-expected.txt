@@ -2771,10 +2771,10 @@ PASS marquee.hspace: IDL set to "-0" should not throw
 PASS marquee.hspace: IDL set to "-0" followed by getAttribute() 
 PASS marquee.hspace: IDL set to "-0" followed by IDL get 
 PASS marquee.hspace: IDL set to 2147483648 should not throw 
-FAIL marquee.hspace: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "2147483648"
+PASS marquee.hspace: IDL set to 2147483648 followed by getAttribute() 
 PASS marquee.hspace: IDL set to 2147483648 followed by IDL get 
 PASS marquee.hspace: IDL set to 4294967295 should not throw 
-FAIL marquee.hspace: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "4294967295"
+PASS marquee.hspace: IDL set to 4294967295 followed by getAttribute() 
 PASS marquee.hspace: IDL set to 4294967295 followed by IDL get 
 PASS marquee.scrollAmount: typeof IDL attribute 
 PASS marquee.scrollAmount: IDL get with DOM attribute unset 
@@ -3229,10 +3229,10 @@ PASS marquee.vspace: IDL set to "-0" should not throw
 PASS marquee.vspace: IDL set to "-0" followed by getAttribute() 
 PASS marquee.vspace: IDL set to "-0" followed by IDL get 
 PASS marquee.vspace: IDL set to 2147483648 should not throw 
-FAIL marquee.vspace: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "2147483648"
+PASS marquee.vspace: IDL set to 2147483648 followed by getAttribute() 
 PASS marquee.vspace: IDL set to 2147483648 followed by IDL get 
 PASS marquee.vspace: IDL set to 4294967295 should not throw 
-FAIL marquee.vspace: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "4294967295"
+PASS marquee.vspace: IDL set to 4294967295 followed by getAttribute() 
 PASS marquee.vspace: IDL set to 4294967295 followed by IDL get 
 PASS marquee.width: typeof IDL attribute 
 PASS marquee.width: IDL get with DOM attribute unset 

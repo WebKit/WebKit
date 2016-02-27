@@ -1,3 +1,16 @@
+2016-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Fix the behavior of reflecting IDL attributes of type unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=154771
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test coverage for the behavior of reflecting IDL attributes of type
+        unsigned long.
+
+        * fast/dom/reflect-unsigned-long-expected.txt: Added.
+        * fast/dom/reflect-unsigned-long.html: Added.
+
 2016-02-26  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (188611): Search field Cancel button should not overlap search text on extensions page.

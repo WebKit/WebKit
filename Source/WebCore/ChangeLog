@@ -1,3 +1,55 @@
+2016-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Fix the behavior of reflecting IDL attributes of type unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=154771
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix the behavior of reflecting IDL attributes of type unsigned long to
+        align with the specification:
+        - https://html.spec.whatwg.org/multipage/infrastructure.html#reflecting-content-attributes-in-idl-attributes
+        - https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
+
+        Firefox and Chrome already follow the specification.
+
+        There were several issues with our implementation, which are all
+        addressed in this patch:
+        - Upon getting, the value returned must be in the range 0 to 2147483647.
+          Otherwise, we must return the default value (0 unless specified
+          otherwise). We previously returned values in the range 0 to 4294967295
+          instead.
+        - Upon setting, we must set the content attribute to the default value
+          (0 unless specified otherwise) if the input value is not in the range
+          0 to 2147483647. We previously allowed values in the range 0 to
+          4294967295 instead.
+        - "-0" was not recognized as a valid unsigned integer
+
+        Test: fast/dom/reflect-unsigned-long.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setUnsignedIntegralAttribute):
+        Update setUnsignedIntegralAttribute() to limit the input value in the
+        0 to 2147483647 range, as per the HTML specification. This method is
+        called by the bindings implementation of reflecting attributes setters.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLNonNegativeInteger):
+        Update parseHTMLNonNegativeInteger() to call parseHTMLInteger() instead
+        of duplicating most of its code and fail if the value returned is
+        negative. This matches the algorithm in the specification:
+        - https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
+
+        This has 2 behavior changes:
+        1. "-0" is now correctly parsed as 0.
+        2. The returned values are in the range 0 to 2147483647.
+
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::limitToOnlyHTMLNonNegativeNumbersGreaterThanZero):
+        (WebCore::limitToOnlyHTMLNonNegative):
+        Drop the checks for "<= 2147483647" and replace with an assertion
+        now that parseHTMLNonNegativeInteger() already returned values in
+        the right range.
+
 2016-02-26  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (188611): Search field Cancel button should not overlap search text on extensions page.

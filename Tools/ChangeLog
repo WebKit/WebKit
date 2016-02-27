@@ -1,3 +1,18 @@
+2016-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Fix the behavior of reflecting IDL attributes of type unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=154771
+
+        Reviewed by Ryosuke Niwa.
+
+        Update API tests to cover the fixes to the parseHTMLNonNegativeInteger()
+        implementation:
+        - "-0" is parsed as 0.
+        - Range boundaries are now [0; 2147483647].
+
+        * TestWebKitAPI/Tests/WebCore/HTMLParserIdioms.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-02-26  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: New database versions are never committed to SQLite.

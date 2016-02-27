@@ -41,6 +41,9 @@ bool isHTMLLineBreak(UChar);
 bool isNotHTMLSpace(UChar);
 bool isHTMLSpaceButNotLineBreak(UChar);
 
+// 2147483647 is 2^31 - 1.
+static const unsigned maxHTMLNonNegativeInteger = 2147483647;
+
 // Strip leading and trailing whitespace as defined by the HTML specification. 
 WEBCORE_EXPORT String stripLeadingAndTrailingHTMLSpaces(const String&);
 
@@ -112,27 +115,31 @@ inline bool isHTMLSpaceButNotLineBreak(UChar character)
 // https://html.spec.whatwg.org/multipage/infrastructure.html#limited-to-only-non-negative-numbers-greater-than-zero
 inline unsigned limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(unsigned value, unsigned defaultValue = 1)
 {
-    return (value > 0 && value <= 2147483647) ? value : defaultValue;
+    return (value > 0 && value <= maxHTMLNonNegativeInteger) ? value : defaultValue;
 }
 
 inline unsigned limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(const String& stringValue, unsigned defaultValue = 1)
 {
-    unsigned value = defaultValue;
-    parseHTMLNonNegativeInteger(stringValue, value);
-    return limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultValue);
+    unsigned value;
+    if (!parseHTMLNonNegativeInteger(stringValue, value) || !value)
+        value = defaultValue;
+    ASSERT(value > 0 && value <= maxHTMLNonNegativeInteger);
+    return value;
 }
 
 // https://html.spec.whatwg.org/#reflecting-content-attributes-in-idl-attributes:idl-unsigned-long
 inline unsigned limitToOnlyHTMLNonNegative(unsigned value, unsigned defaultValue = 0)
 {
-    return value <= 2147483647 ? value : defaultValue;
+    return value <= maxHTMLNonNegativeInteger ? value : defaultValue;
 }
 
 inline unsigned limitToOnlyHTMLNonNegative(const String& stringValue, unsigned defaultValue = 0)
 {
-    unsigned value = defaultValue;
-    parseHTMLNonNegativeInteger(stringValue, value);
-    return limitToOnlyHTMLNonNegative(value, defaultValue);
+    unsigned value;
+    if (!parseHTMLNonNegativeInteger(stringValue, value))
+        value = defaultValue;
+    ASSERT(value <= maxHTMLNonNegativeInteger);
+    return value;
 }
 
 }

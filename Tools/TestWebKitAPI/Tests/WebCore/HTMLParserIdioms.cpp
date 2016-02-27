@@ -133,13 +133,13 @@ TEST(WebCoreHTMLParserIdioms, parseHTMLNonNegativeInteger)
     // Boundaries.
     EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("+0"));
     EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("0"));
-    // FIXME: This should pass.
-    // EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("-0"));
-    EXPECT_EQ(4294967295u, testParseHTMLNonNegativeInteger("4294967295"));
+    EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("-0"));
+    EXPECT_EQ(2147483647u, testParseHTMLNonNegativeInteger("2147483647"));
 
     // Failure cases.
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-1"));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("4294967296"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("2147483648"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("2147483649"));
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("111111111111111111"));
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("  -123"));
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-123"));
