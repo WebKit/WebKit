@@ -1,5 +1,13 @@
 2016-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ clean build.
+
+        Add missing header include.
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+
+2016-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Network cache: old pages returned by disk cache on history navigation after session is restored
         https://bugs.webkit.org/show_bug.cgi?id=153230
 

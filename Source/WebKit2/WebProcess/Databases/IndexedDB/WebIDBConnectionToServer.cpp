@@ -37,6 +37,7 @@
 #include <WebCore/IDBCursorInfo.h>
 #include <WebCore/IDBError.h>
 #include <WebCore/IDBIndexInfo.h>
+#include <WebCore/IDBKeyRangeData.h>
 #include <WebCore/IDBObjectStoreInfo.h>
 #include <WebCore/IDBOpenDBRequestImpl.h>
 #include <WebCore/IDBRequestData.h>
