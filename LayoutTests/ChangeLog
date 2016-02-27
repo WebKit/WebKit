@@ -1,3 +1,16 @@
+2015-10-07  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Progress bar is broken on recent GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=149831
+
+        Reviewed by Carlos Garcia Campos.
+
+        * fast/dom/HTMLProgressElement/native-progress-bar.html: Added.
+        * platform/gtk/fast/dom/HTMLProgressElement/native-progress-bar-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLProgressElement/native-progress-bar-expected.txt: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/native-progress-bar-expected.png: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/native-progress-bar-expected.txt: Added.
+
 2014-12-07  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Soup][Curl] HTTP header values should be treated as latin1, not UTF-8

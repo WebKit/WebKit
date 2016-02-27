@@ -1,3 +1,21 @@
+2015-10-07  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Progress bar is broken on recent GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=149831
+
+        Reviewed by Carlos Garcia Campos.
+
+        The gtk progress bar has been broken after bumping up to Gtk+-3.16. This is because
+        the way of rendering progress bar changed after gtk+-3.13.7. See more
+        https://mail.gnome.org/archives/commits-list/2014-August/msg03865.html
+        gtk_render_activity is no longer valid to paint a progress bar on a newer gtk+.
+        It should be done with gtk_render_background and gtk_render_frame.
+
+        Test: fast/dom/HTMLProgressElement/native-progress-bar.html
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintProgressBar):
+
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
         WebCore uses M_PI_2 instead of piOverTwoDouble

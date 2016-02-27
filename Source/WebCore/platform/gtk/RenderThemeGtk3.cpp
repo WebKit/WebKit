@@ -759,9 +759,14 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
                          rect.height() - (padding.top + padding.bottom));
     progressRect = RenderThemeGtk::calculateProgressRect(renderObject, progressRect);
 
-    if (!progressRect.isEmpty())
+    if (!progressRect.isEmpty()) {
+#if GTK_CHECK_VERSION(3, 13, 7)
+        gtk_render_background(context, paintInfo.context->platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
+        gtk_render_frame(context, paintInfo.context->platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
+#else
         gtk_render_activity(context, paintInfo.context->platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
-
+#endif
+    }
     gtk_style_context_restore(context);
     return false;
 }
