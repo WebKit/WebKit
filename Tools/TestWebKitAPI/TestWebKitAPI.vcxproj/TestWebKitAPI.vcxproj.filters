@@ -51,6 +51,9 @@
     <ClCompile Include="..\Tests\WebCore\win\BitmapImage.cpp">
       <Filter>Tests\WebCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\WebCore\HTMLParserIdioms.cpp">
+      <Filter>Tests\WebCore</Filter>
+    </ClCompile>
     <ClCompile Include="..\Tests\WebCore\LayoutUnit.cpp">
       <Filter>Tests\WebCore</Filter>
     </ClCompile>

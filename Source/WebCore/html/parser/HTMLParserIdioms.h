@@ -57,10 +57,10 @@ double parseToDoubleForNumberType(const String&);
 double parseToDoubleForNumberType(const String&, double fallbackValue);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
-bool parseHTMLInteger(const String&, int&);
+WEBCORE_EXPORT bool parseHTMLInteger(const String&, int&);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
-bool parseHTMLNonNegativeInteger(const String&, unsigned int&);
+WEBCORE_EXPORT bool parseHTMLNonNegativeInteger(const String&, unsigned&);
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-settings-attribute
 String parseCORSSettingsAttribute(const AtomicString&);

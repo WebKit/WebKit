@@ -1,3 +1,14 @@
+2016-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Add API test coverage for parseHTMLInteger / parseHTMLNonNegativeInteger
+        https://bugs.webkit.org/show_bug.cgi?id=154714
+
+        Reviewed by Darin Adler.
+
+        Export a couple more symbols for API testing.
+
+        * html/parser/HTMLParserIdioms.h:
+
 2016-02-26  Beth Dakin  <bdakin@apple.com>
 
         32-bit!!!
