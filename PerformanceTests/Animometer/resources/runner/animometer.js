@@ -1,8 +1,13 @@
 ResultsDashboard = Utilities.createClass(
-    function()
+    function(options, testData)
     {
         this._iterationsSamplers = [];
-        this._processedData = undefined;
+        this._options = options;
+        this._results = null;
+        if (testData) {
+            this._iterationsSamplers = testData;
+            this._processData();
+        }
     }, {
 
     push: function(suitesSamplers)
@@ -12,53 +17,179 @@ ResultsDashboard = Utilities.createClass(
 
     _processData: function()
     {
-        var iterationsResults = [];
+        this._results = {};
+        this._results[Strings.json.results.iterations] = [];
+
         var iterationsScores = [];
+        this._iterationsSamplers.forEach(function(iteration, index) {
+            var testsScores = [];
 
-        this._iterationsSamplers.forEach(function(iterationSamplers, index) {
-            var suitesResults = {};
-            var suitesScores = [];
+            var result = {};
+            this._results[Strings.json.results.iterations][index] = result;
 
-            for (var suiteName in iterationSamplers) {
-                var suite = suiteFromName(suiteName);
-                var suiteSamplerData = iterationSamplers[suiteName];
+            var suitesResult = {};
+            result[Strings.json.results.tests] = suitesResult;
 
-                var testsResults = {};
-                var testsScores = [];
+            for (var suiteName in iteration) {
+                var suiteData = iteration[suiteName];
 
-                for (var testName in suiteSamplerData) {
-                    testsResults[testName] = suiteSamplerData[testName];
-                    testsScores.push(testsResults[testName][Strings.json.score]);
+                var suiteResult = {};
+                suitesResult[suiteName] = suiteResult;
+
+                for (var testName in suiteData) {
+                    if (!suiteData[testName][Strings.json.result])
+                        this.calculateScore(suiteData[testName]);
+
+                    suiteResult[testName] = suiteData[testName][Strings.json.result];
+                    delete suiteData[testName][Strings.json.result];
+
+                    testsScores.push(suiteResult[testName][Strings.json.score]);
                 }
-
-                suitesResults[suiteName] =  {};
-                suitesResults[suiteName][Strings.json.score] = Statistics.geometricMean(testsScores);
-                suitesResults[suiteName][Strings.json.results.tests] = testsResults;
-                suitesScores.push(suitesResults[suiteName][Strings.json.score]);
             }
 
-            iterationsResults[index] = {};
-            iterationsResults[index][Strings.json.score] = Statistics.geometricMean(suitesScores);
-            iterationsResults[index][Strings.json.results.suites] = suitesResults;
-            iterationsScores.push(iterationsResults[index][Strings.json.score]);
+            result[Strings.json.score] = Statistics.geometricMean(testsScores);
+            iterationsScores.push(result[Strings.json.score]);
+        }, this);
+
+        this._results[Strings.json.score] = Statistics.sampleMean(iterationsScores.length, iterationsScores.reduce(function(a, b) { return a + b; }));
+    },
+
+    calculateScore: function(data)
+    {
+        var result = {};
+        data[Strings.json.result] = result;
+        var samples = data[Strings.json.samples];
+
+        function findRegression(series) {
+            var minIndex = Math.round(.025 * series.length);
+            var maxIndex = Math.round(.975 * (series.length - 1));
+            var minComplexity = series[minIndex].complexity;
+            var maxComplexity = series[maxIndex].complexity;
+            if (Math.abs(maxComplexity - minComplexity) < 20 && maxIndex - minIndex < 20) {
+                minIndex = 0;
+                maxIndex = series.length - 1;
+                minComplexity = series[minIndex].complexity;
+                maxComplexity = series[maxIndex].complexity;
+            }
+
+            return {
+                minComplexity: minComplexity,
+                maxComplexity: maxComplexity,
+                samples: series.slice(minIndex, maxIndex + 1),
+                regression: new Regression(
+                    series,
+                    function (datum, i) { return datum[i].complexity; },
+                    function (datum, i) { return datum[i].frameLength; },
+                    minIndex, maxIndex)
+            };
+        }
+
+        var complexitySamples;
+        [Strings.json.complexity, Strings.json.complexityAverage].forEach(function(seriesName) {
+            if (!(seriesName in samples))
+                return;
+
+            var regression = {};
+            result[seriesName] = regression;
+            var regressionResult = findRegression(samples[seriesName]);
+            if (seriesName == Strings.json.complexity)
+                complexitySamples = regressionResult.samples;
+            var calculation = regressionResult.regression;
+            regression[Strings.json.regressions.segment1] = [
+                [regressionResult.minComplexity, calculation.s1 + calculation.t1 * regressionResult.minComplexity],
+                [calculation.complexity, calculation.s1 + calculation.t1 * calculation.complexity]
+            ];
+            regression[Strings.json.regressions.segment2] = [
+                [calculation.complexity, calculation.s2 + calculation.t2 * calculation.complexity],
+                [regressionResult.maxComplexity, calculation.s2 + calculation.t2 * regressionResult.maxComplexity]
+            ];
+            regression[Strings.json.complexity] = calculation.complexity;
+            regression[Strings.json.measurements.stdev] = Math.sqrt(calculation.error / samples[seriesName].length);
         });
 
-        this._processedData = {};
-        this._processedData[Strings.json.score] = Statistics.sampleMean(iterationsScores.length, iterationsScores.reduce(function(a, b) { return a * b; }));
-        this._processedData[Strings.json.results.iterations] = iterationsResults;
+        if (this._options["adjustment"] == "ramp") {
+            var timeComplexity = new Experiment;
+            data[Strings.json.controller].forEach(function(regression) {
+                timeComplexity.sample(regression[Strings.json.complexity]);
+            });
+
+            var experimentResult = {};
+            result[Strings.json.controller] = experimentResult;
+            experimentResult[Strings.json.score] = timeComplexity.mean();
+            experimentResult[Strings.json.measurements.average] = timeComplexity.mean();
+            experimentResult[Strings.json.measurements.stdev] = timeComplexity.standardDeviation();
+            experimentResult[Strings.json.measurements.percent] = timeComplexity.percentage();
+
+            result[Strings.json.complexity][Strings.json.bootstrap] = Regression.bootstrap(complexitySamples, 2500, function(resample) {
+                    resample.sort(function(a, b) {
+                        return a.complexity - b.complexity;
+                    });
+
+                    var regressionResult = findRegression(resample);
+                    return regressionResult.regression.complexity;
+                }, .95);
+            result[Strings.json.score] = result[Strings.json.complexity][Strings.json.bootstrap].median;
+
+        } else {
+            var marks = data[Strings.json.marks];
+            var samplingStartIndex = 0, samplingEndIndex = -1;
+            if (Strings.json.samplingStartTimeOffset in marks)
+                samplingStartIndex = marks[Strings.json.samplingStartTimeOffset].index;
+            if (Strings.json.samplingEndTimeOffset in marks)
+                samplingEndIndex = marks[Strings.json.samplingEndTimeOffset].index;
+
+            var averageComplexity = new Experiment;
+            var averageFrameLength = new Experiment;
+            samples[Strings.json.controller].forEach(function (sample, i) {
+                if (i >= samplingStartIndex && (samplingEndIndex == -1 || i < samplingEndIndex)) {
+                    averageComplexity.sample(sample.complexity);
+                    if (sample.smoothedFrameLength && sample.smoothedFrameLength != -1)
+                        averageFrameLength.sample(sample.smoothedFrameLength);
+                }
+            });
+
+            var experimentResult = {};
+            result[Strings.json.controller] = experimentResult;
+            experimentResult[Strings.json.measurements.average] = averageComplexity.mean();
+            experimentResult[Strings.json.measurements.concern] = averageComplexity.concern(Experiment.defaults.CONCERN);
+            experimentResult[Strings.json.measurements.stdev] = averageComplexity.standardDeviation();
+            experimentResult[Strings.json.measurements.percent] = averageComplexity.percentage();
+
+            experimentResult = {};
+            result[Strings.json.frameLength] = experimentResult;
+            experimentResult[Strings.json.measurements.average] = 1000 / averageFrameLength.mean();
+            experimentResult[Strings.json.measurements.concern] = averageFrameLength.concern(Experiment.defaults.CONCERN);
+            experimentResult[Strings.json.measurements.stdev] = averageFrameLength.standardDeviation();
+            experimentResult[Strings.json.measurements.percent] = averageFrameLength.percentage();
+
+            result[Strings.json.score] = averageComplexity.score(Experiment.defaults.CONCERN);
+        }
     },
 
     get data()
     {
-        if (this._processedData)
-            return this._processedData;
+        return this._iterationsSamplers;
+    },
+
+    get results()
+    {
+        if (this._results)
+            return this._results[Strings.json.results.iterations];
         this._processData();
-        return this._processedData;
+        return this._results[Strings.json.results.iterations];
+    },
+
+    get options()
+    {
+        return this._options;
     },
 
     get score()
     {
-        return this.data[Strings.json.score];
+        if (this._results)
+            return this._results[Strings.json.score];
+        this._processData();
+        return this._results[Strings.json.score];
     }
 });
 
@@ -133,29 +264,26 @@ ResultsTable = Utilities.createClass(
         }, this);
     },
 
-    _addSuite: function(suiteName, suiteResults, options)
+    _addIteration: function(iterationResult, iterationData, options)
     {
-        for (var testName in suiteResults[Strings.json.results.tests]) {
-            var testResults = suiteResults[Strings.json.results.tests][testName];
-            this._addTest(testName, testResults, options);
-        }
-    },
-
-    _addIteration: function(iterationResult, options)
-    {
-        for (var suiteName in iterationResult[Strings.json.results.suites]) {
+        var testsResults = iterationResult[Strings.json.results.tests];
+        for (var suiteName in testsResults) {
             this._addEmptyRow();
-            this._addSuite(suiteName, iterationResult[Strings.json.results.suites][suiteName], options);
+            var suiteResult = testsResults[suiteName];
+            var suiteData = iterationData[suiteName];
+            for (var testName in suiteResult)
+                this._addTest(testName, suiteResult[testName], options, suiteData[testName]);
         }
     },
 
-    showIterations: function(iterationsResults, options)
+    showIterations: function(dashboard)
     {
         this.clear();
         this._addHeader();
 
-        iterationsResults.forEach(function(iterationResult) {
-            this._addIteration(iterationResult, options);
+        var iterationsResults = dashboard.results;
+        iterationsResults.forEach(function(iterationResult, index) {
+            this._addIteration(iterationResult, dashboard.data[index], dashboard.options);
         }, this);
     }
 });
@@ -172,12 +300,17 @@ window.benchmarkRunnerClient = {
 
     willStartFirstIteration: function()
     {
-        this.results = new ResultsDashboard();
+        this.results = new ResultsDashboard(this.options);
     },
 
     didRunSuites: function(suitesSamplers)
     {
         this.results.push(suitesSamplers);
+    },
+
+    didRunTest: function(testData)
+    {
+        this.results.calculateScore(testData);
     },
 
     didFinishLastIteration: function()
@@ -210,10 +343,10 @@ window.sectionsManager =
             document.querySelector("#" + sectionIdentifier + " .mean").innerHTML = mean;
     },
 
-    populateTable: function(tableIdentifier, headers, data)
+    populateTable: function(tableIdentifier, headers, dashboard)
     {
         var table = new ResultsTable(document.getElementById(tableIdentifier), headers);
-        table.showIterations(data, benchmarkRunnerClient.options);
+        table.showIterations(dashboard);
     }
 };
 
@@ -249,10 +382,11 @@ window.benchmarkController = {
             this.addedKeyEvent = true;
         }
 
-        sectionsManager.setSectionScore("results", benchmarkRunnerClient.results.score.toFixed(2));
-        var data = benchmarkRunnerClient.results.data[Strings.json.results.iterations];
-        sectionsManager.populateTable("results-header", Headers.testName, data);
-        sectionsManager.populateTable("results-score", Headers.score, data);
+        var dashboard = benchmarkRunnerClient.results;
+
+        sectionsManager.setSectionScore("results", dashboard.score.toFixed(2));
+        sectionsManager.populateTable("results-header", Headers.testName, dashboard);
+        sectionsManager.populateTable("results-score", Headers.score, dashboard);
         sectionsManager.showSection("results", true);
     },
 

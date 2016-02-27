@@ -1,7 +1,6 @@
-SimpleKalmanEstimator = Utilities.createClass(
+SimpleKalmanEstimator = Utilities.createSubclass(Experiment,
     function(processError, measurementError) {
-        this._initialized = false;
-
+        Experiment.call(this, false);
         var error = .5 * (Math.sqrt(processError * processError + 4 * processError * measurementError) - processError);
         this._gain = error / (error + measurementError);
     }, {
@@ -10,16 +9,18 @@ SimpleKalmanEstimator = Utilities.createClass(
     {
         if (!this._initialized) {
             this._initialized = true;
-            this._estimatedMeasurement = newMeasurement;
+            this.estimate = newMeasurement;
             return;
         }
 
-        this._estimatedMeasurement = this._estimatedMeasurement + this._gain * (newMeasurement - this._estimatedMeasurement);
+        this.estimate = this.estimate + this._gain * (newMeasurement - this.estimate);
     },
 
-    get estimate()
+    reset: function()
     {
-        return this._estimatedMeasurement;
+        Experiment.prototype.reset.call(this);
+        this._initialized = false;
+        this.estimate = 0;
     }
 });
 

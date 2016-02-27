@@ -10,7 +10,7 @@ Particle.prototype =
 {
     reset: function()
     {
-        var randSize = Math.pow(Math.random(), 4) * 25 + 15;
+        var randSize = Math.pow(Pseudo.random(), 4) * 25 + 15;
         this.size = new Point(randSize, randSize);
         this.maxPosition = this.stage.size.subtract(this.size);
         this.position = new Point(this.stage.size.x / 2, this.stage.size.y / 4);

@@ -2,11 +2,13 @@
 <html>
 <head>
     <title>Animometer - developer</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="stylesheet" href="resources/runner/animometer.css">
     <link rel="stylesheet" href="resources/debug-runner/animometer.css">
     <script src="resources/strings.js"></script>
     <script src="resources/extensions.js"></script>
+    <script src="resources/statistics.js"></script>
 
     <script src="resources/runner/tests.js"></script>
     <script src="resources/debug-runner/tests.js" charset="utf-8"></script>
@@ -26,6 +28,7 @@
                 <div id="suites">
                     <h2>Suites:</h2>
                     <ul class="tree"></ul>
+                    <div><span id="drop-target">Drop results here</span></div>
                 </div>
                 <div id="options">
                     <h2>Options:</h2>
@@ -106,8 +109,8 @@
             <nav>
                 <form name="graph-type">
                     <ul>
-                        <li><label><input type="radio" name="graph-type" value="time" checked> Time graph</label></li>
-                        <li><label><input type="radio" name="graph-type" value="complexity"> Complexity graph</label></li>
+                        <li><label><input type="radio" name="graph-type" value="time"> Time graph</label></li>
+                        <li><label><input type="radio" name="graph-type" value="complexity" checked> Complexity graph</label></li>
                     </ul>
                 </form>
                 <form name="time-graph-options">
@@ -127,12 +130,13 @@
                 <form name="complexity-graph-options">
                     <ul class="series">
                         <li><label><input type="checkbox" name="series-raw" checked> Series raw</label></li>
-                        <li><label><input type="checkbox" name="series-average" checked> Series average</label></li>
+                        <li><label><input type="checkbox" name="series-average"> Series average</label></li>
                     </ul>
                     <ul>
-                        <li><label><input type="checkbox" name="regression-time-score" checked> Ramp regression score</label>
-                        <li><label><input type="checkbox" name="complexity-regression-aggregate-raw" checked> Regression, series raw</label>
-                        <li><label><input type="checkbox" name="complexity-regression-aggregate-average" checked> Regression, series average</label>
+                        <li><label><input type="checkbox" name="regression-time-score"> Controller score</label></li>
+                        <li><label><input type="checkbox" name="bootstrap-score" checked> Bootstrap score and histogram</label></li>
+                        <li><label><input type="checkbox" name="complexity-regression-aggregate-raw" checked> Regression, series raw</label><span id="complexity-regression-aggregate-raw"></span></li>
+                        <li><label><input type="checkbox" name="complexity-regression-aggregate-average"> Regression, series average</label><span id="complexity-regression-aggregate-average"></span></li>
                     </ul>
                 </form>
             </nav>

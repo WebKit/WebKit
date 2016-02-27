@@ -171,6 +171,23 @@ label.tree-label {
     padding: 0 0 0 1em;
 }
 
+#suites > div {
+    margin-top: 3em;
+}
+
+#drop-target {
+    font-size: 1em;
+    border-radius: 10px;
+    padding: .5em 2em;
+    border: 2px solid rgb(235, 235, 235);
+    color: rgb(235, 235, 235);
+}
+
+#drop-target:hover {
+    background-color: rgba(255, 255, 255, .1);
+    cursor: pointer;
+}
+
 #options ul {
     margin: 0;
     padding: 0;
@@ -306,6 +323,26 @@ label.tree-label {
     padding-left: .25em;
 }
 
+#results-data .left {
+    text-align: left;
+}
+
+#results-data .right {
+    text-align: right;
+}
+
+#results-data .pad-left {
+    padding-left: 1em;
+}
+
+#results-data .pad-right {
+    padding-right: .25em;
+}
+
+#results-data .small {
+    font-size: .8em;
+}
+
 #results-tables td.noisy-results {
     color: rgb(255, 104, 104);
 }
@@ -357,7 +394,7 @@ label.tree-label {
     top: 1.5em;
     right: 0;
     font-size: .7em;
-    width: 23em;
+    width: 28em;
 }
 
 #test-graph nav ul {
@@ -520,11 +557,41 @@ label.tree-label {
     fill: rgba(253, 253, 253, .05);
 }
 
-#complexity-graph .series.average circle {
+#complexity-graph .raw.series line {
+    stroke: hsl(30, 96%, 56%);
+    stroke-width: 1px;
+}
+
+#complexity-graph .raw.regression line {
+    stroke: rgba(30, 96%, 86%, .6);
+}
+
+#complexity-graph .raw.regression polygon {
+    stroke: rgba(30, 96%, 86%, .05);
+}
+
+#complexity-graph .average.series circle {
     fill: hsl(170, 96%, 56%);
 }
 
-#complexity-graph .series.average line {
+#complexity-graph .average.series line {
     stroke: hsla(170, 96%, 56%, .2);
     stroke-width: 2px;
+}
+
+#complexity-graph .bootstrap .bar {
+    fill: hsla(260, 56%, 66%, .4);
+}
+
+#complexity-graph .bootstrap .median line {
+    stroke: hsla(300, 56%, 66%, .8);
+    stroke-width: 2px;
+}
+
+#complexity-graph .bootstrap .median circle {
+    fill: hsla(300, 56%, 66%, .8);
+}
+
+#complexity-graph .bootstrap .median polygon {
+    fill: hsla(300, 56%, 66%, .05);
 }

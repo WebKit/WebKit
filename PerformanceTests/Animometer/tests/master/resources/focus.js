@@ -18,7 +18,7 @@ var FocusElement = Utilities.createClass(
         var left = Stage.random(0, stage.size.width - 2 * radius - sizeVariance);
 
         // size and blurring are a function of depth
-        this._depth = Utilities.lerp(1 - Math.pow(Math.random(), 2), minObjectDepth, maxObjectDepth);
+        this._depth = Utilities.lerp(1 - Math.pow(Pseudo.random(), 2), minObjectDepth, maxObjectDepth);
         var distance = Utilities.lerp(this._depth, 1, sizeVariance);
         var size = 2 * radius + sizeVariance - distance;
 
@@ -32,8 +32,8 @@ var FocusElement = Utilities.createClass(
         Utilities.setElementPrefixedProperty(this.element, "filter", "blur(" + stage.getBlurValue(this._depth) + "px) opacity(" + stage.getOpacityValue(this._depth) + "%)");
 
         var depthMultiplier = Utilities.lerp(1 - this._depth, 0.8, 1);
-        this._sinMultiplier = Math.random() * Stage.randomSign() * depthMultiplier;
-        this._cosMultiplier = Math.random() * Stage.randomSign() * depthMultiplier;
+        this._sinMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier;
+        this._cosMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier;
     }, {
 
     animate: function(stage, sinTime, cosTime)

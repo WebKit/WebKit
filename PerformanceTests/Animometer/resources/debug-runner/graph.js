@@ -1,44 +1,56 @@
 Utilities.extendObject(window.benchmarkController, {
     layoutCounter: 0,
 
-    updateGraphData: function(graphData)
+    updateGraphData: function(testResult, testData, options)
     {
         var element = document.getElementById("test-graph-data");
         element.innerHTML = "";
-        element.graphData = graphData;
+        element.testResult = testResult;
+        element.testData = testData;
+        element.options = options;
         document.querySelector("hr").style.width = this.layoutCounter++ + "px";
 
         var margins = new Insets(30, 30, 30, 40);
         var size = Point.elementClientSize(element).subtract(margins.size);
 
-        this.createTimeGraph(graphData, margins, size);
+        this.createTimeGraph(testResult, testData[Strings.json.samples][Strings.json.controller], testData[Strings.json.marks], testData[Strings.json.controller], options, margins, size);
         this.onTimeGraphOptionsChanged();
 
-        var hasComplexityRegression = !!graphData.complexityRegression;
-        this._showOrHideNodes(hasComplexityRegression, "form[name=graph-type]");
-        if (hasComplexityRegression) {
+        var hasComplexitySamples = !!testData[Strings.json.samples][Strings.json.complexity];
+        this._showOrHideNodes(hasComplexitySamples, "form[name=graph-type]");
+        if (hasComplexitySamples) {
             document.forms["graph-type"].elements["type"] = "complexity";
-            this.createComplexityGraph(graphData, margins, size);
+            this.createComplexityGraph(testResult, testData[Strings.json.controller], testData[Strings.json.samples], options, margins, size);
             this.onComplexityGraphOptionsChanged();
         }
 
         this.onGraphTypeChanged();
     },
 
-    _addRegressionLine: function(parent, xScale, yScale, points, stdev, isAlongYAxis)
+    _addRegressionLine: function(parent, xScale, yScale, points, range, isAlongYAxis)
     {
         var polygon = [];
         var line = []
-        var xStdev = isAlongYAxis ? stdev : 0;
-        var yStdev = isAlongYAxis ? 0 : stdev;
+        var xRange = isAlongYAxis ? range : 0;
+        var yRange = isAlongYAxis ? 0 : range;
         for (var i = 0; i < points.length; ++i) {
             var point = points[i];
-            polygon.push(xScale(point[0] + xStdev), yScale(point[1] + yStdev));
+            var x;
+            if (xRange instanceof Array)
+                x = xRange[0];
+            else
+                x = point[0] + xRange;
+            polygon.push(xScale(x), yScale(point[1] + yRange));
             line.push(xScale(point[0]), yScale(point[1]));
         }
         for (var i = points.length - 1; i >= 0; --i) {
             var point = points[i];
-            polygon.push(xScale(point[0] - xStdev), yScale(point[1] - yStdev));
+            var x;
+            if (xRange instanceof Array)
+                x = xRange[1];
+            else
+                x = point[0] - xRange;
+            polygon.push(xScale(x), yScale(point[1] - yRange));
         }
         parent.append("polygon")
             .attr("points", polygon.join(","));
@@ -52,14 +64,14 @@ Utilities.extendObject(window.benchmarkController, {
     _addRegression: function(data, svg, xScale, yScale)
     {
         svg.append("circle")
-            .attr("cx", xScale(data.segment2[1][0]))
-            .attr("cy", yScale(data.segment2[1][1]))
+            .attr("cx", xScale(data.segment1[1][0]))
+            .attr("cy", yScale(data.segment1[1][1]))
             .attr("r", 5);
         this._addRegressionLine(svg, xScale, yScale, data.segment1, data.stdev);
         this._addRegressionLine(svg, xScale, yScale, data.segment2, data.stdev);
     },
 
-    createComplexityGraph: function(graphData, margins, size)
+    createComplexityGraph: function(result, timeRegressions, data, options, margins, size)
     {
         var svg = d3.select("#test-graph-data").append("svg")
             .attr("id", "complexity-graph")
@@ -69,34 +81,36 @@ Utilities.extendObject(window.benchmarkController, {
             .append("g")
                 .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
+        var timeSamples = data[Strings.json.controller];
+
         var xMin = 100000, xMax = 0;
-        if (graphData.timeRegressions) {
-            graphData.timeRegressions.forEach(function(regression) {
+        if (timeRegressions) {
+            timeRegressions.forEach(function(regression) {
                 for (var i = regression.startIndex; i <= regression.endIndex; ++i) {
-                    xMin = Math.min(xMin, graphData.samples[i].complexity);
-                    xMax = Math.max(xMax, graphData.samples[i].complexity);
+                    xMin = Math.min(xMin, timeSamples[i].complexity);
+                    xMax = Math.max(xMax, timeSamples[i].complexity);
                 }
             });
         } else {
-            xMin = d3.min(graphData.samples, function(s) { return s.complexity; });
-            xMax = d3.max(graphData.samples, function(s) { return s.complexity; });
+            xMin = d3.min(timeSamples, function(s) { return s.complexity; });
+            xMax = d3.max(timeSamples, function(s) { return s.complexity; });
         }
 
         var xScale = d3.scale.linear()
             .range([0, size.width])
             .domain([xMin, xMax]);
         var yScale = d3.scale.linear()
-                .range([size.height, 0])
-                .domain([1000/20, 1000/60]);
+            .range([size.height, 0])
+            .domain([1000/20, 1000/60]);
 
         var xAxis = d3.svg.axis()
-                .scale(xScale)
-                .orient("bottom");
+            .scale(xScale)
+            .orient("bottom");
         var yAxis = d3.svg.axis()
-                .scale(yScale)
-                .tickValues([1000/20, 1000/25, 1000/30, 1000/35, 1000/40, 1000/45, 1000/50, 1000/55, 1000/60])
-                .tickFormat(function(d) { return (1000 / d).toFixed(0); })
-                .orient("left");
+            .scale(yScale)
+            .tickValues([1000/20, 1000/25, 1000/30, 1000/35, 1000/40, 1000/45, 1000/50, 1000/55, 1000/60])
+            .tickFormat(function(d) { return (1000 / d).toFixed(0); })
+            .orient("left");
 
         // x-axis
         svg.append("g")
@@ -109,38 +123,64 @@ Utilities.extendObject(window.benchmarkController, {
             .attr("class", "y axis")
             .call(yAxis);
 
-        // time-based regression
+        // time result
         var mean = svg.append("g")
             .attr("class", "mean complexity");
-        var complexity = graphData.averages[Strings.json.experiments.complexity];
-        this._addRegressionLine(mean, xScale, yScale, [[complexity.average, yScale.domain()[0]], [complexity.average, yScale.domain()[1]]], complexity.stdev, true);
+        var timeResult = result[Strings.json.controller];
+        var yMin = yScale.domain()[0], yMax = yScale.domain()[1];
+        this._addRegressionLine(mean, xScale, yScale, [[timeResult.average, yMin], [timeResult.average, yMax]], timeResult.stdev, true);
 
         // regression
-        this._addRegression(graphData.complexityRegression, svg.append("g").attr("class", "regression raw"), xScale, yScale);
-        this._addRegression(graphData.complexityAverageRegression, svg.append("g").attr("class", "regression average"), xScale, yScale);
+        this._addRegression(result[Strings.json.complexity], svg.append("g").attr("class", "regression raw"), xScale, yScale);
+        this._addRegression(result[Strings.json.complexityAverage], svg.append("g").attr("class", "regression average"), xScale, yScale);
 
-        var svgGroup = svg.append("g")
-            .attr("class", "series raw");
-        var seriesCounter = 0;
-        graphData.timeRegressions.forEach(function(regression, i) {
-            seriesCounter++;
-            var group = svgGroup.append("g")
-                .attr("class", "series-" + seriesCounter)
-                .attr("fill", "hsl(" + (i / graphData.timeRegressions.length * 360).toFixed(0) + ", 96%, 56%)");
-            group.selectAll("circle")
-                .data(graphData.samples)
-                .enter()
-                .append("circle")
-                .filter(function(d, i) { return i >= regression.startIndex && i <= regression.endIndex; })
-                .attr("cx", function(d) { return xScale(d.complexity); })
-                .attr("cy", function(d) { return yScale(d.frameLength); })
-                .attr("r", 2);
-        });
+        var bootstrapResult = result[Strings.json.complexity][Strings.json.bootstrap];
+        if (bootstrapResult) {
+            var histogram = d3.layout.histogram()
+                .bins(xScale.ticks(100))(bootstrapResult.data);
+            var yBootstrapScale = d3.scale.linear()
+                .range([size.height/2, 0])
+                .domain([0, d3.max(histogram, function(d) { return d.y; })]);
+            group = svg.append("g").attr("class", "bootstrap");
+            var bar = group.selectAll(".bar")
+                .data(histogram)
+                .enter().append("g")
+                    .attr("class", "bar")
+                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yBootstrapScale(d.y) + ")"; });
+            bar.append("rect")
+                .attr("x", 1)
+                .attr("y", size.height/2)
+                .attr("width", xScale(histogram[1].x) - xScale(histogram[0].x) - 1)
+                .attr("height", function(d) { return size.height/2 - yBootstrapScale(d.y); });
+            group = group.append("g").attr("class", "median");
+            this._addRegressionLine(group, xScale, yScale, [[bootstrapResult.median, yMin], [bootstrapResult.median, yMax]], [bootstrapResult.confidenceLow, bootstrapResult.confidenceHigh], true);
+            group.append("circle")
+                .attr("cx", xScale(bootstrapResult.median))
+                .attr("cy", yScale(1000/60))
+                .attr("r", 5);
+        }
+
+        // series
+        group = svg.append("g")
+            .attr("class", "series raw")
+            .selectAll("line")
+                .data(data[Strings.json.complexity])
+                .enter();
+        group.append("line")
+            .attr("x1", function(d) { return xScale(d.complexity) - 3; })
+            .attr("x2", function(d) { return xScale(d.complexity) + 3; })
+            .attr("y1", function(d) { return yScale(d.frameLength) - 3; })
+            .attr("y2", function(d) { return yScale(d.frameLength) + 3; });
+        group.append("line")
+            .attr("x1", function(d) { return xScale(d.complexity) - 3; })
+            .attr("x2", function(d) { return xScale(d.complexity) + 3; })
+            .attr("y1", function(d) { return yScale(d.frameLength) + 3; })
+            .attr("y2", function(d) { return yScale(d.frameLength) - 3; });
 
         group = svg.append("g")
             .attr("class", "series average")
             .selectAll("circle")
-                .data(graphData.complexityAverageSamples)
+                .data(data[Strings.json.complexityAverage])
                 .enter();
         group.append("circle")
             .attr("cx", function(d) { return xScale(d.complexity); })
@@ -162,7 +202,7 @@ Utilities.extendObject(window.benchmarkController, {
             .attr("y2", yScale(yAxis.scale().domain()[1]));
         cursorGroup.append("line")
             .attr("class", "y")
-            .attr("x1", xScale(0) - 10)
+            .attr("x1", xScale(xAxis.scale().domain()[0]) - 10)
             .attr("x2", xScale(xAxis.scale().domain()[1]))
             .attr("y1", 0)
             .attr("y2", 0)
@@ -174,7 +214,7 @@ Utilities.extendObject(window.benchmarkController, {
             .attr("text-anchor", "middle");
         cursorGroup.append("text")
             .attr("class", "label y")
-            .attr("x", xScale(0) - 15)
+            .attr("x", xScale(xAxis.scale().domain()[0]) - 15)
             .attr("y", 0)
             .attr("baseline-shift", "-30%")
             .attr("text-anchor", "end");
@@ -208,7 +248,7 @@ Utilities.extendObject(window.benchmarkController, {
         });
     },
 
-    createTimeGraph: function(graphData, margins, size)
+    createTimeGraph: function(result, samples, marks, regressions, options, margins, size)
     {
         var svg = d3.select("#test-graph-data").append("svg")
             .attr("id", "time-graph")
@@ -217,21 +257,17 @@ Utilities.extendObject(window.benchmarkController, {
             .append("g")
                 .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
-        var axes = graphData.axes;
-        var targetFrameLength = graphData.targetFrameLength;
-
         // Axis scales
         var x = d3.scale.linear()
                 .range([0, size.width])
                 .domain([
-                    Math.min(d3.min(graphData.samples, function(s) { return s.time; }), 0),
-                    d3.max(graphData.samples, function(s) { return s.time; })]);
-        var complexityMax = d3.max(graphData.samples, function(s) { return s.complexity; });
-        if (graphData.timeRegressions) {
-            complexityMax = Math.max.apply(Math, graphData.timeRegressions.map(function(regression) {
-                return regression.maxComplexity || 0;
-            }));
-        }
+                    Math.min(d3.min(samples, function(s) { return s.time; }), 0),
+                    d3.max(samples, function(s) { return s.time; })]);
+        var complexityMax = d3.max(samples, function(s) {
+            if (s.time > 0)
+                return s.complexity;
+            return 0;
+        });
 
         var yLeft = d3.scale.linear()
                 .range([size.height, 0])
@@ -280,7 +316,7 @@ Utilities.extendObject(window.benchmarkController, {
                 .attr("fill", "#7ADD49")
                 .attr("dy", ".71em")
                 .style("text-anchor", "end")
-                .text(axes[0]);
+                .text(Strings.text.complexity);
 
         // yRight-axis
         svg.append("g")
@@ -295,13 +331,13 @@ Utilities.extendObject(window.benchmarkController, {
                 .attr("fill", "#FA4925")
                 .attr("dy", ".71em")
                 .style("text-anchor", "start")
-                .text(axes[1]);
+                .text(Strings.text.frameRate);
 
         // marks
-        var yMin = yLeft(0);
-        var yMax = yLeft(yAxisLeft.scale().domain()[1]);
-        for (var markName in graphData.marks) {
-            var mark = graphData.marks[markName];
+        var yMin = yRight(yAxisRight.scale().domain()[0]);
+        var yMax = yRight(yAxisRight.scale().domain()[1]);
+        for (var markName in marks) {
+            var mark = marks[markName];
             var xLocation = x(mark.time);
 
             var markerGroup = svg.append("g")
@@ -318,21 +354,22 @@ Utilities.extendObject(window.benchmarkController, {
                 .attr("y2", yMax);
         }
 
-        if (Strings.json.experiments.complexity in graphData.averages) {
-            var complexity = graphData.averages[Strings.json.experiments.complexity];
+        if (Strings.json.controller in result) {
+            var complexity = result[Strings.json.controller];
             var regression = svg.append("g")
                 .attr("class", "complexity mean");
-            this._addRegressionLine(regression, x, yLeft, [[graphData.samples[0].time, complexity.average], [graphData.samples[graphData.samples.length - 1].time, complexity.average]], complexity.stdev);
+            this._addRegressionLine(regression, x, yLeft, [[samples[0].time, complexity.average], [samples[samples.length - 1].time, complexity.average]], complexity.stdev);
         }
-        if (Strings.json.experiments.frameRate in graphData.averages) {
-            var frameRate = graphData.averages[Strings.json.experiments.frameRate];
+        if (Strings.json.frameLength in result) {
+            var frameLength = result[Strings.json.frameLength];
             var regression = svg.append("g")
                 .attr("class", "fps mean");
-            this._addRegressionLine(regression, x, yRight, [[graphData.samples[0].time, 1000/frameRate.average], [graphData.samples[graphData.samples.length - 1].time, 1000/frameRate.average]], frameRate.stdev);
+            this._addRegressionLine(regression, x, yRight, [[samples[0].time, 1000/frameLength.average], [samples[samples.length - 1].time, 1000/frameLength.average]], frameLength.stdev);
         }
 
         // right-target
-        if (targetFrameLength) {
+        if (options["adjustment"] == "adaptive") {
+            var targetFrameLength = 1000 / options["frame-rate"];
             svg.append("line")
                 .attr("x1", x(0))
                 .attr("x2", size.width)
@@ -350,8 +387,8 @@ Utilities.extendObject(window.benchmarkController, {
             .attr("y2", yMin);
 
         // Data
-        var allData = graphData.samples;
-        var filteredData = graphData.samples.filter(function (sample) {
+        var allData = samples;
+        var filteredData = samples.filter(function (sample) {
             return "smoothedFrameLength" in sample;
         });
 
@@ -384,19 +421,23 @@ Utilities.extendObject(window.benchmarkController, {
         // regressions
         var regressionGroup = svg.append("g")
             .attr("id", "regressions");
-        if (graphData.timeRegressions) {
+        if (regressions) {
             var complexities = [];
-            graphData.timeRegressions.forEach(function (regression) {
-                regressionGroup.append("line")
-                    .attr("x1", x(regression.segment1[0][0]))
-                    .attr("x2", x(regression.segment1[1][0]))
-                    .attr("y1", yRight(regression.segment1[0][1]))
-                    .attr("y2", yRight(regression.segment1[1][1]));
-                regressionGroup.append("line")
-                    .attr("x1", x(regression.segment2[0][0]))
-                    .attr("x2", x(regression.segment2[1][0]))
-                    .attr("y1", yRight(regression.segment2[0][1]))
-                    .attr("y2", yRight(regression.segment2[1][1]));
+            regressions.forEach(function (regression) {
+                if (!isNaN(regression.segment1[0][1]) && !isNaN(regression.segment1[1][1])) {
+                    regressionGroup.append("line")
+                        .attr("x1", x(regression.segment1[0][0]))
+                        .attr("x2", x(regression.segment1[1][0]))
+                        .attr("y1", yRight(regression.segment1[0][1]))
+                        .attr("y2", yRight(regression.segment1[1][1]));
+                }
+                if (!isNaN(regression.segment2[0][1]) && !isNaN(regression.segment2[1][1])) {
+                    regressionGroup.append("line")
+                        .attr("x1", x(regression.segment2[0][0]))
+                        .attr("x2", x(regression.segment2[1][0]))
+                        .attr("y1", yRight(regression.segment2[0][1]))
+                        .attr("y2", yRight(regression.segment2[1][1]));
+                }
                 // inflection point
                 regressionGroup.append("circle")
                     .attr("cx", x(regression.segment1[1][0]))
@@ -503,6 +544,7 @@ Utilities.extendObject(window.benchmarkController, {
         benchmarkController._showOrHideNodes(form["series-raw"].checked, "#complexity-graph .series.raw");
         benchmarkController._showOrHideNodes(form["series-average"].checked, "#complexity-graph .series.average");
         benchmarkController._showOrHideNodes(form["regression-time-score"].checked, "#complexity-graph .mean.complexity");
+        benchmarkController._showOrHideNodes(form["bootstrap-score"].checked, "#complexity-graph .bootstrap");
         benchmarkController._showOrHideNodes(form["complexity-regression-aggregate-raw"].checked, "#complexity-graph .regression.raw");
         benchmarkController._showOrHideNodes(form["complexity-regression-aggregate-average"].checked, "#complexity-graph .regression.average");
     },
@@ -514,11 +556,12 @@ Utilities.extendObject(window.benchmarkController, {
         benchmarkController._showOrHideNodes(form["complexity"].checked, "#complexity");
         benchmarkController._showOrHideNodes(form["rawFPS"].checked, "#rawFPS");
         benchmarkController._showOrHideNodes(form["filteredFPS"].checked, "#filteredFPS");
+        benchmarkController._showOrHideNodes(form["regressions"].checked, "#regressions");
     },
 
     onGraphTypeChanged: function() {
         var form = document.forms["graph-type"].elements;
-        var graphData = document.getElementById("test-graph-data").graphData;
+        var testResult = document.getElementById("test-graph-data").testResult;
         var isTimeSelected = form["graph-type"].value == "time";
 
         benchmarkController._showOrHideNodes(isTimeSelected, "#time-graph");
@@ -528,9 +571,9 @@ Utilities.extendObject(window.benchmarkController, {
 
         var score, mean;
         if (isTimeSelected) {
-            score = graphData.score.toFixed(2);
+            score = testResult[Strings.json.score].toFixed(2);
 
-            var regression = graphData.averages.complexity;
+            var regression = testResult[Strings.json.controller];
             mean = [
                 "mean: ",
                 regression.average.toFixed(2),
@@ -546,18 +589,20 @@ Utilities.extendObject(window.benchmarkController, {
             }
             mean = mean.join("");
         } else {
-            score = [
-                "raw: ",
-                graphData.complexityRegression.complexity.toFixed(2),
-                ", average: ",
-                graphData.complexityAverageRegression.complexity.toFixed(2)].join("");
+            var complexityRegression = testResult[Strings.json.complexity];
+            var complexityAverageRegression = testResult[Strings.json.complexityAverage];
 
+            document.getElementById("complexity-regression-aggregate-raw").textContent = complexityRegression.complexity.toFixed(2) + ", ±" + complexityRegression.stdev.toFixed(2) + "ms";
+            document.getElementById("complexity-regression-aggregate-average").textContent = complexityAverageRegression.complexity.toFixed(2) + ", ±" + complexityAverageRegression.stdev.toFixed(2) + "ms";
+
+            var bootstrap = complexityRegression[Strings.json.bootstrap];
+            score = bootstrap.median.toFixed(2);
             mean = [
-                "raw: ±",
-                graphData.complexityRegression.stdev.toFixed(2),
-                "ms, average: ±",
-                graphData.complexityAverageRegression.stdev.toFixed(2),
-                "ms"].join("");
+                "95% CI: ",
+                bootstrap.confidenceLow.toFixed(2),
+                "–",
+                bootstrap.confidenceHigh.toFixed(2)
+            ].join("");
         }
 
         sectionsManager.setSectionScore("test-graph", score, mean);

@@ -1,7 +1,49 @@
+Utilities.extendObject(Strings.text, {
+    samples: "Samples",
+    complexity: "Time Complexity",
+    frameRate: "FPS",
+    confidenceInterval: "95% Confidence Interval",
+    mergedRawComplexity: "Raw Complexity",
+    graph: "Graph"
+});
+
+
 Utilities.extendObject(Headers, {
     details: [
         {
             title: Strings.text.graph
+        },
+        {
+            title: Strings.text.confidenceInterval,
+            children:
+            [
+                {
+                    text: function(data) {
+                        return data[Strings.json.complexity][Strings.json.bootstrap].confidenceLow.toFixed(2);
+                    },
+                    className: "right pad-left pad-right"
+                },
+                {
+                    text: function(data) {
+                        return " - " + data[Strings.json.complexity][Strings.json.bootstrap].confidenceHigh.toFixed(2);
+                    },
+                    className: "left"
+                },
+                {
+                    text: function(data) {
+                        var bootstrap = data[Strings.json.complexity][Strings.json.bootstrap];
+                        return (100 * (bootstrap.confidenceLow / bootstrap.median - 1)).toFixed(2) + "%";
+                    },
+                    className: "left pad-left small"
+                },
+                {
+                    text: function(data) {
+                        var bootstrap = data[Strings.json.complexity][Strings.json.bootstrap];
+                        return "+" + (100 * (bootstrap.confidenceHigh / bootstrap.median - 1)).toFixed(2) + "%";
+                    },
+                    className: "left pad-left small"
+                }
+            ]
         },
         {
             title: Strings.text.complexity,
@@ -9,7 +51,7 @@ Utilities.extendObject(Headers, {
             [
                 {
                     text: function(data) {
-                        return data[Strings.json.experiments.complexity][Strings.json.measurements.average].toFixed(2);
+                        return data[Strings.json.controller][Strings.json.measurements.average].toFixed(2);
                     },
                     className: "average"
                 },
@@ -17,14 +59,14 @@ Utilities.extendObject(Headers, {
                     text: function(data) {
                         return [
                             "± ",
-                            data[Strings.json.experiments.complexity][Strings.json.measurements.percent].toFixed(2),
+                            data[Strings.json.controller][Strings.json.measurements.percent].toFixed(2),
                             "%"
                         ].join("");
                     },
                     className: function(data) {
                         var className = "stdev";
 
-                        if (data[Strings.json.experiments.complexity][Strings.json.measurements.percent] >= 10)
+                        if (data[Strings.json.controller][Strings.json.measurements.percent] >= 10)
                             className += " noisy-results";
                         return className;
                     }
@@ -37,18 +79,18 @@ Utilities.extendObject(Headers, {
             [
                 {
                     text: function(data) {
-                        return data[Strings.json.experiments.frameRate][Strings.json.measurements.average].toFixed(2);
+                        return data[Strings.json.frameLength][Strings.json.measurements.average].toFixed(2);
                     },
                     className: function(data, options) {
                         var className = "average";
-                        if (Math.abs(data[Strings.json.experiments.frameRate][Strings.json.measurements.average] - options["frame-rate"]) >= 2)
+                        if (Math.abs(data[Strings.json.frameLength][Strings.json.measurements.average] - options["frame-rate"]) >= 2)
                             className += " noisy-results";
                         return className;
                     }
                 },
                 {
                     text: function(data) {
-                        var frameRateData = data[Strings.json.experiments.frameRate];
+                        var frameRateData = data[Strings.json.frameLength];
                         return [
                             "± ",
                             frameRateData[Strings.json.measurements.percent].toFixed(2),
@@ -58,7 +100,7 @@ Utilities.extendObject(Headers, {
                     className: function(data) {
                         var className = "stdev";
 
-                        if (data[Strings.json.experiments.frameRate][Strings.json.measurements.percent] >= 10)
+                        if (data[Strings.json.frameLength][Strings.json.measurements.percent] >= 10)
                             className += " noisy-results";
                         return className;
                     }
@@ -71,7 +113,7 @@ Utilities.extendObject(Headers, {
             [
                 {
                     text: function(data) {
-                        return data[Strings.json.regressions.complexityRegression][Strings.json.regressions.complexity].toFixed(2);
+                        return data[Strings.json.complexity][Strings.json.complexity].toFixed(2);
                     },
                     className: "average"
                 },
@@ -79,36 +121,14 @@ Utilities.extendObject(Headers, {
                     text: function(data) {
                         return [
                             "± ",
-                            data[Strings.json.regressions.complexityRegression][Strings.json.measurements.stdev].toFixed(2),
+                            data[Strings.json.complexity][Strings.json.measurements.stdev].toFixed(2),
                             "ms"
                         ].join("");
                     },
                     className: "stdev"
                 }
             ]
-        },
-        {
-            title: Strings.text.mergedAverageComplexity,
-            children:
-            [
-                {
-                    text: function(data) {
-                        return data[Strings.json.regressions.complexityAverageRegression][Strings.json.regressions.complexity].toFixed(2);
-                    },
-                    className: "average"
-                },
-                {
-                    text: function(data) {
-                        return [
-                            "± ",
-                            data[Strings.json.regressions.complexityAverageRegression][Strings.json.measurements.stdev].toFixed(2),
-                            "ms"
-                        ].join("");
-                    },
-                    className: "stdev"
-                }
-            ]
-        },
+        }
     ]
 })
 

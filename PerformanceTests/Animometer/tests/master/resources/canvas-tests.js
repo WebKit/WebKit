@@ -7,15 +7,15 @@ CanvasLineSegment = Utilities.createClass(
     {
         var circle = Stage.randomInt(0, 2);
         this._color = ["#e01040", "#10c030", "#e05010"][circle];
-        this._lineWidth = Math.pow(Math.random(), 12) * 20 + 3;
-        this._omega = Math.random() * 3 + 0.2;
+        this._lineWidth = Math.pow(Pseudo.random(), 12) * 20 + 3;
+        this._omega = Pseudo.random() * 3 + 0.2;
         var theta = Stage.randomAngle();
         this._cosTheta = Math.cos(theta);
         this._sinTheta = Math.sin(theta);
         this._startX = stage.circleRadius * this._cosTheta + (0.5 + circle) / 3 * stage.size.x;
         this._startY = stage.circleRadius * this._sinTheta + stage.size.y / 2;
-        this._length = Math.pow(Math.random(), 8) * 40 + 20;
-        this._segmentDirection = Math.random() > 0.5 ? -1 : 1;
+        this._length = Math.pow(Pseudo.random(), 8) * 40 + 20;
+        this._segmentDirection = Pseudo.random() > 0.5 ? -1 : 1;
     }, {
 
     draw: function(context)
@@ -44,15 +44,15 @@ CanvasArc = Utilities.createClass(
 
         this._point = new Point(distanceX * (randX + (randY % 2) / 2), distanceY * (randY + .5));
 
-        this._radius = 20 + Math.pow(Math.random(), 5) * (Math.min(distanceX, distanceY) / 1.8);
+        this._radius = 20 + Math.pow(Pseudo.random(), 5) * (Math.min(distanceX, distanceY) / 1.8);
         this._startAngle = Stage.randomAngle();
         this._endAngle = Stage.randomAngle();
-        this._omega = (Math.random() - 0.5) * 0.3;
+        this._omega = (Pseudo.random() - 0.5) * 0.3;
         this._counterclockwise = Stage.randomBool();
         var colors = ["#101010", "#808080", "#c0c0c0"];
         colors.push(["#e01040", "#10c030", "#e05010"][(randX + Math.ceil(randY / 2)) % 3]);
-        this._color = colors[Math.floor(Math.random() * colors.length)];
-        this._lineWidth = 1 + Math.pow(Math.random(), 5) * 30;
+        this._color = colors[Math.floor(Pseudo.random() * colors.length)];
+        this._lineWidth = 1 + Math.pow(Pseudo.random(), 5) * 30;
         this._doStroke = Stage.randomInt(0, 3) != 0;
     }, {
 
@@ -87,7 +87,7 @@ CanvasLinePoint = Utilities.createClass(
         var Y_LOOPS = 20;
 
         var offsets = [[-2, -1], [2, 1], [-1, 0], [1, 0], [-1, 2], [1, -2]];
-        var offset = offsets[Math.floor(Math.random() * offsets.length)];
+        var offset = offsets[Math.floor(Pseudo.random() * offsets.length)];
 
         this.coordinate = new Point(X_LOOPS/2, Y_LOOPS/2);
         if (stage.objects.length) {
@@ -111,10 +111,10 @@ CanvasLinePoint = Utilities.createClass(
         var randX = (xOff + this.coordinate.x) * stage.size.x / X_LOOPS;
         var randY = this.coordinate.y * stage.size.y / Y_LOOPS;
         var colors = ["#101010", "#808080", "#c0c0c0", "#101010", "#808080", "#c0c0c0", "#e01040"];
-        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.color = colors[Math.floor(Pseudo.random() * colors.length)];
 
-        this.width = Math.pow(Math.random(), 5) * 20 + 1;
-        this.isSplit = Math.random() > 0.9;
+        this.width = Math.pow(Pseudo.random(), 5) * 20 + 1;
+        this.isSplit = Pseudo.random() > 0.9;
         this.point = new Point(randX, randY);
     }
 );
@@ -189,7 +189,7 @@ CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasStage,
 
                 context.lineTo(object.point.x, object.point.y);
 
-                if (Math.random() > 0.999)
+                if (Pseudo.random() > 0.999)
                     object.isSplit = !object.isSplit;
             }
         }

@@ -1,3 +1,286 @@
+2016-02-24  Jon Lee  <jonlee@apple.com>
+
+        Update animation benchmark and tests
+        https://bugs.webkit.org/show_bug.cgi?id=154673
+
+        Reviewed by Dean Jackson.
+
+        Update the ramp controller.
+
+        The controller refines the complexity interval to test across.
+
+        * Animometer/resources/statistics.js: Add functions that estimate cumulative distribution function.
+        (Regression): For the flat regression, force the first segment to be at 60 fps.
+        (valueAt): Add convenience function to return interpolated value based on the regression used.
+        (_calculateRegression): Include the number of points included for both segments, and the piecewise
+        errors.
+        * Animometer/tests/resources/math.js: Make the Kalman estimator subclass Experiment, and allow it
+        to be reset.
+
+        * Animometer/tests/resources/main.js: Initialize the tier such that it starts at 10^0 = 1.
+        Increase the number of ramps. Maintain three FPS thresholds-- the frame rate of interest, a limit
+        on the lowest FPS we care to go for later interpolation, and a minimum FPS threshold we want to
+        aim for each ramp. Also keep three estimators: a running average of the change point, a minimum
+        boundary for each ramp, and an estimator for all the frames within an interval. The first two
+        are used to determine the parameters of the next ramp, and the latter allows us to refine the
+        parameters.
+        (update): During the tier phase, it is possible that the highest complexity possible for a test
+        won't stress the system enough to trigger stopping the tier phase and transitioning to the ramps.
+        If the complexity doesn't change when going to the next tier, we've maxed the test out, and move
+        on. When the tier phase completed, turn off Controller.frameLengthEstimator, which estimates the
+        FPS at each tier.
+        (tune): At each interval, look at the confidence distribution of being on the 60 FPS side or the
+        slow side. If the slowest FPS we achieve at the ramp's maximum complexity is not at least
+        _fpsRampSlowThreshold, then increase the maximum complexity. If we ever achieve 60 FPS, increase
+        the ramp's minimum complexity to that level. If, at an even lower complexity, a glitch causes the
+        FPS to drop, we reset the minimum complexity.
+
+        Have the bootstrap calculation occur between tests. Clean up harness.
+
+        * Animometer/resources/debug-runner/animometer.js: Run bootstrap after a test has
+        completed to avoid doing all of it at the end before showing the results. Clean up
+        parameters being passed around.
+        * Animometer/resources/debug-runner/tests.js:
+        (text):
+        * Animometer/resources/runner/animometer.js:
+        (this._processData.calculateScore): Save the results to the same object holding the data.
+        (this._processData._processData): In the case where a file is dragged, calculate the score
+        serially. Grab the results object and move it to the results variable and remove it from
+        the data object. This avoids serializing the results into the JSON.
+        (this._processData.findRegression): Include the samples used for bootstrapping. Reduce the
+        resample size to shorten the wait.
+        * Animometer/resources/runner/benchmark-runner.js:
+        * Animometer/resources/statistics.js:
+        (bootstrap): Update how bootstrapData is sorted. In some regression results the mix of
+        floats and integers causes an alphabetical sort to occur.
+        * Animometer/resources/strings.js:
+
+        Add meta charset so that encodings between harness and test match.
+
+        * Animometer/tests/bouncing-particles/bouncing-canvas-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-shapes.html:
+        * Animometer/tests/bouncing-particles/bouncing-svg-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-svg-shapes.html:
+        * Animometer/tests/master/canvas-stage.html:
+        * Animometer/tests/master/focus.html:
+        * Animometer/tests/master/image-data.html:
+        * Animometer/tests/master/multiply.html:
+        * Animometer/tests/master/particles.html:
+        * Animometer/tests/misc/canvas-electrons.html:
+        * Animometer/tests/misc/canvas-stars.html:
+        * Animometer/tests/misc/compositing-transforms.html:
+        * Animometer/tests/simple/simple-canvas-paths.html:
+        * Animometer/tests/simple/tiled-canvas-image.html:
+        * Animometer/tests/template/template-canvas.html:
+        * Animometer/tests/template/template-css.html:
+        * Animometer/tests/template/template-svg.html:
+        * Animometer/tests/text/layering-text.html:
+        * Animometer/tests/text/text-boxes.html:
+
+        Update test harness reporting.
+
+        * Animometer/developer.html: Add missing meta charset.
+        * Animometer/index.html: Remove unnecessary utf-8 declaration.
+        * Animometer/resources/debug-runner/animometer.css: Add convenience classes for
+        formatting the results table.
+        * Animometer/resources/debug-runner/animometer.js: Adjust which stats are shown.
+        * Animometer/resources/debug-runner/tests.js: Display bootstrapping statistics.
+        * Animometer/resources/strings.js: Move strings not used by the release harness.
+
+        Switch to a pseudo-random number generator.
+
+        * Animometer/resources/statistics.js: Add a Pseudo class, with a simple
+        pseudo-random number generator.
+        (_calculateRegression): Reset the generator before running bootstrap.
+        (bootstrap): Deleted.
+
+        Replace Math.random with Pseudo.random.
+        * Animometer/tests/master/resources/canvas-tests.js:
+        * Animometer/tests/master/resources/focus.js:
+        * Animometer/tests/master/resources/particles.js:
+        * Animometer/tests/resources/main.js:
+
+        Use bootstrapping to get confidence interval in the breakpoint.
+
+        For the ramp controller, calculate the piecewise regression, and then use
+        bootstrapping in order to find the 95% confidence interval. Use the raw data.
+
+        * Animometer/developer.html: Default to the complexity graph. Add a legend
+        checkbox to toggle visibility of the bootstrap score and histogram.
+        * Animometer/resources/debug-runner/animometer.css: Make some more space to show
+        the old raw and average scores in the legend. Add new styles for the data.
+        * Animometer/resources/debug-runner/graph.js:
+        (_addRegressionLine): Allow passing an array for the variance bar tied to the
+        regression line. Now |stdev| is |range|.
+        (createComplexityGraph): Add bootstrap median, and overlay a histogram of
+        the bootstrap samples. Switch raw samples from circles to X's.
+        (onComplexityGraphOptionsChanged): Allow toggling of the bootstrap data.
+        (onGraphTypeChanged): Move the regressions for the raw and average samples to the
+        legend. In the subtitle use the bootstrap median, and include the 95% confidence
+        interval.
+        * Animometer/resources/runner/animometer.js:
+        (this._processData.findRegression): Factor out the code that determines which
+        samples to include when calculating the piecewise regression. For series that have
+        many samples, or a wider range of recorded complexities, throw away the 2.5%
+        lowest and highest samples before calculating the regression. Keep all samples
+        if the number of samples to regress is small or the range of complexities is
+        narrow.
+        (this._processData._calculateScore): Factor out regression calculation to
+        findRegression(). Bootstrap the change point of the regression. The score is the
+        median.
+        * Animometer/resources/statistics.js:
+        (_calculateRegression): Correct an issue in the calculation of the regression, where
+        the denominator can be 0.
+        (bootstrap): Template for bootstrapping. Create a bootstrap sample array, Create
+        re-samples by random selection with replacement. Return the 95% confidence samples,
+        the bootstrap median, mean, and the data itself.
+        * Animometer/resources/strings.js: Add bootstrap.
+        * Animometer/tests/resources/main.js:
+        (processSamples): Don't prematurely cut the sample data.
+
+        Fix graph drawing.
+
+        * Animometer/resources/debug-runner/animometer.js: Add spacing in the JSON output.
+        Multiple tests output a lot of JSON and can hang when selecting JSON with no whitespace.
+        * Animometer/resources/debug-runner/animometer.css:
+        (#complexity-graph .series.raw circle): Update the color.
+        * Animometer/resources/debug-runner/graph.js: Use the FPS axis instead of the
+        complexity axis, which can vary in domain. For determining the complexity domain,
+        only use samples after samplingTimeOffset.
+
+        Allow dropping results JSON.
+
+        * Animometer/developer.html: Add a button.
+        * Animometer/resources/debug-runner/animometer.css:
+        * Animometer/resources/debug-runner/animometer.js: Read the data and go straight
+        to the dashboard. With JSON output, write out only the options and the raw data.
+
+        Teach the harness to evaluate the samples and determine the test score.
+
+        This will allow us to update how the score is calculated separately from the samples recorded.
+        This also prepares the harness to be able to accept JSON of prior runs.
+
+        * Animometer/resources/strings.js: Clean up and remove unneeded strings and reduce some of the
+        hierarchy.
+        * Animometer/resources/debug-runner/tests.js: Update to use the new strings.
+
+        * Animometer/tests/resources/main.js: Allow all controllers to show a complexity-FPS graph.
+        (_processComplexitySamples): Factor out some of the sample processing done in the ramp
+        controller for the benefit of the other controllers. |complexitySamples| contains a list of
+        samples. Sort the samples by complexity. Optionally remove the top x% of samples.
+        Group them, and calculate distribution of samples within the same complexity, and add those as
+        new entries into |complexityAverageSamples|.
+        (Controller.processSamples): Move the code responsible for determining the complexity and FPS
+        scores out to ResultsDashboard. The structure of the data returned by the controller is:
+
+        {
+            controller: [time-regression, time-regression, ...], // optional, data specific to controller
+            marks: [...],
+            samples: {                    // all of the sample data
+                controller: [...],
+                complexity: [...],        // processed from controller samples
+                complexityAverage: [...], // processed from complexity samples
+            }
+        }
+
+        (AdaptiveController.processSamples): Adding the target frame length is no longer necessary; we
+        now pass the test options to the graph.
+        (Regression): Move to statistics.js.
+        * Animometer/resources/statistics.js: Move Regression to here. Add a check if the sampling range
+        only contains one sample, since we cannot calculate a regression from one sample point.
+
+        Teach the test harness to evaluate the data.
+        * Animometer/resources/runner/animometer.js:
+        (ResultsDashboard): Store the options used to run the test and the computed results/score separately
+        from the data. The results are stored as:
+
+        {
+            score: /* geomean of iteration score */,
+            iterationsResults: [
+                {
+                    score: /* geomean of tests */,
+                    testsResults: {
+                        suiteName: {
+                            testName: {
+                                controller: {
+                                    average:
+                                    concern:
+                                    stdev:
+                                    percent:
+                                },
+                                frameLength: { ... },
+                                complexity: {
+                                    complexity:
+                                    stdev:
+                                    segment1:
+                                    segment2:
+                                },
+                                complexityAverage: { ... }
+                            },
+                            testName: { ... },
+                        },
+                        ... next suite ...
+                    }
+                },
+                { ...next iteration... }
+            ]
+        }
+
+        * Animometer/resources/debug-runner/animometer.js: Pass options around instead of relying
+        on what was selected in the form. This will later allow for dropping previous results, and
+        using those runs' options when calculating scores.
+        (ResultsTable._addGraphButton): Simplify button action by using attached test data.
+        * Animometer/resources/debug-runner/graph.js: Refactor to use the data.
+
+        Consolidate JS files, and move statistics out to a separate JS.
+
+        Preparation for having the Controller only handle recording and storage of the samples,
+        and leave the evaluation of the test score out to the harness. Move Experiment to
+        a new statistics.js, where Regression will also eventually go. Get rid of algorithm.js
+        and move it to utilities.js since the Heap is used only for Experiments.
+
+        * Animometer/tests/resources/algorithm.js: Removed. Heap is in utilities.js.
+        * Animometer/tests/resources/sampler.js: Removed. Experiment is in statistics.js,
+        Sampler in main.js.
+        * Animometer/tests/resources/main.js: Move Sampler here.
+        * Animometer/resources/statistics.js: Added. Move Statistics and Experiment here.
+        * Animometer/resources/extensions.js: Move Heap here. Attach static method to create
+        a max or min heap to Heap, instead of a new Algorithm object.
+
+        Update JS files.
+        * Animometer/developer.html:
+        * Animometer/index.html:
+        * Animometer/tests/bouncing-particles/bouncing-canvas-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-shapes.html:
+        * Animometer/tests/bouncing-particles/bouncing-svg-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-svg-shapes.html:
+        * Animometer/tests/master/canvas-stage.html:
+        * Animometer/tests/master/focus.html:
+        * Animometer/tests/master/image-data.html:
+        * Animometer/tests/master/multiply.html:
+        * Animometer/tests/master/particles.html:
+        * Animometer/tests/misc/canvas-electrons.html:
+        * Animometer/tests/misc/canvas-stars.html:
+        * Animometer/tests/misc/compositing-transforms.html:
+        * Animometer/tests/simple/simple-canvas-paths.html:
+        * Animometer/tests/simple/tiled-canvas-image.html:
+        * Animometer/tests/template/template-canvas.html:
+        * Animometer/tests/template/template-css.html:
+        * Animometer/tests/template/template-svg.html:
+        * Animometer/tests/text/layering-text.html:
+        * Animometer/tests/text/text-boxes.html:
+
+        Fix the cursor in the graph analysis when the min
+        complexity is not 0.
+
+        * Animometer/resources/debug-runner/graph.js:
+        (_addRegression):
+        (createComplexityGraph):
+
 2016-02-23  Geoffrey Garen  <ggaren@apple.com>
 
         Fix some issues in MallocBench
@@ -38,7 +321,7 @@
         Added new capabilities to MallocBench.  These include:
             Added a recording of http://nim-lang.org/docs/lib.html.
             Added thread id to the recording and the ability to playback switching threads in MallocBench
-            Added aligned allocations to recordings and the ability to playback 
+            Added aligned allocations to recordings and the ability to playback
             Added --use-thread-id option to honor recorded thread ids
             Added --detailed-report to output remaining allocations by size after playback
             Added --no-warmup to not run the warm up iteration

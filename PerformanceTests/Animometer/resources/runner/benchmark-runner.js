@@ -95,13 +95,13 @@ BenchmarkRunner = Utilities.createClass(
 
         var benchmark = new contentWindow.benchmarkClass(options);
         document.body.style.backgroundColor = benchmark.backgroundColor();
-        benchmark.run().then(function(results) {
+        benchmark.run().then(function(testData) {
             var suiteResults = self._suitesResults[suite.name] || {};
-            suiteResults[test.name] = results;
+            suiteResults[test.name] = testData;
             self._suitesResults[suite.name] = suiteResults;
 
             if (self._client && self._client.didRunTest)
-                self._client.didRunTest(suite, test);
+                self._client.didRunTest(testData);
 
             state.next();
             if (state.currentSuite() != suite)
