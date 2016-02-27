@@ -1,5 +1,20 @@
 2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Fix GTK and maybe EFL build after r197172.
+
+        Unreviewed.
+
+        * CMakeLists.txt:
+        * UIProcess/API/gtk/WebKitUserContent.cpp:
+        (_WebKitUserScript::_WebKitUserScript):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::removeUserContentWorld):
+        (WebKit::WebUserContentController::addUserScripts):
+        (WebKit::WebUserContentController::removeUserScript):
+        (WebKit::WebUserContentController::removeAllUserScripts):
+
+2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Fix order of parameters in gtkdoc for webkit_web_view_get_snapshot
 
         Unreviewed.

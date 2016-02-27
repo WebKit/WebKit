@@ -112,7 +112,7 @@ void WebUserContentController::removeUserContentWorld(uint64_t worldIdentifier)
 
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove a UserContentWorld (id=%llu) that is does not exist.", worldIdentifier);
+        WTFLogAlways("Trying to remove a UserContentWorld (id=%" PRIu64 ") that is does not exist.", worldIdentifier);
         return;
     }
 
@@ -127,7 +127,7 @@ void WebUserContentController::addUserScripts(const Vector<std::pair<uint64_t, W
     for (const auto& userScriptWorldPair : userScripts) {
         auto it = worldMap().find(userScriptWorldPair.first);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to add a UserScript to a UserContentWorld (id=%llu) that does not exist.", userScriptWorldPair.first);
+            WTFLogAlways("Trying to add a UserScript to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userScriptWorldPair.first);
             continue;
         }
 
@@ -139,7 +139,7 @@ void WebUserContentController::removeUserScript(uint64_t worldIdentifier, const 
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove a UserScript from a UserContentWorld (id=%llu) that does not exist.", worldIdentifier);
+        WTFLogAlways("Trying to remove a UserScript from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
         return;
     }
 
@@ -150,7 +150,7 @@ void WebUserContentController::removeAllUserScripts(uint64_t worldIdentifier)
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove all UserScripts from a UserContentWorld (id=%llu) that does not exist.", worldIdentifier);
+        WTFLogAlways("Trying to remove all UserScripts from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
         return;
     }
 

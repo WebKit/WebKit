@@ -179,7 +179,7 @@ struct _WebKitUserScript {
             String::fromUTF8(source), URL { },
             toStringVector(whitelist), toStringVector(blacklist),
             toUserScriptInjectionTime(injectionTime),
-            toUserContentInjectedFrames(injectedFrames) })))
+            toUserContentInjectedFrames(injectedFrames) }, API::UserContentWorld::normalWorld())))
         , referenceCount(1)
     {
     }
