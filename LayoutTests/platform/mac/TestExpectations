@@ -1372,3 +1372,6 @@ webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.h
 
 # This test relies on iOS-specific font fallback.
 [ Mavericks Yosemite ElCapitan ] fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+
+# <rdar://problem/24748533>
+[ Mavericks ] fast/text/small-caps-web-font.html [ Skip ]

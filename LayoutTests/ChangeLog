@@ -1,3 +1,10 @@
+2016-02-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove unnecessary test file and skip fast/text/small-caps-web-font.html on Mavericks. rdar://problem/24748533
+
+        * platform/mac-mavericks/fast/text/small-caps-web-font-expected.png: Removed.
+        * platform/mac/TestExpectations:
+
 2016-02-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/writing-mode/broken-ideograph-small-caps.html for Mavericks. rdar://problem/24748658
