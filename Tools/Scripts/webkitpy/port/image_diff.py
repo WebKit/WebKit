@@ -117,7 +117,10 @@ class ImageDiffer(object):
 
 class IOSSimulatorImageDiffer(ImageDiffer):
     def _start(self, tolerance):
-        command = ['xcrun', '-sdk', 'iphonesimulator', 'sim', '--environment=preserve', '--adopt-pid', self._port._path_to_image_diff(), '--tolerance', str(tolerance)]
+        # FIXME: Using "booted" is not 100% correct, we should use a device ID that we created.
+        # FIXME: Is it a problem that ImageDiff and simctl remain separate processes? This code used to pass --adopt-pid to sim tool.
+        # We should probably just build and use a host version of ImageDiff instead of a simulator one to solve both.
+        command = ['xcrun', '-sdk', 'iphonesimulator', 'simctl', 'spawn', 'booted', self._port._path_to_image_diff(), '--tolerance', str(tolerance)]
         environment = self._port.setup_environ_for_server('ImageDiff')
         self._process = self._port._server_process_constructor(self._port, 'ImageDiff', command, environment)
         self._process.start()

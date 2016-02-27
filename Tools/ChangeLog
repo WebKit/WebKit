@@ -1,3 +1,13 @@
+2016-02-26  Alexey Proskuryakov  <ap@apple.com>
+
+        [iOS Simulator] Reftests don't work
+        https://bugs.webkit.org/show_bug.cgi?id=154764
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/port/image_diff.py: (IOSSimulatorImageDiffer._start):
+        Use simctl instead of sim.
+
 2016-02-26  Chris Dumez  <cdumez@apple.com>
 
         Add API test coverage for parseHTMLInteger / parseHTMLNonNegativeInteger
