@@ -5,9 +5,9 @@ Utilities.extendObject(window.benchmarkController, {
     {
         var element = document.getElementById("test-graph-data");
         element.innerHTML = "";
-        element.testResult = testResult;
-        element.testData = testData;
-        element.options = options;
+        element._testResult = testResult;
+        element._testData = testData;
+        element._options = options;
         document.querySelector("hr").style.width = this.layoutCounter++ + "px";
 
         var margins = new Insets(30, 30, 30, 40);
@@ -561,7 +561,7 @@ Utilities.extendObject(window.benchmarkController, {
 
     onGraphTypeChanged: function() {
         var form = document.forms["graph-type"].elements;
-        var testResult = document.getElementById("test-graph-data").testResult;
+        var testResult = document.getElementById("test-graph-data")._testResult;
         var isTimeSelected = form["graph-type"].value == "time";
 
         benchmarkController._showOrHideNodes(isTimeSelected, "#time-graph");

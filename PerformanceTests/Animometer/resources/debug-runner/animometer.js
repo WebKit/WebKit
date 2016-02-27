@@ -28,7 +28,7 @@ DeveloperResultsTable = Utilities.createSubclass(ResultsTable,
     _addGraphButton: function(td, testName, testResult, testData)
     {
         var button = Utilities.createElement("button", { class: "small-button" }, td);
-        button.textContent = Strings.text.graph + "...";
+        button.textContent = Strings.text.graph + "…";
         button.testName = testName;
         button.testResult = testResult;
         button.testData = testData;
@@ -495,9 +495,9 @@ Utilities.extendObject(window.benchmarkController, {
         }
 
         var dashboard = benchmarkRunnerClient.results;
-        if (dashboard.options["adjustment"] == "ramp") {
+        if (dashboard.options["adjustment"] == "ramp")
             Headers.details[3].disabled = true;
-        } else {
+        else {
             Headers.details[1].disabled = true;
             Headers.details[4].disabled = true;
         }

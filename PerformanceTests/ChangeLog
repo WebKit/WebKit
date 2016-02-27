@@ -1,3 +1,11 @@
+2016-02-26  Jon Lee  <jonlee@apple.com>
+
+        Address Dean's comments in 154673.
+
+        * Animometer/developer.html:
+        * Animometer/resources/debug-runner/animometer.js:
+        * Animometer/resources/debug-runner/graph.js:
+
 2016-02-25  Jon Lee  <jonlee@apple.com>
 
         Update animation benchmark and tests
