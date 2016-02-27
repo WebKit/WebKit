@@ -45,8 +45,6 @@ WebInspector.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph ext
     {
         super.reset();
 
-        this._timelineRecordBarMap = new Map;
-
         this.element.removeChildren();
     }
 
