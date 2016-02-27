@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ExecutableAllocator.h"
 
+#if ENABLE(ASSEMBLER)
+
 #include "JSCInlines.h"
 
 #include "CodeProfiling.h"
@@ -220,3 +222,5 @@ void ExecutableAllocator::dumpProfile()
 #endif
 
 }
+
+#endif
