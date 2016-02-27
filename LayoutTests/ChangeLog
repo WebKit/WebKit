@@ -1,3 +1,36 @@
+2016-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (188611): Search field Cancel button should not overlap search text on extensions page.
+        https://bugs.webkit.org/show_bug.cgi?id=154692
+        <rdar://problem/22840453>
+
+        Reviewed by Brent Fulgham.
+
+        Adjust the cancel button position using the actual size of the cancel button.
+
+        When the input box and the font height trigger different cancel button sizes, we need to readjust
+        the rectangle returned by cancelButtonRectForBounds.
+        This fixes both the mispositioned cancel button and the squared off icon when the input field is zoomed all the way in.
+
+        * fast/forms/search/search-padding-cancel-results-buttons-expected.txt:
+        * platform/mac/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/mac/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/mac/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/forms/search-styled-expected.txt:
+        * platform/mac/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/mac/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/mac/fast/forms/searchfield-heights-expected.txt:
+        * platform/mac/fast/repaint/search-field-cancel-expected.txt:
+        * platform/mac/fast/replaced/width100percent-searchfield-expected.txt:
+
 2016-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197216.
