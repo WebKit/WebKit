@@ -1,3 +1,13 @@
+2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove unused private field from WEBPImageDecoder
+
+        Unreviewed.
+
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::WEBPImageDecoder):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2016-02-26  Chris Dumez  <cdumez@apple.com>
 
         Fix the behavior of reflecting IDL attributes of type unsigned long

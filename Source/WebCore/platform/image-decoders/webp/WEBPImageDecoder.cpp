@@ -50,7 +50,6 @@ WEBPImageDecoder::WEBPImageDecoder(ImageSource::AlphaOption alphaOption,
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_decoder(0)
     , m_hasAlpha(false)
-    , m_formatFlags(0)
 {
 }
 
