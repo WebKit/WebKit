@@ -232,6 +232,8 @@ JSValue objectConstructorGetOwnPropertyDescriptor(ExecState* exec, JSObject* obj
         return jsUndefined();
 
     JSObject* description = constructEmptyObject(exec);
+    if (exec->hadException())
+        return jsUndefined();
     if (!descriptor.isAccessorDescriptor()) {
         description->putDirect(exec->vm(), exec->propertyNames().value, descriptor.value() ? descriptor.value() : jsUndefined(), 0);
         description->putDirect(exec->vm(), exec->propertyNames().writable, jsBoolean(descriptor.writable()), 0);

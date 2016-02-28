@@ -925,7 +925,7 @@
 - path: es6/Proxy_get_handler_instances_of_proxies.js
   cmd: runES6 :normal
 - path: es6/Proxy_getOwnPropertyDescriptor_handler.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_getPrototypeOf_handler.js
   cmd: runES6 :fail
 - path: es6/Proxy_has_handler.js

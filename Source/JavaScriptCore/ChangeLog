@@ -1,3 +1,40 @@
+2016-02-28  Saam barati  <sbarati@apple.com>
+
+        ProxyObject.[[GetOwnProperty]] is partially broken because it doesn't propagate information back to the slot
+        https://bugs.webkit.org/show_bug.cgi?id=154768
+
+        Reviewed by Ryosuke Niwa.
+
+        This fixes a big bug with ProxyObject.[[GetOwnProperty]]:
+        http://www.ecma-international.org/ecma-262/6.0/index.html#sec-proxy-object-internal-methods-and-internal-slots-getownproperty-p
+        We weren't correctly propagating the result of this operation to the
+        out PropertySlot& parameter. This patch fixes that and adds tests.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        I added a missing exception check after object allocation
+        because I saw that it was missing while reading the code.
+
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setUndefined):
+        (JSC::PropertyDescriptor::slowGetterSetter):
+        (JSC::PropertyDescriptor::getter):
+        * runtime/PropertyDescriptor.h:
+        (JSC::PropertyDescriptor::attributes):
+        (JSC::PropertyDescriptor::value):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        * tests/es6.yaml:
+        * tests/stress/proxy-get-own-property.js:
+        (let.handler.getOwnPropertyDescriptor):
+        (set get let.handler.return):
+        (set get let.handler.getOwnPropertyDescriptor):
+        (set get let):
+        (set get let.a):
+        (let.b):
+        (let.setter):
+        (let.getter):
+
 2016-02-27  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Intl.Collator uses POSIX locale (detected by js/intl-collator.html on iOS Simulator)

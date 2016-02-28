@@ -138,7 +138,6 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
 bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
-    slot.setValue(this, None, jsUndefined()); // We do this to protect against any bad actors. Nobody should depend on this value.
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
         throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
@@ -210,6 +209,16 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
             return false;
         }
     }
+
+    if (trapResultAsDescriptor.isAccessorDescriptor()) {
+        GetterSetter* getterSetter = trapResultAsDescriptor.slowGetterSetter(exec);
+        if (exec->hadException())
+            return false;
+        slot.setGetterSlot(this, trapResultAsDescriptor.attributes(), getterSetter);
+    } else if (trapResultAsDescriptor.isDataDescriptor())
+        slot.setValue(this, trapResultAsDescriptor.attributes(), trapResultAsDescriptor.value());
+    else
+        slot.setValue(this, trapResultAsDescriptor.attributes(), jsUndefined()); // We use undefined because it's the default value in object properties.
 
     return true;
 }

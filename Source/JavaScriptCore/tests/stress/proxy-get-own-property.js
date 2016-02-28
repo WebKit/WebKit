@@ -263,3 +263,189 @@ Object.prototype.fooBarBaz = 20; // Make for-in go over the prototype chain to t
         called = false;
     }
 }
+
+{
+    let target = {};
+    Object.defineProperty(target, "x", {
+        enumerable: false,
+        configurable: false,
+        writable: true,
+        value: 50
+    });
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            return {enumerable: false, value: 45};
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let desc = Object.getOwnPropertyDescriptor(proxy, "x");
+        assert(desc.configurable === false);
+        assert(desc.enumerable === false);
+        assert(desc.writable === false);
+        assert(desc.value === 45);
+    }
+}
+
+{
+    let target = {};
+    Object.defineProperty(target, "x", {
+        enumerable: false,
+        configurable: false,
+        writable: true
+    });
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            return {enumerable: false, value: 45};
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let desc = Object.getOwnPropertyDescriptor(proxy, "x");
+        assert(desc.configurable === false);
+        assert(desc.enumerable === false);
+        assert(desc.writable === false);
+        assert(desc.value === 45);
+    }
+}
+
+{
+    let target = {};
+    Object.defineProperty(target, "x", {
+        enumerable: true,
+        configurable: true,
+        writable: true
+    });
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            return {configurable: true, value: 45, enumerable: true};
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let desc = Object.getOwnPropertyDescriptor(proxy, "x");
+        assert(desc.configurable === true);
+        assert(desc.enumerable === true);
+        assert(desc.writable === false);
+        assert(desc.value === 45);
+    }
+}
+
+{
+    let target = {};
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            return {configurable: true, value: 45, enumerable: true};
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let desc = Object.getOwnPropertyDescriptor(proxy, "x");
+        assert(desc.configurable === true);
+        assert(desc.enumerable === true);
+        assert(desc.writable === false);
+        assert(desc.value === 45);
+    }
+}
+
+{
+    let target = {};
+    Object.defineProperty(target, "x", {
+        get: function() { return 25; },
+        set: function() { return 50; },
+        configurable: false
+    });
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            return {configurable: false, set:function(){}, get:function(){} };
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let threw = false;
+        try {
+            Object.getOwnPropertyDescriptor(proxy, "x");
+        } catch(e) {
+            threw = true;
+            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test.");
+        }
+        assert(threw);
+    }
+}
+
+{
+    let target = {};
+    Object.defineProperty(target, "x", {
+        get: function() { return 25; },
+        set: function() { return 50; },
+        configurable: true
+    });
+    let a = function() { };
+    let b = function() {}
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            return {configurable: true, set: a, get: b };
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let result = Object.getOwnPropertyDescriptor(proxy, "x");
+        assert(result.configurable);
+        assert(result.set === a);
+        assert(result.get === b);
+    }
+}
+
+{
+    let target = {};
+    Object.defineProperty(target, "x", {
+        get: function() { return 25; },
+        set: function() { return 50; },
+        configurable: false
+    });
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            return {configurable: false, set:function(){}, get:function(){} };
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let threw = false;
+        try {
+            Object.getOwnPropertyDescriptor(proxy, "x");
+        } catch(e) {
+            threw = true;
+            assert(e.toString() === "TypeError: Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test.");
+        }
+        assert(threw);
+    }
+}
+
+{
+    let target = {};
+    let setter = function() { };
+    let getter = function() { };
+    Object.defineProperty(target, "x", {
+        get: getter,
+        set: setter,
+        configurable: false
+    });
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            return {
+                configurable: false, 
+                set: setter, 
+                get: getter
+            };
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let desc = Object.getOwnPropertyDescriptor(proxy, "x");
+        assert(desc.configurable === false);
+        assert(desc.get === getter);
+        assert(desc.set === setter);
+        assert(desc.enumerable === false);
+        assert(desc.writable === undefined);
+    }
+}

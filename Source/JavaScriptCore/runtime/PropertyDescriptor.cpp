@@ -72,6 +72,21 @@ void PropertyDescriptor::setUndefined()
     m_attributes = ReadOnly | DontDelete | DontEnum;
 }
 
+GetterSetter* PropertyDescriptor::slowGetterSetter(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    GetterSetter* getterSetter = GetterSetter::create(vm, globalObject);
+    if (exec->hadException())
+        return nullptr;
+    if (m_getter && !m_getter.isUndefined())
+        getterSetter->setGetter(vm, globalObject, jsCast<JSObject*>(m_getter));
+    if (m_setter && !m_setter.isUndefined())
+        getterSetter->setSetter(vm, globalObject, jsCast<JSObject*>(m_setter));
+
+    return getterSetter;
+}
+
 JSValue PropertyDescriptor::getter() const
 {
     ASSERT(isAccessorDescriptor());
