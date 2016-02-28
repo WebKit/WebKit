@@ -50,9 +50,9 @@
             shouldBeFalse("canGet('targetWindow.location.port')");
             shouldBeFalse("canGet('targetWindow.location.protocol')");
             shouldBeFalse("canGet('targetWindow.location.search')");
+            shouldBeFalse("canGet('targetWindow.location.assign')");
+            shouldBeFalse("canGet('targetWindow.location.reload')");
 
-            shouldBeTrue("canGet('targetWindow.location.assign')");
-            shouldBeTrue("canGet('targetWindow.location.reload')");
             shouldBeTrue("canGet('targetWindow.location.replace')");
 
             shouldBeFalse("canGet('targetWindow.location.existingCustomProperty')");

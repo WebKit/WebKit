@@ -1,3 +1,21 @@
+2016-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Prevent cross-origin access to Location.assign() / Location.reload()
+        https://bugs.webkit.org/show_bug.cgi?id=154779
+
+        Reviewed by Darin Adler.
+
+        Update existing layout tests now that we prevent cross-origin access to
+        Location.assign() / Location.reload().
+
+        * http/tests/security/cross-frame-access-getOwnPropertyDescriptor-expected.txt:
+        * http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html:
+        * http/tests/security/cross-frame-access-location-get-expected.txt:
+        * http/tests/security/cross-frame-access-location-get-override-expected.txt:
+        * http/tests/security/cross-frame-access-location-get-override.html:
+        * http/tests/security/cross-frame-access-location-get.html:
+        * http/tests/security/xss-DENIED-defineProperty-expected.txt:
+
 2016-02-27  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Intl.Collator uses POSIX locale (detected by js/intl-collator.html on iOS Simulator)
