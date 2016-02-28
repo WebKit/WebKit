@@ -1,3 +1,15 @@
+2016-02-27  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Removing ios-simulator baseline for js/number-toLocaleString.html
+        https://bugs.webkit.org/show_bug.cgi?id=154524
+
+        Reviewed by Darin Adler.
+
+        The default locale issue has been fixed in r197261.
+        Infinity.toLocaleString() should return "∞" as expected.
+
+        * platform/ios-simulator/js/number-toLocaleString-expected.txt: Removed.
+
 2016-02-27  Chris Dumez  <cdumez@apple.com>
 
         Prevent cross-origin access to Location.assign() / Location.reload()
