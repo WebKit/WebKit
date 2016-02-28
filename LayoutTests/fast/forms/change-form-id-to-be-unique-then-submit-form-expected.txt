@@ -1,0 +1,4 @@
+This tests that we submit the form element associated with id "a" after changing the id of one of the <form id="a">s in a document that contains two such HTML Form elements.
+
+PASS submitted second <form>.
+

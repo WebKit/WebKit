@@ -59,8 +59,8 @@ public:
     const Vector<Element*>* getAllElementsById(const AtomicString&) const;
     bool hasElementWithId(const AtomicStringImpl&) const;
     bool containsMultipleElementsWithId(const AtomicString& id) const;
-    void addElementById(const AtomicStringImpl& elementId, Element&);
-    void removeElementById(const AtomicStringImpl& elementId, Element&);
+    void addElementById(const AtomicStringImpl& elementId, Element&, bool notifyObservers = true);
+    void removeElementById(const AtomicStringImpl& elementId, Element&, bool notifyObservers = true);
 
     Element* getElementByName(const AtomicString&) const;
     bool hasElementWithName(const AtomicStringImpl&) const;

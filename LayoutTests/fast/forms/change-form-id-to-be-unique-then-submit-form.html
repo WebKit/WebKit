@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#test-container { visibility: hidden; }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function logMessageAndDone(message)
+{
+    document.getElementById("console").textContent = message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest()
+{
+    var search = document.location.search;
+    if (search === "?submitted=secondFormElement")
+        logMessageAndDone("PASS submitted second <form>.");
+    else if (search === "?submitted=firstFormElement")
+        logMessageAndDone("FAIL should have submitted second <form>, but submitted first <form>.");
+    else {
+        document.getElementById("a").id = "y"; // Changes the id of the first <form> (traversing the DOM from top-to-bottom).
+        document.getElementById("submit").click();
+    }
+}
+
+window.onload = runTest;
+</script>
+</head>
+<body>
+<p>This tests that we submit the form element associated with id &quot;a&quot; after changing the id of one of the &lt;form id=&quot;a&quot;&gt;s in a document that contains two such HTML Form elements.</p>
+<div id="console"></div>
+<div id="test-container">
+    <form id="a"><input type="hidden" name="submitted" value="firstFormElement"></form>
+    <form id="a"><input type="hidden" name="submitted" value="secondFormElement"></form>
+    <input id="submit" type="submit" form="a" value="Submit">
+</div>
+</body>
+</html>
