@@ -753,7 +753,7 @@ void SVGToOTFFontConverter::appendLigatureSubtable(size_t subtableRecordLocation
     }
     if (ligaturePairs.size() > std::numeric_limits<uint16_t>::max())
         ligaturePairs.clear();
-    std::sort(ligaturePairs.begin(), ligaturePairs.end(), [](LigaturePair& lhs, LigaturePair& rhs) {
+    std::sort(ligaturePairs.begin(), ligaturePairs.end(), [](const LigaturePair& lhs, const LigaturePair& rhs) {
         return lhs.first[0] < rhs.first[0];
     });
     Vector<size_t> overlappingFirstGlyphSegmentLengths;
