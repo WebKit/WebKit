@@ -114,14 +114,6 @@ Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-String defaultLocale()
-{
-    // 6.2.4 DefaultLocale ()
-    String locale = uloc_getDefault();
-    convertICULocaleToBCP47LanguageTag(locale);
-    return locale;
-}
-
 void convertICULocaleToBCP47LanguageTag(String& locale)
 {
     locale.replace('_', '-');
@@ -650,6 +642,19 @@ String bestAvailableLocale(const HashSet<String>& availableLocales, const String
     return String();
 }
 
+String defaultLocale(ExecState& state)
+{
+    // 6.2.4 DefaultLocale ()
+    if (auto defaultLanguage = state.callee()->globalObject()->globalObjectMethodTable()->defaultLanguage) {
+        String locale = defaultLanguage();
+        if (!locale.isEmpty())
+            return canonicalizeLanguageTag(locale);
+    }
+    String locale = uloc_getDefault();
+    convertICULocaleToBCP47LanguageTag(locale);
+    return locale;
+}
+
 String removeUnicodeLocaleExtension(const String& locale)
 {
     Vector<String> parts;
@@ -672,7 +677,7 @@ String removeUnicodeLocaleExtension(const String& locale)
     return builder.toString();
 }
 
-static MatcherResult lookupMatcher(const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static MatcherResult lookupMatcher(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // 9.2.3 LookupMatcher (availableLocales, requestedLocales) (ECMA-402 2.0)
     String locale;
@@ -709,25 +714,25 @@ static MatcherResult lookupMatcher(const HashSet<String>& availableLocales, cons
             result.extensionIndex = extensionIndex;
         }
     } else
-        result.locale = defaultLocale();
+        result.locale = defaultLocale(state);
     return result;
 }
 
-static MatcherResult bestFitMatcher(const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static MatcherResult bestFitMatcher(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // 9.2.4 BestFitMatcher (availableLocales, requestedLocales) (ECMA-402 2.0)
     // FIXME: Implement something better than lookup.
-    return lookupMatcher(availableLocales, requestedLocales);
+    return lookupMatcher(state, availableLocales, requestedLocales);
 }
 
-HashMap<String, String> resolveLocale(const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t))
+HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t))
 {
     // 9.2.5 ResolveLocale (availableLocales, requestedLocales, options, relevantExtensionKeys, localeData) (ECMA-402 2.0)
     // 1. Let matcher be the value of options.[[localeMatcher]].
     const String& matcher = options.get(ASCIILiteral("localeMatcher"));
 
     // 2. If matcher is "lookup", then
-    MatcherResult (*matcherOperation)(const HashSet<String>&, const Vector<String>&);
+    MatcherResult (*matcherOperation)(ExecState&, const HashSet<String>&, const Vector<String>&);
     if (matcher == "lookup") {
         // a. Let MatcherOperation be the abstract operation LookupMatcher.
         matcherOperation = lookupMatcher;
@@ -737,7 +742,7 @@ HashMap<String, String> resolveLocale(const HashSet<String>& availableLocales, c
     }
 
     // 4. Let r be MatcherOperation(availableLocales, requestedLocales).
-    MatcherResult matcherResult = matcherOperation(availableLocales, requestedLocales);
+    MatcherResult matcherResult = matcherOperation(state, availableLocales, requestedLocales);
 
     // 5. Let foundLocale be the value of r.[[locale]].
     String foundLocale = matcherResult.locale;

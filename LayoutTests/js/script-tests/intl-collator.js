@@ -43,6 +43,7 @@ var testCollator = function(collator, possibleOptionDifferences) {
 }
 
 // Locale is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator(), [{locale: 'en-US'}])");
 shouldBeTrue("testCollator(Intl.Collator('en'), [{locale: 'en'}])");
 shouldBeTrue("testCollator(Intl.Collator('eN-uS'), [{locale: 'en-US'}])");
 shouldBeTrue("testCollator(Intl.Collator(['en', 'de']), [{locale: 'en'}])");

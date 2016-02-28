@@ -83,6 +83,7 @@ PASS Intl.DateTimeFormat.prototype.resolvedOptions() === Intl.DateTimeFormat.pro
 PASS Intl.DateTimeFormat.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat.
 PASS Intl.DateTimeFormat('$') threw exception RangeError: invalid language tag: $.
 PASS Intl.DateTimeFormat('en', null) threw exception TypeError: null is not an object (evaluating 'Intl.DateTimeFormat('en', null)').
+PASS Intl.DateTimeFormat().resolvedOptions().locale is 'en-US'
 PASS Intl.DateTimeFormat('en').resolvedOptions().weekday is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().era is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().month is 'numeric'

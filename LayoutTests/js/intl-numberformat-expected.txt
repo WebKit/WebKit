@@ -12,6 +12,7 @@ PASS class DerivedNumberFormat extends Intl.NumberFormat {};(new DerivedNumberFo
 PASS class DerivedNumberFormat extends Intl.NumberFormat {};new DerivedNumberFormat().format(1) === '1' is true
 PASS class DerivedNumberFormat extends Intl.NumberFormat {};Object.getPrototypeOf(new DerivedNumberFormat) === DerivedNumberFormat.prototype is true
 PASS class DerivedNumberFormat extends Intl.NumberFormat {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) === Intl.NumberFormat.prototype is true
+PASS testNumberFormat(Intl.NumberFormat(), [{locale: 'en-US'}]) is true
 PASS testNumberFormat(Intl.NumberFormat('en'), [{locale: 'en'}]) is true
 PASS testNumberFormat(Intl.NumberFormat('eN-uS'), [{locale: 'en-US'}]) is true
 PASS testNumberFormat(Intl.NumberFormat(['en', 'de']), [{locale: 'en'}]) is true

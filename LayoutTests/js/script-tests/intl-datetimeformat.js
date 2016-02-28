@@ -164,6 +164,9 @@ shouldThrow("Intl.DateTimeFormat.prototype.resolvedOptions.call(5)", "'TypeError
 shouldThrow("Intl.DateTimeFormat('$')", "'RangeError: invalid language tag: $'");
 shouldThrow("Intl.DateTimeFormat('en', null)", '"TypeError: null is not an object (evaluating \'Intl.DateTimeFormat(\'en\', null)\')"');
 
+// Defaults to en-US locale in test runner
+shouldBe("Intl.DateTimeFormat().resolvedOptions().locale", "'en-US'");
+
 // Defaults to month, day, year.
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().weekday", "undefined");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().era", "undefined");

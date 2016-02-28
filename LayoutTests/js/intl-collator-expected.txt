@@ -19,6 +19,7 @@ PASS class DerivedCollator extends Intl.Collator {};(new DerivedCollator) instan
 PASS class DerivedCollator extends Intl.Collator {};new DerivedCollator().compare('a', 'b') === -1 is true
 PASS class DerivedCollator extends Intl.Collator {};Object.getPrototypeOf(new DerivedCollator) === DerivedCollator.prototype is true
 PASS class DerivedCollator extends Intl.Collator {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) === Intl.Collator.prototype is true
+PASS testCollator(Intl.Collator(), [{locale: 'en-US'}]) is true
 PASS testCollator(Intl.Collator('en'), [{locale: 'en'}]) is true
 PASS testCollator(Intl.Collator('eN-uS'), [{locale: 'en-US'}]) is true
 PASS testCollator(Intl.Collator(['en', 'de']), [{locale: 'en'}]) is true

@@ -173,6 +173,9 @@ struct GlobalObjectMethodTable {
 
     typedef JSValue (*ModuleLoaderEvaluatePtr)(JSGlobalObject*, ExecState*, JSValue, JSValue);
     ModuleLoaderEvaluatePtr moduleLoaderEvaluate;
+
+    typedef String (*DefaultLanguageFunctionPtr)();
+    DefaultLanguageFunctionPtr defaultLanguage;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {

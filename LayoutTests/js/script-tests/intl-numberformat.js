@@ -41,6 +41,7 @@ function testNumberFormat(numberFormat, possibleDifferences) {
 }
 
 // Locale is processed correctly.
+shouldBeTrue("testNumberFormat(Intl.NumberFormat(), [{locale: 'en-US'}])");
 shouldBeTrue("testNumberFormat(Intl.NumberFormat('en'), [{locale: 'en'}])");
 shouldBeTrue("testNumberFormat(Intl.NumberFormat('eN-uS'), [{locale: 'en-US'}])");
 shouldBeTrue("testNumberFormat(Intl.NumberFormat(['en', 'de']), [{locale: 'en'}])");

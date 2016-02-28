@@ -250,7 +250,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     // 17. Let relevantExtensionKeys be the value of %Collator%.[[relevantExtensionKeys]].
     // 18. Let r be ResolveLocale(%Collator%.[[availableLocales]], requestedLocales, opt, relevantExtensionKeys, localeData).
     auto& availableLocales = state.callee()->globalObject()->intlCollatorAvailableLocales();
-    auto result = resolveLocale(availableLocales, requestedLocales, opt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), localeData);
+    auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), localeData);
 
     // 19. Set collator.[[locale]] to the value of r.[[locale]].
     m_locale = result.get(ASCIILiteral("locale"));

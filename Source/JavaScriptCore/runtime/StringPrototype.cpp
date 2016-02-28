@@ -1500,7 +1500,7 @@ static EncodedJSValue toLocaleCase(ExecState* state, int32_t (*convertCase)(UCha
     // a. Let requestedLocale be the first element of requestedLocales.
     // 8. Else
     // a. Let requestedLocale be DefaultLocale().
-    String requestedLocale = len > 0 ? requestedLocales.first() : defaultLocale();
+    String requestedLocale = len > 0 ? requestedLocales.first() : defaultLocale(*state);
 
     // 9. Let noExtensionsLocale be the String value that is requestedLocale with all Unicode locale extension sequences (6.2.1) removed.
     String noExtensionsLocale = removeUnicodeLocaleExtension(requestedLocale);

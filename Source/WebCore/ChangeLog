@@ -1,3 +1,16 @@
+2016-02-27  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Intl.Collator uses POSIX locale (detected by js/intl-collator.html on iOS Simulator)
+        https://bugs.webkit.org/show_bug.cgi?id=152448
+
+        Reviewed by Darin Adler.
+
+        Pass defaultLanguage from Language.h to the globalObjectMethodTable to
+        ensure Intl objects can be initialized with the correct default locale.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+
 2016-02-27  Chris Dumez  <cdumez@apple.com>
 
         Align HTMLMarqueeElement.scrollAmount / scrollDelay with the specification

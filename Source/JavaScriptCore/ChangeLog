@@ -1,3 +1,33 @@
+2016-02-27  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Intl.Collator uses POSIX locale (detected by js/intl-collator.html on iOS Simulator)
+        https://bugs.webkit.org/show_bug.cgi?id=152448
+
+        Reviewed by Darin Adler.
+
+        Add defaultLanguage to the globalObjectMethodTable and use it for the
+        default locale in Intl object initializations. Fall back to ICU default
+        locale only if the defaultLanguage function is null, or returns an
+        empty string.
+
+        * jsc.cpp:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlObject.cpp:
+        (JSC::defaultLocale):
+        (JSC::lookupMatcher):
+        (JSC::bestFitMatcher):
+        (JSC::resolveLocale):
+        * runtime/IntlObject.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::toLocaleCase):
+
 2016-02-27  Oliver Hunt  <oliver@apple.com>
 
         CLoop build fix.
