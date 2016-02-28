@@ -1,3 +1,13 @@
+2016-02-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Silence leaks under TextCodecICU::registerCodecs
+        https://bugs.webkit.org/show_bug.cgi?id=154737
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector._callstacks_to_exclude_from_leaks):
+
 2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Fix incorrect cast
