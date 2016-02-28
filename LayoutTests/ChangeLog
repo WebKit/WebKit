@@ -1,3 +1,18 @@
+2016-02-28  Tim Horton  <timothy_horton@apple.com>
+
+        Variables can resolve to the wrong value when elements differ in nothing but inherited variable value
+        https://bugs.webkit.org/show_bug.cgi?id=154785
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/variables/avoid-matched-property-cache-expected.html: Added.
+        * fast/css/variables/avoid-matched-property-cache.html: Added.
+        Add a test. The non-standard element is necessary because the resolved property
+        cache is already disabled when using the "simple" default style sheet, and
+        it seems better to use a totally non-standard element than one that might
+        end up in the "simple" default style sheet in the future and would silently
+        invalidate the test.
+
 2016-02-28  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Emit loading&putting this/super only if they are used in arrow function
