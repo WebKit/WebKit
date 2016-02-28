@@ -54,15 +54,15 @@ private:
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void addUserContentWorlds(const Vector<std::pair<uint64_t, String>>&);
-    void removeUserContentWorld(uint64_t);
+    void removeUserContentWorlds(const Vector<uint64_t>&);
 
     void addUserScripts(const Vector<std::pair<uint64_t, WebCore::UserScript>>&);
     void removeUserScript(uint64_t worldIdentifier, const String& urlString);
-    void removeAllUserScripts(uint64_t worldIdentifier);
+    void removeAllUserScripts(const Vector<uint64_t>&);
 
-    void addUserStyleSheets(const Vector<WebCore::UserStyleSheet>&);
-    void removeUserStyleSheet(const String& urlString);
-    void removeAllUserStyleSheets();
+    void addUserStyleSheets(const Vector<std::pair<uint64_t, WebCore::UserStyleSheet>>&);
+    void removeUserStyleSheet(uint64_t worldIdentifier, const String& urlString);
+    void removeAllUserStyleSheets(const Vector<uint64_t>&);
 
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>&);
     void removeUserScriptMessageHandler(uint64_t);

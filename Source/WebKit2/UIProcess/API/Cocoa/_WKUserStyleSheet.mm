@@ -29,6 +29,7 @@
 #import "APIArray.h"
 #import "WKNSArray.h"
 #import "WebKit2Initialize.h"
+#import "_WKUserContentWorldInternal.h"
 
 #if WK_API_ENABLED
 
@@ -42,7 +43,20 @@
     // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
     WebKit::InitializeWebKit2();
 
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), API::UserStyleSheet::generateUniqueURL(), { }, { }, forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames, WebCore::UserStyleUserLevel });
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), API::UserStyleSheet::generateUniqueURL(), { }, { }, forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames, WebCore::UserStyleUserLevel }, API::UserContentWorld::normalWorld());
+
+    return self;
+}
+
+- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(WK_ARRAY(NSString *) *)legacyWhitelist legacyBlacklist:(WK_ARRAY(NSString *) *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
+{
+    if (!(self = [super init]))
+        return nil;
+
+    // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
+    WebKit::InitializeWebKit2();
+
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), API::UserStyleSheet::generateUniqueURL(), API::toStringVector(legacyWhitelist), API::toStringVector(legacyBlacklist), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames, WebCore::UserStyleUserLevel }, *userContentWorld->_userContentWorld);
 
     return self;
 }

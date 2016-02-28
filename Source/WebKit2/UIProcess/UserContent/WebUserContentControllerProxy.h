@@ -76,12 +76,16 @@ public:
     API::Array& userScripts() { return m_userScripts.get(); }
     void addUserScript(API::UserScript&);
     void removeUserScript(API::UserScript&);
+    void removeAllUserScripts(API::UserContentWorld&);
     void removeAllUserScripts();
 
     API::Array& userStyleSheets() { return m_userStyleSheets.get(); }
     void addUserStyleSheet(API::UserStyleSheet&);
-    void removeUserStyleSheet(const API::UserStyleSheet&);
+    void removeUserStyleSheet(API::UserStyleSheet&);
+    void removeAllUserStyleSheets(API::UserContentWorld&);
     void removeAllUserStyleSheets();
+
+    void removeAllUserContent(API::UserContentWorld&);
 
     // Returns false if there was a name conflict.
     bool addUserScriptMessageHandler(WebScriptMessageHandler*);
@@ -98,6 +102,11 @@ private:
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void didPostMessage(IPC::Connection&, uint64_t pageID, uint64_t frameID, const WebCore::SecurityOriginData&, uint64_t messageHandlerID, const IPC::DataReference&);
+
+    void addUserContentWorldUse(API::UserContentWorld&);
+    void removeUserContentWorldUses(API::UserContentWorld&, unsigned numberOfUsesToRemove);
+    void removeUserContentWorldUses(HashCountedSet<RefPtr<API::UserContentWorld>>&);
+    bool shouldSendRemoveUserContentWorldsMessage(API::UserContentWorld&, unsigned numberOfUsesToRemove);
 
     uint64_t m_identifier;
     HashSet<WebProcessProxy*> m_processes;    

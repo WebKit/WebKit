@@ -93,7 +93,7 @@ struct _WebKitUserStyleSheet {
             String::fromUTF8(source), URL { },
             toStringVector(whitelist), toStringVector(blacklist),
             toUserContentInjectedFrames(injectedFrames),
-            toUserStyleLevel(level) })))
+            toUserStyleLevel(level) }, API::UserContentWorld::normalWorld())))
         , referenceCount(1)
     {
     }

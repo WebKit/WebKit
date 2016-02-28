@@ -31,6 +31,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class _WKUserContentWorld;
+
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface _WKUserStyleSheet : NSObject <NSCopying>
 
@@ -39,6 +41,8 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @property (nonatomic, readonly, getter=isForMainFrameOnly) BOOL forMainFrameOnly;
 
 - (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly;
+
+- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(WK_ARRAY(NSString *) *)legacyWhitelist legacyBlacklist:(WK_ARRAY(NSString *) *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld;
 
 @end
 

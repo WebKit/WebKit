@@ -73,28 +73,12 @@
 
 @implementation WKUserScript (WKPrivate)
 
-static Vector<WTF::String> toStringVector(NSArray *input)
-{
-    Vector<WTF::String> vector;
-
-    NSUInteger size = input.count;
-    if (!size)
-        return vector;
-
-    vector.reserveInitialCapacity(size);
-    for (id string : input) {
-        if ([string isKindOfClass:[NSString class]])
-            vector.uncheckedAppend(string);
-    }
-    return vector;
-}
-
 - (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray *)legacyWhitelist legacyBlacklist:(NSArray *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), toStringVector(legacyWhitelist), toStringVector(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }, *userContentWorld->_userContentWorld);
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), API::toStringVector(legacyWhitelist), API::toStringVector(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }, *userContentWorld->_userContentWorld);
 
     return self;
 }

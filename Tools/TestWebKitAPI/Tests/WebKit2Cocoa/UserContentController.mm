@@ -27,10 +27,14 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import <WebKit/WebKit.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKUserScript.h>
+#import <WebKit/WKUserScriptPrivate.h>
+#import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKUserContentWorld.h>
+#import <WebKit/_WKUserStyleSheet.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
@@ -363,6 +367,178 @@ TEST(WKUserContentController, UserStyleSheetAffectingAllFrames)
 
     // The subframe should also be affected.
     expectScriptEvaluatesToColor(webView.get(), frameBackgroundColorScript, greenInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetRemove)
+{
+    RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
+    [userContentController _addUserStyleSheet:styleSheet.get()];
+    
+    EXPECT_EQ(1u, [userContentController _userStyleSheets].count);
+    EXPECT_EQ(styleSheet.get(), [userContentController _userStyleSheets][0]);
+
+    [userContentController _removeUserStyleSheet:styleSheet.get()];
+
+    EXPECT_EQ(0u, [userContentController _userStyleSheets].count);
+}
+
+TEST(WKUserContentController, UserStyleSheetRemoveAll)
+{
+    RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
+
+    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    
+    [userContentController _addUserStyleSheet:styleSheet.get()];
+    [userContentController _addUserStyleSheet:styleSheetAssociatedWithWorld.get()];
+    
+    EXPECT_EQ(2u, [userContentController _userStyleSheets].count);
+    EXPECT_EQ(styleSheet.get(), [userContentController _userStyleSheets][0]);
+    EXPECT_EQ(styleSheetAssociatedWithWorld.get(), [userContentController _userStyleSheets][1]);
+
+    [userContentController _removeAllUserStyleSheets];
+
+    EXPECT_EQ(0u, [userContentController _userStyleSheets].count);
+}
+
+TEST(WKUserContentController, UserStyleSheetRemoveAllByWorld)
+{
+    RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
+
+    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld2 = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    
+    [userContentController _addUserStyleSheet:styleSheet.get()];
+    [userContentController _addUserStyleSheet:styleSheetAssociatedWithWorld.get()];
+    [userContentController _addUserStyleSheet:styleSheetAssociatedWithWorld2.get()];
+    
+    EXPECT_EQ(3u, [userContentController _userStyleSheets].count);
+    EXPECT_EQ(styleSheet.get(), [userContentController _userStyleSheets][0]);
+    EXPECT_EQ(styleSheetAssociatedWithWorld.get(), [userContentController _userStyleSheets][1]);
+    EXPECT_EQ(styleSheetAssociatedWithWorld2.get(), [userContentController _userStyleSheets][2]);
+
+    [userContentController _removeAllUserStyleSheetsAssociatedWithUserContentWorld:world.get()];
+
+    EXPECT_EQ(1u, [userContentController _userStyleSheets].count);
+    EXPECT_EQ(styleSheet.get(), [userContentController _userStyleSheets][0]);
+}
+
+TEST(WKUserContentController, UserStyleSheetRemoveAllByNormalWorld)
+{
+    RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
+
+    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld2 = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    
+    [userContentController _addUserStyleSheet:styleSheet.get()];
+    [userContentController _addUserStyleSheet:styleSheetAssociatedWithWorld.get()];
+    [userContentController _addUserStyleSheet:styleSheetAssociatedWithWorld2.get()];
+    
+    EXPECT_EQ(3u, [userContentController _userStyleSheets].count);
+    EXPECT_EQ(styleSheet.get(), [userContentController _userStyleSheets][0]);
+    EXPECT_EQ(styleSheetAssociatedWithWorld.get(), [userContentController _userStyleSheets][1]);
+    EXPECT_EQ(styleSheetAssociatedWithWorld2.get(), [userContentController _userStyleSheets][2]);
+
+    [userContentController _removeAllUserStyleSheetsAssociatedWithUserContentWorld:[_WKUserContentWorld normalWorld]];
+
+    EXPECT_EQ(2u, [userContentController _userStyleSheets].count);
+    EXPECT_EQ(styleSheetAssociatedWithWorld.get(), [userContentController _userStyleSheets][0]);
+    EXPECT_EQ(styleSheetAssociatedWithWorld2.get(), [userContentController _userStyleSheets][1]);
+}
+
+TEST(WKUserContentController, UserScriptRemove)
+{
+    RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
+    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
+    [userContentController addUserScript:userScript.get()];
+    
+    EXPECT_EQ(1u, [userContentController userScripts].count);
+    EXPECT_EQ(userScript.get(), [userContentController userScripts][0]);
+
+    [userContentController _removeUserScript:userScript.get()];
+
+    EXPECT_EQ(0u, [userContentController userScripts].count);
+}
+
+TEST(WKUserContentController, UserScriptRemoveAll)
+{
+    RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
+
+    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+
+    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    
+    [userContentController addUserScript:userScript.get()];
+    [userContentController addUserScript:userScriptAssociatedWithWorld.get()];
+    
+    EXPECT_EQ(2u, [userContentController userScripts].count);
+    EXPECT_EQ(userScript.get(), [userContentController userScripts][0]);
+    EXPECT_EQ(userScriptAssociatedWithWorld.get(), [userContentController userScripts][1]);
+
+    [userContentController removeAllUserScripts];
+
+    EXPECT_EQ(0u, [userContentController userScripts].count);
+}
+
+TEST(WKUserContentController, UserScriptRemoveAllByWorld)
+{
+    RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
+
+    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+
+    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld2 = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    
+    [userContentController addUserScript:userScript.get()];
+    [userContentController addUserScript:userScriptAssociatedWithWorld.get()];
+    [userContentController addUserScript:userScriptAssociatedWithWorld2.get()];
+    
+    EXPECT_EQ(3u, [userContentController userScripts].count);
+    EXPECT_EQ(userScript.get(), [userContentController userScripts][0]);
+    EXPECT_EQ(userScriptAssociatedWithWorld.get(), [userContentController userScripts][1]);
+    EXPECT_EQ(userScriptAssociatedWithWorld2.get(), [userContentController userScripts][2]);
+
+    [userContentController _removeAllUserScriptsAssociatedWithUserContentWorld:world.get()];
+
+    EXPECT_EQ(1u, [userContentController userScripts].count);
+    EXPECT_EQ(userScript.get(), [userContentController userScripts][0]);
+}
+
+TEST(WKUserContentController, UserScriptRemoveAllByNormalWorld)
+{
+    RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
+
+    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+
+    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld2 = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    
+    [userContentController addUserScript:userScript.get()];
+    [userContentController addUserScript:userScriptAssociatedWithWorld.get()];
+    [userContentController addUserScript:userScriptAssociatedWithWorld2.get()];
+    
+    EXPECT_EQ(3u, [userContentController userScripts].count);
+    EXPECT_EQ(userScript.get(), [userContentController userScripts][0]);
+    EXPECT_EQ(userScriptAssociatedWithWorld.get(), [userContentController userScripts][1]);
+    EXPECT_EQ(userScriptAssociatedWithWorld2.get(), [userContentController userScripts][2]);
+
+    [userContentController _removeAllUserScriptsAssociatedWithUserContentWorld:[_WKUserContentWorld normalWorld]];
+
+    EXPECT_EQ(2u, [userContentController userScripts].count);
+    EXPECT_EQ(userScriptAssociatedWithWorld.get(), [userContentController userScripts][0]);
+    EXPECT_EQ(userScriptAssociatedWithWorld2.get(), [userContentController userScripts][1]);
 }
 
 #endif

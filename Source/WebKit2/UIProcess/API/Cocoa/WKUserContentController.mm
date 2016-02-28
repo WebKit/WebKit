@@ -38,6 +38,7 @@
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKUserContentFilterInternal.h"
+#import "_WKUserContentWorldInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
@@ -143,6 +144,11 @@ private:
     _userContentControllerProxy->removeUserScript(*userScript->_userScript);
 }
 
+- (void)_removeAllUserScriptsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
+{
+    _userContentControllerProxy->removeAllUserScripts(*userContentWorld->_userContentWorld);
+}
+
 - (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter
 {
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -182,6 +188,11 @@ private:
 - (void)_removeAllUserStyleSheets
 {
     _userContentControllerProxy->removeAllUserStyleSheets();
+}
+
+- (void)_removeAllUserStyleSheetsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
+{
+    _userContentControllerProxy->removeAllUserStyleSheets(*userContentWorld->_userContentWorld);
 }
 
 @end

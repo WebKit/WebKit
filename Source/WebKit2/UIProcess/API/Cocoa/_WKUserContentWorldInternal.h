@@ -29,6 +29,8 @@
 
 #import "APIUserContentWorld.h"
 #import "WKObject.h"
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 namespace API {
 
@@ -36,6 +38,22 @@ inline _WKUserContentWorld *wrapper(UserContentWorld& userContentWorld)
 {
     ASSERT([userContentWorld.wrapper() isKindOfClass:[_WKUserContentWorld class]]);
     return (_WKUserContentWorld *)userContentWorld.wrapper();
+}
+
+inline Vector<WTF::String> toStringVector(NSArray *input)
+{
+    Vector<WTF::String> vector;
+
+    NSUInteger size = input.count;
+    if (!size)
+        return vector;
+
+    vector.reserveInitialCapacity(size);
+    for (id string : input) {
+        if ([string isKindOfClass:[NSString class]])
+            vector.uncheckedAppend(string);
+    }
+    return vector;
 }
 
 }

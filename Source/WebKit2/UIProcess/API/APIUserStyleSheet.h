@@ -27,6 +27,7 @@
 #define APIUserStyleSheet_h
 
 #include "APIObject.h"
+#include "APIUserContentWorld.h"
 #include <WebCore/UserStyleSheet.h>
 
 namespace API {
@@ -35,15 +36,25 @@ class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet> {
 public:
     static WebCore::URL generateUniqueURL();
 
-    UserStyleSheet(WebCore::UserStyleSheet userStyleSheet)
+    static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::UserContentWorld& world)
+    {
+        return adoptRef(*new UserStyleSheet(WTFMove(userStyleSheet), world));
+    }
+
+    UserStyleSheet(WebCore::UserStyleSheet userStyleSheet, API::UserContentWorld& world)
         : m_userStyleSheet(userStyleSheet)
+        , m_world(world)
     {
     }
 
     const WebCore::UserStyleSheet& userStyleSheet() const { return m_userStyleSheet; }
 
+    UserContentWorld& userContentWorld() { return m_world; }
+    const UserContentWorld& userContentWorld() const { return m_world; }
+
 private:
     WebCore::UserStyleSheet m_userStyleSheet;
+    Ref<UserContentWorld> m_world;
 };
 
 } // namespace API

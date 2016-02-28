@@ -105,21 +105,23 @@ void WebUserContentController::addUserContentWorlds(const Vector<std::pair<uint6
     }
 }
 
-void WebUserContentController::removeUserContentWorld(uint64_t worldIdentifier)
+void WebUserContentController::removeUserContentWorlds(const Vector<uint64_t>& worldIdentifiers)
 {
-    ASSERT(worldIdentifier);
-    ASSERT(worldIdentifier != 1);
+    for (auto& worldIdentifier : worldIdentifiers) {
+        ASSERT(worldIdentifier);
+        ASSERT(worldIdentifier != 1);
 
-    auto it = worldMap().find(worldIdentifier);
-    if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
-        return;
+        auto it = worldMap().find(worldIdentifier);
+        if (it == worldMap().end()) {
+            WTFLogAlways("Trying to remove a UserContentWorld (id=%" PRIu64 ") that is does not exist.", worldIdentifier);
+            return;
+        }
+
+        it->value.second--;
+        
+        if (!it->value.second)
+            worldMap().remove(it);
     }
-
-    it->value.second--;
-    
-    if (!it->value.second)
-        worldMap().remove(it);
 }
 
 void WebUserContentController::addUserScripts(const Vector<std::pair<uint64_t, WebCore::UserScript>>& userScripts)
@@ -146,33 +148,54 @@ void WebUserContentController::removeUserScript(uint64_t worldIdentifier, const 
     m_userContentController->removeUserScript(it->value.first->coreWorld(), URL(URL(), urlString));
 }
 
-void WebUserContentController::removeAllUserScripts(uint64_t worldIdentifier)
+void WebUserContentController::removeAllUserScripts(const Vector<uint64_t>& worldIdentifiers)
+{
+    for (auto& worldIdentifier : worldIdentifiers) {
+        auto it = worldMap().find(worldIdentifier);
+        if (it == worldMap().end()) {
+            WTFLogAlways("Trying to remove all UserScripts from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+            return;
+        }
+
+        m_userContentController->removeUserScripts(it->value.first->coreWorld());
+    }
+}
+
+void WebUserContentController::addUserStyleSheets(const Vector<std::pair<uint64_t, WebCore::UserStyleSheet>>& userStyleSheets)
+{
+    for (const auto& userStyleSheetWorldPair : userStyleSheets) {
+        auto it = worldMap().find(userStyleSheetWorldPair.first);
+        if (it == worldMap().end()) {
+            WTFLogAlways("Trying to add a UserStyleSheet to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userStyleSheetWorldPair.first);
+            continue;
+        }
+
+        m_userContentController->addUserStyleSheet(it->value.first->coreWorld(), std::make_unique<WebCore::UserStyleSheet>(userStyleSheetWorldPair.second), InjectInExistingDocuments);
+    }
+}
+
+void WebUserContentController::removeUserStyleSheet(uint64_t worldIdentifier, const String& urlString)
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove all UserScripts from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+        WTFLogAlways("Trying to remove a UserStyleSheet from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
         return;
     }
 
-    m_userContentController->removeUserScripts(it->value.first->coreWorld());
+    m_userContentController->removeUserStyleSheet(it->value.first->coreWorld(), URL(URL(), urlString));
 }
 
-void WebUserContentController::addUserStyleSheets(const Vector<WebCore::UserStyleSheet>& userStyleSheets)
+void WebUserContentController::removeAllUserStyleSheets(const Vector<uint64_t>& worldIdentifiers)
 {
-    for (const auto& userStyleSheet : userStyleSheets) {
-        m_userContentController->addUserStyleSheet(mainThreadNormalWorld(),
-            std::make_unique<WebCore::UserStyleSheet>(userStyleSheet), InjectInExistingDocuments);
+    for (auto& worldIdentifier : worldIdentifiers) {
+        auto it = worldMap().find(worldIdentifier);
+        if (it == worldMap().end()) {
+            WTFLogAlways("Trying to remove all UserStyleSheets from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+            return;
+        }
+
+        m_userContentController->removeUserStyleSheets(it->value.first->coreWorld());
     }
-}
-
-void WebUserContentController::removeUserStyleSheet(const String& urlString)
-{
-    m_userContentController->removeUserStyleSheet(mainThreadNormalWorld(), URL(URL(), urlString));
-}
-
-void WebUserContentController::removeAllUserStyleSheets()
-{
-    m_userContentController->removeUserStyleSheets(mainThreadNormalWorld());
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)

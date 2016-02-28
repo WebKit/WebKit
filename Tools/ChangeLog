@@ -1,3 +1,13 @@
+2016-02-28  Sam Weinig  <sam@webkit.org>
+
+        Bind _WKUserStyleSheets to WKUserContentWorlds to allow for grouping of user content by associating to a world
+        https://bugs.webkit.org/show_bug.cgi?id=154798
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        Add tests for removing _WKUserStyleSheets and WKUserScripts
+
 2016-02-27  Alexey Proskuryakov  <ap@apple.com>
 
         Silence leaks under TextCodecICU::registerCodecs
