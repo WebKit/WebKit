@@ -1,3 +1,18 @@
+2015-04-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up access checks in JSHistoryCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=143227
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::putDelegate):
+        (WebCore::JSHistory::deleteProperty):
+        (WebCore::JSHistory::deletePropertyByIndex):
+        (WebCore::JSHistory::getOwnPropertyNames):
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+
 2014-08-27  Daniel Bates  <dabates@apple.com>
 
         Scrollbar corner can be drawn outside containing frame
