@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="500">
+  <g stroke="black" stroke-width="10">
+    <rect x= "10" y="10" width="100" height="100" fill="lime"/>
+    <rect x="10" y="130" width="100" height="100" fill="lime"/>
+    <rect x="140" y="10" width="100" height="100" fill="lime"/>
+    <rect x="140" y="130" width="100" height="100" fill="lime"/>
+    <rect x= "270" y="10" width="100" height="100" fill="lime"/>
+    <rect x="270" y="130" width="100" height="100" fill="lime"/>
+  </g>
+
+  <svg x="400" y="10" width="100" height="100" viewBox="0 0 10000 10000">
+    <g stroke="black" stroke-width="1000">
+      <rect width="100%" height="100%" fill="lime"/>
+    </g>
+  </svg>
+  <svg x="400" y="130" width="100" height="100" viewBox="0 0 10000 10000">
+    <g stroke="black" stroke-width="1000">
+      <rect width="100%" height="100%" fill="lime"/>
+    </g>
+  </svg>
+
+  <svg x="535" y="15" width="90" height="90">
+    <g stroke="black" stroke-width="20">
+      <rect width="100%" height="100%" fill="lime"/>
+    </g>
+  </svg> 
+  <svg x="530" y="130" width="100" height="100">
+    <rect width="100%" height="100%" fill="lime"/>
+  </svg>
+
+  <svg x="665" y="15" width="90" height="90">
+    <g stroke="black" stroke-width="20">
+      <rect width="100%" height="100%" fill="lime"/>
+    </g>
+  </svg>
+  <svg x="650" y="120" width="120" height="120">
+    <g stroke="black" stroke-width="10">
+      <rect width="100%" height="100%" fill="lime"/>
+    </g>
+  </svg>
+</svg>
