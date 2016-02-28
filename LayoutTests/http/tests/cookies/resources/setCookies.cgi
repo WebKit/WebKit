@@ -2,6 +2,8 @@
 use strict;
 
 print "Content-Type: text/plain\n";
+print "Access-Control-Allow-Origin: *\n";
+print "Access-Control-Allow-Headers: SET-COOKIE\n";
 print "Cache-Control: no-store\n";
 print 'Cache-Control: no-cache="set-cookie"' . "\n";
 
