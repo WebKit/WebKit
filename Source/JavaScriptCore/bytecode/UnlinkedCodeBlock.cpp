@@ -56,7 +56,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_numVars(0)
     , m_numCalleeLocals(0)
     , m_numParameters(0)
-    , m_vm(vm)
     , m_globalObjectRegister(VirtualRegister())
     , m_usesEval(info.usesEval())
     , m_isStrictMode(info.isStrictMode())
@@ -83,6 +82,11 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     for (auto& constantRegisterIndex : m_linkTimeConstants)
         constantRegisterIndex = 0;
     ASSERT(m_constructorKind == static_cast<unsigned>(info.constructorKind()));
+}
+
+VM* UnlinkedCodeBlock::vm() const
+{
+    return MarkedBlock::blockFor(this)->vm();
 }
 
 void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -261,9 +265,10 @@ void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,
 
 bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot)
 {
+    ASSERT(m_rareData);
     static const bool verbose = false;
-    auto iter = m_typeProfilerInfoMap.find(bytecodeOffset);
-    if (iter == m_typeProfilerInfoMap.end()) {
+    auto iter = m_rareData->m_typeProfilerInfoMap.find(bytecodeOffset);
+    if (iter == m_rareData->m_typeProfilerInfoMap.end()) {
         if (verbose)
             dataLogF("Don't have assignment info for offset:%u\n", bytecodeOffset);
         startDivot = UINT_MAX;
@@ -271,7 +276,7 @@ bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned byt
         return false;
     }
     
-    TypeProfilerExpressionRange& range = iter->value;
+    RareData::TypeProfilerExpressionRange& range = iter->value;
     startDivot = range.m_startDivot;
     endDivot = range.m_endDivot;
     return true;
@@ -279,10 +284,11 @@ bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned byt
 
 void UnlinkedCodeBlock::addTypeProfilerExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot)
 {
-    TypeProfilerExpressionRange range;
+    createRareDataIfNecessary();
+    RareData::TypeProfilerExpressionRange range;
     range.m_startDivot = startDivot;
     range.m_endDivot = endDivot;
-    m_typeProfilerInfoMap.set(instructionOffset, range);  
+    m_rareData->m_typeProfilerInfoMap.set(instructionOffset, range);
 }
 
 void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)

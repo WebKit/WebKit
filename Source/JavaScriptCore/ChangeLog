@@ -1,3 +1,31 @@
+2016-02-28  Andreas Kling  <akling@apple.com>
+
+        Shrink UnlinkedCodeBlock a bit.
+        <https://webkit.org/b/154797>
+
+        Reviewed by Anders Carlsson.
+
+        Move profiler-related members of UnlinkedCodeBlock into its RareData
+        structure, saving 40 bytes, and then reorder the other members of
+        UnlinkedCodeBlock to save another 24 bytes, netting a nice total 64.
+
+        The VM member was removed entirely since UnlinkedCodeBlock is a cell
+        and can retrieve its VM through MarkedBlock header lookup.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::vm):
+        (JSC::UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::addTypeProfilerExpressionInfo):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addRegExp):
+        (JSC::UnlinkedCodeBlock::addConstant):
+        (JSC::UnlinkedCodeBlock::addFunctionDecl):
+        (JSC::UnlinkedCodeBlock::addFunctionExpr):
+        (JSC::UnlinkedCodeBlock::addOpProfileControlFlowBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::opProfileControlFlowBytecodeOffsets):
+        (JSC::UnlinkedCodeBlock::vm): Deleted.
+
 2016-02-27  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should lower its abstract heaps to B3 heap ranges
