@@ -1,3 +1,131 @@
+2016-02-27  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should lower its abstract heaps to B3 heap ranges
+        https://bugs.webkit.org/show_bug.cgi?id=154782
+
+        Reviewed by Saam Barati.
+
+        The FTL can describe the abstract heaps (points-to sets) that a memory operation will
+        affect. The abstract heaps are arranged as a hierarchy. We used to transform this into
+        TBAA hierarchies in LLVM, but we never got around to wiring this up to B3's equivalent
+        notion - the HeapRange. That's what this patch fixes.
+
+        B3 has a minimalistic alias analysis. It represents abstract heaps using unsigned 32-bit
+        integers. There are 1<<32 abstract heaps. The B3 client can describe what an operation
+        affects by specifying a heap range: a begin...end pair that says that the operation
+        affects all abstract heaps H such that begin <= H < end.
+
+        This peculiar scheme was a deliberate attempt to distill what the abstract heap
+        hierarchy is all about. We can assign begin...end numbers to abstract heaps so that:
+
+        - A heap's end is greater than its begin.
+        - A heap's begin is greater than or equal to its parent's begin.
+        - A heap's end is less than or equal to its parent's end.
+
+        This is easy to do using a recursive traversal of the abstract heap hierarchy. I almost
+        went for the iterative traversal, which is a splendid algorithm, but it's totally
+        unnecessary here since we tightly control the height of the heap hierarchy.
+
+        Because abstract heaps are produced on-the-fly by FTL lowering, due to the fact that we
+        generate new ones for field names and constant indices we encounter, we can't actually
+        decorate the B3 instructions we create in lowering until all lowering is done. Adding a
+        new abstract heap to the hierarchy after ranges were already computed would require
+        updating the ranges of any heaps "to the right" of that heap in the hierarchy. This
+        patch solves that problem by recording the associations between abstract heaps and their
+        intended roles in the generated IR, and then decorating all of the relevant B3 values
+        after we compute the ranges of the hierarchy after lowering.
+
+        This is perf-neutral. I was hoping for a small speed-up, but I could not detect a
+        speed-up on any benchmark. That's not too surprising. We already have very precise CSE
+        in the DFG, so there aren't many opportunities left for the B3 CSE and it may have
+        already been getting the big ones even without alias analysis.
+
+        Even without a speed-up, this patch is valuable because it makes it easier to implement
+        other optimizations, like store elimination.
+
+        * b3/B3HeapRange.h:
+        (JSC::B3::HeapRange::HeapRange):
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::AbstractHeap::AbstractHeap):
+        (JSC::FTL::AbstractHeap::changeParent):
+        (JSC::FTL::AbstractHeap::compute):
+        (JSC::FTL::AbstractHeap::shallowDump):
+        (JSC::FTL::AbstractHeap::dump):
+        (JSC::FTL::AbstractHeap::deepDump):
+        (JSC::FTL::AbstractHeap::badRangeError):
+        (JSC::FTL::IndexedAbstractHeap::IndexedAbstractHeap):
+        (JSC::FTL::IndexedAbstractHeap::baseIndex):
+        (JSC::FTL::IndexedAbstractHeap::atSlow):
+        (JSC::FTL::IndexedAbstractHeap::initialize):
+        (JSC::FTL::AbstractHeap::decorateInstruction): Deleted.
+        (JSC::FTL::AbstractField::dump): Deleted.
+        * ftl/FTLAbstractHeap.h:
+        (JSC::FTL::AbstractHeap::AbstractHeap):
+        (JSC::FTL::AbstractHeap::isInitialized):
+        (JSC::FTL::AbstractHeap::initialize):
+        (JSC::FTL::AbstractHeap::parent):
+        (JSC::FTL::AbstractHeap::heapName):
+        (JSC::FTL::AbstractHeap::range):
+        (JSC::FTL::AbstractHeap::offset):
+        (JSC::FTL::IndexedAbstractHeap::atAnyIndex):
+        (JSC::FTL::IndexedAbstractHeap::at):
+        (JSC::FTL::IndexedAbstractHeap::operator[]):
+        (JSC::FTL::IndexedAbstractHeap::returnInitialized):
+        (JSC::FTL::IndexedAbstractHeap::WithoutZeroOrOneHashTraits::constructDeletedValue):
+        (JSC::FTL::IndexedAbstractHeap::WithoutZeroOrOneHashTraits::isDeletedValue):
+        (JSC::FTL::AbstractHeap::changeParent): Deleted.
+        (JSC::FTL::AbstractField::AbstractField): Deleted.
+        (JSC::FTL::AbstractField::initialize): Deleted.
+        (JSC::FTL::AbstractField::offset): Deleted.
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        (JSC::FTL::AbstractHeapRepository::~AbstractHeapRepository):
+        (JSC::FTL::AbstractHeapRepository::decorateMemory):
+        (JSC::FTL::AbstractHeapRepository::decorateCCallRead):
+        (JSC::FTL::AbstractHeapRepository::decorateCCallWrite):
+        (JSC::FTL::AbstractHeapRepository::decoratePatchpointRead):
+        (JSC::FTL::AbstractHeapRepository::decoratePatchpointWrite):
+        (JSC::FTL::AbstractHeapRepository::computeRangesAndDecorateInstructions):
+        * ftl/FTLAbstractHeapRepository.h:
+        (JSC::FTL::AbstractHeapRepository::forArrayType):
+        (JSC::FTL::AbstractHeapRepository::HeapForValue::HeapForValue):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::load8ZeroExt32):
+        (JSC::FTL::Output::load16SignExt32):
+        (JSC::FTL::Output::load16ZeroExt32):
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::store32As8):
+        (JSC::FTL::Output::store32As16):
+        (JSC::FTL::Output::baseIndex):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::address):
+        (JSC::FTL::Output::absolute):
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::load8ZeroExt32):
+        (JSC::FTL::Output::load16SignExt32):
+        (JSC::FTL::Output::load16ZeroExt32):
+        (JSC::FTL::Output::load32):
+        (JSC::FTL::Output::load64):
+        (JSC::FTL::Output::loadPtr):
+        (JSC::FTL::Output::loadDouble):
+        (JSC::FTL::Output::store32):
+        (JSC::FTL::Output::store64):
+        (JSC::FTL::Output::storePtr):
+        (JSC::FTL::Output::storeDouble):
+        (JSC::FTL::Output::ascribeRange):
+        (JSC::FTL::Output::nonNegative32):
+        (JSC::FTL::Output::load32NonNegative):
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        * ftl/FTLTypedPointer.h:
+        (JSC::FTL::TypedPointer::operator!):
+        (JSC::FTL::TypedPointer::heap):
+        (JSC::FTL::TypedPointer::value):
+
 2016-02-28  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Emit loading&putting this/super only if they are used in arrow function

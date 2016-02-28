@@ -37,6 +37,12 @@ namespace JSC { namespace B3 {
 // Alias analysis in B3 is done by checking if two integer ranges overlap. This is powerful enough
 // to be used for TBAA-style alias analysis used by the DFG, FTL, and LLVM: you just turn each node
 // in the tree of abstract heaps into a pre/post range.
+//
+// Note that the 'begin' is inclusive, while the 'end' is exclusive. These two ranges are non-
+// overlapping:
+//
+//     rangeA = 0...8
+//     rangeB = 8...16
 
 class HeapRange {
 public:
@@ -46,6 +52,13 @@ public:
         : m_begin(0)
         , m_end(0)
     {
+    }
+
+    explicit HeapRange(unsigned value)
+        : m_begin(value)
+        , m_end(value + 1)
+    {
+        ASSERT(m_end >= m_begin);
     }
 
     HeapRange(unsigned begin, unsigned end)

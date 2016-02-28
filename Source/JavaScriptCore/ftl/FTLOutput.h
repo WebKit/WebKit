@@ -289,7 +289,7 @@ public:
     // Construct an address by offsetting base by the amount specified by the field,
     // and optionally an additional amount (use this with care), and then creating
     // a TypedPointer with the given field as the heap.
-    TypedPointer address(LValue base, const AbstractField& field, ptrdiff_t offset = 0)
+    TypedPointer address(LValue base, const AbstractHeap& field, ptrdiff_t offset = 0)
     {
         return address(field, base, offset + field.offset());
     }
@@ -310,18 +310,18 @@ public:
         return TypedPointer(m_heaps->absolute[address], constIntPtr(address));
     }
 
-    LValue load8SignExt32(LValue base, const AbstractField& field) { return load8SignExt32(address(base, field)); }
-    LValue load8ZeroExt32(LValue base, const AbstractField& field) { return load8ZeroExt32(address(base, field)); }
-    LValue load16SignExt32(LValue base, const AbstractField& field) { return load16SignExt32(address(base, field)); }
-    LValue load16ZeroExt32(LValue base, const AbstractField& field) { return load16ZeroExt32(address(base, field)); }
-    LValue load32(LValue base, const AbstractField& field) { return load32(address(base, field)); }
-    LValue load64(LValue base, const AbstractField& field) { return load64(address(base, field)); }
-    LValue loadPtr(LValue base, const AbstractField& field) { return loadPtr(address(base, field)); }
-    LValue loadDouble(LValue base, const AbstractField& field) { return loadDouble(address(base, field)); }
-    void store32(LValue value, LValue base, const AbstractField& field) { store32(value, address(base, field)); }
-    void store64(LValue value, LValue base, const AbstractField& field) { store64(value, address(base, field)); }
-    void storePtr(LValue value, LValue base, const AbstractField& field) { storePtr(value, address(base, field)); }
-    void storeDouble(LValue value, LValue base, const AbstractField& field) { storeDouble(value, address(base, field)); }
+    LValue load8SignExt32(LValue base, const AbstractHeap& field) { return load8SignExt32(address(base, field)); }
+    LValue load8ZeroExt32(LValue base, const AbstractHeap& field) { return load8ZeroExt32(address(base, field)); }
+    LValue load16SignExt32(LValue base, const AbstractHeap& field) { return load16SignExt32(address(base, field)); }
+    LValue load16ZeroExt32(LValue base, const AbstractHeap& field) { return load16ZeroExt32(address(base, field)); }
+    LValue load32(LValue base, const AbstractHeap& field) { return load32(address(base, field)); }
+    LValue load64(LValue base, const AbstractHeap& field) { return load64(address(base, field)); }
+    LValue loadPtr(LValue base, const AbstractHeap& field) { return loadPtr(address(base, field)); }
+    LValue loadDouble(LValue base, const AbstractHeap& field) { return loadDouble(address(base, field)); }
+    void store32(LValue value, LValue base, const AbstractHeap& field) { store32(value, address(base, field)); }
+    void store64(LValue value, LValue base, const AbstractHeap& field) { store64(value, address(base, field)); }
+    void storePtr(LValue value, LValue base, const AbstractHeap& field) { storePtr(value, address(base, field)); }
+    void storeDouble(LValue value, LValue base, const AbstractHeap& field) { storeDouble(value, address(base, field)); }
 
     // FIXME: Explore adding support for value range constraints to B3. Maybe it could be as simple as having
     // a load instruction that guarantees that its result is non-negative.
@@ -329,7 +329,7 @@ public:
     void ascribeRange(LValue, const ValueRange&) { }
     LValue nonNegative32(LValue loadInstruction) { return loadInstruction; }
     LValue load32NonNegative(TypedPointer pointer) { return load32(pointer); }
-    LValue load32NonNegative(LValue base, const AbstractField& field) { return load32(base, field); }
+    LValue load32NonNegative(LValue base, const AbstractHeap& field) { return load32(base, field); }
 
     LValue equal(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), left, right); }
     LValue notEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), left, right); }

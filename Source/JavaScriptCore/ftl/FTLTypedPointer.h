@@ -53,7 +53,7 @@ public:
         return !m_heap;
     }
     
-    const AbstractHeap& heap() const { return *m_heap; }
+    const AbstractHeap* heap() const { return m_heap; }
     LValue value() const { return m_value; }
 
 private:

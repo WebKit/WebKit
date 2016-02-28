@@ -102,7 +102,7 @@ LValue Output::logicalNot(LValue value)
 LValue Output::load(TypedPointer pointer, LType type)
 {
     LValue load = m_block->appendNew<MemoryValue>(m_proc, Load, type, origin(), pointer.value());
-    pointer.heap().decorateInstruction(load, *m_heaps);
+    m_heaps->decorateMemory(pointer.heap(), load);
     return load;
 }
 
@@ -153,47 +153,47 @@ LValue Output::unsignedToDouble(LValue value)
 LValue Output::load8SignExt32(TypedPointer pointer)
 {
     LValue load = m_block->appendNew<MemoryValue>(m_proc, Load8S, Int32, origin(), pointer.value());
-    pointer.heap().decorateInstruction(load, *m_heaps);
+    m_heaps->decorateMemory(pointer.heap(), load);
     return load;
 }
 
 LValue Output::load8ZeroExt32(TypedPointer pointer)
 {
     LValue load = m_block->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), pointer.value());
-    pointer.heap().decorateInstruction(load, *m_heaps);
+    m_heaps->decorateMemory(pointer.heap(), load);
     return load;
 }
 
 LValue Output::load16SignExt32(TypedPointer pointer)
 {
     LValue load = m_block->appendNew<MemoryValue>(m_proc, Load16S, Int32, origin(), pointer.value());
-    pointer.heap().decorateInstruction(load, *m_heaps);
+    m_heaps->decorateMemory(pointer.heap(), load);
     return load;
 }
 
 LValue Output::load16ZeroExt32(TypedPointer pointer)
 {
     LValue load = m_block->appendNew<MemoryValue>(m_proc, Load16Z, Int32, origin(), pointer.value());
-    pointer.heap().decorateInstruction(load, *m_heaps);
+    m_heaps->decorateMemory(pointer.heap(), load);
     return load;
 }
 
 void Output::store(LValue value, TypedPointer pointer)
 {
     LValue store = m_block->appendNew<MemoryValue>(m_proc, Store, origin(), value, pointer.value());
-    pointer.heap().decorateInstruction(store, *m_heaps);
+    m_heaps->decorateMemory(pointer.heap(), store);
 }
 
 void Output::store32As8(LValue value, TypedPointer pointer)
 {
     LValue store = m_block->appendNew<MemoryValue>(m_proc, Store8, origin(), value, pointer.value());
-    pointer.heap().decorateInstruction(store, *m_heaps);
+    m_heaps->decorateMemory(pointer.heap(), store);
 }
 
 void Output::store32As16(LValue value, TypedPointer pointer)
 {
     LValue store = m_block->appendNew<MemoryValue>(m_proc, Store16, origin(), value, pointer.value());
-    pointer.heap().decorateInstruction(store, *m_heaps);
+    m_heaps->decorateMemory(pointer.heap(), store);
 }
 
 LValue Output::baseIndex(LValue base, LValue index, Scale scale, ptrdiff_t offset)
