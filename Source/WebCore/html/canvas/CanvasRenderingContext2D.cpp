@@ -1296,8 +1296,6 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     if (!cachedImage)
         return;
 
-    checkOrigin(image);
-
     if (rectContainsCanvas(normalizedDstRect)) {
         c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op, blendMode, ImageOrientationDescription());
         didDrawEntireCanvas();
@@ -1312,6 +1310,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
         c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op, blendMode, ImageOrientationDescription());
         didDraw(normalizedDstRect);
     }
+
+    checkOrigin(image);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, float x, float y, ExceptionCode& ec)
