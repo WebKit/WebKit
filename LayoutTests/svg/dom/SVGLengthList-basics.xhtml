@@ -155,6 +155,31 @@
     shouldBeUndefined("text1.setAttribute('x', '1 2 3 4')");
 
     debug("");
+    debug("Test overlapping edge cases for replaceItem()");
+    var item = text1.x.baseVal.getItem(3);
+    shouldBe("text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 3)", "text1.x.baseVal.getItem(2)");
+    shouldBe("text1.x.baseVal.numberOfItems", "3");    
+    item = text1.x.baseVal.getItem(2);
+    item.newValueSpecifiedUnits(item.unitType, item.value * 2);
+    shouldBe("text1.x.baseVal.getItem(2).value", "2");
+    shouldBe("text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 2)", "text1.x.baseVal.getItem(1)");
+    shouldBe("text1.x.baseVal.numberOfItems", "2");
+    item = text1.x.baseVal.getItem(1);
+    item.newValueSpecifiedUnits(item.unitType, item.value * 2);
+    shouldBe("text1.x.baseVal.getItem(1).value", "4");
+    shouldBe("text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 1)", "text1.x.baseVal.getItem(0)");
+    shouldBe("text1.x.baseVal.numberOfItems", "1");
+    item = text1.x.baseVal.getItem(0);
+    item.newValueSpecifiedUnits(item.unitType, item.value * 2);
+    shouldBe("text1.x.baseVal.getItem(0).value", "6");
+    shouldBe("text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 0)", "text1.x.baseVal.getItem(0)");
+    shouldBe("text1.x.baseVal.numberOfItems", "1");
+
+    debug("");
+    debug("Set x='1 2 3 4' for text1");
+    shouldBeUndefined("text1.setAttribute('x', '1 2 3 4')");
+
+    debug("");
     debug("Test uncommon arguments for removeItem()");
     shouldThrow("text1.x.baseVal.removeItem(30)");
 

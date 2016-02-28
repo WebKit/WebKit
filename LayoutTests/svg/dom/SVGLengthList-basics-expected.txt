@@ -119,6 +119,22 @@ PASS text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(3), 4) threw exception 
 Set x='1 2 3 4' for text1
 PASS text1.setAttribute('x', '1 2 3 4') is undefined.
 
+Test overlapping edge cases for replaceItem()
+PASS text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 3) is text1.x.baseVal.getItem(2)
+PASS text1.x.baseVal.numberOfItems is 3
+PASS text1.x.baseVal.getItem(2).value is 2
+PASS text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 2) is text1.x.baseVal.getItem(1)
+PASS text1.x.baseVal.numberOfItems is 2
+PASS text1.x.baseVal.getItem(1).value is 4
+PASS text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 1) is text1.x.baseVal.getItem(0)
+PASS text1.x.baseVal.numberOfItems is 1
+PASS text1.x.baseVal.getItem(0).value is 6
+PASS text1.x.baseVal.replaceItem(text1.x.baseVal.getItem(0), 0) is text1.x.baseVal.getItem(0)
+PASS text1.x.baseVal.numberOfItems is 1
+
+Set x='1 2 3 4' for text1
+PASS text1.setAttribute('x', '1 2 3 4') is undefined.
+
 Test uncommon arguments for removeItem()
 PASS text1.x.baseVal.removeItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS text1.x.baseVal.removeItem(0).value is 1
