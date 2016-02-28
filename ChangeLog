@@ -1,3 +1,15 @@
+2016-02-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Allow using FindGLIB in case glib is optional dependency.
+        https://bugs.webkit.org/show_bug.cgi?id=154796
+
+        Reviewed by Michael Catanzaro.
+
+        FindGLIB caused internal CMake error in case GLIBCONFIG_INCLUDE_DIR is
+        not defined.
+
+        * Source/cmake/FindGLIB.cmake:
+
 2016-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] [SVG -> OTF Converter] Support the SVG -> OTF Font Converter
