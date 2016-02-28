@@ -28,6 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
 
@@ -121,34 +122,24 @@ void HTMLMarqueeElement::stop()
         marqueeRenderer->stop();
 }
 
-int HTMLMarqueeElement::scrollAmount() const
+unsigned HTMLMarqueeElement::scrollAmount() const
 {
-    bool ok;
-    int scrollAmount = fastGetAttribute(scrollamountAttr).toInt(&ok);
-    return ok && scrollAmount >= 0 ? scrollAmount : RenderStyle::initialMarqueeIncrement().intValue();
+    return limitToOnlyHTMLNonNegative(fastGetAttribute(scrollamountAttr), RenderStyle::initialMarqueeIncrement().intValue());
 }
     
-void HTMLMarqueeElement::setScrollAmount(int scrollAmount, ExceptionCode& ec)
+void HTMLMarqueeElement::setScrollAmount(unsigned scrollAmount)
 {
-    if (scrollAmount < 0)
-        ec = INDEX_SIZE_ERR;
-    else
-        setIntegralAttribute(scrollamountAttr, scrollAmount);
+    setUnsignedIntegralAttribute(scrollamountAttr, limitToOnlyHTMLNonNegative(scrollAmount, RenderStyle::initialMarqueeIncrement().intValue()));
 }
     
-int HTMLMarqueeElement::scrollDelay() const
+unsigned HTMLMarqueeElement::scrollDelay() const
 {
-    bool ok;
-    int scrollDelay = fastGetAttribute(scrolldelayAttr).toInt(&ok);
-    return ok && scrollDelay >= 0 ? scrollDelay : RenderStyle::initialMarqueeSpeed();
+    return limitToOnlyHTMLNonNegative(fastGetAttribute(scrolldelayAttr), RenderStyle::initialMarqueeSpeed());
 }
 
-void HTMLMarqueeElement::setScrollDelay(int scrollDelay, ExceptionCode& ec)
+void HTMLMarqueeElement::setScrollDelay(unsigned scrollDelay)
 {
-    if (scrollDelay < 0)
-        ec = INDEX_SIZE_ERR;
-    else
-        setIntegralAttribute(scrolldelayAttr, scrollDelay);
+    setUnsignedIntegralAttribute(scrolldelayAttr, limitToOnlyHTMLNonNegative(scrollDelay, RenderStyle::initialMarqueeSpeed()));
 }
     
 int HTMLMarqueeElement::loop() const

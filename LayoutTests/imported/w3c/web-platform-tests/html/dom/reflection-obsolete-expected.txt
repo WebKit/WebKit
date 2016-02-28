@@ -2813,7 +2813,7 @@ PASS marquee.scrollAmount: setAttribute() to "1" followed by IDL get
 PASS marquee.scrollAmount: setAttribute() to "\t7" followed by getAttribute() 
 PASS marquee.scrollAmount: setAttribute() to "\t7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to "\v7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to "\v7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to "\v7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to "\f7" followed by getAttribute() 
 PASS marquee.scrollAmount: setAttribute() to "\f7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
@@ -2827,39 +2827,39 @@ PASS marquee.scrollAmount: setAttribute() to "\n7" followed by IDL get
 PASS marquee.scrollAmount: setAttribute() to "\r7" followed by getAttribute() 
 PASS marquee.scrollAmount: setAttribute() to "\r7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to "᠎7" followed by getAttribute() 
 PASS marquee.scrollAmount: setAttribute() to "᠎7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to " 7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by getAttribute() 
 PASS marquee.scrollAmount: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to "　7" followed by getAttribute() 
-FAIL marquee.scrollAmount: setAttribute() to "　7" followed by IDL get assert_equals: expected 6 but got 7
+PASS marquee.scrollAmount: setAttribute() to "　7" followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS marquee.scrollAmount: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS marquee.scrollAmount: setAttribute() to undefined followed by getAttribute() 
@@ -2899,8 +2899,12 @@ PASS marquee.scrollAmount: IDL set to 2147483647 followed by IDL get
 PASS marquee.scrollAmount: IDL set to "-0" should not throw 
 PASS marquee.scrollAmount: IDL set to "-0" followed by getAttribute() 
 PASS marquee.scrollAmount: IDL set to "-0" followed by IDL get 
-FAIL marquee.scrollAmount: IDL set to 2147483648 should not throw IndexSizeError: DOM Exception 1
-FAIL marquee.scrollAmount: IDL set to 4294967295 should not throw IndexSizeError: DOM Exception 1
+PASS marquee.scrollAmount: IDL set to 2147483648 should not throw 
+PASS marquee.scrollAmount: IDL set to 2147483648 followed by getAttribute() 
+PASS marquee.scrollAmount: IDL set to 2147483648 followed by IDL get 
+PASS marquee.scrollAmount: IDL set to 4294967295 should not throw 
+PASS marquee.scrollAmount: IDL set to 4294967295 followed by getAttribute() 
+PASS marquee.scrollAmount: IDL set to 4294967295 followed by IDL get 
 PASS marquee.scrollDelay: typeof IDL attribute 
 PASS marquee.scrollDelay: IDL get with DOM attribute unset 
 PASS marquee.scrollDelay: setAttribute() to -2147483649 followed by getAttribute() 
@@ -2938,7 +2942,7 @@ PASS marquee.scrollDelay: setAttribute() to "1" followed by IDL get
 PASS marquee.scrollDelay: setAttribute() to "\t7" followed by getAttribute() 
 PASS marquee.scrollDelay: setAttribute() to "\t7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to "\v7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to "\v7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to "\v7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to "\f7" followed by getAttribute() 
 PASS marquee.scrollDelay: setAttribute() to "\f7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
@@ -2952,39 +2956,39 @@ PASS marquee.scrollDelay: setAttribute() to "\n7" followed by IDL get
 PASS marquee.scrollDelay: setAttribute() to "\r7" followed by getAttribute() 
 PASS marquee.scrollDelay: setAttribute() to "\r7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to "᠎7" followed by getAttribute() 
 PASS marquee.scrollDelay: setAttribute() to "᠎7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to " 7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by getAttribute() 
 PASS marquee.scrollDelay: setAttribute() to " 7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to "　7" followed by getAttribute() 
-FAIL marquee.scrollDelay: setAttribute() to "　7" followed by IDL get assert_equals: expected 85 but got 7
+PASS marquee.scrollDelay: setAttribute() to "　7" followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS marquee.scrollDelay: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS marquee.scrollDelay: setAttribute() to undefined followed by getAttribute() 
@@ -3024,8 +3028,12 @@ PASS marquee.scrollDelay: IDL set to 2147483647 followed by IDL get
 PASS marquee.scrollDelay: IDL set to "-0" should not throw 
 PASS marquee.scrollDelay: IDL set to "-0" followed by getAttribute() 
 PASS marquee.scrollDelay: IDL set to "-0" followed by IDL get 
-FAIL marquee.scrollDelay: IDL set to 2147483648 should not throw IndexSizeError: DOM Exception 1
-FAIL marquee.scrollDelay: IDL set to 4294967295 should not throw IndexSizeError: DOM Exception 1
+PASS marquee.scrollDelay: IDL set to 2147483648 should not throw 
+PASS marquee.scrollDelay: IDL set to 2147483648 followed by getAttribute() 
+PASS marquee.scrollDelay: IDL set to 2147483648 followed by IDL get 
+PASS marquee.scrollDelay: IDL set to 4294967295 should not throw 
+PASS marquee.scrollDelay: IDL set to 4294967295 followed by getAttribute() 
+PASS marquee.scrollDelay: IDL set to 4294967295 followed by IDL get 
 PASS marquee.trueSpeed: typeof IDL attribute 
 PASS marquee.trueSpeed: IDL get with DOM attribute unset 
 PASS marquee.trueSpeed: setAttribute() to "" followed by getAttribute() 

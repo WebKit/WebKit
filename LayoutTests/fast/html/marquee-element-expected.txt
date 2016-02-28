@@ -67,10 +67,12 @@ PASS marquee.scrollAmount is 2147483647
 PASS marquee.scrollAmount is 5
 "scrollAmount" can contain trailing non-numeric values:
 PASS marquee.scrollAmount is 5
-Setting "scrollAmount" to a negative value raises an exception:
-PASS document.getElementById("marquee").scrollAmount = -1; threw exception Error: IndexSizeError: DOM Exception 1.
-Setting "scrollAmount" to a value that is too large raises an exception:
-PASS document.getElementById("marquee").scrollAmount = 2147483648; threw exception Error: IndexSizeError: DOM Exception 1.
+Setting "scrollAmount" to a negative value should set to the default value:
+PASS marquee.scrollAmount = -1; did not throw exception.
+PASS marquee.scrollAmount is 6
+Setting "scrollAmount" to a value that is too large should set to the default value:
+PASS marquee.scrollAmount = 2147483648; did not throw exception.
+PASS marquee.scrollAmount is 6
 Default "scrollDelay" value is 85:
 PASS marquee.scrollDelay is 85
 "scrollDelay" uses default value when content attribute is not a number:
@@ -87,10 +89,12 @@ PASS marquee.scrollDelay is 2147483647
 PASS marquee.scrollDelay is 5
 "scrollDelay" can contain trailing non-numeric values:
 PASS marquee.scrollDelay is 5
-Setting "scrollDelay" to a negative value raises an exception:
-PASS document.getElementById("marquee").scrollDelay = -1; threw exception Error: IndexSizeError: DOM Exception 1.
-Setting "scrollDelay" to a value that is too large raises an exception:
-PASS document.getElementById("marquee").scrollDelay = 2147483648; threw exception Error: IndexSizeError: DOM Exception 1.
+Setting "scrollDelay" to a negative value should set to the default value:
+PASS marquee.scrollDelay = -1; did not throw exception.
+PASS marquee.scrollDelay is 85
+Setting "scrollDelay" to a value that is too large should set to the default value:
+PASS marquee.scrollDelay = 2147483648; did not throw exception.
+PASS marquee.scrollDelay is 85
 Default "loop" value is -1:
 PASS marquee.loop is -1
 "loop" uses default value when content attribute is not a number:
@@ -112,7 +116,7 @@ PASS marquee.loop is 5
 Setting "loop" to 0 raises an exception:
 PASS document.getElementById("marquee").loop = 0; threw exception Error: IndexSizeError: DOM Exception 1.
 Setting "loop" to a negative value raises an exception:
-PASS document.getElementById("marquee").scrollDelay = -5; threw exception Error: IndexSizeError: DOM Exception 1.
+PASS document.getElementById("marquee").loop = -5; threw exception Error: IndexSizeError: DOM Exception 1.
 "loop" can be set to -1 by script:
 PASS marquee.loop is -1
 PASS successfullyParsed is true

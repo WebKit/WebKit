@@ -1,3 +1,15 @@
+2016-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Align HTMLMarqueeElement.scrollAmount / scrollDelay with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154781
+
+        Reviewed by Darin Adler.
+
+        Update existing test to reflect the behavior changes.
+
+        * fast/html/marquee-element-expected.txt:
+        * fast/html/marquee-element.html:
+
 2016-02-27  Alexey Proskuryakov  <ap@apple.com>
 
         Mark failing reftests as such, now that we detect reftest failures.

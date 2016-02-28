@@ -41,11 +41,11 @@ public:
     void start();
     virtual void stop() override;
     
-    int scrollAmount() const;
-    void setScrollAmount(int, ExceptionCode&);
+    unsigned scrollAmount() const;
+    void setScrollAmount(unsigned);
     
-    int scrollDelay() const;
-    void setScrollDelay(int, ExceptionCode&);
+    unsigned scrollDelay() const;
+    void setScrollDelay(unsigned);
     
     int loop() const;
     void setLoop(int, ExceptionCode&);

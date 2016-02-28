@@ -181,13 +181,17 @@ testParent.innerHTML = '<marquee id="marquee" scrollamount="5a">test</marquee>';
 marquee = document.getElementById('marquee');
 shouldBe('marquee.scrollAmount', '5');
 
-debug('Setting "scrollAmount" to a negative value raises an exception:');
+debug('Setting "scrollAmount" to a negative value should set to the default value:');
 testParent.innerHTML = '<marquee id="marquee">test</marquee>';
-shouldThrow('document.getElementById("marquee").scrollAmount = -1;');
+marquee = document.getElementById('marquee');
+shouldNotThrow('marquee.scrollAmount = -1;');
+shouldBe('marquee.scrollAmount', '6');
 
-debug('Setting "scrollAmount" to a value that is too large raises an exception:');
+debug('Setting "scrollAmount" to a value that is too large should set to the default value:');
 testParent.innerHTML = '<marquee id="marquee">test</marquee>';
-shouldThrow('document.getElementById("marquee").scrollAmount = 2147483648;');
+marquee = document.getElementById('marquee');
+shouldNotThrow('marquee.scrollAmount = 2147483648;');
+shouldBe('marquee.scrollAmount', '6');
 
 debug('Default "scrollDelay" value is 85:');
 testParent.innerHTML = '<marquee id="marquee">test</marquee>';
@@ -229,13 +233,17 @@ testParent.innerHTML = '<marquee id="marquee" scrolldelay="5a">test</marquee>';
 marquee = document.getElementById('marquee');
 shouldBe('marquee.scrollDelay', '5');
 
-debug('Setting "scrollDelay" to a negative value raises an exception:');
+debug('Setting "scrollDelay" to a negative value should set to the default value:');
 testParent.innerHTML = '<marquee id="marquee">test</marquee>';
-shouldThrow('document.getElementById("marquee").scrollDelay = -1;');
+marquee = document.getElementById('marquee');
+shouldNotThrow('marquee.scrollDelay = -1;');
+shouldBe('marquee.scrollDelay', '85');
 
-debug('Setting "scrollDelay" to a value that is too large raises an exception:');
+debug('Setting "scrollDelay" to a value that is too large should set to the default value:');
 testParent.innerHTML = '<marquee id="marquee">test</marquee>';
-shouldThrow('document.getElementById("marquee").scrollDelay = 2147483648;');
+marquee = document.getElementById('marquee');
+shouldNotThrow('marquee.scrollDelay = 2147483648;');
+shouldBe('marquee.scrollDelay', '85');
 
 debug('Default "loop" value is -1:');
 testParent.innerHTML = '<marquee id="marquee">test</marquee>';
@@ -288,7 +296,7 @@ shouldThrow('document.getElementById("marquee").loop = 0;');
 
 debug('Setting "loop" to a negative value raises an exception:');
 testParent.innerHTML = '<marquee id="marquee">test</marquee>';
-shouldThrow('document.getElementById("marquee").scrollDelay = -5;');
+shouldThrow('document.getElementById("marquee").loop = -5;');
 
 debug('"loop" can be set to -1 by script:');
 testParent.innerHTML = '<marquee id="marquee" loop="5">test</marquee>';

@@ -1,3 +1,14 @@
+2016-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Align HTMLMarqueeElement.scrollAmount / scrollDelay with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154781
+
+        Reviewed by Darin Adler.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-obsolete-expected.txt:
+
 2016-02-26  Chris Dumez  <cdumez@apple.com>
 
         Fix the behavior of reflecting IDL attributes of type unsigned long
