@@ -50,6 +50,13 @@ const int SQLResultConstraint = SQLITE_CONSTRAINT;
 
 static const char notOpenErrorMessage[] = "database is not open";
 
+static void unauthorizedSQLFunction(sqlite3_context *context, int, sqlite3_value **)
+{
+    const char* functionName = (const char*)sqlite3_user_data(context);
+    String errorMessage = String::format("Function %s is unauthorized", functionName);
+    sqlite3_result_error(context, errorMessage.utf8().data(), -1);
+}
+
 SQLiteDatabase::SQLiteDatabase()
     : m_db(0)
     , m_pageSize(-1)
@@ -81,6 +88,8 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
         m_db = 0;
         return false;
     }
+
+    overrideUnauthorizedFunctions();
 
     m_openError = sqlite3_extended_result_codes(m_db, 1);
     if (m_openError != SQLITE_OK) {
@@ -131,6 +140,22 @@ void SQLiteDatabase::close()
     m_openingThread = 0;
     m_openError = SQLITE_ERROR;
     m_openErrorMessage = CString();
+}
+
+void SQLiteDatabase::overrideUnauthorizedFunctions()
+{
+    static const std::pair<const char*, int> functionParameters[] = {
+        { "rtreenode", 2 },
+        { "rtreedepth", 1 },
+        { "eval", 1 },
+        { "eval", 2 },
+        { "printf", -1 },
+        { "fts3_tokenizer", 1 },
+        { "fts3_tokenizer", 2 },
+    };
+
+    for (auto& functionParameter : functionParameters)
+        sqlite3_create_function(m_db, functionParameter.first, functionParameter.second, SQLITE_UTF8, const_cast<char*>(functionParameter.first), unauthorizedSQLFunction, 0, 0);
 }
 
 void SQLiteDatabase::interrupt()
