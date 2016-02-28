@@ -1,5 +1,16 @@
 2016-02-28  Tim Horton  <timothy_horton@apple.com>
 
+        Switch to application/vnd.apple.folder for <attachment> folder special-case
+        https://bugs.webkit.org/show_bug.cgi?id=154786
+        <rdar://problem/24416632>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/attachment/attachment-folder-icon-expected.html:
+        * fast/attachment/attachment-folder-icon.html:
+
+2016-02-28  Tim Horton  <timothy_horton@apple.com>
+
         Variables can resolve to the wrong value when elements differ in nothing but inherited variable value
         https://bugs.webkit.org/show_bug.cgi?id=154785
 

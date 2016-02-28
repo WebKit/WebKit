@@ -2349,7 +2349,7 @@ static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
 {
     String MIMEType = attachment.attachmentElement().attachmentType();
     if (!MIMEType.isEmpty()) {
-        if (equalIgnoringASCIICase(MIMEType, "multipart/x-folder")) {
+        if (equalIgnoringASCIICase(MIMEType, "multipart/x-folder") || equalIgnoringASCIICase(MIMEType, "application/vnd.apple.folder")) {
             if (auto icon = Icon::createIconForUTI("public.directory"))
                 return icon;
         } else if (auto icon = Icon::createIconForMIMEType(MIMEType))
