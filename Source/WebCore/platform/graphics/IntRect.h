@@ -246,6 +246,18 @@ inline bool IntRect::isInfinite() const
     return *this == infiniteRect();
 }
 
+inline IntRect& operator-=(IntRect& r, const IntPoint& offset)
+{
+    r.move(-offset.x(), -offset.y());
+    return r;
+}
+
+inline IntRect operator-(const IntRect& r, const IntPoint& offset)
+{
+    IntRect t = r;
+    return t -= offset;
+}
+
 #if USE(CG)
 IntRect enclosingIntRect(const CGRect&);
 #endif
