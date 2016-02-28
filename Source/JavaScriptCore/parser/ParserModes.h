@@ -158,9 +158,23 @@ const CodeFeatures ModifiedParameterFeature =    1 << 6;
 const CodeFeatures ModifiedArgumentsFeature =    1 << 7;
 const CodeFeatures ArrowFunctionFeature =        1 << 8;
 const CodeFeatures ArrowFunctionContextFeature = 1 << 9;
+const CodeFeatures SuperCallFeature =            1 << 10;
+const CodeFeatures SuperPropertyFeature =        1 << 11;
 
-const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ModifiedParameterFeature | ArrowFunctionFeature | ArrowFunctionContextFeature;
+const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ModifiedParameterFeature | ArrowFunctionFeature | ArrowFunctionContextFeature |
+    SuperCallFeature | SuperPropertyFeature;
 
+typedef uint8_t InnerArrowFunctionCodeFeatures;
+    
+const InnerArrowFunctionCodeFeatures NoInnerArrowFunctionFeatures =                0;
+const InnerArrowFunctionCodeFeatures EvalInnerArrowFunctionFeature =          1 << 0;
+const InnerArrowFunctionCodeFeatures ArgumentsInnerArrowFunctionFeature =     1 << 1;
+const InnerArrowFunctionCodeFeatures ThisInnerArrowFunctionFeature =          1 << 2;
+const InnerArrowFunctionCodeFeatures SuperCallInnerArrowFunctionFeature =     1 << 3;
+const InnerArrowFunctionCodeFeatures SuperPropertyInnerArrowFunctionFeature = 1 << 4;
+const InnerArrowFunctionCodeFeatures NewTargetInnerArrowFunctionFeature =     1 << 5;
+    
+const InnerArrowFunctionCodeFeatures AllInnerArrowFunctionCodeFeatures = EvalInnerArrowFunctionFeature | ArgumentsInnerArrowFunctionFeature | ThisInnerArrowFunctionFeature | SuperCallInnerArrowFunctionFeature | SuperPropertyInnerArrowFunctionFeature | NewTargetInnerArrowFunctionFeature;
 } // namespace JSC
 
 #endif // ParserModes_h

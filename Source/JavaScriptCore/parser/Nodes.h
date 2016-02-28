@@ -1554,7 +1554,7 @@ namespace JSC {
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
         ScopeNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, bool inStrictContext);
-        ScopeNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, const SourceCode&, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, CodeFeatures, int numConstants);
+        ScopeNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, const SourceCode&, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
 
         using ParserArenaRoot::operator new;
 
@@ -1568,6 +1568,14 @@ namespace JSC {
 
         void setFeatures(CodeFeatures features) { m_features = features; }
         CodeFeatures features() { return m_features; }
+        InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures() { return m_innerArrowFunctionCodeFeatures; }
+        bool doAnyInnerArrowFunctionsUseArguments() { return m_innerArrowFunctionCodeFeatures & ArgumentsInnerArrowFunctionFeature; }
+        bool doAnyInnerArrowFunctionsUseSuperCall() { return m_innerArrowFunctionCodeFeatures & SuperCallInnerArrowFunctionFeature; }
+        bool doAnyInnerArrowFunctionsUseSuperProperty() { return m_innerArrowFunctionCodeFeatures & SuperPropertyInnerArrowFunctionFeature; }
+        bool doAnyInnerArrowFunctionsUseEval() { return m_innerArrowFunctionCodeFeatures & EvalInnerArrowFunctionFeature; }
+        bool doAnyInnerArrowFunctionsUseThis() { return m_innerArrowFunctionCodeFeatures & ThisInnerArrowFunctionFeature; }
+        bool doAnyInnerArrowFunctionsUseNewTarget() { return m_innerArrowFunctionCodeFeatures & NewTargetInnerArrowFunctionFeature; }
+        bool doAnyInnerArrowFunctionUseAnyFeature() { return m_innerArrowFunctionCodeFeatures != NoInnerArrowFunctionFeatures; }
 
         bool usesEval() const { return m_features & EvalFeature; }
         bool usesArguments() const { return (m_features & ArgumentsFeature) && !(m_features & ShadowsArgumentsFeature); }
@@ -1577,6 +1585,8 @@ namespace JSC {
         bool isStrictMode() const { return m_features & StrictModeFeature; }
         void setUsesArguments() { m_features |= ArgumentsFeature; }
         bool usesThis() const { return m_features & ThisFeature; }
+        bool usesSuperCall() const { return m_features & SuperCallFeature; }
+        bool usesSuperProperty() const { return m_features & SuperPropertyFeature; }
         bool needsActivation() const { return (hasCapturedVariables()) || (m_features & (EvalFeature | WithFeature)); }
         bool hasCapturedVariables() const { return m_varDeclarations.hasCapturedVariables(); }
         bool captures(UniquedStringImpl* uid) { return m_varDeclarations.captures(uid); }
@@ -1605,6 +1615,7 @@ namespace JSC {
 
     private:
         CodeFeatures m_features;
+        InnerArrowFunctionCodeFeatures m_innerArrowFunctionCodeFeatures;
         SourceCode m_source;
         VariableEnvironment m_varDeclarations;
         FunctionStack m_functionStack;
@@ -1614,7 +1625,7 @@ namespace JSC {
 
     class ProgramNode : public ScopeNode {
     public:
-        ProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, int numConstants);
+        ProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
 
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
@@ -1629,7 +1640,7 @@ namespace JSC {
 
     class EvalNode : public ScopeNode {
     public:
-        EvalNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, int numConstants);
+        EvalNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
 
         ALWAYS_INLINE unsigned startColumn() const { return 0; }
         unsigned endColumn() const { return m_endColumn; }
@@ -1644,7 +1655,7 @@ namespace JSC {
 
     class ModuleProgramNode : public ScopeNode {
     public:
-        ModuleProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, int numConstants);
+        ModuleProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
 
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
@@ -1883,7 +1894,7 @@ namespace JSC {
 
     class FunctionNode final : public ScopeNode {
     public:
-        FunctionNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, int numConstants);
+        FunctionNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&, VariableEnvironment&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
 
         FunctionParameters* parameters() const { return m_parameters; }
 

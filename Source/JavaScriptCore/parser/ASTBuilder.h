@@ -242,6 +242,9 @@ public:
 
     ExpressionNode* createBracketAccess(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* property, bool propertyHasAssignments, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
+        if (base->isSuperNode())
+            usesSuperProperty();
+
         BracketAccessorNode* node = new (m_parserArena) BracketAccessorNode(location, base, property, propertyHasAssignments);
         setExceptionLocation(node, start, divot, end);
         return node;
@@ -249,6 +252,9 @@ public:
 
     ExpressionNode* createDotAccess(const JSTokenLocation& location, ExpressionNode* base, const Identifier* property, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
+        if (base->isSuperNode())
+            usesSuperProperty();
+        
         DotAccessorNode* node = new (m_parserArena) DotAccessorNode(location, base, *property);
         setExceptionLocation(node, start, divot, end);
         return node;
@@ -938,6 +944,8 @@ private:
     void usesArrowFunction() { m_scope.m_features |= ArrowFunctionFeature; }
     void usesArguments() { m_scope.m_features |= ArgumentsFeature; }
     void usesWith() { m_scope.m_features |= WithFeature; }
+    void usesSuperCall() { m_scope.m_features |= SuperCallFeature; }
+    void usesSuperProperty() { m_scope.m_features |= SuperPropertyFeature; }
     void usesEval() 
     {
         m_evalCount++;
@@ -1154,6 +1162,9 @@ ExpressionNode* ASTBuilder::makeBitXOrNode(const JSTokenLocation& location, Expr
 ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd)
 {
     ASSERT(divot.offset >= divot.lineStartOffset);
+    if (func->isSuperNode())
+        usesSuperCall();
+
     if (func->isBytecodeIntrinsicNode()) {
         BytecodeIntrinsicNode* intrinsic = static_cast<BytecodeIntrinsicNode*>(func);
         if (intrinsic->type() == BytecodeIntrinsicNode::Type::Constant)

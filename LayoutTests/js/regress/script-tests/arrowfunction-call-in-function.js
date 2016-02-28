@@ -1,9 +1,5 @@
-var af = (a, b) => a + b;
-
-noInline(af);
-
 function bar(a, b) {
-    return af(a, b);
+    return ((_a, _b) => _a + _b)(a, b);
 }
 
 noInline(bar);

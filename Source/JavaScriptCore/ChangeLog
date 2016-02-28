@@ -1,3 +1,94 @@
+2016-02-28  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Emit loading&putting this/super only if they are used in arrow function
+        https://bugs.webkit.org/show_bug.cgi?id=153981
+
+        Reviewed by Saam Barati.
+       
+        In first iteration of implemenation arrow function, we emit load and store variables 'this', 'arguments',
+        'super', 'new.target' in case if arrow function is exist even variables are not used in arrow function. 
+        Current patch added logic that prevent from emiting those varibles if they are not used in arrow function.
+        During syntax analyze parser store information about using variables in arrow function inside of 
+        the ordinary function scope and then put to BytecodeGenerator through UnlinkedCodeBlock
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitLoadThisFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitLoadNewTargetFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::isThisUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isArgumentsUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isNewTargetUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isSuperUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::emitPutNewTargetToArrowFunctionContextScope):
+        (JSC::BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope):
+        (JSC::BytecodeGenerator::emitPutThisToArrowFunctionContextScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createBracketAccess):
+        (JSC::ASTBuilder::createDotAccess):
+        (JSC::ASTBuilder::usesSuperCall):
+        (JSC::ASTBuilder::usesSuperProperty):
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::innerArrowFunctionCodeFeatures):
+        (JSC::ScopeNode::doAnyInnerArrowFunctionsUseArguments):
+        (JSC::ScopeNode::doAnyInnerArrowFunctionsUseSuperCall):
+        (JSC::ScopeNode::doAnyInnerArrowFunctionsUseSuperProperty):
+        (JSC::ScopeNode::doAnyInnerArrowFunctionsUseEval):
+        (JSC::ScopeNode::doAnyInnerArrowFunctionsUseThis):
+        (JSC::ScopeNode::doAnyInnerArrowFunctionsUseNewTarget):
+        (JSC::ScopeNode::doAnyInnerArrowFunctionUseAnyFeature):
+        (JSC::ScopeNode::usesSuperCall):
+        (JSC::ScopeNode::usesSuperProperty):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::isArrowFunctionBoundary):
+        (JSC::Scope::innerArrowFunctionFeatures):
+        (JSC::Scope::setInnerArrowFunctionUsesSuperCall):
+        (JSC::Scope::setInnerArrowFunctionUsesSuperProperty):
+        (JSC::Scope::setInnerArrowFunctionUsesEval):
+        (JSC::Scope::setInnerArrowFunctionUsesThis):
+        (JSC::Scope::setInnerArrowFunctionUsesNewTarget):
+        (JSC::Scope::setInnerArrowFunctionUsesArguments):
+        (JSC::Scope::setInnerArrowFunctionUsesEvalAndUseArgumentsIfNeeded):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::mergeInnerArrowFunctionFeatures):
+        (JSC::Scope::fillParametersForSourceProviderCache):
+        (JSC::Scope::restoreFromSourceProviderCache):
+        (JSC::Scope::setIsFunction):
+        (JSC::Scope::setIsArrowFunction):
+        (JSC::Parser::closestParentNonArrowFunctionNonLexicalScope):
+        (JSC::Parser::pushScope):
+        (JSC::Parser::popScopeInternal):
+        (JSC::Parser<LexerType>::parse):
+        * parser/ParserModes.h:
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionMetadata):
+        * tests/stress/arrowfunction-lexical-bind-arguments-non-strict-1.js:
+        * tests/stress/arrowfunction-lexical-bind-arguments-strict.js:
+        * tests/stress/arrowfunction-lexical-bind-newtarget.js:
+        * tests/stress/arrowfunction-lexical-bind-superproperty.js:
+        * tests/stress/arrowfunction-lexical-bind-this-8.js: Added.
+
 2016-02-28  Saam barati  <sbarati@apple.com>
 
         ProxyObject.[[GetOwnProperty]] is partially broken because it doesn't propagate information back to the slot

@@ -76,3 +76,17 @@ for (var i = 0; i < 1000; i++) {
     testCase(tryToCreateClass(true), true, "Error: newTargetLocal should be hided variable");
     testCase(tryToCreateClass(false), true, "Error: newTargetLocal should be hided variable");
 }
+
+function getTargetBlockScope() {
+    if (true) {
+        let someValue = '';
+        if (true)
+            return x => new.target;
+    }
+    return ()=>value;
+}
+
+for (var i = 0; i < 1000; i++) {
+    var undefinedTarget = getTargetBlockScope()()
+    testCase(undefinedTarget, undefined, "Error: new.target is not lexically binded inside of the arrow function #4");
+}

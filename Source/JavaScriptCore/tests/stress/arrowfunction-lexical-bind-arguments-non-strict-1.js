@@ -214,3 +214,39 @@ function boo() {
 for (var i = 0; i < 10000; i++) {
     testCase(boo('A' + i)('B' + i)('D' + i)('E' + i)('G' + i)[0], 'E' + i, txtMsg + "#17");
 }
+
+var testValue = 'test-value';
+
+function f_args () {
+    if (true) {
+        let someValue = '';
+        if (true) {
+            let anotherValue = 'value';
+            return () => () => () => arguments[0];
+        }
+    }
+
+    return () => 'no-value';
+}
+
+for (var i = 0; i < 10000; i++) {
+    let v = f_args(testValue, 'anotherValue')()()();
+    testCase(v, testValue);
+}
+
+function f_args_eval () {
+    if (true) {
+        let someValue = '';
+        if (true) {
+            let anotherValue = 'value';
+            return () => () => () => eval('arguments[0]');
+        }
+    }
+
+    return () => 'no-value';
+}
+
+for (var i = 0; i < 10000; i++) {
+    let v = f_args_eval(testValue, 'anotherValue')()()();
+    testCase(v, testValue);
+}
