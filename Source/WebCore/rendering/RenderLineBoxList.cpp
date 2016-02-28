@@ -378,7 +378,6 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
 
     // If we found a line box, then dirty it.
     if (box) {
-        RootInlineBox* adjacentBox;
         box->markDirty();
 
         // dirty the adjacent lines that might be affected
@@ -388,17 +387,13 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
         // calls setLineBreakInfo with the result of findNextLineBreak.  findNextLineBreak,
         // despite the name, actually returns the first RenderObject after the BR.
         // <rdar://problem/3849947> "Typing after pasting line does not appear until after window resize."
-        adjacentBox = box->prevRootBox();
-        if (adjacentBox)
-            adjacentBox->markDirty();
-        adjacentBox = box->nextRootBox();
-        // If |child| has been inserted before the first element in the linebox, but after collapsed leading
-        // space, the search for |child|'s linebox will go past the leading space to the previous linebox and select that
-        // one as |box|. If we hit that situation here, dirty the |box| actually containing the child too. 
-        bool insertedAfterLeadingSpace = box->lineBreakObj() == child->previousSibling();
-        if (adjacentBox && (adjacentBox->lineBreakObj()->isDescendantOf(child) || child->isBR() || (curr && curr->isBR())
-            || insertedAfterLeadingSpace || isIsolated(container->style().unicodeBidi())))
-            adjacentBox->markDirty();
+        if (RootInlineBox* prevBox = box->prevRootBox())
+            prevBox->markDirty();
+
+        // FIXME: We shouldn't need to always dirty the next line. This is only strictly 
+        // necessary some of the time, in situations involving BRs.
+        if (RootInlineBox* nextBox = box->nextRootBox())
+            nextBox->markDirty();
     }
 }
 
