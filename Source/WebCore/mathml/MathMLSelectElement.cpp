@@ -69,12 +69,12 @@ void MathMLSelectElement::childrenChanged(const ChildChange& change)
     MathMLInlineContainerElement::childrenChanged(change);
 }
 
-void MathMLSelectElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue, AttributeModificationReason reason)
+void MathMLSelectElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
 {
     if (hasLocalName(mactionTag) && (name == MathMLNames::actiontypeAttr || name == MathMLNames::selectionAttr))
         updateSelectedChild();
 
-    MathMLInlineContainerElement::attributeChanged(name, newValue, reason);
+    MathMLInlineContainerElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)

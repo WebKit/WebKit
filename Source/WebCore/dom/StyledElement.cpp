@@ -149,7 +149,7 @@ MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
     return static_cast<MutableStyleProperties&>(*inlineStyle);
 }
 
-void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue, AttributeModificationReason reason)
+void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
 {
     if (name == styleAttr)
         styleAttributeChanged(newValue, reason);
@@ -158,7 +158,7 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomicStri
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
-    Element::attributeChanged(name, newValue, reason);
+    Element::attributeChanged(name, oldValue, newValue, reason);
 }
 
 PropertySetCSSStyleDeclaration* StyledElement::inlineStyleCSSOMWrapper()

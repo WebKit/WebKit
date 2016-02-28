@@ -59,7 +59,7 @@ protected:
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
-    virtual void attributeChanged(const QualifiedName&, const AtomicString& newValue, AttributeModificationReason) override;
+    virtual void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason) override;
 
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
