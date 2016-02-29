@@ -28,13 +28,11 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "RenderTableCell.h"
 
 namespace WebCore {
-
-// Clamp rowspan at 8k to match Firefox.
-static const int maxRowspan = 8190;
 
 using namespace HTMLNames;
 
@@ -44,16 +42,26 @@ HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Documen
     ASSERT(tagName == thTag || tagName == tdTag);
 }
 
-int HTMLTableCellElement::colSpan() const
+unsigned HTMLTableCellElement::colSpan() const
 {
-    const AtomicString& colSpanValue = fastGetAttribute(colspanAttr);
-    return std::max(1, colSpanValue.toInt());
+    return std::max(1u, colSpanForBindings());
 }
 
-int HTMLTableCellElement::rowSpan() const
+unsigned HTMLTableCellElement::colSpanForBindings() const
 {
-    const AtomicString& rowSpanValue = fastGetAttribute(rowspanAttr);
-    return std::max(1, std::min(rowSpanValue.toInt(), maxRowspan));
+    return limitToOnlyHTMLNonNegative(fastGetAttribute(colspanAttr), 1u);
+}
+
+unsigned HTMLTableCellElement::rowSpan() const
+{
+    static const unsigned maxRowspan = 8190;
+    // FIXME: a rowSpan equal to 0 should be allowed, and mean that the cell is to span all the remaining rows in the row group.
+    return std::max(1u, std::min(rowSpanForBindings(), maxRowspan));
+}
+
+unsigned HTMLTableCellElement::rowSpanForBindings() const
+{
+    return limitToOnlyHTMLNonNegative(fastGetAttribute(rowspanAttr), 1u);
 }
 
 int HTMLTableCellElement::cellIndex() const
@@ -131,9 +139,9 @@ String HTMLTableCellElement::axis() const
     return fastGetAttribute(axisAttr);
 }
 
-void HTMLTableCellElement::setColSpan(int n)
+void HTMLTableCellElement::setColSpanForBindings(unsigned n)
 {
-    setIntegralAttribute(colspanAttr, n);
+    setAttributeWithoutSynchronization(colspanAttr, AtomicString::number(limitToOnlyHTMLNonNegative(n, 1)));
 }
 
 String HTMLTableCellElement::headers() const
@@ -141,9 +149,9 @@ String HTMLTableCellElement::headers() const
     return fastGetAttribute(headersAttr);
 }
 
-void HTMLTableCellElement::setRowSpan(int n)
+void HTMLTableCellElement::setRowSpanForBindings(unsigned n)
 {
-    setIntegralAttribute(rowspanAttr, n);
+    setAttributeWithoutSynchronization(rowspanAttr, AtomicString::number(limitToOnlyHTMLNonNegative(n, 1)));
 }
 
 String HTMLTableCellElement::scope() const

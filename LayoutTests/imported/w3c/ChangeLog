@@ -1,3 +1,14 @@
+2016-02-29  Chris Dumez  <cdumez@apple.com>
+
+        Align td.rowSpan / td.colSpan with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154803
+
+        Reviewed by Darin Adler.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-tabular-expected.txt:
+
 2016-02-28  Chris Dumez  <cdumez@apple.com>
 
         Parse HTMLOLElement.start as per the HTML spec

@@ -25,7 +25,14 @@ interface HTMLTableCellElement : HTMLElement {
     [Reflect] attribute DOMString bgColor;
     [Reflect=char] attribute DOMString ch;
     [Reflect=charoff] attribute DOMString chOff;
-    attribute long colSpan;
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+    [ImplementedAs=colSpanForBindings] attribute long colSpan;
+    [ImplementedAs=rowSpanForBindings] attribute long rowSpan;
+#else
+    [ImplementedAs=colSpanForBindings] attribute unsigned long colSpan;
+    [ImplementedAs=rowSpanForBindings] attribute unsigned long rowSpan;
+#endif
 
     // FIXME: This is supposed to be:
     // [PutForwards=value] readonly attribute DOMTokenList headers;
@@ -33,7 +40,6 @@ interface HTMLTableCellElement : HTMLElement {
 
     [Reflect] attribute DOMString height;
     [Reflect] attribute boolean noWrap;
-    attribute long rowSpan;
     [Reflect] attribute DOMString vAlign;
     [Reflect] attribute DOMString width;
 

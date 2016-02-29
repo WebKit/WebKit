@@ -33,12 +33,14 @@ namespace WebCore {
 class HTMLTableCellElement : public HTMLTablePartElement {
 public:
     int cellIndex() const;
-    int colSpan() const;
-    int rowSpan() const;
+    unsigned colSpan() const;
+    unsigned colSpanForBindings() const;
+    unsigned rowSpan() const;
+    unsigned rowSpanForBindings() const;
 
     void setCellIndex(int);
-    void setColSpan(int);
-    void setRowSpan(int);
+    void setColSpanForBindings(unsigned);
+    void setRowSpanForBindings(unsigned);
 
     String abbr() const;
     String axis() const;

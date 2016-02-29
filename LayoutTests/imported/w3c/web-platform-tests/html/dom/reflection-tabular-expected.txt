@@ -9871,7 +9871,7 @@ PASS td.colSpan: setAttribute() to -36 followed by IDL get
 PASS td.colSpan: setAttribute() to -1 followed by getAttribute() 
 PASS td.colSpan: setAttribute() to -1 followed by IDL get 
 PASS td.colSpan: setAttribute() to 0 followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to 0 followed by IDL get assert_equals: expected 0 but got 1
+PASS td.colSpan: setAttribute() to 0 followed by IDL get 
 PASS td.colSpan: setAttribute() to 1 followed by getAttribute() 
 PASS td.colSpan: setAttribute() to 1 followed by IDL get 
 PASS td.colSpan: setAttribute() to 257 followed by getAttribute() 
@@ -9889,15 +9889,15 @@ PASS td.colSpan: setAttribute() to "" followed by IDL get
 PASS td.colSpan: setAttribute() to "-1" followed by getAttribute() 
 PASS td.colSpan: setAttribute() to "-1" followed by IDL get 
 PASS td.colSpan: setAttribute() to "-0" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to "-0" followed by IDL get assert_equals: expected 0 but got 1
+PASS td.colSpan: setAttribute() to "-0" followed by IDL get 
 PASS td.colSpan: setAttribute() to "0" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to "0" followed by IDL get assert_equals: expected 0 but got 1
+PASS td.colSpan: setAttribute() to "0" followed by IDL get 
 PASS td.colSpan: setAttribute() to "1" followed by getAttribute() 
 PASS td.colSpan: setAttribute() to "1" followed by IDL get 
 PASS td.colSpan: setAttribute() to "\t7" followed by getAttribute() 
 PASS td.colSpan: setAttribute() to "\t7" followed by IDL get 
 PASS td.colSpan: setAttribute() to "\v7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to "\v7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to "\v7" followed by IDL get 
 PASS td.colSpan: setAttribute() to "\f7" followed by getAttribute() 
 PASS td.colSpan: setAttribute() to "\f7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
@@ -9911,39 +9911,39 @@ PASS td.colSpan: setAttribute() to "\n7" followed by IDL get
 PASS td.colSpan: setAttribute() to "\r7" followed by getAttribute() 
 PASS td.colSpan: setAttribute() to "\r7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
 PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to "᠎7" followed by getAttribute() 
 PASS td.colSpan: setAttribute() to "᠎7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " 7" followed by getAttribute() 
 PASS td.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.colSpan: setAttribute() to "　7" followed by getAttribute() 
-FAIL td.colSpan: setAttribute() to "　7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.colSpan: setAttribute() to "　7" followed by IDL get 
 PASS td.colSpan: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS td.colSpan: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS td.colSpan: setAttribute() to undefined followed by getAttribute() 
@@ -9970,7 +9970,7 @@ PASS td.colSpan: setAttribute() to object "3" followed by getAttribute()
 PASS td.colSpan: setAttribute() to object "3" followed by IDL get 
 PASS td.colSpan: IDL set to 0 should not throw 
 PASS td.colSpan: IDL set to 0 followed by getAttribute() 
-FAIL td.colSpan: IDL set to 0 followed by IDL get assert_equals: expected 0 but got 1
+PASS td.colSpan: IDL set to 0 followed by IDL get 
 PASS td.colSpan: IDL set to 1 should not throw 
 PASS td.colSpan: IDL set to 1 followed by getAttribute() 
 PASS td.colSpan: IDL set to 1 followed by IDL get 
@@ -9982,12 +9982,12 @@ PASS td.colSpan: IDL set to 2147483647 followed by getAttribute()
 PASS td.colSpan: IDL set to 2147483647 followed by IDL get 
 PASS td.colSpan: IDL set to "-0" should not throw 
 PASS td.colSpan: IDL set to "-0" followed by getAttribute() 
-FAIL td.colSpan: IDL set to "-0" followed by IDL get assert_equals: expected 0 but got 1
+PASS td.colSpan: IDL set to "-0" followed by IDL get 
 PASS td.colSpan: IDL set to 2147483648 should not throw 
-FAIL td.colSpan: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "1" but got "-2147483648"
+PASS td.colSpan: IDL set to 2147483648 followed by getAttribute() 
 PASS td.colSpan: IDL set to 2147483648 followed by IDL get 
 PASS td.colSpan: IDL set to 4294967295 should not throw 
-FAIL td.colSpan: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "1" but got "-1"
+PASS td.colSpan: IDL set to 4294967295 followed by getAttribute() 
 PASS td.colSpan: IDL set to 4294967295 followed by IDL get 
 PASS td.rowSpan: typeof IDL attribute 
 PASS td.rowSpan: IDL get with DOM attribute unset 
@@ -10000,13 +10000,13 @@ PASS td.rowSpan: setAttribute() to -36 followed by IDL get
 PASS td.rowSpan: setAttribute() to -1 followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to -1 followed by IDL get 
 PASS td.rowSpan: setAttribute() to 0 followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to 0 followed by IDL get assert_equals: expected 0 but got 1
+PASS td.rowSpan: setAttribute() to 0 followed by IDL get 
 PASS td.rowSpan: setAttribute() to 1 followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to 1 followed by IDL get 
 PASS td.rowSpan: setAttribute() to 257 followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to 257 followed by IDL get 
 PASS td.rowSpan: setAttribute() to 2147483647 followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 8190
+PASS td.rowSpan: setAttribute() to 2147483647 followed by IDL get 
 PASS td.rowSpan: setAttribute() to 2147483648 followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to 2147483648 followed by IDL get 
 PASS td.rowSpan: setAttribute() to 4294967295 followed by getAttribute() 
@@ -10018,15 +10018,15 @@ PASS td.rowSpan: setAttribute() to "" followed by IDL get
 PASS td.rowSpan: setAttribute() to "-1" followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to "-1" followed by IDL get 
 PASS td.rowSpan: setAttribute() to "-0" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to "-0" followed by IDL get assert_equals: expected 0 but got 1
+PASS td.rowSpan: setAttribute() to "-0" followed by IDL get 
 PASS td.rowSpan: setAttribute() to "0" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to "0" followed by IDL get assert_equals: expected 0 but got 1
+PASS td.rowSpan: setAttribute() to "0" followed by IDL get 
 PASS td.rowSpan: setAttribute() to "1" followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to "1" followed by IDL get 
 PASS td.rowSpan: setAttribute() to "\t7" followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to "\t7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to "\v7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to "\v7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to "\v7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to "\f7" followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to "\f7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
@@ -10040,39 +10040,39 @@ PASS td.rowSpan: setAttribute() to "\n7" followed by IDL get
 PASS td.rowSpan: setAttribute() to "\r7" followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to "\r7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to "᠎7" followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to "᠎7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " 7" followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to "　7" followed by getAttribute() 
-FAIL td.rowSpan: setAttribute() to "　7" followed by IDL get assert_equals: expected 1 but got 7
+PASS td.rowSpan: setAttribute() to "　7" followed by IDL get 
 PASS td.rowSpan: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS td.rowSpan: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS td.rowSpan: setAttribute() to undefined followed by getAttribute() 
@@ -10099,7 +10099,7 @@ PASS td.rowSpan: setAttribute() to object "3" followed by getAttribute()
 PASS td.rowSpan: setAttribute() to object "3" followed by IDL get 
 PASS td.rowSpan: IDL set to 0 should not throw 
 PASS td.rowSpan: IDL set to 0 followed by getAttribute() 
-FAIL td.rowSpan: IDL set to 0 followed by IDL get assert_equals: expected 0 but got 1
+PASS td.rowSpan: IDL set to 0 followed by IDL get 
 PASS td.rowSpan: IDL set to 1 should not throw 
 PASS td.rowSpan: IDL set to 1 followed by getAttribute() 
 PASS td.rowSpan: IDL set to 1 followed by IDL get 
@@ -10108,15 +10108,15 @@ PASS td.rowSpan: IDL set to 257 followed by getAttribute()
 PASS td.rowSpan: IDL set to 257 followed by IDL get 
 PASS td.rowSpan: IDL set to 2147483647 should not throw 
 PASS td.rowSpan: IDL set to 2147483647 followed by getAttribute() 
-FAIL td.rowSpan: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 8190
+PASS td.rowSpan: IDL set to 2147483647 followed by IDL get 
 PASS td.rowSpan: IDL set to "-0" should not throw 
 PASS td.rowSpan: IDL set to "-0" followed by getAttribute() 
-FAIL td.rowSpan: IDL set to "-0" followed by IDL get assert_equals: expected 0 but got 1
+PASS td.rowSpan: IDL set to "-0" followed by IDL get 
 PASS td.rowSpan: IDL set to 2147483648 should not throw 
-FAIL td.rowSpan: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "1" but got "-2147483648"
+PASS td.rowSpan: IDL set to 2147483648 followed by getAttribute() 
 PASS td.rowSpan: IDL set to 2147483648 followed by IDL get 
 PASS td.rowSpan: IDL set to 4294967295 should not throw 
-FAIL td.rowSpan: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "1" but got "-1"
+PASS td.rowSpan: IDL set to 4294967295 followed by getAttribute() 
 PASS td.rowSpan: IDL set to 4294967295 followed by IDL get 
 PASS td.align: typeof IDL attribute 
 PASS td.align: IDL get with DOM attribute unset 
@@ -11663,7 +11663,7 @@ PASS th.colSpan: setAttribute() to -36 followed by IDL get
 PASS th.colSpan: setAttribute() to -1 followed by getAttribute() 
 PASS th.colSpan: setAttribute() to -1 followed by IDL get 
 PASS th.colSpan: setAttribute() to 0 followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to 0 followed by IDL get assert_equals: expected 0 but got 1
+PASS th.colSpan: setAttribute() to 0 followed by IDL get 
 PASS th.colSpan: setAttribute() to 1 followed by getAttribute() 
 PASS th.colSpan: setAttribute() to 1 followed by IDL get 
 PASS th.colSpan: setAttribute() to 257 followed by getAttribute() 
@@ -11681,15 +11681,15 @@ PASS th.colSpan: setAttribute() to "" followed by IDL get
 PASS th.colSpan: setAttribute() to "-1" followed by getAttribute() 
 PASS th.colSpan: setAttribute() to "-1" followed by IDL get 
 PASS th.colSpan: setAttribute() to "-0" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to "-0" followed by IDL get assert_equals: expected 0 but got 1
+PASS th.colSpan: setAttribute() to "-0" followed by IDL get 
 PASS th.colSpan: setAttribute() to "0" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to "0" followed by IDL get assert_equals: expected 0 but got 1
+PASS th.colSpan: setAttribute() to "0" followed by IDL get 
 PASS th.colSpan: setAttribute() to "1" followed by getAttribute() 
 PASS th.colSpan: setAttribute() to "1" followed by IDL get 
 PASS th.colSpan: setAttribute() to "\t7" followed by getAttribute() 
 PASS th.colSpan: setAttribute() to "\t7" followed by IDL get 
 PASS th.colSpan: setAttribute() to "\v7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to "\v7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to "\v7" followed by IDL get 
 PASS th.colSpan: setAttribute() to "\f7" followed by getAttribute() 
 PASS th.colSpan: setAttribute() to "\f7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
@@ -11703,39 +11703,39 @@ PASS th.colSpan: setAttribute() to "\n7" followed by IDL get
 PASS th.colSpan: setAttribute() to "\r7" followed by getAttribute() 
 PASS th.colSpan: setAttribute() to "\r7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
 PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to "᠎7" followed by getAttribute() 
 PASS th.colSpan: setAttribute() to "᠎7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " 7" followed by getAttribute() 
 PASS th.colSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.colSpan: setAttribute() to "　7" followed by getAttribute() 
-FAIL th.colSpan: setAttribute() to "　7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.colSpan: setAttribute() to "　7" followed by IDL get 
 PASS th.colSpan: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS th.colSpan: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS th.colSpan: setAttribute() to undefined followed by getAttribute() 
@@ -11762,7 +11762,7 @@ PASS th.colSpan: setAttribute() to object "3" followed by getAttribute()
 PASS th.colSpan: setAttribute() to object "3" followed by IDL get 
 PASS th.colSpan: IDL set to 0 should not throw 
 PASS th.colSpan: IDL set to 0 followed by getAttribute() 
-FAIL th.colSpan: IDL set to 0 followed by IDL get assert_equals: expected 0 but got 1
+PASS th.colSpan: IDL set to 0 followed by IDL get 
 PASS th.colSpan: IDL set to 1 should not throw 
 PASS th.colSpan: IDL set to 1 followed by getAttribute() 
 PASS th.colSpan: IDL set to 1 followed by IDL get 
@@ -11774,12 +11774,12 @@ PASS th.colSpan: IDL set to 2147483647 followed by getAttribute()
 PASS th.colSpan: IDL set to 2147483647 followed by IDL get 
 PASS th.colSpan: IDL set to "-0" should not throw 
 PASS th.colSpan: IDL set to "-0" followed by getAttribute() 
-FAIL th.colSpan: IDL set to "-0" followed by IDL get assert_equals: expected 0 but got 1
+PASS th.colSpan: IDL set to "-0" followed by IDL get 
 PASS th.colSpan: IDL set to 2147483648 should not throw 
-FAIL th.colSpan: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "1" but got "-2147483648"
+PASS th.colSpan: IDL set to 2147483648 followed by getAttribute() 
 PASS th.colSpan: IDL set to 2147483648 followed by IDL get 
 PASS th.colSpan: IDL set to 4294967295 should not throw 
-FAIL th.colSpan: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "1" but got "-1"
+PASS th.colSpan: IDL set to 4294967295 followed by getAttribute() 
 PASS th.colSpan: IDL set to 4294967295 followed by IDL get 
 PASS th.rowSpan: typeof IDL attribute 
 PASS th.rowSpan: IDL get with DOM attribute unset 
@@ -11792,13 +11792,13 @@ PASS th.rowSpan: setAttribute() to -36 followed by IDL get
 PASS th.rowSpan: setAttribute() to -1 followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to -1 followed by IDL get 
 PASS th.rowSpan: setAttribute() to 0 followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to 0 followed by IDL get assert_equals: expected 0 but got 1
+PASS th.rowSpan: setAttribute() to 0 followed by IDL get 
 PASS th.rowSpan: setAttribute() to 1 followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to 1 followed by IDL get 
 PASS th.rowSpan: setAttribute() to 257 followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to 257 followed by IDL get 
 PASS th.rowSpan: setAttribute() to 2147483647 followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 8190
+PASS th.rowSpan: setAttribute() to 2147483647 followed by IDL get 
 PASS th.rowSpan: setAttribute() to 2147483648 followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to 2147483648 followed by IDL get 
 PASS th.rowSpan: setAttribute() to 4294967295 followed by getAttribute() 
@@ -11810,15 +11810,15 @@ PASS th.rowSpan: setAttribute() to "" followed by IDL get
 PASS th.rowSpan: setAttribute() to "-1" followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to "-1" followed by IDL get 
 PASS th.rowSpan: setAttribute() to "-0" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to "-0" followed by IDL get assert_equals: expected 0 but got 1
+PASS th.rowSpan: setAttribute() to "-0" followed by IDL get 
 PASS th.rowSpan: setAttribute() to "0" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to "0" followed by IDL get assert_equals: expected 0 but got 1
+PASS th.rowSpan: setAttribute() to "0" followed by IDL get 
 PASS th.rowSpan: setAttribute() to "1" followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to "1" followed by IDL get 
 PASS th.rowSpan: setAttribute() to "\t7" followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to "\t7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to "\v7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to "\v7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to "\v7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to "\f7" followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to "\f7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
@@ -11832,39 +11832,39 @@ PASS th.rowSpan: setAttribute() to "\n7" followed by IDL get
 PASS th.rowSpan: setAttribute() to "\r7" followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to "\r7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to "᠎7" followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to "᠎7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to " 7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " 7" followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to " 7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to "　7" followed by getAttribute() 
-FAIL th.rowSpan: setAttribute() to "　7" followed by IDL get assert_equals: expected 1 but got 7
+PASS th.rowSpan: setAttribute() to "　7" followed by IDL get 
 PASS th.rowSpan: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
 PASS th.rowSpan: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS th.rowSpan: setAttribute() to undefined followed by getAttribute() 
@@ -11891,7 +11891,7 @@ PASS th.rowSpan: setAttribute() to object "3" followed by getAttribute()
 PASS th.rowSpan: setAttribute() to object "3" followed by IDL get 
 PASS th.rowSpan: IDL set to 0 should not throw 
 PASS th.rowSpan: IDL set to 0 followed by getAttribute() 
-FAIL th.rowSpan: IDL set to 0 followed by IDL get assert_equals: expected 0 but got 1
+PASS th.rowSpan: IDL set to 0 followed by IDL get 
 PASS th.rowSpan: IDL set to 1 should not throw 
 PASS th.rowSpan: IDL set to 1 followed by getAttribute() 
 PASS th.rowSpan: IDL set to 1 followed by IDL get 
@@ -11900,15 +11900,15 @@ PASS th.rowSpan: IDL set to 257 followed by getAttribute()
 PASS th.rowSpan: IDL set to 257 followed by IDL get 
 PASS th.rowSpan: IDL set to 2147483647 should not throw 
 PASS th.rowSpan: IDL set to 2147483647 followed by getAttribute() 
-FAIL th.rowSpan: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 8190
+PASS th.rowSpan: IDL set to 2147483647 followed by IDL get 
 PASS th.rowSpan: IDL set to "-0" should not throw 
 PASS th.rowSpan: IDL set to "-0" followed by getAttribute() 
-FAIL th.rowSpan: IDL set to "-0" followed by IDL get assert_equals: expected 0 but got 1
+PASS th.rowSpan: IDL set to "-0" followed by IDL get 
 PASS th.rowSpan: IDL set to 2147483648 should not throw 
-FAIL th.rowSpan: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "1" but got "-2147483648"
+PASS th.rowSpan: IDL set to 2147483648 followed by getAttribute() 
 PASS th.rowSpan: IDL set to 2147483648 followed by IDL get 
 PASS th.rowSpan: IDL set to 4294967295 should not throw 
-FAIL th.rowSpan: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "1" but got "-1"
+PASS th.rowSpan: IDL set to 4294967295 followed by getAttribute() 
 PASS th.rowSpan: IDL set to 4294967295 followed by IDL get 
 PASS th.align: typeof IDL attribute 
 PASS th.align: IDL get with DOM attribute unset 

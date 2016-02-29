@@ -1,5 +1,41 @@
 2016-02-29  Chris Dumez  <cdumez@apple.com>
 
+        Align td.rowSpan / td.colSpan with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154803
+
+        Reviewed by Darin Adler.
+
+        Align td.rowSpan / td.colSpan with the specification:
+        - https://html.spec.whatwg.org/multipage/tables.html#htmltablecellelement
+        - https://html.spec.whatwg.org/multipage/tables.html#dom-tdth-colspan
+        - https://html.spec.whatwg.org/multipage/tables.html#dom-tdth-rowspan
+
+        In particular, the following changes were made:
+        - Change type from 'long' to 'unsigned long'.
+        - Use HTML rules for parsing unsigned integers:
+          - https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
+        - Use 1 as default value when the input value is out of range instead
+          of 0 when setting.
+        - rowspan is still clamped to [1, 8190] internally but we now expose the
+          unclamped value to JS as this is an internal restriction. The same is
+          done for a colSpan value of 0, we expose 0 to the Web but clamp to 1
+          internally.
+
+        No new tests, already covered by existing test.
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::colSpan):
+        (WebCore::HTMLTableCellElement::rowSpan):
+        (WebCore::HTMLTableCellElement::rowSpanForBindings):
+        (WebCore::HTMLTableCellElement::setColSpan):
+        (WebCore::HTMLTableCellElement::setRowSpanForBindings):
+        (WebCore::HTMLTableCellElement::axis): Deleted.
+        (WebCore::HTMLTableCellElement::headers): Deleted.
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableCellElement.idl:
+
+2016-02-29  Chris Dumez  <cdumez@apple.com>
+
         [Web IDL] Add support for [TreatNullAs=EmptyString] and use it
         https://bugs.webkit.org/show_bug.cgi?id=154654
 
