@@ -947,6 +947,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
         return TRUE;
 
     GdkEvent* touchEvent = reinterpret_cast<GdkEvent*>(event);
+    uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
 
 #if HAVE(GTK_GESTURES)
     GestureController& gestureController = webkitWebViewBaseGestureController(webViewBase);
@@ -954,11 +955,14 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
         // If we are already processing gestures is because the WebProcess didn't handle the
         // BEGIN touch event, so pass subsequent events to the GestureController.
         gestureController.handleEvent(touchEvent);
+        // Remove the gesture event sequence from the handled touch events
+        // list to avoid the gesure sequence and a touch sequence of same
+        // ID to conflict.
+        priv->touchEvents.remove(sequence);
         return TRUE;
     }
 #endif
 
-    uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
     switch (touchEvent->type) {
     case GDK_TOUCH_BEGIN: {
         ASSERT(!priv->touchEvents.contains(sequence));

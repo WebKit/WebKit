@@ -1,3 +1,13 @@
+2016-02-29  Adrien Plazas  <aplazas@igalia.com>
+
+        [GTK] Touch slider test fails due to assertion in webkitWebViewBaseTouchEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=153829
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations:
+        Remove now passing tests from the expected failures.
+
 2016-02-28  Antti Koivisto  <antti@apple.com>
 
         ::slotted doesn't work in nested shadow trees

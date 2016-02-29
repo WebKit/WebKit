@@ -419,7 +419,6 @@ fast/events/touch/gesture [ Skip ]
 webkit.org/b/128172 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
 webkit.org/b/128172 fast/events/touch/basic-multi-touch-events.html [ Failure ]
 webkit.org/b/128172 fast/events/touch/touch-input-element-change-documents.html [ Failure Timeout ]
-webkit.org/b/128172 fast/events/touch/frame-hover-update.html [ Failure ]
 webkit.org/b/128172 fast/events/touch/multi-touch-grouped-targets.html [ Timeout Failure ]
 webkit.org/b/128172 fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
@@ -1511,7 +1510,6 @@ webkit.org/b/145260 media/audio-playback-restriction-play.html  [ Timeout Pass ]
 # This tests timeout since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
 webkit.org/b/146731 fast/events/touch/tap-highlight-color.html [ Timeout ]
 webkit.org/b/146731 fast/events/touch/touch-scaled-scrolled.html [ Timeout ]
-webkit.org/b/146731 fast/events/touch/touch-stale-node-crash.html [ Timeout ]
 
 webkit.org/b/153061 [ Release ] imported/w3c/indexeddb/idbindex-multientry-big.htm [ Timeout ]
 

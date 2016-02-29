@@ -1,3 +1,16 @@
+2016-02-29  Adrien Plazas  <aplazas@igalia.com>
+
+        [GTK] Touch slider test fails due to assertion in webkitWebViewBaseTouchEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=153829
+
+        Reviewed by Carlos Garcia Campos.
+
+        Once a touch event sequence is identified as a gesture, remove it
+        from the list of handled touch events.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTouchEvent):
+
 2016-02-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed buildfix after r197177. Just for fun.
