@@ -276,8 +276,8 @@ static void fetchDiskCacheEntries(SessionID sessionID, std::function<void (Vecto
     if (NetworkCache::singleton().isEnabled()) {
         auto* origins = new HashSet<RefPtr<SecurityOrigin>>();
 
-        NetworkCache::singleton().traverse([completionHandler, origins](const NetworkCache::Entry *entry) {
-            if (!entry) {
+        NetworkCache::singleton().traverse([completionHandler, origins](const NetworkCache::Cache::TraversalEntry *traversalEntry) {
+            if (!traversalEntry) {
                 Vector<WebsiteData::Entry> entries;
 
                 for (auto& origin : *origins)
@@ -292,7 +292,7 @@ static void fetchDiskCacheEntries(SessionID sessionID, std::function<void (Vecto
                 return;
             }
 
-            origins->add(SecurityOrigin::create(entry->response().url()));
+            origins->add(SecurityOrigin::create(traversalEntry->entry.response().url()));
         });
 
         return;
@@ -388,11 +388,11 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
 
         auto* cacheKeysToDelete = new Vector<NetworkCache::Key>;
 
-        NetworkCache::singleton().traverse([completionHandler, originsToDelete, cacheKeysToDelete](const NetworkCache::Entry *entry) {
+        NetworkCache::singleton().traverse([completionHandler, originsToDelete, cacheKeysToDelete](const NetworkCache::Cache::TraversalEntry *traversalEntry) {
 
-            if (entry) {
-                if (originsToDelete->contains(SecurityOrigin::create(entry->response().url())))
-                    cacheKeysToDelete->append(entry->key());
+            if (traversalEntry) {
+                if (originsToDelete->contains(SecurityOrigin::create(traversalEntry->entry.response().url())))
+                    cacheKeysToDelete->append(traversalEntry->entry.key());
                 return;
             }
 

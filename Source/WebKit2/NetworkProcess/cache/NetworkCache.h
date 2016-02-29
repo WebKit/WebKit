@@ -108,7 +108,11 @@ public:
     std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest);
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const GlobalFrameID&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
-    void traverse(std::function<void (const Entry*)>&&);
+    struct TraversalEntry {
+        const Entry& entry;
+        const Storage::RecordInfo& recordInfo;
+    };
+    void traverse(const std::function<void (const TraversalEntry*)>&);
     void remove(const Key&);
     void remove(const WebCore::ResourceRequest&);
 

@@ -520,11 +520,11 @@ void Cache::remove(const WebCore::ResourceRequest& request)
     remove(makeCacheKey(request));
 }
 
-void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
+void Cache::traverse(const std::function<void (const TraversalEntry*)>& traverseHandler)
 {
     ASSERT(isEnabled());
 
-    m_storage->traverse(resourceType(), 0, [traverseHandler](const Storage::Record* record, const Storage::RecordInfo&) {
+    m_storage->traverse(resourceType(), 0, [traverseHandler](const Storage::Record* record, const Storage::RecordInfo& recordInfo) {
         if (!record) {
             traverseHandler(nullptr);
             return;
@@ -534,7 +534,8 @@ void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
         if (!entry)
             return;
 
-        traverseHandler(entry.get());
+        TraversalEntry traversalEntry { *entry, recordInfo };
+        traverseHandler(&traversalEntry);
     });
 }
 
