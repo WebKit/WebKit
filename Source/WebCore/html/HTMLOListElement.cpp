@@ -26,6 +26,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "RenderListItem.h"
 
 namespace WebCore {
@@ -81,10 +82,9 @@ void HTMLOListElement::parseAttribute(const QualifiedName& name, const AtomicStr
 {
     if (name == startAttr) {
         int oldStart = start();
-        bool canParse;
-        int parsedStart = value.toInt(&canParse);
-        m_hasExplicitStart = canParse;
-        m_start = canParse ? parsedStart : 0xBADBEEF;
+        m_hasExplicitStart = parseHTMLInteger(value, m_start);
+        if (!m_hasExplicitStart)
+            m_start = 0xBADBEEF;
         if (oldStart == start())
             return;
         updateItemValues();

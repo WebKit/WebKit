@@ -1,3 +1,19 @@
+2016-02-28  Chris Dumez  <cdumez@apple.com>
+
+        Parse HTMLOLElement.start as per the HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=154802
+
+        Reviewed by Andreas Kling.
+
+        Parse HTMLOLElement.start as per the HTML spec:
+        - https://html.spec.whatwg.org/multipage/semantics.html#dom-ol-start
+        - https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-integers
+
+        No new tests, already covered by existing test.
+
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::parseAttribute):
+
 2016-02-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Reduce uses of PassRefPtr in indexeddb
