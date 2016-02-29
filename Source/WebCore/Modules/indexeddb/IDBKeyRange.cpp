@@ -35,15 +35,15 @@
 
 namespace WebCore {
 
-Ref<IDBKeyRange> IDBKeyRange::create(PassRefPtr<IDBKey> prpKey)
+Ref<IDBKeyRange> IDBKeyRange::create(RefPtr<IDBKey>&& key)
 {
-    RefPtr<IDBKey> key = prpKey;
-    return adoptRef(*new IDBKeyRange(key, key, LowerBoundClosed, UpperBoundClosed));
+    RefPtr<IDBKey> upperBound = key;
+    return adoptRef(*new IDBKeyRange(WTFMove(key), WTFMove(upperBound), LowerBoundClosed, UpperBoundClosed));
 }
 
-IDBKeyRange::IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType)
-    : m_lower(lower)
-    , m_upper(upper)
+IDBKeyRange::IDBKeyRange(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, LowerBoundType lowerType, UpperBoundType upperType)
+    : m_lower(WTFMove(lower))
+    , m_upper(WTFMove(upper))
     , m_lowerType(lowerType)
     , m_upperType(upperType)
 {
@@ -61,54 +61,53 @@ Deprecated::ScriptValue IDBKeyRange::upperValue(ScriptExecutionContext* context)
     return idbKeyToScriptValue(&requestState, m_upper);
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::only(PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::only(RefPtr<IDBKey>&& key, ExceptionCode& ec)
 {
-    RefPtr<IDBKey> key = prpKey;
     if (!key || !key->isValid()) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
 
-    return IDBKeyRange::create(key, key, LowerBoundClosed, UpperBoundClosed);
+    return create(WTFMove(key));
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
     if (!key || !key->isValid()) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
 
-    return IDBKeyRange::create(key, key, LowerBoundClosed, UpperBoundClosed);
+    return create(WTFMove(key));
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext* context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext* context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> bound = scriptValueToIDBKey(&requestState, boundValue);
     if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
 
-    return IDBKeyRange::create(bound, 0, open ? LowerBoundOpen : LowerBoundClosed, UpperBoundOpen);
+    return IDBKeyRange::create(WTFMove(bound), nullptr, open ? LowerBoundOpen : LowerBoundClosed, UpperBoundOpen);
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext* context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext* context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> bound = scriptValueToIDBKey(&requestState, boundValue);
     if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
 
-    return IDBKeyRange::create(0, bound, LowerBoundOpen, open ? UpperBoundOpen : UpperBoundClosed);
+    return IDBKeyRange::create(nullptr, WTFMove(bound), LowerBoundOpen, open ? UpperBoundOpen : UpperBoundClosed);
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext* context, const Deprecated::ScriptValue& lowerValue, const Deprecated::ScriptValue& upperValue, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext* context, const Deprecated::ScriptValue& lowerValue, const Deprecated::ScriptValue& upperValue, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> lower = scriptValueToIDBKey(&requestState, lowerValue);
@@ -116,18 +115,18 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext* context, cons
 
     if (!lower || !lower->isValid() || !upper || !upper->isValid()) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
     if (upper->isLessThan(lower.get())) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
     if (upper->isEqual(lower.get()) && (lowerOpen || upperOpen)) {
         ec = IDBDatabaseException::DataError;
-        return 0;
+        return nullptr;
     }
 
-    return IDBKeyRange::create(lower, upper, lowerOpen ? LowerBoundOpen : LowerBoundClosed, upperOpen ? UpperBoundOpen : UpperBoundClosed);
+    return IDBKeyRange::create(WTFMove(lower), WTFMove(upper), lowerOpen ? LowerBoundOpen : LowerBoundClosed, upperOpen ? UpperBoundOpen : UpperBoundClosed);
 }
 
 bool IDBKeyRange::isOnlyKey() const

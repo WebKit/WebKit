@@ -311,7 +311,7 @@ static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const InspectorObject* keyRan
         return nullptr;
     IDBKeyRange::UpperBoundType upperBoundType = upperOpen ? IDBKeyRange::UpperBoundOpen : IDBKeyRange::UpperBoundClosed;
 
-    return IDBKeyRange::create(idbLower, idbUpper, lowerBoundType, upperBoundType);
+    return IDBKeyRange::create(WTFMove(idbLower), WTFMove(idbUpper), lowerBoundType, upperBoundType);
 }
 
 class DataLoader;

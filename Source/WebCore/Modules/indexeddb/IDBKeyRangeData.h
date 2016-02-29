@@ -63,15 +63,15 @@ struct IDBKeyRangeData {
         if (isNull)
             return;
 
-        lowerKey = keyRange->lower().get();
-        upperKey = keyRange->upper().get();
+        lowerKey = keyRange->lower();
+        upperKey = keyRange->upper();
         lowerOpen = keyRange->lowerOpen();
         upperOpen = keyRange->upperOpen();
     }
 
     IDBKeyRangeData isolatedCopy() const;
 
-    WEBCORE_EXPORT PassRefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
+    WEBCORE_EXPORT RefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
 
     WEBCORE_EXPORT bool isExactlyOneKey() const;
     bool containsKey(const IDBKeyData&) const;

@@ -63,7 +63,7 @@ IDBKeyRangeData IDBKeyRangeData::isolatedCopy() const
     return result;
 }
 
-PassRefPtr<IDBKeyRange> IDBKeyRangeData::maybeCreateIDBKeyRange() const
+RefPtr<IDBKeyRange> IDBKeyRangeData::maybeCreateIDBKeyRange() const
 {
     if (isNull)
         return nullptr;
