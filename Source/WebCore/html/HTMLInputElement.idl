@@ -31,8 +31,11 @@ interface HTMLInputElement : HTMLElement {
     readonly attribute HTMLFormElement form;
     attribute FileList files;
     attribute DOMString formAction;
-    [TreatNullAs=NullString] attribute DOMString formEnctype;
-    [TreatNullAs=NullString] attribute DOMString formMethod;
+
+    // FIXME: These should not use [TreatNullAs=LegacyNullString].
+    [TreatNullAs=LegacyNullString] attribute DOMString formEnctype;
+    [TreatNullAs=LegacyNullString] attribute DOMString formMethod;
+
     [Reflect] attribute boolean formNoValidate;
     [Reflect] attribute DOMString formTarget;
     attribute unsigned long height;
@@ -58,9 +61,9 @@ interface HTMLInputElement : HTMLElement {
     attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString value;
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString value;
 #else
-    [TreatNullAs=NullString] attribute DOMString value;
+    attribute DOMString value;
 #endif
     [SetterRaisesException] attribute Date valueAsDate;
     [SetterRaisesException] attribute unrestricted double valueAsNumber;
@@ -120,7 +123,9 @@ interface HTMLInputElement : HTMLElement {
 #endif
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=NullString] attribute DOMString autocapitalize;
+
+    // FIXME: This should not use TreatNullAs=LegacyNullString.
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=LegacyNullString] attribute DOMString autocapitalize;
 
     // See http://www.w3.org/TR/html-media-capture/
     [Conditional=MEDIA_CAPTURE, Reflect] attribute boolean capture;

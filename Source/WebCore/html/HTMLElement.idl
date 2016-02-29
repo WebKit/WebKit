@@ -45,8 +45,8 @@
              [Reflect] attribute DOMString accessKey;
 
     // Extensions
-    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString innerText;
-    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerText;
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerText;
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString outerText;
              
     [RaisesException] Element insertAdjacentElement([Default=Undefined] optional DOMString where,
                                   [Default=Undefined] optional Element element);
@@ -59,7 +59,7 @@
     readonly attribute HTMLCollection children;
 #endif
 
-             [TreatNullAs=NullString, SetterRaisesException] attribute DOMString contentEditable;
+    [SetterRaisesException] attribute DOMString contentEditable;
     readonly attribute boolean isContentEditable;
 
              attribute boolean spellcheck;

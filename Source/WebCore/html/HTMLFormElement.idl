@@ -25,9 +25,12 @@
     [Reflect=accept_charset] attribute DOMString acceptCharset;
     [Reflect, URL] attribute DOMString action;
     attribute DOMString autocomplete;
-    [TreatNullAs=NullString] attribute DOMString enctype;
-    [TreatNullAs=NullString] attribute DOMString encoding;
-    [TreatNullAs=NullString] attribute DOMString method;
+
+    // FIXME: These should not have [TreatNullAs=LegacyNullString].
+    [TreatNullAs=LegacyNullString] attribute DOMString enctype;
+    [TreatNullAs=LegacyNullString] attribute DOMString encoding;
+    [TreatNullAs=LegacyNullString] attribute DOMString method;
+
     [Reflect] attribute DOMString name;
     [Reflect] attribute boolean noValidate;
     [Reflect] attribute DOMString target;
@@ -42,7 +45,9 @@
     getter Element (unsigned long index);
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=NullString] attribute DOMString autocapitalize;
+
+    // FIXME: This should not use [TreatNullAs=LegacyNullString].
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=LegacyNullString] attribute DOMString autocapitalize;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [ImplementedAs=submitFromJavaScript] void submit();

@@ -32,7 +32,8 @@ interface SVGAngle {
     [StrictTypeChecking] attribute unrestricted float value;
     [StrictTypeChecking] attribute unrestricted float valueInSpecifiedUnits;
 
-    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString valueAsString;
+    // FIXME: This should not have [TreatNullAs=EmptyString].
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString valueAsString;
 
     [StrictTypeChecking, RaisesException] void newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
 

@@ -32,14 +32,16 @@ interface URLUtils {
 
     readonly attribute DOMString origin;
 
-    [TreatNullAs=NullString] attribute DOMString protocol;
-    [TreatNullAs=NullString] attribute DOMString username;
-    [TreatNullAs=NullString] attribute DOMString password;
-    [TreatNullAs=NullString] attribute DOMString host;
-    [TreatNullAs=NullString] attribute DOMString hostname;
-    [TreatNullAs=NullString] attribute DOMString port;
-    [TreatNullAs=NullString] attribute DOMString pathname;
-    [TreatNullAs=NullString] attribute DOMString search;
-    //    attribute URLSearchParams? searchParams;
-    [TreatNullAs=NullString] attribute DOMString hash;
+    // FIXME: These should not have [TreatNullAs=EmptyString].
+    [TreatNullAs=EmptyString] attribute DOMString protocol;
+    [TreatNullAs=EmptyString] attribute DOMString username;
+    [TreatNullAs=EmptyString] attribute DOMString password;
+    [TreatNullAs=EmptyString] attribute DOMString host;
+    [TreatNullAs=EmptyString] attribute DOMString hostname;
+    [TreatNullAs=EmptyString] attribute DOMString port;
+    [TreatNullAs=EmptyString] attribute DOMString pathname;
+    [TreatNullAs=EmptyString] attribute DOMString hash;
+
+    // FIXME: This should not have [TreatNullAs=NullString].
+    [TreatNullAs=LegacyNullString] attribute DOMString search;
 };

@@ -245,6 +245,18 @@
     return IMPL->unforgeableAttr();
 }
 
+- (NSString *)stringAttrTreatingNullAsEmptyString
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->stringAttrTreatingNullAsEmptyString();
+}
+
+- (void)setStringAttrTreatingNullAsEmptyString:(NSString *)newStringAttrTreatingNullAsEmptyString
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setStringAttrTreatingNullAsEmptyString(newStringAttrTreatingNullAsEmptyString);
+}
+
 - (DOMTestObj *)XMLObjAttr
 {
     WebCore::JSMainThreadNullState state;
@@ -979,6 +991,12 @@
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->unforgeableMethod();
+}
+
+- (void)methodWithArgTreatingNullAsEmptyString:(NSString *)arg
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithArgTreatingNullAsEmptyString(arg);
 }
 
 - (NSString *)nullableStringMethod

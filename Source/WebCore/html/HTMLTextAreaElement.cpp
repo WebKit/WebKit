@@ -368,7 +368,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
     m_wasModifiedByUser = false;
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We normalize line endings coming from JavaScript here.
-    String normalizedValue = newValue.isNull() ? "" : newValue;
+    String normalizedValue = newValue.isNull() ? emptyString() : newValue;
     normalizedValue.replace("\r\n", "\n");
     normalizedValue.replace('\r', '\n');
 

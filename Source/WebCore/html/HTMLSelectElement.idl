@@ -64,7 +64,9 @@
 #endif
     readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;
-    [TreatNullAs=NullString] attribute DOMString value;
+
+    // FIXME: This should not use [TreatNullAs=LegacyNullString].
+    [TreatNullAs=LegacyNullString] attribute DOMString value;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;

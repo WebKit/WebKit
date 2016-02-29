@@ -5792,7 +5792,7 @@ void HTMLMediaElement::setMediaGroup(const String& group)
     setController(0);
 
     // 3. If m's mediagroup attribute is being removed, then abort these steps.
-    if (group.isNull() || group.isEmpty())
+    if (group.isEmpty())
         return;
 
     // 4. If there is another media element whose Document is the same as m's Document (even if one or both

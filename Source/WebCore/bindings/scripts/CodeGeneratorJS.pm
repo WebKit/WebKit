@@ -4141,8 +4141,9 @@ sub JSValueToNative
     return "valueToDate(state, $value)" if $type eq "Date";
 
     if ($type eq "DOMString") {
-        if ($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") {
-            return "valueToStringWithNullCheck(state, $value)"
+        if ($signature->extendedAttributes->{"TreatNullAs"}) {
+            return "valueToStringTreatingNullAsEmptyString(state, $value)" if $signature->extendedAttributes->{"TreatNullAs"} eq "EmptyString";
+            return "valueToStringWithNullCheck(state, $value)" if $signature->extendedAttributes->{"TreatNullAs"} eq "LegacyNullString";
         }
         return "valueToStringWithUndefinedOrNullCheck(state, $value)" if $signature->isNullable;
         return "$value.toString(state)->toAtomicString(state)" if $signature->extendedAttributes->{"AtomicString"};

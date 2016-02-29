@@ -100,6 +100,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(J
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjInstanceFunctionUnforgeableMethod(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionNullableStringStaticMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringSpecialMethod(JSC::ExecState*);
@@ -224,6 +225,8 @@ void setJSTestObjTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJ
 JSC::EncodedJSValue jsTestObjLenientTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjLenientTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjUnforgeableAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestObjStringAttrTreatingNullAsEmptyString(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestObjStringAttrTreatingNullAsEmptyString(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjXMLObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjXMLObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCreate(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -527,6 +530,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "stringAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttr) } },
     { "testObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTestObjAttr) } },
     { "lenientTestObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLenientTestObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjLenientTestObjAttr) } },
+    { "stringAttrTreatingNullAsEmptyString", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrTreatingNullAsEmptyString), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrTreatingNullAsEmptyString) } },
     { "XMLObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjXMLObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjXMLObjAttr) } },
     { "create", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCreate), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCreate) } },
     { "readOnlySymbolAttr", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlySymbolAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
@@ -616,6 +620,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "longMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionLongMethodWithArgs), (intptr_t) (3) } },
     { "objMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethod), (intptr_t) (0) } },
     { "objMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethodWithArgs), (intptr_t) (3) } },
+    { "methodWithArgTreatingNullAsEmptyString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString), (intptr_t) (1) } },
     { "nullableStringMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionNullableStringMethod), (intptr_t) (0) } },
     { "nullableStringSpecialMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionNullableStringSpecialMethod), (intptr_t) (1) } },
     { "methodWithSequenceArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithSequenceArg), (intptr_t) (1) } },
@@ -1063,6 +1068,21 @@ EncodedJSValue jsTestObjUnforgeableAttr(ExecState* state, EncodedJSValue thisVal
     }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.unforgeableAttr());
+    return JSValue::encode(result);
+}
+
+
+EncodedJSValue jsTestObjStringAttrTreatingNullAsEmptyString(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestObj", "stringAttrTreatingNullAsEmptyString");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = jsStringWithCache(state, impl.stringAttrTreatingNullAsEmptyString());
     return JSValue::encode(result);
 }
 
@@ -2245,6 +2265,23 @@ void setJSTestObjLenientTestObjAttr(ExecState* state, EncodedJSValue thisValue, 
 }
 
 
+void setJSTestObjStringAttrTreatingNullAsEmptyString(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        throwSetterTypeError(*state, "TestObj", "stringAttrTreatingNullAsEmptyString");
+        return;
+    }
+    auto& impl = castedThis->wrapped();
+    String nativeValue = valueToStringTreatingNullAsEmptyString(state, value);
+    if (UNLIKELY(state->hadException()))
+        return;
+    impl.setStringAttrTreatingNullAsEmptyString(nativeValue);
+}
+
+
 void setJSTestObjXMLObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
@@ -3300,6 +3337,23 @@ EncodedJSValue JSC_HOST_CALL jsTestObjInstanceFunctionUnforgeableMethod(ExecStat
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.unforgeableMethod());
     return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithArgTreatingNullAsEmptyString");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    String arg = valueToStringTreatingNullAsEmptyString(state, state->argument(0));
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithArgTreatingNullAsEmptyString(arg);
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringMethod(ExecState* state)

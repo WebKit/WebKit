@@ -22,8 +22,11 @@ interface HTMLFrameElement : HTMLElement {
 
     [Reflect] attribute DOMString frameBorder;
     [Reflect] attribute DOMString longDesc;
+
+    // FIXME: These should use [TreatNullAs=EmptyString].
     [Reflect] attribute DOMString marginHeight;
     [Reflect] attribute DOMString marginWidth;
+
     [Reflect] attribute DOMString name;
     [Reflect] attribute boolean noResize;
     [Reflect] attribute DOMString scrolling;
@@ -39,7 +42,7 @@ interface HTMLFrameElement : HTMLElement {
     [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
 #endif
 
-    [TreatNullAs=NullString, CustomSetter] attribute DOMString location;
+    [CustomSetter] attribute DOMString location;
 
     readonly attribute long width;
     readonly attribute long height;

@@ -59,6 +59,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     attribute TestObj                  testObjAttr;
     [LenientThis] attribute TestObj    lenientTestObjAttr;
     [Unforgeable] readonly attribute DOMString unforgeableAttr;
+    [TreatNullAs=EmptyString] attribute DOMString stringAttrTreatingNullAsEmptyString;
 
     // WK_ucfirst, WK_lcfirst exceptional cases.
     attribute TestObj                  XMLObjAttr;
@@ -96,6 +97,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     TestObj objMethod();
     TestObj objMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     [Unforgeable] long unforgeableMethod();
+    void methodWithArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] DOMString arg);
 
     // Nullable String return values.
     DOMString? nullableStringMethod();

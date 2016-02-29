@@ -30,6 +30,5 @@
     readonly attribute Element          activeElement;
     readonly attribute Element          host;
 
-    [TreatNullAs=NullString, SetterRaisesException]
-    attribute DOMString                 innerHTML;
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerHTML;
 };

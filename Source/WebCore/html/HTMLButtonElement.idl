@@ -23,12 +23,15 @@ interface HTMLButtonElement : HTMLElement {
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     attribute DOMString formAction;
-    [TreatNullAs=NullString] attribute DOMString formEnctype;
-    [TreatNullAs=NullString] attribute DOMString formMethod;
+
+    // FIXME: These should not have [TreatNullAs=LegacyNullString].
+    [TreatNullAs=LegacyNullString] attribute DOMString formEnctype;
+    [TreatNullAs=LegacyNullString] attribute DOMString formMethod;
+    [TreatNullAs=LegacyNullString] attribute DOMString type;
+
     [Reflect] attribute boolean formNoValidate;
     [Reflect] attribute DOMString formTarget;
     [Reflect] attribute DOMString name;
-    [TreatNullAs=NullString] attribute DOMString type;
     [Reflect] attribute DOMString value;
 
     readonly attribute boolean willValidate;

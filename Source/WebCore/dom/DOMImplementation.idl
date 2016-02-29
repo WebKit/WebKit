@@ -26,7 +26,7 @@
     // DOM Level 1
 
     [ObjCLegacyUnnamedParameters] boolean hasFeature([Default=Undefined] optional DOMString feature,
-        [TreatNullAs=NullString, Default=Undefined] optional DOMString version);
+        [TreatNullAs=EmptyString, Default=Undefined] optional DOMString version);
 
     // DOM Level 2
 
@@ -38,7 +38,7 @@
         optional DocumentType doctype);
 #else
     [RaisesException, NewObject] XMLDocument createDocument([Default=Undefined] optional DOMString? namespaceURI,
-        [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName, [Default=Undefined] optional DocumentType? doctype);
+        [TreatNullAs=EmptyString, Default=Undefined] optional DOMString qualifiedName, [Default=Undefined] optional DocumentType? doctype);
 #endif
 
     // DOMImplementationCSS interface from DOM Level 2 CSS

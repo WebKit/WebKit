@@ -247,6 +247,16 @@ WEBKIT_API glong
 webkit_dom_test_obj_unforgeable_method(WebKitDOMTestObj* self);
 
 /**
+ * webkit_dom_test_obj_method_with_arg_treating_null_as_empty_string:
+ * @self: A #WebKitDOMTestObj
+ * @arg: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_arg_treating_null_as_empty_string(WebKitDOMTestObj* self, const gchar* arg);
+
+/**
  * webkit_dom_test_obj_nullable_string_method:
  * @self: A #WebKitDOMTestObj
  *
@@ -935,6 +945,27 @@ webkit_dom_test_obj_set_lenient_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMT
 **/
 WEBKIT_API gchar*
 webkit_dom_test_obj_get_unforgeable_attr(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_get_string_attr_treating_null_as_empty_string:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_obj_get_string_attr_treating_null_as_empty_string(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_string_attr_treating_null_as_empty_string:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_string_attr_treating_null_as_empty_string(WebKitDOMTestObj* self, const gchar* value);
 
 /**
  * webkit_dom_test_obj_get_xml_obj_attr:

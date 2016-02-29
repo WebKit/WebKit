@@ -40,7 +40,7 @@ interface HTMLTextAreaElement : HTMLElement {
 
     readonly attribute DOMString type;
     attribute DOMString defaultValue;
-    [TreatNullAs=NullString] attribute DOMString value;
+    [TreatNullAs=EmptyString] attribute DOMString value;
     readonly attribute unsigned long textLength;
 
     readonly attribute boolean willValidate;
@@ -71,7 +71,9 @@ interface HTMLTextAreaElement : HTMLElement {
 #endif
 
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
-    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=NullString] attribute DOMString autocapitalize;
+
+    // FIXME: This should not use [TreatNullAs=LegacyNullString].
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=LegacyNullString] attribute DOMString autocapitalize;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Reflect] attribute DOMString accessKey;

@@ -54,10 +54,14 @@
 
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode([Default=Undefined] optional Node importedNode,
                     optional boolean deep);
+
+    // FIXME: 'qualifiedName' should not have [TreatNullAs=EmptyString].
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS([Default=Undefined] optional DOMString? namespaceURI,
-        [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName);
+        [TreatNullAs=EmptyString, Default=Undefined] optional DOMString qualifiedName);
+
+    // FIXME: 'qualifiedName' should not have [TreatNullAs=EmptyString].
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS([Default=Undefined] optional DOMString? namespaceURI,
-        [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName);
+        [TreatNullAs=EmptyString, Default=Undefined] optional DOMString qualifiedName);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(optional DOMString namespaceURI, optional DOMString localName);
@@ -158,16 +162,20 @@
 
     // Moved down from HTMLDocument
 
-             [TreatNullAs=NullString] attribute DOMString title;
+    // FIXME: Should not have [TreatNullAs=EmptyString].
+    [TreatNullAs=EmptyString] attribute DOMString title;
+
     readonly attribute DOMString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString domain;
+    // FIXME: Should not have [TreatNullAs=EmptyString].
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString domain;
 #else
     readonly attribute DOMString domain;
 #endif
     [ImplementedAs=urlForBindings] readonly attribute DOMString URL;
 
-    [TreatNullAs=NullString, GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
+    // FIXME: Should not have [TreatNullAs=EmptyString].
+    [TreatNullAs=EmptyString, GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
 
     [SetterRaisesException, ImplementedAs=bodyOrFrameset, StrictTypeChecking] attribute HTMLElement body;
 

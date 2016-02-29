@@ -100,7 +100,7 @@
     //                                 RTCStatsCallback successCallback,
     //                                 RTCPeerConnectionErrorCallback errorCallback);
 
-    [RaisesException] RTCDataChannel createDataChannel([TreatNullAs=NullString] DOMString label, optional Dictionary options);
+    [RaisesException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] DOMString label, optional Dictionary options);
 
     void close();
 

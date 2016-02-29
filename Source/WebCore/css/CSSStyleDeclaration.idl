@@ -34,8 +34,10 @@
     [Custom] CSSValue           getPropertyCSSValue([Default=Undefined] optional DOMString propertyName);
     [RaisesException] DOMString          removeProperty([Default=Undefined] optional DOMString propertyName);
     DOMString?          getPropertyPriority([Default=Undefined] optional DOMString propertyName);
+
+    // FIXME: 'priority' should use [TreatNullAs=EmptyString].
     [ObjCLegacyUnnamedParameters, RaisesException] void setProperty([Default=Undefined] optional DOMString propertyName, 
-                                    [TreatNullAs=NullString, Default=Undefined] optional DOMString value, 
+                                    [TreatNullAs=EmptyString, Default=Undefined] optional DOMString value,
                                     [Default=Undefined] optional DOMString priority);
 
     readonly attribute unsigned long    length;

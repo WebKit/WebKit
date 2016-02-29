@@ -42,20 +42,22 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
         unrestricted float dx, unrestricted float dy);
 
     attribute unrestricted float globalAlpha;
-    [TreatNullAs=NullString] attribute DOMString globalCompositeOperation;
+
+    // FIXME: This should not have [TreatNullAs=EmptyString].
+    [TreatNullAs=EmptyString] attribute DOMString globalCompositeOperation;
 
     [RaisesException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
     [RaisesException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
 
     attribute unrestricted float lineWidth;
-    [TreatNullAs=NullString] attribute DOMString lineCap;
-    [TreatNullAs=NullString] attribute DOMString lineJoin;
+    attribute DOMString lineCap;
+    attribute DOMString lineJoin;
     attribute unrestricted float miterLimit;
 
     attribute unrestricted float shadowOffsetX;
     attribute unrestricted float shadowOffsetY;
     attribute unrestricted float shadowBlur;
-    [TreatNullAs=NullString] attribute DOMString shadowColor;
+    attribute DOMString shadowColor;
 
     void setLineDash(sequence<unrestricted float> dash);
     sequence<unrestricted float> getLineDash();
@@ -170,8 +172,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     [RaisesException] void webkitPutImageDataHD(ImageData? imagedata, float dx, float dy);
     [RaisesException] void webkitPutImageDataHD(ImageData? imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
-    [RaisesException] CanvasPattern createPattern(HTMLCanvasElement? canvas, [TreatNullAs=NullString] DOMString repetitionType);
-    [RaisesException] CanvasPattern createPattern(HTMLImageElement? image, [TreatNullAs=NullString] DOMString repetitionType);
+    [RaisesException] CanvasPattern createPattern(HTMLCanvasElement? canvas, [TreatNullAs=EmptyString] DOMString repetitionType);
+    [RaisesException] CanvasPattern createPattern(HTMLImageElement? image, [TreatNullAs=EmptyString] DOMString repetitionType);
     [RaisesException] ImageData createImageData(ImageData? imagedata);
     [RaisesException] ImageData createImageData(float sw, float sh);
 

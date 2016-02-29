@@ -1,3 +1,141 @@
+2016-02-29  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Add support for [TreatNullAs=EmptyString] and use it
+        https://bugs.webkit.org/show_bug.cgi?id=154654
+
+        Reviewed by Darin Adler.
+
+        Add support for [TreatNullAs=EmptyString] standard Web IDL extended
+        attribute:
+        - http://heycam.github.io/webidl/#TreatNullAs
+
+        This replaces the WebKit-specific [TreatNullAs=NullString] IDL
+        extended attribute. Instead of passing a null String() to the
+        implementation, emptyString() is passed.
+
+        This patch does not cause any web-exposed behavior change. For
+        case where switching from NullString to EmptyString would change
+        the behavior (or require changes to the implementation), the old
+        IDL attribute was kept. However, it was renamed to
+        [TreatNullAs=LegacyNullString] to discourage its use in new code.
+        Eventually, this legacy IDL attribute should go away entirely.
+
+        [TreatNullAs=EmptyString] should only be used when it is present
+        in the corresponding specification. Note that there are a lot of
+        places where we use [TreatNullAs=EmptyString] in our IDL where it
+        does not match the specification. I have added FIXME comments for
+        those so we can clean them up later.
+
+        No new tests, no web-exposed behavior change.
+
+        * Modules/mediastream/RTCPeerConnection.idl:
+        No behavior change because this is not implemented.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::valueToStringTreatingNullAsEmptyString):
+        * bindings/js/JSDOMBinding.h:
+        Add new function to convert a JSValue into a String while treating
+        null as the empty string.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        * bindings/scripts/IDLAttributes.txt:
+        - Add support for [TreatNullAs=EmptyString].
+        - Rename NullString to LegacyNullString to discourage its use.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/TestObj.idl:
+        Add bindings tests coverage for [TreatNullAs=EmptyString].
+
+        * css/CSSStyleDeclaration.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/ShadowRoot.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/URLUtils.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGLength.idl:
+        Use [TreatNullAs=EmptyString] instead of [TreatNullAs=NullString].
+        There is not behavior change because the implementation does
+        not distinguish the null string from the empty string.
+
+        * html/HTMLBaseElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLSelectElement.idl:
+        * svg/SVGElement.idl:
+        * svg/SVGScriptElement.idl:
+        Rename [TreatNullAs=NullString] to [TreatNullAs=LegacyNullString],
+        no behavior change.
+
+        * html/HTMLDocument.idl:
+        - dir and *Color: Rename [TreatNullAs=NullString] to
+          [TreatNullAs=LegacyNullString].
+        - designMode: Drop [TreatNullAs=NullString] as per the specification:
+          - https://html.spec.whatwg.org/multipage/dom.html#the-document-object
+          null now gets converted to "null" instead of the null String but this
+          does not change behavior because the implementation only recognizes
+          "on" / "off" / others. So we still end up using inherit mode when
+          set to null.
+
+        * html/HTMLElement.idl:
+        - Use [TreatNullAs=EmptyString] instead of [TreatNullAs=NullString] for
+          innerText / outerText. Does not change behavior because the
+          implementation does not distinguishes.
+        - Drop [TreatNullAs=NullString] from contentEditable to match the spec:
+          - https://html.spec.whatwg.org/multipage/interaction.html#elementcontenteditable
+          This does not change behavior because the implementation will the a SyntaxError
+          wether a null String or the string "null" is passed.
+
+        * html/HTMLFrameElement.idl:
+        Drop [TreatNullAs=NullString] from location attribute. This does not
+        change behavior because the attribute is using a custom setter.
+
+        * html/HTMLInputElement.idl:
+        - formEnctype / formMethod / autocapitalize: Rename [TreatNullAs=NullString] to
+          [TreatNullAs=LegacyNullString].
+        - value: Rename [TreatNullAs=NullString] to Rename [TreatNullAs=EmptyString], which
+          does not change behavior because the implementation does not distinguish. Also
+          drop the extended attribute for non-JS bindings as it has no impact.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMediaGroup):
+        Drop redundant group.isNull() check as group.isEmpty() already checks for null.
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::setText):
+        Drop useless .impl() call as we have a String and the method requires a String
+        as input.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        Use emptyString() instead of "" as it is slightly more efficient.
+
+        * html/HTMLTextAreaElement.idl:
+        - value: Use [TreatNullAs=EmptyString] instead of [TreatNullAs=NullString]. No
+          behavior change because the implementation does not distinguish.
+        - autocapitalize: Rename [TreatNullAs=NullString] to [TreatNullAs=LegacyNullString].
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+        - globalCompositeOperation / repetitionType: Use [TreatNullAs=EmptyString] instead of
+          [TreatNullAs=NullString]. No behavior change because the implementation does not
+          distinguish.
+        - lineCap / lineJoin: Drop the [TreatNullAs=NullString] to match the spec:
+          - https://html.spec.whatwg.org/multipage/scripting.html#canvaspathdrawingstyles
+          There is no behavior change because those are string enumerations and the value
+          is not recognized either way (String() or String("null")).
+        - shadowColor: Drop the [TreatNullAs=NullString] to match the spec:
+          - https://html.spec.whatwg.org/multipage/scripting.html#canvasshadowstyles
+          No behavior change because this is not a valid color either way.
+
 2016-02-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Refactor FetchBody constructors

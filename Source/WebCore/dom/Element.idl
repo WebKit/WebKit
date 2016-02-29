@@ -117,8 +117,8 @@
 #else
     HTMLCollection getElementsByClassName([Default=Undefined] optional DOMString name);
 #endif
-    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString innerHTML;
-    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerHTML;
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerHTML;
+    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString outerHTML;
              
 
     [Reflect=class] attribute DOMString className;
