@@ -199,6 +199,7 @@
             repo="ftp.gnome.org"
             hash="sha256:8811deacaf8a503d0a9b701777ea079ca6a4277be10e3d730d2112735d5eca07">
       <patch file="glib-warning-fix.patch" strip="1"/>
+      <patch file="gdate-suppress-string-format-literal-warning.patch" strip="1"/>
     </branch>
   </autotools>
 

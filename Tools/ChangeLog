@@ -1,3 +1,15 @@
+2016-02-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK][jhbuild] GLib build fails with GCC 6.0
+        https://bugs.webkit.org/show_bug.cgi?id=154825
+
+        Use the upstream work-around. https://bugzilla.gnome.org/show_bug.cgi?id=761550
+
+        Reviewed by Csaba Osztrogonác.
+
+        * gtk/jhbuild.modules: Apply upstream path.
+        * gtk/patches/gdate-suppress-string-format-literal-warning.patch: Added.
+
 2016-02-29  Filip Pizlo  <fpizlo@apple.com>
 
         We've been running Octane/regexp all wrong in run-jsc-benchmarks
