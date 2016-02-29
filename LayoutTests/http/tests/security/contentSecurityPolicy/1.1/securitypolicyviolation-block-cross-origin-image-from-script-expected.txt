@@ -14,7 +14,7 @@ PASS window.e.effectiveDirective is "img-src"
 PASS window.e.originalPolicy is "img-src 'none'"
 PASS window.e.sourceFile is "http://localhost:8000"
 PASS window.e.lineNumber is 3
-PASS window.e.columnNumber is 7
+PASS window.e.columnNumber is 2
 PASS window.e.statusCode is 200
 PASS successfullyParsed is true
 

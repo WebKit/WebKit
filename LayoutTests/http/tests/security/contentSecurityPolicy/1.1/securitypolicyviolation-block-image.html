@@ -15,14 +15,14 @@
             'effectiveDirective': 'img-src',
             'originalPolicy': 'img-src \'none\'',
             'sourceFile': document.location.toString(),
-            'lineNumber': 23,
-            'columnNumber': 21,
-            'statusCode': 200,
+            'lineNumber': 25,
+            'columnNumber': 16,
+            'statusCode': document.location.protocol === 'http:' ? 200 : 0,
         };
 
         function run() {
             var img = document.createElement('img');
-            img.src = '/security/resources/abe.png';
+            img.src = 'http://127.0.0.1:8000/security/resources/abe.png';
             document.body.appendChild(img);
         }
     </script>
