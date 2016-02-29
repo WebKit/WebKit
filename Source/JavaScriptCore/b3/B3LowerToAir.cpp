@@ -1607,7 +1607,6 @@ private:
                 Tmp result = tmp(m_value);
                 Tmp thenCase = tmp(m_value->child(1));
                 Tmp elseCase = tmp(m_value->child(2));
-                append(relaxedMoveForType(m_value->type()), tmp(m_value->child(2)), result);
                 return Inst(
                     opcode, m_value, condition,
                     left.consume(*this), right.consume(*this), thenCase, elseCase, result);
