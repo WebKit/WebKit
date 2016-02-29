@@ -216,10 +216,21 @@ static NSURLSessionConfiguration *configurationForType(NetworkSession::Type type
     }
 }
 
+static RefPtr<CustomProtocolManager>& globalCustomProtocolManager()
+{
+    NeverDestroyed<RefPtr<CustomProtocolManager>> gCustomProtocolManager;
+    return gCustomProtocolManager.get();
+}
+
+void NetworkSession::setCustomProtocolManager(CustomProtocolManager* customProtocolManager)
+{
+    globalCustomProtocolManager() = customProtocolManager;
+}
+
 NetworkSession& NetworkSession::defaultSession()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<NetworkSession> session(NetworkSession::Type::Normal, WebCore::SessionID::defaultSessionID(), NetworkProcess::singleton().supplement<CustomProtocolManager>());
+    static NeverDestroyed<NetworkSession> session(NetworkSession::Type::Normal, WebCore::SessionID::defaultSessionID(), globalCustomProtocolManager().get());
     return session;
 }
 

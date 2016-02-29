@@ -96,6 +96,9 @@ NetworkProcess::NetworkProcess()
     addSupplement<AuthenticationManager>();
     addSupplement<WebCookieManager>();
     addSupplement<CustomProtocolManager>();
+#if USE(NETWORK_SESSION)
+    NetworkSession::setCustomProtocolManager(supplement<CustomProtocolManager>());
+#endif
 }
 
 NetworkProcess::~NetworkProcess()

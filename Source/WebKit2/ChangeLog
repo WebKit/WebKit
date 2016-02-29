@@ -1,3 +1,30 @@
+2016-02-29  Alex Christensen  <achristensen@webkit.org>
+
+        Don't call NetworkProcess::singleton from WebProcess when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154829
+
+        Reviewed by Anders Carlsson.
+
+        We were calling NetworkProcess::singleton when making the default session in the 
+        WebProcess, which caused bad things to happen.  We also were never clearing the 
+        credentials in the WebProcess between tests because it used to always call
+        NetworkProcess::singleton, which caused flaky tests.
+
+        This fixes repeatable crashes in http/tests/media/media-document-referer.html and 
+        http/tests/media/media-document.html when using NetworkSession.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::~NetworkProcess):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForType):
+        (WebKit::globalCustomProtocolManager):
+        (WebKit::NetworkSession::setCustomProtocolManager):
+        (WebKit::NetworkSession::defaultSession):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::clearCachedCredentials):
+
 2016-02-29  Gavin Barraclough  <barraclough@apple.com>
 
         RefCounter<T>::Event -> RefCounterEvent

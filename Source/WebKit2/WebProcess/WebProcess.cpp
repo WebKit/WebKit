@@ -500,6 +500,9 @@ void WebProcess::setCacheModel(uint32_t cm)
 void WebProcess::clearCachedCredentials()
 {
     NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
+#if USE(NETWORK_SESSION)
+    NetworkSession::defaultSession().clearCredentials();
+#endif
 }
 
 WebPage* WebProcess::focusedWebPage() const
