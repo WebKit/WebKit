@@ -6,6 +6,7 @@ if (this.importScripts) {
 description("Test that deleteDatabase is delayed if a VERSION_CHANGE transaction is running");
 
 indexedDBTest(prepareDatabase, onOpenSuccess);
+
 function prepareDatabase(evt)
 {
     preamble(evt);
@@ -28,7 +29,7 @@ function prepareDatabase(evt)
     request = evalAndLog("indexedDB.deleteDatabase(dbname)");
     request.onerror = unexpectedErrorCallback;
     request.onblocked = function deleteDatabaseOnBlocked(evt) {
-        preamble(evt);
+        eval("blockedCalled = true");
     };
     request.onsuccess = function deleteDatabaseOnSuccess(evt) {
         preamble(evt);
@@ -40,6 +41,7 @@ function prepareDatabase(evt)
 function onOpenSuccess(evt)
 {
     preamble(evt);
+    shouldBeTrue("blockedCalled");
     evalAndLog("h = event.target.result");
     evalAndLog("h.close()");
 }

@@ -18,12 +18,11 @@ PASS event.target.version is 1
 PASS event.oldVersion is 1
 PASS event.newVersion is null
 
-deleteDatabaseOnBlocked():
-
 transactionOnComplete():
 versionChangeComplete = true
 
 onOpenSuccess():
+PASS blockedCalled is true
 h = event.target.result
 h.close()
 
