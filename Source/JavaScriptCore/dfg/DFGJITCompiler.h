@@ -264,6 +264,7 @@ private:
     // Internal implementation to compile.
     void compileEntry();
     void compileSetupRegistersForEntry();
+    void compileEntryExecutionFlag();
     void compileBody();
     void link(LinkBuffer&);
     
