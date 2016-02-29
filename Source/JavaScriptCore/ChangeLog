@@ -1,3 +1,17 @@
+2016-02-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Drop unnecessary proved type branch in ToPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=154716
+
+        Reviewed by Geoffrey Garen.
+
+        This branching based on the proved types is unnecessary because this is already handled in constant folding phase.
+        In fact, the DFGSpeculativeJIT64.cpp case is already removed in r164243.
+        This patch removes the remaining JIT32_64 case.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2016-02-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Be aggressive with OSR Entry to FTL if the DFG function was only used for OSR Entry itself

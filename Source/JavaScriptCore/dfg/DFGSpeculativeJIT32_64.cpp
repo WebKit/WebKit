@@ -3252,22 +3252,17 @@ void SpeculativeJIT::compile(Node* node)
         
         op1.use();
         
-        if (!(m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean))) {
-            m_jit.move(op1TagGPR, resultTagGPR);
-            m_jit.move(op1PayloadGPR, resultPayloadGPR);
-        } else {
-            MacroAssembler::Jump alreadyPrimitive = m_jit.branchIfNotCell(op1.jsValueRegs());
-            MacroAssembler::Jump notPrimitive = m_jit.branchIfObject(op1PayloadGPR);
-            
-            alreadyPrimitive.link(&m_jit);
-            m_jit.move(op1TagGPR, resultTagGPR);
-            m_jit.move(op1PayloadGPR, resultPayloadGPR);
-            
-            addSlowPathGenerator(
-                slowPathCall(
-                    notPrimitive, this, operationToPrimitive,
-                    JSValueRegs(resultTagGPR, resultPayloadGPR), op1TagGPR, op1PayloadGPR));
-        }
+        MacroAssembler::Jump alreadyPrimitive = m_jit.branchIfNotCell(op1.jsValueRegs());
+        MacroAssembler::Jump notPrimitive = m_jit.branchIfObject(op1PayloadGPR);
+        
+        alreadyPrimitive.link(&m_jit);
+        m_jit.move(op1TagGPR, resultTagGPR);
+        m_jit.move(op1PayloadGPR, resultPayloadGPR);
+        
+        addSlowPathGenerator(
+            slowPathCall(
+                notPrimitive, this, operationToPrimitive,
+                JSValueRegs(resultTagGPR, resultPayloadGPR), op1TagGPR, op1PayloadGPR));
         
         jsValueResult(resultTagGPR, resultPayloadGPR, node, UseChildrenCalledExplicitly);
         break;
