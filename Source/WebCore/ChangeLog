@@ -1,5 +1,21 @@
 2016-02-29  Chris Dumez  <cdumez@apple.com>
 
+        Use HTML parsing rules for textarea.maxLength
+        https://bugs.webkit.org/show_bug.cgi?id=154805
+
+        Reviewed by Andreas Kling.
+
+        Use HTML parsing rules for textarea.maxLength:
+        - https://html.spec.whatwg.org/multipage/forms.html#dom-textarea-maxlength
+        - https://html.spec.whatwg.org/multipage/infrastructure.html#limited-to-only-non-negative-numbers
+
+        No new tests, already covered by existing test.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::maxLength):
+
+2016-02-29  Chris Dumez  <cdumez@apple.com>
+
         Align td.rowSpan / td.colSpan with the specification
         https://bugs.webkit.org/show_bug.cgi?id=154803
 

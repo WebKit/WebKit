@@ -15175,7 +15175,7 @@ PASS textarea.maxLength: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t
 PASS textarea.maxLength: setAttribute() to "\t7" followed by getAttribute() 
 PASS textarea.maxLength: setAttribute() to "\t7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to "\v7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to "\v7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to "\v7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to "\f7" followed by getAttribute() 
 PASS textarea.maxLength: setAttribute() to "\f7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
@@ -15189,39 +15189,39 @@ PASS textarea.maxLength: setAttribute() to "\n7" followed by IDL get
 PASS textarea.maxLength: setAttribute() to "\r7" followed by getAttribute() 
 PASS textarea.maxLength: setAttribute() to "\r7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
 PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to "᠎7" followed by getAttribute() 
 PASS textarea.maxLength: setAttribute() to "᠎7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to " 7" followed by getAttribute() 
 PASS textarea.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to "　7" followed by getAttribute() 
-FAIL textarea.maxLength: setAttribute() to "　7" followed by IDL get assert_equals: expected -1 but got 7
+PASS textarea.maxLength: setAttribute() to "　7" followed by IDL get 
 PASS textarea.maxLength: setAttribute() to undefined followed by getAttribute() 
 PASS textarea.maxLength: setAttribute() to undefined followed by IDL get 
 PASS textarea.maxLength: setAttribute() to 1.5 followed by getAttribute() 

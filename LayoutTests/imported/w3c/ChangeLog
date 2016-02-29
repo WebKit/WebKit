@@ -1,5 +1,16 @@
 2016-02-29  Chris Dumez  <cdumez@apple.com>
 
+        Use HTML parsing rules for textarea.maxLength
+        https://bugs.webkit.org/show_bug.cgi?id=154805
+
+        Reviewed by Andreas Kling.
+
+        Rebaseline now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+
+2016-02-29  Chris Dumez  <cdumez@apple.com>
+
         Align td.rowSpan / td.colSpan with the specification
         https://bugs.webkit.org/show_bug.cgi?id=154803
 
