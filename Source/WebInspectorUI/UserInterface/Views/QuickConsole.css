@@ -54,6 +54,7 @@
 
     overflow-y: auto;
     overflow-x: hidden;
+    pointer-events: none;
 }
 
 .quick-console > .console-prompt::before {
@@ -72,7 +73,8 @@
 }
 
 .quick-console > .console-prompt > .CodeMirror {
-    margin: 4px 0 1px;
+    pointer-events: all;
+    margin: 4px 0 2px;
 }
 
 .quick-console > .navigation-bar {

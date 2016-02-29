@@ -1,5 +1,26 @@
 2016-02-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Increase clickable area of the console prompt
+        https://bugs.webkit.org/show_bug.cgi?id=154719
+        <rdar://problem/24854538>
+
+        Reviewed by Timothy Hatcher.
+
+        Clicking on the area around CodeMirror element now moves
+        focus to the console prompt.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole.prototype._handleMouseDown):
+        Only capture mousedown events on .quick-console.
+        Don't capture clicks on CodeMirror.
+
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console > .console-prompt):
+        (.quick-console > .console-prompt > .CodeMirror):
+        Make sure .console-prompt is never an event.target for _handleMouseDown.
+
+2016-02-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
         REGRESSION (r196741): Web Inspector: Bottom section of Layers sidebar is 1px shorter than the console prompt
         https://bugs.webkit.org/show_bug.cgi?id=154773
         <rdar://problem/24873345>
