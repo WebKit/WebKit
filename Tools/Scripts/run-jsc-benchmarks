@@ -2930,7 +2930,7 @@ begin
    [["raytrace"], "raytrace", 2, true, false, 32],
    [["richards"], "richards", 2, true, false, 32],
    [["splay"], "splay", 2, true, false, 32],
-   [["regexp"], "regexp", 2, false, false, 16],
+   [["regexp"], "regexp", 2, true, false, 16],
    [["pdfjs"], "pdfjs", 2, false, false, 4],
    [["mandreel"], "mandreel", 2, false, false, 4],
    [["gbemu-part1", "gbemu-part2"], "gbemu", 2, false, false, 4],

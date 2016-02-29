@@ -1,3 +1,31 @@
+2016-02-29  Filip Pizlo  <fpizlo@apple.com>
+
+        We've been running Octane/regexp all wrong in run-jsc-benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=154827
+
+        Reviewed by Andreas Kling.
+
+        Octane v.2 and JetStream v.1.1 run this benchmark with warmup. This script was running
+        it without warmup. This patches fixes this by making this script run it with warmup.
+
+        This fix shows that my last patch, which added FTL support for regexp, was actually a 3%
+        speed-up on Octane/regexp, not a slow-down as the ChangeLog claimed.
+
+        It discovered this bug because for each Octane test that I want to debug, I usually make
+        a standalone .js file that contains the whole test along with a miniharness - usually
+        a plain loop - that runs it almost like it would for real but with whatever hacks I'm
+        using for debugging. When I wrote such a thing for regexp, I used a ~20 iteration warmup
+        to match the one second of warmup that this benchmark gets in Octane. To my surprise,
+        this quite faithful regexp runner did not see the regression that run-jsc-benchmarks
+        saw. That's when I found out that run-jsc-benchmarks was running it wrong.
+
+        The reason for the no-warmup slow-down is that the FTL is actually fairly expensive to
+        run on some of these very large functions in the regexp benchmark. I don't think we can
+        do anything about that, and I'd argue that the speed-up we see after the compilation is
+        done suggests that it was worth it.
+
+        * Scripts/run-jsc-benchmarks:
+
 2016-02-29  Gavin Barraclough  <barraclough@apple.com>
 
         RefCounter<T>::Event -> RefCounterEvent
