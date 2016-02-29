@@ -623,8 +623,15 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     addResult.iterator->value = std::make_unique<SQLiteIDBTransaction>(*this, info);
 
     auto error = addResult.iterator->value->begin(*m_sqliteDB);
-    if (error.isNull() && info.mode() == IndexedDB::TransactionMode::VersionChange)
+    if (error.isNull() && info.mode() == IndexedDB::TransactionMode::VersionChange) {
         m_originalDatabaseInfoBeforeVersionChange = std::make_unique<IDBDatabaseInfo>(*m_databaseInfo);
+
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("UPDATE IDBDatabaseInfo SET value = ? where key = 'DatabaseVersion';"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindText(1, String::number(info.newVersion())) != SQLITE_OK
+            || sql.step() != SQLITE_DONE)
+            error = { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to store new database version in database") };
+    }
 
     return error;
 }

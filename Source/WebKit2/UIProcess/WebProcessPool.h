@@ -243,6 +243,7 @@ public:
     bool isUsingTestingNetworkSession() const { return m_shouldUseTestingNetworkSession; }
 
     void clearCachedCredentials();
+    void terminateDatabaseProcess();
 
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
