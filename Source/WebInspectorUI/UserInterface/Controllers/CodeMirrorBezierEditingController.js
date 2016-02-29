@@ -54,6 +54,11 @@ WebInspector.CodeMirrorBezierEditingController = class CodeMirrorBezierEditingCo
         this._bezierEditor.bezier = this.value;
     }
 
+    popoverDidDismiss(popover)
+    {
+        this._bezierEditor.removeListeners();
+    }
+
     // Private
 
     _bezierEditorBezierChanged(event)

@@ -25,7 +25,7 @@
 
 .bezier-editor {
     width: 200px;
-    height: 225px;
+    height: 260px;
 }
 
 .bezier-editor > .bezier-preview {
@@ -51,6 +51,7 @@
     border-top: 4px solid black;
 }
 
+.bezier-editor > .bezier-preview.animate > div,
 .bezier-editor > .bezier-preview-timing.animate {
     animation: bezierPreview 2.5s linear 250ms infinite;
 }
@@ -94,4 +95,25 @@
 
 .bezier-editor > .bezier-container .control-handle.selected {
     r: 7px;
+}
+
+.bezier-editor > .number-input-container {
+    display: flex;
+    width: calc(100% - 10px);
+    margin: 0 5px;
+    padding-top: 7px;
+    border-top: 1px solid lightgrey;
+}
+
+.bezier-editor > .number-input-container > input {
+    width: 100%;
+    margin: 0 5px;
+    padding: 1px 2px 1px 1px;
+    text-align: right;
+    font-size: 13px;
+    background-color: white;
+    border: 1px solid hsl(0, 0%, 60%);
+    border-radius: 4px;
+    box-shadow: inset 0 0 1px 1px hsl(0, 0%, 89%);
+    outline: none;
 }

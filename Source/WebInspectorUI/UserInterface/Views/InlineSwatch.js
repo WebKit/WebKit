@@ -57,6 +57,7 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
         this._swatchInnerElement = this._swatchElement.createChild("span");
 
         this._value = value || this._fallbackValue();
+        this._valueEditor = null;
 
         this._updateSwatch();
     }
@@ -77,6 +78,17 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
     {
         this._value = value;
         this._updateSwatch(true);
+    }
+
+    // Protected
+
+    didDismissPopover(popover)
+    {
+        if (!this._valueEditor)
+            return;
+
+        if (typeof this._valueEditor.removeListeners === "function")
+            this._valueEditor.removeListeners();
     }
 
     // Private
@@ -122,29 +134,29 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
         let bounds = WebInspector.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
         let popover = new WebInspector.Popover(this);
 
-        let valueEditor = null;
+        this._valueEditor = null;
         if (this._type === WebInspector.InlineSwatch.Type.Bezier) {
-            valueEditor = new WebInspector.BezierEditor;
-            valueEditor.addEventListener(WebInspector.BezierEditor.Event.BezierChanged, this._valueEditorValueDidChange, this);
+            this._valueEditor = new WebInspector.BezierEditor;
+            this._valueEditor.addEventListener(WebInspector.BezierEditor.Event.BezierChanged, this._valueEditorValueDidChange, this);
         } else if (this._type === WebInspector.InlineSwatch.Type.Gradient) {
-            valueEditor = new WebInspector.GradientEditor;
-            valueEditor.addEventListener(WebInspector.GradientEditor.Event.GradientChanged, this._valueEditorValueDidChange, this);
-            valueEditor.addEventListener(WebInspector.GradientEditor.Event.ColorPickerToggled, (event) => popover.update());
+            this._valueEditor = new WebInspector.GradientEditor;
+            this._valueEditor.addEventListener(WebInspector.GradientEditor.Event.GradientChanged, this._valueEditorValueDidChange, this);
+            this._valueEditor.addEventListener(WebInspector.GradientEditor.Event.ColorPickerToggled, (event) => popover.update());
         } else {
-            valueEditor = new WebInspector.ColorPicker;
-            valueEditor.addEventListener(WebInspector.ColorPicker.Event.ColorChanged, this._valueEditorValueDidChange, this);
+            this._valueEditor = new WebInspector.ColorPicker;
+            this._valueEditor.addEventListener(WebInspector.ColorPicker.Event.ColorChanged, this._valueEditorValueDidChange, this);
         }
 
-        popover.content = valueEditor.element;
+        popover.content = this._valueEditor.element;
         popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_X]);
 
         let value = this._value || this._fallbackValue();
         if (this._type === WebInspector.InlineSwatch.Type.Bezier)
-            valueEditor.bezier = value;
+            this._valueEditor.bezier = value;
         else if (this._type === WebInspector.InlineSwatch.Type.Gradient)
-            valueEditor.gradient = value;
+            this._valueEditor.gradient = value;
         else
-            valueEditor.color = value;
+            this._valueEditor.color = value;
     }
 
     _valueEditorValueDidChange(event)

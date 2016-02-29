@@ -145,6 +145,11 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
         // Implemented by subclasses.
     }
 
+    popoverDidDismiss(popover)
+    {
+        // Implemented by subclasses.
+    }
+
     // Protected
 
     handleKeydownEvent(event)
@@ -181,6 +186,7 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
         delete this._originalValue;
 
         WebInspector.removeWindowKeydownListener(this);
+        this.popoverDidDismiss();
 
         if (this._delegate && typeof this._delegate.editingControllerDidFinishEditing === "function")
             this._delegate.editingControllerDidFinishEditing(this);

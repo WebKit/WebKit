@@ -1,3 +1,62 @@
+2016-02-29  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add direct number inputs to Bezier editor
+        https://bugs.webkit.org/show_bug.cgi?id=154809
+        <rdar://problem/24881465>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._updateWindowKeydownListener):
+        Now only adds the shared event listener when the first keydown listener
+        is added via WebInspector.addWindowKeydownListener
+
+        * UserInterface/Controllers/CodeMirrorBezierEditingController.js:
+        (WebInspector.CodeMirrorBezierEditingController.prototype.popoverDidDismiss):
+
+        * UserInterface/Controllers/CodeMirrorEditingController.js:
+        (WebInspector.CodeMirrorEditingController.prototype.popoverDidDismiss):
+        (WebInspector.CodeMirrorEditingController.prototype.didDismissPopover):
+        Added function that is called when the popover is dismissed so that
+        removing event listeners is possible.
+
+        * UserInterface/Views/BezierEditor.css:
+        (.bezier-editor):
+        (.bezier-editor > .number-input-container):
+        (.bezier-editor > .number-input-container > input):
+
+        * UserInterface/Views/BezierEditor.js:
+        (WebInspector.BezierEditor.createControl):
+        (WebInspector.BezierEditor.createBezierInput):
+        (WebInspector.BezierEditor):
+        Added usage of Element.prototype.createChild for ease of readability.
+        Also added input elements for manually changing the values of each bezier
+        point's x and y values.
+
+        (WebInspector.BezierEditor.prototype.set bezier):
+        (WebInspector.BezierEditor.prototype.removeListeners):
+        (WebInspector.BezierEditor.prototype._handleMousedown):
+        (WebInspector.BezierEditor.prototype._updateBezier):
+        (WebInspector.BezierEditor.prototype._updateBezierPreview):
+        (WebInspector.BezierEditor.prototype._triggerPreviewAnimation):
+        (WebInspector.BezierEditor.prototype._handleNumberInputInput):
+        (WebInspector.BezierEditor.prototype._handleNumberInputKeydown):
+        (WebInspector.BezierEditor.prototype._changeBezierForInput):
+        Refactored code to make it more reusable, as well as adding event listeners
+        to the newly created inputs, including value chaning from the arrow keys.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.didDismissPopover): Deleted.
+        Removed unused code.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch):
+        (WebInspector.InlineSwatch.prototype.didDismissPopover):
+        Removes any global event listeners added by the current editor if able.
+
+        (WebInspector.InlineSwatch.prototype._swatchElementClicked):
+        Now saves the current editor object as a member variable.
+
 2016-02-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: DataGrid's resizers aren't horizontally centered

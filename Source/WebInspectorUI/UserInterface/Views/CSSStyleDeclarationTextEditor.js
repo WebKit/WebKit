@@ -386,12 +386,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     // Protected
 
-    didDismissPopover(popover)
-    {
-        if (popover === this._cubicBezierEditorPopover)
-            this._cubicBezierEditorPopover = null;
-    }
-
     completionControllerCompletionsHidden(completionController)
     {
         var styleText = this._style.text;
