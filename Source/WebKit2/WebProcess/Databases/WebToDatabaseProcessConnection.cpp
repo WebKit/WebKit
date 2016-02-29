@@ -29,8 +29,6 @@
 
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "WebIDBConnectionToServerMessages.h"
-#include "WebIDBServerConnection.h"
-#include "WebIDBServerConnectionMessages.h"
 #include "WebProcess.h"
 #include <wtf/RunLoop.h>
 
@@ -59,13 +57,6 @@ void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection& connecti
             iterator->value->didReceiveMessage(connection, decoder);
         return;
     }
-
-    if (decoder.messageReceiverName() == Messages::WebIDBServerConnection::messageReceiverName()) {
-        HashMap<uint64_t, WebIDBServerConnection*>::iterator connectionIterator = m_webIDBServerConnections.find(decoder.destinationID());
-        if (connectionIterator != m_webIDBServerConnections.end())
-            connectionIterator->value->didReceiveWebIDBServerConnectionMessage(connection, decoder);
-        return;
-    }
 #endif
     
     ASSERT_NOT_REACHED();
@@ -81,22 +72,6 @@ void WebToDatabaseProcessConnection::didReceiveInvalidMessage(IPC::Connection&, 
 }
 
 #if ENABLE(INDEXED_DATABASE)
-void WebToDatabaseProcessConnection::registerWebIDBServerConnection(WebIDBServerConnection& connection)
-{
-    ASSERT(!m_webIDBServerConnections.contains(connection.messageSenderDestinationID()));
-    m_webIDBServerConnections.set(connection.messageSenderDestinationID(), &connection);
-
-}
-
-void WebToDatabaseProcessConnection::removeWebIDBServerConnection(WebIDBServerConnection& connection)
-{
-    ASSERT(m_webIDBServerConnections.contains(connection.messageSenderDestinationID()));
-
-    send(Messages::DatabaseToWebProcessConnection::RemoveDatabaseProcessIDBConnection(connection.messageSenderDestinationID()));
-
-    m_webIDBServerConnections.remove(connection.messageSenderDestinationID());
-}
-
 WebIDBConnectionToServer& WebToDatabaseProcessConnection::idbConnectionToServerForSession(const SessionID& sessionID)
 {
     auto result = m_webIDBConnections.add(sessionID.sessionID(), nullptr);

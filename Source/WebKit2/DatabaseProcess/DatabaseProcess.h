@@ -29,8 +29,6 @@
 #if ENABLE(DATABASE_PROCESS)
 
 #include "ChildProcess.h"
-#include "LegacyUniqueIDBDatabase.h"
-#include "LegacyUniqueIDBDatabaseIdentifier.h"
 #include <WebCore/IDBServer.h>
 #include <WebCore/UniqueIDBDatabase.h>
 #include <wtf/NeverDestroyed.h>
@@ -56,9 +54,6 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     const String& indexedDatabaseDirectory() const { return m_indexedDatabaseDirectory; }
-
-    RefPtr<LegacyUniqueIDBDatabase> getOrCreateLegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabaseIdentifier&);
-    void removeLegacyUniqueIDBDatabase(const LegacyUniqueIDBDatabase&);
 
     void ensureIndexedDatabaseRelativePathExists(const String&);
     String absoluteIndexedDatabasePathFromDatabaseRelativePath(const String&);
@@ -112,8 +107,6 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     String m_indexedDatabaseDirectory;
-
-    HashMap<LegacyUniqueIDBDatabaseIdentifier, RefPtr<LegacyUniqueIDBDatabase>> m_idbDatabases;
 
     RefPtr<WebCore::IDBServer::IDBServer> m_idbServer;
 #endif

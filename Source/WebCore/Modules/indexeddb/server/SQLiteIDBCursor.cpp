@@ -69,7 +69,7 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, const IDBCur
     : m_transaction(&transaction)
     , m_cursorIdentifier(info.identifier())
     , m_objectStoreID(info.objectStoreIdentifier())
-    , m_indexID(info.cursorSource() == IndexedDB::CursorSource::Index ? info.sourceIdentifier() : IDBIndexMetadata::InvalidId)
+    , m_indexID(info.cursorSource() == IndexedDB::CursorSource::Index ? info.sourceIdentifier() : IDBIndexInfo::InvalidId)
     , m_cursorDirection(info.cursorDirection())
     , m_keyRange(info.range())
 {
@@ -80,7 +80,7 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, const uint64
     : m_transaction(&transaction)
     , m_cursorIdentifier(transaction.transactionIdentifier())
     , m_objectStoreID(objectStoreID)
-    , m_indexID(indexID ? indexID : IDBIndexMetadata::InvalidId)
+    , m_indexID(indexID ? indexID : IDBIndexInfo::InvalidId)
     , m_cursorDirection(IndexedDB::CursorDirection::Next)
     , m_keyRange(range)
     , m_backingStoreCursor(true)
@@ -167,7 +167,7 @@ bool SQLiteIDBCursor::establishStatement()
     ASSERT(!m_statement);
     String sql;
 
-    if (m_indexID != IDBIndexMetadata::InvalidId) {
+    if (m_indexID != IDBIndexInfo::InvalidId) {
         sql = buildIndexStatement(m_keyRange, m_cursorDirection);
         m_boundID = m_indexID;
     } else {
@@ -370,7 +370,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
     m_currentValueBuffer = keyData;
 
     // The primaryKey of an ObjectStore cursor is the same as its key.
-    if (m_indexID == IDBIndexMetadata::InvalidId)
+    if (m_indexID == IDBIndexInfo::InvalidId)
         m_currentPrimaryKey = m_currentKey;
     else {
         if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentPrimaryKey)) {

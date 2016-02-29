@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebDatabaseProvider.h"
 
-#include "WebIDBFactoryBackend.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/SessionID.h>
@@ -84,14 +83,6 @@ WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToS
     return WebProcess::singleton().webToDatabaseProcessConnection()->idbConnectionToServerForSession(sessionID).coreConnectionToServer();
 }
 
-RefPtr<WebCore::IDBFactoryBackendInterface> WebDatabaseProvider::createIDBFactoryBackend()
-{
-#if ENABLE(DATABASE_PROCESS)
-    return WebIDBFactoryBackend::create();
-#else
-    return nullptr;
-#endif
-}
 #endif
 
 }

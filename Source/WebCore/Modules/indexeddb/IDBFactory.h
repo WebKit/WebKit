@@ -38,7 +38,6 @@ namespace WebCore {
 
 class IDBKey;
 class IDBKeyRange;
-class IDBFactoryBackendInterface;
 class ScriptExecutionContext;
 
 struct ExceptionCodeWithMessage;
@@ -68,4 +67,4 @@ protected:
 
 #endif
 
-#endif // LegacyFactory_h
+#endif // IDBFactory_h

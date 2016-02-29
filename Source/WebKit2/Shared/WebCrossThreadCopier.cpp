@@ -27,24 +27,12 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBIdentifier.h"
-#include "LegacyUniqueIDBDatabaseIdentifier.h"
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/SecurityOriginData.h>
 
 using namespace WebKit;
 
 namespace WebCore {
-
-LegacyUniqueIDBDatabaseIdentifier CrossThreadCopierBase<false, false, LegacyUniqueIDBDatabaseIdentifier>::copy(const LegacyUniqueIDBDatabaseIdentifier& identifier)
-{
-    return identifier.isolatedCopy();
-}
-
-IDBIdentifier CrossThreadCopierBase<false, false, IDBIdentifier>::copy(const IDBIdentifier& transactionIdentifier)
-{
-    return transactionIdentifier.isolatedCopy();
-}
 
 Vector<char> CrossThreadCopierBase<false, false, Vector<char>>::copy(const Vector<char>& vector)
 {

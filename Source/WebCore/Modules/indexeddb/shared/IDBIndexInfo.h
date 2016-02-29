@@ -54,6 +54,9 @@ public:
     String loggingString(int indent = 0) const;
 #endif
 
+    // FIXME: Remove the need for this.
+    static const int64_t InvalidId = -1;
+
 private:
     uint64_t m_identifier { 0 };
     uint64_t m_objectStoreIdentifier { 0 };

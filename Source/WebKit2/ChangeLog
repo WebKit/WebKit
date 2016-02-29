@@ -1,5 +1,64 @@
 2016-02-25  Brady Eidson  <beidson@apple.com>
 
+        Remove LegacyIDB.
+        https://bugs.webkit.org/show_bug.cgi?id=150854
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::getOrCreateLegacyUniqueIDBDatabase): Deleted.
+        (WebKit::DatabaseProcess::removeLegacyUniqueIDBDatabase): Deleted.
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didClose):
+        (WebKit::DatabaseToWebProcessConnection::didReceiveMessage): Deleted.
+        (WebKit::DatabaseToWebProcessConnection::didReceiveSyncMessage): Deleted.
+        (WebKit::DatabaseToWebProcessConnection::establishIDBConnection): Deleted.
+        (WebKit::DatabaseToWebProcessConnection::removeDatabaseProcessIDBConnection): Deleted.
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.messages.in:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp: Removed.
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h: Removed.
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in: Removed.
+        * DatabaseProcess/IndexedDB/IDBIdentifier.h: Removed.
+        * DatabaseProcess/IndexedDB/IDBSerialization.cpp: Removed.
+        * DatabaseProcess/IndexedDB/IDBSerialization.h: Removed.
+        * DatabaseProcess/IndexedDB/LegacyUniqueIDBDatabase.cpp: Removed.
+        * DatabaseProcess/IndexedDB/LegacyUniqueIDBDatabase.h: Removed.
+        * DatabaseProcess/IndexedDB/LegacyUniqueIDBDatabaseIdentifier.cpp: Removed.
+        * DatabaseProcess/IndexedDB/LegacyUniqueIDBDatabaseIdentifier.h: Removed.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h: Removed.
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp: Removed.
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.h: Removed.
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp: Removed.
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h: Removed.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp: Removed.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h: Removed.
+        * DerivedSources.make:
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::LegacyUniqueIDBDatabaseIdentifier>::copy): Deleted.
+        (WebCore::IDBIdentifier>::copy): Deleted.
+        * Shared/WebCrossThreadCopier.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp: Removed.
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h: Removed.
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp: Removed.
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h: Removed.
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in: Removed.
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::createIDBFactoryBackend): Deleted.
+        * WebProcess/Databases/WebDatabaseProvider.h:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::didReceiveMessage): Deleted.
+        (WebKit::WebToDatabaseProcessConnection::registerWebIDBServerConnection): Deleted.
+        (WebKit::WebToDatabaseProcessConnection::removeWebIDBServerConnection): Deleted.
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+
+2016-02-25  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: WebKit 2 IPC layer.
         https://bugs.webkit.org/show_bug.cgi?id=153808
 

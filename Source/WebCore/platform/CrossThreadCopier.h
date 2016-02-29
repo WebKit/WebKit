@@ -161,22 +161,10 @@ namespace WebCore {
         WEBCORE_EXPORT static IndexedDB::CursorType copy(const IndexedDB::CursorType&);
     };
 
-    struct IDBDatabaseMetadata;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseMetadata> {
-        typedef IDBDatabaseMetadata Type;
-        static Type copy(const IDBDatabaseMetadata&);
-    };
-
     class IDBGetResult;
     template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBGetResult> {
         typedef IDBGetResult Type;
         static Type copy(const IDBGetResult&);
-    };
-
-    struct IDBIndexMetadata;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBIndexMetadata> {
-        typedef IDBIndexMetadata Type;
-        static Type copy(const IDBIndexMetadata&);
     };
 
     class IDBKeyData;
@@ -189,12 +177,6 @@ namespace WebCore {
     template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyRangeData> {
         typedef IDBKeyRangeData Type;
         static Type copy(const IDBKeyRangeData&);
-    };
-
-    struct IDBObjectStoreMetadata;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBObjectStoreMetadata> {
-        typedef IDBObjectStoreMetadata Type;
-        static Type copy(const IDBObjectStoreMetadata&);
     };
 
     class IDBDatabaseInfo;
