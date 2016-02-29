@@ -1,3 +1,26 @@
+2016-02-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Refactor FetchBody constructors
+        https://bugs.webkit.org/show_bug.cgi?id=154721
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        Covered by existing tests.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract): Renamed from "fromJSValue"
+        (WebCore::FetchBody::extractFromBody): Renamed from "fromRequestBody" and making use of move constructor.
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::FetchBody): Making default constructor public and removing empty static method.
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::buildBody):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::error):
+        (WebCore::FetchResponse::redirect):
+        (WebCore::FetchResponse::initializeWith):
+        * Modules/fetch/FetchResponse.h:
+        (WebCore::FetchResponse::create):
+
 2016-02-28  Antti Koivisto  <antti@apple.com>
 
         ::slotted doesn't work in nested shadow trees

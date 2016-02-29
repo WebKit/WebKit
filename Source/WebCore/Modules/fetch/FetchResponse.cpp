@@ -50,7 +50,7 @@ static inline bool isNullBodyStatus(int status)
 
 Ref<FetchResponse> FetchResponse::error()
 {
-    return adoptRef(*new FetchResponse(Type::Error, FetchBody::empty(), FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
+    return adoptRef(*new FetchResponse(Type::Error, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
 }
 
 RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext* context, const String& url, int status, ExceptionCode& ec)
@@ -65,7 +65,7 @@ RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext* context, c
         ec = TypeError;
         return nullptr;
     }
-    RefPtr<FetchResponse> redirectResponse = adoptRef(*new FetchResponse(Type::Default, FetchBody::empty(), FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
+    RefPtr<FetchResponse> redirectResponse = adoptRef(*new FetchResponse(Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
     redirectResponse->m_response.setHTTPStatusCode(status);
     redirectResponse->m_headers->fastSet(HTTPHeaderName::Location, requestURL.string());
     return redirectResponse;
@@ -102,7 +102,7 @@ void FetchResponse::initializeWith(const Dictionary& init, ExceptionCode& ec)
             ec = TypeError;
             return;
         }
-        m_body = FetchBody::fromJSValue(*init.execState(), body);
+        m_body = FetchBody::extract(*init.execState(), body);
         if (m_headers->fastGet(HTTPHeaderName::ContentType).isEmpty() && !m_body.mimeType().isEmpty())
             m_headers->fastSet(HTTPHeaderName::ContentType, m_body.mimeType());
     }

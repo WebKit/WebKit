@@ -216,7 +216,7 @@ static FetchBody buildBody(const Dictionary& init, FetchHeaders& headers, FetchB
 {
     JSC::JSValue value;
     bool hasInitBody = init.get("body", value);
-    FetchBody body = hasInitBody ? FetchBody::fromJSValue(*init.execState(), value) : FetchBody::fromRequestBody(inputBody);
+    FetchBody body = hasInitBody ? FetchBody::extract(*init.execState(), value) : FetchBody::extractFromBody(inputBody);
 
     String type = headers.fastGet(HTTPHeaderName::ContentType);
     if (hasInitBody && type.isEmpty() && !body.mimeType().isEmpty()) {

@@ -47,7 +47,7 @@ typedef int ExceptionCode;
 
 class FetchResponse : public RefCounted<FetchResponse> {
 public:
-    static Ref<FetchResponse> create() { return adoptRef(*new FetchResponse(Type::Default, FetchBody::empty(), FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
+    static Ref<FetchResponse> create() { return adoptRef(*new FetchResponse(Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
     static Ref<FetchResponse> error();
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext*, const String&, int, ExceptionCode&);
     // FIXME: Binding generator should not require below method to handle optional status parameter.

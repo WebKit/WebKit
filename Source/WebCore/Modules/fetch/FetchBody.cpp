@@ -61,7 +61,7 @@ FetchBody::FetchBody(String&& text)
 {
 }
 
-FetchBody FetchBody::fromJSValue(JSC::ExecState& state, JSC::JSValue value)
+FetchBody FetchBody::extract(JSC::ExecState& state, JSC::JSValue value)
 {
     if (value.inherits(JSBlob::info()))
         return FetchBody(*JSBlob::toWrapped(value));
@@ -69,27 +69,16 @@ FetchBody FetchBody::fromJSValue(JSC::ExecState& state, JSC::JSValue value)
         return FetchBody(*JSDOMFormData::toWrapped(value));
     if (value.isString())
         return FetchBody(value.toWTFString(&state));
-    return FetchBody();
+    return { };
 }
 
-// FIXME: Once FetchResponse is added, check whether using a move constructor instead.
-// Ensure whether resetting m_mimeType to the empty string be not observable.
-FetchBody FetchBody::fromRequestBody(FetchBody* body)
+FetchBody FetchBody::extractFromBody(FetchBody* body)
 {
     if (!body)
-        return FetchBody();
-
-    FetchBody result;
-    result.m_type = body->m_type;
-    result.m_mimeType = body->m_mimeType;
-
-    result.m_blob = WTFMove(body->m_blob);
-    result.m_formData = WTFMove(body->m_formData);
-    result.m_text = WTFMove(body->m_text);
+        return { };
 
     body->m_isDisturbed = true;
-
-    return result;
+    return FetchBody(WTFMove(*body));
 }
 
 template<typename T> inline bool FetchBody::processIfEmptyOrDisturbed(DOMPromise<T, ExceptionCode>& promise)
