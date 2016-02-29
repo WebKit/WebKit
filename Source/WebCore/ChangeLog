@@ -1,3 +1,16 @@
+2016-02-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        SVGToOTFFontConversion.cpp does not compile with libstdc++ 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=154794
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendLigatureSubtable): Added const
+        qualifiers.
+
 2016-02-27  Chris Dumez  <cdumez@apple.com>
 
         Prevent cross-origin access to Location.assign() / Location.reload()
