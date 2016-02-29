@@ -80,11 +80,11 @@ TEST(WTF, RefCounter)
     {
         // Testing (1a) - Construction with a callback.
         TestCounter* counterPtr = nullptr;
-        TestCounter counter([&](TestCounter::Event event) {
+        TestCounter counter([&](RefCounterEvent event) {
             // Check that the callback is called at the expected times, and the correct number of times.
-            if (TestCounter::Event::Increment == event)
+            if (RefCounterEvent::Increment == event)
                 EXPECT_EQ(callbackValue, IncrementExpected);
-            if (TestCounter::Event::Decrement == event)
+            if (RefCounterEvent::Decrement == event)
                 EXPECT_EQ(callbackValue, DecrementExpected);
             // return the value of the counter in the callback.
             callbackValue = counterPtr->value();

@@ -1,3 +1,34 @@
+2016-02-29  Gavin Barraclough  <barraclough@apple.com>
+
+        RefCounter<T>::Event -> RefCounterEvent
+        https://bugs.webkit.org/show_bug.cgi?id=154767
+
+        Reviewed by Darin Adler.
+
+        RefCounter<T>::Event is kinda verbose to use, and there is no need for this
+        to be specific to a particular typeof RefCounter. Move the enum class up to
+        the top level & rename to RefCounterEvent.
+
+        Also remove UserObservablePageToken - this is vestigial & not really offering
+        anything over just using UserObservablePageCounter::Token directly.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::PluginProcessManager):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        (WebKit::PluginProcessManager::updateProcessSuppressionDisabled):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::ProcessThrottler):
+        (WebKit::m_backgroundCounter):
+        (WebKit::m_suspendMessageCount):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::m_processSuppressionDisabledForPageCounter):
+        (WebKit::m_hiddenPageThrottlingAutoIncreasesCounter):
+        * UIProcess/WebProcessPool.h:
+
 2016-02-29  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation with !ENABLE(DATABASE_PROCESS).

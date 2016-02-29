@@ -39,7 +39,7 @@ VNodeTracker& VNodeTracker::singleton()
 }
 
 VNodeTracker::VNodeTracker()
-    : m_vnodeCounter([this](VNodeCounter::Event event) { if (event == VNodeCounter::Event::Increment) checkPressureState(); })
+    : m_vnodeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Increment) checkPressureState(); })
     , m_pressureWarningTimer(*this, &VNodeTracker::pressureWarningTimerFired)
     , m_lastWarningTime(std::chrono::steady_clock::now())
 {

@@ -68,7 +68,7 @@ public:
 #if PLATFORM(COCOA)
     inline ProcessSuppressionDisabledToken processSuppressionDisabledToken();
     inline bool processSuppressionDisabled() const;
-    void updateProcessSuppressionDisabled(ProcessSuppressionDisabledCounter::Event);
+    void updateProcessSuppressionDisabled(RefCounterEvent);
 #endif
 
 private:

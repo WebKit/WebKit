@@ -43,7 +43,7 @@ PluginProcessManager& PluginProcessManager::singleton()
 
 PluginProcessManager::PluginProcessManager()
 #if PLATFORM(COCOA)
-    : m_processSuppressionDisabledForPageCounter([this](ProcessSuppressionDisabledCounter::Event event) { updateProcessSuppressionDisabled(event); })
+    : m_processSuppressionDisabledForPageCounter([this](RefCounterEvent event) { updateProcessSuppressionDisabled(event); })
 #endif
 {
 }

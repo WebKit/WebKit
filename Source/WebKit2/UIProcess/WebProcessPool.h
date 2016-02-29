@@ -339,7 +339,7 @@ public:
     void setMemoryCacheDisabled(bool);
     void setFontWhitelist(API::Array*);
 
-    UserObservablePageToken userObservablePageCount()
+    UserObservablePageCounter::Token userObservablePageCount()
     {
         return m_userObservablePageCounter.count();
     }

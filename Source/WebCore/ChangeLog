@@ -1,3 +1,24 @@
+2016-02-29  Gavin Barraclough  <barraclough@apple.com>
+
+        RefCounter<T>::Event -> RefCounterEvent
+        https://bugs.webkit.org/show_bug.cgi?id=154767
+
+        Reviewed by Darin Adler.
+
+        RefCounter<T>::Event is kinda verbose to use, and there is no need for this
+        to be specific to a particular typeof RefCounter. Move the enum class up to
+        the top level & rename to RefCounterEvent.
+
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+        (WebCore::m_audiblePluginHysteresis):
+        (WebCore::m_mediaActivityCounter):
+        (WebCore::m_pageLoadActivityCounter):
+        * platform/VNodeTracker.cpp:
+        (WebCore::VNodeTracker::singleton):
+        (WebCore::VNodeTracker::VNodeTracker):
+        (WebCore::m_lastWarningTime):
+
 2016-02-29  Chris Dumez  <cdumez@apple.com>
 
         Use HTML parsing rules for textarea.maxLength

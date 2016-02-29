@@ -36,7 +36,6 @@ namespace WebKit {
     
 enum UserObservablePageCounterType { };
 typedef RefCounter<UserObservablePageCounterType> UserObservablePageCounter;
-typedef UserObservablePageCounter::Token UserObservablePageToken;
 enum ProcessSuppressionDisabledCounterType { };
 typedef RefCounter<ProcessSuppressionDisabledCounterType> ProcessSuppressionDisabledCounter;
 typedef ProcessSuppressionDisabledCounter::Token ProcessSuppressionDisabledToken;

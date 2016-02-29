@@ -158,9 +158,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_canHandleHTTPSServerTrustEvaluation(true)
     , m_didNetworkProcessCrash(false)
     , m_memoryCacheDisabled(false)
-    , m_userObservablePageCounter([this](UserObservablePageCounter::Event) { updateProcessSuppressionState(); })
-    , m_processSuppressionDisabledForPageCounter([this](ProcessSuppressionDisabledCounter::Event) { updateProcessSuppressionState(); })
-    , m_hiddenPageThrottlingAutoIncreasesCounter([this](HiddenPageThrottlingAutoIncreasesCounter::Event) { updateHiddenPageThrottlingAutoIncreaseLimit(); })
+    , m_userObservablePageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
+    , m_processSuppressionDisabledForPageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
+    , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { updateHiddenPageThrottlingAutoIncreaseLimit(); })
 {
     for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())
         m_schemesToRegisterAsAlwaysRevalidated.add(scheme);

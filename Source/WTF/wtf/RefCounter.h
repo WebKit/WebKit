@@ -32,6 +32,8 @@
 
 namespace WTF {
 
+enum class RefCounterEvent { Decrement, Increment };
+
 template<typename T>
 class RefCounter {
     WTF_MAKE_NONCOPYABLE(RefCounter);
@@ -57,8 +59,7 @@ class RefCounter {
 
 public:
     using Token = RefPtr<Count>;
-    enum class Event { Decrement, Increment };
-    using ValueChangeFunction = std::function<void (Event)>;
+    using ValueChangeFunction = std::function<void (RefCounterEvent)>;
 
     RefCounter(ValueChangeFunction = nullptr);
     ~RefCounter();
@@ -83,7 +84,7 @@ inline void RefCounter<T>::Count::ref()
 {
     ++m_value;
     if (m_refCounter && m_refCounter->m_valueDidChange)
-        m_refCounter->m_valueDidChange(Event::Increment);
+        m_refCounter->m_valueDidChange(RefCounterEvent::Increment);
 }
 
 template<typename T>
@@ -93,7 +94,7 @@ inline void RefCounter<T>::Count::deref()
 
     --m_value;
     if (m_refCounter && m_refCounter->m_valueDidChange)
-        m_refCounter->m_valueDidChange(Event::Decrement);
+        m_refCounter->m_valueDidChange(RefCounterEvent::Decrement);
 
     // The Count object is kept alive so long as either the RefCounter that created it remains
     // allocated, or so long as its reference count is non-zero.
@@ -126,5 +127,6 @@ inline RefCounter<T>::~RefCounter()
 } // namespace WTF
 
 using WTF::RefCounter;
+using WTF::RefCounterEvent;
 
 #endif // RefCounter_h
