@@ -1,3 +1,14 @@
+2016-02-29  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed compilation with !ENABLE(DATABASE_PROCESS).
+        https://bugs.webkit.org/show_bug.cgi?id=154813
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::terminateDatabaseProcess): Added missing #if
+        guard.
+
 2016-02-29  Adrien Plazas  <aplazas@igalia.com>
 
         [GTK] Touch slider test fails due to assertion in webkitWebViewBaseTouchEvent()

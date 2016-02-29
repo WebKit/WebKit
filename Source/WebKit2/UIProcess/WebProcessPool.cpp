@@ -1090,12 +1090,14 @@ void WebProcessPool::clearCachedCredentials()
 
 void WebProcessPool::terminateDatabaseProcess()
 {
+#if ENABLE(DATABASE_PROCESS)
     ASSERT(m_processes.isEmpty());
     if (!m_databaseProcess)
         return;
 
     m_databaseProcess->terminate();
     m_databaseProcess = nullptr;
+#endif
 }
 
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
