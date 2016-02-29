@@ -189,19 +189,11 @@ if (isAppleMacWebKit()) {
         splice(@projects, $webKitIndex, 0, "Source/WebInspectorUI");
 
         # Copy library and header from WebKitLibraries to a findable place in the product directory.
-        my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", "--wksi", "--llvm", productDir());
+        my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", "--wksi",  productDir());
         print(join(" ", @copyLibrariesArgs) . "\n");
         (system(@copyLibrariesArgs) == 0) or die;
     } else {
         my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", "--sdk", xcodeSDK(), "--wksi");
-        push @copyLibrariesArgs, "--llvm" if willUseIOSDeviceSDK();
-        if (my $hasInternalSDK = xcodeSDK() eq "iphoneos.internal") {
-            push @copyLibrariesArgs, (
-                "--prefer-system-llvm",
-                "--llvm-subdirectory", "internal-llvm",
-                "--llvm-prefix", "/usr/local",
-            );
-        }
         push @copyLibrariesArgs, productDir();
         print(join(" ", @copyLibrariesArgs) . "\n");
         (system(@copyLibrariesArgs) == 0) or die;

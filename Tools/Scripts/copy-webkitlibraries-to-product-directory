@@ -31,15 +31,9 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 my $showHelp = 0;
-my $llvm = 0;
 my $wksi = 0;
 my $clean = 0;
-my $llvmIncludePackage = "";
-my $llvmLibraryPackage = "";
 my $useFullLibPaths = 0;
-my $preferSystemLLVMOverDrops = 0;
-my $llvmSubdirectoryName = "llvm";
-my $llvmPrefix = willUseIOSDeviceSDK() ? "/usr/local" : "/usr/local/LLVMForJavaScriptCore";
 my $osxVersion;
 my $force = 0;
 
@@ -59,15 +53,9 @@ EOF
 
 GetOptions(
     'help' => \$showHelp,
-    'llvm!' => \$llvm,
     'wksi!' => \$wksi,
     'clean' => \$clean,
-    'use-llvm-includes=s' => \$llvmIncludePackage,
-    'use-llvm-libraries=s' => \$llvmLibraryPackage,
     'use-full-lib-paths!' => \$useFullLibPaths,
-    'prefer-system-llvm!' => \$preferSystemLLVMOverDrops,
-    'llvm-subdirectory=s' => \$llvmSubdirectoryName,
-    'llvm-prefix=s' => \$llvmPrefix,
     'osx-version=s' => \$osxVersion,
     'force!' => \$force
 );
@@ -168,13 +156,6 @@ if ($wksi) {
     }
     
     dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
-}
-
-if ($llvm) {
-    # We have various scripts that call this script and pass LLVM-related options. So, we sort of
-    # silently ignore them for now. We should remove this once we confirm that we've axed all of the
-    # LLVM support everywhere.
-    print "Warning: we no longer depend on LLVM so this script does nothing for LLVM. LLVM-related options will be removed soon.\n";
 }
 
 sub fileContains

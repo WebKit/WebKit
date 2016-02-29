@@ -1,3 +1,16 @@
+2016-02-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove more LLVM related cruft
+        https://bugs.webkit.org/show_bug.cgi?id=154821
+
+        Reviewed by Darin Adler.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        * Scripts/export-llvm-build: Removed.
+        * Scripts/run-jsc-stress-tests:
+
 2016-02-28  Sam Weinig  <sam@webkit.org>
 
         Reimplement WKPageGroup in terms of WKUserContentController

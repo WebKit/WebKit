@@ -1476,13 +1476,6 @@ def prepareBundle
             end
 
             if $remote and $hostOS == "linux"
-                if $enableFTL
-                    begin
-                        FileUtils.cp_r originalJSCPath + "../../lib/libllvmForJSC.so" , $jscPath.dirname
-                    rescue
-                        $stderr.puts "Warning: unable to copy libllvmForJSC.so to the bundle."
-                    end
-                end
                 begin
                     dependencies = `ldd #{source}`
                     dependencies.split(/\n/).each {
