@@ -1,3 +1,55 @@
+2016-02-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce uses of PassRefPtr in indexeddb
+        https://bugs.webkit.org/show_bug.cgi?id=154273
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior changes.
+
+        * Modules/indexeddb/IDBDatabaseError.h:
+        (WebCore::IDBDatabaseError::create):
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::maybeCreateIDBKey):
+        * Modules/indexeddb/IDBKeyData.h:
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::create):
+        (WebCore::IDBKeyRange::IDBKeyRange):
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBKeyRange.h:
+        (WebCore::IDBKeyRange::create):
+        (WebCore::IDBKeyRange::lower):
+        (WebCore::IDBKeyRange::upper):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBKeyRangeData.cpp:
+        (WebCore::IDBKeyRangeData::maybeCreateIDBKeyRange):
+        * Modules/indexeddb/IDBKeyRangeData.h:
+        * Modules/indexeddb/IDBServerConnection.h:
+        * Modules/indexeddb/legacy/IDBCallbacks.h:
+        * Modules/indexeddb/legacy/IDBCursorBackend.cpp:
+        (WebCore::IDBCursorBackend::continueFunction):
+        * Modules/indexeddb/legacy/IDBCursorBackend.h:
+        * Modules/indexeddb/legacy/IDBCursorBackendOperations.h:
+        (WebCore::CursorIterationOperation::create):
+        (WebCore::CursorIterationOperation::CursorIterationOperation):
+        * Modules/indexeddb/legacy/IDBTransactionBackendOperations.cpp:
+        (WebCore::GetOperation::perform):
+        (WebCore::PutOperation::perform):
+        * Modules/indexeddb/legacy/LegacyCursor.cpp:
+        (WebCore::LegacyCursor::continueFunction):
+        * Modules/indexeddb/legacy/LegacyCursor.h:
+        * Modules/indexeddb/legacy/LegacyFactory.h:
+        (WebCore::LegacyFactory::create):
+        * Modules/indexeddb/legacy/LegacyRequest.cpp:
+        (WebCore::LegacyRequest::onSuccess):
+        * Modules/indexeddb/legacy/LegacyRequest.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+
 2016-02-28  Tim Horton  <timothy_horton@apple.com>
 
         Switch to application/vnd.apple.folder for <attachment> folder special-case

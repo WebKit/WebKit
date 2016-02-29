@@ -62,7 +62,7 @@ public:
         return result;
     }
 
-    WEBCORE_EXPORT PassRefPtr<IDBKey> maybeCreateIDBKey() const;
+    WEBCORE_EXPORT RefPtr<IDBKey> maybeCreateIDBKey() const;
 
     IDBKeyData isolatedCopy() const;
 
