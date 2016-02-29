@@ -116,7 +116,6 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_unlinkedCodeBlockForCall);
     visitor.append(&thisObject->m_unlinkedCodeBlockForConstruct);
-    visitor.append(&thisObject->m_nameValue);
 }
 
 FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& ownerSource, int overrideLineNumber)

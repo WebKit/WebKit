@@ -589,10 +589,9 @@ void JSFunction::reifyName(ExecState* exec)
 
     ASSERT(!hasReifiedName());
     ASSERT(!isHostFunction());
-    JSValue initialValue = jsExecutable()->nameValue();
     unsigned initialAttributes = DontEnum | ReadOnly;
     const Identifier& identifier = exec->propertyNames().name;
-    putDirect(vm, identifier, initialValue, initialAttributes);
+    putDirect(vm, identifier, jsString(exec, jsExecutable()->name().string()), initialAttributes);
 
     rareData->setHasReifiedName();
 }

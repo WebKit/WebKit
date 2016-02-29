@@ -1,5 +1,27 @@
 2016-02-28  Andreas Kling  <akling@apple.com>
 
+        Make JSFunction.name allocation fully lazy.
+        <https://webkit.org/b/154806>
+
+        Reviewed by Saam Barati.
+
+        We were reifying the "name" field on functions lazily, but created the string
+        value itself up front. This patch gets rid of the up-front allocation,
+        saving us a JSString allocation per function in most cases.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::createExecutableInternal):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/Executable.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::reifyName):
+
+2016-02-28  Andreas Kling  <akling@apple.com>
+
         REGRESSION(r197303): 4 jsc tests failing on bots.
 
         Unreviewed follow-up fix.

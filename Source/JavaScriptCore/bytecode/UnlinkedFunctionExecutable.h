@@ -76,8 +76,6 @@ public:
 
     const Identifier& name() const { return m_name; }
     const Identifier& inferredName() const { return m_inferredName; }
-    JSString* nameValue() const { return m_nameValue.get(); }
-    void setNameValue(VM& vm, JSString* nameValue) { m_nameValue.set(vm, this, nameValue); }
     unsigned parameterCount() const { return m_parameterCount; };
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
     bool isInStrictContext() const { return m_isInStrictContext; }
@@ -162,18 +160,11 @@ private:
 
     Identifier m_name;
     Identifier m_inferredName;
-    WriteBarrier<JSString> m_nameValue;
     RefPtr<SourceProvider> m_sourceOverride;
 
     VariableEnvironment m_parentScopeTDZVariables;
 
 protected:
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-        m_nameValue.set(vm, this, jsString(&vm, name().string()));
-    }
-
     static void visitChildren(JSCell*, SlotVisitor&);
 
 public:

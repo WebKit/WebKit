@@ -109,7 +109,6 @@ UnlinkedFunctionExecutable* createExecutableInternal(VM& vm, const SourceCode& s
     metadata->overrideName(name);
     VariableEnvironment dummyTDZVariables;
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, kind, constructAbility, dummyTDZVariables, DerivedContextType::None, WTFMove(sourceOverride));
-    functionExecutable->setNameValue(vm, jsString(&vm, name.string()));
     return functionExecutable;
 }
 
