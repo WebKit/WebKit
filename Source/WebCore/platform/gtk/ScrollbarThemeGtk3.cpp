@@ -115,12 +115,12 @@ void ScrollbarThemeGtk::updateThemeProperties()
     updateScrollbarsFrameThickness();
 }
 
+#if GTK_CHECK_VERSION(3, 19, 2)
 static const char* orientationStyleClass(ScrollbarOrientation orientation)
 {
     return orientation == VerticalScrollbar ? "vertical" : "horizontal";
 }
-
-#if !GTK_CHECK_VERSION(3, 19, 2)
+#else
 static void applyScrollbarStyleContextClasses(GtkStyleContext* context, ScrollbarOrientation orientation)
 {
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCROLLBAR);
@@ -197,7 +197,7 @@ void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrol
     gtk_render_frame(styleContext.get(), context->platformContext()->cr(), scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
 
 #if !GTK_CHECK_VERSION(3, 19, 2)
-    gtk_style_context_restore(styleContext);
+    gtk_style_context_restore(styleContext.get());
 #endif
 }
 
@@ -242,7 +242,7 @@ void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, ScrollbarThemeClien
         orientation == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL);
 
 #if !GTK_CHECK_VERSION(3, 19, 2)
-    gtk_style_context_restore(styleContext);
+    gtk_style_context_restore(styleContext.get());
 #endif
 }
 
@@ -312,7 +312,7 @@ void ScrollbarThemeGtk::paintButton(GraphicsContext* context, ScrollbarThemeClie
     gtk_render_arrow(styleContext.get(), context->platformContext()->cr(), angle, arrowPoint.x(), arrowPoint.y(), arrowSize);
 
 #if !GTK_CHECK_VERSION(3, 19, 2)
-    gtk_style_context_restore(styleContext);
+    gtk_style_context_restore(styleContext.get());
 #endif
 }
 
