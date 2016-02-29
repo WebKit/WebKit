@@ -28,8 +28,6 @@
 
 #include "JSCInlines.h"
 
-#if ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
-
 #include "CodeProfiling.h"
 #include "ExecutableAllocationFuzz.h"
 #include <errno.h>
@@ -222,6 +220,3 @@ void ExecutableAllocator::dumpProfile()
 #endif
 
 }
-
-
-#endif // ENABLE(EXECUTABLE_ALLOCATOR_FIXED)

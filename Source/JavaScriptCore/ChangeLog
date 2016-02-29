@@ -1,3 +1,46 @@
+2016-02-26  Oliver Hunt  <oliver@apple.com>
+
+        Remove the on demand executable allocator
+        https://bugs.webkit.org/show_bug.cgi?id=154749
+
+        Reviewed by Geoffrey Garen.
+
+        Remove all the DemandExecutable code and executable allocator ifdefs.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ExecutableAllocator.cpp: Removed.
+        (JSC::DemandExecutableAllocator::DemandExecutableAllocator): Deleted.
+        (JSC::DemandExecutableAllocator::~DemandExecutableAllocator): Deleted.
+        (JSC::DemandExecutableAllocator::bytesAllocatedByAllAllocators): Deleted.
+        (JSC::DemandExecutableAllocator::bytesCommittedByAllocactors): Deleted.
+        (JSC::DemandExecutableAllocator::dumpProfileFromAllAllocators): Deleted.
+        (JSC::DemandExecutableAllocator::allocateNewSpace): Deleted.
+        (JSC::DemandExecutableAllocator::notifyNeedPage): Deleted.
+        (JSC::DemandExecutableAllocator::notifyPageIsFree): Deleted.
+        (JSC::DemandExecutableAllocator::allocators): Deleted.
+        (JSC::DemandExecutableAllocator::allocatorsMutex): Deleted.
+        (JSC::ExecutableAllocator::initializeAllocator): Deleted.
+        (JSC::ExecutableAllocator::ExecutableAllocator): Deleted.
+        (JSC::ExecutableAllocator::~ExecutableAllocator): Deleted.
+        (JSC::ExecutableAllocator::isValid): Deleted.
+        (JSC::ExecutableAllocator::underMemoryPressure): Deleted.
+        (JSC::ExecutableAllocator::memoryPressureMultiplier): Deleted.
+        (JSC::ExecutableAllocator::allocate): Deleted.
+        (JSC::ExecutableAllocator::committedByteCount): Deleted.
+        (JSC::ExecutableAllocator::dumpProfile): Deleted.
+        (JSC::ExecutableAllocator::getLock): Deleted.
+        (JSC::ExecutableAllocator::isValidExecutableMemory): Deleted.
+        (JSC::ExecutableAllocator::reprotectRegion): Deleted.
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::canPerformRangeFilter): Deleted.
+        (JSC::JITStubRoutine::filteringStartAddress): Deleted.
+        (JSC::JITStubRoutine::filteringExtentSize): Deleted.
+
 2016-02-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Reduce direct callers of Structure::findStructuresAndMapForMaterialization

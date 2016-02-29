@@ -390,9 +390,6 @@
     <ClCompile Include="..\interpreter\StackVisitor.cpp">
       <Filter>interpreter</Filter>
     </ClCompile>
-    <ClCompile Include="..\jit\ExecutableAllocator.cpp">
-      <Filter>jit</Filter>
-    </ClCompile>
     <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp">
       <Filter>jit</Filter>
     </ClCompile>
