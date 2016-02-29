@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,24 +38,96 @@
 
 namespace JSC { namespace FTL {
 
-void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRepository& repository) const
+using namespace B3;
+
+AbstractHeap::AbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset)
+    : m_offset(offset)
+    , m_heapName(heapName)
 {
-    UNUSED_PARAM(instruction);
-    UNUSED_PARAM(repository);
+    changeParent(parent);
+}
+
+void AbstractHeap::changeParent(AbstractHeap* parent)
+{
+    if (m_parent) {
+        bool result = m_parent->m_children.removeFirst(this);
+        RELEASE_ASSERT(result);
+    }
+
+    m_parent = parent;
+
+    if (parent) {
+        ASSERT(!m_parent->m_children.contains(this));
+        m_parent->m_children.append(this);
+    }
+}
+
+void AbstractHeap::compute(unsigned begin)
+{
+    // This recursively computes the ranges of the tree. This solves the following constraints
+    // in linear time:
+    //
+    // - A node's end is greater than its begin.
+    // - A node's begin is greater than or equal to its parent's begin.
+    // - A node's end is less than or equal to its parent's end.
+    // - The ranges are as small as possible.
+    //
+    // It's OK to recurse because we keep the depth of our abstract heap hierarchy fairly sane.
+    // I think that it gets 4 deep at most.
+
+    if (m_children.isEmpty()) {
+        // Must special-case leaves so that they use just one slot on the number line.
+        m_range = HeapRange(begin);
+        return;
+    }
+
+    unsigned current = begin;
+    for (AbstractHeap* child : m_children) {
+        child->compute(current);
+        current = child->range().end();
+    }
+
+    m_range = HeapRange(begin, current);
+}
+
+void AbstractHeap::shallowDump(PrintStream& out) const
+{
+    out.print(heapName(), "(", m_offset, ")");
+    if (m_range)
+        out.print("<", m_range, ">");
 }
 
 void AbstractHeap::dump(PrintStream& out) const
 {
-    out.print(heapName());
+    shallowDump(out);
     if (m_parent)
         out.print("->", *m_parent);
 }
 
-void AbstractField::dump(PrintStream& out) const
+void AbstractHeap::deepDump(PrintStream& out, unsigned indent) const
 {
-    out.print(heapName(), "(", m_offset, ")");
-    if (parent())
-        out.print("->", *parent());
+    auto printIndent = [&] () {
+        for (unsigned i = indent; i--;)
+            out.print("    ");
+    };
+
+    printIndent();
+    shallowDump(out);
+
+    if (m_children.isEmpty()) {
+        out.print("\n");
+        return;
+    }
+
+    out.print(":\n");
+    for (AbstractHeap* child : m_children)
+        child->deepDump(out, indent + 1);
+}
+
+void AbstractHeap::badRangeError() const
+{
+    dataLog("Heap does not have range: ", *this, "\n");
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 IndexedAbstractHeap::IndexedAbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset, size_t elementSize)
@@ -80,23 +152,23 @@ TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue ind
     return TypedPointer(atAnyIndex(), out.addPtr(result, m_offset + offset));
 }
 
-const AbstractField& IndexedAbstractHeap::atSlow(ptrdiff_t index)
+const AbstractHeap& IndexedAbstractHeap::atSlow(ptrdiff_t index)
 {
     ASSERT(static_cast<size_t>(index) >= m_smallIndices.size());
     
     if (UNLIKELY(!m_largeIndices))
         m_largeIndices = std::make_unique<MapType>();
 
-    std::unique_ptr<AbstractField>& field = m_largeIndices->add(index, nullptr).iterator->value;
+    std::unique_ptr<AbstractHeap>& field = m_largeIndices->add(index, nullptr).iterator->value;
     if (!field) {
-        field = std::make_unique<AbstractField>();
+        field = std::make_unique<AbstractHeap>();
         initialize(*field, index);
     }
 
     return *field;
 }
 
-void IndexedAbstractHeap::initialize(AbstractField& field, ptrdiff_t signedIndex)
+void IndexedAbstractHeap::initialize(AbstractHeap& field, ptrdiff_t signedIndex)
 {
     // Build up a name of the form:
     //
@@ -115,9 +187,10 @@ void IndexedAbstractHeap::initialize(AbstractField& field, ptrdiff_t signedIndex
     //
     //    Blah_neg_A
     //
-    // This used to be important because we used to use the string to distinguish the types. This is
-    // not relevant anymore, and this code will be removed eventually.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=154319
+    // This naming convention comes from our previous use of LLVM. It's not clear that we need
+    // it anymore, though it is sort of nifty. Basically, B3 doesn't need string names for
+    // abstract heaps, but the fact that we have a reasonably efficient way to always name the
+    // heaps will probably come in handy for debugging.
     
     static const char* negSplit = "_neg_";
     static const char* posSplit = "_";

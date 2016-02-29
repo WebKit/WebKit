@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,12 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3CCallValue.h"
+#include "B3MemoryValue.h"
+#include "B3PatchpointValue.h"
+#include "B3ValueInlines.h"
 #include "DirectArguments.h"
+#include "FTLState.h"
 #include "GetterSetter.h"
 #include "JSEnvironmentRecord.h"
 #include "JSPropertyNameEnumerator.h"
@@ -39,8 +44,10 @@
 
 namespace JSC { namespace FTL {
 
+using namespace B3;
+
 AbstractHeapRepository::AbstractHeapRepository()
-    : root(0, "jscRoot")
+    : root(nullptr, "jscRoot")
 
 #define ABSTRACT_HEAP_INITIALIZATION(name) , name(&root, #name)
     FOR_EACH_ABSTRACT_HEAP(ABSTRACT_HEAP_INITIALIZATION)
@@ -78,6 +85,52 @@ AbstractHeapRepository::AbstractHeapRepository()
 
 AbstractHeapRepository::~AbstractHeapRepository()
 {
+}
+
+void AbstractHeapRepository::decorateMemory(const AbstractHeap* heap, Value* value)
+{
+    m_heapForMemory.append(HeapForValue(heap, value));
+}
+
+void AbstractHeapRepository::decorateCCallRead(const AbstractHeap* heap, Value* value)
+{
+    m_heapForCCallRead.append(HeapForValue(heap, value));
+}
+
+void AbstractHeapRepository::decorateCCallWrite(const AbstractHeap* heap, Value* value)
+{
+    m_heapForCCallWrite.append(HeapForValue(heap, value));
+}
+
+void AbstractHeapRepository::decoratePatchpointRead(const AbstractHeap* heap, Value* value)
+{
+    m_heapForPatchpointRead.append(HeapForValue(heap, value));
+}
+
+void AbstractHeapRepository::decoratePatchpointWrite(const AbstractHeap* heap, Value* value)
+{
+    m_heapForPatchpointWrite.append(HeapForValue(heap, value));
+}
+
+void AbstractHeapRepository::computeRangesAndDecorateInstructions()
+{
+    root.compute();
+
+    if (verboseCompilationEnabled()) {
+        dataLog("Abstract Heap Repository:\n");
+        root.deepDump(WTF::dataFile());
+    }
+
+    for (HeapForValue entry : m_heapForMemory)
+        entry.value->as<MemoryValue>()->setRange(entry.heap->range());
+    for (HeapForValue entry : m_heapForCCallRead)
+        entry.value->as<CCallValue>()->effects.reads = entry.heap->range();
+    for (HeapForValue entry : m_heapForCCallWrite)
+        entry.value->as<CCallValue>()->effects.writes = entry.heap->range();
+    for (HeapForValue entry : m_heapForPatchpointRead)
+        entry.value->as<CCallValue>()->effects.reads = entry.heap->range();
+    for (HeapForValue entry : m_heapForPatchpointWrite)
+        entry.value->as<CCallValue>()->effects.writes = entry.heap->range();
 }
 
 } } // namespace JSC::FTL

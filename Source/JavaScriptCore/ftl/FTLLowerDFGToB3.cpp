@@ -279,6 +279,12 @@ public:
         for (DFG::BasicBlock* block : preOrder)
             compileBlock(block);
 
+        // Make sure everything is decorated. This does a bunch of deferred decorating. This has
+        // to happen last because our abstract heaps are generated lazily. They have to be
+        // generated lazily because we have an infiniten number of numbered, indexed, and
+        // absolute heaps. We only become aware of the ones we actually mention while lowering.
+        m_heaps.computeRangesAndDecorateInstructions();
+
         // We create all Phi's up front, but we may then decide not to compile the basic block
         // that would have contained one of them. So this creates orphans, which triggers B3
         // validation failures. Calling this fixes the issue.

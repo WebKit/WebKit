@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3HeapRange.h"
 #include "FTLAbbreviatedTypes.h"
 #include "JSCJSValue.h"
 #include <array>
@@ -39,10 +40,6 @@
 
 namespace JSC { namespace FTL {
 
-// This is here because we used to generate LLVM's TBAA. In the future we will want to generate
-// B3 HeapRanges instead.
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=154319
-
 class AbstractHeapRepository;
 class Output;
 class TypedPointer;
@@ -51,35 +48,29 @@ class AbstractHeap {
     WTF_MAKE_NONCOPYABLE(AbstractHeap); WTF_MAKE_FAST_ALLOCATED;
 public:
     AbstractHeap()
-        : m_parent(0)
-        , m_heapName(0)
     {
     }
     
-    AbstractHeap(AbstractHeap* parent, const char* heapName)
-        : m_parent(parent)
-        , m_heapName(heapName)
-    {
-    }
-    
+    AbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset = 0);
+
     bool isInitialized() const { return !!m_heapName; }
     
-    void initialize(AbstractHeap* parent, const char* heapName)
+    void initialize(AbstractHeap* parent, const char* heapName, ptrdiff_t offset = 0)
     {
-        m_parent = parent;
+        changeParent(parent);
         m_heapName = heapName;
+        m_offset = offset;
     }
     
-    void changeParent(AbstractHeap* parent)
-    {
-        m_parent = parent;
-    }
+    void changeParent(AbstractHeap* parent);
 
     AbstractHeap* parent() const
     {
         ASSERT(isInitialized());
         return m_parent;
     }
+
+    const Vector<AbstractHeap*>& children() const;
     
     const char* heapName() const
     {
@@ -87,47 +78,44 @@ public:
         return m_heapName;
     }
 
-    void decorateInstruction(LValue instruction, const AbstractHeapRepository&) const;
-
-    void dump(PrintStream&) const;
-
-private:
-    friend class AbstractHeapRepository;
-
-    AbstractHeap* m_parent;
-    const char* m_heapName;
-};
-
-// Think of "AbstractField" as being an "AbstractHeapWithOffset". I would have named
-// it the latter except that I don't like typing that much.
-class AbstractField : public AbstractHeap {
-public:
-    AbstractField()
+    B3::HeapRange range() const
     {
+        // This will not have a valid value until after all lowering is done. Do associate an
+        // AbstractHeap with a B3::Value*, use AbstractHeapRepository::decorateXXX().
+        if (!m_range)
+            badRangeError();
+        
+        return m_range;
     }
-    
-    AbstractField(AbstractHeap* parent, const char* heapName, ptrdiff_t offset)
-        : AbstractHeap(parent, heapName)
-        , m_offset(offset)
-    {
-    }
-    
-    void initialize(AbstractHeap* parent, const char* heapName, ptrdiff_t offset)
-    {
-        AbstractHeap::initialize(parent, heapName);
-        m_offset = offset;
-    }
-    
+
+    // WARNING: Not all abstract heaps have a meaningful offset.
     ptrdiff_t offset() const
     {
         ASSERT(isInitialized());
         return m_offset;
     }
-    
+
+    void compute(unsigned begin = 0);
+
+    // Print information about just this heap.
+    void shallowDump(PrintStream&) const;
+
+    // Print information about this heap and its ancestors. This is the default.
     void dump(PrintStream&) const;
 
+    // Print information about this heap and its descendents. This is a multi-line dump.
+    void deepDump(PrintStream&, unsigned indent = 0) const;
+
 private:
-    ptrdiff_t m_offset;
+    friend class AbstractHeapRepository;
+
+    NO_RETURN_DUE_TO_CRASH void badRangeError() const;
+
+    AbstractHeap* m_parent { nullptr };
+    Vector<AbstractHeap*> m_children;
+    intptr_t m_offset { 0 };
+    B3::HeapRange m_range;
+    const char* m_heapName { nullptr };
 };
 
 class IndexedAbstractHeap {
@@ -137,41 +125,41 @@ public:
     
     const AbstractHeap& atAnyIndex() const { return m_heapForAnyIndex; }
     
-    const AbstractField& at(ptrdiff_t index)
+    const AbstractHeap& at(ptrdiff_t index)
     {
         if (static_cast<size_t>(index) < m_smallIndices.size())
             return returnInitialized(m_smallIndices[index], index);
         return atSlow(index);
     }
     
-    const AbstractField& operator[](ptrdiff_t index) { return at(index); }
+    const AbstractHeap& operator[](ptrdiff_t index) { return at(index); }
     
     TypedPointer baseIndex(Output& out, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0);
     
     void dump(PrintStream&) const;
 
 private:
-    const AbstractField& returnInitialized(AbstractField& field, ptrdiff_t index)
+    const AbstractHeap& returnInitialized(AbstractHeap& field, ptrdiff_t index)
     {
         if (UNLIKELY(!field.isInitialized()))
             initialize(field, index);
         return field;
     }
 
-    const AbstractField& atSlow(ptrdiff_t index);
-    void initialize(AbstractField& field, ptrdiff_t index);
+    const AbstractHeap& atSlow(ptrdiff_t index);
+    void initialize(AbstractHeap& field, ptrdiff_t index);
 
     AbstractHeap m_heapForAnyIndex;
     size_t m_heapNameLength;
     ptrdiff_t m_offset;
     size_t m_elementSize;
-    std::array<AbstractField, 16> m_smallIndices;
+    std::array<AbstractHeap, 16> m_smallIndices;
     
     struct WithoutZeroOrOneHashTraits : WTF::GenericHashTraits<ptrdiff_t> {
         static void constructDeletedValue(ptrdiff_t& slot) { slot = 1; }
         static bool isDeletedValue(ptrdiff_t value) { return value == 1; }
     };
-    typedef HashMap<ptrdiff_t, std::unique_ptr<AbstractField>, WTF::IntHash<ptrdiff_t>, WithoutZeroOrOneHashTraits> MapType;
+    typedef HashMap<ptrdiff_t, std::unique_ptr<AbstractHeap>, WTF::IntHash<ptrdiff_t>, WithoutZeroOrOneHashTraits> MapType;
     
     std::unique_ptr<MapType> m_largeIndices;
     Vector<CString, 16> m_largeIndexNames;
