@@ -1015,6 +1015,8 @@ private:
 
     void loadURLInFrame(const String&, uint64_t frameID);
 
+    enum class WasRestoredByAPIRequest { No, Yes };
+    void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest);
     void restoreSession(const Vector<BackForwardListItemState>&);
     void didRemoveBackForwardItem(uint64_t);
 

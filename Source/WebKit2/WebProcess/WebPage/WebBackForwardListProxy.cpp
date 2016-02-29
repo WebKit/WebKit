@@ -94,16 +94,14 @@ static void updateBackForwardItem(uint64_t itemID, uint64_t pageID, HistoryItem*
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, pageID, toPageState(*item)), 0);
 }
 
-void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem, uint64_t pageID)
+void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, Ref<HistoryItem>&& item, uint64_t pageID)
 {
-    RefPtr<HistoryItem> item = prpItem;
-    
     // This item/itemID pair should not already exist in our maps.
-    ASSERT(!historyItemToIDMap().contains(item.get()));
+    ASSERT(!historyItemToIDMap().contains(item.ptr()));
     ASSERT(!idToHistoryItemMap().contains(itemID));
 
-    historyItemToIDMap().set<ItemAndPageID>(item, { .itemID = itemID, .pageID = pageID });
-    idToHistoryItemMap().set(itemID, item);
+    historyItemToIDMap().set<ItemAndPageID>(item.ptr(), { .itemID = itemID, .pageID = pageID });
+    idToHistoryItemMap().set(itemID, item.ptr());
 }
 
 static void WK2NotifyHistoryItemChanged(HistoryItem* item)

@@ -42,7 +42,7 @@ public:
     static uint64_t idForItem(WebCore::HistoryItem*);
     static void removeItem(uint64_t itemID);
 
-    static void addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem>, uint64_t pageID);
+    static void addItemFromUIProcess(uint64_t itemID, Ref<WebCore::HistoryItem>&&, uint64_t pageID);
     static void setHighestItemIDFromUIProcess(uint64_t itemID);
     
     void clear();
