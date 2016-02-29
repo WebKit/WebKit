@@ -1,5 +1,16 @@
 2016-02-28  Andreas Kling  <akling@apple.com>
 
+        REGRESSION(r197303): 4 jsc tests failing on bots.
+
+        Unreviewed follow-up fix.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset): This function
+        can still get called with !m_rareData, in case the type profiler is active but this
+        particular code block doesn't have type profiler data. Handle it gracefully.
+
+2016-02-28  Andreas Kling  <akling@apple.com>
+
         Shrink UnlinkedCodeBlock a bit.
         <https://webkit.org/b/154797>
 

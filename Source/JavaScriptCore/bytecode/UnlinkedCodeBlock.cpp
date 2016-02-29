@@ -265,8 +265,15 @@ void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,
 
 bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot)
 {
-    ASSERT(m_rareData);
     static const bool verbose = false;
+    if (!m_rareData) {
+        if (verbose)
+            dataLogF("Don't have assignment info for offset:%u\n", bytecodeOffset);
+        startDivot = UINT_MAX;
+        endDivot = UINT_MAX;
+        return false;
+    }
+
     auto iter = m_rareData->m_typeProfilerInfoMap.find(bytecodeOffset);
     if (iter == m_rareData->m_typeProfilerInfoMap.end()) {
         if (verbose)
