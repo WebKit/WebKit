@@ -1,3 +1,11 @@
+2016-02-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Fix order of parameters in gtkdoc for webkit_web_view_get_snapshot
+
+        Unreviewed.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+
 2016-02-25  Anders Carlsson  <andersca@apple.com>
 
         Cache::traverse should pass the record info to its traversal handler
