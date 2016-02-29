@@ -1,5 +1,13 @@
 2016-02-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Removing unnecessary ios-simulator-wk2 expectation file.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt: Removed.
+
+2016-02-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/html/dom/reflection-forms.html after r197355
 
         Unreviewed test gardening.
