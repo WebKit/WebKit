@@ -1,3 +1,0 @@
-PASS media is allowed when no policy exists.
-PASS media is not allowed when policy exists.
-

@@ -557,7 +557,6 @@ list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
     loader/appcache/DOMApplicationCache.idl
 
     page/BarProp.idl
-    page/DOMSecurityPolicy.idl
     page/DOMSelection.idl
     page/History.idl
     page/Location.idl

@@ -1,3 +1,0 @@
-PASS font is allowed when no policy exists.
-PASS font is not allowed when policy exists.
-

@@ -1,3 +1,0 @@
-PASS inline style is allowed when no policy exists.
-PASS inline style is not allowed when policy exists.
-

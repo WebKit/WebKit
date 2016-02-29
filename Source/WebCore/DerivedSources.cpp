@@ -140,7 +140,6 @@
 #include "JSDOMPath.cpp"
 #include "JSDOMPlugin.cpp"
 #include "JSDOMPluginArray.cpp"
-#include "JSDOMSecurityPolicy.cpp"
 #include "JSDOMSelection.cpp"
 #include "JSDOMStringList.cpp"
 #include "JSDOMStringMap.cpp"

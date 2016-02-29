@@ -1,3 +1,0 @@
-PASS form action is allowed when no policy exists.
-PASS form action is not allowed when policy exists.
-

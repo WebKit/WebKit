@@ -1,3 +1,0 @@
-PASS image is allowed when no policy exists.
-PASS image is not allowed when policy exists.
-
