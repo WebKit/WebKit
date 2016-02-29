@@ -1,3 +1,14 @@
+2016-02-28  Antti Koivisto  <antti@apple.com>
+
+        ::slotted doesn't work in nested shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=154765
+        <rdar://problem/24870995>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/css-scoping-shadow-slotted-nested-expected.html: Added.
+        * fast/shadow-dom/css-scoping-shadow-slotted-nested.html: Added.
+
 2016-02-28  Tim Horton  <timothy_horton@apple.com>
 
         Switch to application/vnd.apple.folder for <attachment> folder special-case

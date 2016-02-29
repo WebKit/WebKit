@@ -1,3 +1,20 @@
+2016-02-28  Antti Koivisto  <antti@apple.com>
+
+        ::slotted doesn't work in nested shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=154765
+        <rdar://problem/24870995>
+
+        Reviewed by Ryosuke Niwa.
+
+        See https://github.com/w3c/webcomponents/issues/331#issuecomment-189191593
+
+        Test: fast/shadow-dom/css-scoping-shadow-slotted-nested.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchSlottedPseudoElementRules):
+
+        Collect ::slotted rules from all the nested shadow trees instead of just the host's.
+
 2016-02-28  Chris Dumez  <cdumez@apple.com>
 
         Parse HTMLOLElement.start as per the HTML spec

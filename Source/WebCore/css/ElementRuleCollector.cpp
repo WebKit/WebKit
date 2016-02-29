@@ -249,18 +249,24 @@ void ElementRuleCollector::matchHostPseudoClassRules(bool includeEmptyRules)
 
 void ElementRuleCollector::matchSlottedPseudoElementRules(bool includeEmptyRules)
 {
-    auto* hostShadowRoot = m_element.parentNode()->shadowRoot();
-    ASSERT(hostShadowRoot);
-    auto* slot = hostShadowRoot->findAssignedSlot(m_element);
-    if (!slot)
-        return;
-    auto* shadowAuthorStyle = hostShadowRoot->styleResolver().ruleSets().authorStyle();
-    if (!shadowAuthorStyle)
-        return;
-    // Find out if there are any ::slotted rules in the shadow tree matching the current slot.
-    // FIXME: This is really part of the slot style and could be cached when resolving it.
-    ElementRuleCollector collector(*slot, *shadowAuthorStyle, nullptr);
-    auto slottedPseudoElementRules = collector.collectSlottedPseudoElementRulesForSlot(includeEmptyRules);
+    RuleSet::RuleDataVector slottedPseudoElementRules;
+
+    auto* maybeSlotted = &m_element;
+    for (auto* hostShadowRoot = m_element.parentNode()->shadowRoot(); hostShadowRoot; hostShadowRoot = maybeSlotted->parentNode()->shadowRoot()) {
+        auto* slot = hostShadowRoot->findAssignedSlot(*maybeSlotted);
+        if (!slot)
+            break;
+        // In nested case the slot may itself be assigned to a slot. Collect ::slotted rules from all the nested trees.
+        maybeSlotted = slot;
+        auto* shadowAuthorStyle = hostShadowRoot->styleResolver().ruleSets().authorStyle();
+        if (!shadowAuthorStyle)
+            continue;
+        // Find out if there are any ::slotted rules in the shadow tree matching the current slot.
+        // FIXME: This is really part of the slot style and could be cached when resolving it.
+        ElementRuleCollector collector(*slot, *shadowAuthorStyle, nullptr);
+        slottedPseudoElementRules.appendVector(collector.collectSlottedPseudoElementRulesForSlot(includeEmptyRules));
+    }
+
     if (slottedPseudoElementRules.isEmpty())
         return;
 
