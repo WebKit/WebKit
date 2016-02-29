@@ -26,11 +26,6 @@
 #ifndef WebPageGroupData_h
 #define WebPageGroupData_h
 
-#include "WebCompiledContentExtensionData.h"
-#include <WebCore/UserScript.h>
-#include <WebCore/UserStyleSheet.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -49,12 +44,7 @@ struct WebPageGroupData {
     bool visibleToInjectedBundle;
     bool visibleToHistoryClient;
 
-    Vector<WebCore::UserStyleSheet> userStyleSheets;
-    Vector<WebCore::UserScript> userScripts;
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    HashMap<String, WebCompiledContentExtensionData> userContentExtensions;
-#endif
+    uint64_t userContentControllerIdentifier;
 };
 
 } // namespace WebKit

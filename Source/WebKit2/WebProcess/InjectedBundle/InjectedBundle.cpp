@@ -72,6 +72,8 @@
 #include <WebCore/Settings.h>
 #include <WebCore/UserContentController.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <WebCore/UserScript.h>
+#include <WebCore/UserStyleSheet.h>
 
 #if ENABLE(CSS_REGIONS) || ENABLE(CSS_COMPOSITING)
 #include <WebCore/RuntimeEnabledFeatures.h>

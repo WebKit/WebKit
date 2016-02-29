@@ -66,16 +66,16 @@ static WorldMap& worldMap()
     return map;
 }
 
-PassRefPtr<WebUserContentController> WebUserContentController::getOrCreate(uint64_t identifier)
+Ref<WebUserContentController> WebUserContentController::getOrCreate(uint64_t identifier)
 {
     auto& userContentControllerPtr = userContentControllers().add(identifier, nullptr).iterator->value;
     if (userContentControllerPtr)
-        return userContentControllerPtr;
+        return *userContentControllerPtr;
 
     RefPtr<WebUserContentController> userContentController = adoptRef(new WebUserContentController(identifier));
     userContentControllerPtr = userContentController.get();
 
-    return userContentController.release();
+    return userContentController.releaseNonNull();
 }
 
 WebUserContentController::WebUserContentController(uint64_t identifier)

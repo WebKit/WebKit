@@ -40,7 +40,7 @@ class WebUserMessageHandlerDescriptorProxy;
 
 class WebUserContentController final : public RefCounted<WebUserContentController>, private IPC::MessageReceiver  {
 public:
-    static PassRefPtr<WebUserContentController> getOrCreate(uint64_t identifier);
+    static Ref<WebUserContentController> getOrCreate(uint64_t identifier);
     virtual ~WebUserContentController();
 
     WebCore::UserContentController& userContentController() { return m_userContentController; }

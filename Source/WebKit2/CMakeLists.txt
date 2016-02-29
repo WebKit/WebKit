@@ -716,7 +716,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/WebInspector.messages.in
     WebProcess/WebPage/WebInspectorUI.messages.in
     WebProcess/WebPage/WebPage.messages.in
-    WebProcess/WebPage/WebPageGroupProxy.messages.in
 )
 
 set(WebProcess_LIBRARIES

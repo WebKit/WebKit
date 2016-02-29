@@ -28,10 +28,12 @@
 
 #include "APIArray.h"
 #include "APIUserContentExtension.h"
+#include "APIUserScript.h"
+#include "APIUserStyleSheet.h"
 #include "WebCompiledContentExtension.h"
-#include "WebPageGroupProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include "WebUserContentControllerProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenate.h>
@@ -89,7 +91,10 @@ static WebPageGroupData pageGroupData(const String& identifier, bool visibleToIn
 WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
     : m_data(pageGroupData(identifier, visibleToInjectedBundle, visibleToHistoryClient))
     , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2", "WebKit2."))
+    , m_userContentController(WebUserContentControllerProxy::create())
 {
+    m_data.userContentControllerIdentifier = m_userContentController->identifier();
+
     webPageGroupMap().set(m_data.pageGroupID, this);
 }
 
@@ -132,15 +137,18 @@ void WebPageGroup::preferencesDidChange()
     }
 }
 
+WebUserContentControllerProxy& WebPageGroup::userContentController()
+{
+    return *m_userContentController;
+}
+
 void WebPageGroup::addUserStyleSheet(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserStyleLevel level)
 {
     if (source.isEmpty())
         return;
 
-    WebCore::UserStyleSheet userStyleSheet = WebCore::UserStyleSheet(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), injectedFrames, level);
-
-    m_data.userStyleSheets.append(userStyleSheet);
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserStyleSheet(userStyleSheet), m_data.pageGroupID);
+    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), injectedFrames, level }, API::UserContentWorld::normalWorld());
+    m_userContentController->addUserStyleSheet(userStyleSheet.get());
 }
 
 void WebPageGroup::addUserScript(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserScriptInjectionTime injectionTime)
@@ -148,48 +156,40 @@ void WebPageGroup::addUserScript(const String& source, const String& baseURL, AP
     if (source.isEmpty())
         return;
 
-    WebCore::UserScript userScript = WebCore::UserScript(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), injectionTime, injectedFrames);
-
-    m_data.userScripts.append(userScript);
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserScript(userScript), m_data.pageGroupID);
+    Ref<API::UserScript> userScript = API::UserScript::create(WebCore::UserScript { source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), injectionTime, injectedFrames }, API::UserContentWorld::normalWorld());
+    m_userContentController->addUserScript(userScript.get());
 }
 
 void WebPageGroup::removeAllUserStyleSheets()
 {
-    m_data.userStyleSheets.clear();
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserStyleSheets(), m_data.pageGroupID);
+    m_userContentController->removeAllUserStyleSheets();
 }
 
 void WebPageGroup::removeAllUserScripts()
 {
-    m_data.userScripts.clear();
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserScripts(), m_data.pageGroupID);
+    m_userContentController->removeAllUserScripts();
 }
 
 void WebPageGroup::removeAllUserContent()
 {
-    m_data.userStyleSheets.clear();
-    m_data.userScripts.clear();
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContent(), m_data.pageGroupID);
+    m_userContentController->removeAllUserStyleSheets();
+    m_userContentController->removeAllUserScripts();
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void WebPageGroup::addUserContentExtension(const API::UserContentExtension& userContentExtension)
+void WebPageGroup::addUserContentExtension(API::UserContentExtension& userContentExtension)
 {
-    m_data.userContentExtensions.set(userContentExtension.name(), userContentExtension.compiledExtension().data());
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserContentExtension(userContentExtension.name(), userContentExtension.compiledExtension().data()), m_data.pageGroupID);
+    m_userContentController->addUserContentExtension(userContentExtension);
 }
 
 void WebPageGroup::removeUserContentExtension(const String& contentExtensionName)
 {
-    m_data.userContentExtensions.remove(contentExtensionName);
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveUserContentExtension(contentExtensionName), m_data.pageGroupID);
+    m_userContentController->removeUserContentExtension(contentExtensionName);
 }
 
 void WebPageGroup::removeAllUserContentExtensions()
 {
-    m_data.userContentExtensions.clear();
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContentExtensions(), m_data.pageGroupID);
+    m_userContentController->removeAllUserContentExtensions();
 }
 #endif
 

@@ -30,11 +30,6 @@
 #include "WebPageGroupData.h"
 #include <wtf/PassRefPtr.h>
 
-namespace IPC {
-class Connection;
-class MessageDecoder;
-}
-
 namespace WebCore {
 class PageGroup;
 class UserContentController;
@@ -42,7 +37,7 @@ class UserContentController;
 
 namespace WebKit {
 
-class WebCompiledContentExtensionData;
+class WebUserContentController;
 
 class WebPageGroupProxy : public API::ObjectImpl<API::Object::Type::BundlePageGroup> {
 public:
@@ -57,27 +52,12 @@ public:
 
     WebCore::UserContentController& userContentController();
 
-    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
-
-    void addUserStyleSheet(const WebCore::UserStyleSheet&);
-    void addUserScript(const WebCore::UserScript&);
-    void removeAllUserStyleSheets();
-    void removeAllUserScripts();
-    void removeAllUserContent();
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    void addUserContentExtension(const String& name, WebCompiledContentExtensionData);
-    void removeUserContentExtension(const String& name);
-    void removeAllUserContentExtensions();
-#endif
-
 private:
     WebPageGroupProxy(const WebPageGroupData&);
 
     WebPageGroupData m_data;
     WebCore::PageGroup* m_pageGroup;
-
-    RefPtr<WebCore::UserContentController> m_userContentController;
+    Ref<WebUserContentController> m_userContentController;
 };
 
 } // namespace WebKit

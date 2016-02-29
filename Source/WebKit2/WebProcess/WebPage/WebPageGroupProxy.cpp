@@ -27,8 +27,8 @@
 #include "WebPageGroupProxy.h"
 
 #include "InjectedBundle.h"
-#include "WebCompiledContentExtension.h"
 #include "WebProcess.h"
+#include "WebUserContentController.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/UserContentController.h>
@@ -48,16 +48,8 @@ PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& 
 WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
     : m_data(data)
     , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifier))
+    , m_userContentController(WebUserContentController::getOrCreate(m_data.userContentControllerIdentifier))
 {
-    for (const auto& userStyleSheet : data.userStyleSheets)
-        addUserStyleSheet(userStyleSheet);
-    for (const auto& userScript : data.userScripts)
-        addUserScript(userScript);
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    for (auto& slot : data.userContentExtensions)
-        addUserContentExtension(slot.key, slot.value);
-#endif
 }
 
 WebPageGroupProxy::~WebPageGroupProxy()
@@ -66,53 +58,7 @@ WebPageGroupProxy::~WebPageGroupProxy()
 
 WebCore::UserContentController& WebPageGroupProxy::userContentController()
 {
-    if (!m_userContentController)
-        m_userContentController = WebCore::UserContentController::create();
-
-    return *m_userContentController;
+    return m_userContentController->userContentController();
 }
-
-void WebPageGroupProxy::addUserStyleSheet(const WebCore::UserStyleSheet& userStyleSheet)
-{
-    userContentController().addUserStyleSheet(WebCore::mainThreadNormalWorld(), std::make_unique<WebCore::UserStyleSheet>(userStyleSheet), WebCore::InjectInExistingDocuments);
-}
-
-void WebPageGroupProxy::addUserScript(const WebCore::UserScript& userScript)
-{
-    userContentController().addUserScript(WebCore::mainThreadNormalWorld(), std::make_unique<WebCore::UserScript>(userScript));
-}
-
-void WebPageGroupProxy::removeAllUserStyleSheets()
-{
-    userContentController().removeUserStyleSheets(WebCore::mainThreadNormalWorld());
-}
-
-void WebPageGroupProxy::removeAllUserScripts()
-{
-    userContentController().removeUserScripts(WebCore::mainThreadNormalWorld());
-}
-
-void WebPageGroupProxy::removeAllUserContent()
-{
-    userContentController().removeAllUserContent();
-}
-
-#if ENABLE(CONTENT_EXTENSIONS)
-void WebPageGroupProxy::addUserContentExtension(const String& name, WebCompiledContentExtensionData contentExtensionData)
-{
-    RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTFMove(contentExtensionData));
-    userContentController().addUserContentExtension(name, compiledContentExtension);
-}
-
-void WebPageGroupProxy::removeUserContentExtension(const String& name)
-{
-    userContentController().removeUserContentExtension(name);
-}
-
-void WebPageGroupProxy::removeAllUserContentExtensions()
-{
-    userContentController().removeAllUserContentExtensions();    
-}
-#endif
 
 } // namespace WebKit

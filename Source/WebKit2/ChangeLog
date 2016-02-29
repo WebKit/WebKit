@@ -1,5 +1,109 @@
 2016-02-28  Sam Weinig  <sam@webkit.org>
 
+        Reimplement WKPageGroup in terms of WKUserContentController
+        https://bugs.webkit.org/show_bug.cgi?id=154804
+
+        Reviewed by Dan Bernstein.
+
+        Instead of having both WebPageGroup and WebUserContentControllerProxy both keep track
+        of user scripts and user stylesheets, give WebPageGroup a WebUserContentControllerProxy
+        and let it take care of things. This allows us to remove a ton of duplicate code, and
+        provides a convenient way for clients currently using PageGroup based user content insertion
+        to start using UserContentController, since they can now be used at the same time.
+
+        When using WKPageConfigurationRef, the rule is:
+            - If you don't set a WKUserContentControllerRef, the one from the WKPageGroupRef will be used.
+            - If you do set a WKUserContentControllerRef, it will be used, and the one from the WKPageGroupRef
+              will do nothing for that web view.
+
+        * DerivedSources.make:
+        Remove WebPageGroupProxy. It no longer is a MessageReceiver.
+
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode):
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+        Stop encoding/decoding user content, instead just encode the identifier to the UserContentController.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupGetUserContentController):
+        * UIProcess/API/C/WKPageGroup.h:
+        Add getter for the underlying WKUserContentControllerRef.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        (WebKit::retainWK):
+        Add retainWK() helper to match RetainPtr's retainPtr() helper.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        (WebKit::WebPageGroup::userContentController):
+        (WebKit::WebPageGroup::addUserStyleSheet):
+        (WebKit::WebPageGroup::addUserScript):
+        (WebKit::WebPageGroup::removeAllUserStyleSheets):
+        (WebKit::WebPageGroup::removeAllUserScripts):
+        (WebKit::WebPageGroup::removeAllUserContent):
+        (WebKit::WebPageGroup::addUserContentExtension):
+        (WebKit::WebPageGroup::removeUserContentExtension):
+        (WebKit::WebPageGroup::removeAllUserContentExtensions):
+        * UIProcess/WebPageGroup.h:
+        Pass through to the WebUserContentControllerProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::finishInitializingWebPageAfterProcessLaunch):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        WebPageProxies always have a WebUserContentControllerProxy now, so it can go in a Ref and
+        a few branches can be removed.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+        If a UserContentController is not passed in, use the one from the PageGroup.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove files.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        Add some #includes that are now needed.
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::getOrCreate):
+        * WebProcess/UserContent/WebUserContentController.h:
+        Modernize WebUserContentController::getOrCreate to return a Ref.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+        (WebKit::WebPage::addUserScript):
+        (WebKit::WebPage::addUserStyleSheet):
+        (WebKit::WebPage::removeAllUserContent):
+        * WebProcess/WebPage/WebPage.h:
+        Store the WebUserContentController in Ref, remove unnecessary branches/asserts.
+
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::WebPageGroupProxy):
+        (WebKit::WebPageGroupProxy::~WebPageGroupProxy):
+        (WebKit::WebPageGroupProxy::userContentController):
+        (WebKit::WebPageGroupProxy::addUserStyleSheet): Deleted.
+        (WebKit::WebPageGroupProxy::addUserScript): Deleted.
+        (WebKit::WebPageGroupProxy::removeAllUserStyleSheets): Deleted.
+        (WebKit::WebPageGroupProxy::removeAllUserScripts): Deleted.
+        (WebKit::WebPageGroupProxy::removeAllUserContent): Deleted.
+        (WebKit::WebPageGroupProxy::addUserContentExtension): Deleted.
+        (WebKit::WebPageGroupProxy::removeUserContentExtension): Deleted.
+        (WebKit::WebPageGroupProxy::removeAllUserContentExtensions): Deleted.
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        Store a WebUserContentController in a Ref, remove now unnecessary message handling functions.
+
+        * WebProcess/WebPage/WebPageGroupProxy.messages.in:
+        Removed.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        Remove routing to WebPageGroupProxy, which is no longer a MessageReceiver.
+
+2016-02-28  Sam Weinig  <sam@webkit.org>
+
         Bind _WKUserStyleSheets to _WKUserContentWorlds to allow for grouping of user content by associating to a world
         https://bugs.webkit.org/show_bug.cgi?id=154798
 

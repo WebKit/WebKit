@@ -36,11 +36,7 @@ void WebPageGroupData::encode(IPC::ArgumentEncoder& encoder) const
     encoder << pageGroupID;
     encoder << visibleToInjectedBundle;
     encoder << visibleToHistoryClient;
-    encoder << userStyleSheets;
-    encoder << userScripts;
-#if ENABLE(CONTENT_EXTENSIONS)
-    encoder << userContentExtensions;
-#endif
+    encoder << userContentControllerIdentifier;
 }
 
 bool WebPageGroupData::decode(IPC::ArgumentDecoder& decoder, WebPageGroupData& data)
@@ -53,14 +49,8 @@ bool WebPageGroupData::decode(IPC::ArgumentDecoder& decoder, WebPageGroupData& d
         return false;
     if (!decoder.decode(data.visibleToHistoryClient))
         return false;
-    if (!decoder.decode(data.userStyleSheets))
+    if (!decoder.decode(data.userContentControllerIdentifier))
         return false;
-    if (!decoder.decode(data.userScripts))
-        return false;
-#if ENABLE(CONTENT_EXTENSIONS)
-    if (!decoder.decode(data.userContentExtensions))
-        return false;
-#endif
     return true;
 }
 

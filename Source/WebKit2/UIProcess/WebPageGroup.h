@@ -30,6 +30,7 @@
 #include "WebPageGroupData.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
@@ -38,6 +39,7 @@ namespace WebKit {
 
 class WebPreferences;
 class WebPageProxy;
+class WebUserContentControllerProxy;
 
 class WebPageGroup : public API::ObjectImpl<API::Object::Type::PageGroup> {
 public:
@@ -59,7 +61,9 @@ public:
     void setPreferences(WebPreferences*);
     WebPreferences& preferences() const;
     void preferencesDidChange();
-    
+
+    WebUserContentControllerProxy& userContentController();
+
     void addUserStyleSheet(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserStyleLevel);
     void addUserScript(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserScriptInjectionTime);
     void removeAllUserStyleSheets();
@@ -67,7 +71,7 @@ public:
     void removeAllUserContent();
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addUserContentExtension(const API::UserContentExtension&);
+    void addUserContentExtension(API::UserContentExtension&);
     void removeUserContentExtension(const String&);
     void removeAllUserContentExtensions();
 #endif
@@ -77,6 +81,7 @@ private:
 
     WebPageGroupData m_data;
     RefPtr<WebPreferences> m_preferences;
+    RefPtr<WebUserContentControllerProxy> m_userContentController;
     HashSet<WebPageProxy*> m_pages;
 };
 

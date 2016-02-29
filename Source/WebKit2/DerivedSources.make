@@ -124,7 +124,6 @@ MESSAGE_RECEIVERS = \
     WebInspectorUI \
     WebNotificationManager \
     WebPage \
-    WebPageGroupProxy \
     WebPageProxy \
     WebPasteboardProxy \
     WebProcess \
