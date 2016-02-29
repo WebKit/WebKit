@@ -1,3 +1,50 @@
+2016-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to run everything in Octane/regexp
+        https://bugs.webkit.org/show_bug.cgi?id=154266
+
+        Reviewed by Saam Barati.
+
+        Adds FTL support for NewRegexp, RegExpTest, and RegExpExec. I couldn't figure out how to
+        make the RegExpExec peephole optimization work in FTL. This optimizations shouldn't be a
+        DFG backend optimization anyway - if we need this optimization then it should be a
+        strength reduction rule over IR. That way, it can be shared by all backends.
+
+        I measured whether removing that optimization had any effect on performance separately
+        from measuring the performance of this patch. Removing that optimization did not change
+        our score on any benchmarks.
+
+        This patch does have an overall negative effect on the Octane/regexp score. This is
+        presumably because tiering up to the FTL has no value to the code in the regexp test. Or
+        maybe it's something else. No matter - the overall effect on the Octane score is not
+        statistically significant and we don't want this kind of coverage blocked by the fact
+        that adding coverage hurts a benchmark.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::setIndexingType):
+        (JSC::DFG::Node::hasRegexpIndex):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNotifyWrite):
+        (JSC::DFG::SpeculativeJIT::compileIsObjectOrNull):
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckWatchdogTimer):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpExec):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpTest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        (JSC::FTL::DFG::LowerDFGToB3::didOverflowStack):
+        * tests/stress/ftl-regexp-exec.js: Added.
+        * tests/stress/ftl-regexp-test.js: Added.
+
 2016-02-28  Andreas Kling  <akling@apple.com>
 
         Make JSFunction.name allocation fully lazy.

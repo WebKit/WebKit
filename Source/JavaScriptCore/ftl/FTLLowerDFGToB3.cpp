@@ -908,6 +908,15 @@ private:
         case GetRestLength:
             compileGetRestLength();
             break;
+        case RegExpExec:
+            compileRegExpExec();
+            break;
+        case RegExpTest:
+            compileRegExpTest();
+            break;
+        case NewRegexp:
+            compileNewRegexp();
+            break;
 
         case PhantomLocal:
         case LoopHint:
@@ -6385,6 +6394,36 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
+    }
+
+    void compileRegExpExec()
+    {
+        LValue base = lowCell(m_node->child1());
+        LValue argument = lowCell(m_node->child2());
+        setJSValue(
+            vmCall(Int64, m_out.operation(operationRegExpExec), m_callFrame, base, argument));
+    }
+
+    void compileRegExpTest()
+    {
+        LValue base = lowCell(m_node->child1());
+        LValue argument = lowCell(m_node->child2());
+        setBoolean(
+            vmCall(Int32, m_out.operation(operationRegExpTest), m_callFrame, base, argument));
+    }
+
+    void compileNewRegexp()
+    {
+        // FIXME: We really should be able to inline code that uses NewRegexp. That means not
+        // reaching into the CodeBlock here.
+        // https://bugs.webkit.org/show_bug.cgi?id=154808
+
+        LValue result = vmCall(
+            pointerType(),
+            m_out.operation(operationNewRegexp), m_callFrame,
+            m_out.constIntPtr(codeBlock()->regexp(m_node->regexpIndex())));
+        
+        setJSValue(result);
     }
 
     LValue didOverflowStack()
