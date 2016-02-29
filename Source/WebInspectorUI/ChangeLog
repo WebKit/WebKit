@@ -1,3 +1,15 @@
+2016-02-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: DataGrid's resizers aren't horizontally centered
+        https://bugs.webkit.org/show_bug.cgi?id=154787
+        <rdar://problem/24876901>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .resizer):
+        Use CSS transforms as margin-left doesn't support sub-pixel values.
+
 2016-02-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Increase clickable area of the console prompt
