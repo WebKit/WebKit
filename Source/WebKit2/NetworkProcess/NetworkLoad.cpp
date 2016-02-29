@@ -60,7 +60,6 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters&
     } else
         ASSERT_NOT_REACHED();
 #else
-    ASSERT(SessionTracker::storageSession(parameters.sessionID));
     m_handle = ResourceHandle::create(m_networkingContext.get(), parameters.request, this, parameters.defersLoading, parameters.contentSniffingPolicy == SniffContent);
 #endif
 }

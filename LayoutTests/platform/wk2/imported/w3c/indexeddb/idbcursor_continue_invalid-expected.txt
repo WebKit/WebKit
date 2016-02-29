@@ -1,3 +1,0 @@
-
-FAIL IDBCursor.continue() - attempt to call continue two times The data provided does not meet requirements.
-

@@ -1,3 +1,99 @@
+2016-02-25  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: WebKit 2 IPC layer.
+        https://bugs.webkit.org/show_bug.cgi?id=153808
+
+        Reviewed by Alex Christensen.
+
+        - Consolidate all test failures to the platform agnostic TestExpectations file.
+        - Remove all existing WK2-specific results.
+        - Add one new WK2-specific result.
+        - Skip two WK2-only failures.
+        
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * platform/wk2/imported/w3c/indexeddb/abort-in-initial-upgradeneeded-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor-advance-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_advance_index5-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_advance_index9-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_advance_objectstore5-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_index5-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_index6-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_index8-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_invalid-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_objectstore6-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_delete_index4-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_delete_objectstore4-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbdatabase_close2-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbdatabase_deleteObjectStore4-not_reused-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbfactory_deleteDatabase3-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbfactory_open12-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbindex-multientry-big-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_get3-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_get7-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_getKey7-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_openCursor2-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_openKeyCursor3-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_add4-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_createIndex2-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_createIndex4-deleteIndex-event_order-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_createIndex7-event_order-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_put4-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbtransaction_abort-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/idbversionchangeevent-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/keygenerator-constrainterror-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/keygenerator-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/keygenerator-overflow-expected.txt: Removed.
+        * platform/wk2/imported/w3c/indexeddb/transaction-requestqueue-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/aborted-versionchange-closes-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/bad-keypath-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/basics-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/clear-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/create-and-remove-object-store-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/create-objectstore-basics-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/cursor-continue-dir-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/cursor-continue-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/cursor-finished-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/cursors-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/database-basics-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/deleteIndex-bug110792-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/index-count-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/intversion-close-in-oncomplete-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/intversion-close-in-upgradeneeded-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/invalid-keys-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/key-requirements-delete-null-key-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/key-requirements-inline-and-passed-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/key-requirements-put-no-key-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/key-requirements-put-null-key-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/key-type-array-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/keypath-arrays-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/keypath-edges-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/keyrange-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/bad-keypath-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/clear-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/create-objectstore-basics-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/cursors-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/key-requirements-delete-null-key-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/key-requirements-put-no-key-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/mozilla/readonly-transactions-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/object-lookups-in-versionchange-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/objectstore-count-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/open-cursor-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/readonly-transactions-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/request-result-cache-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/transaction-abort-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/transaction-active-flag-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/transaction-after-close-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/transaction-read-only-expected.txt: Removed.
+        * platform/wk2/storage/indexeddb/version-change-exclusive-expected.txt: Removed.
+
 2016-02-25  Daniel Bates  <dabates@apple.com>
 
         CSP: Make SecurityPolicyViolationEvent more closely conform to CSP spec and enable it by default

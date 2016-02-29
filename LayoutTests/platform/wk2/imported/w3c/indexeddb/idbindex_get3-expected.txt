@@ -1,3 +1,0 @@
-
-FAIL IDBIndex.get() - attempt to retrieve a record that doesn't exist  assert_equals: expected (undefined) undefined but got (object) null
-

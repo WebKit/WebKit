@@ -38,7 +38,7 @@ public:
     virtual ~WebDatabaseProvider();
 
 #if ENABLE(INDEXED_DATABASE)
-    virtual bool supportsModernIDB() const override { return false; }
+    virtual bool supportsModernIDB() const override { return true; }
     virtual WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&) override final;
 #endif
 

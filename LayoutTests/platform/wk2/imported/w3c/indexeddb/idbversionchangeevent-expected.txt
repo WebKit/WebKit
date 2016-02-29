@@ -1,3 +1,0 @@
-
-FAIL IDBVersionChangeEvent fired in upgradeneeded, versionchange and deleteDatabase assert_equals: new version (versionchange) expected (object) null but got (number) 0
-

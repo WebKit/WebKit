@@ -867,3 +867,93 @@ loader/stateobjects/replacestate-size.html [ Slow ]
 # outline: auto -focusring.
 imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
+
+########################################
+### START OF IndexedDB failures
+
+# Our IDL parser test harness is not what this test expects
+imported/w3c/indexeddb/interfaces.html [ Skip ]
+
+# W3C IDB tests where the test is wrong (the spec, other browsers, and WebKit all agree)
+# Covered by https://github.com/w3c/web-platform-tests/issues/2456
+imported/w3c/indexeddb/idbindex_get7.htm [ Failure ]
+imported/w3c/indexeddb/idbindex_getKey7.htm [ Failure ]
+imported/w3c/indexeddb/idbindex_openCursor2.htm [ Failure ]
+imported/w3c/indexeddb/idbindex_openKeyCursor3.htm [ Failure ]
+
+# Times out for unexplored reasons                                                             
+storage/indexeddb/database-quota.html [ Skip ]
+storage/indexeddb/database-quota-private.html [ Skip ]
+
+# Modern IDB page cache interaction not yet sorted out
+fast/history/page-cache-indexed-closed-db.html [ Failure ]
+
+# IDB is currently disabled in private browsing.
+# With Modern IDB and the in-memory backing store, that should change.
+storage/indexeddb/open-db-private-browsing.html [ Failure ]
+
+# Relies on internals.observeGC
+storage/indexeddb/connection-leak-private.html [ Skip ]
+storage/indexeddb/connection-leak.html [ Skip ]
+storage/indexeddb/cursor-leak-private.html [ Failure ]
+storage/indexeddb/cursor-leak.html [ Skip ]
+storage/indexeddb/cursor-request-cycle-private.html [ Failure ]
+storage/indexeddb/cursor-request-cycle.html [ Skip ]
+storage/indexeddb/delete-closed-database-object-private.html [ Skip ]
+storage/indexeddb/delete-closed-database-object.html [ Skip ]
+storage/indexeddb/request-leak-private.html [ Failure ]
+storage/indexeddb/request-leak.html [ Failure ]
+
+webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Pass Timeout ]
+
+# No workers support in Modern IDB yet
+http/tests/security/cross-origin-worker-indexeddb-allowed.html
+http/tests/security/cross-origin-worker-indexeddb.html
+storage/indexeddb/basics-workers.html
+storage/indexeddb/cursor-advance-workers.html
+storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html
+storage/indexeddb/dont-commit-on-blocked-private.html
+storage/indexeddb/dont-commit-on-blocked.html
+storage/indexeddb/factory-basics-workers.html
+storage/indexeddb/index-basics-workers.html
+storage/indexeddb/objectstore-basics-workers.html
+storage/indexeddb/open-twice-workers.html
+storage/indexeddb/pending-activity-workers.html
+storage/indexeddb/pending-version-change-on-exit-private.html
+storage/indexeddb/pending-version-change-on-exit.html
+storage/indexeddb/pending-version-change-stuck-private.html
+storage/indexeddb/pending-version-change-stuck-works-with-terminate-private.html
+storage/indexeddb/pending-version-change-stuck-works-with-terminate.html
+storage/indexeddb/pending-version-change-stuck.html
+storage/indexeddb/transaction-complete-workers-private.html
+storage/indexeddb/transaction-complete-workers.html
+storage/indexeddb/unprefix-workers.html
+
+# Need a different way to get database names to the web inspector
+inspector/indexeddb/requestDatabaseNames.html
+
+# Test's behavior specific to Legacy IDB with LevelDB backend
+# Modern IDB is spec-compliant without supporting this behavior
+storage/indexeddb/transaction-starvation.html [ Skip ]
+
+# Times out because we only consider "onblocked"'ing one test at a time,
+# which is allowed by the spec and is what Firefox and Edge do.
+storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
+
+# We allowed disabling IDB at runtime to support polyfills in WK1 before Modern IDB.
+# It's unclear if we need to continue supporting this.
+storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
+
+# Completes with passing results, but too slowly for our test timeouts.
+imported/w3c/indexeddb/idbindex-multientry-big.htm [ Failure ]
+imported/w3c/indexeddb/idbcursor_iterating.htm [ Failure ]
+
+# SQLite backend tests that timeout
+storage/indexeddb/modern/transaction-scheduler-1.html [ Skip ]
+storage/indexeddb/modern/transaction-scheduler-2.html [ Skip ]
+storage/indexeddb/modern/transaction-scheduler-5.html [ Skip ]
+storage/indexeddb/modern/transaction-scheduler-6.html [ Skip ]
+storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
+
+### END OF IndexedDB failures
+########################################
