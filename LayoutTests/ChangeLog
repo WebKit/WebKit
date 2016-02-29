@@ -1,3 +1,11 @@
+2016-02-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/html/dom/reflection-embedded.html for ios-simulator after r197237 
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+
 2016-02-28  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should have global store elimination

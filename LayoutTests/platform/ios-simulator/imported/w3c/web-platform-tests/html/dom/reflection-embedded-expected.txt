@@ -9743,10 +9743,10 @@ PASS video.width: IDL set to "-0" should not throw
 PASS video.width: IDL set to "-0" followed by getAttribute() 
 PASS video.width: IDL set to "-0" followed by IDL get 
 PASS video.width: IDL set to 2147483648 should not throw 
-FAIL video.width: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "2147483648"
+PASS video.width: IDL set to 2147483648 followed by getAttribute() 
 PASS video.width: IDL set to 2147483648 followed by IDL get 
 PASS video.width: IDL set to 4294967295 should not throw 
-FAIL video.width: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "4294967295"
+PASS video.width: IDL set to 4294967295 followed by getAttribute() 
 PASS video.width: IDL set to 4294967295 followed by IDL get 
 PASS video.height: typeof IDL attribute 
 PASS video.height: IDL get with DOM attribute unset 
@@ -9872,10 +9872,10 @@ PASS video.height: IDL set to "-0" should not throw
 PASS video.height: IDL set to "-0" followed by getAttribute() 
 PASS video.height: IDL set to "-0" followed by IDL get 
 PASS video.height: IDL set to 2147483648 should not throw 
-FAIL video.height: IDL set to 2147483648 followed by getAttribute() assert_equals: expected "0" but got "2147483648"
+PASS video.height: IDL set to 2147483648 followed by getAttribute() 
 PASS video.height: IDL set to 2147483648 followed by IDL get 
 PASS video.height: IDL set to 4294967295 should not throw 
-FAIL video.height: IDL set to 4294967295 followed by getAttribute() assert_equals: expected "0" but got "4294967295"
+PASS video.height: IDL set to 4294967295 followed by getAttribute() 
 PASS video.height: IDL set to 4294967295 followed by IDL get 
 PASS video.poster: typeof IDL attribute 
 PASS video.poster: IDL get with DOM attribute unset 
