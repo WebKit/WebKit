@@ -1,3 +1,19 @@
+2016-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have global store elimination
+        https://bugs.webkit.org/show_bug.cgi?id=154658
+
+        Reviewed by Benjamin Poulain.
+
+        These two benchmarks both speed up significantly with this change.
+
+        * js/regress/build-large-object-expected.txt: Added.
+        * js/regress/build-large-object.html: Added.
+        * js/regress/many-repeat-stores-expected.txt: Added.
+        * js/regress/many-repeat-stores.html: Added.
+        * js/regress/script-tests/build-large-object.js: Added.
+        * js/regress/script-tests/many-repeat-stores.js: Added.
+
 2016-02-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         streams/pipe-to.html flaky on mac-wk1 debug

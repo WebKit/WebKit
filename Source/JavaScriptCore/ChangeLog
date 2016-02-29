@@ -1,3 +1,70 @@
+2016-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have global store elimination
+        https://bugs.webkit.org/show_bug.cgi?id=154658
+
+        Reviewed by Benjamin Poulain.
+
+        Implements fairly comprehensive global store elimination:
+
+        1) If you store the result of a load with no interference in between, remove the store.
+
+        2) If you store the same thing you stored previously, remove the store.
+
+        3) If you store something that you either loaded previously or stored previously along
+           arbitrarily many paths, remove the store.
+
+        4) If you store to something that is stored to again in the future with no interference in
+           between, remove the store.
+
+        Rule (4) is super relevant to FTL since the DFG does not eliminate redundant PutStructures.
+        A constructor that produces a large object will have many redundant stores to the same base
+        pointer, offset, and heap range, with no code to observe that heap raneg in between.
+
+        This doesn't have a decisive effect on major benchmarks, but it's an enormous win for
+        microbenchmarks:
+
+        - 30% faster to construct an object with many fields.
+
+        - 5x faster to do many stores to a global variable.
+
+        The compile time cost should be very small. Although the optimization is global, it aborts as
+        soon as it sees anything that would confound store elimination. For rules (1)-(3), we
+        piggy-back the existing load elimination, which gives up on interfering stores. For rule (4),
+        we search forward through the current block and then globally a block at a time (skipping
+        block contents thanks to summary data), which could be expensive. But rule (4) aborts as soon
+        as it sees a read, write, or end block (Return or Oops). Any Check will claim to read TOP. Any
+        Patchpoint that results from an InvalidationPoint will claim to read TOP, as will any
+        Patchpoints for ICs. Those are usually sprinkled all over the program.
+
+        In other words, this optimization rarely kicks in. When it does kick in, it makes programs run
+        faster. When it doesn't kick in, it's usually O(1) because there are reasons for aborting all
+        over a "normal" program so the search will halt almost immediately. This of course raises the
+        question: how much more in compile time do we pay when the optimization does kick in? The
+        optimization kicks in the most for the microbenchmarks I wrote for this patch. Amazingly, the
+        effect of the optimization a wash for compile time: whatever cost we pay doing the O(n^2)
+        searches is balanced by the massive reduction in work in the backend. On one of the two
+        microbenchmarks, overall compile time actually shrank with this optimization even though CSE
+        itself cost more. That's not too surprising - the backend costs much more per instruction, so
+        things that remove instructions before we get to the backend tend to be a good idea.
+
+        We could consider adding a more aggressive version of this in the future, which could sink
+        stores into checks. That could be crazy fun: https://bugs.webkit.org/show_bug.cgi?id=152162#c3
+
+        But mainly, I'm adding this optimization because it was super fun to implement during the
+        WebAssembly CG summit.
+
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3MemoryValue.h:
+        * b3/B3SuccessorCollection.h:
+        (JSC::B3::SuccessorCollection::begin):
+        (JSC::B3::SuccessorCollection::end):
+        (JSC::B3::SuccessorCollection::const_iterator::const_iterator):
+        (JSC::B3::SuccessorCollection::const_iterator::operator*):
+        (JSC::B3::SuccessorCollection::const_iterator::operator++):
+        (JSC::B3::SuccessorCollection::const_iterator::operator==):
+        (JSC::B3::SuccessorCollection::const_iterator::operator!=):
+
 2016-02-29  Filip Pizlo  <fpizlo@apple.com>
 
         Make it cheap to #include "JITOperations.h"
