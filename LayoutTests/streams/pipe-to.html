@@ -8,7 +8,7 @@
 // This test is alone here for timing reasons though it should be at streams/reference-implementation/pipe-to.html.
 var test24 = async_test('Piping to a writable stream that does not consume the writes fast enough exerts backpressure on the source');
 test24.step(function() {
-    const timeoutMultiplier = 5;
+    const timeoutMultiplier = 15;
     var desiredSizes = [];
     var rs = new ReadableStream({
         start: function(c) {
