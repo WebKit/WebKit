@@ -1,3 +1,31 @@
+2016-02-29  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: WebKit 2 IPC layer easily confused about multiple web processes being connected.
+        https://bugs.webkit.org/show_bug.cgi?id=154837
+
+        Reviewed by Alex Christensen.
+
+        The crux of the bug is that WebProcesses cannot assign themselves server-unique identifiers...
+        The server must do that for them.
+        
+        A once-per-session-per-WebProcess sync message and a few updates to connection management fix this.
+        
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didReceiveSyncMessage):
+        (WebKit::generateConnectionToServerIdentifier):
+        (WebKit::DatabaseToWebProcessConnection::establishIDBConnectionToServer):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.messages.in:
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer):
+        (WebKit::generateConnectionToServerIdentifier): Deleted.
+
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::didReceiveMessage):
+        (WebKit::WebToDatabaseProcessConnection::idbConnectionToServerForSession):
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+
 2016-02-29  Alex Christensen  <achristensen@webkit.org>
 
         Don't call NetworkProcess::singleton from WebProcess when using NetworkSession

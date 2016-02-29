@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "MessageSender.h"
 #include "WebIDBConnectionToServer.h"
+#include <WebCore/SessionID.h>
 #include <wtf/RefCounted.h>
 
 #if ENABLE(DATABASE_PROCESS)
@@ -71,7 +72,8 @@ private:
     RefPtr<IPC::Connection> m_connection;
 
 #if ENABLE(INDEXED_DATABASE)
-    HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnections;
+    HashMap<WebCore::SessionID, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsBySession;
+    HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsByIdentifier;
 #endif
 };
 
