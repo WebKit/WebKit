@@ -553,24 +553,6 @@ private:
                 break;
             }
 
-            case OverridesHasInstance: {
-                if (!node->child2().node()->isCellConstant())
-                    break;
-
-                if (node->child2().node()->asCell() != m_graph.globalObjectFor(node->origin.semantic)->functionProtoHasInstanceSymbolFunction()) {
-                    m_graph.convertToConstant(node, jsBoolean(true));
-                    changed = true;
-
-                } else if (!m_graph.hasExitSite(node->origin.semantic, BadTypeInfoFlags)) {
-                    // We optimistically assume that we will not see a function that has a custom instanceof operation as they should be rare.
-                    m_insertionSet.insertNode(indexInBlock, SpecNone, CheckTypeInfoFlags, node->origin, OpInfo(ImplementsDefaultHasInstance), Edge(node->child1().node(), CellUse));
-                    m_graph.convertToConstant(node, jsBoolean(false));
-                    changed = true;
-                }
-                
-                break;
-            }
-
             case Check: {
                 alreadyHandled = true;
                 m_interpreter.execute(indexInBlock);

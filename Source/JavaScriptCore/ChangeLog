@@ -1,3 +1,27 @@
+2016-02-29  Keith Miller  <keith_miller@apple.com>
+
+        OverridesHasInstance constant folding is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=154833
+
+        Reviewed by Filip Pizlo.
+
+        The current implementation of OverridesHasInstance constant folding
+        is incorrect. Since it relies on OSR exit information it has been
+        moved to the StrengthReductionPhase. Normally, such an optimazation would be
+        put in FixupPhase, however, there are a number of cases where we don't
+        determine an edge of OverridesHasInstance is a constant until after fixup.
+        Performing the optimization during StrengthReductionPhase means we can defer
+        our decision until later.
+
+        In the future we should consider creating a version of this optimization
+        that does not depend on OSR exit information and move the optimization back
+        to ConstantFoldingPhase.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants): Deleted.
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
 2016-02-28  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should have global store elimination
