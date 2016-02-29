@@ -47,24 +47,12 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
     if (shouldAllowAccessToFrame(exec, frame, message))
         return false;
 
-    // Check for the few functions that we allow, even when called cross-domain.
-    // Make these read-only / non-configurable to prevent writes via defineProperty.
+    // We only allow access to Location.replace() cross origin.
+    // Make it read-only / non-configurable to prevent writes via defineProperty.
     if (propertyName == exec->propertyNames().replace) {
         slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
         return true;
     }
-    if (propertyName == exec->propertyNames().reload) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReload, 0>);
-        return true;
-    }
-    if (propertyName == exec->propertyNames().assign) {
-        slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionAssign, 1>);
-        return true;
-    }
-
-    // FIXME: Other implementers of the Window cross-domain scheme (Window, History) allow toString,
-    // but for now we have decided not to, partly because it seems silly to return "[Object Location]" in
-    // such cases when normally the string form of Location would be the URL.
 
     printErrorMessageForFrame(frame, message);
     slot.setUndefined();

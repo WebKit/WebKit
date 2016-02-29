@@ -253,10 +253,10 @@
             log("----- tests access to cross domain location object -----");
             window.targetLocation = targetWindow.location;
             var locationPropertiesNotAllowed = [
-                "protocol", "host", "hostname", "port", "pathname", "search", "hash", "toString", "valueOf", "customProperty"
+                "protocol", "host", "hostname", "port", "pathname", "search", "hash", "toString", "valueOf", "customProperty", "assign", "reload"
             ];
             var locationPropertiesAllowed = [
-                "assign", "replace", "reload"
+                "replace"
             ];
             for (var i = 0; i < locationPropertiesNotAllowed.length; i++)
                 shouldBeFalse("canGetDescriptor(targetLocation, '" + locationPropertiesNotAllowed[i] + "')");
