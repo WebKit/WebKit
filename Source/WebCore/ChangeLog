@@ -1,3 +1,16 @@
+2016-02-29  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Optional for HTMLOListElement::m_start
+        https://bugs.webkit.org/show_bug.cgi?id=154824
+
+        Reviewed by Andreas Kling.
+
+        Use WTF::Optional for HTMLOListElement::m_start.
+
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::parseAttribute):
+        * html/HTMLOListElement.h:
+
 2016-02-29  Gavin Barraclough  <barraclough@apple.com>
 
         RefCounter<T>::Event -> RefCounterEvent

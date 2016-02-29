@@ -24,6 +24,7 @@
 #define HTMLOListElement_h
 
 #include "HTMLElement.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -32,7 +33,7 @@ public:
     static Ref<HTMLOListElement> create(Document&);
     static Ref<HTMLOListElement> create(const QualifiedName&, Document&);
 
-    int start() const { return m_hasExplicitStart ? m_start : (m_isReversed ? itemCount() : 1); }
+    int start() const { return m_start ? m_start.value() : (m_isReversed ? itemCount() : 1); }
     void setStart(int);
 
     bool isReversed() const { return m_isReversed; }
@@ -57,10 +58,9 @@ private:
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    int m_start;
+    Optional<int> m_start;
     unsigned m_itemCount;
 
-    bool m_hasExplicitStart : 1;
     bool m_isReversed : 1;
     bool m_shouldRecalculateItemCount : 1;
 };

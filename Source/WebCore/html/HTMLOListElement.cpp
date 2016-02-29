@@ -35,9 +35,7 @@ using namespace HTMLNames;
 
 HTMLOListElement::HTMLOListElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_start(0xBADBEEF)
     , m_itemCount(0)
-    , m_hasExplicitStart(false)
     , m_isReversed(false)
     , m_shouldRecalculateItemCount(false)
 {
@@ -82,9 +80,11 @@ void HTMLOListElement::parseAttribute(const QualifiedName& name, const AtomicStr
 {
     if (name == startAttr) {
         int oldStart = start();
-        m_hasExplicitStart = parseHTMLInteger(value, m_start);
-        if (!m_hasExplicitStart)
-            m_start = 0xBADBEEF;
+        int parsedStart;
+        if (parseHTMLInteger(value, parsedStart))
+            m_start = parsedStart;
+        else
+            m_start = Nullopt;
         if (oldStart == start())
             return;
         updateItemValues();
