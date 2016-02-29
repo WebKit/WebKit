@@ -372,12 +372,6 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
         return nullptr;
     }
 
-    if (!ensureValidIndexRecordsTable()) {
-        LOG_ERROR("Could not create IndexRecords table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        m_sqliteDB = nullptr;
-        return nullptr;
-    }
-
     if (!m_sqliteDB->executeCommand("CREATE TABLE KeyGenerators (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, currentKey INTEGER NOT NULL ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create KeyGenerators table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         m_sqliteDB = nullptr;
@@ -590,6 +584,12 @@ const IDBDatabaseInfo& SQLiteIDBBackingStore::getOrEstablishDatabaseInfo()
 
     if (!ensureValidRecordsTable()) {
         LOG_ERROR("Error creating or migrating Records table in database");
+        m_sqliteDB = nullptr;
+        return *m_databaseInfo;
+    }
+
+    if (!ensureValidIndexRecordsTable()) {
+        LOG_ERROR("Error creating or migrating Index Records table in database");
         m_sqliteDB = nullptr;
         return *m_databaseInfo;
     }

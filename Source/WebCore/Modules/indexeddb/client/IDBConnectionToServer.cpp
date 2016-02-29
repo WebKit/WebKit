@@ -76,7 +76,7 @@ void IDBConnectionToServer::didDeleteDatabase(const IDBResultData& resultData)
 
 void IDBConnectionToServer::openDatabase(IDBOpenDBRequest& request)
 {
-    LOG(IndexedDB, "IDBConnectionToServer::openDatabase - %s", request.databaseIdentifier().debugString().utf8().data());
+    LOG(IndexedDB, "IDBConnectionToServer::openDatabase - %s (%" PRIu64 ")", request.databaseIdentifier().debugString().utf8().data(), request.version());
 
     ASSERT(!m_openDBRequestMap.contains(request.resourceIdentifier()));
     m_openDBRequestMap.set(request.resourceIdentifier(), &request);

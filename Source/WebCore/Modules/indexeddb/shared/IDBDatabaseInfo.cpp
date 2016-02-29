@@ -46,6 +46,10 @@ IDBDatabaseInfo IDBDatabaseInfo::isolatedCopy() const
 
     info.m_name = m_name.isolatedCopy();
     info.m_version = m_version;
+    info.m_maxObjectStoreID = m_maxObjectStoreID;
+
+    for (auto entry : m_objectStoreMap)
+        info.m_objectStoreMap.set(entry.key, entry.value.isolatedCopy());
 
     return info;
 }
