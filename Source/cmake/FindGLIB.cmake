@@ -70,14 +70,16 @@ find_path(GLIB_INCLUDE_DIR
 set(GLIB_INCLUDE_DIRS ${GLIB_INCLUDE_DIR} ${GLIBCONFIG_INCLUDE_DIR})
 
 # Version detection
-file(READ "${GLIBCONFIG_INCLUDE_DIR}/glibconfig.h" GLIBCONFIG_H_CONTENTS)
-string(REGEX MATCH "#define GLIB_MAJOR_VERSION ([0-9]+)" _dummy "${GLIBCONFIG_H_CONTENTS}")
-set(GLIB_VERSION_MAJOR "${CMAKE_MATCH_1}")
-string(REGEX MATCH "#define GLIB_MINOR_VERSION ([0-9]+)" _dummy "${GLIBCONFIG_H_CONTENTS}")
-set(GLIB_VERSION_MINOR "${CMAKE_MATCH_1}")
-string(REGEX MATCH "#define GLIB_MICRO_VERSION ([0-9]+)" _dummy "${GLIBCONFIG_H_CONTENTS}")
-set(GLIB_VERSION_MICRO "${CMAKE_MATCH_1}")
-set(GLIB_VERSION "${GLIB_VERSION_MAJOR}.${GLIB_VERSION_MINOR}.${GLIB_VERSION_MICRO}")
+if (EXISTS "${GLIBCONFIG_INCLUDE_DIR}/glibconfig.h")
+    file(READ "${GLIBCONFIG_INCLUDE_DIR}/glibconfig.h" GLIBCONFIG_H_CONTENTS)
+    string(REGEX MATCH "#define GLIB_MAJOR_VERSION ([0-9]+)" _dummy "${GLIBCONFIG_H_CONTENTS}")
+    set(GLIB_VERSION_MAJOR "${CMAKE_MATCH_1}")
+    string(REGEX MATCH "#define GLIB_MINOR_VERSION ([0-9]+)" _dummy "${GLIBCONFIG_H_CONTENTS}")
+    set(GLIB_VERSION_MINOR "${CMAKE_MATCH_1}")
+    string(REGEX MATCH "#define GLIB_MICRO_VERSION ([0-9]+)" _dummy "${GLIBCONFIG_H_CONTENTS}")
+    set(GLIB_VERSION_MICRO "${CMAKE_MATCH_1}")
+    set(GLIB_VERSION "${GLIB_VERSION_MAJOR}.${GLIB_VERSION_MINOR}.${GLIB_VERSION_MICRO}")
+endif ()
 
 # Additional Glib components.  We only look for libraries, as not all of them
 # have corresponding headers and all headers are installed alongside the main
