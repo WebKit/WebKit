@@ -3199,6 +3199,9 @@
     <ClInclude Include="..\runtime\SmallStrings.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\SlowPathReturnType.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\SparseArrayValueMap.h">
       <Filter>runtime</Filter>
     </ClInclude>

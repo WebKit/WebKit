@@ -31,6 +31,7 @@
 #include "CCallHelpers.h"
 #include "CallVariant.h"
 #include "JITOperations.h"
+#include "PutKind.h"
 
 namespace JSC {
 

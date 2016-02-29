@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,20 +28,32 @@
 
 #if ENABLE(JIT)
 
-#include "CallFrame.h"
-#include "CommonSlowPaths.h"
-#include "JITExceptions.h"
-#include "JSArray.h"
-#include "JSCJSValue.h"
-#include "MacroAssembler.h"
-#include "PutKind.h"
-#include "SpillRegistersMode.h"
-#include "StructureStubInfo.h"
-
+#include "MacroAssemblerCodeRef.h"
+#include "PropertyOffset.h"
+#include "SlowPathReturnType.h"
+#include "TypedArrayType.h"
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
 
 class ArrayAllocationProfile;
+class ArrayProfile;
+class CallLinkInfo;
+class CodeBlock;
+class ExecState;
+class JSArray;
+class JSFunction;
+class JSLexicalEnvironment;
+class JSScope;
+class Register;
+class StructureStubInfo;
+class SymbolTable;
+class WatchpointSet;
+
+struct ByValInfo;
+struct InlineCallFrame;
+
+typedef ExecState CallFrame;
 
 #if CALLING_CONVENTION_IS_STDCALL
 #define JIT_OPERATION CDECL
