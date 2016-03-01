@@ -1,3 +1,46 @@
+2016-02-29  Saam barati  <sbarati@apple.com>
+
+        [[PreventExtensions]] should be a virtual method in the method table.
+        https://bugs.webkit.org/show_bug.cgi?id=154800
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes us more consistent with how the ES6 specification models the
+        [[PreventExtensions]] trap. Moving this method into ClassInfo::methodTable 
+        is a prerequisite for implementing Proxy.[[PreventExtensions]].
+
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getGenericPropertyNames):
+        (JSC::JSCell::preventExtensions):
+        * runtime/JSCell.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::JSModuleNamespaceObject):
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::destroy):
+        * runtime/JSModuleNamespaceObject.h:
+        (JSC::JSModuleNamespaceObject::create):
+        (JSC::JSModuleNamespaceObject::moduleRecord):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::freeze):
+        (JSC::JSObject::preventExtensions):
+        (JSC::JSObject::reifyAllStaticProperties):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isSealed):
+        (JSC::JSObject::isFrozen):
+        (JSC::JSObject::isExtensible):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorPreventExtensions):
+        (JSC::objectConstructorIsSealed):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectPreventExtensions):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::preventExtensionsTransition):
+        * runtime/Structure.h:
+
 2016-02-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Private symbols should not be trapped by proxy handler

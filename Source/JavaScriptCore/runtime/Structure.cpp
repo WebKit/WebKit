@@ -203,7 +203,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(classInfo->hasStaticSetterOrReadonlyProperties());
     setHasNonEnumerableProperties(false);
     setAttributesInPrevious(0);
-    setPreventExtensions(false);
+    setDidPreventExtensions(false);
     setDidTransition(false);
     setStaticFunctionsReified(false);
     setHasRareData(false);
@@ -235,7 +235,7 @@ Structure::Structure(VM& vm)
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(m_classInfo->hasStaticSetterOrReadonlyProperties());
     setHasNonEnumerableProperties(false);
     setAttributesInPrevious(0);
-    setPreventExtensions(false);
+    setDidPreventExtensions(false);
     setDidTransition(false);
     setStaticFunctionsReified(false);
     setHasRareData(false);
@@ -266,7 +266,7 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->hasReadOnlyOrGetterSetterPropertiesExcludingProto());
     setHasNonEnumerableProperties(previous->hasNonEnumerableProperties());
     setAttributesInPrevious(0);
-    setPreventExtensions(previous->preventExtensions());
+    setDidPreventExtensions(previous->didPreventExtensions());
     setDidTransition(true);
     setStaticFunctionsReified(previous->staticFunctionsReified());
     setHasRareData(false);
@@ -625,7 +625,7 @@ Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure)
     structure->materializePropertyMapIfNecessary(vm, deferGC);
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm));
     transition->m_offset = structure->m_offset;
-    transition->setPreventExtensions(true);
+    transition->setDidPreventExtensions(true);
     transition->pin();
 
     transition->checkOffsetConsistency();

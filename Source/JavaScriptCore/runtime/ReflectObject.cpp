@@ -186,8 +186,11 @@ EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState* exec)
     JSValue target = exec->argument(0);
     if (!target.isObject())
         return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.preventExtensions requires the first argument be an object")));
-    asObject(target)->preventExtensions(exec->vm());
-    return JSValue::encode(jsBoolean(true));
+    JSObject* object = asObject(target);
+    bool result = object->methodTable(exec->vm())->preventExtensions(object, exec);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsBoolean(result));
 }
 
 // http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.setprototypeof

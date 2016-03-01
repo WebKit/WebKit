@@ -41,7 +41,7 @@ public:
     static JSModuleNamespaceObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSModuleRecord* moduleRecord, const IdentifierSet& exports)
     {
         JSModuleNamespaceObject* object = new (NotNull, allocateCell<JSModuleNamespaceObject>(exec->vm().heap)) JSModuleNamespaceObject(exec->vm(), structure);
-        object->finishCreation(exec->vm(), globalObject, moduleRecord, exports);
+        object->finishCreation(exec, globalObject, moduleRecord, exports);
         return object;
     }
 
@@ -62,7 +62,7 @@ public:
     JSModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
 protected:
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*, JSModuleRecord*, const IdentifierSet& exports);
+    JS_EXPORT_PRIVATE void finishCreation(ExecState*, JSGlobalObject*, JSModuleRecord*, const IdentifierSet& exports);
     JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);
 
 private:

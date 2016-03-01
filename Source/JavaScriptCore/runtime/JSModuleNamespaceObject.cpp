@@ -49,8 +49,9 @@ JSModuleNamespaceObject::JSModuleNamespaceObject(VM& vm, Structure* structure)
 {
 }
 
-void JSModuleNamespaceObject::finishCreation(VM& vm, JSGlobalObject* globalObject, JSModuleRecord* moduleRecord, const IdentifierSet& exports)
+void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject, JSModuleRecord* moduleRecord, const IdentifierSet& exports)
 {
+    VM& vm = exec->vm();
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
@@ -78,7 +79,8 @@ void JSModuleNamespaceObject::finishCreation(VM& vm, JSGlobalObject* globalObjec
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-setprototypeof-v
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-isextensible
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-preventextensions
-    preventExtensions(vm);
+    methodTable(vm)->preventExtensions(this, exec);
+    ASSERT(!exec->hadException());
 }
 
 void JSModuleNamespaceObject::destroy(JSCell* cell)

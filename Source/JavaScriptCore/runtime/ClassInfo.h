@@ -103,6 +103,9 @@ struct MethodTable {
     typedef PassRefPtr<ArrayBufferView> (*GetTypedArrayImpl)(JSArrayBufferView*);
     GetTypedArrayImpl getTypedArrayImpl;
 
+    typedef bool (*PreventExtensionsFunctionPtr)(JSObject*, ExecState*);
+    PreventExtensionsFunctionPtr preventExtensions;
+
     typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);
     DumpToStreamFunctionPtr dumpToStream;
 
@@ -154,6 +157,7 @@ struct MethodTable {
         &ClassName::defineOwnProperty, \
         &ClassName::slowDownAndWasteMemory, \
         &ClassName::getTypedArrayImpl, \
+        &ClassName::preventExtensions, \
         &ClassName::dumpToStream, \
         &ClassName::estimatedSize \
     }, \

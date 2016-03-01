@@ -1675,12 +1675,15 @@ void JSObject::freeze(VM& vm)
     setStructure(vm, Structure::freezeTransition(vm, structure(vm)));
 }
 
-void JSObject::preventExtensions(VM& vm)
+bool JSObject::preventExtensions(JSObject* object, ExecState* exec)
 {
-    if (!isExtensible())
-        return;
-    enterDictionaryIndexingMode(vm);
-    setStructure(vm, Structure::preventExtensionsTransition(vm, structure(vm)));
+    if (!object->isExtensible())
+        return true;
+
+    VM& vm = exec->vm();
+    object->enterDictionaryIndexingMode(vm);
+    object->setStructure(vm, Structure::preventExtensionsTransition(vm, object->structure(vm)));
+    return true;
 }
 
 void JSObject::reifyAllStaticProperties(ExecState* exec)

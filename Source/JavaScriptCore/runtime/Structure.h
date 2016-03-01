@@ -183,7 +183,7 @@ public:
 
     JS_EXPORT_PRIVATE bool isSealed(VM&);
     JS_EXPORT_PRIVATE bool isFrozen(VM&);
-    bool isExtensible() const { return !preventExtensions(); }
+    bool isExtensible() const { return !didPreventExtensions(); }
     bool putWillGrowOutOfLineStorage();
     size_t suggestedNewOutOfLineStorageCapacity(); 
 
@@ -579,7 +579,7 @@ public:
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, hasNonEnumerableProperties, HasNonEnumerableProperties, 1, 5);
     DEFINE_BITFIELD(unsigned, attributesInPrevious, AttributesInPrevious, 14, 6);
-    DEFINE_BITFIELD(bool, preventExtensions, PreventExtensions, 1, 20);
+    DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 20);
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
     DEFINE_BITFIELD(bool, staticFunctionsReified, StaticFunctionsReified, 1, 22);
     DEFINE_BITFIELD(bool, hasRareData, HasRareData, 1, 23);

@@ -614,7 +614,7 @@ public:
 
     JS_EXPORT_PRIVATE void seal(VM&);
     JS_EXPORT_PRIVATE void freeze(VM&);
-    JS_EXPORT_PRIVATE void preventExtensions(VM&);
+    JS_EXPORT_PRIVATE static bool preventExtensions(JSObject*, ExecState*);
     bool isSealed(VM& vm) { return structure(vm)->isSealed(vm); }
     bool isFrozen(VM& vm) { return structure(vm)->isFrozen(vm); }
     bool isExtensible() { return structure()->isExtensible(); }
