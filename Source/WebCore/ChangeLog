@@ -1,3 +1,50 @@
+2016-02-29  Jer Noble  <jer.noble@apple.com>
+
+        Refactor CoreVideo API access into their own classes so code can be re-used.
+        https://bugs.webkit.org/show_bug.cgi?id=154544
+
+        Reviewed by Eric Carlson.
+
+        In order for common CoreVideo code paths to be re-used in other classes, pull those paths
+        out of MediaPlayerPrivateAVFoundationObjC and into re-usable clasess.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        * platform/cocoa/CoreVideoSoftLink.cpp: Added.
+        * platform/cocoa/CoreVideoSoftLink.h: Added.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createPixelBuffer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture):
+        (WebCore::CVPixelBufferGetBytePointerCallback): Deleted.
+        (WebCore::CVPixelBufferReleaseBytePointerCallback): Deleted.
+        (WebCore::CVPixelBufferReleaseInfoCallback): Deleted.
+        (WebCore::createImageFromPixelBuffer): Deleted.
+        (WebCore::enumToStringMap): Deleted.
+        * platform/graphics/cv/PixelBufferConformerCV.cpp: Added.
+        (WebCore::PixelBufferConformerCV::PixelBufferConformerCV):
+        (WebCore::CVPixelBufferGetBytePointerCallback):
+        (WebCore::CVPixelBufferReleaseBytePointerCallback):
+        (WebCore::CVPixelBufferReleaseInfoCallback):
+        (WebCore::PixelBufferConformerCV::createImageFromPixelBuffer):
+        * platform/graphics/cv/PixelBufferConformerCV.h: Added.
+        * platform/graphics/cv/TextureCacheCV.h: Added.
+        (WebCore::TextureCacheCV::context):
+        * platform/graphics/cv/TextureCacheCV.mm: Added.
+        (WebCore::TextureCacheCV::create):
+        (WebCore::TextureCacheCV::TextureCacheCV):
+        (WebCore::TextureCacheCV::textureFromImage):
+        * platform/graphics/cv/VideoTextureCopierCV.cpp: Added.
+        (WebCore::VideoTextureCopierCV::VideoTextureCopierCV):
+        (WebCore::VideoTextureCopierCV::~VideoTextureCopierCV):
+        (WebCore::enumToStringMap):
+        (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture):
+        * platform/graphics/cv/VideoTextureCopierCV.h: Added.
+        (WebCore::VideoTextureCopierCV::context):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm: Move SOFT_LINK declarations into CoreVideoSoftLink.h/cpp.
+
 2016-02-29  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Optional for HTMLOListElement::m_start

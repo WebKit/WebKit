@@ -43,6 +43,7 @@
 #import <objc/runtime.h>
 
 #import "CoreMediaSoftLink.h"
+#import "CoreVideoSoftLink.h"
 
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceType;
@@ -52,7 +53,6 @@ typedef AVCaptureVideoDataOutput AVCaptureVideoDataOutputType;
 typedef AVCaptureVideoPreviewLayer AVCaptureVideoPreviewLayerType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreVideo)
 
 SOFT_LINK_CLASS(AVFoundation, AVCaptureConnection)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice)
@@ -80,17 +80,6 @@ SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPresetLow, NSString *)
 #define AVCaptureSessionPreset640x480 getAVCaptureSessionPreset640x480()
 #define AVCaptureSessionPreset352x288 getAVCaptureSessionPreset352x288()
 #define AVCaptureSessionPresetLow getAVCaptureSessionPresetLow()
-
-SOFT_LINK(CoreVideo, CVPixelBufferGetWidth, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
-SOFT_LINK(CoreVideo, CVPixelBufferGetHeight, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
-SOFT_LINK(CoreVideo, CVPixelBufferGetBaseAddress, void*, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
-SOFT_LINK(CoreVideo, CVPixelBufferGetBytesPerRow, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
-SOFT_LINK(CoreVideo, CVPixelBufferGetPixelFormatType, OSType, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
-SOFT_LINK(CoreVideo, CVPixelBufferLockBaseAddress, CVReturn, (CVPixelBufferRef pixelBuffer, CVOptionFlags lockFlags), (pixelBuffer, lockFlags))
-SOFT_LINK(CoreVideo, CVPixelBufferUnlockBaseAddress, CVReturn, (CVPixelBufferRef pixelBuffer, CVOptionFlags lockFlags), (pixelBuffer, lockFlags))
-
-SOFT_LINK_POINTER(CoreVideo, kCVPixelBufferPixelFormatTypeKey, NSString *)
-#define kCVPixelBufferPixelFormatTypeKey getkCVPixelBufferPixelFormatTypeKey()
 
 namespace WebCore {
 

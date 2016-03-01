@@ -57,7 +57,6 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 
 typedef struct CGImage *CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
-typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
 #if PLATFORM(IOS)
 typedef struct  __CVOpenGLESTextureCache *CVOpenGLESTextureCacheRef;
 #else
@@ -71,8 +70,11 @@ class AudioTrackPrivateAVFObjC;
 class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVFObjC;
 class MediaSelectionGroupAVFObjC;
+class PixelBufferConformerCV;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
+class TextureCacheCV;
+class VideoTextureCopierCV;
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 class VideoFullscreenLayerManager;
@@ -345,17 +347,12 @@ private:
     dispatch_semaphore_t m_videoOutputSemaphore;
 
     RetainPtr<AVPlayerItemVideoOutput> m_openGLVideoOutput;
-#if PLATFORM(IOS)
-    RetainPtr<CVOpenGLESTextureCacheRef> m_openGLTextureCache;
-#else
-    RetainPtr<CVOpenGLTextureCacheRef> m_openGLTextureCache;
-#endif
+    std::unique_ptr<TextureCacheCV> m_textureCache;
+    std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
     RetainPtr<CVPixelBufferRef> m_lastOpenGLImage;
 #endif
 
-#if USE(VIDEOTOOLBOX)
-    RetainPtr<VTPixelTransferSessionRef> m_pixelTransferSession;
-#endif
+    std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     friend class WebCoreAVFResourceLoader;

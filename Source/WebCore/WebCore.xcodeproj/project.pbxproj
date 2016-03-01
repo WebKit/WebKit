@@ -6033,6 +6033,10 @@
 		CD641EB41818F5ED00EE4C41 /* SourceBufferPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */; };
 		CD641EBF1819B36000EE4C41 /* MediaTimeAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD641EBD1819B35900EE4C41 /* MediaTimeAVFoundation.cpp */; };
 		CD641EC01819B36000EE4C41 /* MediaTimeAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD641EBE1819B35900EE4C41 /* MediaTimeAVFoundation.h */; };
+		CD7D33431C7A123F00041293 /* PixelBufferConformerCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7D33411C7A123F00041293 /* PixelBufferConformerCV.cpp */; };
+		CD7D33441C7A123F00041293 /* PixelBufferConformerCV.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7D33421C7A123F00041293 /* PixelBufferConformerCV.h */; };
+		CD7D33471C7A16BF00041293 /* CoreVideoSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7D33451C7A16BF00041293 /* CoreVideoSoftLink.cpp */; };
+		CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */; };
 		CD7DBB2818CA19A400C11066 /* CSSGridLineNamesValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7DBB2618CA11FF00C11066 /* CSSGridLineNamesValue.cpp */; };
 		CD7DBB2918CA19C600C11066 /* CSSGridLineNamesValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */; };
 		CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD7E05211651A84100C1201F /* WebCoreAVFResourceLoader.mm */; };
@@ -6049,6 +6053,10 @@
 		CD8B5A46180DFF4E008B8E65 /* VideoTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A45180DFF4E008B8E65 /* VideoTrackMediaSource.h */; };
 		CD8B5A49180E138B008B8E65 /* TextTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A48180E138B008B8E65 /* TextTrackMediaSource.h */; };
 		CD8B5A4C180E17C0008B8E65 /* AudioTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A4B180E17C0008B8E65 /* AudioTrackMediaSource.h */; };
+		CD9D82751C7AE535006FF066 /* TextureCacheCV.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD9D82731C7AE535006FF066 /* TextureCacheCV.mm */; };
+		CD9D82761C7AE535006FF066 /* TextureCacheCV.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9D82741C7AE535006FF066 /* TextureCacheCV.h */; };
+		CD9D82791C7B8EE1006FF066 /* VideoTextureCopierCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9D82771C7B8EE1006FF066 /* VideoTextureCopierCV.cpp */; };
+		CD9D827A1C7B8EE1006FF066 /* VideoTextureCopierCV.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9D82781C7B8EE1006FF066 /* VideoTextureCopierCV.h */; };
 		CD9DE17417AAC74C00EA386D /* JSMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9DE17217AAC74C00EA386D /* JSMediaSource.cpp */; };
 		CD9DE17517AAC74C00EA386D /* JSMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE17317AAC74C00EA386D /* JSMediaSource.h */; };
 		CD9DE17A17AAC75B00EA386D /* JSSourceBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9DE17617AAC75B00EA386D /* JSSourceBuffer.cpp */; };
@@ -13958,6 +13966,10 @@
 		CD641EBD1819B35900EE4C41 /* MediaTimeAVFoundation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTimeAVFoundation.cpp; sourceTree = "<group>"; };
 		CD641EBE1819B35900EE4C41 /* MediaTimeAVFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaTimeAVFoundation.h; sourceTree = "<group>"; };
 		CD641EC7181ED60100EE4C41 /* MediaSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSample.h; sourceTree = "<group>"; };
+		CD7D33411C7A123F00041293 /* PixelBufferConformerCV.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PixelBufferConformerCV.cpp; path = ../cv/PixelBufferConformerCV.cpp; sourceTree = "<group>"; };
+		CD7D33421C7A123F00041293 /* PixelBufferConformerCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixelBufferConformerCV.h; path = ../cv/PixelBufferConformerCV.h; sourceTree = "<group>"; };
+		CD7D33451C7A16BF00041293 /* CoreVideoSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreVideoSoftLink.cpp; sourceTree = "<group>"; };
+		CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreVideoSoftLink.h; sourceTree = "<group>"; };
 		CD7DBB2618CA11FF00C11066 /* CSSGridLineNamesValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridLineNamesValue.cpp; sourceTree = "<group>"; };
 		CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridLineNamesValue.h; sourceTree = "<group>"; };
 		CD7E05201651A84100C1201F /* WebCoreAVFResourceLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreAVFResourceLoader.h; sourceTree = "<group>"; };
@@ -13978,6 +13990,10 @@
 		CD8B5A48180E138B008B8E65 /* TextTrackMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackMediaSource.h; sourceTree = "<group>"; };
 		CD8B5A4A180E17A3008B8E65 /* AudioTrackMediaSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioTrackMediaSource.idl; sourceTree = "<group>"; };
 		CD8B5A4B180E17C0008B8E65 /* AudioTrackMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackMediaSource.h; sourceTree = "<group>"; };
+		CD9D82731C7AE535006FF066 /* TextureCacheCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextureCacheCV.mm; path = ../cv/TextureCacheCV.mm; sourceTree = "<group>"; };
+		CD9D82741C7AE535006FF066 /* TextureCacheCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureCacheCV.h; path = ../cv/TextureCacheCV.h; sourceTree = "<group>"; };
+		CD9D82771C7B8EE1006FF066 /* VideoTextureCopierCV.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoTextureCopierCV.cpp; path = ../cv/VideoTextureCopierCV.cpp; sourceTree = "<group>"; };
+		CD9D82781C7B8EE1006FF066 /* VideoTextureCopierCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoTextureCopierCV.h; path = ../cv/VideoTextureCopierCV.h; sourceTree = "<group>"; };
 		CD9DE17217AAC74C00EA386D /* JSMediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaSource.cpp; sourceTree = "<group>"; };
 		CD9DE17317AAC74C00EA386D /* JSMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaSource.h; sourceTree = "<group>"; };
 		CD9DE17617AAC75B00EA386D /* JSSourceBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSourceBuffer.cpp; sourceTree = "<group>"; };
@@ -19900,6 +19916,8 @@
 			isa = PBXGroup;
 			children = (
 				A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */,
+				CD7D33451C7A16BF00041293 /* CoreVideoSoftLink.cpp */,
+				CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */,
 				7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */,
 				7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */,
 				5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */,
@@ -21769,6 +21787,7 @@
 				076F0D0812B8192700C26AA4 /* avfoundation */,
 				499B3EC0128CCC1800E726C2 /* ca */,
 				B27535290B053814002CE64F /* cg */,
+				CD9D827C1C7BB2ED006FF066 /* cv */,
 				B5320D68122A24E9002D1440 /* cocoa */,
 				9332AB3B16515D7700D827EC /* cpu */,
 				0FE5FBC91C3DD5060007A2CA /* displaylists */,
@@ -22976,6 +22995,20 @@
 				CD32A189184EB46A0029B1BB /* mediaControlsiOS.js */,
 			);
 			path = mediacontrols;
+			sourceTree = "<group>";
+		};
+		CD9D827C1C7BB2ED006FF066 /* cv */ = {
+			isa = PBXGroup;
+			children = (
+				CD7D33411C7A123F00041293 /* PixelBufferConformerCV.cpp */,
+				CD7D33421C7A123F00041293 /* PixelBufferConformerCV.h */,
+				CD9D82741C7AE535006FF066 /* TextureCacheCV.h */,
+				CD9D82731C7AE535006FF066 /* TextureCacheCV.mm */,
+				CD9D82771C7B8EE1006FF066 /* VideoTextureCopierCV.cpp */,
+				CD9D82781C7B8EE1006FF066 /* VideoTextureCopierCV.h */,
+			);
+			name = cv;
+			path = cg;
 			sourceTree = "<group>";
 		};
 		CDA98DBD16014E0800FEA3B1 /* encryptedmedia */ = {
@@ -25114,6 +25147,7 @@
 				6550B6A2099DF0270090D781 /* Comment.h in Headers */,
 				E1FE137518402A6700892F13 /* CommonCryptoUtilities.h in Headers */,
 				7C93F34A1AA6BA5E00A98BAB /* CompiledContentExtension.h in Headers */,
+				CD9D827A1C7B8EE1006FF066 /* VideoTextureCopierCV.h in Headers */,
 				37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */,
 				E4BA50901BCFBD9500E34EF7 /* ComposedTreeAncestorIterator.h in Headers */,
 				E44FA1851BCA6B5A0091B6EF /* ComposedTreeIterator.h in Headers */,
@@ -26881,6 +26915,7 @@
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
 				1A762C740A074F2600989F5B /* JSXPathEvaluator.h in Headers */,
 				BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */,
+				CD7D33441C7A123F00041293 /* PixelBufferConformerCV.h in Headers */,
 				1A762C760A074F2600989F5B /* JSXPathExpression.h in Headers */,
 				1A762C780A074F2600989F5B /* JSXPathNSResolver.h in Headers */,
 				1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */,
@@ -27587,6 +27622,7 @@
 				078E092A17D14D1C00420AA1 /* RTCStatsReport.h in Headers */,
 				511EC1281C50AACA0032F983 /* IDBSerialization.h in Headers */,
 				078E094517D16E1C00420AA1 /* RTCStatsRequest.h in Headers */,
+				CD9D82761C7AE535006FF066 /* TextureCacheCV.h in Headers */,
 				078E092C17D14D1C00420AA1 /* RTCStatsResponse.h in Headers */,
 				078E094617D16E1C00420AA1 /* RTCStatsResponseBase.h in Headers */,
 				5E2C43681BCEE3770001E2BC /* RTCTrackEvent.h in Headers */,
@@ -28115,6 +28151,7 @@
 				7CC564B818BABEA6001B9652 /* TelephoneNumberDetector.h in Headers */,
 				C65046A9167BFB5500CC2A4D /* TemplateContentDocumentFragment.h in Headers */,
 				26E944DD1AC4B4EA007B85B5 /* Term.h in Headers */,
+				CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */,
 				6550B6A6099DF0270090D781 /* Text.h in Headers */,
 				93309E17099E64920056E581 /* TextAffinity.h in Headers */,
 				CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */,
@@ -29279,6 +29316,7 @@
 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
 				BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */,
 				BCD0FBD00DBD625E00B2F630 /* DOMAbstractView.mm in Sources */,
+				CD7D33431C7A123F00041293 /* PixelBufferConformerCV.cpp in Sources */,
 				319848091A1E6CBF00A13318 /* DOMAnimationEvent.mm in Sources */,
 				1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */,
 				85D389B30A991A7F00282145 /* DOMAttr.mm in Sources */,
@@ -29450,6 +29488,7 @@
 				3F2B33EC165AF15600E3987C /* DOMWebKitCSSViewportRule.mm in Sources */,
 				8A195933147EA16E00D1EA61 /* DOMWebKitNamedFlow.mm in Sources */,
 				31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */,
+				CD7D33471C7A16BF00041293 /* CoreVideoSoftLink.cpp in Sources */,
 				5141299B1C6C16740059E714 /* JSIDBIndexCustom.cpp in Sources */,
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
@@ -29729,6 +29768,7 @@
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,
 				2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */,
 				A871DC270A15205700B12A68 /* HTMLMetaElement.cpp in Sources */,
+				CD9D82751C7AE535006FF066 /* TextureCacheCV.mm in Sources */,
 				A454424A119B3661009BE912 /* HTMLMeterElement.cpp in Sources */,
 				A8CFF7A90A156978000A4234 /* HTMLModElement.cpp in Sources */,
 				A8DF3FD5097FA0FC0052981B /* HTMLNameCollection.cpp in Sources */,
@@ -31130,6 +31170,7 @@
 				A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */,
 				F5528DA61AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.cpp in Sources */,
 				F5528DA91AC109DF000EF7AD /* ReplaceInsertIntoTextNodeCommand.cpp in Sources */,
+				CD9D82791C7B8EE1006FF066 /* VideoTextureCopierCV.cpp in Sources */,
 				A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */,
 				93309E09099E64920056E581 /* ReplaceSelectionCommand.cpp in Sources */,
 				99CC0B5318BE9849006CEBCC /* ReplayController.cpp in Sources */,

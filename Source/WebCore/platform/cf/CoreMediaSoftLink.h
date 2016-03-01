@@ -39,12 +39,16 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMBlockBufferGetDataLength, si
 #define CMBlockBufferGetDataLength softLink_CoreMedia_CMBlockBufferGetDataLength
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, (CMFormatDescriptionRef desc), (desc))
 #define CMFormatDescriptionGetExtensions softLink_CoreMedia_CMFormatDescriptionGetExtensions
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferGetTypeID, CFTypeID, (void), ())
+#define CMSampleBufferGetTypeID softLink_CoreMedia_CMSampleBufferGetTypeID
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, (CMSampleBufferRef sbuf), (sbuf))
 #define CMSampleBufferGetDataBuffer softLink_CoreMedia_CMSampleBufferGetDataBuffer
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf))
 #define CMSampleBufferGetFormatDescription softLink_CoreMedia_CMSampleBufferGetFormatDescription
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferGetSampleTimingInfo, OSStatus, (CMSampleBufferRef sbuf, CMItemIndex sampleIndex, CMSampleTimingInfo* timingInfoOut), (sbuf, sampleIndex, timingInfoOut))
 #define CMSampleBufferGetSampleTimingInfo softLink_CoreMedia_CMSampleBufferGetSampleTimingInfo
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeAdd, CMTime, (CMTime time1, CMTime time2), (time1, time2))
+#define CMTimeAdd softLink_CoreMedia_CMTimeAdd
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeCompare, int32_t, (CMTime time1, CMTime time2), (time1, time2))
 #define CMTimeCompare softLink_CoreMedia_CMTimeCompare
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
@@ -206,8 +210,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMAudioDeviceClockCreate, OSSt
 
 #if PLATFORM(WIN)
 
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeAdd, CMTime, (CMTime addend1, CMTime addend2), (addend1, addend2))
-#define CMTimeAdd softLink_CoreMedia_CMTimeAdd
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeMakeFromDictionary, CMTime, (CFDictionaryRef dict), (dict))
 #define CMTimeMakeFromDictionary softLink_CoreMedia_CMTimeMakeFromDictionary
 
