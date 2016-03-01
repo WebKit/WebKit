@@ -1,3 +1,40 @@
+2016-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Correctly keep track of NetworkDataTasks with and without credentials when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154876
+
+        Reviewed by Brady Eidson.
+
+        I was seeing an assertion failure from ASSERT(!m_session.m_dataTaskMap.contains(taskIdentifier()))
+        in the NetworkDataTask constructor sometimes.  This is because a task identifier is not enough information
+        to uniquely find a NetworkDataTask in a NetworkSession since r196034 because there are two NSURLSessions
+        in a NetworkSession, one with credentials and one without.  The assertion would fire in a case like if we
+        made the first NetworkDataTask with credentials (taskIdentifier is 1) and the first NetworkDataTask 
+        without credentials before the first NetworkDataTask with credentials was finished.  In that case, the 
+        taskIdentifier would also be 1, which would conflict with the other taskIdentifier.  That taskIdentifier
+        would uniquely identify the task in the correct NSURLSession, though, so the solution is to keep a map
+        for each NSURLSession in the NetworkSession.
+
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        (WebKit::NetworkDataTask::suspend):
+        (WebKit::serverTrustCredential):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:]):
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveData:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        (WebKit::NetworkSession::clearCredentials):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        (WebKit::NetworkSession::addDownloadID):
+
 2016-03-01  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r154616): Accelerated drawing is off during the initial load

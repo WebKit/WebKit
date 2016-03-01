@@ -93,7 +93,6 @@ public:
     void resume();
     
     typedef uint64_t TaskIdentifier;
-    TaskIdentifier taskIdentifier();
     
     ~NetworkDataTask();
     

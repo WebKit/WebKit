@@ -98,13 +98,15 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier))
+    auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials))
         networkDataTask->didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
+    auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->willPerformHTTPRedirection(response, request, [completionHandlerCopy](const WebCore::ResourceRequest& request) {
             completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
@@ -115,7 +117,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
+    auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
         auto completionHandlerCopy = Block_copy(completionHandler);
         auto challengeCompletionHandler = [completionHandlerCopy](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
         {
@@ -132,7 +135,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier))
+    auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials))
         networkDataTask->didCompleteWithError(error);
     else if (error) {
         auto downloadID = _session->takeDownloadID(task.taskIdentifier);
@@ -145,7 +149,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier)) {
+    auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier, storedCredentials)) {
         ASSERT(isMainThread());
         WebCore::ResourceResponse resourceResponse(response);
         copyTimingData([dataTask _timingData], resourceResponse.resourceLoadTiming());
@@ -159,7 +164,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier))
+    auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier, storedCredentials))
         networkDataTask->didReceiveData(WebCore::SharedBuffer::wrapNSData(data));
 }
 
@@ -172,7 +178,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
-    ASSERT_WITH_MESSAGE(!_session->dataTaskForIdentifier([downloadTask taskIdentifier]), "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
+    auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    ASSERT_WITH_MESSAGE(!_session->dataTaskForIdentifier([downloadTask taskIdentifier], storedCredentials), "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
 
     auto downloadID = _session->downloadID([downloadTask taskIdentifier]);
     if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
@@ -186,7 +193,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
 {
-    if (auto* networkDataTask = _session->dataTaskForIdentifier([dataTask taskIdentifier])) {
+    auto storedCredentials = session.configuration.URLCredentialStorage ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    if (auto* networkDataTask = _session->dataTaskForIdentifier([dataTask taskIdentifier], storedCredentials)) {
         auto downloadID = networkDataTask->pendingDownloadID();
         auto& downloadManager = WebKit::NetworkProcess::singleton().downloadManager();
         auto download = std::make_unique<WebKit::Download>(downloadManager, downloadID);
@@ -266,15 +274,18 @@ NetworkSession::~NetworkSession()
 
 void NetworkSession::clearCredentials()
 {
-    ASSERT(m_dataTaskMap.isEmpty());
+    ASSERT(m_dataTaskMapWithCredentials.isEmpty());
+    ASSERT(m_dataTaskMapWithoutCredentials.isEmpty());
     ASSERT(m_downloadMap.isEmpty());
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 }
 
-NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier)
+NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier, WebCore::StoredCredentials storedCredentials)
 {
     ASSERT(isMainThread());
-    return m_dataTaskMap.get(taskIdentifier);
+    if (storedCredentials == WebCore::StoredCredentials::AllowStoredCredentials)
+        return m_dataTaskMapWithCredentials.get(taskIdentifier);
+    return m_dataTaskMapWithoutCredentials.get(taskIdentifier);
 }
 
 void NetworkSession::addDownloadID(NetworkDataTask::TaskIdentifier taskIdentifier, DownloadID downloadID)
