@@ -49,9 +49,15 @@
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
 #include "GLContext.h"
-#include "OpenGLShims.h"
 #include "TextureMapperGL.h"
 #include <cairo-gl.h>
+
+#if USE(OPENGL_ES_2)
+#include <GLES2/gl2.h>
+#else
+#include "OpenGLShims.h"
+#endif
+
 #if USE(COORDINATED_GRAPHICS_THREADED)
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxy.h"
@@ -136,8 +142,8 @@ void ImageBufferData::createCairoGLSurface()
     // from a pre-existing surface.
     glGenTextures(1, &m_texture);
     glBindTexture(GL_TEXTURE_2D, m_texture);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
