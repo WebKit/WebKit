@@ -48,9 +48,6 @@ private:
     WebCore::GraphicsContext& beginPaint(const WebCore::IntRect&);
     void endPaint();
 
-    // Create a ThreadSafeCoordinatedSurface referencing an exisiting ImageBuffer
-    static Ref<ThreadSafeCoordinatedSurface> create(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, std::unique_ptr<WebCore::ImageBuffer>);
-
     std::unique_ptr<WebCore::ImageBuffer> m_imageBuffer;
 };
 

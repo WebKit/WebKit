@@ -1,3 +1,18 @@
+2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        ThreadSafeCoordinatedSurface: remove the unused private create() static method
+        https://bugs.webkit.org/show_bug.cgi?id=154792
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the static ThreadSafeCoordinatedSurface::create() method that accepted
+        a std::unique_ptr<ImageBuffer> object as its third parameter. This was not used
+        anywhere.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp:
+        (WebKit::ThreadSafeCoordinatedSurface::create): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.h:
+
 2016-02-29  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the experimental feature of antialiased font dilation
