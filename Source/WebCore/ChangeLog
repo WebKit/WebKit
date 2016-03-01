@@ -1,3 +1,18 @@
+2016-03-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Timer alignment in separate web processes should not all sync up to the same point.
+        https://bugs.webkit.org/show_bug.cgi?id=154878
+
+        Reviewed by Chris Dumez.
+
+        For any given WebContent process it is desirable that timers are synchronized to a single
+        alignment point, but if all WebContent processes align to the same point then there may
+        be a thundering herd of processes waking up.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::alignedFireTime):
+            - align to a randomized point.
+
 2016-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of internal windows build output
