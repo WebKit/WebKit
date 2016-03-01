@@ -202,12 +202,7 @@ function assert(b) {
         assert(called);
         called = false;
 
-        // FIXME: This is true once we implement Proxy.[[IsExtensible]]
-        // https://bugs.webkit.org/show_bug.cgi?id=154872
-        /*
         assert(!Reflect.isExtensible(proxy));
-        */
-
         assert(!Reflect.isExtensible(target));
         assert(!Object.isExtensible(target));
         assert(Object.isFrozen(target));
@@ -234,12 +229,7 @@ function assert(b) {
         assert(called);
         called = false;
 
-        // FIXME: This is true once we implement Proxy.[[IsExtensible]]
-        // https://bugs.webkit.org/show_bug.cgi?id=154872
-        /*
         assert(!Reflect.isExtensible(proxy));
-        */
-
         assert(!Reflect.isExtensible(target));
         assert(!Object.isExtensible(target));
         assert(Object.isFrozen(target));
@@ -266,12 +256,7 @@ function assert(b) {
         assert(called);
         called = false;
 
-        // FIXME: This is true once we implement Proxy.[[IsExtensible]]
-        // https://bugs.webkit.org/show_bug.cgi?id=154872
-        /*
         assert(!Reflect.isExtensible(proxy));
-        */
-
         assert(!Reflect.isExtensible(target));
         assert(!Object.isExtensible(target));
         assert(Object.isFrozen(target));
