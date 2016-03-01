@@ -1,3 +1,32 @@
+2016-03-01  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r154616): Accelerated drawing is off during the initial load
+        <https://webkit.org/b/123812>
+
+        Reviewed by Tim Horton.
+
+        Robustify the hey-the-Settings-changed callbacks in Page to handle document-less frames.
+        This is needed because now Settings are changed even before the main Frame has a Document.
+
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        (WebCore::Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment):
+        (WebCore::Page::takeAnyMediaCanStartListener):
+        (WebCore::Page::setMediaVolume):
+        (WebCore::Page::setPageScaleFactor):
+        (WebCore::Page::invalidateStylesForAllLinks):
+        (WebCore::Page::invalidateStylesForLink):
+        (WebCore::Page::dnsPrefetchingStateChanged):
+        (WebCore::Page::storageBlockingStateChanged):
+        (WebCore::Page::setMuted):
+        (WebCore::Page::captionPreferencesChanged):
+        (WebCore::Page::setSessionID):
+        (WebCore::Page::setPlaybackTarget):
+        (WebCore::Page::playbackTargetAvailabilityDidChange):
+        (WebCore::Page::setShouldPlayToPlaybackTarget):
+        * page/Settings.cpp:
+        (WebCore::setImageLoadingSettings):
+
 2016-03-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197056.

@@ -1,3 +1,16 @@
+2016-03-01  Andreas Kling  <akling@apple.com>
+
+        REGRESSION (r154616): Accelerated drawing is off during the initial load
+        <https://webkit.org/b/123812>
+
+        Reviewed by Tim Horton.
+
+        Load preferences before instantiating the first DrawingArea. This ensures that we do the
+        initial paint using accelerated drawing, and avoids allocating persistent data structures
+        only needed by the software rendering path.
+
+        * WebProcess/WebPage/WebPage.cpp:
+
 2016-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix tests when using NetworkSession
