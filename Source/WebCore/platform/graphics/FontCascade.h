@@ -204,9 +204,6 @@ public:
     static bool leadingExpansionOpportunity(const StringView&, TextDirection);
     static bool trailingExpansionOpportunity(const StringView&, TextDirection);
 
-    WEBCORE_EXPORT static void setAntialiasedFontDilationEnabled(bool);
-    WEBCORE_EXPORT static bool antialiasedFontDilationEnabled();
-
     WEBCORE_EXPORT static void setShouldUseSmoothing(bool);
     WEBCORE_EXPORT static bool shouldUseSmoothing();
 

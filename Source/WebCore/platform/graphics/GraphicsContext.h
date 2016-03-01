@@ -110,7 +110,6 @@ struct GraphicsContextState {
     GraphicsContextState()
         : shouldAntialias(true)
         , shouldSmoothFonts(true)
-        , antialiasedFontDilationEnabled(true)
         , shouldSubpixelQuantizeFonts(true)
         , shadowsIgnoreTransforms(false)
 #if USE(CG)
@@ -142,10 +141,9 @@ struct GraphicsContextState {
         TextDrawingModeChange                   = 1 << 16,
         ShouldAntialiasChange                   = 1 << 17,
         ShouldSmoothFontsChange                 = 1 << 18,
-        AntialiasedFontDilationEnabledChange    = 1 << 19,
-        ShouldSubpixelQuantizeFontsChange       = 1 << 20,
-        DrawLuminanceMaskChange                 = 1 << 21,
-        ImageInterpolationQualityChange         = 1 << 22,
+        ShouldSubpixelQuantizeFontsChange       = 1 << 19,
+        DrawLuminanceMaskChange                 = 1 << 20,
+        ImageInterpolationQualityChange         = 1 << 21,
     };
     typedef uint32_t StateChangeFlags;
 
@@ -176,7 +174,6 @@ struct GraphicsContextState {
 
     bool shouldAntialias : 1;
     bool shouldSmoothFonts : 1;
-    bool antialiasedFontDilationEnabled : 1;
     bool shouldSubpixelQuantizeFonts : 1;
     bool shadowsIgnoreTransforms : 1;
 #if USE(CG)
@@ -293,9 +290,6 @@ public:
 
     WEBCORE_EXPORT void setShouldAntialias(bool);
     bool shouldAntialias() const { return m_state.shouldAntialias; }
-
-    WEBCORE_EXPORT void setAntialiasedFontDilationEnabled(bool);
-    bool antialiasedFontDilationEnabled() const { return m_state.antialiasedFontDilationEnabled; }
 
     WEBCORE_EXPORT void setShouldSmoothFonts(bool);
     bool shouldSmoothFonts() const { return m_state.shouldSmoothFonts; }

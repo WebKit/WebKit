@@ -68,9 +68,6 @@ bool DisplayList::shouldDumpForFlags(AsTextFlags flags, const Item& item)
             if (stateItem.state().m_changeFlags == GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
                 return false;
 
-            if (stateItem.state().m_changeFlags == GraphicsContextState::AntialiasedFontDilationEnabledChange)
-                return false;
-
             if (stateItem.state().m_changeFlags == GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
                 return false;
         }

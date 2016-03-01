@@ -389,16 +389,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setDiagnosticLoggingEnabled(diagnosticLoggingEnabled);
 }
 
-- (BOOL)_antialiasedFontDilationEnabled
-{
-    return _preferences->antialiasedFontDilationEnabled();
-}
-
-- (void)_setAntialiasedFontDilationEnabled:(BOOL)antialiasedFontDilationEnabled
-{
-    _preferences->setAntialiasedFontDilationEnabled(antialiasedFontDilationEnabled);
-}
-
 - (NSUInteger)_defaultFontSize
 {
     return _preferences->defaultFontSize();

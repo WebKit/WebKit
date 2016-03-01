@@ -110,7 +110,6 @@ GraphicsContextState::StateChangeFlags GraphicsContextStateChange::changesFromSt
 
     CHECK_FOR_CHANGED_PROPERTY(ShouldAntialiasChange, shouldAntialias);
     CHECK_FOR_CHANGED_PROPERTY(ShouldSmoothFontsChange, shouldSmoothFonts);
-    CHECK_FOR_CHANGED_PROPERTY(AntialiasedFontDilationEnabledChange, antialiasedFontDilationEnabled);
     CHECK_FOR_CHANGED_PROPERTY(ShouldSubpixelQuantizeFontsChange, shouldSubpixelQuantizeFonts);
     CHECK_FOR_CHANGED_PROPERTY(ShadowsIgnoreTransformsChange, shadowsIgnoreTransforms);
     CHECK_FOR_CHANGED_PROPERTY(DrawLuminanceMaskChange, drawLuminanceMask);
@@ -172,9 +171,6 @@ void GraphicsContextStateChange::accumulate(const GraphicsContextState& state, G
 
     if (flags & GraphicsContextState::ShouldSmoothFontsChange)
         m_state.shouldSmoothFonts = state.shouldSmoothFonts;
-
-    if (flags & GraphicsContextState::AntialiasedFontDilationEnabledChange)
-        m_state.antialiasedFontDilationEnabled = state.antialiasedFontDilationEnabled;
 
     if (flags & GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
         m_state.shouldSubpixelQuantizeFonts = state.shouldSubpixelQuantizeFonts;
@@ -243,9 +239,6 @@ void GraphicsContextStateChange::apply(GraphicsContext& context) const
 
     if (m_changeFlags & GraphicsContextState::ShouldSmoothFontsChange)
         context.setShouldSmoothFonts(m_state.shouldSmoothFonts);
-
-    if (m_changeFlags & GraphicsContextState::AntialiasedFontDilationEnabledChange)
-        context.setAntialiasedFontDilationEnabled(m_state.antialiasedFontDilationEnabled);
 
     if (m_changeFlags & GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
         context.setShouldSubpixelQuantizeFonts(m_state.shouldSubpixelQuantizeFonts);
@@ -316,9 +309,6 @@ void GraphicsContextStateChange::dump(TextStream& ts) const
 
     if (m_changeFlags & GraphicsContextState::ShouldSmoothFontsChange)
         ts.dumpProperty("should-smooth-fonts", m_state.shouldSmoothFonts);
-
-    if (m_changeFlags & GraphicsContextState::AntialiasedFontDilationEnabledChange)
-        ts.dumpProperty("antialiased-font-dilation-enabled", m_state.antialiasedFontDilationEnabled);
 
     if (m_changeFlags & GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
         ts.dumpProperty("should-subpixel-quantize-fonts", m_state.shouldSubpixelQuantizeFonts);
@@ -584,13 +574,6 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality imageInt
     }
 
     setPlatformImageInterpolationQuality(imageInterpolationQuality);
-}
-
-void GraphicsContext::setAntialiasedFontDilationEnabled(bool antialiasedFontDilationEnabled)
-{
-    m_state.antialiasedFontDilationEnabled = antialiasedFontDilationEnabled;
-    if (isRecording())
-        m_displayListRecorder->updateState(m_state, GraphicsContextState::AntialiasedFontDilationEnabledChange);
 }
 
 void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)

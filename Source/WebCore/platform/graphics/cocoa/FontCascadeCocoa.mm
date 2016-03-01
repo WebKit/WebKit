@@ -220,26 +220,6 @@ static void setCGFontRenderingMode(GraphicsContext& context)
     CGContextSetShouldSubpixelQuantizeFonts(cgContext, doSubpixelQuantization);
 }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-static CGSize dilationSizeForTextColor(const Color& color)
-{
-    double hue;
-    double saturation;
-    double lightness;
-    color.getHSL(hue, saturation, lightness);
-    
-    // These values were derived empirically, and are only experimental.
-    if (lightness < 0.3333) // Dark
-        return CGSizeMake(0.007, 0.019);
-
-    if (lightness < 0.6667) // Medium
-        return CGSizeMake(0.032, 0.032);
-
-    // Light
-    return CGSizeMake(0.0475, 0.039);
-}
-#endif
-
 void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)
 {
     const FontPlatformData& platformData = font.platformData();
@@ -250,34 +230,29 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 
     bool shouldSmoothFonts;
     bool changeFontSmoothing;
-    bool matchAntialiasedAndSmoothedFonts = context.antialiasedFontDilationEnabled();
     
     switch (smoothingMode) {
     case Antialiased: {
         context.setShouldAntialias(true);
         shouldSmoothFonts = false;
         changeFontSmoothing = true;
-        matchAntialiasedAndSmoothedFonts = false; // CSS has opted into strictly antialiased fonts.
         break;
     }
     case SubpixelAntialiased: {
         context.setShouldAntialias(true);
         shouldSmoothFonts = true;
         changeFontSmoothing = true;
-        matchAntialiasedAndSmoothedFonts = true;
         break;
     }
     case NoSmoothing: {
         context.setShouldAntialias(false);
         shouldSmoothFonts = false;
         changeFontSmoothing = true;
-        matchAntialiasedAndSmoothedFonts = false;
         break;
     }
     case AutoSmoothing: {
         shouldSmoothFonts = true;
         changeFontSmoothing = false;
-        matchAntialiasedAndSmoothedFonts = true;
         break;
     }
     }
@@ -285,7 +260,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     if (!shouldUseSmoothing()) {
         shouldSmoothFonts = false;
         changeFontSmoothing = true;
-        matchAntialiasedAndSmoothedFonts = true;
     }
 
 #if !PLATFORM(IOS)
@@ -294,17 +268,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts(cgContext);
         CGContextSetShouldSmoothFonts(cgContext, shouldSmoothFonts);
     }
-    
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-    CGFontAntialiasingStyle oldAntialiasingStyle;
-    bool resetAntialiasingStyle = false;
-    if (antialiasedFontDilationEnabled() && !CGContextGetShouldSmoothFonts(cgContext) && matchAntialiasedAndSmoothedFonts) {
-        resetAntialiasingStyle = true;
-        oldAntialiasingStyle = CGContextGetFontAntialiasingStyle(cgContext);
-        CGContextSetFontAntialiasingStyle(cgContext, kCGFontAntialiasingStyleUnfilteredCustomDilation);
-        CGContextSetFontDilation(cgContext, dilationSizeForTextColor(context.fillColor()));
-    }
-#endif
 #endif
 
     CGContextSetFont(cgContext, platformData.cgFont());
@@ -371,11 +334,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         context.setShadow(shadowOffset, shadowBlur, shadowColor);
 
 #if !PLATFORM(IOS)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-    if (resetAntialiasingStyle)
-        CGContextSetFontAntialiasingStyle(cgContext, oldAntialiasingStyle);
-#endif
-    
     if (changeFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 #endif

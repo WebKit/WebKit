@@ -1,3 +1,38 @@
+2016-02-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the experimental feature of antialiased font dilation
+        https://bugs.webkit.org/show_bug.cgi?id=154843
+
+        Reviewed by Zalan Bujtas.
+        
+        Remove the "antialiased font dilation" code path, and related prefs.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Deleted.
+        (WebCore::Settings::setAntialiasedFontDilationEnabled): Deleted.
+        * page/Settings.h:
+        (WebCore::Settings::antialiasedFontDilationEnabled): Deleted.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::setAntialiasedFontDilationEnabled): Deleted.
+        (WebCore::FontCascade::antialiasedFontDilationEnabled): Deleted.
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContextStateChange::changesFromState): Deleted.
+        (WebCore::GraphicsContextStateChange::accumulate): Deleted.
+        (WebCore::GraphicsContextStateChange::apply): Deleted.
+        (WebCore::GraphicsContextStateChange::dump): Deleted.
+        (WebCore::GraphicsContext::setAntialiasedFontDilationEnabled): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState): Deleted.
+        (WebCore::GraphicsContext::antialiasedFontDilationEnabled): Deleted.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayer::drawLayerContents): Deleted.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::dilationSizeForTextColor): Deleted.
+        (WebCore::FontCascade::drawGlyphs): Deleted.
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::shouldDumpForFlags): Deleted.
+
 2016-02-29  Jer Noble  <jer.noble@apple.com>
 
         Refactor CoreVideo API access into their own classes so code can be re-used.

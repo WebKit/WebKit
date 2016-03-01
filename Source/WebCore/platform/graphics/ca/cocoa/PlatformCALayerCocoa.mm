@@ -1059,7 +1059,6 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
     if (!layerContents->platformCALayerContentsOpaque()) {
         // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
         graphicsContext.setShouldSmoothFonts(false);
-        graphicsContext.setAntialiasedFontDilationEnabled(true);
     }
     
 #if PLATFORM(MAC)

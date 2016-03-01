@@ -76,8 +76,6 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 
 @property (nonatomic, setter=_setDiagnosticLoggingEnabled:) BOOL _diagnosticLoggingEnabled WK_AVAILABLE(10_11, 9_0);
 
-@property (nonatomic, setter=_setAntialiasedFontDilationEnabled:) BOOL _antialiasedFontDilationEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-
 @property (nonatomic, setter=_setDefaultFontSize:) NSUInteger _defaultFontSize WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, setter=_setDefaultFixedPitchFontSize:) NSUInteger _defaultFixedPitchFontSize WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, copy, setter=_setFixedPitchFontFamily:) NSString *_fixedPitchFontFamily WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);

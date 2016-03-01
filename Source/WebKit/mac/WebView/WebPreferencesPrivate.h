@@ -458,9 +458,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMediaKeysStorageDirectory:(NSString *)directory;
 - (NSString *)mediaKeysStorageDirectory;
 
-- (void)setAntialiasedFontDilationEnabled:(BOOL)flag;
-- (BOOL)antialiasedFontDilationEnabled;
-
 - (void)setMetaRefreshEnabled:(BOOL)flag;
 - (BOOL)metaRefreshEnabled;
 

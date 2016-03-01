@@ -1387,14 +1387,14 @@ double WKPreferencesGetMinimumZoomFontSize(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->minimumZoomFontSize();
 }
 
-void WKPreferencesSetAntialiasedFontDilationEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetAntialiasedFontDilationEnabled(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setAntialiasedFontDilationEnabled(enabled);
+    // Feature removed.
 }
 
-bool WKPreferencesGetAntialiasedFontDilationEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetAntialiasedFontDilationEnabled(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->antialiasedFontDilationEnabled();
+    return false; // Feature removed.
 }
 
 void WKPreferencesSetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef, WKDebugOverlayRegions visibleRegions)

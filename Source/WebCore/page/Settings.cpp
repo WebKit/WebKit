@@ -199,7 +199,6 @@ Settings::Settings(Page* page)
     , m_needsAdobeFrameReloadingQuirk(false)
     , m_usesPageCache(false)
     , m_fontRenderingMode(0)
-    , m_antialiasedFontDilationEnabled(false)
     , m_showTiledScrollingIndicator(false)
     , m_backgroundShouldExtendBeyondPage(false)
     , m_dnsPrefetchingEnabled(false)
@@ -359,12 +358,6 @@ void Settings::setTextAutosizingFontScaleFactor(float fontScaleFactor)
 }
 
 #endif
-
-void Settings::setAntialiasedFontDilationEnabled(bool enabled)
-{
-    // FIXME: It's wrong for a setting to toggle a global, but this code is temporary.
-    FontCascade::setAntialiasedFontDilationEnabled(enabled);
-}
 
 void Settings::setMediaTypeOverride(const String& mediaTypeOverride)
 {
