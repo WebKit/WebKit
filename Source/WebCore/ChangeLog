@@ -1,3 +1,14 @@
+2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        CoordinatedGraphicsLayer should override the inherited TextureMapperPlatformLayer::Client methods
+        https://bugs.webkit.org/show_bug.cgi?id=154788
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        Add the override specifiers for the two methods that are inherited
+        from the TextureMapperPlatformLayer::Client interface.
+
 2016-02-29  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the experimental feature of antialiased font dilation
