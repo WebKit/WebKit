@@ -1,5 +1,11 @@
 2016-03-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline fast/css/will-change-parsing.html. rdar://problem/24743200
+
+        * fast/css/will-change-parsing-expected.txt:
+
+2016-03-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Update TesetExpectations for fast/text/multiple-feature-properties.html. rdar://problem/24494562
 
         * platform/mac/TestExpectations:
