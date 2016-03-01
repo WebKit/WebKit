@@ -1,5 +1,20 @@
 2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        ThreadedCompositor: clean up composition-specific resources before shutting down the thread
+        https://bugs.webkit.org/show_bug.cgi?id=154793
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::runCompositingThread): Before concluding the
+        compositing thread run, clean up all the resources that were allocated at
+        the start, and in the reverse order. Specifically, we now also deallocate
+        the CoordinatedGraphicsScene and the SimpleViewportController objects. This
+        way these are not deallocated on the main thread when the ThreadedCompositor
+        destructor would otherwise clean them up.
+
+2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
+
         ThreadSafeCoordinatedSurface: remove the unused private create() static method
         https://bugs.webkit.org/show_bug.cgi?id=154792
 
