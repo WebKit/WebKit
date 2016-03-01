@@ -1,5 +1,14 @@
 2016-02-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html as flaky on mac
+        https://bugs.webkit.org/show_bug.cgi?id=154748
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2016-02-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Re-enable passing fast/multicol/newmulticol tests on ios-simulator
 
         Unreviewed test gardening.
