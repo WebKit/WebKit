@@ -55,9 +55,9 @@
     <Message Text="Building $(CONFIGURATION) Solution" />
     <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
 	<Exec Command="$(CMakeCommandCommon) -DWTF_CPU_X86=1 -G &quot;Visual Studio 14 2015&quot;" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build32"/>
-	<Exec Command="msbuild Project.sln" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build32"/>
+	<Exec Command="msbuild Project.sln /p:Configuration=$(CONFIG)" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build32"/>
 	<Exec Command="$(CMakeCommandCommon) -DWTF_CPU_X86_64=1 -G &quot;Visual Studio 14 2015 Win64&quot;" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build64"/>
-	<Exec Command="msbuild Project.sln" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build64"/>
+	<Exec Command="msbuild Project.sln /p:Configuration=$(CONFIG)" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build64"/>
   </Target>
 
   <Target Name="PostBuild" AfterTargets="Build">
