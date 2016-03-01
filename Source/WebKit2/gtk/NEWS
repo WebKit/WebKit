@@ -1,4 +1,17 @@
 ==================
+WebKitGTK+ 2.11.91
+==================
+
+What's new in WebKitGTK+ 2.11.91?
+
+  - Do not show stale contents after session restore.
+  - Fix flickering and rendering artifacts when entering accelerated compositing mode
+    before the web view is realized.
+  - Fix several rendering issues and crashes.
+  - Fix build with FTL enabled in FreeBSD.
+  - Translation updates: Polish.
+
+==================
 WebKitGTK+ 2.11.90
 ==================
 

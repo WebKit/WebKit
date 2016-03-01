@@ -1,3 +1,9 @@
+2016-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.91 release.
+
+        * gtk/NEWS: Add release notes for 2.11.91.
+
 2016-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Network cache: old pages returned by disk cache on history navigation after session is restored
