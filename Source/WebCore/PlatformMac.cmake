@@ -323,6 +323,7 @@ list(APPEND WebCore_SOURCES
     platform/cf/URLCF.cpp
 
     platform/cocoa/ContentFilterUnblockHandlerCocoa.mm
+    platform/cocoa/CoreVideoSoftLink.cpp
     platform/cocoa/DisplaySleepDisablerCocoa.cpp
     platform/cocoa/KeyEventCocoa.mm
     platform/cocoa/LocalizedStringsCocoa.mm
@@ -417,6 +418,10 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/IOSurfacePoolCocoa.mm
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
     platform/graphics/cocoa/WebCoreCALayerExtras.mm
+
+    platform/graphics/cv/PixelBufferConformerCV.cpp
+    platform/graphics/cv/TextureCacheCV.mm
+    platform/graphics/cv/VideoTextureCopierCV.cpp
 
     platform/graphics/mac/ColorMac.mm
     platform/graphics/mac/ComplexTextController.cpp
