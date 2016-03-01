@@ -126,12 +126,6 @@
         (JSC::FTL::TypedPointer::heap):
         (JSC::FTL::TypedPointer::value):
 
-2016-02-27  Oliver Hunt  <oliver@apple.com>
-
-        CLoop build fix.
-
-        * jit/ExecutableAllocatorFixedVMPool.cpp:
-
 2016-02-26  Oliver Hunt  <oliver@apple.com>
 
         Remove the on demand executable allocator
