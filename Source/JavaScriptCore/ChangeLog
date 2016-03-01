@@ -1,3 +1,35 @@
+2016-02-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Private symbols should not be trapped by proxy handler
+        https://bugs.webkit.org/show_bug.cgi?id=154817
+
+        Reviewed by Mark Lam.
+
+        Since the runtime has some assumptions on the properties associated with the private symbols, ES6 Proxy should not trap these property operations.
+        For example, in ArrayIteratorPrototype.js
+
+            var itemKind = this.@arrayIterationKind;
+            if (itemKind === @undefined)
+                throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
+
+        Here, we assume that only the array iterator has the @arrayIterationKind property that value is non-undefined.
+        But If we implement Proxy with the get handler, that returns a non-undefined value for every operations, we accidentally assumes that the given value is an array iterator.
+
+        To avoid these situation, we perform the default operations onto property operations with private symbols.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::deleteProperty):
+        (JSC::ProxyObject::deletePropertyByIndex):
+        * tests/stress/proxy-basic.js:
+        * tests/stress/proxy-with-private-symbols.js: Added.
+        (assert):
+        (let.handler.getOwnPropertyDescriptor):
+
 2016-02-29  Filip Pizlo  <fpizlo@apple.com>
 
         regress/script-tests/double-pollution-putbyoffset.js.ftl-eager timed out because of a lock ordering deadlock involving InferredType and CodeBlock

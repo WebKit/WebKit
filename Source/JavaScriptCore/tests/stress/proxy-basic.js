@@ -281,32 +281,6 @@ assert(Proxy.prototype === undefined);
 }
 
 {
-    let theTarget = [];
-    let sawPrivateSymbolAsString = false;
-    let handler = {
-        get: function(target, propName, proxyArg) {
-            if (typeof propName === "string")
-                sawPrivateSymbolAsString = propName === "PrivateSymbol.arrayIterationKind";
-            return target[propName];
-        }
-    };
-
-    let proxy = new Proxy(theTarget, handler);
-    for (let i = 0; i < 100; i++) {
-        let threw = false;
-        try {
-            proxy[Symbol.iterator]().next.call(proxy);
-        } catch(e) {
-            // this will throw because we conver private symbols to strings.
-            threw = true;
-        }
-        assert(threw);
-        assert(sawPrivateSymbolAsString);
-        sawPrivateSymbolAsString = false;
-    }
-}
-
-{
     let prop = Symbol();
     let theTarget = { };
     Object.defineProperty(theTarget, prop, {

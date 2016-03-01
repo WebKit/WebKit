@@ -95,6 +95,15 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
     }
 
     ProxyObject* proxyObject = jsCast<ProxyObject*>(proxyObjectAsObject);
+    JSObject* target = proxyObject->target();
+
+    auto performDefaultGet = [&] {
+        return JSValue::encode(target->get(exec, propertyName));
+    };
+
+    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
+        return performDefaultGet();
+
     JSValue handlerValue = proxyObject->handler();
     if (handlerValue.isNull())
         return throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
@@ -106,9 +115,8 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSObject* target = proxyObject->target();
     if (getHandler.isUndefined())
-        return JSValue::encode(target->get(exec, propertyName));
+        return performDefaultGet();
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -138,6 +146,15 @@ static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue,
 bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    JSObject* target = this->target();
+
+    auto performDefaultGetOwnProperty = [&] {
+        return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
+    };
+
+    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
+        return performDefaultGetOwnProperty();
+
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
         throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
@@ -150,9 +167,8 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     JSValue getOwnPropertyDescriptorMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "getOwnPropertyDescriptor"), ASCIILiteral("'getOwnPropertyDescriptor' property of a Proxy's handler should be callable."));
     if (exec->hadException())
         return false;
-    JSObject* target = this->target();
     if (getOwnPropertyDescriptorMethod.isUndefined())
-        return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
+        return performDefaultGetOwnProperty();
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -226,8 +242,16 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    JSObject* target = this->target();
     slot.setValue(this, None, jsUndefined()); // Nobody should rely on our value, but be safe and protect against any bad actors reading our value.
-    
+
+    auto performDefaultHasProperty = [&] {
+        return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
+    };
+
+    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
+        return performDefaultHasProperty();
+
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
         throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
@@ -240,9 +264,8 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
     JSValue hasMethod = handler->getMethod(exec, callData, callType, vm.propertyNames->has, ASCIILiteral("'has' property of a Proxy's handler should be callable."));
     if (exec->hadException())
         return false;
-    JSObject* target = this->target();
     if (hasMethod.isUndefined())
-        return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
+        return performDefaultHasProperty();
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -310,9 +333,13 @@ bool ProxyObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
 }
 
 template <typename PerformDefaultPutFunction>
-void ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPutFunction)
+void ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPut)
 {
     VM& vm = exec->vm();
+
+    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
+        return performDefaultPut();
+
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
         throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
@@ -327,7 +354,7 @@ void ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
         return;
     JSObject* target = this->target();
     if (setMethod.isUndefined()) {
-        performDefaultPutFunction();
+        performDefaultPut();
         return;
     }
 
@@ -487,9 +514,13 @@ ConstructType ProxyObject::getConstructData(JSCell* cell, ConstructData& constru
 }
 
 template <typename DefaultDeleteFunction>
-bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, DefaultDeleteFunction defaultDeleteFunction)
+bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, DefaultDeleteFunction performDefaultDelete)
 {
     VM& vm = exec->vm();
+
+    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
+        return performDefaultDelete();
+
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
         throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
@@ -504,7 +535,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
         return false;
     JSObject* target = this->target();
     if (deletePropertyMethod.isUndefined())
-        return defaultDeleteFunction();
+        return performDefaultDelete();
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -537,11 +568,11 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
 bool ProxyObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
-    auto defaultDelete = [&] () -> bool {
+    auto performDefaultDelete = [&] () -> bool {
         JSObject* target = jsCast<JSObject*>(thisObject->target());
         return target->methodTable(exec->vm())->deleteProperty(target, exec, propertyName);
     };
-    return thisObject->performDelete(exec, propertyName, defaultDelete);
+    return thisObject->performDelete(exec, propertyName, performDefaultDelete);
 }
 
 bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
@@ -550,11 +581,11 @@ bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
     Identifier ident = Identifier::from(exec, propertyName); 
     if (exec->hadException())
         return false;
-    auto defaultDelete = [&] () -> bool {
+    auto performDefaultDelete = [&] () -> bool {
         JSObject* target = jsCast<JSObject*>(thisObject->target());
         return target->methodTable(exec->vm())->deletePropertyByIndex(target, exec, propertyName);
     };
-    return thisObject->performDelete(exec, ident.impl(), defaultDelete);
+    return thisObject->performDelete(exec, ident.impl(), performDefaultDelete);
 }
 
 void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
