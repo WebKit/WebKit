@@ -6467,6 +6467,21 @@ private:
         if (m_node->child1().useKind() == StringUse
             && m_node->child2().useKind() == RegExpObjectUse
             && m_node->child3().useKind() == StringUse) {
+
+            if (JSString* replace = m_node->child3()->dynamicCastConstant<JSString*>()) {
+                if (!replace->length()) {
+                    LValue string = lowString(m_node->child1());
+                    LValue regExp = lowCell(m_node->child2());
+                    speculateRegExpObject(m_node->child2(), regExp);
+
+                    LValue result = vmCall(
+                        Int64, m_out.operation(operationStringProtoFuncReplaceRegExpEmptyStr),
+                        m_callFrame, string, regExp);
+
+                    setJSValue(result);
+                    return;
+                }
+            }
             
             LValue string = lowString(m_node->child1());
             LValue regExp = lowCell(m_node->child2());

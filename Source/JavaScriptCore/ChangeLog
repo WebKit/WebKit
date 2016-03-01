@@ -1,3 +1,27 @@
+2016-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should simplify StringReplace with an empty replacement string
+        https://bugs.webkit.org/show_bug.cgi?id=154871
+
+        Reviewed by Michael Saboff.
+
+        This is a simple and hugely profitable change. If we do a string.replace(/things/, ""), then
+        this calls directly into StringPrototype's replace-with-empty-string logic instead of going
+        through stuff that does checks before reaching that same conclusion.
+
+        This speeds up Octane/regexp by about 6-10%. It also speeds up the attached microbenchmark by
+        about 7%.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringReplace):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::operationStringProtoFuncReplaceRegExpEmptyStr):
+        (JSC::operationStringProtoFuncReplaceRegExpString):
+        * runtime/StringPrototype.h:
+
 2016-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of internal windows build output
