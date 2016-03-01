@@ -1,5 +1,13 @@
 2016-02-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Re-enable passing fast/multicol/newmulticol tests on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2016-02-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Removing unnecessary ios-simulator-wk2 expectation file.
 
         Unreviewed test gardening.
