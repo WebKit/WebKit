@@ -14,14 +14,14 @@ request.onsuccess = function(event)
     req.onerror = function(event)
     {
         // Unexpected error
-        window.webkit.messageHandlers.testHandler.postMessage('Unexpected error');
+        window.webkit.messageHandlers.testHandler.postMessage('Unexpected error getting value');
     }
 }
 
 request.onerror = function()
 {
     // Unexpected error
-    window.webkit.messageHandlers.testHandler.postMessage('Unexpected error');
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected error opening database');
 }
 
 request.onupgradeneeded = function(event)

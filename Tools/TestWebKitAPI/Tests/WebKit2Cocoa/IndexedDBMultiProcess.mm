@@ -72,6 +72,10 @@ TEST(IndexedDB, IndexedDBMultiProcess)
     receivedScriptMessage = false;
     RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
 
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
+
     // Make a new web view with a new web process to finish the test
     RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -80,11 +84,12 @@ TEST(IndexedDB, IndexedDBMultiProcess)
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string4 = (NSString *)[lastScriptMessage body];
 
     EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());
     EXPECT_WK_STREQ(@"Transaction complete", string2.get());
-    EXPECT_WK_STREQ(@"Value of foo: bar", string3.get());
+    EXPECT_WK_STREQ(@"Open success", string3.get());
+    EXPECT_WK_STREQ(@"Value of foo: bar", string4.get());
 }
 
 #endif

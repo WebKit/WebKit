@@ -8,7 +8,7 @@ request.onsuccess = function(e)
 request.onerror = function(e)
 {
     // Unexpected error
-    window.webkit.messageHandlers.testHandler.postMessage('Error opening database');
+    window.webkit.messageHandlers.testHandler.postMessage('Error deleting database');
 }
 
 function continueTest()
@@ -17,13 +17,13 @@ function continueTest()
 
     request.onsuccess = function()
     {
-        window.webkit.messageHandlers.testHandler.postMessage('Success');
+        window.webkit.messageHandlers.testHandler.postMessage('Open success');
     }
 
     request.onerror = function()
     {
         // Unexpected error
-        window.webkit.messageHandlers.testHandler.postMessage('Error');
+        window.webkit.messageHandlers.testHandler.postMessage('Unexpected error opening database');
     }
 
     request.onupgradeneeded = function(event)
