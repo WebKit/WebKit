@@ -1,3 +1,82 @@
+2016-03-01  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Get rid of GridResolvedPosition
+        https://bugs.webkit.org/show_bug.cgi?id=154818
+
+        Reviewed by Darin Adler.
+
+        GridResolvedPosition was a small class just wrapping a unsigned.
+        In the future it should actually wrap an integer,
+        as we want to support implicit tracks before the explicit grid.
+
+        The class itself is not providing any benefit,
+        so we can get rid of it and store directly 2 unsigned in GridSpan.
+
+        This will make simpler future changes related to this task.
+
+        We keep the class just as a utility for the methods
+        that deal with the positions resolution.
+        But it should be renamed in a follow-up patch.
+
+        No new tests, no change of behavior.
+
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::stringForPosition):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreasRow):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::findFlexFactorUnitSize):
+        (WebCore::RenderGrid::spanningItemCrossesFlexibleSizedTracks):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::RenderGrid::insertItemIntoGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        * rendering/style/GridCoordinate.h:
+        (WebCore::GridSpan::definiteGridSpan):
+        (WebCore::GridSpan::integerSpan):
+        (WebCore::GridSpan::resolvedInitialPosition):
+        (WebCore::GridSpan::resolvedFinalPosition):
+        (WebCore::GridSpan::GridSpanIterator::GridSpanIterator):
+        (WebCore::GridSpan::GridSpanIterator::operator*):
+        (WebCore::GridSpan::GridSpanIterator::operator++):
+        (WebCore::GridSpan::GridSpanIterator::operator!=):
+        (WebCore::GridSpan::begin):
+        (WebCore::GridSpan::end):
+        (WebCore::GridSpan::GridSpan):
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::resolveNamedGridLinePositionFromStyle):
+        (WebCore::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionAgainstOppositePosition):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition):
+        (WebCore::resolveGridPositionFromStyle):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromStyle):
+        * rendering/style/GridResolvedPosition.h:
+        (WebCore::GridResolvedPosition::GridResolvedPosition): Deleted.
+        (WebCore::GridResolvedPosition::operator*): Deleted.
+        (WebCore::GridResolvedPosition::operator++): Deleted.
+        (WebCore::GridResolvedPosition::operator==): Deleted.
+        (WebCore::GridResolvedPosition::operator!=): Deleted.
+        (WebCore::GridResolvedPosition::operator<): Deleted.
+        (WebCore::GridResolvedPosition::operator>): Deleted.
+        (WebCore::GridResolvedPosition::operator<=): Deleted.
+        (WebCore::GridResolvedPosition::operator>=): Deleted.
+        (WebCore::GridResolvedPosition::toInt): Deleted.
+        (WebCore::GridResolvedPosition::next): Deleted.
+        (WebCore::GridResolvedPosition::prev): Deleted.
+
 2016-03-01  Andreas Kling  <akling@apple.com>
 
         MemoryCache::forEachResource() should guard resources across function invocation.

@@ -46,79 +46,15 @@ enum GridTrackSizingDirection {
     ForRows
 };
 
-// This class represents a line index into one of the dimensions of the grid array.
-// Wraps an unsigned integer just for the purpose of knowing what we manipulate in the grid code.
+// Class with all the code related to grid items positions resolution.
+// TODO(rego): Rename class to GridPositionsResolver.
 class GridResolvedPosition {
 public:
-    GridResolvedPosition(unsigned position)
-        : m_integerPosition(position)
-    {
-    }
-
-    GridResolvedPosition& operator*()
-    {
-        return *this;
-    }
-
-    GridResolvedPosition& operator++()
-    {
-        m_integerPosition++;
-        return *this;
-    }
-
-    bool operator==(const GridResolvedPosition& other) const
-    {
-        return m_integerPosition == other.m_integerPosition;
-    }
-
-    bool operator!=(const GridResolvedPosition& other) const
-    {
-        return m_integerPosition != other.m_integerPosition;
-    }
-
-    bool operator<(const GridResolvedPosition& other) const
-    {
-        return m_integerPosition < other.m_integerPosition;
-    }
-
-    bool operator>(const GridResolvedPosition& other) const
-    {
-        return m_integerPosition > other.m_integerPosition;
-    }
-
-    bool operator<=(const GridResolvedPosition& other) const
-    {
-        return m_integerPosition <= other.m_integerPosition;
-    }
-
-    bool operator>=(const GridResolvedPosition& other) const
-    {
-        return m_integerPosition >= other.m_integerPosition;
-    }
-
-    unsigned toInt() const
-    {
-        return m_integerPosition;
-    }
-
-    GridResolvedPosition next() const
-    {
-        return GridResolvedPosition(m_integerPosition + 1);
-    }
-
-    GridResolvedPosition prev() const
-    {
-        return m_integerPosition ? m_integerPosition - 1 : 0;
-    }
-
-    static GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, const GridResolvedPosition&);
+    static GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, unsigned);
     static GridSpan resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
     static unsigned explicitGridColumnCount(const RenderStyle&);
     static unsigned explicitGridRowCount(const RenderStyle&);
     static bool isNonExistentNamedLineOrArea(const String& lineName, const RenderStyle&, GridPositionSide);
-
-private:
-    unsigned m_integerPosition;
 };
 
 } // namespace WebCore
