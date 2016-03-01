@@ -1,3 +1,26 @@
+2016-03-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Support Request and Response blob() when body data is a blob
+        https://bugs.webkit.org/show_bug.cgi?id=154820
+
+        Reviewed by Darin Adler.
+
+        Adding support for returning the same Blob that is stored in Body in case JS blob() is called.
+        Adding support for Blob creation when data is stored as text.
+        Updated JSDOMBinding and JSDOMPromise to return a JS ArrayBuffer for Vector<char> as well as Vector<unsigned char>.
+
+        Covered by added tests.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::arrayBuffer):
+        (WebCore::FetchBody::blob):
+        (WebCore::FetchBody::extractFromText):
+        * Modules/fetch/FetchBody.h:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::resolve): Deleted.
+
 2016-02-29  Chris Dumez  <cdumez@apple.com>
 
         Have parseHTMLInteger() / parseHTMLNonNegativeInteger() use WTF::Optional

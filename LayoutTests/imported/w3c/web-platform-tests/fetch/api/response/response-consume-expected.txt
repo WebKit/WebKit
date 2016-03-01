@@ -1,7 +1,11 @@
 
 PASS Consume response's body as text 
-FAIL Consume response's body as blob promise_test: Unhandled rejection with value: undefined
-FAIL Consume response's body as arrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoder"
+PASS Consume response's body as blob 
+PASS Consume response's body as arrayBuffer 
 PASS Consume response's body as json 
 FAIL Consume response's body as formData promise_test: Unhandled rejection with value: undefined
+PASS Consume blob response's body as blob 
+FAIL Consume blob response's body as text promise_test: Unhandled rejection with value: undefined
+FAIL Consume blob response's body as json promise_test: Unhandled rejection with value: undefined
+FAIL Consume blob response's body as arrayBuffer promise_test: Unhandled rejection with value: undefined
 

@@ -79,11 +79,27 @@
 
     var formData = new FormData();
     formData.append("name", "value")
-    checkRequestBody("This is request's body", "text", checkBodyText);
-    checkRequestBody("This is request's body", "blob", checkBodyBlob);
-    checkRequestBody("This is request's body", "arrayBuffer", checkBodyArrayBuffer);
-    checkRequestBody(JSON.stringify("This is request's body"), "json", checkBodyJSON);
+    var textData = "This is response's body";
+    var blob = new Blob([textData], { "type" : "text/plain" });
+
+    checkRequestBody(textData, "text", checkBodyText);
+    checkRequestBody(textData, "blob", checkBodyBlob);
+    checkRequestBody(textData, "arrayBuffer", checkBodyArrayBuffer);
+    checkRequestBody(JSON.stringify(textData), "json", checkBodyJSON);
     checkRequestBody(formData, "formData", checkBodyFormData);
+
+    function checkBlobResponseBody(blobBody, blobData, bodyType, checkFunction) {
+      promise_test(function(test) {
+        var response = new Response(blobBody);
+        assert_false(response.bodyUsed, "bodyUsed is false at init");
+        return checkFunction(response, blobData);
+      }, "Consume blob response's body as " + bodyType);
+    }
+
+    checkBlobResponseBody(blob, textData, "blob", checkBodyBlob);
+    checkBlobResponseBody(blob, textData, "text", checkBodyText);
+    checkBlobResponseBody(blob, textData, "json", checkBodyJSON);
+    checkBlobResponseBody(blob, textData, "arrayBuffer", checkBodyArrayBuffer);
 
     var goodJSONValues = ["null", "1", "true", "\"string\""];
     goodJSONValues.forEach(function(value) {

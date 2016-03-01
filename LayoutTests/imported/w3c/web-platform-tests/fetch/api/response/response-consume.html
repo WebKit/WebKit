@@ -37,18 +37,26 @@
       });
     }
 
+    <!-- Taken from https://developers.google.com -->
+    function str2ab(str) {
+      var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+      var bufView = new Uint16Array(buf);
+      for (var i=0, strLen=str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+      }
+      return buf;
+    }
+
     function checkBodyArrayBuffer(response, expectedBody) {
       return response.arrayBuffer().then( function(bodyAsArrayBuffer) {
-        var decoder = new TextDecoder("utf-8");
-        var strBody = decoder.decode(bodyAsArrayBuffer);
-        assert_equals(strBody, expectedBody, "Retrieve and verify response's body");
+        assert_array_equals(bodyAsArrayBuffer, str2ab(expectedBody), "Retrieve and verify response's body");
         assert_true(response.bodyUsed, "body as arrayBuffer: bodyUsed turned true");
       });
     }
 
-    function checkBodyJson(response, expectedBody) {
-      return response.json().then(function(bodyAsJson) {
-        var strBody = JSON.stringify(bodyAsJson)
+    function checkBodyJSON(response, expectedBody) {
+      return response.json().then(function(bodyAsJSON) {
+        var strBody = JSON.stringify(bodyAsJSON)
         assert_equals(strBody, expectedBody, "Retrieve and verify response's body");
         assert_true(response.bodyUsed, "body as json: bodyUsed turned true");
       });
@@ -70,12 +78,31 @@
     }
 
     var formData = new FormData();
-    formData.append("name", "value")
-    checkResponseBody("This is response's body", "text", checkBodyText);
-    checkResponseBody("This is response's body", "blob", checkBodyBlob);
-    checkResponseBody("This is response's body", "arrayBuffer", checkBodyArrayBuffer);
-    checkResponseBody(JSON.stringify("This is response's body"), "json", checkBodyJson);
+    formData.append("name", "value");
+    var textData = "This is response's body";
+    var blob = new Blob([textData], { "type" : "text/plain" });
+
+    checkResponseBody(textData, "text", checkBodyText);
+    checkResponseBody(textData, "blob", checkBodyBlob);
+    checkResponseBody(textData, "arrayBuffer", checkBodyArrayBuffer);
+
+    checkResponseBody(JSON.stringify("This is response's body"), "json", checkBodyJSON);
+
     checkResponseBody(formData, "formData", checkBodyFormData);
+
+    function checkBlobResponseBody(blobBody, blobData, bodyType, checkFunction) {
+      promise_test(function(test) {
+        var response = new Response(blobBody);
+        assert_false(response.bodyUsed, "bodyUsed is false at init");
+        return checkFunction(response, blobData);
+      }, "Consume blob response's body as " + bodyType);
+    }
+
+    checkBlobResponseBody(blob, textData, "blob", checkBodyBlob);
+    checkBlobResponseBody(blob, textData, "text", checkBodyText);
+    checkBlobResponseBody(blob, textData, "json", checkBodyJSON);
+    checkBlobResponseBody(blob, textData, "arrayBuffer", checkBodyArrayBuffer);
+
     </script>
   </body>
 </html>

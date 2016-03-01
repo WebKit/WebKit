@@ -36,6 +36,7 @@
 #include "JSDOMPromise.h"
 
 namespace JSC {
+class ArrayBuffer;
 class ExecState;
 class JSValue;
 };
@@ -47,7 +48,7 @@ typedef int ExceptionCode;
 
 class FetchBody {
 public:
-    typedef DOMPromise<Vector<unsigned char>, ExceptionCode> ArrayBufferPromise;
+    typedef DOMPromise<RefPtr<JSC::ArrayBuffer>, ExceptionCode> ArrayBufferPromise;
     void arrayBuffer(ArrayBufferPromise&&);
 
     typedef DOMPromise<RefPtr<DOMFormData>, ExceptionCode> FormDataPromise;
@@ -80,6 +81,8 @@ private:
     FetchBody(Ref<Blob>&&);
     FetchBody(Ref<DOMFormData>&&);
     FetchBody(String&&);
+
+    Vector<char> extractFromText() const;
 
     Type m_type = Type::None;
     String m_mimeType;

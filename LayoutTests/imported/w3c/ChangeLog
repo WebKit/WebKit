@@ -1,3 +1,19 @@
+2016-03-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Support Request and Response blob() when body data is a blob
+        https://bugs.webkit.org/show_bug.cgi?id=154820
+
+        Reviewed by Darin Adler.
+
+        Adding blob specific tests. New tests are not covered yet as they require converting data from a blob into another form (JSON, text...).
+        Rebasing expectations with test that is now passing and new failing tests.
+        Fixing typos in test (Json -> JSON and removing TextDecoder use).
+
+        * web-platform-tests/fetch/api/request/request-consume-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume.html:
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume.html:
+
 2016-02-29  Chris Dumez  <cdumez@apple.com>
 
         Use HTML parsing rules for textarea.maxLength
