@@ -2188,6 +2188,23 @@ bool ByteCodeParser::handleIntrinsicCall(int resultOperand, Intrinsic intrinsic,
         
         return true;
     }
+
+    case StringPrototypeReplaceIntrinsic: {
+        if (!isFTL(m_graph.m_plan.mode)) {
+            // This is a marginally profitable intrinsic. We've only the work to make it an
+            // intrinsic on the fourth tier.
+            return false;
+        }
+
+        if (argumentCountIncludingThis != 3)
+            return false;
+
+        insertChecks();
+        Node* result = addToGraph(StringReplace, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset)));
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+        
     case RoundIntrinsic:
     case FloorIntrinsic:
     case CeilIntrinsic: {

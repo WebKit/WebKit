@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008, 2013, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,11 +21,13 @@
 #ifndef StringPrototype_h
 #define StringPrototype_h
 
+#include "JITOperations.h"
 #include "StringObject.h"
 
 namespace JSC {
 
 class ObjectPrototype;
+class RegExpObject;
 
 class StringPrototype : public StringObject {
 private:
@@ -50,6 +52,13 @@ protected:
 private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
+
+EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceGeneric(
+    ExecState* exec, EncodedJSValue thisValue, EncodedJSValue searchValue,
+    EncodedJSValue replaceValue);
+
+EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
+    ExecState* exec, JSString* thisValue, RegExpObject* searchValue, JSString* replaceValue);
 
 } // namespace JSC
 

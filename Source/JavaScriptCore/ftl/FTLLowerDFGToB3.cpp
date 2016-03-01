@@ -923,6 +923,9 @@ private:
         case NewRegexp:
             compileNewRegexp();
             break;
+        case StringReplace:
+            compileStringReplace();
+            break;
 
         case PhantomLocal:
         case LoopHint:
@@ -6459,6 +6462,33 @@ private:
         setJSValue(result);
     }
 
+    void compileStringReplace()
+    {
+        if (m_node->child1().useKind() == StringUse
+            && m_node->child2().useKind() == RegExpObjectUse
+            && m_node->child3().useKind() == StringUse) {
+            
+            LValue string = lowString(m_node->child1());
+            LValue regExp = lowCell(m_node->child2());
+            speculateRegExpObject(m_node->child2(), regExp);
+            LValue replace = lowString(m_node->child3());
+
+            LValue result = vmCall(
+                Int64, m_out.operation(operationStringProtoFuncReplaceRegExpString),
+                m_callFrame, string, regExp, replace);
+
+            setJSValue(result);
+            return;
+        }
+        
+        LValue result = vmCall(
+            Int64, m_out.operation(operationStringProtoFuncReplaceGeneric), m_callFrame,
+            lowJSValue(m_node->child1()), lowJSValue(m_node->child2()),
+            lowJSValue(m_node->child3()));
+
+        setJSValue(result);
+    }
+
     LValue didOverflowStack()
     {
         // This does a very simple leaf function analysis. The invariant of FTL call
@@ -9285,6 +9315,9 @@ private:
         case FinalObjectUse:
             speculateFinalObject(edge);
             break;
+        case RegExpObjectUse:
+            speculateRegExpObject(edge);
+            break;
         case StringUse:
             speculateString(edge);
             break;
@@ -9559,6 +9592,17 @@ private:
     void speculateFinalObject(Edge edge)
     {
         speculateFinalObject(edge, lowCell(edge));
+    }
+    
+    void speculateRegExpObject(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecRegExpObject, isNotType(cell, RegExpObjectType));
+    }
+    
+    void speculateRegExpObject(Edge edge)
+    {
+        speculateRegExpObject(edge, lowCell(edge));
     }
     
     void speculateString(Edge edge, LValue cell)

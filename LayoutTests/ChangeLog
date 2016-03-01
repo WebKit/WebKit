@@ -1,3 +1,14 @@
+2016-02-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Turn String.prototype.replace into an intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=154835
+
+        Reviewed by Michael Saboff.
+
+        * js/regress/script-tests/string-replace.js: Added.
+        * js/regress/string-replace-expected.txt: Added.
+        * js/regress/string-replace.html: Added.
+
 2016-03-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline isplaylists/extent-includes tests for mac-wk1

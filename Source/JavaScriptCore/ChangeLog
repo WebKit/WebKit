@@ -1,3 +1,94 @@
+2016-02-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Turn String.prototype.replace into an intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=154835
+
+        Reviewed by Michael Saboff.
+
+        Octane/regexp spends a lot of time in String.prototype.replace(). That function does a lot
+        of checks to see if the parameters are what they are likely to often be (a string, a
+        regexp, and a string). The intuition of this patch is that it's good to remove those checks
+        and it's good to call the native function as directly as possible.
+
+        This yields a 10% speed-up on a replace microbenchmark and a 3% speed-up on Octane/regexp.
+        It also improves Octane/jquery.
+
+        This is only the beginning of what I want to do with replace optimizations. The other
+        optimizations will rely on StringReplace being revealed as a construct in DFG IR.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromClassInfo):
+        * bytecode/SpeculatedType.h:
+        (JSC::isStringOrStringObjectSpeculation):
+        (JSC::isRegExpObjectSpeculation):
+        (JSC::isBoolInt32Speculation):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateStringOrStringObject):
+        (JSC::DFG::Node::shouldSpeculateRegExpObject):
+        (JSC::DFG::Node::shouldSpeculateSymbol):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::speculateRegExpObject):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringReplace):
+        (JSC::FTL::DFG::LowerDFGToB3::didOverflowStack):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateFinalObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateRegExpObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateString):
+        * jit/JITOperations.h:
+        * runtime/Intrinsic.h:
+        * runtime/JSType.h:
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::operationStringProtoFuncReplaceRegExpString):
+        (JSC::replaceUsingStringSearch):
+        (JSC::stringProtoFuncRepeat):
+        (JSC::replace):
+        (JSC::stringProtoFuncReplace):
+        (JSC::operationStringProtoFuncReplaceGeneric):
+        (JSC::stringProtoFuncToString):
+        * runtime/StringPrototype.h:
+
 2016-03-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197056.

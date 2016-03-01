@@ -4882,6 +4882,7 @@ void SpeculativeJIT::compile(Node* node)
     case PutStack:
     case KillStack:
     case GetStack:
+    case StringReplace:
         DFG_CRASH(m_jit.graph(), node, "Unexpected node");
         break;
     }

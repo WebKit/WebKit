@@ -154,7 +154,7 @@
 		0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53E17EA9F5900ABB217 /* FPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54417EA9F5900ABB217 /* GPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53F17EA9F5900ABB217 /* GPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54517EE274900ABB217 /* JITOperations.cpp */; };
-		0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54617EE274900ABB217 /* JITOperations.h */; };
+		0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54617EE274900ABB217 /* JITOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54817EE274900ABB217 /* TempRegisterSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54917EE274900ABB217 /* Repatch.cpp */; };
 		0F24E55117EE274900ABB217 /* Repatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54A17EE274900ABB217 /* Repatch.h */; };
@@ -403,7 +403,7 @@
 		0F5A52D017ADD717008ECB2D /* CopyToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5A52CF17ADD717008ECB2D /* CopyToken.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5A6283188C98D40072C9DF /* FTLValueRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5A6281188C98D40072C9DF /* FTLValueRange.cpp */; };
 		0F5A6284188C98D40072C9DF /* FTLValueRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5A6282188C98D40072C9DF /* FTLValueRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F5B4A331C84F0D600F1B17E /* SlowPathReturnType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B4A321C84F0D600F1B17E /* SlowPathReturnType.h */; };
+		0F5B4A331C84F0D600F1B17E /* SlowPathReturnType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B4A321C84F0D600F1B17E /* SlowPathReturnType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5D085D1B8CF99D001143B4 /* DFGNodeOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5D085C1B8CF99D001143B4 /* DFGNodeOrigin.cpp */; };
 		0F5EF91E16878F7A003E5C25 /* JITThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5EF91B16878F78003E5C25 /* JITThunks.cpp */; };
 		0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5EF91C16878F78003E5C25 /* JITThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };

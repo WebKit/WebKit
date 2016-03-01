@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@ enum UseKind {
     ObjectUse,
     FunctionUse,
     FinalObjectUse,
+    RegExpObjectUse,
     ObjectOrOtherUse,
     StringIdentUse,
     StringUse,
@@ -117,6 +118,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecFunction;
     case FinalObjectUse:
         return SpecFinalObject;
+    case RegExpObjectUse:
+        return SpecRegExpObject;
     case ObjectOrOtherUse:
         return SpecObject | SpecOther;
     case StringIdentUse:
@@ -208,6 +211,7 @@ inline bool isCell(UseKind kind)
     case ObjectUse:
     case FunctionUse:
     case FinalObjectUse:
+    case RegExpObjectUse:
     case StringIdentUse:
     case StringUse:
     case KnownStringUse:
