@@ -90,11 +90,14 @@
     readonly attribute boolean webkitHasClosedCaptions;
     attribute boolean webkitClosedCaptionsVisible;
 
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     // The number of bytes consumed by the media decoder.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
+#endif
 
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
+    // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
+#if (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT) && (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C)
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitGenerateKeyRequest(DOMString? keySystem, optional Uint8Array initData);
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitAddKey(DOMString? keySystem, Uint8Array key, optional Uint8Array initData, [Default=NullString] optional DOMString sessionId);
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitCancelKeyRequest(DOMString? keySystem, [Default=NullString] optional DOMString sessionId);
@@ -111,12 +114,16 @@
     // FIXME: This should not use [TreatNullAs=LegacyNullString].
     [Reflect, TreatNullAs=LegacyNullString] attribute DOMString mediaGroup;
 
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [CustomSetter] attribute MediaController controller;
+#endif
 
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
+#if (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT) && (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C)
     [Conditional=MEDIA_SOURCE] VideoPlaybackQuality getVideoPlaybackQuality();
 #endif
 
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     [Conditional=WIRELESS_PLAYBACK_TARGET] void webkitShowPlaybackTargetPicker();
     [Conditional=WIRELESS_PLAYBACK_TARGET] readonly attribute boolean webkitCurrentPlaybackTargetIsWireless;
+#endif
 };

@@ -118,6 +118,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLLinkElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLMapElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLMarqueeElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLMediaElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLMenuElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLMetaElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLModElement.h \
@@ -144,8 +145,10 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMHTMLTextAreaElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTitleElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLUListElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLVideoElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMImplementation.h \
     $(PRIVATE_HEADERS_DIR)/DOMKeyboardEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMMediaError.h \
     $(PRIVATE_HEADERS_DIR)/DOMMediaList.h \
     $(PRIVATE_HEADERS_DIR)/DOMMouseEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMMutationEvent.h \
@@ -171,6 +174,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMStyleSheetList.h \
     $(PRIVATE_HEADERS_DIR)/DOMStylesheets.h \
     $(PRIVATE_HEADERS_DIR)/DOMText.h \
+    $(PRIVATE_HEADERS_DIR)/DOMTimeRanges.h \
     $(PRIVATE_HEADERS_DIR)/DOMTraversal.h \
     $(PRIVATE_HEADERS_DIR)/DOMTreeWalker.h \
     $(PRIVATE_HEADERS_DIR)/DOMUIEvent.h \

@@ -26,9 +26,11 @@
 [
     Conditional=VIDEO&MEDIA_SESSION,
 ] partial interface HTMLMediaElement {
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     attribute DOMString kind;
+#endif
 
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
+#if (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT) && (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C)
     attribute MediaSession? session;
 #endif
 };

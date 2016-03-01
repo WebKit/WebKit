@@ -27,7 +27,7 @@
     Conditional=VIDEO&MEDIA_STREAM,
 ] partial interface HTMLMediaElement
 {
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
+#if (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT) && (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C)
     attribute MediaStream? srcObject;
 #endif
 };
