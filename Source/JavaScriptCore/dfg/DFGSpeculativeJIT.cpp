@@ -4412,46 +4412,93 @@ void SpeculativeJIT::compileArithMod(Node* node)
     }
 }
 
-void SpeculativeJIT::compileArithRound(Node* node)
+void SpeculativeJIT::compileArithRounding(Node* node)
 {
     ASSERT(node->child1().useKind() == DoubleRepUse);
 
     SpeculateDoubleOperand value(this, node->child1());
     FPRReg valueFPR = value.fpr();
 
-    if (producesInteger(node->arithRoundingMode()) && !shouldCheckNegativeZero(node->arithRoundingMode())) {
-        FPRTemporary oneHalf(this);
-        GPRTemporary roundedResultAsInt32(this);
-        FPRReg oneHalfFPR = oneHalf.fpr();
-        GPRReg resultGPR = roundedResultAsInt32.gpr();
+    auto setResult = [&] (FPRReg resultFPR) {
+        if (producesInteger(node->arithRoundingMode())) {
+            GPRTemporary roundedResultAsInt32(this);
+            FPRTemporary scratch(this);
+            FPRReg scratchFPR = scratch.fpr();
+            GPRReg resultGPR = roundedResultAsInt32.gpr();
+            JITCompiler::JumpList failureCases;
+            m_jit.branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR, shouldCheckNegativeZero(node->arithRoundingMode()));
+            speculationCheck(Overflow, JSValueRegs(), node, failureCases);
 
-        static const double halfConstant = 0.5;
-        m_jit.loadDouble(MacroAssembler::TrustedImmPtr(&halfConstant), oneHalfFPR);
-        m_jit.addDouble(valueFPR, oneHalfFPR);
+            int32Result(resultGPR, node);
+        } else
+            doubleResult(resultFPR, node);
+    };
 
-        JITCompiler::Jump truncationFailed = m_jit.branchTruncateDoubleToInt32(oneHalfFPR, resultGPR);
-        speculationCheck(Overflow, JSValueRegs(), node, truncationFailed);
-        int32Result(resultGPR, node);
-        return;
+    if (m_jit.supportsFloatingPointRounding()) {
+        switch (node->op()) {
+        case ArithRound: {
+            FPRTemporary result(this);
+            FPRReg resultFPR = result.fpr();
+            if (producesInteger(node->arithRoundingMode()) && !shouldCheckNegativeZero(node->arithRoundingMode())) {
+                static const double halfConstant = 0.5;
+                m_jit.loadDouble(MacroAssembler::TrustedImmPtr(&halfConstant), resultFPR);
+                m_jit.addDouble(valueFPR, resultFPR);
+                m_jit.floorDouble(resultFPR, resultFPR);
+            } else {
+                m_jit.ceilDouble(valueFPR, resultFPR);
+                FPRTemporary realPart(this);
+                FPRReg realPartFPR = realPart.fpr();
+                m_jit.subDouble(resultFPR, valueFPR, realPartFPR);
+
+                FPRTemporary scratch(this);
+                FPRReg scratchFPR = scratch.fpr();
+                static const double halfConstant = 0.5;
+                m_jit.loadDouble(MacroAssembler::TrustedImmPtr(&halfConstant), scratchFPR);
+
+                JITCompiler::Jump shouldUseCeiled = m_jit.branchDouble(JITCompiler::DoubleLessThanOrEqual, realPartFPR, scratchFPR);
+                static const double oneConstant = -1.0;
+                m_jit.loadDouble(MacroAssembler::TrustedImmPtr(&oneConstant), scratchFPR);
+                m_jit.addDouble(scratchFPR, resultFPR);
+                shouldUseCeiled.link(&m_jit);
+            }
+            setResult(resultFPR);
+            return;
+        }
+
+        case ArithFloor: {
+            FPRTemporary rounded(this);
+            FPRReg resultFPR = rounded.fpr();
+            m_jit.floorDouble(valueFPR, resultFPR);
+            setResult(resultFPR);
+            return;
+        }
+
+        case ArithCeil: {
+            FPRTemporary rounded(this);
+            FPRReg resultFPR = rounded.fpr();
+            m_jit.ceilDouble(valueFPR, resultFPR);
+            setResult(resultFPR);
+            return;
+        }
+
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    } else {
+        flushRegisters();
+        FPRResult roundedResultAsDouble(this);
+        FPRReg resultFPR = roundedResultAsDouble.fpr();
+        if (node->op() == ArithRound)
+            callOperation(jsRound, resultFPR, valueFPR);
+        else if (node->op() == ArithFloor)
+            callOperation(floor, resultFPR, valueFPR);
+        else {
+            ASSERT(node->op() == ArithCeil);
+            callOperation(ceil, resultFPR, valueFPR);
+        }
+        m_jit.exceptionCheck();
+        setResult(resultFPR);
     }
-
-    flushRegisters();
-    FPRResult roundedResultAsDouble(this);
-    FPRReg resultFPR = roundedResultAsDouble.fpr();
-    callOperation(jsRound, resultFPR, valueFPR);
-    m_jit.exceptionCheck();
-    if (producesInteger(node->arithRoundingMode())) {
-        GPRTemporary roundedResultAsInt32(this);
-        FPRTemporary scratch(this);
-        FPRReg scratchFPR = scratch.fpr();
-        GPRReg resultGPR = roundedResultAsInt32.gpr();
-        JITCompiler::JumpList failureCases;
-        m_jit.branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR);
-        speculationCheck(Overflow, JSValueRegs(), node, failureCases);
-
-        int32Result(resultGPR, node);
-    } else
-        doubleResult(resultFPR, node);
 }
 
 void SpeculativeJIT::compileArithSqrt(Node* node)

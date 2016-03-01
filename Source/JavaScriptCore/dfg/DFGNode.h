@@ -928,7 +928,7 @@ struct Node {
     NodeFlags arithNodeFlags()
     {
         NodeFlags result = m_flags & NodeArithFlagsMask;
-        if (op() == ArithMul || op() == ArithDiv || op() == ArithMod || op() == ArithNegate || op() == ArithPow || op() == ArithRound || op() == DoubleAsInt32)
+        if (op() == ArithMul || op() == ArithDiv || op() == ArithMod || op() == ArithNegate || op() == ArithPow || op() == ArithRound || op() == ArithFloor || op() == ArithCeil || op() == DoubleAsInt32)
             return result;
         return result & ~NodeBytecodeNeedsNegZero;
     }
@@ -1334,6 +1334,8 @@ struct Node {
     {
         switch (op()) {
         case ArithRound:
+        case ArithFloor:
+        case ArithCeil:
         case GetDirectPname:
         case GetById:
         case GetByIdFlush:
@@ -1715,7 +1717,7 @@ struct Node {
 
     bool hasArithRoundingMode()
     {
-        return op() == ArithRound;
+        return op() == ArithRound || op() == ArithFloor || op() == ArithCeil;
     }
 
     Arith::RoundingMode arithRoundingMode()

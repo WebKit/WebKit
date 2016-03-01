@@ -97,6 +97,11 @@ Value* ConstFloatValue::ceilConstant(Procedure& proc) const
     return proc.add<ConstFloatValue>(origin(), ceilf(m_value));
 }
 
+Value* ConstFloatValue::floorConstant(Procedure& proc) const
+{
+    return proc.add<ConstFloatValue>(origin(), floorf(m_value));
+}
+
 Value* ConstFloatValue::sqrtConstant(Procedure& proc) const
 {
     return proc.add<ConstFloatValue>(origin(), static_cast<float>(sqrt(m_value)));

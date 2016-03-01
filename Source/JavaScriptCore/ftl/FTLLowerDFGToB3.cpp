@@ -523,6 +523,12 @@ private:
         case ArithRound:
             compileArithRound();
             break;
+        case ArithFloor:
+            compileArithFloor();
+            break;
+        case ArithCeil:
+            compileArithCeil();
+            break;
         case ArithSqrt:
             compileArithSqrt();
             break;
@@ -1890,30 +1896,57 @@ private:
 
     void compileArithRound()
     {
-        LBasicBlock realPartIsMoreThanHalf = FTL_NEW_BLOCK(m_out, ("ArithRound should round down"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithRound continuation"));
+        LValue result = nullptr;
 
-        LValue value = lowDouble(m_node->child1());
-        LValue integerValue = m_out.doubleCeil(value);
-        ValueFromBlock integerValueResult = m_out.anchor(integerValue);
+        if (producesInteger(m_node->arithRoundingMode()) && !shouldCheckNegativeZero(m_node->arithRoundingMode())) {
+            LValue value = lowDouble(m_node->child1());
+            result = m_out.doubleFloor(m_out.doubleAdd(value, m_out.constDouble(0.5)));
+        } else {
+            LBasicBlock realPartIsMoreThanHalf = FTL_NEW_BLOCK(m_out, ("ArithRound should round down"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithRound continuation"));
 
-        LValue realPart = m_out.doubleSub(integerValue, value);
+            LValue value = lowDouble(m_node->child1());
+            LValue integerValue = m_out.doubleCeil(value);
+            ValueFromBlock integerValueResult = m_out.anchor(integerValue);
 
-        m_out.branch(m_out.doubleGreaterThanOrUnordered(realPart, m_out.constDouble(0.5)), unsure(realPartIsMoreThanHalf), unsure(continuation));
+            LValue realPart = m_out.doubleSub(integerValue, value);
 
-        LBasicBlock lastNext = m_out.appendTo(realPartIsMoreThanHalf, continuation);
-        LValue integerValueRoundedDown = m_out.doubleSub(integerValue, m_out.constDouble(1));
-        ValueFromBlock integerValueRoundedDownResult = m_out.anchor(integerValueRoundedDown);
-        m_out.jump(continuation);
-        m_out.appendTo(continuation, lastNext);
+            m_out.branch(m_out.doubleGreaterThanOrUnordered(realPart, m_out.constDouble(0.5)), unsure(realPartIsMoreThanHalf), unsure(continuation));
 
-        LValue result = m_out.phi(m_out.doubleType, integerValueResult, integerValueRoundedDownResult);
+            LBasicBlock lastNext = m_out.appendTo(realPartIsMoreThanHalf, continuation);
+            LValue integerValueRoundedDown = m_out.doubleSub(integerValue, m_out.constDouble(1));
+            ValueFromBlock integerValueRoundedDownResult = m_out.anchor(integerValueRoundedDown);
+            m_out.jump(continuation);
+            m_out.appendTo(continuation, lastNext);
+
+            result = m_out.phi(m_out.doubleType, integerValueResult, integerValueRoundedDownResult);
+        }
 
         if (producesInteger(m_node->arithRoundingMode())) {
             LValue integerValue = convertDoubleToInt32(result, shouldCheckNegativeZero(m_node->arithRoundingMode()));
             setInt32(integerValue);
         } else
             setDouble(result);
+    }
+
+    void compileArithFloor()
+    {
+        LValue value = lowDouble(m_node->child1());
+        LValue integerValue = m_out.doubleFloor(value);
+        if (producesInteger(m_node->arithRoundingMode()))
+            setInt32(convertDoubleToInt32(integerValue, shouldCheckNegativeZero(m_node->arithRoundingMode())));
+        else
+            setDouble(integerValue);
+    }
+
+    void compileArithCeil()
+    {
+        LValue value = lowDouble(m_node->child1());
+        LValue integerValue = m_out.doubleCeil(value);
+        if (producesInteger(m_node->arithRoundingMode()))
+            setInt32(convertDoubleToInt32(integerValue, shouldCheckNegativeZero(m_node->arithRoundingMode())));
+        else
+            setDouble(integerValue);
     }
 
     void compileArithSqrt() { setDouble(m_out.doubleSqrt(lowDouble(m_node->child1()))); }

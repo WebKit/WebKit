@@ -161,6 +161,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Ceil:
         out.print("Ceil");
         return;
+    case Floor:
+        out.print("Floor");
+        return;
     case Sqrt:
         out.print("Sqrt");
         return;

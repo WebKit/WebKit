@@ -146,6 +146,7 @@ namespace WTF {
 
 class PrintStream;
 void printInternal(PrintStream&, JSC::DFG::Arith::Mode);
+void printInternal(PrintStream&, JSC::DFG::Arith::RoundingMode);
 
 } // namespace WTF
 

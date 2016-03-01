@@ -1,3 +1,206 @@
+2016-02-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL][B3] Support floor and ceil
+        https://bugs.webkit.org/show_bug.cgi?id=154683
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements and fixes the following things.
+
+        1. Implement Ceil and Floor in DFG, FTL and B3
+
+        x86 SSE 4.2 and ARM64 have round instructions that can directly perform Ceil or Floor.
+        This patch leverages this functionality. We introduce ArithFloor and ArithCeil.
+        During DFG phase, these nodes attempt to convert itself to Identity (in Fixup phase).
+        As the same to ArithRound, it tracks arith rounding mode.
+        And if these nodes are required to emit machine codes, we emit rounding machine code
+        if it is supported in the current machine. For example, in x86, we emit `round`.
+
+        This `Floor` functionality is nice for @toInteger in builtin.
+        That is used for Array.prototype.{forEach, map, every, some, reduce...}
+        And according to the benchmark results, Kraken audio-oscillator is slightly improved
+        due to its frequent Math.round and Math.floor calls.
+
+        2. Implement Floor in B3 and Air
+
+        As the same to Ceil in B3, we add a new B3 IR and Air opcode, Floor.
+        This Floor is leveraged to implement ArithFloor in DFG.
+
+        3. Fix ArithRound operation
+
+        Currently, we used cvtsd2si (in x86) to convert double value to int32.
+        And we also used this to implement Math.round, like, cvtsd2si(value + 0.5).
+        However, this implementation is not correct. Because cvtsd2si is not floor operation.
+        It is trucate operation. This is OK for positive numbers. But NG for negative numbers.
+        For example, the current implementation accidentally rounds `-0.6` to `-0.0`. This should be `-1.0`.
+        Using Ceil and Floor instructions, we implement correct ArithRound.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerARM::ceilDouble):
+        (JSC::MacroAssemblerARM::floorDouble):
+        (JSC::MacroAssemblerARM::supportsFloatingPointCeil): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerARM64::floorFloat):
+        (JSC::MacroAssemblerARM64::supportsFloatingPointCeil): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerARMv7::ceilDouble):
+        (JSC::MacroAssemblerARMv7::floorDouble):
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointCeil): Deleted.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::ceilDouble):
+        (JSC::MacroAssemblerMIPS::floorDouble):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointCeil): Deleted.
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerSH4::ceilDouble):
+        (JSC::MacroAssemblerSH4::floorDouble):
+        (JSC::MacroAssemblerSH4::supportsFloatingPointCeil): Deleted.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::floorDouble):
+        (JSC::MacroAssemblerX86Common::floorFloat):
+        (JSC::MacroAssemblerX86Common::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerX86Common::supportsFloatingPointCeil): Deleted.
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::floorConstant):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.cpp:
+        (JSC::B3::ConstFloatValue::floorConstant):
+        * b3/B3ConstFloatValue.h:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::floorConstant):
+        (JSC::B3::Value::isRounded):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testFloorCeilArg):
+        (JSC::B3::testFloorArg):
+        (JSC::B3::testFloorImm):
+        (JSC::B3::testFloorMem):
+        (JSC::B3::testFloorFloorArg):
+        (JSC::B3::testCeilFloorArg):
+        (JSC::B3::testFloorIToD64):
+        (JSC::B3::testFloorIToD32):
+        (JSC::B3::testFloorArgWithUselessDoubleConversion):
+        (JSC::B3::testFloorArgWithEffectfulDoubleConversion):
+        (JSC::B3::run):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArithMode.cpp:
+        (WTF::printInternal):
+        * dfg/DFGArithMode.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::roundShouldSpeculateInt32):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasArithRoundingMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        (JSC::DFG::SpeculativeJIT::compileArithRound): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithRound):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithFloor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithCeil):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleFloor):
+        * jit/ThunkGenerators.cpp:
+        (JSC::ceilThunkGenerator):
+        * tests/stress/math-ceil-arith-rounding-mode.js: Added.
+        (firstCareAboutZeroSecondDoesNot):
+        (firstDoNotCareAboutZeroSecondDoes):
+        (warmup):
+        (verifyNegativeZeroIsPreserved):
+        * tests/stress/math-ceil-basics.js: Added.
+        (mathCeilOnIntegers):
+        (mathCeilOnDoubles):
+        (mathCeilOnBooleans):
+        (uselessMathCeil):
+        (mathCeilWithOverflow):
+        (mathCeilConsumedAsDouble):
+        (mathCeilDoesNotCareAboutMinusZero):
+        (mathCeilNoArguments):
+        (mathCeilTooManyArguments):
+        (testMathCeilOnConstants):
+        (mathCeilStructTransition):
+        (Math.ceil):
+        * tests/stress/math-floor-arith-rounding-mode.js: Added.
+        (firstCareAboutZeroSecondDoesNot):
+        (firstDoNotCareAboutZeroSecondDoes):
+        (warmup):
+        (verifyNegativeZeroIsPreserved):
+        * tests/stress/math-floor-basics.js: Added.
+        (mathFloorOnIntegers):
+        (mathFloorOnDoubles):
+        (mathFloorOnBooleans):
+        (uselessMathFloor):
+        (mathFloorWithOverflow):
+        (mathFloorConsumedAsDouble):
+        (mathFloorDoesNotCareAboutMinusZero):
+        (mathFloorNoArguments):
+        (mathFloorTooManyArguments):
+        (testMathFloorOnConstants):
+        (mathFloorStructTransition):
+        (Math.floor):
+        * tests/stress/math-round-should-not-use-truncate.js: Added.
+        (mathRoundDoesNotCareAboutMinusZero):
+        * tests/stress/math-rounding-infinity.js: Added.
+        (shouldBe):
+        (testRound):
+        (testFloor):
+        (testCeil):
+        * tests/stress/math-rounding-nan.js: Added.
+        (shouldBe):
+        (testRound):
+        (testFloor):
+        (testCeil):
+        * tests/stress/math-rounding-negative-zero.js: Added.
+        (shouldBe):
+        (testRound):
+        (testFloor):
+        (testCeil):
+        (testRoundNonNegativeZero):
+        (testRoundNonNegativeZero2):
+
 2016-02-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add new MethodTable method to get an estimated size for a cell

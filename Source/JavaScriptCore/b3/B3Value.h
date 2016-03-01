@@ -137,6 +137,7 @@ public:
     virtual Value* floatToDoubleConstant(Procedure&) const;
     virtual Value* absConstant(Procedure&) const;
     virtual Value* ceilConstant(Procedure&) const;
+    virtual Value* floorConstant(Procedure&) const;
     virtual Value* sqrtConstant(Procedure&) const;
 
     virtual TriState equalConstant(const Value* other) const;
@@ -189,6 +190,8 @@ public:
     bool returnsBool() const;
 
     bool isNegativeZero() const;
+
+    bool isRounded() const;
 
     TriState asTriState() const;
     bool isLikeZero() const { return asTriState() == FalseTriState; }
