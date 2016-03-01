@@ -1,3 +1,16 @@
+2016-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should simplify StringReplace with an empty replacement string
+        https://bugs.webkit.org/show_bug.cgi?id=154871
+
+        Reviewed by Michael Saboff.
+
+        Really add this new test.
+
+        * js/regress/script-tests/string-replace-empty.js: Added.
+        * js/regress/string-replace-empty-expected.txt: Added.
+        * js/regress/string-replace-empty.html: Added.
+
 2016-02-29  Filip Pizlo  <fpizlo@apple.com>
 
         Turn String.prototype.replace into an intrinsic
