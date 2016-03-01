@@ -82,3 +82,60 @@ var testException = function (value, index) {
 for (var i=0; i < 1000; i++) {
     testException(false, i);
 }
+
+class F extends A {
+    constructor() {
+      var arr_after = () => {
+        this.idValue  = 'this-value';
+      };
+      var arr_before = () => {
+        return 'not-some-value';
+      };
+      arr_before();
+      super();
+      arr_after();
+    }
+}
+
+let f = new F();
+testCase(f.idValue, 'this-value', 'Error: not correct binding of this in constructor');
+
+class G extends A {
+    constructor() {
+        var arr_simple = () => {
+            return 'not-some-value';
+        };
+        var arr_super = () => {
+            super();
+        };
+        arr_simple();
+        arr_super();
+    }
+}
+
+let g = new G();
+testCase(g.idValue, testValue, 'Error: not correct binding super&this in constructor');
+
+class A_this_Prop extends A {
+    getValue () {
+        return this.idValue;
+    }
+}
+
+class H extends A_this_Prop {
+    constructor() {
+        var arr_simple = () => {
+            return 'not-some-value';
+        };
+        var arr_super = () => {
+            super();
+        };
+        var arr_value = () => super.getValue();
+        arr_simple();
+        arr_super();
+        this.someValue = arr_value();
+    }
+}
+
+let h = new H();
+testCase(h.someValue, testValue, 'Error: not correct binding superProperty&this in constructor');

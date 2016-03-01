@@ -1,3 +1,28 @@
+2016-03-01  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function. Some not used byte code is emited
+        https://bugs.webkit.org/show_bug.cgi?id=154639
+
+        Reviewed by Saam Barati.
+
+        Currently bytecode that is generated for arrow function is not optimal. 
+        Current fix removed following unnecessary bytecode:
+        1.create_lexical_environment not emited always for arrow function, only if some of 
+        features(this/super/arguments/eval) is used inside of the arrow function. 
+        2.load 'this' from arrow function scope in constructor is done only if super 
+        contains in arrow function 
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::isSuperCallUsedInInnerArrowFunction):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::doAnyInnerArrowFunctionsUseAnyFeature):
+        * tests/stress/arrowfunction-lexical-bind-supercall-4.js:
+
 2016-02-29  Filip Pizlo  <fpizlo@apple.com>
 
         Turn String.prototype.replace into an intrinsic

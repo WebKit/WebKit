@@ -723,6 +723,7 @@ namespace JSC {
         bool isArgumentsUsedInInnerArrowFunction();
 
     public:
+        bool isSuperCallUsedInInnerArrowFunction();
         bool isThisUsedInInnerArrowFunction();
         void pushLexicalScope(VariableEnvironmentNode*, TDZCheckOptimization, NestedScopeType = NestedScopeType::IsNotNested, RegisterID** constantSymbolTableResult = nullptr);
         void popLexicalScope(VariableEnvironmentNode*);
