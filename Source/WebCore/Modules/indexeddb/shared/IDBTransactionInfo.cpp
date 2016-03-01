@@ -81,7 +81,7 @@ IDBTransactionInfo IDBTransactionInfo::isolatedCopy() const
         result.m_objectStores.uncheckedAppend(objectStore.isolatedCopy());
 
     if (m_originalDatabaseInfo)
-        result.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*m_originalDatabaseInfo);
+        result.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*m_originalDatabaseInfo, IDBDatabaseInfo::IsolatedCopy);
 
     return result;
 }

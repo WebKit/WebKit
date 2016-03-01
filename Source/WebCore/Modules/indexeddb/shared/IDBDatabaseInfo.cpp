@@ -40,18 +40,18 @@ IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version)
 {
 }
 
+IDBDatabaseInfo::IDBDatabaseInfo(const IDBDatabaseInfo& other, IsolatedCopyTag)
+    : m_name(other.m_name.isolatedCopy())
+    , m_version(other.m_version)
+    , m_maxObjectStoreID(other.m_maxObjectStoreID)
+{
+    for (auto entry : other.m_objectStoreMap)
+        m_objectStoreMap.set(entry.key, entry.value.isolatedCopy());
+}
+
 IDBDatabaseInfo IDBDatabaseInfo::isolatedCopy() const
 {
-    IDBDatabaseInfo info;
-
-    info.m_name = m_name.isolatedCopy();
-    info.m_version = m_version;
-    info.m_maxObjectStoreID = m_maxObjectStoreID;
-
-    for (auto entry : m_objectStoreMap)
-        info.m_objectStoreMap.set(entry.key, entry.value.isolatedCopy());
-
-    return info;
+    return { *this, IDBDatabaseInfo::IsolatedCopy };
 }
 
 bool IDBDatabaseInfo::hasObjectStore(const String& name) const
