@@ -1,5 +1,18 @@
 2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        TextureMapperGL: beginPainting() should handle the PaintingMirrored value in PaintFlags
+        https://bugs.webkit.org/show_bug.cgi?id=154789
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::beginPainting): The ClipStack should be reset with
+        a Y-axis mode that corresponds to the presence of the PaintingMirrored value in
+        the passed-in PaintFlags argument. If present, the default Y-axis mode should be
+        used, and the inverted Y-axis otherwise.
+
+2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
+
         CoordinatedGraphicsLayer should override the inherited TextureMapperPlatformLayer::Client methods
         https://bugs.webkit.org/show_bug.cgi?id=154788
 
