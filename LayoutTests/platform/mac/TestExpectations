@@ -1381,3 +1381,6 @@ webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.h
 [ Mavericks Yosemite ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 [ Mavericks ] css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 [ Mavericks ] css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
+
+# <rdar://problem/24494562>
+fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]

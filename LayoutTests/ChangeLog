@@ -1,3 +1,9 @@
+2016-03-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TesetExpectations for fast/text/multiple-feature-properties.html. rdar://problem/24494562
+
+        * platform/mac/TestExpectations:
+
 2016-02-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for css3/font-variant-* tests. rdar://problem/24190682
