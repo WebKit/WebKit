@@ -1061,7 +1061,7 @@
 - path: es6/Proxy_ownKeys_handler.js
   cmd: runES6 :fail
 - path: es6/Proxy_preventExtensions_handler.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_Proxy.revocable.js
   cmd: runES6 :fail
 - path: es6/Proxy_set_handler.js

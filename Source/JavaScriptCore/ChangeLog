@@ -1,3 +1,31 @@
+2016-03-01  Saam barati  <sbarati@apple.com>
+
+        [ES6] Implement Proxy.[[PreventExtensions]]
+        https://bugs.webkit.org/show_bug.cgi?id=154873
+
+        Reviewed by Oliver Hunt.
+
+        This patch is a direct implementation of Proxy.[[PreventExtensions]] with respect to section 9.5.4
+        of the ECMAScript 6 spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-preventextensions
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::deletePropertyByIndex):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::preventExtensions):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        * tests/es6.yaml:
+        * tests/stress/proxy-prevent-extensions.js: Added.
+        (assert):
+        (throw.new.Error.let.handler.get preventExtensions):
+        (throw.new.Error):
+        (assert.let.handler.preventExtensions):
+        (assert.):
+        (let.handler.preventExtensions):
+        (assert.Object.isSealed.let.handler.preventExtensions):
+        (assert.Object.isSealed):
+
 2016-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should simplify StringReplace with an empty replacement string

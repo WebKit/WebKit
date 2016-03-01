@@ -597,6 +597,54 @@ bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
     return thisObject->performDelete(exec, ident.impl(), performDefaultDelete);
 }
 
+bool ProxyObject::performPreventExtensions(ExecState* exec)
+{
+    VM& vm = exec->vm();
+
+    JSValue handlerValue = this->handler();
+    if (handlerValue.isNull()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+        return false;
+    }
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue preventExtensionsMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "preventExtensions"), ASCIILiteral("'preventExtensions' property of a Proxy's handler should be callable."));
+    if (exec->hadException())
+        return false;
+    JSObject* target = this->target();
+    if (preventExtensionsMethod.isUndefined())
+        return target->methodTable(vm)->preventExtensions(target, exec);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    JSValue trapResult = call(exec, preventExtensionsMethod, callType, callData, handler, arguments);
+    if (exec->hadException())
+        return false;
+
+    bool trapResultAsBool = trapResult.toBoolean(exec);
+    if (exec->hadException())
+        return false;
+
+    if (trapResultAsBool) {
+        bool targetIsExtensible = target->isExtensibleInline(exec);
+        if (exec->hadException())
+            return false;
+        if (targetIsExtensible) {
+            throwVMTypeError(exec, ASCIILiteral("Proxy's 'preventExtensions' trap returned true even though its target is extensible. It should have returned false."));
+            return false;
+        }
+    }
+
+    return trapResultAsBool;
+}
+
+bool ProxyObject::preventExtensions(JSObject* object, ExecState* exec)
+{
+    return jsCast<ProxyObject*>(object)->performPreventExtensions(exec);
+}
+
 void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);

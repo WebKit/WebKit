@@ -69,6 +69,7 @@ private:
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
+    static bool preventExtensions(JSObject*, ExecState*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     bool getOwnPropertySlotCommon(ExecState*, PropertyName, PropertySlot&);
@@ -78,6 +79,7 @@ private:
     bool performDelete(ExecState*, PropertyName, DefaultDeleteFunction);
     template <typename PerformDefaultPutFunction>
     void performPut(ExecState*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction);
+    bool performPreventExtensions(ExecState*);
 
     WriteBarrier<JSObject> m_target;
     WriteBarrier<Unknown> m_handler;
