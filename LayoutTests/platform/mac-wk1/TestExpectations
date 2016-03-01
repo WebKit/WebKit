@@ -56,8 +56,6 @@ webkit.org/b/152485 webaudio/audiocontext-state-interrupted.html [ Pass Crash ]
 
 webkit.org/b/152487 inspector/debugger/command-line-api-exception-nested-catch.html [ Pass Timeout ]
 
-webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass Timeout ]
-
 webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pass Crash ]
 
 webkit.org/b/153039 [ Debug ] inspector/heap/garbageCollected.html [ Pass Timeout ]
