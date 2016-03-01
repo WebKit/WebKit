@@ -528,8 +528,8 @@ void TextureMapperGL::drawUnitRect(TextureMapperShaderProgram* program, GC3Denum
 
 void TextureMapperGL::draw(const FloatRect& rect, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram* shaderProgram, GC3Denum drawingMode, Flags flags)
 {
-    TransformationMatrix matrix =
-        TransformationMatrix(modelViewMatrix).multiply(TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), rect));
+    TransformationMatrix matrix(modelViewMatrix);
+    matrix.multiply(TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), rect));
 
     m_context3D->enableVertexAttribArray(shaderProgram->vertexLocation());
     shaderProgram->setMatrix(shaderProgram->modelViewMatrixLocation(), matrix);
@@ -676,8 +676,8 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
     const GC3Dfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
     m_context3D->vertexAttribPointer(program->vertexLocation(), 2, GraphicsContext3D::FLOAT, false, 0, GC3Dintptr(unitRect));
 
-    TransformationMatrix matrix = TransformationMatrix(modelViewMatrix)
-        .multiply(TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), targetRect));
+    TransformationMatrix matrix(modelViewMatrix);
+    matrix.multiply(TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), targetRect));
 
     static const TransformationMatrix fullProjectionMatrix = TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), FloatRect(-1, -1, 2, 2));
 

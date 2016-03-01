@@ -1,5 +1,24 @@
 2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        TextureMapperGL: simplify TransformationMatrix copies in draw(), beginClip()
+        https://bugs.webkit.org/show_bug.cgi?id=154791
+
+        Reviewed by Carlos Garcia Campos.
+
+        In both functions, the passed-in model-view matrix is first copied, multiplied
+        against a rect-to-rect TransformationMatrix, and then assigned into a local
+        TransformationMatrix variable, which causes another copy due to the multiply()
+        function returning a reference to the modified object.
+
+        To avoid the last copy, first copy the model-view matrix into a local variable,
+        and multiply the rect-to-rect TransformationMatrix into the new object afterwards.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::draw):
+        (WebCore::TextureMapperGL::beginClip):
+
+2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
+
         ImageBufferCairo should support OpenGL ES 2 configurations
         https://bugs.webkit.org/show_bug.cgi?id=154790
 
