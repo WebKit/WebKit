@@ -99,10 +99,19 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionExprs.begin(), end = thisObject->m_functionExprs.end(); ptr != end; ++ptr)
         visitor.append(ptr);
     visitor.appendValues(thisObject->m_constantRegisters.data(), thisObject->m_constantRegisters.size());
+    if (thisObject->m_unlinkedInstructions)
+        visitor.reportExtraMemoryVisited(thisObject->m_unlinkedInstructions->sizeInBytes());
     if (thisObject->m_rareData) {
         for (size_t i = 0, end = thisObject->m_rareData->m_regexps.size(); i != end; i++)
             visitor.append(&thisObject->m_rareData->m_regexps[i]);
     }
+}
+
+size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell)
+{
+    UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
+    size_t extraSize = thisObject->m_unlinkedInstructions ? thisObject->m_unlinkedInstructions->sizeInBytes() : 0;
+    return Base::estimatedSize(cell) + extraSize;
 }
 
 int UnlinkedCodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
@@ -343,7 +352,9 @@ void UnlinkedFunctionExecutable::destroy(JSCell* cell)
 
 void UnlinkedCodeBlock::setInstructions(std::unique_ptr<UnlinkedInstructionStream> instructions)
 {
+    ASSERT(instructions);
     m_unlinkedInstructions = WTFMove(instructions);
+    Heap::heap(this)->reportExtraMemoryAllocated(m_unlinkedInstructions->sizeInBytes());
 }
 
 const UnlinkedInstructionStream& UnlinkedCodeBlock::instructions() const

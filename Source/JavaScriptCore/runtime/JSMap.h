@@ -122,6 +122,7 @@ private:
     }
 
     static void destroy(JSCell*);
+    static size_t estimatedSize(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
     static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
 

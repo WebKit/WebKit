@@ -111,6 +111,8 @@ public:
     void visitChildren(JSCell* owner, SlotVisitor&);
     void copyBackingStore(CopyVisitor&, CopyToken);
 
+    size_t capacityInBytes() const { return m_capacity * sizeof(Entry); }
+
 private:
     typedef WTF::UnsignedWithZeroKeyHashTraits<int32_t> IndexTraits;
 
@@ -118,8 +120,6 @@ private:
     typedef HashMap<EncodedJSValue, int32_t, EncodedJSValueHash, EncodedJSValueHashTraits, IndexTraits> ValueKeyedMap;
     typedef HashMap<StringImpl*, int32_t, typename WTF::DefaultHash<StringImpl*>::Hash, WTF::HashTraits<StringImpl*>, IndexTraits> StringKeyedMap;
     typedef HashMap<SymbolImpl*, int32_t, typename WTF::PtrHash<SymbolImpl*>, WTF::HashTraits<SymbolImpl*>, IndexTraits> SymbolKeyedMap;
-
-    size_t capacityInBytes() { return m_capacity * sizeof(Entry); }
 
     ALWAYS_INLINE Entry* find(ExecState*, KeyType);
     ALWAYS_INLINE Entry* add(ExecState*, JSCell* owner, KeyType);

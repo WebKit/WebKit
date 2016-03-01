@@ -2462,6 +2462,15 @@ void CodeBlock::visitWeakly(SlotVisitor& visitor)
 #endif // ENABLE(DFG_JIT)
 }
 
+size_t CodeBlock::estimatedSize(JSCell* cell)
+{
+    CodeBlock* thisObject = jsCast<CodeBlock*>(cell);
+    size_t extraMemoryAllocated = thisObject->m_instructions.size() * sizeof(Instruction);
+    if (thisObject->m_jitCode)
+        extraMemoryAllocated += thisObject->m_jitCode->size();
+    return Base::estimatedSize(cell) + extraMemoryAllocated;
+}
+
 void CodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     CodeBlock* thisObject = jsCast<CodeBlock*>(cell);

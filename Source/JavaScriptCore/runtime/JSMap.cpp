@@ -43,6 +43,13 @@ void JSMap::destroy(JSCell* cell)
     thisObject->JSMap::~JSMap();
 }
 
+size_t JSMap::estimatedSize(JSCell* cell)
+{
+    JSMap* thisObject = jsCast<JSMap*>(cell);
+    size_t mapDataSize = thisObject->m_mapData.capacityInBytes();
+    return Base::estimatedSize(cell) + mapDataSize;
+}
+
 void JSMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);

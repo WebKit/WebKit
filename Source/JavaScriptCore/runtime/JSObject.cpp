@@ -197,6 +197,13 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
     }
 }
 
+size_t JSObject::estimatedSize(JSCell* cell)
+{
+    JSObject* thisObject = jsCast<JSObject*>(cell);
+    size_t butterflyOutOfLineSize = thisObject->m_butterfly ? thisObject->structure()->outOfLineSize() : 0;
+    return Base::estimatedSize(cell) + butterflyOutOfLineSize;
+}
+
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);

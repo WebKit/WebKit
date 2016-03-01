@@ -51,6 +51,16 @@ void JSCell::dumpToStream(const JSCell* cell, PrintStream& out)
     out.printf("<%p, %s>", cell, cell->className());
 }
 
+size_t JSCell::estimatedSizeInBytes() const
+{
+    return methodTable()->estimatedSize(const_cast<JSCell*>(this));
+}
+
+size_t JSCell::estimatedSize(JSCell* cell)
+{
+    return MarkedBlock::blockFor(cell)->cellSize();
+}
+
 void JSCell::copyBackingStore(JSCell*, CopyVisitor&, CopyToken)
 {
 }
