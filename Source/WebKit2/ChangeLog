@@ -1,3 +1,28 @@
+2016-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix tests when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154866
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::globalCustomProtocolManager):
+        (WebKit::NetworkSession::setCustomProtocolManager):
+        
+        Use a static NeverDestroyed instead of a local NeverDestroyed.
+        This fix was suggested by Darin after I broke the custom protocol tests in r197362.
+        
+        (WebKit::NetworkSession::clearCredentials):
+        
+        In r197223 I added code that I thought cleared the credentials of a session, but it was
+        actually trying (and failing) to remove the credentials from the NSURLCredentialStorage that
+        were stored with NSURLCredentialPersistencePermanent.
+        This was causing credentials stored in an NSURLSession with NSURLCredentialPersistenceForSession
+        to remain for the next tests, and was causing credentials from previous tests, usually from
+        http/tests/loading/basic-credentials-sent-automatically.html, to be used in future tests.
+        Creating a new NSURLSession is the equivalent of CredentialStorage::clearCredentials because it
+        removes all credentials stored with NSURLCredentialPersistenceForSession.
+
 2016-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkCache: Web process leaks resource buffer when using shareable reasources

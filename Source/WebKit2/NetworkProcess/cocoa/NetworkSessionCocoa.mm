@@ -218,8 +218,8 @@ static NSURLSessionConfiguration *configurationForType(NetworkSession::Type type
 
 static RefPtr<CustomProtocolManager>& globalCustomProtocolManager()
 {
-    NeverDestroyed<RefPtr<CustomProtocolManager>> gCustomProtocolManager;
-    return gCustomProtocolManager.get();
+    static NeverDestroyed<RefPtr<CustomProtocolManager>> customProtocolManager;
+    return customProtocolManager.get();
 }
 
 void NetworkSession::setCustomProtocolManager(CustomProtocolManager* customProtocolManager)
@@ -266,14 +266,9 @@ NetworkSession::~NetworkSession()
 
 void NetworkSession::clearCredentials()
 {
-    NSURLCredentialStorage *credentialStorage = m_sessionWithCredentialStorage.get().configuration.URLCredentialStorage;
-    NSDictionary<NSURLProtectionSpace *, NSDictionary<NSString *, NSURLCredential *> *> *credentials = credentialStorage.allCredentials;
-    
-    for (NSURLProtectionSpace *protectionSpace in credentials) {
-        NSDictionary<NSString *, NSURLCredential *> *credentialsDict = [credentials objectForKey:protectionSpace];
-        for (NSString *user in credentialsDict)
-            [credentialStorage removeCredential:[credentialsDict objectForKey:user] forProtectionSpace:protectionSpace];
-    }
+    ASSERT(m_dataTaskMap.isEmpty());
+    ASSERT(m_downloadMap.isEmpty());
+    m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 }
 
 NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier)
