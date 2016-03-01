@@ -645,6 +645,60 @@ bool ProxyObject::preventExtensions(JSObject* object, ExecState* exec)
     return jsCast<ProxyObject*>(object)->performPreventExtensions(exec);
 }
 
+bool ProxyObject::performIsExtensible(ExecState* exec)
+{
+    VM& vm = exec->vm();
+
+    JSValue handlerValue = this->handler();
+    if (handlerValue.isNull()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+        return false;
+    }
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue isExtensibleMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "isExtensible"), ASCIILiteral("'isExtensible' property of a Proxy's handler should be callable."));
+    if (exec->hadException())
+        return false;
+
+    JSObject* target = this->target();
+    if (isExtensibleMethod.isUndefined())
+        return target->isExtensibleInline(exec);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    JSValue trapResult = call(exec, isExtensibleMethod, callType, callData, handler, arguments);
+    if (exec->hadException())
+        return false;
+
+    bool trapResultAsBool = trapResult.toBoolean(exec);
+    if (exec->hadException())
+        return false;
+
+    bool isTargetExtensible = target->isExtensibleInline(exec);
+    if (exec->hadException())
+        return false;
+
+    if (trapResultAsBool != isTargetExtensible) {
+        if (isTargetExtensible) {
+            ASSERT(!trapResultAsBool);
+            throwVMTypeError(exec, ASCIILiteral("Proxy object's 'isExtensible' trap returned false when the target is extensible. It should have returned true."));
+        } else {
+            ASSERT(!isTargetExtensible);
+            ASSERT(trapResultAsBool);
+            throwVMTypeError(exec, ASCIILiteral("Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false."));
+        }
+    }
+    
+    return trapResultAsBool;
+}
+
+bool ProxyObject::isExtensible(JSObject* object, ExecState* exec)
+{
+    return jsCast<ProxyObject*>(object)->performIsExtensible(exec);
+}
+
 void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);

@@ -70,6 +70,7 @@ private:
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
     static bool preventExtensions(JSObject*, ExecState*);
+    static bool isExtensible(JSObject*, ExecState*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     bool getOwnPropertySlotCommon(ExecState*, PropertyName, PropertySlot&);
@@ -80,6 +81,7 @@ private:
     template <typename PerformDefaultPutFunction>
     void performPut(ExecState*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction);
     bool performPreventExtensions(ExecState*);
+    bool performIsExtensible(ExecState*);
 
     WriteBarrier<JSObject> m_target;
     WriteBarrier<Unknown> m_handler;

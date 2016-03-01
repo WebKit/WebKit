@@ -1055,7 +1055,7 @@
 - path: es6/Proxy_internal_set_calls_Object.assign.js
   cmd: runES6 :normal
 - path: es6/Proxy_isExtensible_handler.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_JSON.stringify_support.js
   cmd: runES6 :fail
 - path: es6/Proxy_ownKeys_handler.js
