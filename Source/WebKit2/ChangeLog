@@ -1,3 +1,17 @@
+2016-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkCache: Web process leaks resource buffer when using shareable reasources
+        https://bugs.webkit.org/show_bug.cgi?id=154852
+
+        Reviewed by Darin Adler.
+
+        ResourceLoader::didReceiveBuffer() expects a PassRefPtr, but we
+        are passing a raw pointer making PassRefPtr to take another
+        reference instead of transfering the ownership as expected.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResource):
+
 2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
 
         ThreadedCompositor: clean up composition-specific resources before shutting down the thread
