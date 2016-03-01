@@ -1,3 +1,38 @@
+2016-02-29  Filip Pizlo  <fpizlo@apple.com>
+
+        regress/script-tests/double-pollution-putbyoffset.js.ftl-eager timed out because of a lock ordering deadlock involving InferredType and CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=154841
+
+        Reviewed by Benjamin Poulain.
+
+        Here's the deadlock:
+
+        Main thread:
+            1) Change an InferredType.  This acquires InferredType::m_lock.
+            2) Fire watchpoint set.  This triggers CodeBlock invalidation, which acquires
+               CodeBlock::m_lock.
+
+        DFG thread:
+            1) Iterate over the information in a CodeBlock.  This acquires CodeBlock::m_lock.
+            2) Ask an InferredType for its descriptor().  This acquires InferredType::m_lock.
+
+        I think that the DFG thread's ordering should be legal, because the best logic for lock
+        hierarchies is that locks that protect the largest set of stuff should be acquired first.
+
+        This means that the main thread shouldn't be holding the InferredType::m_lock when firing
+        watchpoint sets.  That's what this patch ensures.
+
+        At the time of writing, this test was deadlocking for me on trunk 100% of the time.  With
+        this change I cannot get it to deadlock.
+
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::willStoreValueSlow):
+        (JSC::InferredType::makeTopSlow):
+        (JSC::InferredType::set):
+        (JSC::InferredType::removeStructure):
+        (JSC::InferredType::InferredStructureWatchpoint::fireInternal):
+        * runtime/InferredType.h:
+
 2016-02-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL][B3] Support floor and ceil
