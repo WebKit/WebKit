@@ -89,7 +89,7 @@ private:
 // large. However, due to https://bugs.webkit.org/show_bug.cgi?id=14536 things
 // get rather sluggish when a text field has a larger number of characters than
 // this, even when just clicking in the text field.
-const int HTMLInputElement::maximumLength = 524288;
+const unsigned HTMLInputElement::maximumLength = 524288;
 const int defaultSize = 20;
 const int maxSavedResults = 256;
 
@@ -1742,11 +1742,7 @@ bool HTMLInputElement::isEmptyValue() const
 
 void HTMLInputElement::parseMaxLengthAttribute(const AtomicString& value)
 {
-    int maxLength;
-    if (!parseHTMLInteger(value, maxLength))
-        maxLength = maximumLength;
-    if (maxLength < 0 || maxLength > maximumLength)
-        maxLength = maximumLength;
+    int maxLength = std::min(parseHTMLNonNegativeInteger(value).valueOr(maximumLength), maximumLength);
     int oldMaxLength = m_maxLength;
     m_maxLength = maxLength;
     if (oldMaxLength != maxLength)

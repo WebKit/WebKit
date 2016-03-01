@@ -153,13 +153,13 @@ double parseToDoubleForNumberType(const String& string)
 }
 
 template <typename CharacterType>
-static bool parseHTMLIntegerInternal(const CharacterType* position, const CharacterType* end, int& value)
+static Optional<int> parseHTMLIntegerInternal(const CharacterType* position, const CharacterType* end)
 {
     while (position < end && isHTMLSpace(*position))
         ++position;
 
     if (position == end)
-        return false;
+        return Nullopt;
 
     bool isNegative = false;
     if (*position == '-') {
@@ -169,7 +169,7 @@ static bool parseHTMLIntegerInternal(const CharacterType* position, const Charac
         ++position;
 
     if (position == end || !isASCIIDigit(*position))
-        return false;
+        return Nullopt;
 
     constexpr int intMax = std::numeric_limits<int>::max();
     constexpr int base = 10;
@@ -180,41 +180,39 @@ static bool parseHTMLIntegerInternal(const CharacterType* position, const Charac
         int digitValue = *position - '0';
 
         if (result > maxMultiplier || (result == maxMultiplier && digitValue > (intMax % base) + isNegative))
-            return false;
+            return Nullopt;
 
         result = base * result + digitValue;
         ++position;
     } while (position < end && isASCIIDigit(*position));
 
-    value = isNegative ? -result : result;
-    return true;
+    return isNegative ? -result : result;
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-integers
-bool parseHTMLInteger(const String& input, int& value)
+Optional<int> parseHTMLInteger(const String& input)
 {
     unsigned length = input.length();
     if (!length)
-        return false;
+        return Nullopt;
 
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();
-        return parseHTMLIntegerInternal(start, start + length, value);
+        return parseHTMLIntegerInternal(start, start + length);
     }
 
     auto* start = input.characters16();
-    return parseHTMLIntegerInternal(start, start + length, value);
+    return parseHTMLIntegerInternal(start, start + length);
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
-bool parseHTMLNonNegativeInteger(const String& input, unsigned& value)
+Optional<unsigned> parseHTMLNonNegativeInteger(const String& input)
 {
-    int signedValue;
-    if (!parseHTMLInteger(input, signedValue) || signedValue < 0)
-        return false;
+    Optional<int> signedValue = parseHTMLInteger(input);
+    if (!signedValue || signedValue.value() < 0)
+        return Nullopt;
 
-    value = signedValue;
-    return true;
+    return signedValue.value();
 }
 
 static bool threadSafeEqual(const StringImpl& a, const StringImpl& b)

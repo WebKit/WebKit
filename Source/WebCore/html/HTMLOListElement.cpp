@@ -80,11 +80,7 @@ void HTMLOListElement::parseAttribute(const QualifiedName& name, const AtomicStr
 {
     if (name == startAttr) {
         int oldStart = start();
-        int parsedStart;
-        if (parseHTMLInteger(value, parsedStart))
-            m_start = parsedStart;
-        else
-            m_start = Nullopt;
+        m_start = parseHTMLInteger(value);
         if (oldStart == start())
             return;
         updateItemValues();

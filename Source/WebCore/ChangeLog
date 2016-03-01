@@ -1,3 +1,40 @@
+2016-02-29  Chris Dumez  <cdumez@apple.com>
+
+        Have parseHTMLInteger() / parseHTMLNonNegativeInteger() use WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=154845
+
+        Reviewed by Ryosuke Niwa.
+
+        Have parseHTMLInteger() / parseHTMLNonNegativeInteger() use
+        WTF::Optional.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getIntegralAttribute):
+        (WebCore::Element::getUnsignedIntegralAttribute):
+        (WebCore::Element::setUnsignedIntegralAttribute): Deleted.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseBorderWidthAttribute):
+        (WebCore::HTMLElement::parseAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMaxLengthAttribute):
+        * html/HTMLInputElement.h:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::parseAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::maxLength):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::height):
+        (WebCore::ImageInputType::width):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLIntegerInternal):
+        (WebCore::parseHTMLInteger):
+        (WebCore::parseHTMLNonNegativeInteger):
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::limitToOnlyHTMLNonNegativeNumbersGreaterThanZero):
+        (WebCore::limitToOnlyHTMLNonNegative):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseAttribute):
+
 2016-02-29  Zan Dobersek  <zdobersek@igalia.com>
 
         TextureMapperGL: simplify TransformationMatrix copies in draw(), beginClip()

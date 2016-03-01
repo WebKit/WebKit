@@ -35,16 +35,14 @@ namespace TestWebKitAPI {
 
 static int testParseHTMLInteger(const String& input)
 {
-    int result = 0;
-    bool success = parseHTMLInteger(input, result);
-    EXPECT_TRUE(success);
-    return result;
+    auto optionalResult = parseHTMLInteger(input);
+    EXPECT_TRUE(!!optionalResult);
+    return optionalResult.valueOr(0);
 }
 
 static bool parseHTMLIntegerFails(const String& input)
 {
-    int result = 0;
-    return !parseHTMLInteger(input, result);
+    return !parseHTMLInteger(input);
 }
 
 TEST(WebCoreHTMLParserIdioms, parseHTMLInteger)
@@ -101,16 +99,14 @@ TEST(WebCoreHTMLParserIdioms, parseHTMLInteger)
 
 static unsigned testParseHTMLNonNegativeInteger(const String& input)
 {
-    unsigned result = 0;
-    bool success = parseHTMLNonNegativeInteger(input, result);
-    EXPECT_TRUE(success);
-    return result;
+    auto optionalResult = parseHTMLNonNegativeInteger(input);
+    EXPECT_TRUE(!!optionalResult);
+    return optionalResult.valueOr(0);
 }
 
 static bool parseHTMLNonNegativeIntegerFails(const String& input)
 {
-    unsigned result = 0;
-    return !parseHTMLNonNegativeInteger(input, result);
+    return !parseHTMLNonNegativeInteger(input);
 }
 
 TEST(WebCoreHTMLParserIdioms, parseHTMLNonNegativeInteger)

@@ -423,10 +423,10 @@ void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
 
 int HTMLTextAreaElement::maxLength() const
 {
-    unsigned result;
-    if (parseHTMLNonNegativeInteger(fastGetAttribute(maxlengthAttr), result))
-        return result;
-    return -1;
+    auto optionalMaxLength = parseHTMLNonNegativeInteger(fastGetAttribute(maxlengthAttr));
+    if (!optionalMaxLength)
+        return -1;
+    return optionalMaxLength.value();
 }
 
 void HTMLTextAreaElement::setMaxLength(int newValue, ExceptionCode& ec)
