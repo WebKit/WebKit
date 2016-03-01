@@ -1,3 +1,16 @@
+2016-03-01  Andreas Kling  <akling@apple.com>
+
+        MemoryCache::forEachResource() should guard resources across function invocation.
+        <https://webkit.org/b/154846>
+
+        Reviewed by Antti Koivisto.
+
+        It occurred to me that we should protect the CachedResources from being
+        deleted while invoking the custom function here, lest we create a giant footgun.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::forEachResource):
+
 2016-03-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] One more unreviewed speculative buildfix after r197375. Just for fun.
