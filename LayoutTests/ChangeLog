@@ -1,3 +1,12 @@
+2016-03-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline isplaylists/extent-includes tests for mac-wk1
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/displaylists/extent-includes-shadow-expected.txt:
+        * platform/mac-wk1/displaylists/extent-includes-transforms-expected.txt:
+
 2016-02-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking webgl/1.0.2/conformance/extensions/get-extension.html as flaky on mac, removing wk1 specific flakiness expectation.

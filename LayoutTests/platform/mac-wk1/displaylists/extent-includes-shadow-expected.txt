@@ -5,7 +5,7 @@
 (save
   (restore-index 4))
 (set-state
-  (change-flags 1049600)
+  (change-flags 525312)
   (shadow-blur 12.00)
   (shadow-offset width=10 height=20)
   (shadows-use-legacy-radius 0)
