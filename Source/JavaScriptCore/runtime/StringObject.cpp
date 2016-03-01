@@ -86,7 +86,10 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
     StringObject* thisObject = jsCast<StringObject*>(object);
 
     if (propertyName == exec->propertyNames().length) {
-        if (!object->isExtensible()) {
+        bool isExtensible = object->isExtensibleInline(exec);
+        if (exec->hadException())
+            return false;
+        if (!isExtensible) {
             if (throwException)
                 exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible.")));
             return false;

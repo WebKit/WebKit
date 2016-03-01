@@ -196,7 +196,10 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         }
         // FIXME: this doesn't work if 'target' is another Proxy. We don't have isExtensible implemented in a way that fits w/ Proxys.
         // https://bugs.webkit.org/show_bug.cgi?id=154375
-        if (!target->isExtensible()) {
+        bool isExtensible = target->isExtensibleInline(exec);
+        if (exec->hadException())
+            return false;
+        if (!isExtensible) {
             // FIXME: Come up with a test for this error. I'm not sure how to because
             // Object.seal(o) will make all fields [[Configurable]] false.
             // https://bugs.webkit.org/show_bug.cgi?id=154376
@@ -207,12 +210,15 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         return false;
     }
 
+    bool isExtensible = target->isExtensibleInline(exec);
+    if (exec->hadException())
+        return false;
     PropertyDescriptor trapResultAsDescriptor;
     toPropertyDescriptor(exec, trapResult, trapResultAsDescriptor);
     if (exec->hadException())
         return false;
     bool throwException = false;
-    bool valid = validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, target->isExtensible(),
+    bool valid = validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, isExtensible,
         trapResultAsDescriptor, isTargetPropertyDescriptorDefined, targetPropertyDescriptor, throwException);
     if (!valid) {
         throwVMTypeError(exec, ASCIILiteral("Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test."));
@@ -288,7 +294,10 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
                 throwVMTypeError(exec, ASCIILiteral("Proxy 'has' must return 'true' for non-configurable properties."));
                 return false;
             }
-            if (!target->isExtensible()) {
+            bool isExtensible = target->isExtensibleInline(exec);
+            if (exec->hadException())
+                return false;
+            if (!isExtensible) {
                 throwVMTypeError(exec, ASCIILiteral("Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property."));
                 return false;
             }

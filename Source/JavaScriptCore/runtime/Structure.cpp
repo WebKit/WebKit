@@ -691,7 +691,7 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
 // In future we may want to cache this property.
 bool Structure::isSealed(VM& vm)
 {
-    if (isExtensible())
+    if (isStructureExtensible())
         return false;
 
     DeferGC deferGC(vm.heap);
@@ -710,7 +710,7 @@ bool Structure::isSealed(VM& vm)
 // In future we may want to cache this property.
 bool Structure::isFrozen(VM& vm)
 {
-    if (isExtensible())
+    if (isStructureExtensible())
         return false;
 
     DeferGC deferGC(vm.heap);

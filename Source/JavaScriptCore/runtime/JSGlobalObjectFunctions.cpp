@@ -885,7 +885,10 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (thisObject->prototype() == value)
         return JSValue::encode(jsUndefined());
 
-    if (!thisObject->isExtensible())
+    bool isExtensible = thisObject->isExtensibleInline(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    if (!isExtensible)
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 
     if (!thisObject->setPrototypeWithCycleCheck(exec, value))

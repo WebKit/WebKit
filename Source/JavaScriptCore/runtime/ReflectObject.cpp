@@ -168,7 +168,11 @@ EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState* exec)
     JSValue target = exec->argument(0);
     if (!target.isObject())
         return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.isExtensible requires the first argument be an object")));
-    return JSValue::encode(jsBoolean(asObject(target)->isExtensible()));
+
+    bool isExtensible = asObject(target)->isExtensibleInline(exec);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsBoolean(isExtensible));
 }
 
 // http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.ownkeys
@@ -211,7 +215,10 @@ EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState* exec)
     if (object->prototype() == proto)
         return JSValue::encode(jsBoolean(true));
 
-    if (!object->isExtensible())
+    bool isExtensible = object->isExtensibleInline(exec);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+    if (!isExtensible)
         return JSValue::encode(jsBoolean(false));
 
     return JSValue::encode(jsBoolean(object->setPrototypeWithCycleCheck(exec, proto)));

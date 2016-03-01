@@ -207,6 +207,7 @@ protected:
     static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH bool preventExtensions(JSObject*, ExecState*);
+    static NO_RETURN_DUE_TO_CRASH bool isExtensible(JSObject*, ExecState*);
 
     static String className(const JSObject*);
     JS_EXPORT_PRIVATE static bool customHasInstance(JSObject*, ExecState*, JSValue);

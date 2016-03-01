@@ -106,6 +106,9 @@ struct MethodTable {
     typedef bool (*PreventExtensionsFunctionPtr)(JSObject*, ExecState*);
     PreventExtensionsFunctionPtr preventExtensions;
 
+    typedef bool (*IsExtensibleFunctionPtr)(JSObject*, ExecState*);
+    IsExtensibleFunctionPtr isExtensible;
+
     typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);
     DumpToStreamFunctionPtr dumpToStream;
 
@@ -158,6 +161,7 @@ struct MethodTable {
         &ClassName::slowDownAndWasteMemory, \
         &ClassName::getTypedArrayImpl, \
         &ClassName::preventExtensions, \
+        &ClassName::isExtensible, \
         &ClassName::dumpToStream, \
         &ClassName::estimatedSize \
     }, \

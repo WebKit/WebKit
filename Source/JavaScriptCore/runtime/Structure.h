@@ -183,7 +183,7 @@ public:
 
     JS_EXPORT_PRIVATE bool isSealed(VM&);
     JS_EXPORT_PRIVATE bool isFrozen(VM&);
-    bool isExtensible() const { return !didPreventExtensions(); }
+    bool isStructureExtensible() const { return !didPreventExtensions(); }
     bool putWillGrowOutOfLineStorage();
     size_t suggestedNewOutOfLineStorageCapacity(); 
 

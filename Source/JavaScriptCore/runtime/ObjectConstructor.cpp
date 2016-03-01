@@ -212,7 +212,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
     if (object->prototype() == protoValue)
         return JSValue::encode(objectValue);
 
-    if (!object->isExtensible())
+    bool isExtensible = object->isExtensibleInline(exec);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+    if (!isExtensible)
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 
     if (!object->setPrototypeWithCycleCheck(exec, protoValue)) {
@@ -616,7 +619,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
 
     // 3. If the [[Extensible]] internal property of O is false, then return true.
     // 4. Otherwise, return false.
-    return JSValue::encode(jsBoolean(!object->isExtensible()));
+    bool isExtensible = object->isExtensibleInline(exec);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsBoolean(!isExtensible));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
@@ -650,7 +656,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
 
     // 3. If the [[Extensible]] internal property of O is false, then return true.
     // 4. Otherwise, return false.
-    return JSValue::encode(jsBoolean(!object->isExtensible()));
+    bool isExtensible = object->isExtensibleInline(exec);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsBoolean(!isExtensible));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState* exec)
@@ -658,7 +667,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState* exec)
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return JSValue::encode(jsBoolean(false));
-    return JSValue::encode(jsBoolean(asObject(obj)->isExtensible()));
+    JSObject* object = asObject(obj);
+    bool isExtensible = object->isExtensibleInline(exec);
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsBoolean(isExtensible));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIs(ExecState* exec)

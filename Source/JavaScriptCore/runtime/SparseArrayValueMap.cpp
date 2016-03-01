@@ -98,7 +98,7 @@ void SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
-    if (result.isNewEntry && !array->isExtensible()) {
+    if (result.isNewEntry && !array->isStructureExtensible()) {
         remove(result.iterator);
         if (shouldThrow)
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
@@ -118,7 +118,7 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
-    if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isExtensible()) {
+    if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isStructureExtensible()) {
         remove(result.iterator);
         return reject(exec, mode == PutDirectIndexShouldThrow, "Attempting to define property on object that is not extensible.");
     }
