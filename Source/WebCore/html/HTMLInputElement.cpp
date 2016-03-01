@@ -1867,6 +1867,29 @@ void HTMLInputElement::setRangeText(const String& replacement, unsigned start, u
     HTMLTextFormControlElement::setRangeText(replacement, start, end, selectionMode, ec);
 }
 
+Ref<RenderStyle> HTMLInputElement::createInnerTextStyle(const RenderStyle& style) const
+{
+    auto textBlockStyle = RenderStyle::create();
+    textBlockStyle.get().inheritFrom(&style);
+    adjustInnerTextStyle(style, textBlockStyle.get());
+
+    textBlockStyle.get().setWhiteSpace(PRE);
+    textBlockStyle.get().setOverflowWrap(NormalOverflowWrap);
+    textBlockStyle.get().setOverflowX(OHIDDEN);
+    textBlockStyle.get().setOverflowY(OHIDDEN);
+
+    bool textShouldBeTruncated = document().focusedElement() != this && style.textOverflow() == TextOverflowEllipsis;
+    textBlockStyle.get().setTextOverflow(textShouldBeTruncated ? TextOverflowEllipsis : TextOverflowClip);
+
+    // Do not allow line-height to be smaller than our default.
+    if (textBlockStyle.get().fontMetrics().lineSpacing() > style.computedLineHeight())
+        textBlockStyle.get().setLineHeight(RenderStyle::initialLineHeight());
+
+    textBlockStyle.get().setDisplay(BLOCK);
+
+    return textBlockStyle;
+}
+
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
 {

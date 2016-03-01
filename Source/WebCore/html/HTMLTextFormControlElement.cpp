@@ -26,6 +26,7 @@
 #include "HTMLTextFormControlElement.h"
 
 #include "AXObjectCache.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Event.h"
@@ -756,6 +757,50 @@ String HTMLTextFormControlElement::directionForFormData() const
     }
 
     return "ltr";
+}
+
+void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentStyle, RenderStyle& textBlockStyle) const
+{
+    // The inner block, if present, always has its direction set to LTR,
+    // so we need to inherit the direction and unicode-bidi style from the element.
+    textBlockStyle.setDirection(parentStyle.direction());
+    textBlockStyle.setUnicodeBidi(parentStyle.unicodeBidi());
+
+    if (HTMLElement* innerText = innerTextElement()) {
+        if (const StyleProperties* properties = innerText->presentationAttributeStyle()) {
+            RefPtr<CSSValue> value = properties->getPropertyCSSValue(CSSPropertyWebkitUserModify);
+            if (is<CSSPrimitiveValue>(value.get()))
+                textBlockStyle.setUserModify(downcast<CSSPrimitiveValue>(*value));
+        }
+    }
+
+    if (isDisabledFormControl())
+        textBlockStyle.setColor(document().page()->theme().disabledTextColor(textBlockStyle.visitedDependentColor(CSSPropertyColor), parentStyle.visitedDependentColor(CSSPropertyBackgroundColor)));
+#if PLATFORM(IOS)
+    if (textBlockStyle.textSecurity() != TSNONE && !textBlockStyle.isLeftToRightDirection()) {
+        // Preserve the alignment but force the direction to LTR so that the last-typed, unmasked character
+        // (which cannot have RTL directionality) will appear to the right of the masked characters. See <rdar://problem/7024375>.
+        
+        switch (textBlockStyle.textAlign()) {
+        case TASTART:
+        case JUSTIFY:
+            textBlockStyle.setTextAlign(RIGHT);
+            break;
+        case TAEND:
+            textBlockStyle.setTextAlign(LEFT);
+            break;
+        case LEFT:
+        case RIGHT:
+        case CENTER:
+        case WEBKIT_LEFT:
+        case WEBKIT_RIGHT:
+        case WEBKIT_CENTER:
+            break;
+        }
+
+        textBlockStyle.setDirection(LTR);
+    }
+#endif
 }
 
 } // namespace Webcore

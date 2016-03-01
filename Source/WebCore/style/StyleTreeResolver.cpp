@@ -179,7 +179,10 @@ Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& in
     }
 
     if (element.hasCustomStyleResolveCallbacks()) {
-        if (RefPtr<RenderStyle> style = element.customStyleForRenderer(inheritedStyle))
+        RenderStyle* shadowHostStyle = nullptr;
+        if (auto* shadowRoot = scope().shadowRoot)
+            shadowHostStyle = shadowRoot->host()->renderStyle();
+        if (RefPtr<RenderStyle> style = element.customStyleForRenderer(inheritedStyle, shadowHostStyle))
             return style.releaseNonNull();
     }
 

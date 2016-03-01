@@ -140,7 +140,10 @@ public:
 #endif
 
     HTMLElement* containerElement() const;
+    
     virtual TextControlInnerTextElement* innerTextElement() const override final;
+    virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle&) const override;
+
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
     HTMLElement* capsLockIndicatorElement() const;

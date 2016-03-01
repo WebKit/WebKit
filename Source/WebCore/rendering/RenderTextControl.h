@@ -35,7 +35,6 @@ public:
     virtual ~RenderTextControl();
 
     WEBCORE_EXPORT HTMLTextFormControlElement& textFormControlElement() const;
-    virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
 #if PLATFORM(IOS)
     bool canScroll() const;
@@ -51,7 +50,6 @@ protected:
     TextControlInnerTextElement* innerTextElement() const;
 
     int scrollbarThickness() const;
-    void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle& textBlockStyle) const;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 

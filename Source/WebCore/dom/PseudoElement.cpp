@@ -76,7 +76,7 @@ void PseudoElement::clearHostElement()
     m_hostElement = nullptr;
 }
 
-RefPtr<RenderStyle> PseudoElement::customStyleForRenderer(RenderStyle& parentStyle)
+RefPtr<RenderStyle> PseudoElement::customStyleForRenderer(RenderStyle& parentStyle, RenderStyle*)
 {
     return m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId, &parentStyle);
 }

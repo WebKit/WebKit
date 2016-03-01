@@ -34,9 +34,6 @@ class RenderTextControlSingleLine : public RenderTextControl {
 public:
     RenderTextControlSingleLine(HTMLInputElement&, Ref<RenderStyle>&&);
     virtual ~RenderTextControlSingleLine();
-    // FIXME: Move create*Style() to their classes.
-    virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const override;
-    Ref<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
 
 protected:
     virtual void centerContainerIfNeeded(RenderBox*) const { }
@@ -79,8 +76,6 @@ private:
     bool textShouldBeTruncated() const;
 
     HTMLElement* innerSpinButtonElement() const;
-
-    LayoutUnit m_desiredInnerTextLogicalHeight;
 };
 
 inline HTMLElement* RenderTextControlSingleLine::containerElement() const

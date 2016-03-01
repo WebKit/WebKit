@@ -3265,7 +3265,7 @@ void Element::didDetachRenderers()
     ASSERT(hasCustomStyleResolveCallbacks());
 }
 
-RefPtr<RenderStyle> Element::customStyleForRenderer(RenderStyle&)
+RefPtr<RenderStyle> Element::customStyleForRenderer(RenderStyle&, RenderStyle*)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
     return nullptr;

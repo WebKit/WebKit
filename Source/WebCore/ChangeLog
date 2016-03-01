@@ -1,3 +1,85 @@
+2016-03-01  Antti Koivisto  <antti@apple.com>
+
+        Text control shadow element style shouldn't depend on renderers
+        https://bugs.webkit.org/show_bug.cgi?id=154855
+
+        Reviewed by Andreas Kling.
+
+        Currently the code for computing style for text control shadow elements lives in render tree.
+        Style is the input for building a render tree and should be computable without having one.
+
+        Fix by moving virtual createInnerTextStyle() from RenderTextControl hierarchy to the DOM side
+        HTMLTextFormControlElement hierarchy.
+
+        * dom/Element.cpp:
+        (WebCore::Element::didDetachRenderers):
+        (WebCore::Element::customStyleForRenderer):
+
+            Also pass shadow host style as it is needed for text controls.
+
+        * dom/Element.h:
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        (WebCore::PseudoElement::customStyleForRenderer):
+        * dom/PseudoElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setRangeText):
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::willRespondToMouseClickEvents):
+        (WebCore::HTMLTextAreaElement::createInnerTextStyle):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::directionForFormData):
+        (WebCore::HTMLTextFormControlElement::adjustInnerTextStyle):
+        * html/HTMLTextFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::cachedSelectionDirection):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::create):
+        (WebCore::TextControlInnerElement::customStyleForRenderer):
+        (WebCore::TextControlInnerTextElement::renderer):
+        (WebCore::TextControlInnerTextElement::customStyleForRenderer):
+        * html/shadow/TextControlInnerElements.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+        (WebCore::RenderTextControl::textBlockLogicalHeight):
+        (WebCore::RenderTextControl::adjustInnerTextStyle): Deleted.
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::baselinePosition):
+        (WebCore::RenderTextControlMultiLine::layoutSpecialExcludedChild):
+        (WebCore::RenderTextControlMultiLine::createInnerTextStyle): Deleted.
+
+            createInnerTextStyle moves to HTMLTextAreaElement::createInnerTextStyle
+
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+
+            Remove m_desiredInnerTextLogicalHeight cache. It doesn't work, it is never valid when hit.
+
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        (WebCore::RenderTextControlSingleLine::computeControlLogicalHeight):
+        (WebCore::RenderTextControlSingleLine::textShouldBeTruncated):
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle): Deleted.
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle): Deleted.
+
+            - createInnerTextStyle moves to HTMLInputElement::createInnerTextStyle
+            - createInnerBlockStyle moves to TextControlInnerElement::customStyleForRenderer
+
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlSingleLine::centerContainerIfNeeded):
+        (WebCore::RenderTextControlSingleLine::containerElement):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::styleForElement):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::synchronizeSystemLanguage):
+        (WebCore::SVGElement::customStyleForRenderer):
+        * svg/SVGElement.h:
+
 2016-03-01  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Get rid of GridResolvedPosition

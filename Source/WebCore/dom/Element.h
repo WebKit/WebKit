@@ -476,7 +476,7 @@ public:
     virtual void didAttachRenderers();
     virtual void willDetachRenderers();
     virtual void didDetachRenderers();
-    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle);
+    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle, RenderStyle* shadowHostStyle);
 
     LayoutRect absoluteEventHandlerBounds(bool& includesFixedPositionElements) override;
 

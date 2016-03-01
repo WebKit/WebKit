@@ -87,22 +87,6 @@ int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-Ref<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const RenderStyle* startStyle) const
-{
-    auto textBlockStyle = RenderStyle::create();
-    textBlockStyle.get().inheritFrom(startStyle);
-    adjustInnerTextStyle(startStyle, textBlockStyle.get());
-    textBlockStyle.get().setDisplay(BLOCK);
-
-#if PLATFORM(IOS)
-    // We're adding three extra pixels of padding to line textareas up with text fields.  
-    textBlockStyle.get().setPaddingLeft(Length(3, Fixed));
-    textBlockStyle.get().setPaddingRight(Length(3, Fixed));
-#endif
-
-    return textBlockStyle;
-}
-
 RenderObject* RenderTextControlMultiLine::layoutSpecialExcludedChild(bool relayoutChildren)
 {
     RenderObject* placeholderRenderer = RenderTextControl::layoutSpecialExcludedChild(relayoutChildren);

@@ -54,6 +54,7 @@ public:
     bool isValidValue(const String&) const;
     
     virtual TextControlInnerTextElement* innerTextElement() const override;
+    virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle&) const override;
 
     void rendererWillBeDestroyed();
 

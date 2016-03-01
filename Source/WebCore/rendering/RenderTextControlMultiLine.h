@@ -47,7 +47,6 @@ private:
     virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
-    virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const override;
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
 };
 
