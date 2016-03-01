@@ -1,3 +1,9 @@
+2016-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix CLOOP build.
+
+        * jit/JITOperations.h:
+
 2016-03-01  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function. Some not used byte code is emited
