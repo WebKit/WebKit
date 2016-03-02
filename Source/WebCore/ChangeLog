@@ -1,5 +1,12 @@
 2016-03-01  Ada Chan  <adachan@apple.com>
 
+        One more attempt to fix the build.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker):
+
+2016-03-01  Ada Chan  <adachan@apple.com>
+
         Attempt to fix the internal build.
 
         * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:

@@ -111,6 +111,10 @@ AVOutputDeviceMenuControllerType *MediaPlaybackTargetPickerMac::devicePicker()
 
 void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool checkActiveRoute, const String& customMenuItemTitle)
 {
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+    UNUSED_PARAM(customMenuItemTitle);
+#endif
+
     if (!client() || m_showingMenu)
         return;
 
