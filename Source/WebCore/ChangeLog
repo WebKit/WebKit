@@ -1,3 +1,84 @@
+2016-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Align HTMLInputElement.maxLength with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=154906
+
+        Reviewed by Ryosuke Niwa.
+
+        Align HTMLInputElement.maxLength with the specification:
+        - https://html.spec.whatwg.org/multipage/forms.html#dom-input-maxlength
+        - https://html.spec.whatwg.org/multipage/forms.html#attr-input-maxlength
+
+        In particular, the following Web-facing change was made:
+        - HTMLInputElement.maxLength returns -1 instead of 524288 when
+          the corresponding content attribute is missing, cannot be parsed
+          or out of range (i.e. negative), as per:
+          - https://html.spec.whatwg.org/multipage/infrastructure.html#limited-to-only-non-negative-numbers
+
+        Note that HTMLTextAreaElement.maxLength was already returning -1 in
+        this case.
+
+        The new behavior matches Firefox. Chrome however, still seems to
+        return 524288.
+
+        Note that we keep using 524288 as a maximum maxLength internally for
+        performance reasons. However, we stop exposing this arbitrary value to
+        the Web as this is an internal limitation.
+
+        No new tests, already covered by existing tests.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        Initialize m_maxLength to -1 initially, instead of 524288.
+
+        (WebCore::HTMLInputElement::tooLong):
+        Call effectiveMaxLength() instead of maxLength(), which no longer
+        exists. effectiveMaxLength() makes sure of returning a value in
+        the range [0, 524288].
+
+        (WebCore::HTMLInputElement::parseAttribute):
+
+        (WebCore::HTMLInputElement::effectiveMaxLength):
+        Split maxLength() into maxLengthForBindings() and effectiveMaxLength().
+        effectiveMaxLength() returns a value in the range [0, 524288], while
+        maxLengthForBindings() returns values in the range [-1, 2147483647].
+
+        (WebCore::HTMLInputElement::setMaxLength): Deleted.
+        The implementation was moved to the parent class so that it can be
+        shared with HTMLTextAreaElement.
+
+        (WebCore::HTMLInputElement::maxLengthAttributeChanged):
+        Rename for clarity.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseAttribute):
+        (WebCore::HTMLTextAreaElement::maxLengthAttributeChanged):
+        Cache the parsed maxLength when the content attribute changes, similarly
+        to what is already done in HTMLInputElement.
+
+        (WebCore::HTMLTextAreaElement::handleBeforeTextInsertedEvent):
+        (WebCore::HTMLTextAreaElement::validationMessage):
+        (WebCore::HTMLTextAreaElement::tooLong):
+        Call effectiveMaxLength() instead of maxLength() which no longer exists.
+        effectiveMaxLength() returns a cached value and is therefore a lot more
+        efficient.
+
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setMaxLengthForBindings):
+        This was moved up from HTMLInputElement / HTMLTextAreaElement to avoid code
+        duplication.
+
+        * html/HTMLTextFormControlElement.h:
+
+        * html/InputType.cpp:
+        (WebCore::InputType::validationMessage):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent):
+        Call HTMLInputElement::effectiveMaxLength() instead of
+        HTMLInputElement::maxLength() which no longer exists.
+
 2016-03-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197434 and r197436.

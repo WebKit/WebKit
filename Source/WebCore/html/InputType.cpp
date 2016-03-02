@@ -406,7 +406,7 @@ String InputType::validationMessage() const
         return validationMessagePatternMismatchText();
 
     if (element().tooLong())
-        return validationMessageTooLongText(numGraphemeClusters(value), element().maxLength());
+        return validationMessageTooLongText(numGraphemeClusters(value), element().effectiveMaxLength());
 
     if (!isSteppable())
         return emptyString();

@@ -42,7 +42,7 @@ interface HTMLInputElement : HTMLElement {
     attribute boolean indeterminate;
     [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
     [Reflect] attribute DOMString max;
-    [SetterRaisesException] attribute long maxLength;
+    [ImplementedAs=maxLengthForBindings, SetterRaisesException] attribute long maxLength;
     [Reflect] attribute DOMString min;
     [Reflect] attribute boolean multiple;
     [Reflect] attribute DOMString name;

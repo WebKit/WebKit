@@ -48,6 +48,8 @@ public:
     void didEditInnerTextValue();
     void forwardEvent(Event*);
 
+    void setMaxLengthForBindings(int, ExceptionCode&);
+
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
     // The derived class should return true if placeholder processing is needed.
@@ -75,7 +77,6 @@ public:
 
     virtual void dispatchFormControlChangeEvent() override final;
 
-    virtual int maxLength() const = 0;
     virtual String value() const = 0;
 
     virtual TextControlInnerTextElement* innerTextElement() const = 0;

@@ -232,8 +232,8 @@ public:
 
     URL src() const;
 
-    virtual int maxLength() const override final;
-    void setMaxLength(int, ExceptionCode&);
+    int maxLengthForBindings() const { return m_maxLength; }
+    unsigned effectiveMaxLength() const;
 
     bool multiple() const;
 
@@ -292,7 +292,7 @@ public:
     bool shouldUseMediaCapture() const;
 #endif
 
-    static const int maximumLength;
+    static const unsigned maxEffectiveLength;
 
     unsigned height() const;
     unsigned width() const;
@@ -414,7 +414,7 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     void resetListAttributeTargetObserver();
 #endif
-    void parseMaxLengthAttribute(const AtomicString&);
+    void maxLengthAttributeChanged(const AtomicString& newValue);
     void updateValueIfNeeded();
 
     // Returns null if this isn't associated with any radio button group.

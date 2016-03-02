@@ -430,7 +430,7 @@ static bool isAutoFillButtonTypeChanged(const AtomicString& attribute, AutoFillB
 
 String TextFieldInputType::sanitizeValue(const String& proposedValue) const
 {
-    return limitLength(proposedValue.removeCharacters(isASCIILineBreak), HTMLInputElement::maximumLength);
+    return limitLength(proposedValue.removeCharacters(isASCIILineBreak), HTMLInputElement::maxEffectiveLength);
 }
 
 void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event)
@@ -460,7 +460,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
 
     // Selected characters will be removed by the next text event.
     unsigned baseLength = oldLength - selectionLength;
-    unsigned maxLength = static_cast<unsigned>(isTextType() ? element().maxLength() : HTMLInputElement::maximumLength); // maxLength can never be negative.
+    unsigned maxLength = isTextType() ? element().effectiveMaxLength() : HTMLInputElement::maxEffectiveLength;
     unsigned appendableLength = maxLength > baseLength ? maxLength - baseLength : 0;
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.

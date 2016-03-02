@@ -89,14 +89,14 @@ private:
 // large. However, due to https://bugs.webkit.org/show_bug.cgi?id=14536 things
 // get rather sluggish when a text field has a larger number of characters than
 // this, even when just clicking in the text field.
-const int HTMLInputElement::maximumLength = 524288;
+const unsigned HTMLInputElement::maxEffectiveLength = 524288;
 const int defaultSize = 20;
 const int maxSavedResults = 256;
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
     : HTMLTextFormControlElement(tagName, document, form)
     , m_size(defaultSize)
-    , m_maxLength(maximumLength)
+    , m_maxLength(-1)
     , m_maxResults(-1)
     , m_isChecked(false)
     , m_reflectsCheckedAttribute(true)
@@ -283,16 +283,14 @@ bool HTMLInputElement::tooLong(const String& value, NeedsToCheckDirtyFlag check)
     // 'virtual' overhead.
     if (!isTextType())
         return false;
-    int max = maxLength();
-    if (max < 0)
-        return false;
+    unsigned max = effectiveMaxLength();
     if (check == CheckDirtyFlag) {
         // Return false for the default value or a value set by a script even if
         // it is longer than maxLength.
         if (!hasDirtyValue() || !m_wasModifiedByUser)
             return false;
     }
-    return numGraphemeClusters(value) > static_cast<unsigned>(max);
+    return numGraphemeClusters(value) > max;
 }
 
 bool HTMLInputElement::rangeUnderflow() const
@@ -682,7 +680,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
             m_reflectsCheckedAttribute = true;
         }
     } else if (name == maxlengthAttr)
-        parseMaxLengthAttribute(value);
+        maxLengthAttributeChanged(value);
     else if (name == sizeAttr) {
         unsigned oldSize = m_size;
         m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultSize);
@@ -1254,17 +1252,10 @@ String HTMLInputElement::alt() const
     return fastGetAttribute(altAttr);
 }
 
-int HTMLInputElement::maxLength() const
+unsigned HTMLInputElement::effectiveMaxLength() const
 {
-    return m_maxLength;
-}
-
-void HTMLInputElement::setMaxLength(int maxLength, ExceptionCode& ec)
-{
-    if (maxLength < 0)
-        ec = INDEX_SIZE_ERR;
-    else
-        setIntegralAttribute(maxlengthAttr, maxLength);
+    // The number -1 represents no maximum at all; conveniently it becomes a super-large value when converted to unsigned.
+    return std::min<unsigned>(m_maxLength, maxEffectiveLength);
 }
 
 bool HTMLInputElement::multiple() const
@@ -1740,13 +1731,14 @@ bool HTMLInputElement::isEmptyValue() const
     return m_inputType->isEmptyValue();
 }
 
-void HTMLInputElement::parseMaxLengthAttribute(const AtomicString& value)
+void HTMLInputElement::maxLengthAttributeChanged(const AtomicString& newValue)
 {
-    int maxLength = std::min(parseHTMLNonNegativeInteger(value).valueOr(maximumLength), maximumLength);
-    int oldMaxLength = m_maxLength;
-    m_maxLength = maxLength;
-    if (oldMaxLength != maxLength)
+    unsigned oldEffectiveMaxLength = effectiveMaxLength();
+    m_maxLength = parseHTMLNonNegativeInteger(newValue).valueOr(-1);
+    if (oldEffectiveMaxLength != effectiveMaxLength())
         updateValueIfNeeded();
+
+    // FIXME: Do we really need to do this if the effective maxLength has not changed?
     setNeedsStyleRecalc();
     updateValidity();
 }

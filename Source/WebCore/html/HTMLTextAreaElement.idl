@@ -24,7 +24,7 @@ interface HTMLTextAreaElement : HTMLElement {
     [Reflect] attribute DOMString dirName;
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    [SetterRaisesException] attribute long maxLength;
+    [ImplementedAs=maxLengthForBindings, SetterRaisesException] attribute long maxLength;
     [Reflect] attribute DOMString name;
     [Reflect] attribute DOMString placeholder;
     [Reflect] attribute boolean readOnly;

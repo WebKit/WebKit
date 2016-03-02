@@ -6173,15 +6173,15 @@ PASS input.max: IDL set to object "test-valueOf" should not throw
 PASS input.max: IDL set to object "test-valueOf" followed by getAttribute() 
 PASS input.max: IDL set to object "test-valueOf" followed by IDL get 
 PASS input.maxLength: typeof IDL attribute 
-FAIL input.maxLength: IDL get with DOM attribute unset assert_equals: expected -1 but got 524288
+PASS input.maxLength: IDL get with DOM attribute unset 
 PASS input.maxLength: setAttribute() to -2147483649 followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to -2147483649 followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to -2147483649 followed by IDL get 
 PASS input.maxLength: setAttribute() to -2147483648 followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to -2147483648 followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to -2147483648 followed by IDL get 
 PASS input.maxLength: setAttribute() to -36 followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to -36 followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to -36 followed by IDL get 
 PASS input.maxLength: setAttribute() to -1 followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to -1 followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to -1 followed by IDL get 
 PASS input.maxLength: setAttribute() to -0 followed by getAttribute() 
 PASS input.maxLength: setAttribute() to -0 followed by IDL get 
 PASS input.maxLength: setAttribute() to 0 followed by getAttribute() 
@@ -6189,17 +6189,17 @@ PASS input.maxLength: setAttribute() to 0 followed by IDL get
 PASS input.maxLength: setAttribute() to 1 followed by getAttribute() 
 PASS input.maxLength: setAttribute() to 1 followed by IDL get 
 PASS input.maxLength: setAttribute() to 2147483647 followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 524288
+PASS input.maxLength: setAttribute() to 2147483647 followed by IDL get 
 PASS input.maxLength: setAttribute() to 2147483648 followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to 2147483648 followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to 2147483648 followed by IDL get 
 PASS input.maxLength: setAttribute() to 4294967295 followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to 4294967295 followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to 4294967295 followed by IDL get 
 PASS input.maxLength: setAttribute() to 4294967296 followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to 4294967296 followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to 4294967296 followed by IDL get 
 PASS input.maxLength: setAttribute() to "" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to "" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to "" followed by IDL get 
 PASS input.maxLength: setAttribute() to "-1" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to "-1" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to "-1" followed by IDL get 
 PASS input.maxLength: setAttribute() to "-0" followed by getAttribute() 
 PASS input.maxLength: setAttribute() to "-0" followed by IDL get 
 PASS input.maxLength: setAttribute() to "0" followed by getAttribute() 
@@ -6207,79 +6207,79 @@ PASS input.maxLength: setAttribute() to "0" followed by IDL get
 PASS input.maxLength: setAttribute() to "1" followed by getAttribute() 
 PASS input.maxLength: setAttribute() to "1" followed by IDL get 
 PASS input.maxLength: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS input.maxLength: setAttribute() to "\t7" followed by getAttribute() 
 PASS input.maxLength: setAttribute() to "\t7" followed by IDL get 
 PASS input.maxLength: setAttribute() to "\v7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to "\v7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to "\v7" followed by IDL get 
 PASS input.maxLength: setAttribute() to "\f7" followed by getAttribute() 
 PASS input.maxLength: setAttribute() to "\f7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
 PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to "﻿7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to "﻿7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to "﻿7" followed by IDL get 
 PASS input.maxLength: setAttribute() to "\n7" followed by getAttribute() 
 PASS input.maxLength: setAttribute() to "\n7" followed by IDL get 
 PASS input.maxLength: setAttribute() to "\r7" followed by getAttribute() 
 PASS input.maxLength: setAttribute() to "\r7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to "᠎7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to "᠎7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to "᠎7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to " 7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to " 7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to " 7" followed by IDL get 
 PASS input.maxLength: setAttribute() to "　7" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to "　7" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to "　7" followed by IDL get 
 PASS input.maxLength: setAttribute() to undefined followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to undefined followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to undefined followed by IDL get 
 PASS input.maxLength: setAttribute() to 1.5 followed by getAttribute() 
 PASS input.maxLength: setAttribute() to 1.5 followed by IDL get 
 PASS input.maxLength: setAttribute() to true followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to true followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to true followed by IDL get 
 PASS input.maxLength: setAttribute() to false followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to false followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to false followed by IDL get 
 PASS input.maxLength: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to object "[object Object]" followed by IDL get 
 PASS input.maxLength: setAttribute() to NaN followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to NaN followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to NaN followed by IDL get 
 PASS input.maxLength: setAttribute() to Infinity followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to Infinity followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to Infinity followed by IDL get 
 PASS input.maxLength: setAttribute() to -Infinity followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to -Infinity followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to -Infinity followed by IDL get 
 PASS input.maxLength: setAttribute() to "\0" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to "\0" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to "\0" followed by IDL get 
 PASS input.maxLength: setAttribute() to object "2" followed by getAttribute() 
 PASS input.maxLength: setAttribute() to object "2" followed by IDL get 
 PASS input.maxLength: setAttribute() to object "3" followed by getAttribute() 
-FAIL input.maxLength: setAttribute() to object "3" followed by IDL get assert_equals: expected -1 but got 524288
+PASS input.maxLength: setAttribute() to object "3" followed by IDL get 
 PASS input.maxLength: IDL set to -2147483648 must throw INDEX_SIZE_ERR 
 PASS input.maxLength: IDL set to -36 must throw INDEX_SIZE_ERR 
 PASS input.maxLength: IDL set to -1 must throw INDEX_SIZE_ERR 
@@ -6291,7 +6291,7 @@ PASS input.maxLength: IDL set to 1 followed by getAttribute()
 PASS input.maxLength: IDL set to 1 followed by IDL get 
 PASS input.maxLength: IDL set to 2147483647 should not throw 
 PASS input.maxLength: IDL set to 2147483647 followed by getAttribute() 
-FAIL input.maxLength: IDL set to 2147483647 followed by IDL get assert_equals: expected 2147483647 but got 524288
+PASS input.maxLength: IDL set to 2147483647 followed by IDL get 
 PASS input.min: typeof IDL attribute 
 PASS input.min: IDL get with DOM attribute unset 
 PASS input.min: setAttribute() to "" followed by getAttribute() 
