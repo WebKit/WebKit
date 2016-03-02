@@ -882,6 +882,16 @@
 #define ENABLE_MASM_PROBE 0
 #endif
 
+/* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
+   On non-Windows x86-64, iOS, and ARM64 we use a single fixed mmap, on other platforms we mmap on demand. */
+#if ENABLE(ASSEMBLER)
+#if CPU(X86_64) || PLATFORM(IOS) || CPU(ARM64)
+#define ENABLE_EXECUTABLE_ALLOCATOR_FIXED 1
+#else
+#define ENABLE_EXECUTABLE_ALLOCATOR_DEMAND 1
+#endif
+#endif
+
 /* CSS Selector JIT Compiler */
 #if !defined(ENABLE_CSS_SELECTOR_JIT)
 #if (CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && PLATFORM(IOS))) && ENABLE(JIT) && (OS(DARWIN) || PLATFORM(GTK) || PLATFORM(EFL))

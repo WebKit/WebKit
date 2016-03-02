@@ -635,6 +635,7 @@
     <ClCompile Include="..\jit\CallFrameShuffler32_64.cpp" />
     <ClCompile Include="..\jit\CallFrameShuffler64.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocationFuzz.cpp" />
+    <ClCompile Include="..\jit\ExecutableAllocator.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocatorFixedVMPool.cpp" />
     <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp" />
     <ClCompile Include="..\jit\HostCallReturnValue.cpp" />

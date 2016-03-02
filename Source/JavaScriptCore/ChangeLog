@@ -1,3 +1,20 @@
+2016-03-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r197226 and r197256.
+        https://bugs.webkit.org/show_bug.cgi?id=154910
+
+        Caused crashes on Mac 32-bit and on ARM (Requested by ap on
+        #webkit).
+
+        Reverted changesets:
+
+        "Remove the on demand executable allocator"
+        https://bugs.webkit.org/show_bug.cgi?id=154749
+        http://trac.webkit.org/changeset/197226
+
+        "CLoop build fix."
+        http://trac.webkit.org/changeset/197256
+
 2016-03-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Simplify some StringBuilder appends
