@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,6 +68,8 @@ static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataT
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypePlugInData])
         return WebsiteDataType::PlugInData;
 #endif
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeResourceLoadStatistics])
+        return WebsiteDataType::WebsiteDataTypeResourceLoadStatistics;
 
     return Nullopt;
 }
@@ -114,6 +116,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
     if (websiteDataTypes.contains(WebsiteDataType::PlugInData))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypePlugInData];
 #endif
+    if (websiteDataTypes.contains(WebsiteDataType::WebsiteDataTypeResourceLoadStatistics))
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeResourceLoadStatistics];
 
     return wkWebsiteDataTypes;
 }

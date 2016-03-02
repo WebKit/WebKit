@@ -46,6 +46,7 @@ enum class WebsiteDataType {
 #if ENABLE(MEDIA_STREAM)
     MediaDeviceIdentifier = 1 << 12,
 #endif
+    WebsiteDataTypeResourceLoadStatistics = 1 << 13,
 };
 
 };
