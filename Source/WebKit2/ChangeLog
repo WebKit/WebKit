@@ -1,3 +1,32 @@
+2016-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r197409): [GTK] Web process always crashes on WebPage construction after r197409
+        https://bugs.webkit.org/show_bug.cgi?id=154918
+
+        Reviewed by Žan Doberšek.
+
+        We have an incorrect check in DrawingAreaImpl constructor that has
+        never actually worked because it uses the page settings before
+        they were initialized. But that has been fixed in r197409 and now
+        we are always forcing accelerated compositing mode incorrectly,
+        because m_alwaysUseCompositing is set in the constructor and never
+        changed again.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl): Remove code to set
+        settings and m_alwaysUseCompositing, since that should be done in
+        updatePreferences().
+        (WebKit::DrawingAreaImpl::updatePreferences): Update the settings
+        accordingly and always update m_alwaysUseCompositing when AC is
+        enabled and forced in the settings.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): WebPage::updatePreferences() calls
+        DrawingArea::updatePreferences(), but since r197409 it happens
+        before the drawing area has been created. So, call
+        DrawingArea::updatePreferences() in the constructor right after
+        the main frame has been created, since
+        DrawingArea::updatePreferences() uses the main frame.
+
 2016-02-29  Ada Chan  <adachan@apple.com>
 
         Adopt the new version of AVOutputDeviceMenuController's showMenuForRect method.
