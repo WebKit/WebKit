@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+</head>
+<body>
+<p>This test makes sure that the complex text codepath can handle small caps with non-BMP characters which can be uppercased.</p>
+<div style="font-size: 100px; font-variant: small-caps">
+<div style="position: absolute; left: 16px; top: 16px;">&#x642;&#x10428;</div>
+<div style="position: absolute; left: 116px; top: 16px;">&#x10428;&#x642;</div>
+<div style="position: absolute; left: 216px; top: 16px;">&#x642;&#x10428;&#x300;</div>
+<div style="position: absolute; left: 316px; top: 16px;">&#x10428;&#x300;&#x642;</div>
+</div>
+</div>
+</body>
+</html>

@@ -350,8 +350,10 @@ void ComplexTextController::collectComplexTextRuns()
         && !nextFont->variantCapsSupportsCharacterForSynthesis(fontVariantCaps, baseCharacter)) {
         synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
         smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
-        m_smallCapsBuffer[0] = capitalizedBase ? capitalizedBase.value() : cp[0];
-        for (unsigned i = 1; cp + i < curr; ++i)
+        UChar32 characterToWrite = capitalizedBase ? capitalizedBase.value() : cp[0];
+        unsigned characterIndex = 0;
+        U16_APPEND_UNSAFE(m_smallCapsBuffer, characterIndex, characterToWrite);
+        for (unsigned i = characterIndex; cp + i < curr; ++i)
             m_smallCapsBuffer[i] = cp[i];
         nextIsSmallCaps = true;
     }
@@ -366,9 +368,10 @@ void ComplexTextController::collectComplexTextRuns()
 
         if (synthesizedFont) {
             if (auto capitalizedBase = capitalized(baseCharacter)) {
-                m_smallCapsBuffer[index] = capitalizedBase.value();
+                unsigned characterIndex = index;
+                U16_APPEND_UNSAFE(m_smallCapsBuffer, characterIndex, capitalizedBase.value());
                 for (unsigned i = 0; i < markCount; ++i)
-                    m_smallCapsBuffer[index + i + 1] = cp[index + i + 1];
+                    m_smallCapsBuffer[i + characterIndex] = cp[i + characterIndex];
                 nextIsSmallCaps = true;
             } else {
                 if (engageAllSmallCapsProcessing) {

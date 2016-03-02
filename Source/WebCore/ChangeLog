@@ -1,5 +1,20 @@
 2016-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Small-caps non-BMP characters are garbled in the complex text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=154875
+
+        Reviewed by Michael Saboff.
+
+        We were assuming that all characters able to be capitalized are in BMP. This is not true.
+
+        Test: fast/text/complex-small-caps-non-bmp-capitalize.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::capitalized):
+        (WebCore::ComplexTextController::collectComplexTextRuns):
+
+2016-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Extend CSSFontSelector's lifetime to be longer than the Document's lifetime
         https://bugs.webkit.org/show_bug.cgi?id=154101
 

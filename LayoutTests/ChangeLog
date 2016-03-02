@@ -1,3 +1,15 @@
+2016-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Small-caps non-BMP characters are garbled in the complex text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=154875
+
+        Reviewed by Michael Saboff.
+
+        * fast/text/complex-small-caps-non-bmp-capitalize-expected.html: Added.
+        * fast/text/complex-small-caps-non-bmp-capitalize.html: Added.
+        * fast/text/regress-154875-expected.txt: Deleted
+        * fast/text/regress-154875.html: Deleted
+
 2016-03-01  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Add support for Unicode regular expressions
