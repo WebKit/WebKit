@@ -1,3 +1,14 @@
+2016-03-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Update Xcode project for InstallAPI
+        https://bugs.webkit.org/show_bug.cgi?id=154896
+        rdar://problem/24825992
+
+        Patch by Daniel Dunbar, reviewed by me.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-03-01  Ada Chan  <adachan@apple.com>
 
         One more attempt to fix the build.
