@@ -40,6 +40,8 @@ webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/co
 
 webkit.org/b/147683 platform/mac/fast/scrolling/scroll-div-with-nested-nonscrollable-iframe.html [ Skip ]
 
+webkit.org/b/152485 webaudio/audiocontext-state-interrupted.html [ Pass Crash ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
