@@ -70,10 +70,13 @@ float parseSizesAttribute(StringView sizesAttribute, RenderView* view, Frame* fr
 {
     if (!view)
         return 0;
-    RenderStyle& style = view->style();
-    for (auto& sourceSize : CSSParser(CSSStrictMode).parseSizesAttribute(sizesAttribute)) {
-        if (match(WTFMove(sourceSize.expression), style, frame))
-            return computeLength(sourceSize.length.get(), style, view);
+    if (!sizesAttribute.empty()) {
+        view->document().updateStyleIfNeeded();
+        RenderStyle& style = view->style();
+        for (auto& sourceSize : CSSParser(CSSStrictMode).parseSizesAttribute(sizesAttribute)) {
+            if (match(WTFMove(sourceSize.expression), style, frame))
+                return computeLength(sourceSize.length.get(), style, view);
+        }
     }
     return defaultLength(style, view);
 }

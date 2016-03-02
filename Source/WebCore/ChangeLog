@@ -1,3 +1,51 @@
+2016-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Extend CSSFontSelector's lifetime to be longer than the Document's lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=154101
+
+        Reviewed by Darin Adler.
+
+        Rather than destroying the Document's CSSFontSelector, instead, the object should
+        live for the lifetime of the document, and it should instead be asked to clear its
+        contents.
+
+        This is important for the CSS Font Loading API, where the identity of objects the
+        CSSFontSelector references needs to persist throughout the lifetime of the
+        Document. This patch represents the first step to implementing this correctly.
+        The second step is for the CSSFontSelector to perform a diff instead of a
+        wholesale clear of its contents. Once this is done, font loading objects can
+        survive through a call to Document::clearStyleResolver().
+
+        This patch gives the CSSFontSelector two states: building underway and building not
+        underway. The state is building underway in between calls to clearStyleResolver()
+        and when the style resolver gets built back up. Otherwise, the state is building
+        not underway. Because of this new design, creation of all FontFace objects can be
+        postponed until a state transition from building underway to building not underway.
+        A subsequent patch will perform the diff at this point. An ASSERT() makes sure that
+        we never service a font lookup request while Building.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::clear):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::buildStarted):
+        (WebCore::CSSFontSelector::buildCompleted):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        (WebCore::CSSFontSelector::CSSFontSelector): Deleted.
+        (WebCore::CSSFontSelector::clearDocument): Deleted.
+        * css/CSSFontSelector.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::clearStyleResolver):
+        (WebCore::Document::fontSelector): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::fontSelector):
+
 2016-03-01  Alexey Proskuryakov  <ap@apple.com>
 
         Update Xcode project for InstallAPI

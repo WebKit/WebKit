@@ -963,8 +963,10 @@ void TreeResolver::resolve(Change change)
     auto& renderView = *m_document.renderView();
 
     Element* documentElement = m_document.documentElement();
-    if (!documentElement)
+    if (!documentElement) {
+        m_document.ensureStyleResolver();
         return;
+    }
     if (change != Force && !documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return;
 
