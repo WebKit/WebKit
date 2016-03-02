@@ -1,3 +1,20 @@
+2016-03-01  Keith Miller  <keith_miller@apple.com>
+
+        Promise.prototype.then should use Symbol.species to construct the return Promise
+        https://bugs.webkit.org/show_bug.cgi?id=154862
+
+        Reviewed by Saam Barati.
+
+        * builtins/PromisePrototype.js:
+        * tests/stress/promise-species-functions.js: Added.
+        (Symbol.species):
+        (id):
+        (funcThrows):
+        (makeC):
+        (test.species):
+        (test.speciesThrows):
+        (test):
+
 2016-03-01  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Add support for Unicode regular expressions

@@ -37,9 +37,16 @@ function then(onFulfilled, onRejected)
     if (!@isPromise(this))
         throw new @TypeError("|this| is not a object");
 
-    // FIXME: Fix this code when @@species well-known symbol is landed.
-    // https://bugs.webkit.org/show_bug.cgi?id=146624
     var constructor = this.constructor;
+    if (constructor === @undefined)
+        constructor = @Promise;
+    else if (!@isObject(constructor))
+        throw new @TypeError("|this|.constructor is not an Object or undefined");
+    else {
+        constructor = constructor[@symbolSpecies];
+        if (constructor == null)
+            constructor = @Promise;
+    }
 
     var resultCapability = @newPromiseCapability(constructor);
 
