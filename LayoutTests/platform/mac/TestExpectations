@@ -1384,3 +1384,6 @@ webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.h
 
 # <rdar://problem/24494562>
 fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]
+
+# <rdar://problem/24745197>
+media/controls/track-menu.html [ Skip ]
