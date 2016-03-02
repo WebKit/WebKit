@@ -1,3 +1,48 @@
+2016-03-02  Beth Dakin  <bdakin@apple.com>
+
+        Add support for playbackControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=154742
+        -and corresponding-
+        rdar://problem/23833753
+
+        Reviewed by Jer Noble.
+
+        WebVideoFullscreenManagerProxy ensures the model and interface for the 
+        UIProcess side of the playbackControlsManager. It also caches the 
+        m_controlsManagerContextId so that it can return the 
+        controlsManagerInterface.
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setUpVideoControlsManagerWithID):
+        (WebKit::WebVideoFullscreenManagerProxy::controlsManagerInterface):
+
+        Pipe isPlayingMediaDidChange() to WebViewImpl, and use that information to 
+        update WebViewImplAdditions.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::isPlayingMediaDidChange):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        (WebKit::WebPageProxy::isPlayingVideoWithAudio):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isPlayingAudio):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isPlayingMediaDidChange):
+
+        Pipe setUpVideoControlsManager to the WebVideoFullscreenManager.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setUpVideoControlsManager):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        Ensure the model an interface for the playbackControlsManager on the 
+        WebProcess side and pass the message to the UIProcess to do the same.
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::setUpVideoControlsManager):
+
 2016-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r197409): [GTK] Web process always crashes on WebPage construction after r197409

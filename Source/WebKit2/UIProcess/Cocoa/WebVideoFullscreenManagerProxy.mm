@@ -374,6 +374,24 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
 #endif
 }
 
+void WebVideoFullscreenManagerProxy::setUpVideoControlsManagerWithID(uint64_t contextId)
+{
+#if PLATFORM(MAC)
+    // If there is an existing controls manager, clean it up.
+    if (m_controlsManagerContextId)
+        m_contextMap.remove(m_controlsManagerContextId);
+
+    RefPtr<WebVideoFullscreenModelContext> model;
+    RefPtr<PlatformWebVideoFullscreenInterface> interface;
+
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    m_controlsManagerContextId = contextId;
+    interface->ensureControlsManager();
+#else
+    UNUSED_PARAM(contextId);
+#endif
+}
+
 void WebVideoFullscreenManagerProxy::resetMediaState(uint64_t contextId)
 {
     ensureInterface(contextId).resetMediaState();
@@ -613,6 +631,11 @@ void WebVideoFullscreenManagerProxy::fullscreenModeChanged(uint64_t contextId, W
 bool WebVideoFullscreenManagerProxy::isVisible() const
 {
     return m_page->isViewVisible() && m_page->isInWindow();
+}
+
+PlatformWebVideoFullscreenInterface& WebVideoFullscreenManagerProxy::controlsManagerInterface()
+{
+    return ensureInterface(m_controlsManagerContextId);
 }
 
 void WebVideoFullscreenManagerProxy::fullscreenMayReturnToInline(uint64_t contextId)

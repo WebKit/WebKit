@@ -35,6 +35,7 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSWindow;
+OBJC_CLASS WebPlaybackControlsManager;
 
 #if USE(APPLE_INTERNAL_SDK)
 OBJC_CLASS WebVideoFullscreenInterfaceMacObjC;
@@ -61,12 +62,12 @@ public:
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
 
     WEBCORE_EXPORT void resetMediaState() override { }
-    WEBCORE_EXPORT void setDuration(double) override { }
-    WEBCORE_EXPORT void setCurrentTime(double /*currentTime*/, double /*anchorTime*/) override { }
+    WEBCORE_EXPORT void setDuration(double) override;
+    WEBCORE_EXPORT void setCurrentTime(double /*currentTime*/, double /*anchorTime*/) override;
     WEBCORE_EXPORT void setBufferedTime(double) override { }
-    WEBCORE_EXPORT void setRate(bool /*isPlaying*/, float /*playbackRate*/) override { }
+    WEBCORE_EXPORT void setRate(bool /*isPlaying*/, float /*playbackRate*/) override;
     WEBCORE_EXPORT void setVideoDimensions(bool /*hasVideo*/, float /*width*/, float /*height*/) override { }
-    WEBCORE_EXPORT void setSeekableRanges(const TimeRanges&) override { }
+    WEBCORE_EXPORT void setSeekableRanges(const TimeRanges&) override;
     WEBCORE_EXPORT void setCanPlayFastReverse(bool) override { }
     WEBCORE_EXPORT void setAudioMediaSelectionOptions(const Vector<WTF::String>& /*options*/, uint64_t /*selectedIndex*/) override { }
     WEBCORE_EXPORT void setLegibleMediaSelectionOptions(const Vector<WTF::String>& /*options*/, uint64_t /*selectedIndex*/) override { }
@@ -80,6 +81,7 @@ public:
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void requestHideAndExitFullscreen() { }
     WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect, NSWindow *parentWindow);
+    WEBCORE_EXPORT void ensureControlsManager();
 
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_mode; }
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_mode & mode; }
@@ -90,6 +92,8 @@ public:
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const { return false; }
     void applicationDidBecomeActive() { }
 
+    WEBCORE_EXPORT WebPlaybackControlsManager *playBackControlsManager();
+
 private:
     WebVideoFullscreenModel* m_videoFullscreenModel { nullptr };
     WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
@@ -98,6 +102,7 @@ private:
 #if USE(APPLE_INTERNAL_SDK)
     RetainPtr<WebVideoFullscreenInterfaceMacObjC> m_webVideoFullscreenInterfaceObjC;
 #endif
+    RetainPtr<WebPlaybackControlsManager> m_playbackControlsManager;
 };
 
 }

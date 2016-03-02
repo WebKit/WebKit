@@ -59,6 +59,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeMakeWithSeconds, CMTime,
 #define CMTimeMakeWithSeconds softLink_CoreMedia_CMTimeMakeWithSeconds
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
 #define CMTimeRangeGetEnd softLink_CoreMedia_CMTimeRangeGetEnd
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
+#define CMTimeRangeMake softLink_CoreMedia_CMTimeRangeMake
 
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, CFStringRef)
 #define kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()
@@ -191,8 +193,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeMinimum, CMTime, (CMTime
 #define CMTimeMinimum softLink_CoreMedia_CMTimeMinimum
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeRangeContainsTime, Boolean, (CMTimeRange range, CMTime time), (range, time))
 #define CMTimeRangeContainsTime softLink_CoreMedia_CMTimeRangeContainsTime
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
-#define CMTimeRangeMake softLink_CoreMedia_CMTimeRangeMake
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend), (minuend, subtrahend))
 #define CMTimeSubtract softLink_CoreMedia_CMTimeSubtract
 

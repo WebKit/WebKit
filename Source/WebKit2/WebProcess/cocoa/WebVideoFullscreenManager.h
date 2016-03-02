@@ -116,6 +116,7 @@ public:
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
+    void setUpVideoControlsManager(WebCore::HTMLVideoElement&);
     
 protected:
     friend class WebVideoFullscreenInterfaceContext;
@@ -168,6 +169,7 @@ protected:
     WebPage* m_page;
     HashMap<WebCore::HTMLVideoElement*, uint64_t> m_videoElements;
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;
+    uint64_t m_controlsManagerContextId { 0 };
 };
     
 } // namespace WebKit

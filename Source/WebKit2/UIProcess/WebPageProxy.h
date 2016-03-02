@@ -1014,6 +1014,8 @@ public:
     bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducer::IsPlayingAudio); }
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t);
 
+    bool isPlayingVideoWithAudio() const;
+
 #if ENABLE(MEDIA_SESSION)
     void hasMediaSessionWithActiveMediaElementsDidChange(bool);
     void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&);

@@ -45,6 +45,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeGetSeconds, Float64, (CM
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTextMarkupAlignmentType_End, CFStringRef)
@@ -113,7 +114,6 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMAudioClockCreate, OSStatus, 
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeMaximum, CMTime, (CMTime time1, CMTime time2), (time1, time2))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeMinimum, CMTime, (CMTime time1, CMTime time2), (time1, time2))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeRangeContainsTime, Boolean, (CMTimeRange range, CMTime time), (range, time))
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend), (minuend, subtrahend))
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTimeIndefinite, CMTime)

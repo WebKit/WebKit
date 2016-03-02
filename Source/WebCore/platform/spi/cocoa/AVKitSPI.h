@@ -101,15 +101,6 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
-@end
-
-@interface AVValueTiming ()
-+ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
-@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
-@end
-
 #endif // PLATFORM(IOS)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
@@ -144,6 +135,14 @@ typedef NS_ENUM(NSInteger, AVOutputDeviceMenuControllerSelection) {
 @end
 
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
-#endif
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+
+@interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying> 
+@end
+
+@interface AVValueTiming ()
++ (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
+@property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
+@end

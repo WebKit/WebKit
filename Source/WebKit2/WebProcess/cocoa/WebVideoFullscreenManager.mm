@@ -279,6 +279,34 @@ void WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTML
     m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(contextId, clientRectForElement(&videoElement)), m_page->pageID());
 }
 
+void WebVideoFullscreenManager::setUpVideoControlsManager(WebCore::HTMLVideoElement& videoElement)
+{
+    // If there is an existing controls manager, clean it up.
+    if (m_controlsManagerContextId) {
+        RefPtr<WebVideoFullscreenModelVideoElement> model;
+        RefPtr<WebVideoFullscreenInterfaceContext> interface;
+        std::tie(model, interface) = ensureModelAndInterface(m_controlsManagerContextId);
+
+        RefPtr<HTMLVideoElement> videoElement = model->videoElement();
+        model->setVideoElement(nullptr);
+        model->setWebVideoFullscreenInterface(nullptr);
+        interface->invalidate();
+        m_videoElements.remove(videoElement.get());
+        m_contextMap.remove(m_controlsManagerContextId);
+    }
+
+    auto addResult = m_videoElements.ensure(&videoElement, [&] { return nextContextId(); });
+    auto contextId = addResult.iterator->value;
+    m_controlsManagerContextId = contextId;
+
+    RefPtr<WebVideoFullscreenModelVideoElement> model;
+    RefPtr<WebVideoFullscreenInterfaceContext> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setVideoElement(&videoElement);
+    
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetUpVideoControlsManagerWithID(contextId), m_page->pageID());
+}
+
 #pragma mark Interface to WebVideoFullscreenInterfaceContext:
 
 void WebVideoFullscreenManager::resetMediaState(uint64_t contextId)
