@@ -1,3 +1,16 @@
+2016-03-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Simplify some StringBuilder appends
+        https://bugs.webkit.org/show_bug.cgi?id=154902
+
+        Reviewed by Mark Lam.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::notAFunctionSourceAppender):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        Use StringBuilder::append(char) instead of append(char*) where possible.
+
 2016-03-01  Keith Miller  <keith_miller@apple.com>
 
         Promise.prototype.then should use Symbol.species to construct the return Promise
