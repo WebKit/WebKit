@@ -266,6 +266,7 @@ public:
     virtual void setHovered(bool flag = true);
     virtual void setFocus(bool flag);
 
+    bool tabIndexSetExplicitly() const;
     virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;

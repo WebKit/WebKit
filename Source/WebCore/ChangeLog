@@ -1,3 +1,28 @@
+2016-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Contents inside a shadow host with a negative tabindex should not be tab focusable
+        https://bugs.webkit.org/show_bug.cgi?id=154769
+
+        Reviewed by Antti Koivisto.
+
+        Contents inside a shadow host with a negative tabindex content attribute should not be included in
+        the sequential focus navigation order as discussed on https://github.com/w3c/webcomponents/issues/399.
+
+        Test: fast/shadow-dom/negative-tabindex-on-shadow-host.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::tabIndexSetExplicitly): Added.
+        * dom/Element.h:
+        * page/FocusController.cpp:
+        (WebCore::shadowAdjustedTabIndex): Renamed from adjustedTabIndex. Return 0 when tabindex content attribute
+        is not explicitly set since element.tabIndex() would return -1 for HTML elements in such case.
+        (WebCore::isFocusableOrHasShadowTreeWithoutCustomFocusLogic): Renamed from shouldVisit.
+        (WebCore::FocusController::findElementWithExactTabIndex):
+        (WebCore::nextElementWithGreaterTabIndex):
+        (WebCore::previousElementWithLowerTabIndex):
+        (WebCore::FocusController::nextFocusableElement):
+        (WebCore::FocusController::previousFocusableElement):
+
 2016-03-01  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r197426): Missed adding unicode parameter to call to Yarr::parse() in URLFilterParser::addPattern()

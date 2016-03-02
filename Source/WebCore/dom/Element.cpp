@@ -212,9 +212,14 @@ void Element::setTabIndexExplicitly(short tabIndex)
     ensureElementRareData().setTabIndexExplicitly(tabIndex);
 }
 
-bool Element::supportsFocus() const
+bool Element::tabIndexSetExplicitly() const
 {
     return hasRareData() && elementRareData()->tabIndexSetExplicitly();
+}
+
+bool Element::supportsFocus() const
+{
+    return tabIndexSetExplicitly();
 }
 
 Element* Element::focusDelegate()

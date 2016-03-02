@@ -235,6 +235,9 @@ webkit.org/b/149440 fast/shadow-dom/css-scoping-shadow-host-functional-rule.html
 webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slotted-rule.html [ ImageOnlyFailure ]
 webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.html [ ImageOnlyFailure ]
 
+# No tab navigation support on iOS
+fast/shadow-dom/negative-tabindex-on-shadow-host.html [ Failure ]
+
 webkit.org/b/150225 fast/custom-elements [ Pass ]
 
 # This test needs to be rewritten to use runUIScript to work on iOS

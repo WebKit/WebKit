@@ -1,3 +1,16 @@
+2016-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Contents inside a shadow host with a negative tabindex should not be tab focusable
+        https://bugs.webkit.org/show_bug.cgi?id=154769
+
+        Reviewed by Antti Koivisto.
+
+        Added a test for navigating across shadow boundaries.
+
+        * fast/shadow-dom/negative-tabindex-on-shadow-host-expected.txt: Added.
+        * fast/shadow-dom/negative-tabindex-on-shadow-host.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Small-caps non-BMP characters are garbled in the complex text codepath

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests for setting a negative tabindex on shadow host. Elements inside such a shadow tree should not be in the sequential navigation order.<br>
+To manually test, press tab key four times. It should traverse focusable elements in the increasing numerical order.</p>
+<div id="test-content">
+<div id="first" tabindex="1" onfocus="log(this)">1. First sequentially focusable element outside shadow trees</div>
+<div id="host-with-negative-tabindex" tabindex="-1" onfocus="log(this)">Shadow host with a negative tabindex</div>
+<div id="host-with-no-tabindex" onfocus="log(this)">4.2. Shadow host with no tabindex</div>
+<div id="host-with-positive-tabindex" tabindex="2" onfocus="log(this)">2. / 3.2. Shadow host with a positive tabindex</div>
+<div tabindex="0" onfocus="log(this)">5. Last sequentially focusable element outside shadow trees</div>
+</div>
+<pre></pre>
+<script>
+
+document.getElementById('host-with-negative-tabindex').attachShadow({mode: 'closed'}).innerHTML = `
+    <div tabindex="0" onfocus="log(this)">Should not be focused as it is inside a shadow host with a negative tabindex</div>
+`;
+
+document.getElementById('host-with-no-tabindex').attachShadow({mode: 'closed'}).innerHTML = `
+    <div tabindex="0" onfocus="log(this)">4.1. Focusable element inside a shadow host with no tabindex</div>
+`;
+
+document.getElementById('host-with-positive-tabindex').attachShadow({mode: 'closed'}).innerHTML = `
+    <slot></slot>
+    <div tabindex="0" onfocus="log(this)">3.1. Focusable element inside a shadow host with a positive tabindex</div>
+`;
+
+function log(element) {
+    document.querySelector('pre').textContent += element.textContent + '\n';
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.getElementById('first').focus();
+
+if (window.eventSender) {
+    eventSender.keyDown('\t');
+    eventSender.keyDown('\t');
+    eventSender.keyDown('\t');
+    eventSender.keyDown('\t');
+    document.getElementById('test-content').style.display = 'none';
+}
+
+</script>
+</body>
+</html>
