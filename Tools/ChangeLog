@@ -1,3 +1,13 @@
+2016-03-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Disable FTL JIT testing on 32-bit JSC tester bots
+        https://bugs.webkit.org/show_bug.cgi?id=154858
+
+        Reviewed by Saam Barati.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (Run32bitJSCTests):
+
 2016-03-01  Dean Johnson  <dean_johnson@apple.com>
 
         Fix iOS EWS.
