@@ -80,6 +80,11 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
 static EncodedJSValue performProxyGet(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
     VM& vm = exec->vm();
+    if (!vm.isSafeToRecurse()) {
+        throwStackOverflowError(exec);
+        return JSValue::encode(JSValue());
+    }
+
     JSObject* thisObject = jsCast<JSObject*>(JSValue::decode(thisValue)); // This might be a value where somewhere in __proto__ chain lives a ProxyObject.
     JSObject* proxyObjectAsObject = thisObject;
     // FIXME: make it so that custom getters take both the |this| value and the slotBase (property holder).
@@ -345,6 +350,10 @@ template <typename PerformDefaultPutFunction>
 void ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPut)
 {
     VM& vm = exec->vm();
+    if (!vm.isSafeToRecurse()) {
+        throwStackOverflowError(exec);
+        return;
+    }
 
     if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
         return performDefaultPut();

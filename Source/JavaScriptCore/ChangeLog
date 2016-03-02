@@ -1,3 +1,23 @@
+2016-03-02  Saam barati  <sbarati@apple.com>
+
+        SIGSEGV in Proxy [[Get]] and [[Set]] recursion
+        https://bugs.webkit.org/show_bug.cgi?id=154854
+
+        Reviewed by Yusuke Suzuki.
+
+        We need to be aware of the possibility that the VM
+        may recurse and that we can stack overflow.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performPut):
+        * tests/stress/proxy-get-and-set-recursion-stack-overflow.js: Added.
+        (assert):
+        (testStackOverflowGet):
+        (testStackOverflowIndexedGet):
+        (testStackOverflowSet):
+        (testStackOverflowIndexedSet):
+
 2016-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Use a Move without REX byte when possible
