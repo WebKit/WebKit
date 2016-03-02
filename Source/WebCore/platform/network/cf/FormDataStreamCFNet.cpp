@@ -109,10 +109,13 @@ struct FormStreamFields {
     CFReadStreamRef formStream;
     unsigned long long streamLength;
     unsigned long long bytesSent;
+    Lock streamIsBeingOpenedOrClosedLock;
 };
 
 static void closeCurrentStream(FormStreamFields* form)
 {
+    ASSERT(form->streamIsBeingOpenedOrClosedLock.isHeld());
+
     if (form->currentStream) {
         CFReadStreamClose(form->currentStream);
         CFReadStreamSetClient(form->currentStream, kCFStreamEventNone, 0, 0);
@@ -127,6 +130,8 @@ static void closeCurrentStream(FormStreamFields* form)
 // Return false if we cannot advance the stream. Currently the only possible failure is that the underlying file has been removed or changed since File.slice.
 static bool advanceCurrentStream(FormStreamFields* form)
 {
+    ASSERT(form->streamIsBeingOpenedOrClosedLock.isHeld());
+
     closeCurrentStream(form);
 
     if (form->remainingElements.isEmpty())
@@ -176,6 +181,10 @@ static bool advanceCurrentStream(FormStreamFields* form)
 
 static bool openNextStream(FormStreamFields* form)
 {
+    // CFReadStreamOpen() can cause this function to be re-entered from another thread before it returns.
+    // One example when this can occur is when the stream being opened has no data. See <rdar://problem/23550269>.
+    LockHolder locker(form->streamIsBeingOpenedOrClosedLock);
+
     // Skip over any streams we can't open.
     if (!advanceCurrentStream(form))
         return false;
@@ -213,7 +222,10 @@ static void formFinalize(CFReadStreamRef stream, void* context)
     ASSERT_UNUSED(stream, form->formStream == stream);
 
     callOnMainThread([form] {
-        closeCurrentStream(form);
+        {
+            LockHolder locker(form->streamIsBeingOpenedOrClosedLock);
+            closeCurrentStream(form);
+        }
         delete form;
     });
 }
@@ -281,6 +293,7 @@ static Boolean formCanRead(CFReadStreamRef stream, void* context)
 static void formClose(CFReadStreamRef, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
+    LockHolder locker(form->streamIsBeingOpenedOrClosedLock);
 
     closeCurrentStream(form);
 }

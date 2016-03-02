@@ -1,3 +1,32 @@
+2016-03-01  Daniel Bates  <dabates@apple.com>
+
+        com.apple.WebKit.Networking.Development crashes in WebCore::formOpen()
+        https://bugs.webkit.org/show_bug.cgi?id=154682
+        <rdar://problem/23550269>
+
+        Reviewed by Brent Fulgham.
+
+        Speculative fix for a race condition when opening the stream for the next form data element.
+        Calling CFReadStreamOpen(s) in WebCore::openNextStream() can cause stream s to be closed and
+        deallocated before CFReadStreamOpen(s) returns.
+
+        When WebCore::openNextStream() is called it closes and deallocates the current stream and
+        then opens a new stream for the next form data element. Calling CFReadStreamOpen() in
+        WebCore::openNextStream() can lead to WebCore::openNextStream() being re-entered via
+        WebCore::formEventCallback() from another thread. One example when this can occur is when
+        the stream being opened has no data (i.e. WebCore::formEventCallback() is called
+        back with event type kCFStreamEventEndEncountered).
+
+        I have been unable to reproduce this crash. We know that it occurs from crash reports.
+
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::closeCurrentStream): Assert that we had acquired a lock to close the stream.
+        (WebCore::advanceCurrentStream): Assert that we had acquired a lock to advance the stream.
+        (WebCore::openNextStream): Acquire a lock before we open the next stream to ensure that
+        exactly one thread executes this critical section at a time.
+        (WebCore::formFinalize): Acquire a lock before we close the current stream.
+        (WebCore::formClose): Ditto.
+
 2016-03-01  Michael Saboff  <msaboff@apple.com>
 
         ASSERT in platform/graphics/mac/ComplexTextController.cpp::capitalize()
