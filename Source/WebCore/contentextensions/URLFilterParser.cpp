@@ -345,7 +345,7 @@ URLFilterParser::ParseStatus URLFilterParser::addPattern(const String& pattern, 
 
     ParseStatus status = Ok;
     PatternParser patternParser(patternIsCaseSensitive);
-    String error = String(JSC::Yarr::parse(patternParser, pattern, 0));
+    String error = String(JSC::Yarr::parse(patternParser, pattern, false, 0));
     if (error.isNull())
         patternParser.finalize(patternId, m_combinedURLFilters);
     else
