@@ -117,11 +117,16 @@ void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& loc
     LOG(Media, "MediaPlaybackTargetPickerMac::showPlaybackTargetPicker - checkActiveRoute = %i", (int)checkActiveRoute);
 
     AVOutputDeviceMenuControllerType *picker = devicePicker();
-    if (![picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:customMenuItemTitle:customMenuItemEnabled:)] && ![picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:)])
+    if (![picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:)]
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+        && ![picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:customMenuItemTitle:customMenuItemEnabled:)]
+#endif
+        )
         return;
 
     m_showingMenu = true;
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     if ([picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:customMenuItemTitle:customMenuItemEnabled:)]) {
         NSString *customMenuItemTitleNSString = customMenuItemTitle.isEmpty() ? nil : (NSString *)customMenuItemTitle;
         switch ([picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute customMenuItemTitle:customMenuItemTitleNSString customMenuItemEnabled:YES]) {
@@ -135,7 +140,9 @@ void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& loc
         case AVOutputDeviceMenuControllerSelectionNone:
             break;
         }
-    } else if ([picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
+    } else
+#endif
+    if ([picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
         if (!checkActiveRoute)
             currentDeviceDidChange();
     }
