@@ -37,6 +37,9 @@ my $useFullLibPaths = 0;
 my $osxVersion;
 my $force = 0;
 
+# Pops off --sdk=<SDK Name> from the argument list so --sdk is not taken as the productDir.
+willUseIOSDeviceSDK();
+
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
