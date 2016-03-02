@@ -331,7 +331,7 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Inc
                 if (floatingObject->renderer().shapeOutsideInfo())
                     SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
 #endif
-                float availableWidth = flow.availableLogicalWidthForLine(floatingObject->y(), false);
+                float availableWidth = flow.availableLogicalWidthForLine(floatingObject->y(), DoNotIndentText);
                 if (availableWidth < minimumWidthNeeded)
                     SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
             }
@@ -568,8 +568,9 @@ static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line, b
     bool shouldApplyTextIndent = !flow.isAnonymous() || flow.parent()->firstChild() == &flow;
     LayoutUnit height = flow.logicalHeight();
     LayoutUnit logicalHeight = flow.minLineHeightForReplacedRenderer(false, 0);
-    float logicalRightOffset = flow.logicalRightOffsetForLine(height, false, logicalHeight);
-    line.setLogicalLeftOffset(flow.logicalLeftOffsetForLine(height, false, logicalHeight) + (shouldApplyTextIndent && isFirstLine ? flow.textIndentOffset() : LayoutUnit(0)));
+    float logicalRightOffset = flow.logicalRightOffsetForLine(height, DoNotIndentText, logicalHeight);
+    line.setLogicalLeftOffset(flow.logicalLeftOffsetForLine(height, DoNotIndentText, logicalHeight) +
+        (shouldApplyTextIndent && isFirstLine ? flow.textIndentOffset() : LayoutUnit(0)));
     line.setAvailableWidth(std::max<float>(0, logicalRightOffset - line.logicalLeftOffset()));
 }
 

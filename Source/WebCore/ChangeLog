@@ -1,3 +1,56 @@
+2016-03-02  Zalan Bujtas  <zalan@apple.com>
+
+        Use IndentTextOrNot instead of passing isFirstLine/shouldIndentText as bool.
+        https://bugs.webkit.org/show_bug.cgi?id=154628
+
+        Reviewed by Simon Fraser.
+
+        No change in behaviour.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats):
+        (WebCore::RenderBlock::logicalLeftSelectionOffset):
+        (WebCore::RenderBlock::logicalRightSelectionOffset):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::availableLogicalWidthForLineInRegion):
+        (WebCore::RenderBlock::logicalRightOffsetForLineInRegion):
+        (WebCore::RenderBlock::logicalLeftOffsetForLineInRegion):
+        (WebCore::RenderBlock::startOffsetForLineInRegion):
+        (WebCore::RenderBlock::endOffsetForLineInRegion):
+        (WebCore::RenderBlock::availableLogicalWidthForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::startOffsetForLine):
+        (WebCore::RenderBlock::endOffsetForLine):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::getClearDelta):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::updateLogicalInlinePositions):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::deleteEllipsisLineBoxes):
+        (WebCore::RenderBlockFlow::checkLinesForTextOverflow):
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+        (WebCore::RenderBox::containingBlockAvailableLineWidthInRegion):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTop):
+        (WebCore::RootInlineBox::selectionBottom):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        (WebCore::SimpleLineLayout::updateLineConstrains):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        * rendering/line/LineWidth.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        (WebCore::availableWidthAtOffset):
+        * rendering/line/LineWidth.h:
+        (WebCore::LineWidth::shouldIndentText):
+
 2016-03-02  Beth Dakin  <bdakin@apple.com>
 
         Add support for playbackControlsManager
