@@ -1,3 +1,30 @@
+2016-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Have parseHTMLInteger() / parseHTMLNonNegativeInteger() use WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=154845
+
+        Reviewed by Darin Adler.
+
+        Take into consideration review comments made after landing r197389.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseBorderWidthAttribute):
+        (WebCore::HTMLElement::parseAttribute):
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::maxLength):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::height):
+        (WebCore::ImageInputType::width):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLNonNegativeInteger):
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::limitToOnlyHTMLNonNegativeNumbersGreaterThanZero):
+        (WebCore::limitToOnlyHTMLNonNegative):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseAttribute):
+
 2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed. Remove the "Partial Support" status from web components since shadow DOM and custom elements

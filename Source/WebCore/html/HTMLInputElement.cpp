@@ -89,7 +89,7 @@ private:
 // large. However, due to https://bugs.webkit.org/show_bug.cgi?id=14536 things
 // get rather sluggish when a text field has a larger number of characters than
 // this, even when just clicking in the text field.
-const unsigned HTMLInputElement::maximumLength = 524288;
+const int HTMLInputElement::maximumLength = 524288;
 const int defaultSize = 20;
 const int maxSavedResults = 256;
 

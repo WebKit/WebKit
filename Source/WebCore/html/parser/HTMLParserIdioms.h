@@ -64,7 +64,7 @@ double parseToDoubleForNumberType(const String&, double fallbackValue);
 WEBCORE_EXPORT Optional<int> parseHTMLInteger(const String&);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
-WEBCORE_EXPORT Optional<unsigned> parseHTMLNonNegativeInteger(const String&);
+WEBCORE_EXPORT Optional<int> parseHTMLNonNegativeInteger(const String&);
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-settings-attribute
 String parseCORSSettingsAttribute(const AtomicString&);
@@ -121,20 +121,25 @@ inline unsigned limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(unsigned value,
 
 inline unsigned limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(const String& stringValue, unsigned defaultValue = 1)
 {
+    ASSERT(defaultValue > 0);
+    ASSERT(defaultValue <= maxHTMLNonNegativeInteger);
     auto optionalValue = parseHTMLNonNegativeInteger(stringValue);
     unsigned value = optionalValue && optionalValue.value() ? optionalValue.value() : defaultValue;
-    ASSERT(value > 0 && value <= maxHTMLNonNegativeInteger);
+    ASSERT(value > 0);
+    ASSERT(value <= maxHTMLNonNegativeInteger);
     return value;
 }
 
 // https://html.spec.whatwg.org/#reflecting-content-attributes-in-idl-attributes:idl-unsigned-long
 inline unsigned limitToOnlyHTMLNonNegative(unsigned value, unsigned defaultValue = 0)
 {
+    ASSERT(defaultValue <= maxHTMLNonNegativeInteger);
     return value <= maxHTMLNonNegativeInteger ? value : defaultValue;
 }
 
 inline unsigned limitToOnlyHTMLNonNegative(const String& stringValue, unsigned defaultValue = 0)
 {
+    ASSERT(defaultValue <= maxHTMLNonNegativeInteger);
     unsigned value = parseHTMLNonNegativeInteger(stringValue).valueOr(defaultValue);
     ASSERT(value <= maxHTMLNonNegativeInteger);
     return value;

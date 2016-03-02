@@ -518,9 +518,9 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
     if (name == HTMLNames::tabindexAttr) {
         if (value.isEmpty())
             clearTabIndexExplicitlyIfNeeded();
-        else if (auto optionalTabIndex = parseHTMLInteger(value)) {
+        else if (Optional<int> tabIndex = parseHTMLInteger(value)) {
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
-            setTabIndexExplicitly(std::max(static_cast<int>(std::numeric_limits<short>::min()), std::min(optionalTabIndex.value(), static_cast<int>(std::numeric_limits<short>::max()))));
+            setTabIndexExplicitly(std::max(static_cast<int>(std::numeric_limits<short>::min()), std::min(tabIndex.value(), static_cast<int>(std::numeric_limits<short>::max()))));
         }
         return;
     }

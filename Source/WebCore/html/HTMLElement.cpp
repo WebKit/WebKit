@@ -133,8 +133,10 @@ static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
 
 unsigned HTMLElement::parseBorderWidthAttribute(const AtomicString& value) const
 {
-    auto optionalBorderWidth = value.isEmpty() ? Nullopt : parseHTMLNonNegativeInteger(value);
-    return optionalBorderWidth.valueOr(hasTagName(tableTag) ? 1 : 0);
+    if (Optional<int> borderWidth = parseHTMLNonNegativeInteger(value))
+        return borderWidth.value();
+
+    return hasTagName(tableTag) ? 1 : 0;
 }
 
 void HTMLElement::applyBorderAttributeToStyle(const AtomicString& value, MutableStyleProperties& style)
@@ -451,9 +453,9 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
     if (name == tabindexAttr) {
         if (value.isEmpty())
             clearTabIndexExplicitlyIfNeeded();
-        else if (auto optionalTabIndex = parseHTMLInteger(value)) {
+        else if (Optional<int> tabIndex = parseHTMLInteger(value)) {
             // Clamp tab index to a 16-bit value to match Firefox's behavior.
-            setTabIndexExplicitly(std::max(-0x8000, std::min(optionalTabIndex.value(), 0x7FFF)));
+            setTabIndexExplicitly(std::max(-0x8000, std::min(tabIndex.value(), 0x7FFF)));
         }
         return;
     }

@@ -206,13 +206,13 @@ Optional<int> parseHTMLInteger(const String& input)
 }
 
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-non-negative-integers
-Optional<unsigned> parseHTMLNonNegativeInteger(const String& input)
+Optional<int> parseHTMLNonNegativeInteger(const String& input)
 {
     Optional<int> signedValue = parseHTMLInteger(input);
     if (!signedValue || signedValue.value() < 0)
         return Nullopt;
 
-    return signedValue.value();
+    return signedValue;
 }
 
 static bool threadSafeEqual(const StringImpl& a, const StringImpl& b)
