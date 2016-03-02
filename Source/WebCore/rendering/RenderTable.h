@@ -360,8 +360,8 @@ private:
         return false;
     }
 
-    short m_hSpacing;
-    short m_vSpacing;
+    LayoutUnit m_hSpacing;
+    LayoutUnit m_vSpacing;
     LayoutUnit m_borderStart;
     LayoutUnit m_borderEnd;
     mutable LayoutUnit m_columnOffsetTop;

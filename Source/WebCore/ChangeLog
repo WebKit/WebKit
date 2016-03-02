@@ -1,3 +1,31 @@
+2016-03-02  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Enable vertical/horizontal subpixel spacing for tables.
+        https://bugs.webkit.org/show_bug.cgi?id=154899
+
+        Reviewed by Simon Fraser.
+
+        This patch enables authors to specify device pixel values for table border spacing.
+        (see border-spacing)
+
+        Test: fast/table/hidpi-vertical-and-horizontal-spacing.html
+
+        * css/CSSPropertyNames.in:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::offsetLeftForColumn):
+        (WebCore::RenderTable::offsetWidthForColumn):
+        (WebCore::RenderTable::RenderTable): Deleted.
+        * rendering/RenderTable.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::horizontalBorderSpacing):
+        (WebCore::RenderStyle::verticalBorderSpacing):
+        (WebCore::RenderStyle::setHorizontalBorderSpacing):
+        (WebCore::RenderStyle::setVerticalBorderSpacing):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleInheritedData.h:
+
 2016-03-02  Chris Dumez  <cdumez@apple.com>
 
         Have parseHTMLInteger() / parseHTMLNonNegativeInteger() use WTF::Optional

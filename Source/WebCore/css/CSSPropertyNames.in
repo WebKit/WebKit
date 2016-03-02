@@ -406,7 +406,7 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-border-end-style [SkipBuilder]
 -webkit-border-end-width [SkipBuilder]
 -webkit-border-fit
--webkit-border-horizontal-spacing [Inherited, NameForMethods=HorizontalBorderSpacing, Converter=ComputedLength<short>]
+-webkit-border-horizontal-spacing [Inherited, NameForMethods=HorizontalBorderSpacing, Converter=ComputedLength<float>]
 -webkit-border-image [Initial=initialNinePieceImage, Converter=BorderImage<CSSPropertyWebkitBorderImage>]
 // -webkit-border-radius differs from border-radius only in the interpretation of
 // a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
@@ -416,7 +416,7 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-border-start-color [SkipBuilder]
 -webkit-border-start-style [SkipBuilder]
 -webkit-border-start-width [SkipBuilder]
--webkit-border-vertical-spacing [Inherited, NameForMethods=VerticalBorderSpacing, Converter=ComputedLength<short>]
+-webkit-border-vertical-spacing [Inherited, NameForMethods=VerticalBorderSpacing, Converter=ComputedLength<float>]
 -webkit-box-align
 -webkit-box-direction [Inherited]
 -webkit-box-flex

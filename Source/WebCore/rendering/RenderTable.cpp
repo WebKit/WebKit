@@ -63,8 +63,6 @@ RenderTable::RenderTable(Element& element, Ref<RenderStyle>&& style)
     , m_columnLogicalWidthChanged(false)
     , m_columnRenderersValid(false)
     , m_hasCellColspanThatDeterminesTableWidth(false)
-    , m_hSpacing(0)
-    , m_vSpacing(0)
     , m_borderStart(0)
     , m_borderEnd(0)
     , m_columnOffsetTop(-1)
@@ -87,8 +85,6 @@ RenderTable::RenderTable(Document& document, Ref<RenderStyle>&& style)
     , m_columnLogicalWidthChanged(false)
     , m_columnRenderersValid(false)
     , m_hasCellColspanThatDeterminesTableWidth(false)
-    , m_hSpacing(0)
-    , m_vSpacing(0)
     , m_borderStart(0)
     , m_borderEnd(0)
 {
@@ -928,7 +924,7 @@ LayoutUnit RenderTable::offsetLeftForColumn(const RenderTableCol& column) const
     unsigned columnIndex = effectiveIndexOfColumn(column);
     if (columnIndex >= numEffCols())
         return 0;
-    return m_columnPos[columnIndex] + LayoutUnit(m_hSpacing) + borderLeft();
+    return m_columnPos[columnIndex] + m_hSpacing + borderLeft();
 }
 
 LayoutUnit RenderTable::offsetWidthForColumn(const RenderTableCol& column) const

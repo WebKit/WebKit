@@ -46,8 +46,8 @@ public:
         return !(*this == o);
     }
 
-    short horizontal_border_spacing;
-    short vertical_border_spacing;
+    float horizontal_border_spacing;
+    float vertical_border_spacing;
 
     // could be packed in a short but doesn't
     // make a difference currently because of padding

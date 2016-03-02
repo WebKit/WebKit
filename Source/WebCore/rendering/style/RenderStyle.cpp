@@ -385,8 +385,8 @@ unsigned RenderStyle::hashForTextAutosizing() const
     hash ^= rareInheritedData->lineBreak;
     hash ^= WTF::FloatHash<float>::hash(inherited->specifiedLineHeight.value());
     hash ^= computeFontHash(inherited->fontCascade);
-    hash ^= inherited->horizontal_border_spacing;
-    hash ^= inherited->vertical_border_spacing;
+    hash ^= WTF::FloatHash<float>::hash(inherited->horizontal_border_spacing);
+    hash ^= WTF::FloatHash<float>::hash(inherited->vertical_border_spacing);
     hash ^= inherited_flags._box_direction;
     hash ^= inherited_flags.m_rtlOrdering;
     hash ^= noninherited_flags.position();
@@ -1164,10 +1164,10 @@ Color RenderStyle::visitedLinkColor() const { return inherited->visitedLinkColor
 void RenderStyle::setColor(const Color& v) { SET_VAR(inherited, color, v); }
 void RenderStyle::setVisitedLinkColor(const Color& v) { SET_VAR(inherited, visitedLinkColor, v); }
 
-short RenderStyle::horizontalBorderSpacing() const { return inherited->horizontal_border_spacing; }
-short RenderStyle::verticalBorderSpacing() const { return inherited->vertical_border_spacing; }
-void RenderStyle::setHorizontalBorderSpacing(short v) { SET_VAR(inherited, horizontal_border_spacing, v); }
-void RenderStyle::setVerticalBorderSpacing(short v) { SET_VAR(inherited, vertical_border_spacing, v); }
+float RenderStyle::horizontalBorderSpacing() const { return inherited->horizontal_border_spacing; }
+float RenderStyle::verticalBorderSpacing() const { return inherited->vertical_border_spacing; }
+void RenderStyle::setHorizontalBorderSpacing(float v) { SET_VAR(inherited, horizontal_border_spacing, v); }
+void RenderStyle::setVerticalBorderSpacing(float v) { SET_VAR(inherited, vertical_border_spacing, v); }
 
 RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {

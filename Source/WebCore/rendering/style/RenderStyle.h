@@ -822,8 +822,8 @@ public:
     StyleImage* maskBoxImageSource() const { return rareNonInheritedData->m_maskBoxImage.image(); }
  
     EBorderCollapse borderCollapse() const { return static_cast<EBorderCollapse>(inherited_flags._border_collapse); }
-    short horizontalBorderSpacing() const;
-    short verticalBorderSpacing() const;
+    float horizontalBorderSpacing() const;
+    float verticalBorderSpacing() const;
     EEmptyCell emptyCells() const { return static_cast<EEmptyCell>(inherited_flags._empty_cells); }
     ECaptionSide captionSide() const { return static_cast<ECaptionSide>(inherited_flags._caption_side); }
 
@@ -1423,8 +1423,8 @@ public:
     void setMaskSize(LengthSize size) { SET_VAR(rareNonInheritedData, m_mask.m_sizeLength, WTFMove(size)); }
 
     void setBorderCollapse(EBorderCollapse collapse) { inherited_flags._border_collapse = collapse; }
-    void setHorizontalBorderSpacing(short);
-    void setVerticalBorderSpacing(short);
+    void setHorizontalBorderSpacing(float);
+    void setVerticalBorderSpacing(float);
     void setEmptyCells(EEmptyCell v) { inherited_flags._empty_cells = v; }
     void setCaptionSide(ECaptionSide v) { inherited_flags._caption_side = v; }
 
@@ -1897,8 +1897,8 @@ public:
     static ETextTransform initialTextTransform() { return TTNONE; }
     static EVisibility initialVisibility() { return VISIBLE; }
     static EWhiteSpace initialWhiteSpace() { return NORMAL; }
-    static short initialHorizontalBorderSpacing() { return 0; }
-    static short initialVerticalBorderSpacing() { return 0; }
+    static float initialHorizontalBorderSpacing() { return 0; }
+    static float initialVerticalBorderSpacing() { return 0; }
     static ECursor initialCursor() { return CursorAuto; }
 #if ENABLE(CURSOR_VISIBILITY)
     static CursorVisibility initialCursorVisibility() { return CursorVisibilityAuto; }

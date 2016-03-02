@@ -1,3 +1,16 @@
+2016-03-02  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Enable vertical/horizontal subpixel spacing for tables.
+        https://bugs.webkit.org/show_bug.cgi?id=154899
+
+        Reviewed by Simon Fraser.
+
+        This patch enables authors to specify device pixel values for table border spacing.
+        (see border-spacing)
+
+        * fast/table/hidpi-vertical-and-horizontal-spacing-expected.html: Added.
+        * fast/table/hidpi-vertical-and-horizontal-spacing.html: Added.
+
 2016-03-02  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [AX][GTK] Position-related tests need new baseline after r196439
