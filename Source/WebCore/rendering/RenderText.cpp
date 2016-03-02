@@ -502,6 +502,32 @@ ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, int start, 
     return f.width(run, fallbackFonts, glyphOverflow);
 }
 
+inline bool isHangablePunctuationAtLineStart(UChar c)
+{
+    return U_GET_GC_MASK(c) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+}
+
+inline bool isHangablePunctuationAtLineEnd(UChar c)
+{
+    return U_GET_GC_MASK(c) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+}
+
+float RenderText::hangablePunctuationStartWidth() const
+{
+    if (!textLength())
+        return 0;
+    
+    ASSERT(m_text);
+    StringImpl& text = *m_text.impl();
+    if (!isHangablePunctuationAtLineStart(text[0]))
+        return 0;
+    
+    const RenderStyle& style = this->style();
+    const FontCascade& font = style.fontCascade();
+        
+    return widthFromCache(font, 0, 1, 0, 0, 0, style);
+}
+    
 void RenderText::trimmedPrefWidths(float leadWidth,
                                    float& beginMinW, bool& beginWS,
                                    float& endMinW, bool& endWS,

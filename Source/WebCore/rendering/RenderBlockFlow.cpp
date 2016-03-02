@@ -4064,6 +4064,9 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     RenderObject* prevFloat = 0;
     bool isPrevChildInlineFlow = false;
     bool shouldBreakLineAfterText = false;
+    bool canHangPunctuationAtStart = styleToUse.hangingPunctuation() & FirstHangingPunctuation;
+    bool addedStartPunctuationHang = false;
+    
     while (RenderObject* child = childIterator.next()) {
         bool autoWrap = child->isReplaced() ? child->parent()->style().autoWrap() :
             child->style().autoWrap();
@@ -4179,6 +4182,9 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     else
                         addedTextIndent = true;
                 }
+                
+                if (canHangPunctuationAtStart && !addedStartPunctuationHang && !child->isFloating() && !isAnonymousInlineBlock)
+                    addedStartPunctuationHang = true;
 
                 // Add our width to the max.
                 inlineMax += std::max<float>(0, childMax);
@@ -4267,7 +4273,17 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                         hasRemainingNegativeTextIndent = true;
                     }
                 }
-
+                
+                // See if we have a hanging punctuation situation at the start.
+                if (canHangPunctuationAtStart && !addedStartPunctuationHang) {
+                    float hangStartWidth = renderText.hangablePunctuationStartWidth();
+                    childMin -= hangStartWidth;
+                    beginMin -= hangStartWidth;
+                    childMax -= hangStartWidth;
+                    beginMax -= hangStartWidth;
+                    addedStartPunctuationHang = true;
+                }
+                
                 // If we have no breakable characters at all,
                 // then this is the easy case. We add ourselves to the current
                 // min and max and continue.
@@ -4305,6 +4321,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     maxLogicalWidth = preferredWidth(maxLogicalWidth, childMax);
                     inlineMax = endMax;
                     addedTextIndent = true;
+                    addedStartPunctuationHang = true;
                 } else
                     inlineMax += std::max<float>(0, childMax);
             }
@@ -4319,6 +4336,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
             stripFrontSpaces = true;
             trailingSpaceChild = 0;
             addedTextIndent = true;
+            addedStartPunctuationHang = true;
         }
 
         if (!child->isText() && child->isRenderInline())

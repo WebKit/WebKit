@@ -102,6 +102,7 @@ public:
                            bool& hasBreakableChar, bool& hasBreak,
                            float& beginMaxW, float& endMaxW,
                            float& minW, float& maxW, bool& stripFrontSpaces);
+    float hangablePunctuationStartWidth() const;
 
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;

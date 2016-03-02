@@ -111,7 +111,8 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasNoParent                       = 1LLU  << 46,
     FlowHasNoChild                        = 1LLU  << 47,
     FlowChildIsSelected                   = 1LLU  << 48,
-    EndOfReasons                          = 1LLU  << 49
+    FlowHasHangingPunctuation             = 1LLU  << 49,
+    EndOfReasons                          = 1LLU  << 50
 };
 const unsigned NoReason = 0;
 
@@ -283,6 +284,9 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Inc
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOutline, reasons, includeReasons);
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsRuby, reasons, includeReasons);
+    if (flow.style().hangingPunctuation() != NoHangingPunctuation)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons);
+    
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
@@ -797,6 +801,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case FlowIsRuby:
         stream << "ruby";
+        break;
+    case FlowHasHangingPunctuation:
+        stream << "hanging punctuation";
         break;
     case FlowIsPaginated:
         stream << "paginated";

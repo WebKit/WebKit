@@ -737,7 +737,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     const FontCascade& font = style.fontCascade();
     bool isFixedPitch = font.isFixedPitch();
     bool canHyphenate = style.hyphens() == HyphensAuto && WebCore::canHyphenate(style.locale());
-
+    bool canHangPunctuationAtStart = style.hangingPunctuation() & FirstHangingPunctuation;
+    
     unsigned lastSpace = m_current.offset();
     float wordSpacing = m_currentStyle->fontCascade().wordSpacing();
     float lastSpaceWordSpacing = 0;
@@ -787,6 +788,9 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         UChar c = m_current.current();
         m_currentCharacterIsSpace = c == ' ' || c == '\t' || (!m_preservesNewline && (c == '\n'));
 
+        if (canHangPunctuationAtStart && !m_current.offset() && m_width.isFirstLine() && !m_width.committedWidth() && !wrapW && !m_current.offset())
+            m_width.addUncommittedWidth(-renderText.hangablePunctuationStartWidth());
+            
         if (!m_collapseWhiteSpace || !m_currentCharacterIsSpace)
             m_lineInfo.setEmpty(false, &m_block, &m_width);
 

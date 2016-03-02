@@ -806,11 +806,34 @@ static inline void applyExpansionBehavior(InlineTextBox& textBox, ExpansionBehav
     }
 }
 
+static bool inlineAncestorHasStartBorderPaddingOrMargin(const RenderBlockFlow& block, const InlineBox& box)
+{
+    bool isLTR = block.style().isLeftToRightDirection();
+    for (auto* currentBox = box.parent(); currentBox; currentBox = currentBox->parent()) {
+        if ((isLTR && currentBox->marginBorderPaddingLogicalLeft() > 0)
+            || (!isLTR && currentBox->marginBorderPaddingLogicalRight() > 0))
+            return true;
+    }
+    return false;
+}
+
+static bool isLastInFlowRun(BidiRun& runToCheck)
+{
+    for (auto* run = runToCheck.next(); run; run = run->next()) {
+        if (!run->box() || run->renderer().isOutOfFlowPositioned() || run->box()->isLineBreak())
+            continue;
+        return false;
+    }
+    return true;
+}
+    
 BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBox* lineBox, const LineInfo& lineInfo, ETextAlign textAlign, float& logicalLeft, 
     float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache,
     WordMeasurements& wordMeasurements)
 {
     bool needsWordSpacing = false;
+    bool canHangPunctuationAtStart = style().hangingPunctuation() & FirstHangingPunctuation;
+    bool isLTR = style().isLeftToRightDirection();
     float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     unsigned expansionOpportunityCount = 0;
     bool isAfterExpansion = is<RenderRubyBase>(*this) ? downcast<RenderRubyBase>(*this).isAfterExpansion() : true;
@@ -827,6 +850,15 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
         if (is<RenderText>(run->renderer())) {
             auto& renderText = downcast<RenderText>(run->renderer());
             auto& textBox = downcast<InlineTextBox>(*run->box());
+            if (canHangPunctuationAtStart && lineInfo.isFirstLine() && (isLTR || isLastInFlowRun(*run))
+                && !inlineAncestorHasStartBorderPaddingOrMargin(*this, *run->box())) {
+                float hangStartWidth = renderText.hangablePunctuationStartWidth();
+                availableLogicalWidth += hangStartWidth;
+                if (style().isLeftToRightDirection())
+                    logicalLeft -= hangStartWidth;
+                canHangPunctuationAtStart = false;
+            }
+            
             if (textAlign == JUSTIFY && run != trailingSpaceRun) {
                 ExpansionBehavior expansionBehavior = expansionBehaviorForInlineTextBox(*this, textBox, previousRun, run->next(), textAlign, isAfterExpansion);
                 applyExpansionBehavior(textBox, expansionBehavior);
@@ -844,6 +876,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
 
             setLogicalWidthForTextRun(lineBox, run, renderText, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
         } else {
+            canHangPunctuationAtStart = false;
             bool encounteredJustifiedRuby = false;
             if (is<RenderRubyRun>(run->renderer()) && textAlign == JUSTIFY && run != trailingSpaceRun && downcast<RenderRubyRun>(run->renderer()).rubyBase()) {
                 auto* rubyBase = downcast<RenderRubyRun>(run->renderer()).rubyBase();

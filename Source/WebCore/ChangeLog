@@ -1,3 +1,61 @@
+2016-03-02  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for the "first" value of the hanging-punctuation property.
+        https://bugs.webkit.org/show_bug.cgi?id=154919
+
+        Reviewed by Simon Fraser.
+
+        New tests added in fast/text.
+
+        Implement the "first" value for hanging-punctuation as described here:
+        https://drafts.csswg.org/css-text-3/#propdef-hanging-punctuation
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths):
+        Update the preferred logical width computation to factor in hanging punctuation.
+        This check is similar to the text-indent logic in that we only want to do it for
+        the first formatted line.
+
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::simpleLineLayout):
+        Make sure to turn off simple line layout when hanging punctuation is present. Eventually
+        it should be feasible to support this in simple line layout, but since the full line
+        layout model has to work with it anyway, we are starting there.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::inlineAncestorHasStartBorderPaddingOrMargin):
+        (WebCore::isLastInFlowRun):
+        Helper functions that are needed to determine whether or not we're allowed to apply
+        hanging punctuation "first" to a text run.
+
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        This function manipulates logicalLeft and availableWidth when hanging punctuation
+        is present to shift the line as needed and to expand the availableWidth of the line.
+
+        * rendering/RenderText.cpp:
+        (WebCore::isHangablePunctuationAtLineStart):
+        (WebCore::isHangablePunctuationAtLineEnd):
+        (WebCore::RenderText::hangablePunctuationStartWidth):
+        (WebCore::RenderText::trimmedPrefWidths):
+        * rendering/RenderText.h:
+        RenderText has a helper function for handing back the hangable punctuation width. This
+        is used everywhere line layout wants to apply that offset. There are also helper functions
+        that detect whether the character is a hangable punctuation character.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        (WebCore::SimpleLineLayout::printReason):
+        Turn off simple line layout when hanging punctuation is enabled.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+        Modified to expand the available width when hanging punctuation is present so that we
+        know we have more room on the line.
+
+        * rendering/line/LineWidth.h:
+        (WebCore::LineWidth::isFirstLine):
+        Add an accessor for whether or not we're the first line.
+
 2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make HTML parser construct custom elements
