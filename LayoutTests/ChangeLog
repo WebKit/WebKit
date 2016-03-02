@@ -1,3 +1,25 @@
+2016-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Add a benchmark for string transcoding.
+
+        Rubber stamped by Saam Barati.
+
+        I wrote some code like this while working on
+        https://github.com/WebAssembly/design/pull/573. I thought I'd add it as a benchmark since
+        it stresses things that we may not have good bench coverage for.
+
+        * js/regress/script-tests/string-transcoding.js: Added.
+        (decodeUTF8):
+        (encodeUTF8):
+        (arraysEqual):
+        (arrayToString):
+        (setHeader):
+        (print):
+        (tryArray):
+        (doSteps):
+        * js/regress/string-transcoding-expected.txt: Added.
+        * js/regress/string-transcoding.html: Added.
+
 2016-03-02  Dave Hyatt  <hyatt@apple.com>
 
         Add support for the "first" value of the hanging-punctuation property.
