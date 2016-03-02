@@ -1,3 +1,12 @@
+2016-03-02  Milan Crha  <mcrha@redhat.com>
+
+        Fix the build with VIDEO disabled.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/RenderThemeGtk2.cpp:
+        * platform/gtk/RenderThemeGtk3.cpp:
+
 2016-02-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build with GTK+ < 3.19.

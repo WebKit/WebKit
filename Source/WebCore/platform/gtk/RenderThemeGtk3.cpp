@@ -37,6 +37,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PlatformContextCairo.h"
+#include "RenderBox.h"
 #include "RenderElement.h"
 #include "ScrollbarThemeGtk.h"
 #include "TextDirection.h"
@@ -1157,6 +1158,7 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
     }
 }
 
+#if ENABLE(VIDEO)
 bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* graphicsContext, const IntRect& rect, const char* iconName, const char*)
 {
     GRefPtr<GtkStyleContext> context = createStyleContext(MediaButton);
@@ -1166,6 +1168,7 @@ bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContex
     IntRect iconRect(rect.x() + (rect.width() - mediaIconSize) / 2, rect.y() + (rect.height() - mediaIconSize) / 2, mediaIconSize, mediaIconSize);
     return !paintIcon(context.get(), *graphicsContext, iconRect, iconName);
 }
+#endif
 
 } // namespace WebCore
 

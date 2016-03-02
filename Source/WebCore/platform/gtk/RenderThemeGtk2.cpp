@@ -908,6 +908,7 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
     }
 }
 
+#if ENABLE(VIDEO)
 bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, const char* symbolicIconName, const char* fallbackStockIconName)
 {
     static const unsigned mediaIconSize = 16;
@@ -919,6 +920,7 @@ bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContex
     paintGdkPixbuf(context, icon.get(), iconRect);
     return false;
 }
+#endif
 
 static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, RenderTheme* renderTheme)
 {
