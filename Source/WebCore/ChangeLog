@@ -1,3 +1,17 @@
+2016-03-01  Michael Saboff  <msaboff@apple.com>
+
+        ASSERT in platform/graphics/mac/ComplexTextController.cpp::capitalize()
+        https://bugs.webkit.org/show_bug.cgi?id=154875
+
+        Reviewed by Myles C. Maxfield.
+
+        Change an ASSERT to verify that uper casing a character doesn't change its size.
+
+        Test: fast/text/regress-154875.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::capitalized):
+
 2016-03-01  Gavin Barraclough  <barraclough@apple.com>
 
         Timer alignment in separate web processes should not all sync up to the same point.

@@ -298,7 +298,7 @@ static inline Optional<UChar32> capitalized(UChar32 baseCharacter)
         return Nullopt;
 
     UChar32 uppercaseCharacter = u_toupper(baseCharacter);
-    ASSERT(uppercaseCharacter == baseCharacter || uppercaseCharacter <= 0xFFFF);
+    ASSERT(uppercaseCharacter == baseCharacter || (U_IS_BMP(baseCharacter) == U_IS_BMP(uppercaseCharacter)));
     if (uppercaseCharacter != baseCharacter)
         return uppercaseCharacter;
     return Nullopt;

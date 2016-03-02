@@ -1,3 +1,15 @@
+2016-03-01  Michael Saboff  <msaboff@apple.com>
+
+        ASSERT in platform/graphics/mac/ComplexTextController.cpp::capitalize()
+        https://bugs.webkit.org/show_bug.cgi?id=154875
+
+        Reviewed by Myles C. Maxfield.
+
+        New test.
+
+        * fast/text/regress-154875-expected.txt: Added.
+        * fast/text/regress-154875.html: Added.
+
 2016-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should simplify StringReplace with an empty replacement string
