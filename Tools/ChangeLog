@@ -1,3 +1,10 @@
+2016-03-02  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed build fix for media-stream after r197114.
+
+        * TestWebKitAPI/Tests/WebKit2/UserMedia.cpp:
+        (TestWebKitAPI::decidePolicyForUserMediaPermissionRequestCallBack):
+
 2016-03-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Disable FTL JIT testing on 32-bit JSC tester bots
