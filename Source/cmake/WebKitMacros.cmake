@@ -258,6 +258,15 @@ macro(WEBKIT_FRAMEWORK _target)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${${_target}_OUTPUT_NAME})
     endif ()
 
+    if (${_target}_PRE_BUILD_COMMAND)
+        add_custom_target(_${_target}_PreBuild COMMAND ${${_target}_PRE_BUILD_COMMAND} VERBATIM)
+        add_dependencies(${_target} _${_target}_PreBuild)
+    endif ()
+
+    if (${_target}_POST_BUILD_COMMAND)
+        add_custom_command(TARGET ${_target} POST_BUILD COMMAND ${${_target}_POST_BUILD_COMMAND} VERBATIM)
+    endif ()
+
     if (APPLE AND NOT PORT STREQUAL "GTK")
         set_target_properties(${_target} PROPERTIES FRAMEWORK TRUE)
         install(TARGETS ${_target} FRAMEWORK DESTINATION ${LIB_INSTALL_DIR})

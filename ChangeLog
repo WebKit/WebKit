@@ -1,3 +1,14 @@
+2016-03-02  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Moved PRE/POST_BUILD_COMMAND to WEBKIT_FRAMEWORK.
+        https://bugs.webkit.org/show_bug.cgi?id=154651
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/WebKitMacros.cmake: Used phony target instead of
+        CMake's PRE_BUILD COMMAND feature because the latter actually
+        generates pre-link target instead of pre-build.
+
 2016-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of internal windows build output
