@@ -47,7 +47,7 @@ void JSProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
 {
     ASSERT_ARG(globalObject, globalObject);
     m_target.set(vm, this, globalObject);
-    setPrototype(vm, globalObject->prototype());
+    setPrototypeDirect(vm, globalObject->prototype());
 
     PrototypeMap& prototypeMap = vm.prototypeMap;
     if (!prototypeMap.isPrototype(this))

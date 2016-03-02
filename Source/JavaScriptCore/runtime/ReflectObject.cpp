@@ -221,7 +221,11 @@ EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState* exec)
     if (!isExtensible)
         return JSValue::encode(jsBoolean(false));
 
-    return JSValue::encode(jsBoolean(object->setPrototypeWithCycleCheck(exec, proto)));
+    VM& vm = exec->vm();
+    bool didSetPrototype = object->setPrototypeOfInline(vm, exec, proto);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsBoolean(didSetPrototype));
 }
 
 } // namespace JSC

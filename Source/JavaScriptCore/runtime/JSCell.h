@@ -208,6 +208,7 @@ protected:
     static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH bool preventExtensions(JSObject*, ExecState*);
     static NO_RETURN_DUE_TO_CRASH bool isExtensible(JSObject*, ExecState*);
+    static NO_RETURN_DUE_TO_CRASH bool setPrototypeOf(JSObject*, ExecState*, JSValue);
 
     static String className(const JSObject*);
     JS_EXPORT_PRIVATE static bool customHasInstance(JSObject*, ExecState*, JSValue);

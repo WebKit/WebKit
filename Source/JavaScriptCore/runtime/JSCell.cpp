@@ -280,4 +280,9 @@ bool JSCell::isExtensible(JSObject*, ExecState*)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+bool JSCell::setPrototypeOf(JSObject*, ExecState*, JSValue)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

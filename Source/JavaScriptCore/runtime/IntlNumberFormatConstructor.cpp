@@ -96,7 +96,9 @@ static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* state)
     IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, jsCast<IntlNumberFormatConstructor*>(state->callee()));
     if (numberFormat && !jsDynamicCast<IntlNumberFormatConstructor*>(newTarget)) {
         JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(numberFormat)->setPrototypeWithCycleCheck(state, proto);
+        asObject(numberFormat)->setPrototypeOfInline(vm, state, proto);
+        if (vm.exception())
+            return JSValue::encode(JSValue());
     }
 
     // 3. ReturnIfAbrupt(numberFormat).

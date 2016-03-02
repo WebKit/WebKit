@@ -1,5 +1,59 @@
 2016-03-02  Saam barati  <sbarati@apple.com>
 
+        [[SetPrototypeOf]] should be a fully virtual method in ClassInfo::methodTable
+        https://bugs.webkit.org/show_bug.cgi?id=154897
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes us more consistent with how the ES6 specification models the
+        [[SetPrototypeOf]] trap. Moving this method into ClassInfo::methodTable 
+        is a prerequisite for implementing Proxy.[[SetPrototypeOf]]. This patch
+        still allows directly setting the prototype for situations where this
+        is the desired behavior. This is equivalent to setting the internal
+        [[Prototype]] field as described in the specification. 
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectSetPrototype):
+        (JSObjectHasProperty):
+        * API/JSWrapperMap.mm:
+        (makeWrapper):
+        * runtime/ClassInfo.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::constructIntlCollator):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::isExtensible):
+        (JSC::JSCell::setPrototypeOf):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::resetPrototype):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoSetter):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        (JSC::JSObject::setPrototypeDirect):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::setPrototypeOf):
+        (JSC::JSObject::allowsAccessFrom):
+        (JSC::JSObject::setPrototype): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::setPrototypeOfInline):
+        (JSC::JSObject::mayInterceptIndexedAccesses):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setTarget):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectSetPrototypeOf):
+
+2016-03-02  Saam barati  <sbarati@apple.com>
+
         SIGSEGV in Proxy [[Get]] and [[Set]] recursion
         https://bugs.webkit.org/show_bug.cgi?id=154854
 

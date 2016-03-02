@@ -1171,7 +1171,7 @@ void JSObject::switchToSlowPutArrayStorage(VM& vm)
     }
 }
 
-void JSObject::setPrototype(VM& vm, JSValue prototype)
+void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
 {
     ASSERT(prototype);
     if (prototype.isObject())
@@ -1197,17 +1197,23 @@ void JSObject::setPrototype(VM& vm, JSValue prototype)
     switchToSlowPutArrayStorage(vm);
 }
 
-bool JSObject::setPrototypeWithCycleCheck(ExecState* exec, JSValue prototype)
+bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue prototype)
 {
-    ASSERT(methodTable(exec->vm())->toThis(this, exec, NotStrictMode) == this);
+    UNUSED_PARAM(exec);
+    ASSERT(methodTable(vm)->toThis(this, exec, NotStrictMode) == this);
     JSValue nextPrototype = prototype;
     while (nextPrototype && nextPrototype.isObject()) {
         if (nextPrototype == this)
             return false;
         nextPrototype = asObject(nextPrototype)->prototype();
     }
-    setPrototype(exec->vm(), prototype);
+    setPrototypeDirect(vm, prototype);
     return true;
+}
+
+bool JSObject::setPrototypeOf(JSObject* object, ExecState* exec, JSValue prototype)
+{
+    return object->setPrototypeWithCycleCheck(exec->vm(), exec, prototype);
 }
 
 bool JSObject::allowsAccessFrom(ExecState* exec)

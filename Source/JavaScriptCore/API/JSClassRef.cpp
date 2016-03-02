@@ -204,7 +204,7 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
     JSObject* prototype = JSCallbackObject<JSDestructibleObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData); // set jsClassData as the object's private data, so it can clear our reference on destruction
     if (parentClass) {
         if (JSObject* parentPrototype = parentClass->prototype(exec))
-            prototype->setPrototype(exec->vm(), parentPrototype);
+            prototype->setPrototypeDirect(exec->vm(), parentPrototype);
     }
 
     jsClassData.cachedPrototype = Weak<JSObject>(prototype);

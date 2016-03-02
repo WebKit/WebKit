@@ -117,7 +117,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 
     JSCallbackObject<JSDestructibleObject>* object = JSCallbackObject<JSDestructibleObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), jsClass, data);
     if (JSObject* prototype = jsClass->prototype(exec))
-        object->setPrototype(exec->vm(), prototype);
+        object->setPrototypeDirect(exec->vm(), prototype);
 
     return toRef(object);
 }
@@ -291,7 +291,7 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
         // Someday we might use proxies for something other than JSGlobalObjects, but today is not that day.
         RELEASE_ASSERT_NOT_REACHED();
     }
-    jsObject->setPrototypeWithCycleCheck(exec, jsValue.isObject() ? jsValue : jsNull());
+    jsObject->setPrototypeOfInline(exec->vm(), exec, jsValue.isObject() ? jsValue : jsNull());
 }
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)

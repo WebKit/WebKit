@@ -103,8 +103,31 @@ public:
     JS_EXPORT_PRIVATE static String calculatedClassName(JSObject*);
 
     JSValue prototype() const;
-    JS_EXPORT_PRIVATE void setPrototype(VM&, JSValue prototype);
-    JS_EXPORT_PRIVATE bool setPrototypeWithCycleCheck(ExecState*, JSValue prototype);
+    // This sets the prototype without checking for cycles and without
+    // doing dynamic dispatch on [[SetPrototypeOf]] operation in the specification.
+    // It is not valid to use this when performing a [[SetPrototypeOf]] operation in
+    // the specification. It is valid to use though when you know that you want to directly
+    // set it without consulting the method table and when you definitely won't
+    // introduce a cycle in the prototype chain. This is akin to setting the
+    // [[Prototype]] internal field directly as described in the specification.
+    JS_EXPORT_PRIVATE void setPrototypeDirect(VM&, JSValue prototype);
+private:
+    // This is OrdinarySetPrototypeOf in the specification. Section 9.1.2.1
+    // https://tc39.github.io/ecma262/#sec-ordinarysetprototypeof
+    JS_EXPORT_PRIVATE bool setPrototypeWithCycleCheck(VM&, ExecState*, JSValue prototype);
+public:
+    // This is the fully virtual [[SetPrototypeOf]] internal function defined
+    // in the ECMAScript 6 specification. Use this when doing a [[SetPrototypeOf]] 
+    // operation as dictated in the specification.
+    ALWAYS_INLINE bool setPrototypeOfInline(VM& vm, ExecState* exec, JSValue prototype)
+    {
+        auto setPrototypeOfMethod = methodTable(vm)->setPrototypeOf;
+        if (LIKELY(setPrototypeOfMethod == JSObject::setPrototypeOf))
+            return setPrototypeWithCycleCheck(vm, exec, prototype);
+
+        return setPrototypeOfMethod(this, exec, prototype);
+    }
+    JS_EXPORT_PRIVATE static bool setPrototypeOf(JSObject*, ExecState*, JSValue prototype);
         
     bool mayInterceptIndexedAccesses()
     {

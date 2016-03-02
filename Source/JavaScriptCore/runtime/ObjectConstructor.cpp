@@ -218,8 +218,12 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
     if (!isExtensible)
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 
-    if (!object->setPrototypeWithCycleCheck(exec, protoValue)) {
-        exec->vm().throwException(exec, createError(exec, ASCIILiteral("cyclic __proto__ value")));
+    VM& vm = exec->vm();
+    bool didSetPrototype = object->setPrototypeOfInline(vm, exec, protoValue);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+    if (!didSetPrototype) {
+        vm.throwException(exec, createError(exec, ASCIILiteral("cyclic __proto__ value")));
         return JSValue::encode(jsUndefined());
     }
 
