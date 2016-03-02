@@ -526,11 +526,12 @@ private:
 
     Vector<Ref<PluginViewBase>> pluginViews();
 
+    enum class TimerThrottlingState { Disabled, Enabled, EnabledIncreasing };
     void hiddenPageDOMTimerThrottlingStateChanged();
-    void setTimerThrottlingEnabled(bool);
+    void setTimerThrottlingState(TimerThrottlingState);
+    void updateTimerThrottlingState();
     void setDOMTimerAlignmentInterval(double);
     void timerAlignmentIntervalIncreaseTimerFired();
-    bool timerThrottlingEnabled() const { return !!m_timerThrottlingEnabledTime; }
 
     const std::unique_ptr<Chrome> m_chrome;
     const std::unique_ptr<DragCaretController> m_dragCaretController;
@@ -616,7 +617,8 @@ private:
     ViewMode m_viewMode;
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
-    Optional<double> m_timerThrottlingEnabledTime;
+    TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
+    double m_timerThrottlingEnabledTime { 0 };
     double m_timerAlignmentInterval;
     Timer m_timerAlignmentIntervalIncreaseTimer;
     double m_timerAlignmentIntervalIncreaseLimit { 0 };

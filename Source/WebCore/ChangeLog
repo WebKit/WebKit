@@ -1,3 +1,38 @@
+2016-03-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Add Page::TimerThrottlingState
+        https://bugs.webkit.org/show_bug.cgi?id=154926
+
+        Reviewed by Chris Dumez.
+
+        Hidden page timer throttling is currently a boolean state, indicated by whether the Optional
+        m_timerThrottlingEnabledTime is in a set/unset state. When enabled, the increasing mechanism
+        may or may not be enabled, this is controlled directly by the setting.
+
+        Refactor to add an enum tracking timer throttling being in one of three states - disabled,
+        enabled, or enabled-increasing. This cleans things up, and will enabled up to introduce a
+        dynamic policy for when enabled-throttling is enabled. (Behavior is unchanged in this patch.)
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setIsVisuallyIdleInternal):
+        (WebCore::Page::hiddenPageDOMTimerThrottlingStateChanged):
+            - setTimerThrottlingEnabled -> updateTimerThrottlingState.
+        (WebCore::Page::updateTimerThrottlingState):
+            - policy decision (currently enabled if visually-idle) was scattered across
+              all call sites to setTimerThrottlingState. Unify in one place.
+        (WebCore::Page::setTimerThrottlingState):
+            - Was setTimerThrottlingEnabled.
+        (WebCore::Page::setTimerAlignmentIntervalIncreaseLimit):
+        (WebCore::Page::setDOMTimerAlignmentInterval):
+        (WebCore::Page::timerAlignmentIntervalIncreaseTimerFired):
+            - updated to check m_timerThrottlingState.
+        (WebCore::Page::setTimerThrottlingEnabled): Deleted.
+            - This became updateTimerThrottlingState.
+        * page/Page.h:
+        (WebCore::Page::timerThrottlingEnabled): Deleted.
+            - Removed, it's easy enough now to just check m_timerThrottlingState.
+
 2016-03-02  Chris Dumez  <cdumez@apple.com>
 
         Align HTMLInputElement.maxLength with the specification
