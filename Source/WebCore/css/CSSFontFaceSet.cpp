@@ -242,8 +242,6 @@ void CSSFontFaceSet::clear()
     m_facesLookupTable.clear();
     m_locallyInstalledFacesLookupTable.clear();
     m_cache.clear();
-    m_facesPartitionIndex = 0;
-    m_status = Status::Loaded;
 }
 
 CSSFontFace& CSSFontFaceSet::operator[](size_t i)
