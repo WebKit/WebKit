@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ public:
     void assertionBOL() {}
     void assertionEOL() {}
     void assertionWordBoundary(bool) {}
-    void atomPatternCharacter(UChar) {}
+    void atomPatternCharacter(UChar32) {}
     void atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) {}
     void atomCharacterClassBegin(bool = false) {}
     void atomCharacterClassAtom(UChar) {}
@@ -53,7 +53,7 @@ public:
 const char* checkSyntax(const String& pattern)
 {
     SyntaxChecker syntaxChecker;
-    return parse(syntaxChecker, pattern);
+    return parse(syntaxChecker, pattern, false);
 }
 
 }} // JSC::YARR

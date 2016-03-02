@@ -1,3 +1,169 @@
+2016-03-01  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Add support for Unicode regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=154842
+
+        Reviewed by Filip Pizlo.
+
+        Added processing of Unicode regular expressions to the Yarr interpreter.
+
+        Changed parsing of regular expression patterns and PatternTerms to process characters as
+        UChar32 in the Yarr code.  The parser converts matched surrogate pairs into the appropriate
+        Unicode character when the expression is parsed.  When matching a unicode expression and
+        reading source characters, we convert proper surrogate pair into a Unicode character and
+        advance the source cursor, "pos", one more position.  The exception to this is when we
+        know when generating a fixed character atom that we need to match a unicode character
+        that doesn't fit in 16 bits.  The code calls this an extendedUnicodeCharacter and has a
+        helper to determine this.
+
+        Added 'u' flag and 'unicode' identifier to regular expression classes.  Added an "isUnicode"
+        parameter to YarrPattern pattern() and internal users of that function.
+
+        Updated the generation of the canonicalization tables to include a new set a tables that
+        follow the ES 6.0, 21.2.2.8.2 Step 2.  Renamed the YarrCanonicalizeUCS2.* files to
+        YarrCanonicalizeUnicode.*. 
+
+        Added a new Layout/js test that tests the added functionality.  Updated other tests that
+        have minor es6 unicode checks and look for valid flags.
+
+        Ran the ChakraCore Unicode regular expression tests as well.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::compile):
+        Updated use of pattern().
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/RegExp.cpp:
+        (JSC::regExpFlags):
+        (JSC::RegExpFunctionalTestCollector::outputOneTest):
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/RegExp.h:
+        * runtime/RegExpKey.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        (JSC::flagsString):
+        (JSC::regExpProtoGetterMultiline):
+        (JSC::regExpProtoGetterUnicode):
+        (JSC::regExpProtoGetterFlags):
+        Updated for new 'y' (unicode) flag.  Add check to use the interpreter for unicode regular expressions.
+
+        * tests/es6.yaml:
+        * tests/stress/static-getter-in-names.js:
+        Updated tests for new flag and for passing the minimal es6 regular expression processing.
+
+        * yarr/Yarr.h: Updated the size of information now kept for backtracking.
+
+        * yarr/YarrCanonicalizeUCS2.cpp: Removed.
+        * yarr/YarrCanonicalizeUCS2.h: Removed.
+        * yarr/YarrCanonicalizeUCS2.js: Removed.
+        * yarr/YarrCanonicalizeUnicode.cpp: Copied from Source/JavaScriptCore/yarr/YarrCanonicalizeUCS2.cpp.
+        * yarr/YarrCanonicalizeUnicode.h: Copied from Source/JavaScriptCore/yarr/YarrCanonicalizeUCS2.h.
+        (JSC::Yarr::canonicalCharacterSetInfo):
+        (JSC::Yarr::canonicalRangeInfoFor):
+        (JSC::Yarr::getCanonicalPair):
+        (JSC::Yarr::isCanonicallyUnique):
+        (JSC::Yarr::areCanonicallyEquivalent):
+        (JSC::Yarr::rangeInfoFor): Deleted.
+        * yarr/YarrCanonicalizeUnicode.js: Copied from Source/JavaScriptCore/yarr/YarrCanonicalizeUCS2.js.
+        (printHeader):
+        (printFooter):
+        (hex):
+        (canonicalize):
+        (canonicalizeUnicode):
+        (createUCS2CanonicalGroups):
+        (createUnicodeCanonicalGroups):
+        (cu.in.groupedCanonically.characters.sort): Deleted.
+        (cu.in.groupedCanonically.else): Deleted.
+        Refactored to output two sets of tables, one for UCS2 and one for Unicode.  The UCS2 tables follow
+        the legacy canonicalization rules now specified in ES 6.0, 21.2.2.8.2 Step 3.  The new Unicode
+        tables follow the rules specified in ES 6.0, 21.2.2.8.2 Step 2.  Eliminated the unused Latin1 tables.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::InputStream::InputStream):
+        (JSC::Yarr::Interpreter::InputStream::readChecked):
+        (JSC::Yarr::Interpreter::InputStream::readSurrogatePairChecked):
+        (JSC::Yarr::Interpreter::InputStream::reread):
+        (JSC::Yarr::Interpreter::InputStream::prev):
+        (JSC::Yarr::Interpreter::testCharacterClass):
+        (JSC::Yarr::Interpreter::checkCharacter):
+        (JSC::Yarr::Interpreter::checkSurrogatePair):
+        (JSC::Yarr::Interpreter::checkCasedCharacter):
+        (JSC::Yarr::Interpreter::tryConsumeBackReference):
+        (JSC::Yarr::Interpreter::backtrackPatternCharacter):
+        (JSC::Yarr::Interpreter::matchCharacterClass):
+        (JSC::Yarr::Interpreter::backtrackCharacterClass):
+        (JSC::Yarr::Interpreter::matchParenthesesTerminalEnd):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::Interpreter):
+        (JSC::Yarr::ByteCompiler::assertionWordBoundary):
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::optimizeAlternative):
+        (JSC::Yarr::YarrGenerator::matchCharacterClassRange):
+        (JSC::Yarr::YarrGenerator::matchCharacterClass):
+        (JSC::Yarr::YarrGenerator::notAtEndOfInput):
+        (JSC::Yarr::YarrGenerator::jumpIfCharNotEquals):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterNonGreedy):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomPatternCharacter):
+        (JSC::Yarr::Parser::Parser):
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::consumePossibleSurrogatePair):
+        (JSC::Yarr::Parser::parseCharacterClass):
+        (JSC::Yarr::Parser::parseTokens):
+        (JSC::Yarr::Parser::parse):
+        (JSC::Yarr::Parser::atEndOfPattern):
+        (JSC::Yarr::Parser::patternRemaining):
+        (JSC::Yarr::Parser::peek):
+        (JSC::Yarr::parse):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::CharacterClassConstructor):
+        (JSC::Yarr::CharacterClassConstructor::append):
+        (JSC::Yarr::CharacterClassConstructor::putChar):
+        (JSC::Yarr::CharacterClassConstructor::putUnicodeIgnoreCase):
+        (JSC::Yarr::CharacterClassConstructor::putRange):
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        (JSC::Yarr::CharacterClassConstructor::addSorted):
+        (JSC::Yarr::CharacterClassConstructor::addSortedRange):
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPatternConstructor::assertionWordBoundary):
+        (JSC::Yarr::YarrPatternConstructor::atomPatternCharacter):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassBegin):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassAtom):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassRange):
+        (JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets):
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::CharacterRange::CharacterRange):
+        (JSC::Yarr::CharacterClass::CharacterClass):
+        (JSC::Yarr::PatternTerm::PatternTerm):
+        (JSC::Yarr::YarrPattern::reset):
+        * yarr/YarrSyntaxChecker.cpp:
+        (JSC::Yarr::SyntaxChecker::assertionBOL):
+        (JSC::Yarr::SyntaxChecker::assertionEOL):
+        (JSC::Yarr::SyntaxChecker::assertionWordBoundary):
+        (JSC::Yarr::SyntaxChecker::atomPatternCharacter):
+        (JSC::Yarr::SyntaxChecker::atomBuiltInCharacterClass):
+        (JSC::Yarr::SyntaxChecker::atomCharacterClassBegin):
+        (JSC::Yarr::SyntaxChecker::atomCharacterClassAtom):
+        (JSC::Yarr::checkSyntax):
+
 2016-03-01  Saam barati  <sbarati@apple.com>
 
         Remove FIXMEs and add valid test cases after necessary patch has landed.

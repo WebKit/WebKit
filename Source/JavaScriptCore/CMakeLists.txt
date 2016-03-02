@@ -826,7 +826,7 @@ set(JavaScriptCore_SOURCES
     wasm/WASMReader.cpp
 
     yarr/RegularExpression.cpp
-    yarr/YarrCanonicalizeUCS2.cpp
+    yarr/YarrCanonicalizeUnicode.cpp
     yarr/YarrInterpreter.cpp
     yarr/YarrJIT.cpp
     yarr/YarrPattern.cpp

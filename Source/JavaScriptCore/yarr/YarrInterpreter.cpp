@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
 #include "YarrInterpreter.h"
 
 #include "Yarr.h"
-#include "YarrCanonicalizeUCS2.h"
+#include "YarrCanonicalizeUnicode.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/DataLog.h>
 #include <wtf/text/CString.h>
@@ -44,9 +44,11 @@ public:
     struct ParenthesesDisjunctionContext;
 
     struct BackTrackInfoPatternCharacter {
+        uintptr_t begin; // Only needed for unicode patterns
         uintptr_t matchAmount;
     };
     struct BackTrackInfoCharacterClass {
+        uintptr_t begin; // Only needed for unicode patterns
         uintptr_t matchAmount;
     };
     struct BackTrackInfoBackReference {
@@ -167,10 +169,11 @@ public:
 
     class InputStream {
     public:
-        InputStream(const CharType* input, unsigned start, unsigned length)
+        InputStream(const CharType* input, unsigned start, unsigned length, bool decodeSurrogatePairs)
             : input(input)
             , pos(start)
             , length(length)
+            , decodeSurrogatePairs(decodeSurrogatePairs)
         {
         }
 
@@ -204,13 +207,43 @@ public:
             RELEASE_ASSERT(pos >= negativePositionOffest);
             unsigned p = pos - negativePositionOffest;
             ASSERT(p < length);
-            return input[p];
+            int result = input[p];
+            if (U16_IS_LEAD(result) && decodeSurrogatePairs && p + 1 < length
+                && U16_IS_TRAIL(input[p + 1])) {
+                if (atEnd())
+                    return -1;
+                
+                result = U16_GET_SUPPLEMENTARY(result, input[p + 1]);
+                next();
+            }
+            return result;
+        }
+        
+        int readSurrogatePairChecked(unsigned negativePositionOffest)
+        {
+            RELEASE_ASSERT(pos >= negativePositionOffest);
+            unsigned p = pos - negativePositionOffest;
+            ASSERT(p < length);
+            if (p + 1 >= length)
+                return -1;
+
+            int first = input[p];
+            if (U16_IS_LEAD(first) && U16_IS_TRAIL(input[p + 1]))
+                return U16_GET_SUPPLEMENTARY(first, input[p + 1]);
+
+            return -1;
         }
 
         int reread(unsigned from)
         {
             ASSERT(from < length);
-            return input[from];
+            int result = input[from];
+            if (U16_IS_LEAD(result) && decodeSurrogatePairs && from + 1 < length
+                && U16_IS_TRAIL(input[from + 1])) {
+                
+                result = U16_GET_SUPPLEMENTARY(result, input[from + 1]);
+            }
+            return result;
         }
 
         int prev()
@@ -281,11 +314,12 @@ public:
         const CharType* input;
         unsigned pos;
         unsigned length;
+        bool decodeSurrogatePairs;
     };
 
     bool testCharacterClass(CharacterClass* characterClass, int ch)
     {
-        if (ch & 0xFF80) {
+        if (ch & 0x1FFF80) {
             for (unsigned i = 0; i < characterClass->m_matchesUnicode.size(); ++i)
                 if (ch == characterClass->m_matchesUnicode[i])
                     return true;
@@ -309,6 +343,11 @@ public:
         return testChar == input.readChecked(negativeInputOffset);
     }
 
+    bool checkSurrogatePair(int testUnicodeChar, unsigned negativeInputOffset)
+    {
+        return testUnicodeChar == input.readSurrogatePairChecked(negativeInputOffset);
+    }
+
     bool checkCasedCharacter(int loChar, int hiChar, unsigned negativeInputOffset)
     {
         int ch = input.readChecked(negativeInputOffset);
@@ -328,32 +367,30 @@ public:
         if (!input.checkInput(matchSize))
             return false;
 
-        if (pattern->m_ignoreCase) {
-            for (unsigned i = 0; i < matchSize; ++i) {
-                int oldCh = input.reread(matchBegin + i);
-                int ch = input.readChecked(negativeInputOffset + matchSize - i);
+        for (unsigned i = 0; i < matchSize; ++i) {
+            int oldCh = input.reread(matchBegin + i);
+            int ch;
+            if (!U_IS_BMP(oldCh)) {
+                ch = input.readSurrogatePairChecked(negativeInputOffset + matchSize - i);
+                ++i;
+            } else
+                ch = input.readChecked(negativeInputOffset + matchSize - i);
 
-                if (oldCh == ch)
-                    continue;
+            if (oldCh == ch)
+                continue;
 
-                // The definition for canonicalize (see ES 5.1, 15.10.2.8) means that
+            if (pattern->m_ignoreCase) {
+                // The definition for canonicalize (see ES 6.0, 15.10.2.8) means that
                 // unicode values are never allowed to match against ascii ones.
                 if (isASCII(oldCh) || isASCII(ch)) {
                     if (toASCIIUpper(oldCh) == toASCIIUpper(ch))
                         continue;
-                } else if (areCanonicallyEquivalent(oldCh, ch))
+                } else if (areCanonicallyEquivalent(oldCh, ch, unicode ? CanonicalMode::Unicode : CanonicalMode::UCS2))
                     continue;
+            }
 
-                input.uncheckInput(matchSize);
-                return false;
-            }
-        } else {
-            for (unsigned i = 0; i < matchSize; ++i) {
-                if (!checkCharacter(input.reread(matchBegin + i), negativeInputOffset + matchSize - i)) {
-                    input.uncheckInput(matchSize);
-                    return false;
-                }
-            }
+            input.uncheckInput(matchSize);
+            return false;
         }
 
         return true;
@@ -396,7 +433,10 @@ public:
         case QuantifierGreedy:
             if (backTrack->matchAmount) {
                 --backTrack->matchAmount;
-                input.uncheckInput(1);
+                if (unicode && !U_IS_BMP(term.atom.patternCharacter))
+                    input.uncheckInput(2);
+                else
+                    input.uncheckInput(1);
                 return true;
             }
             break;
@@ -407,7 +447,7 @@ public:
                 if (checkCharacter(term.atom.patternCharacter, term.inputPosition + 1))
                     return true;
             }
-            input.uncheckInput(backTrack->matchAmount);
+            input.setPos(backTrack->begin);
             break;
         }
 
@@ -446,10 +486,23 @@ public:
     bool matchCharacterClass(ByteTerm& term, DisjunctionContext* context)
     {
         ASSERT(term.type == ByteTerm::TypeCharacterClass);
-        BackTrackInfoPatternCharacter* backTrack = reinterpret_cast<BackTrackInfoPatternCharacter*>(context->frame + term.frameLocation);
+        BackTrackInfoCharacterClass* backTrack = reinterpret_cast<BackTrackInfoCharacterClass*>(context->frame + term.frameLocation);
 
         switch (term.atom.quantityType) {
         case QuantifierFixedCount: {
+            if (unicode) {
+                backTrack->begin = input.getPos();
+                unsigned matchAmount = 0;
+                for (matchAmount = 0; matchAmount < term.atom.quantityCount; ++matchAmount) {
+                    if (!checkCharacterClass(term.atom.characterClass, term.invert(), term.inputPosition - matchAmount)) {
+                        input.setPos(backTrack->begin);
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
             for (unsigned matchAmount = 0; matchAmount < term.atom.quantityCount; ++matchAmount) {
                 if (!checkCharacterClass(term.atom.characterClass, term.invert(), term.inputPosition - matchAmount))
                     return false;
@@ -458,6 +511,7 @@ public:
         }
 
         case QuantifierGreedy: {
+            backTrack->begin = input.getPos();
             unsigned matchAmount = 0;
             while ((matchAmount < term.atom.quantityCount) && input.checkInput(1)) {
                 if (!checkCharacterClass(term.atom.characterClass, term.invert(), term.inputPosition + 1)) {
@@ -472,6 +526,7 @@ public:
         }
 
         case QuantifierNonGreedy:
+            backTrack->begin = input.getPos();
             backTrack->matchAmount = 0;
             return true;
         }
@@ -483,14 +538,28 @@ public:
     bool backtrackCharacterClass(ByteTerm& term, DisjunctionContext* context)
     {
         ASSERT(term.type == ByteTerm::TypeCharacterClass);
-        BackTrackInfoPatternCharacter* backTrack = reinterpret_cast<BackTrackInfoPatternCharacter*>(context->frame + term.frameLocation);
+        BackTrackInfoCharacterClass* backTrack = reinterpret_cast<BackTrackInfoCharacterClass*>(context->frame + term.frameLocation);
 
         switch (term.atom.quantityType) {
         case QuantifierFixedCount:
+            if (unicode)
+                input.setPos(backTrack->begin);
             break;
 
         case QuantifierGreedy:
             if (backTrack->matchAmount) {
+                if (unicode) {
+                    // Rematch one less match
+                    input.setPos(backTrack->begin);
+                    --backTrack->matchAmount;
+                    for (unsigned matchAmount = 0; (matchAmount < backTrack->matchAmount) && input.checkInput(1); ++matchAmount) {
+                        if (!checkCharacterClass(term.atom.characterClass, term.invert(), term.inputPosition + 1)) {
+                            input.uncheckInput(1);
+                            break;
+                        }
+                    }
+                    return true;
+                }
                 --backTrack->matchAmount;
                 input.uncheckInput(1);
                 return true;
@@ -503,7 +572,7 @@ public:
                 if (checkCharacterClass(term.atom.characterClass, term.invert(), term.inputPosition + 1))
                     return true;
             }
-            input.uncheckInput(backTrack->matchAmount);
+            input.setPos(backTrack->begin);
             break;
         }
 
@@ -773,7 +842,7 @@ public:
         if (backTrack->begin == input.getPos())
             return false;
 
-        // Successful match! Okay, what's next? - loop around and try to match moar!
+        // Successful match! Okay, what's next? - loop around and try to match more!
         context->term -= (term.atom.parenthesesWidth + 1);
         return true;
     }
@@ -1154,9 +1223,23 @@ public:
 
         case ByteTerm::TypePatternCharacterOnce:
         case ByteTerm::TypePatternCharacterFixed: {
+            if (unicode) {
+                if (!U_IS_BMP(currentTerm().atom.patternCharacter)) {
+                    for (unsigned matchAmount = 0; matchAmount < currentTerm().atom.quantityCount; ++matchAmount) {
+                        if (!checkSurrogatePair(currentTerm().atom.patternCharacter, currentTerm().inputPosition - matchAmount)) {
+                            BACKTRACK();
+                        }
+                    }
+                    MATCH_NEXT();
+                }
+            }
+            unsigned position = input.getPos(); // May need to back out reading a surrogate pair.
+
             for (unsigned matchAmount = 0; matchAmount < currentTerm().atom.quantityCount; ++matchAmount) {
-                if (!checkCharacter(currentTerm().atom.patternCharacter, currentTerm().inputPosition - matchAmount))
+                if (!checkCharacter(currentTerm().atom.patternCharacter, currentTerm().inputPosition - matchAmount)) {
+                    input.setPos(position);
                     BACKTRACK();
+                }
             }
             MATCH_NEXT();
         }
@@ -1176,12 +1259,28 @@ public:
         }
         case ByteTerm::TypePatternCharacterNonGreedy: {
             BackTrackInfoPatternCharacter* backTrack = reinterpret_cast<BackTrackInfoPatternCharacter*>(context->frame + currentTerm().frameLocation);
+            backTrack->begin = input.getPos();
             backTrack->matchAmount = 0;
             MATCH_NEXT();
         }
 
         case ByteTerm::TypePatternCasedCharacterOnce:
         case ByteTerm::TypePatternCasedCharacterFixed: {
+            if (unicode) {
+                // Case insensitive matching of unicode charaters are handled as TypeCharacterClass
+                ASSERT(U_IS_BMP(currentTerm().atom.patternCharacter));
+
+                unsigned position = input.getPos(); // May need to back out reading a surrogate pair.
+                
+                for (unsigned matchAmount = 0; matchAmount < currentTerm().atom.quantityCount; ++matchAmount) {
+                    if (!checkCasedCharacter(currentTerm().atom.casedCharacter.lo, currentTerm().atom.casedCharacter.hi, currentTerm().inputPosition - matchAmount)) {
+                        input.setPos(position);
+                        BACKTRACK();
+                    }
+                }
+                MATCH_NEXT();
+            }
+
             for (unsigned matchAmount = 0; matchAmount < currentTerm().atom.quantityCount; ++matchAmount) {
                 if (!checkCasedCharacter(currentTerm().atom.casedCharacter.lo, currentTerm().atom.casedCharacter.hi, currentTerm().inputPosition - matchAmount))
                     BACKTRACK();
@@ -1190,6 +1289,10 @@ public:
         }
         case ByteTerm::TypePatternCasedCharacterGreedy: {
             BackTrackInfoPatternCharacter* backTrack = reinterpret_cast<BackTrackInfoPatternCharacter*>(context->frame + currentTerm().frameLocation);
+
+            // Case insensitive matching of unicode charaters are handled as TypeCharacterClass
+            ASSERT(!unicode || U_IS_BMP(currentTerm().atom.patternCharacter));
+
             unsigned matchAmount = 0;
             while ((matchAmount < currentTerm().atom.quantityCount) && input.checkInput(1)) {
                 if (!checkCasedCharacter(currentTerm().atom.casedCharacter.lo, currentTerm().atom.casedCharacter.hi, currentTerm().inputPosition + 1)) {
@@ -1204,6 +1307,10 @@ public:
         }
         case ByteTerm::TypePatternCasedCharacterNonGreedy: {
             BackTrackInfoPatternCharacter* backTrack = reinterpret_cast<BackTrackInfoPatternCharacter*>(context->frame + currentTerm().frameLocation);
+
+            // Case insensitive matching of unicode charaters are handled as TypeCharacterClass
+            ASSERT(!unicode || U_IS_BMP(currentTerm().atom.patternCharacter));
+            
             backTrack->matchAmount = 0;
             MATCH_NEXT();
         }
@@ -1439,8 +1546,9 @@ public:
 
     Interpreter(BytecodePattern* pattern, unsigned* output, const CharType* input, unsigned length, unsigned start)
         : pattern(pattern)
+        , unicode(pattern->m_unicode)
         , output(output)
-        , input(input, start, length)
+        , input(input, start, length, pattern->m_unicode)
         , allocatorPool(0)
         , remainingMatchCount(matchLimit)
     {
@@ -1448,6 +1556,7 @@ public:
 
 private:
     BytecodePattern* pattern;
+    bool unicode;
     unsigned* output;
     InputStream input;
     BumpPointerPool* allocatorPool;
@@ -1506,14 +1615,14 @@ public:
         m_bodyDisjunction->terms.append(ByteTerm::WordBoundary(invert, inputPosition));
     }
 
-    void atomPatternCharacter(UChar ch, unsigned inputPosition, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    void atomPatternCharacter(UChar32 ch, unsigned inputPosition, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
     {
         if (m_pattern.m_ignoreCase) {
-            ASSERT(u_tolower(ch) <= 0xFFFF);
-            ASSERT(u_toupper(ch) <= 0xFFFF);
+            ASSERT(u_tolower(ch) <= UCHAR_MAX_VALUE);
+            ASSERT(u_toupper(ch) <= UCHAR_MAX_VALUE);
 
-            UChar lo = u_tolower(ch);
-            UChar hi = u_toupper(ch);
+            UChar32 lo = u_tolower(ch);
+            UChar32 hi = u_toupper(ch);
 
             if (lo != hi) {
                 m_bodyDisjunction->terms.append(ByteTerm(lo, hi, inputPosition, frameLocation, quantityCount, quantityType));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010-2012, 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,10 +74,10 @@ struct ByteTerm {
     union {
         struct {
             union {
-                UChar patternCharacter;
+                UChar32 patternCharacter;
                 struct {
-                    UChar lo;
-                    UChar hi;
+                    UChar32 lo;
+                    UChar32 hi;
                 } casedCharacter;
                 CharacterClass* characterClass;
                 unsigned subpatternId;
@@ -105,7 +105,7 @@ struct ByteTerm {
     bool m_invert : 1;
     unsigned inputPosition;
 
-    ByteTerm(UChar ch, int inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    ByteTerm(UChar32 ch, int inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
@@ -128,7 +128,7 @@ struct ByteTerm {
         inputPosition = inputPos;
     }
 
-    ByteTerm(UChar lo, UChar hi, int inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    ByteTerm(UChar32 lo, UChar32 hi, int inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
@@ -341,6 +341,7 @@ public:
         : m_body(WTFMove(body))
         , m_ignoreCase(pattern.m_ignoreCase)
         , m_multiline(pattern.m_multiline)
+        , m_unicode(pattern.m_unicode)
         , m_allocator(allocator)
     {
         m_body->terms.shrinkToFit();
@@ -360,6 +361,7 @@ public:
     std::unique_ptr<ByteDisjunction> m_body;
     bool m_ignoreCase;
     bool m_multiline;
+    bool m_unicode;
     // Each BytecodePattern is associated with a RegExp, each RegExp is associated
     // with a VM.  Cache a pointer to out VM's m_regExpAllocator.
     BumpPointerAllocator* m_allocator;

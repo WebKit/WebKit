@@ -48,6 +48,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearch(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState*);
 
@@ -68,6 +69,7 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, &re
   global        regExpProtoGetterGlobal     DontEnum|Accessor
   ignoreCase    regExpProtoGetterIgnoreCase DontEnum|Accessor
   multiline     regExpProtoGetterMultiline  DontEnum|Accessor
+  unicode       regExpProtoGetterUnicode    DontEnum|Accessor
   source        regExpProtoGetterSource     DontEnum|Accessor
   flags         regExpProtoGetterFlags      DontEnum|Accessor
 @end
@@ -146,7 +148,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-typedef std::array<char, 3 + 1> FlagsString; // 3 different flags and a null character terminator.
+typedef std::array<char, 4 + 1> FlagsString; // 4 different flags and a null character terminator.
 
 static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
 {
@@ -159,6 +161,9 @@ static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
     if (exec->hadException())
         return string;
     JSValue multilineValue = regexp->get(exec, exec->propertyNames().multiline);
+    if (exec->hadException())
+        return string;
+    JSValue unicodeValue = regexp->get(exec, exec->propertyNames().unicode);
 
     unsigned index = 0;
     if (globalValue.toBoolean(exec))
@@ -167,6 +172,8 @@ static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
         string[index++] = 'i';
     if (multilineValue.toBoolean(exec))
         string[index++] = 'm';
+    if (unicodeValue.toBoolean(exec))
+        string[index++] = 'u';
     ASSERT(index < string.size());
     string[index] = 0;
     return string;
@@ -223,6 +230,15 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState* exec)
         return throwVMTypeError(exec);
 
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->multiline()));
+}
+
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!thisValue.inherits(RegExpObject::info()))
+        return throwVMTypeError(exec);
+    
+    return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->unicode()));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState* exec)

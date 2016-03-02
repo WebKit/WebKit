@@ -57,7 +57,7 @@ private:
 
     std::unique_ptr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
     {
-        JSC::Yarr::YarrPattern pattern(patternString, (caseSensitivity == TextCaseInsensitive), (multilineMode == MultilineEnabled), &m_constructionError);
+        JSC::Yarr::YarrPattern pattern(patternString, (caseSensitivity == TextCaseInsensitive), (multilineMode == MultilineEnabled), false, &m_constructionError);
         if (m_constructionError) {
             LOG_ERROR("RegularExpression: YARR compile failed with '%s'", m_constructionError);
             return nullptr;

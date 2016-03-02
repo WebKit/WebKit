@@ -1,3 +1,26 @@
+2016-03-01  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Add support for Unicode regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=154842
+
+        Reviewed by Filip Pizlo.
+
+        Added a new test for the added unicode regular expression processing.
+
+        Updated several tests for the y flag changes and "unicode" property.
+
+        * js/regexp-unicode-expected.txt: Added.
+        * js/regexp-unicode.html: Added.
+        * js/script-tests/regexp-unicode.js: Added.
+        New test.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/regexp-flags-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/regexp-flags.js:
+        (RegExp.prototype.hasOwnProperty):
+        Updated tests.
+
 2016-03-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/text/crash-complex-text-surrogate.html as flaky on mac

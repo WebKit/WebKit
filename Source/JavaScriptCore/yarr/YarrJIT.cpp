@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 #include "LinkBuffer.h"
 #include "Options.h"
 #include "Yarr.h"
-#include "YarrCanonicalizeUCS2.h"
+#include "YarrCanonicalizeUnicode.h"
 
 #if ENABLE(YARR_JIT)
 
@@ -140,7 +140,7 @@ class YarrGenerator : private MacroAssembler {
         }
     }
 
-    void matchCharacterClassRange(RegisterID character, JumpList& failures, JumpList& matchDest, const CharacterRange* ranges, unsigned count, unsigned* matchIndex, const UChar* matches, unsigned matchCount)
+    void matchCharacterClassRange(RegisterID character, JumpList& failures, JumpList& matchDest, const CharacterRange* ranges, unsigned count, unsigned* matchIndex, const UChar32* matches, unsigned matchCount)
     {
         do {
             // pick which range we're going to generate
@@ -200,15 +200,15 @@ class YarrGenerator : private MacroAssembler {
 
             if (charClass->m_matchesUnicode.size()) {
                 for (unsigned i = 0; i < charClass->m_matchesUnicode.size(); ++i) {
-                    UChar ch = charClass->m_matchesUnicode[i];
+                    UChar32 ch = charClass->m_matchesUnicode[i];
                     matchDest.append(branch32(Equal, character, Imm32(ch)));
                 }
             }
 
             if (charClass->m_rangesUnicode.size()) {
                 for (unsigned i = 0; i < charClass->m_rangesUnicode.size(); ++i) {
-                    UChar lo = charClass->m_rangesUnicode[i].begin;
-                    UChar hi = charClass->m_rangesUnicode[i].end;
+                    UChar32 lo = charClass->m_rangesUnicode[i].begin;
+                    UChar32 hi = charClass->m_rangesUnicode[i].end;
 
                     Jump below = branch32(LessThan, character, Imm32(lo));
                     matchDest.append(branch32(LessThanOrEqual, character, Imm32(hi)));
@@ -285,7 +285,7 @@ class YarrGenerator : private MacroAssembler {
         return branch32(NotEqual, index, length);
     }
 
-    Jump jumpIfCharNotEquals(UChar ch, int inputPosition, RegisterID character)
+    Jump jumpIfCharNotEquals(UChar32 ch, int inputPosition, RegisterID character)
     {
         readCharacter(inputPosition, character);
 
@@ -766,7 +766,7 @@ class YarrGenerator : private MacroAssembler {
         YarrOp* nextOp = &m_ops[opIndex + 1];
 
         PatternTerm* term = op.m_term;
-        UChar ch = term->patternCharacter;
+        UChar32 ch = term->patternCharacter;
 
         if ((ch > 0xff) && (m_charSize == Char8)) {
             // Have a 16 bit pattern character and an 8 bit string - short circuit
@@ -813,7 +813,7 @@ class YarrGenerator : private MacroAssembler {
             int shiftAmount = (m_charSize == Char8 ? 8 : 16) * numberCharacters;
 #endif
 
-            UChar currentCharacter = nextTerm->patternCharacter;
+            UChar32 currentCharacter = nextTerm->patternCharacter;
 
             if ((currentCharacter > 0xff) && (m_charSize == Char8)) {
                 // Have a 16 bit pattern character and an 8 bit string - short circuit
@@ -882,7 +882,7 @@ class YarrGenerator : private MacroAssembler {
     {
         YarrOp& op = m_ops[opIndex];
         PatternTerm* term = op.m_term;
-        UChar ch = term->patternCharacter;
+        UChar32 ch = term->patternCharacter;
 
         const RegisterID character = regT0;
         const RegisterID countRegister = regT1;
@@ -919,7 +919,7 @@ class YarrGenerator : private MacroAssembler {
     {
         YarrOp& op = m_ops[opIndex];
         PatternTerm* term = op.m_term;
-        UChar ch = term->patternCharacter;
+        UChar32 ch = term->patternCharacter;
 
         const RegisterID character = regT0;
         const RegisterID countRegister = regT1;
@@ -977,7 +977,7 @@ class YarrGenerator : private MacroAssembler {
     {
         YarrOp& op = m_ops[opIndex];
         PatternTerm* term = op.m_term;
-        UChar ch = term->patternCharacter;
+        UChar32 ch = term->patternCharacter;
 
         const RegisterID character = regT0;
         const RegisterID countRegister = regT1;

@@ -937,7 +937,7 @@
     <ClCompile Include="..\wasm\WASMModuleParser.cpp" />
     <ClCompile Include="..\wasm\WASMReader.cpp" />
     <ClCompile Include="..\yarr\RegularExpression.cpp" />
-    <ClCompile Include="..\yarr\YarrCanonicalizeUCS2.cpp" />
+    <ClCompile Include="..\yarr\YarrCanonicalizeUnicode.cpp" />
     <ClCompile Include="..\yarr\YarrInterpreter.cpp" />
     <ClCompile Include="..\yarr\YarrJIT.cpp" />
     <ClCompile Include="..\yarr\YarrPattern.cpp" />
@@ -1878,7 +1878,7 @@
     <ClInclude Include="..\wasm\WASMReader.h" />
     <ClInclude Include="..\yarr\RegularExpression.h" />
     <ClInclude Include="..\yarr\Yarr.h" />
-    <ClInclude Include="..\yarr\YarrCanonicalizeUCS2.h" />
+    <ClInclude Include="..\yarr\YarrCanonicalizeUnicode.h" />
     <ClInclude Include="..\yarr\YarrInterpreter.h" />
     <ClInclude Include="..\yarr\YarrJIT.h" />
     <ClInclude Include="..\yarr\YarrParser.h" />

@@ -38,7 +38,8 @@ enum RegExpFlags {
     FlagGlobal = 1,
     FlagIgnoreCase = 2,
     FlagMultiline = 4,
-    InvalidFlags = 8,
+    FlagUnicode = 8,
+    InvalidFlags = 16,
     DeletedValueFlags = -1
 };
 

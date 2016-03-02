@@ -1,0 +1,97 @@
+Test for unicode regular expression processing
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "a".match(/a/)[0].length is 1
+PASS "a".match(/A/i)[0].length is 1
+PASS "a".match(/a/u)[0].length is 1
+PASS "a".match(/A/iu)[0].length is 1
+PASS "Ȓ".match(/Ȓ/)[0].length is 1
+PASS "Ȓ".match(/Ȓ/u)[0].length is 1
+PASS "ሴ".match(/ሴ/)[0].length is 1
+PASS "ሴ".match(/ሴ/u)[0].length is 1
+PASS "⪼".match(/⪼/)[0].length is 1
+PASS "㿭".match(/㿭/u)[0].length is 1
+PASS "𒍅".match(/𒍅/u)[0].length is 2
+PASS "𒍅".match(/𒍅/u)[0].length is 2
+PASS "𝌆".match(/𝌆/)[0].length is 2
+PASS /𐑏/u.test("𐑏") is true
+PASS /𐑏/u.test("𐑏") is true
+PASS "𝌆".match(/𝌆/u)[0].length is 2
+PASS /(𐀀|𐐀|𐐩)/u.test("𐐀") is true
+PASS "𐄣".match(/a|𐄣|b/u)[0].length is 2
+PASS "b".match(/a|𐄣|b/u)[0].length is 1
+PASS /(?:a|𐄣|b)x/u.test("𐄣") is false
+PASS /(?:a|𐄣|b)x/u.test("𐄣x") is true
+PASS /(?:a|𐄣|b)x/u.test("b") is false
+PASS /(?:a|𐄣|b)x/u.test("bx") is true
+PASS "a𐄣x".match(/a𐄣b|a𐄣x/u)[0].length is 4
+PASS /(𐀀|𐐀|𐐩)x/ui.test("𐐀x") is true
+PASS /(𐀀|𐐀|𐐩)x/ui.test("𐐩x") is true
+PASS /(𐀀|𐐀|𐐩)x/ui.test("𐐁x") is true
+PASS /(𐀀|𐐀|𐐩)x/ui.test("𐐨x") is true
+PASS "𐐩".match(/a|𐐁|b/iu)[0].length is 2
+PASS "B".match(/a|𐄣|b/iu)[0].length is 1
+PASS /(?:A|𐄣|b)x/iu.test("𐄣") is false
+PASS /(?:A|𐄣|b)x/iu.test("𐄣x") is true
+PASS /(?:A|𐄣|b)x/iu.test("b") is false
+PASS /(?:A|𐄣|b)x/iu.test("bx") is true
+PASS "a𐄣X".match(/a𐄣b|a𐄣x/iu)[0].length is 4
+PASS "Ťx".match(/ťx/iu)[0].length is 2
+PASS "𝌆".match(/^.$/u)[0].length is 2
+PASS "It is 78°".match(/.*/u)[0].length is 9
+PASS "𝌆".match(/[𝌆a]/)[0].length is 1
+PASS "𝌆".match(/[a𝌆]/u)[0].length is 2
+PASS "𝌆".match(/[𝌆a]/u)[0].length is 2
+PASS "𝌆".match(/[a-𝌆]/)[0].length is 1
+PASS "𝌆".match(/[a-𝌆]/u)[0].length is 2
+PASS "X".match(/[ -𐑏]/u)[0].length is 1
+PASS "က".match(/[ -𐑏]/u)[0].length is 1
+PASS "𐐧".match(/[ -𐑏]/u)[0].length is 2
+PASS re1.test("Z") is false
+PASS re1.test("က") is false
+PASS re1.test("𐐀") is false
+PASS re2.test("A") is true
+PASS re2.test("￿") is false
+PASS re2.test("𒍅") is true
+PASS "𐌑𐌑𐌑".match(/𐌑*a|𐌑*./u)[0] is "𐌑𐌑𐌑"
+PASS "a𐌑𐌑".match(/a𐌑*?$/u)[0] is "a𐌑𐌑"
+PASS "a𐌑𐌑𐌑c".match(/a𐌑*cd|a𐌑*c/u)[0] is "a𐌑𐌑𐌑c"
+PASS "a𐌑𐌑𐌑c".match(/a𐌑+cd|a𐌑+c/u)[0] is "a𐌑𐌑𐌑c"
+PASS "𐌑𐌑𐌑".match(/𐌑+?a|𐌑+?./u)[0] is "𐌑𐌑"
+PASS "𐌑𐌑𐌑".match(/𐌑+?a|𐌑+?$/u)[0] is "𐌑𐌑𐌑"
+PASS "a𐌑𐌑𐌑c".match(/a𐌑*?cd|a𐌑*?c/u)[0] is "a𐌑𐌑𐌑c"
+PASS "a𐌑𐌑𐌑c".match(/a𐌑+?cd|a𐌑+?c/u)[0] is "a𐌑𐌑𐌑c"
+PASS "𐌑𐌑𐌑".match(/𐌑+?a|𐌑+?./iu)[0] is "𐌑𐌑"
+PASS "𐐪𐐪𐌑".match(/𐐂*𐈀|𐐂*𐌑/iu)[0] is "𐐪𐐪𐌑"
+PASS "𐐪𐐪𐌑".match(/𐐂+𐈀|𐐂+𐌑/iu)[0] is "𐐪𐐪𐌑"
+PASS "𐐪𐐪𐌑".match(/𐐂*?𐈀|𐐂*?𐌑/iu)[0] is "𐐪𐐪𐌑"
+PASS "𐐪𐐪𐌑".match(/𐐂+?𐈀|𐐂+?𐌑/iu)[0] is "𐐪𐐪𐌑"
+PASS "ab𐌑c𐨁".match(/abc|ab𐌑cd|ab𐌑c𐨁d|ab𐌑c𐨁/u)[0] is "ab𐌑c𐨁"
+PASS "ab𐐨c𐨁".match(/abc|ab𐐀cd|ab𐐀c𐨁d|ab𐐀c𐨁/iu)[0] is "ab𐐨c𐨁"
+PASS /abc|ab𐐀cd|ab𐐀c𐨁d|ab𐐀c𐨁/iu.test("qwerty123") is false
+PASS "a𐐨𐐨𐐨c".match(/ac|a𐐀*cd|a𐐀+cd|a𐐀+c/iu)[0] is "a𐐨𐐨𐐨c"
+PASS "ab𐐨𐐨𐐨c𐨁".match(/abc|ab𐐀*cd|ab𐐀+c𐨁d|ab𐐀+c𐨁/iu)[0] is "ab𐐨𐐨𐐨c𐨁"
+PASS "ab𐐨𐐨𐐨".match(/abc|ab𐐨*./u)[0] is "ab𐐨𐐨𐐨"
+PASS "ab𐐨𐐨𐐨".match(/abc|ab𐐀*./iu)[0] is "ab𐐨𐐨𐐨"
+PASS match3[0] is "a𐐐𐐐b"
+PASS match3[1] is undefined.
+PASS match3[2] is "a𐐐𐐐b"
+PASS match4[0] is "a𐐸𐐸b"
+PASS match4[1] is undefined.
+PASS match4[2] is "𐐸𐐸"
+PASS match5[0] is "a𐐒𐐒b𐐒𐐒"
+PASS match5[1] is undefined.
+PASS match5[2] is "𐐒𐐒"
+PASS match6[0] is "a𐐒𐐒b𐐺𐐒"
+PASS match6[1] is undefined.
+PASS match6[2] is "𐐒𐐒"
+PASS /ẚbc/ui.test("abc") is true
+PASS /abc/ui.test("ẚbc") is true
+PASS /texẗ/ui.test("text") is true
+PASS /text/ui.test("ẗext") is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
