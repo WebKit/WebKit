@@ -1,3 +1,56 @@
+2016-02-29  Ada Chan  <adachan@apple.com>
+
+        Adopt the new version of AVOutputDeviceMenuController's showMenuForRect method.
+        https://bugs.webkit.org/show_bug.cgi?id=154823
+
+        Reviewed by Tim Horton.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+        (WebCore::WebMediaSessionManager::customPlaybackActionSelected):
+        Call customPlaybackActionSelected() on the client that requested the picker.
+        * Modules/mediasession/WebMediaSessionManager.h:
+        * Modules/mediasession/WebMediaSessionManagerClient.h:
+        * dom/Document.cpp:
+        (WebCore::Document::showPlaybackTargetPicker):
+        (WebCore::Document::customPlaybackActionSelected):
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::customPlaybackActionSelected):
+        (WebCore::HTMLMediaElement::playbackTargetPickerCustomActionName):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::showPlaybackTargetPicker):
+        (WebCore::MediaElementSession::customPlaybackActionSelected):
+        * html/MediaElementSession.h:
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        (WebCore::Page::showPlaybackTargetPicker):
+        (WebCore::Page::customPlaybackActionSelected):
+        * page/Page.h:
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::customPlaybackActionSelected):
+        * platform/graphics/MediaPlaybackTargetClient.h:
+        * platform/graphics/MediaPlaybackTargetPicker.cpp:
+        (WebCore::MediaPlaybackTargetPicker::pendingActionTimerFired):
+        (WebCore::MediaPlaybackTargetPicker::showPlaybackTargetPicker):
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+        (WebCore::MediaPlaybackTargetPicker::Client::customPlaybackActionSelected):
+        (WebCore::MediaPlaybackTargetPicker::customPlaybackActionSelected):
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        Update the forward declaration of AVOutputDeviceMenuController's showMenuForRect method.
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker):
+        Call the new version of showMenuForRect if available.
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::setExternalPlayback):
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::showPlaybackTargetPicker):
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+        * platform/spi/cocoa/AVKitSPI.h:
+        Updated with the new version of showMenuForRect.
+
 2016-03-01  Daniel Bates  <dabates@apple.com>
 
         com.apple.WebKit.Networking.Development crashes in WebCore::formOpen()

@@ -45,7 +45,7 @@ public:
 
     void addPlaybackTargetPickerClient(uint64_t);
     void removePlaybackTargetPickerClient(uint64_t);
-    void showPlaybackTargetPicker(uint64_t, const WebCore::FloatRect&, bool hasVideo);
+    void showPlaybackTargetPicker(uint64_t, const WebCore::FloatRect&, bool hasVideo, const String&);
     void playbackTargetPickerClientStateDidChange(uint64_t, WebCore::MediaProducer::MediaStateFlags);
     void setMockMediaPlaybackTargetPickerEnabled(bool);
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State);
@@ -54,6 +54,7 @@ public:
     virtual void setPlaybackTarget(uint64_t, Ref<WebCore::MediaPlaybackTarget>&&) override;
     virtual void externalOutputDeviceAvailableDidChange(uint64_t, bool) override;
     virtual void setShouldPlayToPlaybackTarget(uint64_t, bool) override;
+    virtual void customPlaybackActionSelected(uint64_t) override;
 
     void invalidate();
 

@@ -344,6 +344,8 @@ public:
     virtual bool isPlayingToWirelessPlaybackTarget() const override;
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
     virtual void setShouldPlayToPlaybackTarget(bool) override;
+    virtual void customPlaybackActionSelected() override;
+    String playbackTargetPickerCustomActionName() const;
 #endif
     bool webkitCurrentPlaybackTargetIsWireless() const;
 

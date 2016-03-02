@@ -6828,7 +6828,7 @@ void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& clien
     page->removePlaybackTargetPickerClient(clientId);
 }
 
-void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo)
+void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo, const String& customMenuItemTitle)
 {
     Page* page = this->page();
     if (!page)
@@ -6838,7 +6838,7 @@ void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool 
     if (it == m_clientToIDMap.end())
         return;
 
-    page->showPlaybackTargetPicker(it->value, view()->lastKnownMousePosition(), isVideo);
+    page->showPlaybackTargetPicker(it->value, view()->lastKnownMousePosition(), isVideo, customMenuItemTitle);
 }
 
 void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient& client, MediaProducer::MediaStateFlags state)
@@ -6879,6 +6879,12 @@ void Document::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
         return;
 
     it->value->setShouldPlayToPlaybackTarget(shouldPlay);
+}
+
+void Document::customPlaybackActionSelected(uint64_t clientId)
+{
+    if (auto* client = m_idToClientMap.get(clientId))
+        client->customPlaybackActionSelected();
 }
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 

@@ -41,7 +41,7 @@ public:
 
     virtual ~MediaPlaybackTargetPickerMock();
 
-    void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute) override;
+    void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, const String&) override;
     void startingMonitoringPlaybackTargets() override;
     void stopMonitoringPlaybackTargets() override;
     void invalidatePlaybackTargets() override;

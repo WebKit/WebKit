@@ -59,6 +59,9 @@ void MediaPlaybackTargetPicker::pendingActionTimerFired()
 
     if (pendingActions & OutputDeviceAvailabilityChanged)
         m_client->externalOutputDeviceAvailableDidChange(externalOutputDeviceAvailable());
+
+    if (pendingActions & CustomPlaybackActionSelected)
+        m_client->customPlaybackActionSelected();
 }
 
 void MediaPlaybackTargetPicker::addPendingAction(PendingActionFlags action)
@@ -70,7 +73,7 @@ void MediaPlaybackTargetPicker::addPendingAction(PendingActionFlags action)
     m_pendingActionTimer.startOneShot(pendingActionInterval);
 }
 
-void MediaPlaybackTargetPicker::showPlaybackTargetPicker(const FloatRect&, bool)
+void MediaPlaybackTargetPicker::showPlaybackTargetPicker(const FloatRect&, bool, const String&)
 {
     ASSERT_NOT_REACHED();
 }

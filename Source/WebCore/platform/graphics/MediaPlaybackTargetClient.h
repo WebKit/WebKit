@@ -42,6 +42,7 @@ public:
     virtual void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) = 0;
     virtual void externalOutputDeviceAvailableDidChange(bool) = 0;
     virtual void setShouldPlayToPlaybackTarget(bool) = 0;
+    virtual void customPlaybackActionSelected() = 0;
 };
 
 } // namespace WebCore

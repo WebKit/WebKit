@@ -99,6 +99,10 @@ void WebVideoFullscreenInterfaceMac::preparedToReturnToInline(bool, const IntRec
 {
 }
 
+void WebVideoFullscreenInterfaceMac::setExternalPlayback(bool, ExternalPlaybackTargetType, WTF::String)
+{
+}
+
 bool supportsPictureInPicture()
 {
     return false;

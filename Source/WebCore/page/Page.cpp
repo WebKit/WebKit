@@ -1853,15 +1853,16 @@ void Page::removePlaybackTargetPickerClient(uint64_t contextId)
     chrome().client().removePlaybackTargetPickerClient(contextId);
 }
 
-void Page::showPlaybackTargetPicker(uint64_t contextId, const WebCore::IntPoint& location, bool isVideo)
+void Page::showPlaybackTargetPicker(uint64_t contextId, const WebCore::IntPoint& location, bool isVideo, const String& customMenuItemTitle)
 {
 #if PLATFORM(IOS)
     // FIXME: refactor iOS implementation.
     UNUSED_PARAM(contextId);
     UNUSED_PARAM(location);
+    UNUSED_PARAM(customMenuItemTitle);
     chrome().client().showPlaybackTargetPicker(isVideo);
 #else
-    chrome().client().showPlaybackTargetPicker(contextId, location, isVideo);
+    chrome().client().showPlaybackTargetPicker(contextId, location, isVideo, customMenuItemTitle);
 #endif
 }
 
@@ -1905,6 +1906,12 @@ void Page::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
             continue;
         frame->document()->setShouldPlayToPlaybackTarget(clientId, shouldPlay);
     }
+}
+
+void Page::customPlaybackActionSelected(uint64_t contextId)
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+        frame->document()->customPlaybackActionSelected(contextId);
 }
 #endif
 

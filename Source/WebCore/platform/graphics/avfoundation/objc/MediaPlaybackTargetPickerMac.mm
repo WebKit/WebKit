@@ -51,11 +51,6 @@ using namespace WebCore;
 static NSString *externalOutputDeviceAvailableKeyName = @"externalOutputDeviceAvailable";
 static NSString *externalOutputDevicePickedKeyName = @"externalOutputDevicePicked";
 
-// FIXME: remove this once the headers are available.
-@interface AVOutputDeviceMenuController (ForwardDeclaration)
-- (BOOL)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName allowReselectionOfSelectedOutputDevice:(BOOL)allowReselectionOfSelectedOutputDevice;
-@end
-
 @interface WebAVOutputDeviceMenuControllerHelper : NSObject {
     MediaPlaybackTargetPickerMac* m_callback;
 }
@@ -114,7 +109,7 @@ AVOutputDeviceMenuControllerType *MediaPlaybackTargetPickerMac::devicePicker()
     return m_outputDeviceMenuController.get();
 }
 
-void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool checkActiveRoute)
+void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool checkActiveRoute, const String& customMenuItemTitle)
 {
     if (!client() || m_showingMenu)
         return;
@@ -122,14 +117,29 @@ void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& loc
     LOG(Media, "MediaPlaybackTargetPickerMac::showPlaybackTargetPicker - checkActiveRoute = %i", (int)checkActiveRoute);
 
     AVOutputDeviceMenuControllerType *picker = devicePicker();
-    if (![picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:)])
+    if (![picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:customMenuItemTitle:customMenuItemEnabled:)] && ![picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:)])
         return;
 
     m_showingMenu = true;
-    if ([picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
+
+    if ([picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:customMenuItemTitle:customMenuItemEnabled:)]) {
+        NSString *customMenuItemTitleNSString = customMenuItemTitle.isEmpty() ? nil : (NSString *)customMenuItemTitle;
+        switch ([picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute customMenuItemTitle:customMenuItemTitleNSString customMenuItemEnabled:YES]) {
+        case AVOutputDeviceMenuControllerSelectionCustomMenuItem:
+            customPlaybackActionSelected();
+            break;
+        case AVOutputDeviceMenuControllerSelectionOutputDevice:
+            if (!checkActiveRoute)
+                currentDeviceDidChange();
+            break;
+        case AVOutputDeviceMenuControllerSelectionNone:
+            break;
+        }
+    } else if ([picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
         if (!checkActiveRoute)
             currentDeviceDidChange();
     }
+
     m_showingMenu = false;
 }
 
