@@ -1326,3 +1326,5 @@ accessibility/mac/selection-notification-focus-change.html [ Pass Failure ]
 webkit.org/b/154748 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html [ Pass Failure ]
 
 webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass Timeout ]
+
+webkit.org/b/154709 [ ElCapitan+ ] fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
