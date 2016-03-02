@@ -6,8 +6,8 @@ This test checks that the right accessibility tree is generated for a link insid
 AXRole: AXLink
 AXParent: AXSection
 AXChildren: 1
-AXPosition: { 8.000000, 98.000000 }
-AXSize: { 280.000000, 213.000000 }
+AXPosition: { 8.000000, 97.000000 }
+AXSize: { 280.000000, 214.000000 }
 AXTitle: Delicious cake
 AXDescription: 
 AXValue: <obj>
@@ -27,7 +27,7 @@ Child 0:
 AXRole: AXImage
 AXParent: AXLink: Delicious cake
 AXChildren: 0
-AXPosition: { 8.000000, 99.000000 }
+AXPosition: { 8.000000, 98.000000 }
 AXSize: { 280.000000, 210.000000 }
 AXTitle: Delicious cake
 AXDescription: Delicious cake

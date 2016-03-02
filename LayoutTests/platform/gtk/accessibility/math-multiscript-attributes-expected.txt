@@ -30,7 +30,7 @@ AXPlatformAttributes: tag:mi, toolkit:WebKitGtk
 AXRole: AXSubscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition: { 33.000000, -14.000000 }
+AXPosition: { 32.000000, -15.000000 }
 AXSize: { 11.000000, 81.000000 }
 AXTitle: 
 AXDescription: 
@@ -49,7 +49,7 @@ AXPlatformAttributes: multiscript-type:post, tag:mi, toolkit:WebKitGtk
 AXRole: AXSuperscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition: { 33.000000, -26.000000 }
+AXPosition: { 32.000000, -26.000000 }
 AXSize: { 11.000000, 80.000000 }
 AXTitle: 
 AXDescription: 
@@ -68,7 +68,7 @@ AXPlatformAttributes: multiscript-type:post, tag:mi, toolkit:WebKitGtk
 AXRole: AXSubscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition: { 9.000000, -14.000000 }
+AXPosition: { 9.000000, -15.000000 }
 AXSize: { 10.000000, 81.000000 }
 AXTitle: 
 AXDescription: 

@@ -20,7 +20,7 @@ THEAD, TFOOT table
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 363.000000, 60.000000 }
+AXPosition: { 362.000000, 60.000000 }
 AXSize: { 21.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
@@ -39,7 +39,7 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 383.000000, 60.000000 }
+AXPosition: { 382.000000, 60.000000 }
 AXSize: { 28.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
@@ -58,7 +58,7 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 410.000000, 60.000000 }
+AXPosition: { 409.000000, 60.000000 }
 AXSize: { 29.000000, 29.000000 }
 AXTitle: 
 AXDescription: 

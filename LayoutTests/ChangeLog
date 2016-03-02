@@ -1,3 +1,21 @@
+2016-03-02  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [AX][GTK] Position-related tests need new baseline after r196439
+        https://bugs.webkit.org/show_bug.cgi?id=154917
+
+        The tests in question include the position accessed via the component
+        interface. The result changed by one pixel after r196439.
+
+        Unreviewed gardening.
+
+        * platform/gtk/accessibility/image-link-expected.txt: new baseline
+        * platform/gtk/accessibility/math-multiscript-attributes-expected.txt: new baseline
+        * platform/gtk/accessibility/table-attributes-expected.txt: new baseline
+        * platform/gtk/accessibility/table-cell-spans-expected.txt: new baseline
+        * platform/gtk/accessibility/table-cells-expected.txt: new baseline
+        * platform/gtk/accessibility/table-detection-expected.txt: new baseline
+        * platform/gtk/accessibility/table-sections-expected.txt: new baseline
+
 2016-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Contents inside a shadow host with a negative tabindex should not be tab focusable

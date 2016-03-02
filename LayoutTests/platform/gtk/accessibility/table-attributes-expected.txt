@@ -11,7 +11,7 @@ South	3333	1111	2222
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 235.000000, 26.000000 }
+AXPosition: { 234.000000, 26.000000 }
 AXSize: { 144.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
@@ -30,7 +30,7 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 235.000000, 26.000000 }
+AXPosition: { 234.000000, 26.000000 }
 AXSize: { 144.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
@@ -49,7 +49,7 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 378.000000, 26.000000 }
+AXPosition: { 377.000000, 26.000000 }
 AXSize: { 70.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
@@ -68,7 +68,7 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 447.000000, 26.000000 }
+AXPosition: { 446.000000, 26.000000 }
 AXSize: { 120.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
@@ -87,7 +87,7 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 447.000000, 26.000000 }
+AXPosition: { 446.000000, 26.000000 }
 AXSize: { 120.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
