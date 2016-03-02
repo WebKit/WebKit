@@ -1,3 +1,15 @@
+2016-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a custom element test for synchronous element construction in HTML parser
+        https://bugs.webkit.org/show_bug.cgi?id=154932
+
+        Reviewed by Antti Koivisto.
+
+        Added a test.
+
+        * fast/custom-elements/parser/parser-constructs-custom-element-synchronously-expected.txt: Added.
+        * fast/custom-elements/parser/parser-constructs-custom-element-synchronously.html: Added.
+
 2016-03-02  Filip Pizlo  <fpizlo@apple.com>
 
         Add a benchmark for string transcoding.
