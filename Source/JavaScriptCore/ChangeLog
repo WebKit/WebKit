@@ -1,3 +1,9 @@
+2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Update the status of Proxy objects to "In Development".
+
+        * features.json:
+
 2016-03-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197226 and r197256.

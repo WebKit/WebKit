@@ -218,7 +218,7 @@
     {
         "name": "Proxy Objects",
         "status": {
-            "status": "Under Consideration"
+            "status": "In Development"
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-proxy-objects",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=35731",
