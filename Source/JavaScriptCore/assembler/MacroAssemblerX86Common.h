@@ -262,26 +262,26 @@ public:
         else if (op1 == dest)
             and32(op2, dest);
         else {
-            move(op2, dest);
+            move32IfNeeded(op2, dest);
             and32(op1, dest);
         }
     }
 
     void and32(Address op1, RegisterID op2, RegisterID dest)
     {
-        move(op2, dest);
+        move32IfNeeded(op2, dest);
         and32(op1, dest);
     }
 
     void and32(RegisterID op1, Address op2, RegisterID dest)
     {
-        move(op1, dest);
+        move32IfNeeded(op1, dest);
         and32(op2, dest);
     }
 
     void and32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        move(src, dest);
+        move32IfNeeded(src, dest);
         and32(imm, dest);
     }
 
@@ -324,8 +324,7 @@ public:
     {
         ASSERT(shift_amount != dest);
 
-        if (src != dest)
-            move(src, dest);
+        move32IfNeeded(src, dest);
         lshift32(shift_amount, dest);
     }
 
@@ -336,8 +335,7 @@ public:
     
     void lshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (src != dest)
-            move(src, dest);
+        move32IfNeeded(src, dest);
         lshift32(imm, dest);
     }
     
@@ -352,7 +350,7 @@ public:
             m_assembler.imull_rr(src1, dest);
             return;
         }
-        move(src1, dest);
+        move32IfNeeded(src1, dest);
         m_assembler.imull_rr(src2, dest);
     }
 
@@ -363,13 +361,13 @@ public:
 
     void mul32(Address src1, RegisterID src2, RegisterID dest)
     {
-        move(src2, dest);
+        move32IfNeeded(src2, dest);
         mul32(src1, dest);
     }
 
     void mul32(RegisterID src1, Address src2, RegisterID dest)
     {
-        move(src1, dest);
+        move32IfNeeded(src1, dest);
         mul32(src2, dest);
     }
     
@@ -444,26 +442,26 @@ public:
         else if (op1 == dest)
             or32(op2, dest);
         else {
-            move(op2, dest);
+            move32IfNeeded(op2, dest);
             or32(op1, dest);
         }
     }
 
     void or32(Address op1, RegisterID op2, RegisterID dest)
     {
-        move(op2, dest);
+        move32IfNeeded(op2, dest);
         or32(op1, dest);
     }
 
     void or32(RegisterID op1, Address op2, RegisterID dest)
     {
-        move(op1, dest);
+        move32IfNeeded(op1, dest);
         or32(op2, dest);
     }
 
     void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        move(src, dest);
+        move32IfNeeded(src, dest);
         or32(imm, dest);
     }
 
@@ -487,8 +485,7 @@ public:
     {
         ASSERT(shift_amount != dest);
 
-        if (src != dest)
-            move(src, dest);
+        move32IfNeeded(src, dest);
         rshift32(shift_amount, dest);
     }
 
@@ -499,8 +496,7 @@ public:
     
     void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (src != dest)
-            move(src, dest);
+        move32IfNeeded(src, dest);
         rshift32(imm, dest);
     }
     
@@ -524,8 +520,7 @@ public:
     {
         ASSERT(shift_amount != dest);
 
-        if (src != dest)
-            move(src, dest);
+        move32IfNeeded(src, dest);
         urshift32(shift_amount, dest);
     }
 
@@ -536,8 +531,7 @@ public:
     
     void urshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (src != dest)
-            move(src, dest);
+        move32IfNeeded(src, dest);
         urshift32(imm, dest);
     }
     
@@ -607,26 +601,26 @@ public:
         else if (op1 == dest)
             xor32(op2, dest);
         else {
-            move(op2, dest);
+            move32IfNeeded(op2, dest);
             xor32(op1, dest);
         }
     }
 
     void xor32(Address op1, RegisterID op2, RegisterID dest)
     {
-        move(op2, dest);
+        move32IfNeeded(op2, dest);
         xor32(op1, dest);
     }
 
     void xor32(RegisterID op1, Address op2, RegisterID dest)
     {
-        move(op1, dest);
+        move32IfNeeded(op1, dest);
         xor32(op2, dest);
     }
 
     void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        move(src, dest);
+        move32IfNeeded(src, dest);
         xor32(imm, dest);
     }
 
@@ -2036,25 +2030,25 @@ public:
     {
         if (src1 == dest)
             return branchAdd32(cond, src2, dest);
-        move(src2, dest);
+        move32IfNeeded(src2, dest);
         return branchAdd32(cond, src1, dest);
     }
 
     Jump branchAdd32(ResultCondition cond, Address src1, RegisterID src2, RegisterID dest)
     {
-        move(src2, dest);
+        move32IfNeeded(src2, dest);
         return branchAdd32(cond, src1, dest);
     }
 
     Jump branchAdd32(ResultCondition cond, RegisterID src1, Address src2, RegisterID dest)
     {
-        move(src1, dest);
+        move32IfNeeded(src1, dest);
         return branchAdd32(cond, src2, dest);
     }
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        move(src, dest);
+        move32IfNeeded(src, dest);
         return branchAdd32(cond, imm, dest);
     }
 
@@ -2086,7 +2080,7 @@ public:
     {
         if (src1 == dest)
             return branchMul32(cond, src2, dest);
-        move(src2, dest);
+        move32IfNeeded(src2, dest);
         return branchMul32(cond, src1, dest);
     }
 
@@ -2125,13 +2119,13 @@ public:
         // B := A - B is invalid.
         ASSERT(src1 == dest || src2 != dest);
 
-        move(src1, dest);
+        move32IfNeeded(src1, dest);
         return branchSub32(cond, src2, dest);
     }
 
     Jump branchSub32(ResultCondition cond, RegisterID src1, TrustedImm32 src2, RegisterID dest)
     {
-        move(src1, dest);
+        move32IfNeeded(src1, dest);
         return branchSub32(cond, src2, dest);
     }
 
@@ -2490,6 +2484,15 @@ private:
 
         ASSERT(!(cond & DoubleConditionBitSpecial));
         return Jump(m_assembler.jCC(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits)));
+    }
+
+    // The 32bit Move does not need the REX byte for low registers, making it shorter.
+    // Use this if the top bits are irrelevant because they will be reset by the next instruction.
+    void move32IfNeeded(RegisterID src, RegisterID dest)
+    {
+        if (src == dest)
+            return;
+        m_assembler.movl_rr(src, dest);
     }
 
 #if CPU(X86_64)
