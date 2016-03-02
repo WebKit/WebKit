@@ -1,5 +1,20 @@
 2016-03-02  Beth Dakin  <bdakin@apple.com>
 
+        Crashes in media tests after http://trac.webkit.org/changeset/197461
+        https://bugs.webkit.org/show_bug.cgi?id=154933
+
+        Reviewed by Eric Carlson.
+
+        Since the controlsManagerInterface is not guaranteed to exist, it doesn't 
+        make sense to return a reference. Return a pointer instead.
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::isVisible):
+        (WebKit::WebVideoFullscreenManagerProxy::controlsManagerInterface):
+        (WebKit::WebVideoFullscreenManagerProxy::fullscreenMayReturnToInline):
+
+2016-03-02  Beth Dakin  <bdakin@apple.com>
+
         Add support for playbackControlsManager
         https://bugs.webkit.org/show_bug.cgi?id=154742
         -and corresponding-

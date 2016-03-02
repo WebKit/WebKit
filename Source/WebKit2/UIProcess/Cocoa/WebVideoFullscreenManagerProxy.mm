@@ -633,9 +633,13 @@ bool WebVideoFullscreenManagerProxy::isVisible() const
     return m_page->isViewVisible() && m_page->isInWindow();
 }
 
-PlatformWebVideoFullscreenInterface& WebVideoFullscreenManagerProxy::controlsManagerInterface()
+PlatformWebVideoFullscreenInterface* WebVideoFullscreenManagerProxy::controlsManagerInterface()
 {
-    return ensureInterface(m_controlsManagerContextId);
+    if (!m_controlsManagerContextId)
+        return nullptr;
+
+    auto& interface = ensureInterface(m_controlsManagerContextId);
+    return &interface;
 }
 
 void WebVideoFullscreenManagerProxy::fullscreenMayReturnToInline(uint64_t contextId)

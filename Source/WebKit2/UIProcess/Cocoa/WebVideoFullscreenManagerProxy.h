@@ -119,7 +119,7 @@ public:
     void applicationDidBecomeActive();
     bool isVisible() const;
 
-    PlatformWebVideoFullscreenInterface& controlsManagerInterface();
+    PlatformWebVideoFullscreenInterface* controlsManagerInterface();
 
 private:
     friend class WebVideoFullscreenModelContext;
