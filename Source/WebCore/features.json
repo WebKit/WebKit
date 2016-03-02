@@ -365,16 +365,16 @@
     {
         "name": "Custom Elements",
         "status": {
-            "status": "Prototyping"
+            "status": "In Development"
         },
         "url": "http://w3c.github.io/webcomponents/spec/custom/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=150225",
         "specification": "Web Components",
         "description": "Define a custom HTML tag and associate it with an ES6 class.",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Ryosuke Niwa",
+            "twitter": "@RyosukeNiwa",
+            "email": "rniwa@webkit.org"
         }
     },
     {

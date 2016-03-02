@@ -1,3 +1,9 @@
+2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Update the feature status for custom elements API.
+
+        * features.json:
+
 2016-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Contents inside a shadow host with a negative tabindex should not be tab focusable
