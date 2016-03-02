@@ -1,3 +1,26 @@
+2016-03-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Simplify ArithMod(ArithMod(x, const1), const2) if const2 >= const1
+        https://bugs.webkit.org/show_bug.cgi?id=154904
+
+        Reviewed by Saam Barati.
+
+        The ASM test "ubench" has a "x % 10 % 255".
+        The second modulo should be eliminated.
+
+        This is a 15% improvement on ASMJS' ubench.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * tests/stress/arith-modulo-twice.js: Added.
+        (opaqueModuloSmaller):
+        (opaqueModuloEqual):
+        (opaqueModuloLarger):
+        (opaqueModuloSmallerNeg):
+        (opaqueModuloEqualNeg):
+        (opaqueModuloLargerNeg):
+        (opaqueExpectedOther):
+
 2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed. Update the status of Proxy objects to "In Development".

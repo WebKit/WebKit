@@ -36,6 +36,7 @@
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGVariableAccessDataDump.h"
 #include "JSCInlines.h"
+#include <cstdlib>
 
 namespace JSC { namespace DFG {
 
@@ -169,6 +170,21 @@ private:
                     m_node->convertToArithSqrt();
                     m_changed = true;
                 }
+            }
+            break;
+
+        case ArithMod:
+            // On Integers
+            // In: ArithMod(ArithMod(x, const1), const2)
+            // Out: Identity(ArithMod(x, const1))
+            //     if const1 <= const2.
+            if (m_node->binaryUseKind() == Int32Use
+                && m_node->child2()->isInt32Constant()
+                && m_node->child1()->op() == ArithMod
+                && m_node->child1()->binaryUseKind() == Int32Use
+                && m_node->child1()->child2()->isInt32Constant()
+                && std::abs(m_node->child1()->child2()->asInt32()) <= std::abs(m_node->child2()->asInt32())) {
+                    convertToIdentityOverChild1();
             }
             break;
 
