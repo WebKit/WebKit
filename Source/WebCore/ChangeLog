@@ -1,5 +1,12 @@
 2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed. Remove the "Partial Support" status from web components since shadow DOM and custom elements
+        are in active development.
+
+        * features.json:
+
+2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed. Update the feature status for custom elements API.
 
         * features.json:

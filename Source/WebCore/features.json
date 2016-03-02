@@ -188,9 +188,6 @@
     },
     {
         "name": "Web Components",
-        "status": {
-            "status": "Partial Support"
-        },
         "url": "http://www.w3.org/wiki/WebComponents/",
         "keywords": ["web components", "shadow dom", "html imports", "custom elements", "template element"],
         "category": "webapps",
