@@ -1,0 +1,6 @@
+hello world
+
+PASS HTML parser must set the attributes 
+PASS HTML parser must append child nodes 
+PASS HTML parser must set the attributes or append children before calling constructor 
+

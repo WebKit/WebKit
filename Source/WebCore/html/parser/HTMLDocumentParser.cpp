@@ -34,6 +34,8 @@
 #include "HTMLPreloadScanner.h"
 #include "HTMLScriptRunner.h"
 #include "HTMLTreeBuilder.h"
+#include "HTMLUnknownElement.h"
+#include "JSCustomElementInterface.h"
 
 namespace WebCore {
 
@@ -188,8 +190,24 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 {
     ASSERT(scriptingContentIsAllowed(parserContentPolicy()));
 
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (std::unique_ptr<CustomElementConstructionData> constructionData = m_treeBuilder->takeCustomElementConstructionData()) {
+        ASSERT(!m_treeBuilder->hasParserBlockingScriptWork());
+
+        RefPtr<Element> newElement = constructionData->interface->constructElement(constructionData->name, JSCustomElementInterface::ShouldClearException::Clear);
+        if (!newElement) {
+            // FIXME: This call to docuemnt() is wrong for elements inside a template element.
+            newElement = HTMLUnknownElement::create(QualifiedName(nullAtom, constructionData->name, xhtmlNamespaceURI), *document());
+        }
+
+        m_treeBuilder->didCreateCustomOrCallbackElement(newElement.releaseNonNull(), *constructionData);
+        return;
+    }
+#endif
+
     TextPosition scriptStartPosition = TextPosition::belowRangePosition();
     if (auto scriptElement = m_treeBuilder->takeScriptToProcess(scriptStartPosition)) {
+        ASSERT(!m_treeBuilder->hasParserBlockingScriptWork());
         // We will not have a scriptRunner when parsing a DocumentFragment.
         if (m_scriptRunner)
             m_scriptRunner->execute(scriptElement.release(), scriptStartPosition);
@@ -459,7 +477,7 @@ bool HTMLDocumentParser::isWaitingForScripts() const
     // The script runner will hold the script until its loaded and run. During
     // any of this time, we want to count ourselves as "waiting for a script" and thus
     // run the preload scanner, as well as delay completion of parsing.
-    bool treeBuilderHasBlockingScript = m_treeBuilder->hasParserBlockingScript();
+    bool treeBuilderHasBlockingScript = m_treeBuilder->hasParserBlockingScriptWork();
     bool scriptRunnerHasBlockingScript = m_scriptRunner && m_scriptRunner->hasParserBlockingScript();
     // Since the parser is paused while a script runner has a blocking script, it should
     // never be possible to end up with both objects holding a blocking script.

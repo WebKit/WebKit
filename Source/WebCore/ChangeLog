@@ -1,3 +1,80 @@
+2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make HTML parser construct custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=154908
+        <rdar://problem/24923735>
+
+        Reviewed by Antti Koivisto.
+
+        Added the support for instantiating custom elements inside the parser. Based on Jan F2F discussion,
+        the HTML parser is going to synchronously construct custom elements. When a custom element constructor
+        throws, the HTML parser creates a HTMLUnknownElement instead.
+
+        In our implementation, we pause the parser completely and construct custom elements using the same
+        mechanism used to run author scripts. It's possible that we may want to apply some optimizations to
+        to make custom element construction but it's probably a good idea to get semantics right first.
+
+        Tests: fast/custom-elements/parser/parser-constructs-custom-elements.html
+               fast/custom-elements/parser/parser-fallsback-to-unknown-element.html
+               fast/custom-elements/parser/parser-sets-attributes-and-children.html
+               fast/custom-elements/parser/parser-uses-constructed-element.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::constructElement): Added ShouldClearException as an argument
+        to be used by the HTML parser since the parser can't re-throw to anywhere or fail parsing.
+
+        * bindings/js/JSCustomElementInterface.h:
+        (WebCore::JSCustomElementInterface::ShouldClearException): Added.
+
+        * dom/Document.cpp:
+        (WebCore::createHTMLElementWithNameValidation): Do not clear the exception here since createElement
+        must re-throw the exception thrown by a custom element constructor.
+        (WebCore::Document::createElementForBindings):
+
+        * dom/make_names.pl:
+        (printFactoryCppFile): Added ConstructorFunctionMapEntry which contains the constructor function
+        as well as the qualified name.
+        (printFactoryHeaderFile): Added a variant of createKnownElement and createElement that takes
+        AtomicString instead of QualifiedName.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::setAttributes): Added a variant that takes Vector<Attribute>.
+        (WebCore::HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface): Added. Returns a
+        custom element interface when the element doesn't match any builtin element and there is a custom
+        element definition that matches the specified name.
+        (WebCore::HTMLConstructionSite::insertCustomElement): Added. Like insertElement but also sets the
+        attributes on the newly created custom element.
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface): Extracted from
+        createHTMLElement. When customElementInterface is not nullptr, we optionally find the custom
+        element interface and return nullptr.
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        * html/parser/HTMLConstructionSite.h:
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder): Create a custom element when there
+        is a pending custom element to create (i.e. m_customElementToConstruct is not empty).
+        (WebCore::HTMLDocumentParser::isWaitingForScripts):
+
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::create): Added a variant used for custom elements.
+        (WebCore::HTMLStackItem::HTMLStackItem): Ditto.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::CustomElementConstructionData::CustomElementConstructionData): Added. It needs to be in
+        the cpp file to avoid introducing more header dependencies in HTMLTreeBuilder.h.
+        (WebCore::CustomElementConstructionData::~CustomElementConstructionData): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Use insertGenericHTMLElement when creating
+        a generic element that could be custom elements.
+        (WebCore::HTMLTreeBuilder::insertGenericHTMLElement): Added. Create and insert a new element
+        or set m_customElementToConstruct so that the HTMLDocumentParser will create a custom element later.
+        (WebCore::HTMLTreeBuilder::didCreateCustomOrCallbackElement): Added. Called by HTMLDocumentParser
+        when it finishes creating a new custom element.
+
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::takeCustomElementConstructionData): Added.
+        (WebCore::HTMLTreeBuilder::hasParserBlockingScriptWork): Renamed from hasParserBlockingScript.
+        Checks the existence of m_customElementToConstruct as well as m_scriptToProcess.
+
 2016-03-02  Zalan Bujtas  <zalan@apple.com>
 
         Use IndentTextOrNot instead of passing isFirstLine/shouldIndentText as bool.

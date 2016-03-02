@@ -84,6 +84,7 @@ class AtomicHTMLToken;
 class Document;
 class Element;
 class HTMLFormElement;
+class JSCustomElementInterface;
 
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
@@ -103,6 +104,10 @@ public:
     void insertCommentOnDocument(AtomicHTMLToken*);
     void insertCommentOnHTMLHtmlElement(AtomicHTMLToken*);
     void insertHTMLElement(AtomicHTMLToken*);
+#if ENABLE(CUSTOM_ELEMENTS)
+    JSCustomElementInterface* insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken*);
+    void insertCustomElement(Ref<Element>&&, const AtomicString& localName, Vector<Attribute>&);
+#endif
     void insertSelfClosingHTMLElement(AtomicHTMLToken*);
     void insertFormattingElement(AtomicHTMLToken*);
     void insertHTMLHeadElement(AtomicHTMLToken*);
@@ -194,6 +199,7 @@ private:
 
     void findFosterSite(HTMLConstructionSiteTask&);
 
+    RefPtr<Element> createHTMLElementOrFindCustomElementInterface(AtomicHTMLToken*, JSCustomElementInterface**);
     Ref<Element> createHTMLElement(AtomicHTMLToken*);
     Ref<Element> createElement(AtomicHTMLToken*, const AtomicString& namespaceURI);
 

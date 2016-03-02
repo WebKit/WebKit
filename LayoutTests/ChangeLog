@@ -1,3 +1,22 @@
+2016-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make HTML parser construct custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=154908
+
+        Reviewed by Antti Koivisto.
+
+        Added W3C testharness.js based tests for instantiating custom elements inside the HTML parser.
+
+        * fast/custom-elements/parser: Added.
+        * fast/custom-elements/parser/parser-constructs-custom-elements-expected.txt: Added.
+        * fast/custom-elements/parser/parser-constructs-custom-elements.html: Added.
+        * fast/custom-elements/parser/parser-fallsback-to-unknown-element-expected.txt: Added.
+        * fast/custom-elements/parser/parser-fallsback-to-unknown-element.html: Added.
+        * fast/custom-elements/parser/parser-sets-attributes-and-children-expected.txt: Added.
+        * fast/custom-elements/parser/parser-sets-attributes-and-children.html: Added.
+        * fast/custom-elements/parser/parser-uses-constructed-element-expected.txt: Added.
+        * fast/custom-elements/parser/parser-uses-constructed-element.html: Added.
+
 2016-03-02  Chris Dumez  <cdumez@apple.com>
 
         Align HTMLInputElement.maxLength with the specification

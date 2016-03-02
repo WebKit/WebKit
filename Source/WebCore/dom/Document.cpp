@@ -879,35 +879,35 @@ void Document::childrenChanged(const ChildChange& change)
     clearStyleResolver();
 }
 
-static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, const QualifiedName qualifiedName, ExceptionCode& ec)
+static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, const AtomicString& localName, ExceptionCode& ec)
 {
-    RefPtr<HTMLElement> element = HTMLElementFactory::createKnownElement(qualifiedName, document);
+    RefPtr<HTMLElement> element = HTMLElementFactory::createKnownElement(localName, document);
     if (LIKELY(element))
         return element;
 
 #if ENABLE(CUSTOM_ELEMENTS)
     auto* definitions = document.customElementDefinitions();
     if (UNLIKELY(definitions)) {
-        if (auto* interface = definitions->findInterface(qualifiedName))
-            return interface->constructElement(qualifiedName.localName());
+        if (auto* interface = definitions->findInterface(localName))
+            return interface->constructElement(localName, JSCustomElementInterface::ShouldClearException::DoNotClear);
     }
 #endif
 
-    if (UNLIKELY(!Document::isValidName(qualifiedName.localName()))) {
+    if (UNLIKELY(!Document::isValidName(localName))) {
         ec = INVALID_CHARACTER_ERR;
         return nullptr;
     }
 
-    return HTMLUnknownElement::create(qualifiedName, document);
+    return HTMLUnknownElement::create(QualifiedName(nullAtom, localName, xhtmlNamespaceURI), document);
 }
 
 RefPtr<Element> Document::createElementForBindings(const AtomicString& name, ExceptionCode& ec)
 {
     if (isHTMLDocument())
-        return createHTMLElementWithNameValidation(*this, QualifiedName(nullAtom, name.convertToASCIILowercase(), xhtmlNamespaceURI), ec);
+        return createHTMLElementWithNameValidation(*this, name.convertToASCIILowercase(), ec);
 
     if (isXHTMLDocument())
-        return createHTMLElementWithNameValidation(*this, QualifiedName(nullAtom, name, xhtmlNamespaceURI), ec);
+        return createHTMLElementWithNameValidation(*this, name, ec);
 
     if (!isValidName(name)) {
         ec = INVALID_CHARACTER_ERR;

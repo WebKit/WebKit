@@ -986,10 +986,28 @@ END
         $argumentList = "name, document, createdByParser";
     }
 
+    my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
+
     printConstructors($F, \%tagConstructorMap);
 
     print F <<END
-static NEVER_INLINE void populate$parameters{namespace}FactoryMap(HashMap<AtomicStringImpl*, $parameters{namespace}ConstructorFunction>& map)
+
+struct ConstructorFunctionMapEntry {
+    ConstructorFunctionMapEntry($parameters{namespace}ConstructorFunction function, const QualifiedName& name)
+        : function(function)
+        , qualifiedName(&name)
+    { }
+
+    ConstructorFunctionMapEntry()
+        : function(nullptr)
+        , qualifiedName(nullptr)
+    { }
+
+    $parameters{namespace}ConstructorFunction function;
+    const QualifiedName* qualifiedName; // Use pointer instead of reference so that emptyValue() in HashMap is cheap to create.
+};
+
+static NEVER_INLINE void populate$parameters{namespace}FactoryMap(HashMap<AtomicStringImpl*, ConstructorFunctionMapEntry>& map)
 {
     struct TableEntry {
         const QualifiedName& name;
@@ -1006,25 +1024,42 @@ END
     };
 
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i)
-        map.add(table[i].name.localName().impl(), table[i].function);
+        map.add(table[i].name.localName().impl(), ConstructorFunctionMapEntry(table[i].function, table[i].name));
 }
 
-RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
+
+static ConstructorFunctionMapEntry find$parameters{namespace}ElementConstructorFunction(const AtomicString& localName)
 {
-    static NeverDestroyed<HashMap<AtomicStringImpl*, $parameters{namespace}ConstructorFunction>> functions;
-    if (functions.get().isEmpty())
-        populate$parameters{namespace}FactoryMap(functions);
-    $parameters{namespace}ConstructorFunction function = functions.get().get(name.localName().impl());
-    if (LIKELY(function))
-        return function($argumentList);
+    static NeverDestroyed<HashMap<AtomicStringImpl*, ConstructorFunctionMapEntry>> map;
+    if (map.get().isEmpty())
+        populate$parameters{namespace}FactoryMap(map);
+    return map.get().get(localName.impl());
+}
+
+RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const AtomicString& localName, Document& document$formElementArgumentForDefinition, bool createdByParser)
+{
+    const ConstructorFunctionMapEntry& entry = find$parameters{namespace}ElementConstructorFunction(localName);
+    if (LIKELY(entry.function)) {
+        ASSERT(entry.qualifiedName);
+        const auto& name = *entry.qualifiedName;
+        return entry.function($argumentList);
+    }
     return nullptr;
 }
 
-Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
+Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const AtomicString& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
 {
     RefPtr<$parameters{namespace}Element> element = $parameters{namespace}ElementFactory::createKnownElement($argumentList);
     if (LIKELY(element))
         return element.releaseNonNull();
+    return $parameters{fallbackInterfaceName}::create(QualifiedName(nullAtom, name, ${lowercaseNamespacePrefix}NamespaceURI), document);
+}
+
+Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
+{
+    const ConstructorFunctionMapEntry& entry = find$parameters{namespace}ElementConstructorFunction(name.localName());
+    if (LIKELY(entry.function))
+        return entry.function($argumentList);
     return $parameters{fallbackInterfaceName}::create(name, document);
 }
 
@@ -1065,10 +1100,13 @@ namespace WebCore {
 END
 ;
 
-print F "        static RefPtr<$parameters{namespace}Element> createKnownElement(const QualifiedName&, Document&";
+print F "        static RefPtr<$parameters{namespace}Element> createKnownElement(const AtomicString& localName, Document&";
 print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser = false);\n\n";
-print F "        static Ref<$parameters{namespace}Element> createElement(const QualifiedName&, Document&";
+print F "        static Ref<$parameters{namespace}Element> createElement(const AtomicString& localName, Document&";
+print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
+print F ", bool createdByParser = false);\n";
+print F "        static Ref<$parameters{namespace}Element> createElement(const QualifiedName& localName, Document&";
 print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser = false);\n";
 

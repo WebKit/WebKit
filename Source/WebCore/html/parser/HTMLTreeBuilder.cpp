@@ -34,6 +34,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLParserIdioms.h"
+#include "JSCustomElementInterface.h"
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
 #include "XLinkNames.h"
@@ -49,6 +50,19 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+#if ENABLE(CUSTOM_ELEMENTS)
+
+CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& interface, const AtomicString& name, const Vector<Attribute>& attributes)
+    : interface(WTFMove(interface))
+    , name(name)
+    , attributes(attributes) // FIXME: Avoid copying attributes.
+{ }
+
+CustomElementConstructionData::~CustomElementConstructionData()
+{ }
+
+#endif
 
 namespace {
 
@@ -896,8 +910,26 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     }
 #endif
     m_tree.reconstructTheActiveFormattingElements();
-    m_tree.insertHTMLElement(&token);
+    insertGenericHTMLElement(token);
 }
+
+inline void HTMLTreeBuilder::insertGenericHTMLElement(AtomicHTMLToken& token)
+{
+#if ENABLE(CUSTOM_ELEMENTS)
+    auto* interface = m_tree.insertHTMLElementOrFindCustomElementInterface(&token);
+    if (UNLIKELY(interface))
+        m_customElementToConstruct = std::make_unique<CustomElementConstructionData>(*interface, token.name(), token.attributes());
+#else
+    m_tree.insertHTMLElement(&token);
+#endif
+}
+
+#if ENABLE(CUSTOM_ELEMENTS)
+void HTMLTreeBuilder::didCreateCustomOrCallbackElement(Ref<Element>&& element, CustomElementConstructionData& data)
+{
+    m_tree.insertCustomElement(WTFMove(element), data.name, data.attributes);
+}
+#endif
 
 #if ENABLE(TEMPLATE_ELEMENT)
 

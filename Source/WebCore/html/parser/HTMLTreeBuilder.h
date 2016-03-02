@@ -34,7 +34,19 @@
 
 namespace WebCore {
 
+class JSCustomElementInterface;
 class HTMLDocumentParser;
+
+#if ENABLE(CUSTOM_ELEMENTS)
+struct CustomElementConstructionData {
+    CustomElementConstructionData(Ref<JSCustomElementInterface>&&, const AtomicString& name, const Vector<Attribute>&);
+    ~CustomElementConstructionData();
+
+    Ref<JSCustomElementInterface> interface;
+    AtomicString name;
+    Vector<Attribute> attributes;
+};
+#endif
 
 class HTMLTreeBuilder {
     WTF_MAKE_FAST_ALLOCATED;
@@ -49,10 +61,15 @@ public:
 
     void constructTree(AtomicHTMLToken&);
 
-    bool hasParserBlockingScript() const;
+    bool hasParserBlockingScriptWork() const;
 
     // Must be called to take the parser-blocking script before calling the parser again.
     RefPtr<Element> takeScriptToProcess(TextPosition& scriptStartPosition);
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    std::unique_ptr<CustomElementConstructionData> takeCustomElementConstructionData() { return WTFMove(m_customElementToConstruct); }
+    void didCreateCustomOrCallbackElement(Ref<Element>&&, CustomElementConstructionData&);
+#endif
 
     // Done, close any open tags, etc.
     void finished();
@@ -165,6 +182,8 @@ private:
 
     void resetInsertionModeAppropriately();
 
+    void insertGenericHTMLElement(AtomicHTMLToken&);
+
 #if ENABLE(TEMPLATE_ELEMENT)
     void processTemplateStartTag(AtomicHTMLToken&);
     bool processTemplateEndTag(AtomicHTMLToken&);
@@ -204,6 +223,10 @@ private:
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
     TextPosition m_scriptToProcessStartPosition; // Starting line number of the script tag needing processing.
 
+#if ENABLE(CUSTOM_ELEMENTS)
+    std::unique_ptr<CustomElementConstructionData> m_customElementToConstruct;
+#endif
+
     bool m_shouldSkipLeadingNewline { false };
 
     bool m_framesetOk { true };
@@ -235,10 +258,15 @@ inline bool HTMLTreeBuilder::isParsingFragment() const
     return !!m_fragmentContext.fragment();
 }
 
-inline bool HTMLTreeBuilder::hasParserBlockingScript() const
+inline bool HTMLTreeBuilder::hasParserBlockingScriptWork() const
 {
     ASSERT(!m_destroyed);
-    return !!m_scriptToProcess;
+#if ENABLE(CUSTOM_ELEMENTS)
+    ASSERT(!(m_scriptToProcess && m_customElementToConstruct));
+    return m_scriptToProcess || m_customElementToConstruct;
+#else
+    return m_scriptToProcess;
+#endif
 }
 
 inline DocumentFragment* HTMLTreeBuilder::FragmentParsingContext::fragment() const

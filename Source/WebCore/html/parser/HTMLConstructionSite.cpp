@@ -28,6 +28,7 @@
 #include "HTMLTreeBuilder.h"
 
 #include "Comment.h"
+#include "CustomElementDefinitions.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Frame.h"
@@ -43,6 +44,7 @@
 #include "HTMLPictureElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLTemplateElement.h"
+#include "HTMLUnknownElement.h"
 #include "NotImplemented.h"
 #include "SVGElement.h"
 #include "Text.h"
@@ -51,11 +53,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline void setAttributes(Element& element, AtomicHTMLToken* token, ParserContentPolicy parserContentPolicy)
+static inline void setAttributes(Element& element, Vector<Attribute>& attributes, ParserContentPolicy parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
-        element.stripScriptingAttributes(token->attributes());
-    element.parserSetAttributes(token->attributes());
+        element.stripScriptingAttributes(attributes);
+    element.parserSetAttributes(attributes);
+}
+
+static inline void setAttributes(Element& element, AtomicHTMLToken* token, ParserContentPolicy parserContentPolicy)
+{
+    setAttributes(element, token->attributes(), parserContentPolicy);
 }
 
 static bool hasImpliedEndTag(const HTMLStackItem& item)
@@ -482,6 +489,26 @@ void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken* token)
     m_openElements.push(HTMLStackItem::create(element.releaseNonNull(), *token));
 }
 
+#if ENABLE(CUSTOM_ELEMENTS)
+JSCustomElementInterface* HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken* token)
+{
+    JSCustomElementInterface* interface = nullptr;
+    RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, &interface);
+    if (UNLIKELY(interface))
+        return interface;
+    attachLater(&currentNode(), element);
+    m_openElements.push(HTMLStackItem::create(element.releaseNonNull(), *token));
+    return nullptr;
+}
+
+void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const AtomicString& localName, Vector<Attribute>& attributes)
+{
+    setAttributes(element.get(), attributes, m_parserContentPolicy);
+    attachLater(&currentNode(), element.ptr());
+    m_openElements.push(HTMLStackItem::create(WTFMove(element), localName, attributes));
+}
+#endif
+
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken* token)
 {
     ASSERT(token->type() == HTMLToken::StartTag);
@@ -633,26 +660,51 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
     return currentNode().document();
 }
 
-Ref<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* token)
+RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(
+    AtomicHTMLToken* token, JSCustomElementInterface** customElementInterface)
 {
-    QualifiedName tagName(nullAtom, token->name(), xhtmlNamespaceURI);
+    auto& localName = token->name();
     // FIXME: This can't use HTMLConstructionSite::createElement because we
     // have to pass the current form element.  We should rework form association
     // to occur after construction to allow better code sharing here.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#create-an-element-for-the-token
     Document& ownerDocument = ownerDocumentForCurrentNode();
     bool insideTemplateElement = !ownerDocument.frame();
-    Ref<Element> element = HTMLElementFactory::createElement(tagName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
-    
+    RefPtr<Element> element = HTMLElementFactory::createKnownElement(localName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
+    if (UNLIKELY(!element)) {
+
+#if ENABLE(CUSTOM_ELEMENTS)
+        auto* definitions = ownerDocumentForCurrentNode().customElementDefinitions();
+        if (customElementInterface && UNLIKELY(definitions)) {
+            if (auto* interface = definitions->findInterface(localName)) {
+                *customElementInterface = interface;
+                return nullptr;
+            }
+        }
+#else
+        UNUSED_PARAM(customElementInterface);
+#endif
+
+        element = HTMLUnknownElement::create(QualifiedName(nullAtom, localName, xhtmlNamespaceURI), ownerDocumentForCurrentNode());
+    }
+    ASSERT(element);
+
     // FIXME: This is a hack to connect images to pictures before the image has
     // been inserted into the document. It can be removed once asynchronous image
     // loading is working.
-    if (is<HTMLPictureElement>(currentNode()) && is<HTMLImageElement>(element))
-        downcast<HTMLImageElement>(element.get()).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
+    if (is<HTMLPictureElement>(currentNode()) && is<HTMLImageElement>(*element))
+        downcast<HTMLImageElement>(*element).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
 
-    setAttributes(element.get(), token, m_parserContentPolicy);
+    setAttributes(*element, token, m_parserContentPolicy);
     ASSERT(element->isHTMLElement());
     return element;
+}
+
+Ref<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* token)
+{
+    RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, nullptr);
+    ASSERT(element);
+    return element.releaseNonNull();
 }
 
 Ref<HTMLStackItem> HTMLConstructionSite::createElementFromSavedToken(HTMLStackItem* item)

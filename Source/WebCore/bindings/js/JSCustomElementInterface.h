@@ -59,7 +59,8 @@ public:
         return adoptRef(*new JSCustomElementInterface(callback, globalObject));
     }
 
-    RefPtr<Element> constructElement(const AtomicString&);
+    enum class ShouldClearException { Clear, DoNotClear };
+    RefPtr<Element> constructElement(const AtomicString&, ShouldClearException);
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
     JSC::JSObject* constructor() { return m_constructor.get(); }

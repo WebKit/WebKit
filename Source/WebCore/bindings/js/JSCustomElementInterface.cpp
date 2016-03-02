@@ -55,7 +55,7 @@ JSCustomElementInterface::~JSCustomElementInterface()
 {
 }
 
-RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& tagName)
+RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& tagName, ShouldClearException shouldClearException)
 {
     if (!canInvokeCallback())
         return nullptr;
@@ -87,6 +87,9 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& t
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(context, constructType, constructData);
     JSValue newElement = construct(state, m_constructor.get(), constructType, constructData, args);
     InspectorInstrumentation::didCallFunction(cookie, context);
+
+    if (shouldClearException == ShouldClearException::Clear && state->hadException())
+        state->clearException();
 
     if (newElement.isEmpty())
         return nullptr;
