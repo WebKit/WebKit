@@ -1,5 +1,21 @@
 2016-03-03  Brady Eidson  <beidson@apple.com>
 
+        storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html flaky on mac-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=154747
+
+        Reviewed by Alex Christensen.
+        
+        This callback coming out of order like this is okay, so the test should just allow it.
+
+        It makes sense that the flake is WK2-only, since WK1 has a much more well defined order 
+        with thread-hopping versus process-hopping.
+
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-open-success-expected.txt:
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-open-success-private-expected.txt:
+        * storage/indexeddb/resources/delete-in-upgradeneeded-close-in-open-success.js:
+
+2016-03-03  Brady Eidson  <beidson@apple.com>
+
         storage/indexeddb/intversion-open-in-upgradeneeded.html is flaky on mac-wk2 debug.
         https://bugs.webkit.org/show_bug.cgi?id=154706
 

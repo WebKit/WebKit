@@ -62,9 +62,9 @@ function versionChangeCallback(evt)
 
 function deleteBlockedCallback(evt)
 {
-    preamble(evt);
-    shouldBeTrue("sawVersionChange");
-    evalAndLog("sawDeleteBlocked = true");
+    if (!sawVersionChange)
+        debug("deleteBlockedCallback was called *before* versionChangeCallback, which is wrong");
+    eval("sawDeleteBlocked = true");
 }
 
 function deleteSuccessCallback(evt)

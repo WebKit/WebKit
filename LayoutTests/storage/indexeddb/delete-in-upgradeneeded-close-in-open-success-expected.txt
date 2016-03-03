@@ -24,10 +24,6 @@ PASS event.oldVersion is 1
 PASS event.newVersion is null
 sawVersionChange = true
 
-deleteBlockedCallback():
-PASS sawVersionChange is true
-sawDeleteBlocked = true
-
 openSuccess():
 PASS sawUpgradeNeeded is true
 db = event.target.result
