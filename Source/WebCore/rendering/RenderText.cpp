@@ -512,22 +512,75 @@ inline bool isHangablePunctuationAtLineEnd(UChar c)
     return U_GET_GC_MASK(c) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
 }
 
-float RenderText::hangablePunctuationStartWidth() const
+float RenderText::hangablePunctuationStartWidth(unsigned index) const
 {
     if (!textLength())
         return 0;
     
     ASSERT(m_text);
     StringImpl& text = *m_text.impl();
-    if (!isHangablePunctuationAtLineStart(text[0]))
-        return 0;
     
+    if (!isHangablePunctuationAtLineStart(text[index]))
+        return 0;
+
     const RenderStyle& style = this->style();
     const FontCascade& font = style.fontCascade();
         
     return widthFromCache(font, 0, 1, 0, 0, 0, style);
 }
+
+float RenderText::hangablePunctuationEndWidth(unsigned index) const
+{
+    if (!textLength())
+        return 0;
     
+    ASSERT(m_text);
+    StringImpl& text = *m_text.impl();
+
+    if (!isHangablePunctuationAtLineEnd(text[index]))
+        return 0;
+    
+    const RenderStyle& style = this->style();
+    const FontCascade& font = style.fontCascade();
+    
+    return widthFromCache(font, 0, 1, 0, 0, 0, style);
+}
+
+unsigned RenderText::firstCharacterIndexStrippingSpaces() const
+{
+    if (!style().collapseWhiteSpace())
+        return 0;
+    
+    ASSERT(m_text);
+    StringImpl& text = *m_text.impl();
+    
+    unsigned i = 0;
+    for ( ; i < textLength(); ++i) {
+        if (text[i] != ' ' && (text[i] != '\n' || style().preserveNewline()) && text[i] != '\t')
+            break;
+    }
+    return i;
+}
+
+unsigned RenderText::lastCharacterIndexStrippingSpaces() const
+{
+    if (!textLength())
+        return 0;
+
+    if (!style().collapseWhiteSpace())
+        return textLength() - 1;
+    
+    ASSERT(m_text);
+    StringImpl& text = *m_text.impl();
+    
+    int i = textLength() - 1;
+    for ( ; i  >= 0; --i) {
+        if (text[i] != ' ' && (text[i] != '\n' || style().preserveNewline()) && text[i] != '\t')
+            break;
+    }
+    return i;
+}
+
 void RenderText::trimmedPrefWidths(float leadWidth,
                                    float& beginMinW, bool& beginWS,
                                    float& endMinW, bool& endWS,

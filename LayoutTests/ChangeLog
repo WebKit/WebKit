@@ -1,3 +1,21 @@
+2016-03-03  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for the "last" value of hanging-punctuation
+        https://bugs.webkit.org/show_bug.cgi?id=154977
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        * fast/text/hanging-punctuation-first-and-last-together-expected.html: Added.
+        * fast/text/hanging-punctuation-first-and-last-together.html: Added.
+        * fast/text/hanging-punctuation-first-ws-expected.html: Added.
+        * fast/text/hanging-punctuation-first-ws.html: Added.
+        * fast/text/hanging-punctuation-last-expected.html: Added.
+        * fast/text/hanging-punctuation-last-rtl-expected.html: Added.
+        * fast/text/hanging-punctuation-last-rtl.html: Added.
+        * fast/text/hanging-punctuation-last-ws-expected.html: Added.
+        * fast/text/hanging-punctuation-last-ws.html: Added.
+        * fast/text/hanging-punctuation-last.html: Added.
+
 2016-03-03  Brady Eidson  <beidson@apple.com>
 
         storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html flaky on mac-wk2.

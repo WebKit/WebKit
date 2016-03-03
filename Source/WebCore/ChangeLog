@@ -1,3 +1,34 @@
+2016-03-03  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for the "last" value of hanging-punctuation
+        https://bugs.webkit.org/show_bug.cgi?id=154977
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        New tests in fast/text.
+
+        This patch adds support for the new "last" value and also fixes up both
+        "first" and "last" to work with leading and trailing whitespace that ends
+        up getting collapsed away.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::inlineAncestorHasStartBorderPaddingOrMargin):
+        (WebCore::inlineAncestorHasEndBorderPaddingOrMargin):
+        (WebCore::isLastInFlowRun):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        * rendering/RenderText.cpp:
+        (WebCore::isHangablePunctuationAtLineEnd):
+        (WebCore::RenderText::hangablePunctuationStartWidth):
+        (WebCore::RenderText::hangablePunctuationEndWidth):
+        (WebCore::RenderText::firstCharacterIndexStrippingSpaces):
+        (WebCore::RenderText::lastCharacterIndexStrippingSpaces):
+        (WebCore::RenderText::trimmedPrefWidths):
+        * rendering/RenderText.h:
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+
 2016-03-03  Andy Estes  <aestes@apple.com>
 
         Adopt CFNetwork storage partitioning SPI

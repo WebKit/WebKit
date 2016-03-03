@@ -817,6 +817,17 @@ static bool inlineAncestorHasStartBorderPaddingOrMargin(const RenderBlockFlow& b
     return false;
 }
 
+static bool inlineAncestorHasEndBorderPaddingOrMargin(const RenderBlockFlow& block, const InlineBox& box)
+{
+    bool isLTR = block.style().isLeftToRightDirection();
+    for (auto* currentBox = box.parent(); currentBox; currentBox = currentBox->parent()) {
+        if ((isLTR && currentBox->marginBorderPaddingLogicalRight() > 0)
+            || (!isLTR && currentBox->marginBorderPaddingLogicalLeft() > 0))
+            return true;
+    }
+    return false;
+}
+    
 static bool isLastInFlowRun(BidiRun& runToCheck)
 {
     for (auto* run = runToCheck.next(); run; run = run->next()) {
@@ -833,6 +844,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
 {
     bool needsWordSpacing = false;
     bool canHangPunctuationAtStart = style().hangingPunctuation() & FirstHangingPunctuation;
+    bool canHangPunctuationAtEnd = style().hangingPunctuation() & LastHangingPunctuation;
     bool isLTR = style().isLeftToRightDirection();
     float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     unsigned expansionOpportunityCount = 0;
@@ -852,11 +864,20 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
             auto& textBox = downcast<InlineTextBox>(*run->box());
             if (canHangPunctuationAtStart && lineInfo.isFirstLine() && (isLTR || isLastInFlowRun(*run))
                 && !inlineAncestorHasStartBorderPaddingOrMargin(*this, *run->box())) {
-                float hangStartWidth = renderText.hangablePunctuationStartWidth();
+                float hangStartWidth = renderText.hangablePunctuationStartWidth(run->m_start);
                 availableLogicalWidth += hangStartWidth;
                 if (style().isLeftToRightDirection())
                     logicalLeft -= hangStartWidth;
                 canHangPunctuationAtStart = false;
+            }
+            
+            if (canHangPunctuationAtEnd && lineInfo.isLastLine() && run->m_stop > 0 && (!isLTR || isLastInFlowRun(*run))
+                && !inlineAncestorHasEndBorderPaddingOrMargin(*this, *run->box())) {
+                float hangEndWidth = renderText.hangablePunctuationEndWidth(run->m_stop - 1);
+                availableLogicalWidth += hangEndWidth;
+                if (!style().isLeftToRightDirection())
+                    logicalLeft -= hangEndWidth;
+                canHangPunctuationAtEnd = false;
             }
             
             if (textAlign == JUSTIFY && run != trailingSpaceRun) {
