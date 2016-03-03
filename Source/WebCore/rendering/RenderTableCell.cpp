@@ -1204,10 +1204,11 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     LayoutUnit leftWidth = leftVal.width();
     LayoutUnit rightWidth = rightVal.width();
 
-    LayoutRect borderRect = LayoutRect(paintRect.x() - floorToInt(leftWidth / 2),
-        paintRect.y() - floorToInt(topWidth / 2),
-        paintRect.width() + floorToInt(leftWidth / 2) + floorToInt((rightWidth + 1) / 2),
-        paintRect.height() + floorToInt(topWidth / 2) + floorToInt((bottomWidth + 1) / 2));
+    float deviceScaleFactor = document().deviceScaleFactor();
+    LayoutRect borderRect = LayoutRect(paintRect.x() - floorToDevicePixel(leftWidth / 2, deviceScaleFactor),
+        paintRect.y() - floorToDevicePixel(topWidth / 2, deviceScaleFactor),
+        paintRect.width() + floorToDevicePixel(leftWidth / 2, deviceScaleFactor) + floorToDevicePixel(rightWidth / 2, deviceScaleFactor),
+        paintRect.height() + floorToDevicePixel(topWidth / 2, deviceScaleFactor) + floorToDevicePixel(bottomWidth / 2, deviceScaleFactor));
     
     EBorderStyle topStyle = collapsedBorderStyle(topVal.style());
     EBorderStyle bottomStyle = collapsedBorderStyle(bottomVal.style());

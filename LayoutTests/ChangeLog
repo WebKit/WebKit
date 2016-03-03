@@ -1,3 +1,18 @@
+2016-03-03  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make collapsed borders painting subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=154980
+
+        Reviewed by David Hyatt.
+
+        This patch enables collapsed borders with odd pixel width paint on subpixel position.
+        Currently borders with odd pixels are split at integral position so that border-width: 3px;
+        paints 1px on the left(top) and 2px on the right(bottom) side. With this patch
+        we paint 1.5px on both sides(on 2x display).
+
+        * fast/table/hidpi-collapsed-border-with-odd-pixel-width-expected.html: Added.
+        * fast/table/hidpi-collapsed-border-with-odd-pixel-width.html: Added.
+
 2016-03-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to compile StringReplace
