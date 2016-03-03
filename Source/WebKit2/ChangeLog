@@ -1,3 +1,18 @@
+2016-03-02  Alex Christensen  <achristensen@webkit.org>
+
+        Properly cancel downloads when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=154893
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download):
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::cancel):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+
 2016-03-01  Ada Chan  <adachan@apple.com>
 
         Update the media element's presentation mode properly after going in and out of full screen via the Full Screen API

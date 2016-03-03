@@ -75,8 +75,8 @@ class WebPage;
 class Download : public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
-#if USE(NETWORK_SESSION)
-    Download(DownloadManager&, DownloadID);
+#if USE(NETWORK_SESSION) && PLATFORM(COCOA)
+    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*);
 #else
     Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&);
 #endif

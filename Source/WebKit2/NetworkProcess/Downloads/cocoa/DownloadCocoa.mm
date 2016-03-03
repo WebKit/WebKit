@@ -40,9 +40,13 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     
 void Download::cancel()
 {
-    [m_download cancelByProducingResumeData: ^(NSData *resumeData)
+    ASSERT(m_download);
+    [m_download cancelByProducingResumeData: ^(NSData * _Nullable resumeData)
     {
-        didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>([resumeData bytes]), [resumeData length]));
+        if (resumeData && resumeData.bytes && resumeData.length)
+            didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>(resumeData.bytes), resumeData.length));
+        else
+            didCancel({ });
     }];
 }
 
