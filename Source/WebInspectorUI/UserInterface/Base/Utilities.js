@@ -24,6 +24,7 @@
  */
 
 var emDash = "\u2014";
+var enDash = "\u2013";
 var ellipsis = "\u2026";
 
 Object.defineProperty(Object, "shallowCopy",

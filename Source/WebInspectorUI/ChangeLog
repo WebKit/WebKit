@@ -1,5 +1,120 @@
 2016-03-02  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Timelines UI redesign: replace content view container with a content browser
+        https://bugs.webkit.org/show_bug.cgi?id=153033
+        <rdar://problem/24195565>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch replaces the ContentViewContainer in the Timelines tab with a ContentBrowser,
+        moves filtering controls from the sidebar to the new browser's navigation bar, and adds
+        a new leaf path component for the current ruler selection to the main content browser's
+        navigation bar.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI strings.
+
+        * UserInterface/Base/Utilities.js:
+        Added global en dash string.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New files.
+
+        * UserInterface/Models/TimelineRange.js:
+        (WebInspector.TimelineRange):
+        (WebInspector.TimelineRange.prototype.get startValue):
+        (WebInspector.TimelineRange.prototype.set startValue):
+        (WebInspector.TimelineRange.prototype.get endValue):
+        (WebInspector.TimelineRange.prototype.set endValue):
+        New represented object used by ruler selection path components.
+
+        * UserInterface/Views/FilterBarNavigationItem.js:
+        (WebInspector.FilterBarNavigationItem):
+        (WebInspector.FilterBarNavigationItem.prototype.get filterBar):
+        Adapter class for using a FilterBar as a NavigationItem.
+
+        * UserInterface/Views/TimelineIcons.css:
+        (.time-icon .icon):
+        Icon class used by ruler selection path component.
+
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows):
+        (.content-view.timeline-recording > .content-browser > .content-view-container > .timeline-view > .data-grid td):
+        (.content-view.timeline-recording > .content-browser > .content-view-container > .timeline-view > .data-grid table.data):
+        (.content-view.timeline-recording > .content-view-container): Deleted.
+        (.content-view.timeline-recording > .content-view-container > .timeline-view > .data-grid td): Deleted.
+        (.content-view.timeline-recording > .content-view-container > .timeline-view > .data-grid table.data): Deleted.
+        New styles for the ContentBrowser that replaces the ContentViewContainer.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        Create the ContentBrowser, ruler selection path components, and the browser's filter bar.
+
+        (WebInspector.TimelineRecordingContentView.prototype.showOverviewTimelineView):
+        (WebInspector.TimelineRecordingContentView.prototype.showTimelineViewForTimeline):
+        Implemented by the content browser instead of the view container.
+
+        (WebInspector.TimelineRecordingContentView.prototype.get selectionPathComponents):
+        Add timeline and selection path components. Components for the current TimelineView
+        are now located in the lower content browser's navigation bar.
+
+        (WebInspector.TimelineRecordingContentView.prototype.get supplementalRepresentedObjects):
+        (WebInspector.TimelineRecordingContentView.prototype.get handleCopyEvent):
+        (WebInspector.TimelineRecordingContentView.prototype.get supportsSave):
+        (WebInspector.TimelineRecordingContentView.prototype.get saveData):
+        (WebInspector.TimelineRecordingContentView.prototype.get currentTimelineView):
+        (WebInspector.TimelineRecordingContentView.prototype.shown):
+        (WebInspector.TimelineRecordingContentView.prototype.hidden):
+        (WebInspector.TimelineRecordingContentView.prototype.closed):
+        (WebInspector.TimelineRecordingContentView.prototype.canGoBack):
+        (WebInspector.TimelineRecordingContentView.prototype.canGoForward):
+        (WebInspector.TimelineRecordingContentView.prototype.goBack):
+        (WebInspector.TimelineRecordingContentView.prototype.goForward):
+        (WebInspector.TimelineRecordingContentView.prototype.saveToCookie):
+        Implemented by the content browser instead of the view container.
+
+        (WebInspector.TimelineRecordingContentView.prototype.contentBrowserTreeElementForRepresentedObject):
+        Create the root tree element for the lower content browser's navigation bar.
+
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangePathComponentSelected):
+        Update the ruler selection based on the new path component.
+
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSupplementalRepresentedObjectsDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineOverviewHeight):
+        Implemented by the content browser instead of the view container.
+
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        Update the currently selected path component when the ruler selection changes.
+        If the entire range is selected, show the "Entire Recording" path component,
+        otherwise update the TimelineRange of the path component for the user-defined
+        selection and refresh all timeline range path components.
+
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimeRangePathComponents):
+        Update title text and sibling relationships for ruler selection path components.
+
+        (WebInspector.TimelineRecordingContentView.prototype._createTimelineRangePathComponent):
+        Helper function for creating TimelineRange path components.
+
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        The TimelineView scope bar is no longer added to the sidebar. The UI has been moved
+        to the lower content browser navigation bar.
+
+        (WebInspector.TimelineRecordingContentView.prototype._updateFrameSelection): Deleted.
+        No longer needed since the selected range is shown in the navigation bar.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.get navigationItems):
+        Adds the TimelineView's scope bar (if any) to the lower content browser's navigation
+        bar. Items are inserted before the filter bar, which is always the right-most item.
+
+2016-03-02  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Timelines UI redesign: show content tree outline records in timeline data grids
         https://bugs.webkit.org/show_bug.cgi?id=153032
         <rdar://problem/24195317>

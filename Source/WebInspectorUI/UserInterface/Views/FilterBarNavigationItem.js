@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.timeline-recording > .timeline-overview {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-}
+WebInspector.FilterBarNavigationItem = class FilterBarNavigationItem extends WebInspector.NavigationItem
+{
+    constructor()
+    {
+        super();
 
-.content-view.timeline-recording > .content-browser {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
+        this._filterBar = new WebInspector.FilterBar(this.element);
+    }
 
-    border-top: 1px solid var(--border-color);
-}
+    // Public
 
-.content-view.timeline-recording > .content-browser > .navigation-bar {
-    background-color: var(--panel-background-color);
-    border-bottom: none;
-}
-
-.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple {
-    background-color: transparent;
-    color: black;
-}
-
-.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows {
-    color: black;
-}
-
-.content-view.timeline-recording > .content-browser > .content-view-container > .timeline-view > .data-grid td {
-    height: 16px;
-    line-height: 16px;
-}
-
-.content-view.timeline-recording > .content-browser > .content-view-container > .timeline-view > .data-grid table.data {
-    background-image: linear-gradient(to bottom, white, white 50%, hsl(0, 0%, 95%) 50%, hsl(0, 0%, 95%));
-    background-size: 100% 40px;
-}
+    get filterBar()
+    {
+        return this._filterBar;
+    }
+};
