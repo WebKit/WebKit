@@ -1,3 +1,18 @@
+2016-03-02  Zalan Bujtas  <zalan@apple.com>
+
+        Paint table borders on empty cells even in quirks mode.
+        https://bugs.webkit.org/show_bug.cgi?id=154928
+
+        Reviewed by David Hyatt.
+
+        Enable border painting for empty cells unless 'empty-cells: hide' is set. 
+        This is inline with FF and Chrome behaviour.
+
+        Test: fast/table/border-on-empty-table-cells-quirks-mode.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations):
+
 2016-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTML parser instantiates a custom element inside a template element with a wrong owner document

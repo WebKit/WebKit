@@ -1277,8 +1277,8 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
 
-    RenderTable* tableElt = table();
-    if (!tableElt->collapseBorders() && style().emptyCells() == HIDE && !firstChild())
+    RenderTable* table = this->table();
+    if (!table->collapseBorders() && style().emptyCells() == HIDE && !firstChild())
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
@@ -1289,7 +1289,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
 
     paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
-    if (!style().hasBorder() || tableElt->collapseBorders() || (!firstChild() && document().inQuirksMode()))
+    if (!style().hasBorder() || table->collapseBorders())
         return;
 
     paintBorder(paintInfo, paintRect, style());
