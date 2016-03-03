@@ -1,3 +1,40 @@
+2016-03-03  Miguel Gomez  <magomez@igalia.com>
+
+        [TextureMapper] Use RGBA format for textures attached to framebuffers
+        https://bugs.webkit.org/show_bug.cgi?id=154965
+
+        Reviewed by Žan Doberšek.
+
+        Use RGBA format when allocating textures that will be used as framebuffer
+        attachments. This means adding a new flag to BitmapTexture and modifying
+        BitmapTextureGL to use the appropriate format according to the flag. Also,
+        BitmapTexturePool needs to use two vectors to handle both types of textures
+        separately, as we want to avoid constantly switching the format of a reused
+        texture.
+
+        No new tests since the behavior change is covered by existing tests.
+
+        * platform/graphics/texmap/BitmapTexture.h: Add new flag.
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::BitmapTextureGL): Receive flags on constructor and use RGBA
+        when the FBOAttachment flag is enabled.
+        (WebCore::BitmapTextureGL::applyFilters): Use FBOAttachemt flag to request a texture.
+        * platform/graphics/texmap/BitmapTextureGL.h: Add flags to the constructor.
+        * platform/graphics/texmap/BitmapTexturePool.cpp: Add a new vector of textures to hold
+        those in RGBA format.
+        (WebCore::BitmapTexturePool::acquireTexture): Return a texture for the usage specified
+        in the incoming flags.
+        (WebCore::BitmapTexturePool::releaseUnusedTexturesTimerFired): Release textures from
+        both vectors.
+        (WebCore::BitmapTexturePool::createTexture): Pass the usage flag when creating a new
+        texture.
+        * platform/graphics/texmap/BitmapTexturePool.h: Add new texture vector and add flags to
+        the needed headers.
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::acquireTextureFromPool): Pass the received flags to the BitmapTexturePool.
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintIntoSurface): Use FBOAttachemt flag to request a texture.
+
 2016-03-03  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] New CSS Value 'normal' for Content Alignment
