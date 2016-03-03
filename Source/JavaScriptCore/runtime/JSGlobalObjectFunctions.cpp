@@ -885,14 +885,14 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (thisObject->prototype() == value)
         return JSValue::encode(jsUndefined());
 
-    bool isExtensible = thisObject->isExtensibleInline(exec);
+    bool isExtensible = thisObject->isExtensible(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (!isExtensible)
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 
     VM& vm = exec->vm();
-    if (!thisObject->setPrototypeOfInline(vm, exec, value)) {
+    if (!thisObject->setPrototype(vm, exec, value)) {
         if (!vm.exception())
             vm.throwException(exec, createError(exec, ASCIILiteral("cyclic __proto__ value")));
         return JSValue::encode(jsUndefined());

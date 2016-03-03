@@ -86,7 +86,7 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
     StringObject* thisObject = jsCast<StringObject*>(object);
 
     if (propertyName == exec->propertyNames().length) {
-        bool isExtensible = object->isExtensibleInline(exec);
+        bool isExtensible = object->isExtensible(exec);
         if (exec->hadException())
             return false;
         if (!isExtensible) {

@@ -291,7 +291,7 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
         // Someday we might use proxies for something other than JSGlobalObjects, but today is not that day.
         RELEASE_ASSERT_NOT_REACHED();
     }
-    jsObject->setPrototypeOfInline(exec->vm(), exec, jsValue.isObject() ? jsValue : jsNull());
+    jsObject->setPrototype(exec->vm(), exec, jsValue.isObject() ? jsValue : jsNull());
 }
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)

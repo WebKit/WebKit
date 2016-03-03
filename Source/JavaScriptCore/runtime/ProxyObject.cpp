@@ -201,7 +201,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         }
         // FIXME: this doesn't work if 'target' is another Proxy. We don't have isExtensible implemented in a way that fits w/ Proxys.
         // https://bugs.webkit.org/show_bug.cgi?id=154375
-        bool isExtensible = target->isExtensibleInline(exec);
+        bool isExtensible = target->isExtensible(exec);
         if (exec->hadException())
             return false;
         if (!isExtensible) {
@@ -215,7 +215,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         return false;
     }
 
-    bool isExtensible = target->isExtensibleInline(exec);
+    bool isExtensible = target->isExtensible(exec);
     if (exec->hadException())
         return false;
     PropertyDescriptor trapResultAsDescriptor;
@@ -299,7 +299,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
                 throwVMTypeError(exec, ASCIILiteral("Proxy 'has' must return 'true' for non-configurable properties."));
                 return false;
             }
-            bool isExtensible = target->isExtensibleInline(exec);
+            bool isExtensible = target->isExtensible(exec);
             if (exec->hadException())
                 return false;
             if (!isExtensible) {
@@ -637,7 +637,7 @@ bool ProxyObject::performPreventExtensions(ExecState* exec)
         return false;
 
     if (trapResultAsBool) {
-        bool targetIsExtensible = target->isExtensibleInline(exec);
+        bool targetIsExtensible = target->isExtensible(exec);
         if (exec->hadException())
             return false;
         if (targetIsExtensible) {
@@ -673,7 +673,7 @@ bool ProxyObject::performIsExtensible(ExecState* exec)
 
     JSObject* target = this->target();
     if (isExtensibleMethod.isUndefined())
-        return target->isExtensibleInline(exec);
+        return target->isExtensible(exec);
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
@@ -685,7 +685,7 @@ bool ProxyObject::performIsExtensible(ExecState* exec)
     if (exec->hadException())
         return false;
 
-    bool isTargetExtensible = target->isExtensibleInline(exec);
+    bool isTargetExtensible = target->isExtensible(exec);
     if (exec->hadException())
         return false;
 

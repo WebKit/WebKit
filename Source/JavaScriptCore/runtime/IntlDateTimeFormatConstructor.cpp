@@ -96,7 +96,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* state
     IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, jsCast<IntlDateTimeFormatConstructor*>(state->callee()));
     if (dateTimeFormat && !jsDynamicCast<IntlDateTimeFormatConstructor*>(newTarget)) {
         JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(dateTimeFormat)->setPrototypeOfInline(vm, state, proto);
+        asObject(dateTimeFormat)->setPrototype(vm, state, proto);
         if (vm.exception())
             return JSValue::encode(JSValue());
     }

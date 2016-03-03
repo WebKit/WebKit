@@ -1211,9 +1211,14 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
     return true;
 }
 
-bool JSObject::setPrototypeOf(JSObject* object, ExecState* exec, JSValue prototype)
+bool JSObject::setPrototype(JSObject* object, ExecState* exec, JSValue prototype)
 {
     return object->setPrototypeWithCycleCheck(exec->vm(), exec, prototype);
+}
+
+bool JSObject::setPrototype(VM& vm, ExecState* exec, JSValue prototype)
+{
+    return methodTable(vm)->setPrototype(this, exec, prototype);
 }
 
 bool JSObject::allowsAccessFrom(ExecState* exec)
@@ -1699,6 +1704,12 @@ bool JSObject::preventExtensions(JSObject* object, ExecState* exec)
 bool JSObject::isExtensible(JSObject* obj, ExecState*)
 {
     return obj->isExtensibleImpl();
+}
+
+bool JSObject::isExtensible(ExecState* exec)
+{ 
+    VM& vm = exec->vm();
+    return methodTable(vm)->isExtensible(this, exec);
 }
 
 void JSObject::reifyAllStaticProperties(ExecState* exec)
@@ -2863,7 +2874,7 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     DefineOwnPropertyScope scope(exec);
     PropertyDescriptor current;
     bool isCurrentDefined = getOwnPropertyDescriptor(exec, propertyName, current);
-    bool isExtensible = isExtensibleInline(exec);
+    bool isExtensible = this->isExtensible(exec);
     if (UNLIKELY(exec->hadException()))
         return false;
     return validateAndApplyPropertyDescriptor(exec, this, propertyName, isExtensible, descriptor, isCurrentDefined, current, throwException);

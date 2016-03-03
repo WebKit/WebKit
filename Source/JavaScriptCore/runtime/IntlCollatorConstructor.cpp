@@ -97,7 +97,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* state)
     IntlCollator* collator = IntlCollator::create(vm, jsCast<IntlCollatorConstructor*>(state->callee()));
     if (collator && !jsDynamicCast<IntlCollatorConstructor*>(newTarget)) {
         JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(collator)->setPrototypeOfInline(vm, state, proto);
+        asObject(collator)->setPrototype(vm, state, proto);
         if (vm.exception())
             return JSValue::encode(JSValue());
     }

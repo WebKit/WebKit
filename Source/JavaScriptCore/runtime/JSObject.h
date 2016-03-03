@@ -119,15 +119,8 @@ public:
     // This is the fully virtual [[SetPrototypeOf]] internal function defined
     // in the ECMAScript 6 specification. Use this when doing a [[SetPrototypeOf]] 
     // operation as dictated in the specification.
-    ALWAYS_INLINE bool setPrototypeOfInline(VM& vm, ExecState* exec, JSValue prototype)
-    {
-        auto setPrototypeOfMethod = methodTable(vm)->setPrototypeOf;
-        if (LIKELY(setPrototypeOfMethod == JSObject::setPrototypeOf))
-            return setPrototypeWithCycleCheck(vm, exec, prototype);
-
-        return setPrototypeOfMethod(this, exec, prototype);
-    }
-    JS_EXPORT_PRIVATE static bool setPrototypeOf(JSObject*, ExecState*, JSValue prototype);
+    bool setPrototype(VM&, ExecState*, JSValue prototype);
+    JS_EXPORT_PRIVATE static bool setPrototype(JSObject*, ExecState*, JSValue prototype);
         
     bool mayInterceptIndexedAccesses()
     {
@@ -653,15 +646,7 @@ public:
     // You should call this when performing [[IsExtensible]] trap in a place
     // that is described in the specification. This performs the fully virtual
     // [[IsExtensible]] trap.
-    ALWAYS_INLINE bool isExtensibleInline(ExecState* exec)
-    { 
-        VM& vm = exec->vm();
-        auto isExtensibleMethod = methodTable(vm)->isExtensible;
-        if (LIKELY(isExtensibleMethod == JSObject::isExtensible))
-            return isExtensibleImpl();
-
-        return isExtensibleMethod(this, exec);
-    }
+    bool isExtensible(ExecState*);
     bool indexingShouldBeSparse()
     {
         return !isStructureExtensible()

@@ -1,3 +1,60 @@
+2016-03-02  Saam barati  <sbarati@apple.com>
+
+        clean up JSObject::isExtensibleInline and JSObject::setPrototypeOfInline, and rename setPrototypeOf to setPrototype
+        https://bugs.webkit.org/show_bug.cgi?id=154942
+
+        Reviewed by Benjamin Poulain.
+
+        These don't need to be inlined in the way they are.
+        Doing dynamic dispatch is ok performance wise until
+        we have evidence stating otherwise.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetPrototype):
+        (JSObjectHasProperty):
+        * runtime/ClassInfo.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::constructIntlCollator):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::isExtensible):
+        (JSC::JSCell::setPrototype):
+        (JSC::JSCell::setPrototypeOf): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoSetter):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::allowsAccessFrom):
+        (JSC::JSObject::isExtensible):
+        (JSC::JSObject::reifyAllStaticProperties):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        (JSC::JSObject::setPrototypeOf): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::mayInterceptIndexedAccesses):
+        (JSC::JSObject::indexingShouldBeSparse):
+        (JSC::JSObject::setPrototypeOfInline): Deleted.
+        (JSC::JSObject::isExtensibleInline): Deleted.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        (JSC::objectConstructorIsExtensible):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectIsExtensible):
+        (JSC::reflectObjectSetPrototypeOf):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::defineOwnProperty):
+
 2016-03-02  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Moved PRE/POST_BUILD_COMMAND to WEBKIT_FRAMEWORK.

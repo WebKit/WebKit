@@ -109,8 +109,8 @@ struct MethodTable {
     typedef bool (*IsExtensibleFunctionPtr)(JSObject*, ExecState*);
     IsExtensibleFunctionPtr isExtensible;
 
-    typedef bool (*SetPrototypeOfFunctionPtr)(JSObject*, ExecState*, JSValue);
-    SetPrototypeOfFunctionPtr setPrototypeOf;
+    typedef bool (*SetPrototypeFunctionPtr)(JSObject*, ExecState*, JSValue);
+    SetPrototypeFunctionPtr setPrototype;
 
     typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);
     DumpToStreamFunctionPtr dumpToStream;
@@ -165,7 +165,7 @@ struct MethodTable {
         &ClassName::getTypedArrayImpl, \
         &ClassName::preventExtensions, \
         &ClassName::isExtensible, \
-        &ClassName::setPrototypeOf, \
+        &ClassName::setPrototype, \
         &ClassName::dumpToStream, \
         &ClassName::estimatedSize \
     }, \

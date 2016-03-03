@@ -212,14 +212,14 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
     if (object->prototype() == protoValue)
         return JSValue::encode(objectValue);
 
-    bool isExtensible = object->isExtensibleInline(exec);
+    bool isExtensible = object->isExtensible(exec);
     if (exec->hadException())
         return JSValue::encode(JSValue());
     if (!isExtensible)
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 
     VM& vm = exec->vm();
-    bool didSetPrototype = object->setPrototypeOfInline(vm, exec, protoValue);
+    bool didSetPrototype = object->setPrototype(vm, exec, protoValue);
     if (vm.exception())
         return JSValue::encode(JSValue());
     if (!didSetPrototype) {
@@ -623,7 +623,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
 
     // 3. If the [[Extensible]] internal property of O is false, then return true.
     // 4. Otherwise, return false.
-    bool isExtensible = object->isExtensibleInline(exec);
+    bool isExtensible = object->isExtensible(exec);
     if (exec->hadException())
         return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(!isExtensible));
@@ -660,7 +660,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
 
     // 3. If the [[Extensible]] internal property of O is false, then return true.
     // 4. Otherwise, return false.
-    bool isExtensible = object->isExtensibleInline(exec);
+    bool isExtensible = object->isExtensible(exec);
     if (exec->hadException())
         return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(!isExtensible));
@@ -672,7 +672,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState* exec)
     if (!obj.isObject())
         return JSValue::encode(jsBoolean(false));
     JSObject* object = asObject(obj);
-    bool isExtensible = object->isExtensibleInline(exec);
+    bool isExtensible = object->isExtensible(exec);
     if (exec->hadException())
         return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(isExtensible));
