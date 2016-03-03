@@ -1,3 +1,40 @@
+2016-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        RegExpPrototype should check for exceptions after calling toString and doing so should not be expensive
+        https://bugs.webkit.org/show_bug.cgi?id=154927
+
+        Reviewed by Saam Barati.
+
+        While working on regexp optimizations, I found that RegExpPrototype calls toString(), an
+        effectful operation that could do anything, without then checking for hadException().
+
+        So I added a call to hadException().
+
+        But that regressed Octane/regexp by 5%!  That's a lot!  It turns out that
+        exec->hadException() is soooper slow. So, I made it cheaper to check for exceptions from
+        toString(): there is now a variant called toStringFast() that returns null iff it throws an
+        exception.
+
+        This allowed me to add the exception check without regressing perf.
+
+        Note that toString() must retain its old behavior of returning an empty string on exception.
+        There is just too much code that relies on that behavior.
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::isValidCallee):
+        (JSC::JSValue::toStringSlowCase):
+        (JSC::JSValue::toWTFStringSlowCase):
+        * runtime/JSCJSValue.h:
+        (JSC::JSValue::asValue):
+        * runtime/JSString.h:
+        (JSC::JSValue::toString):
+        (JSC::JSValue::toStringFast):
+        (JSC::JSValue::toWTFString):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncCompile):
+
 2016-03-02  Saam barati  <sbarati@apple.com>
 
         clean up JSObject::isExtensibleInline and JSObject::setPrototypeOfInline, and rename setPrototypeOf to setPrototype

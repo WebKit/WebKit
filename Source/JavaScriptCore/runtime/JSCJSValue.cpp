@@ -361,8 +361,14 @@ bool JSValue::isValidCallee()
     return asObject(asCell())->globalObject();
 }
 
-JSString* JSValue::toStringSlowCase(ExecState* exec) const
+JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnError) const
 {
+    auto errorValue = [&] () -> JSString* {
+        if (returnEmptyStringOnError)
+            return jsEmptyString(exec);
+        return nullptr;
+    };
+    
     VM& vm = exec->vm();
     ASSERT(!isString());
     if (isInt32()) {
@@ -383,15 +389,18 @@ JSString* JSValue::toStringSlowCase(ExecState* exec) const
         return vm.smallStrings.undefinedString();
     if (isSymbol()) {
         throwTypeError(exec);
-        return jsEmptyString(exec);
+        return errorValue();
     }
 
     ASSERT(isCell());
     JSValue value = asCell()->toPrimitive(exec, PreferString);
-    if (exec->hadException())
-        return jsEmptyString(exec);
+    if (vm.exception())
+        return errorValue();
     ASSERT(!value.isObject());
-    return value.toString(exec);
+    JSString* result = value.toString(exec);
+    if (vm.exception())
+        return errorValue();
+    return result;
 }
 
 String JSValue::toWTFStringSlowCase(ExecState* exec) const
