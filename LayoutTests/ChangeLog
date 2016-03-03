@@ -1,5 +1,18 @@
 2016-03-02  Chris Dumez  <cdumez@apple.com>
 
+        HTMLFormElement's named property getter does not return a RadioNodelist
+        https://bugs.webkit.org/show_bug.cgi?id=154949
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test to confirm that HTMLFormElement's named property getter
+        does indeed return a RadioNodeList when there are several matches.
+
+        * fast/dom/HTMLFormElement/named-property-getter-radionodelist-expected.txt: Added.
+        * fast/dom/HTMLFormElement/named-property-getter-radionodelist.html: Added.
+
+2016-03-02  Chris Dumez  <cdumez@apple.com>
+
         Drop [TreatNullAs=LegacyNullString] from HTMLBaseElement.href
         https://bugs.webkit.org/show_bug.cgi?id=154952
 

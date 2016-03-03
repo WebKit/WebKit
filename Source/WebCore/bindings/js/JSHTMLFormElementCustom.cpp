@@ -30,8 +30,7 @@
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "JSDOMWindowCustom.h"
-#include "JSNodeList.h"
-#include "StaticNodeList.h"
+#include "JSRadioNodeList.h"
 
 using namespace JSC;
 
@@ -48,8 +47,7 @@ bool JSHTMLFormElement::nameGetter(ExecState* exec, PropertyName propertyName, J
         return true;
     }
 
-    // FIXME: HTML5 specifies that this should be a RadioNodeList.
-    value = toJS(exec, globalObject(), StaticElementList::adopt(namedItems).get());
+    value = toJS(exec, globalObject(), wrapped().radioNodeList(propertyNameToAtomicString(propertyName)).get());
     return true;
 }
 

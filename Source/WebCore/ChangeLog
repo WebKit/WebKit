@@ -1,5 +1,28 @@
 2016-03-02  Chris Dumez  <cdumez@apple.com>
 
+        HTMLFormElement's named property getter does not return a RadioNodelist
+        https://bugs.webkit.org/show_bug.cgi?id=154949
+
+        Reviewed by Ryosuke Niwa.
+
+        HTMLFormElement's named property getter should return a RadioNodeList
+        when there are several matches:
+        https://html.spec.whatwg.org/multipage/forms.html#the-form-element
+
+        Previously, WebKit returned a generic NodeList. As a result, users
+        cannot create a white-and-gold hat in the MAKE A HAT GREAT AGAIN
+        section at:
+        https://www.washingtonpost.com/news/the-fix/wp/2015/10/06/hey-lets-all-make-our-own-donald-trump-hats/
+
+        Chrome and Firefox already match the specification. Edge will soon.
+
+        Test: fast/dom/HTMLFormElement/named-property-getter-radionodelist.html
+
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+
+2016-03-02  Chris Dumez  <cdumez@apple.com>
+
         Drop [TreatNullAs=LegacyNullString] from HTMLBaseElement.href
         https://bugs.webkit.org/show_bug.cgi?id=154952
 
