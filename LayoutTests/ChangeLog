@@ -1,3 +1,11 @@
+2016-03-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip unsupported test fast/text/complex-small-caps-non-bmp-capitalize.html on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-03-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Close UniqueIDBDatabases once they become unused.
