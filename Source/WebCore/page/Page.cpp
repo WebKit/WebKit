@@ -1031,8 +1031,6 @@ void Page::resumeScriptedAnimations()
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
 {
-    updateTimerThrottlingState();
-    
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->scriptedAnimationControllerSetThrottled(isVisuallyIdle);
@@ -1185,12 +1183,21 @@ void Page::hiddenPageDOMTimerThrottlingStateChanged()
 
 void Page::updateTimerThrottlingState()
 {
-    TimerThrottlingState state = TimerThrottlingState::Disabled;
+    // Timer throttling disabled if page is visually active, or disabled by setting.
+    if (!m_settings->hiddenPageDOMTimerThrottlingEnabled() || !(m_viewState & ViewState::IsVisuallyIdle)) {
+        setTimerThrottlingState(TimerThrottlingState::Disabled);
+        return;
+    }
 
-    if (m_settings->hiddenPageDOMTimerThrottlingEnabled() && m_viewState & ViewState::IsVisuallyIdle)
-        state = m_settings->hiddenPageDOMTimerThrottlingAutoIncreases() ? TimerThrottlingState::EnabledIncreasing : TimerThrottlingState::Enabled;
+    // If the page is visible (but idle), there is any activity (loading, media playing, etc), or per setting,
+    // we allow timer throttling, but not increasing timer throttling.
+    if (!m_settings->hiddenPageDOMTimerThrottlingAutoIncreases() || m_viewState & ViewState::IsVisible || m_pageThrottler.activityState()) {
+        setTimerThrottlingState(TimerThrottlingState::Enabled);
+        return;
+    }
 
-    setTimerThrottlingState(state);
+    // If we get here increasing timer throttling is enabled.
+    setTimerThrottlingState(TimerThrottlingState::EnabledIncreasing);
 }
 
 void Page::setTimerThrottlingState(TimerThrottlingState state)
@@ -1395,6 +1402,9 @@ void Page::setViewState(ViewState::Flags viewState)
     if (changed & ViewState::IsVisuallyIdle)
         setIsVisuallyIdleInternal(viewState & ViewState::IsVisuallyIdle);
 
+    if (changed & (ViewState::IsVisible | ViewState::IsVisuallyIdle))
+        updateTimerThrottlingState();
+
     for (auto* observer : m_viewStateChangeObservers)
         observer->viewStateDidChange(oldViewState, m_viewState);
 }
@@ -1402,6 +1412,7 @@ void Page::setViewState(ViewState::Flags viewState)
 void Page::setPageActivityState(PageActivityState::Flags activityState)
 {
     chrome().client().setPageActivityState(activityState);
+    updateTimerThrottlingState();
 }
 
 void Page::setIsVisible(bool isVisible)
