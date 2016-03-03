@@ -294,8 +294,6 @@ webkit.org/b/152025 [ Debug ] inspector/console/messagesCleared.html [ Pass Time
 
 webkit.org/b/152492 [ Debug ] inspector/debugger/break-on-exception-catch.html [ Pass Timeout ]
 
-webkit.org/b/154706 storage/indexeddb/intversion-open-in-upgradeneeded.html [ Skip ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 

@@ -1,3 +1,16 @@
+2016-03-03  Brady Eidson  <beidson@apple.com>
+
+        storage/indexeddb/intversion-open-in-upgradeneeded.html is flaky on mac-wk2 debug.
+        https://bugs.webkit.org/show_bug.cgi?id=154706
+
+        Rubberstamped by Alex Christensen.
+
+        This test was fixed by http://trac.webkit.org/changeset/197474.
+        
+        Unskipping it now.
+        
+        * platform/mac-wk2/TestExpectations:
+
 2016-03-03  Chris Dumez  <cdumez@apple.com>
 
         Drop [TreatNullAs=EmptyString] from URL interface attributes
