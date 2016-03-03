@@ -169,7 +169,7 @@ description('Test that setting and getting justify-content works as expected');
 
 debug("Test getting justify-content set through CSS");
 var justifyContentAuto = document.getElementById("justifyContentAuto");
-shouldBeEqualToString("getComputedStyle(justifyContentAuto, '').getPropertyValue('justify-content')", "start");
+shouldBeEqualToString("getComputedStyle(justifyContentAuto, '').getPropertyValue('justify-content')", "normal");
 
 var justifyContentBaseline = document.getElementById("justifyContentBaseline");
 shouldBeEqualToString("getComputedStyle(justifyContentBaseline, '').getPropertyValue('justify-content')", "baseline");
@@ -247,25 +247,25 @@ var justifyContentSpaceEvenlyFlexStartSafe = document.getElementById("justifyCon
 shouldBeEqualToString("getComputedStyle(justifyContentSpaceEvenlyFlexStartSafe, '').getPropertyValue('justify-content')", "space-evenly flex-start safe");
 
 var justifyContentSpaceBetweenSafe = document.getElementById("justifyContentSpaceBetweenSafe");
-shouldBeEqualToString("getComputedStyle(justifyContentSpaceBetweenSafe, '').getPropertyValue('justify-content')", "start");
+shouldBeEqualToString("getComputedStyle(justifyContentSpaceBetweenSafe, '').getPropertyValue('justify-content')", "normal");
 
 var justifyContentSpaceAroundUnsafe = document.getElementById("justifyContentSpaceBetweenStretch");
-shouldBeEqualToString("getComputedStyle(justifyContentSpaceBetweenStretch, '').getPropertyValue('justify-content')", "start");
+shouldBeEqualToString("getComputedStyle(justifyContentSpaceBetweenStretch, '').getPropertyValue('justify-content')", "normal");
 
 var justifyContentSpaceAroundUnsafe = document.getElementById("justifyContentSafe");
-shouldBeEqualToString("getComputedStyle(justifyContentSafe, '').getPropertyValue('justify-content')", "start");
+shouldBeEqualToString("getComputedStyle(justifyContentSafe, '').getPropertyValue('justify-content')", "normal");
 
 var justifyContentSpaceAroundUnsafe = document.getElementById("justifyContentRightSafeUnsafe");
-shouldBeEqualToString("getComputedStyle(justifyContentRightSafeUnsafe, '').getPropertyValue('justify-content')", "start");
+shouldBeEqualToString("getComputedStyle(justifyContentRightSafeUnsafe, '').getPropertyValue('justify-content')", "normal");
 
 var justifyContentSpaceAroundUnsafe = document.getElementById("justifyContentCenterLeft");
-shouldBeEqualToString("getComputedStyle(justifyContentCenterLeft, '').getPropertyValue('justify-content')", "start");
+shouldBeEqualToString("getComputedStyle(justifyContentCenterLeft, '').getPropertyValue('justify-content')", "normal");
 
 debug("");
 debug("Test initial value of justify-content through JS");
 element = document.createElement("div");
 document.body.appendChild(element);
-shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('justify-content')", "start");
+shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('justify-content')", "normal");
 
 debug("");
 debug("Test getting and setting justify-content through JS");
@@ -289,16 +289,16 @@ checkValues(element, "justifyContent", "justify-content",  "stretch center", "st
 element.style.justifyContent = "right unsafe";
 checkValues(element, "justifyContent", "justify-content",  "right unsafe", "right unsafe");
 
-element.style.justifyContent = "auto";
-checkValues(element, "justifyContent", "justify-content",  "auto", "start");
+element.style.justifyContent = "normal";
+checkValues(element, "justifyContent", "justify-content",  "normal", "normal");
 
 element.style.display = "-webkit-flex";
-element.style.justifyContent = "auto";
-checkValues(element, "justifyContent", "justify-content",  "auto", "stretch");
+element.style.justifyContent = "normal";
+checkValues(element, "justifyContent", "justify-content",  "normal", "normal");
 
 element.style.display = "-webkit-grid";
-element.style.justifyContent = "auto";
-checkValues(element, "justifyContent", "justify-content",  "auto", "start");
+element.style.justifyContent = "normal";
+checkValues(element, "justifyContent", "justify-content",  "normal", "normal");
 
 element.style.justifyContent = "flex-end";
 checkValues(element, "justifyContent", "justify-content",  "flex-end", "flex-end");
@@ -309,6 +309,7 @@ element = document.createElement("div");
 document.body.appendChild(element);
 
 checkBadValues(element, "justifyContent", "justify-content",  "");
+checkBadValues(element, "justifyContent", "justify-content",  "auto");
 checkBadValues(element, "justifyContent", "justify-content",  "unsafe auto");
 checkBadValues(element, "justifyContent", "justify-content",  "auto safe");
 checkBadValues(element, "justifyContent", "justify-content",  "auto left");
@@ -333,17 +334,17 @@ checkBadValues(element, "justifyContent", "justify-content",  "safe");
 debug("");
 debug("Test the value 'initial'");
 element.style.display = "";
-checkInitialValues(element, "justifyContent", "justify-content", "stretch center", "start");
+checkInitialValues(element, "justifyContent", "justify-content", "stretch center", "normal");
 
 debug("");
 debug("Test the value 'initial' for grid containers");
 element.style.display = "-webkit-grid";
-checkInitialValues(element, "justifyContent", "justify-content", "space-between left", "start");
+checkInitialValues(element, "justifyContent", "justify-content", "space-between left", "normal");
 
 debug("");
 debug("Test the value 'initial' for flex containers");
 element.style.display = "-webkit-flex";
-checkInitialValues(element, "justifyContent", "justify-content", "right unsafe", "stretch");
+checkInitialValues(element, "justifyContent", "justify-content", "right unsafe", "normal");
 
 debug("");
 debug("Test the value 'inherit'");

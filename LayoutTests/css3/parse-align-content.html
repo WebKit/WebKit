@@ -173,7 +173,7 @@ description('Test that setting and getting align-content works as expected');
 
 debug("Test getting align-content set through CSS");
 var alignContentAuto = document.getElementById("alignContentAuto");
-shouldBeEqualToString("getComputedStyle(alignContentAuto, '').getPropertyValue('align-content')", "start");
+shouldBeEqualToString("getComputedStyle(alignContentAuto, '').getPropertyValue('align-content')", "normal");
 
 var alignContentBaseline = document.getElementById("alignContentBaseline");
 shouldBeEqualToString("getComputedStyle(alignContentBaseline, '').getPropertyValue('align-content')", "baseline");
@@ -251,25 +251,25 @@ var alignContentSpaceEvenlyFlexStartSafe = document.getElementById("alignContent
 shouldBeEqualToString("getComputedStyle(alignContentSpaceEvenlyFlexStartSafe, '').getPropertyValue('align-content')", "space-evenly flex-start safe");
 
 var alignContentSpaceBetweenSafe = document.getElementById("alignContentSpaceBetweenSafe");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceBetweenSafe, '').getPropertyValue('align-content')", "start");
+shouldBeEqualToString("getComputedStyle(alignContentSpaceBetweenSafe, '').getPropertyValue('align-content')", "normal");
 
 var alignContentSpaceAroundUnsafe = document.getElementById("alignContentSpaceBetweenStretch");
-shouldBeEqualToString("getComputedStyle(alignContentSpaceBetweenStretch, '').getPropertyValue('align-content')", "start");
+shouldBeEqualToString("getComputedStyle(alignContentSpaceBetweenStretch, '').getPropertyValue('align-content')", "normal");
 
 var alignContentSpaceAroundUnsafe = document.getElementById("alignContentSafe");
-shouldBeEqualToString("getComputedStyle(alignContentSafe, '').getPropertyValue('align-content')", "start");
+shouldBeEqualToString("getComputedStyle(alignContentSafe, '').getPropertyValue('align-content')", "normal");
 
 var alignContentSpaceAroundUnsafe = document.getElementById("alignContentRightSafeUnsafe");
-shouldBeEqualToString("getComputedStyle(alignContentRightSafeUnsafe, '').getPropertyValue('align-content')", "start");
+shouldBeEqualToString("getComputedStyle(alignContentRightSafeUnsafe, '').getPropertyValue('align-content')", "normal");
 
 var alignContentSpaceAroundUnsafe = document.getElementById("alignContentCenterLeft");
-shouldBeEqualToString("getComputedStyle(alignContentCenterLeft, '').getPropertyValue('align-content')", "start");
+shouldBeEqualToString("getComputedStyle(alignContentCenterLeft, '').getPropertyValue('align-content')", "normal");
 
 debug("");
 debug("Test initial value of align-content through JS");
 element = document.createElement("div");
 document.body.appendChild(element);
-shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('align-content')", "start");
+shouldBeEqualToString("getComputedStyle(element, '').getPropertyValue('align-content')", "normal");
 
 debug("");
 debug("Test getting and setting align-content through JS");
@@ -293,16 +293,16 @@ checkValues(element, "alignContent", "align-content",  "stretch center", "stretc
 element.style.alignContent = "right unsafe";
 checkValues(element, "alignContent", "align-content",  "right unsafe", "right unsafe");
 
-element.style.alignContent = "auto";
-checkValues(element, "alignContent", "align-content",  "auto", "start");
+element.style.alignContent = "normal";
+checkValues(element, "alignContent", "align-content",  "normal", "normal");
 
 element.style.display = "-webkit-flex";
-element.style.alignContent = "auto";
-checkValues(element, "alignContent", "align-content",  "auto", "stretch");
+element.style.alignContent = "normal";
+checkValues(element, "alignContent", "align-content",  "normal", "normal");
 
 element.style.display = "-webkit-grid";
-element.style.alignContent = "auto";
-checkValues(element, "alignContent", "align-content",  "auto", "start");
+element.style.alignContent = "normal";
+checkValues(element, "alignContent", "align-content",  "normal", "normal");
 
 element.style.alignContent = "flex-end";
 checkValues(element, "alignContent", "align-content",  "flex-end", "flex-end");
@@ -313,6 +313,7 @@ element = document.createElement("div");
 document.body.appendChild(element);
 
 checkBadValues(element, "alignContent", "align-content",  "");
+checkBadValues(element, "alignContent", "align-content",  "auto");
 checkBadValues(element, "alignContent", "align-content",  "unsafe auto");
 checkBadValues(element, "alignContent", "align-content",  "auto safe");
 checkBadValues(element, "alignContent", "align-content",  "auto left");
@@ -337,17 +338,17 @@ checkBadValues(element, "alignContent", "align-content",  "safe");
 debug("");
 debug("Test the value 'initial'");
 element.style.display = "";
-checkInitialValues(element, "alignContent", "align-content", "stretch center", "start");
+checkInitialValues(element, "alignContent", "align-content", "stretch center", "normal");
 
 debug("");
 debug("Test the value 'initial' for grid containers");
 element.style.display = "-webkit-grid";
-checkInitialValues(element, "alignContent", "align-content", "space-between left", "start");
+checkInitialValues(element, "alignContent", "align-content", "space-between left", "normal");
 
 debug("");
 debug("Test the value 'initial' for flex containers");
 element.style.display = "-webkit-flex";
-checkInitialValues(element, "alignContent", "align-content", "right unsafe", "stretch");
+checkInitialValues(element, "alignContent", "align-content", "right unsafe", "normal");
 
 debug("");
 debug("Test the value 'inherit'");

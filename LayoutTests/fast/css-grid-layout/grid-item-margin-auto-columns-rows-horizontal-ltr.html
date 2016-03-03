@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .grid {
     -webkit-grid-template-rows: auto auto;
@@ -32,7 +33,7 @@
 <div>This test checks that the grid's rows and columns 'auto' sizes are updated accordingly to its grid-item's before and start margins.</div>
 
 <div class="testContainer">
-    <div class="grid">
+    <div class="grid contentStart">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -41,7 +42,7 @@
 </div>
 
 <div class="testContainer">
-    <div class="grid">
+    <div class="grid contentStart">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem marginBottom firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
@@ -50,7 +51,7 @@
 </div>
 
 <div class="testContainer">
-    <div class="grid horizontalBT">
+    <div class="grid contentStart horizontalBT">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -59,7 +60,7 @@
 </div>
 
 <div class="testContainer">
-    <div class="grid horizontalBT">
+    <div class="grid contentStart horizontalBT">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem marginBottom firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>

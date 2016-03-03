@@ -1354,13 +1354,19 @@ void RenderGrid::clearGrid()
     m_gridItemCoordinate.clear();
 }
 
+static const StyleContentAlignmentData& normalValueBehavior()
+{
+    static const StyleContentAlignmentData normalBehavior = {ContentPositionNormal, ContentDistributionStretch};
+    return normalBehavior;
+}
+
 void RenderGrid::applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection direction, GridSizingData& sizingData)
 {
     Optional<LayoutUnit> freeSpace = sizingData.freeSpaceForDirection(direction);
     if (!freeSpace
         || freeSpace.value() <= 0
-        || (direction == ForColumns && style().resolvedJustifyContentDistribution() != ContentDistributionStretch)
-        || (direction == ForRows && style().resolvedAlignContentDistribution() != ContentDistributionStretch))
+        || (direction == ForColumns && style().resolvedJustifyContentDistribution(normalValueBehavior()) != ContentDistributionStretch)
+        || (direction == ForRows && style().resolvedAlignContentDistribution(normalValueBehavior()) != ContentDistributionStretch))
         return;
 
     // Spec defines auto-sized tracks as the ones with an 'auto' max-sizing function.
@@ -1856,7 +1862,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
         LayoutUnit childBreadth = child.logicalHeight() + child.marginLogicalHeight();
         // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
         if (childEndLine - childStartLine > 1 && childEndLine < m_rowPositions.size() - 1)
-            endOfRow -= offsetBetweenTracks(style().resolvedAlignContentDistribution(), m_rowPositions, childBreadth);
+            endOfRow -= offsetBetweenTracks(style().resolvedAlignContentDistribution(normalValueBehavior()), m_rowPositions, childBreadth);
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveAlignmentOverflow(style(), child.style()), endOfRow - startOfRow, childBreadth);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
@@ -1890,7 +1896,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
         LayoutUnit childBreadth = child.logicalWidth() + child.marginLogicalWidth();
         // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
         if (childEndLine - childStartLine > 1 && childEndLine < m_columnPositions.size() - 1)
-            endOfColumn -= offsetBetweenTracks(style().resolvedJustifyContentDistribution(), m_columnPositions, childBreadth);
+            endOfColumn -= offsetBetweenTracks(style().resolvedJustifyContentDistribution(normalValueBehavior()), m_columnPositions, childBreadth);
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveJustificationOverflow(style(), child.style()), endOfColumn - startOfColumn, childBreadth);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
@@ -1912,26 +1918,16 @@ ContentPosition static resolveContentDistributionFallback(ContentDistributionTyp
     case ContentDistributionStretch:
         return ContentPositionStart;
     case ContentDistributionDefault:
-        return ContentPositionAuto;
+        return ContentPositionNormal;
     }
 
     ASSERT_NOT_REACHED();
-    return ContentPositionAuto;
-}
-
-static inline LayoutUnit offsetToStartEdge(bool isLeftToRight, LayoutUnit availableSpace)
-{
-    return isLeftToRight ? LayoutUnit() : availableSpace;
-}
-
-static inline LayoutUnit offsetToEndEdge(bool isLeftToRight, LayoutUnit availableSpace)
-{
-    return !isLeftToRight ? LayoutUnit() : availableSpace;
+    return ContentPositionNormal;
 }
 
 static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availableFreeSpace, ContentPosition& fallbackPosition, ContentDistributionType distribution, unsigned numberOfGridTracks)
 {
-    if (distribution != ContentDistributionDefault && fallbackPosition == ContentPositionAuto)
+    if (distribution != ContentDistributionDefault && fallbackPosition == ContentPositionNormal)
         fallbackPosition = resolveContentDistributionFallback(distribution);
 
     if (availableFreeSpace <= 0)
@@ -1952,7 +1948,6 @@ static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availabl
         distributionOffset = availableFreeSpace / (numberOfGridTracks + 1);
         return {distributionOffset, distributionOffset};
     case ContentDistributionStretch:
-        return {0, 0};
     case ContentDistributionDefault:
         return ContentAlignmentData::defaultOffsets();
     }
@@ -1964,8 +1959,8 @@ static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availabl
 ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const
 {
     bool isRowAxis = direction == ForColumns;
-    ContentPosition position = isRowAxis ? style().resolvedJustifyContentPosition() : style().resolvedAlignContentPosition();
-    ContentDistributionType distribution = isRowAxis ? style().resolvedJustifyContentDistribution() : style().resolvedAlignContentDistribution();
+    ContentPosition position = isRowAxis ? style().resolvedJustifyContentPosition(normalValueBehavior()) : style().resolvedAlignContentPosition(normalValueBehavior());
+    ContentDistributionType distribution = isRowAxis ? style().resolvedJustifyContentDistribution(normalValueBehavior()) : style().resolvedAlignContentDistribution(normalValueBehavior());
     // If <content-distribution> value can't be applied, 'position' will become the associated
     // <content-position> fallback value.
     ContentAlignmentData contentAlignment = contentDistributionOffset(availableFreeSpace, position, distribution, numberOfGridTracks);
@@ -1990,21 +1985,21 @@ ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Gri
     case ContentPositionFlexEnd: // Only used in flex layout, for other layout, it's equivalent to 'end'.
     case ContentPositionEnd:
         if (isRowAxis)
-            return {offsetToEndEdge(style().isLeftToRightDirection(), availableFreeSpace), 0};
+            return {style().isLeftToRightDirection() ? availableFreeSpace : LayoutUnit(), LayoutUnit()};
         return {availableFreeSpace, 0};
     case ContentPositionFlexStart: // Only used in flex layout, for other layout, it's equivalent to 'start'.
     case ContentPositionStart:
         if (isRowAxis)
-            return {offsetToStartEdge(style().isLeftToRightDirection(), availableFreeSpace), 0};
+            return {style().isLeftToRightDirection() ? LayoutUnit() : availableFreeSpace, LayoutUnit()};
         return {0, 0};
     case ContentPositionBaseline:
     case ContentPositionLastBaseline:
         // FIXME: Implement the previous values. For now, we always 'start' align.
         // http://webkit.org/b/145566
         if (isRowAxis)
-            return {offsetToStartEdge(style().isLeftToRightDirection(), availableFreeSpace), 0};
+            return {style().isLeftToRightDirection() ? LayoutUnit() : availableFreeSpace, LayoutUnit()};
         return {0, 0};
-    case ContentPositionAuto:
+    case ContentPositionNormal:
         break;
     }
 

@@ -3,6 +3,7 @@
 <head>
 <link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .definite {
     /* Give an explicit size to the grid so that percentage grid tracks have a consistent resolution */
@@ -77,8 +78,8 @@
 <div class="grid min-content gridWithPercent" id="gridWithPercentWithoutSizeWithChildren">
     <div class="gridItem"></div>
 </div>
-<div class="grid definite gridWithAuto" id="gridWithAutoElement"></div>
-<div class="grid definite gridWithAuto" id="gridWithAutoWithChildrenElement">
+<div class="grid definite gridWithAuto contentStart" id="gridWithAutoElement"></div>
+<div class="grid definite gridWithAuto contentStart" id="gridWithAutoWithChildrenElement">
     <div class="gridItem"></div>
 </div>
 <div class="grid definite gridWithMinMax" id="gridWithMinMax"></div>

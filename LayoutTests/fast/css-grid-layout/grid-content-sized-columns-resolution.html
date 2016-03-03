@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
 <link href="resources/grid.css" rel="stylesheet"/>
+<link href="resources/grid-alignment.css" rel="stylesheet"/>
 <style>
 .grid {
     font: 10px/1 Ahem;
@@ -58,11 +59,11 @@
 <script src="../../resources/js-test.js"></script>
 </head>
 <body>
-<div class="grid gridMinContentFixedAndAuto" id="gridMinContentFixedAndAuto">
+<div class="grid gridMinContentFixedAndAuto justifyContentStart" id="gridMinContentFixedAndAuto">
     <div class="firstRowBothColumn">XXXX XXXX</div>
 </div>
 
-<div class="grid gridAutoAndAuto" id="gridAutoAndAuto">
+<div class="grid gridAutoAndAuto justifyContentStart" id="gridAutoAndAuto">
     <div class="firstRowBothColumn">XXXX XXXX</div>
 </div>
 
@@ -92,11 +93,11 @@
     </div>
 </div>
 
-<div class="grid gridAutoMinContent" id="gridAutoMinContent">
+<div class="grid gridAutoMinContent justifyContentStart" id="gridAutoMinContent">
     <div class="firstRowBothColumn">XXXX XXXX</div>
 </div>
 
-<div class="grid gridAutoMaxContent" id="gridAutoMaxContent">
+<div class="grid gridAutoMaxContent justifyContentStart" id="gridAutoMaxContent">
     <div class="firstRowBothColumn">XXXX XXXX</div>
 </div>
 
@@ -204,12 +205,12 @@
 </div>
 
 <!-- Check that items are processed by ascending span instead of going track by track allowing extra space distribution. -->
-<div class="grid gridMinContentFixedAndAuto" id="gridMinContentFixedAndAutoUnsorted">
+<div class="grid gridMinContentFixedAndAuto justifyContentStart" id="gridMinContentFixedAndAutoUnsorted">
     <div class="firstRowBothColumn">XXXX XXXX</div>
     <div class="firstRowSecondColumn">XXXX XXXX</div>
 </div>
 
-<div class="grid gridAutoAndAuto" id="gridAutoAndAutoUnsorted">
+<div class="grid gridAutoAndAuto justifyContentStart" id="gridAutoAndAutoUnsorted">
     <div class="firstRowBothColumn">XXXX XXXX</div>
     <div class="firstRowSecondColumn">XXX</div>
 </div>
@@ -242,18 +243,18 @@
     <div class="firstRowSecondColumn">XXXX XXXX</div>
 </div>
 
-<div class="grid gridMaxContentFixedAndAuto" id="gridMaxContentFixedAndAutoUnsorted">
+<div class="grid gridMaxContentFixedAndAuto justifyContentStart" id="gridMaxContentFixedAndAutoUnsorted">
     <div class="firstRowBothColumn">XX XX</div>
     <div class="firstRowSecondColumn">XXXX</div>
     <div class="firstRowSecondColumn">XXX XXX</div>
 </div>
 
-<div class="grid gridAutoMinContent" id="gridAutoMinContentUnsorted">
+<div class="grid gridAutoMinContent justifyContentStart" id="gridAutoMinContentUnsorted">
     <div class="firstRowBothColumn">XX XX XX XX</div>
     <div class="firstRowSecondColumn">XXXXXX XXXXXX</div>
 </div>
 
-<div class="grid gridAutoMaxContent" id="gridAutoMaxContentUnsorted">
+<div class="grid gridAutoMaxContent justifyContentStart" id="gridAutoMaxContentUnsorted">
     <div class="firstRowBothColumn">XXXX XXXX</div>
     <div class="firstRowBothColumn">XXX XXX</div>
     <div class="firstRowSecondColumn">XXXXX</div>
@@ -274,7 +275,7 @@
 
 <!-- The next four force the grid to grow only a particular subset of tracks above the limits -->
 <div class="constrainedContainer">
-    <div class="grid gridMinContentFixedAndAuto" id="gridMinContentFixedAndAutoAboveLimits">
+    <div class="grid gridMinContentFixedAndAuto justifyContentStart" id="gridMinContentFixedAndAutoAboveLimits">
 	<div class="firstRowBothColumn">XXXX XXXX</div>
 	<div class="firstRowBothColumn">XXXXXXXXXXX</div>
     </div>
@@ -307,7 +308,7 @@
     <div class="firstRowBothColumn">XX XX XX XX XX</div>
 </div>
 
-<div class="grid gridAutoAndMinContentFixedAndMinContent" id="gridAutoAndMinContentFixedAndMinContent">
+<div class="grid gridAutoAndMinContentFixedAndMinContent justifyContentStart" id="gridAutoAndMinContentFixedAndMinContent">
     <div class="firstRowFirstColumn">XX</div>
     <div class="firstRowBothColumn">XXXXXXXXXXXXXXX</div>
     <div style="-webkit-grid-row: 1; -webkit-grid-column: 3;">XXX XXX</div>

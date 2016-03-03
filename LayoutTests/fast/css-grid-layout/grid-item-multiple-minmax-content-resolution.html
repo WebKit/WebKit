@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .gridMinMaxAutoWithColumnMinMaxAuto {
     -webkit-grid-template-columns: minmax(50px, 180px) auto;
@@ -13,7 +14,7 @@
 <p>Test that several different grid items along with several minmax tracks are properly sized.</p>
 
 <div class="unconstrainedContainer" style="position: relative;">
-<div class="grid gridMinMaxAutoWithColumnMinMaxAuto">
+<div class="grid gridMinMaxAutoWithColumnMinMaxAuto justifyContentStart">
     <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="180" data-expected-height="10">XXXXX XXXXX</div>
     <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="170" data-expected-height="10">XXXXX XXXXX XXXXX</div>
     <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="180" data-expected-height="100">XXXXX XXXXX XXXXX XXXXX</div>

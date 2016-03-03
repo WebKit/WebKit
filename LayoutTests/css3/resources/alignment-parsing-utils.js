@@ -8,8 +8,10 @@ function checkValues(element, property, propertyID, value, computedValue)
 
 function checkBadValues(element, property, propertyID, value)
 {
+    var elementID = element.id || "element";
+    var initialValue = eval("window.getComputedStyle(" + elementID + " , '').getPropertyValue('" + propertyID + "')");
     element.style[property] = value;
-    checkValues(element, property, propertyID, "", "start");
+    checkValues(element, property, propertyID, "", initialValue);
 }
 
 function checkInitialValues(element, property, propertyID, value, initial)

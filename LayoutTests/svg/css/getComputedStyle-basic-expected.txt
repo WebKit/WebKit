@@ -294,7 +294,7 @@ rect: style.getPropertyValue(column-span) : none
 rect: style.getPropertyCSSValue(column-span) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-width) : auto
 rect: style.getPropertyCSSValue(column-width) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(align-content) : start
+rect: style.getPropertyValue(align-content) : normal
 rect: style.getPropertyCSSValue(align-content) : [object CSSValueList]
 rect: style.getPropertyValue(align-items) : start
 rect: style.getPropertyCSSValue(align-items) : [object CSSValueList]
@@ -306,7 +306,7 @@ rect: style.getPropertyValue(flex-direction) : row
 rect: style.getPropertyCSSValue(flex-direction) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(flex-wrap) : nowrap
 rect: style.getPropertyCSSValue(flex-wrap) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(justify-content) : start
+rect: style.getPropertyValue(justify-content) : normal
 rect: style.getPropertyCSSValue(justify-content) : [object CSSValueList]
 rect: style.getPropertyValue(justify-self) : start
 rect: style.getPropertyCSSValue(justify-self) : [object CSSValueList]
@@ -828,7 +828,7 @@ g: style.getPropertyValue(column-span) : none
 g: style.getPropertyCSSValue(column-span) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-width) : auto
 g: style.getPropertyCSSValue(column-width) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(align-content) : start
+g: style.getPropertyValue(align-content) : normal
 g: style.getPropertyCSSValue(align-content) : [object CSSValueList]
 g: style.getPropertyValue(align-items) : start
 g: style.getPropertyCSSValue(align-items) : [object CSSValueList]
@@ -840,7 +840,7 @@ g: style.getPropertyValue(flex-direction) : row
 g: style.getPropertyCSSValue(flex-direction) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(flex-wrap) : nowrap
 g: style.getPropertyCSSValue(flex-wrap) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(justify-content) : start
+g: style.getPropertyValue(justify-content) : normal
 g: style.getPropertyCSSValue(justify-content) : [object CSSValueList]
 g: style.getPropertyValue(justify-self) : start
 g: style.getPropertyCSSValue(justify-self) : [object CSSValueList]

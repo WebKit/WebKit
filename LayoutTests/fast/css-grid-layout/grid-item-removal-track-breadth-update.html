@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+ <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .gridAutoContent {
     -webkit-grid-template-columns: auto;
@@ -159,7 +160,7 @@ window.addEventListener("load", testRemovals, false);
 
 <!-- The container is big enough to allow all the extra space distribution we want. -->
 <div class="unconstrainedContainer">
-    <div class="grid gridAutoContent" id="unconstrainedAutoGrid">
+    <div class="grid gridAutoContent justifyContentStart" id="unconstrainedAutoGrid">
         <div class="firstRowFirstColumn">XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX</div>
         <div class="firstRowFirstColumn">XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX</div>
         <div class="firstRowFirstColumn">XX XX XX XX XX XX</div>

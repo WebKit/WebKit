@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel=stylesheet>
 <style>
 .minWidthGrid {
@@ -29,7 +30,7 @@
 
 <div class="constrainedContainer">
     <div class="grid minWidthGrid" data-expected-height="40" data-expected-width="100"></div>
-    <div class="grid minWidthAutoGrid" data-expected-height="10" data-expected-width="100">
+    <div class="grid minWidthAutoGrid justifyContentStart justfyContentStart" data-expected-height="10" data-expected-width="100">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-height="10" data-expected-width="70">XXX XXX</div>
     </div>
     <!-- These 2 grids are sized after their containing block as width is 'auto'. We end up having the content overflow which is weird but the grid shouldn't shrink to fit by default. -->
@@ -58,7 +59,7 @@
 
 <div class="unconstrainedContainer">
     <div class="grid minWidthGrid" data-expected-height="40" data-expected-width="1000"></div>
-    <div class="grid minWidthAutoGrid" data-expected-height="10" data-expected-width="1000">
+    <div class="grid minWidthAutoGrid justifyContentStart" data-expected-height="10" data-expected-width="1000">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-height="10" data-expected-width="70">XXX XXX</div>
     </div>
     <div class="grid maxWidthGrid" data-expected-height="40" data-expected-width="100"></div>

@@ -24,6 +24,8 @@ function checkGridTemplatesSetJSValues(useGrid, columnValue, rowValue, computedC
         element.style.display = "-webkit-grid";
         element.style.width = "800px";
         element.style.height = "600px";
+        element.style.justifyContent = "start";
+        element.style.alignContent = "start";
     }
     element.style.font = "10px Ahem"; // Used to resolve em font consistently.
     element.style.webkitGridTemplateColumns = columnValue;

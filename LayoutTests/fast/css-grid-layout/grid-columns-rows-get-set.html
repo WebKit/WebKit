@@ -3,6 +3,7 @@
 <head>
 <link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .definite {
     /* Give an explicit size to the grid so that percentage grid tracks have a consistent resolution */
@@ -101,9 +102,9 @@
 <div class="grid min-content gridWithPercent" id="gridWithPercentWithoutSizeWithChildren">
     <div class="gridItem"></div>
 </div>
-<div class="grid definite gridWithAuto" id="gridWithAutoElement"></div>
-<div class="grid definite gridWithAuto" id="gridWithAutoWithoutSizeElement"></div>
-<div class="grid definite gridWithAuto fontSpec" id="gridWithAutoWithChildrenElement">
+<div class="grid definite gridWithAuto contentStart" id="gridWithAutoElement"></div>
+<div class="grid definite gridWithAuto contentStart" id="gridWithAutoWithoutSizeElement"></div>
+<div class="grid definite gridWithAuto contentStart fontSpec" id="gridWithAutoWithChildrenElement">
   <div class="gridItem"></div>
 </div>
 <div class="grid definite gridWithEM" id="gridWithEMElement"></div>
@@ -126,7 +127,7 @@
 <div class="grid definite gridWithCalcComplex" id="gridWithCalcComplexElement"></div>
 <div class="grid definite gridWithCalcInsideMinMax" id="gridWithCalcInsideMinMaxElement"></div>
 <div class="grid definite gridWithCalcComplexInsideMinMax" id="gridWithCalcComplexInsideMinMaxElement"></div>
-<div class="grid definite gridWithAutoInsideMinMax" id="gridWithAutoInsideMinMaxElement">
+<div class="grid definite gridWithAutoInsideMinMax contentStart" id="gridWithAutoInsideMinMaxElement">
     <div class="gridItem"></div>
 </div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .smallGrid {
     -webkit-grid-template-columns: 50px 100px;
@@ -45,7 +46,7 @@
 <p>This test checks that the tracks' auto positions are properly resolved on a static grid.</p>
 
 <div class="unconstrainedContainer">
-    <div class="grid smallGrid">
+    <div class="grid smallGrid justifyContentStart">
         <div class="sizedToGridArea autoRowAutoColumn" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea autoRowSecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
@@ -56,7 +57,7 @@
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowColumnSparse">
+    <div class="grid bigGrid gridAutoFlowColumnSparse justifyContentStart">
         <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="50" data-offset-y="50" data-expected-width="100" data-expected-height="100">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
@@ -66,7 +67,7 @@
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowRowSparse">
+    <div class="grid bigGrid gridAutoFlowRowSparse justifyContentStart">
         <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="50" data-offset-y="50" data-expected-width="100" data-expected-height="100">XXXXX XXXXX XXXXX</div>
@@ -76,7 +77,7 @@
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowColumnSparse">
+    <div class="grid bigGrid gridAutoFlowColumnSparse justifyContentStart">
         <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea autoRowSecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
@@ -86,7 +87,7 @@
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowColumnDense">
+    <div class="grid bigGrid gridAutoFlowColumnDense justifyContentStart">
         <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea autoRowSecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
@@ -96,7 +97,7 @@
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowRowSparse">
+    <div class="grid bigGrid gridAutoFlowRowSparse justifyContentStart">
         <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="150">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
@@ -106,7 +107,7 @@
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowRowDense">
+    <div class="grid bigGrid gridAutoFlowRowDense justifyContentStart">
         <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="150">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
@@ -117,7 +118,7 @@
 
 <!-- Using some 2 positions non-spanning fixed grid-{row|column} -->
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowColumnSparse">
+    <div class="grid bigGrid gridAutoFlowColumnSparse justifyContentStart">
         <div class="sizedToGridArea autoLastRowAutoLastColumn" data-offset-x="300" data-offset-y="300" data-expected-width="200" data-expected-height="200">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstAutoRowSecondAutoColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
@@ -127,7 +128,7 @@
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowRowSparse">
+    <div class="grid bigGrid gridAutoFlowRowSparse justifyContentStart">
         <div class="sizedToGridArea autoLastRowAutoLastColumn" data-offset-x="300" data-offset-y="300" data-expected-width="200" data-expected-height="200">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea firstAutoRowSecondAutoColumn" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowAutoColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
@@ -137,28 +138,28 @@
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowColumnSparse">
+    <div class="grid bigGrid gridAutoFlowColumnSparse justifyContentStart">
         <div class="sizedToGridArea overflowingRowFirstColumn" data-offset-x="0" data-offset-y="500" data-expected-width="50" data-expected-height="30">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowOverflowingColumn" data-offset-x="500" data-offset-y="50" data-expected-width="170" data-expected-height="100">XXXXX XXXXX XXXXX</div>
     </div>
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowRowSparse">
+    <div class="grid bigGrid gridAutoFlowRowSparse justifyContentStart">
         <div class="sizedToGridArea overflowingRowFirstColumn" data-offset-x="0" data-offset-y="500" data-expected-width="50" data-expected-height="30">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowOverflowingColumn" data-offset-x="500" data-offset-y="50" data-expected-width="170" data-expected-height="100">XXXXX XXXXX XXXXX</div>
     </div>
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowColumnSparse">
+    <div class="grid bigGrid gridAutoFlowColumnSparse justifyContentStart">
         <div class="sizedToGridArea negativeOverflowingRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowNegativeOverflowingColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
     </div>
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid bigGrid gridAutoFlowRowSparse">
+    <div class="grid bigGrid gridAutoFlowRowSparse justifyContentStart">
         <div class="sizedToGridArea negativeOverflowingRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
         <div class="sizedToGridArea secondRowNegativeOverflowingColumn" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100">XXXXX XXXXX XXXXX</div>
     </div>

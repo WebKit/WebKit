@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <script src="../../resources/check-layout.js"></script>
 <script>
 function testLayout(gridElementID, gridTracks, size)
@@ -59,7 +60,7 @@ window.addEventListener("load", updateRowsColumns, false);
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid" id="unconstrainedGrid">
+    <div class="grid justifyContentStart" id="unconstrainedGrid">
         <div class="sizedToGridArea">XXXXX XXXXXX</div>
     </div>
 </div>

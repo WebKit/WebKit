@@ -3,6 +3,7 @@
 <head>
 <link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .definite {
     /* Give an explicit size to the grid so that percentage grid tracks have a consistent resolution */
@@ -73,26 +74,26 @@
 <body>
 <div class="grid definite singleSingleTrackRepeat" id="singleSingleTrackRepeatWithSize"></div>
 <div class="grid min-content singleSingleTrackRepeat" id="singleSingleTrackRepeatWithoutSize"></div>
-<div class="grid definite twoSingleTrackRepeat" id="twoSingleTrackRepeat"></div>
-<div class="grid definite twoSingleTrackRepeat" id="twoSingleTrackRepeatWithChildren">
+<div class="grid definite twoSingleTrackRepeat alignContentStart" id="twoSingleTrackRepeat"></div>
+<div class="grid definite twoSingleTrackRepeat alignContentStart" id="twoSingleTrackRepeatWithChildren">
     <div class="gridItem"></div>
     <div class="gridItem2"></div>
 </div>
-<div class="grid definite twoDoubleTrackRepeat" id="twoDoubleTrackRepeat">
+<div class="grid definite twoDoubleTrackRepeat contentStart" id="twoDoubleTrackRepeat">
     <div class="gridItem"></div>
     <div class="gridItem2"></div>
 </div>
-<div class="grid definite twoDoubleTrackWithNamedGridLineRepeat" id="twoDoubleTrackWithNamedGridLineRepeat">
+<div class="grid definite twoDoubleTrackWithNamedGridLineRepeat contentStart" id="twoDoubleTrackWithNamedGridLineRepeat">
     <div class="gridItem"></div>
     <div class="gridItem2"></div>
 </div>
-<div class="grid definite twoDoubleTrackWithTrailingNamedGridLineRepeat" id="twoDoubleTrackWithTrailingNamedGridLineRepeat"></div>
+<div class="grid definite twoDoubleTrackWithTrailingNamedGridLineRepeat justifyContentStart" id="twoDoubleTrackWithTrailingNamedGridLineRepeat"></div>
 <div class="grid definite trailingNamedGridLineRepeat" id="trailingNamedGridLineRepeat"></div>
 <div class="grid definite leadingNamedGridLineRepeat" id="leadingNamedGridLineRepeat"></div>
-<div class="grid definite mixRepeatAfterNonRepeat" id="mixRepeatAfterNonRepeat">
+<div class="grid definite mixRepeatAfterNonRepeat alignContentStart" id="mixRepeatAfterNonRepeat">
     <div class="gridItem"></div>
 </div>
-<div class="grid definite mixNonRepeatAfterRepeat" id="mixNonRepeatAfterRepeat"></div>
+<div class="grid definite mixNonRepeatAfterRepeat alignContentStart" id="mixNonRepeatAfterRepeat"></div>
 
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script>

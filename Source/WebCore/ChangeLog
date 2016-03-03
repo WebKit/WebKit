@@ -1,3 +1,67 @@
+2016-03-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] New CSS Value 'normal' for Content Alignment
+        https://bugs.webkit.org/show_bug.cgi?id=154282
+
+        Reviewed by David Hyatt.
+
+        The Box Alignment specification defines a new value 'normal' to be used
+        as default for the different layout models, which will define the
+        specific behavior for each case. This patch adds a new CSS value in the
+        parsing logic and adapts the Content Alignment properties to the new
+        value.
+
+        The 'auto' value is no longer valid and the Computed Value will be
+        always the specified value. Hence, I removed the StyleResolver logic
+        because is not required now; the specific behavior of the 'normal'
+        value will be resolved at layout time.
+
+        Computed value of both align-content and justify-content is the
+        specified value, we don't have to resolve any 'auto' value now.
+
+        Additionally, this patch updates the layout logic as well, for both
+        Flexbox and Grid layout models.
+
+        No new tests, since we only need to rebaseline those test cases
+        affected by the new default computed value.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForContentPositionAndDistributionWithOverflowAlignment):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Deleted.
+        (WebCore::CSSComputedStyleDeclaration::copyProperties): Deleted.
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc): Deleted.
+        (WebCore::isFlexOrGrid): Deleted.
+        (WebCore::ComputedStyleExtractor::customPropertyValue): Deleted.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseContentDistributionOverflowPosition):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ContentPosition):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::normalValueBehavior):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        (WebCore::RenderFlexibleBox::alignFlexLines):
+        (WebCore::alignContentSpaceBetweenChildren): Deleted.
+        * rendering/RenderGrid.cpp:
+        (WebCore::normalValueBehavior):
+        (WebCore::RenderGrid::applyStretchAlignmentToTracksIfNeeded):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        (WebCore::resolveContentDistributionFallback):
+        (WebCore::contentDistributionOffset):
+        (WebCore::RenderGrid::computeContentPositionAndDistributionOffset):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::resolvedContentAlignmentPosition):
+        (WebCore::resolvedContentAlignmentDistribution):
+        (WebCore::RenderStyle::resolvedJustifyContentPosition):
+        (WebCore::RenderStyle::resolvedJustifyContentDistribution):
+        (WebCore::RenderStyle::resolvedAlignContentPosition):
+        (WebCore::RenderStyle::resolvedAlignContentDistribution):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2016-03-03  Antti Koivisto  <antti@apple.com>
 
         Slider thumb style should not depend on renderers

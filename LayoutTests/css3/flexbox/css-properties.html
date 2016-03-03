@@ -54,8 +54,8 @@ shouldBeEqualToString('flexitem.style.webkitOrder', '');
 flexbox.style.display = '-webkit-flex';
 
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
-// The initial value is 'auto' which, will be resolve to 'stretch' for flexbox containes (behaving like 'flex-start' for the justify-content property).
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'stretch');
+// The initial value is 'normal'.
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'normal');
 
 flexbox.style.webkitJustifyContent = 'foo';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
@@ -78,7 +78,7 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyConte
 
 flexbox.style.webkitJustifyContent = '';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'normal');
 
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
 // The initial value is 'auto', which will be resolved depending on parent's style (except for the 'document' element).
@@ -279,9 +279,9 @@ shouldBeFalse('foundFlexFlow');
 
 flexbox.style.display = '-webkit-flex';
 
-// The initial value is 'stretch'.
+// The initial value is 'normal'.
 shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'normal');
 
 flexbox.style.webkitAlignContent = 'flex-start';
 shouldBeEqualToString('flexbox.style.webkitAlignContent', 'flex-start');
@@ -309,11 +309,11 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent
 
 flexbox.style.webkitAlignContent = '';
 shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'normal');
 
 flexbox.style.webkitAlignContent = 'foo';
 shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'normal');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

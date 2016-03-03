@@ -2,6 +2,7 @@
 <html>
 <head>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .grid {
     -webkit-grid-template-rows: 20px;
@@ -73,7 +74,7 @@ window.addEventListener("load", updateGridAutoRowsColumns, false);
 </div>
 
 <div class="unconstrainedContainer" style="position: relative">
-    <div class="grid" id="unconstrainedGrid">
+    <div class="grid justifyContentStart" id="unconstrainedGrid">
         <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="50" data-expected-height="30">XXXXX XXXXXX</div>
     </div>
 </div>

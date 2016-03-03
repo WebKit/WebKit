@@ -1092,12 +1092,22 @@ EOverflow RenderFlexibleBox::mainAxisOverflowForChild(RenderBox& child) const
     return child.style().overflowY();
 }
 
+static const StyleContentAlignmentData& normalValueBehavior()
+{
+    // The justify-content property applies along the main axis, but since flexing
+    // in the main axis is controlled by flex, stretch behaves as flex-start (ignoring
+    // the specified fallback alignment, if any).
+    // https://drafts.csswg.org/css-align/#distribution-flex
+    static const StyleContentAlignmentData normalBehavior = {ContentPositionNormal, ContentDistributionStretch};
+    return normalBehavior;
+}
+
 void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList& children, const Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>& lineContexts)
 {
     ASSERT(childSizes.size() == children.size());
 
-    ContentPosition position = style().resolvedJustifyContentPosition();
-    ContentDistributionType distribution = style().resolvedJustifyContentDistribution();
+    ContentPosition position = style().resolvedJustifyContentPosition(normalValueBehavior());
+    ContentDistributionType distribution = style().resolvedJustifyContentDistribution(normalValueBehavior());
 
     size_t numberOfChildrenForJustifyContent = numberOfInFlowPositionedChildren(children);
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(children, availableFreeSpace);
@@ -1180,8 +1190,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
 
 void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
 {
-    ContentPosition position = style().resolvedJustifyContentPosition();
-    ContentDistributionType distribution = style().resolvedJustifyContentDistribution();
+    ContentPosition position = style().resolvedJustifyContentPosition(normalValueBehavior());
+    ContentDistributionType distribution = style().resolvedJustifyContentDistribution(normalValueBehavior());
 
     // This is similar to the logic in layoutAndPlaceChildren, except we place the children
     // starting from the end of the flexbox. We also don't need to layout anything since we're
@@ -1238,8 +1248,8 @@ static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace
 
 void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts)
 {
-    ContentPosition position = style().resolvedAlignContentPosition();
-    ContentDistributionType distribution = style().resolvedAlignContentDistribution();
+    ContentPosition position = style().resolvedAlignContentPosition(normalValueBehavior());
+    ContentDistributionType distribution = style().resolvedAlignContentDistribution(normalValueBehavior());
 
     if (!isMultiline() || position == ContentPositionFlexStart)
         return;

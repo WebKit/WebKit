@@ -3405,18 +3405,18 @@ bool CSSParser::parseLegacyPosition(CSSPropertyID propId, bool important)
 
 RefPtr<CSSValue> CSSParser::parseContentDistributionOverflowPosition()
 {
-    // auto | <baseline-position> | <content-distribution> || [ <overflow-position>? && <content-position> ]
+    // normal | <baseline-position> | <content-distribution> || [ <overflow-position>? && <content-position> ]
     // <baseline-position> = baseline | last-baseline;
     // <content-distribution> = space-between | space-around | space-evenly | stretch;
     // <content-position> = center | start | end | flex-start | flex-end | left | right;
-    // <overflow-position> = true | safe
+    // <overflow-position> = unsafe | safe
 
     CSSParserValue* value = m_valueList->current();
     if (!value)
         return nullptr;
 
     // auto | <baseline-position>
-    if (value->id == CSSValueAuto || isBaselinePositionKeyword(value->id)) {
+    if (value->id == CSSValueNormal || isBaselinePositionKeyword(value->id)) {
         m_valueList->next();
         return CSSContentDistributionValue::create(CSSValueInvalid, value->id, CSSValueInvalid);
     }

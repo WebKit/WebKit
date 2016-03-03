@@ -257,7 +257,7 @@ enum EFlexWrap { FlexNoWrap, FlexWrap, FlexWrapReverse };
 enum ItemPosition {ItemPositionAuto, ItemPositionStretch, ItemPositionBaseline, ItemPositionLastBaseline, ItemPositionCenter, ItemPositionStart, ItemPositionEnd, ItemPositionSelfStart, ItemPositionSelfEnd, ItemPositionFlexStart, ItemPositionFlexEnd, ItemPositionLeft, ItemPositionRight};
 enum OverflowAlignment {OverflowAlignmentDefault, OverflowAlignmentUnsafe, OverflowAlignmentSafe};
 enum ItemPositionType {NonLegacyPosition, LegacyPosition};
-enum ContentPosition {ContentPositionAuto, ContentPositionBaseline, ContentPositionLastBaseline, ContentPositionCenter, ContentPositionStart, ContentPositionEnd, ContentPositionFlexStart, ContentPositionFlexEnd, ContentPositionLeft, ContentPositionRight};
+enum ContentPosition {ContentPositionNormal, ContentPositionBaseline, ContentPositionLastBaseline, ContentPositionCenter, ContentPositionStart, ContentPositionEnd, ContentPositionFlexStart, ContentPositionFlexEnd, ContentPositionLeft, ContentPositionRight};
 enum ContentDistributionType {ContentDistributionDefault, ContentDistributionSpaceBetween, ContentDistributionSpaceAround, ContentDistributionSpaceEvenly, ContentDistributionStretch};
 
 enum ETextSecurity {

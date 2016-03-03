@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .gridFixedContent {
     -webkit-grid-template-columns: 50px minmax(-webkit-min-content, 50px) minmax(-webkit-max-content, 50px) minmax(50px, -webkit-min-content);
@@ -115,7 +116,7 @@ window.addEventListener("load", updateImplicitGridColumn, false);
 
 <!-- Allow the extra logical space distribution to occur. -->
 <div style="width: 1000px; height: 1000px">
-    <div class="grid gridFixedContent" id="unconstrainedGrid"><div class="sizedToGridArea">XXXXXX XXXXXX</div></div>
+    <div class="grid gridFixedContent justifyContentStart" id="unconstrainedGrid"><div class="sizedToGridArea">XXXXXX XXXXXX</div></div>
 </div>
 
 </body>

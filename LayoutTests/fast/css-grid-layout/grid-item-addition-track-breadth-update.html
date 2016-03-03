@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .gridFixedContent {
     -webkit-grid-template-columns: 50px minmax(-webkit-min-content, 50px) minmax(-webkit-max-content, 50px) minmax(50px, -webkit-min-content);
@@ -26,6 +27,7 @@ function testPosition(gridElementID, content, position, size)
     gridItem.setAttribute("data-expected-width", size.width);
     gridItem.setAttribute("data-expected-height", size.height);
     var gridElement = document.getElementById(gridElementID);
+    gridElement.classList.add("contentStart");
     gridElement.appendChild(gridItem);
     checkLayout("#" + gridElementID);
 }

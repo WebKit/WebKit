@@ -2,6 +2,7 @@
 <html>
 <head>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .intrinsic {
     -webkit-grid-template-rows: max-content;
@@ -21,7 +22,7 @@
 <script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.percentage');">
     <p>This test checks that percentage track breadths of intrinsic size are treated as auto.</p>
-    <div class="grid intrinsic">
+    <div class="grid intrinsic contentStart">
         <div class="grid percentage">
             <div class="sizedToGridArea" data-expected-width="50" data-expected-height="10">XXXXX</div>
         </div>

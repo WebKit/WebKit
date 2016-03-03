@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 
 <style>
@@ -73,7 +74,7 @@ div.grid > div { font: 10px/1 Ahem; }
 <br>
 <h2>Check the behavior of grids under min-content contstraints.</h2>
 <div class="min-content min-width-50">
-    <div class="grid" data-expected-width="50" data-expected-height="10">
+    <div class="grid justifyContentStart" data-expected-width="50" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
     <div class="grid min-content" data-expected-width="20" data-expected-height="20">
@@ -88,7 +89,7 @@ div.grid > div { font: 10px/1 Ahem; }
 </div>
 
 <div style="width: 200px;">
-    <div class="grid min-content min-width-fill-available" data-expected-width="200" data-expected-height="10">
+    <div class="grid justifyContentStart min-content min-width-fill-available" data-expected-width="200" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
 </div>
@@ -109,14 +110,14 @@ div.grid > div { font: 10px/1 Ahem; }
     <div data-expected-width="40" data-expected-height="10">XX X</div>
 </div>
 
-<div class="grid min-content min-width-50" data-expected-width="50" data-expected-height="10">
+<div class="grid justifyContentStart min-content min-width-50" data-expected-width="50" data-expected-height="10">
     <div data-expected-width="40" data-expected-height="10">XX X</div>
 </div>
 
 <br>
 <h2>Check the behavior of grids with definite available space.</h2>
 <div style="width: 100px;">
-    <div class="grid" data-expected-width="100" data-expected-height="10">
+    <div class="grid justifyContentStart" data-expected-width="100" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
 </div>
@@ -133,16 +134,16 @@ div.grid > div { font: 10px/1 Ahem; }
     </div>
 </div>
 
-<div class="grid" style="width: 90px;" data-expected-width="90" data-expected-height="10">
+<div class="grid justifyContentStart" style="width: 90px;" data-expected-width="90" data-expected-height="10">
     <div data-expected-width="40" data-expected-height="10">XX X</div>
 </div>
 
-<div class="grid min-width-50" style="width: 10px;" data-expected-width="50" data-expected-height="10">
+<div class="grid justifyContentStart min-width-50" style="width: 10px;" data-expected-width="50" data-expected-height="10">
     <div data-expected-width="40" data-expected-height="10">XX X</div>
 </div>
 
 <div class="min-width-50" style="width: 20px;">
-    <div class="grid" data-expected-width="50" data-expected-height="10">
+    <div class="grid justifyContentStart" data-expected-width="50" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
 </div>
@@ -151,7 +152,7 @@ div.grid > div { font: 10px/1 Ahem; }
     <div class="grid" style="width: 37%;" data-expected-width="37" data-expected-height="20">
 	<div data-expected-width="37" data-expected-height="20">XX X</div>
     </div>
-    <div class="grid min-width-50" style="width: 37%;" data-expected-width="50" data-expected-height="10">
+    <div class="grid justifyContentStart min-width-50" style="width: 37%;" data-expected-width="50" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
     <div class="grid min-width-35" style="width: 37%;" data-expected-width="37" data-expected-height="20">
@@ -180,10 +181,10 @@ div.grid > div { font: 10px/1 Ahem; }
 </div>
 
 <div class="fit-content min-width-50">
-    <div class="grid" data-expected-width="50" data-expected-height="10">
+    <div class="grid justifyContentStart" data-expected-width="50" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
-    <div class="grid min-width-35" data-expected-width="50" data-expected-height="10">
+    <div class="grid justifyContentStart min-width-35" data-expected-width="50" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
     <div class="grid max-width-min-content" data-expected-width="20" data-expected-height="20">
@@ -192,7 +193,7 @@ div.grid > div { font: 10px/1 Ahem; }
     <div class="grid fit-content" data-expected-width="40" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
-    <div class="grid fill-available" data-expected-width="50" data-expected-height="10">
+    <div class="grid justifyContentStart fill-available" data-expected-width="50" data-expected-height="10">
 	<div data-expected-width="40" data-expected-height="10">XX X</div>
     </div>
 </div>

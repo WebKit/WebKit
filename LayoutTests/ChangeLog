@@ -1,3 +1,73 @@
+2016-03-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] New CSS Value 'normal' for Content Alignment
+        https://bugs.webkit.org/show_bug.cgi?id=154282
+
+        The Box Alignment specification defines a new value 'normal' to be used
+        as default for the different layout models, which will define the
+        specific behavior for each case. This patch adds a new CSS value in the
+        parsing logic and adapts the Content Alignment properties to the new
+        value.
+
+        Since the 'normal' vlaue, initial/default for both justify-content
+        and align-content CSS properties, behaves now as 'stretch' instead
+        of o'start' we have to rebaseline those tests affected by the new
+        default value.
+
+        Reviewed by David Hyatt.
+
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/parse-align-content-expected.txt:
+        * css3/parse-align-content.html:
+        * css3/parse-justify-content-expected.txt:
+        * css3/parse-justify-content.html:
+        * css3/resources/alignment-parsing-utils.js:
+        (checkBadValues):
+        * fast/css-grid-layout/auto-content-resolution-columns.html:
+        * fast/css-grid-layout/grid-auto-columns-rows-update.html:
+        * fast/css-grid-layout/grid-auto-flow-resolution.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-container-change-named-grid-lines-recompute-child.html:
+        * fast/css-grid-layout/grid-content-sized-columns-resolution.html:
+        * fast/css-grid-layout/grid-dynamic-updates-relayout.html:
+        * fast/css-grid-layout/grid-element-min-max-width.html:
+        * fast/css-grid-layout/grid-element-repeat-get-set.html:
+        * fast/css-grid-layout/grid-initialize-span-one-items.html:
+        * fast/css-grid-layout/grid-item-addition-auto-placement-update.html:
+        * fast/css-grid-layout/grid-item-addition-track-breadth-update.html:
+        * fast/css-grid-layout/grid-item-bad-named-area-auto-placement.html:
+        * fast/css-grid-layout/grid-item-margin-auto-columns-rows-horizontal-ltr.html:
+        * fast/css-grid-layout/grid-item-margin-auto-columns-rows-horizontal-rtl.html:
+        * fast/css-grid-layout/grid-item-margin-auto-columns-rows-vertical-ltr.html:
+        * fast/css-grid-layout/grid-item-margin-auto-columns-rows-vertical-rtl.html:
+        * fast/css-grid-layout/grid-item-multiple-minmax-content-resolution.html:
+        * fast/css-grid-layout/grid-item-named-grid-area-resolution.html:
+        * fast/css-grid-layout/grid-item-negative-indexes.html:
+        * fast/css-grid-layout/grid-item-order-in-content-sized-columns-resolution.html:
+        * fast/css-grid-layout/grid-item-removal-auto-placement-update.html:
+        * fast/css-grid-layout/grid-item-removal-track-breadth-update.html:
+        * fast/css-grid-layout/grid-update-sizes-after-distributing-all.html:
+        * fast/css-grid-layout/implicit-columns-auto-resolution.html:
+        * fast/css-grid-layout/implicit-position-dynamic-change.html:
+        * fast/css-grid-layout/mark-as-infinitely-growable.html:
+        * fast/css-grid-layout/maximize-tracks-definite-indefinite-width.html:
+        * fast/css-grid-layout/minmax-spanning-resolution-columns.html:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/named-grid-lines-computed-style-implicit-tracks.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution.html:
+        * fast/css-grid-layout/percent-intrinsic-track-breadth.html:
+        * fast/css-grid-layout/percent-track-breadths-regarding-container-size.html:
+        * fast/css-grid-layout/resources/grid-definitions-parsing-utils.js:
+        (checkGridTemplatesSetJSValues):
+        * fast/css-grid-layout/resources/grid-template-shorthand-parsing-utils.js:
+        (checkGridDefinitionsSetJSValues):
+        (testGridDefinitionsSetBadJSValues):
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2016-03-02  Chris Dumez  <cdumez@apple.com>
 
         HTMLFormElement's named property getter does not return a RadioNodelist

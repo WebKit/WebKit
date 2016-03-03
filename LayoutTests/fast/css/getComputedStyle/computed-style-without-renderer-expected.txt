@@ -147,13 +147,13 @@ column-rule-style: none
 column-rule-width: 0px
 column-span: none
 column-width: auto
-align-content: auto
+align-content: normal
 align-items: auto
 align-self: auto
 filter: none
 flex-direction: row
 flex-wrap: nowrap
-justify-content: auto
+justify-content: normal
 justify-self: auto
 justify-items: auto
 -webkit-font-kerning: auto

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .gridAutoContent {
     /* -webkit-grid-template-columns is left unset so that the grid item's column is implicit. */
@@ -33,7 +34,7 @@
 </div>
 
 <div style="width: 100px; height: 10px;">
-    <div class="grid gridAutoContent">
+    <div class="grid gridAutoContent justifyContentStart">
         <div class="firstRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX</div>
     </div>
 </div>

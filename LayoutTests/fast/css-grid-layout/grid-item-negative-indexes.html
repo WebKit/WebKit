@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .negativeStartBeforePositionIndexes {
     -webkit-grid-row: -10 / 1;
@@ -19,19 +20,19 @@
 <div>This test checks that negative grid position indexes don't make us crash.</div>
 
 <div class="unconstrainedContainer">
-    <div class="grid">
+    <div class="grid justifyContentStart">
         <div class="sizedToGridArea negativeStartBeforePositionIndexes" data-expected-width="120" data-expected-height="10">XXXXX XXXXXX</div>
     </div>
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid">
+    <div class="grid justifyContentStart">
         <div class="sizedToGridArea negativeEndAfterPositionIndexes" data-expected-width="120" data-expected-height="10">XXXXX XXXXXX</div>
     </div>
 </div>
 
 <div class="unconstrainedContainer">
-    <div class="grid">
+    <div class="grid justifyContentStart">
         <div class="sizedToGridArea negativePositionIndexes" data-expected-width="120" data-expected-height="10">XXXXX XXXXXX</div>
     </div>
 </div>

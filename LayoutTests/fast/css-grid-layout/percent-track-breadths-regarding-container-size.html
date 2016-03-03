@@ -4,6 +4,7 @@
 <link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
 <link href="../css-intrinsic-dimensions/resources/height-keyword-classes.css" rel="stylesheet">
 <link href="resources/grid.css" rel="stylesheet">
+<link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .grid {
     -webkit-grid-template-columns: 20% 50% 30%;
@@ -87,7 +88,7 @@
     </div>
 
     <div class="fit-content indefiniteHeight">
-        <div class="grid calculatedSize">
+        <div class="grid calculatedSize justifyContentStart">
             <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="20" data-expected-height="10">XX</div>
             <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="50" data-expected-height="10">XXXXX</div>
             <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="30" data-expected-height="10">XXX</div>
