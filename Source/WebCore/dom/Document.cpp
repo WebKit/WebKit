@@ -5802,6 +5802,9 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
 
     unwrapFullScreenRenderer(m_fullScreenRenderer, m_fullScreenElement.get());
 
+    if (element)
+        element->willBecomeFullscreenElement();
+    
     m_fullScreenElement = element;
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)

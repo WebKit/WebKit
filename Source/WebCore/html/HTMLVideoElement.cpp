@@ -318,6 +318,18 @@ bool HTMLVideoElement::webkitDisplayingFullscreen()
     return isFullscreen();
 }
 
+void HTMLVideoElement::ancestorWillEnterFullscreen()
+{
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    if (fullscreenMode() == VideoFullscreenModeNone)
+        return;
+
+    // If this video element's presentation mode is not inline, but its ancestor
+    // is entering fullscreen, exit its current fullscreen mode.
+    exitToFullscreenModeWithoutAnimationIfPossible(fullscreenMode(), VideoFullscreenModeNone);
+#endif
+}
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool HTMLVideoElement::webkitWirelessVideoPlaybackDisabled() const
 {
@@ -475,6 +487,14 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
     HTMLMediaElement::fullscreenModeChanged(mode);
 }
 
+#endif
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+void HTMLVideoElement::exitToFullscreenModeWithoutAnimationIfPossible(HTMLMediaElementEnums::VideoFullscreenMode fromMode, HTMLMediaElementEnums::VideoFullscreenMode toMode)
+{
+    if (document().page()->chrome().client().supportsVideoFullscreen(fromMode))
+        document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(*this, toMode);
+}
 #endif
 
 }

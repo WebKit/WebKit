@@ -491,6 +491,13 @@ void WebVideoFullscreenManagerProxy::exitFullscreen(uint64_t contextId, WebCore:
 #endif
 }
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+void WebVideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
+{
+    ensureInterface(contextId).exitFullscreenWithoutAnimationToMode(targetMode);
+}
+#endif
+
 void WebVideoFullscreenManagerProxy::cleanupFullscreen(uint64_t contextId)
 {
     ensureInterface(contextId).cleanupFullscreen();

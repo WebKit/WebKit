@@ -247,6 +247,9 @@ private:
     virtual void setUpVideoControlsManager(WebCore::HTMLVideoElement&) override;
     virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     virtual void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) override;
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    virtual void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
+#endif
 #endif
 
 #if ENABLE(FULLSCREEN_API)

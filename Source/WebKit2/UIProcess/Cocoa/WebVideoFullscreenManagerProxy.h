@@ -152,6 +152,9 @@ private:
     void exitFullscreen(uint64_t contextId, WebCore::IntRect finalRect);
     void cleanupFullscreen(uint64_t contextId);
     void preparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect);
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    void exitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+#endif
 
     // Messages to WebVideoFullscreenManager
     void play(uint64_t contextId);

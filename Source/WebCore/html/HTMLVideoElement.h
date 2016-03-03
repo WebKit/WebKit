@@ -48,6 +48,8 @@ public:
     bool webkitSupportsFullscreen();
     bool webkitDisplayingFullscreen();
 
+    virtual void ancestorWillEnterFullscreen() override;
+    
     // FIXME: Maintain "FullScreen" capitalization scheme for backwards compatibility.
     // https://bugs.webkit.org/show_bug.cgi?id=36081
     void webkitEnterFullScreen(ExceptionCode& ec) { webkitEnterFullscreen(ec); }
@@ -84,6 +86,10 @@ public:
     String webkitPresentationMode() const;
     void setFullscreenMode(VideoFullscreenMode);
     virtual void fullscreenModeChanged(VideoFullscreenMode) override;
+#endif
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    void exitToFullscreenModeWithoutAnimationIfPossible(HTMLMediaElementEnums::VideoFullscreenMode fromMode, HTMLMediaElementEnums::VideoFullscreenMode toMode);
 #endif
 
 private:

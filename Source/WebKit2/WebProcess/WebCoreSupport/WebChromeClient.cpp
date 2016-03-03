@@ -870,6 +870,14 @@ void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoEleme
 {
     m_page->videoFullscreenManager()->exitVideoFullscreenForVideoElement(videoElement);
 }
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)
+{
+    m_page->videoFullscreenManager()->exitVideoFullscreenToModeWithoutAnimation(videoElement, targetMode);
+}
+#endif
+
 #endif
     
 #if ENABLE(FULLSCREEN_API)

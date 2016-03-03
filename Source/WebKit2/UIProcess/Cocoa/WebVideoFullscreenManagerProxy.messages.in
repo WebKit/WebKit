@@ -40,5 +40,8 @@ messages -> WebVideoFullscreenManagerProxy {
     CleanupFullscreen(uint64_t contextId)
     PreparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect)
     SetUpVideoControlsManagerWithID(uint64_t contextId)
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    ExitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
+#endif
 }
 #endif

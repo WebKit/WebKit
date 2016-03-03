@@ -1,3 +1,22 @@
+2016-03-01  Ada Chan  <adachan@apple.com>
+
+        Update the media element's presentation mode properly after going in and out of full screen via the Full Screen API
+        https://bugs.webkit.org/show_bug.cgi?id=154834
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode):
+        Call the new exitFullscreenWithoutAnimationToMode() method on WebVideoFullscreenInterfaceMac.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exitVideoFullscreenToModeWithoutAnimation):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+
 2016-03-02  Beth Dakin  <bdakin@apple.com>
 
         Crashes in media tests after http://trac.webkit.org/changeset/197461

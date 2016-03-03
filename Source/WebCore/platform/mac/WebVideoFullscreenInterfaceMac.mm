@@ -261,6 +261,10 @@ void WebVideoFullscreenInterfaceMac::exitFullscreen(const IntRect&, NSWindow *)
 {
 }
 
+void WebVideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode)
+{
+}
+
 void WebVideoFullscreenInterfaceMac::cleanupFullscreen()
 {
 }

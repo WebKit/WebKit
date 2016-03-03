@@ -307,6 +307,23 @@ void WebVideoFullscreenManager::setUpVideoControlsManager(WebCore::HTMLVideoElem
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetUpVideoControlsManagerWithID(contextId), m_page->pageID());
 }
 
+void WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
+{
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    ASSERT(m_videoElements.contains(&videoElement));
+
+    uint64_t contextId = m_videoElements.get(&videoElement);
+    auto& interface = ensureInterface(contextId);
+
+    interface.setTargetIsFullscreen(false);
+
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreenWithoutAnimationToMode(contextId, targetMode), m_page->pageID());
+#else
+    UNUSED_PARAM(videoElement);
+    UNUSED_PARAM(targetMode);
+#endif
+}
+
 #pragma mark Interface to WebVideoFullscreenInterfaceContext:
 
 void WebVideoFullscreenManager::resetMediaState(uint64_t contextId)

@@ -505,6 +505,7 @@ private:
     virtual void removedFrom(ContainerNode&) override;
     virtual void didRecalcStyle(Style::Change) override;
 
+    virtual void willBecomeFullscreenElement() override;
     virtual void didBecomeFullscreenElement() override;
     virtual void willStopBeingFullscreenElement() override;
 

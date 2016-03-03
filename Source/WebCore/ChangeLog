@@ -1,3 +1,39 @@
+2016-03-01  Ada Chan  <adachan@apple.com>
+
+        Update the media element's presentation mode properly after going in and out of full screen via the Full Screen API
+        https://bugs.webkit.org/show_bug.cgi?id=154834
+
+        Reviewed by Simon Fraser.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        * dom/Element.cpp:
+        (WebCore::Element::willBecomeFullscreenElement):
+        * dom/Element.h:
+        (WebCore::Element::ancestorWillEnterFullscreen):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        If the Full Screen API is enabled and this media element is entering a mode other than standard
+        full screen, see if it's currently contained in a full screen element. If so, exit full screen.
+        (WebCore::HTMLMediaElement::willBecomeFullscreenElement):
+        If this media element is going to standard full screen, update its presentation mode. If
+        this media element also supports presentation mode and it currently has a presentation mode
+        that's not standard full screen, exit that presentation mode directly without animation.
+        (WebCore::HTMLMediaElement::willStopBeingFullscreenElement):
+        Set the presentation mode back to inline unless it's already changed to a different
+        presentation mode.
+        * html/HTMLMediaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::ancestorWillEnterFullscreen):
+        Reset this video element's presentation state to inline if its ancestor is going to full screen.
+        (WebCore::HTMLVideoElement::exitToFullscreenModeWithoutAnimationIfPossible):
+        If the fullscreen mode the video element is exiting from is supported, exit that mode to the new mode.
+        * html/HTMLVideoElement.h:
+        * page/ChromeClient.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode):
+
 2016-03-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Close UniqueIDBDatabases once they become unused.
