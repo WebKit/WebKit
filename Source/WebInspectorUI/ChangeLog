@@ -1,5 +1,20 @@
 2016-03-02  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Update MemoryTimelineView for new ruler height
+        https://bugs.webkit.org/show_bug.cgi?id=153904
+        <rdar://problem/24517259>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory > .content > .details > .timeline-ruler):
+        (.timeline-view.memory > .content > .details > .subtitle):
+        Adjust ruler top and subtitle padding for shorter timeline ruler.
+        Also reduced padding in the Categories heading area to tighen up
+        the layout a bit.
+
+2016-03-02  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Timelines UI redesign: replace content view container with a content browser
         https://bugs.webkit.org/show_bug.cgi?id=153033
         <rdar://problem/24195565>

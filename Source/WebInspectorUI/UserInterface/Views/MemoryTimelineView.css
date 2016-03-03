@@ -47,11 +47,11 @@
 .timeline-view.memory > .content > .details > .timeline-ruler {
     margin-left: 150px;
     position: relative;
-    top: 9px;
+    top: 5px;
 }
 
 .timeline-view.memory > .content > .details > .subtitle {
-    padding: 10px;
+    padding: 0 10px 10px;
     border-bottom: 1px solid var(--border-color);
 }
 
