@@ -26,6 +26,7 @@
 #ifndef OptionSet_h
 #define OptionSet_h
 
+#include <initializer_list>
 #include <type_traits>
 
 namespace WTF {
@@ -40,14 +41,19 @@ public:
         return static_cast<T>(storageType);
     }
 
-    constexpr OptionSet()
-        : m_storage(0)
-    {
-    }
+    constexpr OptionSet() = default;
 
     constexpr OptionSet(T t)
         : m_storage(static_cast<StorageType>(t))
     {
+    }
+
+    // FIXME: Make this constexpr once we adopt C++14 as C++11 does not support for-loops
+    // in a constexpr function.
+    OptionSet(std::initializer_list<T> initializerList)
+    {
+        for (auto& option : initializerList)
+            m_storage |= static_cast<StorageType>(option);
     }
 
     constexpr StorageType toRaw() const { return m_storage; }
@@ -65,7 +71,7 @@ public:
     }
 
 private:
-    StorageType m_storage;
+    StorageType m_storage { 0 };
 };
 
 }

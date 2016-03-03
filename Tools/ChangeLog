@@ -1,3 +1,18 @@
+2016-03-03  Daniel Bates  <dabates@apple.com>
+
+        Add unit tests for WTF::OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=154925
+        <rdar://problem/24964211>
+
+        Reviewed by Darin Adler.
+
+        Add tests to ensure that we do not regress the behavior of WTF::OptionSet.
+
+        * TestWebKitAPI/CMakeLists.txt: Add file TestWebKitAPI/Tests/WTF/OptionSet.cpp.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Ditto.
+        * TestWebKitAPI/Tests/WTF/OptionSet.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2016-03-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r197442.
