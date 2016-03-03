@@ -1,3 +1,34 @@
+2016-03-03  Antti Koivisto  <antti@apple.com>
+
+        Slider thumb style should not depend on renderers
+        https://bugs.webkit.org/show_bug.cgi?id=154961
+
+        Reviewed by Andreas Kling.
+
+        Currently slider thumb pseudo id is computed based on host element renderer.
+        Style is the input for building a render tree and should be computable without having one.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::hostInput):
+        (WebCore::SliderThumbElement::customStyleForRenderer):
+
+            Compute pseudo id based on the host style.
+            Return nullptr so style recalc will otherwise proceed normally.
+
+        (WebCore::SliderThumbElement::shadowPseudoId):
+        (WebCore::SliderThumbElement::cloneElementWithoutAttributesAndChildren):
+        (WebCore::SliderContainerElement::SliderContainerElement):
+        (WebCore::SliderContainerElement::create):
+        (WebCore::SliderContainerElement::createElementRenderer):
+        (WebCore::SliderContainerElement::customStyleForRenderer):
+
+            Here too.
+
+        (WebCore::SliderContainerElement::shadowPseudoId):
+        (WebCore::sliderThumbShadowPseudoId): Deleted.
+        (WebCore::mediaSliderThumbShadowPseudoId): Deleted.
+        * html/shadow/SliderThumbElement.h:
+
 2016-03-03  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Simplify method to resolve auto-placed items

@@ -62,6 +62,7 @@ private:
     SliderThumbElement(Document&);
 
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+
     virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
     virtual bool isDisabledFormControl() const override;
     virtual bool matchesReadWritePseudoClass() const override;
@@ -77,6 +78,7 @@ private:
 #endif
     virtual void willDetachRenderers() override;
 
+    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle&, RenderStyle*) override;
     virtual const AtomicString& shadowPseudoId() const override;
 
     void startDragging();
@@ -96,6 +98,7 @@ private:
     void unregisterForTouchEvents();
 #endif
 
+    AtomicString m_shadowPseudoId;
     bool m_inDragMode;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -132,7 +135,10 @@ public:
 private:
     SliderContainerElement(Document&);
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle&, RenderStyle*) override;
     virtual const AtomicString& shadowPseudoId() const override;
+
+    AtomicString m_shadowPseudoId;
 };
 
 }
