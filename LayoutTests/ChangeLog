@@ -1,3 +1,19 @@
+2016-03-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to compile StringReplace
+        https://bugs.webkit.org/show_bug.cgi?id=154979
+
+        Reviewed by Benjamin Poulain.
+
+        Add a microbenchmark for a case of StringReplace that we hadn't covered with a microbenchmark
+        yet: using something absurd for the replace value. This is interesting for implementing the
+        32_64 version of StringReplace, which gets really weird in the absurd case because of how it
+        consumes the entire register file while making the call on x86-32.
+
+        * js/regress/script-tests/string-replace-generic.js: Added.
+        * js/regress/string-replace-generic-expected.txt: Added.
+        * js/regress/string-replace-generic.html: Added.
+
 2016-03-03  Dave Hyatt  <hyatt@apple.com>
 
         Add support for the "last" value of hanging-punctuation

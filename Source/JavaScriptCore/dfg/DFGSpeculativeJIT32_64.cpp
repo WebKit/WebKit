@@ -2902,6 +2902,74 @@ void SpeculativeJIT::compile(Node* node)
         booleanResult(result.gpr(), node);
         break;
     }
+
+    case StringReplace: {
+        if (node->child1().useKind() == StringUse
+            && node->child2().useKind() == RegExpObjectUse
+            && node->child3().useKind() == StringUse) {
+            if (JSString* replace = node->child3()->dynamicCastConstant<JSString*>()) {
+                if (!replace->length()) {
+                    SpeculateCellOperand string(this, node->child1());
+                    SpeculateCellOperand regExp(this, node->child2());
+                    GPRReg stringGPR = string.gpr();
+                    GPRReg regExpGPR = regExp.gpr();
+                    speculateString(node->child1(), stringGPR);
+                    speculateRegExpObject(node->child2(), regExpGPR);
+
+                    flushRegisters();
+                    GPRFlushedCallResult2 resultTag(this);
+                    GPRFlushedCallResult resultPayload(this);
+                    callOperation(
+                        operationStringProtoFuncReplaceRegExpEmptyStr, resultTag.gpr(),
+                        resultPayload.gpr(), stringGPR, regExpGPR);
+                    m_jit.exceptionCheck();
+                    cellResult(resultPayload.gpr(), node);
+                    break;
+                }
+            }
+            
+            SpeculateCellOperand string(this, node->child1());
+            SpeculateCellOperand regExp(this, node->child2());
+            SpeculateCellOperand replace(this, node->child3());
+            GPRReg stringGPR = string.gpr();
+            GPRReg regExpGPR = regExp.gpr();
+            GPRReg replaceGPR = replace.gpr();
+            speculateString(node->child1(), stringGPR);
+            speculateRegExpObject(node->child2(), regExpGPR);
+            speculateString(node->child3(), replaceGPR);
+            
+            flushRegisters();
+            GPRFlushedCallResult2 resultTag(this);
+            GPRFlushedCallResult resultPayload(this);
+            callOperation(
+                operationStringProtoFuncReplaceRegExpString, resultTag.gpr(), resultPayload.gpr(),
+                stringGPR, regExpGPR, replaceGPR);
+            m_jit.exceptionCheck();
+            cellResult(resultPayload.gpr(), node);
+            break;
+        }
+        
+        JSValueOperand string(this, node->child1());
+        JSValueOperand regExp(this, node->child2());
+        JSValueOperand replace(this, node->child3());
+        GPRReg stringTagGPR = string.tagGPR();
+        GPRReg stringPayloadGPR = string.payloadGPR();
+        GPRReg regExpTagGPR = regExp.tagGPR();
+        GPRReg regExpPayloadGPR = regExp.payloadGPR();
+        GPRReg replaceTagGPR = replace.tagGPR();
+        GPRReg replacePayloadGPR = replace.payloadGPR();
+        
+        flushRegisters();
+        GPRFlushedCallResult2 resultTag(this);
+        GPRFlushedCallResult resultPayload(this);
+        callOperation(
+            operationStringProtoFuncReplaceGeneric, resultTag.gpr(), resultPayload.gpr(),
+            stringTagGPR, stringPayloadGPR, regExpTagGPR, regExpPayloadGPR, replaceTagGPR,
+            replacePayloadGPR);
+        m_jit.exceptionCheck();
+        cellResult(resultPayload.gpr(), node);
+        break;
+    }
         
     case ArrayPush: {
         ASSERT(node->arrayMode().isJSArray());
@@ -4864,7 +4932,6 @@ void SpeculativeJIT::compile(Node* node)
     case KillStack:
     case GetStack:
     case GetMyArgumentByVal:
-    case StringReplace:
         DFG_CRASH(m_jit.graph(), node, "unexpected node in DFG backend");
         break;
     }

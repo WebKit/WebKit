@@ -2190,12 +2190,6 @@ bool ByteCodeParser::handleIntrinsicCall(int resultOperand, Intrinsic intrinsic,
     }
 
     case StringPrototypeReplaceIntrinsic: {
-        if (!isFTL(m_graph.m_plan.mode)) {
-            // This is a marginally profitable intrinsic. We've only the work to make it an
-            // intrinsic on the fourth tier.
-            return false;
-        }
-
         if (argumentCountIncludingThis != 3)
             return false;
 

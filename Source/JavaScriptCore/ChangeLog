@@ -1,3 +1,26 @@
+2016-03-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to compile StringReplace
+        https://bugs.webkit.org/show_bug.cgi?id=154979
+
+        Reviewed by Benjamin Poulain.
+
+        Adds support for StringReplace to the DFG tier. This is a 3% speed-up on Octane/regexp.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::speculateRegExpObject):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOperations.h:
+
 2016-03-03  Saam barati  <sbarati@apple.com>
 
         [[SetPrototypeOf]] isn't properly implemented everywhere
