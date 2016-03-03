@@ -1197,28 +1197,44 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
     switchToSlowPutArrayStorage(vm);
 }
 
-bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue prototype)
+bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
 {
-    UNUSED_PARAM(exec);
     ASSERT(methodTable(vm)->toThis(this, exec, NotStrictMode) == this);
+
+    if (this->prototype() == prototype)
+        return true;
+
+    bool isExtensible = this->isExtensible(exec);
+    if (vm.exception())
+        return false;
+
+    if (!isExtensible) {
+        if (shouldThrowIfCantSet)
+            throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+        return false;
+    }
+
     JSValue nextPrototype = prototype;
     while (nextPrototype && nextPrototype.isObject()) {
-        if (nextPrototype == this)
+        if (nextPrototype == this) {
+            if (shouldThrowIfCantSet)
+                vm.throwException(exec, createError(exec, ASCIILiteral("cyclic __proto__ value")));
             return false;
+        }
         nextPrototype = asObject(nextPrototype)->prototype();
     }
     setPrototypeDirect(vm, prototype);
     return true;
 }
 
-bool JSObject::setPrototype(JSObject* object, ExecState* exec, JSValue prototype)
+bool JSObject::setPrototype(JSObject* object, ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
 {
-    return object->setPrototypeWithCycleCheck(exec->vm(), exec, prototype);
+    return object->setPrototypeWithCycleCheck(exec->vm(), exec, prototype, shouldThrowIfCantSet);
 }
 
-bool JSObject::setPrototype(VM& vm, ExecState* exec, JSValue prototype)
+bool JSObject::setPrototype(VM& vm, ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
 {
-    return methodTable(vm)->setPrototype(this, exec, prototype);
+    return methodTable(vm)->setPrototype(this, exec, prototype, shouldThrowIfCantSet);
 }
 
 bool JSObject::allowsAccessFrom(ExecState* exec)

@@ -109,7 +109,7 @@ struct MethodTable {
     typedef bool (*IsExtensibleFunctionPtr)(JSObject*, ExecState*);
     IsExtensibleFunctionPtr isExtensible;
 
-    typedef bool (*SetPrototypeFunctionPtr)(JSObject*, ExecState*, JSValue);
+    typedef bool (*SetPrototypeFunctionPtr)(JSObject*, ExecState*, JSValue, bool shouldThrowIfCantSet);
     SetPrototypeFunctionPtr setPrototype;
 
     typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);

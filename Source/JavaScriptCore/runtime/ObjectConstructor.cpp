@@ -209,24 +209,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
     if (!checkProtoSetterAccessAllowed(exec, object))
         return JSValue::encode(objectValue);
 
-    if (object->prototype() == protoValue)
-        return JSValue::encode(objectValue);
-
-    bool isExtensible = object->isExtensible(exec);
-    if (exec->hadException())
-        return JSValue::encode(JSValue());
-    if (!isExtensible)
-        return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
-
     VM& vm = exec->vm();
-    bool didSetPrototype = object->setPrototype(vm, exec, protoValue);
-    if (vm.exception())
-        return JSValue::encode(JSValue());
-    if (!didSetPrototype) {
-        vm.throwException(exec, createError(exec, ASCIILiteral("cyclic __proto__ value")));
-        return JSValue::encode(jsUndefined());
-    }
-
+    bool shouldThrowIfCantSet = true;
+    bool didSetPrototype = object->setPrototype(vm, exec, protoValue, shouldThrowIfCantSet);
+    ASSERT_UNUSED(didSetPrototype, vm.exception() || didSetPrototype);
     return JSValue::encode(objectValue);
 }
 

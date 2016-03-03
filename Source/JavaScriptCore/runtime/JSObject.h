@@ -114,13 +114,13 @@ public:
 private:
     // This is OrdinarySetPrototypeOf in the specification. Section 9.1.2.1
     // https://tc39.github.io/ecma262/#sec-ordinarysetprototypeof
-    JS_EXPORT_PRIVATE bool setPrototypeWithCycleCheck(VM&, ExecState*, JSValue prototype);
+    JS_EXPORT_PRIVATE bool setPrototypeWithCycleCheck(VM&, ExecState*, JSValue prototype, bool shouldThrowIfCantSet);
 public:
     // This is the fully virtual [[SetPrototypeOf]] internal function defined
     // in the ECMAScript 6 specification. Use this when doing a [[SetPrototypeOf]] 
     // operation as dictated in the specification.
-    bool setPrototype(VM&, ExecState*, JSValue prototype);
-    JS_EXPORT_PRIVATE static bool setPrototype(JSObject*, ExecState*, JSValue prototype);
+    bool setPrototype(VM&, ExecState*, JSValue prototype, bool shouldThrowIfCantSet = false);
+    JS_EXPORT_PRIVATE static bool setPrototype(JSObject*, ExecState*, JSValue prototype, bool shouldThrowIfCantSet);
         
     bool mayInterceptIndexedAccesses()
     {

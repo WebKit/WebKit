@@ -212,17 +212,9 @@ EncodedJSValue JSC_HOST_CALL reflectObjectSetPrototypeOf(ExecState* exec)
     if (!checkProtoSetterAccessAllowed(exec, object))
         return JSValue::encode(jsBoolean(false));
 
-    if (object->prototype() == proto)
-        return JSValue::encode(jsBoolean(true));
-
-    bool isExtensible = object->isExtensible(exec);
-    if (exec->hadException())
-        return JSValue::encode(JSValue());
-    if (!isExtensible)
-        return JSValue::encode(jsBoolean(false));
-
     VM& vm = exec->vm();
-    bool didSetPrototype = object->setPrototype(vm, exec, proto);
+    bool shouldThrowIfCantSet = false;
+    bool didSetPrototype = object->setPrototype(vm, exec, proto, shouldThrowIfCantSet);
     if (vm.exception())
         return JSValue::encode(JSValue());
     return JSValue::encode(jsBoolean(didSetPrototype));

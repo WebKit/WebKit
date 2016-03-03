@@ -1,3 +1,38 @@
+2016-03-03  Saam barati  <sbarati@apple.com>
+
+        [[SetPrototypeOf]] isn't properly implemented everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=154943
+
+        Reviewed by Benjamin Poulain.
+
+        We were copy-pasting implememntation bits that belong in OrdinarySetPrototypeOf 
+        in a few different places that call O.[[SetPrototypeOf]](v)
+        rather than having those bits in OrdinarySetPrototypeOf itself.
+        We need to put those copy-pasted bits into OrdinarySetPrototypeOf
+        and not the call sites of O.[[SetPrototypeOf]](v) because
+        O.[[SetPrototypeOf]](v) won't always call into OrdinarySetPrototypeOf.
+        This is needed for correctness because this behavior is now observable
+        with the ES6 Proxy object.
+
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::isExtensible):
+        (JSC::JSCell::setPrototype):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoSetter):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeDirect):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::allowsAccessFrom):
+        * runtime/JSObject.h:
+        (JSC::JSObject::mayInterceptIndexedAccesses):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectSetPrototypeOf):
+
 2016-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build after r197489.
