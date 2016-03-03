@@ -8,32 +8,66 @@ var ImageDataStage = Utilities.createSubclass(Stage,
         this._offsetIndex = 0;
     }, {
 
-    testImageSrc: './../resources/yin-yang.png',
+    imageWidth: 100,
+    imageHeight: 100,
+    pixelStride: 4,
+    rowStride: 400,
+    weightNegativeThreshold: 0.04,
+    weightPositiveThreshold: 0.96,
+    imageSrcs: [
+        "compass",
+        "console",
+        "contribute",
+        "debugger",
+        "inspector",
+        "layout",
+        "performance",
+        "script",
+        "shortcuts",
+        "standards",
+        "storage",
+        "styles",
+        "timeline"
+    ],
+    images: [],
 
     initialize: function(benchmark)
     {
         Stage.prototype.initialize.call(this, benchmark);
 
         var waitForLoad = new SimplePromise;
+
+        var lastPromise;
+        var images = this.images;
+        this.imageSrcs.forEach(function(imageSrc) {
+            var promise = this._loadImage("resources/" + imageSrc + ".svg");
+            if (!lastPromise)
+                lastPromise = promise;
+            else {
+                lastPromise = lastPromise.then(function(img) {
+                    images.push(img);
+                    return promise;
+                });
+            }
+        }, this);
+
+        lastPromise.then(function(img) {
+            images.push(img);
+            benchmark.readyPromise.resolve();
+        }.bind(this));
+    },
+
+    _loadImage: function(src) {
         var img = new Image;
+        var promise = new SimplePromise;
 
         img.addEventListener('load', function onImageLoad(e) {
             img.removeEventListener('load', onImageLoad);
-            waitForLoad.resolve(img);
+            promise.resolve(img);
         });
 
-        img.src = this.testImageSrc;
-
-        waitForLoad.then(function(img) {
-            this.testImage = img;
-            this.testImageWidth = img.naturalWidth;
-            this.testImageHeight = img.naturalHeight;
-
-            this.diffuseXOffset = 4,
-            this.diffuseYOffset = this.testImageWidth * 4;
-
-            benchmark.readyPromise.resolve();
-        }.bind(this));
+        img.src = src;
+        return promise;
     },
 
     tune: function(count)
@@ -44,14 +78,16 @@ var ImageDataStage = Utilities.createSubclass(Stage,
         if (count < 0) {
             this._offsetIndex = Math.max(this._offsetIndex + count, 0);
             for (var i = this._offsetIndex; i < this.testElements.length; ++i)
-                this.testElements[i].style.visibility = "hidden";
+                this.testElements[i].style.display = "none";
             return;
         }
 
         this._offsetIndex = this._offsetIndex + count;
         var index = Math.min(this._offsetIndex, this.testElements.length);
-        for (var i = 0; i < index; ++i)
-            this.testElements[i].style.visibility = "";
+        for (var i = 0; i < index; ++i) {
+            this.testElements[i].style.display = "block";
+            this._refreshElement(this.testElements[i]);
+        }
         if (this._offsetIndex <= this.testElements.length)
             return;
 
@@ -65,38 +101,35 @@ var ImageDataStage = Utilities.createSubclass(Stage,
 
     _createTestElement: function() {
         var element = document.createElement('canvas');
-        element.width = this.testImageWidth;
-        element.height = this.testImageHeight;
+        element.width = this.imageWidth;
+        element.height = this.imageHeight;
+        element.style.width = this.imageWidth + 'px';
+        element.style.height = this.imageHeight + 'px';
 
-        var context = element.getContext("2d");
+        this._refreshElement(element);
+        return element;
+    },
 
-        // Put draw image into the canvas
-        context.drawImage(this.testImage, 0, 0, this.testImageWidth, this.testImageHeight);
-
-        // randomize location
-        var left = Stage.randomInt(0, this.size.width - this.testImageWidth);
-        var top = Stage.randomInt(0, this.size.height - this.testImageHeight);
+    _refreshElement: function(element) {
+        var top = Stage.randomInt(0, Math.floor((this.size.height - this.imageHeight) / this.imageHeight)) * this.imageHeight;
+        var left = Stage.randomInt(0, Math.floor((this.size.width - this.imageWidth) / this.imageWidth)) * this.imageWidth;
 
         element.style.top = top + 'px';
         element.style.left = left + 'px';
-        element.style.width = this.testImageWidth + 'px';
-        element.style.height = this.testImageHeight + 'px';
-
-        return element;
     },
 
     animate: function(timeDelta) {
         for (var i = 0; i < this._offsetIndex; ++i) {
-            var context = this.testElements[i].getContext("2d");
+            var element = this.testElements[i];
+            var context = element.getContext("2d");
 
             // Get image data
-            var imageData = context.getImageData(0, 0, this.testImageWidth, this.testImageHeight);
+            var imageData = context.getImageData(0, 0, this.imageWidth, this.imageHeight);
 
-            var rgbaLen = 4,
-                didDraw = false,
+            var didDraw = false,
                 neighborPixelIndex,
                 dataLen = imageData.data.length;
-            for (var j = 0; j < dataLen; j += rgbaLen) {
+            for (var j = 0; j < dataLen; j += this.pixelStride) {
                 if (imageData.data[j + 3] === 0)
                     continue;
 
@@ -107,38 +140,24 @@ var ImageDataStage = Utilities.createSubclass(Stage,
                 imageData.data[j] = imageData.data[neighborPixelIndex];
                 imageData.data[j + 1] = imageData.data[neighborPixelIndex + 1];
                 imageData.data[j + 2] = imageData.data[neighborPixelIndex + 2];
-                imageData.data[j + 3] = Math.max(imageData.data[neighborPixelIndex + 3] - j % 10, 0);
+                imageData.data[j + 3] = imageData.data[neighborPixelIndex + 3];
                 didDraw = true;
             }
 
-            // Put the image data back into the canvas
-            context.putImageData(imageData, 0, 0);
-
-             // If it didn't draw restart
-            if (!didDraw)
-                context.drawImage(this.testImage, 0, 0, this.testImageWidth, this.testImageHeight)
+            if (didDraw)
+                context.putImageData(imageData, 0, 0);
+            else {
+                this._refreshElement(element);
+                element.getContext("2d").drawImage(this.images[Stage.randomInt(0, this.images.length - 1)], 0, 0, this.imageWidth, this.imageHeight);
+            }
         }
     },
 
-    _getRandomNeighboringPixelIndex: function(pixelIdx, pixelArrayLength) {
-        var xOffset = Stage.randomInt(-1, 1),
-            yOffset = Stage.randomInt(-1, 1),
-            resultPixelIdx = pixelIdx;
-
-        // Add X to the result
-        resultPixelIdx += (this.diffuseXOffset * xOffset);
-        // Add Y to the result
-        resultPixelIdx += (this.diffuseYOffset * yOffset);
-
-        // Don't fall off the end of the image
-        if (resultPixelIdx > pixelArrayLength)
-            resultPixelIdx = pixelIdx;
-
-        // Don't fall off the beginning of the image
-        if (resultPixelIdx < 0)
-            resultPixelIdx = 0;
-
-        return resultPixelIdx;
+    _getRandomNeighboringPixelIndex: function(pixelIdx, pixelArrayLength)
+    {
+        var xOffset = Math.floor((Pseudo.random() - this.weightNegativeThreshold) / (this.weightPositiveThreshold - this.weightNegativeThreshold));
+        var yOffset = Math.floor((Pseudo.random() - this.weightNegativeThreshold) / (this.weightPositiveThreshold - this.weightNegativeThreshold));
+        return (pixelIdx + this.pixelStride * xOffset + this.rowStride * yOffset) % pixelArrayLength;
     },
 
     complexity: function()

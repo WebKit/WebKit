@@ -1,3 +1,33 @@
+2016-03-03  Jon Lee  <jonlee@apple.com>
+
+        Update image test
+        https://bugs.webkit.org/show_bug.cgi?id=154962
+
+        Rubber-stamped by Darin Adler.
+
+        * Animometer/tests/master/image-data.html: Make each canvas have a compositing layer.
+        * Animometer/tests/master/resources/image-data.js:
+        (initialize): Update to load multiple images serially.
+        (_loadImage):
+        (tune): Use display instead of visibility. When showing an element anew, move it somewhere else.
+        (_createTestElement): Set up the element, refactor out placement of element to _refreshElement.
+        (_refreshElement): Place element in a tile grid.
+        (animate):
+        (_getRandomNeighboringPixelIndex): Use a more conservative distribution to make the effect last a little longer.
+        * Animometer/tests/master/resources/compass.svg: Added.
+        * Animometer/tests/master/resources/console.svg: Added.
+        * Animometer/tests/master/resources/contribute.svg: Added.
+        * Animometer/tests/master/resources/debugger.svg: Added.
+        * Animometer/tests/master/resources/inspector.svg: Added.
+        * Animometer/tests/master/resources/layout.svg: Added.
+        * Animometer/tests/master/resources/performance.svg: Added.
+        * Animometer/tests/master/resources/script.svg: Added.
+        * Animometer/tests/master/resources/shortcuts.svg: Added.
+        * Animometer/tests/master/resources/standards.svg: Added.
+        * Animometer/tests/master/resources/storage.svg: Added.
+        * Animometer/tests/master/resources/styles.svg: Added.
+        * Animometer/tests/master/resources/timeline.svg: Added.
+
 2016-03-02  Jon Lee  <jonlee@apple.com>
 
         Add some new controllers, and refine tests
