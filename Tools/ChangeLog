@@ -1,3 +1,12 @@
+2016-03-03  Frederic Wang  <fwang@igalia.com>
+
+        [jhbuild] Remove LLVM dependency.
+        https://bugs.webkit.org/show_bug.cgi?id=153274
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules:
+
 2016-03-02  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed build fix for media-stream after r197114.
