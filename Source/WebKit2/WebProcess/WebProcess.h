@@ -164,6 +164,7 @@ public:
 
     void ensurePrivateBrowsingSession(WebCore::SessionID);
     void destroyPrivateBrowsingSession(WebCore::SessionID);
+    void ensureLegacyPrivateBrowsingSessionInNetworkProcess();
 
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);

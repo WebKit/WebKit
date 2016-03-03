@@ -479,6 +479,11 @@ void WebProcess::destroyPrivateBrowsingSession(SessionID sessionID)
     SessionTracker::destroySession(sessionID);
 }
 
+void WebProcess::ensureLegacyPrivateBrowsingSessionInNetworkProcess()
+{
+    networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::EnsureLegacyPrivateBrowsingSession(), 0);
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 {

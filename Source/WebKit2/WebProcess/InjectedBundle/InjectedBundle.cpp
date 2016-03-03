@@ -285,13 +285,12 @@ void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGrou
 
 void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
 {
-    // FIXME (NetworkProcess): This test-only function doesn't work with NetworkProcess, <https://bugs.webkit.org/show_bug.cgi?id=115274>.
-#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
-    if (enabled)
+    if (enabled) {
+        WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
         WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID());
-    else
+    } else
         SessionTracker::destroySession(SessionID::legacyPrivateSessionID());
-#endif
+
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->enableLegacyPrivateBrowsing(enabled);

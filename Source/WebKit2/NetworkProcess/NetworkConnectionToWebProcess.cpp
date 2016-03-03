@@ -270,4 +270,9 @@ void NetworkConnectionToWebProcess::blobSize(const URL& url, uint64_t& resultSiz
     resultSize = NetworkBlobRegistry::singleton().blobSize(this, url);
 }
 
+void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
+{
+    NetworkProcess::singleton().ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID());
+}
+
 } // namespace WebKit

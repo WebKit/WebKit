@@ -1,3 +1,24 @@
+2016-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        [WK2] testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=115274
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::blobSize):
+        (WebKit::NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::destroyPrivateBrowsingSession):
+        (WebKit::WebProcess::ensureLegacyPrivateBrowsingSessionInNetworkProcess):
+        (WebKit::WebProcess::pluginProcessConnectionManager):
+        * WebProcess/WebProcess.h:
+
 2016-03-02  Alex Christensen  <achristensen@webkit.org>
 
         Properly cancel downloads when using NetworkSession
