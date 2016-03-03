@@ -23,6 +23,10 @@ shouldBeTrue("endsWith(document.querySelector('base').href, 'foo/bar/')");
 shouldBeFalse("endsWith(document.querySelector('base').href, 'foo/bar/foo/bar/')");
 
 base.href = null;
+shouldBeTrue("document.querySelector('base').hasAttribute('href')");
+shouldBeTrue("endsWith(document.querySelector('base').href, '/null')");
+
+base.removeAttribute('href');
 shouldBeFalse("document.querySelector('base').hasAttribute('href')");
 shouldBeTrue("endsWith(document.querySelector('base').href, '/href-attribute-resolves-with-respect-to-document.html')");
 

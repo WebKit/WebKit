@@ -1,3 +1,21 @@
+2016-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Drop [TreatNullAs=LegacyNullString] from HTMLBaseElement.href
+        https://bugs.webkit.org/show_bug.cgi?id=154952
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop [TreatNullAs=LegacyNullString] from HTMLBaseElement.href as this
+        does not match the specification:
+        - https://html.spec.whatwg.org/multipage/semantics.html#the-base-element
+
+        Firefox and Chrome both convert null to the string "null".
+
+        No new tests, updated the following existing test:
+        fast/dom/HTMLBaseElement/href-attribute-resolves-with-respect-to-document.html
+
+        * html/HTMLBaseElement.idl:
+
 2016-03-02  Zalan Bujtas  <zalan@apple.com>
 
         Paint table borders on empty cells even in quirks mode.

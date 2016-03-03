@@ -18,8 +18,7 @@
  */
 
 interface HTMLBaseElement : HTMLElement {
-    // FIXME: This should not have [TreatNullAs=LegacyNullString].
-    [TreatNullAs=LegacyNullString] attribute DOMString href;
+    attribute DOMString href;
 
     [Reflect] attribute DOMString target;
 };
