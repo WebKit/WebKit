@@ -502,14 +502,10 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
     _showTimelineViewForType(timelineType)
     {
-        if (timelineType) {
-            let timeline = this._displayedRecording.timelines.get(timelineType);
-            console.assert(timeline, "Cannot show timeline because it does not belong to the shown recording.", timelineType);
-            if (!timeline)
-                return;
-
+        let timeline = timelineType ? this._displayedRecording.timelines.get(timelineType) : null;
+        if (timeline)
             this._displayedContentView.showTimelineViewForTimeline(timeline);
-        } else
+        else
             this._displayedContentView.showOverviewTimelineView();
 
         if (this.contentBrowser.currentContentView !== this._displayedContentView)

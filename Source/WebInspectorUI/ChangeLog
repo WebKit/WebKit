@@ -1,3 +1,15 @@
+2016-03-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Assertion Failed: Cannot show timeline because it does not belong to the shown recording. – "overview"
+        https://bugs.webkit.org/show_bug.cgi?id=154972
+        <rdar://problem/24956233>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype._showTimelineViewForType):
+        Just show the overview if the recording has no timeline of the given type.
+
 2016-03-02  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Update MemoryTimelineView for new ruler height
