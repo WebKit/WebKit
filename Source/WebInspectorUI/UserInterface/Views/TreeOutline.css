@@ -127,8 +127,11 @@
 }
 
 .tree-outline.large .item .icon {
-    width: 32px;
+    margin-top: 5px;
     margin-right: 6px;
+
+    width: 24px;
+    height: 24px;
 }
 
 .tree-outline .item .status {

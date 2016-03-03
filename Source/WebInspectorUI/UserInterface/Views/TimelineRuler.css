@@ -49,7 +49,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 29px;
+    height: 23px;
 }
 
 .timeline-ruler > .header > .divider {
@@ -67,7 +67,7 @@ body.window-inactive .timeline-ruler > .header > .divider {
 
 .timeline-ruler > .header > .divider > .label {
     position: absolute;
-    top: 8px;
+    top: 6px;
     right: 5px;
     font-size: 9px;
     color: hsl(0, 0%, 50%);
@@ -156,7 +156,7 @@ body.window-inactive .timeline-ruler > .header > .divider {
 .timeline-ruler > .selection-drag {
     position: absolute;
     top: 0;
-    height: 29px;
+    height: 23px;
     cursor: -webkit-grab;
     pointer-events: all;
 }
@@ -169,7 +169,7 @@ body.window-inactive .timeline-ruler > .header > .divider {
     position: absolute;
     top: 0;
     width: 8px;
-    height: 28px;
+    height: 22px;
     border-radius: 5px;
     background-color: hsl(0, 0%, 64%);
     border: 1px solid white;

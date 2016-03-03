@@ -1,3 +1,80 @@
+2016-03-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Timelines UI redesign: add the timelines tree outline to the TimelineOverview
+        https://bugs.webkit.org/show_bug.cgi?id=153034
+        <rdar://problem/24195628>
+
+        Reviewed by Timothy Hatcher.
+
+        Move the Timelines tree outline to the overview, in preparation for <https://webkit.org/b/153036>.
+
+        * UserInterface/Views/OverviewTimelineView.css:
+        (.timeline-view.overview > .timeline-ruler > .header): Deleted.
+        (.timeline-view.overview > .timeline-ruler > .event-markers): Deleted.
+        These are now part of the default ruler style.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .tree-outline.timelines):
+        (.timeline-overview > .tree-outline.timelines::before):
+        (body.window-inactive .timeline-overview > .tree-outline.timelines):
+        (.timeline-overview.frames > .tree-outline.timelines):
+        (.timeline-overview > .tree-outline.timelines .close-button):
+        (.timeline-overview > .tree-outline.timelines .item.selected .close-button):
+        (.timeline-overview > .tree-outline.timelines .item:not(.selected):nth-child(even)):
+        (.timeline-overview > .tree-outline.timelines .item:not(.selected):not(:first-child)):
+        (.timeline-overview > .tree-outline.timelines .item.selected + .item):
+        (body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected + .item):
+        (.timeline-overview > .tree-outline.timelines :focus .item.selected + .item):
+        (.timeline-overview > .scroll-container):
+        (.timeline-overview.frames > .scroll-container):
+        (.timeline-overview > .timeline-ruler):
+        (.timeline-overview.frames > .timeline-ruler):
+        (.timeline-overview > .timeline-ruler > .markers):
+        (.timeline-overview > .graphs-container):
+        (.timeline-overview.frames > .graphs-container):
+        Styles for the timelines tree outline. A content element is inserted before the
+        tree to fill the gap created by the timeline ruler. For now the tree has a fixed
+        width of 185px, and is hidden when displaying the FPS instrument.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.get selectedTimeline):
+        (WebInspector.TimelineOverview.prototype.set selectedTimeline):
+        Make the selected timeline accessible to the parent view, since the overview doesn't
+        have a "represented object", or receive ContentView change notifications.
+
+        (WebInspector.TimelineOverview.prototype._instrumentAdded):
+        (WebInspector.TimelineOverview.prototype._instrumentRemoved):
+        (WebInspector.TimelineOverview.prototype._viewModeDidChange):
+        Add and remove instrument tree elements. Each tree element is created with a height
+        equal to it's overview graph, and is shown/hidden based on the current view mode.
+
+        (WebInspector.TimelineOverview.prototype._timelinesTreeSelectionDidChange):
+        Update the selected timeline and dispatch change event.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineOverviewHeight):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineSelected):
+        Sync the overview's timeline selection with the current ContentView's represented object.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header):
+        (.timeline-ruler > .header > .divider > .label):
+        (.timeline-ruler > .selection-drag):
+        (.timeline-ruler > .selection-handle):
+        Ruler height changed to 23px, to be consistent with the DataGrid header.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline.large .item .icon):
+        Large icon style updated to match TimelineSidebarPanel.css. The 32px
+        size is outdated and no longer used.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        New color variables, used by TimelineOverview.css.
+
 2016-02-29  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add direct number inputs to Bezier editor

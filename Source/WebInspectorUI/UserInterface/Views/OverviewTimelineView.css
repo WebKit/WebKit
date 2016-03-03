@@ -38,6 +38,7 @@
 
 .timeline-view.overview > .timeline-ruler > .event-markers {
     top: 23px;
+    border-top: 1px solid var(--border-color);
 }
 
 .timeline-view.overview > .data-grid {

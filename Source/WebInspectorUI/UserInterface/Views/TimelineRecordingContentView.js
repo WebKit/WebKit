@@ -41,6 +41,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._timelineOverview = new WebInspector.TimelineOverview(this._recording);
         this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
         this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.RecordSelected, this._recordSelected, this);
+        this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimelineSelected, this._timelineSelected, this);
         this.addSubview(this._timelineOverview);
 
         this._contentViewContainer = new WebInspector.ContentViewContainer;
@@ -338,6 +339,12 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
             this._updateTimelineViewSelection(timelineView);
             timelineView.currentTime = this._currentTime;
+
+            let timeline = null;
+            if (timelineView.representedObject instanceof WebInspector.Timeline)
+                timeline = timelineView.representedObject;
+
+            this._timelineOverview.selectedTimeline = timeline;
         }
 
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
@@ -528,7 +535,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _updateTimelineOverviewHeight()
     {
-        const rulerHeight = 29;
+        const rulerHeight = 23;
         
         let styleValue = (rulerHeight + this.timelineOverviewHeight) + "px";
         this._timelineOverview.element.style.height = styleValue;
@@ -666,6 +673,15 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
             return;
 
         treeElement.revealAndSelect(false, false, false, true);
+    }
+
+    _timelineSelected()
+    {
+        let timeline = this._timelineOverview.selectedTimeline;
+        if (timeline)
+            this.showTimelineViewForTimeline(timeline);
+        else
+            this.showOverviewTimelineView();
     }
 
     _updateFrameSelection()
