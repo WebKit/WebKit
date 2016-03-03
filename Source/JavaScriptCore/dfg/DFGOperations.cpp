@@ -361,10 +361,10 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
     }
 
     baseValue.requireObjectCoercible(exec);
-    if (exec->hadException())
+    if (vm.exception())
         return JSValue::encode(jsUndefined());
     auto propertyName = property.toPropertyKey(exec);
-    if (exec->hadException())
+    if (vm.exception())
         return JSValue::encode(jsUndefined());
     return JSValue::encode(baseValue.get(exec, propertyName));
 }
@@ -394,7 +394,7 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
     }
 
     auto propertyName = property.toPropertyKey(exec);
-    if (exec->hadException())
+    if (vm.exception())
         return JSValue::encode(jsUndefined());
     return JSValue::encode(JSValue(base).get(exec, propertyName));
 }
@@ -622,8 +622,31 @@ EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, JSCell* base, 
     if (!base->inherits(RegExpObject::info()))
         return throwVMTypeError(exec);
 
-    ASSERT(argument->isString() || argument->isObject());
-    JSString* input = argument->isString() ? asString(argument) : asObject(argument)->toString(exec);
+    JSString* input;
+    if (argument->isString())
+        input = asString(argument);
+    else {
+        input = JSValue(argument).toStringOrNull(exec);
+        if (!input)
+            return JSValue::encode(jsUndefined());
+    }
+    return JSValue::encode(asRegExpObject(base)->exec(exec, input));
+}
+        
+EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue base = JSValue::decode(encodedBase);
+    JSValue argument = JSValue::decode(encodedArgument);
+    
+    if (!base.inherits(RegExpObject::info()))
+        return throwVMTypeError(exec);
+
+    JSString* input = argument.toStringOrNull(exec);
+    if (!input)
+        return JSValue::encode(jsUndefined());
     return JSValue::encode(asRegExpObject(base)->exec(exec, input));
 }
         
@@ -637,8 +660,33 @@ size_t JIT_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* 
         return false;
     }
 
-    ASSERT(argument->isString() || argument->isObject());
-    JSString* input = argument->isString() ? asString(argument) : asObject(argument)->toString(exec);
+    JSString* input;
+    if (argument->isString())
+        input = asString(argument);
+    else {
+        input = JSValue(argument).toStringOrNull(exec);
+        if (!input)
+            return false;
+    }
+    return asRegExpObject(base)->test(exec, input);
+}
+
+size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue base = JSValue::decode(encodedBase);
+    JSValue argument = JSValue::decode(encodedArgument);
+
+    if (!base.inherits(RegExpObject::info())) {
+        throwTypeError(exec);
+        return false;
+    }
+
+    JSString* input = argument.toStringOrNull(exec);
+    if (!input)
+        return false;
     return asRegExpObject(base)->test(exec, input);
 }
 
@@ -1182,9 +1230,9 @@ JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, Encode
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSString* str1 = JSValue::decode(a).toString(exec);
-    ASSERT(!exec->hadException()); // Impossible, since we must have been given primitives.
+    ASSERT(!vm.exception()); // Impossible, since we must have been given primitives.
     JSString* str2 = JSValue::decode(b).toString(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!vm.exception());
 
     if (sumOverflows<int32_t>(str1->length(), str2->length())) {
         throwOutOfMemoryError(exec);
@@ -1200,11 +1248,11 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, Encode
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSString* str1 = JSValue::decode(a).toString(exec);
-    ASSERT(!exec->hadException()); // Impossible, since we must have been given primitives.
+    ASSERT(!vm.exception()); // Impossible, since we must have been given primitives.
     JSString* str2 = JSValue::decode(b).toString(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!vm.exception());
     JSString* str3 = JSValue::decode(c).toString(exec);
-    ASSERT(!exec->hadException());
+    ASSERT(!vm.exception());
 
     if (sumOverflows<int32_t>(str1->length(), str2->length(), str3->length())) {
         throwOutOfMemoryError(exec);
@@ -1560,6 +1608,11 @@ char* JIT_OPERATION triggerOSREntryNow(
 
         if (!codeBlock->hasOptimizedReplacement())
             return nullptr;
+
+        if (jitCode->osrEntryRetry < Options::ftlOSREntryRetryThreshold()) {
+            jitCode->osrEntryRetry++;
+            return nullptr;
+        }
     }
     
     // It's time to try to compile code for OSR entry.
