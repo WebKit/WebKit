@@ -31,10 +31,6 @@
     bottom: 0;
 }
 
-.timeline-view.layout > .data-grid .eventType-column {
-    border-right: none;
-}
-
 .sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.layout .item .subtitle {
     display: none;
 }

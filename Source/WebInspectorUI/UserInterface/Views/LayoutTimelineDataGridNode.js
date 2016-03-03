@@ -49,7 +49,7 @@ WebInspector.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode exten
     {
         if (!this._cachedData) {
             this._cachedData = {
-                eventType: this._record.eventType,
+                name: WebInspector.LayoutTimelineRecord.displayNameForEventType(this._record.eventType),
                 width: this._record.width,
                 height: this._record.height,
                 area: this._record.width * this._record.height,
@@ -67,8 +67,9 @@ WebInspector.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode exten
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
-        case "eventType":
-            return WebInspector.LayoutTimelineRecord.displayNameForEventType(value);
+        case "name":
+            cell.classList.add(WebInspector.TimelineTabContentView.iconClassNameForRecord(this._record));
+            return value;
 
         case "width":
         case "height":

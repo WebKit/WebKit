@@ -23,7 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-view.overview > .timeline-ruler {
+.timeline-view.overview > .data-grid th.graph-column > .timeline-ruler {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.timeline-view.overview > .data-grid th.graph-column > .timeline-ruler > .header {
+    border: none;
+    height: 22px;
+}
+
+.timeline-view.overview > .data-grid th.graph-column > .timeline-ruler > .event-markers {
+    top: 22px;
+}
+
+.timeline-view.overview > .data-grid {
     position: absolute;
     top: 0;
     left: 0;
@@ -31,22 +46,8 @@
     bottom: 0;
 }
 
-.timeline-view.overview > .timeline-ruler > .header {
-    border-top: 1px solid var(--border-color);
-    height: 23px;
-}
-
-.timeline-view.overview > .timeline-ruler > .event-markers {
-    top: 23px;
-    border-top: 1px solid var(--border-color);
-}
-
-.timeline-view.overview > .data-grid {
-    position: absolute;
-    top: 23px;
-    left: 0;
-    right: 0;
-    bottom: 0;
+.timeline-view.overview > .data-grid th {
+    border-top: solid 1px var(--border-color);
 }
 
 .timeline-view.overview > .data-grid td.graph-column {

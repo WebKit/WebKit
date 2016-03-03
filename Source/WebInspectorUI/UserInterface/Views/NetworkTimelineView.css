@@ -31,6 +31,10 @@
     bottom: 0;
 }
 
+.timeline-view.network > .data-grid .name-column .subtitle {
+    display: none;
+}
+
 .sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.network .item .subtitle {
     display: none;
 }

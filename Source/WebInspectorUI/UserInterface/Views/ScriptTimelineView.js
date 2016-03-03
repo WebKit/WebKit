@@ -33,9 +33,15 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
 
         this.navigationSidebarTreeOutline.element.classList.add("script");
 
-        var columns = {location: {}, callCount: {}, startTime: {}, totalTime: {}, selfTime: {}, averageTime: {}};
+        let columns = {name: {}, location: {}, callCount: {}, startTime: {}, totalTime: {}, selfTime: {}, averageTime: {}};
+
+        columns.name.title = WebInspector.UIString("Name");
+        columns.name.width = "10%";
+        columns.name.icon = true;
+        columns.name.disclosure = true;
 
         columns.location.title = WebInspector.UIString("Location");
+        columns.location.icon = true;
         columns.location.width = "15%";
 
         let isSamplingProfiler = !!window.ScriptProfilerAgent;

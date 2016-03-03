@@ -24,9 +24,10 @@
  */
 
 .item.resource.failed {
-    color: hsl(0, 86%, 47%) !important;
+    color: var(--error-text-color) !important;
 }
 
 .item.resource.failed .subtitle {
-    color: hsla(0, 86%, 47%, 0.7) !important;
+    color: var(--error-text-color) !important;
+    opacity: 0.7;
 }

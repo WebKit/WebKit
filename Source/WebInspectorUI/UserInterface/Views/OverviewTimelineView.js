@@ -31,17 +31,23 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
         this._recording = recording;
 
-        var columns = {"graph": {width: "100%"}};
+        let columns = {name: {}, graph: {}};
 
-        this._dataGrid = new WebInspector.DataGrid(columns);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
-        this._dataGrid.element.classList.add("no-header");
-
-        this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this.navigationSidebarTreeOutline, this._dataGrid);
+        columns.name.title = WebInspector.UIString("Name");
+        columns.name.width = "20%";
+        columns.name.icon = true;
+        columns.name.disclosure = true;
 
         this._timelineRuler = new WebInspector.TimelineRuler;
         this._timelineRuler.allowsClippedLabels = true;
-        this.addSubview(this._timelineRuler);
+
+        columns.graph.width = "80%";
+        columns.graph.headerView = this._timelineRuler;
+
+        this._dataGrid = new WebInspector.DataGrid(columns);
+        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+
+        this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this.navigationSidebarTreeOutline, this._dataGrid);
 
         this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
         this._timelineRuler.addMarker(this._currentTimeMarker);

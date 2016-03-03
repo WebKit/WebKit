@@ -264,7 +264,7 @@
 }
 
 .data-grid td.error {
-    color: hsl(0, 86%, 47%);
+    color: var(--error-text-color);
 }
 
 .data-grid tr.selected td.error {

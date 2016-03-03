@@ -1,5 +1,151 @@
 2016-03-02  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Timelines UI redesign: show content tree outline records in timeline data grids
+        https://bugs.webkit.org/show_bug.cgi?id=153032
+        <rdar://problem/24195317>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch relocates the data shown in the Timelines navigation sidebar content tree outline
+        to a new grid column in each TimelineDataGrid. Logic for creating subtitles, goto arrow buttons,
+        and status elements (the progress spinner used for network resources) has been replicated in
+        the appropriate TimelineDataGridNode classes.
+
+        Duplicate logic contained in TimelineRecordTreeElement classes is left in place for now, but
+        will be removed in <https://webkit.org/b/153036>.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid td.error):
+        Use --error-text-color CSS variable.
+
+        * UserInterface/Views/DataGrid.js:
+        Removed GoToArrowClicked event.
+        (WebInspector.DataGridNode.prototype.createGoToArrowButton.buttonClicked): Deleted.
+        (WebInspector.DataGridNode.prototype.createGoToArrowButton): Deleted.
+        Now part of TimelineDataGridNode.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode):
+        (WebInspector.LayoutTimelineDataGridNode.prototype.get data):
+        Add name cell to row data.
+        (WebInspector.LayoutTimelineDataGridNode.prototype.createCellContent):
+        Create name cell.
+
+        * UserInterface/Views/LayoutTimelineView.css:
+        (.timeline-view.layout > .data-grid .eventType-column): Deleted.
+        Column border no longer hidden.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        Setup name column.
+
+        * UserInterface/Views/NetworkTimelineView.css:
+        (.timeline-view.network > .data-grid .name-column .subtitle):
+        Don't show subtitles in the Network grid's name column.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        Setup name column.
+
+        * UserInterface/Views/OverviewTimelineView.css:
+        (.timeline-view.overview > .data-grid th.graph-column > .timeline-ruler):
+        (.timeline-view.overview > .data-grid th.graph-column > .timeline-ruler > .header):
+        (.timeline-view.overview > .data-grid th):
+        (body.window-inactive .timeline-view.overview > .data-grid th):
+        (.timeline-view.overview .timeline-ruler > .event-markers):
+        (.timeline-view.overview > .data-grid):
+        (.timeline-view.overview > .timeline-ruler): Deleted.
+        (.timeline-view.overview > .timeline-ruler > .header): Deleted.
+        (body.window-inactive .timeline-view.overview > .timeline-ruler > .header): Deleted.
+        (.timeline-view.overview > .timeline-ruler > .event-markers): Deleted.
+        New styles for adding grid column headers and using a TimelineRuler as the
+        graph column header.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        Setup name column and add ruler to graph column header.
+
+        * UserInterface/Views/ProfileNodeDataGridNode.js:
+        (WebInspector.ProfileNodeDataGridNode):
+        Use cached data instead of creating row data at construction time.
+        (WebInspector.ProfileNodeDataGridNode.prototype.get data):
+        Add name cell to row data.
+        (WebInspector.ProfileNodeDataGridNode.prototype.createCellContent):
+        Create name cell.
+        (WebInspector.ProfileNodeDataGridNode.prototype._iconClassNameForProfileNode):
+        (WebInspector.ProfileNodeDataGridNode.prototype._titleForProfileNode):
+        Copied from ProfileNodeTreeElement.
+
+        * UserInterface/Views/RenderingFrameTimelineDataGridNode.js:
+        (WebInspector.RenderingFrameTimelineDataGridNode):
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.get data):
+        Add name cell to row data.
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.createCellContent):
+        Create name cell.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        Setup name column.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode):
+        Renamed "graphOnly" to "includesGraph", since resource rows in the overview
+        now show the name column in addition to the graph column. Resource events
+        LoadingDidFinish and LoadingDidFail now need to be handled for both types
+        of resource rows.
+
+        (WebInspector.ResourceTimelineDataGridNode.prototype.get data):
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        Update resource status element and create name cell content.
+        (WebInspector.ResourceTimelineDataGridNode.prototype._createNameCellDocumentFragment):
+        Create DOM fragment with titles. Based on code in TimelineRecordTreeElement.
+        (WebInspector.ResourceTimelineDataGridNode.prototype._dataGridNodeGoToArrowClicked):
+        Show resource when goto arrow is clicked.
+        (WebInspector.ResourceTimelineDataGridNode.prototype._updateStatus):
+        Update name cell's text color and progress spinner.
+
+        * UserInterface/Views/ResourceTreeElement.css:
+        (.item.resource.failed):
+        (.item.resource.failed .subtitle):
+        Use --error-text-color CSS variable.
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.ScriptTimelineDataGridNode.prototype._createNameCellDocumentFragment):
+        Create DOM fragment with titles. Based on code in TimelineRecordTreeElement.
+
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView):
+        Setup name column.
+
+        * UserInterface/Views/SourceCodeTimelineTimelineDataGridNode.js:
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype.createCellContent):
+        Added now that this node type is no longer "graph only".
+        (WebInspector.SourceCodeTimelineTimelineDataGridNode.prototype._createNameCellContent):
+        Create DOM fragment with titles. Based on code in TimelineRecordTreeElement.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode):
+        Renamed `graphOnly` to `includesGraph`.
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+        Removed icon element creation. This is now handled by the DataGrid.
+        (WebInspector.TimelineDataGridNode.prototype.refresh):
+        Refresh of all node cells after updating the graph.
+        (WebInspector.TimelineDataGridNode.prototype.createGoToArrowButton):
+        (WebInspector.TimelineDataGridNode.prototype.createGoToArrowButton.buttonClicked):
+        Relocated from DataGrid, as it's only used by TimelineDataGridNodes.
+
+        * UserInterface/Views/TimelineView.css:
+        (.timeline-view > .data-grid .indeterminate-progress-spinner):
+        Styles for grid cell progress spinners.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Added --error-text-color variable to remove duplication.
+
+2016-03-02  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Timelines UI redesign: relocate recording controls to TimelineTabContentView's content browser
         https://bugs.webkit.org/show_bug.cgi?id=153532
         <rdar://problem/24361611>

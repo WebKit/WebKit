@@ -31,6 +31,11 @@
     bottom: 0;
 }
 
+.timeline-view > .data-grid .indeterminate-progress-spinner {
+    float: right;
+    margin-left: 2px;
+}
+
 .panel.navigation.timeline > .content > .tree-outline {
     min-height: 100%;
     background-image: none;

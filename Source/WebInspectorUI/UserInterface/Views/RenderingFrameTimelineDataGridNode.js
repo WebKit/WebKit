@@ -48,11 +48,13 @@ WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDa
     get data()
     {
         if (!this._cachedData) {
-            var scriptTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Script);
-            var layoutTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Layout);
-            var paintTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint);
-            var otherTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Other);
+            let name = WebInspector.TimelineTabContentView.displayNameForRecord(this._record);
+            let scriptTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Script);
+            let layoutTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Layout);
+            let paintTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint);
+            let otherTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Other);
             this._cachedData = {
+                name,
                 startTime: this._record.startTime,
                 totalTime: this._record.duration,
                 scriptTime,
@@ -70,6 +72,10 @@ WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDa
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
+        case "name":
+            cell.classList.add(WebInspector.TimelineTabContentView.iconClassNameForRecord(this._record));
+            return value;
+
         case "startTime":
             return isNaN(value) ? emDash : Number.secondsToString(value - this._baseStartTime, true);
 

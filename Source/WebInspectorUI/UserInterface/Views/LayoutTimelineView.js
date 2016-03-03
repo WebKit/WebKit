@@ -33,10 +33,10 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         this.navigationSidebarTreeOutline.element.classList.add("layout");
 
-        var columns = {eventType: {}, location: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
+        let columns = {name: {}, location: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
 
-        columns.eventType.title = WebInspector.UIString("Type");
-        columns.eventType.width = "15%";
+        columns.name.title = WebInspector.UIString("Type");
+        columns.name.width = "15%";
 
         var typeToLabelMap = new Map;
         for (var key in WebInspector.LayoutTimelineRecord.EventType) {
@@ -44,9 +44,11 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
             typeToLabelMap.set(value, WebInspector.LayoutTimelineRecord.displayNameForEventType(value));
         }
 
-        columns.eventType.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
-        columns.eventType.hidden = true;
-        this._scopeBar = columns.eventType.scopeBar;
+        columns.name.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
+        columns.name.disclosure = true;
+        columns.name.icon = true;
+
+        this._scopeBar = columns.name.scopeBar;
 
         columns.location.title = WebInspector.UIString("Initiator");
         columns.location.width = "25%";

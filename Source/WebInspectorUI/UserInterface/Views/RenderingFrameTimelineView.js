@@ -42,7 +42,12 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         this._scopeBar = new WebInspector.ScopeBar("rendering-frame-scope-bar", scopeBarItems, scopeBarItems[0], true);
         this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
-        let columns = {totalTime: {}, scriptTime: {}, layoutTime: {}, paintTime: {}, otherTime: {}, startTime: {}, location: {}};
+        let columns = {name: {}, totalTime: {}, scriptTime: {}, layoutTime: {}, paintTime: {}, otherTime: {}, startTime: {}, location: {}};
+
+        columns.name.title = WebInspector.UIString("Name");
+        columns.name.width = "20%";
+        columns.name.icon = true;
+        columns.name.disclosure = true;
 
         columns.totalTime.title = WebInspector.UIString("Total Time");
         columns.totalTime.width = "15%";

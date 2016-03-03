@@ -124,8 +124,9 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
-        case "eventType":
-            return WebInspector.ScriptTimelineRecord.EventType.displayName(value, this._record.details);
+        case "name":
+            cell.classList.add(WebInspector.TimelineTabContentView.iconClassNameForRecord(this._record));
+            return this._createNameCellDocumentFragment();
 
         case "startTime":
             return isNaN(value) ? emDash : Number.secondsToString(value - this._baseStartTime, true);
@@ -140,5 +141,28 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
         }
 
         return super.createCellContent(columnIdentifier, cell);
+    }
+
+    // Private
+
+    _createNameCellDocumentFragment(cellElement)
+    {
+        let fragment = document.createDocumentFragment();
+        let mainTitle = WebInspector.TimelineTabContentView.displayNameForRecord(this._record);
+        fragment.append(mainTitle);
+
+        if (this._record.eventType === WebInspector.ScriptTimelineRecord.EventType.TimerInstalled) {
+            let subtitleElement = document.createElement("span");
+            subtitleElement.classList.add("subtitle");
+            fragment.append(subtitleElement);
+
+            let timeoutString = Number.secondsToString(this._record.details.timeout / 1000);
+            if (this._record.details.repeating)
+                subtitleElement.textContent = WebInspector.UIString("%s interval").format(timeoutString);
+            else
+                subtitleElement.textContent = WebInspector.UIString("%s delay").format(timeoutString);
+        }
+
+        return fragment;
     }
 };

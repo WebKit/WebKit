@@ -34,7 +34,11 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         this.navigationSidebarTreeOutline.disclosureButtons = false;
         this.navigationSidebarTreeOutline.element.classList.add("network");
 
-        var columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}};
+        let columns = {name: {}, domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}};
+
+        columns.name.title = WebInspector.UIString("Name");
+        columns.name.icon = true;
+        columns.name.width = "10%";
 
         columns.domain.title = WebInspector.UIString("Domain");
         columns.domain.width = "10%";

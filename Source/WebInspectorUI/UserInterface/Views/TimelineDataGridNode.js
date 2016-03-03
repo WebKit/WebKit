@@ -25,13 +25,13 @@
 
 WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspector.DataGridNode
 {
-    constructor(graphOnly, graphDataSource, hasChildren)
+    constructor(includesGraph, graphDataSource, hasChildren)
     {
         super({}, hasChildren);
 
         this.copyable = false;
 
-        this._graphOnly = graphOnly || false;
+        this._includesGraph = includesGraph || false;
         this._graphDataSource = graphDataSource || null;
 
         if (graphDataSource) {
@@ -124,10 +124,6 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
             var goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(value, false, true);
             fragment.appendChild(goToArrowButtonLink);
 
-            var icon = document.createElement("div");
-            icon.className = "icon";
-            fragment.appendChild(icon);
-
             var titleElement = document.createElement("span");
             value.populateLiveDisplayLocationString(titleElement, "textContent");
             fragment.appendChild(titleElement);
@@ -155,10 +151,6 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
 
                 var goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(callFrame.sourceCodeLocation, false, true);
                 fragment.appendChild(goToArrowButtonLink);
-
-                var icon = document.createElement("div");
-                icon.classList.add("icon");
-                fragment.appendChild(icon);
 
                 if (isAnonymousFunction) {
                     // For anonymous functions we show the resource or script icon and name.
@@ -207,10 +199,8 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
 
     refresh()
     {
-        if (this._graphDataSource && this._graphOnly) {
+        if (this._graphDataSource && this._includesGraph)
             this.needsGraphRefresh();
-            return;
-        }
 
         super.refresh();
     }
@@ -319,6 +309,25 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
     }
 
     // Protected
+
+    createGoToArrowButton(cellElement, callback)
+    {
+        function buttonClicked(event)
+        {
+            if (this.hidden || !this.revealed)
+                return;
+
+            event.stopPropagation();
+
+            callback(this, cellElement.__columnIdentifier);
+        }
+
+        let button = WebInspector.createGoToArrowButton();
+        button.addEventListener("click", buttonClicked.bind(this));
+
+        let contentElement = cellElement.firstChild;
+        contentElement.appendChild(button);
+    }
 
     isRecordVisible(record)
     {

@@ -1397,8 +1397,7 @@ WebInspector.DataGrid.Event = {
     SortChanged: "datagrid-sort-changed",
     SelectedNodeChanged: "datagrid-selected-node-changed",
     ExpandedNode: "datagrid-expanded-node",
-    CollapsedNode: "datagrid-collapsed-node",
-    GoToArrowClicked: "datagrid-go-to-arrow-clicked"
+    CollapsedNode: "datagrid-collapsed-node"
 };
 
 WebInspector.DataGrid.ResizeMethod = {
@@ -1506,26 +1505,6 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
     {
         for (var columnIdentifier of this.dataGrid.orderedColumns)
             this._element.appendChild(this.createCell(columnIdentifier));
-    }
-
-    createGoToArrowButton(cellElement)
-    {
-        function buttonClicked(event)
-        {
-            if (this.hidden || !this.revealed)
-                return;
-
-            event.stopPropagation();
-
-            let columnIdentifier = cellElement.__columnIdentifier;
-            this.dataGrid.dispatchEventToListeners(WebInspector.DataGrid.Event.GoToArrowClicked, {dataGridNode: this, columnIdentifier});
-        }
-
-        let button = WebInspector.createGoToArrowButton();
-        button.addEventListener("click", buttonClicked.bind(this));
-
-        let contentElement = cellElement.firstChild;
-        contentElement.appendChild(button);
     }
 
     refreshIfNeeded()
