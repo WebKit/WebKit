@@ -1,3 +1,9 @@
+2016-03-02  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed test gardening.
+
+        * platform/wk2/TestExpectations: Mark two tests that are very slow as [ Slow ].
+
 2016-03-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip unsupported test fast/text/complex-small-caps-non-bmp-capitalize.html on ios-simulator
