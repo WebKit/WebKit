@@ -1,3 +1,16 @@
+2016-03-03  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix order of grid shorthands in CSSPropertyNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=154915
+
+        Reviewed by Darin Adler.
+
+        The order of columns and rows in grid and grid-template shorthands
+        has been swapped recently (r196906 & r196934).
+        However the order was not updated in CSSPropertyNames.in file.
+
+        * css/CSSPropertyNames.in:
+
 2016-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         AllInOne build fix.
