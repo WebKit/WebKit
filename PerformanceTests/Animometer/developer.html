@@ -35,7 +35,7 @@
                     <form name="benchmark-options">
                     <ul>
                     <li>
-                        <label>Test length: <input type="number" id="test-interval" value="10"> seconds each</label>
+                        <label>Test length: <input type="number" id="test-interval" value="20"> seconds each</label>
                     </li>
                     <li>
                         <h3>Display:</h3>
@@ -47,9 +47,11 @@
                     <li>
                         <h3>Adjusting the test complexity:</h3>
                         <ul>
-                            <li><label><input name="adjustment" type="radio" value="step"> Keep at a fixed complexity, then make a big step</label></li>
-                            <li><label><input name="adjustment" type="radio" value="adaptive" checked> Maintain target FPS</label></li>
-                            <li><label><input name="adjustment" type="radio" value="ramp"> Ramp</label></li>
+                            <li><label><input name="controller" type="radio" value="fixed"> Keep at a fixed complexity</label></li>
+                            <li><label><input name="controller" type="radio" value="step"> Keep at a fixed complexity, then make a big step</label></li>
+                            <li><label><input name="controller" type="radio" value="adaptive"> Maintain target FPS</label></li>
+                            <li><label><input name="controller" type="radio" value="ramp" checked> Ramp</label></li>
+                            <li><label><input name="controller" type="radio" value="ramp30"> Ramp @ 30fps</label></li>
                         </ul>
                     </li>
                     <li>

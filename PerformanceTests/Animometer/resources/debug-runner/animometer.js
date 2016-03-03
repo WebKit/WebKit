@@ -328,7 +328,7 @@ window.suitesManager =
     updateEditsElementsState: function()
     {
         var editsElements = this._editsElements();
-        var showComplexityInputs = optionsManager.valueForOption("adjustment") == "step";
+        var showComplexityInputs = ["fixed", "step"].indexOf(optionsManager.valueForOption("controller")) != -1;
 
         for (var i = 0; i < editsElements.length; ++i) {
             var editElement = editsElements[i];
@@ -471,7 +471,7 @@ Utilities.extendObject(window.benchmarkController, {
 
     onBenchmarkOptionsChanged: function(event)
     {
-        if (event.target.name == "adjustment") {
+        if (event.target.name == "controller") {
             suitesManager.updateEditsElementsState();
             return;
         }
@@ -495,7 +495,7 @@ Utilities.extendObject(window.benchmarkController, {
         }
 
         var dashboard = benchmarkRunnerClient.results;
-        if (dashboard.options["adjustment"] == "ramp")
+        if (["ramp", "ramp30"].indexOf(dashboard.options["controller"]) != -1)
             Headers.details[3].disabled = true;
         else {
             Headers.details[1].disabled = true;

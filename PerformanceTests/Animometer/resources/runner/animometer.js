@@ -60,6 +60,10 @@ ResultsDashboard = Utilities.createClass(
         data[Strings.json.result] = result;
         var samples = data[Strings.json.samples];
 
+        var desiredFrameLength = 1000/60;
+        if (this._options["controller"] == "ramp30")
+            desiredFrameLength = 1000/30;
+
         function findRegression(series) {
             var minIndex = Math.round(.025 * series.length);
             var maxIndex = Math.round(.975 * (series.length - 1));
@@ -80,7 +84,7 @@ ResultsDashboard = Utilities.createClass(
                     series,
                     function (datum, i) { return datum[i].complexity; },
                     function (datum, i) { return datum[i].frameLength; },
-                    minIndex, maxIndex)
+                    minIndex, maxIndex, desiredFrameLength)
             };
         }
 
@@ -107,7 +111,7 @@ ResultsDashboard = Utilities.createClass(
             regression[Strings.json.measurements.stdev] = Math.sqrt(calculation.error / samples[seriesName].length);
         });
 
-        if (this._options["adjustment"] == "ramp") {
+        if (["ramp", "ramp30"].indexOf(this._options["controller"]) != -1) {
             var timeComplexity = new Experiment;
             data[Strings.json.controller].forEach(function(regression) {
                 timeComplexity.sample(regression[Strings.json.complexity]);
@@ -364,10 +368,9 @@ window.benchmarkController = {
     startBenchmark: function()
     {
         var options = {
-            "test-interval": 10,
+            "test-interval": 20,
             "display": "minimal",
-            "adjustment": "adaptive",
-            "frame-rate": 50,
+            "controller": "ramp",
             "kalman-process-error": 1,
             "kalman-measurement-error": 4,
             "time-measurement": "performance"

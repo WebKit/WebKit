@@ -368,7 +368,7 @@ Utilities.extendObject(window.benchmarkController, {
         }
 
         // right-target
-        if (options["adjustment"] == "adaptive") {
+        if (options["controller"] == "adaptive") {
             var targetFrameLength = 1000 / options["frame-rate"];
             svg.append("line")
                 .attr("x1", x(0))

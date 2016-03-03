@@ -148,16 +148,17 @@ Experiment.defaults =
 };
 
 Regression = Utilities.createClass(
-    function(samples, getComplexity, getFrameLength, startIndex, endIndex, options)
+    function(samples, getComplexity, getFrameLength, startIndex, endIndex, desiredFrameLength)
     {
+        desiredFrameLength = desiredFrameLength || 1000/60;
         var slope = this._calculateRegression(samples, getComplexity, getFrameLength, startIndex, endIndex, {
             shouldClip: true,
-            s1: 1000/60,
+            s1: desiredFrameLength,
             t1: 0
         });
         var flat = this._calculateRegression(samples, getComplexity, getFrameLength, startIndex, endIndex, {
             shouldClip: true,
-            s1: 1000/60,
+            s1: desiredFrameLength,
             t1: 0,
             t2: 0
         });

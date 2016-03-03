@@ -1,3 +1,39 @@
+2016-03-02  Jon Lee  <jonlee@apple.com>
+
+        Add some new controllers, and refine tests
+        https://bugs.webkit.org/show_bug.cgi?id=154914
+
+        Reviewed by Simon Fraser.
+
+        Add a controller that centers around 30 fps instead of 60 fps.
+
+        * Animometer/developer.html: Add a new option.
+        * Animometer/resources/debug-runner/animometer.js:
+        * Animometer/resources/runner/animometer.js:
+        (this._processData.findRegression): When calculating the complexity-frameLength regression,
+        check the controller, and use a 30 fps baseline if needed.
+        * Animometer/resources/statistics.js:
+        (Regression.Utilities.createClass): Update to allow clients to specify the baseline
+        frame length.
+        * Animometer/tests/resources/main.js:
+        (tune): Override some of the constants in RampController. Move those constants out for
+        easier reading.
+
+        Add a fixed controller, with no step.
+
+        * Animometer/developer.html: Add a controller that takes no step.
+        * Animometer/resources/debug-runner/animometer.js:
+        * Animometer/tests/resources/main.js:
+        (Rotater.Utilities.createClass):
+
+        Switch to ramp controller as default.
+
+        * Animometer/developer.html: Increase the test length to 20 seconds.
+        * Animometer/resources/debug-runner/animometer.js: Rename the "adjustment" field to "controller"
+        since that is a more accurate description.
+        * Animometer/resources/debug-runner/graph.js:
+        * Animometer/resources/runner/animometer.js: Update preferences for release suite.
+
 2016-02-26  Jon Lee  <jonlee@apple.com>
 
         Address Dean's comments in 154673.
