@@ -1,3 +1,11 @@
+2016-03-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/html/dom/reflection-forms.html for ios-simulator after r197458
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+
 2016-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a custom element test for synchronous element construction in HTML parser
