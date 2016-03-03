@@ -189,10 +189,20 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
 
     contentBrowserTreeElementForRepresentedObject(contentBrowser, representedObject)
     {
-        if (this.navigationSidebarPanel)
-            return this.navigationSidebarPanel.treeElementForRepresentedObject(representedObject);
-        return null;
+        return this.treeElementForRepresentedObject(representedObject);
     }
+
+    // Protected
+
+    treeElementForRepresentedObject(representedObject)
+    {
+        // Can be overriden by subclasses.
+
+        if (!this.navigationSidebarPanel)
+            return null;
+
+        return this.navigationSidebarPanel.treeElementForRepresentedObject(representedObject);
+     }
 
     // Private
 
@@ -231,31 +241,30 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
 
     _contentBrowserCurrentContentViewDidChange(event)
     {
-        var currentContentView = this._contentBrowser.currentContentView;
+        let currentContentView = this._contentBrowser.currentContentView;
         if (!currentContentView)
             return;
 
-        this._revealAndSelectRepresentedObjectInNavigationSidebar(currentContentView.representedObject);
+        this._revealAndSelectRepresentedObject(currentContentView.representedObject);
     }
 
-    _revealAndSelectRepresentedObjectInNavigationSidebar(representedObject)
+    _revealAndSelectRepresentedObject(representedObject)
     {
-        if (!this.navigationSidebarPanel)
-            return;
-
-        // If a tree outline is processing a selection currently then we can assume the selection does not
-        // need to be changed. This is needed to allow breakpoint and call frame tree elements to be selected
-        // without jumping back to selecting the resource tree element.
-        for (var contentTreeOutline of this.navigationSidebarPanel.visibleContentTreeOutlines) {
-            if (contentTreeOutline.processingSelectionChange)
-                return;
+        if (this.navigationSidebarPanel) {
+            // If a tree outline is processing a selection currently then we can assume the selection does not
+            // need to be changed. This is needed to allow breakpoint and call frame tree elements to be selected
+            // without jumping back to selecting the resource tree element.
+            for (let contentTreeOutline of this.navigationSidebarPanel.visibleContentTreeOutlines) {
+                if (contentTreeOutline.processingSelectionChange)
+                    return;
+            }
         }
 
-        var treeElement = this.navigationSidebarPanel.treeElementForRepresentedObject(representedObject);
+        let treeElement = this.treeElementForRepresentedObject(representedObject);
 
         if (treeElement)
             treeElement.revealAndSelect(true, false, true, true);
-        else if (this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement)
+        else if (this.navigationSidebarPanel && this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement)
             this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
     }
 };

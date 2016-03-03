@@ -1,5 +1,116 @@
 2016-03-02  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Timelines UI redesign: relocate recording controls to TimelineTabContentView's content browser
+        https://bugs.webkit.org/show_bug.cgi?id=153532
+        <rdar://problem/24361611>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch shifts UI controller responsibilities from the sidebar panel
+        to the tab content view. Controls for starting/stopping the recording and
+        switching view modes are now located in the tab's navigation bar, as is
+        the hidden tree outline of open timeline recordings.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI strings. Renamed view-mode radio buttons located from the sidebar
+        to "Events" and "Frames". UI for switching modes isn't final, and the
+        labels may change or be removed entirely in favor of image-only buttons.
+
+        * UserInterface/Main.html:
+        New file.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView.prototype.contentBrowserTreeElementForRepresentedObject):
+        (WebInspector.ContentBrowserTabContentView.prototype.treeElementForRepresentedObject):
+        Allow subclasses to override behavior for retrieving the tree element
+        for a represented object. Default behavior delegates the implementation
+        to the navigation sidebar.
+
+        (WebInspector.ContentBrowserTabContentView.prototype._contentBrowserCurrentContentViewDidChange):
+        (WebInspector.ContentBrowserTabContentView.prototype._revealAndSelectRepresentedObject):
+        (WebInspector.ContentBrowserTabContentView):
+        (WebInspector.ContentBrowserTabContentView.prototype._revealAndSelectRepresentedObjectInNavigationSidebar): Deleted.
+        Renamed to _revealAndSelectRepresentedObject as it's no longer specific
+        to the sidebar.
+
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView):
+        (WebInspector.TabContentView.prototype.restoreStateFromCookie):
+        (WebInspector.TabContentView.prototype.saveStateToCookie):
+        A navigation sidebar shouldn't be required to save/restore cookie state.
+
+        * UserInterface/Views/TimelineTabContentView.css: Added.
+        (.timeline.tab.content-view .navigation-bar > .item.toggle-navigation-sidebar.activate.button):
+        (.timeline.tab.content-view .navigation-bar > .item.record-start-stop):
+        (.timeline.tab.content-view .navigation-bar > .item.record-start-stop:hover):
+        (.timeline.tab.content-view .navigation-bar > .item.record-start-stop:active):
+        (.timeline.tab.content-view .navigation-bar > .item.record-start-stop *):
+        (.timeline.tab.content-view .navigation-bar > .item.radio):
+        Styles for new navigation items: record button and view mode radio buttons.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        Logic for maintaining the timeline recording hierarchy and the state
+        of the active recording has been added to the tab content view.
+
+        (WebInspector.TimelineTabContentView):
+        (WebInspector.TimelineTabContentView.prototype.shown):
+        (WebInspector.TimelineTabContentView.prototype.hidden):
+        (WebInspector.TimelineTabContentView.prototype.canShowRepresentedObject):
+        Objects other than recordings are no longer shown in the tab's content
+        browser. Displaying other objects (such as timeline resources) in the
+        content browser will be addressed in a follow-up patch: https://bugs.webkit.org/show_bug.cgi?id=154920.
+
+        (WebInspector.TimelineTabContentView.prototype.get supportsSplitContentBrowser):
+        (WebInspector.TimelineTabContentView.prototype.restoreFromCookie):
+        (WebInspector.TimelineTabContentView.prototype.saveToCookie):
+        Persist view state that was previously located in the sidebar.
+
+        (WebInspector.TimelineTabContentView.prototype.treeElementForRepresentedObject):
+        Implements logic previously limited to the navigation sidebar. Only tree
+        elements for timeline recordings are supported, since other represented
+        objects (timeline resources) no longer have content tree outline tree elements.
+
+        (WebInspector.TimelineTabContentView.prototype._capturingStartedOrStopped):
+        (WebInspector.TimelineTabContentView.prototype._toggleRecordingOnSpacebar):
+        (WebInspector.TimelineTabContentView.prototype._toggleNewRecordingOnSpacebar):
+        (WebInspector.TimelineTabContentView.prototype._toggleRecording):
+        (WebInspector.TimelineTabContentView.prototype._recordButtonClicked):
+        (WebInspector.TimelineTabContentView.prototype._recordingsTreeSelectionDidChange):
+        (WebInspector.TimelineTabContentView.prototype._recordingCreated):
+        (WebInspector.TimelineTabContentView.prototype._addRecording):
+        (WebInspector.TimelineTabContentView.prototype._recordingCountChanged):
+        (WebInspector.TimelineTabContentView.prototype._recordingLoaded):
+        Implementations copied from the sidebar panel.
+
+        (WebInspector.TimelineTabContentView.prototype._recordingSelected):
+        Implementation similar to that which existed in the sidebar panel, except
+        that logic related to instruments isn't needed. Updates to timeline view
+        filters will be implemented in a follow-up patch: https://bugs.webkit.org/show_bug.cgi?id=154924.
+
+        (WebInspector.TimelineTabContentView.prototype._viewModeSelected):
+        This method is now limited to the handling of the radio button event only.
+        Additional logic which existed in the sidebar panel's implementation has
+        been pushed into _changeViewMode, which does the actual work of toggling
+        view modes.
+
+        (WebInspector.TimelineTabContentView.prototype._changeViewMode):
+        Updates the current view mode state. If triggered by a user selection (was
+        called by the radio button event handler), the correct timeline view for
+        the new mode is shown.
+
+        (WebInspector.TimelineTabContentView.prototype._showTimelineViewForType):
+        Helper function for showing the view for the specified timeline type, if
+        the timeline exists in the current recording. Otherwise the overview timeline
+        view is displayed.
+
+        (WebInspector.TimelineTabContentView.prototype._displayedContentViewNavigationItemsDidChange):
+        Keep the view mode in sync with the content browser.
+
+        (WebInspector.TimelineTabContentView.prototype._getTimelineForCurrentContentView):
+        Helper function for getting the currently displayed timeline.
+
+2016-03-02  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Timelines UI redesign: add the timelines tree outline to the TimelineOverview
         https://bugs.webkit.org/show_bug.cgi?id=153034
         <rdar://problem/24195628>
