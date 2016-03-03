@@ -1,5 +1,29 @@
 2016-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] JSCell_freeListNext and JSCell_structureID are considered not overlapping
+        https://bugs.webkit.org/show_bug.cgi?id=154947
+
+        Reviewed by Filip Pizlo.
+
+        This bug was discovered while testing https://bugs.webkit.org/show_bug.cgi?id=154894.
+
+        The problem was that JSCell_freeListNext and JSCell_structureID were
+        considered as disjoint. When reordering instructions, the scheduler
+        could move the write of the StructureID first to reduce dependencies.
+        This would erase half of JSCell_freeListNext before we get a chance
+        to load the value.
+
+        This patch changes the hierarchy to make sure nothing is written
+        until JSCell_freeListNext is processed.
+
+        All credits for this patch go to Filip.
+
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+
+2016-03-02  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Improve Select of Doubles based on Double condition
         https://bugs.webkit.org/show_bug.cgi?id=154572
 
