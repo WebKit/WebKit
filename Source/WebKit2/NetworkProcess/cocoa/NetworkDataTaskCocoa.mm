@@ -34,6 +34,7 @@
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/CFNetworkSPI.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceRequest.h>
 #import <wtf/MainThread.h>
 
@@ -85,6 +86,12 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
         ASSERT(!m_session.m_dataTaskMapWithoutCredentials.contains([m_task taskIdentifier]));
         m_session.m_dataTaskMapWithoutCredentials.add([m_task taskIdentifier], this);
     }
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    String storagePartition = WebCore::cookieStoragePartition(request);
+    if (!storagePartition.isEmpty())
+        m_task.get()._storagePartitionIdentifier = storagePartition;
+#endif
 }
 
 NetworkDataTask::~NetworkDataTask()

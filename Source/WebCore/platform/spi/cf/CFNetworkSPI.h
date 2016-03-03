@@ -41,7 +41,7 @@
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <CFNetwork/CFURLStorageSession.h>
 
-// FIXME: Remove the defined(__OBJC__)-guard onnce we fix <rdar://problem/19033610>.
+// FIXME: Remove the defined(__OBJC__)-guard once we fix <rdar://problem/19033610>.
 #if defined(__OBJC__) && PLATFORM(COCOA)
 // FIXME: As a workaround for <rdar://problem/18337182>, we conditionally enclose the header
 // in an extern "C" linkage block to make it suitable for C++ use.
@@ -103,7 +103,21 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @end
 #endif
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+@interface NSHTTPCookie ()
+@property (nullable, readonly, copy) NSString *_storagePartition;
+@end
+
+@interface NSHTTPCookieStorage ()
+- (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition completionHandler:(void (^)(NSArray *))completionHandler;
+@end
+
+@interface NSURLSessionTask ()
+@property (copy) NSString *_storagePartitionIdentifier;
+@end
 #endif
+
+#endif // defined(__OBJC__)
 
 #endif // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
 

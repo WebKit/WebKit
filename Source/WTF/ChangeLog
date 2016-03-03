@@ -1,3 +1,13 @@
+2016-03-03  Andy Estes  <aestes@apple.com>
+
+        Adopt CFNetwork storage partitioning SPI
+        https://bugs.webkit.org/show_bug.cgi?id=154957
+        rdar://problem/23614620
+
+        Reviewed by Darin Adler.
+
+        * wtf/Platform.h: Defined HAVE_CFNETWORK_STORAGE_PARTITIONING.
+
 2016-03-02  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Moved PRE/POST_BUILD_COMMAND to WEBKIT_FRAMEWORK.

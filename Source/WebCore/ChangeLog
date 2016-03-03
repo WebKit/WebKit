@@ -1,3 +1,40 @@
+2016-03-03  Andy Estes  <aestes@apple.com>
+
+        Adopt CFNetwork storage partitioning SPI
+        https://bugs.webkit.org/show_bug.cgi?id=154957
+        rdar://problem/23614620
+
+        Reviewed by Darin Adler.
+
+        Adopt CFNetwork SPI for creating storage partitions. If Settings::cookieStoragePartitioningEnabled() is true,
+        create cookie storage partitions for third-party contexts. This feature is disabled by default.
+
+        No new tests. Test support is tracked by <https://webkit.org/b/154958>.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setCookieStoragePartitioningEnabled): Controls whether storage partitioning for cookies is enabled.
+        * page/Settings.h:
+        (WebCore::Settings::cookieStoragePartitioningEnabled):
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::cookieStoragePartition): Computes a storage partition identifier by determining the top
+        privately-controlled domain of the cookie's first-party (main frame document) URL, then determining whether the
+        cookie's document hostname is a subdomain of it. If is is not, the first-party top domain is the partition name.
+        Otherwise, there is no partition name.
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::applyPartitionToCookies): Returns a deep copy of the given cookie array after adding a storage
+        partition property to each copied cookie.
+        (WebCore::cookiesInPartitionForURL): Returns cookies for the partition computed by the given URLs. If no
+        partition can be determined, nil is returned.
+        (WebCore::cookiesForURL): Returns cookiesInPartitionForURL() if non-nil, otherwise returns wkHTTPCookiesForURL().
+        (WebCore::cookiesForSession): Started calling cookiesForURL().
+        (WebCore::setCookiesFromDOM): Called applyPartitionToCookies() if a partition can be computed from the given URLs.
+        (WebCore::getRawCookies): Started calling cookiesForURL().
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection): Computed the storage partition identifier for the new request.
+        If non-empty, set it as a property on the NSURLRequest where CFNetwork knows to find it.
+        * platform/spi/cf/CFNetworkSPI.h: Declare new SPI for building with the public SDK.
+
 2016-03-03  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix order of grid shorthands in CSSPropertyNames.in

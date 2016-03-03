@@ -198,6 +198,9 @@ public:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static void setQTKitEnabled(bool flag);
     static bool isQTKitEnabled() { return gQTKitEnabled; }
+
+    WEBCORE_EXPORT static void setCookieStoragePartitioningEnabled(bool flag);
+    static bool cookieStoragePartitioningEnabled() { return gCookieStoragePartitioningEnabled; }
 #else
     static bool isQTKitEnabled() { return false; }
 #endif
@@ -352,6 +355,7 @@ private:
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static bool gQTKitEnabled;
+    static bool gCookieStoragePartitioningEnabled;
 #endif
 
     static bool gMockScrollbarsEnabled;

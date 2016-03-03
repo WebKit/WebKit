@@ -36,6 +36,7 @@
 #import "Cookie.h"
 #import "CookieStorage.h"
 #import "URL.h"
+#import <wtf/Optional.h>
 #import <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -64,12 +65,64 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
     return filteredCookies;
 }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+
+static NSArray *applyPartitionToCookies(NSString *partition, NSArray *cookies)
+{
+    // FIXME 24747739: CFNetwork should expose this key as SPI
+    static NSString * const partitionKey = @"StoragePartition";
+
+    NSMutableArray *partitionedCookies = [NSMutableArray arrayWithCapacity:cookies.count];
+    for (NSHTTPCookie *cookie in cookies) {
+        RetainPtr<NSMutableDictionary> properties = adoptNS([cookie.properties mutableCopy]);
+        [properties setObject:partition forKey:partitionKey];
+        [partitionedCookies addObject:[NSHTTPCookie cookieWithProperties:properties.get()]];
+    }
+
+    return partitionedCookies;
+}
+
+static NSArray *cookiesInPartitionForURL(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+{
+    String partition = cookieStoragePartition(firstParty, url);
+    if (partition.isEmpty())
+        return nil;
+
+    // FIXME: Stop creating a new NSHTTPCookieStorage object each time we want to query the cookie jar.
+    // NetworkStorageSession could instead keep a NSHTTPCookieStorage object for us.
+    RetainPtr<NSHTTPCookieStorage> cookieStorage;
+    if (auto storage = session.cookieStorage())
+        cookieStorage = adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage.get()]);
+    else
+        cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+
+    // The _getCookiesForURL: method calls the completionHandler synchronously.
+    Optional<RetainPtr<NSArray *>> cookiesPtr;
+    [cookieStorage _getCookiesForURL:url mainDocumentURL:firstParty partition:partition completionHandler:[&cookiesPtr](NSArray *cookies) {
+        cookiesPtr = retainPtr(cookies);
+    }];
+    ASSERT(!!cookiesPtr);
+
+    return cookiesPtr->autorelease();
+}
+
+#endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    
+static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+{
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (NSArray *cookies = cookiesInPartitionForURL(session, firstParty, url))
+        return cookies;
+#endif
+    return wkHTTPCookiesForURL(session.cookieStorage().get(), firstParty, url);
+}
+
 enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
 static String cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeHTTPOnlyOrNot includeHTTPOnly)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSArray *cookies = wkHTTPCookiesForURL(session.cookieStorage().get(), firstParty, url);
+    NSArray *cookies = cookiesForURL(session, firstParty, url);
     if (![cookies count])
         return String(); // Return a null string, not an empty one that StringBuilder would create below.
 
@@ -129,6 +182,12 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies);
     ASSERT([filteredCookies.get() count] <= 1);
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    String partition = cookieStoragePartition(firstParty, url);
+    if (!partition.isEmpty())
+        filteredCookies = applyPartitionToCookies(partition, filteredCookies.get());
+#endif
+
     wkSetHTTPCookiesForURL(session.cookieStorage().get(), filteredCookies.get(), cookieURL, firstParty);
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -150,7 +209,7 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, 
     rawCookies.clear();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSArray *cookies = wkHTTPCookiesForURL(session.cookieStorage().get(), firstParty, url);
+    NSArray *cookies = cookiesForURL(session, firstParty, url);
     NSUInteger count = [cookies count];
     rawCookies.reserveCapacity(count);
     for (NSUInteger i = 0; i < count; ++i) {

@@ -31,6 +31,9 @@
 #include <wtf/ProcessID.h>
 
 #if PLATFORM(COCOA)
+#include "PublicSuffix.h"
+#include "ResourceRequest.h"
+#include "Settings.h"
 #include "WebCoreSystemInterface.h"
 #else
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -93,5 +96,37 @@ RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
     return 0;
 #endif
 }
+
+#if PLATFORM(COCOA)
+
+String cookieStoragePartition(const ResourceRequest& request)
+{
+    return cookieStoragePartition(request.firstPartyForCookies(), request.url());
+}
+
+static inline bool hostIsInDomain(StringView host, StringView domain)
+{
+    if (!host.endsWithIgnoringASCIICase(domain))
+        return false;
+
+    ASSERT(host.length() >= domain.length());
+    unsigned suffixOffset = host.length() - domain.length();
+    return suffixOffset == 0 || host[suffixOffset - 1] == '.';
+}
+
+String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource)
+{
+    if (!Settings::cookieStoragePartitioningEnabled())
+        return emptyString();
+
+    String firstPartyDomain = firstPartyForCookies.host();
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    firstPartyDomain = topPrivatelyControlledDomain(firstPartyDomain);
+#endif
+    
+    return hostIsInDomain(resource.host(), firstPartyDomain) ? emptyString() : firstPartyDomain;
+}
+
+#endif
 
 }

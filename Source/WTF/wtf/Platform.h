@@ -665,6 +665,10 @@
 #define HAVE_VIRTUALALLOC 1
 #endif
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+#define HAVE_CFNETWORK_STORAGE_PARTITIONING 1
+#endif
+
 /* ENABLE macro defaults */
 
 /* FIXME: move out all ENABLE() defines from here to FeatureDefines.h */

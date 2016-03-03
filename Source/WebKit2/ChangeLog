@@ -1,3 +1,15 @@
+2016-03-03  Andy Estes  <aestes@apple.com>
+
+        Adopt CFNetwork storage partitioning SPI
+        https://bugs.webkit.org/show_bug.cgi?id=154957
+        rdar://problem/23614620
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::NetworkDataTask): Computed the storage partition identifier for the new session task.
+        If non-empty, set it using a NSURLSessionTask SPI.
+
 2016-03-03  Alex Christensen  <achristensen@webkit.org>
 
         [WK2] testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess

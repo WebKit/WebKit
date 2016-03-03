@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class NetworkingContext;
+class ResourceRequest;
 class SoupNetworkSession;
 
 class NetworkStorageSession {
@@ -78,6 +79,9 @@ private:
 
     CredentialStorage m_credentialStorage;
 };
+
+WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&);
+String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource);
 
 }
 

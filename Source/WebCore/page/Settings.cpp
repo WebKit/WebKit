@@ -82,6 +82,7 @@ bool Settings::gAVFoundationNSURLSessionEnabled = false;
 
 #if PLATFORM(COCOA)
 bool Settings::gQTKitEnabled = false;
+bool Settings::gCookieStoragePartitioningEnabled = false;
 #endif
 
 bool Settings::gMockScrollbarsEnabled = false;
@@ -597,6 +598,11 @@ void Settings::setQTKitEnabled(bool enabled)
 
     gQTKitEnabled = enabled;
     HTMLMediaElement::resetMediaEngines();
+}
+    
+void Settings::setCookieStoragePartitioningEnabled(bool enabled)
+{
+    gCookieStoragePartitioningEnabled = enabled;
 }
 #endif
 
