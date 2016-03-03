@@ -1,3 +1,11 @@
+2016-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        AllInOne build fix.
+
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderGrid.cpp:
+        Don't have two static functions with the same name.
+
 2016-03-03  Chris Dumez  <cdumez@apple.com>
 
         Drop [TreatNullAs=EmptyString] from URL interface attributes

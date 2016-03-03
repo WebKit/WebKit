@@ -1354,7 +1354,7 @@ void RenderGrid::clearGrid()
     m_gridItemCoordinate.clear();
 }
 
-static const StyleContentAlignmentData& normalValueBehavior()
+static const StyleContentAlignmentData& normalValueBehaviorGrid()
 {
     static const StyleContentAlignmentData normalBehavior = {ContentPositionNormal, ContentDistributionStretch};
     return normalBehavior;
@@ -1365,8 +1365,8 @@ void RenderGrid::applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection 
     Optional<LayoutUnit> freeSpace = sizingData.freeSpaceForDirection(direction);
     if (!freeSpace
         || freeSpace.value() <= 0
-        || (direction == ForColumns && style().resolvedJustifyContentDistribution(normalValueBehavior()) != ContentDistributionStretch)
-        || (direction == ForRows && style().resolvedAlignContentDistribution(normalValueBehavior()) != ContentDistributionStretch))
+        || (direction == ForColumns && style().resolvedJustifyContentDistribution(normalValueBehaviorGrid()) != ContentDistributionStretch)
+        || (direction == ForRows && style().resolvedAlignContentDistribution(normalValueBehaviorGrid()) != ContentDistributionStretch))
         return;
 
     // Spec defines auto-sized tracks as the ones with an 'auto' max-sizing function.
@@ -1862,7 +1862,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
         LayoutUnit childBreadth = child.logicalHeight() + child.marginLogicalHeight();
         // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
         if (childEndLine - childStartLine > 1 && childEndLine < m_rowPositions.size() - 1)
-            endOfRow -= offsetBetweenTracks(style().resolvedAlignContentDistribution(normalValueBehavior()), m_rowPositions, childBreadth);
+            endOfRow -= offsetBetweenTracks(style().resolvedAlignContentDistribution(normalValueBehaviorGrid()), m_rowPositions, childBreadth);
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveAlignmentOverflow(style(), child.style()), endOfRow - startOfRow, childBreadth);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
@@ -1896,7 +1896,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
         LayoutUnit childBreadth = child.logicalWidth() + child.marginLogicalWidth();
         // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
         if (childEndLine - childStartLine > 1 && childEndLine < m_columnPositions.size() - 1)
-            endOfColumn -= offsetBetweenTracks(style().resolvedJustifyContentDistribution(normalValueBehavior()), m_columnPositions, childBreadth);
+            endOfColumn -= offsetBetweenTracks(style().resolvedJustifyContentDistribution(normalValueBehaviorGrid()), m_columnPositions, childBreadth);
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveJustificationOverflow(style(), child.style()), endOfColumn - startOfColumn, childBreadth);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
@@ -1959,8 +1959,8 @@ static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availabl
 ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const
 {
     bool isRowAxis = direction == ForColumns;
-    ContentPosition position = isRowAxis ? style().resolvedJustifyContentPosition(normalValueBehavior()) : style().resolvedAlignContentPosition(normalValueBehavior());
-    ContentDistributionType distribution = isRowAxis ? style().resolvedJustifyContentDistribution(normalValueBehavior()) : style().resolvedAlignContentDistribution(normalValueBehavior());
+    ContentPosition position = isRowAxis ? style().resolvedJustifyContentPosition(normalValueBehaviorGrid()) : style().resolvedAlignContentPosition(normalValueBehaviorGrid());
+    ContentDistributionType distribution = isRowAxis ? style().resolvedJustifyContentDistribution(normalValueBehaviorGrid()) : style().resolvedAlignContentDistribution(normalValueBehaviorGrid());
     // If <content-distribution> value can't be applied, 'position' will become the associated
     // <content-position> fallback value.
     ContentAlignmentData contentAlignment = contentDistributionOffset(availableFreeSpace, position, distribution, numberOfGridTracks);
