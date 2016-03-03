@@ -1,3 +1,28 @@
+2016-03-03  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Simplify method to resolve auto-placed items
+        https://bugs.webkit.org/show_bug.cgi?id=154911
+
+        Reviewed by Sergio Villar Senin.
+
+        Refactor the method to resolve auto-placed items
+        as we're only interested in knowing the span size.
+
+        Adapt the calls to use the span size instead of a GridSpan.
+
+        No new tests, no change of behavior.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::GridResolvedPosition::spanSizeForAutoPlacedItem):
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition):
+        Renamed to spanSizeForAutoPlacedItem().
+        * rendering/style/GridResolvedPosition.h:
+
 2016-03-02  Chris Dumez  <cdumez@apple.com>
 
         HTMLFormElement's named property getter does not return a RadioNodelist

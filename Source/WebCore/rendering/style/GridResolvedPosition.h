@@ -50,7 +50,7 @@ enum GridTrackSizingDirection {
 // TODO(rego): Rename class to GridPositionsResolver.
 class GridResolvedPosition {
 public:
-    static GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, unsigned);
+    static unsigned spanSizeForAutoPlacedItem(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
     static GridSpan resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
     static unsigned explicitGridColumnCount(const RenderStyle&);
     static unsigned explicitGridRowCount(const RenderStyle&);
