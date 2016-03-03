@@ -101,7 +101,6 @@ public:
     void enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&&);
 
     void handleDelete(IDBConnectionToClient&, const IDBRequestData&);
-    bool deletePending() const { return m_deletePending; }
 
     static JSC::VM& databaseThreadVM();
     static JSC::ExecState& databaseThreadExecState();
@@ -146,7 +145,7 @@ private:
 
     // Main thread callbacks
     void didDeleteBackingStore(uint64_t deletedVersion);
-    void didOpenBackingStore(const IDBDatabaseInfo&);
+    void didOpenBackingStore(const IDBDatabaseInfo&, const IDBError&);
     void didPerformCreateObjectStore(uint64_t callbackIdentifier, const IDBError&, const IDBObjectStoreInfo&);
     void didPerformDeleteObjectStore(uint64_t callbackIdentifier, const IDBError&, uint64_t objectStoreIdentifier);
     void didPerformClearObjectStore(uint64_t callbackIdentifier, const IDBError&);
@@ -173,6 +172,7 @@ private:
     void performCountCallback(uint64_t callbackIdentifier, const IDBError&, uint64_t);
 
     bool hasAnyPendingCallbacks() const;
+    bool isCurrentlyInUse() const;
 
     void invokeOperationAndTransactionTimer();
     void operationAndTransactionTimerFired();
@@ -191,11 +191,13 @@ private:
     RefPtr<UniqueIDBDatabaseTransaction> m_versionChangeTransaction;
 
     bool m_isOpeningBackingStore { false };
+    IDBError m_backingStoreOpenError;
     std::unique_ptr<IDBBackingStore> m_backingStore;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBDatabaseInfo> m_mostRecentDeletedDatabaseInfo;
 
     bool m_backingStoreSupportsSimultaneousTransactions { false };
+    bool m_backingStoreIsEphemeral { false };
 
     HashMap<uint64_t, ErrorCallback> m_errorCallbacks;
     HashMap<uint64_t, KeyDataCallback> m_keyDataCallbacks;
@@ -212,7 +214,6 @@ private:
     HashCountedSet<uint64_t> m_objectStoreTransactionCounts;
     HashSet<uint64_t> m_objectStoreWriteTransactions;
 
-    bool m_deletePending { false };
     bool m_deleteBackingStoreInProgress { false };
 };
 

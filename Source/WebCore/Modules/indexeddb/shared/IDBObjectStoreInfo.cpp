@@ -88,8 +88,13 @@ IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const
 {
     IDBObjectStoreInfo result = { m_identifier, m_name.isolatedCopy(), m_keyPath.isolatedCopy(), m_autoIncrement };
 
-    for (auto& iterator : m_indexMap)
+    for (auto& iterator : m_indexMap) {
         result.m_indexMap.set(iterator.key, iterator.value.isolatedCopy());
+        if (iterator.key > result.m_maxIndexID)
+            result.m_maxIndexID = iterator.key;
+    }
+
+    ASSERT(result.m_maxIndexID == m_maxIndexID);
 
     return result;
 }

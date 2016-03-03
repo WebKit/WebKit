@@ -54,7 +54,7 @@ class IDBBackingStore {
 public:
     virtual ~IDBBackingStore() { }
 
-    virtual const IDBDatabaseInfo& getOrEstablishDatabaseInfo() = 0;
+    virtual IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) = 0;
 
     virtual IDBError beginTransaction(const IDBTransactionInfo&) = 0;
     virtual IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) = 0;
@@ -79,7 +79,9 @@ public:
 
     virtual IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) = 0;
     virtual void deleteBackingStore() = 0;
+
     virtual bool supportsSimultaneousTransactions() = 0;
+    virtual bool isEphemeral() = 0;
 };
 
 } // namespace IDBServer

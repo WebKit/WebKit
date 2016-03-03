@@ -1,3 +1,18 @@
+2016-03-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Close UniqueIDBDatabases once they become unused.
+        https://bugs.webkit.org/show_bug.cgi?id=154922
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/256-open-databases-expected.txt: Added.
+        * storage/indexeddb/modern/256-open-databases.html: Added.
+        * storage/indexeddb/modern/exceed-open-file-limit-expected.txt: Added.
+        * storage/indexeddb/modern/exceed-open-file-limit.html: Added.
+        * storage/indexeddb/modern/resources/256-open-databases.js: Added.
+        * storage/indexeddb/modern/resources/exceed-open-file-limit.js: Added.
+
 2016-03-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/transforms/bounding-rect-zoom.html for ios-simulator after r197450

@@ -1,3 +1,59 @@
+2016-03-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Close UniqueIDBDatabases once they become unused.
+        https://bugs.webkit.org/show_bug.cgi?id=154922
+
+        Reviewed by Alex Christensen.
+
+        Tests: storage/indexeddb/modern/256-open-databases.html
+               storage/indexeddb/modern/exceed-open-file-limit.html
+
+        Without this change, attempts to open a 256th database in the DatabaseProcess will fail on Mac.
+        
+        Due to SQLite journal files, this limit could come up as early as 128 databases if they are all
+        in active use.
+        
+        This is because launchd - by default - limits xpc services to having 256 open file handles by default.
+        
+        While we should explore raising the limit, we should also close databases we no longer need.
+        
+        * Modules/indexeddb/server/IDBBackingStore.h:
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::closeUniqueIDBDatabase):
+        (WebCore::IDBServer::IDBServer::deleteUniqueIDBDatabase): Deleted.
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::MemoryBackingStoreTransaction):
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::getOrEstablishDatabaseInfo):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation): Handle the case where opening
+          the backing store failed by firing an error event instead of pretending everything is okay.
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didOpenBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::isCurrentlyInUse):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired): If the database is not
+          currently in use, close it.
+        (WebCore::IDBServer::UniqueIDBDatabase::inProgressTransactionCompleted):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        (WebCore::IDBServer::UniqueIDBDatabase::deletePending): Deleted.
+
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::isolatedCopy): Actually get this right.
+
 2016-03-02  Gavin Barraclough  <barraclough@apple.com>
 
         Disable timer throttling increases for visually idle / active pages.

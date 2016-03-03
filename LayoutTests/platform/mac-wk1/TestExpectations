@@ -146,6 +146,10 @@ webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/oes-texture-half-float.html 
 # This test gives a different output on ElCapitan-wk1 only.
 webkit.org/b/152178 [ Yosemite+ ] fast/replaced/replaced-breaking.html [ Failure ]
 
+# DRT can open way more files than the DatabaseProcess with WebKitTestRunner, and the number is reasonable.
+# So we shouldn't bother with this test in WebKit1.
+storage/indexeddb/modern/exceed-open-file-limit.html
+
 ### END OF (2) Failures without bug reports
 ########################################
 

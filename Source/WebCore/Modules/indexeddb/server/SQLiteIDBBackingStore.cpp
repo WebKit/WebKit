@@ -557,14 +557,14 @@ String SQLiteIDBBackingStore::fullDatabasePath() const
     return pathByAppendingComponent(fullDatabaseDirectory(), "IndexedDB.sqlite3");
 }
 
-const IDBDatabaseInfo& SQLiteIDBBackingStore::getOrEstablishDatabaseInfo()
+IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::getOrEstablishDatabaseInfo - database %s", m_identifier.databaseName().utf8().data());
 
-    if (m_databaseInfo)
-        return *m_databaseInfo;
-
-    m_databaseInfo = std::make_unique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
+    if (m_databaseInfo) {
+        info = *m_databaseInfo;
+        return { };
+    }
 
     makeAllDirectories(fullDatabaseDirectory());
     String dbFilename = fullDatabasePath();
@@ -576,7 +576,7 @@ const IDBDatabaseInfo& SQLiteIDBBackingStore::getOrEstablishDatabaseInfo()
     }
 
     if (!m_sqliteDB)
-        return *m_databaseInfo;
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to open database file on disk") };
 
     m_sqliteDB->setCollationFunction("IDBKEY", [this](int aLength, const void* a, int bLength, const void* b) {
         return idbKeyCollate(aLength, a, bLength, b);
@@ -585,25 +585,28 @@ const IDBDatabaseInfo& SQLiteIDBBackingStore::getOrEstablishDatabaseInfo()
     if (!ensureValidRecordsTable()) {
         LOG_ERROR("Error creating or migrating Records table in database");
         m_sqliteDB = nullptr;
-        return *m_databaseInfo;
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Error creating or migrating Records table in database") };
     }
 
     if (!ensureValidIndexRecordsTable()) {
         LOG_ERROR("Error creating or migrating Index Records table in database");
         m_sqliteDB = nullptr;
-        return *m_databaseInfo;
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Error creating or migrating Index Records table in database") };
     }
 
     auto databaseInfo = extractExistingDatabaseInfo();
     if (!databaseInfo)
         databaseInfo = createAndPopulateInitialDatabaseInfo();
 
-    if (!databaseInfo)
+    if (!databaseInfo) {
         LOG_ERROR("Unable to establish IDB database at path '%s'", dbFilename.utf8().data());
-    else
-        m_databaseInfo = WTFMove(databaseInfo);
+        m_sqliteDB = nullptr;
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to establish IDB database file") };
+    }
 
-    return *m_databaseInfo;
+    m_databaseInfo = WTFMove(databaseInfo);
+    info = *m_databaseInfo;
+    return { };
 }
 
 IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
