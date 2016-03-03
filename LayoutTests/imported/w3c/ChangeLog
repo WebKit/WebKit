@@ -1,3 +1,31 @@
+2016-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTML parser instantiates a custom element inside a template element with a wrong owner document
+        https://bugs.webkit.org/show_bug.cgi?id=154936
+
+        Reviewed by Chris Dumez.
+
+        Updated the expected results for newly passing test cases.
+
+        One test case in additions-to-parsing-xhtml-documents/node-document.html starts failing due to a bug in the test.
+        The bug in the test will be fixed in https://github.com/w3c/web-platform-tests/pull/2651
+
+        Finally, remove duplicated HTML template element tests in html-templates since there is a new copy under
+        web-platform-tests/html/semantics/scripting-1/the-template-element/. Unfortunately, we can't remove
+        html-templates/parsing-html-templates/ because we haven't imported web-platform-tests/html/syntax yet.
+
+        * html-templates/additions-to-parsing-xhtml-documents: Removed.
+        * html-templates/additions-to-serializing-xhtml-documents: Removed.
+        * html-templates/additions-to-the-css-user-agent-style-sheet: Removed.
+        * html-templates/additions-to-the-steps-to-clone-a-node: Removed.
+        * html-templates/definitions: Removed.
+        * html-templates/innerhtml-on-templates: Removed.
+        * html-templates/serializing-html-templates: Removed.
+        * html-templates/template-element: Removed.
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-parsing-xhtml-documents/node-document.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/template-contents-owner-test-001-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/node-document-changes-expected.txt:
+
 2016-03-02  Chris Dumez  <cdumez@apple.com>
 
         Align HTMLInputElement.maxLength with the specification

@@ -1,5 +1,5 @@
 
-PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test empty template 
+FAIL Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test empty template assert_equals: Wrong template content owner document expected Document node with 2 children but got Document node with 0 children
 PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test not empty template 
 PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test nested templates 
 PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test loading XHTML document from a file 

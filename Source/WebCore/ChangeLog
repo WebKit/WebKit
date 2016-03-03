@@ -1,3 +1,22 @@
+2016-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTML parser instantiates a custom element inside a template element with a wrong owner document
+        https://bugs.webkit.org/show_bug.cgi?id=154936
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by our implementation following the old spec which didn't create a appropriate template
+        contents owner document [1] for a document without a browsing context. The new spec no longer has this clause,
+        and we should be always creating the appropriate template contents owner document unless the document itself
+        is an appropriate template contents owner document for another document (comes up in nested template elements).
+
+        No new tests since the behavior change is covered by existing tests.
+
+        [1] https://html.spec.whatwg.org/#appropriate-template-contents-owner-document
+
+        * dom/Document.h:
+        (WebCore::Document::templateDocument):
+
 2016-03-02  Gavin Barraclough  <barraclough@apple.com>
 
         PageThrottler should apply hysteresis to media activity

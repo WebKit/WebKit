@@ -1,6 +1,0 @@
-
-PASS The template contents owner document type is HTML document (case when document has browsing context and the template is created by HTML parser) 
-PASS The template contents owner document type is HTML document (case when document has browsing context and the template is created by createElement()) 
-PASS The template contents owner document type is HTML document (case when document has no browsing context and the template is created by createElement()) 
-PASS The template contents owner document type is HTML document (case when document has no browsing context and the template is created via innerHTML) 
-

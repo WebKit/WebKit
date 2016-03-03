@@ -1798,11 +1798,7 @@ inline TextEncoding Document::textEncoding() const
 #if ENABLE(TEMPLATE_ELEMENT)
 inline const Document* Document::templateDocument() const
 {
-    // If DOCUMENT does not have a browsing context, Let TEMPLATE CONTENTS OWNER be DOCUMENT and abort these steps.
-    if (!m_frame)
-        return this;
-
-    return m_templateDocument.get();
+    return m_templateDocumentHost ? this : m_templateDocument.get();
 }
 #endif
 
