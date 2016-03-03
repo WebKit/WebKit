@@ -1,5 +1,13 @@
 2016-03-02  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline fast/transforms/bounding-rect-zoom.html for ios-simulator after r197450
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/transforms/bounding-rect-zoom-expected.txt:
+
+2016-03-02  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline imported/w3c/web-platform-tests/html/dom/reflection-forms.html for ios-simulator after r197458
 
         Unreviewed test gardening.
