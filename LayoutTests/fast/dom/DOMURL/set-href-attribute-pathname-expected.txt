@@ -12,7 +12,7 @@ PASS a.href is 'https://www.mydomain.com//path%23name?key=value'
 Set a pathname containing .. in it
 PASS a.href is 'https://www.mydomain.com/path?key=value'
 Set pathname to null
-PASS a.href is 'https://www.mydomain.com/?key=value'
+PASS a.href is 'https://www.mydomain.com/null?key=value'
 Set pathname to empty string
 PASS a.href is 'https://www.mydomain.com/?key=value'
 Set pathname that includes illegal characters to URL that contains illegal characters.

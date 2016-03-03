@@ -13,7 +13,7 @@ PASS a.href is 'http://www.mydomain.com/path/testurl.html#hash?value'
 PASS a.href = "https://www.my\"d(){}|~om?ain#com/path/testurl.html#middle" threw exception TypeError: Type error.
 PASS a.href is 'https://www.my\"d(){}|~om?ain#com/path/testurl.html#middle'
 Set hash to null
-PASS a.href is 'https://www.mydomain.com/path/testurl.html#'
+PASS a.href is 'https://www.mydomain.com/path/testurl.html#null'
 Set hash to empty string
 PASS a.href is 'https://www.mydomain.com/path/testurl.html#'
 Add hash to mailto: protocol

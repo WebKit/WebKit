@@ -1,3 +1,26 @@
+2016-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop [TreatNullAs=EmptyString] from URL interface attributes
+        https://bugs.webkit.org/show_bug.cgi?id=154951
+
+        Reviewed by Darin Adler.
+
+        Update existing tests now that URL interface attributes no longer treat
+        null as the empty string.
+
+        * fast/dom/DOMURL/set-href-attribute-hash-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-hash.html:
+        * fast/dom/DOMURL/set-href-attribute-host-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-host.html:
+        * fast/dom/DOMURL/set-href-attribute-hostname-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-hostname.html:
+        * fast/dom/DOMURL/set-href-attribute-pathname-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-pathname.html:
+        * fast/dom/DOMURL/set-href-attribute-protocol-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-protocol.html:
+        * fast/dom/DOMURL/set-href-attribute-search-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-search.html:
+
 2016-03-03  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] New CSS Value 'normal' for Content Alignment

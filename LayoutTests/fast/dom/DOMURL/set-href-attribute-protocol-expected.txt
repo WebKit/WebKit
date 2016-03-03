@@ -14,7 +14,7 @@ PASS a.href is 'foo:^^'
 Set a protocol that starts with ':'
 PASS a.href is 'https://www.mydomain.com/path/'
 Set protocol to null
-PASS a.href is 'https://www.mydomain.com/path/'
+PASS a.href is 'null://www.mydomain.com/path/'
 Set protocol to empty string
 PASS a.href is 'https://www.mydomain.com/path/'
 Set protocol to http on malformed URL
