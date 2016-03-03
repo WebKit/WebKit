@@ -1,3 +1,31 @@
+2016-03-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Run the run-benchmark script on the performance bot.
+        https://bugs.webkit.org/show_bug.cgi?id=154595
+
+        Reviewed by Carlos Garcia Campos.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Add new RunBenchmarkTests step on the perf bots (only for the GTK+ port at this moment).
+        (RunBenchmarkTests):
+        (RunBenchmarkTests.start):
+        (RunBenchmarkTests.getText):
+        (RunBenchmarkTests.getText2):
+        (BuildAndPerfTestFactory.__init__):
+        (DownloadAndPerfTestFactory.__init__):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py: Add new test for RunBenchmarkTests and update expected steps of GTK+ perf bot.
+        (RunBenchmarkTest):
+        (RunBenchmarkTest.assertResults):
+        (RunBenchmarkTest.test_success):
+        (RunBenchmarkTest.test_tests_failed):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py: Log both the current iteration as also the total iterations for the current benchmark/plan.
+        (BenchmarkRunner._run_benchmark):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/gtk_minibrowser_driver.py: Use python logging also for errors.
+        (GTKMiniBrowserDriver.close_browsers):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py: Implement support for running all available benchmark plans.
+        (parse_args):
+        (start):
+        (main):
+
 2016-03-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Remove u-szeged.hu SVN mirror in EFL perf bot

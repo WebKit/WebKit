@@ -49,4 +49,5 @@ class GTKMiniBrowserDriver(GTKBrowserDriver):
     def close_browsers(self):
         super(GTKMiniBrowserDriver, self).close_browsers()
         if self._minibrowser_process and self._minibrowser_process.returncode:
-            sys.exit('MiniBrowser crashed with exitcode %d' % self._minibrowser_process.returncode)
+            _log.error('MiniBrowser crashed with exitcode %d' % self._minibrowser_process.returncode)
+            sys.exit(1)

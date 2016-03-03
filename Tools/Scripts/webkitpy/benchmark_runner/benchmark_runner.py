@@ -62,7 +62,7 @@ class BenchmarkRunner(object):
     def _run_benchmark(self, count, web_root):
         results = []
         for iteration in xrange(1, count + 1):
-            _log.info('Start the iteration {current_iteration} of current benchmark'.format(current_iteration=iteration))
+            _log.info('Start the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
             try:
                 result = None
                 self._http_server_driver.serve(web_root)
@@ -78,7 +78,7 @@ class BenchmarkRunner(object):
                 self._browser_driver.restore_env()
                 self._browser_driver.close_browsers()
                 self._http_server_driver.kill_server()
-            _log.info('End of {current_iteration} iteration of current benchmark'.format(current_iteration=iteration))
+            _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
         results = self._wrap(results)
         self._dump(results, self._output_file if self._output_file else self._plan['output_file'])
         self.show_results(results, self._scale_unit)
