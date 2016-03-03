@@ -32,6 +32,8 @@
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
+#include "HeapProfiler.h"
+#include "HeapSnapshotBuilder.h"
 #include "HeapStatistics.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
@@ -465,12 +467,67 @@ private:
     Vector<int> m_vector;
 };
 
+class SimpleObject : public JSNonFinalObject {
+public:
+    SimpleObject(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    typedef JSNonFinalObject Base;
+    static const bool needsDestruction = false;
+
+    static SimpleObject* create(VM& vm, JSGlobalObject* globalObject)
+    {
+        Structure* structure = createStructure(vm, globalObject, jsNull());
+        SimpleObject* simpleObject = new (NotNull, allocateCell<SimpleObject>(vm.heap, sizeof(SimpleObject))) SimpleObject(vm, structure);
+        simpleObject->finishCreation(vm);
+        return simpleObject;
+    }
+
+    void finishCreation(VM& vm)
+    {
+        Base::finishCreation(vm);
+    }
+
+    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
+    {
+        SimpleObject* thisObject = jsCast<SimpleObject*>(cell);
+        ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+        Base::visitChildren(thisObject, visitor);
+        visitor.append(&thisObject->m_hiddenValue);
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    JSValue hiddenValue()
+    {
+        return m_hiddenValue.get();
+    }
+
+    void setHiddenValue(VM& vm, JSValue value)
+    {
+        ASSERT(value.isCell());
+        m_hiddenValue.set(vm, this, value);
+    }
+
+    DECLARE_INFO;
+
+private:
+    WriteBarrier<Unknown> m_hiddenValue;
+};
+
+
 const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, CREATE_METHOD_TABLE(Element) };
 const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, 0, CREATE_METHOD_TABLE(Masquerader) };
 const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, CREATE_METHOD_TABLE(Root) };
 const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(ImpureGetter) };
 const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(CustomGetter) };
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, 0, CREATE_METHOD_TABLE(RuntimeArray) };
+const ClassInfo SimpleObject::s_info = { "SimpleObject", &Base::s_info, 0, CREATE_METHOD_TABLE(SimpleObject) };
 
 ElementHandleOwner* Element::handleOwner()
 {
@@ -501,6 +558,9 @@ static EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateElement(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGetElement(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateSimpleObject(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionGetHiddenValue(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionSetHiddenValue(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState*);
@@ -555,6 +615,7 @@ static EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPlatformSupportsSamplingProfiler(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionGenerateHeapSnapshot(ExecState*);
 #if ENABLE(SAMPLING_PROFILER)
 static EncodedJSValue JSC_HOST_CALL functionStartSamplingProfiler(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState*);
@@ -708,6 +769,10 @@ protected:
         addFunction(vm, "getElement", functionGetElement, 1);
         addFunction(vm, "setElementRoot", functionSetElementRoot, 2);
         
+        addConstructableFunction(vm, "SimpleObject", functionCreateSimpleObject, 0);
+        addFunction(vm, "getHiddenValue", functionGetHiddenValue, 1);
+        addFunction(vm, "setHiddenValue", functionSetHiddenValue, 2);
+        
         putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "DFGTrue"), 0, functionFalse1, DFGTrueIntrinsic, DontEnum);
         putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "OSRExit"), 0, functionUndefined1, OSRExitIntrinsic, DontEnum);
         putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "isFinalTier"), 0, functionFalse2, IsFinalTierIntrinsic, DontEnum);
@@ -747,6 +812,7 @@ protected:
         addFunction(vm, "checkModuleSyntax", functionCheckModuleSyntax, 1);
 
         addFunction(vm, "platformSupportsSamplingProfiler", functionPlatformSupportsSamplingProfiler, 0);
+        addFunction(vm, "generateHeapSnapshot", functionGenerateHeapSnapshot, 0);
 #if ENABLE(SAMPLING_PROFILER)
         addFunction(vm, "startSamplingProfiler", functionStartSamplingProfiler, 0);
         addFunction(vm, "samplingProfilerStackTraces", functionSamplingProfilerStackTraces, 0);
@@ -1130,6 +1196,28 @@ EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState* exec)
     Element* element = jsCast<Element*>(exec->argument(0));
     Root* root = jsCast<Root*>(exec->argument(1));
     element->setRoot(exec->vm(), root);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateSimpleObject(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    return JSValue::encode(SimpleObject::create(exec->vm(), exec->lexicalGlobalObject()));
+}
+
+EncodedJSValue JSC_HOST_CALL functionGetHiddenValue(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    SimpleObject* simpleObject = jsCast<SimpleObject*>(exec->argument(0).asCell());
+    return JSValue::encode(simpleObject->hiddenValue());
+}
+
+EncodedJSValue JSC_HOST_CALL functionSetHiddenValue(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    SimpleObject* simpleObject = jsCast<SimpleObject*>(exec->argument(0).asCell());
+    JSValue value = exec->argument(1);
+    simpleObject->setHiddenValue(exec->vm(), value);
     return JSValue::encode(jsUndefined());
 }
 
@@ -1644,6 +1732,19 @@ EncodedJSValue JSC_HOST_CALL functionPlatformSupportsSamplingProfiler(ExecState*
 #else
     return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
 #endif
+}
+
+EncodedJSValue JSC_HOST_CALL functionGenerateHeapSnapshot(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+
+    HeapSnapshotBuilder snapshotBuilder(exec->vm().ensureHeapProfiler());
+    snapshotBuilder.buildSnapshot();
+
+    String jsonString = snapshotBuilder.json();
+    EncodedJSValue result = JSValue::encode(JSONParse(exec, jsonString));
+    RELEASE_ASSERT(!exec->hadException());
+    return result;
 }
 
 #if ENABLE(SAMPLING_PROFILER)

@@ -31,6 +31,8 @@
 #include "CopiedBlockInlines.h"
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlines.h"
+#include "HeapProfiler.h"
+#include "HeapSnapshotBuilder.h"
 #include "JSArray.h"
 #include "JSDestructibleObject.h"
 #include "VM.h"
@@ -94,6 +96,9 @@ void SlotVisitor::didStartMarking()
 {
     if (heap()->operationInProgress() == FullCollection)
         ASSERT(m_opaqueRoots.isEmpty()); // Should have merged by now.
+
+    if (HeapProfiler* heapProfiler = vm().heapProfiler())
+        m_heapSnapshotBuilder = heapProfiler->activeSnapshotBuilder();
 }
 
 void SlotVisitor::reset()
@@ -101,6 +106,8 @@ void SlotVisitor::reset()
     m_bytesVisited = 0;
     m_bytesCopied = 0;
     m_visitCount = 0;
+    m_heapSnapshotBuilder = nullptr;
+    ASSERT(!m_currentCell);
     ASSERT(m_stack.isEmpty());
 }
 
@@ -121,6 +128,10 @@ void SlotVisitor::append(JSValue value)
 {
     if (!value || !value.isCell())
         return;
+
+    if (m_heapSnapshotBuilder)
+        m_heapSnapshotBuilder->appendEdge(m_currentCell, value.asCell());
+
     setMarkedAndAppendToMarkStack(value.asCell());
 }
 
@@ -155,11 +166,36 @@ void SlotVisitor::appendToMarkStack(JSCell* cell)
     m_visitCount++;
     m_bytesVisited += MarkedBlock::blockFor(cell)->cellSize();
     m_stack.append(cell);
+
+    if (m_heapSnapshotBuilder)
+        m_heapSnapshotBuilder->appendNode(cell);
 }
+
+class SetCurrentCellScope {
+public:
+    SetCurrentCellScope(SlotVisitor& visitor, const JSCell* cell)
+        : m_visitor(visitor)
+    {
+        ASSERT(!m_visitor.m_currentCell);
+        m_visitor.m_currentCell = const_cast<JSCell*>(cell);
+    }
+
+    ~SetCurrentCellScope()
+    {
+        ASSERT(m_visitor.m_currentCell);
+        m_visitor.m_currentCell = nullptr;
+    }
+
+private:
+    SlotVisitor& m_visitor;
+};
+
 
 ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
 {
     ASSERT(Heap::isMarked(cell));
+
+    SetCurrentCellScope currentCellScope(*this, cell);
 
     m_currentObjectCellStateBeforeVisiting = cell->cellState();
     cell->setCellState(CellState::OldBlack);

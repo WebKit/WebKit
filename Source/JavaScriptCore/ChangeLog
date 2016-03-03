@@ -1,3 +1,196 @@
+2016-03-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add ability to generate a Heap Snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=154847
+
+        Reviewed by Mark Lam.
+
+        This adds HeapSnapshot, HeapSnapshotBuilder, and HeapProfiler.
+
+        HeapProfiler hangs off of the VM and holds the list of snapshots.
+        I expect to add other HeapProfiling features, such as allocation
+        tracking, to the profiler.
+
+        HeapSnapshot contains a collection of live cells and their identifiers.
+        It can point to a previous HeapSnapshot, to ensure that a cell that
+        already received an identifier maintains the same identifier across
+        multiple snapshots. When a snapshotted cell gets garbage collected,
+        the cell will be swept from the HeapSnapshot at the end of collection
+        to ensure the list contains only live cells.
+
+        When building a HeapSnapshot nodes are added in increasing node
+        identifier order. When done building, the list of nodes is complete
+        and the snapshot is finalized. At this point the nodes are sorted
+        by JSCell* address to allow for quick lookup of a JSCell*.
+
+        HeapSnapshotBuilder is where snapshotting begins. The builder
+        will initiate a specialized heap snapshotting garbage collection.
+        During this collection the builder will be notified of all marked
+        (live) cells, and connections between cells, as seen by SlotVisitors.
+        The builder can reference the previous, readonly, HeapSnapshots to
+        avoid creating new nodes for cells that have already been snapshotted.
+        When it is determined that we are visiting a live cell for the first
+        time, we give the cell a unique identifier and add it to the the
+        snapshot we are building.
+
+        Since edge data is costly, and of little long term utility, this
+        data is only held by the builder for serialization, and not stored
+        long term with the HeapSnapshot node data.
+
+        The goals of HeapSnapshotting at this time are:
+        - minimal impact on performance when not profiling the heap
+        - unique identifier for cells, so they may be identified across multiple snapshots
+        - nodes and edges to be able to construct a graph of which nodes reference/retain which other nodes
+        - node data - identifier, type (class name), size
+        - edge data - from cell, to cell, type / data (to come in a follow-up patch)
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        Add new files to the build.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::isHeapSnapshotting):
+        (JSC::RemoveDeadHeapSnapshotNodes::RemoveDeadHeapSnapshotNodes):
+        (JSC::RemoveDeadHeapSnapshotNodes::operator()):
+        (JSC::Heap::removeDeadHeapSnapshotNodes):
+        (JSC::Heap::collectImpl):
+        After every collection, sweep dead cells from in memory snapshots.
+
+        * runtime/VM.cpp:
+        (JSC::VM::ensureHeapProfiler):
+        * runtime/VM.h:
+        (JSC::VM::heapProfiler):
+        * heap/Heap.h:
+        * heap/HeapProfiler.cpp: Added.
+        (JSC::HeapProfiler::HeapProfiler):
+        (JSC::HeapProfiler::~HeapProfiler):
+        (JSC::HeapProfiler::mostRecentSnapshot):
+        (JSC::HeapProfiler::appendSnapshot):
+        (JSC::HeapProfiler::clearSnapshots):
+        (JSC::HeapProfiler::setActiveSnapshotBuilder):
+        * heap/HeapProfiler.h: Added.
+        (JSC::HeapProfiler::vm):
+        (JSC::HeapProfiler::activeSnapshotBuilder):
+        VM and Heap can look at the profiler to determine if we are building a
+        snapshot, or the "head" snapshot to use for sweeping.
+
+        * heap/HeapSnapshot.cpp: Added.
+        (JSC::HeapSnapshot::HeapSnapshot):
+        (JSC::HeapSnapshot::~HeapSnapshot):
+        (JSC::HeapSnapshot::appendNode):
+        Add a node to the unfinalized list of new cells.
+
+        (JSC::HeapSnapshot::sweepCell):
+        (JSC::HeapSnapshot::shrinkToFit):
+        Collect a list of cells for sweeping and then remove them all at once
+        in shrinkToFit. This is done to avoid thrashing of individual removes
+        that could cause many overlapping moves within the Vector.
+
+        (JSC::HeapSnapshot::finalize):
+        Sort the list, and also cache the bounding start/stop identifiers.
+        No other snapshot can contain an identifier in this range, so it will
+        improve lookup of a node from an identifier.
+
+        (JSC::HeapSnapshot::nodeForCell):
+        (JSC::HeapSnapshot::nodeForObjectIdentifier):
+        Search helpers.
+
+        * heap/HeapSnapshotBuilder.h: Added.
+        (JSC::HeapSnapshotNode::HeapSnapshotNode):
+        (JSC::HeapSnapshotEdge::HeapSnapshotEdge):
+        Node and Edge struct types the builder creates.
+
+        * heap/HeapSnapshotBuilder.cpp: Added.
+        (JSC::HeapSnapshotBuilder::getNextObjectIdentifier):
+        (JSC::HeapSnapshotBuilder::HeapSnapshotBuilder):
+        (JSC::HeapSnapshotBuilder::~HeapSnapshotBuilder):
+        (JSC::HeapSnapshotBuilder::buildSnapshot):
+        (JSC::HeapSnapshotBuilder::appendNode):
+        (JSC::HeapSnapshotBuilder::appendEdge):
+        When building the snapshot, generating the next identifier, and
+        appending to any of the lists must be guarded by a lock because
+        SlotVisitors running in parallel may be accessing the builder.
+
+        (JSC::HeapSnapshotBuilder::hasExistingNodeForCell):
+        Looking up if a node already exists in a previous snapshot can be
+        done without a lock because at this point the data is readonly.
+
+        (JSC::edgeTypeToNumber):
+        (JSC::edgeTypeToString):
+        (JSC::HeapSnapshotBuilder::json):
+        JSON serialization of a heap snapshot contains node and edge data.
+
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        Set/clear the active snapshot builder to know if this will be a
+        snapshotting GC or not.
+
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        Inform the builder of a new node or edge.
+
+        (JSC::SlotVisitor::visitChildren):
+        Remember the current cell we are visiting so that if we need to
+        inform the builder of edges we know the "from" cell.
+
+        * jsc.cpp:
+        (SimpleObject::SimpleObject):
+        (SimpleObject::create):
+        (SimpleObject::finishCreation):
+        (SimpleObject::visitChildren):
+        (SimpleObject::createStructure):
+        (SimpleObject::hiddenValue):
+        (SimpleObject::setHiddenValue):
+        Create a new class "SimpleObject" that can be used by heap snapshotting
+        tests. It is easy to filter for this new class name and test internal
+        edge relationships created by garbage collection visiting the cell.
+
+        (functionCreateSimpleObject):
+        (functionGetHiddenValue):
+        (functionSetHiddenValue):
+        Expose methods to create and interact with a SimpleObject.
+
+        (functionGenerateHeapSnapshot):
+        Expose methods to create a heap snapshot. This currently automatically
+        turns the serialized string into a JSON object. That may change.
+
+        * tests/heapProfiler.yaml: Added.
+        * tests/heapProfiler/basic-edges.js: Added.
+        (excludeStructure):
+        * tests/heapProfiler/basic-nodes.js: Added.
+        (hasDifferentSizeNodes):
+        (hasAllInternalNodes):
+        Add tests for basic node and edge data.
+
+        * tests/heapProfiler/driver/driver.js: Added.
+        (assert):
+        (CheapHeapSnapshotNode):
+        (CheapHeapSnapshotEdge):
+        (CheapHeapSnapshotEdge.prototype.get from):
+        (CheapHeapSnapshotEdge.prototype.get to):
+        (CheapHeapSnapshot):
+        (CheapHeapSnapshot.prototype.get nodes):
+        (CheapHeapSnapshot.prototype.get edges):
+        (CheapHeapSnapshot.prototype.nodeWithIdentifier):
+        (CheapHeapSnapshot.prototype.nodesWithClassName):
+        (CheapHeapSnapshot.prototype.classNameFromTableIndex):
+        (CheapHeapSnapshot.prototype.edgeTypeFromTableIndex):
+        (createCheapHeapSnapshot):
+        (HeapSnapshotNode):
+        (HeapSnapshotEdge):
+        (HeapSnapshot):
+        (HeapSnapshot.prototype.nodesWithClassName):
+        (createHeapSnapshot):
+        Add two HeapSnapshot representations.
+        CheapHeapSnapshot creates two lists of node and edge data that
+        lazily creates objects as needed.
+        HeapSnapshot creates an object for each node and edge. This
+        is wasteful but easier to use.
+
 2016-03-02  Filip Pizlo  <fpizlo@apple.com>
 
         RegExpPrototype should check for exceptions after calling toString and doing so should not be expensive

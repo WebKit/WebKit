@@ -575,6 +575,9 @@
     <ClCompile Include="..\heap\HandleStack.cpp" />
     <ClCompile Include="..\heap\Heap.cpp" />
     <ClCompile Include="..\heap\HeapHelperPool.cpp" />
+    <ClCompile Include="..\heap\HeapProfiler.cpp" />
+    <ClCompile Include="..\heap\HeapSnapshot.cpp" />
+    <ClCompile Include="..\heap\HeapSnapshotBuilder.cpp" />
     <ClCompile Include="..\heap\HeapStatistics.cpp" />
     <ClCompile Include="..\heap\HeapTimer.cpp" />
     <ClCompile Include="..\heap\HeapVerifier.cpp" />
@@ -1386,6 +1389,9 @@
     <ClInclude Include="..\heap\HeapInlines.h" />
     <ClInclude Include="..\heap\HeapOperation.h" />
     <ClInclude Include="..\heap\HeapRootVisitor.h" />
+    <ClInclude Include="..\heap\HeapProfiler.h" />
+    <ClInclude Include="..\heap\HeapSnapshot.h" />
+    <ClInclude Include="..\heap\HeapSnapshotBuilder.h" />
     <ClInclude Include="..\heap\HeapStatistics.h" />
     <ClInclude Include="..\heap\HeapTimer.h" />
     <ClInclude Include="..\heap\HeapVerifier.h" />

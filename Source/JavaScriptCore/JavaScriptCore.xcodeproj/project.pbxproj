@@ -1548,6 +1548,8 @@
 		A513E5CB185F9624007E95AD /* InjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A513E5C9185F9624007E95AD /* InjectedScriptManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A514B2C2185A684400F3C7CB /* InjectedScriptBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A514B2C0185A684400F3C7CB /* InjectedScriptBase.cpp */; };
 		A514B2C3185A684400F3C7CB /* InjectedScriptBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A514B2C1185A684400F3C7CB /* InjectedScriptBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5311C361C77CEC500E6B1B6 /* HeapSnapshotBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A5311C351C77CEAC00E6B1B6 /* HeapSnapshotBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5311C371C77CECA00E6B1B6 /* HeapSnapshotBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5311C341C77CEAC00E6B1B6 /* HeapSnapshotBuilder.cpp */; };
 		A532438718568335002ED692 /* InspectorBackendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A532438118568317002ED692 /* InspectorBackendDispatchers.cpp */; };
 		A532438818568335002ED692 /* InspectorBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = A532438218568317002ED692 /* InspectorBackendDispatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A532438918568335002ED692 /* InspectorFrontendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A532438318568317002ED692 /* InspectorFrontendDispatchers.cpp */; };
@@ -1558,6 +1560,8 @@
 		A5339EC61BB399A60054F005 /* InspectorHeapAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5339EC51BB399900054F005 /* InspectorHeapAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5339EC71BB399A90054F005 /* InspectorHeapAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5339EC41BB399900054F005 /* InspectorHeapAgent.cpp */; };
 		A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = A5339EC81BB4B4510054F005 /* HeapObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = A5398FAA1C750D950060A963 /* HeapProfiler.h */; };
+		A5398FAC1C750DA60060A963 /* HeapProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5398FA91C750D950060A963 /* HeapProfiler.cpp */; };
 		A53CE08518BC1A5600BEDF76 /* ConsolePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */; };
 		A53CE08618BC1A5600BEDF76 /* ConsolePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */; };
 		A53CE08718BC1A5600BEDF76 /* JSConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */; };
@@ -1566,6 +1570,8 @@
 		A53F1AC018C90F8F0072EB6D /* framework.sb in Resources */ = {isa = PBXBuildFile; fileRef = A53F1ABE18C90EC70072EB6D /* framework.sb */; };
 		A54982031891D0B00081E5B8 /* EventLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54982011891D0B00081E5B8 /* EventLoop.cpp */; };
 		A54982041891D0B00081E5B8 /* EventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = A54982021891D0B00081E5B8 /* EventLoop.h */; };
+		A54C2AB01C6544EE00A18D78 /* HeapSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54C2AAE1C6544D100A18D78 /* HeapSnapshot.cpp */; };
+		A54C2AB11C6544F200A18D78 /* HeapSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = A54C2AAF1C6544D100A18D78 /* HeapSnapshot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A54CF2F5184EAB2400237F19 /* ScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54CF2F2184EAB2400237F19 /* ScriptValue.cpp */; };
 		A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A54CF2F3184EAB2400237F19 /* ScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A54CF2F9184EAEDA00237F19 /* ScriptObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54CF2F7184EAEDA00237F19 /* ScriptObject.cpp */; };
@@ -3743,6 +3749,8 @@
 		A513E5C9185F9624007E95AD /* InjectedScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptManager.h; sourceTree = "<group>"; };
 		A514B2C0185A684400F3C7CB /* InjectedScriptBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptBase.cpp; sourceTree = "<group>"; };
 		A514B2C1185A684400F3C7CB /* InjectedScriptBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptBase.h; sourceTree = "<group>"; };
+		A5311C341C77CEAC00E6B1B6 /* HeapSnapshotBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapSnapshotBuilder.cpp; sourceTree = "<group>"; };
+		A5311C351C77CEAC00E6B1B6 /* HeapSnapshotBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapSnapshotBuilder.h; sourceTree = "<group>"; };
 		A532438118568317002ED692 /* InspectorBackendDispatchers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatchers.cpp; sourceTree = "<group>"; };
 		A532438218568317002ED692 /* InspectorBackendDispatchers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatchers.h; sourceTree = "<group>"; };
 		A532438318568317002ED692 /* InspectorFrontendDispatchers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontendDispatchers.cpp; sourceTree = "<group>"; };
@@ -3755,6 +3763,8 @@
 		A5339EC41BB399900054F005 /* InspectorHeapAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorHeapAgent.cpp; sourceTree = "<group>"; };
 		A5339EC51BB399900054F005 /* InspectorHeapAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorHeapAgent.h; sourceTree = "<group>"; };
 		A5339EC81BB4B4510054F005 /* HeapObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapObserver.h; sourceTree = "<group>"; };
+		A5398FA91C750D950060A963 /* HeapProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapProfiler.cpp; sourceTree = "<group>"; };
+		A5398FAA1C750D950060A963 /* HeapProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapProfiler.h; sourceTree = "<group>"; };
 		A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsolePrototype.cpp; sourceTree = "<group>"; };
 		A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsolePrototype.h; sourceTree = "<group>"; };
 		A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsole.cpp; sourceTree = "<group>"; };
@@ -3763,6 +3773,8 @@
 		A53F1ABE18C90EC70072EB6D /* framework.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = framework.sb; sourceTree = "<group>"; };
 		A54982011891D0B00081E5B8 /* EventLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventLoop.cpp; sourceTree = "<group>"; };
 		A54982021891D0B00081E5B8 /* EventLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoop.h; sourceTree = "<group>"; };
+		A54C2AAE1C6544D100A18D78 /* HeapSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapSnapshot.cpp; sourceTree = "<group>"; };
+		A54C2AAF1C6544D100A18D78 /* HeapSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapSnapshot.h; sourceTree = "<group>"; };
 		A54CF2F2184EAB2400237F19 /* ScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptValue.cpp; sourceTree = "<group>"; };
 		A54CF2F3184EAB2400237F19 /* ScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptValue.h; sourceTree = "<group>"; };
 		A54CF2F7184EAEDA00237F19 /* ScriptObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptObject.cpp; sourceTree = "<group>"; };
@@ -5093,7 +5105,13 @@
 				2AD8932917E3868F00668276 /* HeapIterationScope.h */,
 				A5339EC81BB4B4510054F005 /* HeapObserver.h */,
 				2A6F462517E959CE00C45C98 /* HeapOperation.h */,
+				A5398FA91C750D950060A963 /* HeapProfiler.cpp */,
+				A5398FAA1C750D950060A963 /* HeapProfiler.h */,
 				14F97446138C853E00DA1C67 /* HeapRootVisitor.h */,
+				A54C2AAE1C6544D100A18D78 /* HeapSnapshot.cpp */,
+				A54C2AAF1C6544D100A18D78 /* HeapSnapshot.h */,
+				A5311C341C77CEAC00E6B1B6 /* HeapSnapshotBuilder.cpp */,
+				A5311C351C77CEAC00E6B1B6 /* HeapSnapshotBuilder.h */,
 				C24D31E0161CD695002AA4DB /* HeapStatistics.cpp */,
 				C24D31E1161CD695002AA4DB /* HeapStatistics.h */,
 				C2E526BB1590EF000054E48D /* HeapTimer.cpp */,
@@ -6918,6 +6936,7 @@
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				996B73171BDA067F00331B84 /* ArrayConstructor.lut.h in Headers */,
 				0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */,
+				A5311C361C77CEC500E6B1B6 /* HeapSnapshotBuilder.h in Headers */,
 				A7BDAEC917F4EA1400F6140C /* ArrayIteratorPrototype.h in Headers */,
 				996B73181BDA068000331B84 /* ArrayIteratorPrototype.lut.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
@@ -7090,6 +7109,7 @@
 				41359CF30FDD89AD00206180 /* DateConversion.h in Headers */,
 				BC1166020E1997B4008066DD /* DateInstance.h in Headers */,
 				14A1563210966365006FA260 /* DateInstanceCache.h in Headers */,
+				A54C2AB11C6544F200A18D78 /* HeapSnapshot.h in Headers */,
 				BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */,
 				BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */,
 				BC18C3FA0E16F5CD00B34460 /* Debugger.h in Headers */,
@@ -7502,6 +7522,7 @@
 				FE187A0F1C030D6C0038BBCA /* SnippetOperand.h in Headers */,
 				A1587D701B4DC14100D69849 /* IntlDateTimeFormatConstructor.h in Headers */,
 				A1587D751B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h in Headers */,
+				A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */,
 				A1587D721B4DC14100D69849 /* IntlDateTimeFormatPrototype.h in Headers */,
 				A1587D761B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h in Headers */,
 				A1D792FD1B43864B004516F5 /* IntlNumberFormat.h in Headers */,
@@ -8822,6 +8843,7 @@
 				0FE7211D193B9C590031F6ED /* DFGTransition.cpp in Sources */,
 				0F63944015C75F1D006A597C /* DFGTypeCheckHoistingPhase.cpp in Sources */,
 				0FBE0F7616C1DB0F0082C5E8 /* DFGUnificationPhase.cpp in Sources */,
+				A5398FAC1C750DA60060A963 /* HeapProfiler.cpp in Sources */,
 				0F34B14916D42010001CDA5A /* DFGUseKind.cpp in Sources */,
 				0F3B3A2B15475000003ED0FF /* DFGValidate.cpp in Sources */,
 				0F2BDC4F15228BF300CD8910 /* DFGValueSource.cpp in Sources */,
@@ -8995,6 +9017,7 @@
 				0F2B66E417B6B5AB00A7AE3F /* JSArrayBufferConstructor.cpp in Sources */,
 				0F2B66E617B6B5AB00A7AE3F /* JSArrayBufferPrototype.cpp in Sources */,
 				0F2B66E817B6B5AB00A7AE3F /* JSArrayBufferView.cpp in Sources */,
+				A5311C371C77CECA00E6B1B6 /* HeapSnapshotBuilder.cpp in Sources */,
 				A7BDAECA17F4EA1400F6140C /* JSArrayIterator.cpp in Sources */,
 				1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */,
 				86FA9E91142BBB2E001773B7 /* JSBoundFunction.cpp in Sources */,
@@ -9247,6 +9270,7 @@
 				BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */,
 				7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */,
 				2AF7382C18BBBF92008A5A37 /* StructureIDTable.cpp in Sources */,
+				A54C2AB01C6544EE00A18D78 /* HeapSnapshot.cpp in Sources */,
 				C2F0F2D116BAEEE900187C19 /* StructureRareData.cpp in Sources */,
 				0FB438A319270B1D00E1FBC9 /* StructureSet.cpp in Sources */,
 				0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */,

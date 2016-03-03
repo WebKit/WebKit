@@ -50,6 +50,7 @@
 #include "GetterSetter.h"
 #include "Heap.h"
 #include "HeapIterationScope.h"
+#include "HeapProfiler.h"
 #include "HostCallReturnValue.h"
 #include "Identifier.h"
 #include "IncrementalSweeper.h"
@@ -441,6 +442,13 @@ Watchdog& VM::ensureWatchdog()
         deleteAllCode();
     }
     return *m_watchdog;
+}
+
+HeapProfiler& VM::ensureHeapProfiler()
+{
+    if (!m_heapProfiler)
+        m_heapProfiler = std::make_unique<HeapProfiler>(*this);
+    return *m_heapProfiler;
 }
 
 #if ENABLE(SAMPLING_PROFILER)

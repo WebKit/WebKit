@@ -37,6 +37,7 @@ namespace JSC {
 class ConservativeRoots;
 class GCThreadSharedData;
 class Heap;
+class HeapSnapshotBuilder;
 template<typename T> class JITWriteBarrier;
 class UnconditionalFinalizer;
 template<typename T> class Weak;
@@ -47,6 +48,7 @@ class SlotVisitor {
     WTF_MAKE_NONCOPYABLE(SlotVisitor);
     WTF_MAKE_FAST_ALLOCATED;
 
+    friend class SetCurrentCellScope;
     friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
     friend class Heap;
 
@@ -111,6 +113,8 @@ public:
 
     void dump(PrintStream&) const;
 
+    bool isBuildingHeapSnapshot() const { return !!m_heapSnapshotBuilder; }
+
 private:
     friend class ParallelModeEnabler;
     
@@ -136,6 +140,9 @@ private:
     bool m_isInParallelMode;
     
     Heap& m_heap;
+
+    HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
+    JSCell* m_currentCell { nullptr };
 
     CellState m_currentObjectCellStateBeforeVisiting { CellState::NewWhite };
 
