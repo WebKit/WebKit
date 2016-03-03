@@ -1,3 +1,13 @@
+2016-03-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Remove u-szeged.hu SVN mirror in EFL perf bot
+        https://bugs.webkit.org/show_bug.cgi?id=154960
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Remove szeged univ's svn mirror.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+
 2016-03-03  Frederic Wang  <fwang@igalia.com>
 
         [jhbuild] Remove LLVM dependency.
