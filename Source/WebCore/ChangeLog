@@ -1,3 +1,30 @@
+2016-03-02  Gavin Barraclough  <barraclough@apple.com>
+
+        PageThrottler should apply hysteresis to media activity
+        https://bugs.webkit.org/show_bug.cgi?id=154940
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently PageThrottler keeps a track of audible plugin activity and HTML media element
+        activity separately. Audible plugin activity also gets an extra 5s hysteresis applied,
+        so that after audio playback has completed there is a chance to queue up more audio
+        before timer throttling kicks in. HTML audio does not get this grace. Funnel both
+        together into a single activity flag, such that the hysteresis is applied to both.
+
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+        (WebCore::m_mediaActivityHysteresis):
+            - PageActivityState::AudiblePlugin -> PageActivityState::MediaActivity.
+        (WebCore::m_mediaActivityCounter):
+            - when m_mediaActivityCounter value changes call mediaActivityCounterChanged().
+        (WebCore::PageThrottler::mediaActivityCounterChanged):
+            - Drive PageActivityState::MediaActivity indirectly via m_mediaActivityHysteresis,
+              such that a 5s hysteresis is applied.
+        * page/PageThrottler.h:
+            - Removed AudiblePlugin (merged in with MediaActivity).
+        (WebCore::PageThrottler::pluginDidEvaluateWhileAudioIsPlaying):
+            - m_audiblePluginHysteresis.impulse -> m_mediaActivityHysteresis.impulse.
+
 2016-03-01  Ada Chan  <adachan@apple.com>
 
         Update the media element's presentation mode properly after going in and out of full screen via the Full Screen API

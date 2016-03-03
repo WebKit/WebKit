@@ -43,15 +43,14 @@ typedef PageActivityCounter::Token PageActivityAssertionToken;
 struct PageActivityState {
     enum {
         UserInputActivity = 1 << 0,
-        AudiblePlugin = 1 << 1,
-        MediaActivity = 1 << 2,
-        PageLoadActivity = 1 << 3,
+        MediaActivity = 1 << 1,
+        PageLoadActivity = 1 << 2,
     };
 
     typedef unsigned Flags;
 
     static const Flags NoFlags = 0;
-    static const Flags AllFlags = UserInputActivity | AudiblePlugin | MediaActivity | PageLoadActivity;
+    static const Flags AllFlags = UserInputActivity | MediaActivity | PageLoadActivity;
 };
 
 class PageThrottler {
@@ -61,17 +60,18 @@ public:
 
     void didReceiveUserInput() { m_userInputHysteresis.impulse(); }
     PageActivityState::Flags activityState() { return m_activityState; }
-    void pluginDidEvaluateWhileAudioIsPlaying() { m_audiblePluginHysteresis.impulse(); }
+    void pluginDidEvaluateWhileAudioIsPlaying() { m_mediaActivityHysteresis.impulse(); }
     PageActivityAssertionToken mediaActivityToken();
     PageActivityAssertionToken pageLoadActivityToken();
 
 private:
+    void mediaActivityCounterChanged();
     void setActivityFlag(PageActivityState::Flags, bool);
 
     Page& m_page;
     PageActivityState::Flags m_activityState { PageActivityState::NoFlags };
     HysteresisActivity m_userInputHysteresis;
-    HysteresisActivity m_audiblePluginHysteresis;
+    HysteresisActivity m_mediaActivityHysteresis;
     PageActivityCounter m_mediaActivityCounter;
     PageActivityCounter m_pageLoadActivityCounter;
 };
