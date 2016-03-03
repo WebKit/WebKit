@@ -517,7 +517,7 @@ public:
     DECLARE_INFO;
 
 private:
-    WriteBarrier<Unknown> m_hiddenValue;
+    WriteBarrier<JSC::Unknown> m_hiddenValue;
 };
 
 
