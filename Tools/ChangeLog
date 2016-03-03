@@ -1,3 +1,13 @@
+2016-03-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed fix after r197505 (Run the run-benchmark script on the performance bot.)
+        https://bugs.webkit.org/show_bug.cgi?id=154595
+
+        Unreviewed fix after r197505.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunBenchmarkTests.start):
+
 2016-03-03  Daniel Bates  <dabates@apple.com>
 
         Add unit tests for WTF::OptionSet
