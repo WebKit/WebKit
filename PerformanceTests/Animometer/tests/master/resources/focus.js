@@ -1,14 +1,15 @@
 (function() {
 
 var maxVerticalOffset = 50;
-var radius = 20;
+var radius = 10;
+var centerDiameter = 100;
 var sizeVariance = 80;
 var travelDistance = 70;
 
 var minObjectDepth = 0.2;
 var maxObjectDepth = 1.0;
 
-var opacityMultiplier = 40;
+var opacityMultiplier = 30;
 
 var FocusElement = Utilities.createClass(
     function(stage)
@@ -22,27 +23,41 @@ var FocusElement = Utilities.createClass(
         var distance = Utilities.lerp(this._depth, 1, sizeVariance);
         var size = 2 * radius + sizeVariance - distance;
 
-        this.element = document.createElement('div');
-        this.element.style.width = size + "px";
-        this.element.style.height = size + "px";
-        this.element.style.top = top + "px";
-        this.element.style.left = left + "px";
-        this.element.style.zIndex = Math.round((1 - this._depth) * 10);
+        this.container = document.createElement('div');
+        this.container.style.width = (size + stage.maxBlurValue * 2) + "px";
+        this.container.style.height = (size + stage.maxBlurValue * 2) + "px";
+        this.container.style.top = top + "px";
+        this.container.style.left = left + "px";
+        this.container.style.zIndex = Math.round((1 - this._depth) * 10);
 
-        Utilities.setElementPrefixedProperty(this.element, "filter", "blur(" + stage.getBlurValue(this._depth) + "px) opacity(" + stage.getOpacityValue(this._depth) + "%)");
+        var particle = Utilities.createElement("div", {}, this.container);
+        particle.style.width = size + "px";
+        particle.style.height = size + "px";
+        particle.style.top = stage.maxBlurValue + "px";
+        particle.style.left = stage.maxBlurValue + "px";
 
         var depthMultiplier = Utilities.lerp(1 - this._depth, 0.8, 1);
         this._sinMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier;
         this._cosMultiplier = Pseudo.random() * Stage.randomSign() * depthMultiplier;
     }, {
 
-    animate: function(stage, sinTime, cosTime)
+    hide: function()
     {
-        var top = sinTime * this._sinMultiplier * travelDistance;
-        var left = cosTime * this._cosMultiplier * travelDistance;
+        this.container.style.display = "none";
+    },
 
-        Utilities.setElementPrefixedProperty(this.element, "filter", "blur(" + stage.getBlurValue(this._depth) + "px) opacity(" + stage.getOpacityValue(this._depth) + "%)");
-        this.element.style.transform = "translateX(" + left + "%) translateY(" + top + "%)";
+    show: function()
+    {
+        this.container.style.display = "block";
+    },
+
+    animate: function(stage, sinFactor, cosFactor)
+    {
+        var top = sinFactor * this._sinMultiplier;
+        var left = cosFactor * this._cosMultiplier;
+
+        Utilities.setElementPrefixedProperty(this.container, "filter", "blur(" + stage.getBlurValue(this._depth) + "px) opacity(" + stage.getOpacityValue(this._depth) + "%)");
+        this.container.style.transform = "translate3d(" + left + "%, " + top + "%, 0)";
     }
 });
 
@@ -67,19 +82,26 @@ var FocusStage = Utilities.createSubclass(Stage,
 
         this._testElements = [];
         this._focalPoint = 0.5;
+        this._offsetIndex = 0;
 
         this._centerElement = document.getElementById("center-text");
-        this._centerElement.style.width = (radius * 5) + 'px';
-        this._centerElement.style.height = (radius * 5) + 'px';
+        this._centerElement.style.width = (centerDiameter + this.maxCenterObjectBlurValue * 2) + "px";
+        this._centerElement.style.height = (centerDiameter + this.maxCenterObjectBlurValue * 2) + "px";
         this._centerElement.style.zIndex = Math.round(10 * this.centerObjectDepth);
 
-        var blur = this.getBlurValue(this.centerObjectDepth);
+        var particle = document.querySelector("#center-text div");
+        particle.style.width = centerDiameter + "px";
+        particle.style.height = centerDiameter + "px";
+        particle.style.top = this.maxCenterObjectBlurValue + "px";
+        particle.style.left = this.maxCenterObjectBlurValue + "px";
+
+        var blur = this.getBlurValue(this.centerObjectDepth, true);
         Utilities.setElementPrefixedProperty(this._centerElement, "filter", "blur(" + blur + "px)");
     },
 
     complexity: function()
     {
-        return 1 + this._testElements.length;
+        return 1 + this._offsetIndex;
     },
 
     tune: function(count)
@@ -87,55 +109,51 @@ var FocusStage = Utilities.createSubclass(Stage,
         if (count == 0)
             return;
 
-        if (count > 0) {
-            for (var i = 0; i < count; ++i) {
-                var obj = new FocusElement(this);
-                this._testElements.push(obj);
-                this.element.appendChild(obj.element);
-            }
+        if (count < 0) {
+            this._offsetIndex = Math.max(0, this._offsetIndex + count);
+            for (var i = this._offsetIndex; i < this._testElements.length; ++i)
+                this._testElements[i].hide();
             return;
         }
 
-        while (count < 0) {
-            var obj = this._testElements.shift();
-            if (!obj)
-                return;
-
-            this.element.removeChild(obj.element);
-            count++;
+        var newIndex = this._offsetIndex + count;
+        for (var i = this._testElements.length; i < newIndex; ++i) {
+            var obj = new FocusElement(this);
+            this._testElements.push(obj);
+            this.element.appendChild(obj.container);
         }
+        for (var i = this._offsetIndex; i < newIndex; ++i)
+            this._testElements[i].show();
+        this._offsetIndex = newIndex;
     },
 
     animate: function()
     {
         var time = this._benchmark.timestamp;
-        var sinTime = Math.sin(time / this.movementDuration);
-        var cosTime = Math.cos(time / this.movementDuration);
+        var sinFactor = Math.sin(time / this.movementDuration) * travelDistance;
+        var cosFactor = Math.cos(time / this.movementDuration) * travelDistance;
 
-        var focusProgress = Utilities.progressValue(Math.sin(time / this.focusDuration), -1, 1);
+        var focusProgress = 0.5 + 0.5 * Math.sin(time / this.focusDuration);
         this._focalPoint = focusProgress;
 
         // update center element before loop
         Utilities.setElementPrefixedProperty(this._centerElement, "filter", "blur(" + this.getBlurValue(this.centerObjectDepth, true) + "px)");
 
-        this._testElements.forEach(function(element) {
-            element.animate(this, sinTime, cosTime);
-        }, this);
+        for (var i = 0; i < this._offsetIndex; ++i)
+            this._testElements[i].animate(this, sinFactor, cosFactor);
     },
 
     getBlurValue: function(depth, isCenter)
     {
-        var value = Math.abs(depth - this._focalPoint);
-
         if (isCenter)
-            return this.maxCenterObjectBlurValue * value;
+            return 1 + Math.abs(depth - this._focalPoint) * (this.maxCenterObjectBlurValue - 1);
 
-        return Utilities.lerp(value, this.minBlurValue, this.maxBlurValue);
+        return Utilities.lerp(Math.abs(depth - this._focalPoint), this.minBlurValue, this.maxBlurValue);
     },
 
     getOpacityValue: function(depth)
     {
-        return opacityMultiplier * (1 - Math.abs(depth - this._focalPoint));
+        return Math.max(1, opacityMultiplier * (1 - Math.abs(depth - this._focalPoint)));
     },
 });
 

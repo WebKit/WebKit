@@ -10,7 +10,11 @@
         z-index: -10000;
     }
 
-    #stage div {
+    #stage > div {
+        position: absolute;
+        overflow: hidden;
+    }
+    #stage div div {
         position: absolute;
         background-color: #DEDADD;
         border-radius: 50%;
@@ -23,14 +27,14 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translateX(-50%) translateY(-50%);
+        transform: translate3d(-50%, -50%, 0);
     }
 
     </style>
 </head>
 <body>
     <div id="stage">
-        <div id="center-text"><span>focus</span></div>
+        <div id="center-text"><div><span>focus</span></div></div>
     </div>
     <script src="../../resources/strings.js"></script>
     <script src="../../resources/extensions.js"></script>

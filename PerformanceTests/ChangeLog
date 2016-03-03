@@ -5,6 +5,35 @@
 
         Reviewed by Simon Fraser.
 
+        Improve tests.
+
+        * Animometer/tests/master/focus.html: Move each particle into a layer. Put the particle
+        in a container element. Expand the container element by the max blur radius, and clip
+        overflow. This way, when the blur is applied, it avoids causing layer resizes.
+        * Animometer/tests/master/resources/focus.js:
+        (FocusElement.Utilities.createClass): Create a container element, and put the particle
+        inside.
+        (hide): Set display:none.
+        (show): Set display:block.
+        (animate): Apply filters to the container element.
+        (FocusStage.call.initialize): Instead of inserting and removing elements from the DOM,
+        keep them in the stage, but set the display style instead. Use this._offsetIndex to
+        keep track of which elements are displayed.
+        (FocusStage.call.animate): Move some calculations around to avoid doing unneeded math.
+        (FocusStage.call.getBlurValue): Make sure elements are always blurred.
+        (FocusStage.call.getOpacityValue): Make sure elements have some opacity.
+        * Animometer/tests/master/resources/multiply.js: Have the particles on the edge of the
+        stage appear less black when the complexity gets large enough.
+        (tune): Have this._distanceFactor calculate the factor. Avoid calculating square root each
+        frame.
+
+2016-03-02  Jon Lee  <jonlee@apple.com>
+
+        Add some new controllers, and refine tests
+        https://bugs.webkit.org/show_bug.cgi?id=154914
+
+        Reviewed by Simon Fraser.
+
         Add a controller that centers around 30 fps instead of 60 fps.
 
         * Animometer/developer.html: Add a new option.
