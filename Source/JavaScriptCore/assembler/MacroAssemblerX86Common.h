@@ -1777,6 +1777,24 @@ public:
             cmov(x86Condition(invert(cond)), elseCase, dest);
     }
 
+    void moveConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
+            m_assembler.testl_rr(left, left);
+        else
+            m_assembler.cmpl_ir(right.m_value, left);
+
+        if (thenCase != dest && elseCase != dest) {
+            move(elseCase, dest);
+            elseCase = dest;
+        }
+
+        if (elseCase == dest)
+            cmov(x86Condition(cond), thenCase, dest);
+        else
+            cmov(x86Condition(invert(cond)), elseCase, dest);
+    }
+
     void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
     {
         m_assembler.testl_rr(testReg, mask);
@@ -1823,6 +1841,90 @@ public:
             cmov(x86Condition(cond), thenCase, dest);
         else
             cmov(x86Condition(invert(cond)), elseCase, dest);
+    }
+
+    template<typename LeftType, typename RightType>
+    void moveDoubleConditionally32(RelationalCondition cond, LeftType left, RightType right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        static_assert(!std::is_same<LeftType, FPRegisterID>::value && !std::is_same<RightType, FPRegisterID>::value, "One of the tested argument could be aliased on dest. Use moveDoubleConditionallyDouble().");
+
+        if (thenCase != dest && elseCase != dest) {
+            moveDouble(elseCase, dest);
+            elseCase = dest;
+        }
+
+        if (elseCase == dest) {
+            Jump falseCase = branch32(invert(cond), left, right);
+            moveDouble(thenCase, dest);
+            falseCase.link(this);
+        } else {
+            Jump trueCase = branch32(cond, left, right);
+            moveDouble(elseCase, dest);
+            trueCase.link(this);
+        }
+    }
+
+    template<typename TestType, typename MaskType>
+    void moveDoubleConditionallyTest32(ResultCondition cond, TestType test, MaskType mask, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        static_assert(!std::is_same<TestType, FPRegisterID>::value && !std::is_same<MaskType, FPRegisterID>::value, "One of the tested argument could be aliased on dest. Use moveDoubleConditionallyDouble().");
+
+        if (elseCase == dest && isInvertible(cond)) {
+            Jump falseCase = branchTest32(invert(cond), test, mask);
+            moveDouble(thenCase, dest);
+            falseCase.link(this);
+        } else if (thenCase == dest) {
+            Jump trueCase = branchTest32(cond, test, mask);
+            moveDouble(elseCase, dest);
+            trueCase.link(this);
+        }
+
+        Jump trueCase = branchTest32(cond, test, mask);
+        moveDouble(elseCase, dest);
+        Jump falseCase = jump();
+        trueCase.link(this);
+        moveDouble(thenCase, dest);
+        falseCase.link(this);
+    }
+
+    void moveDoubleConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        if (elseCase == dest) {
+            Jump falseCase = branchDouble(invert(cond), left, right);
+            moveDouble(thenCase, dest);
+            falseCase.link(this);
+        } else if (thenCase == dest) {
+            Jump trueCase = branchDouble(cond, left, right);
+            moveDouble(elseCase, dest);
+            trueCase.link(this);
+        } else {
+            Jump trueCase = branchDouble(cond, left, right);
+            moveDouble(elseCase, dest);
+            Jump falseCase = jump();
+            trueCase.link(this);
+            moveDouble(thenCase, dest);
+            falseCase.link(this);
+        }
+    }
+
+    void moveDoubleConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        if (elseCase == dest) {
+            Jump falseCase = branchFloat(invert(cond), left, right);
+            moveDouble(thenCase, dest);
+            falseCase.link(this);
+        } else if (thenCase == dest) {
+            Jump trueCase = branchFloat(cond, left, right);
+            moveDouble(elseCase, dest);
+            trueCase.link(this);
+        } else {
+            Jump trueCase = branchFloat(cond, left, right);
+            moveDouble(elseCase, dest);
+            Jump falseCase = jump();
+            trueCase.link(this);
+            moveDouble(thenCase, dest);
+            falseCase.link(this);
+        }
     }
 
     // Forwards / external control flow operations:

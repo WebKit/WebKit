@@ -1,3 +1,61 @@
+2016-03-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Improve Select of Doubles based on Double condition
+        https://bugs.webkit.org/show_bug.cgi?id=154572
+
+        Reviewed by Filip Pizlo.
+
+        Octane has a bunch of Select on Double based on comparing Doubles.
+        A few nodes generate that: ValueRep, Min, Max, etc.
+
+        On ARM64, we can improve our code a lot. ARM can do a select
+        based on flags with the FCSEL instruction.
+
+        On x86, this patch adds aggressive aliasing for moveDoubleConditionallyXXX.
+        This has obviously a much more limited impact.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::moveDoubleConditionally32): Deleted.
+        (JSC::MacroAssembler::moveDoubleConditionally64): Deleted.
+        (JSC::MacroAssembler::moveDoubleConditionallyTest32): Deleted.
+        (JSC::MacroAssembler::moveDoubleConditionallyTest64): Deleted.
+        (JSC::MacroAssembler::moveDoubleConditionallyDouble): Deleted.
+        (JSC::MacroAssembler::moveDoubleConditionallyFloat): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyDouble):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyFloat):
+        (JSC::MacroAssemblerARM64::moveConditionally32):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionally32):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionally64):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyTest32):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyTest64):
+        (JSC::MacroAssemblerARM64::branch64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::moveConditionally32):
+        (JSC::MacroAssemblerX86Common::moveDoubleConditionally32):
+        (JSC::MacroAssemblerX86Common::moveDoubleConditionallyTest32):
+        (JSC::MacroAssemblerX86Common::moveDoubleConditionallyDouble):
+        (JSC::MacroAssemblerX86Common::moveDoubleConditionallyFloat):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::moveDoubleConditionally64):
+        (JSC::MacroAssemblerX86_64::moveDoubleConditionallyTest64):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::shouldTryAliasingDef):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::populateWithInterestingValues):
+        (JSC::B3::floatingPointOperands):
+        (JSC::B3::int64Operands):
+        (JSC::B3::int32Operands):
+        (JSC::B3::testSelectCompareFloat):
+        (JSC::B3::testSelectCompareFloatToDouble):
+        (JSC::B3::testSelectDoubleCompareDouble):
+        (JSC::B3::testSelectDoubleCompareDoubleWithAliasing):
+        (JSC::B3::testSelectFloatCompareFloat):
+        (JSC::B3::testSelectFloatCompareFloatWithAliasing):
+        (JSC::B3::run):
+
 2016-03-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add ability to generate a Heap Snapshot

@@ -1666,6 +1666,39 @@ public:
         m_assembler.csel<datasize>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
+    template<int datasize>
+    void moveDoubleConditionallyAfterFloatingPointCompare(DoubleCondition cond, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        if (cond == DoubleNotEqual) {
+            Jump unordered = makeBranch(ARM64Assembler::ConditionVS);
+            m_assembler.fcsel<datasize>(dest, thenCase, elseCase, ARM64Assembler::ConditionNE);
+            unordered.link(this);
+            return;
+        }
+        if (cond == DoubleEqualOrUnordered) {
+            // If the compare is unordered, thenCase is copied to dest and the
+            // next csel has all arguments equal to thenCase.
+            // If the compare is ordered, dest is unchanged and EQ decides
+            // what value to set.
+            m_assembler.fcsel<datasize>(dest, thenCase, elseCase, ARM64Assembler::ConditionVS);
+            m_assembler.fcsel<datasize>(dest, thenCase, dest, ARM64Assembler::ConditionEQ);
+            return;
+        }
+        m_assembler.fcsel<datasize>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
+    void moveDoubleConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.fcmp<64>(left, right);
+        moveDoubleConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
+    }
+
+    void moveDoubleConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.fcmp<32>(left, right);
+        moveDoubleConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
+    }
+
     void mulDouble(FPRegisterID src, FPRegisterID dest)
     {
         mulDouble(dest, src, dest);
@@ -1938,6 +1971,19 @@ public:
         m_assembler.csel<32>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
+    void moveConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        if (isUInt12(right.m_value))
+            m_assembler.cmp<32>(left, UInt12(right.m_value));
+        else if (isUInt12(-right.m_value))
+            m_assembler.cmn<32>(left, UInt12(-right.m_value));
+        else {
+            moveToCachedReg(right, dataMemoryTempRegister());
+            m_assembler.cmp<32>(left, dataTempRegister);
+        }
+        m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
     void moveConditionally64(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
     {
         m_assembler.cmp<64>(left, right);
@@ -1972,6 +2018,56 @@ public:
     {
         m_assembler.tst<64>(left, right);
         m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
+    void moveDoubleConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.cmp<32>(left, right);
+        m_assembler.fcsel<32>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
+    void moveDoubleConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        if (isUInt12(right.m_value))
+            m_assembler.cmp<32>(left, UInt12(right.m_value));
+        else if (isUInt12(-right.m_value))
+            m_assembler.cmn<32>(left, UInt12(-right.m_value));
+        else {
+            moveToCachedReg(right, dataMemoryTempRegister());
+            m_assembler.cmp<32>(left, dataTempRegister);
+        }
+        m_assembler.fcsel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
+    void moveDoubleConditionally64(RelationalCondition cond, RegisterID left, RegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.cmp<64>(left, right);
+        m_assembler.fcsel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
+    void moveDoubleConditionally64(RelationalCondition cond, RegisterID left, TrustedImm32 right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        if (isUInt12(right.m_value))
+            m_assembler.cmp<64>(left, UInt12(right.m_value));
+        else if (isUInt12(-right.m_value))
+            m_assembler.cmn<64>(left, UInt12(-right.m_value));
+        else {
+            moveToCachedReg(right, dataMemoryTempRegister());
+            m_assembler.cmp<64>(left, dataTempRegister);
+        }
+        m_assembler.fcsel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
+    void moveDoubleConditionallyTest32(ResultCondition cond, RegisterID left, RegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.tst<32>(left, right);
+        m_assembler.fcsel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
+    void moveDoubleConditionallyTest64(ResultCondition cond, RegisterID left, RegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.tst<64>(left, right);
+        m_assembler.fcsel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
     // Forwards / external control flow operations:
@@ -2060,6 +2156,19 @@ public:
             }
         }
         m_assembler.cmp<64>(left, right);
+        return Jump(makeBranch(cond));
+    }
+
+    Jump branch64(RelationalCondition cond, RegisterID left, TrustedImm32 right)
+    {
+        if (isUInt12(right.m_value))
+            m_assembler.cmp<64>(left, UInt12(right.m_value));
+        else if (isUInt12(-right.m_value))
+            m_assembler.cmn<64>(left, UInt12(-right.m_value));
+        else {
+            moveToCachedReg(right, dataMemoryTempRegister());
+            m_assembler.cmp<64>(left, dataTempRegister);
+        }
         return Jump(makeBranch(cond));
     }
 
