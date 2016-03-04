@@ -1468,7 +1468,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
 }
 
 // ECMA 7.1.1
-inline JSValue JSObject::ordinaryToPrimitive(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue JSObject::ordinaryToPrimitive(ExecState* exec, PreferredPrimitiveType hint) const
 {
     // Make sure that whatever default value methods there are on object's prototype chain are
     // being watched.

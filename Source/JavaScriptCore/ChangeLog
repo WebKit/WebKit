@@ -1,3 +1,19 @@
+2016-03-04  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r197531): JavaScriptCore ASan build fails due to weak external symbol
+        <http://webkit.org/b/155033>
+        <rdar://problem/24979661>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ordinaryToPrimitive): Don't mark this method
+        inline since it's also used in DatePrototype.cpp, and is
+        declared as a public class method.
+        * runtime/JSObject.h:
+        (JSC::JSObject::ordinaryToPrimitive): Don't export this method
+        since it is not used outside of JavaScriptCore.
+
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove vcxproj build system

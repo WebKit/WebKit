@@ -505,7 +505,7 @@ public:
     JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
     JS_EXPORT_PRIVATE static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
-    JS_EXPORT_PRIVATE JSValue ordinaryToPrimitive(ExecState*, PreferredPrimitiveType) const;
+    JSValue ordinaryToPrimitive(ExecState*, PreferredPrimitiveType) const;
 
     JS_EXPORT_PRIVATE bool hasInstance(ExecState*, JSValue value, JSValue hasInstanceValue);
     bool hasInstance(ExecState*, JSValue);
