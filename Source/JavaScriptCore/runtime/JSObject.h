@@ -41,6 +41,7 @@
 #include "PropertyStorage.h"
 #include "PutDirectIndexMode.h"
 #include "PutPropertySlot.h"
+#include "RuntimeType.h"
 
 #include "Structure.h"
 #include "VM.h"
@@ -1531,6 +1532,37 @@ ALWAYS_INLINE Identifier makeIdentifier(VM& vm, const char* name)
 ALWAYS_INLINE Identifier makeIdentifier(VM&, const Identifier& name)
 {
     return name;
+}
+
+// Section 7.3.17 of the spec. 
+template <typename AddFunction> // Add function should have a type like: (JSValue, RuntimeType) -> bool
+void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTypeMask legalTypesFilter, const String& errorMessage, AddFunction addFunction)
+{
+    VM& vm = exec->vm();
+    Vector<JSValue> result;
+    JSValue lengthProperty = arrayLikeValue.get(exec, exec->vm().propertyNames->length);
+    if (vm.exception())
+        return;
+    double lengthAsDouble = lengthProperty.toLength(exec);
+    if (vm.exception())
+        return;
+    RELEASE_ASSERT(lengthAsDouble >= 0.0 && lengthAsDouble == std::trunc(lengthAsDouble));
+    uint64_t length = static_cast<uint64_t>(lengthAsDouble);
+    for (uint64_t index = 0; index < length; index++) {
+        JSValue  next = arrayLikeValue.get(exec, index);
+        if (vm.exception())
+            return;
+
+        RuntimeType type = runtimeTypeForValue(next);
+        if (!(type & legalTypesFilter)) {
+            throwTypeError(exec, errorMessage);
+            return;
+        }
+
+        bool exitEarly = addFunction(next, type);
+        if (exitEarly)
+            return;
+    }
 }
 
 bool validateAndApplyPropertyDescriptor(ExecState*, JSObject*, PropertyName, bool isExtensible,

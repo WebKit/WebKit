@@ -1,3 +1,91 @@
+2016-03-03  Saam Barati  <sbarati@apple.com>
+
+        Add Proxy tests for exceptions that depend on an object being non-extensible and having configurable properties
+        https://bugs.webkit.org/show_bug.cgi?id=154745
+
+        Reviewed by Geoffrey Garen.
+
+        This patch is mostly an implementation of Proxy.[[OwnPropertyKeys]] 
+        with respect to section 9.5.11 of the ECMAScript spec.
+        https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
+
+        This patch also changes call sites of getOwnPropertyNames and
+        getPropertyNames to expect that an exception can be thrown.
+
+        * dfg/DFGOperations.cpp:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/IntlObject.cpp:
+        (JSC::supportedLocales):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::get):
+        (JSC::JSValue::put):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::getGenericPropertyNames):
+        * runtime/JSObject.h:
+        (JSC::makeIdentifier):
+        (JSC::createListFromArrayLike):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::defineProperties):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        (JSC::ownPropertyKeys):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::getOwnPropertySlotByIndex):
+        (JSC::ProxyObject::deleteProperty):
+        (JSC::ProxyObject::deletePropertyByIndex):
+        (JSC::ProxyObject::defineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::getOwnPropertyNames):
+        (JSC::ProxyObject::getOwnNonIndexPropertyNames):
+        (JSC::ProxyObject::getStructurePropertyNames):
+        (JSC::ProxyObject::getGenericPropertyNames):
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyObject.h:
+        (JSC::ProxyObject::create):
+        (JSC::ProxyObject::createStructure):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::add):
+        (JSC::Structure::getPropertyNamesFromStructure):
+        (JSC::Structure::checkConsistency):
+        (JSC::Structure::canCachePropertyNameEnumerator):
+        (JSC::Structure::canAccessPropertiesQuicklyForEnumeration):
+        (JSC::Structure::canAccessPropertiesQuickly): Deleted.
+        * runtime/Structure.h:
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * tests/es6.yaml:
+        * tests/stress/proxy-own-keys.js: Added.
+        (assert):
+        (throw.new.Error.let.handler.ownKeys):
+        (throw.new.Error):
+        (assert.let.handler.get ownKeys):
+        (assert.let.handler.ownKeys):
+        (let.handler.ownKeys):
+        (i.catch):
+        (shallowEq):
+        (let.handler.getOwnPropertyDescriptor):
+        (i.set assert):
+        (set add):
+        (set assert):
+        (set if):
+
 2016-03-03  Keith Miller  <keith_miller@apple.com>
 
         Array prototype JS builtins should support Symbol.species

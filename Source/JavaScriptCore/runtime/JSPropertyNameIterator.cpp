@@ -59,7 +59,10 @@ JSPropertyNameIterator* JSPropertyNameIterator::clone(ExecState* exec)
 
 JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, Structure* structure, JSObject* iteratedObject)
 {
-    return JSPropertyNameIterator::create(exec, structure, iteratedObject, propertyNameEnumerator(exec, iteratedObject));
+    JSPropertyNameEnumerator* enumerator = propertyNameEnumerator(exec, iteratedObject);
+    if (UNLIKELY(exec->hadException()))
+        return nullptr;
+    return JSPropertyNameIterator::create(exec, structure, iteratedObject, enumerator);
 }
 
 JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, Structure* structure, JSObject* iteratedObject, JSPropertyNameEnumerator* enumerator)

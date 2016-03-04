@@ -410,7 +410,7 @@ ALWAYS_INLINE EncodedJSValue getByValCellInt(ExecState* exec, JSCell* base, int3
     }
 
     // Use this since we know that the value is out of bounds.
-    return JSValue::encode(JSValue(base).get(exec, index));
+    return JSValue::encode(JSValue(base).get(exec, static_cast<unsigned>(index)));
 }
 
 EncodedJSValue JIT_OPERATION operationGetByValArrayInt(ExecState* exec, JSArray* base, int32_t index)

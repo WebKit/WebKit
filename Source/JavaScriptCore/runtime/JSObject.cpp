@@ -1591,6 +1591,8 @@ EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(ExecState* exec)
 void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, propertyNames, mode);
+    if (UNLIKELY(exec->hadException()))
+        return;
 
     if (object->prototype().isNull())
         return;
@@ -1603,6 +1605,8 @@ void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameA
             break;
         }
         prototype->methodTable(vm)->getOwnPropertyNames(prototype, exec, propertyNames, mode);
+        if (UNLIKELY(exec->hadException()))
+            return;
         JSValue nextProto = prototype->prototype();
         if (nextProto.isNull())
             break;
@@ -3025,6 +3029,8 @@ void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Proper
 {
     VM& vm = exec->vm();
     object->methodTable(vm)->getOwnPropertyNames(object, exec, propertyNames, EnumerationMode(mode, JSObjectPropertiesMode::Exclude));
+    if (UNLIKELY(exec->hadException()))
+        return;
 
     if (object->prototype().isNull())
         return;
@@ -3036,6 +3042,8 @@ void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Proper
             break;
         }
         prototype->methodTable(vm)->getOwnPropertyNames(prototype, exec, propertyNames, mode);
+        if (UNLIKELY(exec->hadException()))
+            return;
         JSValue nextProto = prototype->prototype();
         if (nextProto.isNull())
             break;

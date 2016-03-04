@@ -944,6 +944,8 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
     // 7. Let keys be subset.[[OwnPropertyKeys]]().
     PropertyNameArray keys(&state, PropertyNameMode::Strings);
     supportedLocales->getOwnPropertyNames(supportedLocales, &state, keys, EnumerationMode());
+    if (state.hadException())
+        return jsUndefined();
 
     PropertyDescriptor desc;
     desc.setConfigurable(false);

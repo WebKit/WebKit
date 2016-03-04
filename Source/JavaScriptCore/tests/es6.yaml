@@ -935,7 +935,7 @@
 - path: es6/Proxy_internal_defineProperty_calls_[[Set]].js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_defineProperty_calls_SetIntegrityLevel.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.copyWithin.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_deleteProperty_calls_Array.prototype.pop.js
@@ -985,9 +985,9 @@
 - path: es6/Proxy_internal_get_calls_JSON.stringify.js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_get_calls_Object.assign.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_Object.defineProperties.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_Promise_resolve_functions.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_RegExp.prototype.flags.js
@@ -1027,11 +1027,11 @@
 - path: es6/Proxy_internal_getOwnPropertyDescriptor_calls_Object.prototype.hasOwnProperty.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_ownKeys_calls_SerializeJSONObject.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_ownKeys_calls_SetIntegrityLevel.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_ownKeys_calls_TestIntegrityLevel.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.from.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_set_calls_Array.of.js
@@ -1059,7 +1059,7 @@
 - path: es6/Proxy_JSON.stringify_support.js
   cmd: runES6 :fail
 - path: es6/Proxy_ownKeys_handler.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_preventExtensions_handler.js
   cmd: runES6 :normal
 - path: es6/Proxy_Proxy.revocable.js

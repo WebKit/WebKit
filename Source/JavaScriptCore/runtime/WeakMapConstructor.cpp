@@ -106,13 +106,13 @@ static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState* exec)
             return JSValue::encode(jsUndefined());
         }
 
-        JSValue key = nextItem.get(exec, 0);
+        JSValue key = nextItem.get(exec, static_cast<unsigned>(0));
         if (exec->hadException()) {
             iteratorClose(exec, iterator);
             return JSValue::encode(jsUndefined());
         }
 
-        JSValue value = nextItem.get(exec, 1);
+        JSValue value = nextItem.get(exec, static_cast<unsigned>(1));
         if (exec->hadException()) {
             iteratorClose(exec, iterator);
             return JSValue::encode(jsUndefined());

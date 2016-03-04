@@ -439,6 +439,8 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             else {
                 PropertyNameArray objectPropertyNames(exec, PropertyNameMode::Strings);
                 m_object->methodTable()->getOwnPropertyNames(m_object.get(), exec, objectPropertyNames, EnumerationMode());
+                if (UNLIKELY(exec->hadException()))
+                    return false;
                 m_propertyNames = objectPropertyNames.releaseData();
             }
             m_size = m_propertyNames->propertyNameVector().size();
@@ -656,6 +658,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec, PropertyNameMode::Strings));
                 object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
+                if (UNLIKELY(m_exec->hadException()))
+                    return jsNull();
             }
             objectStartVisitMember:
             FALLTHROUGH;

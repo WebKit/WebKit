@@ -778,6 +778,13 @@ ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName, Prope
     return jsUndefined();
 }
 
+ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, uint64_t propertyName) const
+{
+    if (LIKELY(propertyName <= std::numeric_limits<unsigned>::max()))
+        return get(exec, static_cast<unsigned>(propertyName));
+    return get(exec, Identifier::from(exec, static_cast<double>(propertyName)));
+}
+
 inline void JSValue::put(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (UNLIKELY(!isCell())) {

@@ -341,8 +341,6 @@ bool ProxyObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(object);
     Identifier ident = Identifier::from(exec, propertyName); 
-    if (exec->hadException())
-        return false;
     return thisObject->getOwnPropertySlotCommon(exec, ident.impl(), slot);
 }
 
@@ -587,7 +585,7 @@ bool ProxyObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pro
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
     auto performDefaultDelete = [&] () -> bool {
-        JSObject* target = jsCast<JSObject*>(thisObject->target());
+        JSObject* target = thisObject->target();
         return target->methodTable(exec->vm())->deleteProperty(target, exec, propertyName);
     };
     return thisObject->performDelete(exec, propertyName, performDefaultDelete);
@@ -597,10 +595,8 @@ bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
     Identifier ident = Identifier::from(exec, propertyName); 
-    if (exec->hadException())
-        return false;
     auto performDefaultDelete = [&] () -> bool {
-        JSObject* target = jsCast<JSObject*>(thisObject->target());
+        JSObject* target = thisObject->target();
         return target->methodTable(exec->vm())->deletePropertyByIndex(target, exec, propertyName);
     };
     return thisObject->performDelete(exec, ident.impl(), performDefaultDelete);
@@ -799,6 +795,164 @@ bool ProxyObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyN
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(object);
     return thisObject->performDefineOwnProperty(exec, propertyName, descriptor, shouldThrow);
+}
+
+void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray& trapResult, EnumerationMode enumerationMode)
+{
+    VM& vm = exec->vm();
+    JSValue handlerValue = this->handler();
+    if (handlerValue.isNull()) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy 'handler' is null. It should be an Object."));
+        return;
+    }
+
+    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    CallData callData;
+    CallType callType;
+    JSValue ownKeysMethod = handler->getMethod(exec, callData, callType, makeIdentifier(vm, "ownKeys"), ASCIILiteral("'ownKeys' property of a Proxy's handler should be callable."));
+    if (exec->hadException())
+        return;
+    JSObject* target = this->target();
+    if (ownKeysMethod.isUndefined()) {
+        target->methodTable(exec->vm())->getOwnPropertyNames(target, exec, trapResult, enumerationMode);
+        return;
+    }
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(target);
+    JSValue arrayLikeObject = call(exec, ownKeysMethod, callType, callData, handler, arguments);
+    if (exec->hadException())
+        return;
+
+    PropertyNameMode propertyNameMode = trapResult.mode();
+    RuntimeTypeMask resultFilter = 0;
+    switch (propertyNameMode) {
+    case PropertyNameMode::Symbols:
+        resultFilter = TypeSymbol;
+        break;
+    case PropertyNameMode::Strings:
+        resultFilter = TypeString;
+        break;
+    case PropertyNameMode::StringsAndSymbols:
+        resultFilter = TypeSymbol | TypeString;
+        break;
+    }
+    ASSERT(resultFilter);
+    RuntimeTypeMask dontThrowAnExceptionTypeFilter = TypeString | TypeSymbol;
+    HashMap<UniquedStringImpl*, unsigned> uncheckedResultKeys;
+    unsigned totalSize = 0;
+
+    auto addPropName = [&] (JSValue value, RuntimeType type) -> bool {
+        static const bool doExitEarly = true;
+        static const bool dontExitEarly = false;
+
+        if (!(type & resultFilter))
+            return dontExitEarly;
+
+        Identifier ident = value.toPropertyKey(exec);
+        if (exec->hadException())
+            return doExitEarly;
+
+        ++uncheckedResultKeys.add(ident.impl(), 0).iterator->value;
+        ++totalSize;
+
+        trapResult.add(ident.impl());
+
+        return dontExitEarly;
+    };
+
+    createListFromArrayLike(exec, arrayLikeObject, dontThrowAnExceptionTypeFilter, ASCIILiteral("Proxy handler's 'ownKeys' method must return a array-like object containing only Strings and Symbols."), addPropName);
+    if (exec->hadException())
+        return;
+
+    bool targetIsExensible = target->isExtensible(exec);
+
+    PropertyNameArray targetKeys(&vm, propertyNameMode);
+    target->methodTable(vm)->getOwnPropertyNames(target, exec, targetKeys, enumerationMode);
+    if (exec->hadException())
+        return;
+    Vector<UniquedStringImpl*> targetConfigurableKeys;
+    Vector<UniquedStringImpl*> targetNonConfigurableKeys;
+    for (const Identifier& ident : targetKeys) {
+        PropertyDescriptor descriptor;
+        bool isPropertyDefined = target->getOwnPropertyDescriptor(exec, ident.impl(), descriptor); 
+        if (exec->hadException())
+            return;
+        if (isPropertyDefined && !descriptor.configurable())
+            targetNonConfigurableKeys.append(ident.impl());
+        else
+            targetConfigurableKeys.append(ident.impl());
+    }
+
+    auto removeIfContainedInUncheckedResultKeys = [&] (UniquedStringImpl* impl) -> bool {
+        static const bool isContainedIn = true;
+        static const bool isNotContainedIn = false;
+
+        auto iter = uncheckedResultKeys.find(impl);
+        if (iter == uncheckedResultKeys.end())
+            return isNotContainedIn;
+
+        unsigned& count = iter->value;
+        if (count == 0)
+            return isNotContainedIn;
+
+        --count;
+        --totalSize;
+        return isContainedIn;
+    };
+
+    for (UniquedStringImpl* impl : targetNonConfigurableKeys) {
+        bool contains = removeIfContainedInUncheckedResultKeys(impl);
+        if (!contains) {
+            throwVMTypeError(exec, makeString("Proxy object's 'target' has the non-configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap."));
+            return;
+        }
+    }
+
+    if (targetIsExensible)
+        return;
+
+    for (UniquedStringImpl* impl : targetConfigurableKeys) {
+        bool contains = removeIfContainedInUncheckedResultKeys(impl);
+        if (!contains) {
+            throwVMTypeError(exec, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap."));
+            return;
+        }
+    }
+
+#ifndef NDEBUG
+    unsigned sum = 0;
+    for (unsigned keyCount : uncheckedResultKeys.values())
+        sum += keyCount;
+    ASSERT(sum == totalSize);
+#endif
+
+    if (totalSize) {
+        throwVMTypeError(exec, ASCIILiteral("Proxy handler's 'ownKeys' method returned a key that was not present in its target or it returned duplicate keys."));
+        return;
+    }
+}
+
+void ProxyObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
+{
+    ProxyObject* thisObject = jsCast<ProxyObject*>(object);
+    thisObject->performGetOwnPropertyNames(exec, propertyNameArray, enumerationMode);
+}
+
+void ProxyObject::getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ProxyObject::getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+{
+    // We should always go down the getOwnPropertyNames path.
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ProxyObject::getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
