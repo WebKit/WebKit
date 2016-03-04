@@ -1,3 +1,16 @@
+2016-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix crash seen in iOS simulator tests
+        https://bugs.webkit.org/show_bug.cgi?id=155030
+
+        Reviewed by Tim Horton.
+
+        owningGraphicsLayer() can be null when the tileSizeChangeTimer fires, so null check
+        it and return, as we do for the tileRevalidationTimer.
+
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::tileSizeChangeTimerFired):
+
 2016-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove vcxproj build system

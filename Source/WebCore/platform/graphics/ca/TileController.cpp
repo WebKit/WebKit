@@ -477,6 +477,9 @@ void TileController::notePendingTileSizeChange()
 
 void TileController::tileSizeChangeTimerFired()
 {
+    if (!owningGraphicsLayer())
+        return;
+
     m_tileSizeLocked = false;
     setNeedsRevalidateTiles();
 }
