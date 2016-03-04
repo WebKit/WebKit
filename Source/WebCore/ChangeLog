@@ -1,5 +1,31 @@
 2016-03-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Max out timer throttling immediately for pre-render pages
+        https://bugs.webkit.org/show_bug.cgi?id=155038
+
+        Reviewed by Chris Dumez.
+
+        If a hidden page has never been visible, no need to gently ramp into throttling - treat it
+        the same as a page that has been viewed, but has been in the background for a long time.
+
+        Why? The throttling mechanism scales with the amount of background work by shifting the
+        limit - once all background pages have maxed out the limit, they should no longer be burden
+        of the system. However the mechanism doesn't currently do anything to accelerate towards
+        the limit based on the number of pages in the ramp up phase, and ramp up duration is
+        proportional to limit (so ramping up to a high limit takes a long time). So if you quickly
+        create a large number of hidden pages the system may be under excessive load for a while,
+        as we slowly ramp up to a limit that will adequately constrain resource consumption.
+        In cases where a large number of hidden pages are rapidly generated, many likely remain in
+        the pre-render state, so this mitigation should typically help.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateDOMTimerAlignmentInterval):
+            - if m_isPrerender then m_timerAlignmentInterval is set to the limit.
+        (WebCore::Page::setIsPrerender):
+            - When this changes updateDOMTimerAlignmentInterval().
+
+2016-03-04  Gavin Barraclough  <barraclough@apple.com>
+
         Unify determination of page timer alignment
         https://bugs.webkit.org/show_bug.cgi?id=155031
 

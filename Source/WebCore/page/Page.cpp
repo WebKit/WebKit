@@ -1244,11 +1244,20 @@ void Page::updateDOMTimerAlignmentInterval()
         break;
 
     case TimerThrottlingState::EnabledIncreasing:
-        ASSERT(m_timerThrottlingStateLastChangedTime);
-        double throttledDuration = monotonicallyIncreasingTime() - m_timerThrottlingStateLastChangedTime;
-        double minimumAlignmentInterval = std::max(DOMTimer::hiddenPageAlignmentInterval(), throttledDuration);
-        m_timerAlignmentInterval = std::min(minimumAlignmentInterval, m_timerAlignmentIntervalIncreaseLimit);
-        needsIncreaseTimer = m_timerAlignmentInterval < m_timerAlignmentIntervalIncreaseLimit;
+        // For pages in prerender state maximum throttling kicks in immediately.
+        if (m_isPrerender)
+            m_timerAlignmentInterval = m_timerAlignmentIntervalIncreaseLimit;
+        else {
+            ASSERT(m_timerThrottlingStateLastChangedTime);
+            m_timerAlignmentInterval = monotonicallyIncreasingTime() - m_timerThrottlingStateLastChangedTime;
+            // If we're below the limit, set the timer. If above, clamp to limit.
+            if (m_timerAlignmentInterval < m_timerAlignmentIntervalIncreaseLimit)
+                needsIncreaseTimer = true;
+            else
+                m_timerAlignmentInterval = m_timerAlignmentIntervalIncreaseLimit;
+        }
+        // Alignment interval should not be less than DOMTimer::hiddenPageAlignmentInterval().
+        m_timerAlignmentInterval = std::max(m_timerAlignmentInterval, DOMTimer::hiddenPageAlignmentInterval());
     }
 
     // If throttling is enabled, auto-increasing of throttling is enabled, and the auto-increase
@@ -1479,6 +1488,7 @@ void Page::setIsVisibleInternal(bool isVisible)
 void Page::setIsPrerender()
 {
     m_isPrerender = true;
+    updateDOMTimerAlignmentInterval();
 }
 
 PageVisibilityState Page::visibilityState() const
